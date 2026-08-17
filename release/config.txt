@@ -1,0 +1,10 @@
+{
+  "nickname": "Pony",
+  "hostIp": "127.0.0.1",
+  "port": 23456,
+  "tickMs": 50,
+  "worldInject": "1",
+  "ghostCombat": "1",
+  "autoFollow": "1",
+  "freezeAI": "1"
+}

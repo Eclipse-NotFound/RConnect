@@ -1,0 +1,845 @@
+package rconnect.core
+{
+   import flash.events.Event;
+   import flash.events.TimerEvent;
+   import flash.utils.Timer;
+   import rconnect.core.Log;
+   import rconnect.net.HostServer;
+   import rconnect.net.NetMessageEvent;
+   import rconnect.net.Protocol;
+   import rconnect.net.TcpLink;
+
+   /**
+    * 会话状态机：offline / hosting / joining / connected。
+    * 宿主权威中继：客户端发 playerstate，宿主合并广播 worldstate。
+    */
+   public class Session
+   {
+      public static const OFFLINE:String = "offline";
+      public static const HOSTING:String = "hosting";
+      public static const JOINING:String = "joining";
+      public static const CONNECTED:String = "connected";
+
+      public var mod:RConnectMod;
+      public var mode:String = OFFLINE;
+      public var error:String = "";
+
+      public var server:HostServer;      // 宿主端
+      public var link:TcpLink;           // 客户端端（宿主自己不用）
+      public var myId:int = -1;          // 宿主固定 0
+      public var myName:String = "";
+      public var hostName:String = "";
+
+      /** 宿主维护的 peer 表：{id, name, link, snap} */
+      public var peers:Array = [];
+      /** 客户端维护的远程状态：{id, name, snap} */
+      public var remotes:Array = [];
+
+      private var _tick:Timer;
+      private var _tickCount:int = 0;
+      private var _seq:int = 0;
+      private var _lastRecvAt:Number = 0;
+      private var _worldProbeT:int = 0;
+      private var _autoRole:String = "";
+      private var _autoGame:Boolean = false;
+      private var _autoGameTries:int = 0;
+      private var _autoMove:Boolean = false;
+      private var _autoTravel:Boolean = false;
+      private var _autoFollow:Boolean = false;
+      private var _autoDamage:Boolean = false;
+      private var _autoGhostDmg:Boolean = false;
+      private var _autoHeal:Boolean = false;
+      private var _autoLoadSave:int = -1;
+      private var _loadSaveDone:Boolean = false;
+      private var _loadSaveTries:int = 0;
+      private var _autoTravelLand:String = "";
+      private var _travelLandDone:Boolean = false;
+      private var _worldInject:Boolean = true;
+      private var _userLeft:Boolean = false;
+      private var _rejoinTries:int = 0;
+      private var _rejoinTimer:Timer;
+      private var _autoChatSent:Boolean = false;
+      private var _wasDead:Boolean = false;
+
+      public function Session(mod:RConnectMod)
+      {
+         this.mod = mod;
+         this.myName = mod.config.getValue("nickname");
+         this._autoRole = String(mod.config.getValue("autoRole"));
+         var ag:String = String(mod.config.getValue("autoGame"));
+         this._autoGame = (ag == "1" || ag == "true" || ag == "yes");
+         var am:String = String(mod.config.getValue("autoMove"));
+         this._autoMove = (am == "1" || am == "true" || am == "yes");
+         var at:String = String(mod.config.getValue("autoTravel"));
+         this._autoTravel = (at == "1" || at == "true" || at == "yes");
+         var af:String = String(mod.config.getValue("autoFollow"));
+         this._autoFollow = (af == "1" || af == "true" || af == "yes");
+         var ad:String = String(mod.config.getValue("autoDamage"));
+         this._autoDamage = (ad == "1" || ad == "true" || ad == "yes");
+         var agd:String = String(mod.config.getValue("autoGhostDmg"));
+         this._autoGhostDmg = (agd == "1" || agd == "true" || agd == "yes");
+         var ah:String = String(mod.config.getValue("autoHeal"));
+         this._autoHeal = (ah == "1" || ah == "true" || ah == "yes");
+         var als:String = String(mod.config.getValue("autoLoadSave"));
+         this._autoLoadSave = (als != "" && !isNaN(Number(als)))
+            ? int(als) : -1;
+         this._autoTravelLand = String(mod.config.getValue("autoTravelLand"));
+         var wi:String = String(mod.config.getValue("worldInject"));
+         this._worldInject = (wi != "0" && wi != "false" && wi != "no");
+         _tick = new Timer(int(mod.config.getValue("tickMs")));
+         _tick.addEventListener(TimerEvent.TIMER, onTick);
+         _tick.start();
+      }
+
+      /** 自动化联测：按配置 autoRole 自动主持/加入。 */
+      public function autoStart():void
+      {
+         if(_autoRole == "host")
+         {
+            Log.d("RConnectNet: autoStart host");
+            startHost();
+         }
+         else if(_autoRole == "join")
+         {
+            Log.d("RConnectNet: autoStart join");
+            startJoin();
+         }
+      }
+
+      // ---- 状态机 -------------------------------------------------------
+
+      public function startHost():void
+      {
+         stop();
+         error = "";
+         _userLeft = false;
+         server = new HostServer();
+         server.addEventListener(HostServer.STARTED, onServerStarted);
+         server.addEventListener(HostServer.FAILED, onServerFailed);
+         server.addEventListener(HostServer.CLIENT_ADDED, onClientAdded);
+         server.addEventListener(HostServer.CLIENT_REMOVED, onClientRemoved);
+         server.listen(int(mod.config.getValue("port")));
+         mode = HOSTING;
+         myId = 0;
+         hostName = myName;
+         myName = String(mod.config.getValue("nickname"));
+      }
+
+      public function startJoin():void
+      {
+         stop();
+         error = "";
+         _userLeft = false;
+         link = new TcpLink();
+         link.addEventListener(TcpLink.CONNECTED, onLinkConnected);
+         link.addEventListener(TcpLink.CLOSED, onLinkClosed);
+         link.addEventListener(TcpLink.FAILED, onLinkFailed);
+         link.addEventListener(TcpLink.MESSAGE, onLinkMessage);
+         link.connect(String(mod.config.getValue("hostIp")),
+                      int(mod.config.getValue("port")));
+         mode = JOINING;
+         myId = -1;
+      }
+
+      public function leave():void
+      {
+         _userLeft = true;
+         if(mode == CONNECTED || mode == JOINING)
+         {
+            if(link != null && link.isOpen)
+            {
+               link.send(Protocol.make(Protocol.MSG_GOODBYE, {}));
+            }
+         }
+         stop();
+         mode = OFFLINE;
+         error = "";
+      }
+
+      public function sendChat(text:String):void
+      {
+         if(text == null || text.length == 0)
+         {
+            return;
+         }
+         var msg:Object = Protocol.make(Protocol.MSG_CHAT,
+            {name: myName, text: text});
+         if(server != null)
+         {
+            server.broadcast(msg);
+         }
+         else if(link != null && link.isOpen)
+         {
+            link.send(msg);
+         }
+         // 自己的消息本地回显
+         if(mod.hud != null)
+         {
+            mod.hud.addChatLine(myName, text);
+         }
+      }
+
+      private function stop():void
+      {
+         if(server != null)
+         {
+            server.close();
+            server = null;
+         }
+         if(link != null)
+         {
+            link.close();
+            link = null;
+         }
+         peers = [];
+         remotes = [];
+      }
+
+      // ---- 宿主事件 -----------------------------------------------------
+
+      private function onServerStarted(e:Event):void
+      {
+         mode = HOSTING;
+      }
+
+      private function onServerFailed(e:Event):void
+      {
+         error = "host failed (port busy?)";
+         mode = OFFLINE;
+      }
+
+      private function onClientAdded(e:NetMessageEvent):void
+      {
+         // 新连接：接管其消息流，等 hello 里带昵称后入表
+         var link:TcpLink = e.data as TcpLink;
+         link.addEventListener(TcpLink.MESSAGE, onHostMessage);
+      }
+
+      private function onClientRemoved(e:NetMessageEvent):void
+      {
+         var link:TcpLink = e.data as TcpLink;
+         Log.d("RConnectNet: peer '" + link.peerName + "' left");
+         removePeerByLink(link);
+         broadcastWorldState();
+      }
+
+      // ---- 客户端事件 ---------------------------------------------------
+
+      private function onLinkConnected(e:Event):void
+      {
+         Log.d("RConnectNet: connected to host, sending hello");
+         link.send(Protocol.make(Protocol.MSG_HELLO, {name: myName}));
+      }
+
+      private function onLinkClosed(e:Event):void
+      {
+         if(mode == JOINING || mode == CONNECTED)
+         {
+            if(mod.game != null)
+            {
+               for each(var r:Object in remotes)
+               {
+                  mod.game.removeRemote(int(r.id));
+               }
+            }
+            remotes = [];
+            mode = OFFLINE;
+            maybeRejoin("closed");
+         }
+      }
+
+      private function onLinkFailed(e:Event):void
+      {
+         error = "connect failed (check ip/port)";
+         mode = OFFLINE;
+         // 与断线重连共用同一重试通道（防双定时器竞态）
+         maybeRejoin("failed");
+      }
+
+      /** 意外断线/连接失败自动重连（用户主动离开除外，限 20 次、间隔 2s）。 */
+      private function maybeRejoin(reason:String):void
+      {
+         if(_userLeft || _autoRole != "join" || _rejoinTries >= 20)
+         {
+            return;
+         }
+         _rejoinTries++;
+         Log.d("RConnectNet: link " + reason + ", auto-rejoin try "
+            + _rejoinTries + "/20");
+         if(_rejoinTimer == null)
+         {
+            _rejoinTimer = new Timer(2000, 1);
+            _rejoinTimer.addEventListener(TimerEvent.TIMER_COMPLETE,
+               function(ev:TimerEvent):void
+               {
+                  if(mode == OFFLINE && !_userLeft)
+                  {
+                     startJoin();
+                  }
+               });
+         }
+         _rejoinTimer.start();
+      }
+
+      // ---- 消息处理 -----------------------------------------------------
+
+      private function onLinkMessage(e:NetMessageEvent):void
+      {
+         handleMessage(e.data as Object);
+      }
+
+      /** 客户端收到宿主的消息。 */
+      private function handleMessage(msg:Object):void
+      {
+         var type:String = msg != null ? String(msg.type) : "";
+         _lastRecvAt = new Date().time;
+
+         switch(type)
+         {
+            case Protocol.MSG_WELCOME:
+               myId = int(msg.id);
+               hostName = msg.name != undefined ? String(msg.name) : "";
+               mode = CONNECTED;
+               Log.d("RConnectNet: welcome id=" + myId + " host=" + hostName);
+               compareWorldInfo(msg.worldInfo);
+               // 自动化联测：join 连接成功后自动发一条聊天验证转发
+               if(_autoRole == "join" && !_autoChatSent)
+               {
+                  _autoChatSent = true;
+                  sendChat("hello from " + myName);
+               }
+               break;
+
+            case Protocol.MSG_UNITSYNC:
+               if(mod.game != null)
+               {
+                  // M7：世界注入——同 land 同 loc 时把敌对单位镜像成宿主快照
+                  if(_worldInject && msg.worldInfo != null)
+                  {
+                     mod.game.refreshWorld();
+                     var mine:Object = mod.game.readWorldInfo();
+                     if(mine != null
+                        && String(mine.curLandId)
+                           == String(msg.worldInfo.curLandId)
+                        && String(mine.locId) == String(msg.worldInfo.locId))
+                     {
+                        mod.game.reconcileWorld(msg.units as Array);
+                     }
+                  }
+                  var r:Object = mod.game.applyUnitsSync(msg.units as Array);
+                  _syncCount++;
+                  if(_syncCount % 20 == 1)
+                  {
+                     Log.d("RConnectNet: unitsync matched "
+                        + r.matched + "/" + r.total);
+                  }
+                  // M5c：按宿主世界身份自动跟随换房（测试模式）
+                  // M10b：本地玩家死亡流程期间暂停跟随，避免干扰复活回城
+                  if(_autoFollow && msg.worldInfo != null
+                     && !mod.game.isPlayerDead())
+                  {
+                     var fres:String = mod.game.followHostWorld(msg.worldInfo);
+                     if(fres.indexOf("skip-same") != 0
+                        && fres.indexOf("not-in-game") != 0
+                        && fres.indexOf("skip-cooldown") != 0)
+                     {
+                        Log.d("RConnectWorld: follow result: " + fres);
+                     }
+                  }
+               }
+               break;
+
+            case Protocol.MSG_WORLDSTATE:
+               applyWorldState(msg.players as Array);
+               break;
+
+            case Protocol.MSG_CHAT:
+               if(mod.hud != null)
+               {
+                  mod.hud.addChatLine(String(msg.name), String(msg.text));
+               }
+               break;
+
+            case Protocol.MSG_PLAYERDMG:
+               // 客户端：宿主世界对你的化身造成的伤害 → 本地玩家结算
+               // M10b：本地已死（t_die/sost>=3）时不再施加（死亡流程本地处理）
+               if(mod.game != null && mod.game.gg != null
+                  && msg.dmg != undefined && Number(msg.dmg) > 0
+                  && !mod.game.isPlayerDead())
+               {
+                  try
+                  {
+                     mod.game.gg["damage"](Number(msg.dmg), 0, null, false);
+                     Log.d("RConnectNet: took " + Number(msg.dmg)
+                        + " damage from host world");
+                  }
+                  catch(err:*)
+                  {
+                     Log.d("RConnectNet: player damage apply failed: " + err);
+                  }
+               }
+               break;
+
+            case Protocol.MSG_GOODBYE:
+               break;
+         }
+      }
+
+      /** 宿主收到客户端消息（在 server 的 link 上）。 */
+      private function onHostMessage(e:NetMessageEvent):void
+      {
+         var link:TcpLink = e.target as TcpLink;
+         var msg:Object = e.data as Object;
+         if(msg == null)
+         {
+            return;
+         }
+         var type:String = String(msg.type);
+
+         switch(type)
+         {
+            case Protocol.MSG_HELLO:
+               link.id = nextPeerId();
+               link.peerName = msg.name != undefined ? String(msg.name) : "Pony";
+               peers.push({id: link.id, name: link.peerName, link: link, snap: null});
+               var wInfo:Object = mod.game != null
+                  ? mod.game.readWorldInfo() : null;
+               link.send(Protocol.make(Protocol.MSG_WELCOME,
+                  {id: link.id, name: myName, worldInfo: wInfo}));
+               Log.d("RConnectNet: peer #" + link.id + " '" + link.peerName
+                  + "' joined");
+               broadcastWorldState();
+               break;
+
+            case Protocol.MSG_PLAYERSTATE:
+               var peer:Object = findPeerByLink(link);
+               if(peer != null)
+               {
+                  peer.snap = msg.snap;
+                  // 宿主侧同样应用快照到本地幽灵
+                  if(mod.game != null)
+                  {
+                     mod.game.updateRemote(peer.id, peer.snap,
+                        String(peer.name));
+                  }
+               }
+               broadcastWorldState();
+               break;
+
+            case Protocol.MSG_CHAT:
+               var chat:Object = Protocol.make(Protocol.MSG_CHAT,
+                  {name: link.peerName, text: String(msg.text)});
+               server.broadcast(chat, link);
+               Log.d("RConnectNet: chat '" + link.peerName + "': "
+                  + String(msg.text));
+               if(mod.hud != null)
+               {
+                  mod.hud.addChatLine(String(chat.name), String(chat.text));
+               }
+               break;
+
+            case Protocol.MSG_DAMAGE:
+               // 宿主：应用客户端上报的伤害（客户端命中检测 → 宿主权威结算），
+               // 并把敌人仇恨拉到该客户端的幽灵化身上（M9）
+               if(msg.hits is Array)
+               {
+                  var applied:int = 0;
+                  var peerObj:Object = findPeerByLink(link);
+                  var attacker:Object = (mod.game != null && peerObj != null)
+                     ? mod.game.getRemoteGhost(peerObj.id) : null;
+                  for each(var h:Object in msg.hits as Array)
+                  {
+                     if(mod.game != null
+                        && mod.game.applyDamage(String(h.id), Number(h.dmg),
+                           attacker))
+                     {
+                        applied++;
+                     }
+                  }
+                  if(applied > 0)
+                  {
+                     Log.d("RConnectNet: applied " + applied
+                        + " client damage hits");
+                  }
+               }
+               break;
+
+            case Protocol.MSG_GOODBYE:
+               removePeerByLink(link);
+               broadcastWorldState();
+               break;
+         }
+      }
+
+      // ---- tick --------------------------------------------------------
+
+      /** M4：比较宿主世界身份与本地世界（只记录，不做自动传送）。 */
+      private function compareWorldInfo(hostInfo:Object):void
+      {
+         _hostWorldInfo = hostInfo;
+         doCompareWorldInfo();
+      }
+
+      private var _hostWorldInfo:Object = null;
+      private var _worldCompared:Boolean = false;
+
+      /** 双方都进游戏后再做一次对比（welcome 时客户端往往还在菜单）。 */
+      private function doCompareWorldInfo():void
+      {
+         if(_hostWorldInfo == null || mod.game == null || _worldCompared)
+         {
+            return;
+         }
+         var mine:Object = mod.game.readWorldInfo();
+         if(mine == null)
+         {
+            return;
+         }
+         _worldCompared = true;
+         var hostInfo:Object = _hostWorldInfo;
+         var sameLoc:Boolean = String(mine.locId) == String(hostInfo.locId);
+         var sameLand:Boolean = String(mine.curLandId) == String(hostInfo.curLandId);
+         Log.d("RConnectWorld: host=" + hostInfo.curLandId + "/"
+            + hostInfo.locId + "@" + Math.round(Number(hostInfo.x)) + ","
+            + Math.round(Number(hostInfo.y))
+            + " mine=" + mine.curLandId + "/" + mine.locId + "@"
+            + Math.round(Number(mine.x)) + "," + Math.round(Number(mine.y))
+            + " -> landMatch=" + sameLand + " locMatch=" + sameLoc);
+      }
+
+      private var _syncCount:int = 0;
+
+      private function onTick(e:TimerEvent):void
+      {
+         _tickCount++;
+         // 调试心跳（每 10s），定位 tick 停滞点
+         if(_tickCount % 200 == 0)
+         {
+            Log.d("RConnectDbg: tick " + _tickCount + " mode=" + mode
+               + " world=" + (mod.game != null && mod.game.world != null));
+         }
+
+         // 周期性刷新世界引用（gg/loc 会随进游戏/切场景变化，不能长期缓存）
+         if(mod.game != null && _tickCount % 40 == 0)
+         {
+            mod.game.refreshWorld();
+            mod.game.dumpGameError();   // 诊断：错误对话框文本进日志
+         }
+
+         // 自动化联测：autoGame=1 时程序化开新游戏（主菜单，每 2 秒重试）
+         if(_autoGame && mod.game != null
+            && mod.game.gg == null && _autoGameTries < 30
+            && _tickCount % 40 == 0)
+         {
+            _autoGameTries++;
+            mod.game.startGame();
+         }
+         if(_autoGame && mod.game != null)
+         {
+            mod.game.tickAutoGame();
+         }
+
+         // M8 自动化联测：autoLoadSave>=0 时程序化加载存档（等价菜单 Continue；
+         // 内部先 newGame 初始化世界骨架再 comLoad 读档，用于让加入方用
+         // 不同进度的存档制造世界差异）
+         if(_autoLoadSave >= 0 && !_loadSaveDone
+            && mod.game != null && _tickCount % 40 == 0
+            && _loadSaveTries < 15)
+         {
+            _loadSaveTries++;
+            if(mod.game.loadSaveTest(_autoLoadSave))
+            {
+               _loadSaveDone = true;
+            }
+         }
+
+         // 自动化联测：autoMove=1 时周期挪动本地玩家（30s 后开始，避开传送过渡）
+         // M10b：死亡流程期间不挪动（避免干扰复活回城）
+         if(_autoMove && mod.game != null && _tickCount % 100 == 0
+            && _tickCount > 600 && !mod.game.isPlayerDead())
+         {
+            mod.game.moveTest();
+         }
+
+         // M4：客户端进游戏后完成世界身份对比
+         if(mode == CONNECTED && !_worldCompared && _tickCount % 20 == 0)
+         {
+            doCompareWorldInfo();
+         }
+
+         if(mode == CONNECTED && link != null && link.isOpen)
+         {
+            var snap:Object = mod.game != null ? mod.game.readSnapshot() : null;
+            link.send(Protocol.make(Protocol.MSG_PLAYERSTATE,
+               {id: myId, seq: _seq++, name: myName, snap: snap}));
+            // M6a：驱动被冻结单位的动画（游戏自己的公开 animate()）
+            if(mod.game != null)
+            {
+               mod.game.tickFrozenAnims();
+               if(_autoDamage && _tickCount % 200 == 0)
+               {
+                  mod.game.animProbeTest();
+               }
+            }
+            // M5b：客户端本地命中检测 → 上报宿主结算（每 10 tick = 500ms）
+            if(mod.game != null && _tickCount % 10 == 0)
+            {
+               // 自动化联测：autoDamage=1 时先模拟本地伤害再检测
+               if(_autoDamage && _tickCount % 100 == 0
+                  && !mod.game.isPlayerDead())
+               {
+                  mod.game.damageTest();
+               }
+               // M10b：死亡/复活过渡日志（确定性验证用）
+               var dead:Boolean = mod.game.isPlayerDead();
+               if(dead && !_wasDead)
+               {
+                  Log.d("RConnectNet: local player died (respawn flow)");
+               }
+               else if(!dead && _wasDead)
+               {
+                  Log.d("RConnectNet: local player revived");
+                  // 测试钩子：复活后完全治疗（身体部件伤重会挡旅行）
+                  if(_autoHeal)
+                  {
+                     mod.game.healTest();
+                  }
+               }
+               _wasDead = dead;
+               var hits:Array = mod.game.scanAndReportDamage();
+               if(hits != null && hits.length > 0)
+               {
+                  link.send(Protocol.make(Protocol.MSG_DAMAGE, {hits: hits}));
+                  Log.d("RConnectNet: reported " + hits.length
+                     + " damage hits first=" + String(hits[0].id)
+                     + "/" + Math.round(Number(hits[0].dmg)));
+               }
+            }
+         }
+         else if(mode == HOSTING && server != null)
+         {
+            broadcastWorldState();
+            // M4/M5：宿主每 4 tick（200ms = 5Hz）广播单位快照 + 世界身份
+            if(_tickCount % 4 == 0 && mod.game != null)
+            {
+               var usnap:Array = mod.game.readUnitsSnapshot();
+               if(usnap != null && usnap.length > 0)
+               {
+                  server.broadcast(Protocol.make(Protocol.MSG_UNITSYNC,
+                     {tick: _tickCount, units: usnap,
+                      worldInfo: mod.game.readWorldInfo()}));
+               }
+            }
+            // M5c：自动化联测换房（每 15s）
+            if(_autoTravel && mod.game != null && _tickCount % 300 == 0)
+            {
+               mod.game.travelTest();
+            }
+            // M9：监测客户端化身受击，伤害回传客户端（每 10 tick = 500ms）
+            // M10b：客户端已死（快照 sost>=3/hp<=0）时不上报——死亡流程本地处理
+            if(mod.game != null && _tickCount % 10 == 0)
+            {
+               for each(var gp:Object in peers)
+               {
+                  var ps:Object = gp.snap;
+                  var peerDead:Boolean = ps != null
+                     && (Number(ps.sost) >= 3 || Number(ps.hp) <= 0);
+                  if(peerDead)
+                  {
+                     continue;
+                  }
+                  var gdmg:Number = mod.game.scanGhostHp(int(gp.id));
+                  if(gdmg > 0 && gp.link != null && gp.link.isOpen)
+                  {
+                     gp.link.send(Protocol.make(Protocol.MSG_PLAYERDMG,
+                        {dmg: gdmg}));
+                     Log.d("RConnectNet: relayed " + gdmg
+                        + " damage to '" + gp.name + "'");
+                  }
+               }
+            }
+            // M6.5：自动化联测——跨地图传送（世界就绪后执行一次；
+            // travelToLand 返回 false 时（加载中/已在目标）稍后重试）
+            if(_autoTravelLand != "" && !_travelLandDone
+               && mod.game != null && mod.game.gg != null
+               && _tickCount % 40 == 0)
+            {
+               if(mod.game.travelToLand(_autoTravelLand))
+               {
+                  _travelLandDone = true;
+               }
+            }
+            // M6：自动化联测——宿主侧伤害自己的单位（权威死亡→animState 变化）
+            if(_autoDamage && mod.game != null && _tickCount % 100 == 0
+               && !mod.game.isPlayerDead())
+            {
+               mod.game.damageTest();
+            }
+            // M10b：确定性验证——宿主直接伤害客户端幽灵化身（每 15s，
+            // 伤害量=testGhostDmg；联测设大值触发客户端死亡→复活闭环）
+            if(_autoGhostDmg && mod.game != null && _tickCount % 300 == 0
+               && _tickCount > 600)
+            {
+               mod.game.ghostDamageTest();
+            }
+         }
+
+         if(mod.hud != null)
+         {
+            mod.hud.refresh();
+         }
+      }
+
+      // ---- 世界状态广播 -------------------------------------------------
+
+      private function broadcastWorldState():void
+      {
+         if(server == null || !server.bound)
+         {
+            return;
+         }
+         var players:Array = [];
+         var selfSnap:Object = mod.game != null ? mod.game.readSnapshot() : null;
+         players.push({id: 0, name: myName, snap: selfSnap});
+         for each(var p:Object in peers)
+         {
+            players.push({id: p.id, name: p.name, snap: p.snap});
+         }
+         server.broadcast(Protocol.make(Protocol.MSG_WORLDSTATE,
+            {tick: _tickCount, players: players}));
+      }
+
+      private function applyWorldState(players:Array):void
+      {
+         if(players == null || mod.game == null)
+         {
+            return;
+         }
+         var seen:Object = {};
+         var next:Array = [];
+         for each(var p:Object in players)
+         {
+            var id:int = int(p.id);
+            seen[id] = true;
+            if(id == myId)
+            {
+               continue;
+            }
+            mod.game.updateRemote(id, p.snap != null ? p.snap : {},
+               p.name != undefined ? String(p.name) : "");
+            next.push({id: id, name: p.name, snap: p.snap});
+         }
+         // 清理已消失的远程玩家
+         for each(var r:Object in remotes)
+         {
+            if(!seen[int(r.id)])
+            {
+               mod.game.removeRemote(int(r.id));
+            }
+         }
+         remotes = next;
+      }
+
+      // ---- 工具 --------------------------------------------------------
+
+      private function nextPeerId():int
+      {
+         var id:int = 1;
+         while(findPeer(id) != null)
+         {
+            id++;
+         }
+         return id;
+      }
+
+      private function findPeer(id:int):Object
+      {
+         for each(var p:Object in peers)
+         {
+            if(p.id == id)
+            {
+               return p;
+            }
+         }
+         return null;
+      }
+
+      private function findPeerByLink(link:TcpLink):Object
+      {
+         for each(var p:Object in peers)
+         {
+            if(p.link == link)
+            {
+               return p;
+            }
+         }
+         return null;
+      }
+
+      private function removePeerByLink(link:TcpLink):void
+      {
+         for(var i:int = peers.length - 1; i >= 0; i--)
+         {
+            if(peers[i].link == link)
+            {
+               if(mod.game != null)
+               {
+                  mod.game.removeRemote(int(peers[i].id));
+               }
+               peers.splice(i, 1);
+            }
+         }
+      }
+
+      /** 状态行文本（HUD 每帧读取）。 */
+      public function statusText():String
+      {
+         var s:String = "RConnect v" + RConnectMod.VERSION
+            + " | " + mod.versionInfo.version;
+         s += "\nmode: " + mode;
+         if(mode == HOSTING)
+         {
+            s += " (port " + mod.config.getValue("port")
+               + ", peers " + peers.length + ")";
+         }
+         else if(mode == CONNECTED)
+         {
+            s += " (id " + myId + " of " + hostName + ", remotes "
+               + remotes.length + ")";
+         }
+         else if(mode == JOINING)
+         {
+            s += " (" + mod.config.getValue("hostIp") + ":"
+               + mod.config.getValue("port") + ")";
+         }
+         if(mode == HOSTING)
+         {
+            for each(var p:Object in peers)
+            {
+               s += "\n  " + String(p.name) + " hp=" + snapHp(p.snap);
+            }
+         }
+         else if(mode == CONNECTED)
+         {
+            for each(var r:Object in remotes)
+            {
+               s += "\n  " + String(r.name) + " hp=" + snapHp(r.snap);
+            }
+         }
+         if(error != "")
+         {
+            s += "\nerror: " + error;
+         }
+         return s;
+      }
+
+      private static function snapHp(snap:Object):String
+      {
+         if(snap == null || snap.hp == undefined)
+         {
+            return "?";
+         }
+         return String(Math.round(Number(snap.hp)));
+      }
+   }
+}

@@ -1,0 +1,12 @@
+# ---- 构建产物（均可再生成：build_mod.py / make_release.py / 测试脚本）----
+build/
+release/*.swf
+
+# ---- Python ----
+__pycache__/
+*.pyc
+
+# ---- 系统/编辑器 ----
+.DS_Store
+Thumbs.db
+*.tmp
