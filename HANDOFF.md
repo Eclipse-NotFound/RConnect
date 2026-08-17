@@ -189,7 +189,20 @@ raiders、rbl（基地）；rbl 作为 autoTravelLand 目标会触发防护跳�
 4. 未决小项：M3 遗留（动画阈值观感校准）；玩家攻击中立 NPC 的权威处理；
    rbl 房间为基地（无敌人）时联机体验验证；发布版本号/打包流程。
 
-## 10. 新会话自检清单（开工前 30 秒）
+## 10. Git 状态（2026-08-17 建立）
+
+- 仓库：`mods/Rconnect/.git`（仅本模组文件夹，不含游戏文件与其他 mods）。
+- 已跟踪：src/ tools/ state/ knowledge/ decisions/ design/ 及全部文档。
+- **不入库**（.gitignore）：`build/`（备份/分析/测试日志/安装包，均可再生成）、
+  `release/*.swf`（编译产物，改源码后跑 `python tools/build_mod.py` 重建）。
+- 每次工作结束建议 `git add -A && git commit`（提交信息用中文简述本段改动，
+  如"M11：xxx"）；身份沿用全局（eclipse / helloimyyt@163.com）。
+- `tools/second_player.bat` 为 GBK 编码且 CRLF——git 不做换行转换
+  （该文件已按原样入库，勿用工具改写行尾）。
+- 注意：build/backup/ 里的合并基线不在 git 内，改游戏文件前的哈希比对
+  依赖磁盘上的 build/backup/current-merged-20260815/。
+
+## 11. 新会话自检清单（开工前 30 秒）
 
 - [ ] 读 AGENT_SCOPE.md 权限规则
 - [ ] state/current-status.md 为最新（§3 摘要无出入）
