@@ -172,10 +172,16 @@ raiders、rbl（基地）；rbl 作为 autoTravelLand 目标会触发防护跳�
   Sandevistan+RConnect（新模组如需支持 DLC 版本按同模式合并）。
 - 其他开发者贡献的公共知识：mod-loader-patch-structure（LoaderContext(false)
   未传域=同域加载修正）、grafon-drawallobjs 冲突（待运行时验证）、
-  bullet-wall-impact 等；本模组贡献 6 则 shared-knowledge 事实
-  （menu-worldstep-gating / findcel-targeting / player-vis-anim-pipeline /
-  world-identity-determinism / land-travel-api / frozen-units-unfreeze /
-  save-load-api）。
+  bullet-wall-impact、world-rooms-field-injection（RandomRooms：运行时
+  注入房间池，对 M8 遗留的随机地图同步有参考价值）等。
+- 本模组贡献的 shared-knowledge（截至 2026-08-18，12 则）：
+  - 早期：menu-worldstep-gating、findcel-targeting、player-vis-anim-pipeline、
+    world-identity-determinism、land-travel-api；
+  - M10/M8：frozen-units-unfreeze、save-load-api、
+    programmatic-gameplay-driving（methods）；
+  - 2026-08-18 经验沉淀：player-death-respawn-flow、spectator-avatar-unit、
+    mod-loader-cross-domain-anomaly、trigger-damage-crash、version-fingerprint；
+    land-travel-api 补充挂死点清单（加载中旅行/重入当前土地）。
 - Sandevistan 同步可能覆盖补丁：重跑 `tools/patch_game_swfs.py` 恢复；
   锚点缺失会明确报错需人工适配。
 
