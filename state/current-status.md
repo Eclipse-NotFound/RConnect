@@ -196,16 +196,28 @@
 - 新测试钩子：autoLoadSave；M2_JOIN_LOADSAVE/M2_JOIN_QUIET 环境变量。
 - M10 战斗回归通过（56 applied / 2 轮死亡复活闭环）。
 
-## 其他开发者协作状态（2026-08-15 更新）
+## 其他开发者协作状态（2026-08-18 更新）
 
-- 根 `pfe.swf`（1.02）已被 4 个模组 loader 合并（Sandevistan/RConnect/
-  RealisticVision/MoreSkills&Weapons），**本模组 loader 段保留完整**（已反编译
-  核验）。`DLC/pfe.swf`、`DLC/pfeUI.swf` 仍为 Sandevistan+RConnect。
-- 其他开发者贡献了公共知识：mod-loader-patch-structure（含"LoaderContext(false)
-  未传域=同域加载"修正）、grafon-drawallobjs 冲突记录、bullet-wall-impact 等。
-- 本模组合并前备份已刷新到 `build/backup/current-merged-20260815/`。
-- **改游戏文件前必查**：对比 `build/backup/current-merged-20260815/` 哈希，
-  若他人有改动则按 patch_game_swfs.py 的锚点合并（失败即报错，不静默产出）。
+- **新模组出现**：mods/ 下现有 6 个模组（新增 RandomRooms、TDFC，均由
+  其他开发者维护，本模组一律不读取、不修改）。MoreSkills&Weapons 仍存在。
+- **游戏 SWF 被再次合并**（2026-08-17/18）：
+  - `pfe.swf`（1.02）：现含 5 个加载器（Sandevistan/RConnect/RealisticVision/
+    TDFC/RandomRooms）——注意不再含 MoreSkills&Weapons 的加载器（他方合并
+    选择，非本模组处理范围）；
+  - `DLC/pfe.swf`（1.03）：Sandy/RConnect/RandomRooms；
+  - `DLC/pfeUI.swf`（1.04）：Sandy/RConnect（未再变）。
+  - **三份文件均仍包含 RConnect 加载器（已核验 app:/mods/Rconnect 标记）**，
+    模组可正常加载。
+  - 他方在游戏根目录留有各自合并前备份（pfe_1.02_before_tdfc_*、
+    pfe_before_rrooms_*）。
+- **合并基线已刷新**：`build/backup/current-merged-20260818/`（含我们加载器
+  的当前三方 SWF）。今后"改游戏文件前必查"以 20260818 基线为准。
+- 其他开发者新增公共知识（与本模组相关）：`world-objects/discoveries/
+  world-rooms-field-injection.md`（World.w.rooms 原版恒 null；运行时注入
+  房间池 + roomsLoad=0 + GameData.d 追加土地可行）——对 M8 遗留的
+  "随机地图内容同步/种子"课题是重要可复用素材。
+- **本模组 loader 段保留完整**（三版本核验）。重跑 `tools/patch_game_swfs.py`
+  前必须先对照新基线（20260818）确认他人改动并合并，绝不直接覆盖。
 
 ## 已知风险 / 待验证
 
