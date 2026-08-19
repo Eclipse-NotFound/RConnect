@@ -1,5 +1,7 @@
 package rconnect.game
 {
+   import flash.display.Stage;
+   import flash.events.Event;
    import flash.text.TextField;
    import flash.text.TextFieldAutoSize;
    import flash.text.TextFormat;
@@ -56,7 +58,35 @@ package rconnect.game
       public function GameBridge(main:Object)
       {
          this.main = main;
+         // M12：拦截 Stage DEACTIVATE——游戏在 World 构造时用默认优先级注册
+         // onDeactivate（失焦 → pip.onoff(11) 打开 PipBuck 且永不自动关闭，
+         // 导致 allStat=2、旅行/场景冻结、"两侧房间不同"）。用更高优先级
+         // 抢先 stopImmediatePropagation，让游戏的失焦开 pip 永久不触发。
+         try
+         {
+            var st:Stage = main["stage"] as Stage;
+            if(st != null)
+            {
+               st.addEventListener(Event.DEACTIVATE, onStageDeactivate,
+                  false, 1000, true);
+            }
+         }
+         catch(err:*)
+         {
+         }
          refreshWorld();
+      }
+
+      /** M12：抢在游戏 onDeactivate 前拦住失焦事件（失焦开 pip 是游戏 bug）。 */
+      private function onStageDeactivate(e:Event):void
+      {
+         try
+         {
+            e.stopImmediatePropagation();
+         }
+         catch(err:*)
+         {
+         }
       }
 
       /** 定时重探 world（进游戏/切换场景后 World.w/loc 变化）。 */
@@ -187,6 +217,13 @@ package rconnect.game
          {
             return null;
          }
+      }
+
+      /** 数值型字段探测（外部类用）：缺失/不可读/非有限 → def。 */
+      public static function probeNum(o:Object, name:String, def:Number):Number
+      {
+         var v:* = probe(o, name);
+         return (v != null && isFinite(Number(v))) ? Number(v) : def;
       }
 
       /** 采集本机玩家状态快照（联机发送用）。无世界/无玩家时返回 null。 */
@@ -995,6 +1032,12 @@ package rconnect.game
          {
             return "skip-transition";
          }
+         // M12：覆盖层卡住（allStat!=1）→ 先关，本轮跳过（下轮重试）
+         if(probeNum(world, "allStat", 1) != 1)
+         {
+            forceCloseOverlays();
+            return "skip-overlay";
+         }
          try
          {
             var land:Object = probe(world, "land");
@@ -1072,6 +1115,14 @@ package rconnect.game
             Log.d("RConnectGame: travelToLand: world transitioning, skip");
             return false;
          }
+         // M12：世界被覆盖层卡住（allStat!=1：失焦打开的 pip 等）——先关掉，
+         // 本轮跳过，下一轮世界恢复后重试（避免把过渡发进冻结的世界）
+         if(probeNum(world, "allStat", 1) != 1)
+         {
+            forceCloseOverlays();
+            Log.d("RConnectGame: travelToLand: overlay blocked, closing");
+            return false;
+         }
          try
          {
             var game:Object = probe(world, "game");
@@ -1111,6 +1162,102 @@ package rconnect.game
          }
          // mxmlc 控制流怪癖：全部 return 都在 try/catch 内会误报"无返回值"
          return false;
+      }
+
+      /** M12：强制关闭游戏覆盖层（pip/sats/stand/guiPause）。
+       *  背景：窗口失焦会触发 World.onDeactivate → pip.onoff(11) 打开
+       *  PipBuck 且无 ACTIVATE 处理器复位；覆盖层开 → World.allStat=2 →
+       *  World.step 的 gameplay 块（含 t_exit/exitStep 过渡）被跳过 →
+       *  旅行冻结、"两侧房间不同/场景无法正常加载"。
+       *  pip 用游戏原生 onoff(0)（active 时=关闭，避免残留页码状态）；
+       *  其余直接置 active=false（公开字段）。@return 是否关掉了什么 */
+      public function forceCloseOverlays():Boolean
+      {
+         if(world == null)
+         {
+            return false;
+         }
+         var closed:Boolean = false;
+         var pip:Object = probe(world, "pip");
+         if(pip != null)
+         {
+            try
+            {
+               if(probe(pip, "active"))
+               {
+                  pip["onoff"](0);
+                  closed = true;
+               }
+            }
+            catch(err:*)
+            {
+            }
+         }
+         var sats:Object = probe(world, "sats");
+         if(sats != null)
+         {
+            try
+            {
+               if(probe(sats, "active"))
+               {
+                  sats["active"] = false;
+                  closed = true;
+               }
+            }
+            catch(err:*)
+            {
+            }
+         }
+         var stand:Object = probe(world, "stand");
+         if(stand != null)
+         {
+            try
+            {
+               if(probe(stand, "active"))
+               {
+                  stand["active"] = false;
+                  closed = true;
+               }
+            }
+            catch(err:*)
+            {
+            }
+         }
+         var gui:Object = probe(world, "gui");
+         if(gui != null)
+         {
+            try
+            {
+               if(probe(gui, "guiPause"))
+               {
+                  gui["guiPause"] = false;
+                  closed = true;
+               }
+            }
+            catch(err:*)
+            {
+            }
+         }
+         if(closed)
+         {
+            Log.d("RConnectGame: forceCloseOverlays closed overlay(s)");
+         }
+         return closed;
+      }
+
+      /** M12 复现钩子（autoDeactivate）：模拟窗口失焦
+       *  （World.onDeactivate → pip.onoff(11)），确定性验证覆盖层卡死路径。 */
+      public function deactivateTest():void
+      {
+         try
+         {
+            main["stage"]["dispatchEvent"](new Event(Event.DEACTIVATE));
+            Log.d("RConnectGame: deactivateTest dispatched");
+         }
+         catch(err:*)
+         {
+            Log.d("RConnectGame: deactivateTest failed: " + err);
+         }
       }
 
       private var _travelTestStep:int = 0;

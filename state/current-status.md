@@ -214,6 +214,32 @@
     died 2/revived 2）。
 - 详见 knowledge/experiments/2026-08-18-m11-save-follow-settle.md。
 
+## 同地点两侧房间不同——失焦冻结修复（M12）——2026-08-18
+
+- 用户报告：宿主和加入方进入同一地点（马哈顿）时两侧显示的房间不同。
+- **根因**：窗口失焦时游戏 `World.onDeactivate → pip.onoff(11)` 自动打开
+  PipBuck 且**无复位机制**（无 ACTIVATE 处理）→ `pip.active=true` →
+  `allStat=2` → World.step 的 gameplay 块与旅行过渡（exitStep）整体冻结
+  → 被失焦的一方卡在旧房间（旅行中途 t_exit 停在 16）。间歇性
+  （自动化约 1/3 轮次命中）。双窗口同屏时点另一个窗口就触发。
+- **修复**：
+  1. **源头拦截**：GameBridge 构造时在同一 Stage 上以优先级 1000
+     `stopImmediatePropagation()` 拦下 `DEACTIVATE`，游戏开 pip 路径
+     永久失效（副作用：失焦自动存档取消，周期性 t_save 不受影响）；
+  2. 兜底：`travelToLand`/`gotoXY` 前 allStat!=1 则
+     `forceCloseOverlays()`（pip 原生 onoff(0)）+ 跳过重试；过渡中
+     （t_exit>0 && allStat!=1）每 2s 恢复守护；
+  3. 诊断：心跳带 allStat/pipA/satsA/standA/guiPause；复现钩子
+     `autoDeactivate`（派发 DEACTIVATE）。
+- 验证：`M2_DEACT=1` 确定性失焦——修复前 pipA=true 永久卡死，修复后
+  pipA 全程 false、join 正常落定马哈顿 loc0_4；默认战斗回归 ×2
+  pipA=0/allStat>=2=0，战斗链路正常。
+- 新增 shared-knowledge：`ui-systems/facts/window-blur-pip-allstat.md`
+  （allStat 覆盖层门控 + 失焦开 pip 无复位 + 优先级拦截法）。
+- **注意区分**：随机土地（rnd）房间布局按 Math.random 生成、两侧内容
+  不同，是与本冻结**独立**的另一个问题（需改游戏本体做确定性/种子同步，
+  另评估）。
+
 ## 其他开发者协作状态（2026-08-18 更新）
 
 - **新模组出现**：mods/ 下现有 6 个模组（新增 RandomRooms、TDFC，均由

@@ -52,6 +52,8 @@ package rconnect.core
       private var _autoHeal:Boolean = false;
       private var _autoHostKill:Boolean = false;
       private var _hostKillDone:Boolean = false;
+      private var _autoDeactivate:Boolean = false;
+      private var _deactDone:Boolean = false;
       private var _autoLoadSave:int = -1;
       private var _loadSaveDone:Boolean = false;
       private var _loadSaveTries:int = 0;
@@ -90,6 +92,8 @@ package rconnect.core
             ? int(als) : -1;
          var hk:String = String(mod.config.getValue("autoHostKill"));
          this._autoHostKill = (hk == "1" || hk == "true" || hk == "yes");
+         var de:String = String(mod.config.getValue("autoDeactivate"));
+         this._autoDeactivate = (de == "1" || de == "true" || de == "yes");
          this._autoTravelLand = String(mod.config.getValue("autoTravelLand"));
          var wi:String = String(mod.config.getValue("worldInject"));
          this._worldInject = (wi != "0" && wi != "false" && wi != "no");
@@ -539,6 +543,22 @@ package rconnect.core
                   + " clickReq=" + String(GameBridge.probe(w, "clickReq"))
                   + " verror=" + String(GameBridge.probe(
                      GameBridge.probe(w, "verror"), "visible"));
+               // M12：World.step 卡点门控诊断
+               var mm12:Object = GameBridge.probe(w, "mm");
+               dbg += " mm.active=" + String(mm12 != null
+                  ? GameBridge.probe(mm12, "active") : "null")
+                  + " ng_wait=" + String(GameBridge.probe(w, "ng_wait"))
+                  + " allStat=" + String(GameBridge.probe(w, "allStat"))
+                  + " onPause=" + String(GameBridge.probe(w, "onPause"));
+               // M12：allStat=2 的覆盖层定位（pip/sats/stand/guiPause）
+               dbg += " pipA=" + String(GameBridge.probe(
+                  GameBridge.probe(w, "pip"), "active"))
+                  + " satsA=" + String(GameBridge.probe(
+                     GameBridge.probe(w, "sats"), "active"))
+                  + " standA=" + String(GameBridge.probe(
+                     GameBridge.probe(w, "stand"), "active"))
+                  + " guiPause=" + String(GameBridge.probe(
+                     GameBridge.probe(w, "gui"), "guiPause"));
             }
             Log.d(dbg);
          }
@@ -548,6 +568,22 @@ package rconnect.core
          {
             mod.game.refreshWorld();
             mod.game.dumpGameError();   // 诊断：错误对话框文本进日志
+            // M12：旅行过渡中被覆盖层卡住（失焦 pip 等）→ 强制关闭恢复。
+            // 窗口失焦会触发游戏 onDeactivate → pip.onoff(11) 打开 PipBuck，
+            // 无复位机制 → allStat=2 → gameplay 与 exitStep 冻结
+            if(mod.game.world != null
+               && GameBridge.probeNum(mod.game.world, "t_exit", 0) > 0
+               && GameBridge.probeNum(mod.game.world, "allStat", 1) != 1)
+            {
+               mod.game.forceCloseOverlays();
+            }
+            // M12 复现钩子：模拟失焦（确定性触发覆盖层卡死路径）
+            if(_autoDeactivate && !_deactDone && _tickCount >= 400
+               && mod.game != null && mod.game.gg != null)
+            {
+               _deactDone = true;
+               mod.game.deactivateTest();
+            }
          }
 
          // 自动化联测：autoGame=1 时程序化开新游戏（主菜单，每 2 秒重试）

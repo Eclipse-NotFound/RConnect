@@ -81,6 +81,9 @@ def prep_instance(app_id, role, nickname):
         # M8：join 加载自己的存档（不同进度→中立单位差异），不开新游戏
         extra = ',"autoGame":"","autoLoadSave":0,' \
                 '"autoFollow":"1","freezeAI":"1"'
+    elif os.environ.get("M2_DEACT"):
+        # M12：模拟失焦（确定性验证覆盖层卡死→恢复守护）
+        extra = ',"autoDeactivate":"1","autoFollow":"1","freezeAI":"1"'
     elif os.environ.get("M2_JOIN_QUIET"):
         # M8：只跟随+镜像（无 autoMove/autoDamage 干扰，观察中立单位注入/移除）
         extra = ',"autoFollow":"1","freezeAI":"1"'
