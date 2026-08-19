@@ -196,6 +196,24 @@
 - 新测试钩子：autoLoadSave；M2_JOIN_LOADSAVE/M2_JOIN_QUIET 环境变量。
 - M10 战斗回归通过（56 applied / 2 轮死亡复活闭环）。
 
+## 不同存档加入——场景加载修复（M11）——2026-08-18
+
+- 用户报告：玩家 1、2 存档不同时，玩家 2 的场景无法正常加载。
+- **根因**：加入方在**世界过渡期**（t_exit/t_die/comLoad 任一进行中）
+  就被 autoFollow 拉着跳房/传送——入场逻辑把房间重置回出生点，
+  反复重进、注入永不收敛（followed 循环 / injected 0 / matched 1/10；
+  AIR stdout 土地建 4666ms 异常耗时）。
+- **修复**：`GameBridge.isTransitioning()`（t_exit>0||t_die>0||comLoad>=0）；
+  followHostWorld/travelToLand/autoMove/damageTest 全加过渡门槛；
+  autoLoadSave 读档前后设 8s 跟随抑制窗口；诊断心跳附世界身份与
+  过渡状态；`dumpGameError` 空文本也记录；复现钩子 `autoHostKill`。
+- 验证（不同存档 + 宿主马哈顿 + 宿主自毁回城）：
+  - join 稳定跟随 random_mane/loc0_4（t_exit=0/verror=false），注入 14/14；
+  - 宿主死亡回城后 join 跟随到 rbl/loc0_0，注入 **27/27**；
+  - 无重进循环、无卡死；默认战斗场景回归通过（applied 4/relayed 5/
+    died 2/revived 2）。
+- 详见 knowledge/experiments/2026-08-18-m11-save-follow-settle.md。
+
 ## 其他开发者协作状态（2026-08-18 更新）
 
 - **新模组出现**：mods/ 下现有 6 个模组（新增 RandomRooms、TDFC，均由

@@ -4,6 +4,7 @@ package rconnect.core
    import flash.events.TimerEvent;
    import flash.utils.Timer;
    import rconnect.core.Log;
+   import rconnect.game.GameBridge;
    import rconnect.net.HostServer;
    import rconnect.net.NetMessageEvent;
    import rconnect.net.Protocol;
@@ -49,6 +50,8 @@ package rconnect.core
       private var _autoDamage:Boolean = false;
       private var _autoGhostDmg:Boolean = false;
       private var _autoHeal:Boolean = false;
+      private var _autoHostKill:Boolean = false;
+      private var _hostKillDone:Boolean = false;
       private var _autoLoadSave:int = -1;
       private var _loadSaveDone:Boolean = false;
       private var _loadSaveTries:int = 0;
@@ -60,6 +63,8 @@ package rconnect.core
       private var _rejoinTimer:Timer;
       private var _autoChatSent:Boolean = false;
       private var _wasDead:Boolean = false;
+      /** M11：跟随抑制截止时刻（ms）——存档加载前后/过渡期不跟随。 */
+      private var _followSuppressUntil:Number = 0;
 
       public function Session(mod:RConnectMod)
       {
@@ -83,6 +88,8 @@ package rconnect.core
          var als:String = String(mod.config.getValue("autoLoadSave"));
          this._autoLoadSave = (als != "" && !isNaN(Number(als)))
             ? int(als) : -1;
+         var hk:String = String(mod.config.getValue("autoHostKill"));
+         this._autoHostKill = (hk == "1" || hk == "true" || hk == "yes");
          this._autoTravelLand = String(mod.config.getValue("autoTravelLand"));
          var wi:String = String(mod.config.getValue("worldInject"));
          this._worldInject = (wi != "0" && wi != "false" && wi != "no");
@@ -335,8 +342,12 @@ package rconnect.core
                   }
                   // M5c：按宿主世界身份自动跟随换房（测试模式）
                   // M10b：本地玩家死亡流程期间暂停跟随，避免干扰复活回城
+                  // M11：过渡期/存档加载后抑制期不跟随（否则房间被重置
+                  // 回出生点，反复重进、场景无法正常加载）
                   if(_autoFollow && msg.worldInfo != null
-                     && !mod.game.isPlayerDead())
+                     && !mod.game.isPlayerDead()
+                     && !mod.game.isTransitioning()
+                     && flash.utils.getTimer() > _followSuppressUntil)
                   {
                      var fres:String = mod.game.followHostWorld(msg.worldInfo);
                      if(fres.indexOf("skip-same") != 0
@@ -512,11 +523,24 @@ package rconnect.core
       private function onTick(e:TimerEvent):void
       {
          _tickCount++;
-         // 调试心跳（每 10s），定位 tick 停滞点
+         // 调试心跳（每 10s），定位 tick 停滞点；M11：附带世界身份与
+         // 过渡状态，用于定位"场景无法正常加载/卡在过渡"问题
          if(_tickCount % 200 == 0)
          {
-            Log.d("RConnectDbg: tick " + _tickCount + " mode=" + mode
-               + " world=" + (mod.game != null && mod.game.world != null));
+            var dbg:String = "RConnectDbg: tick " + _tickCount + " mode=" + mode;
+            if(mod.game != null && mod.game.world != null)
+            {
+               var wi:Object = mod.game.readWorldInfo();
+               var w:Object = mod.game.world;
+               dbg += " world=" + (wi != null
+                  ? String(wi.curLandId) + "/" + String(wi.locId) : "null")
+                  + " t_exit=" + String(GameBridge.probe(w, "t_exit"))
+                  + " comLoad=" + String(GameBridge.probe(w, "comLoad"))
+                  + " clickReq=" + String(GameBridge.probe(w, "clickReq"))
+                  + " verror=" + String(GameBridge.probe(
+                     GameBridge.probe(w, "verror"), "visible"));
+            }
+            Log.d(dbg);
          }
 
          // 周期性刷新世界引用（gg/loc 会随进游戏/切场景变化，不能长期缓存）
@@ -542,11 +566,14 @@ package rconnect.core
          // M8 自动化联测：autoLoadSave>=0 时程序化加载存档（等价菜单 Continue；
          // 内部先 newGame 初始化世界骨架再 comLoad 读档，用于让加入方用
          // 不同进度的存档制造世界差异）
+         // M11：读档前后抑制跟随（读档完成 + 世界稳定前的 8s 内不跟随，
+         // 防止过渡期 gotoXY 把房间重置回出生点）
          if(_autoLoadSave >= 0 && !_loadSaveDone
             && mod.game != null && _tickCount % 40 == 0
             && _loadSaveTries < 15)
          {
             _loadSaveTries++;
+            _followSuppressUntil = flash.utils.getTimer() + 8000;
             if(mod.game.loadSaveTest(_autoLoadSave))
             {
                _loadSaveDone = true;
@@ -555,8 +582,10 @@ package rconnect.core
 
          // 自动化联测：autoMove=1 时周期挪动本地玩家（30s 后开始，避开传送过渡）
          // M10b：死亡流程期间不挪动（避免干扰复活回城）
+         // M11：过渡期不挪动（避免干扰读档/退出流程）
          if(_autoMove && mod.game != null && _tickCount % 100 == 0
-            && _tickCount > 600 && !mod.game.isPlayerDead())
+            && _tickCount > 600 && !mod.game.isPlayerDead()
+            && !mod.game.isTransitioning())
          {
             mod.game.moveTest();
          }
@@ -586,7 +615,8 @@ package rconnect.core
             {
                // 自动化联测：autoDamage=1 时先模拟本地伤害再检测
                if(_autoDamage && _tickCount % 100 == 0
-                  && !mod.game.isPlayerDead())
+                  && !mod.game.isPlayerDead()
+                  && !mod.game.isTransitioning())
                {
                   mod.game.damageTest();
                }
@@ -669,9 +699,18 @@ package rconnect.core
                   _travelLandDone = true;
                }
             }
+            // M11 复现钩子：宿主自毁（确定性触发死亡回城→rbl，
+            // 验证加入方跟随到基地的过程）
+            if(_autoHostKill && !_hostKillDone
+               && mod.game != null && mod.game.gg != null
+               && _tickCount > 800 && _tickCount % 20 == 0)
+            {
+               _hostKillDone = true;
+               mod.game.hostKillTest();
+            }
             // M6：自动化联测——宿主侧伤害自己的单位（权威死亡→animState 变化）
             if(_autoDamage && mod.game != null && _tickCount % 100 == 0
-               && !mod.game.isPlayerDead())
+               && !mod.game.isPlayerDead() && !mod.game.isTransitioning())
             {
                mod.game.damageTest();
             }

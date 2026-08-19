@@ -30,6 +30,7 @@ package rconnect.core
          autoGhostDmg: "",
          autoHeal: "",
          autoLoadSave: "",
+         autoHostKill: "",
          testGhostDmg: 50
       };
 
@@ -97,6 +98,7 @@ package rconnect.core
          values.autoGhostDmg = String(values.autoGhostDmg);
          values.autoHeal = String(values.autoHeal);
          values.autoLoadSave = String(values.autoLoadSave);
+         values.autoHostKill = String(values.autoHostKill);
          values.testGhostDmg = Number(values.testGhostDmg);
          if(!isFinite(values.testGhostDmg) || values.testGhostDmg < 0)
          {

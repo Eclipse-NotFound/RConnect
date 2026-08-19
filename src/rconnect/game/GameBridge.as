@@ -404,6 +404,31 @@ package rconnect.game
          return numOr(probe(world, "t_die"), 0) > 0;
       }
 
+      /** M11：世界过渡中（退出/死亡/读档流程）——此时外部不应改位置/
+       *  旅行/跟随。读档（comLoad）、退出（t_exit）、死亡（t_die）任一
+       *  进行中即视为过渡。实测：过渡期跟随/传送会把房间重置回存档出生点，
+       *  造成"场景无法正常加载"的反复重进循环。 */
+      public function isTransitioning():Boolean
+      {
+         if(world == null)
+         {
+            return false;
+         }
+         if(numOr(probe(world, "t_exit"), 0) > 0)
+         {
+            return true;
+         }
+         if(numOr(probe(world, "t_die"), 0) > 0)
+         {
+            return true;
+         }
+         if(numOr(probe(world, "comLoad"), -1) >= 0)
+         {
+            return true;
+         }
+         return false;
+      }
+
       /** 取某远程玩家的宿主侧幽灵（M9 拉仇恨用）。 */
       public function getRemoteGhost(id:int):Object
       {
@@ -921,6 +946,11 @@ package rconnect.game
          }
          if(String(mine.curLandId) != String(info.curLandId))
          {
+            // M11：过渡期不旅行（读档/退出流程中，房间会被重置回出生点）
+            if(isTransitioning())
+            {
+               return "skip-transition";
+            }
             // 身体部件伤重时 gotoLand 只会弹 nocont 不执行（Pers.dopusk），
             // 提前探测避免无效重试刷屏（等身体恢复后冷却重试）
             var pers:Object = probe(gg, "pers");
@@ -940,6 +970,10 @@ package rconnect.game
             }
             _lastFollowT = now;
             // 跨地图：进入宿主的土地（随机地图内容可能不一致，见实验记录）
+            Log.d("RConnectWorld: travel " + String(mine.curLandId)
+               + " -> " + String(info.curLandId) + " (host at "
+               + Math.round(Number(info.x)) + "," + Math.round(Number(info.y))
+               + ")");
             travelToLand(String(info.curLandId));
             try
             {
@@ -954,6 +988,12 @@ package rconnect.game
          if(String(mine.locId) == String(info.locId))
          {
             return "skip-same-room";
+         }
+         // M11：过渡期不跟随（同土地换房；实测过渡期 gotoXY 会被
+         // 入场逻辑重置回出生点，导致反复重进循环）
+         if(isTransitioning())
+         {
+            return "skip-transition";
          }
          try
          {
@@ -1025,6 +1065,13 @@ package rconnect.game
             Log.d("RConnectGame: travelToLand: not in game");
             return false;
          }
+         // M11：过渡期（读档/退出/死亡流程中）不旅行——实测会挂死或
+         // 把房间重置回出生点
+         if(isTransitioning())
+         {
+            Log.d("RConnectGame: travelToLand: world transitioning, skip");
+            return false;
+         }
          try
          {
             var game:Object = probe(world, "game");
@@ -1069,7 +1116,27 @@ package rconnect.game
       private var _travelTestStep:int = 0;
       private var _lastFollowT:int = -100000;
 
-      /** M8 诊断：游戏错误对话框（showError→verror.txt.text）可见时抓文本。 */
+      /** M11 复现钩子（autoHostKill）：宿主自毁，触发死亡回城→基地，
+       *  验证加入方跨土地跟随到基地的路径。 */
+      public function hostKillTest():void
+      {
+         if(world == null || gg == null)
+         {
+            return;
+         }
+         try
+         {
+            gg["damage"](99999, 0, null, false);
+            Log.d("RConnectGame: hostKillTest applied");
+         }
+         catch(err:*)
+         {
+            Log.d("RConnectGame: hostKillTest failed: " + err);
+         }
+      }
+
+      /** M8 诊断：游戏错误对话框（showError→verror.txt.text）可见时抓文本。
+       *  M11：只要可见就记录一次（不依赖文本变化——空文本对话框也要看到）。 */
       public function dumpGameError():void
       {
          if(world == null)
@@ -1090,6 +1157,11 @@ package rconnect.game
                _lastErr = s;
                Log.d("RConnectGame: game error dialog: " + s.substr(0, 400));
             }
+            else if(!_errVisibleLogged)
+            {
+               _errVisibleLogged = true;
+               Log.d("RConnectGame: game error dialog visible (text unchanged)");
+            }
          }
          catch(err:*)
          {
@@ -1097,6 +1169,7 @@ package rconnect.game
       }
 
       private var _lastErr:String = "";
+      private var _errVisibleLogged:Boolean = false;
 
       /** M10b 测试钩子（autoHeal）：完全治疗（身体部件+主血量）。
        *  死亡回城后身体部件伤重会挡旅行（Pers.dopusk），联测用此恢复。 */
