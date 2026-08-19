@@ -538,6 +538,13 @@ package rconnect.core
                var w:Object = mod.game.world;
                dbg += " world=" + (wi != null
                   ? String(wi.curLandId) + "/" + String(wi.locId) : "null")
+                  + (wi != null
+                     ? " x=" + Math.round(Number(wi.x))
+                        + "," + Math.round(Number(wi.y)) : "")
+                  + " tileV=" + (mod.game != null
+                     ? String(mod.game.debugTileV()) : "?")
+                  + " grid=" + (mod.game != null
+                     ? mod.game.debugTileGrid() : "?")
                   + " t_exit=" + String(GameBridge.probe(w, "t_exit"))
                   + " comLoad=" + String(GameBridge.probe(w, "comLoad"))
                   + " clickReq=" + String(GameBridge.probe(w, "clickReq"))

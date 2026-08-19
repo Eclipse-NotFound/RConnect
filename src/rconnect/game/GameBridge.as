@@ -1024,6 +1024,27 @@ package rconnect.game
          }
          if(String(mine.locId) == String(info.locId))
          {
+            // M13：确定性布局下双方可能落在同房不同出生点（存档 checkpoint
+            // 差异）—— 首次同房且相距过大时一次性对齐到宿主坐标
+            var akey:String = String(mine.curLandId) + "/" + String(mine.locId);
+            if(_alignedKey != akey)
+            {
+               var adx:Number = numOr(mine.x, 0) - Number(info.x);
+               var ady:Number = numOr(mine.y, 0) - Number(info.y);
+               if(adx * adx + ady * ady > 300 * 300)
+               {
+                  _alignedKey = akey;
+                  try
+                  {
+                     gg["setPos"](Number(info.x), Number(info.y));
+                     gg["setVisPos"]();
+                     Log.d("RConnectWorld: aligned to host in " + mine.locId);
+                  }
+                  catch(err:*)
+                  {
+                  }
+               }
+            }
             return "skip-same-room";
          }
          // M11：过渡期不跟随（同土地换房；实测过渡期 gotoXY 会被
@@ -1260,8 +1281,72 @@ package rconnect.game
          }
       }
 
+      /** M13 诊断：本地玩家脚下瓦片的公开字段采样（visi）。
+       *  用于量化"同坐标是否同房间内容"（随机图布局指纹）。 */
+      public function debugTileV():Number
+      {
+         if(gg == null || loc == null)
+         {
+            return -999;
+         }
+         try
+         {
+            var t:Object = loc["getAbsTile"](
+               numOr(probe(gg, "X"), 0), numOr(probe(gg, "Y"), 0));
+            return t != null ? numOr(probe(t, "visi"), -1) : -999;
+         }
+         catch(err:*)
+         {
+            return -999;
+         }
+         // mxmlc 控制流怪癖：全部 return 都在 try/catch 内会误报"无返回值"
+         return -999;
+      }
+
+      /** M13 诊断：本地玩家周围 8 点瓦片布局指纹（phis/zForm/stair/water）。
+       *  两侧同坐标处指纹一致 = 房间布局一致（验证 Land 确定性补丁）。 */
+      public function debugTileGrid():String
+      {
+         if(gg == null || loc == null)
+         {
+            return "?";
+         }
+         var px:Number = numOr(probe(gg, "X"), 0);
+         var py:Number = numOr(probe(gg, "Y"), 0);
+         var offs:Array = [
+            [0, 0], [150, 0], [-150, 0], [0, -150],
+            [300, 150], [-300, -150], [0, 300], [150, -300]
+         ];
+         var out:String = "";
+         try
+         {
+            for each(var o:Array in offs)
+            {
+               var t:Object = loc["getAbsTile"](px + Number(o[0]),
+                  py + Number(o[1]));
+               if(t != null)
+               {
+                  out += String(probe(t, "phis")) + "/"
+                     + String(probe(t, "zForm")) + "/"
+                     + String(probe(t, "stair")) + "/"
+                     + String(probe(t, "water")) + " ";
+               }
+               else
+               {
+                  out += "? ";
+               }
+            }
+         }
+         catch(err:*)
+         {
+            return "err";
+         }
+         return out;
+      }
+
       private var _travelTestStep:int = 0;
       private var _lastFollowT:int = -100000;
+      private var _alignedKey:String = "";
 
       /** M11 复现钩子（autoHostKill）：宿主自毁，触发死亡回城→基地，
        *  验证加入方跨土地跟随到基地的路径。 */
@@ -1782,6 +1867,13 @@ package rconnect.game
       {
          try
          {
+            var eid:String = String(e.id);
+            // M13：注塑失败黑名单——boss 类（如 alicorn）构造依赖 XML，
+            // AllData 查不到时静默跳过，避免每轮重试刷日志
+            if(_injectFailed[eid])
+            {
+               return null;
+            }
             var ad:Object = main["loaderInfo"]["applicationDomain"];
             var cls:Object = ad["getDefinition"](String(e.cls));
             if(cls == null)
@@ -1791,6 +1883,13 @@ package rconnect.game
                return null;
             }
             var xml:Object = findUnitXml(String(e.id));
+            if(xml == null)
+            {
+               _injectFailed[eid] = true;
+               Log.d("RConnectGame: inject '" + e.id + "' skipped: no unit xml"
+                  + " (boss? host-authority only)");
+               return null;
+            }
             var u:Object = new (cls as Class)(String(e.id), 100, xml, null);
             u["doop"] = true;
             u["unres"] = true;
@@ -1810,12 +1909,15 @@ package rconnect.game
          }
          catch(err:*)
          {
+            _injectFailed[String(e.id)] = true;
             Log.d("RConnectGame: inject '" + e.id + "' failed: " + err);
             return null;
          }
          // mxmlc 控制流怪癖：全部 return 都在 try/catch 内会误报"无返回值"
          return null;
       }
+
+      private var _injectFailed:Object = {};
 
       /** 从游戏全量数据 AllData.d 中取单位 XML（blit 动画定义的数据源）。 */
       private function findUnitXml(id:String):Object

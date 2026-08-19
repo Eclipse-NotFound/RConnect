@@ -74,8 +74,11 @@ def prep_instance(app_id, role, nickname):
     land = os.environ.get("M2_LAND", "")
     ghost_dmg = os.environ.get("M2_TESTGHOSTDMG", "2000")
     host_kill = '"autoHostKill":"1",' if os.environ.get("M2_HOSTKILL") else ""
+    host_loadsave = '"autoGame":"","autoLoadSave":0,' \
+        if os.environ.get("M2_HOST_LOADSAVE") else ""
     if role == "host":
-        extra = (',"autoTravel":"0","autoDamage":"0","autoGhostDmg":"1",' + host_kill
+        extra = (',' + host_loadsave + '"autoTravel":"0","autoDamage":"0",'
+                 '"autoGhostDmg":"1",' + host_kill
                  + '"testGhostDmg":%s,"autoTravelLand":"%s"' % (ghost_dmg, land))
     elif os.environ.get("M2_JOIN_LOADSAVE"):
         # M8：join 加载自己的存档（不同进度→中立单位差异），不开新游戏

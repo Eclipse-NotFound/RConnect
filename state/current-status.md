@@ -240,6 +240,25 @@
   不同，是与本冻结**独立**的另一个问题（需改游戏本体做确定性/种子同步，
   另评估）。
 
+## 随机图（rnd）房间布局确定性（M13）——2026-08-19 完成
+
+- 用户报告：host/join 进入马哈顿（random_mane）两侧房间不同、互相看不到。
+- **根因**：房间几何由「模板+镜像+门位」决定，其结构随机点仅 7 处、全在
+  Land.as（Explore 精读确认）；两实例全局 Math.random 时序不同 → 布局不同。
+- **修复（游戏文件，已授权）**：`tools/patch_land_determinism.py`
+  ~ Land 新增静态 PRNG（fnv1a(act.id) 播种 + LCG），构造 `if(this.rnd)`
+  分支自动播种 → 双端同一 seed → 同一布局；7 处结构随机换 `rndNext()`，
+  内容随机保留全局。已对 pfe/DLC/pfe/DLC/pfeUI 三份一并补丁（均备份+
+  双标记校验+全加载器校验）。
+- **mod 附带**：同房出生点对齐（首次同房相距>300px 一次性 setPos 到宿主
+  坐标）；注入失败黑名单（boss alicorns 查不到 XML 时记一次、保持宿主
+  权威，不再每轮刷日志）；debugTileGrid 8 点布局指纹。
+- **验证**：3 轮双实例——同 locId+同坐标+同 tile grid（362,960 处 8 点
+  完全一致）；matched 5/5 收敛；默认战斗回归通过（applied 3/relayed 5/
+  took 5/died+revived 1+1）；无失焦冻结。
+- **基线已刷新**：`build/backup/current-merged-20260819/`（含本补丁）。
+- 取舍：rnd 图每次新档同一套布局（联机一致优先）；boss 远端镜像受限。
+
 ## 其他开发者协作状态（2026-08-18 更新）
 
 - **新模组出现**：mods/ 下现有 6 个模组（新增 RandomRooms、TDFC，均由
