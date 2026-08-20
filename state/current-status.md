@@ -304,6 +304,22 @@
   物品现场生成（宿主新生成）未镜像。
 - 详见 knowledge/experiments/2026-08-20-m16-pose-mirror-objs-sync.md。
 
+## 瓦片破坏 + 新生成物品/Loot 同步（M17）——2026-08-20 完成
+
+- 用户诉求的最后两项"宿主权威"：宿主造成的房间破坏（瓦片）+ 现场生成
+  物品（掉落）加入方可视。
+- **M17a 瓦片破坏差分**：宿主每 200ms 对比 loc.space（phis/front/back/
+  zad/zForm/water/stair/hp）与进房基线广播变化瓦片（持久状态+去抖重绘），
+  加入方应用 + `World.redrawLoc()`。验证：opened 8,1 → patch applied 1 →
+  **仅 1 次重绘**。
+- **M17b 新物品/Loot 镜像**：Loot 在 Pt 链不在 objs——沿链扫描 fe.loc 系；
+  模板 id 集过滤；每个 unitsync 报非模板 Obj（Loot 按 item base 重建）。
+  验证：host spawn 'kofe' → join 生成（spawned=2 skipped=1，checkpoint 类
+  安全跳过）。
+- 关键坑：unitsync 无单位门槛会吞数据（已移除）、事件改持久+幂等、
+  getQualifiedClassName 用 `::`、Loot 在链不在数组、持续补丁需变化检测。
+- 详见 knowledge/experiments/2026-08-20-m17-tile-loot-sync.md。
+
 ## 其他开发者协作状态（2026-08-18 更新）
 
 - **新模组出现**：mods/ 下现有 6 个模组（新增 RandomRooms、TDFC，均由

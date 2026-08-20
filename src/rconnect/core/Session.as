@@ -58,6 +58,12 @@ package rconnect.core
       private var _autoGhostAnim:Boolean = false;
       private var _autoBoxKill:Boolean = false;
       private var _boxKillDone:Boolean = false;
+      private var _spawnTxLog:Boolean = false;
+      private var _spawnRxLog:Boolean = false;
+      private var _autoTileBreak:Boolean = false;
+      private var _tileBreakDone:Boolean = false;
+      private var _autoObjSpawn:Boolean = false;
+      private var _objSpawnDone:Boolean = false;
       private var _autoLoadSave:int = -1;
       private var _loadSaveDone:Boolean = false;
       private var _loadSaveTries:int = 0;
@@ -104,6 +110,10 @@ package rconnect.core
          this._autoGhostAnim = (ga == "1" || ga == "true" || ga == "yes");
          var bk:String = String(mod.config.getValue("autoBoxKill"));
          this._autoBoxKill = (bk == "1" || bk == "true" || bk == "yes");
+         var tb:String = String(mod.config.getValue("autoTileBreak"));
+         this._autoTileBreak = (tb == "1" || tb == "true" || tb == "yes");
+         var os:String = String(mod.config.getValue("autoObjSpawn"));
+         this._autoObjSpawn = (os == "1" || os == "true" || os == "yes");
          this._autoTravelLand = String(mod.config.getValue("autoTravelLand"));
          var wi:String = String(mod.config.getValue("worldInject"));
          this._worldInject = (wi != "0" && wi != "false" && wi != "no");
@@ -349,6 +359,21 @@ package rconnect.core
                         if(msg.objs != null)
                         {
                            mod.game.reconcileObjs(msg.objs as Array);
+                        }
+                        // M17：瓦片破坏差分 + 新生成物品
+                        if(msg.tilePatch != null)
+                        {
+                           mod.game.applyTilePatch(msg.tilePatch as Array);
+                        }
+                        if(msg.objSpawn != null)
+                        {
+                           if(!_spawnRxLog)
+                           {
+                              _spawnRxLog = true;
+                              Log.d("RConnectNet: objSpawn rx "
+                                 + (msg.objSpawn as Array).length);
+                           }
+                           mod.game.applyObjSpawn(msg.objSpawn as Array);
                         }
                      }
                   }
@@ -658,13 +683,32 @@ package rconnect.core
          {
             mod.game.walkStepTest();
          }
-         // M16 复现钩子：宿主破坏第一个物品（验证 join 端 dead 同步）
-         if(_autoBoxKill && !_boxKillDone && mod.game != null
-            && mod.game.gg != null && _tickCount > 800)
+            // M16 复现钩子：宿主破坏第一个物品（验证 join 端 dead 同步）
+            if(_autoBoxKill && !_boxKillDone && mod.game != null
+               && mod.game.gg != null && _tickCount > 800)
+            {
+               _boxKillDone = true;
+               mod.game.boxKillTest();
+            }
+            // M17 复现钩子：宿主破墙 + 现场生成掉落（验证瓦片/新物品同步）
+            if(_autoTileBreak && !_tileBreakDone && mod.game != null
+               && mod.game.gg != null && _tickCount > 800)
+            {
+               _tileBreakDone = true;
+               mod.game.tileBreakTest();
+            }
+            if(_autoObjSpawn && !_objSpawnDone && mod.game != null
+               && mod.game.gg != null && _tickCount > 800)
+            {
+               _objSpawnDone = true;
+               mod.game.objSpawnTest();
+            }
+         // M17：瓦片变化后整房重绘（加入方应用瓦片差分后）
+         if(mod.game != null && _tickCount % 10 == 0)
          {
-            _boxKillDone = true;
-            mod.game.boxKillTest();
+            mod.game.tileRedrawIfDirty();
          }
+
          // M14 诊断：autoGhostAnim=1 时强制幽灵标签循环（验证动画帧推进）
          if(_autoGhostAnim && mod.game != null && _tickCount % 20 == 0
             && _tickCount > 400)
@@ -732,22 +776,37 @@ package rconnect.core
          {
             broadcastWorldState();
             // M4/M5：宿主每 4 tick（200ms = 5Hz）广播单位快照 + 世界身份
+            // M17：不设 units>0 门槛——房间无敌人时也要传瓦片/物品/新生成
             if(_tickCount % 4 == 0 && mod.game != null)
             {
                var usnap:Array = mod.game.readUnitsSnapshot();
-               if(usnap != null && usnap.length > 0)
+               var usMsg:Object = Protocol.make(Protocol.MSG_UNITSYNC,
+                  {tick: _tickCount, units: usnap != null ? usnap : [],
+                   worldInfo: mod.game.readWorldInfo()});
+               // M16：物品（箱/门）状态快照随行广播（对象级重建/破坏同步）
+               var olist:Array = mod.game.readObjsSnapshot();
+               if(olist != null)
                {
-                  var usMsg:Object = Protocol.make(Protocol.MSG_UNITSYNC,
-                     {tick: _tickCount, units: usnap,
-                      worldInfo: mod.game.readWorldInfo()});
-                  // M16：物品（箱/门）状态快照随行广播（对象级重建/破坏同步）
-                  var olist:Array = mod.game.readObjsSnapshot();
-                  if(olist != null)
-                  {
-                     usMsg.objs = olist;
-                  }
-                  server.broadcast(usMsg);
+                  usMsg.objs = olist;
                }
+               // M17：瓦片破坏差分 + 新生成物品广播
+               var tpatch:Array = mod.game.readTilePatch();
+               if(tpatch != null)
+               {
+                  usMsg.tilePatch = tpatch;
+               }
+               var nspawn:Array = mod.game.readNewObjs();
+               if(nspawn != null)
+               {
+                  usMsg.objSpawn = nspawn;
+                  if(!_spawnTxLog)
+                  {
+                     _spawnTxLog = true;
+                     Log.d("RConnectNet: objSpawn tx " + nspawn.length
+                        + " first=" + String(nspawn[0].id));
+                  }
+               }
+               server.broadcast(usMsg);
             }
             // M5c：自动化联测换房（每 15s）
             if(_autoTravel && mod.game != null && _tickCount % 300 == 0)

@@ -35,6 +35,8 @@ package rconnect.core
          autoWalk: "",
         autoGhostAnim: "",
         autoBoxKill: "",
+        autoTileBreak: "",
+        autoObjSpawn: "",
          testGhostDmg: 50
       };
 
@@ -107,6 +109,8 @@ package rconnect.core
          values.autoWalk = String(values.autoWalk);
         values.autoGhostAnim = String(values.autoGhostAnim);
         values.autoBoxKill = String(values.autoBoxKill);
+        values.autoTileBreak = String(values.autoTileBreak);
+        values.autoObjSpawn = String(values.autoObjSpawn);
          values.testGhostDmg = Number(values.testGhostDmg);
          if(!isFinite(values.testGhostDmg) || values.testGhostDmg < 0)
          {

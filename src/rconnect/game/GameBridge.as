@@ -2085,6 +2085,494 @@ package rconnect.game
          }
       }
 
+      /** M17：宿主瓦片破坏差分——与基线比对返回变化瓦片（墙洞/地形破坏）。
+       *  附带 key 状态字段；基线随 loc 缓存，换房重建。 */
+      public function readTilePatch():Array
+      {
+         if(loc == null)
+         {
+            return null;
+         }
+         if(_tileBaseLoc !== loc)
+         {
+            _tileBaseLoc = loc;
+            _tileBase = null;   // 进入新房间：以当前状态为基线
+            buildTileBase();
+            return null;
+         }
+         if(_tileBase == null)
+         {
+            buildTileBase();
+            return null;
+         }
+         var out:Array = [];
+         try
+         {
+            var sx:int = numOr(probe(loc, "spaceX"), 0);
+            var sy:int = numOr(probe(loc, "spaceY"), 0);
+            var space:Object = probe(loc, "space");
+            for(var y:int = 0; y < sy && out.length < 60; y++)
+            {
+               var ry:Object = (space as Array)[y];
+               if(!(ry is Array))
+               {
+                  continue;
+               }
+               for(var x:int = 0; x < sx; x++)
+               {
+                  var t:Object = (ry as Array)[x];
+                  if(t == null)
+                  {
+                     continue;
+                  }
+                  var k:String = x + "," + y;
+                  var b:Object = _tileBase[k];
+                  if(b == null)
+                  {
+                     continue;
+                  }
+                  var phis:Number = numOr(probe(t, "phis"), 0);
+                  var front:String = String(probe(t, "front"));
+                  var back:String = String(probe(t, "back"));
+                  var zad:String = String(probe(t, "zad"));
+                  var zForm:int = numOr(probe(t, "zForm"), 0);
+                  var water:int = numOr(probe(t, "water"), 0);
+                  var stair:int = numOr(probe(t, "stair"), 0);
+                  var hp:Number = numOr(probe(t, "hp"), 0);
+                  if(phis != b.p || front != b.f || back != b.b || zad != b.z
+                     || zForm != b.zf || water != b.w || stair != b.st
+                     || Math.abs(hp - b.h) > 0.5)
+                  {
+                     out.push({x: x, y: y, p: phis, f: front, b: back, z: zad,
+                        zf: zForm, w: water, st: stair, h: hp});
+                     // M17：不推进基线——非默认瓦片作为"持久状态"持续广播，
+                     // 保证晚到的加入方也能收敛（应用侧幂等）
+                  }
+               }
+            }
+         }
+         catch(err:*)
+         {
+         }
+         return out.length > 0 ? out : null;
+      }
+
+      private function buildTileBase():void
+      {
+         _tileBase = {};
+         try
+         {
+            var sx:int = numOr(probe(loc, "spaceX"), 0);
+            var sy:int = numOr(probe(loc, "spaceY"), 0);
+            var space:Object = probe(loc, "space");
+            for(var y:int = 0; y < sy; y++)
+            {
+               var ry:Object = (space as Array)[y];
+               if(!(ry is Array))
+               {
+                  continue;
+               }
+               for(var x:int = 0; x < sx; x++)
+               {
+                  var t:Object = (ry as Array)[x];
+                  if(t == null)
+                  {
+                     continue;
+                  }
+                  _tileBase[x + "," + y] = {
+                     p: numOr(probe(t, "phis"), 0),
+                     f: String(probe(t, "front")),
+                     b: String(probe(t, "back")),
+                     z: String(probe(t, "zad")),
+                     zf: numOr(probe(t, "zForm"), 0),
+                     w: numOr(probe(t, "water"), 0),
+                     st: numOr(probe(t, "stair"), 0),
+                     h: numOr(probe(t, "hp"), 0)
+                  };
+               }
+            }
+         }
+         catch(err:*)
+         {
+         }
+      }
+
+      private var _tileBase:Object = null;
+      private var _tileBaseLoc:Object = null;
+
+      /** M17：应用宿主瓦片破坏；置脏，由 tick 触发整房重绘。 */
+      public function applyTilePatch(list:Array):void
+      {
+         if(loc == null || list == null)
+         {
+            return;
+         }
+         try
+         {
+            var space:Object = probe(loc, "space");
+            var applied:int = 0;
+            for each(var p:Object in list)
+            {
+               var t:Object = null;
+               try
+               {
+                  t = (space as Array)[int(p.y)][int(p.x)];
+               }
+               catch(err:*)
+               {
+                  t = null;
+               }
+               if(t == null)
+               {
+                  continue;
+               }
+               var changed:Boolean = false;
+               if(p.p != undefined && Number(t["phis"]) != Number(p.p))
+               {
+                  t["phis"] = Number(p.p);
+                  changed = true;
+               }
+               if(p.f != undefined && String(t["front"]) != String(p.f))
+               {
+                  t["front"] = String(p.f);
+                  changed = true;
+               }
+               if(p.b != undefined && String(t["back"]) != String(p.b))
+               {
+                  t["back"] = String(p.b);
+                  changed = true;
+               }
+               if(p.z != undefined && String(t["zad"]) != String(p.z))
+               {
+                  t["zad"] = String(p.z);
+                  changed = true;
+               }
+               if(p.zf != undefined && int(t["zForm"]) != int(p.zf))
+               {
+                  t["zForm"] = int(p.zf);
+                  changed = true;
+               }
+               if(p.w != undefined && int(t["water"]) != int(p.w))
+               {
+                  t["water"] = int(p.w);
+                  changed = true;
+               }
+               if(p.st != undefined && int(t["stair"]) != int(p.st))
+               {
+                  t["stair"] = int(p.st);
+                  changed = true;
+               }
+               if(p.h != undefined && Math.abs(Number(t["hp"]) - Number(p.h)) > 0.01)
+               {
+                  t["hp"] = Number(p.h);
+                  changed = true;
+               }
+               if(changed)
+               {
+                  applied++;
+               }
+            }
+            if(applied > 0)
+            {
+               _tileDirty = true;
+               if(!_tilePatchLogged)
+               {
+                  _tilePatchLogged = true;
+                  Log.d("RConnectGame: tile patch applied " + applied);
+               }
+            }
+         }
+         catch(err:*)
+         {
+         }
+      }
+
+      private var _tileDirty:Boolean = false;
+      private var _tilePatchLogged:Boolean = false;
+
+      /** M17：瓦片变化后整房重绘（World.redrawLoc 公开）。 */
+      public function tileRedrawIfDirty():void
+      {
+         if(!_tileDirty || world == null)
+         {
+            return;
+         }
+         _tileDirty = false;
+         try
+         {
+            world["redrawLoc"]();
+            Log.d("RConnectGame: tile redraw ran");
+         }
+         catch(err:*)
+         {
+         }
+      }
+
+      /** M17：宿主检测"非模板"物品（现场生成/掉落）→ 持续广播给加入方。
+       *  模板 id 集 = 进房时 loc.objs 的 id；之后沿 Pt 链（firstObj→nobj）
+       *  收集非单位 Obj：Loot 恒定上报（位置+物品作键），非 Loot 且非模板
+       *  id 的对象也上报（脚本生成的箱等）。加入方按键幂等去重。 */
+      public function readNewObjs():Array
+      {
+         if(loc == null)
+         {
+            return null;
+         }
+         if(_objBaseLoc !== loc)
+         {
+            _objBaseLoc = loc;
+            _objTpl = {};
+            _objTplInit = false;
+         }
+         if(!_objTplInit)
+         {
+            try
+            {
+               var to:Object = probe(loc, "objs");
+               if(to is Array)
+               {
+                  for each(var tb:Object in to as Array)
+                  {
+                     var tid:String = String(probe(tb, "id"));
+                     if(tid != null && tid.length > 0)
+                     {
+                        _objTpl[tid] = true;
+                     }
+                  }
+               }
+            }
+            catch(err:*)
+            {
+            }
+            _objTplInit = true;
+            return null;
+         }
+         var out:Array = [];
+         try
+         {
+            var cur:Object = probe(loc, "firstObj");
+            var guard:int = 0;
+            while(cur != null && guard++ < 800)
+            {
+               var clsS:String = getQualifiedClassName(cur);
+               // 只关心 fe.loc 里的 Obj 系（Box/Loot）；单位（fe.unit）、粒子
+               // （fe.graph）、地图标记（CheckPoint/BackObj）等在别处处理。
+               // 注意：getQualifiedClassName 用 '::'（如 fe.loc::Loot）
+               if(clsS.indexOf("fe.loc") == 0
+                  && clsS.indexOf("CheckPoint") < 0
+                  && clsS.indexOf("BackObj") < 0)
+               {
+                  var id:String = String(probe(cur, "id"));
+                  var isLoot:Boolean = (clsS.indexOf("Loot") >= 0);
+                  if(isLoot || (id != null && id.length > 0
+                     && _objTpl[id] !== true))
+                  {
+                     if(isLoot)
+                     {
+                        id = "loot@" + lootItemBase(cur) + "@"
+                           + Math.round(numOr(probe(cur, "X"), 0)) + ","
+                           + Math.round(numOr(probe(cur, "Y"), 0));
+                     }
+                     out.push({id: id, cls: clsS,
+                        x: numOr(probe(cur, "X"), 0),
+                        y: numOr(probe(cur, "Y"), 0),
+                        isLoot: isLoot,
+                        itemBase: lootItemBase(cur),
+                        dead: probe(cur, "dead") == true,
+                        door: numOr(probe(cur, "door"), -1),
+                        hp: numOr(probe(cur, "hp"), -1),
+                        shelf: probe(cur, "shelf") == true});
+                  }
+               }
+               cur = probe(cur, "nobj");
+            }
+         }
+         catch(err:*)
+         {
+         }
+         return out.length > 0 ? out : null;
+      }
+
+      private var _objTpl:Object = {};
+      private var _objTplInit:Boolean = false;
+      private var _objBaseLoc:Object = null;
+
+      private function lootItemBase(o:Object):String
+      {
+         try
+         {
+            var it:Object = probe(o, "item");
+            return it != null ? String(probe(it, "base")) : "";
+         }
+         catch(err:*)
+         {
+            return "";
+         }
+         return "";
+      }
+
+      /** M17：加入方按宿主广播生成新物品（Loot 按 item base 构造；其他 Obj
+       *  尽力构造）。幂等（按 id 去重，避免持续广播重复生成）。 */
+      public function applyObjSpawn(list:Array):void
+      {
+         if(loc == null || list == null)
+         {
+            return;
+         }
+         try
+         {
+            var ad:Object = main["loaderInfo"]["applicationDomain"];
+            var spawned:int = 0;
+            var skipped:int = 0;
+            for each(var s:Object in list)
+            {
+               var key:String = String(s.id);
+               if(_objSpawnedIds[key])
+               {
+                  continue;   // 幂等：持续广播下去重
+               }
+               _objSpawnedIds[key] = true;
+               var clsName:String = String(s.cls);
+               var cls:Object = ad["getDefinition"](clsName);
+               if(cls == null)
+               {
+                  skipped++;
+                  continue;
+               }
+               if(s.isLoot == true)
+               {
+                  if(spawnLoot(ad, cls, s))
+                  {
+                     spawned++;
+                  }
+                  else
+                  {
+                     skipped++;
+                     Log.d("RConnectGame: obj spawn loot failed '" + key + "'");
+                  }
+               }
+               else
+               {
+                  try
+                  {
+                     var obj:Object = new (cls as Class)(loc, String(s.id),
+                        Number(s.x), Number(s.y), null, null);
+                     spawned++;
+                  }
+                  catch(err:*)
+                  {
+                     skipped++;
+                     Log.d("RConnectGame: obj spawn '" + key
+                        + "' failed: " + err);
+                  }
+               }
+            }
+            if(spawned > 0 || skipped > 0)
+            {
+               Log.d("RConnectGame: obj spawn recv spawned=" + spawned
+                  + " skipped=" + skipped);
+            }
+         }
+         catch(err:*)
+         {
+         }
+      }
+
+      private var _objSpawnedIds:Object = {};
+
+      /** M17：按宿主广播生成 Loot（Item 按 base 构造）。@return 是否成功。 */
+      private function spawnLoot(ad:Object, lootCls:Object, s:Object):Boolean
+      {
+         try
+         {
+            var itCls:Object = ad["getDefinition"]("fe.serv.Item");
+            var base:String = s.itemBase != undefined ? String(s.itemBase) : "";
+            if(base == "")
+            {
+               return false;
+            }
+            var item:Object = new (itCls as Class)(null, base, 1);
+            var lo:Object = new (lootCls as Class)(loc, item, Number(s.x),
+               Number(s.y), false, false, false);
+            return lo != null;
+         }
+         catch(err:*)
+         {
+            Log.d("RConnectGame: spawnLoot failed: " + err);
+            return false;
+         }
+         // mxmlc 控制流怪癖
+         return false;
+      }
+
+      /** M17 复现钩子：宿主破一面墙（模拟爆炸轰洞）——整房扫描第一块实心
+       *  瓦片（phis>0），不依赖玩家附近。验证瓦片差分同步。 */
+      public function tileBreakTest():void
+      {
+         if(loc == null)
+         {
+            return;
+         }
+         try
+         {
+            var space:Object = probe(loc, "space");
+            var sx:int = numOr(probe(loc, "spaceX"), 0);
+            var sy:int = numOr(probe(loc, "spaceY"), 0);
+            for(var y:int = 1; y < sy; y++)
+            {
+               var ry:Object = (space as Array)[y];
+               if(!(ry is Array))
+               {
+                  continue;
+               }
+               for(var x:int = 1; x < sx; x++)
+               {
+                  var t:Object = (ry as Array)[x];
+                  if(t != null && numOr(probe(t, "phis"), 0) > 0
+                     && (x + y) % 3 == 0)
+                  {
+                     t["phis"] = 0;
+                     t["front"] = "";
+                     t["back"] = "";
+                     t["zad"] = "";
+                     Log.d("RConnectGame: tileBreakTest opened " + x + "," + y);
+                     world["redrawLoc"]();
+                     return;
+                  }
+               }
+            }
+            Log.d("RConnectGame: tileBreakTest: no solid tile");
+         }
+         catch(err:*)
+         {
+            Log.d("RConnectGame: tileBreakTest failed: " + err);
+         }
+      }
+
+      /** M17 复现钩子：宿主在玩家面前生成一个 Loot 掉落（验证加入方镜像）。 */
+      public function objSpawnTest():void
+      {
+         if(gg == null || loc == null)
+         {
+            return;
+         }
+         try
+         {
+            var ad:Object = main["loaderInfo"]["applicationDomain"];
+            var itCls:Object = ad["getDefinition"]("fe.serv.Item");
+            var loCls:Object = ad["getDefinition"]("fe.loc.Loot");
+            var item:Object = new (itCls as Class)(null, "kofe", 1);
+            new (loCls as Class)(loc, item,
+               numOr(probe(gg, "X"), 0) + 40,
+               numOr(probe(gg, "Y"), 0), false, false, false);
+            Log.d("RConnectGame: objSpawnTest spawned loot 'kofe'");
+         }
+         catch(err:*)
+         {
+            Log.d("RConnectGame: objSpawnTest failed: " + err);
+         }
+      }
+
       private var _travelTestStep:int = 0;
       private var _lastFollowT:int = -100000;
       private var _alignedKey:String = "";
