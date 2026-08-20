@@ -670,7 +670,10 @@ package rconnect.game
             tf.y = -110;
             tf.x = -tf.width / 2;
             vis.addChild(tf);
-            ghost["_rconnect_label"] = tf;
+            // 标签引用存到动态类 vis 上（visualPlayer 是 MovieClip=动态；
+            // 存到幽灵本体是密封类会 #1069，导致 driveGhost 后续全被中断——
+            // M14a：这曾让幽灵动画自 M6b 起全部失效）
+            vis["_rconnect_label"] = tf;
          }
          catch(err:*)
          {
@@ -754,10 +757,10 @@ package rconnect.game
             }
             ghost["setVisPos"]();
             // 名字标签抵消 setVisPos 的整体翻转（vis.scaleX = storona）
-            var label:Object = ghost["_rconnect_label"];
+            var v:Object = probe(ghost, "vis");
+            var label:Object = v != null ? probe(v, "_rconnect_label") : null;
             if(label != null)
             {
-               var v:Object = probe(ghost, "vis");
                if(v != null)
                {
                   var sx:Number = numOr(probe(v, "scaleX"), 1);
@@ -768,9 +771,16 @@ package rconnect.game
          }
          catch(err:*)
          {
-            // 幽灵驱动失败不影响联机主流程
+            // 幽灵驱动失败不影响联机主流程；M14：首错记录定位
+            if(!_driveErrLogged[id])
+            {
+               _driveErrLogged[id] = true;
+               Log.d("RConnectGame: driveGhost #" + id + " err: " + err);
+            }
          }
       }
+
+      private var _driveErrLogged:Object = {};
 
       /**
        * 驱动幽灵姿态动画（与 UnitPlayer.control 同款模式）：
@@ -1343,6 +1353,87 @@ package rconnect.game
          }
          return out;
       }
+
+      /** M14 复现钩子（autoWalk）：避墙漫游——每步探测 4 方向瓦片
+       *  phis==0（可走）的方向挪 +40px，确保持续真实位移，用于验证
+       *  远端幽灵随移动切换 walk/run 动画。 */
+      public function walkStepTest():void
+      {
+         if(world == null || gg == null || loc == null)
+         {
+            return;
+         }
+         try
+         {
+            var x:Number = numOr(probe(gg, "X"), 0);
+            var y:Number = numOr(probe(gg, "Y"), 0);
+            var dirs:Array = [[1, 0], [-1, 0], [0, -1], [0, 1]];
+            for each(var d:Array in dirs)
+            {
+               var tx:Number = x + Number(d[0]) * 40;
+               var ty:Number = y + Number(d[1]) * 40;
+               var tl:Object = loc["getAbsTile"](tx, ty);
+               if(tl == null || numOr(probe(tl, "phis"), 1) != 0)
+               {
+                  continue;
+               }
+               gg["setPos"](tx, ty);
+               gg["setVisPos"]();
+               gg["dx"] = Number(d[0]);
+               gg["dy"] = Number(d[1]);
+               gg["stay"] = 0;
+               return;
+            }
+         }
+         catch(err:*)
+         {
+            Log.d("RConnectGame: walkStepTest failed: " + err);
+         }
+      }
+
+      /** M14 诊断：直接驱动远端幽灵在 stay/walk/run/jump 间循环切换，
+       *  并采样 osn.body.currentFrame——验证标签切换后动画帧是否真的推进。 */
+      public function ghostAnimTest():void
+      {
+         for(var k:String in _remotes)
+         {
+            var ghost:Object = _remotes[k].ghost;
+            if(ghost == null)
+            {
+               continue;
+            }
+            try
+            {
+               var labels:Array = ["stay", "walk", "run", "jump"];
+               _ghostAnimIdx = (_ghostAnimIdx + 1) % labels.length;
+               var lbl:String = String(labels[_ghostAnimIdx]);
+               var vis:Object = probe(ghost, "vis");
+               var osn:Object = probe(vis, "osn");
+               var body:Object = osn != null ? probe(osn, "body") : null;
+               var frLbl:int = 0;
+               var frBody:int = 0;
+               if(osn != null)
+               {
+                  osn["gotoAndStop"](lbl);
+                  if(body != null)
+                  {
+                     body["play"]();
+                     frBody = int(probe(body, "currentFrame"));
+                  }
+                  frLbl = int(probe(osn, "currentFrame"));
+               }
+               Log.d("RConnectGame: ghostAnimTest #" + k + " label=" + lbl
+                  + " osn.frame=" + frLbl + " body.frame=" + frBody);
+            }
+            catch(err:*)
+            {
+               Log.d("RConnectGame: ghostAnimTest failed: " + err);
+            }
+            return;
+         }
+      }
+
+      private var _ghostAnimIdx:int = 0;
 
       private var _travelTestStep:int = 0;
       private var _lastFollowT:int = -100000;

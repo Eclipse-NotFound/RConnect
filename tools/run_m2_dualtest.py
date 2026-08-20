@@ -84,6 +84,12 @@ def prep_instance(app_id, role, nickname):
         # M8：join 加载自己的存档（不同进度→中立单位差异），不开新游戏
         extra = ',"autoGame":"","autoLoadSave":0,' \
                 '"autoFollow":"1","freezeAI":"1"'
+    elif os.environ.get("M2_GHOSTANIM"):
+        # M14：强制幽灵动画标签循环，验证动画帧推进
+        extra = ',"autoGhostAnim":"1","autoFollow":"1","freezeAI":"1"'
+    elif os.environ.get("M2_WALK"):
+        # M14：join 平滑右移，验证远端幽灵走路动画
+        extra = ',"autoWalk":"1","autoFollow":"1","freezeAI":"1"'
     elif os.environ.get("M2_DEACT"):
         # M12：模拟失焦（确定性验证覆盖层卡死→恢复守护）
         extra = ',"autoDeactivate":"1","autoFollow":"1","freezeAI":"1"'

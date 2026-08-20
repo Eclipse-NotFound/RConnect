@@ -54,6 +54,8 @@ package rconnect.core
       private var _hostKillDone:Boolean = false;
       private var _autoDeactivate:Boolean = false;
       private var _deactDone:Boolean = false;
+      private var _autoWalk:Boolean = false;
+      private var _autoGhostAnim:Boolean = false;
       private var _autoLoadSave:int = -1;
       private var _loadSaveDone:Boolean = false;
       private var _loadSaveTries:int = 0;
@@ -94,6 +96,10 @@ package rconnect.core
          this._autoHostKill = (hk == "1" || hk == "true" || hk == "yes");
          var de:String = String(mod.config.getValue("autoDeactivate"));
          this._autoDeactivate = (de == "1" || de == "true" || de == "yes");
+         var wk:String = String(mod.config.getValue("autoWalk"));
+         this._autoWalk = (wk == "1" || wk == "true" || wk == "yes");
+         var ga:String = String(mod.config.getValue("autoGhostAnim"));
+         this._autoGhostAnim = (ga == "1" || ga == "true" || ga == "yes");
          this._autoTravelLand = String(mod.config.getValue("autoTravelLand"));
          var wi:String = String(mod.config.getValue("worldInject"));
          this._worldInject = (wi != "0" && wi != "false" && wi != "no");
@@ -631,6 +637,19 @@ package rconnect.core
             && !mod.game.isTransitioning())
          {
             mod.game.moveTest();
+         }
+         // M14 复现钩子：autoWalk=1 时在 30-60s 窗口平滑右移（每 10 tick=0.5s 一步）
+         if(_autoWalk && mod.game != null && _tickCount >= 600
+            && _tickCount <= 1200 && _tickCount % 10 == 0
+            && !mod.game.isTransitioning())
+         {
+            mod.game.walkStepTest();
+         }
+         // M14 诊断：autoGhostAnim=1 时强制幽灵标签循环（验证动画帧推进）
+         if(_autoGhostAnim && mod.game != null && _tickCount % 20 == 0
+            && _tickCount > 400)
+         {
+            mod.game.ghostAnimTest();
          }
 
          // M4：客户端进游戏后完成世界身份对比
