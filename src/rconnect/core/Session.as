@@ -56,6 +56,8 @@ package rconnect.core
       private var _deactDone:Boolean = false;
       private var _autoWalk:Boolean = false;
       private var _autoGhostAnim:Boolean = false;
+      private var _autoBoxKill:Boolean = false;
+      private var _boxKillDone:Boolean = false;
       private var _autoLoadSave:int = -1;
       private var _loadSaveDone:Boolean = false;
       private var _loadSaveTries:int = 0;
@@ -100,6 +102,8 @@ package rconnect.core
          this._autoWalk = (wk == "1" || wk == "true" || wk == "yes");
          var ga:String = String(mod.config.getValue("autoGhostAnim"));
          this._autoGhostAnim = (ga == "1" || ga == "true" || ga == "yes");
+         var bk:String = String(mod.config.getValue("autoBoxKill"));
+         this._autoBoxKill = (bk == "1" || bk == "true" || bk == "yes");
          this._autoTravelLand = String(mod.config.getValue("autoTravelLand"));
          var wi:String = String(mod.config.getValue("worldInject"));
          this._worldInject = (wi != "0" && wi != "false" && wi != "no");
@@ -341,6 +345,11 @@ package rconnect.core
                         && String(mine.locId) == String(msg.worldInfo.locId))
                      {
                         mod.game.reconcileWorld(msg.units as Array);
+                        // M16：同房物品（箱/门）状态镜像
+                        if(msg.objs != null)
+                        {
+                           mod.game.reconcileObjs(msg.objs as Array);
+                        }
                      }
                   }
                   var r:Object = mod.game.applyUnitsSync(msg.units as Array);
@@ -649,6 +658,13 @@ package rconnect.core
          {
             mod.game.walkStepTest();
          }
+         // M16 复现钩子：宿主破坏第一个物品（验证 join 端 dead 同步）
+         if(_autoBoxKill && !_boxKillDone && mod.game != null
+            && mod.game.gg != null && _tickCount > 800)
+         {
+            _boxKillDone = true;
+            mod.game.boxKillTest();
+         }
          // M14 诊断：autoGhostAnim=1 时强制幽灵标签循环（验证动画帧推进）
          if(_autoGhostAnim && mod.game != null && _tickCount % 20 == 0
             && _tickCount > 400)
@@ -721,9 +737,16 @@ package rconnect.core
                var usnap:Array = mod.game.readUnitsSnapshot();
                if(usnap != null && usnap.length > 0)
                {
-                  server.broadcast(Protocol.make(Protocol.MSG_UNITSYNC,
+                  var usMsg:Object = Protocol.make(Protocol.MSG_UNITSYNC,
                      {tick: _tickCount, units: usnap,
-                      worldInfo: mod.game.readWorldInfo()}));
+                      worldInfo: mod.game.readWorldInfo()});
+                  // M16：物品（箱/门）状态快照随行广播（对象级重建/破坏同步）
+                  var olist:Array = mod.game.readObjsSnapshot();
+                  if(olist != null)
+                  {
+                     usMsg.objs = olist;
+                  }
+                  server.broadcast(usMsg);
                }
             }
             // M5c：自动化联测换房（每 15s）

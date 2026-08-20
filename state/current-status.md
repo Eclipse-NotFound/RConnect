@@ -289,6 +289,21 @@
 - shared-knowledge rnd-land-generator-structure 补充 landStage 生成输入说明。
 - 详见 knowledge/experiments/2026-08-20-m15-landstage-pose.md。
 
+## 姿态镜像 + 物品/箱破坏同步（M16）——2026-08-20 完成
+
+- 用户诉求：加入方真实存在于宿主存档（房间/物品/破坏由宿主权威复制）。
+- **M16a 趴姿终局**：本地玩家静止 osn 标签 = `free1`（站立待机轮播），
+  而旧 driveVisAnim 把静止硬映射为 `stay`=蹲/趴 → 趴姿。修复：快照带
+  `pose`（对方当前标签），幽灵**优先镜像对方真实标签**（待机/蹲/跳/走
+  全对）。验证：幽灵 osn 显示 free3（对方真实待机）。
+- **M16b 物品/箱状态同步**：宿主 loc.objs 快照（id/dead/door/hp）随
+  unitsync 广播，加入方同房按 id 镜像——破坏/开门状态一致。验证：
+  33/33、58/58；`boxKillTest destroyed 'septum'` → join `box destroyed
+  synced 'septum'`。
+- 仍限制：墙体/瓦片破坏（炸墙洞）未同步（需瓦片差分+重绘，下一课题）；
+  物品现场生成（宿主新生成）未镜像。
+- 详见 knowledge/experiments/2026-08-20-m16-pose-mirror-objs-sync.md。
+
 ## 其他开发者协作状态（2026-08-18 更新）
 
 - **新模组出现**：mods/ 下现有 6 个模组（新增 RandomRooms、TDFC，均由

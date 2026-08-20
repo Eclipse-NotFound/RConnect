@@ -255,6 +255,9 @@ package rconnect.game
          var cw:Object = probe(gg, "currentWeapon");
          s.wi = cw != null ? String(probe(cw, "id")) : "";
          s.wv = cw != null ? int(numOr(probe(cw, "variant"), 0)) : 0;
+         // M16：本机当前姿态标签（vis.osn.currentLabel）——让远端幽灵直接
+         // 播放对方真实姿态（站/走/跑/蹲/趴都由对方游戏决定，不再本地猜测）
+         s.pose = localPoseLabel();
          s.aimX = numOr(probe(world, "celX"), 0);
          s.aimY = numOr(probe(world, "celY"), 0);
          if(!_snapLogged)
@@ -925,7 +928,12 @@ package rconnect.game
          rec.ly = y;
 
          var label:String;
-         if(Number(snap.dy) != 0)
+         // M16：优先镜像对方真实姿态标签（站/走/跑/蹲/趴都由对方游戏决定）
+         if(snap.pose != null && String(snap.pose) != "")
+         {
+            label = String(snap.pose);
+         }
+         else if(Number(snap.dy) != 0)
          {
             label = "jump";
          }
@@ -1769,6 +1777,26 @@ package rconnect.game
          return "?";
       }
 
+      /** M16：本机当前姿态标签（供快照携带、幽灵镜像）。 */
+      private function localPoseLabel():String
+      {
+         if(gg == null)
+         {
+            return "";
+         }
+         try
+         {
+            var vis:Object = probe(gg, "vis");
+            var osn:Object = probe(vis, "osn");
+            return osn != null ? String(probe(osn, "currentLabel")) : "";
+         }
+         catch(err:*)
+         {
+            return "";
+         }
+         return "";
+      }
+
       /** M15：加入方在进入宿主所在土地前，采纳宿主的 rnd 生成参数
        *  （landStage/visited）并清空已缓存 Land 强制重新生成——
        *  否则双方存档 landStage 不同 → 同一种子选出不同房间池 → 布局不同。 */
@@ -1897,6 +1925,165 @@ package rconnect.game
       }
 
       private var _adoptedSame:Object = {};
+
+      /** M16：读取当前房间的物品（Box/标志物）状态快照，宿主广播。
+       *  确定性布局下双方同模板同 id，只需同步状态（死/门/血量等）。 */
+      public function readObjsSnapshot():Array
+      {
+         if(loc == null)
+         {
+            return null;
+         }
+         var objs:Object = probe(loc, "objs");
+         if(objs == null || !(objs is Array))
+         {
+            return null;
+         }
+         var out:Array = [];
+         try
+         {
+            for each(var b:Object in objs as Array)
+            {
+               var id:String = String(probe(b, "id"));
+               if(id == null || id.length == 0)
+               {
+                  continue;
+               }
+               out.push({
+                  id: id,
+                  cls: getQualifiedClassName(b),
+                  x: numOr(probe(b, "X"), -1),
+                  y: numOr(probe(b, "Y"), -1),
+                  dead: probe(b, "dead") == true,
+                  door: numOr(probe(b, "door"), -1),
+                  door_opac: numOr(probe(b, "door_opac"), -1),
+                  shelf: probe(b, "shelf") == true
+               });
+            }
+         }
+         catch(err:*)
+         {
+         }
+         return out;
+      }
+
+      /** M16：把宿主的物品状态镜像到本房间（按 id 匹配；缺失/多余跳过，
+       *  破坏/门等状态由字段驱动视觉自动更新）。 */
+      public function reconcileObjs(list:Array):void
+      {
+         if(loc == null || list == null)
+         {
+            return;
+         }
+         var objs:Object = probe(loc, "objs");
+         if(objs == null || !(objs is Array))
+         {
+            return;
+         }
+         var byId:Object = {};
+         try
+         {
+            for each(var b:Object in objs as Array)
+            {
+               var id:String = String(probe(b, "id"));
+               if(id != null && id.length > 0 && byId[id] == undefined)
+               {
+                  byId[id] = b;
+               }
+            }
+         }
+         catch(err:*)
+         {
+         }
+         var synced:int = 0;
+         for each(var h:Object in list)
+         {
+            var lb:Object = byId[String(h.id)];
+            if(lb == null)
+            {
+               continue;
+            }
+            try
+            {
+               if(h.dead != undefined)
+               {
+                  var wasDead:Boolean = (probe(lb, "dead") == true);
+                  if(!wasDead && h.dead == true && !_boxDeadLogged[String(h.id)])
+                  {
+                     _boxDeadLogged[String(h.id)] = true;
+                     Log.d("RConnectGame: box destroyed synced '" + String(h.id)
+                        + "'");
+                  }
+                  lb["dead"] = (h.dead == true);
+               }
+               if(h.hp is Number || h.hp != undefined)
+               {
+                  var hpR:* = probe(h, "hp");
+                  if(hpR != undefined && hpR != null)
+                  {
+                     lb["hp"] = Number(hpR);
+                  }
+               }
+               if(numOr(h.door, -1) >= 0)
+               {
+                  lb["door"] = int(h.door);
+               }
+               if(numOr(h.door_opac, -1) >= 0)
+               {
+                  lb["door_opac"] = Number(h.door_opac);
+               }
+               synced++;
+            }
+            catch(err:*)
+            {
+            }
+         }
+         if(synced > 0 && !_objsLogged2)
+         {
+            _objsLogged2 = true;
+            Log.d("RConnectGame: objs synced " + synced + " (host " + list.length + ")");
+         }
+      }
+
+      private var _objsLogged2:Boolean = false;
+      private var _boxDeadLogged:Object = {};
+
+      /** M16 复现钩子：宿主把第一个未被破坏的物品标记为破坏（验证 join 端
+       *  同步 dead）。放宽到任意带 id 的 Box（含装饰性箱子）。 */
+      public function boxKillTest():void
+      {
+         if(loc == null)
+         {
+            return;
+         }
+         var objs:Object = probe(loc, "objs");
+         if(!(objs is Array))
+         {
+            return;
+         }
+         try
+         {
+            var n:int = 0;
+            for each(var b:Object in objs as Array)
+            {
+               n++;
+               if(String(probe(b, "id")) == "" || (probe(b, "dead") == true))
+               {
+                  continue;
+               }
+               b["dead"] = true;
+               b["hp"] = 0;
+               Log.d("RConnectGame: boxKillTest destroyed '" + String(probe(b, "id"))
+                  + "' (inspected " + n + " objs)");
+               return;
+            }
+            Log.d("RConnectGame: boxKillTest no destructible obj (inspected " + n + ")");
+         }
+         catch(err:*)
+         {
+            Log.d("RConnectGame: boxKillTest failed: " + err);
+         }
+      }
 
       private var _travelTestStep:int = 0;
       private var _lastFollowT:int = -100000;

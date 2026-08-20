@@ -34,6 +34,7 @@ package rconnect.core
          autoDeactivate: "",
          autoWalk: "",
         autoGhostAnim: "",
+        autoBoxKill: "",
          testGhostDmg: 50
       };
 
@@ -105,6 +106,7 @@ package rconnect.core
          values.autoDeactivate = String(values.autoDeactivate);
          values.autoWalk = String(values.autoWalk);
         values.autoGhostAnim = String(values.autoGhostAnim);
+        values.autoBoxKill = String(values.autoBoxKill);
          values.testGhostDmg = Number(values.testGhostDmg);
          if(!isFinite(values.testGhostDmg) || values.testGhostDmg < 0)
          {
