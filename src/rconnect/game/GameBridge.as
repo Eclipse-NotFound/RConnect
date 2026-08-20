@@ -865,6 +865,16 @@ package rconnect.game
             {
                ghost["stay"] = Number(snap.stay);
             }
+            // M15b：化身是"镜象"，本体状态在客户端——强制 sost=1 防止
+            // 幽灵在宿主世界被击倒/击杀后显示尸体/倒地姿态（“固定趴姿”），
+            // 姿态一律由快照标签驱动；血量死亡流程由 scanGhostHp 重建处理
+            try
+            {
+               ghost["sost"] = 1;
+            }
+            catch(err:*)
+            {
+            }
             ghost["setVisPos"]();
             // 名字标签抵消 setVisPos 的整体翻转（vis.scaleX = storona）
             var v:Object = probe(ghost, "vis");
@@ -1074,6 +1084,13 @@ package rconnect.game
          w.landZ = land != null ? int(probe(land, "locZ")) : 0;
          var room:Object = loc != null ? probe(loc, "room") : null;
          w.roomId = room != null ? String(probe(room, "id")) : "";
+         // M15：rnd 生成参数（landStage 随存档持久化，决定房间池）——
+         // 加入方据此采纳宿主参数，保证同种子同布局
+         var larr:Object = game != null ? probe(game, "lands") : null;
+         var la:Object = larr != null && game != null
+            ? larr[String(probe(game, "curLandId"))] : null;
+         w.landStage = la != null ? numOr(probe(la, "landStage"), -1) : -1;
+         w.hostVisited = la != null ? (probe(la, "visited") == true) : false;
          w.x = numOr(probe(gg, "X"), 0);
          w.y = numOr(probe(gg, "Y"), 0);
          return w;
@@ -1131,6 +1148,9 @@ package rconnect.game
             }
             _lastFollowT = now;
             // 跨地图：进入宿主的土地（随机地图内容可能不一致，见实验记录）
+            // M15：先采纳宿主的 rnd 生成参数（landStage/visited）+ 清 Land
+            // 强制重建——否则双方存档 landStage 不同会选不同房间池
+            adoptHostLandParams(info);
             Log.d("RConnectWorld: travel " + String(mine.curLandId)
                + " -> " + String(info.curLandId) + " (host at "
                + Math.round(Number(info.x)) + "," + Math.round(Number(info.y))
@@ -1148,6 +1168,19 @@ package rconnect.game
          }
          if(String(mine.locId) == String(info.locId))
          {
+            // M15：同土地 rnd 且 landStage 与宿主不一致 → 采纳参数重建
+            var raKey:String = String(mine.curLandId);
+            if(!_adoptedSame[raKey]
+               && numOr(info.landStage, -1) >= 0
+               && Math.abs(numOr(info.landStage, -1)
+                  - currentLandStage()) > 0.01
+               && isRndLand(raKey))
+            {
+               _adoptedSame[raKey] = true;
+               adoptHostLandParams(info);
+               regenCurrentLand();
+               return "regen(" + raKey + ")";
+            }
             // M13：确定性布局下双方可能落在同房不同出生点（存档 checkpoint
             // 差异）—— 首次同房且相距过大时一次性对齐到宿主坐标
             var akey:String = String(mine.curLandId) + "/" + String(mine.locId);
@@ -1672,6 +1705,198 @@ package rconnect.game
       private var _seenCache:String = "";
       private var _seenBuiltLogged:Boolean = false;
       private var _seenAppliedLogged:Object = {};
+
+      /** M14 诊断：第一个远端幽灵的实际姿态（osn 标签/帧 + sost），
+       *  定位"固定趴姿"问题。 */
+      public function debugGhostPose():String
+      {
+         for(var k:String in _remotes)
+         {
+            var ghost:Object = _remotes[k].ghost;
+            if(ghost == null)
+            {
+               return "no-ghost";
+            }
+            try
+            {
+               var vis:Object = probe(ghost, "vis");
+               var osn:Object = probe(vis, "osn");
+               var body:Object = osn != null ? probe(osn, "body") : null;
+               var lbl:String = osn != null
+                  ? String(probe(osn, "currentLabel")) : "?";
+               var fr:int = osn != null ? int(probe(osn, "currentFrame")) : -1;
+               var bodyFr:int = body != null
+                  ? int(probe(body, "currentFrame")) : -1;
+               return "ghost#" + k + " sost="
+                  + String(numOr(probe(ghost, "sost"), -1))
+                  + " lbl=" + lbl + " fr=" + fr + " bodyFr=" + bodyFr
+                  + " visK=" + (vis != null
+                     ? String(int(probe(vis, "numChildren"))) : "?");
+            }
+            catch(err:*)
+            {
+               return "err";
+            }
+            return "";
+         }
+         return "none";
+      }
+
+      /** M15 诊断：本地玩家视觉的 osn 标签/帧（对照幽灵姿态用）。 */
+      public function debugLocalPose():String
+      {
+         if(gg == null)
+         {
+            return "no-gg";
+         }
+         try
+         {
+            var vis:Object = probe(gg, "vis");
+            var osn:Object = probe(vis, "osn");
+            if(osn == null)
+            {
+               return "no-osn";
+            }
+            return "lbl=" + String(probe(osn, "currentLabel"))
+               + " fr=" + String(int(probe(osn, "currentFrame")))
+               + " stay=" + String(numOr(probe(gg, "stay"), -1))
+               + " work=" + String(probe(gg, "work"));
+         }
+         catch(err:*)
+         {
+            return "err";
+         }
+         return "?";
+      }
+
+      /** M15：加入方在进入宿主所在土地前，采纳宿主的 rnd 生成参数
+       *  （landStage/visited）并清空已缓存 Land 强制重新生成——
+       *  否则双方存档 landStage 不同 → 同一种子选出不同房间池 → 布局不同。 */
+      public function adoptHostLandParams(info:Object):void
+      {
+         if(world == null)
+         {
+            return;
+         }
+         try
+         {
+            var game:Object = probe(world, "game");
+            if(game == null)
+            {
+               return;
+            }
+            var target:String = info.curLandId != null
+               ? String(info.curLandId) : "";
+            if(target == "")
+            {
+               return;
+            }
+            var act:Object = probe(game, "lands");
+            if(act == null)
+            {
+               return;
+            }
+            var la:Object = act[target];
+            if(la == null)
+            {
+               return;
+            }
+            if(!(probe(la, "rnd") as Boolean))
+            {
+               return;   // 只处理随机土地
+            }
+            var hs:Number = info.landStage != null
+               ? Number(info.landStage) : -1;
+            var ls:Number = numOr(probe(la, "landStage"), -1);
+            if(hs >= 0 && Math.abs(hs - ls) > 0.01)
+            {
+               la["landStage"] = hs;
+               la["land"] = null;   // 强制下次进入重建
+               Log.d("RConnectWorld: adopt host landStage " + target
+                  + " " + ls + " -> " + hs);
+            }
+            if(info.hostVisited != null && info.hostVisited != undefined)
+            {
+               var hv:Boolean = (info.hostVisited == true);
+               if(probe(la, "visited") != hv)
+               {
+                  la["visited"] = hv;
+               }
+            }
+         }
+         catch(err:*)
+         {
+            Log.d("RConnectWorld: adoptHostLandParams failed: " + err);
+         }
+      }
+
+      /** M15：当前土地是否 rnd（随机土地）。 */
+      private function isRndLand(landId:String):Boolean
+      {
+         try
+         {
+            var game:Object = probe(world, "game");
+            if(game == null)
+            {
+               return false;
+            }
+            var la:Object = probe(game, "lands");
+            if(la == null)
+            {
+               return false;
+            }
+            var act:Object = la[landId];
+            return act != null && (probe(act, "rnd") as Boolean);
+         }
+         catch(err:*)
+         {
+            return false;
+         }
+         // mxmlc 控制流怪癖
+         return false;
+      }
+
+      /** M15：当前土地 landStage（-1=未知）。 */
+      private function currentLandStage():Number
+      {
+         var mine:Object = readWorldInfo();
+         return mine != null ? numOr(mine.landStage, -1) : -1;
+      }
+
+      /** M15：重入当前土地（清 Land 后 gotoLand 同土地），强制用新参数重建。 */
+      private function regenCurrentLand():void
+      {
+         if(world == null)
+         {
+            return;
+         }
+         try
+         {
+            var game:Object = probe(world, "game");
+            if(game == null)
+            {
+               return;
+            }
+            var cur:String = String(probe(game, "curLandId"));
+            if(cur == "")
+            {
+               return;
+            }
+            var la:Object = probe(game, "lands");
+            if(la != null && la[cur] != null)
+            {
+               la[cur]["land"] = null;
+            }
+            game["gotoLand"](cur);
+            Log.d("RConnectWorld: regen land " + cur);
+         }
+         catch(err:*)
+         {
+            Log.d("RConnectWorld: regen failed: " + err);
+         }
+      }
+
+      private var _adoptedSame:Object = {};
 
       private var _travelTestStep:int = 0;
       private var _lastFollowT:int = -100000;

@@ -551,6 +551,10 @@ package rconnect.core
                      ? String(mod.game.debugTileV()) : "?")
                   + " grid=" + (mod.game != null
                      ? mod.game.debugTileGrid() : "?")
+                  + " ghostPose=" + (mod.game != null
+                     ? mod.game.debugGhostPose() : "?")
+                  + " localPose=" + (mod.game != null
+                     ? mod.game.debugLocalPose() : "?")
                   + " t_exit=" + String(GameBridge.probe(w, "t_exit"))
                   + " comLoad=" + String(GameBridge.probe(w, "comLoad"))
                   + " clickReq=" + String(GameBridge.probe(w, "clickReq"))

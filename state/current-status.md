@@ -273,6 +273,22 @@
   掩码随 worldstate 广播，加入方同房点亮。验证 `applied seen mask rows=25`。
 - 默认战斗回归正常。详见 knowledge/experiments/2026-08-20-m14-*。
 
+## 双存档随机图布局差异（landStage）+ 幽灵趴姿（M15）——2026-08-20 完成
+
+- 用户报告：双方"继续游戏"进马哈顿，布局仍不同（能互见）；幽灵固定趴姿。
+- **M15a 布局**：根因 = `LandAct.landStage` 随存档持久化且参与房间池过滤
+  （newRandomLoc 用 lvl<=landStage）——双方存档 stage 不同（join=4/host=0）
+  → 同种子不同池 → 布局分歧。修复：worldInfo 带 landStage/visited；
+  加入方旅行前 adoptHostLandParams（采纳宿主 stage + act.land=null 强制
+  重建；同土地 stage 不一致也重入重建，_adoptedSame 防循环）。
+  验证：双存档场景采纳 4->0 后 8 点 grid 全一致（多次复现）。
+- **M15b 趴姿**：诊断确认幽灵标签与本地一致（lbl=stay=站姿正确）；真凶
+  是幽灵在宿主世界被击倒/击杀后 sost≥2 画倒地/尸体帧且不重置。
+  修复：driveGhost 每帧强制 sost=1（姿态由快照驱动；死亡流程仍由
+  scanGhostHp 重建）。验证：sost 恒 1、战斗回归正常。
+- shared-knowledge rnd-land-generator-structure 补充 landStage 生成输入说明。
+- 详见 knowledge/experiments/2026-08-20-m15-landstage-pose.md。
+
 ## 其他开发者协作状态（2026-08-18 更新）
 
 - **新模组出现**：mods/ 下现有 6 个模组（新增 RandomRooms、TDFC，均由
