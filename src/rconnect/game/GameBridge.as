@@ -2919,7 +2919,62 @@ package rconnect.game
          return false;
       }
 
-      /** 采集本世界单位快照（M4：宿主广播，客户端镜像）。 */
+      /** M19：单位视觉帧（小马类 = vis.osn.pon.currentFrame，即配色/皮肤）。
+       *  非小马（blit 等）无 osn.pon → -1（外观由类/XML 决定，天然一致）。 */
+      private function unitVisualFrame(u:Object):Number
+      {
+         try
+         {
+            var vis:Object = probe(u, "vis");
+            var osn:Object = vis != null ? probe(vis, "osn") : null;
+            var pon:Object = osn != null ? probe(osn, "pon") : null;
+            return pon != null ? int(probe(pon, "currentFrame")) : -1;
+         }
+         catch(err:*)
+         {
+            return -1;
+         }
+         return -1;
+      }
+
+      /** M19：把宿主单位的视觉帧/瞄准点应用到本地单位（镜像+傀儡）。
+       *  @return 是否应用了外观帧（验证用）。 */
+      public function applyUnitAppearance(u:Object, vf:Number, cx:Number,
+         cy:Number):Boolean
+      {
+         var styled:Boolean = false;
+         if(vf >= 1)
+         {
+            try
+            {
+               var vis:Object = probe(u, "vis");
+               var osn:Object = vis != null ? probe(vis, "osn") : null;
+               var pon:Object = osn != null ? probe(osn, "pon") : null;
+               if(pon != null && int(probe(pon, "currentFrame")) != int(vf))
+               {
+                  pon["gotoAndStop"](int(vf));
+                  styled = true;
+               }
+            }
+            catch(err:*)
+            {
+            }
+         }
+         if(cx >= 0 && cy >= 0)
+         {
+            try
+            {
+               u["celX"] = cx;
+               u["celY"] = cy;
+            }
+            catch(err:*)
+            {
+            }
+         }
+         return styled;
+      }
+
+      /** M19：采集本世界单位快照（M4：宿主广播，客户端镜像）。 */
       public function readUnitsSnapshot():Array
       {
          if(world == null || loc == null)
@@ -2958,8 +3013,21 @@ package rconnect.game
                   sost: numOr(probe(u, "sost"), 1),
                   hp: numOr(probe(u, "hp"), -1),
                   fraction: numOr(probe(u, "fraction"), 0),
-                  anim: String(probe(u, "animState"))
+                  anim: String(probe(u, "animState")),
+                  // M19：外观帧（小马类 osn.pon 帧=配色/皮肤）与瞄准点
+                  // （celX/celY=敌人当前目标方向，仇恨可视化一致）
+                  vf: unitVisualFrame(u),
+                  cx: numOr(probe(u, "celX"), -1),
+                  cy: numOr(probe(u, "celY"), -1)
                });
+               // M19 诊断：房间是否存在小马类敌人（vf>=1）
+               var vfN:Number = unitVisualFrame(u);
+               if(vfN >= 1 && !_ponySeen)
+               {
+                  _ponySeen = true;
+                  Log.d("RConnectGame: pony enemy '" + uid
+                     + "' vf=" + vfN);
+               }
             }
          }
          catch(err:*)
@@ -3062,6 +3130,16 @@ package rconnect.game
                            + "' -> " + wantAnim);
                      }
                   }
+               }
+               // M19：敌人外观帧/瞄准点（皮肤一致 + 仇恨朝向一致）
+               applyUnitAppearance(target, numOr(e.vf, -1),
+                  numOr(e.cx, -1), numOr(e.cy, -1));
+               if(numOr(e.vf, -1) >= 1 && !_skinSeen)
+               {
+                  _skinSeen = true;
+                  Log.d("RConnectGame: enemy skin '" + eid
+                     + "' hostVf=" + String(e.vf)
+                     + " localPon=" + String(unitVisualFrame(target)));
                }
                res.matched++;
             }
@@ -3325,6 +3403,9 @@ package rconnect.game
             units["push"](u);
             u["disabled"] = true;   // 视觉已挂，停本地 AI
             u["setVisPos"]();
+            // M19：注入时同步宿主外观帧/瞄准点
+            applyUnitAppearance(u, numOr(e.vf, -1), numOr(e.cx, -1),
+               numOr(e.cy, -1));
             Log.d("RConnectGame: injected '" + e.id + "' (" + e.cls
                + ") at " + Math.round(numOr(e.x, 0)) + ","
                + Math.round(numOr(e.y, 0)));
@@ -3406,6 +3487,8 @@ package rconnect.game
 
       private var _frozen:Object = {};
       private var _animLogged:Object = {};
+      private var _skinSeen:Boolean = false;
+      private var _ponySeen:Boolean = false;
 
       /** M6 验证：采样被冻结 blit 单位的显示像素，两次采样不同 = 动画在动。 */
       public function animProbeTest():void

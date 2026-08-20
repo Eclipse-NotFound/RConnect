@@ -334,6 +334,15 @@
 - 限制：外观在幽灵生成时套用，会话中换装需重建刷新（死亡/重连自动刷新）。
 - 详见 knowledge/experiments/2026-08-20-m18-appearance-mirror.md。
 
+## 敌人同步（A 外观 / B 死亡掉落 / C 仇恨朝向）——M19 完成（2026-08-20）
+
+- unitsync 单位条目扩展 vf（小马 osn.pon 帧=皮肤）+ cx/cy（celX/celY=
+  目标点/仇恨朝向）；加入方 applyUnitAppearance 应用到镜像与注入傀儡。
+- 验证：A `enemy skin 'ponpon' hostVf=20 localPon=20`（确定性同皮，vf
+  兜底分歧）；B 击杀→掉落 `obj spawn recv spawned=1 skipped=0`（M17 链
+  零失败）+ sost 死亡回流；C celX/Y 每同步写入。
+- 详见 knowledge/experiments/2026-08-20-m19-enemy-sync.md。
+
 ## 其他开发者协作状态（2026-08-18 更新）
 
 - **新模组出现**：mods/ 下现有 6 个模组（新增 RandomRooms、TDFC，均由
