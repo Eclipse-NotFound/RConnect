@@ -371,7 +371,7 @@ package rconnect.core
                break;
 
             case Protocol.MSG_WORLDSTATE:
-               applyWorldState(msg.players as Array);
+               applyWorldState(msg.players as Array, msg.seen);
                break;
 
             case Protocol.MSG_CHAT:
@@ -806,15 +806,34 @@ package rconnect.core
          {
             players.push({id: p.id, name: p.name, snap: p.snap});
          }
-         server.broadcast(Protocol.make(Protocol.MSG_WORLDSTATE,
-            {tick: _tickCount, players: players}));
+         var ws:Object = Protocol.make(Protocol.MSG_WORLDSTATE,
+            {tick: _tickCount, players: players});
+         // M14c：探索迷雾同步——宿主当前房间已探索掩码（readSeenMask 按 loc
+         // 引用缓存，换房才重建；加入方同房间点亮一致）
+         if(mod.game != null && peers.length > 0 && mod.game.loc != null)
+         {
+            var seenData:String = mod.game.readSeenMask();
+            if(seenData != "")
+            {
+               ws.seen = {locId: String(GameBridge.probe(mod.game.loc, "id")),
+                  cols: int(GameBridge.probeNum(mod.game.loc, "spaceX", 0)),
+                  data: seenData};
+            }
+         }
+         server.broadcast(ws);
       }
 
-      private function applyWorldState(players:Array):void
+      private function applyWorldState(players:Array, seenMask:Object = null):void
       {
          if(players == null || mod.game == null)
          {
             return;
+         }
+         // M14c：宿主的房间探索掩码 → 加入方同房点亮（地图/暗幕一致）
+         if(seenMask != null && seenMask.data != undefined)
+         {
+            mod.game.applySeenMask(String(seenMask.locId),
+               int(seenMask.cols), String(seenMask.data));
          }
          var seen:Object = {};
          var next:Array = [];

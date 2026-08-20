@@ -251,6 +251,10 @@ package rconnect.game
          var g0:Object = probe(world, "game");
          s.landId = g0 != null ? String(probe(g0, "curLandId")) : "";
          s.locId = loc != null ? String(probe(loc, "id")) : "";
+         // M14b：当前武器 id/变体（远端据此在幽灵手上镜像同款武器）
+         var cw:Object = probe(gg, "currentWeapon");
+         s.wi = cw != null ? String(probe(cw, "id")) : "";
+         s.wv = cw != null ? int(numOr(probe(cw, "variant"), 0)) : 0;
          s.aimX = numOr(probe(world, "celX"), 0);
          s.aimY = numOr(probe(world, "celY"), 0);
          if(!_snapLogged)
@@ -331,6 +335,8 @@ package rconnect.game
             rec.ghost = ghost;
             _ghostHp[id] = Math.max(1, numOr(snap.hp, 100));
             _ghostPassive[id] = false;
+            removeWeaponVis(id);        // 新化身重建武器
+            _weaponId[id] = null;
             var arec:Object = _animState[id];
             if(arec != null)
             {
@@ -340,8 +346,110 @@ package rconnect.game
          if(ghost != null)
          {
             driveGhost(ghost, snap, id);
+            syncRemoteWeapon(ghost, snap, id);
          }
       }
+
+      /** M14b：在幽灵手上镜像远程玩家的当前武器。
+       *  用公开构造 `new Weapon(owner, id, variant)`（Weapon 从游戏数据按 id
+       *  取参数/视觉），把武器显示对象挂到幽灵 visualPlayer 上；武器变化时
+       *  重建。视觉位置/朝向由 driveGhost 里的 weaponDrive 每帧校正。 */
+      private function syncRemoteWeapon(ghost:Object, snap:Object, id:int):void
+      {
+         var wi:String = snap.wi != null ? String(snap.wi) : "";
+         if(_weaponId[id] != null && _weaponId[id] == wi)
+         {
+            return;
+         }
+         // 移除旧武器
+         removeWeaponVis(id);
+         _weaponId[id] = wi;
+         if(wi == "")
+         {
+            return;
+         }
+         if(_weaponSkip[wi])
+         {
+            return;
+         }
+         try
+         {
+            var ad:Object = main["loaderInfo"]["applicationDomain"];
+            var wcl:Object = ad["getDefinition"]("fe.weapon.Weapon");
+            var wv:int = int(numOr(snap.wv, 0));
+            var w:Object = new (wcl as Class)(ghost, wi, wv);
+            ghost["currentWeapon"] = w;
+            var wvis:Object = probe(w, "vis");
+            if(wvis != null)
+            {
+               var gvis:Object = probe(ghost, "vis");
+               if(gvis != null)
+               {
+                  gvis["addChild"](wvis);
+                  _weaponVis[id] = wvis;
+                  Log.d("RConnectGame: weapon #" + id + " -> " + wi);
+               }
+            }
+         }
+         catch(err:*)
+         {
+            _weaponSkip[wi] = true;
+            Log.d("RConnectGame: weapon #" + id + " '" + wi
+               + "' failed: " + err);
+         }
+      }
+
+      /** M14b：按快照瞄向驱动已挂载的武器（位置/旋转/翻转）。 */
+      private function driveWeaponVis(ghost:Object, snap:Object, id:int):void
+      {
+         var wvis:Object = _weaponVis[id];
+         if(wvis == null)
+         {
+            return;
+         }
+         try
+         {
+            var storona:Number = numOr(snap.storona, 1) >= 0 ? 1 : -1;
+            var scX:Number = numOr(probe(ghost, "scX"), 30);
+            var scY:Number = numOr(probe(ghost, "scY"), 60);
+            wvis["x"] = scX * storona;
+            wvis["y"] = -scY * 0.7;
+            wvis["scaleX"] = storona;
+            var ax:Number = numOr(snap.aimX, 0);
+            var ay:Number = numOr(snap.aimY, 0);
+            var gx:Number = numOr(probe(ghost, "X"), 0);
+            var gy:Number = numOr(probe(ghost, "Y"), 0);
+            wvis["rotation"] = Math.atan2(ay - gy, (ax - gx) * storona)
+               * 180 / Math.PI;
+         }
+         catch(err:*)
+         {
+         }
+      }
+
+      private function removeWeaponVis(id:int):void
+      {
+         var wvis:Object = _weaponVis[id];
+         if(wvis != null)
+         {
+            try
+            {
+               var parent:Object = wvis["parent"];
+               if(parent != null)
+               {
+                  parent["removeChild"](wvis);
+               }
+            }
+            catch(err:*)
+            {
+            }
+         }
+         delete _weaponVis[id];
+      }
+
+      private var _weaponVis:Object = {};
+      private var _weaponId:Object = {};
+      private var _weaponSkip:Object = {};
 
       /**
        * M10b：宿主化身与客户端生命状态协调（每次收到快照时调用）。
@@ -581,6 +689,8 @@ package rconnect.game
          }
          delete _remotes[id];
          delete _animState[id];
+         removeWeaponVis(id);
+         delete _weaponId[id];
       }
 
       public function remoteCount():int
@@ -768,6 +878,10 @@ package rconnect.game
                }
             }
             driveVisAnim(ghost, snap, id);
+            if(snap.wi != undefined)
+            {
+               driveWeaponVis(ghost, snap, id);
+            }
          }
          catch(err:*)
          {
@@ -1434,6 +1548,130 @@ package rconnect.game
       }
 
       private var _ghostAnimIdx:int = 0;
+
+      /** M14c：宿主已探索瓦片掩码（按 loc 引用缓存，换房重建）。
+       *  格式：每行 spaceX 个 '1'/'0'（visi>=0.5=已见），行间 '|' 分隔。
+       *  loc.space（public）探索雾由玩家点亮，联机双方探索半径不同 → 房间
+       *  亮暗不同（“地图不同”）→ 宿主广播给加入方统一。 */
+      public function readSeenMask():String
+      {
+         if(loc == null)
+         {
+            return "";
+         }
+         if(_seenKey === loc)
+         {
+            return _seenCache;
+         }
+         _seenKey = loc;
+         _seenCache = buildSeenMask();
+         if(_seenCache != "" && !_seenBuiltLogged)
+         {
+            _seenBuiltLogged = true;
+            Log.d("RConnectGame: seen mask built "
+               + numOr(probe(loc, "spaceX"), 0) + "x"
+               + numOr(probe(loc, "spaceY"), 0)
+               + " (" + _seenCache.length + " chars)");
+         }
+         return _seenCache;
+      }
+
+      private function buildSeenMask():String
+      {
+         try
+         {
+            var sx:int = numOr(probe(loc, "spaceX"), 0);
+            var sy:int = numOr(probe(loc, "spaceY"), 0);
+            if(sx <= 0 || sy <= 0 || sx > 200 || sy > 200)
+            {
+               return "";
+            }
+            var space:Object = probe(loc, "space");
+            if(space == null || !(space is Array))
+            {
+               return "";
+            }
+            var rows:Array = [];
+            for(var y:int = 0; y < sy; y++)
+            {
+               var row:String = "";
+               var ry:Object = (space as Array)[y];
+               if(ry is Array)
+               {
+                  for(var x:int = 0; x < sx; x++)
+                  {
+                     var t:Object = (ry as Array)[x];
+                     var v:Number = t != null ? numOr(probe(t, "visi"), 0) : 0;
+                     row += (v >= 0.5) ? "1" : "0";
+                  }
+               }
+               rows.push(row);
+            }
+            return rows.join("|");
+         }
+         catch(err:*)
+         {
+            return "";
+         }
+         // mxmlc 控制流怪癖
+         return "";
+      }
+
+      /** M14c：应用宿主的已探索掩码（仅当同 loc；visi 取最大=点亮）。 */
+      public function applySeenMask(locId:String, cols:int, data:String):void
+      {
+         if(loc == null || data == null || data.length == 0)
+         {
+            return;
+         }
+         if(String(probe(loc, "id")) != locId)
+         {
+            return;
+         }
+         try
+         {
+            var rows:Array = data.split("|");
+            if(!_seenAppliedLogged[locId])
+            {
+               _seenAppliedLogged[locId] = true;
+               Log.d("RConnectGame: applied seen mask " + locId
+                  + " rows=" + rows.length);
+            }
+            var space:Object = probe(loc, "space");
+            if(space == null || !(space is Array))
+            {
+               return;
+            }
+            for(var y:int = 0; y < rows.length; y++)
+            {
+               var row:String = String(rows[y]);
+               var ry:Object = (space as Array)[y];
+               if(!(ry is Array))
+               {
+                  continue;
+               }
+               for(var x:int = 0; x < row.length && x < cols; x++)
+               {
+                  if(row.charAt(x) == "1")
+                  {
+                     var t:Object = (ry as Array)[x];
+                     if(t != null)
+                     {
+                        t["visi"] = 1;
+                     }
+                  }
+               }
+            }
+         }
+         catch(err:*)
+         {
+         }
+      }
+
+      private var _seenKey:Object = null;
+      private var _seenCache:String = "";
+      private var _seenBuiltLogged:Boolean = false;
+      private var _seenAppliedLogged:Object = {};
 
       private var _travelTestStep:int = 0;
       private var _lastFollowT:int = -100000;

@@ -259,6 +259,20 @@
 - **基线已刷新**：`build/backup/current-merged-20260819/`（含本补丁）。
 - 取舍：rnd 图每次新档同一套布局（联机一致优先）；boss 远端镜像受限。
 
+## 幽灵动画修复 + 武器/探索迷雾同步（M14）——2026-08-20 完成
+
+- 用户报告：互见+移动同步 OK；但看不到对方走路动画与武器，当前房间
+  "地图"（探索迷雾）两侧不同。
+- **M14a 走路动画失效已修**：根因 = M6b 起名字标签引用存在密封类
+  UnitPonPon 上，driveGhost 读它 #1069 → try 中断 → driveVisAnim 从未跑。
+  改存动态类 vis；driveGhost catch 改每 id 一次错误日志。验证：宿主侧
+  幽灵动画切换 236 次（walk/stay/jump）。
+- **M14b 武器镜像**：快照带 wi/wv；`new Weapon(ghost,id,variant)` 构造同款
+  武器挂幽灵手上，按 storona/aim 每帧校正。验证 `weapon #1 -> lmg`。
+- **M14c 探索迷雾同步**：`loc.space[x][y].visi`（Grafon 暗幕）宿主已探索
+  掩码随 worldstate 广播，加入方同房点亮。验证 `applied seen mask rows=25`。
+- 默认战斗回归正常。详见 knowledge/experiments/2026-08-20-m14-*。
+
 ## 其他开发者协作状态（2026-08-18 更新）
 
 - **新模组出现**：mods/ 下现有 6 个模组（新增 RandomRooms、TDFC，均由
