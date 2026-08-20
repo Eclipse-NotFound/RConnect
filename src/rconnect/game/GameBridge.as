@@ -2,6 +2,7 @@ package rconnect.game
 {
    import flash.display.Stage;
    import flash.events.Event;
+   import flash.geom.ColorTransform;
    import flash.text.TextField;
    import flash.text.TextFieldAutoSize;
    import flash.text.TextFormat;
@@ -258,6 +259,8 @@ package rconnect.game
          // M16：本机当前姿态标签（vis.osn.currentLabel）——让远端幽灵直接
          // 播放对方真实姿态（站/走/跑/蹲/趴都由对方游戏决定，不再本地猜测）
          s.pose = localPoseLabel();
+         // M18：外观镜像——远端据此给幽灵穿上对方的外观（护甲/毛色/眼/魔法）
+         s.ap = readAppearance();
          s.aimX = numOr(probe(world, "celX"), 0);
          s.aimY = numOr(probe(world, "celY"), 0);
          if(!_snapLogged)
@@ -682,6 +685,7 @@ package rconnect.game
 
       private var _ghostHp:Object = {};
       private var _ghostPassive:Object = {};
+      private var _appearanceLogged:Object = {};
 
       public function removeRemote(id:int):void
       {
@@ -730,7 +734,15 @@ package rconnect.game
             ghost["maxhp"] = numOr(snap.maxhp, 100);
             // 换用玩家视觉（visualPlayer，带完整姿态标签），并做与
             // UnitPlayer 构造一致的初始化（停 osn、隐藏不相关子剪辑）
-            installPlayerVis(ghost);
+            installPlayerVis(ghost, snap.ap);
+            if(snap.ap != null && snap.ap.cFur != undefined
+               && !_appearanceLogged[id])
+            {
+               _appearanceLogged[id] = true;
+               Log.d("RConnectGame: ghost #" + id + " styled armor="
+                  + String(snap.ap.armor) + " cFur="
+                  + String(snap.ap.cFur) + " cEye=" + String(snap.ap.cEye));
+            }
             applyGhostMarking(ghost, name);
             var x:Number = numOr(snap.x, 0);
             var y:Number = numOr(snap.y, 0);
@@ -793,12 +805,31 @@ package rconnect.game
          }
       }
 
-      /** 给幽灵安装 visualPlayer 视觉并按玩家初始化方式整理。 */
-      private function installPlayerVis(ghost:Object):void
+      /** 给幽灵安装 visualPlayer 视觉并按玩家初始化方式整理。
+       *  M18：ap 非空时用对方外观构造（临时换全局 Appear 再还原）。 */
+      private function installPlayerVis(ghost:Object, ap:Object = null):void
       {
          var ad:Object = main["loaderInfo"]["applicationDomain"];
          var visCls:Object = ad["getDefinition"]("visualPlayer");
-         var vis:Object = new (visCls as Class)();
+         var vis:Object = null;
+         if(ap != null && ap.cFur != undefined)
+         {
+            vis = buildPlayerVisStyled(ap);
+         }
+         if(vis == null)
+         {
+            try
+            {
+               vis = new (visCls as Class)();
+            }
+            catch(err:*)
+            {
+            }
+         }
+         if(vis == null)
+         {
+            return;
+         }
          var osn:Object = probe(vis, "osn");
          if(osn != null)
          {
@@ -874,6 +905,9 @@ package rconnect.game
             try
             {
                ghost["sost"] = 1;
+               // M18b：强制不悬浮——幽灵垂直位置只由快照 setPos 决定，
+               // 防止游戏自身飞行/悬浮物理把幽灵带起来（“飞行药水效果”）
+               ghost["isFly"] = false;
             }
             catch(err:*)
             {
@@ -1748,6 +1782,166 @@ package rconnect.game
             return "";
          }
          return "none";
+      }
+
+      /** M18：读取本机外观（Appear 全局静态 + World.app 颜色 + 变换）。
+       *  visualPlayer 在构造时从这些全局取样式——所以幽灵必须用对方的
+       *  值构造，否则所有幽灵都长得像本地玩家。 */
+      public function readAppearance():Object
+      {
+         var ap:Object = {};
+         try
+         {
+            var ad:Object = main["loaderInfo"]["applicationDomain"];
+            var ac:Object = ad["getDefinition"]("fe.inter.Appear");
+            if(ac != null)
+            {
+               ap.armor = String(ac["ggArmorId"]);
+               ap.hideMane = int(numOr(ac["hideMane"], 0));
+               ap.visHair1 = (ac["visHair1"] == true);
+               ap.fEye = int(numOr(ac["fEye"], 1));
+               ap.fHair = int(numOr(ac["fHair"], 1));
+               ap.tf = readCT(ac["trFur"]);
+               ap.tH = readCT(ac["trHair"]);
+               ap.tH1 = readCT(ac["trHair1"]);
+               ap.tE = readCT(ac["trEye"]);
+               ap.tM = readCT(ac["trMagic"]);
+            }
+            var app:Object = probe(world, "app");
+            if(app != null)
+            {
+               ap.cFur = numOr(probe(app, "cFur"), 0);
+               ap.cHair = numOr(probe(app, "cHair"), 0);
+               ap.cHair1 = numOr(probe(app, "cHair1"), 0);
+               ap.cEye = numOr(probe(app, "cEye"), 0);
+               ap.cMagic = numOr(probe(app, "cMagic"), 0);
+            }
+         }
+         catch(err:*)
+         {
+         }
+         return ap;
+      }
+
+      /** ColorTransform → 6 数数组（rm,gm,bm,ro,go,bo）。 */
+      private function readCT(ct:Object):Array
+      {
+         try
+         {
+            return [Number(ct["redMultiplier"]), Number(ct["greenMultiplier"]),
+               Number(ct["blueMultiplier"]), Number(ct["redOffset"]),
+               Number(ct["greenOffset"]), Number(ct["blueOffset"])];
+         }
+         catch(err:*)
+         {
+            return null;
+         }
+         return null;
+      }
+
+      /** M18：把对方外观套到新的 visualPlayer 上（临时换全局再还原）。 */
+      private function buildPlayerVisStyled(ap:Object):Object
+      {
+         var ad:Object = main["loaderInfo"]["applicationDomain"];
+         var ac:Object = ad["getDefinition"]("fe.inter.Appear");
+         var app:Object = probe(world, "app");
+         // 保存本地外观
+         var save:Object = {};
+         if(ac != null)
+         {
+            save.armor = ac["ggArmorId"];
+            save.hideMane = ac["hideMane"];
+            save.visHair1 = ac["visHair1"];
+            save.fEye = ac["fEye"];
+            save.fHair = ac["fHair"];
+            save.tf = ac["trFur"];
+            save.tH = ac["trHair"];
+            save.tH1 = ac["trHair1"];
+            save.tE = ac["trEye"];
+            save.tM = ac["trMagic"];
+         }
+         var saveC:Object = {};
+         if(app != null)
+         {
+            saveC.cFur = app["cFur"];
+            saveC.cHair = app["cHair"];
+            saveC.cHair1 = app["cHair1"];
+            saveC.cEye = app["cEye"];
+            saveC.cMagic = app["cMagic"];
+         }
+         var vis:Object = null;
+         try
+         {
+            if(ac != null && ap != null)
+            {
+               ac["ggArmorId"] = String(ap.armor != null ? ap.armor : "");
+               ac["hideMane"] = int(numOr(ap.hideMane, 0));
+               ac["visHair1"] = (ap.visHair1 == true);
+               ac["fEye"] = int(numOr(ap.fEye, 1));
+               ac["fHair"] = int(numOr(ap.fHair, 1));
+               if(ap.tf is Array)
+               {
+                  ac["trFur"] = new ColorTransform(Number(ap.tf[0]),
+                     Number(ap.tf[1]), Number(ap.tf[2]), 1,
+                     Number(ap.tf[3]), Number(ap.tf[4]), Number(ap.tf[5]));
+                  ac["trHair"] = new ColorTransform(Number(ap.tH[0]),
+                     Number(ap.tH[1]), Number(ap.tH[2]), 1,
+                     Number(ap.tH[3]), Number(ap.tH[4]), Number(ap.tH[5]));
+                  ac["trHair1"] = new ColorTransform(Number(ap.tH1[0]),
+                     Number(ap.tH1[1]), Number(ap.tH1[2]), 1,
+                     Number(ap.tH1[3]), Number(ap.tH1[4]), Number(ap.tH1[5]));
+                  ac["trEye"] = new ColorTransform(Number(ap.tE[0]),
+                     Number(ap.tE[1]), Number(ap.tE[2]), 1,
+                     Number(ap.tE[3]), Number(ap.tE[4]), Number(ap.tE[5]));
+                  ac["trMagic"] = new ColorTransform(Number(ap.tM[0]),
+                     Number(ap.tM[1]), Number(ap.tM[2]), 1,
+                     Number(ap.tM[3]), Number(ap.tM[4]), Number(ap.tM[5]));
+               }
+            }
+            if(app != null && ap != null)
+            {
+               app["cFur"] = numOr(ap.cFur, saveC.cFur);
+               app["cHair"] = numOr(ap.cHair, saveC.cHair);
+               app["cHair1"] = numOr(ap.cHair1, saveC.cHair1);
+               app["cEye"] = numOr(ap.cEye, saveC.cEye);
+               app["cMagic"] = numOr(ap.cMagic, saveC.cMagic);
+            }
+            var visCls:Object = ad["getDefinition"]("visualPlayer");
+            vis = new (visCls as Class)();
+         }
+         catch(err:*)
+         {
+            vis = null;
+         }
+         // 还原本地外观
+         try
+         {
+            if(ac != null)
+            {
+               ac["ggArmorId"] = save.armor;
+               ac["hideMane"] = save.hideMane;
+               ac["visHair1"] = save.visHair1;
+               ac["fEye"] = save.fEye;
+               ac["fHair"] = save.fHair;
+               ac["trFur"] = save.tf;
+               ac["trHair"] = save.tH;
+               ac["trHair1"] = save.tH1;
+               ac["trEye"] = save.tE;
+               ac["trMagic"] = save.tM;
+            }
+            if(app != null)
+            {
+               app["cFur"] = saveC.cFur;
+               app["cHair"] = saveC.cHair;
+               app["cHair1"] = saveC.cHair1;
+               app["cEye"] = saveC.cEye;
+               app["cMagic"] = saveC.cMagic;
+            }
+         }
+         catch(err:*)
+         {
+         }
+         return vis;
       }
 
       /** M15 诊断：本地玩家视觉的 osn 标签/帧（对照幽灵姿态用）。 */

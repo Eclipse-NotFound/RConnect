@@ -320,6 +320,20 @@
   getQualifiedClassName 用 `::`、Loot 在链不在数组、持续补丁需变化检测。
 - 详见 knowledge/experiments/2026-08-20-m17-tile-loot-sync.md。
 
+## 外观镜像 + 悬浮/飞行药水效果修复（M18）——2026-08-20 完成
+
+- 用户报告：对方形象与本地一样（幽灵都像自己）；对方有"飞行药水效果"；
+  仍为趴姿。
+- **根因**：visualPlayer 构造时从全局静态 Appear（ggArmorId/tr*/颜色）取
+  外观 → 幽灵全按本地玩家外观构造；potion_fly 本体=isFly+黑色粒子拖尾，
+  幽灵被悬浮物理带起即"飞行药水效果"；初始帧/姿态也连带本地初始化。
+- **修复**：快照带 ap（Appear 静态+World.app 色+ColorTransform 六元组）；
+  幽灵构造临时换全局 Appear → new visualPlayer → 还原。driveGhost 每帧
+  isFly=false+sost=1（垂直位置只由快照决定）。验证：host 幽灵 armor=
+  assault（对方）、join 幽灵 armor=pip（对方）——镜像生效；回归正常。
+- 限制：外观在幽灵生成时套用，会话中换装需重建刷新（死亡/重连自动刷新）。
+- 详见 knowledge/experiments/2026-08-20-m18-appearance-mirror.md。
+
 ## 其他开发者协作状态（2026-08-18 更新）
 
 - **新模组出现**：mods/ 下现有 6 个模组（新增 RandomRooms、TDFC，均由
