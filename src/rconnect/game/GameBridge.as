@@ -2956,6 +2956,58 @@ package rconnect.game
          }
       }
 
+      /** M21：单个远程玩家摘要（面板用）：姿态/护甲。 */
+      public function remoteBrief(id:int):String
+      {
+         var rec:Object = _remotes[id];
+         if(rec == null)
+         {
+            return "?";
+         }
+         var ghost:Object = rec.ghost;
+         var pose:String = "?";
+         if(ghost != null)
+         {
+            var vis:Object = probe(ghost, "vis");
+            var osn:Object = vis != null ? probe(vis, "osn") : null;
+            pose = osn != null ? String(probe(osn, "currentLabel")) : "?";
+         }
+         var ak:String = _apKey[id] != null ? String(_apKey[id]) : "";
+         var armor:String = ak.split("|")[0];
+         if(armor == null || armor == "")
+         {
+            armor = "?";
+         }
+         return "pose=" + pose + " armor=" + armor;
+      }
+
+      /** M21：会话摘要（每 60s 一行，供复测粘贴）。 */
+      public function sessionReport():String
+      {
+         var wi:Object = readWorldInfo();
+         var r:String = "land=" + (wi != null ? String(wi.curLandId) : "?")
+            + "/" + (wi != null ? String(wi.locId) : "?")
+            + " stage=" + (wi != null ? String(wi.landStage) : "?")
+            + " localPose=" + localPoseLabel();
+         var n:int = 0;
+         for(var k:String in _remotes)
+         {
+            n++;
+            r += " ghost" + k + "[" + remoteBrief(int(k)) + "]";
+         }
+         var objs:Object = probe(loc, "objs");
+         var units:Object = probe(loc, "units");
+         var ifail:int = 0;
+         for(var f:String in _injectFailed)
+         {
+            ifail++;
+         }
+         r += " objs=" + (objs is Array ? String((objs as Array).length) : "?")
+            + " units=" + (units is Array ? String((units as Array).length) : "?")
+            + " injectFail=" + ifail;
+         return r;
+      }
+
       private var _travelTestStep:int = 0;
       private var _lastFollowT:int = -100000;
       private var _alignedKey:String = "";
@@ -3456,6 +3508,13 @@ package rconnect.game
          {
             return;
          }
+         // M21：宿主列表为空时**不动**本地敌人——空列表可能是换房过渡/
+         // 短暂空房的瞬时状态；照单移除会永久清空加入方房间
+         // （之后注入失败的话房间就永远没敌人了）。
+         if(list.length == 0)
+         {
+            return;
+         }
          var units:Object = probe(loc, "units");
          if(units == null || !(units is Array))
          {
@@ -3650,6 +3709,9 @@ package rconnect.game
             _baseHp = {};
             _frozen = {};
             _animLogged = {};
+            // M21：换房后清空注入失败黑名单——同一 id 在新房间可能可注入
+            // （旧失败多为瞬时状态；防"永久空敌"）
+            _injectFailed = {};
             if(loc != null)
             {
                Log.d("RConnectGame: world loc changed, baselines reset");

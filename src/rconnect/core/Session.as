@@ -614,6 +614,12 @@ package rconnect.core
             Log.d(dbg);
          }
 
+         // M21：会话摘要（每 60s 一行全量状态，复测时粘贴用）
+         if(_tickCount % 1200 == 600 && mod.game != null)
+         {
+            Log.d("RConnectReport: " + mod.game.sessionReport());
+         }
+
          // 周期性刷新世界引用（gg/loc 会随进游戏/切场景变化，不能长期缓存）
          if(mod.game != null && _tickCount % 40 == 0)
          {
