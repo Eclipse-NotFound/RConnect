@@ -353,6 +353,132 @@ package rconnect.game
          {
             driveGhost(ghost, snap, id);
             syncRemoteWeapon(ghost, snap, id);
+            // M20：外观热更——对方换装/换护甲后按 apKey 变化重装视觉
+            var ak:String = apKeyOf(snap.ap);
+            if(_apKey[id] != ak && snap.ap != null
+               && snap.ap.cFur != undefined)
+            {
+               _apKey[id] = ak;
+               restyleGhost(rec, id, snap);
+            }
+         }
+      }
+
+      private function apKeyOf(ap:Object):String
+      {
+         if(ap == null)
+         {
+            return "";
+         }
+         return String(ap.armor) + "|" + String(ap.cFur) + "|"
+            + String(ap.cEye) + "|" + String(ap.fHair) + "|"
+            + String(ap.hideMane);
+      }
+
+      private var _apKey:Object = {};
+
+      /** M20：按对方最新外观重建幽灵视觉（保留名字标签与武器）。 */
+      private function restyleGhost(rec:Object, id:int, snap:Object):void
+      {
+         var ghost:Object = rec.ghost;
+         if(ghost == null)
+         {
+            return;
+         }
+         try
+         {
+            // 摘武器（旧 vis 将被替换）
+            var wvis:Object = _weaponVis[id];
+            var newVis:Object = buildPlayerVisStyled(snap.ap);
+            if(newVis == null)
+            {
+               return;
+            }
+            preparePlayerVis(newVis);
+            var name:String = rec.name != null ? String(rec.name) : "";
+            // 迁移标签（新 vis 上重建）
+            applyGhostMarking2(newVis, name, ghost);
+            // 迁移武器
+            if(wvis != null)
+            {
+               try
+               {
+                  newVis["addChild"](wvis);
+               }
+               catch(err:*)
+               {
+               }
+            }
+            ghost["vis"] = newVis;
+            if(wvis != null)
+            {
+               _weaponVis[id] = wvis;
+            }
+            // 立即套用姿态
+            var rec2:Object = _animState[id];
+            if(rec2 != null)
+            {
+               rec2.label = "";
+            }
+            Log.d("RConnectGame: ghost #" + id + " restyled (appearance change)");
+         }
+         catch(err:*)
+         {
+            Log.d("RConnectGame: restyleGhost failed: " + err);
+         }
+      }
+
+      /** 把新 visualPlayer 做与玩家一致的初始化整理（拆出 installPlayerVis 共用）。 */
+      private function preparePlayerVis(vis:Object):void
+      {
+         var osn:Object = probe(vis, "osn");
+         if(osn != null)
+         {
+            try
+            {
+               osn["stop"]();
+               var body:Object = probe(osn, "body");
+               if(body != null)
+               {
+                  var pip2:Object = probe(body, "pip2");
+                  if(pip2 != null)
+                  {
+                     pip2["visible"] = false;
+                  }
+               }
+            }
+            catch(err:*)
+            {
+            }
+            hideChild(vis, "inh");
+            hideChild(vis, "cryst");
+            hideChild(vis, "fetter");
+            hideChild(vis, "rat");
+            hideChild(vis, "shit");
+            hideChild(vis, "svet");
+         }
+      }
+
+      /** 在新 vis 上重建名字标签（不依赖 ghost 上的旧引用）。 */
+      private function applyGhostMarking2(vis:Object, name:String,
+         ghost:Object):void
+      {
+         try
+         {
+            var tf:TextField = new TextField();
+            var fmt:TextFormat = new TextFormat("_sans", 12, 0xFFE066, true);
+            tf.defaultTextFormat = fmt;
+            tf.text = name.length > 0 ? name : "player";
+            tf.selectable = false;
+            tf.mouseEnabled = false;
+            tf.autoSize = TextFieldAutoSize.CENTER;
+            tf.y = -110;
+            tf.x = -tf.width / 2;
+            vis["addChild"](tf);
+            vis["_rconnect_label"] = tf;
+         }
+         catch(err:*)
+         {
          }
       }
 
@@ -981,7 +1107,9 @@ package rconnect.game
          }
          else
          {
-            label = "stay";
+            // M20：兜底用站立待机标签 free1——"stay" 是蹲/趴姿态，
+            // 旧客户端无 pose 字段时绝不能回落到趴姿
+            label = "free1";
          }
          if(label == rec.label)
          {
@@ -2764,6 +2892,67 @@ package rconnect.game
          catch(err:*)
          {
             Log.d("RConnectGame: objSpawnTest failed: " + err);
+         }
+      }
+
+      /** M20：宿主侧"近身敌人转火加入方"——把幽灵 320px 内、当前无目标的
+       *  敌人指向该幽灵（priorUnit/celUnit），让敌人会识别/攻击加入方。
+       *  每次最多转 4 个（分散，不抢宿主仇恨）。 */
+      public function redirectNearbyAggro():void
+      {
+         if(loc == null)
+         {
+            return;
+         }
+         var units:Object = probe(loc, "units");
+         if(!(units is Array))
+         {
+            return;
+         }
+         var n:int = 0;
+         try
+         {
+            for(var k:String in _remotes)
+            {
+               var ghost:Object = _remotes[k].ghost;
+               if(ghost == null || _ghostPassive[k] || numOr(probe(ghost, "hp"), 0) <= 0)
+               {
+                  continue;
+               }
+               var gx:Number = numOr(probe(ghost, "X"), 0);
+               var gy:Number = numOr(probe(ghost, "Y"), 0);
+               for each(var u:Object in units as Array)
+               {
+                  if(n >= 4)
+                  {
+                     return;
+                  }
+                  var frac:Number = numOr(probe(u, "fraction"), 0);
+                  if(frac < 1 || frac >= 100
+                     || numOr(probe(u, "sost"), 1) >= 3
+                     || numOr(probe(u, "hp"), 0) <= 0)
+                  {
+                     continue;
+                  }
+                  // 已锁定其它目标的敌人不动（不抢宿主仇恨）
+                  if(probe(u, "priorUnit") != null || probe(u, "celUnit") != null)
+                  {
+                     continue;
+                  }
+                  var dx:Number = numOr(probe(u, "X"), 0) - gx;
+                  var dy:Number = numOr(probe(u, "Y"), 0) - gy;
+                  if(dx * dx + dy * dy > 320 * 320)
+                  {
+                     continue;
+                  }
+                  u["priorUnit"] = ghost;
+                  u["celUnit"] = ghost;
+                  n++;
+               }
+            }
+         }
+         catch(err:*)
+         {
          }
       }
 

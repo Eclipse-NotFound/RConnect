@@ -343,6 +343,14 @@
   零失败）+ sost 死亡回流；C celX/Y 每同步写入。
 - 详见 knowledge/experiments/2026-08-20-m19-enemy-sync.md。
 
+## 真机鲁棒性补强（M20）——2026-08-20 完成
+
+- 兜底姿态 free1（"stay"=趴姿，旧客户端兜底绝不回落）；
+- 外观热更（apKey 变化即 restyleGhost：换装即时，不依赖重生）；
+- 近身敌人转火加入方（宿主每 1s，320px 内无目标敌人指向幽灵，每轮≤4）。
+- 综合回归通过；战斗回归 relayed 5/took 5/died 3（转火生效）。
+- 复测指引见 knowledge/experiments/2026-08-20-m20-robustness.md。
+
 ## 其他开发者协作状态（2026-08-18 更新）
 
 - **新模组出现**：mods/ 下现有 6 个模组（新增 RandomRooms、TDFC，均由

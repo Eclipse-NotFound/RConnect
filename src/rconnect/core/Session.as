@@ -683,6 +683,11 @@ package rconnect.core
          {
             mod.game.walkStepTest();
          }
+            // M20：近身敌人转火加入方（每 1s；让敌人会识别/攻击加入方）
+            if(mod.game != null && _tickCount % 20 == 0)
+            {
+               mod.game.redirectNearbyAggro();
+            }
             // M16 复现钩子：宿主破坏第一个物品（验证 join 端 dead 同步）
             if(_autoBoxKill && !_boxKillDone && mod.game != null
                && mod.game.gg != null && _tickCount > 800)
