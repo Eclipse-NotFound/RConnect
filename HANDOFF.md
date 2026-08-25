@@ -24,10 +24,14 @@
    internal 不可访问、每字段独立 try 探测）。
 3. 读 `mods/Rconnect/state/current-status.md`（里程碑完成记录 + 剩余课题 +
    协作状态 + 授权记录）。
-4. 读 `mods/Rconnect/design/architecture.md`（架构）、
+4. **M11–M21 的本轮全部变更**（多次修复与里程碑：失焦冻结、随机图布局
+   确定性+landStage、姿态/武器/探索/外观镜像、瓦片/掉落/敌人同步）——全部
+   记录在 `state/current-status.md` 各节与 `knowledge/experiments/2026-08-20-*`、
+   `2026-08-19-*` 中，优先通读 state 了解现状再动手。
+5. 读 `mods/Rconnect/design/architecture.md`（架构）、
    `mods/Rconnect/decisions/2026-08-15-load-patch.md`（游戏 SWF 补丁决策）。
-5. 需要时再读 `mods/Rconnect/knowledge/`（facts/discoveries/experiments）。
-6. 本文件 §3 的摘要 + §7 的测试手册足够开始工作。
+6. 需要时再读 `mods/Rconnect/knowledge/`（facts/discoveries/experiments）。
+7. 本文件 §3 的摘要 + §7 的测试手册足够开始工作。
 
 ## 3. 现状摘要（里程碑）
 
@@ -67,6 +71,7 @@ mods/Rconnect/
     run_m2_dualtest.py         真机双实例联机测试（详见 §7）
     make_release.py            打玩家安装包（build/RConnect-v0.1.0.zip：INSTALL.txt
                                + 三份已补丁 SWF + mods/Rconnect 本体）
+    patch_land_determinism.py   随机图布局确定性补丁（改 Land.as，三 SWF 已打）
     second_player.bat          双开第二窗口（GBK 编码！）：手动双人联机测试用；
                                依赖 tools/second_player_descriptor.xml（pfe2 身份），
                                自动写 %APPDATA%\pfe2 的手动模式配置
