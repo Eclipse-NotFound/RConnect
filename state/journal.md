@@ -2,6 +2,18 @@
 
 > 协议见 GOVERNANCE.md §8：只追加不改写，**新条目插在最上面**。
 
+## 2026-08-27 M22 门/容器交互状态同步（Interact ist 镜像）
+
+- 做了什么：查证 M16 的 door/door_opac 字段同步是无效同步（XML 类型常量）→ 真实状态在 `Interact`（open/lock/loot/mine）→ 实现 ist 快照/应用（宿主 `save()`+实时 open 打包，joiner `setAct()` 官方存档恢复路径幂等应用）+ 门死亡走 die(-1) 清瓦片 + doorIcTest/boxLootTest 钩子 + M2_PORT/M2_DOORTOGGLE/M2_BOXLOOT/M2_HOSTWALK 测试变量。11 轮双实例迭代验证。
+- 关键决定/发现（→ knowledge/experiments/2026-08-27-m22-door-interact-sync.md）：
+  - 宿主须广播"曾经非默认"字段（ever-seen），否则关门/解锁永远到不了 joiner；
+  - autoClose 门 open 不同步（游戏存档语义）+ open/lock 滞回（10 条 unitsync）——rbl door3 是游戏侧 1.4s 周期循环门，忠实镜像会变 setAct 风暴；
+  - 同机残留测试实例抢 23456 端口致串线：bind 失败现在写 RConnect.log，测试换 M2_PORT；
+  - 本机工具链：flexsdk 在 D:\RemainsMod\...\tools（AIR SDK 51.3.3，须显式 -swf-version=38），Java 11 在 _sandevistan_dev\jdk-11（build_mod.py 已修）。
+- 遗留/下一步：门被摧毁 die(-1) 未做双实例专项；客户端交互上报宿主（双向门）未做；容器搜刮 joiner 侧等有容器房间现场验证；其余按 MEMORY §6。
+
+---
+
 ## 2026-08-27 外置记忆迁移
 
 - 由 state/current-status.md + 顶层 HANDOFF.md 拆分迁移（原文在 git 历史）：现行状态 → state\MEMORY.md；14 条关键坑清单 → knowledge/facts/engineering-pitfalls.md；M1-M20 里程碑流水浓缩为下方条目。

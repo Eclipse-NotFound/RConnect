@@ -64,6 +64,10 @@ package rconnect.core
       private var _tileBreakDone:Boolean = false;
       private var _autoObjSpawn:Boolean = false;
       private var _objSpawnDone:Boolean = false;
+      private var _autoDoorToggle:Boolean = false;
+      private var _doorToggleCount:int = 0;
+      private var _autoBoxLoot:Boolean = false;
+      private var _boxLootDone:Boolean = false;
       private var _autoLoadSave:int = -1;
       private var _loadSaveDone:Boolean = false;
       private var _loadSaveTries:int = 0;
@@ -114,6 +118,10 @@ package rconnect.core
          this._autoTileBreak = (tb == "1" || tb == "true" || tb == "yes");
          var os:String = String(mod.config.getValue("autoObjSpawn"));
          this._autoObjSpawn = (os == "1" || os == "true" || os == "yes");
+         var dt:String = String(mod.config.getValue("autoDoorToggle"));
+         this._autoDoorToggle = (dt == "1" || dt == "true" || dt == "yes");
+         var bl:String = String(mod.config.getValue("autoBoxLoot"));
+         this._autoBoxLoot = (bl == "1" || bl == "true" || bl == "yes");
          this._autoTravelLand = String(mod.config.getValue("autoTravelLand"));
          var wi:String = String(mod.config.getValue("worldInject"));
          this._worldInject = (wi != "0" && wi != "false" && wi != "no");
@@ -150,6 +158,13 @@ package rconnect.core
          server.addEventListener(HostServer.CLIENT_ADDED, onClientAdded);
          server.addEventListener(HostServer.CLIENT_REMOVED, onClientRemoved);
          server.listen(int(mod.config.getValue("port")));
+         if(!server.bound)
+         {
+            // 绑定失败（端口被占，如同机另一宿主实例）——mode 仍会显示
+            // hosting，此行是唯一可靠信号
+            Log.d("RConnectNet: host bind FAILED on port "
+               + int(mod.config.getValue("port")));
+         }
          mode = HOSTING;
          myId = 0;
          hostName = myName;
@@ -713,6 +728,29 @@ package rconnect.core
             {
                _objSpawnDone = true;
                mod.game.objSpawnTest();
+            }
+            // M22 复现钩子：宿主 80s 开门 / 120s 关门（验证门开关双向同步；
+            // 时点须晚于加入方连接收敛，首次快照会先收敛到当前状态）
+            if(_autoDoorToggle && mod.game != null && mod.game.gg != null
+               && !mod.game.isTransitioning())
+            {
+               if(_tickCount > 1600 && _doorToggleCount == 0)
+               {
+                  _doorToggleCount = 1;
+                  mod.game.doorIcTest();
+               }
+               if(_tickCount > 2400 && _doorToggleCount == 1)
+               {
+                  _doorToggleCount = 2;
+                  mod.game.doorIcTest();
+               }
+            }
+            // M22 复现钩子：宿主搜刮第一个容器（验证已搜刮状态同步）
+            if(_autoBoxLoot && !_boxLootDone && mod.game != null
+               && mod.game.gg != null && _tickCount > 1600)
+            {
+               _boxLootDone = true;
+               mod.game.boxLootTest();
             }
          // M17：瓦片变化后整房重绘（加入方应用瓦片差分后）
          if(mod.game != null && _tickCount % 10 == 0)

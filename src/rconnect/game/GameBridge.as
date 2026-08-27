@@ -2271,7 +2271,7 @@ package rconnect.game
                {
                   continue;
                }
-               out.push({
+               var ent:Object = {
                   id: id,
                   cls: getQualifiedClassName(b),
                   x: numOr(probe(b, "X"), -1),
@@ -2280,7 +2280,98 @@ package rconnect.game
                   door: numOr(probe(b, "door"), -1),
                   door_opac: numOr(probe(b, "door_opac"), -1),
                   shelf: probe(b, "shelf") == true
-               });
+               };
+               // M22：交互状态（门开关/上锁/已搜刮/陷阱/爆炸）。
+               // saveOpen/saveLock 等是 fe.serv 内部成员，外部只能走公共
+               // save() 打包；open 与 lock 用实时值——open 是 autoClose 门
+               // 的唯一可靠来源，而 saveLock 在开门后不清（setAct("open")
+               // 只清实时 lock），照发会让加入方"开着门还带锁"。
+               // 开着的对象不带 lock（游戏语义开=无锁）；实时 lock=100
+               // （卡死）映射回 102（setAct 只认 101/102 特殊值）。
+               // 持久状态纪律（M17 教训的 door 版）：按房间记住曾经非
+               // 默认的字段（_istSeen），回默认后也显式广播 0 值——否则
+               // "开门后再关门/解锁"的字段直接消失，加入方锁存回不去。
+               var iv:Object = probe(b, "inter");
+               if(iv != null)
+               {
+                  if(_istSeenLoc !== loc)
+                  {
+                     _istSeenLoc = loc;
+                     _istSeen = {};
+                  }
+                  var seen:Object = _istSeen[id];
+                  if(seen == null)
+                  {
+                     seen = {open: false, lock: false, mine: false,
+                        loot: false, expl: false};
+                     _istSeen[id] = seen;
+                  }
+                  var so:Object = {};
+                  iv["save"](so);
+                  var ist:Object = null;
+                  // autoClose 门（XML autoclose/time）的 open 是瞬态——游戏
+                  // 存档也不持久化它（setAct: if(autoClose==0) saveOpen），
+                  // 且堵门/脚本会让它高速振荡，不同步
+                  var ac:int = numOr(probe(iv, "autoClose"), 0);
+                  var isOpen:Boolean = (probe(iv, "open") == true && ac == 0);
+                  if(isOpen)
+                  {
+                     ist = istNew(ist, "open", 1);
+                     seen.open = true;
+                  }
+                  else if(seen.open)
+                  {
+                     ist = istNew(ist, "open", 0);
+                  }
+                  if(!isOpen)
+                  {
+                     var lv:int = numOr(probe(iv, "lock"), 0);
+                     if(lv == 100)
+                     {
+                        lv = 102;
+                     }
+                     if(lv != 0)
+                     {
+                        ist = istNew(ist, "lock", lv);
+                        seen.lock = true;
+                     }
+                     else if(seen.lock)
+                     {
+                        ist = istNew(ist, "lock", 0);
+                     }
+                  }
+                  var mv:int = numOr(so.mine, 0);
+                  if(mv != 0)
+                  {
+                     ist = istNew(ist, "mine", mv);
+                     seen.mine = true;
+                  }
+                  else if(seen.mine)
+                  {
+                     ist = istNew(ist, "mine", 0);
+                  }
+                  var lov:int = numOr(so.loot, 0);
+                  if(lov > 0)
+                  {
+                     ist = istNew(ist, "loot", lov);
+                     seen.loot = true;
+                  }
+                  var ev:int = numOr(so.expl, 0);
+                  if(ev != 0)
+                  {
+                     ist = istNew(ist, "expl", ev);
+                     seen.expl = true;
+                  }
+                  else if(seen.expl)
+                  {
+                     ist = istNew(ist, "expl", 0);
+                  }
+                  if(ist != null)
+                  {
+                     ent.ist = ist;
+                  }
+               }
+               out.push(ent);
             }
          }
          catch(err:*)
@@ -2333,10 +2424,26 @@ package rconnect.game
                   if(!wasDead && h.dead == true && !_boxDeadLogged[String(h.id)])
                   {
                      _boxDeadLogged[String(h.id)] = true;
-                     Log.d("RConnectGame: box destroyed synced '" + String(h.id)
-                        + "'");
+                     if(numOr(probe(lb, "door"), 0) > 0)
+                     {
+                        // M22：门类 Box 只翻 dead 字段不清瓦片（phis/opac/视觉
+                        // 都在瓦片上）——走 die(-1)，即存档加载恢复同款路径
+                        lb["die"](-1);
+                        Log.d("RConnectGame: door destroyed synced '"
+                           + String(h.id) + "'");
+                     }
+                     else
+                     {
+                        Log.d("RConnectGame: box destroyed synced '" + String(h.id)
+                           + "'");
+                     }
                   }
-                  lb["dead"] = (h.dead == true);
+                  // 只单向置 dead（游戏语义死亡不可逆；不回写 false 防止
+                  // 宿主快照把加入方本地破坏过的物品"复活"）
+                  if(h.dead == true)
+                  {
+                     lb["dead"] = true;
+                  }
                }
                if(h.hp is Number || h.hp != undefined)
                {
@@ -2354,6 +2461,10 @@ package rconnect.game
                {
                   lb["door_opac"] = Number(h.door_opac);
                }
+               if(h.ist != undefined && h.ist != null)
+               {
+                  applyIst(lb, String(h.id), h.ist);
+               }
                synced++;
             }
             catch(err:*)
@@ -2369,6 +2480,154 @@ package rconnect.game
 
       private var _objsLogged2:Boolean = false;
       private var _boxDeadLogged:Object = {};
+
+      /** M22：ist 构造（懒初始化）。 */
+      private function istNew(ist:Object, key:String, val:int):Object
+      {
+         if(ist == null)
+         {
+            ist = {};
+         }
+         ist[key] = val;
+         return ist;
+      }
+
+      private var _istLast:Object = {};
+      private var _istLastLoc:Object = null;
+      private var _istSeen:Object = {};
+      private var _istSeenLoc:Object = null;
+
+      /** open/lock 滞回窗口（unitsync 条数，20Hz 下约 500ms）。 */
+      private static const IST_STABLE_N:int = 10;
+
+      /** M22：把宿主交互状态应用到本地 inter。只在变化时 setAct——
+       *  setAct 会触发 setVisState（开门/搜刮音效）与整房重光照，
+       *  每 200ms 重放会刷屏；应用值记入 _istLast（换房重置，
+       *  不同房间可有同名 id）。被阻挡的关门（有人堵门口）会在本地
+       *  保持 open，属于游戏自身语义，宿主下次变更前不再重试。 */
+      private function applyIst(lb:Object, oid:String, ist:Object):void
+      {
+         try
+         {
+            if(_istLastLoc !== loc)
+            {
+               // M22 诊断：非 null→null 的重置说明 loc 引用在换，锁存被清
+               if(_istLastLoc != null)
+               {
+                  Log.d("RConnectGame: ist latch RESET (loc ref changed)");
+               }
+               _istLastLoc = loc;
+               _istLast = {};
+            }
+            var iv:Object = probe(lb, "inter");
+            if(iv == null)
+            {
+               return;
+            }
+            if(probe(lb, "dead") == true)
+            {
+               return;   // 已破坏：die(-1) 已定视觉，交互状态不再镜像
+            }
+            var last:Object = _istLast[oid];
+            if(last == null)
+            {
+               last = {open: -1, lock: -1, loot: 0, mine: -1, expl: -1,
+                  co: -1, cn: 0, cl: -1, ln: 0};
+               _istLast[oid] = last;
+            }
+            // open/lock 滞回：候选值连续 IST_STABLE_N 条消息不变才应用——
+            // 过滤宿主侧残余振荡（实测 autoClose 门被堵门时 350ms 周期抖动）
+            var v:int;
+            if(ist.open != undefined)
+            {
+               v = int(ist.open);
+               if(v == last.open)
+               {
+                  last.cn = 0;
+               }
+               else if(last.co == v)
+               {
+                  last.cn++;
+                  if(last.cn >= IST_STABLE_N)
+                  {
+                     last.open = v;
+                     last.cn = 0;
+                     iv["setAct"]("open", v);
+                     Log.d("RConnectGame: ist apply open=" + v + " '" + oid
+                        + "' tilePhis=" + firstDoorTilePhis(lb));
+                  }
+               }
+               else
+               {
+                  last.co = v;
+                  last.cn = 1;
+               }
+            }
+            if(ist.lock != undefined)
+            {
+               v = int(ist.lock);
+               if(v == last.lock)
+               {
+                  last.ln = 0;
+               }
+               else if(last.cl == v)
+               {
+                  last.ln++;
+                  if(last.ln >= IST_STABLE_N)
+                  {
+                     last.lock = v;
+                     last.ln = 0;
+                     iv["setAct"]("lock", v);
+                     Log.d("RConnectGame: ist apply lock=" + v + " '" + oid + "'");
+                  }
+               }
+               else
+               {
+                  last.cl = v;
+                  last.ln = 1;
+               }
+            }
+            if(ist.loot != undefined && last.loot != int(ist.loot))
+            {
+               v = int(ist.loot);
+               last.loot = v;
+               iv["setAct"]("loot", v);
+               Log.d("RConnectGame: ist apply loot=" + v + " '" + oid + "'");
+            }
+            if(ist.mine != undefined && last.mine != int(ist.mine))
+            {
+               v = int(ist.mine);
+               last.mine = v;
+               iv["setAct"]("mine", v);
+            }
+            if(ist.expl != undefined && last.expl != int(ist.expl))
+            {
+               v = int(ist.expl);
+               last.expl = v;
+               iv["setAct"]("expl", v);
+            }
+         }
+         catch(err:*)
+         {
+         }
+      }
+
+      /** M22：读门 Box 第一块从属瓦片的 phis（0=通行，>0=阻挡）。 */
+      private function firstDoorTilePhis(lb:Object):int
+      {
+         try
+         {
+            var tiles:Object = probe(lb, "tiles");
+            if(tiles is Array && (tiles as Array).length > 0)
+            {
+               return numOr(probe((tiles as Array)[0], "phis"), -1);
+            }
+         }
+         catch(err:*)
+         {
+         }
+         return -1;
+      }
 
       /** M16 复现钩子：宿主把第一个未被破坏的物品标记为破坏（验证 join 端
        *  同步 dead）。放宽到任意带 id 的 Box（含装饰性箱子）。 */
@@ -2404,6 +2663,100 @@ package rconnect.game
          catch(err:*)
          {
             Log.d("RConnectGame: boxKillTest failed: " + err);
+         }
+      }
+
+      private var _doorIcTestOpen:Boolean = false;
+
+      /** M22 复现钩子：宿主开关第一个活着的门——走真实使用路径
+       *  inter.command("open"/"close")（含 autoClose 计时语义），
+       *  每次调用翻转开/关。附 tilePhis 证明瓦片碰撞真实切换。
+       *  跳过 autoClose 门——其 open 是瞬态，不参与同步。 */
+      public function doorIcTest():void
+      {
+         if(loc == null)
+         {
+            return;
+         }
+         var objs:Object = probe(loc, "objs");
+         if(!(objs is Array))
+         {
+            return;
+         }
+         try
+         {
+            for each(var b:Object in objs as Array)
+            {
+               if(probe(b, "dead") == true || numOr(probe(b, "door"), 0) <= 0)
+               {
+                  continue;
+               }
+               var iv:Object = probe(b, "inter");
+               if(iv == null)
+               {
+                  continue;
+               }
+               if(numOr(probe(iv, "autoClose"), 0) > 0)
+               {
+                  continue;
+               }
+               _doorIcTestOpen = !_doorIcTestOpen;
+               iv["command"](_doorIcTestOpen ? "open" : "close");
+               Log.d("RConnectGame: doorIcTest "
+                  + (_doorIcTestOpen ? "open" : "close")
+                  + " '" + String(probe(b, "id"))
+                  + "' tilePhis=" + firstDoorTilePhis(b));
+               return;
+            }
+            Log.d("RConnectGame: doorIcTest: no door obj");
+         }
+         catch(err:*)
+         {
+            Log.d("RConnectGame: doorIcTest failed: " + err);
+         }
+      }
+
+      /** M22 复现钩子：宿主搜刮第一个非空容器（setAct("loot",2)，
+       *  与存档恢复同款状态写入）。 */
+      public function boxLootTest():void
+      {
+         if(loc == null)
+         {
+            return;
+         }
+         var objs:Object = probe(loc, "objs");
+         if(!(objs is Array))
+         {
+            return;
+         }
+         try
+         {
+            for each(var b:Object in objs as Array)
+            {
+               if(probe(b, "dead") == true)
+               {
+                  continue;
+               }
+               var iv:Object = probe(b, "inter");
+               if(iv == null)
+               {
+                  continue;
+               }
+               var cont:Object = probe(iv, "cont");
+               if(!(cont is String) || cont == "" || cont == "empty")
+               {
+                  continue;
+               }
+               iv["setAct"]("loot", 2);
+               Log.d("RConnectGame: boxLootTest looted '"
+                  + String(probe(b, "id")) + "' (cont was " + cont + ")");
+               return;
+            }
+            Log.d("RConnectGame: boxLootTest: no container obj");
+         }
+         catch(err:*)
+         {
+            Log.d("RConnectGame: boxLootTest failed: " + err);
          }
       }
 

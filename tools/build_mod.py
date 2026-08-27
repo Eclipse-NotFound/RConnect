@@ -18,7 +18,12 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 MOD_ROOT = os.path.dirname(HERE)   # mods/Rconnect/
 
-DEFAULT_AMXMLC = r"C:\Users\micha\Documents\_sandevistan_dev\flexsdk\bin\amxmlc.bat"
+DEFAULT_AMXMLC = r"D:\RemainsMod\mods\Sandevistan\build\tools\flexsdk\bin\amxmlc.bat"
+
+# 显式固定 swf-version：旧 flexsdk 的 air-config 默认恰为 38；AIR SDK 51 的
+# 默认是 51，而游戏运行时只支持 ≤39（超了静默不加载）。运行 java 需
+# PATH 上有 Java 11+（见 _sandevistan_dev\jre11）。
+EXTRA_ARGS = ["-swf-version=38"]
 
 
 def main():
@@ -40,6 +45,7 @@ def main():
         "-debug=" + ("true" if args.debug else "false"),
         "-optimize=" + ("false" if args.debug else "true"),
         "-warnings=true",
+    ] + EXTRA_ARGS + [
         # 主类是 RConnectDoc（空 Sprite，避免 #2023）；RConnectMod 是普通类，
         # 加载契约通过 getDefinition("RConnectMod") 查找它。
         os.path.join(src_dir, "RConnectDoc.as"),

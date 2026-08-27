@@ -16,7 +16,7 @@
 
 ## 3. 当前状态
 
-- **0.1.0-dev**（未发布）：M1–M20 全部通过**真机双实例自动化验证**（2026-08-15~20），覆盖：互见/姿态/武器/外观镜像、宿主权威世界注入、双向战斗、死亡复活协调、换图/跨图跟随、聊天、断线重连、探索迷雾/物品/瓦片破坏/Loot 同步、随机图布局确定性。
+- **0.1.0-dev**（未发布）：M1–M22 全部通过**真机双实例自动化验证**（2026-08-15~27），覆盖：互见/姿态/武器/外观镜像、宿主权威世界注入、双向战斗、死亡复活协调、换图/跨图跟随、聊天、断线重连、探索迷雾/物品/瓦片破坏/Loot 同步、随机图布局确定性、**门/容器交互状态同步（M22：open/lock/loot/mine 经 Interact setAct 官方恢复路径镜像）**。
 - 三份游戏 SWF 均含本模组 loader（已核验 `app:/mods/Rconnect` 标记）；工作树干净。
 
 ## 4. 正在进行与卡点
@@ -28,22 +28,25 @@
 - NAT：MVP 直连需端口转发（远期公共中转服务器）；
 - M3 遗留：动画阈值（run≥6px/walk≥1px）按真实联机观感校准；
 - 外观换装靠 restyleGhost 热更（M20），会话内复杂变化仍可能需重建刷新；
-- Sandevistan 同步可能覆盖游戏 SWF 补丁——重跑 `tools/patch_game_swfs.py` 恢复（锚点缺失报错 = MainFE 结构已变，需人工适配）。
+- Sandevistan 同步可能覆盖游戏 SWF 补丁——重跑 `tools/patch_game_swfs.py` 恢复（锚点缺失报错 = MainFE 结构已变，需人工适配）；
+- M22：autoClose 门与 rbl door3 这类**游戏侧循环/瞬态门**的 open 不同步（游戏存档语义本就如此）；joiner 对 open/lock 有 2s 滞回，状态变更最多延迟 2s；
+- M22：门被摧毁的 die(-1) 清瓦片路径已实现但未做双实例专项验证。
 
 ## 6. 下一步（优先级排序）
 
 1. 真人体验测试（用户有条件时）；
-2. 门/箱（瓦片级 Obj）同步 + 随机地图种子同步——都属"改游戏本体"级，需用户授权后评估；
+2. 随机图内容种子同步评估（布局/单位/物品已由 M8/M13/M17 覆盖，剩余为脚本类内容）——改游戏本体级，需用户授权后评估；
 3. NAT 穿透 / 中转服务器（远期）；
 4. 发布收尾：版本号、打包（tools/make_release.py）、README 已有。
 
 ## 7. 深入了解
 
-- **开发历程**：state/journal.md（M1–M20 逐里程碑浓缩 + 指向各实验文档）
+- **开发历程**：state/journal.md（M1–M22 逐里程碑浓缩 + 指向各实验文档）
 - **关键坑清单**：knowledge/facts/engineering-pitfalls.md（14 条，编号对应实验文档）
 - **架构**：design/architecture.md；src/rconnect/ 结构（GameBridge 游戏桥接 / Session 状态机 / Config / net 三件 / NetHud F10 面板）
 - **决策**：decisions/2026-08-15-load-patch.md（游戏 SWF 补丁授权与方案）
-- **测试手册**：docs/automated-testing.md（双实例编排/场景矩阵/断言表）；`python tools/run_m2_dualtest.py run|cleanup`
+- **测试手册**：docs/automated-testing.md（双实例编排/场景矩阵/断言表）；`python tools/run_m2_dualtest.py run|cleanup`，环境变量含 M2_PORT（默认 23456 被占时必换）/M2_DOORTOGGLE/M2_BOXLOOT/M2_HOSTWALK 等
+- **构建（本机）**：`python tools/build_mod.py`；工具链在 `D:\RemainsMod\mods\Sandevistan\build\tools\flexsdk`（HARMAN AIR SDK 51.3.3，已显式 -swf-version=38）；Java 11 在 `C:\Users\hello\Documents\_sandevistan_dev\jdk-11.0.32.1+1-jre`（PATH 挂 bin）
 - **用户向文档**：README.md、INSTALL.txt
 - **共享知识贡献**：12 则（menu-worldstep-gating、findcel-targeting、player-vis-anim-pipeline、world-identity-determinism、land-travel-api、frozen-units-unfreeze、save-load-api、programmatic-gameplay-driving、player-death-respawn-flow、spectator-avatar-unit、mod-loader-cross-domain-anomaly、version-fingerprint 等）
 - **技能**：remains-auto-testing、remains-runtime-debug、remains-swf-patching、remains-mod-build

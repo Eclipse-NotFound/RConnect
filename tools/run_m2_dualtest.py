@@ -24,15 +24,16 @@ import subprocess
 import sys
 import time
 
-GAME_ROOT = r"C:\Program Files (x86)\Steam\steamapps\common\Remains"
+GAME_ROOT = r"D:\Program Files\Steam\steamapps\common\Remains"
 ADL = os.path.join(GAME_ROOT, "adl64.exe")
 RUNTIME = os.path.join(GAME_ROOT, "runtimes", "air", "win64")
 APPDATA = os.path.expandvars(r"%APPDATA%")
-MOD = os.path.join(GAME_ROOT, "mods", "Rconnect")
+MOD = os.path.join(GAME_ROOT, "mods", "RConnect")
 
 HOST_ID = "pfe2"
 JOIN_ID = "pfe3"
-PORT = 23456
+# 端口可换：同机有其他宿主实例占 23456 时用 M2_PORT 避开
+PORT = int(os.environ.get("M2_PORT", "23456"))
 
 SRC_SAVE = os.path.join(APPDATA, "pfe", "Local Store", "#SharedObjects",
                         "pfe.swf", "PFEgame0.sol")
@@ -77,11 +78,17 @@ def prep_instance(app_id, role, nickname):
     host_boxkill = '"autoBoxKill":"1",' if os.environ.get("M2_BOXKILL") else ""
     host_tilebreak = '"autoTileBreak":"1",' if os.environ.get("M2_TILEBREAK") else ""
     host_objspawn = '"autoObjSpawn":"1",' if os.environ.get("M2_OBJSPAWN") else ""
+    host_doortoggle = '"autoDoorToggle":"1",' if os.environ.get("M2_DOORTOGGLE") else ""
+    host_boxloot = '"autoBoxLoot":"1",' if os.environ.get("M2_BOXLOOT") else ""
+    # 宿主先走开（ticks 600-1200 平滑移动）——出生点常在门框里，玩家
+    # 堵门会触发游戏 attDoor 堵门循环让门状态高速振荡（M22 教训）
+    host_walk = '"autoWalk":"1",' if os.environ.get("M2_HOSTWALK") else ""
     host_loadsave = '"autoGame":"","autoLoadSave":0,' \
         if os.environ.get("M2_HOST_LOADSAVE") else ""
     if role == "host":
         extra = (',' + host_loadsave + '"autoTravel":"0","autoDamage":"0",'
-                 '"autoGhostDmg":"1",' + host_kill + host_boxkill + host_tilebreak + host_objspawn
+                 '"autoGhostDmg":"1",' + host_kill + host_boxkill + host_tilebreak
+                 + host_objspawn + host_doortoggle + host_boxloot + host_walk
                  + '"testGhostDmg":%s,"autoTravelLand":"%s"' % (ghost_dmg, land))
     elif os.environ.get("M2_JOIN_LOADSAVE"):
         # M8：join 加载自己的存档（不同进度→中立单位差异），不开新游戏
@@ -182,7 +189,7 @@ def cmd_run():
 
         log("launching join (%s) ..." % JOIN_ID)
         procs.append(launch(join_desc, os.path.join(MOD, "build", "m2_join.log")))
-        time.sleep(120)   # 连接+进游戏+拉仇恨循环+死亡→复活闭环（多轮）
+        time.sleep(180)   # 连接+跟随+镜像；M22 门/容器钩子在宿主 80s/150s 触发
 
         dump_logs()
     finally:

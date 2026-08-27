@@ -187,6 +187,9 @@ cleanup 子命令：杀测试实例 + 删临时描述符。
 | `M2_TESTGHOSTDMG=0\|N` | 0=纯自然拉仇恨；大值=确定性击杀/死亡循环 | （受击） |
 | `M2_JOIN_QUIET=1` | — | 只跟随+镜像（无移动/伤害干扰） |
 | `M2_JOIN_LOADSAVE=1` | — | 加载自己存档（不同进度→世界差异） |
+| `M2_PORT=<port>` | 换监听端口（默认 23456，被同机其他宿主实例占用时必换） | 同左 |
+| `M2_DOORTOGGLE=1` | 宿主 80s 开门 / 120s 关门（inter.command 真实路径） | （跟随镜像） |
+| `M2_BOXLOOT=1` | 宿主 80s 搜刮第一个容器（setAct("loot",2)） | （跟随镜像） |
 
 ### 4.3 手动双开（无脚本时给玩家/自己的速测）
 
@@ -204,6 +207,9 @@ cleanup 子命令：杀测试实例 + 删临时描述符。
 | 客户端命中→宿主权威 | `applied N client damage hits` | `reported N damage hits` |
 | 敌人打客户端（影响回传） | `relayed X damage to '...'` | `took X damage from host world` |
 | 世界镜像 | `injected/removed ...` | `unitsync matched N/N` |
+| 门开关同步（M22） | `doorIcTest open/close 'id' tilePhis=N` | `ist apply open=1/0 'id' tilePhis=N` |
+| 容器搜刮同步（M22） | `boxLootTest looted 'id'` | `ist apply loot=2 'id'` |
+| 门被摧毁同步（M22） | （boxKill 覆盖门类） | `door destroyed synced 'id'` |
 | 死亡/复活闭环 | `ghost passive/combat restored/respawned` | `died/revived`, `healTest` |
 | 游戏没挂 | `RConnectDbg: tick N`（10s 心跳持续） | 同左 |
 | 错误对话框 | `game error dialog: ...`（dumpGameError） | 同左 |
