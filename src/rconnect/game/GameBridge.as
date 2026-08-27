@@ -145,6 +145,15 @@ package rconnect.game
             {
                return;
             }
+            // M23：开机链门控——landData 由开机 stage-2 异步建立，未就绪时
+            // Game 构造器访问 World.w.landData 直接 #1009（TDFC AutoTest
+            // 同款教训），且失败的 newGame 会留下半初始化世界连累重试。
+            // 等待即可，由 Session 周期重入。
+            if(probe(world, "landData") == null)
+            {
+               Log.d("RConnectGame: startGame: landData not ready, wait");
+               return;
+            }
             _autoTries++;
             Log.d("RConnectGame: startGame: calling newGame (try "
                + _autoTries + ")");
@@ -1031,9 +1040,11 @@ package rconnect.game
             try
             {
                ghost["sost"] = 1;
-               // M18b：强制不悬浮——幽灵垂直位置只由快照 setPos 决定，
-               // 防止游戏自身飞行/悬浮物理把幽灵带起来（“飞行药水效果”）
+               // M18b/M23：强制不悬浮——幽灵垂直位置只由快照 setPos 决定，
+               // isFly 与 levit 都压掉，防止游戏自身飞行/悬浮物理把幽灵
+               // 带起来（“飞行药水效果”）
                ghost["isFly"] = false;
+               ghost["levit"] = false;
             }
             catch(err:*)
             {
@@ -1092,6 +1103,17 @@ package rconnect.game
          if(snap.pose != null && String(snap.pose) != "")
          {
             label = String(snap.pose);
+            // M23：皮肤语义映射。玩家皮肤(visualPlayer)的 idle 主段是
+            // "stay"（UnitPlayer.animate：stay 段=站立待机基础位，
+            // free1/2/3 只是随机小动作），而幽灵皮肤(NPC 小马视觉)的
+            // "stay" 渲染为趴/卧姿（M16a/M20 实证）——直接镜像会让幽灵
+            // 大部分时间趴着。玩家 idle 族 {stay,free1,free2,free3} 映射
+            // 到幽灵站立待机族：stay→free1，freeX 原样；移动/跳跃等
+            // 其余标签两皮肤语义一致，原样透传。
+            if(label == "stay")
+            {
+               label = "free1";
+            }
          }
          else if(Number(snap.dy) != 0)
          {

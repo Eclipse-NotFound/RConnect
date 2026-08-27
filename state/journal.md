@@ -2,6 +2,16 @@
 
 > 协议见 GOVERNANCE.md §8：只追加不改写，**新条目插在最上面**。
 
+## 2026-08-28 M23 幽灵趴姿+悬浮根治（皮肤语义映射）+ 开机门控
+
+- 做了什么：用户报告 M16a/M18 修复后幽灵仍趴姿+悬浮 → 每消息 dump 定位真正根因：玩家皮肤 idle 主段是 "stay"（free1/2/3 只是偶发小动作），而幽灵皮肤 stay=趴/卧——**同标签不同皮肤语义相反**，1:1 镜像必然大部分时间趴。修复：idle 族映射 stay→free1（freeX/移动标签透传）+ levit 压制。另修复 startGame 无 landData 门控问题（夜间并行 TDFC v0.5.0 的 AutoTest 劫持测试实例暴露）。
+- 关键决定/发现（→ knowledge/experiments/2026-08-28-m23-pose-skin-mapping.md）：
+  - 跨皮肤镜像必须建语义字典，镜像"渲染意图"而非"播放头位置"；M16a 的日志级验证抓到 free3 瞬间误判已修——呈现类 bug 需密集采样/真人观感；
+  - TDFC AutoTest 激活条件（appid != "pfe"）比其文档宽，劫持 pfe2/pfe3 抢开新档打坏开机链；RConnect 补 landData 门控自保，TDFC 侧问题只报告不修（见 MEMORY §5）。
+- 遗留/下一步：悬浮消失需用户真人观感最终确认；坐下/爬行不镜像（标签层不可分）；TDFC 激活条件待转告。
+
+---
+
 ## 2026-08-27 M22 门/容器交互状态同步（Interact ist 镜像）
 
 - 做了什么：查证 M16 的 door/door_opac 字段同步是无效同步（XML 类型常量）→ 真实状态在 `Interact`（open/lock/loot/mine）→ 实现 ist 快照/应用（宿主 `save()`+实时 open 打包，joiner `setAct()` 官方存档恢复路径幂等应用）+ 门死亡走 die(-1) 清瓦片 + doorIcTest/boxLootTest 钩子 + M2_PORT/M2_DOORTOGGLE/M2_BOXLOOT/M2_HOSTWALK 测试变量。11 轮双实例迭代验证。
