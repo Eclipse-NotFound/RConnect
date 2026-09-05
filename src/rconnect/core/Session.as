@@ -74,6 +74,14 @@ package rconnect.core
       private var _lootJoinDone:Boolean = false;
       private var _lootsTxLog:Boolean = false;
       private var _lootsRxLog:Boolean = false;
+      private var _autoBoxMove:Boolean = false;
+      private var _boxMoveDone:Boolean = false;
+      private var _autoBoxMoveJoin:Boolean = false;
+      private var _boxMoveJoinDone:Boolean = false;
+      private var _autoDoorJoin:Boolean = false;
+      private var _doorJoinDone:Boolean = false;
+      private var _autoBoxLootJoin:Boolean = false;
+      private var _boxLootJoinDone:Boolean = false;
       private var _autoLoadSave:int = -1;
       private var _loadSaveDone:Boolean = false;
       private var _loadSaveTries:int = 0;
@@ -132,6 +140,14 @@ package rconnect.core
          this._autoLootTest = (lt == "1" || lt == "true" || lt == "yes");
          var lj:String = String(mod.config.getValue("autoLootJoin"));
          this._autoLootJoin = (lj == "1" || lj == "true" || lj == "yes");
+         var bm:String = String(mod.config.getValue("autoBoxMove"));
+         this._autoBoxMove = (bm == "1" || bm == "true" || bm == "yes");
+         var bj:String = String(mod.config.getValue("autoBoxMoveJoin"));
+         this._autoBoxMoveJoin = (bj == "1" || bj == "true" || bj == "yes");
+         var dj:String = String(mod.config.getValue("autoDoorJoin"));
+         this._autoDoorJoin = (dj == "1" || dj == "true" || dj == "yes");
+         var blj:String = String(mod.config.getValue("autoBoxLootJoin"));
+         this._autoBoxLootJoin = (blj == "1" || blj == "true" || blj == "yes");
          this._autoTravelLand = String(mod.config.getValue("autoTravelLand"));
          var wi:String = String(mod.config.getValue("worldInject"));
          this._worldInject = (wi != "0" && wi != "false" && wi != "no");
@@ -563,6 +579,14 @@ package rconnect.core
                }
                break;
 
+            case Protocol.MSG_OBJS:
+               // M25：宿主应用加入方的 Box 位移（念力）与 ist 变更上报
+               if(mod.game != null)
+               {
+                  mod.game.applyObjReports(msg);
+               }
+               break;
+
             case Protocol.MSG_GOODBYE:
                removePeerByLink(link);
                broadcastWorldState();
@@ -758,6 +782,40 @@ package rconnect.core
                _objSpawnDone = true;
                mod.game.objSpawnTest();
             }
+            // M25 复现钩子：宿主 60s 移箱（joiner 镜像断言 box pos synced）
+            if(_autoBoxMove && !_boxMoveDone && mod.game != null
+               && mod.game.gg != null && _tickCount > 1200
+               && !mod.game.isTransitioning())
+            {
+               _boxMoveDone = true;
+               mod.game.boxMoveTest();
+            }
+            // M25 复现钩子：joiner 100s 移箱（错峰于宿主 60s，两方向各自
+            // 可观测：宿主断言 box move applied）
+            if(_autoBoxMoveJoin && !_boxMoveJoinDone && mod.game != null
+               && mod.game.gg != null && _tickCount > 2000
+               && !mod.game.isTransitioning())
+            {
+               _boxMoveJoinDone = true;
+               mod.game.boxMoveTest();
+            }
+            // M25 复现钩子：joiner 70s 开门（宿主断言 ist report applied）
+            if(_autoDoorJoin && !_doorJoinDone && mod.game != null
+               && mod.game.gg != null && _tickCount > 1400
+               && !mod.game.isTransitioning())
+            {
+               _doorJoinDone = true;
+               mod.game.doorJoinTest();
+            }
+            // M25 复现钩子：joiner 80s 搜刮第一个容器（ist 上报路径——
+            // 稳定持久态，可过稳定性门；宿主断言 ist report applied t=2）
+            if(_autoBoxLootJoin && !_boxLootJoinDone && mod.game != null
+               && mod.game.gg != null && _tickCount > 1600
+               && !mod.game.isTransitioning())
+            {
+               _boxLootJoinDone = true;
+               mod.game.boxLootTest();
+            }
             // M24 复现钩子：宿主 50-70s 生成/推 Loot（自推进），90s 捡起；
             // joiner 70s 强制拾取（验证拾取上报→宿主移除）
             if(_autoLootTest && mod.game != null && mod.game.gg != null
@@ -814,7 +872,8 @@ package rconnect.core
          {
             mod.game.tileRedrawIfDirty();
          }
-         // M24：joiner 周期（1s）扫描本地 Loot 拾取/推动 → 上报宿主
+         // M24/M25：joiner 周期（1s）扫描本地 Loot 拾取/推动 + Box 位移
+         // （念力）+ ist 变化（开门/开锁/搜刮）→ 上报宿主
          if(mode == CONNECTED && _tickCount % 20 == 0 && mod.game != null
             && link != null && link.isOpen)
          {
@@ -825,6 +884,14 @@ package rconnect.core
                Log.d("RConnectNet: loot report picked="
                   + (lrep.picked as Array).length + " moved="
                   + (lrep.moved as Array).length);
+            }
+            var orep:Object = mod.game.scanObjReports();
+            if(orep != null)
+            {
+               link.send(Protocol.make(Protocol.MSG_OBJS, orep));
+               Log.d("RConnectNet: objs report moved="
+                  + ((orep.moved as Array) != null ? (orep.moved as Array).length : 0)
+                  + " ist=" + ((orep.ist as Array) != null ? (orep.ist as Array).length : 0));
             }
          }
 

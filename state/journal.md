@@ -2,6 +2,18 @@
 
 > 协议见 GOVERNANCE.md §8：只追加不改写，**新条目插在最上面**。
 
+## 2026-09-05 M25 念力移动物品同步 + 门/容器状态双向
+
+- 做了什么：读用户真实联机日志诊断三项报告——敌人"不渲染"实为 boss(alicorn)/mine 类注入受限（其余 27/27 正常，注入失败日志已加堆栈）；念力 Box 位置与门 ist 补双向：objs 快照带 wall/托举态，joiner id+就近落位（含边界+抗重力）；新消息 MSG_OBJS 上报 joiner 移箱与 ist 变更，宿主 setAct+ever-seen 重播收敛；本地偏差保护（镜像不吞本地移动，M24 loot 推动同洞一并修）+ 3s 稳定性门（滤循环门风暴：545→0）+ ist 扫描按对象实例跟踪（同 id 多箱互殴修复）。
+- 关键决定/发现（→ knowledge/experiments/2026-09-05-m25-levit-box-ist-bidirectional.md）：
+  - 双向同步三件套：镜像保护+上报通道+收敛检测（基线刷新时机是止振关键）；
+  - 按 id 的状态机在同 id 多实例房间必然互殴——一律按对象实例+附位置就近匹配；
+  - 新档 travelToLand 到基地型土地（rbl/stable_pi）触发游戏侧 buildProb #1009（测试环境坑，random_mane 稳定）；
+  - 用户真实日志（%APPDATA%\<appid>\Local Store\RConnect.log）是最快诊断入口。
+- 遗留/下一步：alicorn 注入待用户实测堆栈定位；念力动画平滑度（5Hz 近似）；其余按 MEMORY §6。
+
+---
+
 ## 2026-08-28 M24 可移动物品（Loot）全量同步
 
 - 做了什么：盘点敌人同步（M4/M8/M19/M21 已闭环，无结构性缺口）→ 物品侧补齐：宿主 Loot 稳定键（Dictionary 对象键，L#n）+ unitsync `loots` 数组（空数组也发=移除信号）→ joiner 认领/生成/位置镜像/缺席移除；joiner 拾取与推动经新消息 MSG_LOOT 上报宿主权威落位；readNewObjs 退役 Loot 坐标键（避免与 M24 双重生成）；测试钩子拆成 lootSpawnTest/lootPushTest/lootTakeTest（M2_LOOTTEST/M2_LOOTJOIN）。

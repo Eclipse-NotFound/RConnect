@@ -2299,6 +2299,11 @@ package rconnect.game
                   cls: getQualifiedClassName(b),
                   x: numOr(probe(b, "X"), -1),
                   y: numOr(probe(b, "Y"), -1),
+                  w: numOr(probe(b, "wall"), 0),
+                  // M25：念力托举态（levit/fracLevit）——接收端据此保持悬浮
+                  // （stay=true 抗重力）而不是让它下坠
+                  q: (numOr(probe(b, "levit"), 0) != 0
+                     || numOr(probe(b, "fracLevit"), 0) > 0),
                   dead: probe(b, "dead") == true,
                   door: numOr(probe(b, "door"), -1),
                   door_opac: numOr(probe(b, "door_opac"), -1),
@@ -2417,6 +2422,8 @@ package rconnect.game
             return;
          }
          var byId:Object = {};
+         // M25：本轮已消费的 Box（同 id 就近匹配用）
+         var consumed:Dictionary = new Dictionary();
          try
          {
             for each(var b:Object in objs as Array)
@@ -2487,6 +2494,20 @@ package rconnect.game
                if(h.ist != undefined && h.ist != null)
                {
                   applyIst(lb, String(h.id), h.ist);
+               }
+               // M25：可移动 Box（念力可移动物品：wall==0 且非门）位置镜像
+               // ——就近匹配同 id（房间可有多个同 id 箱子），本地正被念力
+               // 托举的跳过（防镜像与本地持有互抢，由上报通道主导）
+               if(numOr(h.door, 0) <= 0 && numOr(h.w, 0) <= 0
+                  && numOr(h.x, -1) >= 0)
+               {
+                  var cand:Object = matchBoxById(String(h.id),
+                     Number(h.x), Number(h.y), consumed);
+                  if(cand != null && !boxHeldLocally(cand))
+                  {
+                     trackBoxPos(cand, Number(h.x), Number(h.y),
+                        h.q == true);
+                  }
                }
                synced++;
             }
@@ -2576,6 +2597,7 @@ package rconnect.game
                      last.open = v;
                      last.cn = 0;
                      iv["setAct"]("open", v);
+                     istExpectSet(lb, "o", v);
                      Log.d("RConnectGame: ist apply open=" + v + " '" + oid
                         + "' tilePhis=" + firstDoorTilePhis(lb));
                   }
@@ -2601,6 +2623,7 @@ package rconnect.game
                      last.lock = v;
                      last.ln = 0;
                      iv["setAct"]("lock", v);
+                     istExpectSet(lb, "l", v);
                      Log.d("RConnectGame: ist apply lock=" + v + " '" + oid + "'");
                   }
                }
@@ -2633,6 +2656,19 @@ package rconnect.game
          catch(err:*)
          {
          }
+      }
+
+      /** M25：推进 joiner 的 ist 期望态（宿主广播应用后调用，
+       *  防止回流被 scanObjReports 误判为本地变更重复上报）。按对象实例。 */
+      private function istExpectSet(lb:Object, key:String, v:int):void
+      {
+         var ex:Object = _istExpectO[lb];
+         if(ex == null)
+         {
+            _istExpectO[lb] = {o: 0, l: 0, t: 0};
+            ex = _istExpectO[lb];
+         }
+         ex[key] = v;
       }
 
       /** M22：读门 Box 第一块从属瓦片的 phis（0=通行，>0=阻挡）。 */
@@ -3237,23 +3273,49 @@ package rconnect.game
                if(lo != null)
                {
                   // 位置镜像：直接落位并清速度（防双端物理分叉），vis 由
-                  // Loot.step 每帧自跟随
-                  var oldP:Object = _lootPos[k];
-                  if(oldP != null
-                     && (Math.abs(Number(s.x) - Number(oldP.x)) > 2
-                        || Math.abs(Number(s.y) - Number(oldP.y)) > 2)
-                     && _lootMoveLogged[k] == undefined)
+                  // Loot.step 每帧自跟随。
+                  // 本地偏差保护（与 M25 trackBoxPos 同理）：本地已偏离
+                  // 宿主基线 >25px（本地推动/念力进行中）时不覆写不刷
+                  // 基线，交给 scanLootReports 上报——否则 5Hz 旧快照会
+                  // 把本地推动拽回吞掉
+                  var baseP:Object = _lootPos[k];
+                  var ldev:Number = baseP != null
+                     ? (numOr(probe(lo, "X"), 0) - Number(baseP.x))
+                        * (numOr(probe(lo, "X"), 0) - Number(baseP.x))
+                        + (numOr(probe(lo, "Y"), 0) - Number(baseP.y))
+                        * (numOr(probe(lo, "Y"), 0) - Number(baseP.y))
+                     : 0;
+                  if(ldev <= 625)
                   {
-                     _lootMoveLogged[k] = true;
-                     Log.d("RConnectGame: loot move '" + k + "' -> "
-                        + Math.round(Number(s.x)) + ","
-                        + Math.round(Number(s.y)));
+                     var oldP:Object = baseP;
+                     if(oldP != null
+                        && (Math.abs(Number(s.x) - Number(oldP.x)) > 2
+                           || Math.abs(Number(s.y) - Number(oldP.y)) > 2)
+                        && _lootMoveLogged[k] == undefined)
+                     {
+                        _lootMoveLogged[k] = true;
+                        Log.d("RConnectGame: loot move '" + k + "' -> "
+                           + Math.round(Number(s.x)) + ","
+                           + Math.round(Number(s.y)));
+                     }
+                     lo["X"] = Number(s.x);
+                     lo["Y"] = Number(s.y);
+                     lo["dx"] = 0;
+                     lo["dy"] = 0;
+                     _lootPos[k] = {x: Number(s.x), y: Number(s.y)};
                   }
-                  lo["X"] = Number(s.x);
-                  lo["Y"] = Number(s.y);
-                  lo["dx"] = 0;
-                  lo["dy"] = 0;
-                  _lootPos[k] = {x: Number(s.x), y: Number(s.y)};
+                  else
+                  {
+                     // 本地推动挂起：若宿主快照已与本地一致（上报已被
+                     // 采纳），刷新基线防无限重报
+                     var cvx:Number = numOr(probe(lo, "X"), 0) - Number(s.x);
+                     var cvy:Number = numOr(probe(lo, "Y"), 0) - Number(s.y);
+                     if(cvx * cvx + cvy * cvy <= 625)
+                     {
+                        _lootPos[k] = {x: numOr(probe(lo, "X"), 0),
+                           y: numOr(probe(lo, "Y"), 0)};
+                     }
+                  }
                }
             }
             // 移除：宿主广播里已消失的键 = 宿主侧被拾取/清除
@@ -3579,6 +3641,457 @@ package rconnect.game
          catch(err:*)
          {
             Log.d("RConnectGame: lootTakeJoin failed: " + err);
+         }
+      }
+
+      /** M25 复现钩子：把第一个可移动 Box（door<=0 且 wall==0）位移 60px
+       *  （确定性位置变化，宿主/joiner 两侧通用——验证双向位置同步）。 */
+      public function boxMoveTest():Boolean
+      {
+         if(loc == null)
+         {
+            return false;
+         }
+         try
+         {
+            var objs:Object = probe(loc, "objs");
+            for each(var b:Object in objs as Array)
+            {
+               if(numOr(probe(b, "door"), 0) > 0
+                  || numOr(probe(b, "wall"), 0) > 0
+                  || probe(b, "dead") == true)
+               {
+                  continue;
+               }
+               b["X"] = numOr(probe(b, "X"), 0) + 60;
+               b["Y"] = numOr(probe(b, "Y"), 0) - 10;
+               b["runVis"]();
+               Log.d("RConnectGame: boxMoveTest moved '" + String(probe(b,
+                  "id")) + "' -> " + Math.round(numOr(probe(b, "X"), 0))
+                  + "," + Math.round(numOr(probe(b, "Y"), 0)));
+               return true;
+            }
+            Log.d("RConnectGame: boxMoveTest: no movable box");
+         }
+         catch(err:*)
+         {
+            Log.d("RConnectGame: boxMoveTest failed: " + err);
+         }
+         return false;
+      }
+
+      /** M25 复现钩子：joiner 开第一个非 autoClose 活门（真实使用路径，
+       *  验证 ist 上报→宿主应用→广播回流收敛）。 */
+      public function doorJoinTest():void
+      {
+         if(loc == null)
+         {
+            return;
+         }
+         var objs:Object = probe(loc, "objs");
+         if(!(objs is Array))
+         {
+            return;
+         }
+         try
+         {
+            for each(var b:Object in objs as Array)
+            {
+               if(probe(b, "dead") == true || numOr(probe(b, "door"), 0) <= 0)
+               {
+                  continue;
+               }
+               var iv:Object = probe(b, "inter");
+               if(iv == null || numOr(probe(iv, "autoClose"), 0) > 0)
+               {
+                  continue;
+               }
+               iv["command"]("open");
+               Log.d("RConnectGame: doorJoinTest open '" + String(probe(b,
+                  "id")) + "' tilePhis=" + firstDoorTilePhis(b));
+               return;
+            }
+            Log.d("RConnectGame: doorJoinTest: no door obj");
+         }
+         catch(err:*)
+         {
+            Log.d("RConnectGame: doorJoinTest failed: " + err);
+         }
+      }
+
+      // ================= M25：可移动 Box（念力物品）+ ist 双向 =================
+      // M16 只同步 Box 的 dead/hp/ist 状态，位置不动——念力（telekinesis）
+      // 移动的箱子在对端原地不动。M25 补位置镜像（宿主→joiner，随 objs
+      // 快照）+ 移动/交互上报（joiner→宿主，宿主权威落位后经快照回流）。
+
+      private var _boxTrack:Dictionary = new Dictionary();
+      private var _boxTrackLoc:Object = null;
+      // M25：ist 扫描期望/稳定性按对象实例跟踪（同 id 多实例实测会互殴）
+      private var _istExpectO:Dictionary = new Dictionary();
+      private var _istStabO:Dictionary = new Dictionary();
+
+      /** ist 上报稳定性门：连续 N 次扫描（1Hz）一致才上报。 */
+      private static const IST_REPORT_N:int = 3;
+
+      private function boxTrackReset():void
+      {
+         _boxTrack = new Dictionary();
+      }
+
+      /** 同 id 就近匹配（未消费的里挑离 (x,y) 最近者，150px 内才算）。
+       *  含门/墙对象（ist 上报路径用；可移动物路径用 matchBoxById）。 */
+      private function matchObjByIdPos(id:String, x:Number, y:Number,
+         consumed:Dictionary):Object
+      {
+         var best:Object = null;
+         var bestD:Number = 22500;   // 150²
+         try
+         {
+            var objs:Object = probe(loc, "objs");
+            for each(var b:Object in objs as Array)
+            {
+               if(consumed[b] === true
+                  || String(probe(b, "id")) != id)
+               {
+                  continue;
+               }
+               var dx:Number = numOr(probe(b, "X"), 0) - x;
+               var dy:Number = numOr(probe(b, "Y"), 0) - y;
+               var d2:Number = dx * dx + dy * dy;
+               if(d2 < bestD)
+               {
+                  bestD = d2;
+                  best = b;
+               }
+            }
+         }
+         catch(err:*)
+         {
+         }
+         return best;
+      }
+
+      /** 本地正被念力托举？（levit/fracLevit 由施法侧设置） */
+      private function boxHeldLocally(b:Object):Boolean
+      {
+         return numOr(probe(b, "levit"), 0) != 0
+            || numOr(probe(b, "fracLevit"), 0) > 0;
+      }
+
+      /** 同 id 就近匹配（未消费的里挑离 (x,y) 最近者，150px 内才算）。 */
+      private function matchBoxById(id:String, x:Number, y:Number,
+         consumed:Dictionary):Object
+      {
+         var best:Object = null;
+         var bestD:Number = 22500;   // 150²
+         try
+         {
+            var objs:Object = probe(loc, "objs");
+            for each(var b:Object in objs as Array)
+            {
+               if(consumed[b] === true
+                  || numOr(probe(b, "door"), 0) > 0
+                  || numOr(probe(b, "wall"), 0) > 0)
+               {
+                  continue;
+               }
+               if(String(probe(b, "id")) != id)
+               {
+                  continue;
+               }
+               var dx:Number = numOr(probe(b, "X"), 0) - x;
+               var dy:Number = numOr(probe(b, "Y"), 0) - y;
+               var d2:Number = dx * dx + dy * dy;
+               if(d2 < bestD)
+               {
+                  bestD = d2;
+                  best = b;
+               }
+            }
+         }
+         catch(err:*)
+         {
+         }
+         if(best != null)
+         {
+            consumed[best] = true;
+         }
+         return best;
+      }
+
+      /** 落位到宿主/对端报告的位置（含碰撞边界与视觉；托举态抗重力）。
+       *  本地偏差保护（force=false 的镜像路径）：本地已偏离基线 >25px
+       *  （本地念力/推挤进行中）时不覆写也不刷新基线——否则宿主旧快照
+       *  会在 200ms 内把本地移动拽回、偏差被吞、上报通道永远发不出
+       *  （M24/M25 实测教训）。force=true（宿主应用上报）强制落位。 */
+      private function trackBoxPos(b:Object, x:Number, y:Number,
+         held:Boolean, force:Boolean = false):void
+      {
+         try
+         {
+            var rec:Object = _boxTrack[b];
+            if(rec != null && !force)
+            {
+               var ldx:Number = numOr(probe(b, "X"), 0) - Number(rec.x);
+               var ldy:Number = numOr(probe(b, "Y"), 0) - Number(rec.y);
+               if(ldx * ldx + ldy * ldy > 625)
+               {
+                  // 本地移动挂起：不覆写。但若宿主快照已与本地一致
+                  // （上报已被采纳），刷新基线消除偏差，防无限重报
+                  var hx:Number = numOr(probe(b, "X"), 0) - x;
+                  var hy:Number = numOr(probe(b, "Y"), 0) - y;
+                  if(hx * hx + hy * hy <= 625)
+                  {
+                     rec.x = x;
+                     rec.y = y;
+                  }
+                  return;
+               }
+            }
+            var bx:Number = numOr(probe(b, "X"), 0);
+            var by:Number = numOr(probe(b, "Y"), 0);
+            if(Math.abs(bx - x) >= 2 || Math.abs(by - y) >= 2)
+            {
+               var scX:Number = numOr(probe(b, "scX"), 20);
+               var scY:Number = numOr(probe(b, "scY"), 20);
+               b["X"] = x;
+               b["Y"] = y;
+               b["X1"] = x - scX / 2;
+               b["X2"] = x + scX / 2;
+               b["Y1"] = y - scY;
+               b["Y2"] = y;
+               b["dx"] = 0;
+               b["dy"] = 0;
+               if(held)
+               {
+                  b["stay"] = true;   // 抗重力：托举中的箱子不落下
+               }
+               if(!_boxMoveLogged[b])
+               {
+                  _boxMoveLogged[b] = true;
+                  Log.d("RConnectGame: box pos synced '" + String(probe(b,
+                     "id")) + "' -> " + Math.round(x) + "," + Math.round(y));
+               }
+            }
+            b["runVis"]();
+            if(rec == null)
+            {
+               _boxTrack[b] = {x: x, y: y, q: held, lastR: 0};
+            }
+            else
+            {
+               rec.x = x;
+               rec.y = y;
+               rec.q = held;
+            }
+         }
+         catch(err:*)
+         {
+         }
+      }
+
+      private var _boxMoveLogged:Dictionary = new Dictionary();
+      private var _objScanErrLogged:Boolean = false;
+
+      /** M25：joiner 周期（1s）扫描——本地 Box 移动（念力/推挤）与
+       *  ist 变化（开关门/开锁/搜刮）上报宿主。@return 上报对象或 null。 */
+      public function scanObjReports():Object
+      {
+         if(loc == null)
+         {
+            return null;
+         }
+         if(_boxTrackLoc !== loc)
+         {
+            _boxTrackLoc = loc;
+            boxTrackReset();
+            _istExpectO = new Dictionary();
+            _istStabO = new Dictionary();
+         }
+         var moved:Array = [];
+         var ist:Array = [];
+         try
+         {
+            var now:int = flash.utils.getTimer();
+            // 1) Box 位移：偏离宿主快照基线 >25px 即本地被移动（念力）
+            for(var b:Object in _boxTrack)
+            {
+               var rec:Object = _boxTrack[b];
+               var dx:Number = numOr(probe(b, "X"), 0) - Number(rec.x);
+               var dy:Number = numOr(probe(b, "Y"), 0) - Number(rec.y);
+               if(dx * dx + dy * dy > 625
+                  && now - numOr(rec.lastR, 0) > 1000)
+               {
+                  rec.lastR = now;
+                  moved.push({id: String(probe(b, "id")),
+                     x: numOr(probe(b, "X"), 0),
+                     y: numOr(probe(b, "Y"), 0),
+                     q: boxHeldLocally(b)});
+               }
+            }
+            // 2) ist 变化：实际 open/lock/loot 偏离期望态（期望来自宿主
+            //    广播或首见初始化）→ 本地交互（开门/开锁/搜刮）。
+            //    稳定性门：连续 IST_REPORT_N 次扫描（≈3s）一致才上报——
+            //    游戏自驱循环门（如 rbl door3 的 1.4s 开合循环）各相位
+            //    都撑不过窗口，被自然滤除，防止上报风暴打穿宿主
+            var objs:Object = probe(loc, "objs");
+            for each(var o:Object in objs as Array)
+            {
+               var iv:Object = probe(o, "inter");
+               if(iv == null || numOr(probe(iv, "autoClose"), 0) > 0)
+               {
+                  continue;   // autoClose 门瞬态不同步（M22 语义）
+               }
+               var oid:String = String(probe(o, "id"));
+               if(oid == null || oid.length == 0)
+               {
+                  continue;
+               }
+               var so:Object = {};
+               iv["save"](so);
+               var ao:int = probe(iv, "open") == true ? 1 : 0;
+               var al:int = numOr(probe(iv, "lock"), 0);
+               if(al == 100)
+               {
+                  al = 102;
+               }
+               var at:int = numOr(so.loot, 0) > 0 ? 2 : 0;
+               // M25：按对象实例跟踪（同 id 多实例会在 id 级互相打架，
+               // 稳定性计数永远到不了阈值——'case' 实测教训）
+               var stab:Object = _istStabO[o];
+               if(stab == null)
+               {
+                  stab = _istStabO[o] = {o: ao, l: al, t: at, n: 1};
+                  continue;
+               }
+               if(stab.o == ao && stab.l == al && stab.t == at)
+               {
+                  stab.n++;
+               }
+               else
+               {
+                  stab.o = ao;
+                  stab.l = al;
+                  stab.t = at;
+                  stab.n = 1;
+               }
+               var exo:Object = _istExpectO[o];
+               if(exo == null)
+               {
+                  _istExpectO[o] = {o: ao, l: al, t: at};
+                  continue;
+               }
+               if(exo == null || stab.n < IST_REPORT_N)
+               {
+                  continue;
+               }
+               if(stab.o != exo.o || stab.l != exo.l || stab.t != exo.t)
+               {
+                  // 附位置：宿主按 id+就近匹配到正确实例（同 id 多箱）
+                  ist.push({id: oid, o: stab.o, l: stab.l, t: stab.t,
+                     x: numOr(probe(o, "X"), 0), y: numOr(probe(o, "Y"), 0)});
+                  // 推进期望防重复上报
+                  exo.o = stab.o;
+                  exo.l = stab.l;
+                  exo.t = stab.t;
+                  Log.d("RConnectGame: ist local change '" + oid
+                     + "' o=" + stab.o + " l=" + stab.l + " t=" + stab.t);
+               }
+            }
+         }
+         catch(err:*)
+         {
+            if(!_objScanErrLogged)
+            {
+               _objScanErrLogged = true;
+               Log.d("RConnectGame: obj scan err: " + err
+                  + (err is Error && (err as Error).getStackTrace() != null
+                     ? " | " + String((err as Error).getStackTrace()).split(
+                        "\n").slice(0, 3).join(" <= ") : ""));
+            }
+         }
+         if(moved.length == 0 && ist.length == 0)
+         {
+            return null;
+         }
+         return {moved: moved, ist: ist};
+      }
+
+      /** M25：宿主应用 joiner 上报（Box 位移就近落位；ist 经 setAct 官方
+       *  路径 + ever-seen 标记使其随快照重播，两端收敛）。 */
+      public function applyObjReports(o:Object):void
+      {
+         if(o == null || loc == null)
+         {
+            return;
+         }
+         try
+         {
+            var moved:Array = o.moved as Array;
+            if(moved != null)
+            {
+               for each(var m:Object in moved)
+               {
+                  var mb:Object = matchBoxById(String(m.id),
+                     Number(m.x), Number(m.y), new Dictionary());
+                  if(mb != null)
+                  {
+                     trackBoxPos(mb, Number(m.x), Number(m.y),
+                        m.q == true, true);
+                     Log.d("RConnectGame: box move applied '" + String(m.id)
+                        + "'");
+                  }
+               }
+            }
+            var istl:Array = o.ist as Array;
+            if(istl != null)
+            {
+               var used:Dictionary = new Dictionary();
+               for each(var is2:Object in istl)
+               {
+                  // id+就近匹配到正确实例（同 id 多箱；含门/墙对象）
+                  var target:Object = matchObjByIdPos(String(is2.id),
+                     numOr(is2.x, 0), numOr(is2.y, 0), used);
+                  if(target == null)
+                  {
+                     continue;
+                  }
+                  used[target] = true;
+                  var iv:Object = probe(target, "inter");
+                  if(iv == null)
+                  {
+                     continue;
+                  }
+                  var seen:Object = _istSeen[String(is2.id)];
+                  if(seen == null)
+                  {
+                     seen = {open: false, lock: false, mine: false,
+                        loot: false, expl: false};
+                     _istSeen[String(is2.id)] = seen;
+                  }
+                  if(is2.o != undefined && is2.o == 1)
+                  {
+                     iv["setAct"]("open", 1);
+                     seen.open = true;
+                  }
+                  if(is2.l != undefined && numOr(is2.l, 0) > 0)
+                  {
+                     iv["setAct"]("lock", numOr(is2.l, 0));
+                     seen.lock = true;
+                  }
+                  if(is2.t != undefined && numOr(is2.t, 0) > 0)
+                  {
+                     iv["setAct"]("loot", 2);
+                     seen.loot = true;
+                  }
+                  Log.d("RConnectGame: ist report applied '" + String(is2.id)
+                     + "' o=" + String(is2.o) + " l=" + String(is2.l)
+                     + " t=" + String(is2.t));
+               }
+            }
+         }
+         catch(err:*)
+         {
          }
       }
 
@@ -4537,7 +5050,9 @@ package rconnect.game
          catch(err:*)
          {
             _injectFailed[String(e.id)] = true;
-            Log.d("RConnectGame: inject '" + e.id + "' failed: " + err);
+            Log.d("RConnectGame: inject '" + e.id + "' failed: " + err
+               + (err is Error && (err as Error).getStackTrace() != null
+                  ? " | " + (err as Error).getStackTrace() : ""));
             return null;
          }
          // mxmlc 控制流怪癖：全部 return 都在 try/catch 内会误报"无返回值"

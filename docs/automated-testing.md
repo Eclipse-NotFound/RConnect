@@ -192,6 +192,10 @@ cleanup 子命令：杀测试实例 + 删临时描述符。
 | `M2_BOXLOOT=1` | 宿主 80s 搜刮第一个容器（setAct("loot",2)） | （跟随镜像） |
 | `M2_LOOTTEST=1` | 宿主 50-60s 生成 Loot、80s 推走、120s 捡起 | （生成/移动/移除镜像+拾取上报） |
 | `M2_LOOTJOIN=1` | — | joiner 70s 强制拾取本地 Loot（验证拾取上报→宿主移除） |
+| `M2_BOXMOVE=1` | 宿主 60s 移动第一个可移动 Box | （joiner 断言 `box pos synced`） |
+| `M2_BOXMOVEJOIN=1` | （宿主断言 `box move applied`） | joiner 100s 移动第一个可移动 Box |
+| `M2_BOXLOOTJOIN=1` | （宿主断言 `ist report applied`） | joiner 80s 搜刮第一个非空容器 |
+| `M2_DOORJOIN=1` | — | joiner 70s 开第一个非 autoClose 门（注意循环门会搅局） |
 
 ### 4.3 手动双开（无脚本时给玩家/自己的速测）
 

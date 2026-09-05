@@ -20,6 +20,7 @@ package rconnect.net
       public static const MSG_DAMAGE:String = "damage";
       public static const MSG_PLAYERDMG:String = "playerdmg";
       public static const MSG_LOOT:String = "loot";
+      public static const MSG_OBJS:String = "objs";
 
       /** 构造消息对象（type + 字段）。 */
       public static function make(type:String, fields:Object):Object

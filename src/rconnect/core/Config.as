@@ -41,6 +41,10 @@ package rconnect.core
         autoBoxLoot: "",
         autoLootTest: "",
         autoLootJoin: "",
+        autoBoxMove: "",
+        autoBoxMoveJoin: "",
+        autoDoorJoin: "",
+        autoBoxLootJoin: "",
          testGhostDmg: 50
       };
 
@@ -119,6 +123,10 @@ package rconnect.core
         values.autoBoxLoot = String(values.autoBoxLoot);
         values.autoLootTest = String(values.autoLootTest);
         values.autoLootJoin = String(values.autoLootJoin);
+        values.autoBoxMove = String(values.autoBoxMove);
+        values.autoBoxMoveJoin = String(values.autoBoxMoveJoin);
+        values.autoDoorJoin = String(values.autoDoorJoin);
+        values.autoBoxLootJoin = String(values.autoBoxLootJoin);
          values.testGhostDmg = Number(values.testGhostDmg);
          if(!isFinite(values.testGhostDmg) || values.testGhostDmg < 0)
          {
