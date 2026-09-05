@@ -6,6 +6,7 @@ package rconnect.game
    import flash.text.TextField;
    import flash.text.TextFieldAutoSize;
    import flash.text.TextFormat;
+   import flash.utils.Dictionary;
    import flash.utils.getQualifiedClassName;
    import rconnect.core.Log;
 
@@ -3061,19 +3062,16 @@ package rconnect.game
                {
                   var id:String = String(probe(cur, "id"));
                   var isLoot:Boolean = (clsS.indexOf("Loot") >= 0);
-                  if(isLoot || (id != null && id.length > 0
-                     && _objTpl[id] !== true))
+                  // M24：Loot 一律走稳定键同步（readLootSync/applyLootSync），
+                  // 这里不再上报——否则坐标键与稳定键两套系统会对同一
+                  // 物品双重生成
+                  if(!isLoot && id != null && id.length > 0
+                     && _objTpl[id] !== true)
                   {
-                     if(isLoot)
-                     {
-                        id = "loot@" + lootItemBase(cur) + "@"
-                           + Math.round(numOr(probe(cur, "X"), 0)) + ","
-                           + Math.round(numOr(probe(cur, "Y"), 0));
-                     }
                      out.push({id: id, cls: clsS,
                         x: numOr(probe(cur, "X"), 0),
                         y: numOr(probe(cur, "Y"), 0),
-                        isLoot: isLoot,
+                        isLoot: false,
                         itemBase: lootItemBase(cur),
                         dead: probe(cur, "dead") == true,
                         door: numOr(probe(cur, "door"), -1),
@@ -3094,12 +3092,513 @@ package rconnect.game
       private var _objTplInit:Boolean = false;
       private var _objBaseLoc:Object = null;
 
+      // ================= M24：可移动物品（Loot）同步 =================
+      // M17b 只镜像"Loot 的诞生"且键含坐标——物品被推动后键变化，joiner
+      // 会重复生成并留下旧位置残影；宿主捡起后 joiner 的副本也永存。
+      // M24 给 Loot 稳定身份 + 位置/移除镜像 + joiner 侧拾取/推动上报。
+
+      private var _lootIdOf:Dictionary;    // 宿主：Loot 对象 → 稳定键 L#n
+      private var _lootIdSeq:int = 0;
+      private var _lootObjOf:Object = {};  // 键 → Loot 对象（双端）
+      private var _lootKeyOfJ:Dictionary;  // joiner：Loot 对象 → 已认领键
+      private var _lootPos:Object = {};    // joiner：键 → 宿主上次广播位置
+      private var _lootRepT:Object = {};   // joiner：键 → 上次移动上报时刻
+      private var _lootLoc:Object = null;  // 房间守卫（换房清空身份表）
+
+      private function lootSyncReset():void
+      {
+         _lootIdOf = new Dictionary();
+         _lootKeyOfJ = new Dictionary();
+         _lootObjOf = {};
+         _lootPos = {};
+         _lootRepT = {};
+         _lootIdSeq = 0;
+      }
+
+      /** 沿 Pt 链枚举本房间全部 Loot。@return [obj, base] 数组 */
+      private function lootWalk():Array
+      {
+         var out:Array = [];
+         try
+         {
+            var cur:Object = probe(loc, "firstObj");
+            var guard:int = 0;
+            while(cur != null && guard++ < 800)
+            {
+               if(getQualifiedClassName(cur).indexOf("Loot") >= 0)
+               {
+                  out.push([cur, lootItemBase(cur)]);
+               }
+               cur = probe(cur, "nobj");
+            }
+         }
+         catch(err:*)
+         {
+         }
+         return out;
+      }
+
+      /** M24：宿主扫描本房间 Loot（稳定键 = 首见顺序，随 unitsync 广播）。 */
+      public function readLootSync():Array
+      {
+         if(loc == null)
+         {
+            return null;
+         }
+         if(_lootLoc !== loc)
+         {
+            _lootLoc = loc;
+            lootSyncReset();
+         }
+         var out:Array = [];
+         try
+         {
+            var list:Array = lootWalk();
+            if(list.length > 0 && !_lootScanLogged)
+            {
+               _lootScanLogged = true;
+               Log.d("RConnectGame: loots scan first n=" + list.length
+                  + " keying...");
+            }
+            for each(var e:Object in list)
+            {
+               var o:Object = e[0];
+               var k:String = _lootIdOf[o];
+               if(k == null)
+               {
+                  k = "L#" + (++_lootIdSeq);
+                  _lootIdOf[o] = k;
+                  _lootObjOf[k] = o;
+               }
+               out.push({k: k, x: numOr(probe(o, "X"), 0),
+                  y: numOr(probe(o, "Y"), 0), b: String(e[1])});
+               if(out.length >= 60)
+               {
+                  break;
+               }
+            }
+         }
+         catch(err:*)
+         {
+            if(!_lootScanErrLogged)
+            {
+               _lootScanErrLogged = true;
+               Log.d("RConnectGame: loots scan err: " + err);
+            }
+         }
+         return out.length > 0 ? out : null;
+      }
+
+      private var _lootScanLogged:Boolean = false;
+      private var _lootScanErrLogged:Boolean = false;
+
+      /** M24：joiner 应用宿主 Loot 快照（认领/生成/移动/移除）。 */
+      public function applyLootSync(list:Array):void
+      {
+         if(loc == null || list == null)
+         {
+            return;
+         }
+         if(_lootLoc !== loc)
+         {
+            _lootLoc = loc;
+            lootSyncReset();
+         }
+         var spawned:int = 0;
+         var claimed:int = 0;
+         try
+         {
+            var ad:Object = main["loaderInfo"]["applicationDomain"];
+            var seen:Object = {};
+            for each(var s:Object in list)
+            {
+               var k:String = String(s.k);
+               seen[k] = true;
+               var lo:Object = _lootObjOf[k];
+               if(lo == null)
+               {
+                  lo = claimLocalLoot(k, String(s.b),
+                     Number(s.x), Number(s.y));
+                  if(lo != null)
+                  {
+                     claimed++;
+                  }
+               }
+               if(lo == null)
+               {
+                  lo = spawnLootByKey(ad, s);
+                  if(lo != null)
+                  {
+                     spawned++;
+                     Log.d("RConnectGame: loot spawn '" + k + "' base="
+                        + String(s.b));
+                  }
+               }
+               if(lo != null)
+               {
+                  // 位置镜像：直接落位并清速度（防双端物理分叉），vis 由
+                  // Loot.step 每帧自跟随
+                  var oldP:Object = _lootPos[k];
+                  if(oldP != null
+                     && (Math.abs(Number(s.x) - Number(oldP.x)) > 2
+                        || Math.abs(Number(s.y) - Number(oldP.y)) > 2)
+                     && _lootMoveLogged[k] == undefined)
+                  {
+                     _lootMoveLogged[k] = true;
+                     Log.d("RConnectGame: loot move '" + k + "' -> "
+                        + Math.round(Number(s.x)) + ","
+                        + Math.round(Number(s.y)));
+                  }
+                  lo["X"] = Number(s.x);
+                  lo["Y"] = Number(s.y);
+                  lo["dx"] = 0;
+                  lo["dy"] = 0;
+                  _lootPos[k] = {x: Number(s.x), y: Number(s.y)};
+               }
+            }
+            // 移除：宿主广播里已消失的键 = 宿主侧被拾取/清除
+            // （TCP 可靠有序，缺席即真移除，无丢包抖动）
+            for(var pk:String in _lootObjOf)
+            {
+               if(seen[pk] !== true)
+               {
+                  var gone:Object = _lootObjOf[pk];
+                  try
+                  {
+                     loc["remObj"](gone);
+                     Log.d("RConnectGame: loot removed '" + pk + "'");
+                  }
+                  catch(e2:*)
+                  {
+                  }
+                  forgetLoot(pk, gone);
+               }
+            }
+            if((spawned > 0 || claimed > 0) && !_lootSyncLogged)
+            {
+               _lootSyncLogged = true;
+               Log.d("RConnectGame: loot sync first: spawned=" + spawned
+                  + " claimed=" + claimed + " total=" + list.length);
+            }
+         }
+         catch(err:*)
+         {
+         }
+      }
+
+      private var _lootSyncLogged:Boolean = false;
+      private var _lootMoveLogged:Object = {};
+
+      /** joiner 认领：同 base 且距宿主广播位置 <40px 的未标记本地 Loot。 */
+      private function claimLocalLoot(k:String, base:String,
+         hx:Number, hy:Number):Object
+      {
+         try
+         {
+            var list:Array = lootWalk();
+            for each(var e:Object in list)
+            {
+               var o:Object = e[0];
+               if(_lootKeyOfJ[o] != undefined)
+               {
+                  continue;   // 已被其他键认领
+               }
+               if(String(e[1]) != base)
+               {
+                  continue;
+               }
+               var dx:Number = numOr(probe(o, "X"), 0) - hx;
+               var dy:Number = numOr(probe(o, "Y"), 0) - hy;
+               if(dx * dx + dy * dy < 1600)
+               {
+                  _lootKeyOfJ[o] = k;
+                  _lootObjOf[k] = o;
+                  return o;
+               }
+            }
+         }
+         catch(err:*)
+         {
+         }
+         return null;
+      }
+
+      /** M17b 构造路径复用：按广播条目生成 Loot 并登记键。 */
+      private function spawnLootByKey(ad:Object, s:Object):Object
+      {
+         var res:Object = null;
+         try
+         {
+            var lootCls:Object = ad["getDefinition"]("fe.loc.Loot");
+            var shaped:Object = {itemBase: String(s.b),
+               x: Number(s.x), y: Number(s.y)};
+            var lo:Object = spawnLoot(ad, lootCls, shaped);
+            if(lo != null)
+            {
+               _lootKeyOfJ[lo] = String(s.k);
+               _lootObjOf[String(s.k)] = lo;
+            }
+            res = lo;
+         }
+         catch(err:*)
+         {
+            res = null;
+         }
+         return res;
+      }
+
+      private function forgetLoot(k:String, o:Object):void
+      {
+         delete _lootObjOf[k];
+         delete _lootPos[k];
+         delete _lootRepT[k];
+         if(_lootKeyOfJ != null)
+         {
+            delete _lootKeyOfJ[o];
+         }
+      }
+
+      /** M24：joiner 周期扫描（1Hz）——本地拾取/推动上报宿主。 */
+      public function scanLootReports():Object
+      {
+         var res:Object = null;
+         if(loc == null || _lootLoc !== loc)
+         {
+            return null;
+         }
+         var picked:Array = [];
+         var moved:Array = [];
+         try
+         {
+            // 在链上的 Loot 集合（用于识别"未拾取但已不在链上"的清除）
+            // 注意必须用 Dictionary——普通 Object 的键会被字符串化，
+            // 所有对象撞成同一个键
+            var live:Dictionary = new Dictionary();
+            var list:Array = lootWalk();
+            for each(var e:Object in list)
+            {
+               live[e[0]] = true;
+            }
+            var now:int = flash.utils.getTimer();
+            for(var k:String in _lootObjOf)
+            {
+               var o:Object = _lootObjOf[k];
+               var isTake:Boolean = (probe(o, "isTake") == true);
+               var inChain:Boolean = (live[o] === true);
+               if(isTake || !inChain)
+               {
+                  picked.push(k);
+                  continue;
+               }
+               var p:Object = _lootPos[k];
+               if(p == null)
+               {
+                  continue;
+               }
+               var dx:Number = numOr(probe(o, "X"), 0) - Number(p.x);
+               var dy:Number = numOr(probe(o, "Y"), 0) - Number(p.y);
+               if(dx * dx + dy * dy > 625)
+               {
+                  if(now - numOr(_lootRepT[k], 0) > 1000)
+                  {
+                     _lootRepT[k] = now;
+                     moved.push({k: k, x: numOr(probe(o, "X"), 0),
+                        y: numOr(probe(o, "Y"), 0)});
+                  }
+               }
+            }
+            if(picked.length > 0 || moved.length > 0)
+            {
+               res = {picked: picked, moved: moved};
+            }
+         }
+         catch(err:*)
+         {
+         }
+         return res;
+      }
+
+      /** M24：宿主应用 joiner 的拾取/推动上报（宿主仍是权威：落位即可）。 */
+      public function applyLootReports(o:Object):void
+      {
+         if(o == null || loc == null || _lootLoc !== loc)
+         {
+            return;
+         }
+         try
+         {
+            var picked:Array = o.picked as Array;
+            if(picked != null)
+            {
+               for each(var pk:Object in picked)
+               {
+                  var lo:Object = _lootObjOf[String(pk)];
+                  if(lo != null)
+                  {
+                     loc["remObj"](lo);
+                     Log.d("RConnectGame: loot pick applied '" + String(pk)
+                        + "'");
+                  }
+                  forgetLoot(String(pk), lo);
+               }
+            }
+            var moved:Array = o.moved as Array;
+            if(moved != null)
+            {
+               for each(var m:Object in moved)
+               {
+                  var mo:Object = _lootObjOf[String(m.k)];
+                  if(mo != null)
+                  {
+                     mo["X"] = Number(m.x);
+                     mo["Y"] = Number(m.y);
+                     mo["dx"] = 0;
+                     mo["dy"] = 0;
+                     Log.d("RConnectGame: loot push applied '" + String(m.k)
+                        + "'");
+                  }
+               }
+            }
+         }
+         catch(err:*)
+         {
+         }
+      }
+
+      /** M24 复现钩子（幂等）：房间无地面 Loot 则生成一件 kofe（M17b
+       *  同款构造）。由 Session 在时间窗内每 tick 调用，自守卫。 */
+      public function lootSpawnTest():void
+      {
+         if(loc == null)
+         {
+            return;
+         }
+         try
+         {
+            if(lootWalk().length > 0)
+            {
+               return;
+            }
+            var ad:Object = main["loaderInfo"]["applicationDomain"];
+            var itCls:Object = ad["getDefinition"]("fe.serv.Item");
+            var loCls:Object = ad["getDefinition"]("fe.loc.Loot");
+            var item:Object = new (itCls as Class)(null, "kofe", 1);
+            new (loCls as Class)(loc, item,
+               Number(numOr(probe(gg, "X"), 0)) + 40,
+               Number(numOr(probe(gg, "Y"), 0)), false, false, false);
+            Log.d("RConnectGame: lootTest spawned 'kofe' (room empty)");
+         }
+         catch(err:*)
+         {
+            Log.d("RConnectGame: lootSpawnTest failed: " + err);
+         }
+      }
+
+      /** M24 复现钩子：推第一件 Loot——直接位移 60px（确定性位置变化，
+       *  比速度更可靠：静止物品的 dx 会被摩擦/休眠逻辑吞掉）。 */
+      public function lootPushTest():void
+      {
+         if(loc == null)
+         {
+            return;
+         }
+         try
+         {
+            var list:Array = lootWalk();
+            if(list.length == 0)
+            {
+               return;
+            }
+            var o:Object = list[0][0];
+            o["X"] = Number(numOr(probe(o, "X"), 0)) + 60;
+            o["Y"] = Number(numOr(probe(o, "Y"), 0)) - 10;
+            o["stay"] = false;
+            Log.d("RConnectGame: lootTest pushed '"
+               + String(list[0][1]) + "' @" + Math.round(numOr(probe(o,
+               "X"), 0)) + "," + Math.round(numOr(probe(o, "Y"), 0)));
+         }
+         catch(err:*)
+         {
+            Log.d("RConnectGame: lootPushTest failed: " + err);
+         }
+      }
+
+      /** M24 复现钩子：捡第一件 Loot（take(true)=强制拾取，走游戏原生
+       *  remObj+入包）。房间没有就先现场生成。@return 是否已捡。 */
+      public function lootTakeTest():Boolean
+      {
+         var res:Boolean = false;
+         if(loc == null)
+         {
+            return false;
+         }
+         try
+         {
+            var list:Array = lootWalk();
+            if(list.length == 0)
+            {
+               lootSpawnTest();
+               res = false;
+            }
+            else
+            {
+               list[0][0]["take"](true);
+               Log.d("RConnectGame: lootTest taken '"
+                  + String(list[0][1]) + "'");
+               res = true;
+            }
+         }
+         catch(err:*)
+         {
+            Log.d("RConnectGame: lootTakeTest failed: " + err);
+            res = false;
+         }
+         return res;
+      }
+
+      /** M24 复现钩子：joiner 强制拾取本地第一件 Loot（验证拾取上报→
+       *  宿主移除链路）。 */
+      public function lootTakeJoinTest():void
+      {
+         if(loc == null)
+         {
+            return;
+         }
+         try
+         {
+            var list:Array = lootWalk();
+            if(list.length == 0)
+            {
+               Log.d("RConnectGame: lootTakeJoin: no loot in room");
+               return;
+            }
+            list[0][0]["take"](true);
+            Log.d("RConnectGame: lootTakeJoin taken '"
+               + String(list[0][1]) + "'");
+         }
+         catch(err:*)
+         {
+            Log.d("RConnectGame: lootTakeJoin failed: " + err);
+         }
+      }
+
       private function lootItemBase(o:Object):String
       {
          try
          {
             var it:Object = probe(o, "item");
-            return it != null ? String(probe(it, "base")) : "";
+            if(it == null)
+            {
+               return "";
+            }
+            // M24：Item 构造器把 param2 赋给 id 而非 base（base 字段另有
+            // 来源，实测 hook 生成的物品 base 恒为空）——身份键优先取 id
+            var id:String = String(probe(it, "id"));
+            if(id != null && id.length > 0)
+            {
+               return id;
+            }
+            return String(probe(it, "base"));
          }
          catch(err:*)
          {
@@ -3177,8 +3676,9 @@ package rconnect.game
 
       private var _objSpawnedIds:Object = {};
 
-      /** M17：按宿主广播生成 Loot（Item 按 base 构造）。@return 是否成功。 */
-      private function spawnLoot(ad:Object, lootCls:Object, s:Object):Boolean
+      /** M17：按宿主广播生成 Loot（Item 按 base 构造）。@return Loot 对象
+       *  或 null（M24：返回对象供键登记；applyObjSpawn 的真值判断兼容）。 */
+      private function spawnLoot(ad:Object, lootCls:Object, s:Object):Object
       {
          try
          {
@@ -3186,20 +3686,20 @@ package rconnect.game
             var base:String = s.itemBase != undefined ? String(s.itemBase) : "";
             if(base == "")
             {
-               return false;
+               return null;
             }
             var item:Object = new (itCls as Class)(null, base, 1);
             var lo:Object = new (lootCls as Class)(loc, item, Number(s.x),
                Number(s.y), false, false, false);
-            return lo != null;
+            return lo;
          }
          catch(err:*)
          {
             Log.d("RConnectGame: spawnLoot failed: " + err);
-            return false;
+            return null;
          }
          // mxmlc 控制流怪癖
-         return false;
+         return null;
       }
 
       /** M17 复现钩子：宿主破一面墙（模拟爆炸轰洞）——整房扫描第一块实心

@@ -68,6 +68,12 @@ package rconnect.core
       private var _doorToggleCount:int = 0;
       private var _autoBoxLoot:Boolean = false;
       private var _boxLootDone:Boolean = false;
+      private var _autoLootTest:Boolean = false;
+      private var _lootTestCount:int = 0;
+      private var _autoLootJoin:Boolean = false;
+      private var _lootJoinDone:Boolean = false;
+      private var _lootsTxLog:Boolean = false;
+      private var _lootsRxLog:Boolean = false;
       private var _autoLoadSave:int = -1;
       private var _loadSaveDone:Boolean = false;
       private var _loadSaveTries:int = 0;
@@ -122,6 +128,10 @@ package rconnect.core
          this._autoDoorToggle = (dt == "1" || dt == "true" || dt == "yes");
          var bl:String = String(mod.config.getValue("autoBoxLoot"));
          this._autoBoxLoot = (bl == "1" || bl == "true" || bl == "yes");
+         var lt:String = String(mod.config.getValue("autoLootTest"));
+         this._autoLootTest = (lt == "1" || lt == "true" || lt == "yes");
+         var lj:String = String(mod.config.getValue("autoLootJoin"));
+         this._autoLootJoin = (lj == "1" || lj == "true" || lj == "yes");
          this._autoTravelLand = String(mod.config.getValue("autoTravelLand"));
          var wi:String = String(mod.config.getValue("worldInject"));
          this._worldInject = (wi != "0" && wi != "false" && wi != "no");
@@ -390,6 +400,17 @@ package rconnect.core
                            }
                            mod.game.applyObjSpawn(msg.objSpawn as Array);
                         }
+                        // M24：可移动物品（Loot）位置/移除镜像
+                        if(msg.loots != null)
+                        {
+                           if(!_lootsRxLog)
+                           {
+                              _lootsRxLog = true;
+                              Log.d("RConnectNet: loots rx first "
+                                 + (msg.loots as Array).length);
+                           }
+                           mod.game.applyLootSync(msg.loots as Array);
+                        }
                      }
                   }
                   var r:Object = mod.game.applyUnitsSync(msg.units as Array);
@@ -531,6 +552,14 @@ package rconnect.core
                      Log.d("RConnectNet: applied " + applied
                         + " client damage hits");
                   }
+               }
+               break;
+
+            case Protocol.MSG_LOOT:
+               // M24：宿主应用加入方的拾取/推动上报（宿主权威落位）
+               if(mod.game != null)
+               {
+                  mod.game.applyLootReports(msg);
                }
                break;
 
@@ -729,6 +758,34 @@ package rconnect.core
                _objSpawnDone = true;
                mod.game.objSpawnTest();
             }
+            // M24 复现钩子：宿主 50-70s 生成/推 Loot（自推进），90s 捡起；
+            // joiner 70s 强制拾取（验证拾取上报→宿主移除）
+            if(_autoLootTest && mod.game != null && mod.game.gg != null
+               && !mod.game.isTransitioning())
+            {
+               if(_tickCount > 1000 && _tickCount < 1200)
+               {
+                  mod.game.lootSpawnTest();   // 生成窗（幂等）
+               }
+               if(_tickCount > 1600 && _lootTestCount < 1)
+               {
+                  mod.game.lootPushTest();
+                  _lootTestCount = 1;
+               }
+               if(_tickCount > 2400 && _lootTestCount < 2)
+               {
+                  if(mod.game.lootTakeTest())
+                  {
+                     _lootTestCount = 2;
+                  }
+               }
+            }
+            if(_autoLootJoin && !_lootJoinDone && mod.game != null
+               && mod.game.gg != null && _tickCount > 1400)
+            {
+               _lootJoinDone = true;
+               mod.game.lootTakeJoinTest();
+            }
             // M22 复现钩子：宿主 80s 开门 / 120s 关门（验证门开关双向同步；
             // 时点须晚于加入方连接收敛，首次快照会先收敛到当前状态）
             if(_autoDoorToggle && mod.game != null && mod.game.gg != null
@@ -756,6 +813,19 @@ package rconnect.core
          if(mod.game != null && _tickCount % 10 == 0)
          {
             mod.game.tileRedrawIfDirty();
+         }
+         // M24：joiner 周期（1s）扫描本地 Loot 拾取/推动 → 上报宿主
+         if(mode == CONNECTED && _tickCount % 20 == 0 && mod.game != null
+            && link != null && link.isOpen)
+         {
+            var lrep:Object = mod.game.scanLootReports();
+            if(lrep != null)
+            {
+               link.send(Protocol.make(Protocol.MSG_LOOT, lrep));
+               Log.d("RConnectNet: loot report picked="
+                  + (lrep.picked as Array).length + " moved="
+                  + (lrep.moved as Array).length);
+            }
          }
 
          // M14 诊断：autoGhostAnim=1 时强制幽灵标签循环（验证动画帧推进）
@@ -854,6 +924,17 @@ package rconnect.core
                      Log.d("RConnectNet: objSpawn tx " + nspawn.length
                         + " first=" + String(nspawn[0].id));
                   }
+               }
+               // M24：可移动物品（Loot）快照随行广播（稳定键+实时位置）。
+               // 空数组也必须发——"缺席"就是移除信号，不发会让 joiner
+               // 永远收不到清理指令而重复上报
+               var llist:Array = mod.game.readLootSync();
+               usMsg.loots = llist != null ? llist : [];
+               if(llist != null && !_lootsTxLog)
+               {
+                  _lootsTxLog = true;
+                  Log.d("RConnectNet: loots tx first " + llist.length
+                     + " k=" + String(llist[0].k));
                }
                server.broadcast(usMsg);
             }

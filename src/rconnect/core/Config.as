@@ -39,6 +39,8 @@ package rconnect.core
         autoObjSpawn: "",
         autoDoorToggle: "",
         autoBoxLoot: "",
+        autoLootTest: "",
+        autoLootJoin: "",
          testGhostDmg: 50
       };
 
@@ -115,6 +117,8 @@ package rconnect.core
         values.autoObjSpawn = String(values.autoObjSpawn);
         values.autoDoorToggle = String(values.autoDoorToggle);
         values.autoBoxLoot = String(values.autoBoxLoot);
+        values.autoLootTest = String(values.autoLootTest);
+        values.autoLootJoin = String(values.autoLootJoin);
          values.testGhostDmg = Number(values.testGhostDmg);
          if(!isFinite(values.testGhostDmg) || values.testGhostDmg < 0)
          {

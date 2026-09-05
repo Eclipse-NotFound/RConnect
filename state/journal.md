@@ -2,6 +2,18 @@
 
 > 协议见 GOVERNANCE.md §8：只追加不改写，**新条目插在最上面**。
 
+## 2026-08-28 M24 可移动物品（Loot）全量同步
+
+- 做了什么：盘点敌人同步（M4/M8/M19/M21 已闭环，无结构性缺口）→ 物品侧补齐：宿主 Loot 稳定键（Dictionary 对象键，L#n）+ unitsync `loots` 数组（空数组也发=移除信号）→ joiner 认领/生成/位置镜像/缺席移除；joiner 拾取与推动经新消息 MSG_LOOT 上报宿主权威落位；readNewObjs 退役 Loot 坐标键（避免与 M24 双重生成）；测试钩子拆成 lootSpawnTest/lootPushTest/lootTakeTest（M2_LOOTTEST/M2_LOOTJOIN）。
+- 关键决定/发现（→ knowledge/experiments/2026-08-24-m24-loot-sync.md，文件名 2026-08-28）：
+  - `Item(构造器)` param2 赋给 id 而非 base——物品身份键读 item.id（读 base 恒空 → spawnLoot 静默拒绝）；
+  - "缺席即移除"必须真的发空数组，否则 joiner 无限重复上报 picked；
+  - 测试钩子动作窗口必须 ≥ unitsync 广播间隔（200ms），否则物品生命周期短于采样窗永远不可见（6 轮迭代定位）；
+  - AS3 对象键映射必须用 Dictionary（Object 键字符串化全撞键）。
+- 遗留/下一步：suction 动画不镜像（直接落位）；同 base 重位误认领（仅键归属，无增减）；推动限频 1s/键；其余按 MEMORY §6。
+
+---
+
 ## 2026-08-28 M23 幽灵趴姿+悬浮根治（皮肤语义映射）+ 开机门控
 
 - 做了什么：用户报告 M16a/M18 修复后幽灵仍趴姿+悬浮 → 每消息 dump 定位真正根因：玩家皮肤 idle 主段是 "stay"（free1/2/3 只是偶发小动作），而幽灵皮肤 stay=趴/卧——**同标签不同皮肤语义相反**，1:1 镜像必然大部分时间趴。修复：idle 族映射 stay→free1（freeX/移动标签透传）+ levit 压制。另修复 startGame 无 landData 门控问题（夜间并行 TDFC v0.5.0 的 AutoTest 劫持测试实例暴露）。

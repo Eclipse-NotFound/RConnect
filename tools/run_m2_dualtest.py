@@ -80,6 +80,7 @@ def prep_instance(app_id, role, nickname):
     host_objspawn = '"autoObjSpawn":"1",' if os.environ.get("M2_OBJSPAWN") else ""
     host_doortoggle = '"autoDoorToggle":"1",' if os.environ.get("M2_DOORTOGGLE") else ""
     host_boxloot = '"autoBoxLoot":"1",' if os.environ.get("M2_BOXLOOT") else ""
+    host_loottest = '"autoLootTest":"1",' if os.environ.get("M2_LOOTTEST") else ""
     # 宿主先走开（ticks 600-1200 平滑移动）——出生点常在门框里，玩家
     # 堵门会触发游戏 attDoor 堵门循环让门状态高速振荡（M22 教训）
     host_walk = '"autoWalk":"1",' if os.environ.get("M2_HOSTWALK") else ""
@@ -88,7 +89,8 @@ def prep_instance(app_id, role, nickname):
     if role == "host":
         extra = (',' + host_loadsave + '"autoTravel":"0","autoDamage":"0",'
                  '"autoGhostDmg":"1",' + host_kill + host_boxkill + host_tilebreak
-                 + host_objspawn + host_doortoggle + host_boxloot + host_walk
+                 + host_objspawn + host_doortoggle + host_boxloot + host_loottest
+                 + host_walk
                  + '"testGhostDmg":%s,"autoTravelLand":"%s"' % (ghost_dmg, land))
     elif os.environ.get("M2_JOIN_LOADSAVE"):
         # M8：join 加载自己的存档（不同进度→中立单位差异），不开新游戏
@@ -109,6 +111,9 @@ def prep_instance(app_id, role, nickname):
     else:
         extra = ',"autoFollow":"1","freezeAI":"1","autoDamage":"1",' \
                 '"autoMove":"1","autoHeal":"1"'
+    # M24：joiner 侧拾取上报验证（追加到任意 join 分支）
+    if os.environ.get("M2_LOOTJOIN") and role == "join":
+        extra += ',"autoLootJoin":"1"'
     # 注意：autoMove 已移到 join 侧，且模组内延迟 60s 后才开始（避开传送过渡）
     cfg = '{"nickname":"%s","hostIp":"127.0.0.1","port":%d,' \
           '"tickMs":50,"autoRole":"%s","autoGame":"1"%s}\n' \

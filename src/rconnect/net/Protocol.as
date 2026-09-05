@@ -19,6 +19,7 @@ package rconnect.net
       public static const MSG_UNITSYNC:String = "unitsync";
       public static const MSG_DAMAGE:String = "damage";
       public static const MSG_PLAYERDMG:String = "playerdmg";
+      public static const MSG_LOOT:String = "loot";
 
       /** 构造消息对象（type + 字段）。 */
       public static function make(type:String, fields:Object):Object
