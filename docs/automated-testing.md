@@ -199,8 +199,10 @@ cleanup 子命令：杀测试实例 + 删临时描述符。
 
 ### 4.3 手动双开（无脚本时给玩家/自己的速测）
 
-`tools/second_player.bat`（GBK 编码！）——自动建 pfe2 描述符 + 写手动
-配置 + 启动第二窗口。第一窗口 Host、第二窗口 Join（IP 127.0.0.1）。
+`tools\second_player.bat`（纯 ASCII/CRLF）——自动建 pfe2 描述符 + **只读
+镜像主档案全部存档**（PFEgame*.sol + config.sol，每次启动刷新到最新进度；
+第二窗口自己存的进度会被下次镜像覆盖）+ 写手动配置 + 清理残留实例 +
+启动第二窗口。第一窗口 Host、第二窗口 Join（IP 127.0.0.1）。
 
 ---
 
