@@ -85,7 +85,8 @@ def prep_instance(app_id, role, nickname):
     # 宿主先走开（ticks 600-1200 平滑移动）——出生点常在门框里，玩家
     # 堵门会触发游戏 attDoor 堵门循环让门状态高速振荡（M22 教训）
     host_walk = '"autoWalk":"1",' if os.environ.get("M2_HOSTWALK") else ""
-    host_loadsave = '"autoGame":"","autoLoadSave":0,' \
+    host_loadsave = '"autoGame":"","autoLoadSave":%s,' \
+        % os.environ.get("M2_LOADSLOT", "0") \
         if os.environ.get("M2_HOST_LOADSAVE") else ""
     if role == "host":
         extra = (',' + host_loadsave + '"autoTravel":"0","autoDamage":"0",'

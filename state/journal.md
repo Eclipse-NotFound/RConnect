@@ -2,6 +2,18 @@
 
 > 协议见 GOVERNANCE.md §8：只追加不改写，**新条目插在最上面**。
 
+## 2026-09-06 Steam 还原游戏 SWF 事件（#1009 报错根因）+ 恢复
+
+- 做了什么：用户报"进入游戏 #1009（Invent.addLoad）"→ 排查发现三份游戏 SWF 于 09-06 05:46 被 Steam 还原（体积 -7.5KB、loader 标记全无、今早 07:11 主游戏以纯原版启动）——原版物品表没有存档里的 MSW 模组物品 → `Invent.addLoad` 的 `this.items[id].kol` 空引用。**存档本身没坏**。按 remains-game-update runbook + 2026-08-15 授权，从基线备份恢复：备份 Steam 原版（build/backup/steam-restore-20260906-0546/）→ 覆盖 current-merged-20260819 三份 SWF → 测试实例验证指纹 `game version=1.02 bd=0.2` + RConnect 初始化 ✓。
+- 关键发现：
+  - 诊断捷径：模组日志**完全无新行**（连 mod init 都没有）= loader 不在；先查 SWF mtime/标记再怀疑代码。
+  - 基线恢复比重跑 6 个模组补丁脚本更稳（current-merged-20260819 含 6 loader + M13 Land 补丁，字符串扫描校验过）。
+  - 跑测试实例遇到"静默无输出"先别当挂死——原版游戏开到菜单就是静默的（stdout 缓冲不 flush）。
+- 遗留/通知：主游戏 07:11 起的实例是原版（内存里没 loader），**用户需重启游戏**；其他模组会话请核验各自功能（loader 已随基线恢复）；若 Steam 再次校验，重跑本恢复路径即可（原版备份 + 基线都在 build/backup/）。
+- 附带：run_m2_dualtest.py 加 M2_LOADSLOT（程序化读档槽位可配）。
+
+---
+
 ## 2026-09-05 second_player.bat 存档镜像（用户工具改进）
 
 - 做了什么：用户报告第二窗口读档菜单为空——根因是 pfe2 实例存储与主档案（%APPDATA%\pfe\）天然隔离且从不复制。重写 bat（纯 ASCII/CRLF）：启动前把主档案全部 PFEgame*.sol + config.sol **只读镜像**到 pfe2（每次启动刷新到最新进度），并清理残留第二窗口实例（只按描述符特征匹配，绝不动主窗口）。
