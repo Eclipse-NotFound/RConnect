@@ -2,6 +2,18 @@
 
 > 协议见 GOVERNANCE.md §8：只追加不改写，**新条目插在最上面**。
 
+## 2026-09-07 M26 念力平滑 + 门复验 + RV 视距敌人隐藏定位
+
+- 做了什么（grilling 轮答后）：①念力平滑（上报 1Hz→5Hz + 接收端 tween 插值）；②注入/镜像落点校验（修 rr_showroom #1010 崩溃）；③诊断埋点（宿主门清单 + joiner 敌人可见性采样）；④双实例复验门/箱全通。
+- 关键发现（→ knowledge/experiments/2026-09-07-m26-*）：
+  - **敌人"不显示"根因 = RV（RealisticVision）视距机制 × 联机**：RV 把不在本地玩家视线内的敌人整个隐藏（hideUnit→vis.visible=false），采样实证 merc2 s=0。宿主看得见的敌人在加入端自己的黑暗里。修法待用户拍板（A 强制显示镜像敌人 / B RV 侧豁免 / C 现状）；
+  - 门机制复验通过（doorIcTest 开关→joiner ist apply open 双向）；random_mane 门清单 door1/door1a 均 ac=0 可同步，**window1 类无 inter 的脚本门不同步**（宿主开它走 scrOpen，我们读不到）——用户测试的门可能属此类或当时不同房；
+  - 扫描提速后 ist 稳定性门 3→6 次（5Hz 下 ≈1.2s，循环门照滤）；
+  - phoenix p=0（vis 未挂树）观察项待跟。
+- 遗留/下一步：敌人显示修法等用户第二轮拍板；脚本门同步评估待确认；念力平滑观感待用户实测。
+
+---
+
 ## 2026-09-06 Steam 还原游戏 SWF 事件（#1009 报错根因）+ 恢复
 
 - 做了什么：用户报"进入游戏 #1009（Invent.addLoad）"→ 排查发现三份游戏 SWF 于 09-06 05:46 被 Steam 还原（体积 -7.5KB、loader 标记全无、今早 07:11 主游戏以纯原版启动）——原版物品表没有存档里的 MSW 模组物品 → `Invent.addLoad` 的 `this.items[id].kol` 空引用。**存档本身没坏**。按 remains-game-update runbook + 2026-08-15 授权，从基线备份恢复：备份 Steam 原版（build/backup/steam-restore-20260906-0546/）→ 覆盖 current-merged-20260819 三份 SWF → 测试实例验证指纹 `game version=1.02 bd=0.2` + RConnect 初始化 ✓。

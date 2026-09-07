@@ -3461,7 +3461,7 @@ package rconnect.game
                var dy:Number = numOr(probe(o, "Y"), 0) - Number(p.y);
                if(dx * dx + dy * dy > 625)
                {
-                  if(now - numOr(_lootRepT[k], 0) > 1000)
+                  if(now - numOr(_lootRepT[k], 0) > 200)
                   {
                      _lootRepT[k] = now;
                      moved.push({k: k, x: numOr(probe(o, "X"), 0),
@@ -3731,7 +3731,7 @@ package rconnect.game
       private var _istStabO:Dictionary = new Dictionary();
 
       /** ist 上报稳定性门：连续 N 次扫描（1Hz）一致才上报。 */
-      private static const IST_REPORT_N:int = 3;
+      private static const IST_REPORT_N:int = 6;
 
       private function boxTrackReset():void
       {
@@ -3819,18 +3819,176 @@ package rconnect.game
          return best;
       }
 
-      /** 落位到宿主/对端报告的位置（含碰撞边界与视觉；托举态抗重力）。
+      /** M26：坐标落点校验——目标瓦片在 loc.space 内存在才允许注入/镜像
+       *  落位。非确定性生成图（其他模组的随机房）两侧房间几何不同，宿主
+       *  坐标可能落在加入方的房外/空行 → Unit.run() 读 space 越界 #1010
+       *  （rr_showroom 实测崩溃）。@return 就近有效坐标或 null。 */
+      private function validLandPos(x:Number, y:Number):Object
+      {
+         try
+         {
+            var sx:int = numOr(probe(loc, "spaceX"), 0);
+            var sy:int = numOr(probe(loc, "spaceY"), 0);
+            var space:Object = probe(loc, "space");
+            if(sx <= 0 || sy <= 0 || space == null)
+            {
+               return null;
+            }
+            var tx:int = int(x / 40);
+            var ty:int = int(y / 40);
+            // 40px 网格内螺旋找有效瓦片（±24 格）
+            for(var r:int = 0; r <= 24; r++)
+            {
+               for(var ox:int = -r; ox <= r; ox++)
+               {
+                  for(var oy:int = -r; oy <= r; oy++)
+                  {
+                     if(Math.abs(ox) != r && Math.abs(oy) != r)
+                     {
+                        continue;   // 只搜环边
+                     }
+                     var cx:int = tx + ox;
+                     var cy:int = ty + oy;
+                     if(cx < 0 || cx >= sx || cy < 0 || cy >= sy)
+                     {
+                        continue;
+                     }
+                     var row:Object = (space as Array)[cx];
+                     if(row is Array && (row as Array)[cy] != null)
+                     {
+                        return {x: cx * 40 + 20, y: cy * 40 + 20};
+                     }
+                  }
+               }
+            }
+         }
+         catch(err:*)
+         {
+         }
+         return null;
+      }
+
+      private var _doorInvLoc:Object = null;
+      private var _doorInvLogged:Boolean = false;
+
+      /** M26 诊断（宿主，每房一次）：房间门清单 id:autoClose:open——
+       *  用户报"宿主开门不同步"时对号入座（autoClose 门设计上不同步）。 */
+      public function logDoorInventory():void
+      {
+         if(loc == null)
+         {
+            return;
+         }
+         if(_doorInvLoc !== loc)
+         {
+            _doorInvLoc = loc;
+            _doorInvLogged = false;
+         }
+         if(_doorInvLogged)
+         {
+            return;
+         }
+         _doorInvLogged = true;
+         try
+         {
+            var objs:Object = probe(loc, "objs");
+            var parts:Array = [];
+            for each(var b:Object in objs as Array)
+            {
+               if(numOr(probe(b, "door"), 0) <= 0)
+               {
+                  continue;
+               }
+               var iv:Object = probe(b, "inter");
+               parts.push(String(probe(b, "id")) + ":ac="
+                  + (iv != null ? String(numOr(probe(iv, "autoClose"), 0))
+                     : "?")
+                  + ",o=" + (iv != null && probe(iv, "open") == true
+                     ? "1" : "0"));
+            }
+            Log.d("RConnectGame: doors in room: "
+               + (parts.length > 0 ? parts.join(" | ") : "(none)"));
+         }
+         catch(err:*)
+         {
+         }
+      }
+
+      private var _unitVisLoc:Object = null;
+      private var _unitVisLogged:Boolean = false;
+
+      /** M26 诊断（joiner，每房一次）：本地单位可见性采样——
+       *  v=有vis层，p=vis挂显示树，s=vis.visible（RV 视距会把不在本地
+       *  玩家视线内的敌人整个隐藏），m=被遮罩。用户报"敌人不显示"时
+       *  区分：我们丢了渲染 vs RV 隐藏。 */
+      public function logUnitVisibility():void
+      {
+         if(loc == null)
+         {
+            return;
+         }
+         if(_unitVisLoc !== loc)
+         {
+            _unitVisLoc = loc;
+            _unitVisLogged = false;
+         }
+         if(_unitVisLogged)
+         {
+            return;
+         }
+         _unitVisLogged = true;
+         try
+         {
+            var units:Object = probe(loc, "units");
+            var parts:Array = [];
+            var n:int = 0;
+            var myX:Number = gg != null ? numOr(probe(gg, "X"), 0) : 0;
+            var myY:Number = gg != null ? numOr(probe(gg, "Y"), 0) : 0;
+            for each(var u:Object in units as Array)
+            {
+               if(u == gg || n >= 12)
+               {
+                  continue;
+               }
+               var uid:String = String(probe(u, "id"));
+               if(uid.indexOf("rconnect_ghost") == 0)
+               {
+                  continue;
+               }
+               var vis:Object = probe(u, "vis");
+               var ddx:Number = numOr(probe(u, "X"), 0) - myX;
+               var ddy:Number = numOr(probe(u, "Y"), 0) - myY;
+               parts.push(uid + "@d" + Math.round(Math.sqrt(ddx * ddx
+                  + ddy * ddy)) + " v=" + (vis != null ? 1 : 0)
+                  + " p=" + (vis != null && probe(vis, "parent") != null ? 1
+                     : 0)
+                  + " s=" + (vis != null && probe(vis, "visible") == true ? 1
+                     : 0)
+                  + " m=" + (vis != null && probe(vis, "mask") != null ? 1
+                     : 0));
+               n++;
+            }
+            Log.d("RConnectGame: unit vis sample: "
+               + (parts.length > 0 ? parts.join(" ; ") : "(none)"));
+         }
+         catch(err:*)
+         {
+         }
+      }
+
+      /** 落位到宿主/对端报告的位置——M26 平滑插值：不硬跳，设 tween 目标
+       *  由 tickBoxTweens 每 50ms 渐进（25%/tick），念力搬运观感平滑。
        *  本地偏差保护（force=false 的镜像路径）：本地已偏离基线 >25px
        *  （本地念力/推挤进行中）时不覆写也不刷新基线——否则宿主旧快照
-       *  会在 200ms 内把本地移动拽回、偏差被吞、上报通道永远发不出
-       *  （M24/M25 实测教训）。force=true（宿主应用上报）强制落位。 */
+       *  会把本地移动拽回、上报通道永远发不出。force=true 强制收目标。 */
       private function trackBoxPos(b:Object, x:Number, y:Number,
          held:Boolean, force:Boolean = false):void
       {
          try
          {
             var rec:Object = _boxTrack[b];
-            if(rec != null && !force)
+            var tween:Object = _boxTween[b];
+            if(rec != null && !force && tween == null)
             {
                var ldx:Number = numOr(probe(b, "X"), 0) - Number(rec.x);
                var ldy:Number = numOr(probe(b, "Y"), 0) - Number(rec.y);
@@ -3852,20 +4010,8 @@ package rconnect.game
             var by:Number = numOr(probe(b, "Y"), 0);
             if(Math.abs(bx - x) >= 2 || Math.abs(by - y) >= 2)
             {
-               var scX:Number = numOr(probe(b, "scX"), 20);
-               var scY:Number = numOr(probe(b, "scY"), 20);
-               b["X"] = x;
-               b["Y"] = y;
-               b["X1"] = x - scX / 2;
-               b["X2"] = x + scX / 2;
-               b["Y1"] = y - scY;
-               b["Y2"] = y;
-               b["dx"] = 0;
-               b["dy"] = 0;
-               if(held)
-               {
-                  b["stay"] = true;   // 抗重力：托举中的箱子不落下
-               }
+               // M26：设 tween 目标（平滑逼近），不直接写坐标
+               _boxTween[b] = {tx: x, ty: y, q: held};
                if(!_boxMoveLogged[b])
                {
                   _boxMoveLogged[b] = true;
@@ -3873,7 +4019,11 @@ package rconnect.game
                      "id")) + "' -> " + Math.round(x) + "," + Math.round(y));
                }
             }
-            b["runVis"]();
+            else if(tween != null)
+            {
+               // 目标回到当前位：取消挂起的 tween（防漂移）
+               delete _boxTween[b];
+            }
             if(rec == null)
             {
                _boxTrack[b] = {x: x, y: y, q: held, lastR: 0};
@@ -3889,6 +4039,54 @@ package rconnect.game
          {
          }
       }
+
+      /** M26：Box 平滑插值驱动（Session 每 50ms tick 调用）——每步向
+       *  tween 目标逼近 25%，到位即停；托举态保持抗重力。 */
+      public function tickBoxTweens():void
+      {
+         if(_boxTween == null)
+         {
+            return;
+         }
+         try
+         {
+            for(var b:Object in _boxTween)
+            {
+               var tw:Object = _boxTween[b];
+               var x:Number = numOr(probe(b, "X"), 0);
+               var y:Number = numOr(probe(b, "Y"), 0);
+               var dx:Number = Number(tw.tx) - x;
+               var dy:Number = Number(tw.ty) - y;
+               if(dx * dx + dy * dy <= 1)
+               {
+                  delete _boxTween[b];
+                  continue;
+               }
+               var nx:Number = x + dx * 0.25;
+               var ny:Number = y + dy * 0.25;
+               var scX:Number = numOr(probe(b, "scX"), 20);
+               var scY:Number = numOr(probe(b, "scY"), 20);
+               b["X"] = nx;
+               b["Y"] = ny;
+               b["X1"] = nx - scX / 2;
+               b["X2"] = nx + scX / 2;
+               b["Y1"] = ny - scY;
+               b["Y2"] = ny;
+               b["dx"] = 0;
+               b["dy"] = 0;
+               if(tw.q == true)
+               {
+                  b["stay"] = true;
+               }
+               b["runVis"]();
+            }
+         }
+         catch(err:*)
+         {
+         }
+      }
+
+      private var _boxTween:Dictionary = new Dictionary();
 
       private var _boxMoveLogged:Dictionary = new Dictionary();
       private var _objScanErrLogged:Boolean = false;
@@ -3920,7 +4118,7 @@ package rconnect.game
                var dx:Number = numOr(probe(b, "X"), 0) - Number(rec.x);
                var dy:Number = numOr(probe(b, "Y"), 0) - Number(rec.y);
                if(dx * dx + dy * dy > 625
-                  && now - numOr(rec.lastR, 0) > 1000)
+                  && now - numOr(rec.lastR, 0) > 200)
                {
                   rec.lastR = now;
                   moved.push({id: String(probe(b, "id")),
@@ -4712,7 +4910,21 @@ package rconnect.game
             try
             {
                target["storona"] = Number(e.storona) >= 0 ? 1 : -1;
-               target["setPos"](Number(e.x), Number(e.y));
+               // M26：镜像落点校验（同注入防护）——生成图两侧几何不同时
+               // 拒绝越界 setPos，保命优先于位置精度（就近吸附会瞬移）
+               if(validLandPos(Number(e.x), Number(e.y)) == null)
+               {
+                  if(!_posSkipLogged[eid])
+                  {
+                     _posSkipLogged[eid] = true;
+                     Log.d("RConnectGame: pos mirror skip '" + eid
+                        + "' (host pos outside local room)");
+                  }
+               }
+               else
+               {
+                  target["setPos"](Number(e.x), Number(e.y));
+               }
                if(e.sost != undefined && Number(e.sost) != -1)
                {
                   target["sost"] = int(e.sost);
@@ -5033,7 +5245,17 @@ package rconnect.game
             u["fraction"] = numOr(e.fraction, 1);
             u["warn"] = 0;
             u["id"] = String(e.id);
-            u["putLoc"](loc, numOr(e.x, 0), numOr(e.y, 0));
+            // M26：落点校验——生成图（其他模组随机房）两侧几何不同，
+            // 宿主坐标可能在加入方房外（#1010 实测）；就近吸附有效瓦片
+            var landPos:Object = validLandPos(numOr(e.x, 0), numOr(e.y, 0));
+            if(landPos == null)
+            {
+               _injectFailed[eid] = true;
+               Log.d("RConnectGame: inject '" + eid
+                  + "' skipped: no valid tile near host pos");
+               return null;
+            }
+            u["putLoc"](loc, Number(landPos.x), Number(landPos.y));
             loc["addObj"](u);
             var units:Object = loc["units"];
             units["push"](u);
@@ -5088,6 +5310,7 @@ package rconnect.game
       private var _lastLocRef:Object = null;
       private var _phantomLogged:Object = {};
       private var _hpRejectLogged:Object = {};
+      private var _posSkipLogged:Object = {};
 
       /** M8：loc 对象引用变化（读档/换房/换图）时清空客户端同步基线，
        *  防止旧世界血量基线对新世界单位产生幻影伤害上报。 */

@@ -872,9 +872,27 @@ package rconnect.core
          {
             mod.game.tileRedrawIfDirty();
          }
-         // M24/M25：joiner 周期（1s）扫描本地 Loot 拾取/推动 + Box 位移
-         // （念力）+ ist 变化（开门/开锁/搜刮）→ 上报宿主
-         if(mode == CONNECTED && _tickCount % 20 == 0 && mod.game != null
+         // M26：Box 平滑插值驱动（50ms/tick，tween 逼近宿主目标位）
+         if(mod.game != null)
+         {
+            mod.game.tickBoxTweens();
+         }
+         // M26 诊断：宿主每房记一次门清单（id/autoClose/open）
+         if(mod.game != null && _tickCount % 200 == 0
+            && mode == HOSTING)
+         {
+            mod.game.logDoorInventory();
+         }
+         // M26 诊断：joiner 每房记一次本地单位可见性采样（RV 隐藏排查）
+         if(mod.game != null && _tickCount % 200 == 0
+            && mode == CONNECTED)
+         {
+            mod.game.logUnitVisibility();
+         }
+         // M24/M25/M26：joiner 高频（200ms）扫描本地 Loot 拾取/推动 + Box
+         // 位移（念力）+ ist 变化（开门/开锁/搜刮）→ 上报宿主（搬运中的
+         // 物体每秒 5 跳，接收端 tween 平滑）
+         if(mode == CONNECTED && _tickCount % 4 == 0 && mod.game != null
             && link != null && link.isOpen)
          {
             var lrep:Object = mod.game.scanLootReports();
