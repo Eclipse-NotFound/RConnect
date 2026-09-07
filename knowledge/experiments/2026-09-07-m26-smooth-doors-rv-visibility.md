@@ -46,11 +46,25 @@
 
 ## 待用户拍板（第二轮 grilling）
 
-- 敌人显示修法：A) RConnect 对"宿主快照里存活的镜像敌人"周期强制
-  showUnit（联机语义=队友报点，绕过 RV 对同步单位的隐藏；RV 其余
-  效果不动）B) RV 侧加联机豁免（他人模组，只报告）C) 保持现状。
-- 门：window1 类无 inter 的脚本门是否要同步（需走 scrOpen 事件转发，
-  中等工作量）——待用户确认是否就是其测试的门。
+- ~~敌人显示修法~~ → **用户拍板 (a)**：已实施为 M27。
+
+## M27：强制显示宿主快照存活敌人（"队友报点"，2026-09-07 实施）
+
+- 机制：applyUnitsSync 每轮重建 `_hostAlive`（sost<3 且非游戏隐身
+  invis 的匹配单位）；GameBridge 构造时在 stage 挂 ENTER_FRAME
+  （onVisForceFrame），每帧对集合内单位恢复 `vis.visible=true` +
+  `prior=1`。
+- **零闪烁原理**：RV 的隐藏也在 ENTER_FRAME（onFrame→hideEnemies），
+  且 RV 在 loader 链中先于 RConnect 初始化——同帧事件按注册顺序回调，
+  我们的恢复总在 RV 隐藏之后同帧执行。
+- 尸体（sost>=3）与游戏隐身（invis）不强制——潜行/死亡语义留给游戏；
+  换房/读档经 resetBaselinesIfWorldChanged 清集；宿主侧集合恒空
+  （无镜像单位），每帧空循环零开销。
+- **验证（m27_run1，random_mane）**：M26 实证被藏的敌人采样
+  `s=0` → M27 全部 `s=1`；其中 slaver3 `s=1 m=1`——RV 的在视野内
+  软边遮罩原样保留（只豁免"整只隐藏"）；5/5 匹配、零错误零死亡。
+- 观感确认待用户实测（黑暗里的敌人现在应可见；若 RV 用户希望保留
+  "完全黑暗看不见"的玩法，那是选项 b 的范畴，本次不动 RV）。
 
 ## 教训
 

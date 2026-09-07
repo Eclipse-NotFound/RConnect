@@ -71,12 +71,44 @@ package rconnect.game
             {
                st.addEventListener(Event.DEACTIVATE, onStageDeactivate,
                   false, 1000, true);
+               // M27：每帧强制显示宿主快照中的存活镜像敌人（"队友报点"）。
+               // RV（RealisticVision）在 ENTER_FRAME 里按本地玩家视线隐藏
+               // 敌人（hideUnit→vis.visible=false）；本模组在 loader 链中
+               // 晚于 RV 初始化，同帧 ENTER_FRAME 按注册顺序回调——我们的
+               // 恢复在 RV 隐藏之后执行，同帧生效、零闪烁。宿主侧字典
+               // 恒空，每帧代价为空循环。
+               st.addEventListener(Event.ENTER_FRAME, onVisForceFrame,
+                  false, 0, true);
             }
          }
          catch(err:*)
          {
          }
          refreshWorld();
+      }
+
+      private var _hostAlive:Dictionary = new Dictionary();
+
+      /** M27：宿主快照里存活的镜像单位（applyUnitsSync 每轮重建；
+       *  死亡/离房自动移出——不强制显示尸体）。 */
+      private function onVisForceFrame(e:Event):void
+      {
+         try
+         {
+            for(var u:Object in _hostAlive)
+            {
+               var vis:Object = probe(u, "vis");
+               if(vis == null || probe(vis, "visible") != false)
+               {
+                  continue;
+               }
+               vis["visible"] = true;
+               u["prior"] = 1;
+            }
+         }
+         catch(err:*)
+         {
+         }
       }
 
       /** M12：抢在游戏 onDeactivate 前拦住失焦事件（失焦开 pip 是游戏 bug）。 */
@@ -4883,6 +4915,9 @@ package rconnect.game
             return res;
          }
          res.total = list.length;
+         // M27：每轮重建强制显示集（宿主每轮广播完整单位表；死亡
+         // sost>=3 与游戏隐身 invis 不强制——尸体与潜行语义留给游戏）
+         _hostAlive = new Dictionary();
          // 建立 id → 单位 索引（客户端世界）
          var byId:Object = {};
          try
@@ -4981,6 +5016,12 @@ package rconnect.game
                   Log.d("RConnectGame: enemy skin '" + eid
                      + "' hostVf=" + String(e.vf)
                      + " localPon=" + String(unitVisualFrame(target)));
+               }
+               // M27：存活镜像单位进强制显示集（onVisForceFrame 每帧
+               // 恢复被 RV 视距隐藏的 vis——"队友报点"语义）
+               if(numOr(e.sost, 1) < 3 && probe(target, "invis") != true)
+               {
+                  _hostAlive[target] = true;
                }
                res.matched++;
             }
@@ -5325,6 +5366,8 @@ package rconnect.game
             // M21：换房后清空注入失败黑名单——同一 id 在新房间可能可注入
             // （旧失败多为瞬时状态；防"永久空敌"）
             _injectFailed = {};
+            // M27：换房清强制显示集（旧单位引用失效，等下轮重建）
+            _hostAlive = new Dictionary();
             if(loc != null)
             {
                Log.d("RConnectGame: world loc changed, baselines reset");
