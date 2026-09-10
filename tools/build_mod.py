@@ -31,16 +31,28 @@ def main():
     ap.add_argument("--amxmlc", default=DEFAULT_AMXMLC)
     ap.add_argument("--debug", action="store_true",
                     help="编译 debug 版本（含调试信息）")
+    ap.add_argument("--output", help="Explicit candidate path; default remains release")
+    ap.add_argument("--cooperation-tests", action="store_true", help="Build the isolated regression entry point")
     args = ap.parse_args()
 
     src_dir = os.path.join(MOD_ROOT, "src")
     out_dir = os.path.join(MOD_ROOT, "release")
     os.makedirs(out_dir, exist_ok=True)
-    out_swf = os.path.join(out_dir, "RConnectMod.swf")
+    out_swf = os.path.abspath(args.output) if args.output else os.path.join(out_dir, "RConnectMod.swf")
+    if args.cooperation_tests:
+        candidate_root = os.path.realpath(os.path.join(MOD_ROOT, "build"))
+        if not args.output or os.path.commonpath([candidate_root, os.path.realpath(out_swf)]) != candidate_root:
+            ap.error("Test builds require an explicit --output inside this mod's build directory")
+    os.makedirs(os.path.dirname(out_swf), exist_ok=True)
 
+    entry = os.path.join(src_dir, "RConnectDoc.as")
+    sources = ["-source-path=" + src_dir]
+    if args.cooperation_tests:
+        sources.append("-source-path+=" + os.path.join(MOD_ROOT, "tests"))
+        entry = os.path.join(MOD_ROOT, "tests", "CoopTestDoc.as")
     cmd = [
         args.amxmlc,
-        "-source-path=" + src_dir,
+    ] + sources + [
         "-output=" + out_swf,
         "-debug=" + ("true" if args.debug else "false"),
         "-optimize=" + ("false" if args.debug else "true"),
@@ -48,7 +60,7 @@ def main():
     ] + EXTRA_ARGS + [
         # 主类是 RConnectDoc（空 Sprite，避免 #2023）；RConnectMod 是普通类，
         # 加载契约通过 getDefinition("RConnectMod") 查找它。
-        os.path.join(src_dir, "RConnectDoc.as"),
+        entry,
     ]
     print("build_mod: " + " ".join(cmd), flush=True)
     # amxmlc.bat 需要 AIR_HOME 指向含 frameworks/libs/air/airglobal.swc 的 SDK 根

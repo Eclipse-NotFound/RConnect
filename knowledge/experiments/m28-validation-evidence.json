@@ -1,0 +1,556 @@
+{
+  "date": "2026-09-10",
+  "workspace": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect",
+  "game_version": "1.02",
+  "environment": "same machine, isolated AIR ids and game copies, fresh characters",
+  "artifacts": [
+    {
+      "path": "build/m28/RConnectMod.swf",
+      "bytes": 44963,
+      "sha256": "2a65d5f83567bd1fb8d537270bee4499fbaa7bf6ef2eaf89be161bfde0a8cf56"
+    },
+    {
+      "path": "build/m28/CoopTest.swf",
+      "bytes": 84616,
+      "sha256": "42d9e9e0092317e5310c1d6c84e7a8b037970700e5ab49503145ce949f355348"
+    },
+    {
+      "path": "release/RConnectMod.swf",
+      "bytes": 41659,
+      "sha256": "44d61708fe3dce531a5f42f4ff3d195a184a6fdb4ff4e69e2ae6130dd4e2274d"
+    }
+  ],
+  "runs": [
+    {
+      "token": "f77d58614d",
+      "manifest": {
+        "port": 58493,
+        "pids": [
+          33008,
+          11756
+        ]
+      },
+      "roles": {
+        "host": {
+          "log": "build/cooperation/f77d58614d/host.log",
+          "log_sha256": "b281591bc81f02926c656ddae3896ff4326264d25eb8990975982facda449c66",
+          "assertions": [
+            "COOP PASS duplicate doors independent open",
+            "COOP PASS identity survives crossing positions",
+            "COOP PASS join close and lock routed by key",
+            "COOP PASS join unlock zero propagated",
+            "COOP PASS script door host open",
+            "COOP PASS script door join close survives old snapshot",
+            "COOP PASS join door destruction clears tiles",
+            "COOP PASS scene acknowledgements converge",
+            "COOP PASS room identity reset",
+            "COOP PASS real alicorn variant constructor",
+            "COOP PASS real mine constructor without unit XML",
+            "COOP PASS real boss constructor",
+            "COOP PASS real injected units mirror",
+            "COOP PASS nested sitting body frame mirrored",
+            "COOP PASS restyle replaces displayed visual",
+            "COOP PASS leave removes remote avatar"
+          ],
+          "completions": [
+            "COOP DONE passed=16 failed=0"
+          ],
+          "game_errors": [],
+          "initialized": false,
+          "tick_200": true,
+          "welcome": false,
+          "unit_sync": false
+        },
+        "join": {
+          "log": "build/cooperation/f77d58614d/join.log",
+          "log_sha256": "13614c8c5cde56baa9f51ede2cc7e75a33df7c9c14c1b25ff3e9a071fc2d837c",
+          "assertions": [],
+          "completions": [],
+          "game_errors": [],
+          "initialized": false,
+          "tick_200": true,
+          "welcome": true,
+          "unit_sync": true
+        }
+      }
+    },
+    {
+      "token": "ef0ce3ffb6",
+      "manifest": {
+        "port": 52724,
+        "pids": [
+          34296,
+          38812
+        ]
+      },
+      "roles": {
+        "host": {
+          "log": "build/cooperation/ef0ce3ffb6/host.log",
+          "log_sha256": "968607db3d339c2c618960e1847d6db640dc9a0324cc2931458d57b60964fa3d",
+          "assertions": [
+            "COOP PASS duplicate doors independent open",
+            "COOP PASS identity survives crossing positions",
+            "COOP PASS join close and lock routed by key",
+            "COOP PASS join unlock zero propagated",
+            "COOP PASS script door host open",
+            "COOP PASS script door join close survives old snapshot",
+            "COOP PASS join door destruction clears tiles",
+            "COOP PASS scene acknowledgements converge",
+            "COOP PASS room identity reset",
+            "COOP PASS telekinesis interpolates intermediate position",
+            "COOP PASS interpolation does not report false local movement",
+            "COOP PASS local hold wins over pending interpolation",
+            "COOP PASS host own hold not overwritten by remote move",
+            "COOP PASS real alicorn variant constructor",
+            "COOP PASS real mine constructor without unit XML",
+            "COOP PASS real boss constructor",
+            "COOP PASS real injected units mirror",
+            "COOP PASS visibility wins over later registered ENTER_FRAME hider",
+            "COOP PASS orphan mirrored visual reattached",
+            "COOP PASS nested sitting body frame mirrored",
+            "COOP PASS moving body timeline mirrored",
+            "COOP PASS restyle replaces displayed visual",
+            "COOP PASS leave removes remote avatar",
+            "COOP PASS leave stops forced visibility",
+            "COOP PASS network native join close returned",
+            "COOP PASS network native script close returned",
+            "COOP PASS network native join destruction returned"
+          ],
+          "completions": [
+            "COOP DONE passed=24 failed=0",
+            "COOP NETWORK DONE host"
+          ],
+          "game_errors": [],
+          "initialized": false,
+          "tick_200": true,
+          "welcome": false,
+          "unit_sync": false
+        },
+        "join": {
+          "log": "build/cooperation/ef0ce3ffb6/join.log",
+          "log_sha256": "20dc98861bdd29908a4d904dc178ba10693179b58533f638aab7c561f8dc0844",
+          "assertions": [
+            "COOP PASS network new native objects injected",
+            "COOP PASS network native door open received",
+            "COOP PASS network native script door open received",
+            "COOP PASS network native close stays converged"
+          ],
+          "completions": [
+            "COOP NETWORK DONE join"
+          ],
+          "game_errors": [],
+          "initialized": false,
+          "tick_200": true,
+          "welcome": true,
+          "unit_sync": true
+        }
+      }
+    },
+    {
+      "token": "a33ec2e235",
+      "manifest": {
+        "port": 49685,
+        "pids": [
+          6040,
+          24128
+        ],
+        "candidate": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m28\\CoopTest.swf",
+        "sha256": "56f2d428e4196275a1a282269ce7aefaec8b9de27283aa4809233c2e2f1eeb26"
+      },
+      "roles": {
+        "host": {
+          "log": "build/cooperation/a33ec2e235/host.log",
+          "log_sha256": "abab84fef56a501cce77a207c89b80c472c69e4e36fd9e31ca73a3f440d9cff1",
+          "assertions": [
+            "COOP PASS duplicate doors independent open",
+            "COOP PASS identity survives crossing positions",
+            "COOP PASS join close and lock routed by key",
+            "COOP PASS join unlock zero propagated",
+            "COOP PASS script door host open",
+            "COOP PASS script door join close survives old snapshot",
+            "COOP PASS join door destruction clears tiles",
+            "COOP PASS scene acknowledgements converge",
+            "COOP PASS room identity reset",
+            "COOP PASS telekinesis interpolates intermediate position",
+            "COOP PASS interpolation does not report false local movement",
+            "COOP PASS local hold wins over pending interpolation",
+            "COOP PASS host own hold not overwritten by remote move",
+            "COOP PASS real alicorn variant constructor",
+            "COOP PASS real mine constructor without unit XML",
+            "COOP PASS real boss constructor",
+            "COOP PASS real injected units mirror",
+            "COOP PASS visibility wins over later registered ENTER_FRAME hider",
+            "COOP PASS orphan mirrored visual reattached",
+            "COOP PASS nested sitting body frame mirrored",
+            "COOP PASS moving body timeline mirrored",
+            "COOP PASS restyle replaces displayed visual",
+            "COOP PASS leave removes remote avatar",
+            "COOP PASS leave stops forced visibility",
+            "COOP PASS leave removes injected alicorn2",
+            "COOP PASS leave removes injected mine",
+            "COOP PASS leave removes injected bossalicorn",
+            "COOP PASS all 65 ground items included",
+            "COOP PASS ground item stack metadata preserved",
+            "COOP PASS overlapping stacks retain distinct keys",
+            "COOP PASS new remote ground stack retains quantity",
+            "COOP PASS remote pickup movement interpolated",
+            "COOP PASS pickup animation does not award or consume inventory",
+            "COOP PASS network native join close returned",
+            "COOP FAIL network native script close returned",
+            "COOP PASS network native join destruction returned"
+          ],
+          "completions": [
+            "COOP DONE passed=33 failed=0",
+            "COOP NETWORK DONE host"
+          ],
+          "game_errors": [],
+          "initialized": false,
+          "tick_200": true,
+          "welcome": false,
+          "unit_sync": false
+        },
+        "join": {
+          "log": "build/cooperation/a33ec2e235/join.log",
+          "log_sha256": "95ce3c41dc11796b657bf03e5e8e73419e93e2fa4d479afd55ecfbb1cc55c886",
+          "assertions": [
+            "COOP PASS network new native objects injected",
+            "COOP PASS network native door open received",
+            "COOP PASS network native script door open received",
+            "COOP PASS network native close stays converged"
+          ],
+          "completions": [
+            "COOP NETWORK DONE join"
+          ],
+          "game_errors": [],
+          "initialized": false,
+          "tick_200": true,
+          "welcome": true,
+          "unit_sync": true
+        }
+      }
+    },
+    {
+      "token": "e8f2045028",
+      "manifest": {
+        "port": 56960,
+        "pids": [
+          11116,
+          30684
+        ],
+        "candidate": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m28\\CoopTest.swf",
+        "sha256": "749c0e0bf3ab609bc6f1ec92c862bfb354ca3e1e6a6752e9cce2cabfd06c8b93"
+      },
+      "roles": {
+        "host": {
+          "log": "build/cooperation/e8f2045028/host.log",
+          "log_sha256": "5b93a14a1cdbd6ccdb47b379da39ae4fb8e6f841c2a92309074d98bad76084b3",
+          "assertions": [
+            "COOP PASS duplicate doors independent open",
+            "COOP PASS identity survives crossing positions",
+            "COOP PASS join close and lock routed by key",
+            "COOP PASS join unlock zero propagated",
+            "COOP PASS script door host open",
+            "COOP PASS script door join close survives old snapshot",
+            "COOP PASS join door destruction clears tiles",
+            "COOP PASS scene acknowledgements converge",
+            "COOP PASS room identity reset",
+            "COOP PASS telekinesis interpolates intermediate position",
+            "COOP PASS interpolation does not report false local movement",
+            "COOP PASS local hold wins over pending interpolation",
+            "COOP PASS host own hold not overwritten by remote move",
+            "COOP PASS real alicorn variant constructor",
+            "COOP PASS real mine constructor without unit XML",
+            "COOP PASS real boss constructor",
+            "COOP PASS real injected units mirror",
+            "COOP PASS visibility wins over later registered ENTER_FRAME hider",
+            "COOP PASS orphan mirrored visual reattached",
+            "COOP PASS nested sitting body frame mirrored",
+            "COOP PASS moving body timeline mirrored",
+            "COOP PASS restyle replaces displayed visual",
+            "COOP PASS leave removes remote avatar",
+            "COOP PASS leave stops forced visibility",
+            "COOP PASS leave removes injected alicorn2",
+            "COOP PASS leave removes injected mine",
+            "COOP PASS leave removes injected bossalicorn",
+            "COOP PASS all 65 ground items included",
+            "COOP PASS ground item stack metadata preserved",
+            "COOP PASS overlapping stacks retain distinct keys",
+            "COOP PASS new remote ground stack retains quantity",
+            "COOP PASS remote pickup movement interpolated",
+            "COOP PASS pickup animation does not award or consume inventory",
+            "COOP PASS network native join close returned",
+            "COOP PASS network native script close returned",
+            "COOP PASS network native join destruction returned"
+          ],
+          "completions": [
+            "COOP DONE passed=33 failed=0",
+            "COOP NETWORK DONE host"
+          ],
+          "game_errors": [],
+          "initialized": true,
+          "tick_200": true,
+          "welcome": false,
+          "unit_sync": false
+        },
+        "join": {
+          "log": "build/cooperation/e8f2045028/join.log",
+          "log_sha256": "80a5e431e7f3ea5ca5ccf898912c3b2056939dd53d25656f188c2d19d35526dc",
+          "assertions": [
+            "COOP PASS network new native objects injected",
+            "COOP PASS network native door open received",
+            "COOP PASS network native script door open received",
+            "COOP PASS network native close stays converged"
+          ],
+          "completions": [
+            "COOP NETWORK DONE join"
+          ],
+          "game_errors": [],
+          "initialized": true,
+          "tick_200": true,
+          "welcome": true,
+          "unit_sync": true
+        }
+      }
+    },
+    {
+      "token": "563e74694c",
+      "manifest": {
+        "port": 62389,
+        "pids": [
+          39208,
+          37544
+        ],
+        "candidate": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m28\\CoopTest.swf",
+        "sha256": "749c0e0bf3ab609bc6f1ec92c862bfb354ca3e1e6a6752e9cce2cabfd06c8b93"
+      },
+      "roles": {
+        "host": {
+          "log": "build/cooperation/563e74694c/host.log",
+          "log_sha256": "01f2995a36c27e601a223f5f59099df29cc5c3c9194e0b122c70e2a4ab70e843",
+          "assertions": [
+            "COOP PASS duplicate doors independent open",
+            "COOP PASS identity survives crossing positions",
+            "COOP PASS join close and lock routed by key",
+            "COOP PASS join unlock zero propagated",
+            "COOP PASS script door host open",
+            "COOP PASS script door join close survives old snapshot",
+            "COOP PASS join door destruction clears tiles",
+            "COOP PASS scene acknowledgements converge",
+            "COOP PASS room identity reset",
+            "COOP PASS telekinesis interpolates intermediate position",
+            "COOP PASS interpolation does not report false local movement",
+            "COOP PASS local hold wins over pending interpolation",
+            "COOP PASS host own hold not overwritten by remote move",
+            "COOP PASS real alicorn variant constructor",
+            "COOP PASS real mine constructor without unit XML",
+            "COOP PASS real boss constructor",
+            "COOP PASS real injected units mirror",
+            "COOP PASS visibility wins over later registered ENTER_FRAME hider",
+            "COOP PASS orphan mirrored visual reattached",
+            "COOP PASS nested sitting body frame mirrored",
+            "COOP PASS moving body timeline mirrored",
+            "COOP PASS restyle replaces displayed visual",
+            "COOP PASS leave removes remote avatar",
+            "COOP PASS leave stops forced visibility",
+            "COOP PASS leave removes injected alicorn2",
+            "COOP PASS leave removes injected mine",
+            "COOP PASS leave removes injected bossalicorn",
+            "COOP PASS all 65 ground items included",
+            "COOP PASS ground item stack metadata preserved",
+            "COOP PASS overlapping stacks retain distinct keys",
+            "COOP PASS new remote ground stack retains quantity",
+            "COOP PASS remote pickup movement interpolated",
+            "COOP PASS pickup animation does not award or consume inventory",
+            "COOP PASS network native join close returned",
+            "COOP PASS network native script close returned",
+            "COOP PASS network native join destruction returned"
+          ],
+          "completions": [
+            "COOP DONE passed=33 failed=0",
+            "COOP NETWORK DONE host"
+          ],
+          "game_errors": [],
+          "initialized": true,
+          "tick_200": true,
+          "welcome": false,
+          "unit_sync": false
+        },
+        "join": {
+          "log": "build/cooperation/563e74694c/join.log",
+          "log_sha256": "a9a51ab05776d682d5683da9f069e77df32d1a1985d7b1a7e6ea7ac31ba77ef5",
+          "assertions": [
+            "COOP PASS network new native objects injected",
+            "COOP PASS network native door open received",
+            "COOP PASS network native script door open received",
+            "COOP PASS network native close stays converged"
+          ],
+          "completions": [
+            "COOP NETWORK DONE join"
+          ],
+          "game_errors": [],
+          "initialized": true,
+          "tick_200": true,
+          "welcome": true,
+          "unit_sync": true
+        }
+      }
+    },
+    {
+      "token": "98cc4dec2d",
+      "manifest": {
+        "port": 63641,
+        "pids": [
+          9132,
+          22880
+        ],
+        "candidate": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m28\\RConnectMod.swf",
+        "sha256": "cf12830bc3370651400455eac6cb711303e6e25b0aac4cb99e352df8a91ceac3"
+      },
+      "roles": {
+        "host": {
+          "log": "build/cooperation/98cc4dec2d/host.log",
+          "log_sha256": "ab95434c1ab1c9348bc43f1604e0d2a45599dc63099d5df7e1b7b1c875890787",
+          "assertions": [],
+          "completions": [],
+          "game_errors": [],
+          "initialized": true,
+          "tick_200": true,
+          "welcome": false,
+          "unit_sync": false
+        },
+        "join": {
+          "log": "build/cooperation/98cc4dec2d/join.log",
+          "log_sha256": "34efb5b3a42ef081684fd9816b9c036c51aa31d869ce798dbadcfc4caad9e14e",
+          "assertions": [],
+          "completions": [],
+          "game_errors": [],
+          "initialized": true,
+          "tick_200": true,
+          "welcome": true,
+          "unit_sync": true
+        }
+      }
+    },
+    {
+      "token": "65e809e940",
+      "manifest": {
+        "port": 57286,
+        "pids": [
+          13044,
+          31872
+        ],
+        "candidate": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m28\\CoopTest.swf",
+        "sha256": "42d9e9e0092317e5310c1d6c84e7a8b037970700e5ab49503145ce949f355348"
+      },
+      "roles": {
+        "host": {
+          "log": "build/cooperation/65e809e940/host.log",
+          "log_sha256": "d0739b5570b4476f8027c44a0abe1a04083d1a8775707211bdb0bb160b90b951",
+          "assertions": [
+            "COOP PASS duplicate doors independent open",
+            "COOP PASS identity survives crossing positions",
+            "COOP PASS join close and lock routed by key",
+            "COOP PASS join unlock zero propagated",
+            "COOP PASS script door host open",
+            "COOP PASS script door join close survives old snapshot",
+            "COOP PASS join door destruction clears tiles",
+            "COOP PASS scene acknowledgements converge",
+            "COOP PASS room identity reset",
+            "COOP PASS existing units frozen during cooperation",
+            "COOP PASS leave restores original AI across visited rooms",
+            "COOP PASS telekinesis interpolates intermediate position",
+            "COOP PASS interpolation does not report false local movement",
+            "COOP PASS local hold wins over pending interpolation",
+            "COOP PASS host own hold not overwritten by remote move",
+            "COOP PASS real alicorn variant constructor",
+            "COOP PASS real mine constructor without unit XML",
+            "COOP PASS real boss constructor",
+            "COOP PASS real injected units mirror",
+            "COOP PASS visibility wins over later registered ENTER_FRAME hider",
+            "COOP PASS orphan mirrored visual reattached",
+            "COOP PASS nested sitting body frame mirrored",
+            "COOP PASS moving body timeline mirrored",
+            "COOP PASS restyle replaces displayed visual",
+            "COOP PASS leave removes remote avatar",
+            "COOP PASS leave stops forced visibility",
+            "COOP PASS leave removes injected alicorn2",
+            "COOP PASS leave removes injected mine",
+            "COOP PASS leave removes injected bossalicorn",
+            "COOP PASS all 65 ground items included",
+            "COOP PASS ground item stack metadata preserved",
+            "COOP PASS overlapping stacks retain distinct keys",
+            "COOP PASS new remote ground stack retains quantity",
+            "COOP PASS remote pickup movement interpolated",
+            "COOP PASS pickup animation does not award or consume inventory",
+            "COOP PASS network native join close returned",
+            "COOP PASS network native script close returned",
+            "COOP PASS network native join destruction returned"
+          ],
+          "completions": [
+            "COOP DONE passed=35 failed=0",
+            "COOP NETWORK DONE host"
+          ],
+          "game_errors": [],
+          "initialized": true,
+          "tick_200": true,
+          "welcome": false,
+          "unit_sync": false
+        },
+        "join": {
+          "log": "build/cooperation/65e809e940/join.log",
+          "log_sha256": "20e544f2b3d8a45b219520db49ac916e8c2525698be0803aefa32943e783cf23",
+          "assertions": [
+            "COOP PASS network new native objects injected",
+            "COOP PASS network native door open received",
+            "COOP PASS network native script door open received",
+            "COOP PASS network native close stays converged"
+          ],
+          "completions": [
+            "COOP NETWORK DONE join"
+          ],
+          "game_errors": [],
+          "initialized": true,
+          "tick_200": true,
+          "welcome": true,
+          "unit_sync": true
+        }
+      }
+    },
+    {
+      "token": "5ce32a15a1",
+      "manifest": {
+        "port": 59654,
+        "pids": [
+          17960,
+          39328
+        ],
+        "candidate": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m28\\RConnectMod.swf",
+        "sha256": "2a65d5f83567bd1fb8d537270bee4499fbaa7bf6ef2eaf89be161bfde0a8cf56"
+      },
+      "roles": {
+        "host": {
+          "log": "build/cooperation/5ce32a15a1/host.log",
+          "log_sha256": "bdb3818900cbada30731ba3534abde317f7262a0d4a57c8240461b66b86c985b",
+          "assertions": [],
+          "completions": [],
+          "game_errors": [],
+          "initialized": true,
+          "tick_200": true,
+          "welcome": false,
+          "unit_sync": false
+        },
+        "join": {
+          "log": "build/cooperation/5ce32a15a1/join.log",
+          "log_sha256": "1aaaa3c2a6cd41a0d374dd04894d25b11f9577af70c19083b1cd25213e52ca73",
+          "assertions": [],
+          "completions": [],
+          "game_errors": [],
+          "initialized": true,
+          "tick_200": true,
+          "welcome": true,
+          "unit_sync": true
+        }
+      }
+    }
+  ]
+}

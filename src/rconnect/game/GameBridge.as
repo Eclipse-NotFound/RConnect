@@ -71,14 +71,9 @@ package rconnect.game
             {
                st.addEventListener(Event.DEACTIVATE, onStageDeactivate,
                   false, 1000, true);
-               // M27：每帧强制显示宿主快照中的存活镜像敌人（"队友报点"）。
-               // RV（RealisticVision）在 ENTER_FRAME 里按本地玩家视线隐藏
-               // 敌人（hideUnit→vis.visible=false）；本模组在 loader 链中
-               // 晚于 RV 初始化，同帧 ENTER_FRAME 按注册顺序回调——我们的
-               // 恢复在 RV 隐藏之后执行，同帧生效、零闪烁。宿主侧字典
-               // 恒空，每帧代价为空循环。
-               st.addEventListener(Event.ENTER_FRAME, onVisForceFrame,
-                  false, 0, true);
+               // M28: EXIT_FRAME follows all ENTER_FRAME listeners, independent of loader order.
+               st.addEventListener(Event.EXIT_FRAME, onVisForceFrame,
+                  false, -10000, true);
             }
          }
          catch(err:*)
@@ -88,6 +83,53 @@ package rconnect.game
       }
 
       private var _hostAlive:Dictionary = new Dictionary();
+      private var _mirroring:Boolean = false;
+      private var _objects:ObjectIdentity = new ObjectIdentity();
+      private var _sceneExpected:Dictionary = new Dictionary();
+      private var _scenePending:Dictionary = new Dictionary();
+      private var _freezeOriginal:Dictionary = new Dictionary();
+      private var _spawnedPuppets:Dictionary = new Dictionary();
+
+      public function endSession():void
+      {
+         _mirroring = false;
+         _hostAlive = new Dictionary();
+         for(var id:String in _remotes) removeRemote(int(id));
+         for(var unit:Object in _freezeOriginal)
+         {
+            try { unit["disabled"] = _freezeOriginal[unit]; } catch(err:*) {}
+         }
+         _freezeOriginal = new Dictionary();
+         for(var puppet:Object in _spawnedPuppets)
+         {
+            try
+            {
+               var room:Object = _spawnedPuppets[puppet];
+               room["remObj"](puppet);
+               var units:Array = room["units"] as Array;
+               var index:int = units.indexOf(puppet);
+               if(index >= 0) units.splice(index, 1);
+            }
+            catch(removeError:*) {}
+         }
+         _spawnedPuppets = new Dictionary();
+         _frozen = {};
+         _baseHp = {};
+         _objects.reset();
+         _sceneExpected = new Dictionary();
+         _scenePending = new Dictionary();
+         _boxTween = new Dictionary();
+         _boxTrack = new Dictionary();
+         _istExpectO = new Dictionary();
+         _istStabO = new Dictionary();
+         _istSeen = new Dictionary();
+         _istLast = new Dictionary();
+         _istSeenLoc = null;
+         _istLastLoc = null;
+         _lastLocRef = null;
+         lootSyncReset();
+      }
+
 
       /** M27：宿主快照里存活的镜像单位（applyUnitsSync 每轮重建；
        *  死亡/离房自动移出——不强制显示尸体）。 */
@@ -95,9 +137,19 @@ package rconnect.game
       {
          try
          {
+            if(!_mirroring) return;
+            tickLootMotion();
             for(var u:Object in _hostAlive)
             {
                var vis:Object = probe(u, "vis");
+               if(probe(u, "loc") !== loc || numOr(probe(u, "sost"), 3) >= 3
+                  || probe(u, "invis") == true) continue;
+               if(vis != null && probe(vis, "parent") == null && probe(u, "in_chain") == true)
+               {
+                  var disabled:Boolean = probe(u, "disabled") == true;
+                  try { u["disabled"] = false; u["addVisual"](); }
+                  finally { u["disabled"] = disabled; }
+               }
                if(vis == null || probe(vis, "visible") != false)
                {
                   continue;
@@ -190,7 +242,7 @@ package rconnect.game
             _autoTries++;
             Log.d("RConnectGame: startGame: calling newGame (try "
                + _autoTries + ")");
-            world["newGame"](0, "LP", null);
+            world["newGame"](-1, "LP", null);
             _autoStage = 1;
             _autoStageT = flash.utils.getTimer();
          }
@@ -281,6 +333,7 @@ package rconnect.game
             return null;
          }
          var s:Object = {};
+         if(loc == null || probe(gg,"loc") !== loc) return null;
          s.x = numOr(probe(gg, "X"), 0);
          s.y = numOr(probe(gg, "Y"), 0);
          s.storona = numOr(probe(gg, "storona"), 1);
@@ -301,6 +354,10 @@ package rconnect.game
          // M16：本机当前姿态标签（vis.osn.currentLabel）——让远端幽灵直接
          // 播放对方真实姿态（站/走/跑/蹲/趴都由对方游戏决定，不再本地猜测）
          s.pose = localPoseLabel();
+         var osn:Object = probe(probe(gg, "vis"), "osn");
+         s.poseFrame = numOr(probe(osn, "currentFrame"), 1);
+         s.bodyFrame = numOr(probe(probe(osn, "body"), "currentFrame"), 1);
+         s.isSit = probe(gg, "isSit") == true;
          // M18：外观镜像——远端据此给幽灵穿上对方的外观（护甲/毛色/眼/魔法）
          s.ap = readAppearance();
          s.aimX = numOr(probe(world, "celX"), 0);
@@ -340,7 +397,9 @@ package rconnect.game
          // M10b：客户端在别的土地（死亡回城/换图途中）→ 化身隐藏不驱动
          var myLand:String = currentLandId();
          var snapLand:String = snap.landId != null ? String(snap.landId) : "";
-         if(myLand != "" && snapLand != "" && myLand != snapLand)
+         var snapRoom:String = snap.locId == null ? "" : String(snap.locId);
+         if((myLand != "" && snapLand != "" && myLand != snapLand)
+            || (snapRoom != "" && snapRoom != String(probe(loc, "id"))))
          {
             if(rec.ghost != null)
             {
@@ -412,9 +471,9 @@ package rconnect.game
          {
             return "";
          }
-         return String(ap.armor) + "|" + String(ap.cFur) + "|"
-            + String(ap.cEye) + "|" + String(ap.fHair) + "|"
-            + String(ap.hideMane);
+         return JSON.stringify([ap.armor, ap.hideMane, ap.visHair1, ap.fEye, ap.fHair,
+            ap.cFur, ap.cHair, ap.cHair1, ap.cEye, ap.cMagic,
+            ap.tf, ap.tH, ap.tH1, ap.tE, ap.tM]);
       }
 
       private var _apKey:Object = {};
@@ -451,7 +510,17 @@ package rconnect.game
                {
                }
             }
+            var oldVis:Object = probe(ghost, "vis");
+            var parent:Object = probe(oldVis, "parent");
+            if(parent != null)
+            {
+               var index:int = parent["getChildIndex"](oldVis);
+               parent["removeChild"](oldVis);
+               parent["addChildAt"](newVis, index);
+            }
             ghost["vis"] = newVis;
+            ghost["setVisPos"]();
+            driveVisAnim(ghost, snap, id);
             if(wvis != null)
             {
                _weaponVis[id] = wvis;
@@ -866,6 +935,9 @@ package rconnect.game
          delete _animState[id];
          removeWeaponVis(id);
          delete _weaponId[id];
+         delete _ghostHp[id];
+         delete _ghostPassive[id];
+         delete _apKey[id];
       }
 
       public function remoteCount():int
@@ -1120,6 +1192,24 @@ package rconnect.game
        */
       private function driveVisAnim(ghost:Object, snap:Object, id:int):void
       {
+         if(snap.poseFrame != null && snap.bodyFrame != null)
+         {
+            try
+            {
+               var targetOsn:Object = probe(probe(ghost, "vis"), "osn");
+               var pf:int = int(snap.poseFrame);
+               if(pf >= 1 && pf <= numOr(probe(targetOsn, "totalFrames"), 0))
+               {
+                  if(int(probe(targetOsn, "currentFrame")) != pf) targetOsn["gotoAndStop"](pf);
+                  var targetBody:Object = probe(targetOsn, "body");
+                  var bf:int = int(snap.bodyFrame);
+                  if(bf >= 1 && bf <= numOr(probe(targetBody, "totalFrames"), 0))
+                     targetBody["gotoAndStop"](bf);
+                  return;
+               }
+            }
+            catch(poseError:*) {}
+         }
          var rec:Object = _animState[id];
          if(rec == null)
          {
@@ -2316,6 +2406,7 @@ package rconnect.game
          {
             return null;
          }
+         _objects.enter(loc);
          var out:Array = [];
          try
          {
@@ -2328,6 +2419,7 @@ package rconnect.game
                }
                var ent:Object = {
                   id: id,
+                  k: _objects.key(b),
                   cls: getQualifiedClassName(b),
                   x: numOr(probe(b, "X"), -1),
                   y: numOr(probe(b, "Y"), -1),
@@ -2352,19 +2444,21 @@ package rconnect.game
                // 默认的字段（_istSeen），回默认后也显式广播 0 值——否则
                // "开门后再关门/解锁"的字段直接消失，加入方锁存回不去。
                var iv:Object = probe(b, "inter");
+               if(iv == null && numOr(probe(b, "door"), 0) > 0)
+                  ent.doorOpen = firstDoorTilePhis(b) == 0;
                if(iv != null)
                {
                   if(_istSeenLoc !== loc)
                   {
                      _istSeenLoc = loc;
-                     _istSeen = {};
+                     _istSeen = new Dictionary();
                   }
-                  var seen:Object = _istSeen[id];
+                  var seen:Object = _istSeen[b];
                   if(seen == null)
                   {
                      seen = {open: false, lock: false, mine: false,
                         loot: false, expl: false};
-                     _istSeen[id] = seen;
+                     _istSeen[b] = seen;
                   }
                   var so:Object = {};
                   iv["save"](so);
@@ -2453,6 +2547,7 @@ package rconnect.game
          {
             return;
          }
+         _objects.enter(loc);
          var byId:Object = {};
          // M25：本轮已消费的 Box（同 id 就近匹配用）
          var consumed:Dictionary = new Dictionary();
@@ -2473,17 +2568,45 @@ package rconnect.game
          var synced:int = 0;
          for each(var h:Object in list)
          {
-            var lb:Object = byId[String(h.id)];
+            var lb:Object = _objects.resolve(h, objs as Array, consumed);
+            if(lb == null && h.dead != true && String(h.cls) == "fe.loc::Box")
+            {
+               try
+               {
+                  var ad:Object = main["loaderInfo"]["applicationDomain"];
+                  var boxClass:Class = ad["getDefinition"]("fe.loc.Box") as Class;
+                  var pos:Object = validLandPos(Number(h.x), Number(h.y));
+                  if(pos != null)
+                  {
+                     var made:Object = new boxClass(loc,String(h.id),int(pos.x),int(pos.y));
+                     if(numOr(probe(made,"door"),0)>0) made["initDoor"]();
+                     (objs as Array).push(made);
+                     loc["addObj"](made);
+                     _objects.bind(String(h.k), made);
+                     lb = _objects.resolve(h, objs as Array, consumed);
+                     Log.d("RConnectGame: scene object injected '"+String(h.id)+"' key="+String(h.k));
+                  }
+               }
+               catch(createError:*) { Log.d("RConnectGame: scene injection failed: "+createError); }
+            }
             if(lb == null)
             {
                continue;
+            }
+            queueSceneChange(lb);
+            var pending:Object = _scenePending[lb];
+            if(pending != null)
+            {
+               if((pending.dead == true && h.dead != true)
+                  || (pending.doorOpen != null && pending.doorOpen != h.doorOpen)) continue;
+               delete _scenePending[lb];
             }
             try
             {
                if(h.dead != undefined)
                {
                   var wasDead:Boolean = (probe(lb, "dead") == true);
-                  if(!wasDead && h.dead == true && !_boxDeadLogged[String(h.id)])
+                  if(!wasDead && h.dead == true)
                   {
                      _boxDeadLogged[String(h.id)] = true;
                      if(numOr(probe(lb, "door"), 0) > 0)
@@ -2496,6 +2619,7 @@ package rconnect.game
                      }
                      else
                      {
+                        lb["die"](-1);
                         Log.d("RConnectGame: box destroyed synced '" + String(h.id)
                            + "'");
                      }
@@ -2527,14 +2651,14 @@ package rconnect.game
                {
                   applyIst(lb, String(h.id), h.ist);
                }
+               applySceneState(lb, h);
                // M25：可移动 Box（念力可移动物品：wall==0 且非门）位置镜像
                // ——就近匹配同 id（房间可有多个同 id 箱子），本地正被念力
                // 托举的跳过（防镜像与本地持有互抢，由上报通道主导）
                if(numOr(h.door, 0) <= 0 && numOr(h.w, 0) <= 0
                   && numOr(h.x, -1) >= 0)
                {
-                  var cand:Object = matchBoxById(String(h.id),
-                     Number(h.x), Number(h.y), consumed);
+                  var cand:Object = lb;
                   if(cand != null && !boxHeldLocally(cand))
                   {
                      trackBoxPos(cand, Number(h.x), Number(h.y),
@@ -2554,6 +2678,56 @@ package rconnect.game
          }
       }
 
+      private function applySceneState(b:Object, s:Object):void
+      {
+         if(s.dead == true && probe(b, "dead") != true) b["die"](-1);
+         if(probe(b, "dead") != true && s.doorOpen != null
+            && probe(b, "inter") == null && numOr(probe(b, "door"), 0) > 0)
+         {
+            if((firstDoorTilePhis(b) == 0) != (s.doorOpen == true))
+            {
+               b["setDoor"](s.doorOpen == true);
+               loc["isRelight"] = true;
+               loc["isRebuild"] = true;
+            }
+         }
+         _sceneExpected[b] = {dead: probe(b, "dead") == true,
+            doorOpen: firstDoorTilePhis(b) == 0};
+      }
+
+      private function scanSceneReports():Array
+      {
+         var changes:Array = [];
+         for(var b:Object in _sceneExpected)
+         {
+            queueSceneChange(b);
+            if(_scenePending[b] != null) changes.push(_scenePending[b]);
+         }
+         return changes;
+      }
+
+      private function queueSceneChange(b:Object):void
+      {
+            // Keep local intent until the host acknowledges it. A tile patch or
+            // redraw can change physical door tiles while that intent is in flight.
+            if(_scenePending[b] != null) return;
+            var ex:Object = _sceneExpected[b];
+            if(ex == null) return;
+            var dead:Boolean = probe(b, "dead") == true;
+            var open:Boolean = firstDoorTilePhis(b) == 0;
+            var scriptDoor:Boolean = probe(b, "inter") == null && numOr(probe(b, "door"), 0) > 0;
+            if((dead && !ex.dead) || (scriptDoor && !dead && open != ex.doorOpen))
+            {
+               var s:Object = {k: _objects.known(b), id: String(probe(b, "id")),
+                  x: probe(b, "X"), y: probe(b, "Y"), dead: dead};
+               if(scriptDoor) s.doorOpen = open;
+               _scenePending[b] = s;
+               Log.d("RConnectGame: scene local pending " + JSON.stringify(s));
+               ex.dead = dead;
+               ex.doorOpen = open;
+            }
+      }
+
       private var _objsLogged2:Boolean = false;
       private var _boxDeadLogged:Object = {};
 
@@ -2568,9 +2742,9 @@ package rconnect.game
          return ist;
       }
 
-      private var _istLast:Object = {};
+      private var _istLast:Dictionary = new Dictionary();
       private var _istLastLoc:Object = null;
-      private var _istSeen:Object = {};
+      private var _istSeen:Dictionary = new Dictionary();
       private var _istSeenLoc:Object = null;
 
       /** open/lock 滞回窗口（unitsync 条数，20Hz 下约 500ms）。 */
@@ -2593,7 +2767,7 @@ package rconnect.game
                   Log.d("RConnectGame: ist latch RESET (loc ref changed)");
                }
                _istLastLoc = loc;
-               _istLast = {};
+               _istLast = new Dictionary();
             }
             var iv:Object = probe(lb, "inter");
             if(iv == null)
@@ -2604,12 +2778,12 @@ package rconnect.game
             {
                return;   // 已破坏：die(-1) 已定视觉，交互状态不再镜像
             }
-            var last:Object = _istLast[oid];
+            var last:Object = _istLast[lb];
             if(last == null)
             {
                last = {open: -1, lock: -1, loot: 0, mine: -1, expl: -1,
                   co: -1, cn: 0, cl: -1, ln: 0};
-               _istLast[oid] = last;
+               _istLast[lb] = last;
             }
             // open/lock 滞回：候选值连续 IST_STABLE_N 条消息不变才应用——
             // 过滤宿主侧残余振荡（实测 autoClose 门被堵门时 350ms 周期抖动）
@@ -3172,6 +3346,32 @@ package rconnect.game
       private var _lootPos:Object = {};    // joiner：键 → 宿主上次广播位置
       private var _lootRepT:Object = {};   // joiner：键 → 上次移动上报时刻
       private var _lootLoc:Object = null;  // 房间守卫（换房清空身份表）
+      private var _lootMotion:Object = {};
+
+      /** Visual/position interpolation only; never call Loot.take on a mirror. */
+      private function tickLootMotion():void
+      {
+         for(var key:String in _lootMotion)
+         {
+            var target:Object = _lootMotion[key];
+            var o:Object = target.o;
+            if(probe(o,"loc") !== loc || probe(o,"in_chain") != true
+               || boxHeldLocally(o) || probe(o,"vsos") == true)
+            { delete _lootMotion[key]; continue; }
+            try
+            {
+               var x:Number = Number(probe(o,"X"));
+               var y:Number = Number(probe(o,"Y"));
+               x += (Number(target.x)-x)*0.4;
+               y += (Number(target.y)-y)*0.4;
+               o["X"]=x; o["Y"]=y; o["dx"]=0; o["dy"]=0;
+               var vis:Object=probe(o,"vis");
+               if(vis!=null) { vis["x"]=x; vis["y"]=y; }
+               _lootPos[key]={x:x,y:y};
+            }
+            catch(err:*) { delete _lootMotion[key]; }
+         }
+      }
 
       private function lootSyncReset():void
       {
@@ -3181,6 +3381,7 @@ package rconnect.game
          _lootPos = {};
          _lootRepT = {};
          _lootIdSeq = 0;
+         _lootMotion = {};
       }
 
       /** 沿 Pt 链枚举本房间全部 Loot。@return [obj, base] 数组 */
@@ -3190,9 +3391,10 @@ package rconnect.game
          try
          {
             var cur:Object = probe(loc, "firstObj");
-            var guard:int = 0;
-            while(cur != null && guard++ < 800)
+            var visited:Dictionary = new Dictionary();
+            while(cur != null && visited[cur] != true)
             {
+               visited[cur] = true;
                if(getQualifiedClassName(cur).indexOf("Loot") >= 0)
                {
                   out.push([cur, lootItemBase(cur)]);
@@ -3238,12 +3440,10 @@ package rconnect.game
                   _lootIdOf[o] = k;
                   _lootObjOf[k] = o;
                }
+               var itemData:Object = probe(o, "item")["save"]();
                out.push({k: k, x: numOr(probe(o, "X"), 0),
-                  y: numOr(probe(o, "Y"), 0), b: String(e[1])});
-               if(out.length >= 60)
-               {
-                  break;
-               }
+                  y: numOr(probe(o, "Y"), 0), b: String(e[1]), item: itemData,
+                  suction: probe(o, "vsos") == true});
             }
          }
          catch(err:*)
@@ -3286,7 +3486,7 @@ package rconnect.game
                if(lo == null)
                {
                   lo = claimLocalLoot(k, String(s.b),
-                     Number(s.x), Number(s.y));
+                     Number(s.x), Number(s.y), s.item);
                   if(lo != null)
                   {
                      claimed++;
@@ -3304,6 +3504,12 @@ package rconnect.game
                }
                if(lo != null)
                {
+                  if(s.suction == true && !boxHeldLocally(lo) && probe(lo,"vsos") != true)
+                  {
+                     _lootMotion[k]={o:lo,x:Number(s.x),y:Number(s.y)};
+                     continue;
+                  }
+                  delete _lootMotion[k];
                   // 位置镜像：直接落位并清速度（防双端物理分叉），vis 由
                   // Loot.step 每帧自跟随。
                   // 本地偏差保护（与 M25 trackBoxPos 同理）：本地已偏离
@@ -3385,8 +3591,10 @@ package rconnect.game
 
       /** joiner 认领：同 base 且距宿主广播位置 <40px 的未标记本地 Loot。 */
       private function claimLocalLoot(k:String, base:String,
-         hx:Number, hy:Number):Object
+         hx:Number, hy:Number, itemData:Object = null):Object
       {
+         var best:Object = null;
+         var bestD:Number = 1600;
          try
          {
             var list:Array = lootWalk();
@@ -3401,20 +3609,24 @@ package rconnect.game
                {
                   continue;
                }
+               var item:Object = probe(o, "item");
+               if(itemData != null && (int(probe(item,"kol")) != int(itemData.kol)
+                  || int(probe(item,"variant")) != int(itemData.variant)
+                  || Number(probe(item,"sost")) != Number(itemData.sost))) continue;
                var dx:Number = numOr(probe(o, "X"), 0) - hx;
                var dy:Number = numOr(probe(o, "Y"), 0) - hy;
-               if(dx * dx + dy * dy < 1600)
+               if(dx * dx + dy * dy < bestD)
                {
-                  _lootKeyOfJ[o] = k;
-                  _lootObjOf[k] = o;
-                  return o;
+                  bestD = dx * dx + dy * dy;
+                  best = o;
                }
             }
          }
          catch(err:*)
          {
          }
-         return null;
+         if(best != null) { _lootKeyOfJ[best] = k; _lootObjOf[k] = best; }
+         return best;
       }
 
       /** M17b 构造路径复用：按广播条目生成 Loot 并登记键。 */
@@ -3424,7 +3636,7 @@ package rconnect.game
          try
          {
             var lootCls:Object = ad["getDefinition"]("fe.loc.Loot");
-            var shaped:Object = {itemBase: String(s.b),
+            var shaped:Object = {itemBase: String(s.b), item: s.item,
                x: Number(s.x), y: Number(s.y)};
             var lo:Object = spawnLoot(ad, lootCls, shaped);
             if(lo != null)
@@ -3446,6 +3658,7 @@ package rconnect.game
          delete _lootObjOf[k];
          delete _lootPos[k];
          delete _lootRepT[k];
+         delete _lootMotion[k];
          if(_lootKeyOfJ != null)
          {
             delete _lootKeyOfJ[o];
@@ -3484,6 +3697,7 @@ package rconnect.game
                   picked.push(k);
                   continue;
                }
+               if(_lootMotion[k] != null && !boxHeldLocally(o) && probe(o,"vsos") != true) continue;
                var p:Object = _lootPos[k];
                if(p == null)
                {
@@ -4040,7 +4254,7 @@ package rconnect.game
             }
             var bx:Number = numOr(probe(b, "X"), 0);
             var by:Number = numOr(probe(b, "Y"), 0);
-            if(Math.abs(bx - x) >= 2 || Math.abs(by - y) >= 2)
+            if(held || Math.abs(bx - x) >= 2 || Math.abs(by - y) >= 2)
             {
                // M26：设 tween 目标（平滑逼近），不直接写坐标
                _boxTween[b] = {tx: x, ty: y, q: held};
@@ -4055,10 +4269,11 @@ package rconnect.game
             {
                // 目标回到当前位：取消挂起的 tween（防漂移）
                delete _boxTween[b];
+               if(tween.q == true) b["stay"] = false;
             }
             if(rec == null)
             {
-               _boxTrack[b] = {x: x, y: y, q: held, lastR: 0};
+               _boxTrack[b] = {x: bx, y: by, q: held, lastR: 0};
             }
             else
             {
@@ -4085,13 +4300,16 @@ package rconnect.game
             for(var b:Object in _boxTween)
             {
                var tw:Object = _boxTween[b];
+               if(probe(b, "loc") !== loc || probe(b, "dead") == true || boxHeldLocally(b))
+               { delete _boxTween[b]; continue; }
                var x:Number = numOr(probe(b, "X"), 0);
                var y:Number = numOr(probe(b, "Y"), 0);
                var dx:Number = Number(tw.tx) - x;
                var dy:Number = Number(tw.ty) - y;
                if(dx * dx + dy * dy <= 1)
                {
-                  delete _boxTween[b];
+                  if(tw.q == true) { b["stay"] = true; b["dx"] = 0; b["dy"] = 0; }
+                  else delete _boxTween[b];
                   continue;
                }
                var nx:Number = x + dx * 0.25;
@@ -4111,6 +4329,8 @@ package rconnect.game
                   b["stay"] = true;
                }
                b["runVis"]();
+               var baseline:Object = _boxTrack[b];
+               if(baseline != null) { baseline.x = nx; baseline.y = ny; }
             }
          }
          catch(err:*)
@@ -4149,11 +4369,11 @@ package rconnect.game
                var rec:Object = _boxTrack[b];
                var dx:Number = numOr(probe(b, "X"), 0) - Number(rec.x);
                var dy:Number = numOr(probe(b, "Y"), 0) - Number(rec.y);
-               if(dx * dx + dy * dy > 625
+               if((_boxTween[b] == null || boxHeldLocally(b)) && dx * dx + dy * dy > 625
                   && now - numOr(rec.lastR, 0) > 200)
                {
                   rec.lastR = now;
-                  moved.push({id: String(probe(b, "id")),
+                  moved.push({id: String(probe(b, "id")), k: _objects.known(b),
                      x: numOr(probe(b, "X"), 0),
                      y: numOr(probe(b, "Y"), 0),
                      q: boxHeldLocally(b)});
@@ -4218,7 +4438,7 @@ package rconnect.game
                if(stab.o != exo.o || stab.l != exo.l || stab.t != exo.t)
                {
                   // 附位置：宿主按 id+就近匹配到正确实例（同 id 多箱）
-                  ist.push({id: oid, o: stab.o, l: stab.l, t: stab.t,
+                  ist.push({id: oid, k: _objects.known(o), o: stab.o, l: stab.l, t: stab.t,
                      x: numOr(probe(o, "X"), 0), y: numOr(probe(o, "Y"), 0)});
                   // 推进期望防重复上报
                   exo.o = stab.o;
@@ -4240,11 +4460,12 @@ package rconnect.game
                         "\n").slice(0, 3).join(" <= ") : ""));
             }
          }
-         if(moved.length == 0 && ist.length == 0)
+         var scene:Array = scanSceneReports();
+         if(moved.length == 0 && ist.length == 0 && scene.length == 0)
          {
             return null;
          }
-         return {moved: moved, ist: ist};
+         return {moved: moved, ist: ist, scene: scene};
       }
 
       /** M25：宿主应用 joiner 上报（Box 位移就近落位；ist 经 setAct 官方
@@ -4257,13 +4478,18 @@ package rconnect.game
          }
          try
          {
+            _objects.enter(loc);
+            for each(var scene:Object in o.scene as Array)
+            {
+               var sceneObj:Object = _objects.resolve(scene, probe(loc, "objs") as Array, new Dictionary());
+               if(sceneObj != null) applySceneState(sceneObj, scene);
+            }
             var moved:Array = o.moved as Array;
             if(moved != null)
             {
                for each(var m:Object in moved)
                {
-                  var mb:Object = matchBoxById(String(m.id),
-                     Number(m.x), Number(m.y), new Dictionary());
+                  var mb:Object = _objects.resolve(m, probe(loc, "objs") as Array, new Dictionary());
                   if(mb != null)
                   {
                      trackBoxPos(mb, Number(m.x), Number(m.y),
@@ -4280,8 +4506,7 @@ package rconnect.game
                for each(var is2:Object in istl)
                {
                   // id+就近匹配到正确实例（同 id 多箱；含门/墙对象）
-                  var target:Object = matchObjByIdPos(String(is2.id),
-                     numOr(is2.x, 0), numOr(is2.y, 0), used);
+                  var target:Object = _objects.resolve(is2, probe(loc, "objs") as Array, used);
                   if(target == null)
                   {
                      continue;
@@ -4292,19 +4517,19 @@ package rconnect.game
                   {
                      continue;
                   }
-                  var seen:Object = _istSeen[String(is2.id)];
+                  var seen:Object = _istSeen[target];
                   if(seen == null)
                   {
                      seen = {open: false, lock: false, mine: false,
                         loot: false, expl: false};
-                     _istSeen[String(is2.id)] = seen;
+                     _istSeen[target] = seen;
                   }
-                  if(is2.o != undefined && is2.o == 1)
+                  if(is2.o != undefined)
                   {
-                     iv["setAct"]("open", 1);
+                     iv["setAct"]("open", int(is2.o));
                      seen.open = true;
                   }
-                  if(is2.l != undefined && numOr(is2.l, 0) > 0)
+                  if(is2.l != undefined && int(is2.o) != 1)
                   {
                      iv["setAct"]("lock", numOr(is2.l, 0));
                      seen.lock = true;
@@ -4366,6 +4591,8 @@ package rconnect.game
             for each(var s:Object in list)
             {
                var key:String = String(s.id);
+               // Box creation belongs exclusively to the keyed scene channel.
+               if(String(s.cls) == "fe.loc::Box") continue;
                if(_objSpawnedIds[key])
                {
                   continue;   // 幂等：持续广播下去重
@@ -4431,7 +4658,16 @@ package rconnect.game
             {
                return null;
             }
-            var item:Object = new (itCls as Class)(null, base, 1);
+            var data:Object = s.item;
+            var item:Object = data == null ? new (itCls as Class)(null, base, 1)
+               : new (itCls as Class)(String(data.tip), base, int(data.kol), int(data.sost));
+            if(data != null)
+            {
+               item["variant"] = int(data.variant);
+               item["lvl"] = int(data.lvl);
+               item["barter"] = data.barter;
+               item["trig"] = data.trig;
+            }
             var lo:Object = new (lootCls as Class)(loc, item, Number(s.x),
                Number(s.y), false, false, false);
             return lo;
@@ -4745,7 +4981,7 @@ package rconnect.game
                   {
                   }
                }
-               world["newGame"](0, "LP", null);
+               world["newGame"](-1, "LP", null);
                Log.d("RConnectGame: loadSaveTest: newGame bootstrap");
                return false;
             }
@@ -4866,6 +5102,7 @@ package rconnect.game
                out.push({
                   id: uid,
                   cls: getQualifiedClassName(u),
+                  tr: numOr(probe(u, "tr"), 0),
                   x: numOr(probe(u, "X"), 0),
                   y: numOr(probe(u, "Y"), 0),
                   storona: numOr(probe(u, "storona"), 1),
@@ -4918,6 +5155,7 @@ package rconnect.game
          // M27：每轮重建强制显示集（宿主每轮广播完整单位表；死亡
          // sost>=3 与游戏隐身 invis 不强制——尸体与潜行语义留给游戏）
          _hostAlive = new Dictionary();
+         _mirroring = true;
          // 建立 id → 单位 索引（客户端世界）
          var byId:Object = {};
          try
@@ -4958,7 +5196,8 @@ package rconnect.game
                }
                else
                {
-                  target["setPos"](Number(e.x), Number(e.y));
+                  var safe:Object = validLandPos(Number(e.x), Number(e.y));
+                  target["setPos"](Number(safe.x), Number(safe.y));
                }
                if(e.sost != undefined && Number(e.sost) != -1)
                {
@@ -4985,6 +5224,8 @@ package rconnect.game
                // disabled=false 后 hp 漂移产生幻影伤害上报）
                if(freezeAI && target != gg)
                {
+                  if(_freezeOriginal[target] === undefined)
+                     _freezeOriginal[target] = probe(target, "disabled") == true;
                   target["disabled"] = true;
                   if(_frozen[eid] == undefined)
                   {
@@ -5272,15 +5513,18 @@ package rconnect.game
                   + e.cls + " not found");
                return null;
             }
-            var xml:Object = findUnitXml(String(e.id));
-            if(xml == null)
+            var cname:String = String(e.cls);
+            var cid:String = String(e.id);
+            var map:XML = <unit/>;
+            if(cname.indexOf("UnitAlicorn") >= 0)
             {
-               _injectFailed[eid] = true;
-               Log.d("RConnectGame: inject '" + e.id + "' skipped: no unit xml"
-                  + " (boss? host-authority only)");
-               return null;
+               map.@tr = int(e.tr);
+               cid = String(int(e.tr));
             }
-            var u:Object = new (cls as Class)(String(e.id), 100, xml, null);
+            else if(cname.indexOf("Mine") >= 0) map.@tr = int(e.tr);
+            // Constructors obtain base stats/animations from AllData themselves.
+            // param3 is a map placement XML, NOT the AllData unit definition.
+            var u:Object = new (cls as Class)(cid, 100, map, null);
             u["doop"] = true;
             u["unres"] = true;
             u["fraction"] = numOr(e.fraction, 1);
@@ -5300,6 +5544,7 @@ package rconnect.game
             loc["addObj"](u);
             var units:Object = loc["units"];
             units["push"](u);
+            _spawnedPuppets[u] = loc;
             u["disabled"] = true;   // 视觉已挂，停本地 AI
             u["setVisPos"]();
             // M19：注入时同步宿主外观帧/瞄准点
@@ -5360,6 +5605,15 @@ package rconnect.game
          if(_lastLocRef != loc)
          {
             _lastLocRef = loc;
+            _objects.enter(loc);
+            _sceneExpected = new Dictionary();
+            _scenePending = new Dictionary();
+            _boxTween = new Dictionary();
+            _boxTrack = new Dictionary();
+            _istExpectO = new Dictionary();
+            _istStabO = new Dictionary();
+            // Original AI flags belong to the whole session, including rooms
+            // already visited. endSession must restore those units as well.
             _baseHp = {};
             _frozen = {};
             _animLogged = {};

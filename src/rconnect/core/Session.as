@@ -263,6 +263,7 @@ package rconnect.core
             link.close();
             link = null;
          }
+         if(mod.game != null) mod.game.endSession();
          peers = [];
          remotes = [];
       }
@@ -314,6 +315,7 @@ package rconnect.core
                   mod.game.removeRemote(int(r.id));
                }
             }
+            if(mod.game != null) mod.game.endSession();
             remotes = [];
             mode = OFFLINE;
             maybeRejoin("closed");
@@ -322,6 +324,7 @@ package rconnect.core
 
       private function onLinkFailed(e:Event):void
       {
+         if(mod.game != null) mod.game.endSession();
          error = "connect failed (check ip/port)";
          mode = OFFLINE;
          // 与断线重连共用同一重试通道（防双定时器竞态）
@@ -429,7 +432,12 @@ package rconnect.core
                         }
                      }
                   }
-                  var r:Object = mod.game.applyUnitsSync(msg.units as Array);
+                  var localWorld:Object = mod.game.readWorldInfo();
+                  var sameRoom:Boolean = localWorld != null && msg.worldInfo != null
+                     && String(localWorld.curLandId) == String(msg.worldInfo.curLandId)
+                     && String(localWorld.locId) == String(msg.worldInfo.locId);
+                  var r:Object = sameRoom ? mod.game.applyUnitsSync(msg.units as Array)
+                     : {matched: 0, total: 0};
                   _syncCount++;
                   if(_syncCount % 20 == 1)
                   {
@@ -546,6 +554,7 @@ package rconnect.core
                break;
 
             case Protocol.MSG_DAMAGE:
+               if(!sameHostRoom(msg)) break;
                // 宿主：应用客户端上报的伤害（客户端命中检测 → 宿主权威结算），
                // 并把敌人仇恨拉到该客户端的幽灵化身上（M9）
                if(msg.hits is Array)
@@ -572,6 +581,7 @@ package rconnect.core
                break;
 
             case Protocol.MSG_LOOT:
+               if(!sameHostRoom(msg)) break;
                // M24：宿主应用加入方的拾取/推动上报（宿主权威落位）
                if(mod.game != null)
                {
@@ -580,6 +590,7 @@ package rconnect.core
                break;
 
             case Protocol.MSG_OBJS:
+               if(!sameHostRoom(msg)) break;
                // M25：宿主应用加入方的 Box 位移（念力）与 ist 变更上报
                if(mod.game != null)
                {
@@ -601,6 +612,16 @@ package rconnect.core
       {
          _hostWorldInfo = hostInfo;
          doCompareWorldInfo();
+      }
+
+      /** Room-scoped identities cannot be applied after either player travels. */
+      private function sameHostRoom(msg:Object):Boolean
+      {
+         var info:Object = mod.game != null ? mod.game.readWorldInfo() : null;
+         return info != null && msg.worldInfo != null
+            && String(info.curLandId) == String(msg.worldInfo.curLandId)
+            && String(info.locId) == String(msg.worldInfo.locId)
+            && !mod.game.isTransitioning();
       }
 
       private var _hostWorldInfo:Object = null;
@@ -898,6 +919,7 @@ package rconnect.core
             var lrep:Object = mod.game.scanLootReports();
             if(lrep != null)
             {
+               lrep.worldInfo = mod.game.readWorldInfo();
                link.send(Protocol.make(Protocol.MSG_LOOT, lrep));
                Log.d("RConnectNet: loot report picked="
                   + (lrep.picked as Array).length + " moved="
@@ -906,6 +928,7 @@ package rconnect.core
             var orep:Object = mod.game.scanObjReports();
             if(orep != null)
             {
+               orep.worldInfo = mod.game.readWorldInfo();
                link.send(Protocol.make(Protocol.MSG_OBJS, orep));
                Log.d("RConnectNet: objs report moved="
                   + ((orep.moved as Array) != null ? (orep.moved as Array).length : 0)
@@ -969,7 +992,8 @@ package rconnect.core
                var hits:Array = mod.game.scanAndReportDamage();
                if(hits != null && hits.length > 0)
                {
-                  link.send(Protocol.make(Protocol.MSG_DAMAGE, {hits: hits}));
+                  link.send(Protocol.make(Protocol.MSG_DAMAGE,
+                     {hits: hits, worldInfo: mod.game.readWorldInfo()}));
                   Log.d("RConnectNet: reported " + hits.length
                      + " damage hits first=" + String(hits[0].id)
                      + "/" + Math.round(Number(hits[0].dmg)));
