@@ -35,6 +35,7 @@ package
                {
                   CoopRegression.run(mod);
                   EnemyRegression.run(mod);
+                  CombatRegression.run(mod);
                }
             }
             scenario.tick(mod,n);

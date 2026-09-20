@@ -567,7 +567,7 @@ package rconnect.core
                   {
                      if(mod.game != null
                         && mod.game.applyDamage(String(h.id), Number(h.dmg),
-                           attacker, h.k == null ? "" : String(h.k)))
+                           attacker, h.k == null ? "" : String(h.k), h))
                      {
                         applied++;
                      }
@@ -954,16 +954,15 @@ package rconnect.core
             var snap:Object = mod.game != null ? mod.game.readSnapshot() : null;
             link.send(Protocol.make(Protocol.MSG_PLAYERSTATE,
                {id: myId, seq: _seq++, name: myName, snap: snap}));
-            // M6a：驱动被冻结单位的动画（游戏自己的公开 animate()）
+            // Optional animation diagnostics; GameBridge advances animation each game frame.
             if(mod.game != null)
             {
-               mod.game.tickFrozenAnims();
                if(_autoDamage && _tickCount % 200 == 0)
                {
                   mod.game.animProbeTest();
                }
             }
-            // M5b：客户端本地命中检测 → 上报宿主结算（每 10 tick = 500ms）
+            // Periodic test/death diagnostics, independent of damage report timing.
             if(mod.game != null && _tickCount % 10 == 0)
             {
                // 自动化联测：autoDamage=1 时先模拟本地伤害再检测
@@ -989,6 +988,10 @@ package rconnect.core
                   }
                }
                _wasDead = dead;
+            }
+            // Drain damage every network tick; animation runs on ENTER_FRAME.
+            if(mod.game != null)
+            {
                var hits:Array = mod.game.scanAndReportDamage();
                if(hits != null && hits.length > 0)
                {

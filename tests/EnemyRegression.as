@@ -50,7 +50,10 @@ package
             var first:Object=enemy, second:Object;
             for each(u in real.loc.units) if(u.id=="slaver1" && u!==first) second=u;
             snap[snap.length-3].x=x+100; snap[snap.length-2].x=x;
+            // Identity is independent of motion smoothing, verified separately in CombatRegression.
+            b.freezeAI=false;
             b.reconcileWorld(snap); b.applyUnitsSync(snap);
+            b.freezeAI=true;
             check(first.X>second.X && first.hp==200 && second.hp==100,"equal-id enemies keep identity when crossing");
             second.unres=false;
             check(b.applyDamage("slaver1",40,null,"test-b") && second.hp<100 && first.hp==200,"host damage reaches keyed duplicate only");

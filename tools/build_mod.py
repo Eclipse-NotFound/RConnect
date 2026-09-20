@@ -67,11 +67,22 @@ def main():
         # 加载契约通过 getDefinition("RConnectMod") 查找它。
         entry,
     ]
-    print("build_mod: " + " ".join(cmd), flush=True)
     # amxmlc.bat 需要 AIR_HOME 指向含 frameworks/libs/air/airglobal.swc 的 SDK 根
     env = dict(os.environ)
     env["AIR_HOME"] = os.path.normpath(os.path.join(
         os.path.dirname(args.amxmlc), ".."))
+    stub_swc = os.path.join(MOD_ROOT, "build", "GameCombatStubs.swc")
+    os.makedirs(os.path.dirname(stub_swc), exist_ok=True)
+    stub_compiler = [os.path.join(sdk,"bin","acompc.bat")]
+    if args.java:
+        stub_compiler = [args.java,"-Xmx384m","-jar",os.path.join(sdk,"lib","compc.jar"),
+                         "+configname=air","+flexlib="+os.path.join(sdk,"frameworks")]
+    stub_cmd = stub_compiler + ["-source-path="+os.path.join(HERE,"stubs"),
+                               "-include-classes=fe.unit.Unit,fe.weapon.Bullet",
+                               "-output="+stub_swc,"-swf-version=38"]
+    subprocess.run(stub_cmd, env=env, check=True)
+    cmd.insert(1 if not args.java else len(compiler), "-external-library-path+="+stub_swc)
+    print("build_mod: " + " ".join(cmd), flush=True)
     r = subprocess.run(cmd, env=env)
     if r.returncode != 0:
         print("build_mod: 编译失败", file=sys.stderr)

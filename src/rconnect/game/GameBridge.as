@@ -7,6 +7,7 @@ package rconnect.game
    import flash.text.TextFieldAutoSize;
    import flash.text.TextFormat;
    import flash.utils.Dictionary;
+   import flash.utils.getTimer;
    import flash.utils.getQualifiedClassName;
    import rconnect.core.Log;
 
@@ -74,6 +75,7 @@ package rconnect.game
                // M28: EXIT_FRAME follows all ENTER_FRAME listeners, independent of loader order.
                st.addEventListener(Event.EXIT_FRAME, onVisForceFrame,
                   false, -10000, true);
+               st.addEventListener(Event.ENTER_FRAME, onMirrorFrame, false, -10000, true);
             }
          }
          catch(err:*)
@@ -91,10 +93,18 @@ package rconnect.game
       private var _scenePending:Dictionary = new Dictionary();
       private var _freezeOriginal:Dictionary = new Dictionary();
       private var _spawnedPuppets:Dictionary = new Dictionary();
+      private var _hitUnits:Dictionary = new Dictionary();
+      private var _unitMotion:Dictionary = new Dictionary();
+      private var _pendingHits:Dictionary = new Dictionary();
+      private var _forcingVisibility:Boolean = false;
+      private var _animatingMirrors:Boolean = false;
 
       public function endSession():void
       {
          _mirroring = false;
+         clearHitUnits();
+         _unitMotion = new Dictionary();
+         _pendingHits = new Dictionary();
          restoreMirrorMasks();
          _hostAlive = new Dictionary();
          for(var id:String in _remotes) removeRemote(int(id));
@@ -139,9 +149,10 @@ package rconnect.game
        *  死亡/离房自动移出——不强制显示尸体）。 */
       private function onVisForceFrame(e:Event):void
       {
+         if(!_mirroring || _forcingVisibility) return;
+         _forcingVisibility = true;
          try
          {
-            if(!_mirroring) return;
             tickLootMotion();
             for(var u:Object in _hostAlive)
             {
@@ -167,6 +178,13 @@ package rconnect.game
          catch(err:*)
          {
          }
+         finally { _forcingVisibility = false; }
+      }
+
+      private function onMirrorFrame(e:Event):void
+      {
+         if(!_mirroring) return;
+         tickFrozenAnims();
       }
 
       // A sibling alpha mask can erase every pixel despite visible=true.
@@ -4147,7 +4165,7 @@ package rconnect.game
                      var row:Object = (space as Array)[cx];
                      if(row is Array && (row as Array)[cy] != null)
                      {
-                        return {x: cx * 40 + 20, y: cy * 40 + 20};
+                        return r == 0 ? {x:x, y:y} : {x:cx * 40 + 20, y:cy * 40 + 20};
                      }
                   }
                }
@@ -5146,7 +5164,7 @@ package rconnect.game
          {
             for each(var u:Object in units as Array)
             {
-               if(u == gg || numOr(probe(u,"fraction"),0) >= 100)
+               if(u == gg || u is MirrorHitUnit || numOr(probe(u,"fraction"),0) >= 100)
                {
                   continue;   // 本机玩家自己不同步
                }
@@ -5167,6 +5185,8 @@ package rconnect.game
                   hp: numOr(probe(u, "hp"), -1),
                   fraction: numOr(probe(u, "fraction"), 0),
                   anim: String(probe(u, "animState")),
+                  motion: unitFields(u, ["dx","dy","stay","isFly","isLaz","levit"]),
+                  defense: unitFields(u, MirrorHitUnit.DEFENSE),
                   // M19：外观帧（小马类 osn.pon 帧=配色/皮肤）与瞄准点
                   // （celX/celY=敌人当前目标方向，仇恨可视化一致）
                   vf: unitVisualFrame(u),
@@ -5226,6 +5246,7 @@ package rconnect.game
             }
             try
             {
+               captureUnitDamage(target);
                target["storona"] = Number(e.storona) >= 0 ? 1 : -1;
                // M26：镜像落点校验（同注入防护）——生成图两侧几何不同时
                // 拒绝越界 setPos，保命优先于位置精度（就近吸附会瞬移）
@@ -5241,7 +5262,7 @@ package rconnect.game
                else
                {
                   var safe:Object = validLandPos(Number(e.x), Number(e.y));
-                  target["setPos"](Number(safe.x), Number(safe.y));
+                  queueUnitMotion(target, Number(safe.x), Number(safe.y));
                }
                if(e.sost != undefined && Number(e.sost) != -1)
                {
@@ -5262,8 +5283,14 @@ package rconnect.game
                         + "' set=" + Number(e.hp) + " back=" + back);
                   }
                }
+               applyUnitFields(target, e.motion);
+               // Older/test snapshots may provide movement directly.
+               applyUnitFields(target, unitFields(e, ["dx","dy","stay","isFly","isLaz","levit"]));
+               applyUnitFields(target, e.defense);
+               _baseDefense[target] = {armor:numOr(probe(target,"armor_hp"),0),
+                  shield:numOr(probe(target,"shithp"),0)};
                target["setVisPos"]();
-               // M5a：冻结被同步单位的本地 AI（视觉已挂，disabled 只停 step）
+               // Freeze native AI. disabled also excludes bullets, so MirrorHitUnit handles collision.
                // M8：每轮同步都重写——UnitNPC 会自我解除 disabled（实测 vendor
                // disabled=false 后 hp 漂移产生幻影伤害上报）
                if(freezeAI && target != gg)
@@ -5305,6 +5332,19 @@ package rconnect.game
                {
                   _hostAlive[target] = true;
                }
+               var hit:MirrorHitUnit = _hitUnits[target];
+               if(freezeAI && numOr(e.fraction,0)>0 && numOr(e.fraction,0)<100
+                  && numOr(e.sost,1)<3 && !isTrigger(target))
+               {
+                  if(hit == null)
+                  {
+                     hit = new MirrorHitUnit(target);
+                     _hitUnits[target] = hit;
+                     (units as Array).push(hit);
+                  }
+                  hit.sync();
+               }
+               else if(hit != null) removeHitUnit(target);
                res.matched++;
             }
             catch(err:*)
@@ -5312,7 +5352,12 @@ package rconnect.game
             }
          }
          for(var old:Object in previouslyAlive)
-            if(_hostAlive[old] != true) restoreMirrorMask(probe(old,"vis"));
+            if(_hostAlive[old] != true)
+            {
+               restoreMirrorMask(probe(old,"vis"));
+            }
+         for(old in _hitUnits)
+            if(used[old] != true) removeHitUnit(old);
          return res;
       }
 
@@ -5333,61 +5378,93 @@ package rconnect.game
          {
             return null;
          }
+         for each(var u:Object in units as Array) captureUnitDamage(u);
          var out:Array = [];
-         try
+         for(var target:Object in _pendingHits) out.push(_pendingHits[target]);
+         _pendingHits = new Dictionary();
+         return out;
+      }
+
+      private var _baseDefense:Dictionary = new Dictionary();
+
+      private function captureUnitDamage(u:Object):void
+      {
+         var frac:Number = numOr(probe(u,"fraction"),0);
+         if(u == gg || u is MirrorHitUnit || frac < 1 || frac >= 100 || isTrigger(u)) return;
+         var base:* = _baseHp[u];
+         if(base === undefined) return;
+         var cur:Number = numOr(probe(u,"hp"),Number(base));
+         var dmg:Number = Math.max(0,Number(base)-cur);
+         var armor:Number = numOr(probe(u,"armor_hp"),0);
+         var shield:Number = numOr(probe(u,"shithp"),0);
+         var defense:Object = _baseDefense[u];
+         var armorLoss:Number = defense == null ? 0 : Math.max(0,defense.armor-armor);
+         var shieldLoss:Number = defense == null ? 0 : Math.max(0,defense.shield-shield);
+         _baseHp[u] = cur;
+         _baseDefense[u] = {armor:armor,shield:shield};
+         if(dmg <= 0 && armorLoss <= 0 && shieldLoss <= 0) return;
+         var hit:Object = _pendingHits[u];
+         if(hit == null)
          {
-            for each(var u:Object in units as Array)
-            {
-               if(u == gg)
-               {
-                  continue;
-               }
-               var uid:String = String(probe(u, "id"));
-               if(uid == null || uid.length == 0
-                  || uid.indexOf("rconnect_ghost") == 0
-                  || isTrigger(u))
-               {
-                  continue;
-               }
-               // M8：只上报敌人（fraction 1..99）——中立单位（NPC/装饰）的
-               // 自身逻辑会改 hp（实测 vendor 解冻后 hp 漂移），不是玩家伤害
-               var frac:Number = numOr(probe(u, "fraction"), 0);
-               if(frac < 1 || frac >= 100)
-               {
-                  continue;
-               }
-               var cur:Number = numOr(probe(u, "hp"), -1);
-               if(cur < 0)
-               {
-                  continue;
-               }
-               var base:* = _baseHp[u];
-               if(base != undefined && cur < Number(base) - 0.5)
-               {
-                  var dmg:Number = Number(base) - cur;
-                  out.push({id: uid, k:_units.known(u), dmg: dmg});
-                  _baseHp[u] = cur;
-                  // M8 诊断：幻影伤害排查（记录 cur/base 一次）
-                  if(!_phantomLogged[uid])
-                  {
-                     _phantomLogged[uid] = true;
-                     Log.d("RConnectGame: dmg detect '" + uid
-                        + "' cur=" + cur + " base=" + base);
-                  }
-               }
-            }
+            hit = {id:String(probe(u,"id")),k:_units.known(u),dmg:0,armorLoss:0,shieldLoss:0};
+            _pendingHits[u] = hit;
          }
-         catch(err:*)
+         hit.dmg += dmg; hit.armorLoss += armorLoss; hit.shieldLoss += shieldLoss;
+      }
+
+      private static function unitFields(u:Object,names:Array):Object
+      {
+         var out:Object = {};
+         for each(var name:String in names)
          {
+            var value:* = probe(u,name);
+            if(value != null) out[name] = value is Array ? value.concat() : value;
          }
          return out;
       }
 
-      /** M5b（宿主侧）：对指定单位施加伤害（公开 Unit.damage，类型 D_BUL=0）。
-       *  M9：attacker 传入客户端幽灵时，把敌人仇恨拉到幽灵上。 */
-      public function applyDamage(id:String, dmg:Number, attacker:Object = null, key:String = ""):Boolean
+      private static function applyUnitFields(u:Object,fields:Object):void
       {
-         if(world == null || loc == null || dmg <= 0)
+         if(fields == null) return;
+         for(var name:String in fields)
+            try { u[name] = fields[name] is Array ? fields[name].concat() : fields[name]; } catch(err:*) {}
+      }
+
+      private function removeHitUnit(u:Object):void
+      {
+         var hit:MirrorHitUnit = _hitUnits[u];
+         if(hit != null) hit.dispose();
+         delete _hitUnits[u];
+      }
+
+      private function clearHitUnits():void
+      {
+         for(var u:Object in _hitUnits) removeHitUnit(u);
+         _hitUnits = new Dictionary();
+         _baseDefense = new Dictionary();
+      }
+
+      // Interpolate one snapshot interval behind the host; never quantize valid positions.
+      private function queueUnitMotion(u:Object,x:Number,y:Number):void
+      {
+         var now:int = getTimer();
+         var prev:Object = _unitMotion[u];
+         var dx:Number = x-Number(probe(u,"X")), dy:Number = y-Number(probe(u,"Y"));
+         if(prev == null || !freezeAI || dx*dx+dy*dy>600*600 || now-prev.at>1000)
+         {
+            u["setPos"](x,y);
+            _unitMotion[u] = {x:x,y:y,tx:x,ty:y,at:now,duration:200};
+            return;
+         }
+         _unitMotion[u] = {x:Number(u["X"]),y:Number(u["Y"]),tx:x,ty:y,at:now,
+            duration:Math.max(50,Math.min(300,now-prev.at))};
+      }
+
+      /** Host applies net HP loss after client mitigation (native D_INSIDE, no second armor reduction).
+       *  M9：attacker 传入客户端幽灵时，把敌人仇恨拉到幽灵上。 */
+      public function applyDamage(id:String, dmg:Number, attacker:Object = null, key:String = "", hit:Object = null):Boolean
+      {
+         if(world == null || loc == null || !isFinite(dmg) || dmg < 0)
          {
             return false;
          }
@@ -5402,7 +5479,21 @@ package rconnect.game
             {
                if(String(probe(u, "id")) == id && (key == "" || _units.known(u) == key))
                {
-                  u["damage"](dmg, 0, null, false);
+                  if(numOr(probe(u,"sost"),3)>=3 || probe(u,"invulner")==true) return false;
+                  // The joiner already applied native defenses. D_INSIDE avoids a second reduction.
+                  if(hit != null)
+                  {
+                     var armorLoss:Number = numOr(hit.armorLoss,0);
+                     var shieldLoss:Number = numOr(hit.shieldLoss,0);
+                     if(isFinite(armorLoss) && armorLoss>0)
+                     {
+                        u["armor_hp"] = Math.max(0,numOr(probe(u,"armor_hp"),0)-armorLoss);
+                        if(u["armor_hp"]<=0) u["armor_qual"]=0;
+                     }
+                     if(isFinite(shieldLoss) && shieldLoss>0)
+                        u["shithp"] = Math.max(0,numOr(probe(u,"shithp"),0)-shieldLoss);
+                  }
+                  if(dmg > 0) u["damage"](dmg, 100, null, true);
                   if(attacker != null)
                   {
                      // 拉仇恨：敌人转向客户端幽灵（priorUnit 满足 findCel 条件）
@@ -5480,7 +5571,7 @@ package rconnect.game
             for(var i:int = arr.length - 1; i >= 0; i--)
             {
                var v:Object = arr[i];
-               if(v == gg)
+               if(v == gg || v is MirrorHitUnit)
                {
                   continue;
                }
@@ -5502,6 +5593,8 @@ package rconnect.game
                      arr.splice(i, 1);
                      delete _frozen[v];
                      delete _baseHp[v];
+                     delete _baseDefense[v];
+                     delete _unitMotion[v];
                      Log.d("RConnectGame: removed local extra '" + vid + "'");
                   }
                   catch(err:*)
@@ -5641,6 +5734,9 @@ package rconnect.game
             _istStabO = new Dictionary();
             // Original AI flags belong to the whole session, including rooms
             // already visited. endSession must restore those units as well.
+            clearHitUnits();
+            _unitMotion = new Dictionary();
+            _pendingHits = new Dictionary();
             _baseHp = new Dictionary();
             _frozen = new Dictionary();
             _animLogged = {};
@@ -5660,16 +5756,32 @@ package rconnect.game
        *  内部 restart/blit/step 管线由游戏代码完成）。 */
       public function tickFrozenAnims():void
       {
+         // gotoAndStop can synchronously broadcast EXIT_FRAME inside damage/animate.
+         // Advance animation only from the game frame, never from those broadcasts.
+         if(_animatingMirrors) return;
+         _animatingMirrors = true;
          for(var u:Object in _frozen)
          {
             try
             {
+               if(probe(u,"loc") !== loc) continue;
+               captureUnitDamage(u);
+               var motion:Object = _unitMotion[u];
+               if(motion != null)
+               {
+                  var progress:Number = Math.min(1,Math.max(0,(getTimer()-motion.at)/motion.duration));
+                  u["setPos"](motion.x+(motion.tx-motion.x)*progress,motion.y+(motion.ty-motion.y)*progress);
+                  u["setVisPos"]();
+               }
                u["animate"]();
+               var hit:MirrorHitUnit = _hitUnits[u];
+               if(hit != null) hit.sync();
             }
             catch(err:*)
             {
             }
          }
+         _animatingMirrors = false;
       }
 
       private var _frozen:Dictionary = new Dictionary();

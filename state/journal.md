@@ -2,6 +2,13 @@
 
 > 协议见 GOVERNANCE.md §8：只追加不改写，**新条目插在最上面**。
 
+## 2026-09-20 M30：修复加入方动画和真实子弹伤害，部署 0.2.2-dev
+
+- 做了什么：复现 disabled 排除原生子弹、快照覆盖伤害、格心量化及 EXIT_FRAME 受击重入。新增无 AI 受击器、损耗队列、净伤害回传、每游戏帧动画与坐标插值。80 项双实例检查通过，正式 release 启动检查 3ee92b0907 通过；仅替换 RConnect SWF。
+- 关键决定/发现：真实射击必须通过 Bullet.run 碰撞；原生 gotoAndStop 可同步重入 EXIT_FRAME。编译签名外链，正式 14 类无存根或测试入口。报告 knowledge/experiments/2026-09-20-m30-combat-animation.md、结构化 m30-validation-evidence.json。公开事件机制已另存 shared-knowledge/rendering/discoveries/synchronous-exit-frame-during-hit.md。
+- 部署：47919 字节，SHA-256 97bf59edbde5d2b702d675af950de7ef3e8625f3dd27dc458ed410b989fe1995；M29 备份 build/backup/m30-release-20260920-114534-591961/RConnectMod.before.swf。源码基线 8aeacb7，保留另一任务 26cf636 文档，不改共享探索决定。
+- 遗留/下一步：双方用户窗口重启后复测。特殊附加效果、全武器/Boss、TDFC/RR/MSW 组合未穷举；共享探索另任务停点与原排除项保留。没有修改或关闭用户游戏/存档。
+
 ## 2026-09-20 共享探索源码探查，双向与 RV 自身规则已确认
 
 - 做了什么：按用户“请进行探查”读取 RConnect 同步/配置/UI、1.02 原版光照与最小范围 RV 代码；按 grilling 的事实核查要求委托一名只读子代理研究 RV 接口。新增 knowledge/discoveries/2026-09-20-shared-exploration-feasibility.md，更新记忆。未修改功能代码、运行游戏或部署。

@@ -25,9 +25,14 @@ def main():
     token=uuid.uuid4().hex[:10]
     output=ROOT/'build'/'cooperation'/token
     output.mkdir(parents=True)
+    # Freeze one binary for both roles; rebuilding the candidate while host boots
+    # must not silently give the joiner a different version.
+    candidate=output/'candidate.swf'
+    candidate.write_bytes(args.candidate.read_bytes())
+    candidate_hash=hashlib.sha256(candidate.read_bytes()).hexdigest()
     with socket.socket() as probe:
         probe.bind(('127.0.0.1',0)); port=probe.getsockname()[1]
-    procs=[]; artifacts=[]
+    procs=[]; artifacts=[]; inputs={}
     try:
         for role in ('host','join'):
             folder=output/role; folder.mkdir()
@@ -36,13 +41,16 @@ def main():
                     shutil.copy2(source,folder/source.name)
             shutil.copytree(GAME/'Rooms',folder/'Rooms')
             release=folder/'mods'/'Rconnect'/'release'; release.mkdir(parents=True)
-            shutil.copy2(args.candidate,release/'RConnectMod.swf')
+            shutil.copy2(candidate,release/'RConnectMod.swf')
             if args.with_vision:
                 vision=folder/'mods'/'RealisticVision'/'release'
                 vision.mkdir(parents=True)
                 for name in ('RealisticVisionMod.swf','config.txt'):
                     source=GAME/'mods'/'RealisticVision'/'release'/name
                     if source.exists(): shutil.copy2(source,vision/name)
+            inputs[role]={'game':hashlib.sha256((folder/'pfe.swf').read_bytes()).hexdigest()}
+            if args.with_vision:
+                inputs[role]['vision']=hashlib.sha256((vision/'RealisticVisionMod.swf').read_bytes()).hexdigest()
             cfg=dict(nickname=role,hostIp='127.0.0.1',port=port,tickMs=50,
                      autoRole=role,autoGame='1',autoFollow='1',freezeAI='1',
                      worldInject='1',ghostCombat='1',autoHeal='1')
@@ -63,7 +71,7 @@ def main():
             print(json.dumps(dict(role=role,pid=proc.pid,appid=appid,log=str(storage/'RConnect.log'))),flush=True)
             time.sleep(15 if role=='host' else 0)
         (output/'run.json').write_text(json.dumps(dict(port=port,pids=[p.pid for p in procs],
-            candidate=str(args.candidate.resolve()),sha256=hashlib.sha256(args.candidate.read_bytes()).hexdigest()),indent=2))
+            candidate=str(args.candidate.resolve()),sha256=candidate_hash,inputs=inputs),indent=2))
         print('OUTPUT '+str(output),flush=True)
         time.sleep(args.seconds)
     finally:
@@ -79,14 +87,14 @@ def main():
                 folder=(output/role).resolve()
                 assert folder.parent == output.resolve() and folder.name in ('host','join')
                 if folder.exists(): shutil.rmtree(folder)
-    ok=True
+    ok=inputs.get('host')==inputs.get('join')
     for role,_ in artifacts:
         path=output/(role+'.log')
         content=path.read_text(encoding='utf-8',errors='replace') if path.exists() else ''
         bad=[s for s in content.splitlines() if 'COOP FAIL' in s or 'game error dialog' in s]
         if role=='host':
-            if args.smoke: ok=ok and 'v0.2.1-dev initialized' in content and 'tick 200' in content
-            else: ok=ok and 'COOP DONE' in content and 'failed=0' in content and 'COOP ENEMY DONE' in content
+            if args.smoke: ok=ok and 'v0.2.2-dev initialized' in content and 'tick 200' in content
+            else: ok=ok and 'COOP DONE' in content and 'failed=0' in content and 'COOP ENEMY DONE' in content and 'COOP COMBAT DONE' in content
         else: ok=ok and 'welcome id=' in content and 'unitsync matched' in content
         ok=ok and not bad and (args.smoke or 'COOP NETWORK DONE' in content)
         print(role+' failures: '+json.dumps(bad,ensure_ascii=False),flush=True)

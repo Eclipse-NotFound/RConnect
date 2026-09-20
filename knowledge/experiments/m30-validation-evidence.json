@@ -1,0 +1,256 @@
+{
+  "runs": [
+    {
+      "token": "afc3fb0d49",
+      "roles": {
+        "host": {
+          "log_sha256": "1348b27a02e36e69561699208cc1ef63b46200f3de547700c78636e3887395f8",
+          "pass": 56,
+          "fail": [
+            "COOP FAIL combat native projectile hits mirrored enemy",
+            "COOP FAIL combat hit survives a newer host snapshot before report",
+            "COOP FAIL combat positions advance between network snapshots",
+            "COOP FAIL combat native animation receives host movement state"
+          ],
+          "assertions": [
+            "COOP PASS combat damage report is drained once",
+            "COOP PASS combat new position snapshot does not jump to endpoint",
+            "COOP PASS network native join close returned",
+            "COOP PASS network native script close returned",
+            "COOP PASS network native join destruction returned"
+          ],
+          "network_done": true
+        },
+        "join": {
+          "log_sha256": "169f9b90b61c63f9d0c4ef4a51d4935a7681fe0962865c8d73c11521741d5cbe",
+          "pass": 6,
+          "fail": [],
+          "assertions": [
+            "COOP PASS network two equal-id native enemies received",
+            "COOP PASS network both enemy sprites rendered after real vision frames",
+            "COOP PASS network new native objects injected",
+            "COOP PASS network native door open received",
+            "COOP PASS network native script door open received",
+            "COOP PASS network native close stays converged"
+          ],
+          "network_done": true
+        }
+      }
+    },
+    {
+      "token": "a85a93f85c",
+      "roles": {
+        "host": {
+          "log_sha256": "a594129bf6abfe9081bedc60cecdce067f452e573f59c1d721c652b121a3f7a6",
+          "pass": 63,
+          "fail": [
+            "COOP FAIL combat native projectile hits mirrored enemy",
+            "COOP FAIL combat native armor reduces projectile exactly once",
+            "COOP FAIL network native client shot reaches host without duplicate mitigation",
+            "COOP FAIL network client armor wear reaches host"
+          ],
+          "assertions": [
+            "COOP PASS combat collision receiver active without local AI",
+            "COOP PASS combat hit survives a newer host snapshot before report",
+            "COOP PASS combat damage report is drained once",
+            "COOP PASS combat new position snapshot does not jump to endpoint",
+            "COOP PASS combat positions advance between network snapshots",
+            "COOP PASS combat native animation receives host movement state",
+            "COOP PASS combat leave removes collision receivers",
+            "COOP PASS network native client shot leaves equal-id neighbor untouched",
+            "COOP PASS network native join close returned",
+            "COOP PASS network native script close returned",
+            "COOP PASS network native join destruction returned",
+            "COOP PASS network lethal client shot runs native host death"
+          ],
+          "network_done": true
+        },
+        "join": {
+          "log_sha256": "ecf9dfe594dea5dc4f26dcad4a42a09adda6d19f5db3fb8b66171a2cb843412c",
+          "pass": 8,
+          "fail": [
+            "COOP FAIL network native shot predicts armor-adjusted damage",
+            "COOP FAIL network host damage snapshot converges without repeated hits"
+          ],
+          "assertions": [
+            "COOP PASS network two equal-id native enemies received",
+            "COOP PASS network both enemy sprites rendered after real vision frames",
+            "COOP PASS network new native objects injected",
+            "COOP PASS network native door open received",
+            "COOP PASS network native script door open received",
+            "COOP PASS network lethal client shot waits for host death and loot",
+            "COOP PASS network native close stays converged",
+            "COOP PASS network host death snapshot reaches joiner"
+          ],
+          "network_done": true
+        }
+      }
+    },
+    {
+      "token": "eb473cedbf",
+      "roles": {
+        "host": {
+          "log_sha256": "9002b0a33d7b547e1344bbd962089b39409c869416539290d66b8dd11e7d3fdc",
+          "pass": 60,
+          "fail": [],
+          "assertions": [
+            "COOP PASS combat collision receiver active without local AI",
+            "COOP PASS combat native projectile hits mirrored enemy",
+            "COOP PASS combat native armor reduces projectile exactly once",
+            "COOP PASS combat hit survives a newer host snapshot before report",
+            "COOP PASS combat damage report is drained once",
+            "COOP PASS combat new position snapshot does not jump to endpoint",
+            "COOP PASS combat positions advance between network snapshots",
+            "COOP PASS combat native animation receives host movement state",
+            "COOP PASS combat leave removes collision receivers"
+          ],
+          "network_done": false
+        },
+        "join": {
+          "log_sha256": "d70e0cbaefa5a51ddcb8ab24f75316d8d99cb6510a3c8b6c1fb17d2834fbfd10",
+          "pass": 0,
+          "fail": [],
+          "assertions": [],
+          "network_done": false
+        }
+      }
+    },
+    {
+      "token": "12b3510180",
+      "roles": {
+        "host": {
+          "log_sha256": "2227a0b961da4f32626318859d77598095d70b35d50f2ba6c335bb3f7d66594e",
+          "pass": 67,
+          "fail": [],
+          "assertions": [
+            "COOP PASS combat collision receiver active without local AI",
+            "COOP PASS combat native projectile hits mirrored enemy",
+            "COOP PASS combat native armor reduces projectile exactly once",
+            "COOP PASS combat hit survives a newer host snapshot before report",
+            "COOP PASS combat damage report is drained once",
+            "COOP PASS combat new position snapshot does not jump to endpoint",
+            "COOP PASS combat positions advance between network snapshots",
+            "COOP PASS combat native animation receives host movement state",
+            "COOP PASS combat leave removes collision receivers",
+            "COOP PASS network native client shot reaches host without duplicate mitigation",
+            "COOP PASS network native client shot leaves equal-id neighbor untouched",
+            "COOP PASS network client armor wear reaches host",
+            "COOP PASS network native join close returned",
+            "COOP PASS network native script close returned",
+            "COOP PASS network native join destruction returned",
+            "COOP PASS network lethal client shot runs native host death"
+          ],
+          "network_done": true
+        },
+        "join": {
+          "log_sha256": "90349723661f4c4e8b0ed7d1bef1e6c8ae269bb17aab032690f52b3b6a15c560",
+          "pass": 10,
+          "fail": [],
+          "assertions": [
+            "COOP PASS network two equal-id native enemies received",
+            "COOP PASS network both enemy sprites rendered after real vision frames",
+            "COOP PASS network native shot predicts armor-adjusted damage",
+            "COOP PASS network new native objects injected",
+            "COOP PASS network native door open received",
+            "COOP PASS network native script door open received",
+            "COOP PASS network host damage snapshot converges without repeated hits",
+            "COOP PASS network lethal client shot waits for host death and loot",
+            "COOP PASS network native close stays converged",
+            "COOP PASS network host death snapshot reaches joiner"
+          ],
+          "network_done": true
+        }
+      }
+    },
+    {
+      "token": "d1575158a0",
+      "roles": {
+        "host": {
+          "log_sha256": "986bb1830ade9d8732bde77ed20a9f803099772a5488c3f953877db35307e30f",
+          "pass": 70,
+          "fail": [],
+          "assertions": [
+            "COOP PASS combat collision receiver active without local AI",
+            "COOP PASS combat valid position keeps sub-tile precision",
+            "COOP PASS combat native projectile hits mirrored enemy",
+            "COOP PASS combat native armor reduces projectile exactly once",
+            "COOP PASS combat hit survives a newer host snapshot before report",
+            "COOP PASS combat damage report is drained once",
+            "COOP PASS combat new position snapshot does not jump to endpoint",
+            "COOP PASS combat positions advance between network snapshots",
+            "COOP PASS combat native animation receives host movement state",
+            "COOP PASS combat native animation renders changing sprite pixels",
+            "COOP PASS combat movement reaches exact snapshot endpoint",
+            "COOP PASS combat leave removes collision receivers",
+            "COOP PASS network native client shot reaches host without duplicate mitigation",
+            "COOP PASS network native client shot leaves equal-id neighbor untouched",
+            "COOP PASS network client armor wear reaches host",
+            "COOP PASS network native join close returned",
+            "COOP PASS network native script close returned",
+            "COOP PASS network native join destruction returned",
+            "COOP PASS network lethal client shot runs native host death"
+          ],
+          "network_done": true
+        },
+        "join": {
+          "log_sha256": "44888a82ac17a0ace251af08dd7315d36ef30f5ffebe6605da9ed0f36b9a8a8a",
+          "pass": 10,
+          "fail": [],
+          "assertions": [
+            "COOP PASS network two equal-id native enemies received",
+            "COOP PASS network both enemy sprites rendered after real vision frames",
+            "COOP PASS network native shot predicts armor-adjusted damage",
+            "COOP PASS network new native objects injected",
+            "COOP PASS network native door open received",
+            "COOP PASS network native script door open received",
+            "COOP PASS network host damage snapshot converges without repeated hits",
+            "COOP PASS network lethal client shot waits for host death and loot",
+            "COOP PASS network native close stays converged",
+            "COOP PASS network host death snapshot reaches joiner"
+          ],
+          "network_done": true
+        }
+      }
+    }
+  ],
+  "deployment": {
+    "version": "0.2.2-dev",
+    "milestone": "M30",
+    "candidate": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m30\\RConnectMod.swf",
+    "release": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\release\\RConnectMod.swf",
+    "sha256": "97bf59edbde5d2b702d675af950de7ef3e8625f3dd27dc458ed410b989fe1995",
+    "bytes": 47919,
+    "backup": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\backup\\m30-release-20260920-114534-591961\\RConnectMod.before.swf",
+    "previous_sha256": "33ce3b722a3473cc24659e813f8bbb7a934b295f680bd5612a341515a6b38685",
+    "regression": "d1575158a0",
+    "checks": 80,
+    "smoke": "3ee92b0907 PASS",
+    "baseline": {
+      "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\release\\RConnectMod.swf": "33ce3b722a3473cc24659e813f8bbb7a934b295f680bd5612a341515a6b38685",
+      "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\release\\config.txt": "5ca72017f1f811b5f8a2b1f18f6cb8b2c24239e2240716c4059cbc073913fc0a",
+      "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\pfe.swf": "5300ec4874e0404d298bb58c5d2a7469e82f93b455ad29ad64dd2e29d17241e7",
+      "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\DLC\\pfe.swf": "435dac701c49a7730c5f07447086db5a2ffa831c079824a124ad2bb62e5b0c6d",
+      "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\DLC\\pfeUI.swf": "76d8499f9d0eca1288fda52aa1db4edc2658f0cb6fb180b64f8fcab24a75160b",
+      "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RealisticVision\\release\\RealisticVisionMod.swf": "5c26d604ba6ae33a92a5d11f8a6f6abcfbf8bde9663baf3ab68e919a32b8c242",
+      "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RealisticVision\\release\\config.txt": "5136ee1923a77f5f10eab1b3994b64cbd67b09d687a7e829fb1e81d2e79a3c7f",
+      "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m30\\RConnectMod.swf": "97bf59edbde5d2b702d675af950de7ef3e8625f3dd27dc458ed410b989fe1995"
+    },
+    "unchanged_inputs_verified": true
+  },
+  "smoke": {
+    "token": "3ee92b0907",
+    "result": "PASS",
+    "roles": {
+      "host": {
+        "log_sha256": "8f3b6711c7214cde0e9150b198286d8313921ec2adf350258a617f5ec3ebd8a0",
+        "new_version": true,
+        "fail": []
+      },
+      "join": {
+        "log_sha256": "09a18874d46b9f19660c6ef77b06d6d0fbd809befd28a43a7372d80809792ad6",
+        "new_version": true,
+        "fail": []
+      }
+    }
+  }
+}
