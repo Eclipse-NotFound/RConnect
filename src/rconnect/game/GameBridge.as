@@ -85,6 +85,8 @@ package rconnect.game
       private var _hostAlive:Dictionary = new Dictionary();
       private var _mirroring:Boolean = false;
       private var _objects:ObjectIdentity = new ObjectIdentity();
+      private var _units:ObjectIdentity = new ObjectIdentity("U");
+      private var _mirrorMasks:Dictionary = new Dictionary();
       private var _sceneExpected:Dictionary = new Dictionary();
       private var _scenePending:Dictionary = new Dictionary();
       private var _freezeOriginal:Dictionary = new Dictionary();
@@ -93,6 +95,7 @@ package rconnect.game
       public function endSession():void
       {
          _mirroring = false;
+         restoreMirrorMasks();
          _hostAlive = new Dictionary();
          for(var id:String in _remotes) removeRemote(int(id));
          for(var unit:Object in _freezeOriginal)
@@ -113,9 +116,10 @@ package rconnect.game
             catch(removeError:*) {}
          }
          _spawnedPuppets = new Dictionary();
-         _frozen = {};
-         _baseHp = {};
+         _frozen = new Dictionary();
+         _baseHp = new Dictionary();
          _objects.reset();
+         _units.reset();
          _sceneExpected = new Dictionary();
          _scenePending = new Dictionary();
          _boxTween = new Dictionary();
@@ -143,17 +147,19 @@ package rconnect.game
             {
                var vis:Object = probe(u, "vis");
                if(probe(u, "loc") !== loc || numOr(probe(u, "sost"), 3) >= 3
-                  || probe(u, "invis") == true) continue;
+                  || probe(u, "invis") == true)
+               {
+                  restoreMirrorMask(vis);
+                  continue;
+               }
                if(vis != null && probe(vis, "parent") == null && probe(u, "in_chain") == true)
                {
                   var disabled:Boolean = probe(u, "disabled") == true;
                   try { u["disabled"] = false; u["addVisual"](); }
                   finally { u["disabled"] = disabled; }
                }
-               if(vis == null || probe(vis, "visible") != false)
-               {
-                  continue;
-               }
+               if(vis == null) continue;
+               releaseMirrorMask(vis);
                vis["visible"] = true;
                u["prior"] = 1;
             }
@@ -161,6 +167,39 @@ package rconnect.game
          catch(err:*)
          {
          }
+      }
+
+      // A sibling alpha mask can erase every pixel despite visible=true.
+      // Hide the detached mask itself to prevent white rectangles in its layer.
+      private function releaseMirrorMask(vis:Object):void
+      {
+         var mask:Object = probe(vis, "mask");
+         if(mask == null) return;
+         if(_mirrorMasks[vis] == null)
+            _mirrorMasks[vis] = {mask:mask, visible:probe(mask,"visible"), cache:probe(vis,"cacheAsBitmap")};
+         mask["visible"] = false;
+         vis["mask"] = null;
+         vis["cacheAsBitmap"] = false;
+      }
+
+      private function restoreMirrorMasks():void
+      {
+         for(var vis:Object in _mirrorMasks) restoreMirrorMask(vis);
+         _mirrorMasks = new Dictionary();
+      }
+
+      private function restoreMirrorMask(vis:Object):void
+      {
+         var saved:Object = _mirrorMasks[vis];
+         if(saved == null) return;
+         try
+         {
+            if(probe(saved.mask,"parent") != null) vis["mask"] = saved.mask;
+            saved.mask.visible = saved.visible;
+            vis["cacheAsBitmap"] = saved.cache;
+         }
+         catch(err:*) {}
+         delete _mirrorMasks[vis];
       }
 
       /** M12：抢在游戏 onDeactivate 前拦住失焦事件（失焦开 pip 是游戏 bug）。 */
@@ -343,6 +382,10 @@ package rconnect.game
          s.hp = numOr(probe(gg, "hp"), -1);
          s.maxhp = numOr(probe(gg, "maxhp"), 100);
          s.sost = numOr(probe(gg, "sost"), -1);
+         s.visibility = numOr(probe(gg,"visibility"),1000);
+         s.stealthMult = numOr(probe(gg,"stealthMult"),1);
+         s.demask = numOr(probe(gg,"demask"),0);
+         s.noise = numOr(probe(gg,"noise"),0);
          // M10b：带土地/房间身份，宿主据此隐藏"在别的土地"的客户端化身
          var g0:Object = probe(world, "game");
          s.landId = g0 != null ? String(probe(g0, "curLandId")) : "";
@@ -1119,6 +1162,8 @@ package rconnect.game
       {
          try
          {
+            for each(var sense:String in ["visibility","stealthMult","demask","noise"])
+               if(snap[sense] != null) ghost[sense] = Number(snap[sense]);
             if(snap.storona != undefined)
             {
                ghost["storona"] = Number(snap.storona) >= 0 ? 1 : -1;
@@ -4749,9 +4794,9 @@ package rconnect.game
          }
       }
 
-      /** M20：宿主侧"近身敌人转火加入方"——把幽灵 320px 内、当前无目标的
-       *  敌人指向该幽灵（priorUnit/celUnit），让敌人会识别/攻击加入方。
-       *  每次最多转 4 个（分散，不抢宿主仇恨）。 */
+      /** Host perception: native findCel only discovers loc.gg on its own.
+       *  Offer a nearby visible remote player even when celUnit still names a
+       *  distant host. Keep a closer target to avoid rapid target oscillation. */
       public function redirectNearbyAggro():void
       {
          if(loc == null)
@@ -4783,24 +4828,34 @@ package rconnect.game
                   }
                   var frac:Number = numOr(probe(u, "fraction"), 0);
                   if(frac < 1 || frac >= 100
-                     || numOr(probe(u, "sost"), 1) >= 3
+                     || probe(u,"disabled") == true || isTrigger(u)
+                     || numOr(probe(u, "sost"), 1) >= 2
                      || numOr(probe(u, "hp"), 0) <= 0)
-                  {
-                     continue;
-                  }
-                  // 已锁定其它目标的敌人不动（不抢宿主仇恨）
-                  if(probe(u, "priorUnit") != null || probe(u, "celUnit") != null)
                   {
                      continue;
                   }
                   var dx:Number = numOr(probe(u, "X"), 0) - gx;
                   var dy:Number = numOr(probe(u, "Y"), 0) - gy;
-                  if(dx * dx + dy * dy > 320 * 320)
+                  var distance:Number = dx * dx + dy * dy;
+                  if(distance > 320 * 320)
                   {
                      continue;
                   }
+                  // Use the game's cone, wall and stealth checks, not distance alone.
+                  if(!u["isMeet"](ghost) || Number(u["look"](ghost,probe(u,"overLook") == true)) <= 0.5)
+                     continue;
+                  var current:Object = probe(u,"celUnit");
+                  if(current == null) current = probe(u,"priorUnit");
+                  if(current === ghost) continue;
+                  if(current != null && u["isMeet"](current)
+                     && numOr(probe(current,"sost"),3) < 3 && numOr(probe(current,"hp"),0) > 0)
+                  {
+                     var cx:Number = Number(probe(current,"X")) - Number(probe(u,"X"));
+                     var cy:Number = Number(probe(current,"Y")) - Number(probe(u,"Y"));
+                     if(distance >= (cx*cx+cy*cy)*0.64) continue;
+                  }
                   u["priorUnit"] = ghost;
-                  u["celUnit"] = ghost;
+                  u["setCel"](ghost);
                   n++;
                }
             }
@@ -5085,12 +5140,13 @@ package rconnect.game
          {
             return null;
          }
+         _units.enter(loc);
          var out:Array = [];
          try
          {
             for each(var u:Object in units as Array)
             {
-               if(u == gg)
+               if(u == gg || numOr(probe(u,"fraction"),0) >= 100)
                {
                   continue;   // 本机玩家自己不同步
                }
@@ -5101,6 +5157,7 @@ package rconnect.game
                }
                out.push({
                   id: uid,
+                  k: _units.key(u),
                   cls: getQualifiedClassName(u),
                   tr: numOr(probe(u, "tr"), 0),
                   x: numOr(probe(u, "X"), 0),
@@ -5133,7 +5190,7 @@ package rconnect.game
       }
 
       /**
-       * 把宿主的单位快照镜像到本世界（按 id 匹配，M4 MVP：位置/姿态/血量）。
+       * 镜像宿主单位快照；独立实例键贯穿位置、动画、血量和伤害回报。
        * @return {matched, total} 供日志统计
        */
       public function applyUnitsSync(list:Array):Object
@@ -5154,28 +5211,15 @@ package rconnect.game
          res.total = list.length;
          // M27：每轮重建强制显示集（宿主每轮广播完整单位表；死亡
          // sost>=3 与游戏隐身 invis 不强制——尸体与潜行语义留给游戏）
+         var previouslyAlive:Dictionary = _hostAlive;
          _hostAlive = new Dictionary();
          _mirroring = true;
-         // 建立 id → 单位 索引（客户端世界）
-         var byId:Object = {};
-         try
-         {
-            for each(var u:Object in units as Array)
-            {
-               var uid:String = String(probe(u, "id"));
-               if(uid != null && uid.length > 0 && byId[uid] == undefined)
-               {
-                  byId[uid] = u;
-               }
-            }
-         }
-         catch(err:*)
-         {
-         }
+         _units.enter(loc);
+         var used:Dictionary = new Dictionary();
          for each(var e:Object in list)
          {
             var eid:String = String(e.id);
-            var target:Object = byId[eid];
+            var target:Object = _units.resolve(e, units as Array, used);
             if(target == null)
             {
                continue;
@@ -5206,7 +5250,7 @@ package rconnect.game
                if(e.hp != undefined && Number(e.hp) != -1)
                {
                   target["hp"] = Number(e.hp);
-                  _baseHp[eid] = Number(e.hp);   // M5b：同步值作为命中检测基线
+                  _baseHp[target] = Number(e.hp);
                   // M8 诊断：hp 写入是否被游戏侧拒绝（幻影伤害排查）
                   var back:* = probe(target, "hp");
                   if(back != null
@@ -5227,10 +5271,7 @@ package rconnect.game
                   if(_freezeOriginal[target] === undefined)
                      _freezeOriginal[target] = probe(target, "disabled") == true;
                   target["disabled"] = true;
-                  if(_frozen[eid] == undefined)
-                  {
-                     _frozen[eid] = target;
-                  }
+                  _frozen[target] = true;
                }
                // M6a：应用宿主姿态状态（公开 animState 字段）
                if(e.anim != undefined && e.anim != null)
@@ -5270,6 +5311,8 @@ package rconnect.game
             {
             }
          }
+         for(var old:Object in previouslyAlive)
+            if(_hostAlive[old] != true) restoreMirrorMask(probe(old,"vis"));
          return res;
       }
 
@@ -5318,12 +5361,12 @@ package rconnect.game
                {
                   continue;
                }
-               var base:* = _baseHp[uid];
+               var base:* = _baseHp[u];
                if(base != undefined && cur < Number(base) - 0.5)
                {
                   var dmg:Number = Number(base) - cur;
-                  out.push({id: uid, dmg: dmg});
-                  _baseHp[uid] = cur;
+                  out.push({id: uid, k:_units.known(u), dmg: dmg});
+                  _baseHp[u] = cur;
                   // M8 诊断：幻影伤害排查（记录 cur/base 一次）
                   if(!_phantomLogged[uid])
                   {
@@ -5342,7 +5385,7 @@ package rconnect.game
 
       /** M5b（宿主侧）：对指定单位施加伤害（公开 Unit.damage，类型 D_BUL=0）。
        *  M9：attacker 传入客户端幽灵时，把敌人仇恨拉到幽灵上。 */
-      public function applyDamage(id:String, dmg:Number, attacker:Object = null):Boolean
+      public function applyDamage(id:String, dmg:Number, attacker:Object = null, key:String = ""):Boolean
       {
          if(world == null || loc == null || dmg <= 0)
          {
@@ -5357,7 +5400,7 @@ package rconnect.game
          {
             for each(var u:Object in units as Array)
             {
-               if(String(probe(u, "id")) == id)
+               if(String(probe(u, "id")) == id && (key == "" || _units.known(u) == key))
                {
                   u["damage"](dmg, 0, null, false);
                   if(attacker != null)
@@ -5402,22 +5445,8 @@ package rconnect.game
          {
             return;
          }
-         // 本地现有单位 id 集合
-         var localIds:Object = {};
-         try
-         {
-            for each(var u:Object in units as Array)
-            {
-               var uid:String = String(probe(u, "id"));
-               if(uid != null && uid.length > 0)
-               {
-                  localIds[uid] = true;
-               }
-            }
-         }
-         catch(err:*)
-         {
-         }
+         _units.enter(loc);
+         var claimed:Dictionary = new Dictionary();
          // 1) 生成本地缺失的宿主单位（每次上限 8，避免单帧大建）
          var spawned:int = 0;
          for each(var e:Object in list)
@@ -5428,17 +5457,19 @@ package rconnect.game
             {
                continue;   // 玩家阵营不同步（宠物/玩家放置的陷阱）
             }
-            if(localIds[eid])
+            if(_units.resolve(e, units as Array, claimed) != null)
             {
                continue;
             }
             if(spawned >= 8)
             {
-               break;
+               continue;
             }
-            if(spawnUnitPuppet(e) != null)
+            var puppet:Object = spawnUnitPuppet(e);
+            if(puppet != null)
             {
-               localIds[eid] = true;
+               claimed[puppet] = true;
+               if(e.k != null) _units.bind(String(e.k),puppet);
                spawned++;
             }
          }
@@ -5463,22 +5494,14 @@ package rconnect.game
                {
                   continue;
                }
-               var inHost:Boolean = false;
-               for each(var h:Object in list)
-               {
-                  if(String(h.id) == vid)
-                  {
-                     inHost = true;
-                     break;
-                  }
-               }
-               if(!inHost)
+               if(claimed[v] != true)
                {
                   try
                   {
                      loc["remObj"](v);
                      arr.splice(i, 1);
-                     delete _frozen[vid];   // 清理已移除单位的动画驱动残留
+                     delete _frozen[v];
+                     delete _baseHp[v];
                      Log.d("RConnectGame: removed local extra '" + vid + "'");
                   }
                   catch(err:*)
@@ -5521,7 +5544,9 @@ package rconnect.game
                map.@tr = int(e.tr);
                cid = String(int(e.tr));
             }
-            else if(cname.indexOf("Mine") >= 0) map.@tr = int(e.tr);
+            // Numeric variants drive raiders/slavers as well as alicorns.
+            // Mine with tr=0 must use its id path; an explicit zero bypasses it.
+            else if(int(e.tr) > 0) map.@tr = int(e.tr);
             // Constructors obtain base stats/animations from AllData themselves.
             // param3 is a map placement XML, NOT the AllData unit definition.
             var u:Object = new (cls as Class)(cid, 100, map, null);
@@ -5592,7 +5617,7 @@ package rconnect.game
          return null;
       }
 
-      private var _baseHp:Object = {};
+      private var _baseHp:Dictionary = new Dictionary();
       private var _lastLocRef:Object = null;
       private var _phantomLogged:Object = {};
       private var _hpRejectLogged:Object = {};
@@ -5606,6 +5631,8 @@ package rconnect.game
          {
             _lastLocRef = loc;
             _objects.enter(loc);
+            _units.enter(loc);
+            restoreMirrorMasks();
             _sceneExpected = new Dictionary();
             _scenePending = new Dictionary();
             _boxTween = new Dictionary();
@@ -5614,8 +5641,8 @@ package rconnect.game
             _istStabO = new Dictionary();
             // Original AI flags belong to the whole session, including rooms
             // already visited. endSession must restore those units as well.
-            _baseHp = {};
-            _frozen = {};
+            _baseHp = new Dictionary();
+            _frozen = new Dictionary();
             _animLogged = {};
             // M21：换房后清空注入失败黑名单——同一 id 在新房间可能可注入
             // （旧失败多为瞬时状态；防"永久空敌"）
@@ -5633,9 +5660,8 @@ package rconnect.game
        *  内部 restart/blit/step 管线由游戏代码完成）。 */
       public function tickFrozenAnims():void
       {
-         for(var id:String in _frozen)
+         for(var u:Object in _frozen)
          {
-            var u:Object = _frozen[id];
             try
             {
                u["animate"]();
@@ -5646,7 +5672,7 @@ package rconnect.game
          }
       }
 
-      private var _frozen:Object = {};
+      private var _frozen:Dictionary = new Dictionary();
       private var _animLogged:Object = {};
       private var _skinSeen:Boolean = false;
       private var _ponySeen:Boolean = false;
@@ -5654,9 +5680,9 @@ package rconnect.game
       /** M6 验证：采样被冻结 blit 单位的显示像素，两次采样不同 = 动画在动。 */
       public function animProbeTest():void
       {
-         for(var id:String in _frozen)
+         for(var u:Object in _frozen)
          {
-            var u:Object = _frozen[id];
+            var id:String = String(probe(u,"id"));
             if(probe(u, "blitData") == null)
             {
                continue;   // 只看 blit 渲染的单位

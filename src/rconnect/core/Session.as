@@ -567,7 +567,7 @@ package rconnect.core
                   {
                      if(mod.game != null
                         && mod.game.applyDamage(String(h.id), Number(h.dmg),
-                           attacker))
+                           attacker, h.k == null ? "" : String(h.k)))
                      {
                         applied++;
                      }

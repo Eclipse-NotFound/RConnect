@@ -19,6 +19,7 @@ def main():
     ap.add_argument('--candidate',type=Path,required=True)
     ap.add_argument('--seconds',type=int,default=115)
     ap.add_argument('--keep-copies', action='store_true')
+    ap.add_argument('--with-vision', action='store_true', help='Load the installed RealisticVision SWF in isolated copies')
     ap.add_argument('--smoke', action='store_true', help='Validate a production candidate without test classes')
     args=ap.parse_args()
     token=uuid.uuid4().hex[:10]
@@ -36,6 +37,12 @@ def main():
             shutil.copytree(GAME/'Rooms',folder/'Rooms')
             release=folder/'mods'/'Rconnect'/'release'; release.mkdir(parents=True)
             shutil.copy2(args.candidate,release/'RConnectMod.swf')
+            if args.with_vision:
+                vision=folder/'mods'/'RealisticVision'/'release'
+                vision.mkdir(parents=True)
+                for name in ('RealisticVisionMod.swf','config.txt'):
+                    source=GAME/'mods'/'RealisticVision'/'release'/name
+                    if source.exists(): shutil.copy2(source,vision/name)
             cfg=dict(nickname=role,hostIp='127.0.0.1',port=port,tickMs=50,
                      autoRole=role,autoGame='1',autoFollow='1',freezeAI='1',
                      worldInject='1',ghostCombat='1',autoHeal='1')
@@ -78,8 +85,8 @@ def main():
         content=path.read_text(encoding='utf-8',errors='replace') if path.exists() else ''
         bad=[s for s in content.splitlines() if 'COOP FAIL' in s or 'game error dialog' in s]
         if role=='host':
-            if args.smoke: ok=ok and 'v0.2.0-dev initialized' in content and 'tick 200' in content
-            else: ok=ok and 'COOP DONE' in content and 'failed=0' in content
+            if args.smoke: ok=ok and 'v0.2.1-dev initialized' in content and 'tick 200' in content
+            else: ok=ok and 'COOP DONE' in content and 'failed=0' in content and 'COOP ENEMY DONE' in content
         else: ok=ok and 'welcome id=' in content and 'unitsync matched' in content
         ok=ok and not bad and (args.smoke or 'COOP NETWORK DONE' in content)
         print(role+' failures: '+json.dumps(bad,ensure_ascii=False),flush=True)

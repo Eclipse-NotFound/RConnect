@@ -29,6 +29,7 @@ EXTRA_ARGS = ["-swf-version=38"]
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--amxmlc", default=DEFAULT_AMXMLC)
+    ap.add_argument("--java", help="Explicit java.exe when the batch compiler cannot resolve PATH")
     ap.add_argument("--debug", action="store_true",
                     help="编译 debug 版本（含调试信息）")
     ap.add_argument("--output", help="Explicit candidate path; default remains release")
@@ -50,9 +51,13 @@ def main():
     if args.cooperation_tests:
         sources.append("-source-path+=" + os.path.join(MOD_ROOT, "tests"))
         entry = os.path.join(MOD_ROOT, "tests", "CoopTestDoc.as")
-    cmd = [
-        args.amxmlc,
-    ] + sources + [
+    sdk = os.path.normpath(os.path.join(os.path.dirname(args.amxmlc), ".."))
+    compiler = [args.amxmlc]
+    if args.java:
+        compiler = [args.java, "-Xmx384m", "-Dsun.io.useCanonCaches=false", "-jar",
+                    os.path.join(sdk, "lib", "mxmlc.jar"), "+configname=air",
+                    "+flexlib=" + os.path.join(sdk, "frameworks")]
+    cmd = compiler + sources + [
         "-output=" + out_swf,
         "-debug=" + ("true" if args.debug else "false"),
         "-optimize=" + ("false" if args.debug else "true"),

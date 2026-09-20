@@ -79,8 +79,8 @@ package
 
          var freezeBridge:GameBridge=bridge();
          freezeBridge.freezeAI=true;
-         var active:Object={id:"active",disabled:false,setVisPos:function():void {}};
-         var paused:Object={id:"paused",disabled:true,setVisPos:function():void {}};
+         var active:Object={id:"active",X:-100000,Y:-100000,disabled:false,setVisPos:function():void {}};
+         var paused:Object={id:"paused",X:-100000,Y:-100000,disabled:true,setVisPos:function():void {}};
          freezeBridge.loc.units=[active,paused];
          var frozen:Object=freezeBridge.applyUnitsSync([
             {id:"active",x:-100000,y:-100000},{id:"paused",x:-100000,y:-100000}]);

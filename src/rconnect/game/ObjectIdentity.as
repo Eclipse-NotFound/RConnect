@@ -1,6 +1,7 @@
 package rconnect.game
 {
    import flash.utils.Dictionary;
+   import flash.utils.getQualifiedClassName;
 
    /** Room-scoped identities. Once paired, moving across another equal-id object
     *  must never change ownership. Host keys travel back in client reports. */
@@ -10,6 +11,9 @@ package rconnect.game
       private var keys:Dictionary = new Dictionary();
       private var objects:Object = {};
       private var serial:int = 0;
+      private var prefix:String;
+
+      public function ObjectIdentity(prefix:String = "B") { this.prefix = prefix; }
 
       public function reset(next:Object = null):void
       {
@@ -28,7 +32,7 @@ package rconnect.game
       {
          if(keys[o] == null)
          {
-            var k:String = "B" + (++serial);
+            var k:String = prefix + (++serial);
             keys[o] = k;
             objects[k] = o;
          }
@@ -62,6 +66,7 @@ package rconnect.game
          {
             if(used[o] == true || (k != "" && keys[o] != null)) continue;
             if(String(GameBridge.probe(o, "id")) != String(s.id)) continue;
+            if(s.cls != null && getQualifiedClassName(o) != String(s.cls)) continue;
             var dx:Number = Number(GameBridge.probe(o, "X")) - Number(s.x);
             var dy:Number = Number(GameBridge.probe(o, "Y")) - Number(s.y);
             var d:Number = dx * dx + dy * dy;

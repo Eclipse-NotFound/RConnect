@@ -2,6 +2,16 @@
 
 > 协议见 GOVERNANCE.md §8：只追加不改写，**新条目插在最上面**。
 
+## 2026-09-20 M29 修复加入方敌人显示及索敌，部署 0.2.1-dev
+
+- 做了什么：复现真实 RV 下 visible=true 但渲染内容为零、同名敌人被合并、已有房主目标挡住近加入者索敌、普通地雷构造失败。修正遮罩及退出恢复、实例键与伤害路由、原生感知选目标和数字变体构造。仅写 RConnect，未改用户存档/进程和其他模组。
+- 验证：34373dd227 的 35 既有 + 16 敌人 + 9 TCP 检查全部通过；保留所有失败试验与夹具修正证据。正式 release 产物 e7c3ca8fe9 启动/连接检查通过；测试 PID 已结束。
+- 部署：45574 字节，SHA-256 33CE3B722A3473CC24659E813F8BBB7A934B295F680BD5612A341515A6B38685。旧 M28 备份 build/backup/m29-release-20260920-095514-292641/RConnectMod.before.swf。配置/游戏 SWF/主描述符指纹不变。
+- 关键发现与边界：见 knowledge/experiments/2026-09-20-m29-enemy-visibility-targeting.md 及 m29-validation-evidence.json。实际组合只测 RConnect + RV；TDFC 全组合、完整潜行发现度与用户原场景手感待验。
+- 停点：用户需重启双方加载 0.2.1-dev；未扩展稳定重连、三人以上、公网、跨版本及任务/背包/交易系统。无委托。
+
+---
+
 ## 2026-09-10 M28 候选部署完成，供用户测试
 
 - 按用户授权部署 10d46ac 对应普通候选至 release/RConnectMod.swf，44963 字节，SHA-256 2A65D5F83567BD1FB8D537270BEE4499FBAA7BF6EF2EAF89BE161BFDE0A8CF56；旧版备份 build/backup/m28-release-20260910-153718-905444/RConnectMod.before.swf。配置及游戏三份 SWF/主描述符前后哈希一致。

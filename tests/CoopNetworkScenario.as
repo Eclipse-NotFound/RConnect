@@ -14,6 +14,8 @@ package
       private var door:Object;
       private var script:Object;
       private var box:Object;
+      private var enemies:Array=[];
+      private var enemyChecked:Boolean=false;
       public function CoopNetworkScenario(isHost:Boolean) { host=isHost; }
       private function check(ok:Boolean,name:String):void
       {
@@ -40,6 +42,14 @@ package
             door=make(mod,"door1",700);
             script=make(mod,"window1",900);
             box=make(mod,"case",1100);
+            var uc:Class=mod.main["loaderInfo"]["applicationDomain"]["getDefinition"]("fe.unit.UnitSlaver") as Class;
+            for(var z:int=0;z<2;z++)
+            {
+               var enemy:Object=new uc("slaver1",100,<unit/>,null);
+               enemy.putLoc(mod.game.loc,440+z*100,640);
+               mod.game.loc.addObj(enemy); mod.game.loc.units.push(enemy);
+               enemy.disabled=true; enemy.animate(); enemies.push(enemy);
+            }
             // This scenario deliberately exercises a door without Interact.
             script.inter=null;
             Log.d("COOP native scene ready door="+door.door+" window="+script.door+" phis="+script.phis);
@@ -66,6 +76,21 @@ package
                Log.d("COOP script close local phis="+script.phis+" tile="+script.tiles[0].phis+" inter="+script.inter);
             }
             if(box!=null) box.die(-1);
+         }
+         if(!host && !enemyChecked && n>=40)
+         {
+            enemyChecked=true;
+            var count:int=0, drawn:int=0;
+            for each(var unit:Object in mod.game.loc.units)
+            {
+               if(unit.id!="slaver1") continue;
+               count++;
+               var px:int=EnemyRegression.pixels(unit.vis);
+               Log.d("ENEMY network alpha="+unit.vis.alpha+" visible="+unit.vis.visible+" parent="+(unit.vis.parent!=null)+" mask="+unit.vis.mask+" pixels="+px);
+               if(unit.vis.parent!=null && unit.vis.visible && unit.vis.alpha>0 && px>0) drawn++;
+            }
+            check(count==2,"two equal-id native enemies received");
+            check(drawn==2,"both enemy sprites rendered after real vision frames");
          }
          if(host && !finished && n>=95)
          {

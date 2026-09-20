@@ -32,7 +32,10 @@ package
             {
                checked=true;
                if(NativeApplication.nativeApplication.applicationID.indexOf("pfe-rconnect-coop-host-")==0)
+               {
                   CoopRegression.run(mod);
+                  EnemyRegression.run(mod);
+               }
             }
             scenario.tick(mod,n);
          }
