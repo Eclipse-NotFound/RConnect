@@ -1,0 +1,92 @@
+{
+  "token": "m31-release-20260920-151712-770633",
+  "status": "deployed-smoke-pass",
+  "protected": {
+    "pfe.swf": "9a81430d775209e37e8e7fd54414057995e0680671445f38797623865b5a699a",
+    "DLC\\pfe.swf": "435dac701c49a7730c5f07447086db5a2ffa831c079824a124ad2bb62e5b0c6d",
+    "DLC\\pfeUI.swf": "76d8499f9d0eca1288fda52aa1db4edc2658f0cb6fb180b64f8fcab24a75160b",
+    "application.xml": "70dd3b085e5f6c66c03693cf68ce5e93a4e4136dd745d40d1a5b2a49863ba236",
+    "mods\\ModSettings\\release\\ModSettingsMod.swf": "5bd830a63f42130ef56e9c24c0e95b77b9871640b53d5cb4aa5b51e363894b5c",
+    "mods\\MoreSkills&Weapons\\release\\MoreSkillsWeaponsMod.before-v1.4.0-20260919.swf": "bef4d857b6b78d6ccb1f9e012b8bf33cd1e9892b7347892da984176789de648f",
+    "mods\\MoreSkills&Weapons\\release\\MoreSkillsWeaponsMod.before-v1.4.1-20260920.swf": "d87b233391e87ae6be4bb224055d5f2615b2dc3e1dff0ef6929391508d3cf1ec",
+    "mods\\MoreSkills&Weapons\\release\\MoreSkillsWeaponsMod.before-v1.5.0-20260920.swf": "f9dcd668b57b3ee9b44a52649d55432276afade9def0ef9e46ba5ab9b9adcdb3",
+    "mods\\MoreSkills&Weapons\\release\\MoreSkillsWeaponsMod.before-v1.5.2-20260920.swf": "4783cc1943cb8cc58db4610144fb959e37e3a41c652e82bfe714c74e3a30a8a1",
+    "mods\\MoreSkills&Weapons\\release\\MoreSkillsWeaponsMod.swf": "695109fdcd702cefbcbb554748695f87740da93f7654187807a1735d5d4961e9",
+    "mods\\RandomRooms\\release\\RandomRoomsMod.swf": "7ac89a73d6a09c0922fd0c7f1ffe7c2c2a836ee635393bf5d32fcc503463058c",
+    "mods\\RandomRooms\\release\\RandomRoomsMod_v53_backup.swf": "7feb9157e7cd21785eb24077187ce84342c1102f3e6758163401c490a25085c9",
+    "mods\\RConnect\\release\\config.txt": "5ca72017f1f811b5f8a2b1f18f6cb8b2c24239e2240716c4059cbc073913fc0a",
+    "mods\\RealisticVision\\release\\config.txt": "5136ee1923a77f5f10eab1b3994b64cbd67b09d687a7e829fb1e81d2e79a3c7f",
+    "mods\\Sandevistan\\release\\config.txt": "d91c4c2889aba19b1bcfb356885921b0605a50188b270a9e7619d2116e7ebdc3",
+    "mods\\Sandevistan\\release\\SandevistanMod.swf": "0506615963176d937c596f43b8ff6d865b3bac5d2dece8490a47629d65a9a0ba",
+    "mods\\Sandevistan\\release\\\u8bf4\u660e.txt": "90b3c70a8f066f1267128f8c80f4e146d75fdd8bb4d4e1978a6972bb002c0ab0",
+    "mods\\TDFC\\release\\TDFCMod.swf": "5ee8b967bf0eddc1d6c1931f1264db37dea94f365cc416b1971502a999af8a7e"
+  },
+  "files": [
+    {
+      "target": "mods\\RConnect\\release\\RConnectMod.swf",
+      "candidate": "mods\\RConnect\\build\\m31\\RConnectMod.swf",
+      "backup": "mods\\RConnect\\build\\backup\\m31-release-20260920-151712-770633\\RConnectMod.before.swf",
+      "before": "97bf59edbde5d2b702d675af950de7ef3e8625f3dd27dc458ed410b989fe1995",
+      "after": "0e00e4f8f1ba74842b6227b7311ccfd47c4ff3e212afc4132e051e39c3277157",
+      "bytes": 50175
+    },
+    {
+      "target": "mods\\RealisticVision\\release\\RealisticVisionMod.swf",
+      "candidate": "mods\\RealisticVision\\build\\shared-exploration\\RealisticVisionMod.swf",
+      "backup": "mods\\RealisticVision\\build\\backup\\m31-release-20260920-151712-770633\\RealisticVisionMod.before.swf",
+      "before": "47403d06bb989eda462599361e8ca921e356da15541c32b737af29eb03407aeb",
+      "after": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+      "bytes": 22310
+    }
+  ],
+  "firstSmoke": {
+    "token": "5372c2cfae",
+    "runnerResult": "PASS",
+    "manualResult": "incomplete",
+    "reason": "join tick 200 absent at 50 second timeout; RV join only tick 1; runner final check omitted join heartbeat"
+  },
+  "extendedSmoke": {
+    "token": "ec2ea306f3",
+    "manualResult": "PASS: both correct versions and tick 1000; RV heartbeat",
+    "runnerResult": "FAIL: concurrent M32 runner expected v0.2.4; fixed by frozen M31 runner"
+  },
+  "concurrentChanges": {
+    "mods\\MoreSkills&Weapons\\release\\MoreSkillsWeaponsMod.swf": "671fd977eca722b9272ff916426e64e5df8c8c4defda1ecadacdf1778c5eb72a"
+  },
+  "smoke": {
+    "token": "46b70da446",
+    "result": "PASS",
+    "scope": "isolated RC+RV installed files, current root game, no other mod binaries",
+    "logs": {
+      "host": {
+        "host.log": "2451950832f230d97cb3a5b7c85417d56432c5a3995c0502cf8f7096bc233dd4",
+        "host.RVision.log": "4046cd7bff6c4ca5bf3fe76e138d1da534dfa4ad3be89f525f49646cfeff5e25"
+      },
+      "join": {
+        "join.log": "bfb12a5a713d2c3bf0f90ddf5d3b15683f7978dd4586346a1cf82ebe2c68f080",
+        "join.RVision.log": "f7d242cba27b0a68ddc90f49ce66641b70e23fc5f8a39b95fcbdfd77b3b52180"
+      }
+    },
+    "run": {
+      "port": 62649,
+      "pids": [
+        66396,
+        66760
+      ],
+      "candidate": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\release\\RConnectMod.swf",
+      "sha256": "0e00e4f8f1ba74842b6227b7311ccfd47c4ff3e212afc4132e051e39c3277157",
+      "inputs": {
+        "host": {
+          "game": "9a81430d775209e37e8e7fd54414057995e0680671445f38797623865b5a699a",
+          "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b"
+        },
+        "join": {
+          "game": "9a81430d775209e37e8e7fd54414057995e0680671445f38797623865b5a699a",
+          "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b"
+        }
+      }
+    },
+    "runner": "build/m31/run_release_smoke.py",
+    "runnerSha256": "bb23931e033f6f36c448b86f343e5a94bc4c7505ea47a47a0b1d73f04fb04dec"
+  }
+}
