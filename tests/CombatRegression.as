@@ -63,20 +63,29 @@ package
          check(hits.length>0 && Number(hits[0].dmg)>=7,"hit survives a newer host snapshot before report");
          check(b.scanAndReportDamage().length==0,"damage report is drained once");
          var firstX:Number=enemy.X;
-         e.x+=90; b.applyUnitsSync(list);
-         check(enemy.X==firstX && enemy.X<Number(e.x)-1,"new position snapshot does not jump to endpoint");
          var states:Object={}, frames:Object={}, samples:int=0;
+         var started:Boolean=false;
+         var timer:Timer=new Timer(250,1);
          var onFrame:Function=function(ev:Event):void
          {
+            // Start the interpolation window on an actual frame, after synchronous
+            // fixture construction and other regressions have released the event loop.
+            if(!started)
+            {
+               started=true;
+               e.x+=90; b.applyUnitsSync(list);
+               check(enemy.X==firstX && enemy.X<Number(e.x)-1,"new position snapshot does not jump to endpoint");
+               timer.start();
+            }
             samples++; states[String(enemy.X)+"/"+String(enemy.animState)]=true;
             frames[String(frameHash(enemy))]=true;
          };
          mod.stage.addEventListener(Event.ENTER_FRAME,onFrame,false,-20000);
-         var timer:Timer=new Timer(250,1);
          timer.addEventListener(TimerEvent.TIMER,function(ev:TimerEvent):void
          {
             mod.stage.removeEventListener(Event.ENTER_FRAME,onFrame);
             var n:int=0; for(var k:String in states) n++;
+            Log.d("COMBAT frame samples="+samples+" position-states="+n);
             check(samples>=2 && n>=2,"positions advance between network snapshots");
             check(enemy.dx==5 && enemy.stay==true,"native animation receives host movement state");
             var nf:int=0; for(k in frames) nf++;
@@ -87,7 +96,6 @@ package
             check(remains==0,"leave removes collision receivers");
             Log.d("COOP COMBAT DONE");
          });
-         timer.start();
       }
    }
 }

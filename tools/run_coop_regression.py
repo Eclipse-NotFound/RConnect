@@ -20,8 +20,10 @@ def main():
     ap.add_argument('--seconds',type=int,default=115)
     ap.add_argument('--keep-copies', action='store_true')
     ap.add_argument('--with-vision', action='store_true', help='Load the installed RealisticVision SWF in isolated copies')
+    ap.add_argument('--vision-candidate',type=Path,help='Load this optional RV candidate instead of the installed SWF')
     ap.add_argument('--smoke', action='store_true', help='Validate a production candidate without test classes')
     args=ap.parse_args()
+    if args.vision_candidate: args.with_vision=True
     token=uuid.uuid4().hex[:10]
     output=ROOT/'build'/'cooperation'/token
     output.mkdir(parents=True)
@@ -47,6 +49,7 @@ def main():
                 vision.mkdir(parents=True)
                 for name in ('RealisticVisionMod.swf','config.txt'):
                     source=GAME/'mods'/'RealisticVision'/'release'/name
+                    if name=='RealisticVisionMod.swf' and args.vision_candidate: source=args.vision_candidate.resolve()
                     if source.exists(): shutil.copy2(source,vision/name)
             inputs[role]={'game':hashlib.sha256((folder/'pfe.swf').read_bytes()).hexdigest()}
             if args.with_vision:
@@ -73,7 +76,15 @@ def main():
         (output/'run.json').write_text(json.dumps(dict(port=port,pids=[p.pid for p in procs],
             candidate=str(args.candidate.resolve()),sha256=candidate_hash,inputs=inputs),indent=2))
         print('OUTPUT '+str(output),flush=True)
-        time.sleep(args.seconds)
+        deadline=time.monotonic()+args.seconds
+        while time.monotonic()<deadline:
+            complete=True
+            for role,path in artifacts:
+                content=path.read_text(encoding='utf-8',errors='replace') if path.exists() else ''
+                if args.smoke: complete=complete and 'v0.2.3-dev initialized' in content and 'tick 200' in content
+                else: complete=complete and 'COOP NETWORK DONE' in content and (role!='host' or 'COOP COMBAT DONE' in content)
+            if complete: break
+            time.sleep(2)
     finally:
         for p in procs:
             if p.poll() is None:
@@ -93,8 +104,8 @@ def main():
         content=path.read_text(encoding='utf-8',errors='replace') if path.exists() else ''
         bad=[s for s in content.splitlines() if 'COOP FAIL' in s or 'game error dialog' in s]
         if role=='host':
-            if args.smoke: ok=ok and 'v0.2.2-dev initialized' in content and 'tick 200' in content
-            else: ok=ok and 'COOP DONE' in content and 'failed=0' in content and 'COOP ENEMY DONE' in content and 'COOP COMBAT DONE' in content
+            if args.smoke: ok=ok and 'v0.2.3-dev initialized' in content and 'tick 200' in content
+            else: ok=ok and 'COOP DONE' in content and 'failed=0' in content and 'COOP ENEMY DONE' in content and 'COOP COMBAT DONE' in content and 'COOP EXPLORATION DONE' in content
         else: ok=ok and 'welcome id=' in content and 'unitsync matched' in content
         ok=ok and not bad and (args.smoke or 'COOP NETWORK DONE' in content)
         print(role+' failures: '+json.dumps(bad,ensure_ascii=False),flush=True)

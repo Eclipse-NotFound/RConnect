@@ -17,6 +17,7 @@ package rconnect.core
          hostIp: "127.0.0.1",
          port: 23456,
          tickMs: 50,
+         sharedExploration: "1",
          autoRole: "",
          autoGame: "",
          autoMove: "",

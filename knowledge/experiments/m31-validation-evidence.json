@@ -1,0 +1,386 @@
+{
+  "date": "2026-09-20",
+  "scope": "shared exploration; build candidates only; no deployment",
+  "runs": [
+    {
+      "token": "bb3fcccaeb",
+      "inputs": {
+        "port": 52969,
+        "pids": [
+          64196,
+          73656
+        ],
+        "candidate": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m31\\ExplorationTest.swf",
+        "sha256": "034126eb901b229d03696c9fcc929310de0c2e852731dd54dcf2d392bf3e06f3",
+        "inputs": {
+          "host": {
+            "game": "5300ec4874e0404d298bb58c5d2a7469e82f93b455ad29ad64dd2e29d17241e7"
+          },
+          "join": {
+            "game": "5300ec4874e0404d298bb58c5d2a7469e82f93b455ad29ad64dd2e29d17241e7"
+          }
+        }
+      },
+      "roles": {
+        "host": {
+          "passed": 87,
+          "failures": [
+            "COOP FAIL combat positions advance between network snapshots",
+            "COOP FAIL network lethal client shot runs native host death"
+          ],
+          "networkDone": true,
+          "log": {
+            "path": "mods\\RConnect\\build\\cooperation\\bb3fcccaeb\\host.log",
+            "bytes": 12369,
+            "sha256": "0a996056cbac124a7d6441aa99af1a01b4d653aaacc6fef744e77dc2898e3b57"
+          }
+        },
+        "join": {
+          "passed": 8,
+          "failures": [],
+          "networkDone": false,
+          "log": {
+            "path": "mods\\RConnect\\build\\cooperation\\bb3fcccaeb\\join.log",
+            "bytes": 7171,
+            "sha256": "0b2b9b1f690d198db59e14a64fa3a6df03516be6aa3f8636e3675261768ed1b4"
+          }
+        }
+      }
+    },
+    {
+      "token": "c073575605",
+      "inputs": {
+        "port": 53682,
+        "pids": [
+          61016,
+          54848
+        ],
+        "candidate": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m31\\ExplorationTest.swf",
+        "sha256": "903ef8ccfeddf012402c70263d48cf79b566c6c72e378afeb996e06417076d15",
+        "inputs": {
+          "host": {
+            "game": "5300ec4874e0404d298bb58c5d2a7469e82f93b455ad29ad64dd2e29d17241e7",
+            "vision": "0b9e8b9902de394db14f6feca6ec3fe191779652b0d701b6f04d0cb1198a2f93"
+          },
+          "join": {
+            "game": "5300ec4874e0404d298bb58c5d2a7469e82f93b455ad29ad64dd2e29d17241e7",
+            "vision": "0b9e8b9902de394db14f6feca6ec3fe191779652b0d701b6f04d0cb1198a2f93"
+          }
+        }
+      },
+      "roles": {
+        "host": {
+          "passed": 92,
+          "failures": [
+            "COOP FAIL combat positions advance between network snapshots"
+          ],
+          "networkDone": true,
+          "log": {
+            "path": "mods\\RConnect\\build\\cooperation\\c073575605\\host.log",
+            "bytes": 12229,
+            "sha256": "4696eca5824a7f5cd21a0875884e68dc74f6b655a4cde7eac5658545d6ee8147"
+          }
+        },
+        "join": {
+          "passed": 11,
+          "failures": [],
+          "networkDone": true,
+          "log": {
+            "path": "mods\\RConnect\\build\\cooperation\\c073575605\\join.log",
+            "bytes": 7753,
+            "sha256": "0cb5f5954d1e2e28800463f76e91873b08dc8ca76f534f21f5dd6270c730ac06"
+          }
+        }
+      }
+    },
+    {
+      "token": "c5a976c81c",
+      "inputs": {
+        "port": 53066,
+        "pids": [
+          56356,
+          53476
+        ],
+        "candidate": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m31\\ExplorationTest.swf",
+        "sha256": "c1a7e6cc37a73a884ae106f34dbd07bcc347299767f26e78c48ff0b2d759d68c",
+        "inputs": {
+          "host": {
+            "game": "5300ec4874e0404d298bb58c5d2a7469e82f93b455ad29ad64dd2e29d17241e7"
+          },
+          "join": {
+            "game": "5300ec4874e0404d298bb58c5d2a7469e82f93b455ad29ad64dd2e29d17241e7"
+          }
+        }
+      },
+      "roles": {
+        "host": {
+          "passed": 92,
+          "failures": [],
+          "networkDone": true,
+          "log": {
+            "path": "mods\\RConnect\\build\\cooperation\\c5a976c81c\\host.log",
+            "bytes": 12297,
+            "sha256": "1daa71e60aee8795b4c32606740846fdc087688d04e0fdf2f28a3d80b8903a58"
+          }
+        },
+        "join": {
+          "passed": 11,
+          "failures": [],
+          "networkDone": true,
+          "log": {
+            "path": "mods\\RConnect\\build\\cooperation\\c5a976c81c\\join.log",
+            "bytes": 7474,
+            "sha256": "1fe46240292cff3c2f342a239244bf92a0664af59dceb569e33f68b1200eea82"
+          }
+        }
+      }
+    },
+    {
+      "token": "e6c6df2924",
+      "inputs": {
+        "port": 60581,
+        "pids": [
+          63932,
+          66456
+        ],
+        "candidate": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m31\\ExplorationTest.swf",
+        "sha256": "28e6360cb82d1dd10f7a053830cef8c7cc3bae7b167b1196c4a86f7548625cb9",
+        "inputs": {
+          "host": {
+            "game": "5300ec4874e0404d298bb58c5d2a7469e82f93b455ad29ad64dd2e29d17241e7",
+            "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b"
+          },
+          "join": {
+            "game": "5300ec4874e0404d298bb58c5d2a7469e82f93b455ad29ad64dd2e29d17241e7",
+            "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b"
+          }
+        }
+      },
+      "roles": {
+        "host": {
+          "passed": 93,
+          "failures": [],
+          "networkDone": true,
+          "log": {
+            "path": "mods\\RConnect\\build\\cooperation\\e6c6df2924\\host.log",
+            "bytes": 13422,
+            "sha256": "72087de0a3f6919ccb862306cacac36c40acdcd369002d833259bc724592309b"
+          }
+        },
+        "join": {
+          "passed": 11,
+          "failures": [],
+          "networkDone": true,
+          "log": {
+            "path": "mods\\RConnect\\build\\cooperation\\e6c6df2924\\join.log",
+            "bytes": 7573,
+            "sha256": "009d9e380fd6969c157107c1c9610ed5e0972b7928858bd1e133a242469b6a71"
+          }
+        }
+      }
+    },
+    {
+      "token": "94f25cd6d6",
+      "inputs": {
+        "port": 54257,
+        "pids": [
+          17876,
+          58364
+        ],
+        "candidate": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m31\\RConnectMod.swf",
+        "sha256": "0e00e4f8f1ba74842b6227b7311ccfd47c4ff3e212afc4132e051e39c3277157",
+        "inputs": {
+          "host": {
+            "game": "5300ec4874e0404d298bb58c5d2a7469e82f93b455ad29ad64dd2e29d17241e7"
+          },
+          "join": {
+            "game": "5300ec4874e0404d298bb58c5d2a7469e82f93b455ad29ad64dd2e29d17241e7"
+          }
+        }
+      },
+      "roles": {
+        "host": {
+          "passed": 0,
+          "failures": [],
+          "networkDone": false,
+          "log": {
+            "path": "mods\\RConnect\\build\\cooperation\\94f25cd6d6\\host.log",
+            "bytes": 1409,
+            "sha256": "ec0b66ac07e3b4106d185353e2f7bd07c520dd4b497419b548b43254fb096fbe"
+          }
+        },
+        "join": {
+          "passed": 0,
+          "failures": [],
+          "networkDone": false,
+          "log": {
+            "path": "mods\\RConnect\\build\\cooperation\\94f25cd6d6\\join.log",
+            "bytes": 1985,
+            "sha256": "7652212ce07c69d055110ae0b32be50ec349368e8eca396c0a456460c9ce9c77"
+          }
+        }
+      }
+    },
+    {
+      "token": "510c982aa5",
+      "inputs": {
+        "port": 53759,
+        "pids": [
+          39940,
+          44288
+        ],
+        "candidate": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m31\\RConnectMod.swf",
+        "sha256": "0e00e4f8f1ba74842b6227b7311ccfd47c4ff3e212afc4132e051e39c3277157",
+        "inputs": {
+          "host": {
+            "game": "5300ec4874e0404d298bb58c5d2a7469e82f93b455ad29ad64dd2e29d17241e7",
+            "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b"
+          },
+          "join": {
+            "game": "5300ec4874e0404d298bb58c5d2a7469e82f93b455ad29ad64dd2e29d17241e7",
+            "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b"
+          }
+        }
+      },
+      "roles": {
+        "host": {
+          "passed": 0,
+          "failures": [],
+          "productionInit": true,
+          "heartbeat": true,
+          "log": {
+            "path": "mods\\RConnect\\build\\cooperation\\510c982aa5\\host.log",
+            "bytes": 1023,
+            "sha256": "e3e22febae67b07aa75a50959e6422d1939c47dbca86ed22966181176041ab08"
+          }
+        },
+        "join": {
+          "passed": 0,
+          "failures": [],
+          "productionInit": true,
+          "heartbeat": false,
+          "log": {
+            "path": "mods\\RConnect\\build\\cooperation\\510c982aa5\\join.log",
+            "bytes": 1085,
+            "sha256": "40796106d297578e40dbfa517c981b552965b3d4ed1ba82a9a080b61e9546249"
+          }
+        }
+      }
+    }
+  ],
+  "candidates": [
+    {
+      "path": "mods\\RConnect\\build\\m31\\RConnectMod.swf",
+      "bytes": 50175,
+      "sha256": "0e00e4f8f1ba74842b6227b7311ccfd47c4ff3e212afc4132e051e39c3277157"
+    },
+    {
+      "path": "mods\\RConnect\\build\\m31\\ExplorationTest.swf",
+      "bytes": 102166,
+      "sha256": "28e6360cb82d1dd10f7a053830cef8c7cc3bae7b167b1196c4a86f7548625cb9"
+    },
+    {
+      "path": "mods\\RealisticVision\\build\\shared-exploration\\RealisticVisionMod.swf",
+      "bytes": 22310,
+      "sha256": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b"
+    }
+  ],
+  "installedAtRecord": [
+    {
+      "path": "mods\\RConnect\\release\\RConnectMod.swf",
+      "bytes": 47919,
+      "sha256": "97bf59edbde5d2b702d675af950de7ef3e8625f3dd27dc458ed410b989fe1995"
+    },
+    {
+      "path": "mods\\RealisticVision\\release\\RealisticVisionMod.swf",
+      "bytes": 20608,
+      "sha256": "5c26d604ba6ae33a92a5d11f8a6f6abcfbf8bde9663baf3ab68e919a32b8c242"
+    }
+  ],
+  "sourceAtBuildRecord": [
+    {
+      "path": "mods\\RConnect\\src\\rconnect\\game\\ExplorationSync.as",
+      "bytes": 9867,
+      "sha256": "4ef903cf0b7e27810a4559078f38cade4d9dddc722f78596a6ff75c41ce1e500"
+    },
+    {
+      "path": "mods\\RealisticVision\\src\\RealisticVisionMod.as",
+      "bytes": 143824,
+      "sha256": "784c3cb4bbc9319d9a8449ca8a38ce44ed486bf5929409b9ca9fa45575042ce9"
+    },
+    {
+      "path": "mods\\RealisticVision\\src\\RVExplorationCarrier.as",
+      "bytes": 224,
+      "sha256": "87fde379f51faecddf0cb8b0e84da4b2b58c8f1724d637e18abd21a6210e1082"
+    }
+  ],
+  "rvChecks": [
+    {
+      "name": "SoftHarness",
+      "passed": 16,
+      "failures": [],
+      "log": {
+        "path": "mods\\RealisticVision\\knowledge\\experiments\\shared-exploration-v0300\\SoftHarness.log",
+        "bytes": 1483,
+        "sha256": "ee2fdbc39e09278b9911097e64ef0fb14c4b28116687cb68ae484c69fbb26083"
+      },
+      "binary": {
+        "path": "mods\\RealisticVision\\build\\shared-exploration\\checks\\SoftHarness.swf",
+        "bytes": 43151,
+        "sha256": "5227fc5c31000d433eb9559c04678ab825368e2d46bde9e760d9a9046a65fc48"
+      }
+    },
+    {
+      "name": "SharedExplorationHarness",
+      "passed": 21,
+      "failures": [],
+      "log": {
+        "path": "mods\\RealisticVision\\knowledge\\experiments\\shared-exploration-v0300\\SharedExplorationHarness.log",
+        "bytes": 1489,
+        "sha256": "84758c42ad45b51fb9e4375a7e80e3d1816506e37972b57427d56b77491df176"
+      },
+      "binary": {
+        "path": "mods\\RealisticVision\\build\\shared-exploration\\checks\\SharedExplorationHarness.swf",
+        "bytes": 41845,
+        "sha256": "7476bdbb7a94adf03ad54daa236ba73f936a527c5a5eed475adf834f3f8ee1a8"
+      }
+    }
+  ],
+  "packaging": {
+    "rconnect": {
+      "classes": [
+        "RConnectDoc 0",
+        "RConnectMod 1",
+        "rconnect.game.GameBridge 2",
+        "rconnect.game.ExplorationSync 3",
+        "rconnect.ui.NetHud 4",
+        "rconnect.game.VersionProbe 5",
+        "rconnect.core.Session 6",
+        "rconnect.core.Log 7",
+        "rconnect.core.Config 8",
+        "rconnect.game.MirrorHitUnit 9",
+        "rconnect.game.ObjectIdentity 10",
+        "rconnect.net.Protocol 11",
+        "rconnect.net.NetMessageEvent 12",
+        "rconnect.net.TcpLink 13",
+        "rconnect.net.HostServer 14"
+      ],
+      "dump": {
+        "path": "mods\\RConnect\\build\\m31\\RConnectMod.classes.txt",
+        "bytes": 389,
+        "sha256": "4ac529ffbf62dc719843fa346730cabb9dad786e1145d065a3e130d6563760c8"
+      }
+    },
+    "rv": {
+      "classes": [
+        "RealisticVisionMod 0",
+        "RVExplorationCarrier 1"
+      ],
+      "dump": {
+        "path": "mods\\RealisticVision\\build\\shared-exploration\\RealisticVisionMod.classes.txt",
+        "bytes": 46,
+        "sha256": "1b3a4294b77914227b1dc5846feca13445b81ad849802c4eb6724abb08ae4326"
+      }
+    }
+  }
+}

@@ -253,6 +253,7 @@ package rconnect.core
 
       private function stop():void
       {
+         if(mod.exploration != null) mod.exploration.resetLink();
          if(server != null)
          {
             server.close();
@@ -306,6 +307,7 @@ package rconnect.core
 
       private function onLinkClosed(e:Event):void
       {
+         if(mod.exploration != null) mod.exploration.resetLink();
          if(mode == JOINING || mode == CONNECTED)
          {
             if(mod.game != null)
@@ -324,6 +326,7 @@ package rconnect.core
 
       private function onLinkFailed(e:Event):void
       {
+         if(mod.exploration != null) mod.exploration.resetLink();
          if(mod.game != null) mod.game.endSession();
          error = "connect failed (check ip/port)";
          mode = OFFLINE;
@@ -465,7 +468,11 @@ package rconnect.core
                break;
 
             case Protocol.MSG_WORLDSTATE:
-               applyWorldState(msg.players as Array, msg.seen);
+               applyWorldState(msg.players as Array);
+               break;
+
+            case Protocol.MSG_EXPLORATION:
+               if(mode == CONNECTED) mod.exploration.receive(msg.exploration);
                break;
 
             case Protocol.MSG_CHAT:
@@ -539,6 +546,10 @@ package rconnect.core
                   }
                }
                broadcastWorldState();
+               break;
+
+            case Protocol.MSG_EXPLORATION:
+               if(findPeerByLink(link) != null) mod.exploration.receive(msg.exploration);
                break;
 
             case Protocol.MSG_CHAT:
@@ -1113,10 +1124,17 @@ package rconnect.core
             }
          }
 
-         if(mod.hud != null)
+         if((mode == CONNECTED && link != null && link.isOpen)
+            || (mode == HOSTING && server != null && peers.length > 0))
          {
-            mod.hud.refresh();
+            var exploration:Object = mod.exploration.packet();
+            if(exploration != null)
+            {
+               var explorationMsg:Object = Protocol.make(Protocol.MSG_EXPLORATION, {exploration:exploration});
+               if(mode == HOSTING) server.broadcast(explorationMsg); else link.send(explorationMsg);
+            }
          }
+         if(mod.hud != null) mod.hud.refresh();
       }
 
       // ---- 世界状态广播 -------------------------------------------------
@@ -1136,32 +1154,14 @@ package rconnect.core
          }
          var ws:Object = Protocol.make(Protocol.MSG_WORLDSTATE,
             {tick: _tickCount, players: players});
-         // M14c：探索迷雾同步——宿主当前房间已探索掩码（readSeenMask 按 loc
-         // 引用缓存，换房才重建；加入方同房间点亮一致）
-         if(mod.game != null && peers.length > 0 && mod.game.loc != null)
-         {
-            var seenData:String = mod.game.readSeenMask();
-            if(seenData != "")
-            {
-               ws.seen = {locId: String(GameBridge.probe(mod.game.loc, "id")),
-                  cols: int(GameBridge.probeNum(mod.game.loc, "spaceX", 0)),
-                  data: seenData};
-            }
-         }
          server.broadcast(ws);
       }
 
-      private function applyWorldState(players:Array, seenMask:Object = null):void
+      private function applyWorldState(players:Array):void
       {
          if(players == null || mod.game == null)
          {
             return;
-         }
-         // M14c：宿主的房间探索掩码 → 加入方同房点亮（地图/暗幕一致）
-         if(seenMask != null && seenMask.data != undefined)
-         {
-            mod.game.applySeenMask(String(seenMask.locId),
-               int(seenMask.cols), String(seenMask.data));
          }
          var seen:Object = {};
          var next:Array = [];

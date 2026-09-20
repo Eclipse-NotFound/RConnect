@@ -20,6 +20,7 @@ package
       private var damageChecked:Boolean=false;
       private var killed:Boolean=false;
       private var localTarget:Object;
+      private var explorationBaseline:int=0;
       public function CoopNetworkScenario(isHost:Boolean) { host=isHost; }
       private function check(ok:Boolean,name:String):void
       {
@@ -43,6 +44,7 @@ package
          if(host && !setup && n>=25)
          {
             setup=true;
+            explorationBaseline=mod.exploration.received;
             door=make(mod,"door1",700);
             script=make(mod,"window1",900);
             box=make(mod,"case",1100);
@@ -111,7 +113,7 @@ package
             mod.game.world.testDam=oldTestDam;
             check(Math.abs(localTarget.hp-470)<0.01,"native shot predicts armor-adjusted damage");
          }
-         if(host && !damageChecked && n>=78)
+         if(host && setup && !damageChecked && n>=45 && (enemies[0].hp<500 || n>=120))
          {
             damageChecked=true;
             check(Math.abs(enemies[0].hp-470)<0.01,"native client shot reaches host without duplicate mitigation");
@@ -127,7 +129,7 @@ package
             check(localTarget.hp<=0 && localTarget.sost<3 && mod.game.loc.objs.length==countLoot,
                "lethal client shot waits for host death and loot");
          }
-         if(host && !finished && n>=100)
+         if(host && setup && !finished && n>=100 && (enemies[0].sost>=3 || n>=150))
          {
             finished=true;
             check(door!=null && !door.inter.open,"native join close returned");
@@ -135,12 +137,14 @@ package
             check(box!=null && box.dead,"native join destruction returned");
             check(enemies[0].sost>=3 && enemies[0].hp<=0,"lethal client shot runs native host death");
             Log.d("COOP NETWORK DONE host");
+            check(mod.exploration.received>explorationBaseline,"bidirectional exploration received at host over TCP");
          }
-         if(!host && checked && !finished && n>=90)
+         if(!host && checked && !finished && n>=90 && ((localTarget!=null && localTarget.sost>=3) || n>=130))
          {
             finished=true;
             check(door!=null && !door.inter.open,"native close stays converged");
             check(localTarget!=null && localTarget.sost>=3,"host death snapshot reaches joiner");
+            check(mod.exploration.received>0,"bidirectional exploration received at join over TCP");
             Log.d("COOP NETWORK DONE join");
          }
       }

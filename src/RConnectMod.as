@@ -6,6 +6,7 @@ package
    import rconnect.core.Log;
    import rconnect.core.Session;
    import rconnect.game.GameBridge;
+   import rconnect.game.ExplorationSync;
    import rconnect.game.VersionProbe;
    import rconnect.ui.NetHud;
 
@@ -20,7 +21,7 @@ package
     */
    public class RConnectMod
    {
-      public static const VERSION:String = "0.2.2-dev";
+      public static const VERSION:String = "0.2.3-dev";
 
       public static var instance:RConnectMod;
 
@@ -42,6 +43,7 @@ package
       public var stage:Stage;
       public var config:Config;
       public var game:GameBridge;
+      public var exploration:ExplorationSync;
       public var session:Session;
       public var hud:NetHud;
       public var versionInfo:Object;
@@ -67,6 +69,7 @@ package
          var gc:String = String(config.getValue("ghostCombat"));
          game.ghostCombat = (gc != "0" && gc != "false" && gc != "no");
          game.testGhostDmg = Number(config.getValue("testGhostDmg"));
+         this.exploration = new ExplorationSync(this);
          this.hud = new NetHud(stage, this);
          this.session = new Session(this);
          hud.refresh();

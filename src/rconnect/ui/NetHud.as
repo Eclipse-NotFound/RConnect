@@ -32,6 +32,7 @@ package rconnect.ui
       private var _btnJoin:TextField;
       private var _btnLeave:TextField;
       private var _btnSend:TextField;
+      private var _btnExploration:TextField;
       private var _visible:Boolean = true;
       private var _chatLines:int = 0;
 
@@ -57,7 +58,7 @@ package rconnect.ui
          var fmtBold:TextFormat = new TextFormat("_sans", 12, 0xFFD040, true);
 
          graphics.beginFill(0x000000, 0.62);
-         graphics.drawRect(0, 0, 280, 220);
+         graphics.drawRect(0, 0, 280, 274);
          graphics.endFill();
 
          statusTf = makeLabel(8, 8, 264, 44, fmt);
@@ -82,6 +83,13 @@ package rconnect.ui
          var hint:TextField = makeLabel(8, 214, 264, 14, fmt);
          hint.text = "F10 hide/show | chat: Enter";
          hint.alpha = 0.6;
+         _btnExploration = makeButton(8, 234, 264, fmtBold, "接收队友探索：开");
+         _btnExploration.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void {
+            mod.exploration.setEnabled(!mod.exploration.enabled);
+            refresh();
+         });
+         var explorationHint:TextField = makeLabel(8, 254, 264, 16, fmt);
+         explorationHint.text = "关闭后保留已收到的区域";
       }
 
       private function makeLabel(x:Number, y:Number, w:Number, h:Number,
@@ -211,6 +219,7 @@ package rconnect.ui
 
       public function refresh():void
       {
+         _btnExploration.text = "接收队友探索：" + (mod.exploration.enabled ? "开" : "关");
          statusTf.text = mod.session != null
             ? mod.session.statusText() : "RConnect";
       }
