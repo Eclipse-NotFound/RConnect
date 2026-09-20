@@ -10,6 +10,7 @@
 
 - 已授权补齐已有合作探索、战斗与场景交互，允许大幅重构；稳定重连、三人以上、真实网络、版本兼容排除。暂不新增任务进度、背包与交易规则。
 - 已授权部署候选供测试；2026-09-20 用户反馈加入侧无敌人、极少发现加入者，本轮修复并更新候选。
+- 2026-09-20 新需求当前为共享视野探查：已确认双向共享探索；原版按自身明暗机制，RealisticVision 以自身设定为准。开关归属与关闭后保留规则尚待用户回答；不把推荐当决定。
 - 只写 RConnect。用户真实 pfe/pfe2 存档不动、游戏进程不动。测试用独立副本及随机 pfe-rconnect-coop-host/join-<token>，只清理自己创建的 PID。
 - 其他模组仅直接冲突所需最小只读；不改其代码。游戏原始 SWF 本轮未改；将来修改需核对当前合并状态并保留其他 loader。
 
@@ -23,7 +24,9 @@
 
 ## 4. 正在进行与停点
 
-- 本轮修复、回归和部署已完成，等待用户在原有存档场景重启复测。
+- 新一轮共享探索源码探查已完成，未实施/编译/运行/部署。现有 seen 同步存在同房间缓存不刷新、横纵坐标读反、单向和房间身份校验不足；RV 另有独立记忆且无公开共享接口。
+- Q3 待答：宿主统一开关（推荐）或各端自控；Q4 待答：关闭/断开恢复个人探索（推荐）或保留收到的探索。下一轮还需解释原版瞬移/交互权限的连带影响；可靠 RV 兼容涉及其小接口改动，当前仅最小只读。
+- M29 修复、回归和部署已完成，等待用户在原有存档场景重启复测。本轮读取的 RV 已是 v0.29.0-candidate、指纹与 M29 测试时不同，旧测试不能代表新组合通过。
 - 候选没有全模组组合验收；本轮准确覆盖 RConnect + RealisticVision，以及原生敌人 AI，不把 TDFC 等其他模组逻辑算进已通过范围。
 - 若仍异常先读当前双方 RConnect.log，确认 0.2.1 初始化、房间身份、匹配数和显示状态，再定位是否 TDFC/随机房组合造成的新分支。
 
@@ -39,12 +42,13 @@
 
 ## 6. 下一步
 
-1. 用户重启双方，复测原先敌人消失房间与“房主远、加入者近”的遭遇；确认真实手感。
-2. 若仍出现索敌异常，重点区分原生 AI 与 TDFC 战术目标重写；跨模组代码修改另按授权范围处理。
-3. 排除项与新任务/背包/交易系统等待用户恢复范围，不自动扩展。
+1. 接续共享探索 Q3/Q4，按原版/RV 的数据区别形成可审阅方案；详见探查报告。源码事实已经查清的部分不重复问用户。
+2. 实施时区分本人探索与远端记忆，使用正确坐标及地图身份；聚合设置页 + F10 入口可复用现有 API。探查不是已实现，跨模组改动范围需先明确。
+3. M29 真人复测与 TDFC 分支仍保留原验证边界；稳定重连、多人、公网、版本兼容及新任务/背包/交易系统仍排除。
 
 ## 7. 深入了解
 
+- **共享探索探查**：knowledge/discoveries/2026-09-20-shared-exploration-feasibility.md；用户决定、待答问题、源码位置、RV 当前指纹、实施建议与验收清单。仅文档，不改变 M29 部署。
 - **M29 复现/部署/失败记录**：knowledge/experiments/2026-09-20-m29-enemy-visibility-targeting.md；结构化证据 m29-validation-evidence.json。原始日志 build/cooperation/<token>/，部署指纹 build/m29/deployment.json。
 - **测试**：tests/EnemyRegression.as、CoopRegression.as、CoopNetworkScenario.as。`tools/run_coop_regression.py --candidate build/m29/EnemyTest.swf --with-vision`；普通 SWF 用 `--smoke --seconds 45`。测试不应直接用正式用户 ID。
 - **构建**：`tools/build_mod.py --java <java.exe> --output build/m29/RConnectMod.swf`；测试加 `--cooperation-tests --debug --output build/m29/EnemyTest.swf`。不带 output 会写 release。
