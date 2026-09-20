@@ -21,7 +21,7 @@ package
     */
    public class RConnectMod
    {
-      public static const VERSION:String = "0.2.3-dev";
+      public static const VERSION:String = "0.2.4-dev";
 
       public static var instance:RConnectMod;
 

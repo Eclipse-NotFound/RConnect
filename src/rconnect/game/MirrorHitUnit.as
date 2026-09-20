@@ -12,6 +12,7 @@ package rconnect.game
          "dodge","invulner","transp","opt","mech","blood","mat","maxShok","showNumbs"];
       private var target:Object;
       private var inDamage:Boolean=false;
+      private var feedback:HitFeedback = new HitFeedback();
 
       public function MirrorHitUnit(target:Object)
       {
@@ -46,8 +47,13 @@ package rconnect.game
          if(bullet!=null && GameBridge.probe(bullet,"owner")!==GameBridge.probe(self.loc,"gg")) return 0;
          sync();
          var before:Number=self.hp;
+         var shieldBefore:Number=self.shithp;
+         var show:Boolean=self.showNumbs;
          inDamage=true;
          var result:Number=0;
+         // The native accumulator expires only in Unit.actions, which this receiver
+         // deliberately never runs. Own number lifetime without enabling native AI.
+         self.showNumbs=false;
          try { result=super.damage(amount,type,bullet,periodic); }
          finally
          {
@@ -55,6 +61,8 @@ package rconnect.game
             var loss:Number=Math.max(0,before-Number(self.hp));
             target.hp=Number(target.hp)-loss;
             target.armor_hp=self.armor_hp; target.armor_qual=self.armor_qual; target.shithp=self.shithp;
+            self.showNumbs=show;
+            if(show) feedback.show(target,loss,Math.max(0,shieldBefore-Number(self.shithp)));
             inDamage=false;
          }
          try { target.visDetails(); } catch(err:*) {}

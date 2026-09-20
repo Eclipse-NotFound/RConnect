@@ -1010,7 +1010,9 @@ package rconnect.core
                      {hits: hits, worldInfo: mod.game.readWorldInfo()}));
                   Log.d("RConnectNet: reported " + hits.length
                      + " damage hits first=" + String(hits[0].id)
-                     + "/" + Math.round(Number(hits[0].dmg)));
+                     + " hp=" + Math.round(Number(hits[0].dmg))
+                     + " armor=" + Math.round(Number(hits[0].armorLoss))
+                     + " shield=" + Math.round(Number(hits[0].shieldLoss)));
                }
             }
          }

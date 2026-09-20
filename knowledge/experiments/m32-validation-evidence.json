@@ -1,0 +1,491 @@
+{
+  "date": "2026-09-20",
+  "scope": "1.02 independent AIR instances; native LMG vs alicorn3; remote armor",
+  "runs": [
+    {
+      "token": "8dc07990d3",
+      "inputs": {
+        "port": 53377,
+        "pids": [
+          57956,
+          65892
+        ],
+        "candidate": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m32-combat-appearance\\build\\m32\\FeedbackTest.swf",
+        "sha256": "5c02c68e310dc1db22cd2df0895fbce97695e11060c39374b97b5a3d57a86dc5",
+        "inputs": {
+          "host": {
+            "game": "9a81430d775209e37e8e7fd54414057995e0680671445f38797623865b5a699a",
+            "vision": "47403d06bb989eda462599361e8ca921e356da15541c32b737af29eb03407aeb"
+          },
+          "join": {
+            "game": "9a81430d775209e37e8e7fd54414057995e0680671445f38797623865b5a699a",
+            "vision": "47403d06bb989eda462599361e8ca921e356da15541c32b737af29eb03407aeb"
+          }
+        }
+      },
+      "roles": {
+        "host": {
+          "passed": 0,
+          "failures": [],
+          "lmg_final": [],
+          "log": {
+            "path": "build\\m32-combat-appearance\\build\\cooperation\\8dc07990d3\\host.log",
+            "bytes": 163,
+            "sha256": "fae94408c3742322c4575a6e1b05f565db2a834d26dd584fbe9639da8265b266"
+          },
+          "checks": {
+            "COOP NETWORK DONE": false,
+            "COOP LMG NETWORK DONE": false,
+            "COOP APPEARANCE DAMAGE DONE": false,
+            "v0.2.4-dev initialized": false,
+            "tick 200": false
+          }
+        },
+        "join": {
+          "passed": 0,
+          "failures": [],
+          "lmg_final": [],
+          "log": {
+            "path": "build\\m32-combat-appearance\\build\\cooperation\\8dc07990d3\\join.log",
+            "bytes": 239,
+            "sha256": "01b70fb04122dd781a3a5538799fb03985b71cf3ed7f196366d406df2fa7a06c"
+          },
+          "checks": {
+            "COOP NETWORK DONE": false,
+            "COOP LMG NETWORK DONE": false,
+            "COOP APPEARANCE DAMAGE DONE": false,
+            "v0.2.4-dev initialized": false,
+            "tick 200": false
+          }
+        }
+      }
+    },
+    {
+      "token": "9989486af1",
+      "inputs": {
+        "port": 58164,
+        "pids": [
+          35180,
+          67588
+        ],
+        "candidate": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m32-combat-appearance\\build\\m32\\FeedbackTest.swf",
+        "sha256": "61b8cc28659935a31779329a0bf698418b3864f847f6c8ae30f590d02bc3709a",
+        "inputs": {
+          "host": {
+            "game": "9a81430d775209e37e8e7fd54414057995e0680671445f38797623865b5a699a"
+          },
+          "join": {
+            "game": "9a81430d775209e37e8e7fd54414057995e0680671445f38797623865b5a699a"
+          }
+        }
+      },
+      "roles": {
+        "host": {
+          "passed": 68,
+          "failures": [
+            "COOP FAIL appearance-damage shield-only hit has visible feedback",
+            "COOP FAIL appearance-damage remote armor survives native animation frame changes",
+            "COOP FAIL appearance-damage second burst creates number after first number expires"
+          ],
+          "lmg_final": [],
+          "log": {
+            "path": "build\\m32-combat-appearance\\build\\cooperation\\9989486af1\\host.log",
+            "bytes": 9023,
+            "sha256": "fc3c1630d293fe658db9ddd9166bdf39480ba47d56b953019deaed7cdadabbde"
+          },
+          "checks": {
+            "COOP NETWORK DONE": false,
+            "COOP LMG NETWORK DONE": false,
+            "COOP APPEARANCE DAMAGE DONE": true,
+            "v0.2.4-dev initialized": false,
+            "tick 200": true
+          }
+        },
+        "join": {
+          "passed": 0,
+          "failures": [],
+          "lmg_final": [],
+          "log": {
+            "path": "build\\m32-combat-appearance\\build\\cooperation\\9989486af1\\join.log",
+            "bytes": 2585,
+            "sha256": "3fa665e489512c42f6be65a94d586ca6d3758afb47c091f42dc3ed32de8a1624"
+          },
+          "checks": {
+            "COOP NETWORK DONE": false,
+            "COOP LMG NETWORK DONE": false,
+            "COOP APPEARANCE DAMAGE DONE": false,
+            "v0.2.4-dev initialized": false,
+            "tick 200": true
+          }
+        }
+      }
+    },
+    {
+      "token": "3df1568fbb",
+      "inputs": {
+        "port": 53982,
+        "pids": [
+          72132,
+          9004
+        ],
+        "candidate": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m32-combat-appearance\\build\\m32\\FeedbackTest.swf",
+        "sha256": "bda86ba8f9cc93f3083675d1f50825a02c2caf67ea84ab49993de17eb1145775",
+        "inputs": {
+          "host": {
+            "game": "9a81430d775209e37e8e7fd54414057995e0680671445f38797623865b5a699a"
+          },
+          "join": {
+            "game": "9a81430d775209e37e8e7fd54414057995e0680671445f38797623865b5a699a"
+          }
+        }
+      },
+      "roles": {
+        "host": {
+          "passed": 71,
+          "failures": [],
+          "lmg_final": [],
+          "log": {
+            "path": "build\\m32-combat-appearance\\build\\cooperation\\3df1568fbb\\host.log",
+            "bytes": 9048,
+            "sha256": "71db4e3d36cc19b7b4e08b53c8bf95831dadfd9d9e19ada47471e3da6d0d40cc"
+          },
+          "checks": {
+            "COOP NETWORK DONE": false,
+            "COOP LMG NETWORK DONE": false,
+            "COOP APPEARANCE DAMAGE DONE": true,
+            "v0.2.4-dev initialized": false,
+            "tick 200": true
+          }
+        },
+        "join": {
+          "passed": 0,
+          "failures": [],
+          "lmg_final": [],
+          "log": {
+            "path": "build\\m32-combat-appearance\\build\\cooperation\\3df1568fbb\\join.log",
+            "bytes": 2667,
+            "sha256": "dcce9952ca9d206796ddf007151334cf0e956457924f6517a259407ee4c31f71"
+          },
+          "checks": {
+            "COOP NETWORK DONE": false,
+            "COOP LMG NETWORK DONE": false,
+            "COOP APPEARANCE DAMAGE DONE": false,
+            "v0.2.4-dev initialized": false,
+            "tick 200": true
+          }
+        }
+      }
+    },
+    {
+      "token": "b6e31786ce",
+      "inputs": {
+        "port": 50535,
+        "pids": [
+          7476,
+          70616
+        ],
+        "candidate": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m32\\FeedbackTest.swf",
+        "sha256": "44a70f6a2744ecbf5226cf1a04213df6726fa2608b3b6df29a3d3bd190c3747b",
+        "inputs": {
+          "host": {
+            "game": "9a81430d775209e37e8e7fd54414057995e0680671445f38797623865b5a699a"
+          },
+          "join": {
+            "game": "9a81430d775209e37e8e7fd54414057995e0680671445f38797623865b5a699a"
+          }
+        }
+      },
+      "roles": {
+        "host": {
+          "passed": 101,
+          "failures": [
+            "COOP FAIL lmg-network host renders peer armor different from local armor",
+            "COOP FAIL lmg-network host converges shield depletion and HP damage",
+            "COOP FAIL lmg-network host sees remote shield hit numbers"
+          ],
+          "lmg_final": [
+            "LMG final host hp=2000 shield=500"
+          ],
+          "log": {
+            "path": "build\\cooperation\\b6e31786ce\\host.log",
+            "bytes": 18199,
+            "sha256": "014da96a3e5925db83c10322498f08eca3e3d8b893b56841f58c5a7035621d4e"
+          },
+          "checks": {
+            "COOP NETWORK DONE": true,
+            "COOP LMG NETWORK DONE": true,
+            "COOP APPEARANCE DAMAGE DONE": true,
+            "v0.2.4-dev initialized": true,
+            "tick 200": true
+          }
+        },
+        "join": {
+          "passed": 16,
+          "failures": [],
+          "lmg_final": [
+            "LMG final join hp=1704.7999999999995 shield=0"
+          ],
+          "log": {
+            "path": "build\\cooperation\\b6e31786ce\\join.log",
+            "bytes": 12168,
+            "sha256": "f93e636291b61aa6d7a62d2d7b2fe3b25469072a86b9536b27dfb11375c2e786"
+          },
+          "checks": {
+            "COOP NETWORK DONE": true,
+            "COOP LMG NETWORK DONE": true,
+            "COOP APPEARANCE DAMAGE DONE": false,
+            "v0.2.4-dev initialized": true,
+            "tick 200": true
+          }
+        }
+      }
+    },
+    {
+      "token": "d995672ebb",
+      "inputs": {
+        "port": 51981,
+        "pids": [
+          63972,
+          69680
+        ],
+        "candidate": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m32\\FeedbackTest.swf",
+        "sha256": "86464277204d34aef56f4aed3b6182bb0e09aed4f957a56d5f46894c7b3098e4",
+        "inputs": {
+          "host": {
+            "game": "9a81430d775209e37e8e7fd54414057995e0680671445f38797623865b5a699a",
+            "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b"
+          },
+          "join": {
+            "game": "9a81430d775209e37e8e7fd54414057995e0680671445f38797623865b5a699a",
+            "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b"
+          }
+        }
+      },
+      "roles": {
+        "host": {
+          "passed": 105,
+          "failures": [],
+          "lmg_final": [
+            "LMG final host hp=1695.1999999999998 shield=0"
+          ],
+          "log": {
+            "path": "build\\cooperation\\d995672ebb\\host.log",
+            "bytes": 17344,
+            "sha256": "8497ffe5f42303a75d217db50d91f0564981fe72a20aa70812e0f1f5d786107f"
+          },
+          "checks": {
+            "COOP NETWORK DONE": true,
+            "COOP LMG NETWORK DONE": true,
+            "COOP APPEARANCE DAMAGE DONE": true,
+            "v0.2.4-dev initialized": true,
+            "tick 200": true
+          }
+        },
+        "join": {
+          "passed": 17,
+          "failures": [],
+          "lmg_final": [
+            "LMG final join hp=1695.1999999999998 shield=0"
+          ],
+          "log": {
+            "path": "build\\cooperation\\d995672ebb\\join.log",
+            "bytes": 13408,
+            "sha256": "aab322e6c9d3fa153054e75f64ab6e8e5c387e81a915f379caea93b54423bf3c"
+          },
+          "checks": {
+            "COOP NETWORK DONE": true,
+            "COOP LMG NETWORK DONE": true,
+            "COOP APPEARANCE DAMAGE DONE": false,
+            "v0.2.4-dev initialized": true,
+            "tick 200": true
+          }
+        }
+      }
+    },
+    {
+      "token": "6ccefa9187",
+      "inputs": {
+        "port": 59210,
+        "pids": [
+          14008,
+          62072
+        ],
+        "candidate": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m32\\RConnectMod.swf",
+        "sha256": "4e65327f3014211b3811e3917d4ff4dd984e9d6d2964c38f0ee21d51996c5262",
+        "inputs": {
+          "host": {
+            "game": "9a81430d775209e37e8e7fd54414057995e0680671445f38797623865b5a699a",
+            "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b"
+          },
+          "join": {
+            "game": "9a81430d775209e37e8e7fd54414057995e0680671445f38797623865b5a699a",
+            "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b"
+          }
+        }
+      },
+      "roles": {
+        "host": {
+          "passed": 0,
+          "failures": [],
+          "lmg_final": [],
+          "log": {
+            "path": "build\\cooperation\\6ccefa9187\\host.log",
+            "bytes": 1407,
+            "sha256": "e2a7435080218dc8d0065e457d7c1929c86ca3ec87a3528dae0309f7c8739bf4"
+          },
+          "checks": {
+            "COOP NETWORK DONE": false,
+            "COOP LMG NETWORK DONE": false,
+            "COOP APPEARANCE DAMAGE DONE": false,
+            "v0.2.4-dev initialized": true,
+            "tick 200": true
+          }
+        },
+        "join": {
+          "passed": 0,
+          "failures": [],
+          "lmg_final": [],
+          "log": {
+            "path": "build\\cooperation\\6ccefa9187\\join.log",
+            "bytes": 1950,
+            "sha256": "31a67d54d42dc3a83574e2213e637a75e6889ba09d7e4888b8eff9f839cf54d2"
+          },
+          "checks": {
+            "COOP NETWORK DONE": false,
+            "COOP LMG NETWORK DONE": false,
+            "COOP APPEARANCE DAMAGE DONE": false,
+            "v0.2.4-dev initialized": true,
+            "tick 200": true
+          }
+        }
+      }
+    },
+    {
+      "token": "c7ae0ed25a",
+      "inputs": {
+        "port": 56534,
+        "pids": [
+          64528,
+          55656
+        ],
+        "candidate": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\release\\RConnectMod.swf",
+        "sha256": "4e65327f3014211b3811e3917d4ff4dd984e9d6d2964c38f0ee21d51996c5262",
+        "inputs": {
+          "host": {
+            "game": "9a81430d775209e37e8e7fd54414057995e0680671445f38797623865b5a699a",
+            "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b"
+          },
+          "join": {
+            "game": "9a81430d775209e37e8e7fd54414057995e0680671445f38797623865b5a699a",
+            "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b"
+          }
+        }
+      },
+      "roles": {
+        "host": {
+          "passed": 0,
+          "failures": [],
+          "lmg_final": [],
+          "log": {
+            "path": "build\\cooperation\\c7ae0ed25a\\host.log",
+            "bytes": 2240,
+            "sha256": "268e865388090068f0e87730c1493e1d1be10bb790d3a242473037905b038b62"
+          },
+          "checks": {
+            "COOP NETWORK DONE": false,
+            "COOP LMG NETWORK DONE": false,
+            "COOP APPEARANCE DAMAGE DONE": false,
+            "v0.2.4-dev initialized": true,
+            "tick 200": true
+          }
+        },
+        "join": {
+          "passed": 0,
+          "failures": [],
+          "lmg_final": [],
+          "log": {
+            "path": "build\\cooperation\\c7ae0ed25a\\join.log",
+            "bytes": 1841,
+            "sha256": "4ea42d4221dd5cf5677c3613342ff2799ea857db88bcc6d0e4f6162b3623421f"
+          },
+          "checks": {
+            "COOP NETWORK DONE": false,
+            "COOP LMG NETWORK DONE": false,
+            "COOP APPEARANCE DAMAGE DONE": false,
+            "v0.2.4-dev initialized": true,
+            "tick 200": true
+          }
+        }
+      }
+    }
+  ],
+  "production": {
+    "path": "build\\m32\\RConnectMod.swf",
+    "bytes": 51393,
+    "sha256": "4e65327f3014211b3811e3917d4ff4dd984e9d6d2964c38f0ee21d51996c5262"
+  },
+  "test": {
+    "path": "build\\m32\\FeedbackTest.swf",
+    "bytes": 110209,
+    "sha256": "86464277204d34aef56f4aed3b6182bb0e09aed4f957a56d5f46894c7b3098e4"
+  },
+  "classes": [
+    "RConnectDoc 0",
+    "RConnectMod 1",
+    "rconnect.game.GameBridge 2",
+    "rconnect.game.ExplorationSync 3",
+    "rconnect.ui.NetHud 4",
+    "rconnect.game.VersionProbe 5",
+    "rconnect.core.Session 6",
+    "rconnect.core.Log 7",
+    "rconnect.core.Config 8",
+    "rconnect.game.MirrorHitUnit 9",
+    "rconnect.game.HitFeedback 10",
+    "rconnect.game.RemoteArmor 11",
+    "rconnect.game.ObjectIdentity 12",
+    "rconnect.net.Protocol 13",
+    "rconnect.net.NetMessageEvent 14",
+    "rconnect.net.TcpLink 15",
+    "rconnect.net.HostServer 16"
+  ],
+  "deployment": {
+    "version": "0.2.4-dev",
+    "time": "2026-09-20T15:31:35.8355373+08:00",
+    "sourceBase": "ed0e38d",
+    "target": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\release\\RConnectMod.swf",
+    "bytes": 51393,
+    "sha256": "4e65327f3014211b3811e3917d4ff4dd984e9d6d2964c38f0ee21d51996c5262",
+    "backup": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\backup\\m32-release-20260920-153135-660744\\RConnectMod.before.swf",
+    "beforeSha256": "0e00e4f8f1ba74842b6227b7311ccfd47c4ff3e212afc4132e051e39c3277157",
+    "protectedFiles": [
+      {
+        "path": "../../pfe.swf",
+        "sha256": "9a81430d775209e37e8e7fd54414057995e0680671445f38797623865b5a699a"
+      },
+      {
+        "path": "../../DLC/pfe.swf",
+        "sha256": "435dac701c49a7730c5f07447086db5a2ffa831c079824a124ad2bb62e5b0c6d"
+      },
+      {
+        "path": "../../DLC/pfeUI.swf",
+        "sha256": "76d8499f9d0eca1288fda52aa1db4edc2658f0cb6fb180b64f8fcab24a75160b"
+      },
+      {
+        "path": "../../application.xml",
+        "sha256": "70dd3b085e5f6c66c03693cf68ce5e93a4e4136dd745d40d1a5b2a49863ba236"
+      },
+      {
+        "path": "release/config.txt",
+        "sha256": "5ca72017f1f811b5f8a2b1f18f6cb8b2c24239e2240716c4059cbc073913fc0a"
+      },
+      {
+        "path": "../RealisticVision/release/RealisticVisionMod.swf",
+        "sha256": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b"
+      }
+    ],
+    "regression": "d995672ebb",
+    "candidateSmoke": "6ccefa9187",
+    "postDeploySmoke": "c7ae0ed25a PASS: both 0.2.4-dev initialized, tick 200, welcome and unit sync",
+    "userProcessesUntouched": true
+  }
+}

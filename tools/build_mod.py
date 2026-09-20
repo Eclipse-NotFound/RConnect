@@ -78,7 +78,7 @@ def main():
         stub_compiler = [args.java,"-Xmx384m","-jar",os.path.join(sdk,"lib","compc.jar"),
                          "+configname=air","+flexlib="+os.path.join(sdk,"frameworks")]
     stub_cmd = stub_compiler + ["-source-path="+os.path.join(HERE,"stubs"),
-                               "-include-classes=fe.unit.Unit,fe.weapon.Bullet",
+                               "-include-classes=fe.unit.Unit,fe.weapon.Bullet" + (",fe.weapon.Weapon" if args.cooperation_tests else ""),
                                "-output="+stub_swc,"-swf-version=38"]
     subprocess.run(stub_cmd, env=env, check=True)
     cmd.insert(1 if not args.java else len(compiler), "-external-library-path+="+stub_swc)

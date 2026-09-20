@@ -1,6 +1,7 @@
 package rconnect.game
 {
    import flash.display.Stage;
+   import flash.display.DisplayObjectContainer;
    import flash.events.Event;
    import flash.geom.ColorTransform;
    import flash.text.TextField;
@@ -98,10 +99,12 @@ package rconnect.game
       private var _pendingHits:Dictionary = new Dictionary();
       private var _forcingVisibility:Boolean = false;
       private var _animatingMirrors:Boolean = false;
+      private var _shieldFeedback:Dictionary = new Dictionary(true);
 
       public function endSession():void
       {
          _mirroring = false;
+         _shieldFeedback = new Dictionary(true);
          clearHitUnits();
          _unitMotion = new Dictionary();
          _pendingHits = new Dictionary();
@@ -149,10 +152,14 @@ package rconnect.game
        *  死亡/离房自动移出——不强制显示尸体）。 */
       private function onVisForceFrame(e:Event):void
       {
-         if(!_mirroring || _forcingVisibility) return;
+         if(_forcingVisibility) return;
          _forcingVisibility = true;
          try
          {
+            for each(var rec:Object in _remotes)
+               if(rec.ghost != null && rec.snap != null && rec.snap.ap != null)
+                  RemoteArmor.apply(probe(rec.ghost,"vis") as DisplayObjectContainer,String(rec.snap.ap.armor || ""));
+            if(!_mirroring) return;
             tickLootMotion();
             for(var u:Object in _hostAlive)
             {
@@ -5367,9 +5374,19 @@ package rconnect.game
                         if(u["armor_hp"]<=0) u["armor_qual"]=0;
                      }
                      if(isFinite(shieldLoss) && shieldLoss>0)
+                     {
+                        shieldLoss = Math.min(shieldLoss,Math.max(0,numOr(probe(u,"shithp"),0)));
                         u["shithp"] = Math.max(0,numOr(probe(u,"shithp"),0)-shieldLoss);
+                     }
                   }
                   if(dmg > 0) u["damage"](dmg, 100, null, true);
+                  if(shieldLoss > 0)
+                  {
+                     var feedback:HitFeedback = _shieldFeedback[u];
+                     if(feedback == null) _shieldFeedback[u] = feedback = new HitFeedback();
+                     feedback.show(u,0,shieldLoss);
+                     try { u["visDetails"](); } catch(feedbackError:*) {}
+                  }
                   if(attacker != null)
                   {
                      // 拉仇恨：敌人转向客户端幽灵（priorUnit 满足 findCel 条件）

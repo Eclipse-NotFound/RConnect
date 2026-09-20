@@ -17,6 +17,7 @@ GAME = ROOT.parents[1]
 def main():
     ap=argparse.ArgumentParser()
     ap.add_argument('--candidate',type=Path,required=True)
+    ap.add_argument('--game-root',type=Path,default=GAME)
     ap.add_argument('--seconds',type=int,default=115)
     ap.add_argument('--keep-copies', action='store_true')
     ap.add_argument('--with-vision', action='store_true', help='Load the installed RealisticVision SWF in isolated copies')
@@ -24,6 +25,7 @@ def main():
     ap.add_argument('--smoke', action='store_true', help='Validate a production candidate without test classes')
     args=ap.parse_args()
     if args.vision_candidate: args.with_vision=True
+    game=args.game_root.resolve()
     token=uuid.uuid4().hex[:10]
     output=ROOT/'build'/'cooperation'/token
     output.mkdir(parents=True)
@@ -38,17 +40,17 @@ def main():
     try:
         for role in ('host','join'):
             folder=output/role; folder.mkdir()
-            for source in GAME.iterdir():
+            for source in game.iterdir():
                 if source.is_file() and source.suffix in ('.swf','.xml','.cfg'):
                     shutil.copy2(source,folder/source.name)
-            shutil.copytree(GAME/'Rooms',folder/'Rooms')
+            shutil.copytree(game/'Rooms',folder/'Rooms')
             release=folder/'mods'/'Rconnect'/'release'; release.mkdir(parents=True)
             shutil.copy2(candidate,release/'RConnectMod.swf')
             if args.with_vision:
                 vision=folder/'mods'/'RealisticVision'/'release'
                 vision.mkdir(parents=True)
                 for name in ('RealisticVisionMod.swf','config.txt'):
-                    source=GAME/'mods'/'RealisticVision'/'release'/name
+                    source=game/'mods'/'RealisticVision'/'release'/name
                     if name=='RealisticVisionMod.swf' and args.vision_candidate: source=args.vision_candidate.resolve()
                     if source.exists(): shutil.copy2(source,vision/name)
             inputs[role]={'game':hashlib.sha256((folder/'pfe.swf').read_bytes()).hexdigest()}
@@ -68,7 +70,7 @@ def main():
             storage=Path(os.environ['APPDATA'])/appid/'Local Store'
             artifacts.append((role,storage/'RConnect.log'))
             stdout=(output/(role+'.stdout.log')).open('w',encoding='utf-8')
-            proc=subprocess.Popen([str(GAME/'adl64.exe'),'-runtime',str(GAME/'runtimes/air/win64'),str(desc)],
+            proc=subprocess.Popen([str(game/'adl64.exe'),'-runtime',str(game/'runtimes/air/win64'),str(desc)],
                        cwd=folder,stdout=stdout,stderr=subprocess.STDOUT,creationflags=subprocess.CREATE_NO_WINDOW)
             procs.append(proc)
             print(json.dumps(dict(role=role,pid=proc.pid,appid=appid,log=str(storage/'RConnect.log'))),flush=True)
@@ -81,8 +83,8 @@ def main():
             complete=True
             for role,path in artifacts:
                 content=path.read_text(encoding='utf-8',errors='replace') if path.exists() else ''
-                if args.smoke: complete=complete and 'v0.2.3-dev initialized' in content and 'tick 200' in content
-                else: complete=complete and 'COOP NETWORK DONE' in content and (role!='host' or 'COOP COMBAT DONE' in content)
+                if args.smoke: complete=complete and 'v0.2.4-dev initialized' in content and 'tick 200' in content
+                else: complete=complete and 'COOP NETWORK DONE' in content and 'COOP LMG NETWORK DONE' in content and (role!='host' or ('COOP COMBAT DONE' in content and 'COOP APPEARANCE DAMAGE DONE' in content))
             if complete: break
             time.sleep(2)
     finally:
@@ -104,10 +106,12 @@ def main():
         content=path.read_text(encoding='utf-8',errors='replace') if path.exists() else ''
         bad=[s for s in content.splitlines() if 'COOP FAIL' in s or 'game error dialog' in s]
         if role=='host':
-            if args.smoke: ok=ok and 'v0.2.3-dev initialized' in content and 'tick 200' in content
+            if args.smoke: ok=ok and 'v0.2.4-dev initialized' in content and 'tick 200' in content
             else: ok=ok and 'COOP DONE' in content and 'failed=0' in content and 'COOP ENEMY DONE' in content and 'COOP COMBAT DONE' in content and 'COOP EXPLORATION DONE' in content
-        else: ok=ok and 'welcome id=' in content and 'unitsync matched' in content
-        ok=ok and not bad and (args.smoke or 'COOP NETWORK DONE' in content)
+        else:
+            ok=ok and 'welcome id=' in content and 'unitsync matched' in content
+            if args.smoke: ok=ok and 'v0.2.4-dev initialized' in content and 'tick 200' in content
+        ok=ok and not bad and (args.smoke or ('COOP NETWORK DONE' in content and 'COOP LMG NETWORK DONE' in content and (role!='host' or 'COOP APPEARANCE DAMAGE DONE' in content)))
         print(role+' failures: '+json.dumps(bad,ensure_ascii=False),flush=True)
         for line in content.splitlines():
             if 'COOP ' in line: print(line,flush=True)
