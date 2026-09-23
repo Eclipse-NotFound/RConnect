@@ -57,6 +57,17 @@ package
             var native:Number=mod.game.loc.space[1][1].visi;
             var target:Number=mod.game.loc.space[1][1].t_visi;
             check(sync.receive(wire),"acknowledged live room accepted");
+            var delta:Object=JSON.parse(JSON.stringify(wire));
+            delete delta.rows;delta.changes=[[1,p.rows[1]]];
+            check(sync.receive(delta),"validated row delta applies after full baseline");
+            delta.changes=[[1,p.rows[1]],[1,p.rows[1]]];
+            check(!sync.receive(delta),"duplicate delta rows rejected atomically");
+            delta.changes=[[p.height,p.rows[1]]];
+            check(!sync.receive(delta),"out of range delta row rejected");
+            delta.changes=[[1,"broken"]];
+            check(!sync.receive(delta),"truncated delta rejected");
+            delta.changes=[[1,p.rows[1]]];delta.epoch="different-peer";
+            check(!sync.receive(delta),"delta cannot reuse a different room-instance baseline");
             check(mod.game.loc.space[1][1].visi===native && mod.game.loc.space[1][1].t_visi===target,
                "sharing leaves native interaction light unchanged");
             wire.room=p.room+"other";
@@ -65,6 +76,8 @@ package
             mod.config.setValue("sharedExploration","0");
             check(!sync.receive(wire),"local receive switch rejects new knowledge");
             sync.resetLink();
+            delta.epoch="test-peer";
+            check(!sync.receive(delta),"delta requires a fresh full baseline after reset");
             var disabled:Object=sync.packet();
             check(disabled!=null,"disabled receiver still shares with enabled teammate");
             check(disabled!=null && JSON.stringify(disabled.rows)==JSON.stringify(p.rows),"acquired map survives toggle and link reset");

@@ -1,0 +1,1128 @@
+{
+  "milestone": "M33",
+  "version": "0.2.5-dev",
+  "date": "2026-09-23",
+  "runs": {
+    "4b9fc6dee8": {
+      "note": "Invalid harness: omitted loader manifest; modules did not initialize.",
+      "folder": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\4b9fc6dee8",
+      "roles": {},
+      "inputs": {
+        "port": 49956,
+        "pids": [
+          45580,
+          46428
+        ],
+        "candidate": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m33\\PresentationRed.swf",
+        "sha256": "d4a829c7028d6f9a0b31e805e656b0a8bd4cbf9f00f675ee608625e3606e762f",
+        "inputs": {
+          "host": {
+            "game": "252e7b34fc8bf0dd8cf566f45876597fe999562be0f2e6ab596215d1a514c6db",
+            "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b"
+          },
+          "join": {
+            "game": "252e7b34fc8bf0dd8cf566f45876597fe999562be0f2e6ab596215d1a514c6db",
+            "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b"
+          }
+        }
+      },
+      "images": {}
+    },
+    "008d25649a": {
+      "note": "Fixture constructor failure; remote movement/animation red.",
+      "folder": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\008d25649a",
+      "roles": {
+        "host": {
+          "log": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\008d25649a\\host.log",
+          "sha256": "d27c98edd51587704ea6a9311970a42672a330fd9653684b77c585d8ea35e7c0",
+          "passes": 0,
+          "failures": 1,
+          "errors": [
+            "COOP FAIL presentation TypeError: Error #1009: Cannot access a property or method of a null object reference."
+          ],
+          "observations": []
+        },
+        "join": {
+          "log": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\008d25649a\\join.log",
+          "sha256": "8334aec8e3e4f1fde24525d866777c313a6b381daa3d827d3597740a9b8b4538",
+          "passes": 1,
+          "failures": 5,
+          "errors": [
+            "COOP FAIL presentation three native enemy types available after TCP replication",
+            "COOP FAIL presentation remote position does not jump to new packet endpoint",
+            "COOP FAIL presentation remote moves on frames between network packets",
+            "COOP FAIL presentation remote animation advances between network packets",
+            "COOP FAIL presentation continuous exploration published at least six times per second"
+          ],
+          "observations": [
+            "PRESENT sample fixture role=join room=loc0_0 player=326.00000000000006,640",
+            "PRESENT sample between-packets frames=5 positions=1 bodyFrames=1 totalFrames=8",
+            "PRESENT sample exploration packets=4 totalCaptureMs=0",
+            "COOP PRESENTATION DONE join"
+          ]
+        }
+      },
+      "inputs": {
+        "port": 63654,
+        "pids": [
+          17552,
+          10712
+        ],
+        "candidate": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m33\\PresentationRed.swf",
+        "sha256": "d4a829c7028d6f9a0b31e805e656b0a8bd4cbf9f00f675ee608625e3606e762f",
+        "inputs": {
+          "host": {
+            "game": "252e7b34fc8bf0dd8cf566f45876597fe999562be0f2e6ab596215d1a514c6db",
+            "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b"
+          },
+          "join": {
+            "game": "252e7b34fc8bf0dd8cf566f45876597fe999562be0f2e6ab596215d1a514c6db",
+            "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b"
+          }
+        }
+      },
+      "images": {}
+    },
+    "814f427dad": {
+      "note": "Packet-locked movement red; visibility without stale-hidden seed.",
+      "folder": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\814f427dad",
+      "roles": {
+        "host": {
+          "log": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\814f427dad\\host.log",
+          "sha256": "7470ab573802e01f8d4d7fb80c4961ff85e97d5db064486b7d2afeb62d2c9694",
+          "passes": 2,
+          "failures": 7,
+          "errors": [
+            "COOP FAIL presentation enemy contributes final scene pixels: merc2",
+            "COOP FAIL presentation enemy contributes final scene pixels: merc5",
+            "COOP FAIL presentation enemy contributes final scene pixels: alicorn3",
+            "COOP FAIL presentation remote position does not jump to new packet endpoint",
+            "COOP FAIL presentation remote moves on frames between network packets",
+            "COOP FAIL presentation remote animation advances between network packets",
+            "COOP FAIL presentation continuous exploration published at least six times per second"
+          ],
+          "observations": [
+            "PRESENT sample fixture role=host room=loc0_0 player=326.00000000000006,640",
+            "PRESENT sample enemy=merc2 alpha=1 visible=true parent=true mask=[object Shape] isolated=0 composite=0",
+            "PRESENT sample enemy=merc5 alpha=1 visible=true parent=true mask=[object Shape] isolated=0 composite=0",
+            "PRESENT sample enemy=alicorn3 alpha=1 visible=true parent=true mask=[object Shape] isolated=0 composite=0",
+            "PRESENT sample between-packets frames=8 positions=1 bodyFrames=1 totalFrames=8",
+            "PRESENT sample exploration packets=3 totalCaptureMs=0",
+            "COOP PRESENTATION DONE host"
+          ]
+        },
+        "join": {
+          "log": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\814f427dad\\join.log",
+          "sha256": "23fd786a69e580542219f0ef92ed19a90d77ebda37c212a859627e34a90cc86f",
+          "passes": 5,
+          "failures": 4,
+          "errors": [
+            "COOP FAIL presentation remote position does not jump to new packet endpoint",
+            "COOP FAIL presentation remote moves on frames between network packets",
+            "COOP FAIL presentation remote animation advances between network packets",
+            "COOP FAIL presentation continuous exploration published at least six times per second"
+          ],
+          "observations": [
+            "PRESENT sample fixture role=join room=loc0_0 player=326.00000000000006,640",
+            "PRESENT sample enemy=merc2 alpha=1 visible=true parent=true mask=null isolated=13635 composite=4902",
+            "PRESENT sample enemy=merc5 alpha=1 visible=true parent=true mask=null isolated=14445 composite=4686",
+            "PRESENT sample enemy=alicorn3 alpha=1 visible=true parent=true mask=null isolated=14883 composite=7003",
+            "PRESENT sample between-packets frames=8 positions=1 bodyFrames=1 totalFrames=8",
+            "PRESENT sample exploration packets=3 totalCaptureMs=1",
+            "COOP PRESENTATION DONE join"
+          ]
+        }
+      },
+      "inputs": {
+        "port": 62602,
+        "pids": [
+          48704,
+          44132
+        ],
+        "candidate": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m33\\PresentationRed.swf",
+        "sha256": "8ea6c7213277126f1fa4caf4f995090cbde8df457e0b6546a33ea0e908613385",
+        "inputs": {
+          "host": {
+            "game": "252e7b34fc8bf0dd8cf566f45876597fe999562be0f2e6ab596215d1a514c6db",
+            "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b"
+          },
+          "join": {
+            "game": "252e7b34fc8bf0dd8cf566f45876597fe999562be0f2e6ab596215d1a514c6db",
+            "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b"
+          }
+        }
+      },
+      "images": {
+        "host-presentation-alicorn3.png": "b5bf982f0ab1d1aa978ec04a9abbc58e07f0f30d3a8755de3b50e958ae7682c9",
+        "host-presentation-merc2.png": "8337710e1b248a0f94ae3f001ce228f4185ec818c5aca1c5e44d3ca8a7416343",
+        "host-presentation-merc5.png": "8337710e1b248a0f94ae3f001ce228f4185ec818c5aca1c5e44d3ca8a7416343",
+        "join-presentation-alicorn3.png": "7d60c40734a92cc3bf020642611c9e59ed921f382c026bfaacd0a06d6d6b650c",
+        "join-presentation-merc2.png": "74adcb905ac0aa8337d1bdcab2e16f05ffdf5525001cd2afea2c67b3ebe12811",
+        "join-presentation-merc5.png": "7f30f6c45216354be1c519292402fb03402bf1c467d8e05e413605aee6cddd7a"
+      }
+    },
+    "4fdd4c8d1a": {
+      "note": "Motion green; fixture counted unrelated native alicorn.",
+      "folder": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\4fdd4c8d1a",
+      "roles": {
+        "host": {
+          "log": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\4fdd4c8d1a\\host.log",
+          "sha256": "8f517a53f44d5ffa2a6b42ba7e6a83db9a7ae45716c4b3126ceb9355f754edca",
+          "passes": 4,
+          "failures": 2,
+          "errors": [
+            "COOP FAIL presentation three native enemy types available after TCP replication",
+            "COOP FAIL presentation continuous exploration published at least six times per second"
+          ],
+          "observations": [
+            "PRESENT sample fixture role=host room=loc0_4 player=241.8,960",
+            "PRESENT sample enemy=alicorn3 alpha=1 visible=true parent=true mask=[object Shape] isolated=0 composite=6975",
+            "PRESENT sample enemy=alicorn3 alpha=1 visible=false parent=true mask=null isolated=14883 composite=0",
+            "PRESENT sample enemy=merc2 alpha=1 visible=true parent=true mask=[object Shape] isolated=0 composite=0",
+            "PRESENT sample enemy=merc5 alpha=1 visible=true parent=true mask=[object Shape] isolated=0 composite=0",
+            "PRESENT sample enemy=alicorn3 alpha=1 visible=true parent=true mask=[object Shape] isolated=0 composite=0",
+            "PRESENT sample between-packets frames=8 positions=8 bodyFrames=8 totalFrames=8",
+            "PRESENT sample exploration packets=3 totalCaptureMs=6",
+            "COOP PRESENTATION DONE host"
+          ]
+        },
+        "join": {
+          "log": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\4fdd4c8d1a\\join.log",
+          "sha256": "cc657fdf7e0a64bba2169590ac57c816d6dd6c12596583fb009620db22d7fb04",
+          "passes": 8,
+          "failures": 3,
+          "errors": [
+            "COOP FAIL presentation three native enemy types available after TCP replication",
+            "COOP FAIL presentation enemy contributes final scene pixels: alicorn3",
+            "COOP FAIL presentation continuous exploration published at least six times per second"
+          ],
+          "observations": [
+            "PRESENT sample fixture role=join room=loc0_4 player=241.8,960",
+            "PRESENT sample enemy=alicorn3 alpha=1 visible=true parent=true mask=null isolated=15000 composite=7005",
+            "PRESENT sample enemy=alicorn3 alpha=1 visible=false parent=true mask=null isolated=14883 composite=0",
+            "PRESENT sample enemy=merc2 alpha=1 visible=true parent=true mask=null isolated=13635 composite=4904",
+            "PRESENT sample enemy=merc5 alpha=1 visible=true parent=true mask=null isolated=14445 composite=4358",
+            "PRESENT sample enemy=alicorn3 alpha=1 visible=true parent=true mask=null isolated=14883 composite=6873",
+            "PRESENT sample between-packets frames=7 positions=7 bodyFrames=7 totalFrames=8",
+            "PRESENT sample exploration packets=3 totalCaptureMs=1",
+            "COOP PRESENTATION DONE join"
+          ]
+        }
+      },
+      "inputs": {
+        "port": 60918,
+        "pids": [
+          42244,
+          46904
+        ],
+        "candidate": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m33\\PresentationMotion.swf",
+        "sha256": "d1baf0cdcd64dde90c21201cd0ef0646df5aeca8151513ad06387528ecf04d1e",
+        "inputs": {
+          "host": {
+            "game": "252e7b34fc8bf0dd8cf566f45876597fe999562be0f2e6ab596215d1a514c6db",
+            "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b"
+          },
+          "join": {
+            "game": "252e7b34fc8bf0dd8cf566f45876597fe999562be0f2e6ab596215d1a514c6db",
+            "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b"
+          }
+        }
+      },
+      "images": {
+        "host-presentation-alicorn3.png": "9e4f052504a955b11c5494de7b4b64349593123ef9a7710e17708fc155fb1dea",
+        "host-presentation-merc2.png": "6d6389b275e26e2d9e7054ed73b8c6875fc1f62ca2da9ed6336a513dfa38153b",
+        "host-presentation-merc5.png": "6d6389b275e26e2d9e7054ed73b8c6875fc1f62ca2da9ed6336a513dfa38153b",
+        "join-presentation-alicorn3.png": "23a94bf99e7016d5c9691da156810fd8be1bbcf80ea9e15f29c15a19eaf8e2e2",
+        "join-presentation-merc2.png": "40635af571e2963eea6dbbd311be3dcf6cda45a617c0575806a90318f06cb573",
+        "join-presentation-merc5.png": "cc83dd9c4dd41be2f8f6e7d365b401d45d5d5af00e80b9dedc29da4e5252087e"
+      }
+    },
+    "0095b44a29": {
+      "note": "Early all-mod presentation pass; lacked actual viewport crop and stale-hidden seed.",
+      "folder": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\0095b44a29",
+      "roles": {
+        "host": {
+          "log": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\0095b44a29\\host.log",
+          "sha256": "b00d54d25be4307a675f4cccf2944b7eca42ac50a54ebb643247496dd4fb1307",
+          "passes": 6,
+          "failures": 0,
+          "errors": [],
+          "observations": [
+            "PRESENT sample fixture role=host room=loc0_4 player=1681.8,320",
+            "PRESENT sample enemy=presentation_merc2 alpha=1 visible=true parent=true mask=[object Shape] isolated=0 composite=0",
+            "PRESENT sample enemy=presentation_merc5 alpha=1 visible=true parent=true mask=[object Shape] isolated=0 composite=0",
+            "PRESENT sample enemy=presentation_alicorn3 alpha=1 visible=true parent=true mask=[object Shape] isolated=0 composite=0",
+            "PRESENT sample between-packets frames=9 positions=9 bodyFrames=8 totalFrames=8",
+            "PRESENT sample exploration packets=10 totalCaptureMs=0",
+            "COOP PRESENTATION DONE host"
+          ]
+        },
+        "join": {
+          "log": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\0095b44a29\\join.log",
+          "sha256": "f4b8b7cbfa9c119c9ba4b270accc4514cb7ac0317828bf1c90f746f474f7b44f",
+          "passes": 10,
+          "failures": 0,
+          "errors": [],
+          "observations": [
+            "PRESENT sample fixture role=join room=loc0_4 player=241.8,960",
+            "PRESENT sample enemy=presentation_merc2 alpha=1 visible=true parent=true mask=null isolated=13635 composite=2755",
+            "PRESENT sample enemy=presentation_merc5 alpha=1 visible=true parent=true mask=null isolated=14445 composite=3587",
+            "PRESENT sample enemy=presentation_alicorn3 alpha=1 visible=true parent=true mask=null isolated=14140 composite=3021",
+            "PRESENT sample final-render frames=19 missing=0",
+            "PRESENT sample between-packets frames=5 positions=5 bodyFrames=5 totalFrames=8",
+            "PRESENT sample exploration packets=11 totalCaptureMs=2",
+            "COOP PRESENTATION DONE join"
+          ]
+        }
+      },
+      "inputs": {
+        "port": 58140,
+        "pids": [
+          48716,
+          47944
+        ],
+        "candidate": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m33\\PresentationCombined.swf",
+        "sha256": "4343ed799ece6cf7e0bf00bd0ea60245764a0a2486f0b3a3fb90e601727dfea0",
+        "inputs": {
+          "host": {
+            "game": "252e7b34fc8bf0dd8cf566f45876597fe999562be0f2e6ab596215d1a514c6db",
+            "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+            "modules": {
+              "mods\\ModSettings\\release\\ModSettingsMod.swf": "5bd830a63f42130ef56e9c24c0e95b77b9871640b53d5cb4aa5b51e363894b5c",
+              "mods\\MoreSkills&Weapons\\release\\MoreSkillsWeaponsMod.swf": "909cef05d810a8f0c0093b34dd0999dc0ce6847e24e0402c1818bfcf435c3744",
+              "mods\\RandomRooms\\release\\RandomRoomsMod.swf": "16f3d2bd63d19660e039f5f44b4792fd85f3e2119a59f058f8290f5746346c7f",
+              "mods\\Rconnect\\release\\RConnectMod.swf": "4343ed799ece6cf7e0bf00bd0ea60245764a0a2486f0b3a3fb90e601727dfea0",
+              "mods\\RealisticVision\\release\\RealisticVisionMod.swf": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+              "mods\\Sandevistan\\release\\SandevistanMod.swf": "f556c0728da406a4a6a05399df93e9a0349c4225107547f1e12fe88a2aee3e48",
+              "mods\\TDFC\\release\\TDFCMod.swf": "5ee8b967bf0eddc1d6c1931f1264db37dea94f365cc416b1971502a999af8a7e"
+            }
+          },
+          "join": {
+            "game": "252e7b34fc8bf0dd8cf566f45876597fe999562be0f2e6ab596215d1a514c6db",
+            "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+            "modules": {
+              "mods\\ModSettings\\release\\ModSettingsMod.swf": "5bd830a63f42130ef56e9c24c0e95b77b9871640b53d5cb4aa5b51e363894b5c",
+              "mods\\MoreSkills&Weapons\\release\\MoreSkillsWeaponsMod.swf": "909cef05d810a8f0c0093b34dd0999dc0ce6847e24e0402c1818bfcf435c3744",
+              "mods\\RandomRooms\\release\\RandomRoomsMod.swf": "16f3d2bd63d19660e039f5f44b4792fd85f3e2119a59f058f8290f5746346c7f",
+              "mods\\Rconnect\\release\\RConnectMod.swf": "4343ed799ece6cf7e0bf00bd0ea60245764a0a2486f0b3a3fb90e601727dfea0",
+              "mods\\RealisticVision\\release\\RealisticVisionMod.swf": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+              "mods\\Sandevistan\\release\\SandevistanMod.swf": "f556c0728da406a4a6a05399df93e9a0349c4225107547f1e12fe88a2aee3e48",
+              "mods\\TDFC\\release\\TDFCMod.swf": "5ee8b967bf0eddc1d6c1931f1264db37dea94f365cc416b1971502a999af8a7e"
+            }
+          }
+        }
+      },
+      "images": {
+        "host-presentation-presentation_alicorn3.png": "f4d9d4b4b22270f13a5f848a8bc302167bddf5e5ccc8d09e23c98f5c2a222cab",
+        "host-presentation-presentation_merc2.png": "e5dad7a805bc13baaa86c1150a004036fe67029aeb698ebf4e236ebeda392008",
+        "host-presentation-presentation_merc5.png": "e5dad7a805bc13baaa86c1150a004036fe67029aeb698ebf4e236ebeda392008",
+        "join-presentation-presentation_alicorn3.png": "982238da9fda7a72862fd28e97aa89b02760435bd48c463bfa9eac0b0a1cc6c6",
+        "join-presentation-presentation_merc2.png": "3835ba56ce0668bf6a2baee5c9969a583ff711af66bbf385eee4548b5a43719c",
+        "join-presentation-presentation_merc5.png": "f4fad3eeec1cc6f9af694bf9e1efbbb61f7114ecae1d254b441d5fa6b6631512"
+      }
+    },
+    "52964325f7": {
+      "note": "Controlled stale-hidden state and stopped-animation red.",
+      "folder": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\52964325f7",
+      "roles": {
+        "host": {
+          "log": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\52964325f7\\host.log",
+          "sha256": "a308bfbfaabe2bb09558076e36a99cc2fbf02869d52ce6749807e66c2aead923",
+          "passes": 10,
+          "failures": 1,
+          "errors": [
+            "COOP FAIL presentation authoritative stopped animation stays stopped"
+          ],
+          "observations": [
+            "PRESENT sample fixture role=host room=loc0_4 player=1681.8,320",
+            "PRESENT sample enemy=presentation_merc2 alpha=1 invis=false isVis=true visible=true parent=true mask=[object Shape] isolated=0 composite=0",
+            "PRESENT sample enemy=presentation_merc5 alpha=1 invis=false isVis=true visible=true parent=true mask=[object Shape] isolated=0 composite=0",
+            "PRESENT sample enemy=presentation_alicorn3 alpha=1 invis=false isVis=true visible=true parent=true mask=[object Shape] isolated=0 composite=0",
+            "PRESENT sample between-packets frames=6 positions=6 bodyFrames=6 totalFrames=8",
+            "PRESENT sample exploration packets=10 elapsedMs=1314 gaps=114,128,140,140,134,136,123,132,141 totalCaptureMs=1 bytes=29149 fullEquivalent=205990",
+            "COOP PRESENTATION DONE host"
+          ]
+        },
+        "join": {
+          "log": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\52964325f7\\join.log",
+          "sha256": "78cb03ed9f50b09e8b800a01aaf71338cb2f701256a233b9cb36d13952ac9bd6",
+          "passes": 11,
+          "failures": 4,
+          "errors": [
+            "COOP FAIL presentation enemy contributes final scene pixels: presentation_merc2",
+            "COOP FAIL presentation enemy contributes final scene pixels: presentation_merc5",
+            "COOP FAIL presentation enemies remain visible at consecutive final render boundaries",
+            "COOP FAIL presentation authoritative stopped animation stays stopped"
+          ],
+          "observations": [
+            "PRESENT sample fixture role=join room=loc0_4 player=1681.8,320",
+            "PRESENT sample enemy=presentation_merc2 alpha=0 invis=true isVis=false visible=true parent=true mask=[object Shape] isolated=0 composite=3",
+            "PRESENT sample enemy=presentation_merc5 alpha=0 invis=true isVis=false visible=true parent=true mask=[object Shape] isolated=0 composite=0",
+            "PRESENT sample enemy=presentation_alicorn3 alpha=1 invis=true isVis=false visible=true parent=true mask=[object Shape] isolated=0 composite=1820",
+            "PRESENT sample final-render frames=14 missing=28",
+            "PRESENT sample between-packets frames=6 positions=6 bodyFrames=6 totalFrames=8",
+            "PRESENT sample exploration packets=13 elapsedMs=1930 gaps=106,198,161,103,177,150,110,157,109,184,149,183 totalCaptureMs=1 bytes=31999 fullEquivalent=267787",
+            "COOP PRESENTATION DONE join"
+          ]
+        }
+      },
+      "inputs": {
+        "port": 55842,
+        "pids": [
+          42896,
+          37396
+        ],
+        "candidate": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m33\\PresentationHiddenRed.swf",
+        "sha256": "c1b03f73e063044d04213cd688bbc74756e0271e6c2eecff13412f95d37f203b",
+        "inputs": {
+          "host": {
+            "game": "b78244657ed407d03808c90e97325509db35f802122835f58933fff8003305ac",
+            "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+            "modules": {
+              "mods\\ModSettings\\release\\ModSettingsMod.swf": "5bd830a63f42130ef56e9c24c0e95b77b9871640b53d5cb4aa5b51e363894b5c",
+              "mods\\MoreSkills&Weapons\\release\\MoreSkillsWeaponsMod.swf": "909cef05d810a8f0c0093b34dd0999dc0ce6847e24e0402c1818bfcf435c3744",
+              "mods\\RandomRooms\\release\\RandomRoomsMod.swf": "16f3d2bd63d19660e039f5f44b4792fd85f3e2119a59f058f8290f5746346c7f",
+              "mods\\Rconnect\\release\\RConnectMod.swf": "c1b03f73e063044d04213cd688bbc74756e0271e6c2eecff13412f95d37f203b",
+              "mods\\RealisticVision\\release\\RealisticVisionMod.swf": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+              "mods\\Sandevistan\\release\\SandevistanMod.swf": "f556c0728da406a4a6a05399df93e9a0349c4225107547f1e12fe88a2aee3e48",
+              "mods\\TDFC\\release\\TDFCMod.swf": "5ee8b967bf0eddc1d6c1931f1264db37dea94f365cc416b1971502a999af8a7e"
+            }
+          },
+          "join": {
+            "game": "b78244657ed407d03808c90e97325509db35f802122835f58933fff8003305ac",
+            "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+            "modules": {
+              "mods\\ModSettings\\release\\ModSettingsMod.swf": "5bd830a63f42130ef56e9c24c0e95b77b9871640b53d5cb4aa5b51e363894b5c",
+              "mods\\MoreSkills&Weapons\\release\\MoreSkillsWeaponsMod.swf": "909cef05d810a8f0c0093b34dd0999dc0ce6847e24e0402c1818bfcf435c3744",
+              "mods\\RandomRooms\\release\\RandomRoomsMod.swf": "16f3d2bd63d19660e039f5f44b4792fd85f3e2119a59f058f8290f5746346c7f",
+              "mods\\Rconnect\\release\\RConnectMod.swf": "c1b03f73e063044d04213cd688bbc74756e0271e6c2eecff13412f95d37f203b",
+              "mods\\RealisticVision\\release\\RealisticVisionMod.swf": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+              "mods\\Sandevistan\\release\\SandevistanMod.swf": "f556c0728da406a4a6a05399df93e9a0349c4225107547f1e12fe88a2aee3e48",
+              "mods\\TDFC\\release\\TDFCMod.swf": "5ee8b967bf0eddc1d6c1931f1264db37dea94f365cc416b1971502a999af8a7e"
+            }
+          }
+        }
+      },
+      "images": {
+        "host-presentation-presentation_alicorn3.png": "9e4f052504a955b11c5494de7b4b64349593123ef9a7710e17708fc155fb1dea",
+        "host-presentation-presentation_merc2.png": "6d6389b275e26e2d9e7054ed73b8c6875fc1f62ca2da9ed6336a513dfa38153b",
+        "host-presentation-presentation_merc5.png": "6d6389b275e26e2d9e7054ed73b8c6875fc1f62ca2da9ed6336a513dfa38153b",
+        "join-presentation-presentation_alicorn3.png": "e90c5753fee359c88d53aa8fefb2e92346cbcc05d1aa16210a2a6a3362fcf7b6",
+        "join-presentation-presentation_merc2.png": "728b4006ef914f73875f94f4044a13a012d0848adfc664b87ac56e8ff17bb152",
+        "join-presentation-presentation_merc5.png": "ac431d1a794809826c083da6aca4b5242b8e49dbfc7dc8432e3ef7805557586b"
+      }
+    },
+    "eddbc8d1a2": {
+      "note": "Visibility recovered; insufficient render samples, stopped animation failed; cleanup lock.",
+      "folder": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\eddbc8d1a2",
+      "roles": {
+        "host": {
+          "log": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\eddbc8d1a2\\host.log",
+          "sha256": "480722fe9472dc43f2e4cfd183487527026608017e6cf2c5c90a364a9ebf6a74",
+          "passes": 10,
+          "failures": 1,
+          "errors": [
+            "COOP FAIL presentation authoritative stopped animation stays stopped"
+          ],
+          "observations": [
+            "PRESENT sample fixture role=host room=loc0_4 player=241.8,960",
+            "PRESENT sample enemy=presentation_merc2 alpha=1 invis=false isVis=true visible=true parent=true mask=[object Shape] isolated=0 composite=0",
+            "PRESENT sample enemy=presentation_merc5 alpha=1 invis=false isVis=true visible=true parent=true mask=[object Shape] isolated=0 composite=0",
+            "PRESENT sample enemy=presentation_alicorn3 alpha=1 invis=false isVis=true visible=true parent=true mask=[object Shape] isolated=0 composite=0",
+            "PRESENT sample between-packets frames=4 positions=4 bodyFrames=4 totalFrames=8",
+            "PRESENT sample stopped frame=3 playing=true",
+            "PRESENT sample exploration packets=10 elapsedMs=1436 gaps=153,161,131,182,161,112,120,116,173 totalCaptureMs=1 bytes=29149 fullEquivalent=205990",
+            "COOP PRESENTATION DONE host"
+          ]
+        },
+        "join": {
+          "log": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\eddbc8d1a2\\join.log",
+          "sha256": "1b47e4d92eb7a88b54e11266036d015eb58f0ba340588684be9ada214635818e",
+          "passes": 12,
+          "failures": 3,
+          "errors": [
+            "COOP FAIL presentation enemies remain visible at consecutive final render boundaries",
+            "COOP FAIL presentation remote moves on frames between network packets",
+            "COOP FAIL presentation authoritative stopped animation stays stopped"
+          ],
+          "observations": [
+            "PRESENT sample fixture role=join room=loc0_4 player=241.8,960",
+            "PRESENT sample enemy=presentation_merc2 alpha=1 invis=false isVis=true visible=true parent=true mask=null isolated=13635 composite=4159",
+            "PRESENT sample enemy=presentation_merc5 alpha=1 invis=false isVis=true visible=true parent=true mask=null isolated=14445 composite=4625",
+            "PRESENT sample enemy=presentation_alicorn3 alpha=1 invis=false isVis=true visible=true parent=true mask=null isolated=14883 composite=6980",
+            "PRESENT sample final-render frames=5 missing=0",
+            "PRESENT sample between-packets frames=3 positions=1 bodyFrames=3 totalFrames=8",
+            "PRESENT sample stopped frame=3 playing=true",
+            "PRESENT sample exploration packets=16 elapsedMs=3393 gaps=132,232,135,175,210,285,194,428,472,267,153,131,157,106,189 totalCaptureMs=4 bytes=54498 fullEquivalent=329584",
+            "COOP PRESENTATION DONE join"
+          ]
+        }
+      },
+      "inputs": {
+        "port": 58737,
+        "pids": [
+          316,
+          32624
+        ],
+        "candidate": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m33\\PresentationGreen.swf",
+        "sha256": "d8d73b6388445f508854ccf47bc7b2d1ea4f1de06b389c5d120c8b320c7f1dc2",
+        "inputs": {
+          "host": {
+            "game": "b78244657ed407d03808c90e97325509db35f802122835f58933fff8003305ac",
+            "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+            "modules": {
+              "mods\\ModSettings\\release\\ModSettingsMod.swf": "5bd830a63f42130ef56e9c24c0e95b77b9871640b53d5cb4aa5b51e363894b5c",
+              "mods\\MoreSkills&Weapons\\release\\MoreSkillsWeaponsMod.swf": "909cef05d810a8f0c0093b34dd0999dc0ce6847e24e0402c1818bfcf435c3744",
+              "mods\\RandomRooms\\release\\RandomRoomsMod.swf": "16f3d2bd63d19660e039f5f44b4792fd85f3e2119a59f058f8290f5746346c7f",
+              "mods\\Rconnect\\release\\RConnectMod.swf": "d8d73b6388445f508854ccf47bc7b2d1ea4f1de06b389c5d120c8b320c7f1dc2",
+              "mods\\RealisticVision\\release\\RealisticVisionMod.swf": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+              "mods\\Sandevistan\\release\\SandevistanMod.swf": "f556c0728da406a4a6a05399df93e9a0349c4225107547f1e12fe88a2aee3e48",
+              "mods\\TDFC\\release\\TDFCMod.swf": "5ee8b967bf0eddc1d6c1931f1264db37dea94f365cc416b1971502a999af8a7e"
+            }
+          },
+          "join": {
+            "game": "b78244657ed407d03808c90e97325509db35f802122835f58933fff8003305ac",
+            "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+            "modules": {
+              "mods\\ModSettings\\release\\ModSettingsMod.swf": "5bd830a63f42130ef56e9c24c0e95b77b9871640b53d5cb4aa5b51e363894b5c",
+              "mods\\MoreSkills&Weapons\\release\\MoreSkillsWeaponsMod.swf": "909cef05d810a8f0c0093b34dd0999dc0ce6847e24e0402c1818bfcf435c3744",
+              "mods\\RandomRooms\\release\\RandomRoomsMod.swf": "16f3d2bd63d19660e039f5f44b4792fd85f3e2119a59f058f8290f5746346c7f",
+              "mods\\Rconnect\\release\\RConnectMod.swf": "d8d73b6388445f508854ccf47bc7b2d1ea4f1de06b389c5d120c8b320c7f1dc2",
+              "mods\\RealisticVision\\release\\RealisticVisionMod.swf": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+              "mods\\Sandevistan\\release\\SandevistanMod.swf": "f556c0728da406a4a6a05399df93e9a0349c4225107547f1e12fe88a2aee3e48",
+              "mods\\TDFC\\release\\TDFCMod.swf": "5ee8b967bf0eddc1d6c1931f1264db37dea94f365cc416b1971502a999af8a7e"
+            }
+          }
+        }
+      },
+      "images": {
+        "host-presentation-presentation_alicorn3.png": "f4d9d4b4b22270f13a5f848a8bc302167bddf5e5ccc8d09e23c98f5c2a222cab",
+        "host-presentation-presentation_merc2.png": "e5dad7a805bc13baaa86c1150a004036fe67029aeb698ebf4e236ebeda392008",
+        "host-presentation-presentation_merc5.png": "e5dad7a805bc13baaa86c1150a004036fe67029aeb698ebf4e236ebeda392008",
+        "join-presentation-presentation_alicorn3.png": "c5589cbe513b6a500cfa87216a9d06d4a345fd33c025b44d2294f397879ea3da",
+        "join-presentation-presentation_merc2.png": "a0bda6d432624cc7ff4a5988bd95801f1f1369d95c4cf9f0cc16f3de8284a8b3",
+        "join-presentation-presentation_merc5.png": "1cbce46fd2dcbc98af8e25e2008bac2202af345eacd0f9be5f028f8e564888d4"
+      }
+    },
+    "c4f655c783": {
+      "note": "Actual viewport pixels and stop green; insufficient frame sample/incomplete cadence.",
+      "folder": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\c4f655c783",
+      "roles": {
+        "host": {
+          "log": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\c4f655c783\\host.log",
+          "sha256": "73255ac68f75c70d9a0ef8b97c71636d51cedeb863bd8edaed7ce033f2249725",
+          "passes": 11,
+          "failures": 0,
+          "errors": [],
+          "observations": [
+            "PRESENT sample fixture role=host room=loc0_4 player=241.8,960",
+            "PRESENT sample enemy=presentation_merc2 alpha=1 invis=false isVis=true visible=true parent=true mask=[object Shape] isolated=0 composite=0",
+            "PRESENT sample enemy=presentation_merc5 alpha=1 invis=false isVis=true visible=true parent=true mask=[object Shape] isolated=0 composite=0",
+            "PRESENT sample enemy=presentation_alicorn3 alpha=1 invis=false isVis=true visible=true parent=true mask=[object Shape] isolated=0 composite=0",
+            "PRESENT sample between-packets frames=4 positions=4 bodyFrames=4 totalFrames=8",
+            "PRESENT sample stopped frame=3 playing=false",
+            "PRESENT sample exploration packets=18 elapsedMs=5427 gaps=138,419,441,295,278,476,111,174,573,351,137,407,670,198,453,142,105 totalCaptureMs=9 bytes=56398 fullEquivalent=370782",
+            "COOP PRESENTATION DONE host"
+          ]
+        },
+        "join": {
+          "log": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\c4f655c783\\join.log",
+          "sha256": "e952c7ab4da18cf60c6fc28a700b0a3a61960e304b4935401a1434ce4a70ccfb",
+          "passes": 12,
+          "failures": 1,
+          "errors": [
+            "COOP FAIL presentation enemies remain visible at consecutive final render boundaries"
+          ],
+          "observations": [
+            "PRESENT sample fixture role=join room=loc0_4 player=241.8,960",
+            "PRESENT sample enemy=presentation_merc2 alpha=1 invis=false isVis=true visible=true parent=true mask=null isolated=13635 composite=1928",
+            "PRESENT sample enemy=presentation_merc5 alpha=1 invis=false isVis=true visible=true parent=true mask=null isolated=14445 composite=2092",
+            "PRESENT sample enemy=presentation_alicorn3 alpha=1 invis=false isVis=true visible=true parent=true mask=null isolated=14883 composite=3136",
+            "PRESENT sample final-render frames=5 missing=0",
+            "PRESENT sample between-packets frames=4 positions=4 bodyFrames=4 totalFrames=8",
+            "PRESENT sample stopped frame=3 playing=false"
+          ]
+        }
+      },
+      "inputs": {
+        "port": 54067,
+        "pids": [
+          50988,
+          50648
+        ],
+        "candidate": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m33\\PresentationViewport.swf",
+        "sha256": "e688a9f15c0c6a648a3928399d4507f9de152abe6c702a6f77ebbe0ffcb02fac",
+        "inputs": {
+          "host": {
+            "game": "b78244657ed407d03808c90e97325509db35f802122835f58933fff8003305ac",
+            "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+            "modules": {
+              "mods\\ModSettings\\release\\ModSettingsMod.swf": "5bd830a63f42130ef56e9c24c0e95b77b9871640b53d5cb4aa5b51e363894b5c",
+              "mods\\MoreSkills&Weapons\\release\\MoreSkillsWeaponsMod.swf": "909cef05d810a8f0c0093b34dd0999dc0ce6847e24e0402c1818bfcf435c3744",
+              "mods\\RandomRooms\\release\\RandomRoomsMod.swf": "16f3d2bd63d19660e039f5f44b4792fd85f3e2119a59f058f8290f5746346c7f",
+              "mods\\Rconnect\\release\\RConnectMod.swf": "e688a9f15c0c6a648a3928399d4507f9de152abe6c702a6f77ebbe0ffcb02fac",
+              "mods\\RealisticVision\\release\\RealisticVisionMod.swf": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+              "mods\\Sandevistan\\release\\SandevistanMod.swf": "f556c0728da406a4a6a05399df93e9a0349c4225107547f1e12fe88a2aee3e48",
+              "mods\\TDFC\\release\\TDFCMod.swf": "5ee8b967bf0eddc1d6c1931f1264db37dea94f365cc416b1971502a999af8a7e"
+            }
+          },
+          "join": {
+            "game": "b78244657ed407d03808c90e97325509db35f802122835f58933fff8003305ac",
+            "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+            "modules": {
+              "mods\\ModSettings\\release\\ModSettingsMod.swf": "5bd830a63f42130ef56e9c24c0e95b77b9871640b53d5cb4aa5b51e363894b5c",
+              "mods\\MoreSkills&Weapons\\release\\MoreSkillsWeaponsMod.swf": "909cef05d810a8f0c0093b34dd0999dc0ce6847e24e0402c1818bfcf435c3744",
+              "mods\\RandomRooms\\release\\RandomRoomsMod.swf": "16f3d2bd63d19660e039f5f44b4792fd85f3e2119a59f058f8290f5746346c7f",
+              "mods\\Rconnect\\release\\RConnectMod.swf": "e688a9f15c0c6a648a3928399d4507f9de152abe6c702a6f77ebbe0ffcb02fac",
+              "mods\\RealisticVision\\release\\RealisticVisionMod.swf": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+              "mods\\Sandevistan\\release\\SandevistanMod.swf": "f556c0728da406a4a6a05399df93e9a0349c4225107547f1e12fe88a2aee3e48",
+              "mods\\TDFC\\release\\TDFCMod.swf": "5ee8b967bf0eddc1d6c1931f1264db37dea94f365cc416b1971502a999af8a7e"
+            }
+          }
+        }
+      },
+      "images": {
+        "host-presentation-presentation_alicorn3.png": "0ebe20526900c08716198b8a0e03d046f77dececc0b762e64714197c262d0cc5",
+        "host-presentation-presentation_merc2.png": "53cf043c1e2043cfc7411a0079f78d983d37585eb35b7de0a4c8b076bd1bb359",
+        "host-presentation-presentation_merc5.png": "53cf043c1e2043cfc7411a0079f78d983d37585eb35b7de0a4c8b076bd1bb359",
+        "join-presentation-presentation_alicorn3.png": "5832341491f5eb21e5c8099ef4ee828f13ee290423704913ad6b9449832d61fa",
+        "join-presentation-presentation_merc2.png": "4e3f9f35c50f7f29d76a0251be5003e94ce3b41f1635d5ecb8bad8ed8bba907a",
+        "join-presentation-presentation_merc5.png": "de5122d49e37cdb14af6060f784e4403b789d2531655f30611e67bda7ccee1a6"
+      }
+    },
+    "dc940a9437": {
+      "note": "Invalid release evidence: host/join MSW hashes differed. Join got no fixture, empty-array harness error. No proven transport root cause.",
+      "folder": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\dc940a9437",
+      "roles": {
+        "host": {
+          "log": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\dc940a9437\\host.log",
+          "sha256": "c3f1daa74788b49e471f82f68c71662728999833859fad34f827e57d2afca438",
+          "passes": 11,
+          "failures": 0,
+          "errors": [],
+          "observations": [
+            "PRESENT sample fixture role=host room=loc0_4 player=241.8,960",
+            "PRESENT sample enemy=presentation_merc2 alpha=1 invis=false isVis=true visible=true parent=true mask=[object Shape] isolated=0 composite=0",
+            "PRESENT sample enemy=presentation_merc5 alpha=1 invis=false isVis=true visible=true parent=true mask=[object Shape] isolated=0 composite=0",
+            "PRESENT sample enemy=presentation_alicorn3 alpha=1 invis=false isVis=true visible=true parent=true mask=[object Shape] isolated=0 composite=0",
+            "PRESENT sample between-packets frames=5 positions=5 bodyFrames=5 totalFrames=8",
+            "PRESENT sample stopped frame=3 playing=false",
+            "PRESENT sample exploration packets=10 logicalMs=1000 elapsedMs=4 gaps=100,100,100,100,100,100,100,100,100 totalCaptureMs=3 bytes=29149 fullEquivalent=205990",
+            "COOP PRESENTATION DONE host"
+          ]
+        },
+        "join": {
+          "log": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\dc940a9437\\join.log",
+          "sha256": "803e4fc6976c403042314314806b5ab66d46613c9ed500b1595d2fb28fb1321f",
+          "passes": 10,
+          "failures": 362,
+          "errors": [
+            "COOP FAIL presentation three native enemy types available after TCP replication",
+            "COOP FAIL presentation uncaught TypeError: Error #1009: Cannot access a property or method of a null object reference.",
+            "COOP FAIL presentation enemies remain visible at consecutive final render boundaries"
+          ],
+          "observations": [
+            "PRESENT sample fixture role=join room=loc0_4 player=1683.6000000000001,320",
+            "PRESENT sample final-render frames=0 missing=0 elapsedMs=12000",
+            "PRESENT sample between-packets frames=8 positions=8 bodyFrames=8 totalFrames=8",
+            "PRESENT sample stopped frame=3 playing=false",
+            "PRESENT sample exploration packets=10 logicalMs=1000 elapsedMs=3 gaps=100,100,100,100,100,100,100,100,100 totalCaptureMs=3 bytes=29149 fullEquivalent=205990",
+            "COOP PRESENTATION DONE join"
+          ]
+        }
+      },
+      "inputs": {
+        "port": 54683,
+        "pids": [
+          49312,
+          51328
+        ],
+        "candidate": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m33\\PresentationTest.swf",
+        "sha256": "9d30e82a47f263b186aeb8f142a45b9a33cd7c50371c7aeaf82676c0581604c2",
+        "inputs": {
+          "host": {
+            "game": "b78244657ed407d03808c90e97325509db35f802122835f58933fff8003305ac",
+            "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+            "modules": {
+              "mods\\ModSettings\\release\\ModSettingsMod.swf": "5bd830a63f42130ef56e9c24c0e95b77b9871640b53d5cb4aa5b51e363894b5c",
+              "mods\\MoreSkills&Weapons\\release\\MoreSkillsWeaponsMod.swf": "909cef05d810a8f0c0093b34dd0999dc0ce6847e24e0402c1818bfcf435c3744",
+              "mods\\RandomRooms\\release\\RandomRoomsMod.swf": "16f3d2bd63d19660e039f5f44b4792fd85f3e2119a59f058f8290f5746346c7f",
+              "mods\\Rconnect\\release\\RConnectMod.swf": "9d30e82a47f263b186aeb8f142a45b9a33cd7c50371c7aeaf82676c0581604c2",
+              "mods\\RealisticVision\\release\\RealisticVisionMod.swf": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+              "mods\\Sandevistan\\release\\SandevistanMod.swf": "f556c0728da406a4a6a05399df93e9a0349c4225107547f1e12fe88a2aee3e48",
+              "mods\\TDFC\\release\\TDFCMod.swf": "5ee8b967bf0eddc1d6c1931f1264db37dea94f365cc416b1971502a999af8a7e"
+            }
+          },
+          "join": {
+            "game": "b78244657ed407d03808c90e97325509db35f802122835f58933fff8003305ac",
+            "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+            "modules": {
+              "mods\\ModSettings\\release\\ModSettingsMod.swf": "5bd830a63f42130ef56e9c24c0e95b77b9871640b53d5cb4aa5b51e363894b5c",
+              "mods\\MoreSkills&Weapons\\release\\MoreSkillsWeaponsMod.swf": "d16523c35be414fb200d5ffdd31b1453b85f1af3802a91180805d8fdd0f21bbd",
+              "mods\\RandomRooms\\release\\RandomRoomsMod.swf": "16f3d2bd63d19660e039f5f44b4792fd85f3e2119a59f058f8290f5746346c7f",
+              "mods\\Rconnect\\release\\RConnectMod.swf": "9d30e82a47f263b186aeb8f142a45b9a33cd7c50371c7aeaf82676c0581604c2",
+              "mods\\RealisticVision\\release\\RealisticVisionMod.swf": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+              "mods\\Sandevistan\\release\\SandevistanMod.swf": "f556c0728da406a4a6a05399df93e9a0349c4225107547f1e12fe88a2aee3e48",
+              "mods\\TDFC\\release\\TDFCMod.swf": "5ee8b967bf0eddc1d6c1931f1264db37dea94f365cc416b1971502a999af8a7e"
+            }
+          }
+        }
+      },
+      "images": {
+        "host-presentation-presentation_alicorn3.png": "0ebe20526900c08716198b8a0e03d046f77dececc0b762e64714197c262d0cc5",
+        "host-presentation-presentation_merc2.png": "53cf043c1e2043cfc7411a0079f78d983d37585eb35b7de0a4c8b076bd1bb359",
+        "host-presentation-presentation_merc5.png": "53cf043c1e2043cfc7411a0079f78d983d37585eb35b7de0a4c8b076bd1bb359"
+      }
+    },
+    "11bbaa882a": {
+      "note": "Complete RC+RV regression before shimmer refinement.",
+      "folder": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\11bbaa882a",
+      "roles": {
+        "host": {
+          "log": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\11bbaa882a\\host.log",
+          "sha256": "3b96f08a41b768971bb9989d20e45c94749f8776c4577d4c24e99a391d0bc590",
+          "passes": 113,
+          "failures": 0,
+          "errors": [],
+          "observations": [
+            "COOP DONE passed=35 failed=0",
+            "COOP ENEMY DONE",
+            "COOP EXPLORATION DONE passed=28 failed=0",
+            "COOP COMBAT DONE",
+            "COOP APPEARANCE DAMAGE DONE",
+            "LMG final host hp=1692.7999999999997 shield=0",
+            "COOP LMG NETWORK DONE host",
+            "COOP NETWORK DONE host"
+          ]
+        },
+        "join": {
+          "log": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\11bbaa882a\\join.log",
+          "sha256": "6dd02f527419a9802e280278a7cdc0e34c762698af682a84f73e0d25d8f667c1",
+          "passes": 17,
+          "failures": 0,
+          "errors": [],
+          "observations": [
+            "LMG final join hp=1692.7999999999995 shield=0",
+            "COOP LMG NETWORK DONE join",
+            "COOP NETWORK DONE join"
+          ]
+        }
+      },
+      "inputs": {
+        "port": 50526,
+        "pids": [
+          47252,
+          164
+        ],
+        "candidate": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m33\\CoopTest.swf",
+        "sha256": "4cc4ab9b5b7cc87b310ab5588d682526275eeb47510e0ba959b8727eb0c65bbe",
+        "inputs": {
+          "host": {
+            "game": "b78244657ed407d03808c90e97325509db35f802122835f58933fff8003305ac",
+            "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b"
+          },
+          "join": {
+            "game": "b78244657ed407d03808c90e97325509db35f802122835f58933fff8003305ac",
+            "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b"
+          }
+        }
+      },
+      "images": {}
+    },
+    "7f88c2bb18": {
+      "note": "Frozen all-mod inputs; viewport/15 render frames/motion/cadence pass before shimmer refinement.",
+      "folder": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\7f88c2bb18",
+      "roles": {
+        "host": {
+          "log": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\7f88c2bb18\\host.log",
+          "sha256": "395f1070b4ad12f963bd199d8382412426927ab8f5c2b8c7227794bd5ff78f10",
+          "passes": 11,
+          "failures": 0,
+          "errors": [],
+          "observations": [
+            "PRESENT sample fixture role=host room=loc0_4 player=241.8,960",
+            "PRESENT sample enemy=presentation_merc2 alpha=1 invis=false isVis=true visible=true parent=true mask=[object Shape] isolated=0 composite=0",
+            "PRESENT sample enemy=presentation_merc5 alpha=1 invis=false isVis=true visible=true parent=true mask=[object Shape] isolated=0 composite=0",
+            "PRESENT sample enemy=presentation_alicorn3 alpha=1 invis=false isVis=true visible=true parent=true mask=[object Shape] isolated=0 composite=0",
+            "PRESENT sample between-packets frames=8 positions=8 bodyFrames=8 totalFrames=8",
+            "PRESENT sample stopped frame=3 playing=false",
+            "PRESENT sample exploration packets=10 logicalMs=1000 elapsedMs=2 gaps=100,100,100,100,100,100,100,100,100 totalCaptureMs=2 bytes=29149 fullEquivalent=205990",
+            "COOP PRESENTATION DONE host"
+          ]
+        },
+        "join": {
+          "log": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\7f88c2bb18\\join.log",
+          "sha256": "c2a1247fc82dcdb434cca13a0d7102a8f6bbb050588dd0228fc0f67d3447d0cf",
+          "passes": 15,
+          "failures": 0,
+          "errors": [],
+          "observations": [
+            "PRESENT sample fixture role=join room=loc0_4 player=1683.6000000000001,320",
+            "PRESENT sample incoming={\"welcome\":1,\"unitsync\":107,\"worldstate\":717,\"exploration\":11} units={\"world\":{\"y\":960,\"hostVisited\":true,\"landZ\":0,\"curLandId\":\"random_mane\",\"landStage\":0,\"roomId\":\"ко.разлом\",\"landX\":0,\"curCoord\":\"null\",\"x\":241.8,\"landY\":4,\"locId\":\"loc0_4\"},\"count\":5} local={\"y\":960,\"hostVisited\":true,\"landZ\":0,\"curLandId\":\"random_mane\",\"landStage\":0,\"locId\":\"loc0_4\",\"landX\":0,\"curCoord\":\"null\",\"x\":241.8,\"landY\":4,\"roomId\":\"ко.разлом\"}",
+            "PRESENT sample enemy=presentation_merc2 alpha=1 invis=false isVis=true visible=true parent=true mask=null isolated=13635 composite=1948",
+            "PRESENT sample enemy=presentation_merc5 alpha=1 invis=false isVis=true visible=true parent=true mask=null isolated=14445 composite=1936",
+            "PRESENT sample enemy=presentation_alicorn3 alpha=1 invis=false isVis=true visible=true parent=true mask=null isolated=14883 composite=2985",
+            "PRESENT sample final-render frames=15 missing=0 elapsedMs=1136",
+            "PRESENT sample between-packets frames=8 positions=8 bodyFrames=8 totalFrames=8",
+            "PRESENT sample stopped frame=3 playing=false",
+            "PRESENT sample exploration packets=10 logicalMs=1000 elapsedMs=1 gaps=100,100,100,100,100,100,100,100,100 totalCaptureMs=0 bytes=29149 fullEquivalent=205990",
+            "COOP PRESENTATION DONE join"
+          ]
+        }
+      },
+      "inputs": {
+        "port": 62605,
+        "pids": [
+          22956,
+          52012
+        ],
+        "candidate": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m33\\PresentationTest.swf",
+        "sha256": "7e613a76825ebe78f255d20839280231ad83c2e56cb037dab73cd71dade33672",
+        "inputs": {
+          "host": {
+            "game": "b78244657ed407d03808c90e97325509db35f802122835f58933fff8003305ac",
+            "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+            "modules": {
+              "mods\\ModSettings\\release\\ModSettingsMod.swf": "5bd830a63f42130ef56e9c24c0e95b77b9871640b53d5cb4aa5b51e363894b5c",
+              "mods\\MoreSkills&Weapons\\release\\MoreSkillsWeaponsMod.swf": "d16523c35be414fb200d5ffdd31b1453b85f1af3802a91180805d8fdd0f21bbd",
+              "mods\\RandomRooms\\release\\RandomRoomsMod.swf": "16f3d2bd63d19660e039f5f44b4792fd85f3e2119a59f058f8290f5746346c7f",
+              "mods\\Rconnect\\release\\RConnectMod.swf": "7e613a76825ebe78f255d20839280231ad83c2e56cb037dab73cd71dade33672",
+              "mods\\RealisticVision\\release\\RealisticVisionMod.swf": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+              "mods\\Sandevistan\\release\\SandevistanMod.swf": "f556c0728da406a4a6a05399df93e9a0349c4225107547f1e12fe88a2aee3e48",
+              "mods\\TDFC\\release\\TDFCMod.swf": "5ee8b967bf0eddc1d6c1931f1264db37dea94f365cc416b1971502a999af8a7e"
+            }
+          },
+          "join": {
+            "game": "b78244657ed407d03808c90e97325509db35f802122835f58933fff8003305ac",
+            "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+            "modules": {
+              "mods\\ModSettings\\release\\ModSettingsMod.swf": "5bd830a63f42130ef56e9c24c0e95b77b9871640b53d5cb4aa5b51e363894b5c",
+              "mods\\MoreSkills&Weapons\\release\\MoreSkillsWeaponsMod.swf": "d16523c35be414fb200d5ffdd31b1453b85f1af3802a91180805d8fdd0f21bbd",
+              "mods\\RandomRooms\\release\\RandomRoomsMod.swf": "16f3d2bd63d19660e039f5f44b4792fd85f3e2119a59f058f8290f5746346c7f",
+              "mods\\Rconnect\\release\\RConnectMod.swf": "7e613a76825ebe78f255d20839280231ad83c2e56cb037dab73cd71dade33672",
+              "mods\\RealisticVision\\release\\RealisticVisionMod.swf": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+              "mods\\Sandevistan\\release\\SandevistanMod.swf": "f556c0728da406a4a6a05399df93e9a0349c4225107547f1e12fe88a2aee3e48",
+              "mods\\TDFC\\release\\TDFCMod.swf": "5ee8b967bf0eddc1d6c1931f1264db37dea94f365cc416b1971502a999af8a7e"
+            }
+          }
+        }
+      },
+      "images": {
+        "host-presentation-presentation_alicorn3.png": "0ebe20526900c08716198b8a0e03d046f77dececc0b762e64714197c262d0cc5",
+        "host-presentation-presentation_merc2.png": "53cf043c1e2043cfc7411a0079f78d983d37585eb35b7de0a4c8b076bd1bb359",
+        "host-presentation-presentation_merc5.png": "53cf043c1e2043cfc7411a0079f78d983d37585eb35b7de0a4c8b076bd1bb359",
+        "join-presentation-presentation_alicorn3.png": "962ccabd8b4b2da2b75d6933f8b81a8835549908b1096ba50b5ce1a2d92badf2",
+        "join-presentation-presentation_merc2.png": "fc912887a2b504308c67965ce93005ccfbd0ac3dfdf72fe24b14843ffcc65104",
+        "join-presentation-presentation_merc5.png": "45d23602d206a8a190d199dbb2415f7c54726f8472fffcb403c830ab1c88bdc9"
+      }
+    },
+    "d5ee064ade": {
+      "note": "Final complete RC+RV regression, including native camouflage shimmer.",
+      "folder": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\d5ee064ade",
+      "roles": {
+        "host": {
+          "log": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\d5ee064ade\\host.log",
+          "sha256": "0b03c6a4e0a30adecf214ca5e1605eb0794189a081265d66c4ccb95f3dcfe5d9",
+          "passes": 114,
+          "failures": 0,
+          "errors": [],
+          "observations": [
+            "COOP DONE passed=35 failed=0",
+            "COOP ENEMY DONE",
+            "COOP EXPLORATION DONE passed=28 failed=0",
+            "COOP COMBAT DONE",
+            "COOP APPEARANCE DAMAGE DONE",
+            "LMG final host hp=1680.7999999999997 shield=0",
+            "COOP LMG NETWORK DONE host",
+            "COOP NETWORK DONE host"
+          ]
+        },
+        "join": {
+          "log": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\d5ee064ade\\join.log",
+          "sha256": "a16df99a5d4acf9b976d3b312b7eb7a0ab3d2e23e683c9121e995aec80af40e3",
+          "passes": 17,
+          "failures": 0,
+          "errors": [],
+          "observations": [
+            "LMG final join hp=1680.7999999999995 shield=0",
+            "COOP LMG NETWORK DONE join",
+            "COOP NETWORK DONE join"
+          ]
+        }
+      },
+      "inputs": {
+        "port": 56202,
+        "pids": [
+          9296,
+          49244
+        ],
+        "candidate": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m33\\CoopTest.swf",
+        "sha256": "d32b9dfa431baf2497bfca6e2ba516113a2b3fb494aec0385b11dd1132d3a0fd",
+        "inputs": {
+          "host": {
+            "game": "b78244657ed407d03808c90e97325509db35f802122835f58933fff8003305ac",
+            "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b"
+          },
+          "join": {
+            "game": "b78244657ed407d03808c90e97325509db35f802122835f58933fff8003305ac",
+            "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b"
+          }
+        }
+      },
+      "images": {}
+    },
+    "816fae8134": {
+      "note": "Final frozen all-mod presentation scenario.",
+      "folder": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\816fae8134",
+      "roles": {
+        "host": {
+          "log": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\816fae8134\\host.log",
+          "sha256": "130999ad7773297644ec478bcca1805aeafb8bcbd14425902c893973c1e7b8a3",
+          "passes": 11,
+          "failures": 0,
+          "errors": [],
+          "observations": [
+            "PRESENT sample fixture role=host room=loc0_4 player=1681.8,320",
+            "PRESENT sample enemy=presentation_merc2 alpha=1 invis=false isVis=true visible=true parent=true mask=[object Shape] isolated=0 composite=0",
+            "PRESENT sample enemy=presentation_merc5 alpha=1 invis=false isVis=true visible=true parent=true mask=[object Shape] isolated=0 composite=0",
+            "PRESENT sample enemy=presentation_alicorn3 alpha=1 invis=false isVis=true visible=true parent=true mask=[object Shape] isolated=0 composite=0",
+            "PRESENT sample between-packets frames=8 positions=8 bodyFrames=8 totalFrames=8",
+            "PRESENT sample stopped frame=3 playing=false",
+            "PRESENT sample exploration packets=10 logicalMs=1000 elapsedMs=1 gaps=100,100,100,100,100,100,100,100,100 totalCaptureMs=1 bytes=29149 fullEquivalent=205990",
+            "COOP PRESENTATION DONE host"
+          ]
+        },
+        "join": {
+          "log": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\816fae8134\\join.log",
+          "sha256": "a63756c0d5352024bd3a22b47e353d2ac46a97d46c160bd5bdd4f4a0ec5d06ce",
+          "passes": 15,
+          "failures": 0,
+          "errors": [],
+          "observations": [
+            "PRESENT sample fixture role=join room=loc0_4 player=1681.8,320",
+            "PRESENT sample incoming={\"exploration\":10,\"welcome\":1,\"unitsync\":104,\"worldstate\":716} units={\"world\":{\"y\":320,\"locId\":\"loc0_4\",\"landX\":0,\"curCoord\":\"null\",\"landZ\":0,\"landY\":4,\"hostVisited\":true,\"x\":1681.8,\"roomId\":\"ко.разлом\",\"curLandId\":\"random_mane\",\"landStage\":0},\"count\":8} local={\"y\":320,\"hostVisited\":true,\"landX\":0,\"curCoord\":\"null\",\"roomId\":\"ко.разлом\",\"landY\":4,\"locId\":\"loc0_4\",\"x\":1681.8,\"landZ\":0,\"curLandId\":\"random_mane\",\"landStage\":0}",
+            "PRESENT sample enemy=presentation_merc2 alpha=1 invis=false isVis=true visible=true parent=true mask=null isolated=13635 composite=1224",
+            "PRESENT sample enemy=presentation_merc5 alpha=1 invis=false isVis=true visible=true parent=true mask=null isolated=14445 composite=1568",
+            "PRESENT sample enemy=presentation_alicorn3 alpha=1 invis=false isVis=true visible=true parent=true mask=null isolated=14140 composite=1173",
+            "PRESENT sample final-render frames=15 missing=0 elapsedMs=849",
+            "PRESENT sample between-packets frames=5 positions=5 bodyFrames=5 totalFrames=8",
+            "PRESENT sample stopped frame=3 playing=false",
+            "PRESENT sample exploration packets=10 logicalMs=1000 elapsedMs=1 gaps=100,100,100,100,100,100,100,100,100 totalCaptureMs=1 bytes=29149 fullEquivalent=205990",
+            "COOP PRESENTATION DONE join"
+          ]
+        }
+      },
+      "inputs": {
+        "port": 52628,
+        "pids": [
+          52464,
+          45416
+        ],
+        "candidate": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m33\\PresentationTest.swf",
+        "sha256": "1239ccf67a9e242780890a216bf804890324bb526d588ba25b8307b2e8d44287",
+        "inputs": {
+          "host": {
+            "game": "b78244657ed407d03808c90e97325509db35f802122835f58933fff8003305ac",
+            "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+            "modules": {
+              "mods\\ModSettings\\release\\ModSettingsMod.swf": "5bd830a63f42130ef56e9c24c0e95b77b9871640b53d5cb4aa5b51e363894b5c",
+              "mods\\MoreSkills&Weapons\\release\\MoreSkillsWeaponsMod.swf": "f02ff3dbc917f557c59adef2ebc9605163e132fac964952a1b437b8bf1bb5e97",
+              "mods\\RandomRooms\\release\\RandomRoomsMod.swf": "16f3d2bd63d19660e039f5f44b4792fd85f3e2119a59f058f8290f5746346c7f",
+              "mods\\Rconnect\\release\\RConnectMod.swf": "1239ccf67a9e242780890a216bf804890324bb526d588ba25b8307b2e8d44287",
+              "mods\\RealisticVision\\release\\RealisticVisionMod.swf": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+              "mods\\Sandevistan\\release\\SandevistanMod.swf": "28449b2646223a8eee20eb4bb361dda2d5dc0572c6aaa9cd5fcb5d072a374c44",
+              "mods\\TDFC\\release\\TDFCMod.swf": "5ee8b967bf0eddc1d6c1931f1264db37dea94f365cc416b1971502a999af8a7e"
+            }
+          },
+          "join": {
+            "game": "b78244657ed407d03808c90e97325509db35f802122835f58933fff8003305ac",
+            "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+            "modules": {
+              "mods\\ModSettings\\release\\ModSettingsMod.swf": "5bd830a63f42130ef56e9c24c0e95b77b9871640b53d5cb4aa5b51e363894b5c",
+              "mods\\MoreSkills&Weapons\\release\\MoreSkillsWeaponsMod.swf": "f02ff3dbc917f557c59adef2ebc9605163e132fac964952a1b437b8bf1bb5e97",
+              "mods\\RandomRooms\\release\\RandomRoomsMod.swf": "16f3d2bd63d19660e039f5f44b4792fd85f3e2119a59f058f8290f5746346c7f",
+              "mods\\Rconnect\\release\\RConnectMod.swf": "1239ccf67a9e242780890a216bf804890324bb526d588ba25b8307b2e8d44287",
+              "mods\\RealisticVision\\release\\RealisticVisionMod.swf": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+              "mods\\Sandevistan\\release\\SandevistanMod.swf": "28449b2646223a8eee20eb4bb361dda2d5dc0572c6aaa9cd5fcb5d072a374c44",
+              "mods\\TDFC\\release\\TDFCMod.swf": "5ee8b967bf0eddc1d6c1931f1264db37dea94f365cc416b1971502a999af8a7e"
+            }
+          }
+        }
+      },
+      "images": {
+        "host-presentation-presentation_alicorn3.png": "0ebe20526900c08716198b8a0e03d046f77dececc0b762e64714197c262d0cc5",
+        "host-presentation-presentation_merc2.png": "53cf043c1e2043cfc7411a0079f78d983d37585eb35b7de0a4c8b076bd1bb359",
+        "host-presentation-presentation_merc5.png": "53cf043c1e2043cfc7411a0079f78d983d37585eb35b7de0a4c8b076bd1bb359",
+        "join-presentation-presentation_alicorn3.png": "9da069c5dbeab14a68ca32aaf9670779143431b30813bfc33823ad2f7ae466d7",
+        "join-presentation-presentation_merc2.png": "8e34d36269a3c88bf8f949f1a8f91cee59e64d278adc81fd567d6fa1c69f1eee",
+        "join-presentation-presentation_merc5.png": "e9cae8287fe67cd85b69a4a9c068c0bc03cd7d2a95ec9f374d896a1f6d4796b1"
+      }
+    },
+    "370cad3918": {
+      "note": "Restart smoke from deployed release SWF.",
+      "folder": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\370cad3918",
+      "roles": {
+        "host": {
+          "log": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\370cad3918\\host.log",
+          "sha256": "05d7cfbb1413bcff4491a18ce9578a4a9ad3041ac0b0088448c40644be2253c0",
+          "passes": 0,
+          "failures": 0,
+          "errors": [],
+          "observations": []
+        },
+        "join": {
+          "log": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\370cad3918\\join.log",
+          "sha256": "4849b2d9443afa8c94d16527b5efb472b7708d06bdfade9a337bd13394bf8114",
+          "passes": 0,
+          "failures": 0,
+          "errors": [],
+          "observations": []
+        }
+      },
+      "inputs": {
+        "port": 51647,
+        "pids": [
+          44496,
+          51124
+        ],
+        "candidate": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\release\\RConnectMod.swf",
+        "sha256": "683f8573e45cfa8b709d683cd5f558eec6f0b82f0c020380e59b7eb352fff2e6",
+        "inputs": {
+          "host": {
+            "game": "b78244657ed407d03808c90e97325509db35f802122835f58933fff8003305ac",
+            "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b"
+          },
+          "join": {
+            "game": "b78244657ed407d03808c90e97325509db35f802122835f58933fff8003305ac",
+            "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b"
+          }
+        }
+      },
+      "images": {}
+    }
+  },
+  "deployment": {
+    "version": "0.2.5-dev",
+    "deployed_at": "2026-09-23T11:42:37.516627",
+    "backup": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\backup\\m33-release-20260923-114237-479272\\RConnectMod.before.swf",
+    "before_sha256": "4e65327f3014211b3811e3917d4ff4dd984e9d6d2964c38f0ee21d51996c5262",
+    "candidate_sha256": "683f8573e45cfa8b709d683cd5f558eec6f0b82f0c020380e59b7eb352fff2e6",
+    "bytes": 53331,
+    "protected_before": {
+      "pfe.swf": "b78244657ed407d03808c90e97325509db35f802122835f58933fff8003305ac",
+      "DLC\\pfe.swf": "90dec445e60e352dcad06b3171a3ae7b588dbf1fe6c8fb452fceec392aa9db02",
+      "DLC\\pfeUI.swf": "0bd5d24381b5aaea50e40b2f95a9e54dfe4a7911aafba27aff06961c82f350c7",
+      "application.xml": "70dd3b085e5f6c66c03693cf68ce5e93a4e4136dd745d40d1a5b2a49863ba236",
+      "mods\\loader-manifest.txt": "4953b682ad9e18c212a0bcb30464ad905e1eb4d39610dc0366230e91f9eeb785",
+      "mods\\RConnect\\release\\config.txt": "5ca72017f1f811b5f8a2b1f18f6cb8b2c24239e2240716c4059cbc073913fc0a",
+      "mods\\ModSettings\\release\\ModSettingsMod.swf": "5bd830a63f42130ef56e9c24c0e95b77b9871640b53d5cb4aa5b51e363894b5c",
+      "mods\\Sandevistan\\release\\SandevistanMod.swf": "28449b2646223a8eee20eb4bb361dda2d5dc0572c6aaa9cd5fcb5d072a374c44",
+      "mods\\Sandevistan\\release\\config.txt": "d91c4c2889aba19b1bcfb356885921b0605a50188b270a9e7619d2116e7ebdc3",
+      "mods\\RealisticVision\\release\\RealisticVisionMod.swf": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+      "mods\\RealisticVision\\release\\config.txt": "5136ee1923a77f5f10eab1b3994b64cbd67b09d687a7e829fb1e81d2e79a3c7f",
+      "mods\\MoreSkills&Weapons\\release\\MoreSkillsWeaponsMod.swf": "f02ff3dbc917f557c59adef2ebc9605163e132fac964952a1b437b8bf1bb5e97",
+      "mods\\TDFC\\release\\TDFCMod.swf": "5ee8b967bf0eddc1d6c1931f1264db37dea94f365cc416b1971502a999af8a7e",
+      "mods\\RandomRooms\\release\\RandomRoomsMod.swf": "16f3d2bd63d19660e039f5f44b4792fd85f3e2119a59f058f8290f5746346c7f"
+    },
+    "status": "deployed-smoke-passed",
+    "protected_after": {
+      "pfe.swf": "b78244657ed407d03808c90e97325509db35f802122835f58933fff8003305ac",
+      "DLC\\pfe.swf": "90dec445e60e352dcad06b3171a3ae7b588dbf1fe6c8fb452fceec392aa9db02",
+      "DLC\\pfeUI.swf": "0bd5d24381b5aaea50e40b2f95a9e54dfe4a7911aafba27aff06961c82f350c7",
+      "application.xml": "70dd3b085e5f6c66c03693cf68ce5e93a4e4136dd745d40d1a5b2a49863ba236",
+      "mods\\loader-manifest.txt": "4953b682ad9e18c212a0bcb30464ad905e1eb4d39610dc0366230e91f9eeb785",
+      "mods\\RConnect\\release\\config.txt": "5ca72017f1f811b5f8a2b1f18f6cb8b2c24239e2240716c4059cbc073913fc0a",
+      "mods\\ModSettings\\release\\ModSettingsMod.swf": "5bd830a63f42130ef56e9c24c0e95b77b9871640b53d5cb4aa5b51e363894b5c",
+      "mods\\Sandevistan\\release\\SandevistanMod.swf": "28449b2646223a8eee20eb4bb361dda2d5dc0572c6aaa9cd5fcb5d072a374c44",
+      "mods\\Sandevistan\\release\\config.txt": "d91c4c2889aba19b1bcfb356885921b0605a50188b270a9e7619d2116e7ebdc3",
+      "mods\\RealisticVision\\release\\RealisticVisionMod.swf": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+      "mods\\RealisticVision\\release\\config.txt": "5136ee1923a77f5f10eab1b3994b64cbd67b09d687a7e829fb1e81d2e79a3c7f",
+      "mods\\MoreSkills&Weapons\\release\\MoreSkillsWeaponsMod.swf": "f02ff3dbc917f557c59adef2ebc9605163e132fac964952a1b437b8bf1bb5e97",
+      "mods\\TDFC\\release\\TDFCMod.swf": "5ee8b967bf0eddc1d6c1931f1264db37dea94f365cc416b1971502a999af8a7e",
+      "mods\\RandomRooms\\release\\RandomRoomsMod.swf": "16f3d2bd63d19660e039f5f44b4792fd85f3e2119a59f058f8290f5746346c7f"
+    },
+    "smoke": "370cad3918",
+    "protected_final": {
+      "pfe.swf": "b78244657ed407d03808c90e97325509db35f802122835f58933fff8003305ac",
+      "DLC\\pfe.swf": "90dec445e60e352dcad06b3171a3ae7b588dbf1fe6c8fb452fceec392aa9db02",
+      "DLC\\pfeUI.swf": "0bd5d24381b5aaea50e40b2f95a9e54dfe4a7911aafba27aff06961c82f350c7",
+      "application.xml": "70dd3b085e5f6c66c03693cf68ce5e93a4e4136dd745d40d1a5b2a49863ba236",
+      "mods\\loader-manifest.txt": "4953b682ad9e18c212a0bcb30464ad905e1eb4d39610dc0366230e91f9eeb785",
+      "mods\\RConnect\\release\\config.txt": "5ca72017f1f811b5f8a2b1f18f6cb8b2c24239e2240716c4059cbc073913fc0a",
+      "mods\\ModSettings\\release\\ModSettingsMod.swf": "5bd830a63f42130ef56e9c24c0e95b77b9871640b53d5cb4aa5b51e363894b5c",
+      "mods\\Sandevistan\\release\\SandevistanMod.swf": "28449b2646223a8eee20eb4bb361dda2d5dc0572c6aaa9cd5fcb5d072a374c44",
+      "mods\\Sandevistan\\release\\config.txt": "d91c4c2889aba19b1bcfb356885921b0605a50188b270a9e7619d2116e7ebdc3",
+      "mods\\RealisticVision\\release\\RealisticVisionMod.swf": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+      "mods\\RealisticVision\\release\\config.txt": "5136ee1923a77f5f10eab1b3994b64cbd67b09d687a7e829fb1e81d2e79a3c7f",
+      "mods\\MoreSkills&Weapons\\release\\MoreSkillsWeaponsMod.swf": "f02ff3dbc917f557c59adef2ebc9605163e132fac964952a1b437b8bf1bb5e97",
+      "mods\\TDFC\\release\\TDFCMod.swf": "5ee8b967bf0eddc1d6c1931f1264db37dea94f365cc416b1971502a999af8a7e",
+      "mods\\RandomRooms\\release\\RandomRoomsMod.swf": "16f3d2bd63d19660e039f5f44b4792fd85f3e2119a59f058f8290f5746346c7f"
+    },
+    "concurrent_changes": []
+  },
+  "production": {
+    "sha256": "683f8573e45cfa8b709d683cd5f558eec6f0b82f0c020380e59b7eb352fff2e6",
+    "bytes": 53331,
+    "class_audit": "FFDec -dumpAS3 succeeded, 18 RConnect classes; no fe.* or test classes."
+  },
+  "source_sha256": {
+    "src\\rconnect\\core\\Config.as": "93e9e348f7c428fa2abebf379da7dbf7e4a4ddf834cc23ccabd07acc669b57cb",
+    "src\\rconnect\\core\\Log.as": "3863a2136c06c7769483945f3c24456ca8b2ddefe842ca6f696049cf750428f7",
+    "src\\rconnect\\core\\Session.as": "22e3eb6e33349b5ab5f3e8e00c4ffd11d971bf1c9027854490e26038b4787095",
+    "src\\rconnect\\game\\ExplorationSync.as": "1f00c150fa93e5593821cf2f4af8aaa1c2e0385f104bd85782c82ba9515a70c9",
+    "src\\rconnect\\game\\GameBridge.as": "d87b1aed8de3090ab05b897ef2df7a733b0ed67cc6c55540939fd03b57e55b19",
+    "src\\rconnect\\game\\HitFeedback.as": "72441f9c5c5a5e45328aae78bbd6592dcd6630293e7a785c7b2af1ba47a07a17",
+    "src\\rconnect\\game\\MirrorHitUnit.as": "9df7074e539461232ca8a8d63293bc8725ba986bd009983b8fe6e9f954b19845",
+    "src\\rconnect\\game\\ObjectIdentity.as": "9ee2e92e94cfe04e569f6c4ddacf6e1aa5f62c7d457e3b3156df06e3beaf3238",
+    "src\\rconnect\\game\\RemoteArmor.as": "f9de592e2d079cabafcad9625dbb1f2739f8337db8b90aaaf4992cad1fc52249",
+    "src\\rconnect\\game\\RemoteMotion.as": "8999fb245fcd0dc4ca327d9aab1c926d5a21936783db7d4d8301ed2778cec109",
+    "src\\rconnect\\game\\VersionProbe.as": "b565f16eac1bde5bc036f774cfb9b730ae38b270899aaf0f0adf05e4771f07f1",
+    "src\\rconnect\\net\\HostServer.as": "db414124b24bf72285c49992d7e4faacecd39b9dae834cf976588d22dcba3ee2",
+    "src\\rconnect\\net\\NetMessageEvent.as": "45886a1f4c10ca4f1fc831803ff54ccc91c2f8c0d12d4a37f2e2a952ff91db7b",
+    "src\\rconnect\\net\\Protocol.as": "cb883e48461ea88ca7c4e981aa8de13b728ec6b33f5a9045ccdb2ecec1a101e5",
+    "src\\rconnect\\net\\TcpLink.as": "144c4efab569338e996fe5a072e503aea7c7ca05436b22cee44241378297c9c0",
+    "src\\rconnect\\ui\\NetHud.as": "b0c6498f72f9a63c59f6d56b9a45494e098ad7f217d0b8e449dfd8ea2262b130",
+    "src\\RConnectDoc.as": "764967e351e57e10fbcf1c3136d5170e633c6cd2e750a7427c6a180e3a1e34e1",
+    "src\\RConnectMod.as": "4a45d2bfa109b489c7fdaff0f68a226e83a7524912404d33f9a564f33a8c9853"
+  },
+  "scope": "Same-machine TCP, game 1.02, isolated fresh characters. Full cooperation in RC+RV; all-mods only presentation. No user save/process mutations.",
+  "caveat": "Stale hidden-state is controlled reproduction, not proof of every user failure. Exploration 10 packets/second uses deterministic logical clock; no universal runtime-rate claim.",
+  "skills": {
+    "remains-runtime-debug": {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\.agents\\skills\\remains-runtime-debug\\SKILL.md",
+      "sha256": "68e12632abf9e2fd6f6949b6adb3f918b7a8567dd8805106242e7ac0a20c5740"
+    },
+    "remains-auto-testing": {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\.agents\\skills\\remains-auto-testing\\SKILL.md",
+      "sha256": "ab251815064b98c355be1349fd079eaf8ef4458c3acd4bf43853e8f1a6639d0c"
+    },
+    "remains-mod-build": {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\.agents\\skills\\remains-mod-build\\SKILL.md",
+      "sha256": "a8484c8cc68af0d0b8522e182c605ffe40a92fcf57d1c63cdf7bbd412b4c0480"
+    },
+    "remains-release-gate": {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\.agents\\skills\\remains-release-gate\\SKILL.md",
+      "sha256": "2c6c771345d982072892bd6ec33c3529f57e9cb6fefc55bfadb4b812a9594ecd"
+    },
+    "remains-swf-patching": {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\.agents\\skills\\remains-swf-patching\\SKILL.md",
+      "sha256": "cd0a675799f76112cbe6c8ca86048d20ec613e3b9ce31440080c36cfd36ede77"
+    },
+    "remains-mod-memory": {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\.agents\\skills\\remains-mod-memory\\SKILL.md",
+      "sha256": "2d202345d57ccc729d4c59ee1d40006058c743da565237403a6381c1b60121c6"
+    },
+    "remains-knowledge-contribution": {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\.agents\\skills\\remains-knowledge-contribution\\SKILL.md",
+      "sha256": "1f92de4cc5ce5c79d814e9ed621c6d895a60fc946050fbb1e10514f8d6c21b97"
+    },
+    "diagnosing-bugs": {
+      "path": "C:\\Users\\hello\\.agents\\skills\\diagnosing-bugs\\SKILL.md",
+      "sha256": "77f3cf31bc99b2f49af943222526531fcc9fc41d047626d3640e875e85af3e84"
+    },
+    "test-report": {
+      "path": "C:\\Users\\hello\\.agents\\skills\\test-report\\SKILL.md",
+      "sha256": "cde4695f98417768f2c11ea42f6ea1f4400ddecc5d00f5a224fcc988646febf5"
+    }
+  }
+}

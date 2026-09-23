@@ -20,17 +20,28 @@ package rconnect.game
       private var epoch:String = "";
       private var remoteEpoch:String = "";
       private var lastSent:String = "";
+      private var sentRows:Array;
+      private var incomingRows:Array;
+      private var incomingEpoch:String="";
       private var lastAt:int = -10000;
       private var lastFull:int = -10000;
       private var api:Object;
       private var settingsRegistered:Boolean = false;
       private var lastDiscovery:int = -10000;
       public var received:int = 0;
+      private var now:Function;
 
-      public function ExplorationSync(owner:RConnectMod)
+      public function ExplorationSync(owner:RConnectMod, clock:Function=null)
       {
          mod = owner;
-         if(mod.stage != null) mod.stage.addEventListener(Event.EXIT_FRAME, render, false, -100, true);
+         now=clock!=null?clock:getTimer;
+         if(mod.stage != null)
+         {
+            // gotoAndStop also broadcasts EXIT_FRAME synchronously. Composite
+            // once at the actual render boundary, after native lighting finishes.
+            mod.stage.addEventListener(Event.ENTER_FRAME, requestRender, false, -20000, true);
+            mod.stage.addEventListener(Event.RENDER, render, false, -100, true);
+         }
       }
 
       public function get enabled():Boolean
@@ -51,12 +62,13 @@ package rconnect.game
       {
          epoch = ""; remoteEpoch = ""; roomRef = null;
          lastSent = ""; lastAt = lastFull = -10000;
+         sentRows=incomingRows=null;incomingEpoch="";
       }
 
       private function discover():void
       {
-         if(getTimer() - lastDiscovery < 1000) return;
-         lastDiscovery = getTimer();
+         if(now() - lastDiscovery < 1000) return;
+         lastDiscovery = now();
          try
          {
             var main:DisplayObjectContainer = mod.main as DisplayObjectContainer;
@@ -107,6 +119,7 @@ package rconnect.game
             roomRef = loc; roomKey = key;
             epoch = new Date().time.toString(36) + "-" + (++serial) + "-" + Math.random().toString(36);
             remoteEpoch = ""; lastSent = ""; lastFull = -10000;
+            sentRows=incomingRows=null;incomingEpoch="";
          }
          return {loc:loc, key:key, cols:cols, height:rows};
       }
@@ -146,6 +159,7 @@ package rconnect.game
          for(var y:int = 0; y < incoming.length; y++)
          {
             var a:String = old[y], b:String = incoming[y], row:Array = [];
+            if(a==b) {result.push(b);continue;}
             for(var i:int = 0; i < b.length; i++)
             {
                var av:int = HEX.indexOf(a.charAt(i)), bv:int = HEX.indexOf(b.charAt(i));
@@ -159,11 +173,11 @@ package rconnect.game
       public function packet():Object
       {
          discover();
-         var now:int = getTimer();
-         if(now - lastAt < 500) return null;
-         lastAt = now;
+         var time:int = now();
+         if(time - lastAt < 100) return null;
          var c:Object = context();
          if(c == null) return null;
+         lastAt = time;
          var data:Array;
          try { if(api != null) data = api.capture(c.loc) as Array; } catch(err:*) { api = null; }
          if(!validRows(data,c.cols,c.height))
@@ -172,11 +186,17 @@ package rconnect.game
          }
          var retained:Object = memories[c.loc];
          if(retained != null) data = unionRows(data,retained.data);
-         var signature:String = remoteEpoch + "|" + data.join("");
-         if(signature == lastSent && now - lastFull < 3000) return null;
-         lastSent = signature; lastFull = now;
-         return {v:1, room:c.key, epoch:epoch, to:remoteEpoch,
-            cols:c.cols, height:c.height, rows:data};
+         var changes:Array=[];
+         var full:Boolean=sentRows==null || remoteEpoch!=lastSent || time-lastFull>=3000;
+         if(!full)
+            for(var y:int=0;y<data.length;y++) if(data[y]!=sentRows[y]) changes.push([y,data[y]]);
+         if(!full && changes.length==0) return null;
+         var packet:Object={v:1,room:c.key,epoch:epoch,to:remoteEpoch,cols:c.cols,height:c.height};
+         // Small row deltas keep frequent terrain updates from crowding movement.
+         if(full || changes.length*1.1>=c.height) {packet.rows=data;lastFull=time;}
+         else packet.changes=changes;
+         sentRows=data;lastSent=remoteEpoch;
+         return packet;
       }
 
       public function receive(p:Object):Boolean
@@ -185,12 +205,33 @@ package rconnect.game
          var c:Object = context();
          if(c == null || p == null || p.v !== 1 || p.room !== c.key
             || p.cols !== c.cols || p.height !== c.height || !(p.epoch is String)
-            || p.epoch.length < 1 || p.epoch.length > 100 || !validRows(p.rows,c.cols,c.height)) return false;
+            || p.epoch.length < 1 || p.epoch.length > 100) return false;
+         var decoded:Array=p.rows as Array;
+         if(decoded!=null)
+         {
+            if(!validRows(decoded,c.cols,c.height)) return false;
+         }
+         else
+         {
+            if(incomingRows==null || incomingEpoch!==p.epoch || !(p.changes is Array)
+               || p.changes.length<1 || p.changes.length>c.height) return false;
+            decoded=incomingRows.concat();
+            var seen:Object={};
+            for each(var pair:* in p.changes)
+            {
+               if(!(pair is Array) || pair.length!=2 || !(pair[0] is Number)
+                  || pair[0]!=int(pair[0]) || pair[0]<0 || pair[0]>=c.height
+                  || seen[pair[0]] || !(pair[1] is String) || pair[1].length!=c.cols*17
+                  || /[^0-9a-f]/.test(pair[1])) return false;
+               seen[pair[0]]=true;decoded[int(pair[0])]=pair[1];
+            }
+         }
+         incomingRows=decoded;incomingEpoch=p.epoch;
          // Both rooms must acknowledge each other's current instance before merging.
          remoteEpoch = p.epoch;
          if(!enabled || p.to !== epoch) return false;
          var old:Object = memories[c.loc];
-         var data:Array = unionRows(old != null ? old.data : null, p.rows);
+         var data:Array = unionRows(old != null ? old.data : null, decoded);
          memories[c.loc] = {key:c.key, data:data, apiApplied:null};
          received++;
          applyRV(c.loc, memories[c.loc]);
@@ -219,6 +260,8 @@ package rconnect.game
          }
          catch(err:*) { /* Optional display integration must not interrupt gameplay. */ }
       }
+
+      private function requestRender(e:Event):void { if(mod.stage!=null) mod.stage.invalidate(); }
 
       public static function paintNative(loc:Object, data:Array):void
       {

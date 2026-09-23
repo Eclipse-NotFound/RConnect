@@ -34,13 +34,14 @@ def main():
                     help="编译 debug 版本（含调试信息）")
     ap.add_argument("--output", help="Explicit candidate path; default remains release")
     ap.add_argument("--cooperation-tests", action="store_true", help="Build the isolated regression entry point")
+    ap.add_argument("--presentation-tests", action="store_true", help="Build the dark-room and between-packet rendering regression")
     args = ap.parse_args()
 
     src_dir = os.path.join(MOD_ROOT, "src")
     out_dir = os.path.join(MOD_ROOT, "release")
     os.makedirs(out_dir, exist_ok=True)
     out_swf = os.path.abspath(args.output) if args.output else os.path.join(out_dir, "RConnectMod.swf")
-    if args.cooperation_tests:
+    if args.cooperation_tests or args.presentation_tests:
         candidate_root = os.path.realpath(os.path.join(MOD_ROOT, "build"))
         if not args.output or os.path.commonpath([candidate_root, os.path.realpath(out_swf)]) != candidate_root:
             ap.error("Test builds require an explicit --output inside this mod's build directory")
@@ -48,9 +49,9 @@ def main():
 
     entry = os.path.join(src_dir, "RConnectDoc.as")
     sources = ["-source-path=" + src_dir]
-    if args.cooperation_tests:
+    if args.cooperation_tests or args.presentation_tests:
         sources.append("-source-path+=" + os.path.join(MOD_ROOT, "tests"))
-        entry = os.path.join(MOD_ROOT, "tests", "CoopTestDoc.as")
+        entry = os.path.join(MOD_ROOT, "tests", "PresentationTestDoc.as" if args.presentation_tests else "CoopTestDoc.as")
     sdk = os.path.normpath(os.path.join(os.path.dirname(args.amxmlc), ".."))
     compiler = [args.amxmlc]
     if args.java:

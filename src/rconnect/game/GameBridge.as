@@ -77,6 +77,7 @@ package rconnect.game
                st.addEventListener(Event.EXIT_FRAME, onVisForceFrame,
                   false, -10000, true);
                st.addEventListener(Event.ENTER_FRAME, onMirrorFrame, false, -10000, true);
+               st.addEventListener(Event.RENDER, onVisForceFrame, false, -10000, true);
             }
          }
          catch(err:*)
@@ -100,6 +101,8 @@ package rconnect.game
       private var _forcingVisibility:Boolean = false;
       private var _animatingMirrors:Boolean = false;
       private var _shieldFeedback:Dictionary = new Dictionary(true);
+      private var _unitView:Dictionary = new Dictionary();
+      private var _viewErrors:Object = {};
 
       public function endSession():void
       {
@@ -109,6 +112,7 @@ package rconnect.game
          _unitMotion = new Dictionary();
          _pendingHits = new Dictionary();
          restoreMirrorMasks();
+         restoreUnitViews();
          _hostAlive = new Dictionary();
          for(var id:String in _remotes) removeRemote(int(id));
          for(var unit:Object in _freezeOriginal)
@@ -156,16 +160,34 @@ package rconnect.game
          _forcingVisibility = true;
          try
          {
-            for each(var rec:Object in _remotes)
-               if(rec.ghost != null && rec.snap != null && rec.snap.ap != null)
-                  RemoteArmor.apply(probe(rec.ghost,"vis") as DisplayObjectContainer,String(rec.snap.ap.armor || ""));
+            for(var remoteId:String in _remotes)
+            {
+               var rec:Object=_remotes[remoteId];
+               try
+               {
+                  if(rec.ghost != null && rec.snap != null)
+                  {
+                     if(rec.snap.bodyPlaying === false && rec.motion != null)
+                        driveVisAnim(rec.ghost,rec.motion.sample(getTimer()),int(remoteId));
+                     if(rec.snap.ap != null)
+                        RemoteArmor.apply(probe(rec.ghost,"vis") as DisplayObjectContainer,String(rec.snap.ap.armor || ""));
+                  }
+               }
+               catch(armorError:*) {logViewError("remote-"+remoteId,armorError);}
+            }
             if(!_mirroring) return;
             tickLootMotion();
+            for(var viewed:Object in _unitView)
+               if(probe(viewed,"loc")===loc)
+                  try {applyUnitView(viewed,_unitView[viewed].host);}
+                  catch(viewError:*) {logViewError(String(probe(viewed,"id")),viewError);}
             for(var u:Object in _hostAlive)
             {
+               try
+               {
                var vis:Object = probe(u, "vis");
                if(probe(u, "loc") !== loc || numOr(probe(u, "sost"), 3) >= 3
-                  || probe(u, "invis") == true)
+                  || !unitCanShow(u))
                {
                   restoreMirrorMask(vis);
                   continue;
@@ -180,6 +202,8 @@ package rconnect.game
                releaseMirrorMask(vis);
                vis["visible"] = true;
                u["prior"] = 1;
+               }
+               catch(unitError:*) {logViewError(String(probe(u,"id")),unitError);}
             }
          }
          catch(err:*)
@@ -190,8 +214,58 @@ package rconnect.game
 
       private function onMirrorFrame(e:Event):void
       {
+         try {main.stage.invalidate();} catch(stageError:*) {}
+         // Native ghost physics and packet arrivals must not dictate display cadence.
+         for(var id:String in _remotes)
+         {
+            var rec:Object=_remotes[id];
+            if(rec.ghost!=null && rec.motion!=null && probe(rec.ghost,"loc")===loc)
+               driveGhost(rec.ghost,rec.motion.sample(getTimer()),int(id));
+         }
          if(!_mirroring) return;
          tickFrozenAnims();
+      }
+
+      private function logViewError(id:String,error:*):void
+      {
+         if(_viewErrors[id]) return;
+         _viewErrors[id]=true;
+         Log.d("RConnectGame: presentation '"+id+"' failed: "+error);
+      }
+
+      private function unitView(u:Object):Object
+      {
+         return {invis:probe(u,"invis")==true,isVis:probe(u,"isVis")!=false,
+            alpha:numOr(probe(probe(u,"vis"),"alpha"),1)};
+      }
+
+      private function applyUnitView(u:Object,state:Object):void
+      {
+         if(state==null) return;
+         if(state.invis is Boolean) u["invis"]=state.invis;
+         if(state.isVis is Boolean) u["isVis"]=state.isVis;
+         var vis:Object=probe(u,"vis");
+         if(vis!=null && state.alpha!=null && isFinite(Number(state.alpha)))
+            vis["alpha"]=Math.max(0,Math.min(1,Number(state.alpha)));
+         if(vis!=null && (state.isVis===false || (state.invis===true && Number(state.alpha)<=0)))
+            vis["visible"]=false;
+      }
+
+      private function unitCanShow(u:Object):Boolean
+      {
+         if(probe(u,"isVis")==false) return false;
+         if(probe(u,"invis")!=true) return true;
+         // Native camouflage can still shimmer while moving or firing. Keep
+         // its gameplay invisibility, but show the host's partial fade.
+         var rec:Object=_unitView[u];
+         return rec!=null && Number(rec.host.alpha)>0;
+      }
+
+      private function restoreUnitViews():void
+      {
+         for(var u:Object in _unitView)
+            try {applyUnitView(u,_unitView[u].original);} catch(error:*) {}
+         _unitView=new Dictionary();
       }
 
       // A sibling alpha mask can erase every pixel despite visible=true.
@@ -425,6 +499,7 @@ package rconnect.game
          var osn:Object = probe(probe(gg, "vis"), "osn");
          s.poseFrame = numOr(probe(osn, "currentFrame"), 1);
          s.bodyFrame = numOr(probe(probe(osn, "body"), "currentFrame"), 1);
+         s.bodyPlaying = probe(probe(osn, "body"), "isPlaying") == true;
          s.isSit = probe(gg, "isSit") == true;
          // M18：外观镜像——远端据此给幽灵穿上对方的外观（护甲/毛色/眼/魔法）
          s.ap = readAppearance();
@@ -473,6 +548,7 @@ package rconnect.game
             {
                despawnGhost(rec.ghost, id);
                rec.ghost = null;
+               rec.motion = null;
             }
             return;
          }
@@ -508,6 +584,7 @@ package rconnect.game
          {
             ghost = spawnGhost(id, snap, name);
             rec.ghost = ghost;
+            rec.motion = new RemoteMotion();
             _ghostHp[id] = Math.max(1, numOr(snap.hp, 100));
             _ghostPassive[id] = false;
             removeWeaponVis(id);        // 新化身重建武器
@@ -520,7 +597,9 @@ package rconnect.game
          }
          if(ghost != null)
          {
-            driveGhost(ghost, snap, id);
+            if(rec.motion == null) rec.motion = new RemoteMotion();
+            rec.motion.push(snap,getTimer());
+            driveGhost(ghost, rec.motion.sample(getTimer()), id);
             syncRemoteWeapon(ghost, snap, id);
             // M20：外观热更——对方换装/换护甲后按 apKey 变化重装视觉
             var ak:String = apKeyOf(snap.ap);
@@ -1262,6 +1341,8 @@ package rconnect.game
        */
       private function driveVisAnim(ghost:Object, snap:Object, id:int):void
       {
+         var rec:Object = _animState[id];
+         if(rec == null) rec = _animState[id] = {lx:0,ly:0,label:""};
          if(snap.poseFrame != null && snap.bodyFrame != null)
          {
             try
@@ -1270,20 +1351,37 @@ package rconnect.game
                var pf:int = int(snap.poseFrame);
                if(pf >= 1 && pf <= numOr(probe(targetOsn, "totalFrames"), 0))
                {
-                  if(int(probe(targetOsn, "currentFrame")) != pf) targetOsn["gotoAndStop"](pf);
+                  var changed:Boolean=int(probe(targetOsn, "currentFrame")) != pf || rec.osn !== targetOsn;
+                  if(changed) targetOsn["gotoAndStop"](pf);
                   var targetBody:Object = probe(targetOsn, "body");
+                  if(!changed && rec.body===targetBody && rec.frameSnap===snap
+                     && (snap.bodyPlaying === true || int(probe(targetBody,"currentFrame"))==int(snap.bodyFrame))) return;
+                  rec.osn=targetOsn;rec.body=targetBody;rec.frameSnap=snap;
                   var bf:int = int(snap.bodyFrame);
-                  if(bf >= 1 && bf <= numOr(probe(targetBody, "totalFrames"), 0))
-                     targetBody["gotoAndStop"](bf);
+                  var total:int=int(numOr(probe(targetBody,"totalFrames"),0));
+                  if(bf >= 1 && bf <= total)
+                  {
+                     if(snap.bodyPlaying === true)
+                     {
+                        var drift:int=Math.abs(int(probe(targetBody,"currentFrame"))-bf);
+                        drift=Math.min(drift,total-drift);
+                        // Let the game's own frame scripts loop/stop. Only correct a
+                        // changed pose or significant drift, not every packet/frame.
+                        if(changed || probe(targetBody,"isPlaying")!==true || drift>Math.max(3,total/3))
+                           targetBody["gotoAndPlay"](bf);
+                     }
+                     else
+                     {
+                        if(int(probe(targetBody,"currentFrame"))!=bf) targetBody["gotoAndStop"](bf);
+                        // A frame script may call play while gotoAndStop constructs
+                        // the frame. Stop after construction, without re-entering it.
+                        targetBody["stop"]();
+                     }
+                  }
                   return;
                }
             }
             catch(poseError:*) {}
-         }
-         var rec:Object = _animState[id];
-         if(rec == null)
-         {
-            rec = _animState[id] = {lx: 0, ly: 0, label: ""};
          }
          var x:Number = Number(snap.x);
          var y:Number = Number(snap.y);
@@ -4157,7 +4255,9 @@ package rconnect.game
                   + " s=" + (vis != null && probe(vis, "visible") == true ? 1
                      : 0)
                   + " m=" + (vis != null && probe(vis, "mask") != null ? 1
-                     : 0));
+                     : 0) + " a=" + numOr(probe(vis,"alpha"),-1)
+                  + " hidden=" + (probe(u,"invis")==true ? 1:0)
+                  + " isVis=" + (probe(u,"isVis")==false ? 0:1));
                n++;
             }
             Log.d("RConnectGame: unit vis sample: "
@@ -5069,6 +5169,8 @@ package rconnect.game
                   fraction: numOr(probe(u, "fraction"), 0),
                   anim: String(probe(u, "animState")),
                   motion: unitFields(u, ["dx","dy","stay","isFly","isLaz","levit"]),
+                  // Mechanical visibility, never the local RV/FOV visible flag.
+                  view: unitView(u),
                   defense: unitFields(u, MirrorHitUnit.DEFENSE),
                   // M19：外观帧（小马类 osn.pon 帧=配色/皮肤）与瞄准点
                   // （celX/celY=敌人当前目标方向，仇恨可视化一致）
@@ -5170,6 +5272,12 @@ package rconnect.game
                // Older/test snapshots may provide movement directly.
                applyUnitFields(target, unitFields(e, ["dx","dy","stay","isFly","isLaz","levit"]));
                applyUnitFields(target, e.defense);
+               if(e.view!=null)
+               {
+                  if(_unitView[target]==null) _unitView[target]={original:unitView(target),host:e.view};
+                  else _unitView[target].host=e.view;
+                  applyUnitView(target,e.view);
+               }
                _baseDefense[target] = {armor:numOr(probe(target,"armor_hp"),0),
                   shield:numOr(probe(target,"shithp"),0)};
                target["setVisPos"]();
@@ -5211,7 +5319,7 @@ package rconnect.game
                }
                // M27：存活镜像单位进强制显示集（onVisForceFrame 每帧
                // 恢复被 RV 视距隐藏的 vis——"队友报点"语义）
-               if(numOr(e.sost, 1) < 3 && probe(target, "invis") != true)
+               if(numOr(e.sost, 1) < 3 && unitCanShow(target))
                {
                   _hostAlive[target] = true;
                }
@@ -5241,6 +5349,12 @@ package rconnect.game
             }
          for(old in _hitUnits)
             if(used[old] != true) removeHitUnit(old);
+         for(old in _unitView)
+            if(used[old] != true)
+            {
+               try {applyUnitView(old,_unitView[old].original);} catch(viewError:*) {}
+               delete _unitView[old];
+            }
          return res;
       }
 
@@ -5619,6 +5733,7 @@ package rconnect.game
             _objects.enter(loc);
             _units.enter(loc);
             restoreMirrorMasks();
+            restoreUnitViews();
             _sceneExpected = new Dictionary();
             _scenePending = new Dictionary();
             _boxTween = new Dictionary();
