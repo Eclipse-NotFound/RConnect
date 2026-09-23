@@ -33,7 +33,7 @@ def main():
                     (ROOT/'src'/'RConnectMod.as').read_text(encoding='utf-8')).group(1))
     args=ap.parse_args()
     if args.all_mods and not (args.presentation or args.effects): ap.error('--all-mods requires --presentation or --effects')
-    if args.effects_driver and not args.effects: ap.error('--effects-driver requires --effects')
+    if args.effects_driver and not (args.effects or args.presentation): ap.error('--effects-driver requires --effects or --presentation')
     if args.presentation and not args.land: args.land='random_mane'
     if args.vision_candidate: args.with_vision=True
     game=args.game_root.resolve()

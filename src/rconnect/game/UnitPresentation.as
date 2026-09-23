@@ -79,6 +79,7 @@ package rconnect.game
                   originalCurrent:get(u,"currentWeapon"),created:[],styles:new Dictionary()};
             }
             var old:int=rec.sost;rec.sost=int(snapshot.sost);
+            rec.body=snapshot.body;
             if(rec.sost>=3)
             {
                if(old<3 && rec.sost==4)
@@ -98,6 +99,7 @@ package rconnect.game
                enforceDeath(u,rec.sost);
                return;
             }
+            if(rec.body!=null)TurretDisplay.receive(u,rec.body);
             if(!(snapshot.weapons is Array)) return;
             for each(var s:Object in snapshot.weapons)
             {
@@ -161,6 +163,7 @@ package rconnect.game
                {
                   gun.queue--;gun.next=getTimer()+80;gun.flash=3;
                   play(w,"shoot");
+                  if(rec.body!=null && rec.body.kind=="turret")TurretDisplay.fire(u);
                }
                w.t_shoot=gun.flash;
                if(gun.flash>0) gun.flash--;
@@ -171,8 +174,15 @@ package rconnect.game
                   v.visible=u.vis.visible;v.alpha=u.vis.alpha;
                }
             }
+            if(rec.body!=null)TurretDisplay.present(u,rec.body);
          }
          catch(e:*) {failed(u,e);}
+      }
+
+      public function animateBody(u:Object):void
+      {
+         var rec:Object=states[u];
+         if(rec==null || rec.body==null || rec.body.kind!="turret")u.animate();
       }
 
       public function enforce(u:Object):void

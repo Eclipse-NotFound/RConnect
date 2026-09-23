@@ -4970,6 +4970,7 @@ package rconnect.game
                   motion: unitFields(u, ["dx","dy","stay","isFly","isLaz","levit"]),
                   // Mechanical visibility, never the local RV/FOV visible flag.
                   view: unitView(u),
+                  body: TurretDisplay.capture(u),
                   weapons: _presentation.capture(u),
                   defense: unitFields(u, MirrorHitUnit.DEFENSE),
                   // M19：外观帧（小马类 osn.pon 帧=配色/皮肤）与瞄准点
@@ -5448,6 +5449,7 @@ package rconnect.game
             // Numeric variants drive raiders/slavers as well as alicorns.
             // Mine with tr=0 must use its id path; an explicit zero bypasses it.
             else if(int(e.tr) > 0) map.@tr = int(e.tr);
+            if(cname.indexOf("UnitTurret") >= 0) cid=TurretDisplay.constructorId(e);
             // Constructors obtain base stats/animations from AllData themselves.
             // param3 is a map placement XML, NOT the AllData unit definition.
             var u:Object = new (cls as Class)(cid, 100, map, null);
@@ -5583,7 +5585,7 @@ package rconnect.game
                   u["setPos"](motion.x+(motion.tx-motion.x)*progress,motion.y+(motion.ty-motion.y)*progress);
                   u["setVisPos"]();
                }
-               u["animate"]();
+               _presentation.animateBody(u);
                _presentation.tick(u);
                var hit:MirrorHitUnit = _hitUnits[u];
                if(hit != null) hit.sync();

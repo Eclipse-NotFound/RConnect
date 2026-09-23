@@ -18,6 +18,7 @@ def main():
     ap.add_argument('--java',required=True)
     ap.add_argument('--sdk',type=Path,default=Path(r'D:\RemainsMod\mods\Sandevistan\build\tools\flexsdk'))
     ap.add_argument('--output',type=Path,required=True)
+    ap.add_argument('--entry',default='EffectsTerrainTestDoc',choices=['EffectsTerrainTestDoc','TurretTestDoc','PresentationTestDoc'])
     args=ap.parse_args()
     out=args.output.resolve()
     if not out.is_relative_to(ROOT/'build'): ap.error('Output must be inside this mod build directory')
@@ -35,9 +36,9 @@ def main():
         '-include-classes='+','.join(classes),'-output='+str(external)],check=True,env=env)
     subprocess.run(compiler+['-source-path='+str(ROOT/'tests'),'-external-library-path+='+str(external),
         '-external-library-path+='+str(ROOT/'build/GameCombatStubs.swc'),'-output='+str(out/'EffectsDriver.swf'),
-        str(ROOT/'tests/EffectsTerrainTestDoc.as')],check=True,env=env)
+        str(ROOT/'tests'/(args.entry+'.as'))],check=True,env=env)
     subprocess.run(compiler+['-source-path='+str(ROOT/'tests/harness'),'-output='+str(out/'EffectsHarness.swf'),
         str(ROOT/'tests/harness/RConnectDoc.as')],check=True,env=env)
-    (out/'driver-input.json').write_text(json.dumps({'candidate_sha256':hashlib.sha256(args.candidate.read_bytes()).hexdigest()},indent=2))
+    (out/'driver-input.json').write_text(json.dumps({'candidate_sha256':hashlib.sha256(args.candidate.read_bytes()).hexdigest(),'entry':args.entry},indent=2))
 
 if __name__=='__main__': main()
