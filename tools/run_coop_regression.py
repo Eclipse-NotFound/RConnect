@@ -25,12 +25,15 @@ def main():
     ap.add_argument('--vision-candidate',type=Path,help='Load this optional RV candidate instead of the installed SWF')
     ap.add_argument('--smoke', action='store_true', help='Validate a production candidate without test classes')
     ap.add_argument('--presentation', action='store_true', help='Validate the dedicated dark-room rendering test document')
+    ap.add_argument('--effects', action='store_true', help='Validate native weapon/death and terrain changes over TCP')
+    ap.add_argument('--effects-driver',type=Path,help='Directory containing an external EffectsDriver and EffectsHarness for exact production-byte tests')
     ap.add_argument('--land', default='', help='Host travels to this real mission before a scenario starts')
     ap.add_argument('--all-mods', action='store_true', help='Presentation scenario with all installed manifest modules')
     ap.add_argument('--expected-version',default=re.search(r'VERSION:String\s*=\s*"([^"]+)"',
                     (ROOT/'src'/'RConnectMod.as').read_text(encoding='utf-8')).group(1))
     args=ap.parse_args()
-    if args.all_mods and not args.presentation: ap.error('--all-mods requires --presentation')
+    if args.all_mods and not (args.presentation or args.effects): ap.error('--all-mods requires --presentation or --effects')
+    if args.effects_driver and not args.effects: ap.error('--effects-driver requires --effects')
     if args.presentation and not args.land: args.land='random_mane'
     if args.vision_candidate: args.with_vision=True
     game=args.game_root.resolve()
@@ -54,6 +57,12 @@ def main():
     shutil.copytree(game/'Rooms',frozen/'Rooms')
     release=frozen/'mods'/'Rconnect'/'release'; release.mkdir(parents=True)
     shutil.copy2(candidate,release/'RConnectMod.swf')
+    if args.effects_driver:
+        assert json.loads((args.effects_driver/'driver-input.json').read_text())['candidate_sha256']==candidate_hash, 'External driver was built for a different candidate'
+        driver_dir=frozen/'tests';driver_dir.mkdir()
+        shutil.copy2(candidate,driver_dir/'RConnectProduction.swf')
+        shutil.copy2(args.effects_driver/'EffectsDriver.swf',driver_dir/'EffectsDriver.swf')
+        shutil.copy2(args.effects_driver/'EffectsHarness.swf',release/'RConnectMod.swf')
     manifest=game/'mods'/'loader-manifest.txt'
     allowed={'rconnect'}
     if args.with_vision: allowed.add('realisticvision')
@@ -83,6 +92,10 @@ def main():
             folder=output/role; shutil.copytree(frozen,folder)
             release=folder/'mods'/'Rconnect'/'release'
             inputs[role]={'game':hashlib.sha256((folder/'pfe.swf').read_bytes()).hexdigest()}
+            if args.effects_driver:
+                inputs[role]['production']=hashlib.sha256((folder/'tests/RConnectProduction.swf').read_bytes()).hexdigest()
+                inputs[role]['driver']=hashlib.sha256((folder/'tests/EffectsDriver.swf').read_bytes()).hexdigest()
+                inputs[role]['harness']=hashlib.sha256((release/'RConnectMod.swf').read_bytes()).hexdigest()
             if args.with_vision:
                 vision=folder/'mods'/'RealisticVision'/'release'
                 inputs[role]['vision']=hashlib.sha256((vision/'RealisticVisionMod.swf').read_bytes()).hexdigest()
@@ -119,7 +132,8 @@ def main():
             complete=True
             for role,path in artifacts:
                 content=path.read_text(encoding='utf-8',errors='replace') if path.exists() else ''
-                if args.presentation: complete=complete and 'COOP PRESENTATION DONE' in content
+                if args.effects: complete=complete and 'COOP EFFECTS DONE' in content
+                elif args.presentation: complete=complete and 'COOP PRESENTATION DONE' in content
                 elif args.smoke: complete=complete and ('v'+args.expected_version+' initialized') in content and 'tick 200' in content
                 else: complete=complete and 'COOP NETWORK DONE' in content and 'COOP LMG NETWORK DONE' in content and (role!='host' or ('COOP COMBAT DONE' in content and 'COOP APPEARANCE DAMAGE DONE' in content))
             if complete: break
@@ -150,8 +164,8 @@ def main():
         path=output/(role+'.log')
         content=path.read_text(encoding='utf-8',errors='replace') if path.exists() else ''
         bad=list(dict.fromkeys(s for s in content.splitlines() if 'COOP FAIL' in s or 'game error dialog' in s))
-        if args.presentation:
-            ok=ok and not bad and 'COOP PRESENTATION DONE' in content
+        if args.presentation or args.effects:
+            ok=ok and not bad and ('COOP EFFECTS DONE' if args.effects else 'COOP PRESENTATION DONE') in content
             if role=='join': ok=ok and 'welcome id=' in content and 'unitsync matched' in content
             print(role+' failures: '+json.dumps(bad,ensure_ascii=False),flush=True)
             for line in content.splitlines():

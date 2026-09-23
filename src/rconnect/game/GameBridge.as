@@ -107,6 +107,8 @@ package rconnect.game
       public function endSession():void
       {
          _mirroring = false;
+         _terrain.reset();
+         _presentation.reset();
          _shieldFeedback = new Dictionary(true);
          clearHitUnits();
          _unitMotion = new Dictionary();
@@ -179,7 +181,7 @@ package rconnect.game
             tickLootMotion();
             for(var viewed:Object in _unitView)
                if(probe(viewed,"loc")===loc)
-                  try {applyUnitView(viewed,_unitView[viewed].host);}
+                  try {applyUnitView(viewed,_unitView[viewed].host);_presentation.enforce(viewed);}
                   catch(viewError:*) {logViewError(String(probe(viewed,"id")),viewError);}
             for(var u:Object in _hostAlive)
             {
@@ -192,7 +194,10 @@ package rconnect.game
                   restoreMirrorMask(vis);
                   continue;
                }
-               if(vis != null && probe(vis, "parent") == null && probe(u, "in_chain") == true)
+               // drawLoc replaces the layer tree. A frozen unit can still have
+               // a parent in the detached old tree; parent != null is insufficient.
+               if(vis != null && (probe(vis, "parent") == null || probe(vis,"stage") !== probe(main,"stage"))
+                  && probe(u, "in_chain") == true)
                {
                   var disabled:Boolean = probe(u, "disabled") == true;
                   try { u["disabled"] = false; u["addVisual"](); }
@@ -214,6 +219,7 @@ package rconnect.game
 
       private function onMirrorFrame(e:Event):void
       {
+         if(!_mirroring) _presentation.observe(loc);
          try {main.stage.invalidate();} catch(stageError:*) {}
          // Native ghost physics and packet arrivals must not dictate display cadence.
          for(var id:String in _remotes)
@@ -3069,227 +3075,20 @@ package rconnect.game
          }
       }
 
-      /** M17：宿主瓦片破坏差分——与基线比对返回变化瓦片（墙洞/地形破坏）。
-       *  附带 key 状态字段；基线随 loc 缓存，换房重建。 */
-      public function readTilePatch():Array
-      {
-         if(loc == null)
-         {
-            return null;
-         }
-         if(_tileBaseLoc !== loc)
-         {
-            _tileBaseLoc = loc;
-            _tileBase = null;   // 进入新房间：以当前状态为基线
-            buildTileBase();
-            return null;
-         }
-         if(_tileBase == null)
-         {
-            buildTileBase();
-            return null;
-         }
-         var out:Array = [];
-         try
-         {
-            var sx:int = numOr(probe(loc, "spaceX"), 0);
-            var sy:int = numOr(probe(loc, "spaceY"), 0);
-            var space:Object = probe(loc, "space");
-            for(var y:int = 0; y < sy && out.length < 60; y++)
-            {
-               var ry:Object = (space as Array)[y];
-               if(!(ry is Array))
-               {
-                  continue;
-               }
-               for(var x:int = 0; x < sx; x++)
-               {
-                  var t:Object = (ry as Array)[x];
-                  if(t == null)
-                  {
-                     continue;
-                  }
-                  var k:String = x + "," + y;
-                  var b:Object = _tileBase[k];
-                  if(b == null)
-                  {
-                     continue;
-                  }
-                  var phis:Number = numOr(probe(t, "phis"), 0);
-                  var front:String = String(probe(t, "front"));
-                  var back:String = String(probe(t, "back"));
-                  var zad:String = String(probe(t, "zad"));
-                  var zForm:int = numOr(probe(t, "zForm"), 0);
-                  var water:int = numOr(probe(t, "water"), 0);
-                  var stair:int = numOr(probe(t, "stair"), 0);
-                  var hp:Number = numOr(probe(t, "hp"), 0);
-                  if(phis != b.p || front != b.f || back != b.b || zad != b.z
-                     || zForm != b.zf || water != b.w || stair != b.st
-                     || Math.abs(hp - b.h) > 0.5)
-                  {
-                     out.push({x: x, y: y, p: phis, f: front, b: back, z: zad,
-                        zf: zForm, w: water, st: stair, h: hp});
-                     // M17：不推进基线——非默认瓦片作为"持久状态"持续广播，
-                     // 保证晚到的加入方也能收敛（应用侧幂等）
-                  }
-               }
-            }
-         }
-         catch(err:*)
-         {
-         }
-         return out.length > 0 ? out : null;
-      }
+      private var _terrain:TerrainSync = new TerrainSync();
+      private var _presentation:UnitPresentation = new UnitPresentation();
 
-      private function buildTileBase():void
-      {
-         _tileBase = {};
-         try
-         {
-            var sx:int = numOr(probe(loc, "spaceX"), 0);
-            var sy:int = numOr(probe(loc, "spaceY"), 0);
-            var space:Object = probe(loc, "space");
-            for(var y:int = 0; y < sy; y++)
-            {
-               var ry:Object = (space as Array)[y];
-               if(!(ry is Array))
-               {
-                  continue;
-               }
-               for(var x:int = 0; x < sx; x++)
-               {
-                  var t:Object = (ry as Array)[x];
-                  if(t == null)
-                  {
-                     continue;
-                  }
-                  _tileBase[x + "," + y] = {
-                     p: numOr(probe(t, "phis"), 0),
-                     f: String(probe(t, "front")),
-                     b: String(probe(t, "back")),
-                     z: String(probe(t, "zad")),
-                     zf: numOr(probe(t, "zForm"), 0),
-                     w: numOr(probe(t, "water"), 0),
-                     st: numOr(probe(t, "stair"), 0),
-                     h: numOr(probe(t, "hp"), 0)
-                  };
-               }
-            }
-         }
-         catch(err:*)
-         {
-         }
-      }
+      public function readTilePatch():Array {return _terrain.hostPatch(loc);}
+      public function applyTilePatch(list:Array):void {_terrain.apply(loc,list,freezeAI);}
+      public function scanTileReports():Object {return _terrain.report(loc);}
+      public function applyTileReport(peer:String,request:Object):Object {return _terrain.settle(loc,peer,request);}
+      public function acknowledgeTiles(receipt:Object):void {_terrain.acknowledge(loc,receipt);}
 
-      private var _tileBase:Object = null;
-      private var _tileBaseLoc:Object = null;
-
-      /** M17：应用宿主瓦片破坏；置脏，由 tick 触发整房重绘。 */
-      public function applyTilePatch(list:Array):void
-      {
-         if(loc == null || list == null)
-         {
-            return;
-         }
-         try
-         {
-            var space:Object = probe(loc, "space");
-            var applied:int = 0;
-            for each(var p:Object in list)
-            {
-               var t:Object = null;
-               try
-               {
-                  t = (space as Array)[int(p.y)][int(p.x)];
-               }
-               catch(err:*)
-               {
-                  t = null;
-               }
-               if(t == null)
-               {
-                  continue;
-               }
-               var changed:Boolean = false;
-               if(p.p != undefined && Number(t["phis"]) != Number(p.p))
-               {
-                  t["phis"] = Number(p.p);
-                  changed = true;
-               }
-               if(p.f != undefined && String(t["front"]) != String(p.f))
-               {
-                  t["front"] = String(p.f);
-                  changed = true;
-               }
-               if(p.b != undefined && String(t["back"]) != String(p.b))
-               {
-                  t["back"] = String(p.b);
-                  changed = true;
-               }
-               if(p.z != undefined && String(t["zad"]) != String(p.z))
-               {
-                  t["zad"] = String(p.z);
-                  changed = true;
-               }
-               if(p.zf != undefined && int(t["zForm"]) != int(p.zf))
-               {
-                  t["zForm"] = int(p.zf);
-                  changed = true;
-               }
-               if(p.w != undefined && int(t["water"]) != int(p.w))
-               {
-                  t["water"] = int(p.w);
-                  changed = true;
-               }
-               if(p.st != undefined && int(t["stair"]) != int(p.st))
-               {
-                  t["stair"] = int(p.st);
-                  changed = true;
-               }
-               if(p.h != undefined && Math.abs(Number(t["hp"]) - Number(p.h)) > 0.01)
-               {
-                  t["hp"] = Number(p.h);
-                  changed = true;
-               }
-               if(changed)
-               {
-                  applied++;
-               }
-            }
-            if(applied > 0)
-            {
-               _tileDirty = true;
-               if(!_tilePatchLogged)
-               {
-                  _tilePatchLogged = true;
-                  Log.d("RConnectGame: tile patch applied " + applied);
-               }
-            }
-         }
-         catch(err:*)
-         {
-         }
-      }
-
-      private var _tileDirty:Boolean = false;
-      private var _tilePatchLogged:Boolean = false;
-
-      /** M17：瓦片变化后整房重绘（World.redrawLoc 公开）。 */
       public function tileRedrawIfDirty():void
       {
-         if(!_tileDirty || world == null)
-         {
-            return;
-         }
-         _tileDirty = false;
-         try
-         {
-            world["redrawLoc"]();
-            Log.d("RConnectGame: tile redraw ran");
-         }
-         catch(err:*)
-         {
-         }
+         if(!_terrain.dirty || world==null) return;
+         try {world["redrawLoc"]();_terrain.dirty=false;}
+         catch(err:*) {logViewError("terrain-redraw",err);}
       }
 
       /** M17：宿主检测"非模板"物品（现场生成/掉落）→ 持续广播给加入方。
@@ -5171,6 +4970,7 @@ package rconnect.game
                   motion: unitFields(u, ["dx","dy","stay","isFly","isLaz","levit"]),
                   // Mechanical visibility, never the local RV/FOV visible flag.
                   view: unitView(u),
+                  weapons: _presentation.capture(u),
                   defense: unitFields(u, MirrorHitUnit.DEFENSE),
                   // M19：外观帧（小马类 osn.pon 帧=配色/皮肤）与瞄准点
                   // （celX/celY=敌人当前目标方向，仇恨可视化一致）
@@ -5323,6 +5123,7 @@ package rconnect.game
                {
                   _hostAlive[target] = true;
                }
+               if(freezeAI) _presentation.apply(target,e,main);
                var hit:MirrorHitUnit = _hitUnits[target];
                if(freezeAI && numOr(e.fraction,0)>0 && numOr(e.fraction,0)<100
                   && numOr(e.sost,1)<3 && !isTrigger(target))
@@ -5730,6 +5531,7 @@ package rconnect.game
          if(_lastLocRef != loc)
          {
             _lastLocRef = loc;
+            _presentation.reset();
             _objects.enter(loc);
             _units.enter(loc);
             restoreMirrorMasks();
@@ -5782,6 +5584,7 @@ package rconnect.game
                   u["setVisPos"]();
                }
                u["animate"]();
+               _presentation.tick(u);
                var hit:MirrorHitUnit = _hitUnits[u];
                if(hit != null) hit.sync();
             }

@@ -4,53 +4,53 @@
 
 ## 1. 这个模组是什么
 
-双人合作模组：加入者以自己的角色进入宿主世界，宿主结算敌人、伤害与场景状态，加入方上报行为并接收镜像。玩家状态默认约 20Hz，敌人/场景约 5Hz；画面在快照间逐帧推进。共享探索有变化时最快 100ms 发送，三秒完整补齐。入口 RConnectMod.init(main)，AIR/amxmlc，swf-version=38。
+双人合作：加入者以自己的角色进入宿主世界，宿主结算敌人、伤害和场景，加入者上报行为并接收镜像。玩家约20Hz、敌人与场景约5Hz，位置与动画逐帧推进；共享探索变化行最快100ms、三秒全量补齐。入口 RConnectMod.init(main)，AIR/amxmlc，swf-version=38。
 
 ## 2. 用户偏好与协作约定
 
-- 已授权补齐已有合作探索、战斗、场景交互，允许大幅重构，并部署候选测试。排除稳定重连、三人以上、真实网络、其他版本；不新增任务、背包与交易规则。
-- 本轮 M33 用户确认：自己流畅，主要是对方动作和共享视野跳；加入侧站在宿主身边仍看不到敌人本体。之前武器反馈为轻机枪打天角兽，M32 的伤害数字与护甲修复必须保留。
-- 共享探索既定规则：双向共享，各端独立控制接收，关闭保留已收到区域；原版遵循自身明暗，RV 采用本机设置，可选依赖。M31 的 RV 接口授权不扩展为本轮随意修改其他模组。
-- 本轮只写 RConnect。用户 pfe/pfe2 存档和进程不动；测试用随机应用标识、独立副本与新角色，只结束本轮创建的 PID。其他模组只做冲突定位与测试复制所需最小读取。
-- 根游戏及其他模组有同期部署；测试须先冻结整套输入再供两端使用，不能把 host 启动后重新读取线上文件的 join 当成一致环境。
+- 已授权补齐已有合作探索、战斗、交互，允许大幅重构并部署候选。排除稳定重连、三人以上、真实网络、其他版本；不新增任务/背包/交易规则。
+- 最新反馈：敌人不开火动画、旋翼机无死亡动画、加入侧枪械破墙不同步且墙后敌人不显示。旋翼机原生 id=vortex / UnitVortex，UnitDron 是无马机，不能混称。
+- 前轮反馈本机流畅，对方动作/共享视野跳，加入侧贴近宿主仍无敌人；武器为轻机枪打天角兽。M31 探索、M32 伤害/护甲、M33 动态显示修复须保留。
+- 本轮只写 RConnect；其他模组仅必要的冲突定位和测试复制读取。用户存档、进程和根游戏不动。独立新角色、随机应用标识，只结束本轮创建的 PID。
+- 两端所有输入必须启动前统一冻结，避免别的模组同期部署造成测试双方版本不同。共享探索保持双方独立接收开关、关闭后保留；RV 可选，不授予额外交互/看穿机制。
 
 ## 3. 当前状态
 
-- **M33 / 0.2.5-dev 已部署并通过正式路径启动检查 370cad3918**，53331 字节，SHA256 `683f8573e45cfa8b709d683cd5f558eec6f0b82f0c020380e59b7eb352fff2e6`。双方新版初始化、连接、tick200 与单位同步通过。
-- 最终 RC+RV 完整回归 **d5ee064ade：131 PASS / 0 FAIL**。含真实子弹/轻机枪、天角兽护盾与 HP 收敛、双方不同护甲、门箱/死亡、共享探索与退出清理；最终 HP1680.8/shield0，两端与逐击净损耗一致。
-- 最终全模组画面专项 **816fae8134：26 PASS / 0 FAIL**。加入侧 merc2/merc5/alicorn3 的实际屏幕像素可见，连续 15 个 RENDER 帧缺失 0。宿主/加入侧两包间动作分别 8/8/8、5/5/5（采样帧/不同位置/不同动画帧）。停止帧保持，探索逻辑秒 10 包、该夹具流量少约 86%。不等于任意负载下实测 10Hz。
-- 新增 RemoteMotion；原生动画播放与停止分开处理；探索变化行差分及真正绘制前合成；敌人同步 invis/isVis/alpha，并在原生动画后重施。保留天角兽隐身半透明闪现，不把隐身判定解除。正式包 18 类，无游戏存根/测试入口。
-- 原根因红测为受控本地透明残留。用户旧日志只证明单位匹配与 parent/visible 正常，没有 alpha/invis/isVis；不能断言用户所有不显示都仅源于同一原因，新日志已补齐字段。
-- 备份 `build/backup/m33-release-20260923-114237-479272/RConnectMod.before.swf`，SHA `4e65327f…996c5262`。复制回 release/RConnectMod.swf 并正常重启双方回到 M32/0.2.4；只回滚 RConnect，保留其他模组和新 loader。部署指纹在 build/m33/deployment.json。
+- **M34 / 0.2.6-dev 已部署**，57505 字节，SHA256 `cab160ba34ce7c2bedc84c68b9f85a2900811c426b4aeb523a0aa3cf5f549b86`。正式路径重启 **07638f0926 PASS**：双方新版初始化、连接、tick200/单位同步。受保护文件前后指纹一致。
+- **直接正式字节、全模组专项 ded0968377：27 PASS / 0 FAIL**。原生枪械开火帧、无额外本地子弹、UnitVortex/UnitDron 死亡及重复快照不重播、加入侧 Bullet 破墙→宿主 native hitTile→回执收敛。墙后敌人实际场景像素2154。
+- **RC+RV 完整合作 b63258d97b：131 PASS / 0 FAIL**；轻机枪/天角兽护盾与HP、双方不同护甲、门箱、探索、死亡和退出清理保留。
+- **全模组 M33 画面回归 74fbb372df：26 PASS / 0 FAIL**。三敌人实际视口可见、连续15个最终绘制帧缺失0；双方包间7个不同位置/动画帧，停止帧保持，探索差分通过。不是任意负载帧率承诺。
+- 新增 TerrainSync：正确space[x][y]，遮光/形状/碰撞状态，宿主原生结算与回执，保护在途预测、去重、换房清理、128块轮转；HP变化不重绘。
+- 新增 UnitPresentation：逐帧把原生短促开火转成持久事件号，只播放武器显示和机械爆裂，不重复子弹/击杀。房间重绘后同时检查 vis.stage，解决 parent非空却挂在旧离树图层的敌人。
+- 旧版备份 `build/backup/m34-release-20260923-183657-115022/RConnectMod.before.swf`，SHA `683f8573…52fff2e6`。仅复制回release/RConnectMod.swf并重启双方可回到0.2.5；不能恢复旧根SWF覆盖他人loader。部署回执 `build/m34/deployment.json`。
 
 ## 4. 正在进行与停点
 
-- 本轮修复、部署和独立重启验证完成，等待用户具体存档实玩反馈。
-- 源码基于 M32 提交 e872c5d；M31 共享探索与 M32 HitFeedback/RemoteArmor 保留。两端必须同时升级到 0.2.5；新行差分协议不保证旧版互通。
-- 当前根游戏为 1.02，新 manifest loader v2；测试基线 SHA `b7824465…8003305ac`，RV v0.30.0 SHA `ce3abb8d…3a8dfb5b`。本轮没有修改根游戏或 RV。
+- 本轮修复、正式字节行为验证、部署及正式加载路径重启检查完成，等具体存档实玩反馈。
+- 基于M33提交0925667；正式包20类，不含测试入口/游戏存根。外部驱动只有EffectsTerrainTestDoc/TerrainRegression两类，未携带另一份模组代码，测试包装器不部署。
+- 根游戏仍为1.02、manifest loader v2，SHA `b7824465…8003305ac`；RV0.30 SHA `ce3abb8d…3a8dfb5b`。全组合各文件指纹随报告保留。
 
 ## 5. 已知问题与验证边界
 
-- 普通受击器仍使用基础 Unit 损伤规则；持续伤害、特殊 Boss damage 覆写、全部武器及击杀效果没有穷举。
-- 现有 320px 近身补发现保留原生墙、朝向、潜行判断；远端不是 UnitPlayer，未复制完整发现度和听觉调查。TDFC 战术目标仍偏宿主，本轮没改其 AI。
-- 全合作回归只在 RC+RV；全部已装模组做了暗室显示/动态呈现专项，未验长期全组合战斗和全部地区。
-- 仍保留合作报点显示语义；强制显示不等于重做 RV 雾场。真正隐藏、半透明、死亡、离房及退出有定向检查，所有原生特效未穷举。
-- 首次认领同 id/class 就近匹配；绑定后按实例键，不随交叉换目标。首次重叠、几何严重不同仍有边界。
-- 异构输入轮 dc940a9437 曾在加入侧缺后续场景数据，且测试空数组产生异常；冻结输入后的两轮显示专项和两轮完整回归均未复现。不要声称已定位/修复传输层原因，也不要据单轮失败重写重连。
-- 未验证稳定重连、公网、三人以上和其他版本。Steam 覆盖 loader 后按 remains-game-update，不能恢复旧根 SWF 覆盖他人新加载器。
+- 未穷举全部武器、Boss、持续伤害/死亡覆写和焚毁；本轮机械离体以原生金属/小爆炸显示为主，不声称复制所有敌人专属特效或远端弹道。
+- 地形上报从原生已接受的耐久差采集；两端初始生成结构严重不同、连接前已损坏地形初始基线仍有边界。门走已有对象协议；320块与回执次序采用独立小网格验证，真实枪械案例另走完整TCP。
+- 全合作在RC+RV，全部已装模组验了显示/特效/破墙专项，未验长期全组合战斗及每个地区。
+- 普通受击器使用基础Unit损伤规则，特殊Boss覆写未全覆盖。近身320px补发现保留原生墙/朝向/隐身判断；TDFC战术目标、完整发现度/听觉未重做。
+- 初次同id/class就近认领，绑定后按实例键；初次重叠、几何差异仍有限制。稳定重连、公网、三人以上和其他版本不在本轮范围。
+- 红测/失败包含测试初始造墙观察不足、错误厚墙位置，以及真正旧图层失联；不要把前三项或单一像素失败误归因网络，也不要只检查parent/visible。
 
 ## 6. 下一步
 
-1. 双方保存并完全退出游戏，再正常启动，确认面板 0.2.5-dev。
-2. 真人复测加入侧敌人本体、双方跑跳/瞄准与分头探索。自动测试没有操作用户具体存档。
-3. 若仍不显示，先核对两端版本、房间和单位匹配，以及新日志 a/hidden/isVis；继续区分透明状态、绘制遮罩与包同步，不覆盖原始证据。
+1. 用户双方保存、完全退出并正常重启，确认面板0.2.6-dev。
+2. 具体存档复测敌人开火、旋翼机死亡，以及加入侧连射破墙后宿主墙洞与墙后敌人。
+3. 若仍有个别单位不显示，同时查room/key、sost、invis/isVis/alpha、vis.stage与实际主场景像素；特殊死亡按具体类核对，不能调用完整die造成二次掉落。
 
 ## 7. 深入了解
 
-- M33：knowledge/experiments/2026-09-23-m33-presentation.md、m33-validation-evidence.json；build/m33/deployment.json；tests/PresentationTestDoc.as。
-- M32：knowledge/experiments/2026-09-20-m32-hit-feedback-armor.md，m32-validation-evidence.json；src/rconnect/game/HitFeedback.as、RemoteArmor.as。蓝色 S -数字是护盾消耗，普通数字是生命损伤。
-- M31：docs/shared-exploration.md；knowledge/experiments/2026-09-20-m31-shared-exploration.md；state/deployment-m31-2026-09-20.md/json。RV active/capture/merge 为可选接口，不改原生交互/瞬移权限。
-- 构建：tools/build_mod.py --java <java.exe> --output build/m33/RConnectMod.swf；--cooperation-tests / --presentation-tests 加 --debug 构建独立测试入口。**不带 --output 会写 release。**
-- 回归：tools/run_coop_regression.py --candidate <测试SWF> --with-vision --seconds 360；画面专项加 --presentation --all-mods --seconds 210；普通 release 加 --smoke --seconds 150。画面专项进入 random_mane。测试需复制 mods/loader-manifest.txt；全模组标识 pfe-modsettings-rconnect-coop-* 避免 MSWAutoTest 抢驱动，普通 pfe-rconnect-coop-*。
-- Python C:/Users/hello/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe；Java C:/Users/hello/Documents/_sandevistan_dev/jdk-11.0.32.1+1-jre/bin/java.exe；SDK D:/RemainsMod/mods/Sandevistan/build/tools/flexsdk。AIR/FFDec 沙箱加载不足时按实际工具审核，不用初始化日志冒充行为通过。
-- 历史与玩家说明：state/journal.md、README.md、INSTALL.txt。报告有完整失败轮次与观察限制；build 下保留原日志、输入哈希及截图，不能作为新开发基线复制回源码。
+- M34：knowledge/experiments/2026-09-23-m34-effects-terrain.md、m34-validation-evidence.json；build/m34/deployment.json；tests/EffectsTerrainTestDoc.as与TerrainRegression.as。
+- 正式字节外部驱动方法已归档共享知识 KB-000061（修订1）；报告已追加全局测试台账。游戏旧图层机制在shared-knowledge/rendering/discoveries/frozen-unit-detached-layer.md。
+- M33：knowledge/experiments/2026-09-23-m33-presentation.md；M32：knowledge/experiments/2026-09-20-m32-hit-feedback-armor.md；M31：docs/shared-exploration.md。蓝色S -数字为护盾损耗。
+- 构建：tools/build_mod.py --java <java> --output build/<轮次>/RConnectMod.swf；--cooperation-tests / --presentation-tests / --effects-tests 为测试入口。默认无--output会写release，候选阶段必须显式输出。
+- 回归：tools/run_coop_regression.py --candidate <SWF> --with-vision；完整合作--seconds360，专项--effects --all-mods --seconds180，画面--presentation --all-mods --seconds210，正式重启--smoke --seconds150。
+- 正式字节行为测试：先普通构建，再 tools/build_effects_driver.py --candidate <正式SWF> --java <java> --output build/<轮次>/driver；runner加 --effects-driver <该目录> --effects --all-mods。它将正式SWF与只引用外部声明的驱动分开加载；必须审查两者类清单及两端production哈希。
+- Python C:/Users/hello/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe；Java C:/Users/hello/Documents/_sandevistan_dev/jdk-11.0.32.1+1-jre/bin/java.exe；SDK D:/RemainsMod/mods/Sandevistan/build/tools/flexsdk。AIR/FFDec沙箱受限时走工具审核，不以启动通过冒充行为通过。

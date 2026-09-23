@@ -1,0 +1,618 @@
+{
+  "version": "0.2.6-dev",
+  "base_commit": "0925667",
+  "runs": [
+    {
+      "port": 62538,
+      "pids": [
+        61796,
+        60380
+      ],
+      "candidate": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m34\\EffectsRed.swf",
+      "sha256": "7bfa72c6688b4ce2b509d487ac78c4e6ed2471a7c3321e90d691b8f2321747dd",
+      "inputs": {
+        "host": {
+          "game": "b78244657ed407d03808c90e97325509db35f802122835f58933fff8003305ac",
+          "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b"
+        },
+        "join": {
+          "game": "b78244657ed407d03808c90e97325509db35f802122835f58933fff8003305ac",
+          "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b"
+        }
+      },
+      "token": "b50326103c",
+      "results": {
+        "host": {
+          "pass": 2,
+          "fail": 3,
+          "log_sha256": "11ae130804f38f748942aaecf5b497b918137959cf97eef47a72336fbc49bc3d",
+          "failures": [
+            "COOP FAIL effects rectangular room includes far-column tile destruction",
+            "COOP FAIL effects tile state applies at x-y coordinates including light opacity",
+            "COOP FAIL effects join destruction reaches host collision and light"
+          ],
+          "selected": [
+            "COOP EFFECTS DONE host"
+          ]
+        },
+        "join": {
+          "pass": 2,
+          "fail": 5,
+          "log_sha256": "e1b8cbbab2c10bbd524b906929e1af3f5c061954c477321999a4fb45cf6c50bb",
+          "failures": [
+            "COOP FAIL effects enemy gun shows native firing frames on join",
+            "COOP FAIL effects mechanical death emits visible native fragments on join",
+            "COOP FAIL effects destroyed flying enemy leaves no intact hovering body",
+            "COOP FAIL effects join wall stays destroyed after newer host snapshots",
+            "COOP FAIL effects enemy behind destroyed wall contributes actual viewport pixels"
+          ],
+          "selected": [
+            "EFFECTS wall final p=1 opacity=0 enemyPixels=0",
+            "COOP EFFECTS DONE join"
+          ]
+        }
+      }
+    },
+    {
+      "port": 62680,
+      "pids": [
+        21144,
+        6972
+      ],
+      "candidate": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m34\\EffectsGreen.swf",
+      "sha256": "83e624a964b990f01261e506ce48927fe5c783fd0c88bebb982e0b8248fbace1",
+      "inputs": {
+        "host": {
+          "game": "b78244657ed407d03808c90e97325509db35f802122835f58933fff8003305ac",
+          "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b"
+        },
+        "join": {
+          "game": "b78244657ed407d03808c90e97325509db35f802122835f58933fff8003305ac",
+          "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b"
+        }
+      },
+      "token": "e214e890ec",
+      "results": {
+        "host": {
+          "pass": 4,
+          "fail": 1,
+          "log_sha256": "2fcd3ac00e210d9a63b8f3ab978ab2ae1467c602ad637c83c1d8d9b885e71802",
+          "failures": [
+            "COOP FAIL effects join destruction reaches host collision and light"
+          ],
+          "selected": [
+            "RConnectMod: v0.2.6-dev initialized",
+            "COOP EFFECTS DONE host"
+          ]
+        },
+        "join": {
+          "pass": 5,
+          "fail": 2,
+          "log_sha256": "fb615cab7b3ec559863f93fea4c417111accb193f7944124bc0bf120d2743c1f",
+          "failures": [
+            "COOP FAIL effects join wall stays destroyed after newer host snapshots",
+            "COOP FAIL effects enemy behind destroyed wall contributes actual viewport pixels"
+          ],
+          "selected": [
+            "RConnectMod: v0.2.6-dev initialized",
+            "EFFECTS wall final p=1 opacity=1 enemyPixels=0",
+            "COOP EFFECTS DONE join"
+          ]
+        }
+      }
+    },
+    {
+      "port": 64757,
+      "pids": [
+        66604,
+        64188
+      ],
+      "candidate": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m34\\EffectsGreen2.swf",
+      "sha256": "e2da3a3863a37605738749527fd71ef3bd43233a3c10a03d37c0c1378f32264d",
+      "inputs": {
+        "host": {
+          "game": "b78244657ed407d03808c90e97325509db35f802122835f58933fff8003305ac",
+          "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b"
+        },
+        "join": {
+          "game": "b78244657ed407d03808c90e97325509db35f802122835f58933fff8003305ac",
+          "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b"
+        }
+      },
+      "token": "c4bc07160a",
+      "results": {
+        "host": {
+          "pass": 6,
+          "fail": 0,
+          "log_sha256": "1506cce59b90ecc3b21ad37170725941d8e05ef4ab487426404e4a5946af5d05",
+          "failures": [],
+          "selected": [
+            "RConnectMod: v0.2.6-dev initialized",
+            "COOP EFFECTS DONE host"
+          ]
+        },
+        "join": {
+          "pass": 6,
+          "fail": 1,
+          "log_sha256": "91c013895554d9f9cfdc91ce2735cce3f2d63690010eb449436e2a5606e108cc",
+          "failures": [
+            "COOP FAIL effects enemy behind destroyed wall contributes actual viewport pixels"
+          ],
+          "selected": [
+            "RConnectMod: v0.2.6-dev initialized",
+            "EFFECTS wall final p=0 opacity=0 enemyPixels=0",
+            "COOP EFFECTS DONE join"
+          ]
+        }
+      }
+    },
+    {
+      "port": 60167,
+      "pids": [
+        38980,
+        62360
+      ],
+      "candidate": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m34\\EffectsGreen3.swf",
+      "sha256": "142e3ff7a48147bf3487296be86b6efcfe0ddfc975d2bf140c4fa0d5d46628d1",
+      "inputs": {
+        "host": {
+          "game": "b78244657ed407d03808c90e97325509db35f802122835f58933fff8003305ac",
+          "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b"
+        },
+        "join": {
+          "game": "b78244657ed407d03808c90e97325509db35f802122835f58933fff8003305ac",
+          "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b"
+        }
+      },
+      "token": "c3dc4c09a2",
+      "results": {
+        "host": {
+          "pass": 14,
+          "fail": 0,
+          "log_sha256": "0ce47427cb613cff844705415fd0fe83f86bacb6376e510cb0e718fa73dcd868",
+          "failures": [],
+          "selected": [
+            "RConnectMod: v0.2.6-dev initialized",
+            "COOP EFFECTS DONE host"
+          ]
+        },
+        "join": {
+          "pass": 7,
+          "fail": 1,
+          "log_sha256": "f5d6b7cbf5ced6ef0935ffcee1e4b54797ae0af563f7e4778a98dde8ee902368",
+          "failures": [
+            "COOP FAIL effects enemy behind destroyed wall contributes actual viewport pixels"
+          ],
+          "selected": [
+            "RConnectMod: v0.2.6-dev initialized",
+            "EFFECTS wall final p=0 opacity=0 enemyPixels=0",
+            "EFFECTS enemy x=920 y=640 gg=680,640 bounds=(x=824, y=508, w=170, h=170) alpha=1 visible=true parent=[object Sprite] mask=null frames=117",
+            "COOP EFFECTS DONE join"
+          ]
+        }
+      }
+    },
+    {
+      "port": 51177,
+      "pids": [
+        48816,
+        61088
+      ],
+      "candidate": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m34\\EffectsOptimized.swf",
+      "sha256": "85b6ec89d48075f1590c8ea16f37c04f2388dfc55933b16c5b833755c765062f",
+      "inputs": {
+        "host": {
+          "game": "b78244657ed407d03808c90e97325509db35f802122835f58933fff8003305ac",
+          "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+          "modules": {
+            "mods\\ModSettings\\release\\ModSettingsMod.swf": "5bd830a63f42130ef56e9c24c0e95b77b9871640b53d5cb4aa5b51e363894b5c",
+            "mods\\MoreSkills&Weapons\\release\\MoreSkillsWeaponsMod.swf": "a56e3b46d22cbc5ceccc086aa86c5e58917ec0fa5fff4d3178daabf02a49f659",
+            "mods\\RandomRooms\\release\\RandomRoomsMod.swf": "16f3d2bd63d19660e039f5f44b4792fd85f3e2119a59f058f8290f5746346c7f",
+            "mods\\Rconnect\\release\\RConnectMod.swf": "85b6ec89d48075f1590c8ea16f37c04f2388dfc55933b16c5b833755c765062f",
+            "mods\\RealisticVision\\release\\RealisticVisionMod.swf": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+            "mods\\Sandevistan\\release\\SandevistanMod.swf": "28449b2646223a8eee20eb4bb361dda2d5dc0572c6aaa9cd5fcb5d072a374c44",
+            "mods\\TDFC\\release\\TDFCMod.swf": "5ee8b967bf0eddc1d6c1931f1264db37dea94f365cc416b1971502a999af8a7e"
+          }
+        },
+        "join": {
+          "game": "b78244657ed407d03808c90e97325509db35f802122835f58933fff8003305ac",
+          "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+          "modules": {
+            "mods\\ModSettings\\release\\ModSettingsMod.swf": "5bd830a63f42130ef56e9c24c0e95b77b9871640b53d5cb4aa5b51e363894b5c",
+            "mods\\MoreSkills&Weapons\\release\\MoreSkillsWeaponsMod.swf": "a56e3b46d22cbc5ceccc086aa86c5e58917ec0fa5fff4d3178daabf02a49f659",
+            "mods\\RandomRooms\\release\\RandomRoomsMod.swf": "16f3d2bd63d19660e039f5f44b4792fd85f3e2119a59f058f8290f5746346c7f",
+            "mods\\Rconnect\\release\\RConnectMod.swf": "85b6ec89d48075f1590c8ea16f37c04f2388dfc55933b16c5b833755c765062f",
+            "mods\\RealisticVision\\release\\RealisticVisionMod.swf": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+            "mods\\Sandevistan\\release\\SandevistanMod.swf": "28449b2646223a8eee20eb4bb361dda2d5dc0572c6aaa9cd5fcb5d072a374c44",
+            "mods\\TDFC\\release\\TDFCMod.swf": "5ee8b967bf0eddc1d6c1931f1264db37dea94f365cc416b1971502a999af8a7e"
+          }
+        }
+      },
+      "token": "2eac12cd93",
+      "results": {
+        "host": {
+          "pass": 15,
+          "fail": 0,
+          "log_sha256": "a73ea4aa8f51984eafabfae9c9f786857643550b4ef80397433abf17aa1ea575",
+          "failures": [],
+          "selected": [
+            "RConnectMod: v0.2.6-dev initialized",
+            "COOP EFFECTS DONE host"
+          ]
+        },
+        "join": {
+          "pass": 8,
+          "fail": 1,
+          "log_sha256": "a6b54e5c12fd5bc78752362229f089c09864f2bd2aefe06a1607a4c62e408b20",
+          "failures": [
+            "COOP FAIL effects enemy behind destroyed wall contributes actual viewport pixels"
+          ],
+          "selected": [
+            "RConnectMod: v0.2.6-dev initialized",
+            "EFFECTS wall final p=0 opacity=0 enemyPixels=0",
+            "EFFECTS enemy x=560 y=640 gg=320,640 bounds=(x=464, y=508, w=170, h=170) alpha=1 visible=true parent=[object Sprite] mask=null frames=134",
+            "COOP EFFECTS DONE join"
+          ]
+        }
+      }
+    },
+    {
+      "port": 64984,
+      "pids": [
+        38024,
+        42568
+      ],
+      "candidate": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m34\\EffectsFinal.swf",
+      "sha256": "81527c0044121e9f9383aa17bca4b86e7b2316b50f91fd233f0f96f7d507704b",
+      "inputs": {
+        "host": {
+          "game": "b78244657ed407d03808c90e97325509db35f802122835f58933fff8003305ac",
+          "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+          "modules": {
+            "mods\\ModSettings\\release\\ModSettingsMod.swf": "5bd830a63f42130ef56e9c24c0e95b77b9871640b53d5cb4aa5b51e363894b5c",
+            "mods\\MoreSkills&Weapons\\release\\MoreSkillsWeaponsMod.swf": "a56e3b46d22cbc5ceccc086aa86c5e58917ec0fa5fff4d3178daabf02a49f659",
+            "mods\\RandomRooms\\release\\RandomRoomsMod.swf": "16f3d2bd63d19660e039f5f44b4792fd85f3e2119a59f058f8290f5746346c7f",
+            "mods\\Rconnect\\release\\RConnectMod.swf": "81527c0044121e9f9383aa17bca4b86e7b2316b50f91fd233f0f96f7d507704b",
+            "mods\\RealisticVision\\release\\RealisticVisionMod.swf": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+            "mods\\Sandevistan\\release\\SandevistanMod.swf": "28449b2646223a8eee20eb4bb361dda2d5dc0572c6aaa9cd5fcb5d072a374c44",
+            "mods\\TDFC\\release\\TDFCMod.swf": "5ee8b967bf0eddc1d6c1931f1264db37dea94f365cc416b1971502a999af8a7e"
+          }
+        },
+        "join": {
+          "game": "b78244657ed407d03808c90e97325509db35f802122835f58933fff8003305ac",
+          "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+          "modules": {
+            "mods\\ModSettings\\release\\ModSettingsMod.swf": "5bd830a63f42130ef56e9c24c0e95b77b9871640b53d5cb4aa5b51e363894b5c",
+            "mods\\MoreSkills&Weapons\\release\\MoreSkillsWeaponsMod.swf": "a56e3b46d22cbc5ceccc086aa86c5e58917ec0fa5fff4d3178daabf02a49f659",
+            "mods\\RandomRooms\\release\\RandomRoomsMod.swf": "16f3d2bd63d19660e039f5f44b4792fd85f3e2119a59f058f8290f5746346c7f",
+            "mods\\Rconnect\\release\\RConnectMod.swf": "81527c0044121e9f9383aa17bca4b86e7b2316b50f91fd233f0f96f7d507704b",
+            "mods\\RealisticVision\\release\\RealisticVisionMod.swf": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+            "mods\\Sandevistan\\release\\SandevistanMod.swf": "28449b2646223a8eee20eb4bb361dda2d5dc0572c6aaa9cd5fcb5d072a374c44",
+            "mods\\TDFC\\release\\TDFCMod.swf": "5ee8b967bf0eddc1d6c1931f1264db37dea94f365cc416b1971502a999af8a7e"
+          }
+        }
+      },
+      "token": "285c37d9e8",
+      "results": {
+        "host": {
+          "pass": 16,
+          "fail": 0,
+          "log_sha256": "8d8658d610a34b420e103959dfd853c31e1ac83e3e9bbffcb9047681e5ba12d7",
+          "failures": [],
+          "selected": [
+            "RConnectMod: v0.2.6-dev initialized",
+            "COOP EFFECTS DONE host"
+          ]
+        },
+        "join": {
+          "pass": 11,
+          "fail": 0,
+          "log_sha256": "d1889eb1f363b7aba29aec2bd381607d7c3ab7c20be8364b16f08aed9f2600ce",
+          "failures": [],
+          "selected": [
+            "RConnectMod: v0.2.6-dev initialized",
+            "EFFECTS wall final p=0 opacity=0 enemyPixels=2154",
+            "EFFECTS enemy x=560 y=640 gg=320,640 bounds=(x=324, y=404.65, w=113.35000000000002, h=113.35000000000002) alpha=1 visible=true parent=[object Sprite] mask=null frames=122",
+            "COOP EFFECTS DONE join"
+          ]
+        }
+      }
+    },
+    {
+      "port": 63060,
+      "pids": [
+        15540,
+        53124
+      ],
+      "candidate": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m34\\CoopFinal.swf",
+      "sha256": "c9313656118c888891e6210d974ca4aa135a39fc64077fcc15f87d7e626b662b",
+      "inputs": {
+        "host": {
+          "game": "b78244657ed407d03808c90e97325509db35f802122835f58933fff8003305ac",
+          "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b"
+        },
+        "join": {
+          "game": "b78244657ed407d03808c90e97325509db35f802122835f58933fff8003305ac",
+          "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b"
+        }
+      },
+      "token": "b63258d97b",
+      "results": {
+        "host": {
+          "pass": 114,
+          "fail": 0,
+          "log_sha256": "5841a90529dcbc0205d4990f0e5184e80477e32f441cf53b5d3ab6db55e47ff1",
+          "failures": [],
+          "selected": [
+            "RConnectMod: v0.2.6-dev initialized"
+          ]
+        },
+        "join": {
+          "pass": 17,
+          "fail": 0,
+          "log_sha256": "8c306a1dbd87955df0133ce5c961fb17e49c54b8ced3b5d5d117a4e5ce9b8edc",
+          "failures": [],
+          "selected": [
+            "RConnectMod: v0.2.6-dev initialized"
+          ]
+        }
+      }
+    },
+    {
+      "port": 52615,
+      "pids": [
+        41524,
+        57768
+      ],
+      "candidate": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m34\\RConnectMod.swf",
+      "sha256": "cab160ba34ce7c2bedc84c68b9f85a2900811c426b4aeb523a0aa3cf5f549b86",
+      "inputs": {
+        "host": {
+          "game": "b78244657ed407d03808c90e97325509db35f802122835f58933fff8003305ac",
+          "production": "cab160ba34ce7c2bedc84c68b9f85a2900811c426b4aeb523a0aa3cf5f549b86",
+          "driver": "b0c5fdbbf4a37f9281a762a244028ed160db0d327a366a0d5dd8b50db3b59600",
+          "harness": "817a50ea7832ffb59eaf2bc65354d0038de0cc3f68774c6307d7324115f816d9",
+          "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+          "modules": {
+            "mods\\ModSettings\\release\\ModSettingsMod.swf": "5bd830a63f42130ef56e9c24c0e95b77b9871640b53d5cb4aa5b51e363894b5c",
+            "mods\\MoreSkills&Weapons\\release\\MoreSkillsWeaponsMod.swf": "a56e3b46d22cbc5ceccc086aa86c5e58917ec0fa5fff4d3178daabf02a49f659",
+            "mods\\RandomRooms\\release\\RandomRoomsMod.swf": "16f3d2bd63d19660e039f5f44b4792fd85f3e2119a59f058f8290f5746346c7f",
+            "mods\\Rconnect\\release\\RConnectMod.swf": "817a50ea7832ffb59eaf2bc65354d0038de0cc3f68774c6307d7324115f816d9",
+            "mods\\RealisticVision\\release\\RealisticVisionMod.swf": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+            "mods\\Sandevistan\\release\\SandevistanMod.swf": "28449b2646223a8eee20eb4bb361dda2d5dc0572c6aaa9cd5fcb5d072a374c44",
+            "mods\\TDFC\\release\\TDFCMod.swf": "5ee8b967bf0eddc1d6c1931f1264db37dea94f365cc416b1971502a999af8a7e"
+          }
+        },
+        "join": {
+          "game": "b78244657ed407d03808c90e97325509db35f802122835f58933fff8003305ac",
+          "production": "cab160ba34ce7c2bedc84c68b9f85a2900811c426b4aeb523a0aa3cf5f549b86",
+          "driver": "b0c5fdbbf4a37f9281a762a244028ed160db0d327a366a0d5dd8b50db3b59600",
+          "harness": "817a50ea7832ffb59eaf2bc65354d0038de0cc3f68774c6307d7324115f816d9",
+          "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+          "modules": {
+            "mods\\ModSettings\\release\\ModSettingsMod.swf": "5bd830a63f42130ef56e9c24c0e95b77b9871640b53d5cb4aa5b51e363894b5c",
+            "mods\\MoreSkills&Weapons\\release\\MoreSkillsWeaponsMod.swf": "a56e3b46d22cbc5ceccc086aa86c5e58917ec0fa5fff4d3178daabf02a49f659",
+            "mods\\RandomRooms\\release\\RandomRoomsMod.swf": "16f3d2bd63d19660e039f5f44b4792fd85f3e2119a59f058f8290f5746346c7f",
+            "mods\\Rconnect\\release\\RConnectMod.swf": "817a50ea7832ffb59eaf2bc65354d0038de0cc3f68774c6307d7324115f816d9",
+            "mods\\RealisticVision\\release\\RealisticVisionMod.swf": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+            "mods\\Sandevistan\\release\\SandevistanMod.swf": "28449b2646223a8eee20eb4bb361dda2d5dc0572c6aaa9cd5fcb5d072a374c44",
+            "mods\\TDFC\\release\\TDFCMod.swf": "5ee8b967bf0eddc1d6c1931f1264db37dea94f365cc416b1971502a999af8a7e"
+          }
+        }
+      },
+      "token": "ded0968377",
+      "results": {
+        "host": {
+          "pass": 16,
+          "fail": 0,
+          "log_sha256": "546f812b56b7b8cf70456cb97adcd1132798e57952e7aa2778b8d64832674958",
+          "failures": [],
+          "selected": [
+            "RConnectMod: v0.2.6-dev initialized",
+            "COOP EFFECTS DONE host"
+          ]
+        },
+        "join": {
+          "pass": 11,
+          "fail": 0,
+          "log_sha256": "0c096033e07dd2bec268e73e8c225e415f9fb69286ad519bbdddb9f8420e3618",
+          "failures": [],
+          "selected": [
+            "RConnectMod: v0.2.6-dev initialized",
+            "EFFECTS wall final p=0 opacity=0 enemyPixels=2154",
+            "EFFECTS enemy x=560 y=640 gg=320,640 bounds=(x=324, y=404.65, w=113.35000000000002, h=113.35000000000002) alpha=1 visible=true parent=[object Sprite] mask=null frames=194",
+            "COOP EFFECTS DONE join"
+          ]
+        }
+      }
+    },
+    {
+      "port": 58528,
+      "pids": [
+        31360,
+        48920
+      ],
+      "candidate": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m34\\PresentationFinal.swf",
+      "sha256": "be14a5a50404964a164b6fa535788bfbc2321062a0428b6fdf8eecb68965c67f",
+      "inputs": {
+        "host": {
+          "game": "b78244657ed407d03808c90e97325509db35f802122835f58933fff8003305ac",
+          "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+          "modules": {
+            "mods\\ModSettings\\release\\ModSettingsMod.swf": "5bd830a63f42130ef56e9c24c0e95b77b9871640b53d5cb4aa5b51e363894b5c",
+            "mods\\MoreSkills&Weapons\\release\\MoreSkillsWeaponsMod.swf": "132bc390598296bd6237b3991d762f587cf66466ebb907334ea7cf972277f3ce",
+            "mods\\RandomRooms\\release\\RandomRoomsMod.swf": "16f3d2bd63d19660e039f5f44b4792fd85f3e2119a59f058f8290f5746346c7f",
+            "mods\\Rconnect\\release\\RConnectMod.swf": "be14a5a50404964a164b6fa535788bfbc2321062a0428b6fdf8eecb68965c67f",
+            "mods\\RealisticVision\\release\\RealisticVisionMod.swf": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+            "mods\\Sandevistan\\release\\SandevistanMod.swf": "28449b2646223a8eee20eb4bb361dda2d5dc0572c6aaa9cd5fcb5d072a374c44",
+            "mods\\TDFC\\release\\TDFCMod.swf": "5ee8b967bf0eddc1d6c1931f1264db37dea94f365cc416b1971502a999af8a7e"
+          }
+        },
+        "join": {
+          "game": "b78244657ed407d03808c90e97325509db35f802122835f58933fff8003305ac",
+          "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+          "modules": {
+            "mods\\ModSettings\\release\\ModSettingsMod.swf": "5bd830a63f42130ef56e9c24c0e95b77b9871640b53d5cb4aa5b51e363894b5c",
+            "mods\\MoreSkills&Weapons\\release\\MoreSkillsWeaponsMod.swf": "132bc390598296bd6237b3991d762f587cf66466ebb907334ea7cf972277f3ce",
+            "mods\\RandomRooms\\release\\RandomRoomsMod.swf": "16f3d2bd63d19660e039f5f44b4792fd85f3e2119a59f058f8290f5746346c7f",
+            "mods\\Rconnect\\release\\RConnectMod.swf": "be14a5a50404964a164b6fa535788bfbc2321062a0428b6fdf8eecb68965c67f",
+            "mods\\RealisticVision\\release\\RealisticVisionMod.swf": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+            "mods\\Sandevistan\\release\\SandevistanMod.swf": "28449b2646223a8eee20eb4bb361dda2d5dc0572c6aaa9cd5fcb5d072a374c44",
+            "mods\\TDFC\\release\\TDFCMod.swf": "5ee8b967bf0eddc1d6c1931f1264db37dea94f365cc416b1971502a999af8a7e"
+          }
+        }
+      },
+      "token": "74fbb372df",
+      "results": {
+        "host": {
+          "pass": 11,
+          "fail": 0,
+          "log_sha256": "684c6d02baa1702ff28879abe1b7d0d844fae9995b2bdafbbaef6d0d56af1b5d",
+          "failures": [],
+          "selected": [
+            "RConnectMod: v0.2.6-dev initialized",
+            "PRESENT sample between-packets frames=7 positions=7 bodyFrames=7 totalFrames=8",
+            "COOP PRESENTATION DONE host"
+          ]
+        },
+        "join": {
+          "pass": 15,
+          "fail": 0,
+          "log_sha256": "38dd6dc2153f503e5899b00b6c7b51be342a4ebf64925e4c26717a41a6c85d69",
+          "failures": [],
+          "selected": [
+            "RConnectMod: v0.2.6-dev initialized",
+            "PRESENT sample final-render frames=15 missing=0 elapsedMs=844",
+            "PRESENT sample between-packets frames=7 positions=7 bodyFrames=7 totalFrames=8",
+            "COOP PRESENTATION DONE join"
+          ]
+        }
+      }
+    },
+    {
+      "port": 61004,
+      "pids": [
+        65376,
+        67320
+      ],
+      "candidate": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\release\\RConnectMod.swf",
+      "sha256": "cab160ba34ce7c2bedc84c68b9f85a2900811c426b4aeb523a0aa3cf5f549b86",
+      "inputs": {
+        "host": {
+          "game": "b78244657ed407d03808c90e97325509db35f802122835f58933fff8003305ac",
+          "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b"
+        },
+        "join": {
+          "game": "b78244657ed407d03808c90e97325509db35f802122835f58933fff8003305ac",
+          "vision": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b"
+        }
+      },
+      "token": "07638f0926",
+      "results": {
+        "host": {
+          "pass": 0,
+          "fail": 0,
+          "log_sha256": "dfc23198154f2404a8a4643b0f3e77f07ebe31c85bd86fa0df073e991bfdc417",
+          "failures": [],
+          "selected": [
+            "RConnectMod: v0.2.6-dev initialized"
+          ]
+        },
+        "join": {
+          "pass": 0,
+          "fail": 0,
+          "log_sha256": "cc0e23f6f5e2edf1e2b0f53a7798f584408b10ecfe774650f9a3e318bfa9e7a6",
+          "failures": [],
+          "selected": [
+            "RConnectMod: v0.2.6-dev initialized"
+          ]
+        }
+      }
+    }
+  ],
+  "production_classes": [
+    "RConnectDoc 0",
+    "RConnectMod 1",
+    "rconnect.game.GameBridge 2",
+    "rconnect.game.ExplorationSync 3",
+    "rconnect.ui.NetHud 4",
+    "rconnect.game.VersionProbe 5",
+    "rconnect.core.Session 6",
+    "rconnect.core.Log 7",
+    "rconnect.core.Config 8",
+    "rconnect.game.MirrorHitUnit 9",
+    "rconnect.game.HitFeedback 10",
+    "rconnect.game.RemoteMotion 11",
+    "rconnect.game.UnitPresentation 12",
+    "rconnect.game.RemoteArmor 13",
+    "rconnect.game.ObjectIdentity 14",
+    "rconnect.game.TerrainSync 15",
+    "rconnect.net.Protocol 16",
+    "rconnect.net.NetMessageEvent 17",
+    "rconnect.net.TcpLink 18",
+    "rconnect.net.HostServer 19"
+  ],
+  "external_driver_classes": [
+    "EffectsTerrainTestDoc 0",
+    "TerrainRegression 1"
+  ],
+  "deployment": {
+    "version": "0.2.6-dev",
+    "deployed_at": "2026-09-23T18:36:57.231802",
+    "backup": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\backup\\m34-release-20260923-183657-115022\\RConnectMod.before.swf",
+    "before_sha256": "683f8573e45cfa8b709d683cd5f558eec6f0b82f0c020380e59b7eb352fff2e6",
+    "candidate_sha256": "cab160ba34ce7c2bedc84c68b9f85a2900811c426b4aeb523a0aa3cf5f549b86",
+    "bytes": 57505,
+    "protected_before": {
+      "pfe.swf": "b78244657ed407d03808c90e97325509db35f802122835f58933fff8003305ac",
+      "DLC\\pfe.swf": "90dec445e60e352dcad06b3171a3ae7b588dbf1fe6c8fb452fceec392aa9db02",
+      "DLC\\pfeUI.swf": "0bd5d24381b5aaea50e40b2f95a9e54dfe4a7911aafba27aff06961c82f350c7",
+      "application.xml": "70dd3b085e5f6c66c03693cf68ce5e93a4e4136dd745d40d1a5b2a49863ba236",
+      "mods\\loader-manifest.txt": "74fc714289cfade26407b084476ce7de0b7d158a2b1869d9ddb9aeefef4863bd",
+      "mods\\RConnect\\release\\config.txt": "5ca72017f1f811b5f8a2b1f18f6cb8b2c24239e2240716c4059cbc073913fc0a",
+      "mods\\ModSettings\\release\\ModSettingsMod.swf": "5bd830a63f42130ef56e9c24c0e95b77b9871640b53d5cb4aa5b51e363894b5c",
+      "mods\\Sandevistan\\release\\SandevistanMod.swf": "28449b2646223a8eee20eb4bb361dda2d5dc0572c6aaa9cd5fcb5d072a374c44",
+      "mods\\Sandevistan\\release\\config.txt": "d91c4c2889aba19b1bcfb356885921b0605a50188b270a9e7619d2116e7ebdc3",
+      "mods\\RealisticVision\\release\\RealisticVisionMod.swf": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+      "mods\\RealisticVision\\release\\config.txt": "5136ee1923a77f5f10eab1b3994b64cbd67b09d687a7e829fb1e81d2e79a3c7f",
+      "mods\\MoreSkills&Weapons\\release\\MoreSkillsWeaponsMod.swf": "132bc390598296bd6237b3991d762f587cf66466ebb907334ea7cf972277f3ce",
+      "mods\\TDFC\\release\\TDFCMod.swf": "5ee8b967bf0eddc1d6c1931f1264db37dea94f365cc416b1971502a999af8a7e",
+      "mods\\RandomRooms\\release\\RandomRoomsMod.swf": "16f3d2bd63d19660e039f5f44b4792fd85f3e2119a59f058f8290f5746346c7f"
+    },
+    "status": "deployed-smoke-passed",
+    "protected_after": {
+      "pfe.swf": "b78244657ed407d03808c90e97325509db35f802122835f58933fff8003305ac",
+      "DLC\\pfe.swf": "90dec445e60e352dcad06b3171a3ae7b588dbf1fe6c8fb452fceec392aa9db02",
+      "DLC\\pfeUI.swf": "0bd5d24381b5aaea50e40b2f95a9e54dfe4a7911aafba27aff06961c82f350c7",
+      "application.xml": "70dd3b085e5f6c66c03693cf68ce5e93a4e4136dd745d40d1a5b2a49863ba236",
+      "mods\\loader-manifest.txt": "74fc714289cfade26407b084476ce7de0b7d158a2b1869d9ddb9aeefef4863bd",
+      "mods\\RConnect\\release\\config.txt": "5ca72017f1f811b5f8a2b1f18f6cb8b2c24239e2240716c4059cbc073913fc0a",
+      "mods\\ModSettings\\release\\ModSettingsMod.swf": "5bd830a63f42130ef56e9c24c0e95b77b9871640b53d5cb4aa5b51e363894b5c",
+      "mods\\Sandevistan\\release\\SandevistanMod.swf": "28449b2646223a8eee20eb4bb361dda2d5dc0572c6aaa9cd5fcb5d072a374c44",
+      "mods\\Sandevistan\\release\\config.txt": "d91c4c2889aba19b1bcfb356885921b0605a50188b270a9e7619d2116e7ebdc3",
+      "mods\\RealisticVision\\release\\RealisticVisionMod.swf": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+      "mods\\RealisticVision\\release\\config.txt": "5136ee1923a77f5f10eab1b3994b64cbd67b09d687a7e829fb1e81d2e79a3c7f",
+      "mods\\MoreSkills&Weapons\\release\\MoreSkillsWeaponsMod.swf": "132bc390598296bd6237b3991d762f587cf66466ebb907334ea7cf972277f3ce",
+      "mods\\TDFC\\release\\TDFCMod.swf": "5ee8b967bf0eddc1d6c1931f1264db37dea94f365cc416b1971502a999af8a7e",
+      "mods\\RandomRooms\\release\\RandomRoomsMod.swf": "16f3d2bd63d19660e039f5f44b4792fd85f3e2119a59f058f8290f5746346c7f"
+    },
+    "smoke": "07638f0926",
+    "protected_final": {
+      "pfe.swf": "b78244657ed407d03808c90e97325509db35f802122835f58933fff8003305ac",
+      "DLC\\pfe.swf": "90dec445e60e352dcad06b3171a3ae7b588dbf1fe6c8fb452fceec392aa9db02",
+      "DLC\\pfeUI.swf": "0bd5d24381b5aaea50e40b2f95a9e54dfe4a7911aafba27aff06961c82f350c7",
+      "application.xml": "70dd3b085e5f6c66c03693cf68ce5e93a4e4136dd745d40d1a5b2a49863ba236",
+      "mods\\loader-manifest.txt": "74fc714289cfade26407b084476ce7de0b7d158a2b1869d9ddb9aeefef4863bd",
+      "mods\\RConnect\\release\\config.txt": "5ca72017f1f811b5f8a2b1f18f6cb8b2c24239e2240716c4059cbc073913fc0a",
+      "mods\\ModSettings\\release\\ModSettingsMod.swf": "5bd830a63f42130ef56e9c24c0e95b77b9871640b53d5cb4aa5b51e363894b5c",
+      "mods\\Sandevistan\\release\\SandevistanMod.swf": "28449b2646223a8eee20eb4bb361dda2d5dc0572c6aaa9cd5fcb5d072a374c44",
+      "mods\\Sandevistan\\release\\config.txt": "d91c4c2889aba19b1bcfb356885921b0605a50188b270a9e7619d2116e7ebdc3",
+      "mods\\RealisticVision\\release\\RealisticVisionMod.swf": "ce3abb8d1321df4f2a6e1053ecbb44aabff66a6e27f81b517d3a341b3a8dfb5b",
+      "mods\\RealisticVision\\release\\config.txt": "5136ee1923a77f5f10eab1b3994b64cbd67b09d687a7e829fb1e81d2e79a3c7f",
+      "mods\\MoreSkills&Weapons\\release\\MoreSkillsWeaponsMod.swf": "132bc390598296bd6237b3991d762f587cf66466ebb907334ea7cf972277f3ce",
+      "mods\\TDFC\\release\\TDFCMod.swf": "5ee8b967bf0eddc1d6c1931f1264db37dea94f365cc416b1971502a999af8a7e",
+      "mods\\RandomRooms\\release\\RandomRoomsMod.swf": "16f3d2bd63d19660e039f5f44b4792fd85f3e2119a59f058f8290f5746346c7f"
+    },
+    "concurrent_changes": []
+  }
+}

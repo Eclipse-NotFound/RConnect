@@ -467,6 +467,10 @@ package rconnect.core
                }
                break;
 
+            case Protocol.MSG_TERRAIN_ACK:
+               if(sameHostRoom(msg)) mod.game.acknowledgeTiles(msg);
+               break;
+
             case Protocol.MSG_WORLDSTATE:
                applyWorldState(msg.players as Array);
                break;
@@ -606,6 +610,17 @@ package rconnect.core
                if(mod.game != null)
                {
                   mod.game.applyObjReports(msg);
+               }
+               break;
+
+            case Protocol.MSG_TERRAIN:
+               if(!sameHostRoom(msg) || findPeerByLink(link)==null) break;
+               var receipt:Object=mod.game.applyTileReport(String(link.id),msg);
+               if(receipt!=null)
+               {
+                  receipt.worldInfo=mod.game.readWorldInfo();
+                  link.send(Protocol.make(Protocol.MSG_TERRAIN_ACK,receipt));
+                  Log.d("RConnectNet: terrain settled tiles="+receipt.tiles.length+" seq="+receipt.seq);
                }
                break;
 
@@ -927,6 +942,16 @@ package rconnect.core
          if(mode == CONNECTED && _tickCount % 4 == 0 && mod.game != null
             && link != null && link.isOpen)
          {
+            if(!mod.game.isTransitioning())
+            {
+               var terrain:Object=mod.game.scanTileReports();
+               if(terrain!=null)
+               {
+                  terrain.worldInfo=mod.game.readWorldInfo();
+                  link.send(Protocol.make(Protocol.MSG_TERRAIN,terrain));
+                  Log.d("RConnectNet: terrain report tiles="+terrain.tiles.length+" seq="+terrain.seq);
+               }
+            }
             var lrep:Object = mod.game.scanLootReports();
             if(lrep != null)
             {

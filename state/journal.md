@@ -2,6 +2,16 @@
 
 > 协议见 GOVERNANCE.md §8：只追加不改写，**新条目插在最上面**。
 
+## 2026-09-23 M34：敌人开火/机械死亡、枪械破墙与重绘后显示，部署0.2.6-dev
+
+- 用户明确加入侧使用枪械破墙。新增UnitPresentation传递成功开火事件并驱动子武器显示、复制UnitVortex旋翼机/UnitDron无马机的机械爆裂与机体移除，重复死亡不重播；新增TerrainSync正确x/y和opac/形状，宿主原生伤害结算+回执保护预测、去重、换房清理与大批瓦片轮转。
+- 真正墙后无画面的另一原因是重绘后敌人仍挂在旧的离树Sprite：parent非空不足，新增stage归属检查与原生重挂接。保留M31/M32/M33语义。公共机制记录shared-knowledge/rendering/discoveries/frozen-unit-detached-layer.md。
+- 正式文件外部驱动、全模组ded0968377为27 PASS/0 FAIL，墙后2154像素；合作b63258d97b为131 PASS/0 FAIL；画面74fbb372df为26 PASS/0 FAIL、15绘制帧缺失0、双方包间7位置/7动画帧。新增独立外部驱动验证同一份正式字节，不只用debug行为和release初始化。
+- 仅部署RConnect 57505字节，SHA cab160ba…5f549b86；正式路径07638f0926双端启动/连接/tick200通过，其他游戏/模组/配置指纹未变。备份build/backup/m34-release-20260923-183657-115022/RConnectMod.before.swf可单独回滚0.2.5。
+- 旧代码8项红测、测试造墙等待不足、厚墙夹具误设、修正走廊仍因旧图层失联而失败，均保留。报告knowledge/experiments/2026-09-23-m34-effects-terrain.md及m34-validation-evidence.json。特殊敌人/焚毁、全部武器、长期全组合及原排除项不宣称全通过；等用户双端完全重启后具体存档反馈。
+
+---
+
 ## 2026-09-23 M33：对方动作/共享探索平滑与敌人显示，部署 0.2.5-dev
 
 - 用户补充本机流畅，主要对方动作与共享视野跳动；加入侧站在宿主身边仍不见敌人本体。复现包间位置/动画停顿及受控透明残留，新增逐帧 RemoteMotion、原生动画播放/停止处理、宿主 invis/isVis/alpha 同步及最终绘制修正；保留隐身半透明闪现。探索从 500ms 整房改为最快 100ms 变化行，三秒补齐，合成移至真正绘制前。

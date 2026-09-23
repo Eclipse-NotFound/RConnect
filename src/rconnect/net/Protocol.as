@@ -21,6 +21,8 @@ package rconnect.net
       public static const MSG_PLAYERDMG:String = "playerdmg";
       public static const MSG_LOOT:String = "loot";
       public static const MSG_OBJS:String = "objs";
+      public static const MSG_TERRAIN:String = "terrain";
+      public static const MSG_TERRAIN_ACK:String = "terrain-ack";
       public static const MSG_EXPLORATION:String = "exploration";
 
       /** 构造消息对象（type + 字段）。 */
