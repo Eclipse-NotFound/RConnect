@@ -27,7 +27,7 @@ package
       {
          var real:GameBridge=mod.game;
          var b:GameBridge=new GameBridge({stage:mod.stage,loaderInfo:mod.main["loaderInfo"]});
-         b.world=real.world; b.loc=real.loc; b.gg=real.gg; b.freezeAI=true;
+         b.roomEpoch=real.roomEpoch; b.world=real.world; b.loc=real.loc; b.gg=real.gg; b.freezeAI=true;
          var snap:Array=b.readUnitsSnapshot();
          var x:Number=Number(real.gg.X)+40, y:Number=Number(real.gg.Y);
          snap.push({k:"test-a",id:"slaver1",cls:"fe.unit::UnitSlaver",tr:1,x:x,y:y,hp:200,sost:1,fraction:1,anim:"stay"});

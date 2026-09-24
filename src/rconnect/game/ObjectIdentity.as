@@ -12,6 +12,7 @@ package rconnect.game
       private var objects:Object = {};
       private var serial:int = 0;
       private var prefix:String;
+      private var rooms:Dictionary = new Dictionary();
 
       public function ObjectIdentity(prefix:String = "B") { this.prefix = prefix; }
 
@@ -21,11 +22,24 @@ package rconnect.game
          keys = new Dictionary();
          objects = {};
          serial = 0;
+         rooms = new Dictionary();
       }
 
       public function enter(next:Object):void
       {
-         if(room !== next) reset(next);
+         if(room === next) return;
+         if(room!=null) rooms[room]={keys:keys,objects:objects,serial:serial};
+         room=next;
+         var saved:Object=next==null?null:rooms[next];
+         keys=saved==null?new Dictionary():saved.keys;
+         objects=saved==null?{}:saved.objects;
+         serial=saved==null?0:int(saved.serial);
+      }
+
+      public function clearRoom(next:Object):void
+      {
+         enter(next);keys=new Dictionary();objects={};serial=0;
+         if(next!=null)delete rooms[next];
       }
 
       public function key(o:Object):String
@@ -48,6 +62,7 @@ package rconnect.game
       {
          objects[k] = o;
          keys[o] = k;
+         if(k.indexOf(prefix)==0)serial=Math.max(serial,int(k.substr(prefix.length)));
       }
 
       public function resolve(s:Object, list:Array, used:Dictionary):Object
@@ -75,7 +90,7 @@ package rconnect.game
          if(best != null)
          {
             used[best] = true;
-            if(k != "") { objects[k] = best; keys[best] = k; }
+            if(k != "") bind(k,best);
          }
          return best;
       }

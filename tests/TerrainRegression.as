@@ -42,6 +42,19 @@ package
          var shaped:Object=next.space[2][1];shaped.setZForm=function(n:int):void {shaped.zForm=n;shaped.phY1=(1+n/4)*40;shaped.opac=0;};
          client.apply(next,[{x:2,y:1,zf:2,o:0.4}],true);
          check(shaped.phY1==60 && shaped.opac==0.4,"terrain shape recomputes collision bounds and final opacity");
+
+         host=room(20,16);local=room(20,16);sender=new TerrainSync();client=new TerrainSync();
+         sender.hostPatch(host);client.report(local);
+         local.space[0][0].hp=50;first=client.report(local);
+         receipt=sender.settle(host,"peer",first); // Receipt still in flight.
+         for each(column in local.space)for each(t in column)t.hp-=15;
+         var closing:Array=client.finishReports(local),settled:int=0;
+         for each(var batch:Object in closing){sender.settle(host,"peer",batch);settled+=batch.tiles.length;}
+         check(closing.length==3 && settled==320 && host.space[0][0].hp==35 && host.space[19][15].hp==45,
+            "room closing drains all later wall hits despite an in-flight receipt");
+         client.acknowledge(local,receipt);
+         check(client.finishReports(local).length==0 && client.report(local)==null,
+            "late receipt after room closing cannot replay or lose wall damage");
       }
 
       private static function room(width:int,height:int):Object

@@ -33,7 +33,7 @@ package
       {
          n++;
          var mod:RConnectMod = RConnectMod.instance;
-         if(mod == null || mod.game == null || mod.game.gg == null || mod.game.loc == null || n < 15) return;
+         if(mod == null || mod.game == null || mod.game.gg == null || mod.game.loc == null || n < 15 || !mod.session.rooms.ready || mod.session.rooms.busy) return;
          try
          {
             if(!checked)
@@ -47,6 +47,9 @@ package
                   CombatRegression.run(mod);
                }
             }
+            // These fixtures share one native room. Do not let the appearance
+            // fixture create a second mirror controller while combat is sampling it.
+            if(NativeApplication.nativeApplication.applicationID.indexOf("pfe-rconnect-coop-host-")==0 && !CombatRegression.complete)return;
             scenario.tick(mod,n);
             lmgScenario.tick(mod,n);
             if(n>=20 && !appearanceChecked && NativeApplication.nativeApplication.applicationID.indexOf("pfe-rconnect-coop-host-")==0)

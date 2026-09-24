@@ -30,6 +30,8 @@ package rconnect.core
       public var myId:int = -1;          // 宿主固定 0
       public var myName:String = "";
       public var hostName:String = "";
+      public var rooms:RoomSync;
+      private var travelGuard:TravelGuard;
 
       /** 宿主维护的 peer 表：{id, name, link, snap} */
       public var peers:Array = [];
@@ -99,6 +101,7 @@ package rconnect.core
       public function Session(mod:RConnectMod)
       {
          this.mod = mod;
+         rooms=new RoomSync(this);travelGuard=new TravelGuard(mod);
          this.myName = mod.config.getValue("nickname");
          this._autoRole = String(mod.config.getValue("autoRole"));
          var ag:String = String(mod.config.getValue("autoGame"));
@@ -253,6 +256,7 @@ package rconnect.core
 
       private function stop():void
       {
+         if(rooms!=null)rooms.reset();TravelGuard.clear();
          if(mod.exploration != null) mod.exploration.resetLink();
          if(server != null)
          {
@@ -369,6 +373,7 @@ package rconnect.core
       /** 客户端收到宿主的消息。 */
       private function handleMessage(msg:Object):void
       {
+         if(rooms.handle(msg))return;
          var type:String = msg != null ? String(msg.type) : "";
          _lastRecvAt = new Date().time;
 
@@ -389,6 +394,8 @@ package rconnect.core
                break;
 
             case Protocol.MSG_UNITSYNC:
+               rooms.observeHost(msg.worldInfo);
+               if(!rooms.accepts(msg))break;
                if(mod.game != null)
                {
                   // M7：世界注入——同 land 同 loc 时把敌对单位镜像成宿主快照
@@ -401,7 +408,7 @@ package rconnect.core
                            == String(msg.worldInfo.curLandId)
                         && String(mine.locId) == String(msg.worldInfo.locId))
                      {
-                        mod.game.reconcileWorld(msg.units as Array);
+                        mod.game.reconcileWorld(msg.units as Array,true);
                         // M16：同房物品（箱/门）状态镜像
                         if(msg.objs != null)
                         {
@@ -451,7 +458,7 @@ package rconnect.core
                   // M10b：本地玩家死亡流程期间暂停跟随，避免干扰复活回城
                   // M11：过渡期/存档加载后抑制期不跟随（否则房间被重置
                   // 回出生点，反复重进、场景无法正常加载）
-                  if(_autoFollow && msg.worldInfo != null
+                  if(_autoFollow && !mod.game.independentRooms && msg.worldInfo != null
                      && !mod.game.isPlayerDead()
                      && !mod.game.isTransitioning()
                      && flash.utils.getTimer() > _followSuppressUntil)
@@ -487,6 +494,7 @@ package rconnect.core
                break;
 
             case Protocol.MSG_PLAYERDMG:
+               if(!rooms.acceptsReceipt(msg))break;
                // 客户端：宿主世界对你的化身造成的伤害 → 本地玩家结算
                // M10b：本地已死（t_die/sost>=3）时不再施加（死亡流程本地处理）
                if(mod.game != null && mod.game.gg != null
@@ -521,6 +529,8 @@ package rconnect.core
             return;
          }
          var type:String = String(msg.type);
+
+         if(findPeerByLink(link)!=null && (rooms.handle(msg) || rooms.report(msg,link)))return;
 
          switch(type)
          {
@@ -643,6 +653,7 @@ package rconnect.core
       /** Room-scoped identities cannot be applied after either player travels. */
       private function sameHostRoom(msg:Object):Boolean
       {
+         if(mode==CONNECTED)return rooms.accepts(msg);
          var info:Object = mod.game != null ? mod.game.readWorldInfo() : null;
          return info != null && msg.worldInfo != null
             && String(info.curLandId) == String(msg.worldInfo.curLandId)
@@ -939,38 +950,8 @@ package rconnect.core
          // M24/M25/M26：joiner 高频（200ms）扫描本地 Loot 拾取/推动 + Box
          // 位移（念力）+ ist 变化（开门/开锁/搜刮）→ 上报宿主（搬运中的
          // 物体每秒 5 跳，接收端 tween 平滑）
-         if(mode == CONNECTED && _tickCount % 4 == 0 && mod.game != null
-            && link != null && link.isOpen)
-         {
-            if(!mod.game.isTransitioning())
-            {
-               var terrain:Object=mod.game.scanTileReports();
-               if(terrain!=null)
-               {
-                  terrain.worldInfo=mod.game.readWorldInfo();
-                  link.send(Protocol.make(Protocol.MSG_TERRAIN,terrain));
-                  Log.d("RConnectNet: terrain report tiles="+terrain.tiles.length+" seq="+terrain.seq);
-               }
-            }
-            var lrep:Object = mod.game.scanLootReports();
-            if(lrep != null)
-            {
-               lrep.worldInfo = mod.game.readWorldInfo();
-               link.send(Protocol.make(Protocol.MSG_LOOT, lrep));
-               Log.d("RConnectNet: loot report picked="
-                  + (lrep.picked as Array).length + " moved="
-                  + (lrep.moved as Array).length);
-            }
-            var orep:Object = mod.game.scanObjReports();
-            if(orep != null)
-            {
-               orep.worldInfo = mod.game.readWorldInfo();
-               link.send(Protocol.make(Protocol.MSG_OBJS, orep));
-               Log.d("RConnectNet: objs report moved="
-                  + ((orep.moved as Array) != null ? (orep.moved as Array).length : 0)
-                  + " ist=" + ((orep.ist as Array) != null ? (orep.ist as Array).length : 0));
-            }
-         }
+         if(mode==CONNECTED && rooms.ready && !rooms.busy && !rooms.authority && mod.game!=null)
+            flushRoomReports(_tickCount % 4 == 0);
 
          // M14 诊断：autoGhostAnim=1 时强制幽灵标签循环（验证动画帧推进）
          if(_autoGhostAnim && mod.game != null && _tickCount % 20 == 0
@@ -1025,28 +1006,13 @@ package rconnect.core
                }
                _wasDead = dead;
             }
-            // Drain damage every network tick; animation runs on ENTER_FRAME.
-            if(mod.game != null)
-            {
-               var hits:Array = mod.game.scanAndReportDamage();
-               if(hits != null && hits.length > 0)
-               {
-                  link.send(Protocol.make(Protocol.MSG_DAMAGE,
-                     {hits: hits, worldInfo: mod.game.readWorldInfo()}));
-                  Log.d("RConnectNet: reported " + hits.length
-                     + " damage hits first=" + String(hits[0].id)
-                     + " hp=" + Math.round(Number(hits[0].dmg))
-                     + " armor=" + Math.round(Number(hits[0].armorLoss))
-                     + " shield=" + Math.round(Number(hits[0].shieldLoss)));
-               }
-            }
          }
          else if(mode == HOSTING && server != null)
          {
             broadcastWorldState();
             // M4/M5：宿主每 4 tick（200ms = 5Hz）广播单位快照 + 世界身份
             // M17：不设 units>0 门槛——房间无敌人时也要传瓦片/物品/新生成
-            if(_tickCount % 4 == 0 && mod.game != null)
+            if(_tickCount % 4 == 0 && mod.game != null && rooms.ready && !rooms.busy && !mod.game.isTransitioning())
             {
                var usnap:Array = mod.game.readUnitsSnapshot();
                var usMsg:Object = Protocol.make(Protocol.MSG_UNITSYNC,
@@ -1086,7 +1052,7 @@ package rconnect.core
                   Log.d("RConnectNet: loots tx first " + llist.length
                      + " k=" + String(llist[0].k));
                }
-               server.broadcast(usMsg);
+               server.broadcast(rooms.stamp(usMsg));
             }
             // M5c：自动化联测换房（每 15s）
             if(_autoTravel && mod.game != null && _tickCount % 300 == 0)
@@ -1109,8 +1075,8 @@ package rconnect.core
                   var gdmg:Number = mod.game.scanGhostHp(int(gp.id));
                   if(gdmg > 0 && gp.link != null && gp.link.isOpen)
                   {
-                     gp.link.send(Protocol.make(Protocol.MSG_PLAYERDMG,
-                        {dmg: gdmg}));
+                     gp.link.send(rooms.stamp(Protocol.make(Protocol.MSG_PLAYERDMG,
+                        {dmg: gdmg})));
                      Log.d("RConnectNet: relayed " + gdmg
                         + " damage to '" + gp.name + "'");
                   }
@@ -1120,6 +1086,7 @@ package rconnect.core
             // travelToLand 返回 false 时（加载中/已在目标）稍后重试）
             if(_autoTravelLand != "" && !_travelLandDone
                && mod.game != null && mod.game.gg != null
+               && !rooms.busy
                && _tickCount % 40 == 0)
             {
                if(mod.game.travelToLand(_autoTravelLand))
@@ -1162,6 +1129,33 @@ package rconnect.core
             }
          }
          if(mod.hud != null) mod.hud.refresh();
+      }
+
+      public function flushRoomReports(scene:Boolean=true,closing:Boolean=false):void
+      {
+         if(link==null || !link.isOpen)return;
+         var hits:Array=mod.game.scanAndReportDamage();
+         if(hits!=null && hits.length)link.send(rooms.stamp(Protocol.make(Protocol.MSG_DAMAGE,{hits:hits,worldInfo:mod.game.readWorldInfo()})));
+         if(!scene)return;
+         var reports:Array=[];
+         var terrainBatches:Array=closing?mod.game.finishTileReports():[mod.game.scanTileReports()];
+         for each(var terrain:Object in terrainBatches)reports.push({type:Protocol.MSG_TERRAIN,data:terrain});
+         reports=reports.concat([{type:Protocol.MSG_LOOT,data:mod.game.scanLootReports()},
+            {type:Protocol.MSG_OBJS,data:mod.game.scanObjReports()}]);
+         for each(var item:Object in reports)if(item.data!=null)
+         {
+            item.data.worldInfo=mod.game.readWorldInfo();
+            link.send(rooms.stamp(Protocol.make(item.type,item.data)));
+         }
+      }
+
+      public function flushGhostDamage():void
+      {
+         for each(var p:Object in peers)
+         {
+            var amount:Number=mod.game.scanGhostHp(int(p.id));
+            if(amount>0 && p.link!=null)p.link.send(rooms.stamp(Protocol.make(Protocol.MSG_PLAYERDMG,{dmg:amount})));
+         }
       }
 
       // ---- 世界状态广播 -------------------------------------------------
@@ -1305,6 +1299,7 @@ package rconnect.core
          {
             s += "\nerror: " + error;
          }
+         if(rooms.status!="")s+="\n"+rooms.status;
          return s;
       }
 

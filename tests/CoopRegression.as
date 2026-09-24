@@ -110,7 +110,7 @@ package
          var real:GameBridge=mod.game;
          var sample:Object=real.readSnapshot();
          var gb:GameBridge=new GameBridge({stage:mod.stage,loaderInfo:mod.main["loaderInfo"]});
-         gb.world=real.world; gb.loc=real.loc; gb.gg=real.gg; gb.freezeAI=true;
+         gb.roomEpoch=real.roomEpoch; gb.world=real.world; gb.loc=real.loc; gb.gg=real.gg; gb.freezeAI=true;
          var list:Array=gb.readUnitsSnapshot();
          var x:Number=sample.x, y:Number=sample.y;
          list.push({id:"alicorn2",cls:"fe.unit::UnitAlicorn",tr:2,x:x+90,y:y,hp:200,sost:1,fraction:1,anim:"stay"});

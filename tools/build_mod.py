@@ -36,13 +36,14 @@ def main():
     ap.add_argument("--cooperation-tests", action="store_true", help="Build the isolated regression entry point")
     ap.add_argument("--presentation-tests", action="store_true", help="Build the dark-room and between-packet rendering regression")
     ap.add_argument("--effects-tests", action="store_true", help="Build native weapon/death/terrain TCP regression")
+    ap.add_argument("--rooms-tests", action="store_true", help="Build isolated room cooperation regression")
     args = ap.parse_args()
 
     src_dir = os.path.join(MOD_ROOT, "src")
     out_dir = os.path.join(MOD_ROOT, "release")
     os.makedirs(out_dir, exist_ok=True)
     out_swf = os.path.abspath(args.output) if args.output else os.path.join(out_dir, "RConnectMod.swf")
-    if args.cooperation_tests or args.presentation_tests or args.effects_tests:
+    if args.cooperation_tests or args.presentation_tests or args.effects_tests or args.rooms_tests:
         candidate_root = os.path.realpath(os.path.join(MOD_ROOT, "build"))
         if not args.output or os.path.commonpath([candidate_root, os.path.realpath(out_swf)]) != candidate_root:
             ap.error("Test builds require an explicit --output inside this mod's build directory")
@@ -50,9 +51,9 @@ def main():
 
     entry = os.path.join(src_dir, "RConnectDoc.as")
     sources = ["-source-path=" + src_dir]
-    if args.cooperation_tests or args.presentation_tests or args.effects_tests:
+    if args.cooperation_tests or args.presentation_tests or args.effects_tests or args.rooms_tests:
         sources.append("-source-path+=" + os.path.join(MOD_ROOT, "tests"))
-        entry = os.path.join(MOD_ROOT, "tests", "EffectsTerrainTestDoc.as" if args.effects_tests else ("PresentationTestDoc.as" if args.presentation_tests else "CoopTestDoc.as"))
+        entry = os.path.join(MOD_ROOT, "tests", "RoomCooperationTestDoc.as" if args.rooms_tests else ("EffectsTerrainTestDoc.as" if args.effects_tests else ("PresentationTestDoc.as" if args.presentation_tests else "CoopTestDoc.as")))
     sdk = os.path.normpath(os.path.join(os.path.dirname(args.amxmlc), ".."))
     compiler = [args.amxmlc]
     if args.java:
@@ -80,7 +81,7 @@ def main():
         stub_compiler = [args.java,"-Xmx384m","-jar",os.path.join(sdk,"lib","compc.jar"),
                          "+configname=air","+flexlib="+os.path.join(sdk,"frameworks")]
     stub_cmd = stub_compiler + ["-source-path="+os.path.join(HERE,"stubs"),
-                               "-include-classes=fe.unit.Unit,fe.weapon.Bullet" + (",fe.weapon.Weapon" if args.cooperation_tests else ""),
+                               "-include-classes=" + ",".join("fe.unit."+p[:-3] for p in os.listdir(os.path.join(HERE,"stubs","fe","unit")) if p.endswith(".as")) + ",fe.weapon.Bullet,fe.inter.PipPage,fe.inter.PipPageInfo,fe.inter.PipPageInv,fe.serv.Interact" + ",fe.weapon.Weapon",
                                "-output="+stub_swc,"-swf-version=38"]
     subprocess.run(stub_cmd, env=env, check=True)
     cmd.insert(1 if not args.java else len(compiler), "-external-library-path+="+stub_swc)

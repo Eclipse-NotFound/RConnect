@@ -8,6 +8,7 @@ package rconnect.game
    import flash.text.TextFieldAutoSize;
    import flash.text.TextFormat;
    import flash.utils.Dictionary;
+   import fe.serv.RConnectInteractionAccess;
    import flash.utils.getTimer;
    import flash.utils.getQualifiedClassName;
    import rconnect.core.Log;
@@ -45,6 +46,9 @@ package rconnect.game
       public var world:Object;       // fe.World 实例（未进游戏时为 null）
       public var gg:Object;          // 玩家 UnitPlayer（探测缓存）
       public var loc:Object;         // 当前 Location
+      public var roomEpoch:int=0;
+      public var independentRooms:Boolean=false;
+      public var roomHold:Boolean=false;
       /** M5a：客户端冻结被同步单位 AI（由 Session 按配置注入）。 */
       public var freezeAI:Boolean = false;
       /** M9：宿主侧客户端幽灵作为可攻击化身（可被打、可被敌人瞄准）。 */
@@ -158,6 +162,7 @@ package rconnect.game
        *  死亡/离房自动移出——不强制显示尸体）。 */
       private function onVisForceFrame(e:Event):void
       {
+         if(roomHold)return;
          if(_forcingVisibility) return;
          _forcingVisibility = true;
          try
@@ -219,6 +224,7 @@ package rconnect.game
 
       private function onMirrorFrame(e:Event):void
       {
+         if(roomHold)return;
          if(!_mirroring) _presentation.observe(loc);
          try {main.stage.invalidate();} catch(stageError:*) {}
          // Native ghost physics and packet arrivals must not dictate display cadence.
@@ -495,6 +501,7 @@ package rconnect.game
          var g0:Object = probe(world, "game");
          s.landId = g0 != null ? String(probe(g0, "curLandId")) : "";
          s.locId = loc != null ? String(probe(loc, "id")) : "";
+         s.roomKey=roomKey();s.roomEpoch=roomEpoch;
          // M14b：当前武器 id/变体（远端据此在幽灵手上镜像同款武器）
          var cw:Object = probe(gg, "currentWeapon");
          s.wi = cw != null ? String(probe(cw, "id")) : "";
@@ -547,7 +554,8 @@ package rconnect.game
          var myLand:String = currentLandId();
          var snapLand:String = snap.landId != null ? String(snap.landId) : "";
          var snapRoom:String = snap.locId == null ? "" : String(snap.locId);
-         if((myLand != "" && snapLand != "" && myLand != snapLand)
+         if((snap.roomKey!=null && (String(snap.roomKey)!=roomKey() || int(snap.roomEpoch)!=roomEpoch))
+            || (myLand != "" && snapLand != "" && myLand != snapLand)
             || (snapRoom != "" && snapRoom != String(probe(loc, "id"))))
          {
             if(rec.ghost != null)
@@ -1567,6 +1575,8 @@ package rconnect.game
          w.curLandId = game != null ? String(probe(game, "curLandId")) : "";
          w.curCoord = game != null ? String(probe(game, "curCoord")) : "";
          w.locId = loc != null ? String(probe(loc, "id")) : "";
+         w.landProb=loc==null?"":String(probe(loc,"landProb"));
+         w.roomKey=roomKey();w.roomEpoch=roomEpoch;
          var land:Object = probe(world, "land");
          w.landX = land != null ? int(probe(land, "locX")) : 0;
          w.landY = land != null ? int(probe(land, "locY")) : 0;
@@ -1655,6 +1665,7 @@ package rconnect.game
             }
             return "followed-land(" + info.curLandId + ")";
          }
+         if(independentRooms) return "skip-same-map";
          if(String(mine.locId) == String(info.locId))
          {
             // M15：同土地 rnd 且 landStage 与宿主不一致 → 采纳参数重建
@@ -2479,6 +2490,7 @@ package rconnect.game
                   q: (numOr(probe(b, "levit"), 0) != 0
                      || numOr(probe(b, "fracLevit"), 0) > 0),
                   dead: probe(b, "dead") == true,
+                  hp: numOr(probe(b,"hp"),0),
                   door: numOr(probe(b, "door"), -1),
                   door_opac: numOr(probe(b, "door_opac"), -1),
                   shelf: probe(b, "shelf") == true
@@ -3081,6 +3093,7 @@ package rconnect.game
       public function readTilePatch():Array {return _terrain.hostPatch(loc);}
       public function applyTilePatch(list:Array):void {_terrain.apply(loc,list,freezeAI);}
       public function scanTileReports():Object {return _terrain.report(loc);}
+      public function finishTileReports():Array {return _terrain.finishReports(loc);}
       public function applyTileReport(peer:String,request:Object):Object {return _terrain.settle(loc,peer,request);}
       public function acknowledgeTiles(receipt:Object):void {_terrain.acknowledge(loc,receipt);}
 
@@ -5327,7 +5340,7 @@ package rconnect.game
        * 动物，傀儡化后视觉一致）。玩家阵营（fraction 100：宠物/玩家陷阱）
        * 不同步。调用方保证：仅当双方处于同一 land 且同一 loc 时调用。
        */
-      public function reconcileWorld(list:Array):void
+      public function reconcileWorld(list:Array, full:Boolean=false):void
       {
          if(world == null || loc == null || list == null)
          {
@@ -5336,7 +5349,7 @@ package rconnect.game
          // M21：宿主列表为空时**不动**本地敌人——空列表可能是换房过渡/
          // 短暂空房的瞬时状态；照单移除会永久清空加入方房间
          // （之后注入失败的话房间就永远没敌人了）。
-         if(list.length == 0)
+         if(list.length == 0 && !full)
          {
             return;
          }
@@ -5361,7 +5374,7 @@ package rconnect.game
             {
                continue;
             }
-            if(spawned >= 8)
+            if(spawned >= 8 && !full)
             {
                continue;
             }
@@ -5450,6 +5463,7 @@ package rconnect.game
             // Mine with tr=0 must use its id path; an explicit zero bypasses it.
             else if(int(e.tr) > 0) map.@tr = int(e.tr);
             if(cname.indexOf("UnitTurret") >= 0) cid=TurretDisplay.constructorId(e);
+            if(cname=="fe.unit::UnitTrap")cid=null;
             // Constructors obtain base stats/animations from AllData themselves.
             // param3 is a map placement XML, NOT the AllData unit definition.
             var u:Object = new (cls as Class)(cid, 100, map, null);
@@ -5496,6 +5510,115 @@ package rconnect.game
       }
 
       private var _injectFailed:Object = {};
+
+      public function roomKey(room:Object=null):String
+      {
+         if(room==null)room=loc;
+         if(room==null)return "";
+         return String(probe(probe(probe(room,"land"),"act"),"id"))+"/"+String(probe(room,"landProb"))+"/"+
+            int(probe(room,"landX"))+","+int(probe(room,"landY"))+","+int(probe(room,"landZ"));
+      }
+
+      /** Scoped settlement for reports sent just before a door crossing.
+       * Never step an inactive room or move the real player into it. */
+      public function inRoom(room:Object,fn:Function):*
+      {
+         var old:Object=loc,wl:Object=world.loc,land:Object=world.land,ll:Object=land.loc;
+         try {loc=room;world.loc=room;land.loc=room;return fn();}
+         finally {loc=old;world.loc=wl;land.loc=ll;}
+      }
+
+      public function checkpoint():Object
+      {
+         rconnect.core.TravelGuard.clear();
+         var list:Array=readUnitsSnapshot() || [],used:Dictionary=new Dictionary();
+         for each(var s:Object in list)
+         {
+            var u:Object=_units.resolve(s,loc.units,used);
+            if(u!=null)s.runtime=NativeRoomState.unit(u);
+         }
+         var objects:Array=readObjsSnapshot() || [];used=new Dictionary();
+         for each(s in objects)
+         {
+            var b:Object=_objects.resolve(s,loc.objs,used);
+            if(b!=null) {s.runtime=NativeRoomState.scalars(b);s.inter=NativeRoomState.scalars(probe(b,"inter"));s.interNative=RConnectInteractionAccess.capture(probe(b,"inter"));}
+         }
+         return {key:roomKey(),width:loc.spaceX,height:loc.spaceY,roomId:String(probe(loc.room,"id")),
+            units:list,objs:objects,loots:readLootSync() || [],tiles:_terrain.checkpoint(loc)};
+      }
+
+      public function roomRole(authority:Boolean):void
+      {
+         _presentation.reset();clearHitUnits();restoreMirrorMasks();restoreUnitViews();
+         for(var u:Object in _freezeOriginal) try {u.disabled=_freezeOriginal[u];}catch(e:*){}
+         _freezeOriginal=new Dictionary();_frozen=new Dictionary();_hostAlive=new Dictionary();
+         _pendingHits=new Dictionary();_baseHp=new Dictionary();_baseDefense=new Dictionary();
+         _unitMotion=new Dictionary();_mirroring=!authority;freezeAI=!authority;
+         _lastLocRef=null;resetBaselinesIfWorldChanged();
+      }
+
+      public function followMapGeneration(info:Object):void
+      {
+         adoptHostLandParams(info);regenCurrentLand();
+      }
+
+      public function restoreCheckpoint(s:Object,authority:Boolean,foreign:Boolean):void
+      {
+         if(s==null) {roomRole(authority);return;}
+         if(int(s.width)!=int(loc.spaceX) || int(s.height)!=int(loc.spaceY))
+            throw new Error("Room geometry differs: "+roomKey());
+         roomRole(authority);
+         if(foreign)_objects.clearRoom(loc);
+         reconcileObjs(s.objs as Array);
+         var used:Dictionary=new Dictionary();
+         for each(var os:Object in s.objs)
+         {
+            var box:Object=_objects.resolve(os,loc.objs,used);
+            if(box!=null){NativeRoomState.restore(box,os.runtime);NativeRoomState.restore(probe(box,"inter"),os.inter);RConnectInteractionAccess.restore(probe(box,"inter"),os.interNative);}
+         }
+         _terrain.restoreCheckpoint(loc,s.tiles as Array);
+         // A mirror is a display surrogate. Reconstruct native units when its
+         // authority changes, with original difficulty, AI and weapons.
+         if(foreign)
+         {
+            for each(var previous:Object in (loc.units as Array).concat())
+            {
+               if(previous==gg || probeNum(previous,"fraction",0)>=100)continue;
+               loc.remObj(previous);var index:int=loc.units.indexOf(previous);if(index>=0)loc.units.splice(index,1);
+               delete _spawnedPuppets[previous];
+            }
+            _units.clearRoom(loc);
+         }
+         used=new Dictionary();_units.enter(loc);
+         for each(var us:Object in s.units)
+         {
+            var unit:Object=_units.resolve(us,loc.units,used);
+            if(unit==null)
+            {
+               var cls:Class=main.loaderInfo.applicationDomain.getDefinition(String(us.cls)) as Class;
+               var map:XML=us.runtime.internal.xml==null?<unit/>:new XML(us.runtime.internal.xml);
+               if(int(us.tr)>0)map.@tr=int(us.tr);
+               unit=new cls(NativeRoomState.constructorId(us),Number(loc.locDifLevel),map,null);
+               unit.putLoc(loc,Number(us.x),Number(us.y));loc.addObj(unit);loc.units.push(unit);
+               _units.bind(String(us.k),unit);used[unit]=true;
+            }
+            NativeRoomState.restoreUnit(unit,us.runtime,main);
+            delete _spawnedPuppets[unit];
+         }
+         // Empty is a real checkpoint too, not a temporary network omission.
+         for each(unit in (loc.units as Array).concat())
+            if(unit!=gg && !(unit is MirrorHitUnit) && probeNum(unit,"fraction",0)<100 && !used[unit])
+            {loc.remObj(unit);index=loc.units.indexOf(unit);if(index>=0)loc.units.splice(index,1);}
+         for each(var loot:Array in lootWalk())loc.remObj(loot[0]);
+         lootSyncReset();_lootLoc=loc;applyLootSync(s.loots as Array);
+         for(var lootKey:String in _lootObjOf)
+         {
+            _lootIdOf[_lootObjOf[lootKey]]=lootKey;
+            _lootIdSeq=Math.max(_lootIdSeq,int(lootKey.substr(2)));
+         }
+         if(!authority)applyUnitsSync(s.units as Array);
+         tileRedrawIfDirty();
+      }
 
       /** 从游戏全量数据 AllData.d 中取单位 XML（blit 动画定义的数据源）。 */
       private function findUnitXml(id:String):Object

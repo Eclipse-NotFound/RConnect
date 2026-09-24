@@ -33,7 +33,6 @@ def main():
                     (ROOT/'src'/'RConnectMod.as').read_text(encoding='utf-8')).group(1))
     args=ap.parse_args()
     if args.all_mods and not (args.presentation or args.effects): ap.error('--all-mods requires --presentation or --effects')
-    if args.effects_driver and not (args.effects or args.presentation): ap.error('--effects-driver requires --effects or --presentation')
     if args.presentation and not args.land: args.land='random_mane'
     if args.vision_candidate: args.with_vision=True
     game=args.game_root.resolve()
@@ -50,10 +49,16 @@ def main():
     procs=[]; artifacts=[]; inputs={}
     # Snapshot all shared inputs once before either process starts. Other mod
     # tasks may deploy while this pair is running.
+    runtime_swfs={'pfe.swf','sound.swf','sound_unit.swf','sound_weapon.swf',
+                  'sprite.swf','sprite1.swf','texture.swf','texture1.swf'}
+    assets=[p for p in game.iterdir() if p.is_file() and
+            (p.suffix in ('.xml','.cfg') or p.name in runtime_swfs)]
+    required_bytes=sum(p.stat().st_size for p in assets)*3+32*1024*1024
+    if shutil.disk_usage(output).free < required_bytes:
+        raise SystemExit('Insufficient space for isolated test copies; no AIR instance started')
     frozen=output/'frozen'; frozen.mkdir()
-    for source in game.iterdir():
-        if source.is_file() and source.suffix in ('.swf','.xml','.cfg'):
-            shutil.copy2(source,frozen/source.name)
+    for source in assets:
+        shutil.copy2(source,frozen/source.name)
     shutil.copytree(game/'Rooms',frozen/'Rooms')
     release=frozen/'mods'/'Rconnect'/'release'; release.mkdir(parents=True)
     shutil.copy2(candidate,release/'RConnectMod.swf')
@@ -163,7 +168,7 @@ def main():
     for role,_ in artifacts:
         path=output/(role+'.log')
         content=path.read_text(encoding='utf-8',errors='replace') if path.exists() else ''
-        bad=list(dict.fromkeys(s for s in content.splitlines() if 'COOP FAIL' in s or 'game error dialog' in s))
+        bad=list(dict.fromkeys(s for s in content.splitlines() if 'COOP FAIL' in s or 'game error dialog' in s or 'RConnectRoom: ERROR' in s or 'handoff timed out' in s))
         if args.presentation or args.effects:
             ok=ok and not bad and ('COOP EFFECTS DONE' if args.effects else 'COOP PRESENTATION DONE') in content
             if role=='join': ok=ok and 'welcome id=' in content and 'unitsync matched' in content

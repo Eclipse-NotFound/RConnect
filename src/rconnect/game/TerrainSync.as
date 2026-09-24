@@ -20,6 +20,23 @@ package rconnect.game
 
       public function reset():void { room=null; base={}; observed={}; queued={}; pending=null; receipts={}; dirty=false; }
 
+      public function checkpoint(loc:Object):Array
+      {
+         enter(loc);var out:Array=[];
+         for(var x:int=0;x<int(loc.spaceX);x++)for(var y:int=0;y<int(loc.spaceY);y++)
+         {
+            var t:Object=tile(x,y),s:Object=state(t,x,y);
+            s.native=NativeRoomState.scalars(t);out.push(s);
+         }
+         return out;
+      }
+      public function restoreCheckpoint(loc:Object,list:Array):void
+      {
+         reset();enter(loc);
+         for each(var s:Object in list)NativeRoomState.restore(tile(int(s.x),int(s.y)),s.native);
+         apply(loc,list,false);dirty=true;
+      }
+
       private function enter(loc:Object):void
       {
          if(room===loc) return;
@@ -109,6 +126,24 @@ package rconnect.game
          if(!list.length) return null;
          pending={epoch:epoch,seq:++seq,tiles:list};
          return pending;
+      }
+
+      /** Close an old room on the ordered TCP stream. The existing pending
+       * batch was already sent; send every later hit before the room-ready
+       * message, without waiting for receipts that may cross the barrier. */
+      public function finishReports(loc:Object):Array
+      {
+         enter(loc);capture();
+         var batches:Array=[],list:Array=[];
+         for(var k:String in queued)
+         {
+            list.push(queued[k]);delete queued[k];
+            if(list.length==128)
+            {batches.push({epoch:epoch,seq:++seq,tiles:list});list=[];}
+         }
+         if(list.length)batches.push({epoch:epoch,seq:++seq,tiles:list});
+         pending=null;
+         return batches;
       }
 
       private function predicted(k:String):Boolean
