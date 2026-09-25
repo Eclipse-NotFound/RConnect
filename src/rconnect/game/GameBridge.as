@@ -247,7 +247,7 @@ package rconnect.game
 
       private function unitView(u:Object):Object
       {
-         return {invis:probe(u,"invis")==true,isVis:probe(u,"isVis")!=false,
+         return {invis:probe(u,"invis")==true,isVis:probe(u,"isVis")!=false,isSats:probe(u,"isSats")==true,
             alpha:numOr(probe(probe(u,"vis"),"alpha"),1)};
       }
 
@@ -256,6 +256,7 @@ package rconnect.game
          if(state==null) return;
          if(state.invis is Boolean) u["invis"]=state.invis;
          if(state.isVis is Boolean) u["isVis"]=state.isVis;
+         if(state.isSats is Boolean) u["isSats"]=state.isSats;
          var vis:Object=probe(u,"vis");
          if(vis!=null && state.alpha!=null && isFinite(Number(state.alpha)))
             vis["alpha"]=Math.max(0,Math.min(1,Number(state.alpha)));

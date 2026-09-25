@@ -18,7 +18,7 @@ def main():
     ap.add_argument('--java',required=True)
     ap.add_argument('--sdk',type=Path,default=Path(r'D:\RemainsMod\mods\Sandevistan\build\tools\flexsdk'))
     ap.add_argument('--output',type=Path,required=True)
-    ap.add_argument('--entry',default='EffectsTerrainTestDoc',choices=['EffectsTerrainTestDoc','TurretTestDoc','PresentationTestDoc','RoomCooperationTestDoc','CoopTestDoc'])
+    ap.add_argument('--entry',default='EffectsTerrainTestDoc',choices=['EffectsTerrainTestDoc','TurretTestDoc','PresentationTestDoc','RoomCooperationTestDoc','CoopTestDoc','SatsTestDoc'])
     args=ap.parse_args()
     out=args.output.resolve()
     if not out.is_relative_to(ROOT/'build'): ap.error('Output must be inside this mod build directory')
