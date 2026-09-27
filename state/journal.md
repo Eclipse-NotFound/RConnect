@@ -2,6 +2,16 @@
 
 > 协议见 GOVERNANCE.md §8：只追加不改写，**新条目插在最上面**。
 
+## 2026-09-27 M37：修复加入侧SATS空图像崩溃，部署0.2.9-dev
+
+- 用户报Sats/getUnits #1009。95d1afef99在旧部署精确复现；同房本体有图，碰撞代理vis为空；仅补图bf8f801f9d通过。修复保留原生选敌与攻击，同步隐身/禁选/目标资料，缺图排除，归属交接后退役代理不可复活或继续伤害。
+- 正式字节76715字节、SHA 7f8e65ff…6f499432，四组247 PASS/0 FAIL：SATS e7537480f5（24）、完整合作f8df825ae5（131）、分房1e614a79fa（66）、画面42db1a0cda（26）。SATS原生连射弹90→84，双方敌人hp2000→1948；无测试类/原生存根进入正式包。
+- 已备份旧0.2.8至build/backup/m37-release-20260927-201937-320917/RConnectMod.before.swf，仅替换RConnect release。83d542142e正常路径双实例加载0.2.9与tick200通过，47项游戏/其他模组/配置指纹不变；回执build/m37/deployment.json为deployed-smoke-passed。
+- 失败夹具、审核超时与中断如实记录于knowledge/experiments/2026-09-27-m37-sats.md及m37-validation-evidence.json。公共机制新增shared-knowledge/ui-systems/facts/sats-unit-visual-contract.md，已查重且不需读取本模组使用。
+- 2026-09-24到09-27中断间，外部已更新仓库历史及英文README；以fae082b为接续基线，保留其内容并更新双语版本状态，不改写历史、不推送。下一步用户重启双端核对0.2.9并实测SATS；排除范围不变。
+
+---
+
 ## 2026-09-24 M36完成：部署0.2.8-dev，同地图普通房可分头，空房暂停保留
 
 - 已按用户Q1–Q5确认实现RoomSync房间归属交接、真实原生单位/武器/交互/地形/掉落恢复，以及宿主共同旅行和挑战入口限制。保留既有炮塔、动作、探索、护甲、合作伤害和破墙修复；不新增退出游戏后的随机房战斗存档。

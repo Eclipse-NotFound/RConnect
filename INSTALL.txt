@@ -1,13 +1,16 @@
-RConnect 0.2.8-dev 候选版 —— 安装与联机
+RConnect 0.2.9-dev 候选版 —— 安装与联机
 Fallout Equestria: Remains 1.02
 
 当前部署结果与回滚位置：
-knowledge/experiments/2026-09-24-m36-separate-rooms.md
+knowledge/experiments/2026-09-27-m37-sats.md
+
+本轮修复加入侧开启SATS时的getUnits空引用报错，保留原生选敌与射击。
+目标隐身、不能被瞄准或图像尚未就绪时，不会成为错误候选。
 
 本机已经装好模组加载器。更新只需替换：
 mods\Rconnect\release\RConnectMod.swf
 保留个人配置，双方完全退出并重启游戏，按F10核对版本。
-本轮不提供新的游戏文件整包；首次安装或加载器被还原时见README.md第二节。
+本轮不提供新的游戏文件整包；首次安装或加载器被还原时见README.zh-CN.md第二节。
 
 联机步骤：
 1. 宿主打开游戏并进档，按F10，填写名字和端口，点Host。
@@ -33,4 +36,4 @@ mods\Rconnect\release\RConnectMod.swf
 - 新版本没有生效：双方须完全退出并重启游戏。
 - 日志：%APPDATA%\pfe\Local Store\RConnect.log。
 
-更完整说明见README.md。
+更完整说明见README.zh-CN.md（中文）或README.md（English）。

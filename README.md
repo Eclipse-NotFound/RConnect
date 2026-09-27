@@ -4,7 +4,7 @@ Two-player online co-op for **Fallout Equestria: REMAINS** — see each other, c
 
 English (this page) · [简体中文](README.zh-CN.md)
 
-> Status: v0.2.8 (M36). Verified primarily for same-machine two-player co-op on game v1.02; stable reconnection, 3+ players, real-network play and other game versions are still unverified territory.
+> Current local candidate: **0.2.9-dev (M37)**, deployed September 27, 2026. Fixes the joining player's SATS `getUnits` null-reference crash; 247 automated checks and a normal-loading two-instance startup check passed. See the [validation record](knowledge/experiments/2026-09-27-m37-sats.md). Verified primarily for same-machine two-player co-op on game v1.02; stable reconnection, 3+ players, real-network play and other game versions remain unverified.
 
 ## Features
 
@@ -13,6 +13,7 @@ English (this page) · [简体中文](README.zh-CN.md)
 - In-panel **chat** between both sides.
 - **Shared exploration** (M31): two-way fog-of-war sharing with an independent toggle on each side; whatever you already received stays when you turn it off.
 - **Separate rooms** (M36): each player advances combat in the room they occupy; when you meet up, the host settles the fight with the joining side's reported damage. Empty rooms pause and keep their progress (enemy damage, deaths, broken walls, doors/containers, drops) until someone returns.
+- **SATS crash fix** (M37): mirrored enemies provide valid targeting visuals and respect invisibility and targeting restrictions. Native target selection and firing remain available; retired room targets are invalidated.
 - Enemy state broadcast by the host every 200 ms with client-side smoothing; story and challenge areas are entered together, host leads map transitions.
 - Optional auto-reconnect (test configuration).
 - Works alongside RealisticVision (remote vision respects your local vision settings; shared exploration integrates with it).
@@ -25,7 +26,7 @@ English (this page) · [简体中文](README.zh-CN.md)
 
 ## Install
 
-1. Download `RConnect_v0.2.8.zip` from [Releases](../../releases).
+1. Download a published RConnect package from [Releases](../../releases). The local candidate noted above has not been published by this update.
 2. Copy the zip's `mods` folder into your game root (next to `pfe.swf`).
 3. Restart the game — a translucent RConnect panel appears at the top-right of the main menu.
 
