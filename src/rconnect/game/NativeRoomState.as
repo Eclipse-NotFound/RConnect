@@ -27,9 +27,18 @@ package rconnect.game
             var value:*=GameBridge.probe(o,n);
             if(value is Number) {if(isFinite(Number(value)))s[n]=value;}
             else if(value is String || value is Boolean) s[n]=value;
+            // Native XML attributes remain XMLList entries until arithmetic is
+            // performed. JSON otherwise serializes these resistances as "XMLList".
+            else if(value is Array && (n=="vulner" || n=="begvulner")) s[n]=numbers(value);
             else if(value is Array && simple(value)) s[n]=JSON.parse(JSON.stringify(value));
          }
          return s;
+      }
+      public static function numbers(values:Array):Array
+      {
+         var out:Array=[];
+         for each(var value:* in values)out.push(Number(value));
+         return out;
       }
       private static function simple(a:Array,depth:int=0):Boolean
       {

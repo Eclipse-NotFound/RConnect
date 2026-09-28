@@ -7,6 +7,7 @@ package {
    import rconnect.game.GameBridge;
    import rconnect.core.Log;
    public class AppearanceDamageRegression {
+      public static var complete:Boolean=false;
       private static function check(ok:Boolean,label:String):void { Log.d("COOP "+(ok?"PASS ":"FAIL ")+"appearance-damage "+label); }
       public static function armorClips(node:Object,out:Array):void {
          if(node is MovieClip) {
@@ -27,6 +28,7 @@ package {
          return n;
       }
       public static function run(mod:RConnectMod):void {
+         complete=false;
          var b:GameBridge=new GameBridge({stage:mod.stage,loaderInfo:mod.main.loaderInfo});
          b.world=mod.game.world;b.gg=mod.game.gg;b.loc=mod.game.loc;b.freezeAI=true;
          var ad:Object=mod.main.loaderInfo.applicationDomain;
@@ -75,6 +77,7 @@ package {
                check(enemy.hp<hp,"second burst still damages enemy");
                check(numbers(b.loc)>0,"second burst creates number after first number expires");
                b.world.testDam=wasTest;b.world.showHit=wasShow;b.world.armorWork=armorWork;b.endSession();
+               complete=true;
                Log.d("COOP APPEARANCE DAMAGE DONE");
             }
          });timer.start();

@@ -47,9 +47,13 @@ package rconnect.game
          var body:Object=u.vis.osn;
          body.rotation=Number(s.rock);
          if(body.currentFrame!=1)return;
-         body.puha.gotoAndStop(int(u.tr));
-         body.puha.rotation=Number(u.currentWeapon.rot)*180/Math.PI;
-         if(GameBridge.probe(body,"light")!=null)body.light.gotoAndStop(int(s.light));
+         // On unfolding, currentFrame reaches 1 before its named barrel child
+         // is constructed. The next display frame retries without restarting it.
+         var barrel:Object=GameBridge.probe(body,"puha");
+         if(barrel==null)return;
+         if(barrel.currentFrame!=int(u.tr))barrel.gotoAndStop(int(u.tr));
+         barrel.rotation=Number(u.currentWeapon.rot)*180/Math.PI;
+         if(GameBridge.probe(body,"light")!=null && body.light.currentFrame!=int(s.light))body.light.gotoAndStop(int(s.light));
          if(int(s.mount)==3)
             body.t1.scaleX=body.t2.scaleX=body.t3.scaleX=u.storona;
       }
@@ -57,7 +61,9 @@ package rconnect.game
       public static function fire(u:Object):void
       {
          var body:Object=u.vis.osn;
-         if(body.currentFrame==1)body.puha.puha.gotoAndPlay(2);
+         var barrel:Object=GameBridge.probe(body,"puha");
+         var muzzle:Object=GameBridge.probe(barrel,"puha");
+         if(body.currentFrame==1 && muzzle!=null)muzzle.gotoAndPlay(2);
       }
    }
 }

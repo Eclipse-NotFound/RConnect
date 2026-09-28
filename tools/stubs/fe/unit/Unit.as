@@ -18,6 +18,7 @@ internal var t_hitPart:int;
 internal var hitSumm:Number;
 internal var t_mess:int;
 internal var kolChild:int;
+internal var anims:Array;
 public function Unit(id:String=null,difficulty:Number=100,map:XML=null,data:Object=null) {}
 public function damage(amount:Number,type:int,bullet:Bullet=null,periodic:Boolean=false):Number {return 0;}
 public function die(type:int=0):* {}

@@ -40,6 +40,8 @@ package rconnect.core
 
       private var _tick:Timer;
       private var _tickCount:int = 0;
+      private var _nextWorldSnapshot:int=0;
+      private var _nextSceneReport:int=0;
       private var _seq:int = 0;
       private var _lastRecvAt:Number = 0;
       private var _worldProbeT:int = 0;
@@ -256,6 +258,7 @@ package rconnect.core
 
       private function stop():void
       {
+         _nextWorldSnapshot=_nextSceneReport=0;
          if(rooms!=null)rooms.reset();TravelGuard.clear();
          if(mod.exploration != null) mod.exploration.resetLink();
          if(server != null)
@@ -495,6 +498,10 @@ package rconnect.core
 
             case Protocol.MSG_PLAYERDMG:
                if(!rooms.acceptsReceipt(msg))break;
+               if(msg.hits is Array) {
+                  mod.game.applyPlayerHits(msg.hits as Array);
+                  break;
+               }
                // 客户端：宿主世界对你的化身造成的伤害 → 本地玩家结算
                // M10b：本地已死（t_die/sost>=3）时不再施加（死亡流程本地处理）
                if(mod.game != null && mod.game.gg != null
@@ -951,7 +958,11 @@ package rconnect.core
          // 位移（念力）+ ist 变化（开门/开锁/搜刮）→ 上报宿主（搬运中的
          // 物体每秒 5 跳，接收端 tween 平滑）
          if(mode==CONNECTED && rooms.ready && !rooms.busy && !rooms.authority && mod.game!=null)
-            flushRoomReports(_tickCount % 4 == 0);
+         {
+            var sceneDue:Boolean=flash.utils.getTimer()>=_nextSceneReport;
+            if(sceneDue)_nextSceneReport=flash.utils.getTimer()+200;
+            flushRoomReports(sceneDue);
+         }
 
          // M14 诊断：autoGhostAnim=1 时强制幽灵标签循环（验证动画帧推进）
          if(_autoGhostAnim && mod.game != null && _tickCount % 20 == 0
@@ -980,7 +991,7 @@ package rconnect.core
                }
             }
             // Periodic test/death diagnostics, independent of damage report timing.
-            if(mod.game != null && _tickCount % 10 == 0)
+            if(mod.game != null && rooms.ready && !rooms.busy)
             {
                // 自动化联测：autoDamage=1 时先模拟本地伤害再检测
                if(_autoDamage && _tickCount % 100 == 0
@@ -1010,10 +1021,13 @@ package rconnect.core
          else if(mode == HOSTING && server != null)
          {
             broadcastWorldState();
-            // M4/M5：宿主每 4 tick（200ms = 5Hz）广播单位快照 + 世界身份
+            // 宿主按实际时间每约200ms广播单位快照 + 世界身份。
             // M17：不设 units>0 门槛——房间无敌人时也要传瓦片/物品/新生成
-            if(_tickCount % 4 == 0 && mod.game != null && rooms.ready && !rooms.busy && !mod.game.isTransitioning())
+            if(flash.utils.getTimer()>=_nextWorldSnapshot && mod.game != null && rooms.ready && !rooms.busy && !mod.game.isTransitioning())
             {
+               // AIR coalesces delayed timers under load. Counting four callbacks
+               // stretched 200ms updates to 500ms; use elapsed time without catch-up bursts.
+               _nextWorldSnapshot=flash.utils.getTimer()+200;
                var usnap:Array = mod.game.readUnitsSnapshot();
                var usMsg:Object = Protocol.make(Protocol.MSG_UNITSYNC,
                   {tick: _tickCount, units: usnap != null ? usnap : [],
@@ -1059,29 +1073,9 @@ package rconnect.core
             {
                mod.game.travelTest();
             }
-            // M9：监测客户端化身受击，伤害回传客户端（每 10 tick = 500ms）
-            // M10b：客户端已死（快照 sost>=3/hp<=0）时不上报——死亡流程本地处理
-            if(mod.game != null && _tickCount % 10 == 0)
-            {
-               for each(var gp:Object in peers)
-               {
-                  var ps:Object = gp.snap;
-                  var peerDead:Boolean = ps != null
-                     && (Number(ps.sost) >= 3 || Number(ps.hp) <= 0);
-                  if(peerDead)
-                  {
-                     continue;
-                  }
-                  var gdmg:Number = mod.game.scanGhostHp(int(gp.id));
-                  if(gdmg > 0 && gp.link != null && gp.link.isOpen)
-                  {
-                     gp.link.send(rooms.stamp(Protocol.make(Protocol.MSG_PLAYERDMG,
-                        {dmg: gdmg})));
-                     Log.d("RConnectNet: relayed " + gdmg
-                        + " damage to '" + gp.name + "'");
-                  }
-               }
-            }
+            // Deliver typed native hits on the next timer, also using this
+            // exact path before a room handoff removes the remote body.
+            if(mod.game != null && rooms.ready && !rooms.busy)flushGhostDamage();
             // M6.5：自动化联测——跨地图传送（世界就绪后执行一次；
             // travelToLand 返回 false 时（加载中/已在目标）稍后重试）
             if(_autoTravelLand != "" && !_travelLandDone
@@ -1153,8 +1147,12 @@ package rconnect.core
       {
          for each(var p:Object in peers)
          {
+            if(p.link==null || !p.link.isOpen)continue;
+            var hits:Array=mod.game.readRemoteHits(int(p.id));
             var amount:Number=mod.game.scanGhostHp(int(p.id));
-            if(amount>0 && p.link!=null)p.link.send(rooms.stamp(Protocol.make(Protocol.MSG_PLAYERDMG,{dmg:amount})));
+            if(p.snap!=null && (Number(p.snap.sost)>=3 || Number(p.snap.hp)<=0))continue;
+            if(hits.length)p.link.send(rooms.stamp(Protocol.make(Protocol.MSG_PLAYERDMG,{hits:hits})));
+            if(amount>0)p.link.send(rooms.stamp(Protocol.make(Protocol.MSG_PLAYERDMG,{dmg:amount})));
          }
       }
 

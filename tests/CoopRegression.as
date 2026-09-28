@@ -81,6 +81,10 @@ package
          freezeBridge.freezeAI=true;
          var active:Object={id:"active",X:-100000,Y:-100000,disabled:false,setVisPos:function():void {}};
          var paused:Object={id:"paused",X:-100000,Y:-100000,disabled:true,setVisPos:function():void {}};
+         // Production now refreshes native collision bounds after copying shape.
+         // These small lifecycle doubles need the same native positioning API.
+         active.setPos=function(x:Number,y:Number):void {active.X=x;active.Y=y;};
+         paused.setPos=function(x:Number,y:Number):void {paused.X=x;paused.Y=y;};
          freezeBridge.loc.units=[active,paused];
          var frozen:Object=freezeBridge.applyUnitsSync([
             {id:"active",x:-100000,y:-100000},{id:"paused",x:-100000,y:-100000}]);

@@ -4,6 +4,8 @@ package rconnect.game
    import flash.utils.Dictionary;
    import flash.utils.getTimer;
    import rconnect.core.Log;
+   import fe.unit.Unit;
+   import fe.unit.RConnectAnimationAccess;
 
    /** Plays native display objects without Weapon.step/actions or Unit.die.
     * Those methods also create bullets, loot, XP and scripts on a second world. */
@@ -62,7 +64,8 @@ package rconnect.game
             result.push({slot:i,id:String(get(w,"id")),variant:int(get(w,"variant")),main:w===current,
                shots:observeWeapon(w),ox:Number(get(w,"X"))-Number(get(u,"X")),
                oy:Number(get(w,"Y"))-Number(get(u,"Y")),rot:Number(get(w,"rot")),
-               prep:int(get(w,"t_prep")),reload:int(get(w,"t_reload"))});
+               prep:int(get(w,"t_prep")),reload:int(get(w,"t_reload")),
+               cadence:Math.max(16,Number(get(w,"rapid"))*1000/30)});
          }
          return result;
       }
@@ -79,6 +82,8 @@ package rconnect.game
                   originalCurrent:get(u,"currentWeapon"),created:[],styles:new Dictionary()};
             }
             var old:int=rec.sost;rec.sost=int(snapshot.sost);
+            RConnectAnimationAccess.receive(u as Unit,snapshot.pose,String(snapshot.anim),rec.pose);
+            rec.pose=snapshot.pose;
             rec.body=snapshot.body;
             if(rec.sost>=3)
             {
@@ -128,6 +133,11 @@ package rconnect.game
                }
                var delta:int=int(s.shots)-int(gun.shots);
                if(delta>0) gun.queue=Math.min(8,int(gun.queue)+delta);
+               var now:int=getTimer(),prev:Object=gun.motion;
+               gun.motion={x:prev==null?Number(s.ox):Number(gun.weapon.X)-Number(u.X),
+                  y:prev==null?Number(s.oy):Number(gun.weapon.Y)-Number(u.Y),
+                  r:prev==null?Number(s.rot):Number(gun.weapon.rot),at:now,
+                  duration:prev==null?0:Math.max(50,Math.min(600,now-int(prev.at)))};
                gun.shots=int(s.shots);gun.snapshot=s;
                if(int(s.reload)>0 && int(gun.reload)<=0) play(gun.weapon,"reload");
                gun.reload=int(s.reload);
@@ -157,11 +167,19 @@ package rconnect.game
                if(s==null) continue;
                var v:Object=get(w,"vis");
                if(v!=null && (v.parent==null || (get(get(u,"vis"),"stage")!=null && v.stage!==u.vis.stage))) w.addVisual();
-               w.X=Number(u.X)+Number(s.ox);w.Y=Number(u.Y)+Number(s.oy);w.rot=Number(s.rot);
-               w.t_prep=int(s.prep);w.t_reload=int(s.reload);
+               var m:Object=gun.motion;
+               var elapsed:int=getTimer()-int(m.at),p:Number=m.duration>0?Math.min(1,elapsed/m.duration):1;
+               var angle:Number=Number(s.rot)-Number(m.r);
+               while(angle>Math.PI)angle-=Math.PI*2;
+               while(angle<-Math.PI)angle+=Math.PI*2;
+               w.X=Number(u.X)+Number(m.x)+(Number(s.ox)-Number(m.x))*p;
+               w.Y=Number(u.Y)+Number(m.y)+(Number(s.oy)-Number(m.y))*p;
+               w.rot=Number(m.r)+angle*p;
+               w.t_prep=Math.max(0,int(s.prep)-int(elapsed*30/1000));
+               w.t_reload=Math.max(0,int(s.reload)-int(elapsed*30/1000));
                if(gun.queue>0 && getTimer()>=int(gun.next))
                {
-                  gun.queue--;gun.next=getTimer()+80;gun.flash=3;
+                  gun.queue--;gun.next=getTimer()+(s.cadence==null?80:Math.max(16,Math.min(250,Number(s.cadence))));gun.flash=3;
                   play(w,"shoot");
                   if(rec.body!=null && rec.body.kind=="turret")TurretDisplay.fire(u);
                }
@@ -182,7 +200,8 @@ package rconnect.game
       public function animateBody(u:Object):void
       {
          var rec:Object=states[u];
-         if(rec==null || rec.body==null || rec.body.kind!="turret")u.animate();
+         if(rec!=null && rec.body!=null && rec.body.kind=="turret")return;
+         if(rec==null || !RConnectAnimationAccess.tick(u as Unit,rec.pose))u.animate();
       }
 
       public function enforce(u:Object):void
@@ -225,7 +244,8 @@ package rconnect.game
       private function failed(u:Object,e:*):void
       {
          var id:String=String(get(u,"id"));if(errors[id]) return;errors[id]=true;
-         Log.d("RConnectGame: unit effects '"+id+"' failed: "+e);
+         var stack:String=e is Error?(e as Error).getStackTrace():null;
+         Log.d("RConnectGame: unit effects '"+id+"' failed: "+(stack==null?e:stack));
       }
    }
 }

@@ -28,8 +28,9 @@ for name, (parent, fields) in classes.items():
     if name != 'Unit':
         parent = parent if parent in classes else 'Unit'
         declarations = '\n'.join(f'internal var {n}:{t};' for n,t in fields)
+        constructor = 'public function UnitPonPon(id:String=null,difficulty:Number=100,map:XML=null,data:Object=null) {}\n' if name == 'UnitPonPon' else ''
         (root / f'tools/stubs/fe/unit/{name}.as').write_text(
-            f'package fe.unit {{ public class {name} extends {parent} {{\n{declarations}\n}} }}\n', encoding='utf-8')
+            f'package fe.unit {{ public class {name} extends {parent} {{\n{constructor}{declarations}\n}} }}\n', encoding='utf-8')
     else:
         declarations = '\n'.join(f'internal var {n}:{t};' for n,t in fields)
         (root / 'tools/stubs/fe/unit/Unit.as').write_text('''package fe.unit {
@@ -37,6 +38,7 @@ import fe.weapon.Bullet;
 // Compile-only external declarations. Never embedded in the production SWF.
 public class Unit {
 internal var mapxml:XML;
+internal var anims:Array;
 ''' + declarations + '''
 public function Unit(id:String=null,difficulty:Number=100,map:XML=null,data:Object=null) {}
 public function damage(amount:Number,type:int,bullet:Bullet=null,periodic:Boolean=false):Number {return 0;}

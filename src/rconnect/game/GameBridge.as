@@ -9,6 +9,8 @@ package rconnect.game
    import flash.text.TextFormat;
    import flash.utils.Dictionary;
    import fe.serv.RConnectInteractionAccess;
+   import fe.unit.Unit;
+   import fe.unit.RConnectAnimationAccess;
    import flash.utils.getTimer;
    import flash.utils.getQualifiedClassName;
    import rconnect.core.Log;
@@ -107,6 +109,8 @@ package rconnect.game
       private var _shieldFeedback:Dictionary = new Dictionary(true);
       private var _unitView:Dictionary = new Dictionary();
       private var _viewErrors:Object = {};
+      // Optional runtime timing sink; null in normal play.
+      public var presentationTiming:Object=null;
 
       public function endSession():void
       {
@@ -148,7 +152,7 @@ package rconnect.game
          _boxTween = new Dictionary();
          _boxTrack = new Dictionary();
          _istExpectO = new Dictionary();
-         _istStabO = new Dictionary();
+         _istPending = new Dictionary();
          _istSeen = new Dictionary();
          _istLast = new Dictionary();
          _istSeenLoc = null;
@@ -163,7 +167,8 @@ package rconnect.game
       private function onVisForceFrame(e:Event):void
       {
          if(roomHold)return;
-         if(_forcingVisibility) return;
+         if(_forcingVisibility || _animatingMirrors || _applyingUnits) return;
+         var measureAt:int=presentationTiming==null?0:getTimer();
          _forcingVisibility = true;
          try
          {
@@ -219,7 +224,10 @@ package rconnect.game
          catch(err:*)
          {
          }
-         finally { _forcingVisibility = false; }
+         finally {
+            _forcingVisibility = false;
+            if(presentationTiming!=null){presentationTiming.viewMs+=getTimer()-measureAt;presentationTiming.viewCalls++;}
+         }
       }
 
       private function onMirrorFrame(e:Event):void
@@ -494,6 +502,7 @@ package rconnect.game
          s.hp = numOr(probe(gg, "hp"), -1);
          s.maxhp = numOr(probe(gg, "maxhp"), 100);
          s.sost = numOr(probe(gg, "sost"), -1);
+         s.hitShape=unitFields(gg,["scX","scY","dexter","dexterPlus","dodge","neujazMax","invulner","transp","vulner"]);
          s.visibility = numOr(probe(gg,"visibility"),1000);
          s.stealthMult = numOr(probe(gg,"stealthMult"),1);
          s.demask = numOr(probe(gg,"demask"),0);
@@ -986,6 +995,20 @@ package rconnect.game
          return rec != null ? rec.ghost : null;
       }
 
+      public function readRemoteHits(id:int):Array {
+         var ghost:RemoteDamageUnit=getRemoteGhost(id) as RemoteDamageUnit;
+         return ghost==null?[]:ghost.drain();
+      }
+      private var _incomingHit:NativeHit=new NativeHit();
+      public function applyPlayerHits(hits:Array):void {
+         if(hits==null || gg==null || isPlayerDead())return;
+         for each(var hit:Object in hits) {
+            if(isPlayerDead())break;
+            try {_incomingHit.apply(gg,hit,main);}
+            catch(err:*) {logViewError("incoming-hit",err);}
+         }
+      }
+
       /** M9：宿主监测客户端幽灵受击（hp 下降量，一次性上报）。
        *  M10b：
        *  - 客户端已死 → 不上报（死亡流程由客户端本地处理），推进基线防止
@@ -1119,9 +1142,8 @@ package rconnect.game
          try
          {
             var ad:Object = main["loaderInfo"]["applicationDomain"];
-            var cls:Object = ad["getDefinition"]("fe.unit.UnitPonPon");
             var tr:int = 5 + (id % 10);   // 不同远程玩家用不同配色
-            var ghost:Object = new (cls as Class)("stab", 100, null, {tr: tr});
+            var ghost:Object = new RemoteDamageUnit(tr);
             // M9：宿主侧幽灵化身（可被敌人瞄准/命中，血量按客户端快照）
             // 注意：UnitPonPon 构造自带 invulner=true，必须显式关掉
             ghost["doop"] = !ghostCombat;
@@ -1281,6 +1303,7 @@ package rconnect.game
       {
          try
          {
+            applyUnitFields(ghost,snap.hitShape);
             for each(var sense:String in ["visibility","stealthMult","demask","noise"])
                if(snap[sense] != null) ghost[sense] = Number(snap[sense]);
             if(snap.storona != undefined)
@@ -2611,6 +2634,9 @@ package rconnect.game
             return;
          }
          _objects.enter(loc);
+         if(_boxTrackLoc!==loc) {
+            _boxTrackLoc=loc;boxTrackReset();_istExpectO=new Dictionary();_istPending=new Dictionary();
+         }
          var byId:Object = {};
          // M25：本轮已消费的 Box（同 id 就近匹配用）
          var consumed:Dictionary = new Dictionary();
@@ -2657,6 +2683,7 @@ package rconnect.game
                continue;
             }
             queueSceneChange(lb);
+            captureInteractionIntent(lb);
             var pending:Object = _scenePending[lb];
             if(pending != null)
             {
@@ -2810,8 +2837,32 @@ package rconnect.game
       private var _istSeen:Dictionary = new Dictionary();
       private var _istSeenLoc:Object = null;
 
-      /** open/lock 滞回窗口（unitsync 条数，20Hz 下约 500ms）。 */
-      private static const IST_STABLE_N:int = 10;
+      /** Local interactions awaiting the authority's matching echo. */
+      private var _istPending:Dictionary=new Dictionary();
+
+      private function captureInteractionIntent(b:Object):void {
+         var iv:Object=probe(b,"inter");
+         if(iv==null || numOr(probe(iv,"autoClose"),0)>0 || probe(b,"dead")==true)return;
+         var so:Object={};iv["save"](so);
+         var current:Object={o:probe(iv,"open")==true?1:0,l:int(probe(iv,"lock")),t:numOr(so.loot,0)>0?2:0};
+         if(current.l==100)current.l=102;
+         var expected:Object=_istExpectO[b];
+         if(expected==null){_istExpectO[b]=current;return;}
+         var pending:Object=_istPending[b];
+         for each(var field:String in ["o","l","t"])if(current[field]!=expected[field]) {
+            if(pending==null)pending=_istPending[b]={id:String(b.id),k:_objects.known(b),x:b.X,y:b.Y};
+            pending[field]=current[field];expected[field]=current[field];
+         }
+      }
+      private function acceptInteraction(b:Object,field:String,value:int):Boolean {
+         var pending:Object=_istPending[b];
+         if(pending!=null && pending[field]!=undefined) {
+            if(int(pending[field])!=value)return false;
+            delete pending[field];
+            if(pending.o==undefined && pending.l==undefined && pending.t==undefined)delete _istPending[b];
+         }
+         return true;
+      }
 
       /** M22：把宿主交互状态应用到本地 inter。只在变化时 setAct——
        *  setAct 会触发 setVisState（开门/搜刮音效）与整房重光照，
@@ -2844,69 +2895,39 @@ package rconnect.game
             var last:Object = _istLast[lb];
             if(last == null)
             {
-               last = {open: -1, lock: -1, loot: 0, mine: -1, expl: -1,
-                  co: -1, cn: 0, cl: -1, ln: 0};
+               last = {open: -1, lock: -1, loot: 0, mine: -1, expl: -1};
                _istLast[lb] = last;
             }
-            // open/lock 滞回：候选值连续 IST_STABLE_N 条消息不变才应用——
-            // 过滤宿主侧残余振荡（实测 autoClose 门被堵门时 350ms 周期抖动）
+            // TCP preserves event order. Apply once immediately; retain a local
+            // interaction until the authority echoes it, instead of delaying all doors.
             var v:int;
-            if(ist.open != undefined)
+            if(ist.open != undefined && acceptInteraction(lb,"o",int(ist.open)))
             {
                v = int(ist.open);
-               if(v == last.open)
-               {
-                  last.cn = 0;
-               }
-               else if(last.co == v)
-               {
-                  last.cn++;
-                  if(last.cn >= IST_STABLE_N)
-                  {
-                     last.open = v;
-                     last.cn = 0;
-                     iv["setAct"]("open", v);
-                     istExpectSet(lb, "o", v);
-                     Log.d("RConnectGame: ist apply open=" + v + " '" + oid
-                        + "' tilePhis=" + firstDoorTilePhis(lb));
-                  }
-               }
-               else
-               {
-                  last.co = v;
-                  last.cn = 1;
+               last.open=v;
+               if((probe(iv,"open")==true?1:0)!=v)iv["setAct"]("open",v);
+               istExpectSet(lb,"o",v);
+               if(v==1) {
+                  // Native opening clears the lock. Open snapshots omit lock,
+                  // so this is also the acknowledgement of a local unlock.
+                  acceptInteraction(lb,"l",0);
+                  last.lock=0;istExpectSet(lb,"l",0);
                }
             }
-            if(ist.lock != undefined)
+            if(ist.lock != undefined && acceptInteraction(lb,"l",int(ist.lock)))
             {
                v = int(ist.lock);
-               if(v == last.lock)
-               {
-                  last.ln = 0;
-               }
-               else if(last.cl == v)
-               {
-                  last.ln++;
-                  if(last.ln >= IST_STABLE_N)
-                  {
-                     last.lock = v;
-                     last.ln = 0;
-                     iv["setAct"]("lock", v);
-                     istExpectSet(lb, "l", v);
-                     Log.d("RConnectGame: ist apply lock=" + v + " '" + oid + "'");
-                  }
-               }
-               else
-               {
-                  last.cl = v;
-                  last.ln = 1;
-               }
+               if(last.lock!=v)iv["setAct"]("lock",v);
+               last.lock=v;istExpectSet(lb,"l",v);
             }
-            if(ist.loot != undefined && last.loot != int(ist.loot))
+            // Native search writes saveLoot=1; restoration may write 2. Both
+            // acknowledge an opened container and must not echo forever.
+            if(ist.loot != undefined && acceptInteraction(lb,"t",int(ist.loot)>0?2:0) && last.loot != (int(ist.loot)>0?2:0))
             {
                v = int(ist.loot);
-               last.loot = v;
+               last.loot = v>0?2:0;
                iv["setAct"]("loot", v);
+               istExpectSet(lb,"t",last.loot);
                Log.d("RConnectGame: ist apply loot=" + v + " '" + oid + "'");
             }
             if(ist.mine != undefined && last.mine != int(ist.mine))
@@ -3831,10 +3852,6 @@ package rconnect.game
       private var _boxTrackLoc:Object = null;
       // M25：ist 扫描期望/稳定性按对象实例跟踪（同 id 多实例实测会互殴）
       private var _istExpectO:Dictionary = new Dictionary();
-      private var _istStabO:Dictionary = new Dictionary();
-
-      /** ist 上报稳定性门：连续 N 次扫描（1Hz）一致才上报。 */
-      private static const IST_REPORT_N:int = 6;
 
       private function boxTrackReset():void
       {
@@ -4202,7 +4219,7 @@ package rconnect.game
       private var _boxMoveLogged:Dictionary = new Dictionary();
       private var _objScanErrLogged:Boolean = false;
 
-      /** M25：joiner 周期（1s）扫描——本地 Box 移动（念力/推挤）与
+      /** joiner 每约200ms扫描——本地 Box 移动（念力/推挤）与
        *  ist 变化（开关门/开锁/搜刮）上报宿主。@return 上报对象或 null。 */
       public function scanObjReports():Object
       {
@@ -4215,7 +4232,7 @@ package rconnect.game
             _boxTrackLoc = loc;
             boxTrackReset();
             _istExpectO = new Dictionary();
-            _istStabO = new Dictionary();
+            _istPending = new Dictionary();
          }
          var moved:Array = [];
          var ist:Array = [];
@@ -4238,74 +4255,13 @@ package rconnect.game
                      q: boxHeldLocally(b)});
                }
             }
-            // 2) ist 变化：实际 open/lock/loot 偏离期望态（期望来自宿主
-            //    广播或首见初始化）→ 本地交互（开门/开锁/搜刮）。
-            //    稳定性门：连续 IST_REPORT_N 次扫描（≈3s）一致才上报——
-            //    游戏自驱循环门（如 rbl door3 的 1.4s 开合循环）各相位
-            //    都撑不过窗口，被自然滤除，防止上报风暴打穿宿主
+            // Send local intent on the first scan; repeat until echoed. Automatic
+            // doors are excluded explicitly rather than delaying normal interactions.
             var objs:Object = probe(loc, "objs");
             for each(var o:Object in objs as Array)
             {
-               var iv:Object = probe(o, "inter");
-               if(iv == null || numOr(probe(iv, "autoClose"), 0) > 0)
-               {
-                  continue;   // autoClose 门瞬态不同步（M22 语义）
-               }
-               var oid:String = String(probe(o, "id"));
-               if(oid == null || oid.length == 0)
-               {
-                  continue;
-               }
-               var so:Object = {};
-               iv["save"](so);
-               var ao:int = probe(iv, "open") == true ? 1 : 0;
-               var al:int = numOr(probe(iv, "lock"), 0);
-               if(al == 100)
-               {
-                  al = 102;
-               }
-               var at:int = numOr(so.loot, 0) > 0 ? 2 : 0;
-               // M25：按对象实例跟踪（同 id 多实例会在 id 级互相打架，
-               // 稳定性计数永远到不了阈值——'case' 实测教训）
-               var stab:Object = _istStabO[o];
-               if(stab == null)
-               {
-                  stab = _istStabO[o] = {o: ao, l: al, t: at, n: 1};
-                  continue;
-               }
-               if(stab.o == ao && stab.l == al && stab.t == at)
-               {
-                  stab.n++;
-               }
-               else
-               {
-                  stab.o = ao;
-                  stab.l = al;
-                  stab.t = at;
-                  stab.n = 1;
-               }
-               var exo:Object = _istExpectO[o];
-               if(exo == null)
-               {
-                  _istExpectO[o] = {o: ao, l: al, t: at};
-                  continue;
-               }
-               if(exo == null || stab.n < IST_REPORT_N)
-               {
-                  continue;
-               }
-               if(stab.o != exo.o || stab.l != exo.l || stab.t != exo.t)
-               {
-                  // 附位置：宿主按 id+就近匹配到正确实例（同 id 多箱）
-                  ist.push({id: oid, k: _objects.known(o), o: stab.o, l: stab.l, t: stab.t,
-                     x: numOr(probe(o, "X"), 0), y: numOr(probe(o, "Y"), 0)});
-                  // 推进期望防重复上报
-                  exo.o = stab.o;
-                  exo.l = stab.l;
-                  exo.t = stab.t;
-                  Log.d("RConnectGame: ist local change '" + oid
-                     + "' o=" + stab.o + " l=" + stab.l + " t=" + stab.t);
-               }
+               captureInteractionIntent(o);
+               if(_istPending[o]!=null)ist.push(_istPending[o]);
             }
          }
          catch(err:*)
@@ -4385,17 +4341,18 @@ package rconnect.game
                   }
                   if(is2.o != undefined)
                   {
-                     iv["setAct"]("open", int(is2.o));
+                     if((probe(iv,"open")==true?1:0)!=int(is2.o))iv["setAct"]("open", int(is2.o));
                      seen.open = true;
                   }
                   if(is2.l != undefined && int(is2.o) != 1)
                   {
-                     iv["setAct"]("lock", numOr(is2.l, 0));
+                     if(int(probe(iv,"lock"))!=int(is2.l))iv["setAct"]("lock", numOr(is2.l, 0));
                      seen.lock = true;
                   }
                   if(is2.t != undefined && numOr(is2.t, 0) > 0)
                   {
-                     iv["setAct"]("loot", 2);
+                     var saved:Object={};iv["save"](saved);
+                     if(numOr(saved.loot,0)<=0)iv["setAct"]("loot", 2);
                      seen.loot = true;
                   }
                   Log.d("RConnectGame: ist report applied '" + String(is2.id)
@@ -4938,6 +4895,13 @@ package rconnect.game
          return styled;
       }
 
+      /** Box.bindUnit receivers belong to scene objects. They have no visual or
+       * native step-chain membership and must never be rebuilt as enemies. */
+      private static function isSceneHitUnit(unit:Object):Boolean
+      {
+         return getQualifiedClassName(unit)=="fe.unit::VirtualUnit";
+      }
+
       /** M19：采集本世界单位快照（M4：宿主广播，客户端镜像）。 */
       public function readUnitsSnapshot():Array
       {
@@ -4960,7 +4924,7 @@ package rconnect.game
          {
             for each(var u:Object in units as Array)
             {
-               if(u == gg || u is MirrorHitUnit || numOr(probe(u,"fraction"),0) >= 100)
+               if(u == gg || u is MirrorHitUnit || isSceneHitUnit(u) || numOr(probe(u,"fraction"),0) >= 100)
                {
                   continue;   // 本机玩家自己不同步
                }
@@ -4981,7 +4945,8 @@ package rconnect.game
                   hp: numOr(probe(u, "hp"), -1),
                   fraction: numOr(probe(u, "fraction"), 0),
                   anim: String(probe(u, "animState")),
-                  motion: unitFields(u, ["dx","dy","stay","isFly","isLaz","levit"]),
+                  pose: RConnectAnimationAccess.capture(u as Unit),
+                  motion: unitFields(u, ["dx","dy","stay","isFly","isLaz","levit","scX","scY"]),
                   // Mechanical visibility, never the local RV/FOV visible flag.
                   view: unitView(u),
                   body: TurretDisplay.capture(u),
@@ -5029,6 +4994,8 @@ package rconnect.game
             return res;
          }
          res.total = list.length;
+         _applyingUnits=true;
+         try {
          // M27：每轮重建强制显示集（宿主每轮广播完整单位表；死亡
          // sost>=3 与游戏隐身 invis 不强制——尸体与潜行语义留给游戏）
          var previouslyAlive:Dictionary = _hostAlive;
@@ -5084,6 +5051,9 @@ package rconnect.game
                   }
                }
                applyUnitFields(target, e.motion);
+               // Burrowed native ghoul instances have scY=0. Restore the host's
+               // collision shape before creating/updating the bullet receiver.
+               target["setPos"](target.X,target.Y);
                // Older/test snapshots may provide movement directly.
                applyUnitFields(target, unitFields(e, ["dx","dy","stay","isFly","isLaz","levit"]));
                applyUnitFields(target, e.defense);
@@ -5113,7 +5083,7 @@ package rconnect.game
                   var curAnim:String = String(probe(target, "animState"));
                   if(curAnim != wantAnim)
                   {
-                     target["animState"] = wantAnim;
+                     if(e.pose==null)target["animState"] = wantAnim;
                      if(!_animLogged[eid])
                      {
                         _animLogged[eid] = true;
@@ -5171,8 +5141,10 @@ package rconnect.game
                try {applyUnitView(old,_unitView[old].original);} catch(viewError:*) {}
                delete _unitView[old];
             }
+         } finally {_applyingUnits=false;}
          return res;
       }
+      private var _applyingUnits:Boolean=false;
 
       /**
        * M5b：检测本地玩家对单位造成的伤害（hp 低于宿主同步基线 = 本地命中）。
@@ -5231,7 +5203,8 @@ package rconnect.game
          for each(var name:String in names)
          {
             var value:* = probe(u,name);
-            if(value != null) out[name] = value is Array ? value.concat() : value;
+            if(value != null) out[name] = name=="vulner" && value is Array
+               ? NativeRoomState.numbers(value) : (value is Array ? value.concat() : value);
          }
          return out;
       }
@@ -5270,7 +5243,7 @@ package rconnect.game
             return;
          }
          _unitMotion[u] = {x:Number(u["X"]),y:Number(u["Y"]),tx:x,ty:y,at:now,
-            duration:Math.max(50,Math.min(300,now-prev.at))};
+            duration:Math.max(50,Math.min(600,now-prev.at))};
       }
 
       /** Host applies net HP loss after client mitigation (native D_INSIDE, no second armor reduction).
@@ -5394,7 +5367,7 @@ package rconnect.game
             for(var i:int = arr.length - 1; i >= 0; i--)
             {
                var v:Object = arr[i];
-               if(v == gg || v is MirrorHitUnit)
+               if(v == gg || v is MirrorHitUnit || isSceneHitUnit(v))
                {
                   continue;
                }
@@ -5584,7 +5557,7 @@ package rconnect.game
          {
             for each(var previous:Object in (loc.units as Array).concat())
             {
-               if(previous==gg || probeNum(previous,"fraction",0)>=100)continue;
+               if(previous==gg || isSceneHitUnit(previous) || probeNum(previous,"fraction",0)>=100)continue;
                loc.remObj(previous);var index:int=loc.units.indexOf(previous);if(index>=0)loc.units.splice(index,1);
                delete _spawnedPuppets[previous];
             }
@@ -5593,6 +5566,7 @@ package rconnect.game
          used=new Dictionary();_units.enter(loc);
          for each(var us:Object in s.units)
          {
+            if(String(us.cls)=="fe.unit::VirtualUnit")continue;
             var unit:Object=_units.resolve(us,loc.units,used);
             if(unit==null)
             {
@@ -5604,11 +5578,13 @@ package rconnect.game
                _units.bind(String(us.k),unit);used[unit]=true;
             }
             NativeRoomState.restoreUnit(unit,us.runtime,main);
+            RConnectAnimationAccess.receive(unit as Unit,us.pose,String(us.anim));
+            if(us.body!=null)TurretDisplay.receive(unit,us.body);
             delete _spawnedPuppets[unit];
          }
          // Empty is a real checkpoint too, not a temporary network omission.
          for each(unit in (loc.units as Array).concat())
-            if(unit!=gg && !(unit is MirrorHitUnit) && probeNum(unit,"fraction",0)<100 && !used[unit])
+            if(unit!=gg && !(unit is MirrorHitUnit) && !isSceneHitUnit(unit) && probeNum(unit,"fraction",0)<100 && !used[unit])
             {loc.remObj(unit);index=loc.units.indexOf(unit);if(index>=0)loc.units.splice(index,1);}
          for each(var loot:Array in lootWalk())loc.remObj(loot[0]);
          lootSyncReset();_lootLoc=loc;applyLootSync(s.loots as Array);
@@ -5667,7 +5643,7 @@ package rconnect.game
             _boxTween = new Dictionary();
             _boxTrack = new Dictionary();
             _istExpectO = new Dictionary();
-            _istStabO = new Dictionary();
+            _istPending = new Dictionary();
             // Original AI flags belong to the whole session, including rooms
             // already visited. endSession must restore those units as well.
             clearHitUnits();
@@ -5688,13 +5664,13 @@ package rconnect.game
          }
       }
 
-      /** M6a：驱动被冻结单位的动画（调用游戏自己的公开 animate()，
-       *  内部 restart/blit/step 管线由游戏代码完成）。 */
+      /** 逐帧推进冻结单位的原生显示状态，不运行镜像AI或攻击。 */
       public function tickFrozenAnims():void
       {
          // gotoAndStop can synchronously broadcast EXIT_FRAME inside damage/animate.
          // Advance animation only from the game frame, never from those broadcasts.
          if(_animatingMirrors) return;
+         var measureAt:int=presentationTiming==null?0:getTimer();
          _animatingMirrors = true;
          for(var u:Object in _frozen)
          {
@@ -5719,6 +5695,7 @@ package rconnect.game
             }
          }
          _animatingMirrors = false;
+         if(presentationTiming!=null){presentationTiming.motionMs+=getTimer()-measureAt;presentationTiming.motionCalls++;}
       }
 
       private var _frozen:Dictionary = new Dictionary();

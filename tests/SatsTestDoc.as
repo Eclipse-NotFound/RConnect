@@ -8,6 +8,7 @@ package {
    import flash.utils.Timer;
    import flash.utils.Dictionary;
    import flash.utils.getTimer;
+   import flash.utils.getQualifiedClassName;
    import fe.unit.Unit;
    import rconnect.core.Log;
    import rconnect.game.GameBridge;
@@ -21,6 +22,7 @@ package {
       private var watched:Dictionary=new Dictionary(),phase:String="boot",at:int=0;
       private var enemy:Object,proxy:Object,gun:Object,selected:Object;
       private var shotHp:Number=NaN,ammoBefore:Number,odBefore:Number;
+      private var settledAt:int=0,authorityHp:Number=NaN;
       private function check(ok:Boolean,label:String):void {Log.d("COOP "+(ok?"PASS ":"FAIL ")+"sats "+label);}
       public function SatsTestDoc() {
          var app:String=NativeApplication.nativeApplication.applicationID;
@@ -40,6 +42,8 @@ package {
          if(host)mod.session.server.broadcast(msg);else mod.session.link.send(msg);
       }
       private function receive(e:NetMessageEvent):void {
+         if(!host && e.data.type=="unitsync")
+            for each(var state:Object in e.data.units)if(state.id=="slaver2")authorityHp=Number(state.hp);
          if(e.data.type!="sats-test")return;
          if(e.data.stage=="done"){if(host)check(true,"host receives completed native SATS scenario");finish();return;}
          if(host) {
@@ -62,6 +66,15 @@ package {
          var s:Object=mod.game.world.sats;
          s.onoff(-1);mod.game.loc.getAbsTile(enemy.X,enemy.Y-enemy.scY/2).visi=1;
          s.onoff(1);return targetEntry();
+      }
+      private function inFlight():Boolean {
+         var cur:Object=mod.game.loc.firstObj,seen:Dictionary=new Dictionary();
+         while(cur!=null && !seen[cur]) {
+            seen[cur]=true;
+            if(getQualifiedClassName(cur).indexOf("Bullet")>=0 && cur.owner===mod.game.gg && !cur.babah && !cur.off)return true;
+            cur=cur.nobj;
+         }
+         return false;
       }
       private function lifecycleChecks():void {
          var s:Object=mod.game.world.sats,body:Object=enemy.vis,bar:Object=enemy.hpbar,parent:Object=body.parent;
@@ -145,6 +158,12 @@ package {
                w.ctr.keyAction=true;setPhase("shooting");
             }
             else if(!host && phase=="shooting" && w.sats.que.length==0 && getTimer()-at>1500) {
+               // A cleared SATS order does not imply its last bullet has arrived,
+               // or that the authority has echoed that hit. Observe the real
+               // projectile chain and keep the exact final-HP assertion below.
+               if(inFlight() || !isFinite(authorityHp) || Math.abs(enemy.hp-authorityHp)>0.01){settledAt=0;return;}
+               if(settledAt==0){settledAt=getTimer();Log.d("SATS settling local="+enemy.hp+" authority="+authorityHp+" ammo="+gun.hold);return;}
+               if(getTimer()-settledAt<1200)return;
                check(gun.hold<ammoBefore && w.sats.od<odBefore,"native SATS volley consumes ammunition and action points");
                check(enemy.hp<2000,"native SATS volley damages the mirrored enemy");
                Log.d("SATS volley join hp="+enemy.hp+" ammo="+gun.hold+" ap="+w.sats.od);

@@ -4,7 +4,7 @@ Two-player online co-op for **Fallout Equestria: REMAINS** — see each other, c
 
 English (this page) · [简体中文](README.zh-CN.md)
 
-> Current local candidate: **0.2.9-dev (M37)**, deployed September 27, 2026. Fixes the joining player's SATS `getUnits` null-reference crash; 247 automated checks and a normal-loading two-instance startup check passed. See the [validation record](knowledge/experiments/2026-09-27-m37-sats.md). Verified primarily for same-machine two-player co-op on game v1.02; stable reconnection, 3+ players, real-network play and other game versions remain unverified.
+> Current local candidate: **0.2.10-dev (M38)**, deployed 2026-09-28. Fixes LMG hits on ghouls, incoming player and turret damage, bloodwing poses, and delayed or repeatedly restarted door/container visuals. All 391 automated checks and a normal-loading two-instance startup check passed; see the [validation record](knowledge/experiments/2026-09-27-m38-combat-state.md). Dense encounters can still suffer frame drops. Verified primarily for same-machine two-player co-op on game v1.02; stable reconnection, 3+ players, real-network play and other game versions remain unverified.
 
 ## Features
 
@@ -14,6 +14,7 @@ English (this page) · [简体中文](README.zh-CN.md)
 - **Shared exploration** (M31): two-way fog-of-war sharing with an independent toggle on each side; whatever you already received stays when you turn it off.
 - **Separate rooms** (M36): each player advances combat in the room they occupy; when you meet up, the host settles the fight with the joining side's reported damage. Empty rooms pause and keep their progress (enemy damage, deaths, broken walls, doors/containers, drops) until someone returns.
 - **SATS crash fix** (M37): mirrored enemies provide valid targeting visuals and respect invisibility and targeting restrictions. Native target selection and firing remain available; retired room targets are invalidated.
+- **Combat and animation fixes** (M38): restored ghoul collision bounds and resistance data, native player damage calculation for incoming hits, bloodwing flight/rest poses, and immediate door/container updates with confirmation. Weapon aim advances between snapshots.
 - Enemy state broadcast by the host every 200 ms with client-side smoothing; story and challenge areas are entered together, host leads map transitions.
 - Optional auto-reconnect (test configuration).
 - Works alongside RealisticVision (remote vision respects your local vision settings; shared exploration integrates with it).

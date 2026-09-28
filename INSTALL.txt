@@ -1,11 +1,13 @@
-RConnect 0.2.9-dev 候选版 —— 安装与联机
+RConnect 0.2.10-dev 候选版 —— 安装与联机
 Fallout Equestria: Remains 1.02
 
 当前部署结果与回滚位置：
-knowledge/experiments/2026-09-27-m37-sats.md
+knowledge/experiments/2026-09-27-m38-combat-state.md
 
-本轮修复加入侧开启SATS时的getUnits空引用报错，保留原生选敌与射击。
-目标隐身、不能被瞄准或图像尚未就绪时，不会成为错误候选。
+本轮修复轻机枪对尸鬼无效、加入侧受伤与炮塔伤害结算、血翼休息姿态追人。
+门柜首次更新立即显示，重复同步不重启动画；武器瞄准在同步包之间继续推进。
+391项自动检查与正常加载双实例检查通过，保留SATS修复。
+密集敌人的整体掉帧仍未彻底解决。
 
 本机已经装好模组加载器。更新只需替换：
 mods\Rconnect\release\RConnectMod.swf
