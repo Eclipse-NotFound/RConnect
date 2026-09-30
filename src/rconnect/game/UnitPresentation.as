@@ -14,8 +14,9 @@ package rconnect.game
       private var states:Dictionary = new Dictionary();
       private var hostShots:Dictionary = new Dictionary(true);
       private var errors:Object = {};
+      private var shotStream:int=0;
 
-      private static function get(o:Object,k:String):* {var v:*=null;try {v=o[k];}catch(e:*){}return v;}
+      private static function get(o:Object,k:String):* {return GameBridge.probe(o,k);}
 
       private function weaponList(u:Object):Array
       {
@@ -38,11 +39,13 @@ package rconnect.game
          }
       }
 
+      public function observePlayer(u:Object):void {for each(var w:Object in weaponList(u))if(get(w,"kol_shoot")!=null)observeWeapon(w);}
+
       private function observeWeapon(w:Object):int
       {
          var n:int=int(get(w,"kol_shoot")),bullet:Object=get(w,"b"),ammo:Number=Number(get(w,"hold"));
          var r:Object=hostShots[w];
-         if(r==null) r=hostShots[w]={n:n,bullet:bullet,ammo:ammo,total:0};
+         if(r==null) r=hostShots[w]={stream:++shotStream,n:n,bullet:bullet,ammo:ammo,total:0,events:[]};
          else
          {
             var delta:int=n>=int(r.n)?n-int(r.n):n;
@@ -50,7 +53,9 @@ package rconnect.game
             if(isFinite(ammo) && ammo<Number(r.ammo))
                delta=Math.max(delta,Math.ceil((Number(r.ammo)-ammo)/Math.max(1,Number(get(w,"rashod")))));
             r.total+=delta;r.n=n;r.bullet=bullet;r.ammo=ammo;
+            if(delta>0 && bullet!=null)r.events.push({seq:r.total,at:getTimer(),bullet:bullet});
          }
+         while(r.events.length>0 && (r.events.length>24 || getTimer()-r.events[0].at>700))r.events.shift();
          return int(r.total);
       }
 
@@ -61,8 +66,10 @@ package rconnect.game
          {
             var w:Object=list[i];
             if(w==null || get(w,"kol_shoot")==null) continue;
-            result.push({slot:i,id:String(get(w,"id")),variant:int(get(w,"variant")),main:w===current,
-               shots:observeWeapon(w),ox:Number(get(w,"X"))-Number(get(u,"X")),
+            var count:int=observeWeapon(w),events:Array=[];
+            for each(var shot:Object in hostShots[w].events)events.push({seq:shot.seq,flight:ProjectileVisuals.capture(shot.bullet)});
+            result.push({stream:hostShots[w].stream,slot:i,id:String(get(w,"id")),variant:int(get(w,"variant")),main:w===current,events:events,
+               shots:count,ox:Number(get(w,"X"))-Number(get(u,"X")),
                oy:Number(get(w,"Y"))-Number(get(u,"Y")),rot:Number(get(w,"rot")),
                prep:int(get(w,"t_prep")),reload:int(get(w,"t_reload")),
                cadence:Math.max(16,Number(get(w,"rapid"))*1000/30)});
@@ -160,6 +167,7 @@ package rconnect.game
          var rec:Object=states[u];if(rec==null) return;
          try
          {
+            RConnectAnimationAccess.effects(u as Unit);
             if(rec.sost>=3) {enforceDeath(u,rec.sost);return;}
             for each(var gun:Object in rec.guns)
             {
@@ -237,6 +245,7 @@ package rconnect.game
             }
             catch(e:*) {failed(u,e);}
          }
+         RConnectAnimationAccess.reset();
          states=new Dictionary();
          hostShots=new Dictionary(true);
       }

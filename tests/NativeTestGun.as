@@ -2,7 +2,7 @@ package {
    import fe.unit.Unit;
    import fe.weapon.Weapon;
    public class NativeTestGun extends Weapon {
-      public function NativeTestGun(owner:Unit) { super(owner,"lmg",0); }
+      public function NativeTestGun(owner:Unit,id:String="lmg") { super(owner,id,0); }
       public function fireAt(target:Object,deterministic:Boolean=false):Object {
          var self:Object=this;
          self.loc=target.loc; self.X=target.X-45; self.Y=target.Y-target.scY/2;

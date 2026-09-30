@@ -20,6 +20,7 @@ package rconnect.net
       public static const MSG_DAMAGE:String = "damage";
       public static const MSG_PLAYERDMG:String = "playerdmg";
       public static const MSG_LOOT:String = "loot";
+      public static const MSG_LOOT_ACK:String = "loot-ack";
       public static const MSG_OBJS:String = "objs";
       public static const MSG_TERRAIN:String = "terrain";
       public static const MSG_TERRAIN_ACK:String = "terrain-ack";

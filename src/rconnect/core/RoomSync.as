@@ -31,6 +31,7 @@ package rconnect.core
       private var initial:Boolean=true;
       private var blocked:Boolean=false;
       private var requested:Boolean=false;
+      private var teammate:Object,followPending:Object;
       public var busy:Boolean=false;
       public var ready:Boolean=false;
       public var authority:Boolean=true;
@@ -50,6 +51,7 @@ package rconnect.core
          ready=false;authority=true;initial=true;epoch=0;term=0;pending=0;hostInfo=null;
          game.independentRooms=false;game.roomEpoch=0;status="";blocked=false;
          requested=false;
+         teammate=null;followPending=null;
          TravelGuard.reset();
       }
       private function connected():Boolean
@@ -75,6 +77,7 @@ package rconnect.core
       {
          if(busy && pauseWorld!=null)pauseWorld.onPause=savedPause;
          busy=false;game.roomHold=false;pauseWorld=null;
+         if(ready && session.progress!=null)session.progress.prepare();
          status=ready?(authority?"分房探索":"共同探索"):"";
       }
       private function before(e:Event):void
@@ -88,6 +91,7 @@ package rconnect.core
             if(!host())TravelGuard.guardTravel(game,this);
             game.world.land.loc_t=0;
             check();
+            followTeammate();
             TravelGuard.update(game,!host());
             if(busy && getTimer()>deadline && !blocked)
             {
@@ -138,6 +142,7 @@ package rconnect.core
          if(game.isTransitioning())return;
          if(pending>0)return;
          requested=false;
+         session.flushProgress();
          hold();pending=++serial;blocked=false;
          send({op:"seal",barrier:pending,epoch:epoch,info:game.readWorldInfo(),
             together:TravelGuard.restricted(game.loc) || TravelGuard.restricted(settledRoom)});
@@ -168,6 +173,31 @@ package rconnect.core
       public function stamp(msg:Object):Object
       {
          msg.roomKey=settledKey;msg.roomEpoch=epoch;msg.roomTerm=term;return msg;
+      }
+      /** Follow departures from a shared room. This prevents two followers
+       * exchanging rooms when their two position packets cross in flight. */
+      public function observeTeammate(info:Object):void {
+         if(info==null)return;
+         if(teammate!=null && String(teammate.roomKey)!=String(info.roomKey)
+            && String(teammate.roomKey)==game.roomKey()
+            && mod.config.getValue("followTeammate")=="1")followPending=info;
+         if(followPending!=null)followPending=info;
+         teammate=info;
+      }
+      private function followTeammate():void {
+         if(followPending==null)return;
+         if(mod.config.getValue("followTeammate")!="1"){followPending=null;return;}
+         if(!ready || busy || pending!=0 || game.isTransitioning() || game.isPlayerDead())return;
+         var info:Object=followPending,mine:Object=game.readWorldInfo();
+         if(mine==null)return;
+         followPending=null;
+         if(String(info.curLandId)!=String(mine.curLandId) || int(info.roomEpoch)!=epoch
+            || String(info.roomKey)==game.roomKey() || String(info.landProb || "")!="" || TravelGuard.restricted(game.loc))return;
+         var target:Object;
+         try {target=game.world.land.locs[int(info.landX)][int(info.landY)][int(info.landZ)];}catch(e:*){}
+         if(target==null || TravelGuard.restricted(target))return;
+         TravelGuard.follow(game,info,!host());check();
+         notice("已跟随队友进入房间");
       }
       public function accepts(msg:Object):Boolean
       {return !busy && acceptsReceipt(msg);}
@@ -212,7 +242,7 @@ package rconnect.core
       private function sendReady():void
       {
          if(game.isTransitioning() || game.loc==null)return;
-         hold();flush();var own:Object=null;
+         hold();flush();session.flushProgress();var own:Object=null;
          if(ready && authority && settledRoom!=null)
             own=game.inRoom(settledRoom,function():Object{return game.checkpoint();});
          send({op:"ready",barrier:pending,epoch:epoch,info:game.readWorldInfo(),
@@ -266,7 +296,10 @@ package rconnect.core
          {
             if(type==Protocol.MSG_DAMAGE)for each(var h:Object in msg.hits)
                game.applyDamage(String(h.id),Number(h.dmg),game.getRemoteGhost(link.id),String(h.k),h);
-            else if(type==Protocol.MSG_LOOT)game.applyLootReports(msg);
+            else if(type==Protocol.MSG_LOOT) {
+               var lootReceipt:Object=game.applyLootReports(msg);
+               if(lootReceipt!=null)link.send(stamp(Protocol.make(Protocol.MSG_LOOT_ACK,lootReceipt)));
+            }
             else if(type==Protocol.MSG_OBJS)game.applyObjReports(msg);
             else if(type==Protocol.MSG_TERRAIN)
             {

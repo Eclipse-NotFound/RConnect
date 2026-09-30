@@ -4,13 +4,19 @@ Two-player online co-op for **Fallout Equestria: REMAINS** — see each other, c
 
 English (this page) · [简体中文](README.zh-CN.md)
 
-> Current local candidate: **0.2.10-dev (M38)**, deployed 2026-09-28. Fixes LMG hits on ghouls, incoming player and turret damage, bloodwing poses, and delayed or repeatedly restarted door/container visuals. All 391 automated checks and a normal-loading two-instance startup check passed; see the [validation record](knowledge/experiments/2026-09-27-m38-combat-state.md). Dense encounters can still suffer frame drops. Verified primarily for same-machine two-player co-op on game v1.02; stable reconnection, 3+ players, real-network play and other game versions remain unverified.
+> Current local candidate: **0.2.11-dev (M39)**, deployed 2026-10-01. Repairs turret/mine/griffon targeting, shared container drops and actual pickup, player/enemy projectile visuals and alicorn shields. Adds teammate following, shared XP-point rewards and checkpoint unlocks with separate character saves. All 517 automated checks passed; see the [validation record](knowledge/experiments/2026-09-30-m39-gameplay.md). Game v1.02, two players on one machine; stable reconnection, 3+ players, real-network play and other versions remain unverified.
+>
+> For local co-op, save and close both games, then use **[Start-Coop.bat](Start-Coop.bat)**. It keeps only the processes it starts responsive in the background and preserves each character's saves. This may use more power. The 80-enemy stress test sustained roughly 15 FPS for 56 seconds without its previous late slowdown; this is not a promise of full frame rate in every encounter.
 
 ## Features
 
 - One player **hosts**, the other **joins** (3+ untested). The joining side needs no matching save: the host's world is mirrored to them (world injection — missing enemies spawn, extras are removed, state synced at 5 Hz).
 - Players see each other as translucent ghost ponies with floating name tags, walk/run/jump pose animations and **held-weapon display**; remote health shows in the co-op panel.
 - In-panel **chat** between both sides.
+- Shared ground items: one copy, first collector owns it; container drops can be collected on either side.
+- Shared XP-point rewards and checkpoint unlocks; each player saves their own character.
+- Optional **Follow teammate** switch in F10, off by default; follows departures from a shared ordinary room.
+- Player firing/projectile visuals, alicorn lightning and shield state; native turret, mine and griffon perception of the joining player.
 - **Shared exploration** (M31): two-way fog-of-war sharing with an independent toggle on each side; whatever you already received stays when you turn it off.
 - **Separate rooms** (M36): each player advances combat in the room they occupy; when you meet up, the host settles the fight with the joining side's reported damage. Empty rooms pause and keep their progress (enemy damage, deaths, broken walls, doors/containers, drops) until someone returns.
 - **SATS crash fix** (M37): mirrored enemies provide valid targeting visuals and respect invisibility and targeting restrictions. Native target selection and firing remain available; retired room targets are invalidated.

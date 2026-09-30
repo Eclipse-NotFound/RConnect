@@ -59,29 +59,29 @@ package
             check(b.applyDamage("slaver1",40,null,"test-b") && second.hp<100 && first.hp==200,"host damage reaches keyed duplicate only");
             b.applyUnitsSync(snap);
             b.tickFrozenAnims();
-            mod.stage.dispatchEvent(new Event(Event.EXIT_FRAME));
+            mod.stage.dispatchEvent(new Event(Event.RENDER));
             Log.d("ENEMY sample initial alpha="+enemy.vis.alpha+" visible="+enemy.vis.visible+" parent="+(enemy.vis.parent!=null)+" pixels="+pixels(enemy.vis));
             check(enemy.vis.parent!=null && enemy.vis.visible && enemy.vis.alpha>0 && pixels(enemy.vis)>0,"native slaver has visible pixels");
             var entry:Object=snap[snap.length-3];
             entry.view={invis:true,isVis:false,alpha:0};b.applyUnitsSync(snap);
-            mod.stage.dispatchEvent(new Event(Event.EXIT_FRAME));
+            mod.stage.dispatchEvent(new Event(Event.RENDER));
             check(enemy.invis && !enemy.isVis && enemy.vis.alpha==0 && !enemy.vis.visible,"host mechanical invisibility stays hidden");
             entry.view={invis:true,isVis:true,alpha:0.35};b.applyUnitsSync(snap);
-            mod.stage.dispatchEvent(new Event(Event.EXIT_FRAME));
+            mod.stage.dispatchEvent(new Event(Event.RENDER));
             check(enemy.invis && enemy.vis.visible && Math.abs(enemy.vis.alpha-0.35)<0.01,"camouflage shimmer preserves host alpha without clearing gameplay invisibility");
             entry.view={invis:false,isVis:true,alpha:0.6};b.applyUnitsSync(snap);
-            mod.stage.dispatchEvent(new Event(Event.EXIT_FRAME));
+            mod.stage.dispatchEvent(new Event(Event.RENDER));
             check(!enemy.invis && enemy.isVis && enemy.vis.visible && Math.abs(enemy.vis.alpha-0.6)<0.01,"host reveal replaces local invisibility and preserves partial fade");
             entry.view.alpha=1;b.applyUnitsSync(snap);
             real.world.grafon.drawAllObjs();
             b.tickFrozenAnims();
-            mod.stage.dispatchEvent(new Event(Event.EXIT_FRAME));
+            mod.stage.dispatchEvent(new Event(Event.RENDER));
             check(enemy.vis.parent!=null && enemy.vis.visible && pixels(enemy.vis)>0,"slaver survives native scene redraw");
             var mask:Shape=new Shape();
             mask.graphics.beginFill(0xffffff); mask.graphics.drawRect(0,0,1,1); mask.graphics.endFill();
             enemy.vis.parent.addChild(mask); enemy.vis.cacheAsBitmap=true; mask.cacheAsBitmap=true;
             enemy.vis.mask=mask;
-            mod.stage.dispatchEvent(new Event(Event.EXIT_FRAME));
+            mod.stage.dispatchEvent(new Event(Event.RENDER));
             check(enemy.vis.mask==null && !mask.visible && pixels(enemy.vis)>0,"mask removal restores pixels without white overlay");
 
             // Restore native target eligibility. The ghost is close, host is far.

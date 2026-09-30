@@ -18,6 +18,7 @@ package rconnect.core
          port: 23456,
          tickMs: 50,
          sharedExploration: "1",
+         followTeammate: "0",
          autoRole: "",
          autoGame: "",
          autoMove: "",

@@ -10,6 +10,7 @@ package rconnect.game
       public static const DEFENSE:Array = ["maxhp","skin","armor","marmor","armor_hp","armor_maxhp",
          "armor_qual","shithp","shitArmor","allVulnerMult","vulner","dexter","dexterPlus",
          "dodge","invulner","transp","opt","mech","blood","mat","maxShok","showNumbs"];
+      private static const MOTION:Array = ["loc","X","Y","X1","X2","Y1","Y2","scX","scY","storona","fraction","hp","sost","trigDis","nazv","level","invis"];
       private var target:Object;
       private var inDamage:Boolean=false;
       private var disposed:Boolean=false;
@@ -33,9 +34,18 @@ package rconnect.game
             var value:*=GameBridge.probe(target,name);
             if(value!=null) self[name]=value is Array ? (value as Array).concat() : value;
          }
-         for each(name in ["loc","X","Y","X1","X2","Y1","Y2","scX","scY","storona","fraction","hp","sost","trigDis","nazv","level","invis"])
+         syncMotion();
+      }
+
+      /** Defense changes with authoritative snapshots and local hits. Movement
+       * still follows every display frame without cloning resistance arrays. */
+      public function syncMotion():void
+      {
+         if(inDamage || disposed) return;
+         var self:Object=this;
+         for each(var name:String in MOTION)
          {
-            value=GameBridge.probe(target,name);
+            var value:*=GameBridge.probe(target,name);
             if(value!=null) self[name]=value;
          }
          self.disabled=self.sost>=3;

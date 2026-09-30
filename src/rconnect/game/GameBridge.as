@@ -10,7 +10,10 @@ package rconnect.game
    import flash.utils.Dictionary;
    import fe.serv.RConnectInteractionAccess;
    import fe.unit.Unit;
+   import fe.loc.Location;
+   import fe.serv.Item;
    import fe.unit.RConnectAnimationAccess;
+   import fe.unit.RConnectPerceptionAccess;
    import flash.utils.getTimer;
    import flash.utils.getQualifiedClassName;
    import rconnect.core.Log;
@@ -53,8 +56,10 @@ package rconnect.game
       public var roomHold:Boolean=false;
       /** M5a：客户端冻结被同步单位 AI（由 Session 按配置注入）。 */
       public var freezeAI:Boolean = false;
+      public var mapProgress:WorldProgress;
       /** M9：宿主侧客户端幽灵作为可攻击化身（可被打、可被敌人瞄准）。 */
       public var ghostCombat:Boolean = true;
+      public function get mirrorsRoom():Boolean {return _mirroring;}
       /** M10b 测试钩子：ghostDamageTest 单次伤害量（联测可设大值触发死亡流程）。 */
       public var testGhostDmg:Number = 50;
 
@@ -79,10 +84,11 @@ package rconnect.game
             {
                st.addEventListener(Event.DEACTIVATE, onStageDeactivate,
                   false, 1000, true);
-               // M28: EXIT_FRAME follows all ENTER_FRAME listeners, independent of loader order.
-               st.addEventListener(Event.EXIT_FRAME, onVisForceFrame,
-                  false, -10000, true);
+               // RENDER follows all native/mod animation callbacks. EXIT_FRAME
+               // also fires inside gotoAndStop and used to repeat whole-room
+               // display work without producing another rendered game frame.
                st.addEventListener(Event.ENTER_FRAME, onMirrorFrame, false, -10000, true);
+               st.addEventListener(Event.ENTER_FRAME, onPerceptionFrame, false, 90000, true);
                st.addEventListener(Event.RENDER, onVisForceFrame, false, -10000, true);
             }
          }
@@ -114,9 +120,10 @@ package rconnect.game
 
       public function endSession():void
       {
+         restoreContainerActions();
          _mirroring = false;
          _terrain.reset();
-         _presentation.reset();
+         _presentation.reset();_projectiles.reset();
          _shieldFeedback = new Dictionary(true);
          clearHitUnits();
          _unitMotion = new Dictionary();
@@ -159,6 +166,7 @@ package rconnect.game
          _istLastLoc = null;
          _lastLocRef = null;
          lootSyncReset();
+         _lootRequests={};
       }
 
 
@@ -234,6 +242,8 @@ package rconnect.game
       {
          if(roomHold)return;
          if(!_mirroring) _presentation.observe(loc);
+         if(gg!=null)_presentation.observePlayer(gg);
+         _projectiles.tick(loc);
          try {main.stage.invalidate();} catch(stageError:*) {}
          // Native ghost physics and packet arrivals must not dictate display cadence.
          for(var id:String in _remotes)
@@ -243,7 +253,15 @@ package rconnect.game
                driveGhost(rec.ghost,rec.motion.sample(getTimer()),int(id));
          }
          if(!_mirroring) return;
+         mirrorContainerActions();
          tickFrozenAnims();
+      }
+
+      private function onPerceptionFrame(e:Event):void
+      {
+         // Native findCel only offers the local player. Supply visible teammate
+         // candidates before control can patrol/turn away in the same frame.
+         if(!roomHold && !_mirroring)redirectNearbyAggro();
       }
 
       private function logViewError(id:String,error:*):void
@@ -464,6 +482,7 @@ package rconnect.game
          }
          try
          {
+            if(!(name in o))return null;
             var v:* = o[name];
             return (v === undefined) ? null : v;
          }
@@ -502,7 +521,7 @@ package rconnect.game
          s.hp = numOr(probe(gg, "hp"), -1);
          s.maxhp = numOr(probe(gg, "maxhp"), 100);
          s.sost = numOr(probe(gg, "sost"), -1);
-         s.hitShape=unitFields(gg,["scX","scY","dexter","dexterPlus","dodge","neujazMax","invulner","transp","vulner"]);
+         s.hitShape=unitFields(gg,["scX","scY","dexter","dexterPlus","dodge","neujazMax","invulner","transp","vulner","activateTrap","detecting"]);
          s.visibility = numOr(probe(gg,"visibility"),1000);
          s.stealthMult = numOr(probe(gg,"stealthMult"),1);
          s.demask = numOr(probe(gg,"demask"),0);
@@ -512,10 +531,12 @@ package rconnect.game
          s.landId = g0 != null ? String(probe(g0, "curLandId")) : "";
          s.locId = loc != null ? String(probe(loc, "id")) : "";
          s.roomKey=roomKey();s.roomEpoch=roomEpoch;
+         s.worldInfo=readWorldInfo();
          // M14b：当前武器 id/变体（远端据此在幽灵手上镜像同款武器）
          var cw:Object = probe(gg, "currentWeapon");
          s.wi = cw != null ? String(probe(cw, "id")) : "";
          s.wv = cw != null ? int(numOr(probe(cw, "variant"), 0)) : 0;
+         s.weapons=_presentation.capture(gg);
          // M16：本机当前姿态标签（vis.osn.currentLabel）——让远端幽灵直接
          // 播放对方真实姿态（站/走/跑/蹲/趴都由对方游戏决定，不再本地猜测）
          s.pose = localPoseLabel();
@@ -625,6 +646,7 @@ package rconnect.game
             rec.motion.push(snap,getTimer());
             driveGhost(ghost, rec.motion.sample(getTimer()), id);
             syncRemoteWeapon(ghost, snap, id);
+            _projectiles.receive(ghost,snap.weapons as Array,main,true);
             // M20：外观热更——对方换装/换护甲后按 apKey 变化重装视觉
             var ak:String = apKeyOf(snap.ap);
             if(_apKey[id] != ak && snap.ap != null
@@ -3110,6 +3132,8 @@ package rconnect.game
       }
 
       private var _terrain:TerrainSync = new TerrainSync();
+      private var _projectiles:ProjectileVisuals=new ProjectileVisuals();
+      public function get projectileVisualCount():int {return _projectiles.count;}
       private var _presentation:UnitPresentation = new UnitPresentation();
 
       public function readTilePatch():Array {return _terrain.hostPatch(loc);}
@@ -3217,6 +3241,10 @@ package rconnect.game
       // 会重复生成并留下旧位置残影；宿主捡起后 joiner 的副本也永存。
       // M24 给 Loot 稳定身份 + 位置/移除镜像 + joiner 侧拾取/推动上报。
 
+      private var _lootDecisions:Object = {};
+      private var _lootRequestSeq:int=0;
+      private var _lootRequests:Object={};
+      private var _containerHooks:Dictionary=new Dictionary();
       private var _lootIdOf:Dictionary;    // 宿主：Loot 对象 → 稳定键 L#n
       private var _lootIdSeq:int = 0;
       private var _lootObjOf:Object = {};  // 键 → Loot 对象（双端）
@@ -3259,6 +3287,7 @@ package rconnect.game
          _lootPos = {};
          _lootRepT = {};
          _lootIdSeq = 0;
+         _lootDecisions={};
          _lootMotion = {};
       }
 
@@ -3318,7 +3347,7 @@ package rconnect.game
                   _lootIdOf[o] = k;
                   _lootObjOf[k] = o;
                }
-               var itemData:Object = probe(o, "item")["save"]();
+               var itemData:Object = GroundItemState.capture(probe(o, "item"));
                out.push({k: k, x: numOr(probe(o, "X"), 0),
                   y: numOr(probe(o, "Y"), 0), b: String(e[1]), item: itemData,
                   suction: probe(o, "vsos") == true});
@@ -3382,6 +3411,8 @@ package rconnect.game
                }
                if(lo != null)
                {
+                  if(lo is RemoteLoot && (lo as RemoteLoot).requested)continue;
+                  if(probe(lo,"vsos")==true)continue;
                   if(s.suction == true && !boxHeldLocally(lo) && probe(lo,"vsos") != true)
                   {
                      _lootMotion[k]={o:lo,x:Number(s.x),y:Number(s.y)};
@@ -3503,6 +3534,12 @@ package rconnect.game
          catch(err:*)
          {
          }
+         if(best!=null && !(best is RemoteLoot)) {
+            // A pre-existing native drop must use the same grant gate as a
+            // freshly mirrored one; otherwise simultaneous pickup duplicates it.
+            var replacement:Object=new RemoteLoot(loc as Location,best.item as Item,best.X,best.Y,this);
+            loc.remObj(best);best=replacement;
+         }
          if(best != null) { _lootKeyOfJ[best] = k; _lootObjOf[k] = best; }
          return best;
       }
@@ -3568,11 +3605,14 @@ package rconnect.game
             for(var k:String in _lootObjOf)
             {
                var o:Object = _lootObjOf[k];
-               var isTake:Boolean = (probe(o, "isTake") == true);
+               var isTake:Boolean = o is RemoteLoot ? (o as RemoteLoot).requested : (probe(o, "isTake") == true);
                var inChain:Boolean = (live[o] === true);
                if(isTake || !inChain)
                {
-                  picked.push(k);
+                  var token:String="";
+                  for(var pendingToken:String in _lootRequests)if(_lootRequests[pendingToken].o===o)token=pendingToken;
+                  if(token==""){token=String(++_lootRequestSeq);_lootRequests[token]={o:o,k:k};}
+                  picked.push({k:k,token:token});
                   continue;
                }
                if(_lootMotion[k] != null && !boxHeldLocally(o) && probe(o,"vsos") != true) continue;
@@ -3604,51 +3644,58 @@ package rconnect.game
          return res;
       }
 
-      /** M24：宿主应用 joiner 的拾取/推动上报（宿主仍是权威：落位即可）。 */
-      public function applyLootReports(o:Object):void
-      {
-         if(o == null || loc == null || _lootLoc !== loc)
-         {
-            return;
-         }
-         try
-         {
-            var picked:Array = o.picked as Array;
-            if(picked != null)
-            {
-               for each(var pk:Object in picked)
-               {
-                  var lo:Object = _lootObjOf[String(pk)];
-                  if(lo != null)
-                  {
-                     loc["remObj"](lo);
-                     Log.d("RConnectGame: loot pick applied '" + String(pk)
-                        + "'");
-                  }
-                  forgetLoot(String(pk), lo);
-               }
+      /** First native pickup wins. Repeated requests replay the same decision. */
+      public function applyLootReports(o:Object):Object {
+         if(o==null || loc==null || _lootLoc!==loc)return null;
+         var receipt:Object={results:[]};
+         for each(var request:Object in o.picked) {
+            var key:String=request is String?String(request):String(request.k);
+            var token:String=request is String?key:String(request.token);
+            var decision:Object=_lootDecisions[key+":"+token];
+            if(decision==null) {
+               var lo:Object=_lootObjOf[key];
+               decision={k:key,token:token,ok:lo!=null && probe(lo,"in_chain")==true};
+               if(decision.ok){decision.item=GroundItemState.capture(lo.item);loc.remObj(lo);forgetLoot(key,lo);}
+               _lootDecisions[key+":"+token]=decision;
             }
-            var moved:Array = o.moved as Array;
-            if(moved != null)
-            {
-               for each(var m:Object in moved)
-               {
-                  var mo:Object = _lootObjOf[String(m.k)];
-                  if(mo != null)
-                  {
-                     mo["X"] = Number(m.x);
-                     mo["Y"] = Number(m.y);
-                     mo["dx"] = 0;
-                     mo["dy"] = 0;
-                     Log.d("RConnectGame: loot push applied '" + String(m.k)
-                        + "'");
-                  }
-               }
-            }
+            receipt.results.push(decision);
          }
-         catch(err:*)
-         {
+         for each(var m:Object in o.moved) {
+            var moved:Object=_lootObjOf[String(m.k)];
+            if(moved!=null){moved.X=Number(m.x);moved.Y=Number(m.y);moved.dx=moved.dy=0;}
          }
+         return receipt;
+      }
+      public function applyLootReceipt(receipt:Object):void {
+         if(receipt==null)return;
+         for each(var result:Object in receipt.results) {
+            var request:Object=_lootRequests[String(result.token)];
+            if(request==null || request.k!=result.k)continue;
+            delete _lootRequests[String(result.token)];
+            if(result.ok) {
+               if(request.o is RemoteLoot)(request.o as RemoteLoot).grant(GroundItemState.restore(result.item));
+            } else if(request.o is RemoteLoot)(request.o as RemoteLoot).reject();
+         }
+      }
+      private function containerHook(iv:Object):Function {
+         var original:Function=iv.actFun;
+         return function():void {
+            if(original!=null)original();
+            if(iv.cont!=null && iv.cont!="empty")iv.setAct("loot",2);
+         };
+      }
+      private function mirrorContainerActions():void {
+         if(!_mirroring || loc==null)return;
+         for each(var box:Object in loc.objs) {
+            var iv:Object=probe(box,"inter");
+            if(iv==null || getQualifiedClassName(box)!="fe.loc::Box" || iv.cont==null || iv.cont=="empty" || _containerHooks[iv]!=null)continue;
+            var hook:Function=containerHook(iv);
+            _containerHooks[iv]={original:iv.actFun,hook:hook};iv.actFun=hook;
+         }
+      }
+      private function restoreContainerActions():void {
+         for(var iv:Object in _containerHooks)if(iv.actFun===_containerHooks[iv].hook)iv.actFun=_containerHooks[iv].original;
+         _containerHooks=new Dictionary();
       }
 
       /** M24 复现钩子（幂等）：房间无地面 Loot 则生成一件 kofe（M17b
@@ -4352,7 +4399,7 @@ package rconnect.game
                   if(is2.t != undefined && numOr(is2.t, 0) > 0)
                   {
                      var saved:Object={};iv["save"](saved);
-                     if(numOr(saved.loot,0)<=0)iv["setAct"]("loot", 2);
+                     if(numOr(saved.loot,0)<=0)iv["loot"]();
                      seen.loot = true;
                   }
                   Log.d("RConnectGame: ist report applied '" + String(is2.id)
@@ -4468,24 +4515,14 @@ package rconnect.game
       {
          try
          {
-            var itCls:Object = ad["getDefinition"]("fe.serv.Item");
             var base:String = s.itemBase != undefined ? String(s.itemBase) : "";
             if(base == "")
             {
                return null;
             }
-            var data:Object = s.item;
-            var item:Object = data == null ? new (itCls as Class)(null, base, 1)
-               : new (itCls as Class)(String(data.tip), base, int(data.kol), int(data.sost));
-            if(data != null)
-            {
-               item["variant"] = int(data.variant);
-               item["lvl"] = int(data.lvl);
-               item["barter"] = data.barter;
-               item["trig"] = data.trig;
-            }
-            var lo:Object = new (lootCls as Class)(loc, item, Number(s.x),
-               Number(s.y), false, false, false);
+            var item:Item = GroundItemState.restore(s.item,base);
+            var lo:Object = new RemoteLoot(loc as Location, item as Item, Number(s.x),
+               Number(s.y), this);
             return lo;
          }
          catch(err:*)
@@ -4593,10 +4630,6 @@ package rconnect.game
                var gy:Number = numOr(probe(ghost, "Y"), 0);
                for each(var u:Object in units as Array)
                {
-                  if(n >= 4)
-                  {
-                     return;
-                  }
                   var frac:Number = numOr(probe(u, "fraction"), 0);
                   if(frac < 1 || frac >= 100
                      || probe(u,"disabled") == true || isTrigger(u)
@@ -4608,25 +4641,23 @@ package rconnect.game
                   var dx:Number = numOr(probe(u, "X"), 0) - gx;
                   var dy:Number = numOr(probe(u, "Y"), 0) - gy;
                   var distance:Number = dx * dx + dy * dy;
-                  if(distance > 320 * 320)
-                  {
-                     continue;
-                  }
                   // Use the game's cone, wall and stealth checks, not distance alone.
                   if(!u["isMeet"](ghost) || Number(u["look"](ghost,probe(u,"overLook") == true)) <= 0.5)
                      continue;
                   var current:Object = probe(u,"celUnit");
                   if(current == null) current = probe(u,"priorUnit");
-                  if(current === ghost) continue;
+                  if(current === ghost) {recognizeRemote(u);continue;}
                   if(current != null && u["isMeet"](current)
                      && numOr(probe(current,"sost"),3) < 3 && numOr(probe(current,"hp"),0) > 0)
                   {
                      var cx:Number = Number(probe(current,"X")) - Number(probe(u,"X"));
                      var cy:Number = Number(probe(current,"Y")) - Number(probe(u,"Y"));
-                     if(distance >= (cx*cx+cy*cy)*0.64) continue;
+                     if(Number(u["look"](current,probe(u,"overLook")==true))>0.5
+                        && distance >= (cx*cx+cy*cy)*0.64) continue;
                   }
                   u["priorUnit"] = ghost;
                   u["setCel"](ghost);
+                  recognizeRemote(u,true);
                   n++;
                }
             }
@@ -4634,6 +4665,14 @@ package rconnect.game
          catch(err:*)
          {
          }
+      }
+
+      private function recognizeRemote(u:Object,newTarget:Boolean=false):void {
+         RConnectPerceptionAccess.recognize(u as Unit,newTarget);
+         loc.detecting=true;
+         var wasIdle:Boolean=Number(world.t_battle)<=0;
+         world.t_battle=Number(world.constructor.battleNoOut);
+         if(wasIdle)world.cur();
       }
 
       /** M21：单个远程玩家摘要（面板用）：姿态/护甲。 */
@@ -5108,7 +5147,10 @@ package rconnect.game
                {
                   _hostAlive[target] = true;
                }
-               if(freezeAI) _presentation.apply(target,e,main);
+               if(freezeAI) {
+                  _presentation.apply(target,e,main);
+                  _projectiles.receive(target,e.weapons as Array,main);
+               }
                var hit:MirrorHitUnit = _hitUnits[target];
                if(freezeAI && numOr(e.fraction,0)>0 && numOr(e.fraction,0)<100
                   && numOr(e.sost,1)<3 && !isTrigger(target))
@@ -5518,17 +5560,20 @@ package rconnect.game
             if(b!=null) {s.runtime=NativeRoomState.scalars(b);s.inter=NativeRoomState.scalars(probe(b,"inter"));s.interNative=RConnectInteractionAccess.capture(probe(b,"inter"));}
          }
          return {key:roomKey(),width:loc.spaceX,height:loc.spaceY,roomId:String(probe(loc.room,"id")),
-            units:list,objs:objects,loots:readLootSync() || [],tiles:_terrain.checkpoint(loc)};
+            units:list,objs:objects,loots:readLootSync() || [],tiles:_terrain.checkpoint(loc),
+            points:mapProgress==null?null:mapProgress.capture(loc)};
       }
 
       public function roomRole(authority:Boolean):void
       {
-         _presentation.reset();clearHitUnits();restoreMirrorMasks();restoreUnitViews();
+         restoreContainerActions();
+         _presentation.reset();_projectiles.reset();clearHitUnits();restoreMirrorMasks();restoreUnitViews();
          for(var u:Object in _freezeOriginal) try {u.disabled=_freezeOriginal[u];}catch(e:*){}
          _freezeOriginal=new Dictionary();_frozen=new Dictionary();_hostAlive=new Dictionary();
          _pendingHits=new Dictionary();_baseHp=new Dictionary();_baseDefense=new Dictionary();
          _unitMotion=new Dictionary();_mirroring=!authority;freezeAI=!authority;
          _lastLocRef=null;resetBaselinesIfWorldChanged();
+         mirrorContainerActions();
       }
 
       public function followMapGeneration(info:Object):void
@@ -5542,6 +5587,7 @@ package rconnect.game
          if(int(s.width)!=int(loc.spaceX) || int(s.height)!=int(loc.spaceY))
             throw new Error("Room geometry differs: "+roomKey());
          roomRole(authority);
+         if(mapProgress!=null)mapProgress.restore(s.points);
          if(foreign)_objects.clearRoom(loc);
          reconcileObjs(s.objs as Array);
          var used:Dictionary=new Dictionary();
@@ -5633,7 +5679,7 @@ package rconnect.game
          if(_lastLocRef != loc)
          {
             _lastLocRef = loc;
-            _presentation.reset();
+            _presentation.reset();_projectiles.reset();
             _objects.enter(loc);
             _units.enter(loc);
             restoreMirrorMasks();
@@ -5688,7 +5734,7 @@ package rconnect.game
                _presentation.animateBody(u);
                _presentation.tick(u);
                var hit:MirrorHitUnit = _hitUnits[u];
-               if(hit != null) hit.sync();
+               if(hit != null) hit.syncMotion();
             }
             catch(err:*)
             {

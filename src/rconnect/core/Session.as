@@ -5,6 +5,7 @@ package rconnect.core
    import flash.utils.Timer;
    import rconnect.core.Log;
    import rconnect.game.GameBridge;
+   import rconnect.game.WorldProgress;
    import rconnect.net.HostServer;
    import rconnect.net.NetMessageEvent;
    import rconnect.net.Protocol;
@@ -22,6 +23,7 @@ package rconnect.core
       public static const CONNECTED:String = "connected";
 
       public var mod:RConnectMod;
+      public var progress:WorldProgress;
       public var mode:String = OFFLINE;
       public var error:String = "";
 
@@ -103,6 +105,7 @@ package rconnect.core
       public function Session(mod:RConnectMod)
       {
          this.mod = mod;
+         progress=new WorldProgress(mod.game);mod.game.mapProgress=progress;
          rooms=new RoomSync(this);travelGuard=new TravelGuard(mod);
          this.myName = mod.config.getValue("nickname");
          this._autoRole = String(mod.config.getValue("autoRole"));
@@ -259,6 +262,7 @@ package rconnect.core
       private function stop():void
       {
          _nextWorldSnapshot=_nextSceneReport=0;
+         if(progress!=null)progress.reset();
          if(rooms!=null)rooms.reset();TravelGuard.clear();
          if(mod.exploration != null) mod.exploration.resetLink();
          if(server != null)
@@ -396,9 +400,14 @@ package rconnect.core
                }
                break;
 
+            case Protocol.MSG_LOOT_ACK:
+               mod.game.applyLootReceipt(msg);
+               break;
+
             case Protocol.MSG_UNITSYNC:
                rooms.observeHost(msg.worldInfo);
                if(!rooms.accepts(msg))break;
+               progress.restore(msg.points);
                if(mod.game != null)
                {
                   // M7：世界注入——同 land 同 loc 时把敌对单位镜像成宿主快照
@@ -485,6 +494,10 @@ package rconnect.core
                applyWorldState(msg.players as Array);
                break;
 
+            case "map-progress":
+               progress.receive(msg.events as Array);
+               break;
+
             case Protocol.MSG_EXPLORATION:
                if(mode == CONNECTED) mod.exploration.receive(msg.exploration);
                break;
@@ -559,6 +572,7 @@ package rconnect.core
                if(peer != null)
                {
                   peer.snap = msg.snap;
+                  rooms.observeTeammate(peer.snap==null?null:peer.snap.worldInfo);
                   // 宿主侧同样应用快照到本地幽灵
                   if(mod.game != null)
                   {
@@ -567,6 +581,10 @@ package rconnect.core
                   }
                }
                broadcastWorldState();
+               break;
+
+            case "map-progress":
+               progress.receive(msg.events as Array);
                break;
 
             case Protocol.MSG_EXPLORATION:
@@ -617,7 +635,8 @@ package rconnect.core
                // M24：宿主应用加入方的拾取/推动上报（宿主权威落位）
                if(mod.game != null)
                {
-                  mod.game.applyLootReports(msg);
+                  var lootReceipt:Object=mod.game.applyLootReports(msg);
+                  if(lootReceipt!=null)link.send(rooms.stamp(Protocol.make(Protocol.MSG_LOOT_ACK,lootReceipt)));
                }
                break;
 
@@ -695,10 +714,20 @@ package rconnect.core
             + " -> landMatch=" + sameLand + " locMatch=" + sameLoc);
       }
 
+      public function flushProgress():void {
+         if(progress==null || mod.game==null)return;
+         var updates:Array=progress.scan();if(!updates.length)return;
+         var update:Object={type:"map-progress",events:updates};
+         if(mode==HOSTING && server!=null)server.broadcast(update);
+         else if(mode==CONNECTED && link!=null)link.send(update);
+      }
+
       private var _syncCount:int = 0;
 
       private function onTick(e:TimerEvent):void
       {
+         if(rooms.ready && !rooms.busy && !mod.game.isTransitioning())flushProgress();
+
          _tickCount++;
          // 调试心跳（每 10s），定位 tick 停滞点；M11：附带世界身份与
          // 过渡状态，用于定位"场景无法正常加载/卡在过渡"问题
@@ -822,11 +851,6 @@ package rconnect.core
          {
             mod.game.walkStepTest();
          }
-            // M20：近身敌人转火加入方（每 1s；让敌人会识别/攻击加入方）
-            if(mod.game != null && _tickCount % 20 == 0)
-            {
-               mod.game.redirectNearbyAggro();
-            }
             // M16 复现钩子：宿主破坏第一个物品（验证 join 端 dead 同步）
             if(_autoBoxKill && !_boxKillDone && mod.game != null
                && mod.game.gg != null && _tickCount > 800)
@@ -1030,7 +1054,7 @@ package rconnect.core
                _nextWorldSnapshot=flash.utils.getTimer()+200;
                var usnap:Array = mod.game.readUnitsSnapshot();
                var usMsg:Object = Protocol.make(Protocol.MSG_UNITSYNC,
-                  {tick: _tickCount, units: usnap != null ? usnap : [],
+                  {tick: _tickCount, units: usnap != null ? usnap : [],points:progress.capture(mod.game.loc),
                    worldInfo: mod.game.readWorldInfo()});
                // M16：物品（箱/门）状态快照随行广播（对象级重建/破坏同步）
                var olist:Array = mod.game.readObjsSnapshot();
@@ -1192,6 +1216,7 @@ package rconnect.core
             {
                continue;
             }
+            rooms.observeTeammate(p.snap==null?null:p.snap.worldInfo);
             mod.game.updateRemote(id, p.snap != null ? p.snap : {},
                p.name != undefined ? String(p.name) : "");
             next.push({id: id, name: p.name, snap: p.snap});

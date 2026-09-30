@@ -28,11 +28,12 @@ def main():
     ap.add_argument('--effects', action='store_true', help='Validate native weapon/death and terrain changes over TCP')
     ap.add_argument('--effects-driver',type=Path,help='Directory containing an external EffectsDriver and EffectsHarness for exact production-byte tests')
     ap.add_argument('--land', default='', help='Host travels to this real mission before a scenario starts')
-    ap.add_argument('--all-mods', action='store_true', help='Presentation scenario with all installed manifest modules')
+    ap.add_argument('--all-mods', action='store_true', help='Load all installed manifest modules in the isolated scenario')
+    ap.add_argument('--responsive', action='store_true', help='Use the same process-local HighQoS policy as Start-Coop.bat')
     ap.add_argument('--expected-version',default=re.search(r'VERSION:String\s*=\s*"([^"]+)"',
                     (ROOT/'src'/'RConnectMod.as').read_text(encoding='utf-8')).group(1))
     args=ap.parse_args()
-    if args.all_mods and not (args.presentation or args.effects): ap.error('--all-mods requires --presentation or --effects')
+    if args.all_mods and not (args.presentation or args.effects or args.smoke): ap.error('--all-mods requires --presentation, --effects or --smoke')
     if args.presentation and not args.land: args.land='random_mane'
     if args.vision_candidate: args.with_vision=True
     game=args.game_root.resolve()
@@ -57,6 +58,10 @@ def main():
     if shutil.disk_usage(output).free < required_bytes:
         raise SystemExit('Insufficient space for isolated test copies; no AIR instance started')
     frozen=output/'frozen'; frozen.mkdir()
+    if args.responsive:
+        (frozen/'tools').mkdir()
+        for name in ('RConnect.Process.ps1','keep_test_responsive.ps1'):
+            shutil.copy2(ROOT/'tools'/name,frozen/'tools'/name)
     for source in assets:
         shutil.copy2(source,frozen/source.name)
     shutil.copytree(game/'Rooms',frozen/'Rooms')
@@ -97,6 +102,9 @@ def main():
             folder=output/role; shutil.copytree(frozen,folder)
             release=folder/'mods'/'Rconnect'/'release'
             inputs[role]={'game':hashlib.sha256((folder/'pfe.swf').read_bytes()).hexdigest()}
+            if args.responsive:
+                inputs[role]['process_policy']={name:hashlib.sha256((folder/'tools'/name).read_bytes()).hexdigest()
+                    for name in ('RConnect.Process.ps1','keep_test_responsive.ps1')}
             if args.effects_driver:
                 inputs[role]['production']=hashlib.sha256((folder/'tests/RConnectProduction.swf').read_bytes()).hexdigest()
                 inputs[role]['driver']=hashlib.sha256((folder/'tests/EffectsDriver.swf').read_bytes()).hexdigest()
@@ -127,6 +135,12 @@ def main():
             proc=subprocess.Popen([str(game/'adl64.exe'),'-runtime',str(game/'runtimes/air/win64'),str(desc)],
                        cwd=folder,stdout=stdout,stderr=subprocess.STDOUT,creationflags=subprocess.CREATE_NO_WINDOW)
             procs.append(proc)
+            if args.responsive:
+                policy=subprocess.run(['powershell.exe','-NoLogo','-NoProfile','-File',str(folder/'tools/keep_test_responsive.ps1'),
+                    '-OwnedProcessId',str(proc.pid),'-Descriptor',str(desc)],capture_output=True,text=True,check=True)
+                status=json.loads(policy.stdout.strip())
+                assert status['pid']==proc.pid and status['control']&1 and not status['state']&1
+                (output/(role+'.process-policy.json')).write_text(json.dumps(status,indent=2))
             print(json.dumps(dict(role=role,pid=proc.pid,appid=appid,log=str(storage/'RConnect.log'))),flush=True)
             time.sleep(15 if role=='host' else 0)
         (output/'run.json').write_text(json.dumps(dict(port=port,pids=[p.pid for p in procs],

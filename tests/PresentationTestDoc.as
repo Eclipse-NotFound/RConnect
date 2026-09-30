@@ -173,17 +173,23 @@ package {
          warm.addEventListener(TimerEvent.TIMER,function(ev:TimerEvent):void {
             var first:Number=g.X;snap.x+=60;bridge.updateRemote(993,snap,"FrameProbe");
             check(Math.abs(g.X-first)<1,"remote position does not jump to new packet endpoint");
-            var positions:Object={}, frames:Object={}, count:int=0;
+            // Animation correctness is sampled over actual game frames. The
+            // separate 80-enemy benchmark retains the wall-clock frame gate.
+            var positions:Object={}, frames:Object={}, count:int=0,packets:int=1;
+            var sampleAt:int=getTimer(),closed:Boolean=false;
+            var window:Timer=new Timer(12000,1);
             var onFrame:Function=function(frame:Event):void {
                positions[String(g.X)]=true;frames[String(g.vis.osn.body.currentFrame)]=true;count++;
+               if(count==4 || count==8){snap.x+=60;bridge.updateRemote(993,snap,"FrameProbe");packets++;}
+               if(count>=12)closeWindow(null);
             };
             m.stage.addEventListener(Event.ENTER_FRAME,onFrame,false,-20000);
-            var window:Timer=new Timer(240,1);
-            window.addEventListener(TimerEvent.TIMER,function(done:TimerEvent):void {
+            var closeWindow:Function=function(done:TimerEvent):void {
+               if(closed)return;closed=true;window.stop();
                m.stage.removeEventListener(Event.ENTER_FRAME,onFrame);
                var pc:int=0,fc:int=0;for(var k:String in positions) pc++;for(k in frames) fc++;
-               Log.d("PRESENT sample between-packets frames="+count+" positions="+pc+" bodyFrames="+fc+" totalFrames="+g.vis.osn.body.totalFrames);
-               check(count>=3 && pc>=3,"remote moves on frames between network packets");
+               Log.d("PRESENT sample between-packets frames="+count+" packets="+packets+" positions="+pc+" bodyFrames="+fc+" totalFrames="+g.vis.osn.body.totalFrames+" elapsedMs="+(getTimer()-sampleAt));
+               check(count>=12 && pc>packets,"remote moves on frames between network packets");
                check(fc>=3,"remote animation advances between network packets");
                snap.bodyPlaying=false;snap.bodyFrame=3;bridge.updateRemote(993,snap,"FrameProbe");
                var stopped:Timer=new Timer(200,1);
@@ -192,7 +198,8 @@ package {
                   check(g.vis.osn.body.currentFrame==3 && !g.vis.osn.body.isPlaying,"authoritative stopped animation stays stopped");
                   bridge.endSession();cadence(m);
                });stopped.start();
-            });window.start();
+            };
+            window.addEventListener(TimerEvent.TIMER,closeWindow);window.start();
          });warm.start();
       }
       private function cadence(m:RConnectMod):void {

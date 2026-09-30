@@ -33,6 +33,7 @@ package rconnect.ui
       private var _btnLeave:TextField;
       private var _btnSend:TextField;
       private var _btnExploration:TextField;
+      private var _btnFollow:TextField;
       private var _visible:Boolean = true;
       private var _chatLines:int = 0;
 
@@ -58,7 +59,7 @@ package rconnect.ui
          var fmtBold:TextFormat = new TextFormat("_sans", 12, 0xFFD040, true);
 
          graphics.beginFill(0x000000, 0.62);
-         graphics.drawRect(0, 0, 280, 274);
+         graphics.drawRect(0, 0, 280, 300);
          graphics.endFill();
 
          statusTf = makeLabel(8, 8, 264, 44, fmt);
@@ -90,6 +91,11 @@ package rconnect.ui
          });
          var explorationHint:TextField = makeLabel(8, 254, 264, 16, fmt);
          explorationHint.text = "关闭后保留已收到的区域";
+         _btnFollow=makeButton(8,276,264,fmtBold,"跟随队友：关");
+         _btnFollow.addEventListener(MouseEvent.CLICK,function(e:MouseEvent):void {
+            mod.config.setValue("followTeammate",mod.config.getValue("followTeammate")=="1"?"0":"1");
+            mod.config.save();refresh();
+         });
       }
 
       private function makeLabel(x:Number, y:Number, w:Number, h:Number,
@@ -220,6 +226,7 @@ package rconnect.ui
       public function refresh():void
       {
          _btnExploration.text = "接收队友探索：" + (mod.exploration.enabled ? "开" : "关");
+         _btnFollow.text="跟随队友："+(mod.config.getValue("followTeammate")=="1"?"开":"关");
          statusTf.text = mod.session != null
             ? mod.session.statusText() : "RConnect";
       }

@@ -1,5 +1,6 @@
 package {
    import flash.desktop.NativeApplication;
+
    import flash.display.Sprite;
    import flash.events.Event;
    import flash.events.TimerEvent;
@@ -9,8 +10,10 @@ package {
    import flash.utils.getTimer;
    import fe.unit.Unit;
    import fe.unit.CombatStateProbe;
+   import rconnect.game.GameBridge;
    import rconnect.core.Log;
    import rconnect.net.TcpLink;
+   import rconnect.net.Protocol;
    import rconnect.net.NetMessageEvent;
    public class CombatNetworkTestDoc extends Sprite {
       public static const MOD_CLASS:Class=RConnectMod;
@@ -21,6 +24,8 @@ package {
       private var turretKinds:Array=[1,2,3,4,5],fireStart:int=0;
       private var baselineActive:Boolean=false,baselineAt:int=0,baselinePrev:int=0,baselineFrames:int=0;
       private var baselineIntervals:Array=[];
+      private var densityProbe:int=0;
+      private var frameAt:int=0,cpuMs:int=0,cpuMax:int=0,netAt:int=0,netMs:int=0,netMax:int=0;
       public function CombatNetworkTestDoc() {
          var id:String=NativeApplication.nativeApplication.applicationID;
          if(id.indexOf("pfe-rconnect-coop-")!=0 && id.indexOf("pfe-modsettings-rconnect-coop-")!=0)return;
@@ -32,7 +37,10 @@ package {
       private function check(ok:Boolean,label:String):void{Log.d("COOP "+(ok?"PASS ":"FAIL ")+"network-state "+label);}
       private function setPhase(s:String):void {phase=s;at=getTimer();}
       private function send(s:String,p:Object=null):void {p=p||{};p.type="combat-network-test";p.stage=s;if(host)mod.session.server.broadcast(p);else mod.session.link.send(p);}
-      private function watch(l:TcpLink):void {if(l!=null&&!links[l]){links[l]=true;l.addEventListener(TcpLink.MESSAGE,message);}}
+      private function watch(l:TcpLink):void {if(l!=null&&!links[l]){links[l]=true;l.addEventListener(TcpLink.MESSAGE,message);
+         l.addEventListener(TcpLink.MESSAGE,function(e:NetMessageEvent):void{if(phase=="load")netAt=getTimer();},false,100000);
+         l.addEventListener(TcpLink.MESSAGE,function(e:NetMessageEvent):void{if(phase=="load"){var n:int=getTimer()-netAt;netMs+=n;netMax=Math.max(netMax,n);}},false,-100000);
+      }}
       private function finish():void {if(phase=="done")return;phase="done";timer.stop();Log.d("COOP EFFECTS DONE network-state "+(host?"host":"join"));}
       private function find(id:String):Object {for each(var u:Object in mod.game.loc.units)if(u.id==id)return u;return null;}
       private function spawn(name:String,id:String,map:XML,x:Number):Object {
@@ -134,6 +142,10 @@ package {
          if(timer.currentCount<250)return;
          try {
             if(phase=="boot"){
+               if(!host){
+                  mod.stage.addEventListener(Event.ENTER_FRAME,function(e:Event):void{frameAt=getTimer();},false,200000);
+                  mod.stage.addEventListener(Event.ENTER_FRAME,function(e:Event):void{if(phase=="load"){var n:int=getTimer()-frameAt;cpuMs+=n;cpuMax=Math.max(cpuMax,n);}},false,-200000);
+               }
                mod.game.world.testDam=true;mod.game.gg.disabled=true;mod.game.gg.invulner=host;mod.game.gg.pers.begHP=5000;mod.game.gg.hp=5000;mod.game.gg.maxhp=5000;
                mod.game.gg.healhp=0;mod.game.gg.demask=1000;
                if(!host){send("ready");setPhase("wait");}else setPhase("wait");
@@ -169,6 +181,7 @@ package {
                intervals.sort(Array.NUMERIC);var p95:int=intervals.length?intervals[int(intervals.length*.95)]:9999;
                var count:int=0;for(var s:String in samples)count++;
                Log.d("COOP METRIC network-state frames="+frames+" p95ms="+p95+" maxms="+maxFrame+" packets="+packets+" maxPacketMs="+maxPacket+" aimSamples="+count);
+               Log.d("COOP METRIC event-cost cpuMs="+cpuMs+" cpuMax="+cpuMax+" netMs="+netMs+" netMax="+netMax);
                var bridge:Object=mod.game;if("presentationTiming" in bridge)Log.d("COOP METRIC timing "+JSON.stringify(bridge.presentationTiming));
                check(frames>=80&&p95<200,"80 enemies keep stage frames progressing");
                check(packets>=20&&maxPacket<900,"80 enemies keep current world snapshots arriving");

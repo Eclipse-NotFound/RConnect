@@ -1,7 +1,19 @@
 package fe.unit {
    import flash.display.MovieClip;
+   import flash.utils.Dictionary;
    /** Small presentation-only view of native state. No AI or combat steps. */
    public class RConnectAnimationAccess {
+      private static var painted:Dictionary=new Dictionary(true);
+      public static function reset():void {painted=new Dictionary(true);}
+      public static function effects(unit:Unit):void {
+         if(unit is UnitAlicorn) {
+            var a:UnitAlicorn=unit as UnitAlicorn,u:Object=unit;
+            if(a.visshit!=null && a.visshit.visible!=(Number(u.shithp)>0)) {
+               a.visshit.visible=Number(u.shithp)>0;
+               if(a.visshit.visible)a.visshit.gotoAndPlay(1);else a.visshit.gotoAndStop(1);
+            }
+         }
+      }
       public static function capture(unit:Unit):Object {
          if(unit==null)return null;
          var u:Object=unit,s:Object={ai:unit.aiState},a:Object;
@@ -9,7 +21,8 @@ package fe.unit {
          // stopped-frame correction would cut those transitions short.
          if(unit is UnitTurret)return s;
          if(u.blitData!=null && unit.anims!=null && (a=unit.anims[u.animState])!=null)
-            s.blit={f:a.f,df:a.df,st:a.st,stab:a.stab};
+            s.blit={f:a.f,df:a.df,st:a.st,stab:a.stab,
+               reverse:unit is UnitMerc && u.animState=="walk" && unit.aiNapr*Number(u.storona)<0};
          var osn:Object=u.vis==null || !("osn" in u.vis)?null:u.vis["osn"];
          if(osn is MovieClip)s.clip={frame:osn.currentFrame,playing:osn.isPlaying};
          return s;
@@ -44,7 +57,26 @@ package fe.unit {
          if(pose==null)return false;
          var u:Object=unit,a:Object;
          if(pose.blit!=null && unit.anims!=null && (a=unit.anims[u.animState])!=null) {
-            u.blit(a.id,int(a.f));a.step();return true;
+            var frame:int=pose.blit.reverse?int(a.maxf-a.f-1):int(a.f),last:Object=painted[unit];
+            if(last==null || last.id!=a.id || last.frame!=frame || last.data!==unit.visData) {
+               u.blit(a.id,frame);painted[unit]={id:a.id,frame:frame,data:unit.visData};
+            }
+            a.step();
+            // Native Merc.animate skips blit when the host already stopped the
+            // pose, leaving a fresh mirror bitmap empty. Paint even that first
+            // stopped frame, then place its separate arm as native animate does.
+            if(unit is UnitMerc) {
+               var merc:UnitMerc=unit as UnitMerc,positions:Object=u.wPos[a.id];
+               var offset:Object=positions==null?null:positions[int(a.f)];
+               if(merc.arm!=null) {
+                  merc.arm.visible=int(u.sost)<2;
+                  if(offset!=null && unit.visBmp!=null) {
+                     merc.arm.x=Number(u.X)+(Number(offset.x)+unit.visBmp.x)*Number(u.storona);
+                     merc.arm.y=Number(u.Y)+Number(offset.y)+unit.visBmp.y;
+                  }
+               }
+            }
+            return true;
          }
          // MovieClip child timelines advance on the stage. Re-running animate()
          // would select a pose from stale local AI counters and restart the clip.

@@ -10,18 +10,26 @@
 
 - 已授权修复已有合作探索/战斗/交互，允许大幅重构和候选部署。不新增任务/背包/交易规则，排除稳定重连、三人以上、公网和其他版本。
 - 此前炮塔显示与分房请求点名grilling，Q1–Q5全部确认“符合，按此实现”：同地图普通房自由分头；空房暂停保留；宿主发起共同换图；剧情挑战共同进出；关闭游戏沿用原版，不新增随机房完整战斗存档。不得重复确认。
-- 最新反馈M38：轻机枪打尸鬼无效、加入侧受伤疑似偏低、炮塔伤害、敌人与门柜动画卡顿、血翼休息姿态追人。继续既定修复/测试/部署授权。
+- 最新M39九项反馈：密集敌人卡顿，炮塔/地雷/狮鹫索敌，容器掉落与拾取，跟随队友，闪电/双方开火/天角兽护盾，经验点与存档点。用户确认：地上物品一份，先拾取者获得；经验点双方奖励；存档点共同解锁，各自保存角色。继续既定修复/候选部署授权。
 - 只写RConnect；其他模组仅最小必要读取。测试隔离新角色和唯一AIR标识，只结束自己创建的进程；全部输入在任一端启动前冻结。用户进程和存档不动。
 - 保留M31共享探索、M32轻机枪/天角兽伤害与不同护甲、M33动作平滑、M34开火/机械死亡/破墙、M35八类炮塔。旋翼机是UnitVortex，无马机是UnitDron。
 
 ## 3. 当前安装状态
 
-- M38 / **0.2.10-dev已部署并通过正常加载冒烟**（2026-09-28），79605字节，SHA256 `c6c4e97848ae5fe3e456057316a2b839b22fa9bc98c11c6eeffbeeced6c2f005`。
-- 最终同字节8组391 PASS/0 FAIL，运行键见`knowledge/experiments/m38-validation-evidence.json`。7组加载当前全模组，完整合作RC+RV。正式包31类，无原生存根/测试类。
-- 旧M37/0.2.9备份 `build/backup/m38-release-20260928-084315-636286/RConnectMod.before.swf`，SHA `7f8e65ff7cb617894253ec908a7bfc6e61ada9b273d6549dc4a7f3846f499432`。仅复制回RConnect release并完全重启双端即可回滚。
-- 回执`build/m38/deployment.json`为deployed-smoke-passed；正常加载双端冒烟d525efc4c5，版本/连接/房间协议/tick200通过。52项游戏、其他模组及配置指纹不变；未发布远程包。
+- **M39 / 0.2.11-dev已部署并通过正常加载冒烟（2026-10-01）**，87440字节，SHA256 `42d10ea384ce1b731ad4515359ba941a511a83bb67401cf8f5ce70e01c15411d`。37生产类，无存根/测试类；build/m39/final/source-input.json冻结源码。
+- 最终同字节13组517 PASS/0 FAIL，证据`knowledge/experiments/m39-validation-evidence.json`；真实启动入口launcher-1f523a5b4e和部署后无驱动双端冒烟049f83595f通过。52项游戏/其他模组/配置保护指纹不变。
+- 旧M38备份`build/backup/m39-release-20261001-020127-723248/RConnectMod.before.swf`，SHA `c6c4e97848ae5fe3e456057316a2b839b22fa9bc98c11c6eeffbeeced6c2f005`；仅复制回RConnect release并重启双端可回滚。回执build/m39/deployment.json为deployed-smoke-passed，未发布远程包。
+- **同机双人使用Start-Coop.bat**：保存关闭原窗口再启动两端。它仅将自己新建的游戏进程设为HighQoS，防止后台降速；不改电源计划/注册表/亲和性/优先级。主pfe和第二pfe2各自保存；旧second_player不再覆盖存档或结束已有进程。可能增加耗电，退出后结束。
 
 ## 4. 实现与当前接点
+
+- M39九项反馈的实现与候选验证完成：单份掉落由所有者裁定、真实原生入包；开柜由所有者生成；双方武器/弹道、天角兽闪电/护盾、地雷activateTrap、炮塔/狮鹫原生感知；F10跟随默认关；经验点共享、存档点共享解锁各自保存。
+- Windows持续测试的后台策略经验已回流共享知识KB-000071 revision 1；原区保留全部运行记录，无重复公共正文。
+- GroundItemState修复Item第四参数应为变体而非耐久、save漏multHP/shpun，owner回执入包实际耐久222且去重。Raider新发现远端后先自然findCel再巡逻，三次自然攻击通过；停止姿态先blit再放独立手臂，暗房连续15帧无缺失。
+- 性能：移除重复EXIT_FRAME显示处理；不使用失败的本体缓存。29237459b8原策略57帧/8s→HighQoS124/120→恢复60，固定计算38ms→19/23→38，确认本机后台策略为后半段骤降原因。固定快核心及显隐窗口均不足，失败证据保留。
+- 正式启动器相同策略：72853a34e1原密集门禁33通过（121帧/8s，p95 96ms）；d8619f757d持续56秒51通过（117–127帧/8s，p95 86–98ms），全部原阈值保留。**约15FPS，不承诺任意大规模战斗满帧；SWF单独不能设置Windows策略。**
+- 其余最终11组433项通过：GameplayGap 7681a4add4/24、Presentation f75dcd4048/26、GameplayNetwork c4041c1d55/31、CombatState 53b3fb75fa/22、Turret d89206ce0f/60、EffectsTerrain 64e5283eff/29、SATS ea26855383/24、Coop ae3c3ef6a4/132、Room 3ecb649b06/66、Projectile bb143b3e3a/9、Follow 5123a494d1/10。夹具失效/早退漏断言的历史红灯保留。
+- 地图经验点在loc.bonuses、存档点在acts，Box在objs；随机经验点按owner数组槽位/位置同步并维护saves/uidObjs。详见M39实验记录。缓存/固定计算原型已移入build/m39/debug，持续负载和Windows启动检查保留为测试。
 
 - **M38完成主要修复（2026-09-28）**：尸鬼scY=0及抗性XMLList跨JSON失效；现同步碰撞尺寸并数值化vulner/begvulner。真实TCP轻机枪原生/加入/宿主45一致，只结算一次。
 - RemoteDamageUnit捕获原始命中，NativeHit保留弹体/武器参数，由实际UnitPlayer计算；五种炮塔弹种52/22/7/52/22与原生一致。保留直接HP变化的旧兜底；特殊反伤对象上下文未穷举。
@@ -52,14 +60,15 @@
 
 ## 6. 下一步
 
-1. 用户完全重启双端，F10核对0.2.10-dev；重点复测轻机枪/尸鬼、加入侧受伤、炮塔、血翼与门柜。
-2. 密集敌人整体掉帧仍待进一步定位。需要受控的双实例负载证据，不结束用户其他AIR进程，不用局部动画耗时推断整帧瓶颈。
-3. 基线ed0a6bc，本轮提交覆盖源码、驱动、双语说明和证据；不自动推送。既定排除范围不变。
+1. 用户保存关闭双方游戏，使用Start-Coop.bat重开，F10核对0.2.11-dev；重点实测九项原反馈和各自保存/拾取归属。
+2. 新反馈按实际角色、敌人/武器和房间定位；密集80敌人约15FPS，继续优化需同一进程策略和相同输入对照，避免把后台节能误判为代码退化。
+3. 门禁红灯时提出的“先发布功能版本”问题已被完整绿灯消解，未得到也未使用豁免授权。既定排除范围不变。M39基线ddf55e7，不自动推送。
 
 ## 7. 记录与工具入口
 
-- 最新 `knowledge/experiments/2026-09-27-m38-combat-state.md`、`m38-validation-evidence.json`；M37 SATS报告与证据保留。M36分房报告/evidence及design/separate-rooms.md保留。公共SATS图像契约见shared-knowledge/ui-systems/facts/sats-unit-visual-contract.md。
+- 最新 `knowledge/experiments/2026-09-30-m39-gameplay.md`、`m39-validation-evidence.json`；已部署M38为2026-09-27-m38-combat-state.md与m38-validation-evidence.json。历史M37 SATS、M36分房证据和design/separate-rooms.md保留。
 - 构建 `tools/build_mod.py --java <java> --output build/<轮次>/RConnectMod.swf`；必须显式候选输出，默认写release。
 - 同字节外部驱动 `tools/build_effects_driver.py --candidate <正式SWF> --java <java> --output build/<轮次>/driver --entry SatsTestDoc`。另可RoomCooperationTestDoc/CoopTestDoc/TurretTestDoc/EffectsTerrainTestDoc/PresentationTestDoc。
 - runner `tools/run_coop_regression.py --candidate <SWF> --effects-driver <目录>`：分房加`--effects --all-mods --land random_mane --seconds 240`，完整合作`--with-vision --seconds 340`，炮塔/特效`--effects --all-mods --seconds 180`，画面`--presentation --all-mods --seconds 210`。正常路径不加driver，用`--smoke --with-vision --seconds 150`。
 - Python C:/Users/hello/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe；Java C:/Users/hello/Documents/_sandevistan_dev/jdk-11.0.32.1+1-jre/bin/java.exe；SDK D:/RemainsMod/mods/Sandevistan/build/tools/flexsdk。AIR/FFDec沙箱受限走正常工具审核。
+- M39性能使用runner --responsive（同Start-Coop的helper），SustainedDensityTestDoc连续7段；启动函数回归tests/windows/VerifyCoopLauncher.ps1需要--keep-copies保留的隔离模板。旧tools/make_release.py仍是0.1.0整包脚本，本轮未运行；以后分发前需更新包清单纳入启动器，不能当作本轮发布工具。

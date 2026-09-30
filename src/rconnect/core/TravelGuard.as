@@ -88,7 +88,8 @@ package rconnect.core
             if(inter==null)continue;
             var owner:Object=GameBridge.probe(inter,"owner");
             if(GameBridge.probe(inter,"prob")!=null || ["probreturn","exit"].indexOf(String(GameBridge.probe(inter,"allact")))>=0
-               || (owner!=null && getQualifiedClassName(owner).indexOf("CheckPoint")>=0) || scripted(inter))
+               || (owner!=null && getQualifiedClassName(owner).indexOf("CheckPoint")>=0
+                  && ["returnb","returnm"].indexOf(String(inter.userAction))>=0) || scripted(inter))
             {
                changed.push({o:inter,action:inter.action,active:inter.active,is_act:inter.is_act,text:inter.actionText});
                inter.action=0;inter.active=false;inter.is_act=false;

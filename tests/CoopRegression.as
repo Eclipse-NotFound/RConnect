@@ -132,11 +132,11 @@ package
          var hideLate:Function=function(e:Event):void { shown.vis.visible=false; };
          mod.stage.addEventListener(Event.ENTER_FRAME,hideLate);
          mod.stage.dispatchEvent(new Event(Event.ENTER_FRAME));
-         mod.stage.dispatchEvent(new Event(Event.EXIT_FRAME));
+         mod.stage.dispatchEvent(new Event(Event.RENDER));
          check(shown.vis.visible,"visibility wins over later registered ENTER_FRAME hider");
          mod.stage.removeEventListener(Event.ENTER_FRAME,hideLate);
          shown.remVisual();
-         mod.stage.dispatchEvent(new Event(Event.EXIT_FRAME));
+         mod.stage.dispatchEvent(new Event(Event.RENDER));
          check(shown.vis.parent!=null,"orphan mirrored visual reattached");
          var osn:Object=GameBridge.probe(GameBridge.probe(real.gg,"vis"),"osn");
          var savedOuter:int=osn.currentFrame;
@@ -155,7 +155,7 @@ package
          osn.gotoAndStop(savedOuter); gb.endSession();
          check(gb.getRemoteGhost(901)==null,"leave removes remote avatar");
          shown.vis.visible=false;
-         mod.stage.dispatchEvent(new Event(Event.EXIT_FRAME));
+         mod.stage.dispatchEvent(new Event(Event.RENDER));
          check(!shown.vis.visible,"leave stops forced visibility");
          for each(var special:String in ["alicorn2","mine","bossalicorn"])
          {
@@ -182,7 +182,20 @@ package
          var lootJoin:GameBridge=new GameBridge({stage:mod.stage,loaderInfo:mod.main["loaderInfo"]});
          lootJoin.world=real.world; lootJoin.loc=real.loc; lootJoin.gg=real.gg;
          lootList.reverse(); lootJoin.applyLootSync(lootList);
-         created[64].X+=70;
+         // Claiming now replaces native drops with pickup-arbitrated bodies.
+         // Exercise the live object, not the retired constructor reference.
+         var liveCreated:Array=[],liveStack:Object=null,walk:Object=real.loc.firstObj;
+         while(walk!=null) {
+            var liveItem:Object=GameBridge.probe(walk,"item");
+            for each(var original:Object in created)if(liveItem===original.item) {
+               liveCreated.push(walk);
+               if(liveItem===created[64].item)liveStack=walk;
+               break;
+            }
+            walk=walk.nobj;
+         }
+         check(liveCreated.length==65 && liveStack!=null,"claim preserves all 65 live ground stacks");
+         if(liveStack!=null)liveStack.X+=70;
          var lootReport:Object=lootJoin.scanLootReports();
          var correct:Boolean=false;
          if(lootReport!=null) for each(var move:Object in lootReport.moved)
@@ -206,12 +219,12 @@ package
             extra.x=before-80; extra.suction=true;
             lootJoin.applyLootSync(lootList);
             lootJoin.applyUnitsSync(real.readUnitsSnapshot());
-            mod.stage.dispatchEvent(new Event(Event.EXIT_FRAME));
+            mod.stage.dispatchEvent(new Event(Event.RENDER));
             check(injected.X<before && injected.X>before-80,"remote pickup movement interpolated");
             check(injected.item.kol==77,"pickup animation does not award or consume inventory");
          }
-         if(injected!=null) created.push(injected);
-         for each(var drop:Object in created) real.loc.remObj(drop);
+         if(injected!=null) liveCreated.push(injected);
+         for each(var drop:Object in created.concat(liveCreated)) real.loc.remObj(drop);
          lootBridge.endSession(); lootJoin.endSession();
          Log.d("COOP DONE passed="+passed+" failed="+failed);
       }
