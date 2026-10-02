@@ -4,14 +4,15 @@ Two-player online co-op for **Fallout Equestria: REMAINS** — see each other, c
 
 English (this page) · [简体中文](README.zh-CN.md)
 
-> Current local candidate: **0.2.11-dev (M39)**, deployed 2026-10-01. Repairs turret/mine/griffon targeting, shared container drops and actual pickup, player/enemy projectile visuals and alicorn shields. Adds teammate following, shared XP-point rewards and checkpoint unlocks with separate character saves. All 517 automated checks passed; see the [validation record](knowledge/experiments/2026-09-30-m39-gameplay.md). Game v1.02, two players on one machine; stable reconnection, 3+ players, real-network play and other versions remain unverified.
+> Current local candidate: **0.2.12-dev (M40)**, deployed 2026-10-03. Smooths enemy and teammate movement under uneven update timing, and restores faint native zebra/alicorn camouflage on the joining side. All 389 automated checks passed; see the [validation record](knowledge/experiments/2026-10-03-m40-presentation.md). Retains M39 combat, shared drops, following, XP-point and checkpoint features. Game v1.02, two players on one machine; stable reconnection, 3+ players, real-network play and other versions remain unverified.
 >
-> For local co-op, save and close both games, then use **[Start-Coop.bat](Start-Coop.bat)**. It keeps only the processes it starts responsive in the background and preserves each character's saves. This may use more power. The 80-enemy stress test sustained roughly 15 FPS for 56 seconds without its previous late slowdown; this is not a promise of full frame rate in every encounter.
+> For local co-op, save and close both games, then use **[Start-Coop.bat](Start-Coop.bat)**. It keeps only the processes it starts responsive in the background and preserves each character's saves. This may use more power. The 80-enemy stress test sustained roughly 16–17 FPS for 56 seconds; large encounters remain limited by rendering load.
 
 ## Features
 
 - One player **hosts**, the other **joins** (3+ untested). The joining side needs no matching save: the host's world is mirrored to them (world injection — missing enemies spawn, extras are removed, state synced at 5 Hz).
 - Players see each other as translucent ghost ponies with floating name tags, walk/run/jump pose animations and **held-weapon display**; remote health shows in the co-op panel.
+- Enemy and teammate movement plays continuously between updates. Native zebra/alicorn camouflage keeps its faint outline and its original targeting restrictions.
 - In-panel **chat** between both sides.
 - Shared ground items: one copy, first collector owns it; container drops can be collected on either side.
 - Shared XP-point rewards and checkpoint unlocks; each player saves their own character.

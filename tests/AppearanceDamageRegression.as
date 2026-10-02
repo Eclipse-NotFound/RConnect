@@ -2,8 +2,10 @@ package {
    import fe.unit.Unit;
    import flash.display.DisplayObjectContainer;
    import flash.display.MovieClip;
+   import flash.events.Event;
    import flash.events.TimerEvent;
    import flash.utils.Timer;
+   import flash.utils.getTimer;
    import rconnect.game.GameBridge;
    import rconnect.core.Log;
    public class AppearanceDamageRegression {
@@ -61,15 +63,25 @@ package {
          var firstNumbers:int=numbers(b.loc);
          check(firstNumbers>0,"first burst has visible damage number");
          var timer:Timer=new Timer(100,35);var good:Boolean=true;var count:int=0;
+         var frames:int=0,renderedFrame:int=-1,renders:int=0;
+         var frame:Function=function(ev:Event):void {frames++;};
+         // Native frame scripts briefly read the local appearance while building
+         // new parts. Judge the displayed result after the production RENDER
+         // correction; a Timer may observe the in-progress frame instead.
+         var render:Function=function(ev:Event):void {
+            if(renderedFrame==frames)return;renderedFrame=frames;renders++;
+            var rendered:Array=[];armorClips(ghost.vis,rendered);count=Math.max(count,rendered.length);
+            for each(var part:Object in rendered)if(String(part.currentLabel)!=String(snap.ap.armor))good=false;
+         };
+         mod.stage.addEventListener(Event.ENTER_FRAME,frame,false,100000);
+         mod.stage.addEventListener(Event.RENDER,render,false,-20000);
          timer.addEventListener(TimerEvent.TIMER,function(ev:TimerEvent):void {
-            var clips:Array=[];armorClips(ghost.vis,clips);count=Math.max(count,clips.length);
-            for each(var clip:Object in clips) if(String(clip.currentLabel)!=String(snap.ap.armor)) good=false;
-            if(timer.currentCount==2) {
-               var labels:Array=[];for each(clip in clips) labels.push(clip.name+":"+clip.currentLabel);
-               Log.d("M32 armor local="+localArmor+" wanted="+snap.ap.armor+" clips="+labels.join(","));
-            }
-            if(timer.currentCount==10) {b.world.armorWork="pip";snap.pose="jump";b.updateRemote(988,snap,"DifferentArmor");}
+            if(timer.currentCount==10) {b.world.armorWork="pip";snap.pose="jump";snap.sampleTime=getTimer();b.updateRemote(988,snap,"DifferentArmor");}
             if(timer.currentCount==35) {
+               mod.stage.removeEventListener(Event.ENTER_FRAME,frame);
+               mod.stage.removeEventListener(Event.RENDER,render);
+               Log.d("COOP METRIC armor renderedFrames="+renders+" armorClips="+count);
+               check(renders>=15,"remote armor sampled across rendered animation frames");
                check(count>0 && good,"remote armor survives native animation frame changes");
                check(String(ac.ggArmorId)==localArmor,"remote styling preserves local armor");
                check(numbers(b.loc,enemy.X)==0,"first damage number really expired before second burst");

@@ -100,6 +100,7 @@ package rconnect.game
 
       private var _hostAlive:Dictionary = new Dictionary();
       private var _mirroring:Boolean = false;
+      private var _sampleAt:int=0;
       private var _objects:ObjectIdentity = new ObjectIdentity();
       private var _units:ObjectIdentity = new ObjectIdentity("U");
       private var _mirrorMasks:Dictionary = new Dictionary();
@@ -188,7 +189,7 @@ package rconnect.game
                   if(rec.ghost != null && rec.snap != null)
                   {
                      if(rec.snap.bodyPlaying === false && rec.motion != null)
-                        driveVisAnim(rec.ghost,rec.motion.sample(getTimer()),int(remoteId));
+                        driveVisAnim(rec.ghost,rec.motion.sample(presentationTime()),int(remoteId));
                      if(rec.snap.ap != null)
                         RemoteArmor.apply(probe(rec.ghost,"vis") as DisplayObjectContainer,String(rec.snap.ap.armor || ""));
                   }
@@ -250,7 +251,7 @@ package rconnect.game
          {
             var rec:Object=_remotes[id];
             if(rec.ghost!=null && rec.motion!=null && probe(rec.ghost,"loc")===loc)
-               driveGhost(rec.ghost,rec.motion.sample(getTimer()),int(id));
+               driveGhost(rec.ghost,rec.motion.sample(presentationTime()),int(id));
          }
          if(!_mirroring) return;
          mirrorContainerActions();
@@ -259,10 +260,15 @@ package rconnect.game
 
       private function onPerceptionFrame(e:Event):void
       {
+         // Timestamp the simulation frame before its variable rendering work.
+         // Timers may send it more than once, but it is still the same sample.
+         _sampleAt=getTimer();
          // Native findCel only offers the local player. Supply visible teammate
          // candidates before control can patrol/turn away in the same frame.
          if(!roomHold && !_mirroring)redirectNearbyAggro();
       }
+
+      private function presentationTime():int {return _sampleAt>0?_sampleAt:getTimer();}
 
       private function logViewError(id:String,error:*):void
       {
@@ -273,7 +279,9 @@ package rconnect.game
 
       private function unitView(u:Object):Object
       {
+         var kind:String=getQualifiedClassName(u);
          return {invis:probe(u,"invis")==true,isVis:probe(u,"isVis")!=false,isSats:probe(u,"isSats")==true,
+            fade:kind=="fe.unit::UnitZebra" || kind=="fe.unit::UnitAlicorn",
             alpha:numOr(probe(probe(u,"vis"),"alpha"),1)};
       }
 
@@ -286,17 +294,20 @@ package rconnect.game
          var vis:Object=probe(u,"vis");
          if(vis!=null && state.alpha!=null && isFinite(Number(state.alpha)))
             vis["alpha"]=Math.max(0,Math.min(1,Number(state.alpha)));
-         if(vis!=null && (state.isVis===false || (state.invis===true && Number(state.alpha)<=0)))
+         // Native camouflage uses isVis for targeting, not for its faint pixels.
+         // Burrowed/otherwise hidden units still use their ordinary visibility gate.
+         if(vis!=null && ((state.isVis===false && state.fade!==true) || Number(state.alpha)<=0))
             vis["visible"]=false;
       }
 
       private function unitCanShow(u:Object):Boolean
       {
+         var rec:Object=_unitView[u];
+         if(rec!=null && rec.host.fade===true) return Number(rec.host.alpha)>0;
          if(probe(u,"isVis")==false) return false;
          if(probe(u,"invis")!=true) return true;
          // Native camouflage can still shimmer while moving or firing. Keep
          // its gameplay invisibility, but show the host's partial fade.
-         var rec:Object=_unitView[u];
          return rec!=null && Number(rec.host.alpha)>0;
       }
 
@@ -540,6 +551,7 @@ package rconnect.game
          // M16：本机当前姿态标签（vis.osn.currentLabel）——让远端幽灵直接
          // 播放对方真实姿态（站/走/跑/蹲/趴都由对方游戏决定，不再本地猜测）
          s.pose = localPoseLabel();
+         s.sampleTime = _sampleAt>0?_sampleAt:getTimer();
          var osn:Object = probe(probe(gg, "vis"), "osn");
          s.poseFrame = numOr(probe(osn, "currentFrame"), 1);
          s.bodyFrame = numOr(probe(probe(osn, "body"), "currentFrame"), 1);
@@ -644,7 +656,7 @@ package rconnect.game
          {
             if(rec.motion == null) rec.motion = new RemoteMotion();
             rec.motion.push(snap,getTimer());
-            driveGhost(ghost, rec.motion.sample(getTimer()), id);
+            driveGhost(ghost, rec.motion.sample(presentationTime()), id);
             syncRemoteWeapon(ghost, snap, id);
             _projectiles.receive(ghost,snap.weapons as Array,main,true);
             // M20：外观热更——对方换装/换护甲后按 apKey 变化重装视觉
@@ -4979,6 +4991,7 @@ package rconnect.game
                   tr: numOr(probe(u, "tr"), 0),
                   x: numOr(probe(u, "X"), 0),
                   y: numOr(probe(u, "Y"), 0),
+                  sampleTime: _sampleAt>0?_sampleAt:getTimer(),
                   storona: numOr(probe(u, "storona"), 1),
                   sost: numOr(probe(u, "sost"), 1),
                   hp: numOr(probe(u, "hp"), -1),
@@ -5068,7 +5081,7 @@ package rconnect.game
                else
                {
                   var safe:Object = validLandPos(Number(e.x), Number(e.y));
-                  queueUnitMotion(target, Number(safe.x), Number(safe.y));
+                  queueUnitMotion(target, Number(safe.x), Number(safe.y),e.sampleTime);
                }
                if(e.sost != undefined && Number(e.sost) != -1)
                {
@@ -5272,20 +5285,15 @@ package rconnect.game
          _baseDefense = new Dictionary();
       }
 
-      // Interpolate one snapshot interval behind the host; never quantize valid positions.
-      private function queueUnitMotion(u:Object,x:Number,y:Number):void
+      // The same source-time buffer drives enemies and remote players.
+      private function queueUnitMotion(u:Object,x:Number,y:Number,stamp:*=null):void
       {
          var now:int = getTimer();
-         var prev:Object = _unitMotion[u];
-         var dx:Number = x-Number(probe(u,"X")), dy:Number = y-Number(probe(u,"Y"));
-         if(prev == null || !freezeAI || dx*dx+dy*dy>600*600 || now-prev.at>1000)
-         {
-            u["setPos"](x,y);
-            _unitMotion[u] = {x:x,y:y,tx:x,ty:y,at:now,duration:200};
-            return;
-         }
-         _unitMotion[u] = {x:Number(u["X"]),y:Number(u["Y"]),tx:x,ty:y,at:now,
-            duration:Math.max(50,Math.min(600,now-prev.at))};
+         var motion:RemoteMotion=_unitMotion[u] as RemoteMotion;
+         if(motion==null || !freezeAI)motion=_unitMotion[u]=new RemoteMotion(200);
+         motion.push({x:x,y:y,sampleTime:stamp},now);
+         var sample:Object=motion.sample(presentationTime());
+         u["setPos"](sample.x,sample.y);
       }
 
       /** Host applies net HP loss after client mitigation (native D_INSIDE, no second armor reduction).
@@ -5724,11 +5732,11 @@ package rconnect.game
             {
                if(probe(u,"loc") !== loc) continue;
                captureUnitDamage(u);
-               var motion:Object = _unitMotion[u];
+               var motion:RemoteMotion = _unitMotion[u] as RemoteMotion;
                if(motion != null)
                {
-                  var progress:Number = Math.min(1,Math.max(0,(getTimer()-motion.at)/motion.duration));
-                  u["setPos"](motion.x+(motion.tx-motion.x)*progress,motion.y+(motion.ty-motion.y)*progress);
+                  var sample:Object=motion.sample(presentationTime());
+                  u["setPos"](sample.x,sample.y);
                   u["setVisPos"]();
                }
                _presentation.animateBody(u);

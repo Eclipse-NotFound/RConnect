@@ -171,7 +171,7 @@ package {
          var g:Object=bridge.getRemoteGhost(993);
          var warm:Timer=new Timer(200,1);
          warm.addEventListener(TimerEvent.TIMER,function(ev:TimerEvent):void {
-            var first:Number=g.X;snap.x+=60;bridge.updateRemote(993,snap,"FrameProbe");
+            var first:Number=g.X;snap.x+=60;snap.sampleTime=getTimer();bridge.updateRemote(993,snap,"FrameProbe");
             check(Math.abs(g.X-first)<1,"remote position does not jump to new packet endpoint");
             // Animation correctness is sampled over actual game frames. The
             // separate 80-enemy benchmark retains the wall-clock frame gate.
@@ -180,7 +180,7 @@ package {
             var window:Timer=new Timer(12000,1);
             var onFrame:Function=function(frame:Event):void {
                positions[String(g.X)]=true;frames[String(g.vis.osn.body.currentFrame)]=true;count++;
-               if(count==4 || count==8){snap.x+=60;bridge.updateRemote(993,snap,"FrameProbe");packets++;}
+               if(count==4 || count==8){snap.x+=60;snap.sampleTime=getTimer();bridge.updateRemote(993,snap,"FrameProbe");packets++;}
                if(count>=12)closeWindow(null);
             };
             m.stage.addEventListener(Event.ENTER_FRAME,onFrame,false,-20000);
@@ -191,8 +191,9 @@ package {
                Log.d("PRESENT sample between-packets frames="+count+" packets="+packets+" positions="+pc+" bodyFrames="+fc+" totalFrames="+g.vis.osn.body.totalFrames+" elapsedMs="+(getTimer()-sampleAt));
                check(count>=12 && pc>packets,"remote moves on frames between network packets");
                check(fc>=3,"remote animation advances between network packets");
-               snap.bodyPlaying=false;snap.bodyFrame=3;bridge.updateRemote(993,snap,"FrameProbe");
-               var stopped:Timer=new Timer(200,1);
+               snap.bodyPlaying=false;snap.bodyFrame=3;snap.sampleTime=getTimer();bridge.updateRemote(993,snap,"FrameProbe");
+               // Allow the 250ms maximum player buffer plus a rendered frame.
+               var stopped:Timer=new Timer(400,1);
                stopped.addEventListener(TimerEvent.TIMER,function(stop:TimerEvent):void {
                   Log.d("PRESENT sample stopped frame="+g.vis.osn.body.currentFrame+" playing="+g.vis.osn.body.isPlaying);
                   check(g.vis.osn.body.currentFrame==3 && !g.vis.osn.body.isPlaying,"authoritative stopped animation stays stopped");
