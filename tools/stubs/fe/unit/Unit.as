@@ -18,6 +18,8 @@ internal var maxSpok:int;
 internal var timerDie:int;
 internal var t_hitPart:int;
 internal var hitSumm:Number;
+internal var hitPart:*;
+internal var visDamDY:int;
 internal var t_mess:int;
 internal var kolChild:int;
 internal var anims:Array;

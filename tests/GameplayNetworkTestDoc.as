@@ -19,6 +19,7 @@ package {
       private var enemy:Object,box:Object,points:Array=[],cp:Object,index:int=0,shots:Boolean=false,targeted:Boolean=false;
       private var hpStart:Number=0,beforeCP:Object,oldGun:Object,oldChildren:Object,fireFrames:int=0;
       private var mercTrials:int=0;
+      private var scenarioStarted:Boolean=false;
       public function GameplayNetworkTestDoc() {
          var app:String=NativeApplication.nativeApplication.applicationID;
          if(app.indexOf("pfe-rconnect-coop-")!=0 && app.indexOf("pfe-modsettings-rconnect-coop-")!=0)return;
@@ -76,7 +77,7 @@ package {
          try {
             if(p.stage=="done"){finish();return;}
             if(host) {
-               if(p.stage=="ready"){baseX=p.x;baseY=p.y;mod.game.gg.setPos(baseX+650,baseY);combat();}
+               if(p.stage=="ready" && phase=="wait" && !scenarioStarted){scenarioStarted=true;baseX=p.x;baseY=p.y;mod.game.gg.setPos(baseX+650,baseY);combat();}
                else if(p.stage=="combat-result") {
                   check(p.damage>0,"native "+["turret","griffon","mine"][index]+" damages joiner hpLoss="+p.damage);
                   if(index<2){check(shots,"native enemy fires without forced attack "+index);check(targeted,"native enemy selects joining player "+index);}
@@ -122,15 +123,18 @@ package {
          // Protect the fixture while the second isolated instance starts.
          // Dying during this wait leaves native resurrection state in combat.
          if(phase=="boot"){mod.game.gg.invulner=true;mod.game.gg.disabled=true;}
+         // A joiner's room grant can precede the host's resume tick. Listen early
+         // and retry the test-only handshake until the first combat reply.
+         if(host){if(mod.session.server!=null)for each(var l:TcpLink in mod.session.server.clients)watch(l);}else watch(mod.session.link);
          if(!mod.session.rooms.ready || mod.session.rooms.busy || mod.game.isTransitioning())return;
-         if(host){for each(var l:TcpLink in mod.session.server.clients)watch(l);}else watch(mod.session.link);
          if(timer.currentCount<30)return;
          try {
             var g:Object=mod.game.gg,w:Object=mod.game.world;g.disabled=true;g.dx=g.dy=0;
             if(phase=="boot") {
                w.testDam=true;w.enemyAct=3;g.invulner=host;g.demask=0;g.pers.begHP=5000;g.hp=g.maxhp=5000;g.healhp=0;baseItems=items();
-               if(!host)send("ready",{x:g.X,y:g.Y});setPhase("wait");
+               setPhase(host?"wait":"ready");
             }
+            if(!host && phase=="ready")send("ready",{x:g.X,y:g.Y});
             if(phase=="combat") {
                if(host && enemy!=null && index<2) {
                   if(enemy.currentWeapon!=null && enemy.currentWeapon.b!=null)shots=true;

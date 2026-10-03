@@ -18,21 +18,23 @@ def main():
     ap.add_argument('--java',required=True)
     ap.add_argument('--sdk',type=Path,default=Path(r'D:\RemainsMod\mods\Sandevistan\build\tools\flexsdk'))
     ap.add_argument('--output',type=Path,required=True)
-    ap.add_argument('--entry',default='EffectsTerrainTestDoc',choices=['EffectsTerrainTestDoc','TurretTestDoc','PresentationTestDoc','SmoothPresentationTestDoc','SmoothNetworkTestDoc','AppearanceTestDoc','RoomCooperationTestDoc','CoopTestDoc','SatsTestDoc','CombatStateTestDoc','CombatNetworkTestDoc','GameplayGapTestDoc','GameplayNetworkTestDoc','ProjectileNetworkTestDoc','FollowNetworkTestDoc','SustainedDensityTestDoc'])
+    ap.add_argument('--source-root',type=Path,help='Optional frozen production source directory for external declarations')
+    ap.add_argument('--entry',default='EffectsTerrainTestDoc',choices=['EffectsTerrainTestDoc','TurretTestDoc','PresentationTestDoc','SmoothPresentationTestDoc','SmoothNetworkTestDoc','AppearanceTestDoc','CombatFeedbackTestDoc','CombatFeedbackNetworkTestDoc','AnimationGapsTestDoc','RoomCooperationTestDoc','CoopTestDoc','SatsTestDoc','CombatStateTestDoc','CombatNetworkTestDoc','GameplayGapTestDoc','GameplayNetworkTestDoc','ProjectileNetworkTestDoc','FollowNetworkTestDoc','SustainedDensityTestDoc'])
     args=ap.parse_args()
     out=args.output.resolve()
     if not out.is_relative_to(ROOT/'build'): ap.error('Output must be inside this mod build directory')
     out.mkdir(parents=True,exist_ok=True)
     classes=[]
-    for src in sorted((ROOT/'src').rglob('*.as')):
-        relative=src.relative_to(ROOT/'src').with_suffix('')
+    source_root=args.source_root.resolve() if args.source_root else ROOT/'src'
+    for src in sorted(source_root.rglob('*.as')):
+        relative=src.relative_to(source_root).with_suffix('')
         parts=list(relative.parts)
         classes.append('.'.join(parts))
     external=out/'ProductionDeclarations.swc'
     compiler=[args.java,'-Xmx384m','-jar',str(args.sdk/'lib/mxmlc.jar'),'+configname=air','+flexlib='+str(args.sdk/'frameworks'),'-swf-version=38','-debug=false','-optimize=true']
     env=dict(os.environ,AIR_HOME=str(args.sdk))
     declarations=list(compiler);declarations[3]=str(args.sdk/'lib/compc.jar')
-    subprocess.run(declarations+['-source-path='+str(ROOT/'src'),'-external-library-path+='+str(ROOT/'build/GameCombatStubs.swc'),
+    subprocess.run(declarations+['-source-path='+str(source_root),'-external-library-path+='+str(ROOT/'build/GameCombatStubs.swc'),
         '-include-classes='+','.join(classes),'-output='+str(external)],check=True,env=env)
     subprocess.run(compiler+['-source-path='+str(ROOT/'tests'),'-external-library-path+='+str(external),
         '-external-library-path+='+str(ROOT/'build/GameCombatStubs.swc'),'-output='+str(out/'EffectsDriver.swf'),

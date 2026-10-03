@@ -4,7 +4,21 @@ package fe.unit {
    /** Small presentation-only view of native state. No AI or combat steps. */
    public class RConnectAnimationAccess {
       private static var painted:Dictionary=new Dictionary(true);
-      public static function reset():void {painted=new Dictionary(true);}
+      private static var observed:Dictionary=new Dictionary(true);
+      private static var receivedClips:Dictionary=new Dictionary(true);
+      public static function reset():void {painted=new Dictionary(true);observed=new Dictionary(true);receivedClips=new Dictionary(true);}
+      /** Authored clips can auto-advance while AIR reports isPlaying=false.
+       * Observe actual frame changes before deciding a body is a stopped pose.
+       * Label changes alone are pose selections, not continuous playback. */
+      public static function observe(unit:Unit):void {
+         if(unit==null)return;
+         var u:Object=unit,osn:MovieClip=u.vis==null || !("osn" in u.vis)?null:u.vis["osn"] as MovieClip;
+         if(osn==null || unit is UnitTurret)return;
+         var rec:Object=observed[unit];
+         if(rec==null || rec.clip!==osn)rec=observed[unit]={clip:osn,frame:osn.currentFrame,label:osn.currentLabel,run:0};
+         rec.run=osn.currentFrame!=rec.frame && osn.currentLabel==rec.label?int(rec.run)+1:0;
+         rec.frame=osn.currentFrame;rec.label=osn.currentLabel;
+      }
       public static function effects(unit:Unit):void {
          if(unit is UnitAlicorn) {
             var a:UnitAlicorn=unit as UnitAlicorn,u:Object=unit;
@@ -24,7 +38,10 @@ package fe.unit {
             s.blit={f:a.f,df:a.df,st:a.st,stab:a.stab,
                reverse:unit is UnitMerc && u.animState=="walk" && unit.aiNapr*Number(u.storona)<0};
          var osn:Object=u.vis==null || !("osn" in u.vis)?null:u.vis["osn"];
-         if(osn is MovieClip)s.clip={frame:osn.currentFrame,playing:osn.isPlaying};
+         if(osn is MovieClip) {
+            var rec:Object=observed[unit];
+            s.clip={frame:osn.currentFrame,playing:osn.isPlaying || (rec!=null && rec.clip===osn && int(rec.run)>=2)};
+         }
          return s;
       }
       public static function receive(unit:Unit,pose:Object,anim:String,previous:Object=null):void {
@@ -45,10 +62,15 @@ package fe.unit {
             var osn:Object="osn" in u.vis?u.vis["osn"]:null;
             if(osn is MovieClip) {
                var frame:int=int(pose.clip.frame);
-               var continuous:Boolean=u.animState==anim && pose.clip.playing && previous!=null && previous.clip!=null && previous.clip.playing;
-               if(!continuous && (osn.currentFrame!=frame || osn.isPlaying!=pose.clip.playing)) {
+               var continuous:Boolean=receivedClips[unit]===osn && u.animState==anim && pose.clip.playing && previous!=null && previous.clip!=null && previous.clip.playing;
+               // isPlaying also cannot identify an implicit autoplay clip on
+               // receipt. Apply explicit start/stop transitions even at the same
+               // frame; don't let a fresh child inherit the previous child's mode.
+               if(!continuous && (pose.clip.playing || receivedClips[unit]!==osn || previous==null || previous.clip==null
+                  || previous.clip.playing || osn.currentFrame!=frame)) {
                   if(pose.clip.playing)osn.gotoAndPlay(frame);else osn.gotoAndStop(frame);
                }
+               receivedClips[unit]=osn;
                u.animState=anim;
             }
          }

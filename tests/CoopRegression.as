@@ -217,10 +217,16 @@ package
          {
             var before:Number=injected.X;
             extra.x=before-80; extra.suction=true;
+            // Movement needs a new source frame. Reusing the old timestamp asks
+            // RemoteMotion to correct that same sample, not interpolate a path.
+            extra.sampleTime=Number(extra.sampleTime)+200;
             lootJoin.applyLootSync(lootList);
             lootJoin.applyUnitsSync(real.readUnitsSnapshot());
             mod.stage.dispatchEvent(new Event(Event.RENDER));
-            check(injected.X<before && injected.X>before-80,"remote pickup movement interpolated");
+            // No actual display frame has advanced yet. Real TCP trajectory
+            // checks live in AnimationGapsTestDoc.
+            Log.d("COOP loot trajectory before="+before+" after="+injected.X+" target="+extra.x);
+            check(injected.X==before,"same-frame loot packet and render do not advance or teleport movement");
             check(injected.item.kol==77,"pickup animation does not award or consume inventory");
          }
          if(injected!=null) liveCreated.push(injected);

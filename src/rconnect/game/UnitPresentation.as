@@ -35,6 +35,7 @@ package rconnect.game
          for each(var u:Object in units)
          {
             if(int(get(u,"fraction"))>=100 || int(get(u,"sost"))>=3) continue;
+            RConnectAnimationAccess.observe(u as Unit);
             for each(var w:Object in weaponList(u)) if(get(w,"kol_shoot")!=null) observeWeapon(w);
          }
       }
@@ -94,6 +95,8 @@ package rconnect.game
             rec.body=snapshot.body;
             if(rec.sost>=3)
             {
+               if(old<3 && rec.death!=null && rec.death.armed)
+                  DeathVisuals.play(main,u.loc,snapshot.death || rec.death,Number(snapshot.x),Number(snapshot.y)-3);
                if(old<3 && rec.sost==4)
                {
                   // Native UnitDron.expl is metal + miniexpl. Use only the particle
@@ -111,6 +114,7 @@ package rconnect.game
                enforceDeath(u,rec.sost);
                return;
             }
+            rec.death=snapshot.death;
             if(rec.body!=null)TurretDisplay.receive(u,rec.body);
             if(!(snapshot.weapons is Array)) return;
             for each(var s:Object in snapshot.weapons)

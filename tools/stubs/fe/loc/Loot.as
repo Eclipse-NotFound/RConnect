@@ -5,5 +5,6 @@ package fe.loc {
   public function take(force:Boolean=false):* {}
   public function toTake():* {}
   public function step():* {}
+  public function run(divisor:int=1):* {}
  }
 }

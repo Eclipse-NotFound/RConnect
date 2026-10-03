@@ -1,6 +1,7 @@
 package rconnect.game
 {
    import fe.unit.Unit;
+   import fe.unit.RConnectFeedbackAccess;
    import fe.weapon.Bullet;
 
    /** Native collision/mitigation without native AI, death scripts or loot.
@@ -71,9 +72,9 @@ package rconnect.game
          var show:Boolean=self.showNumbs;
          inDamage=true;
          var result:Number=0;
-         // The native accumulator expires only in Unit.actions, which this receiver
-         // deliberately never runs. Own number lifetime without enabling native AI.
-         self.showNumbs=false;
+         // Preserve native impact position, critical/periodic style and merging.
+         // Maintain only their counters while the receiver remains outside step.
+         RConnectFeedbackAccess.prepare(this);
          try { result=super.damage(amount,type,bullet,periodic); }
          finally
          {
@@ -81,12 +82,15 @@ package rconnect.game
             var loss:Number=Math.max(0,before-Number(self.hp));
             target.hp=Number(target.hp)-loss;
             target.armor_hp=self.armor_hp; target.armor_qual=self.armor_qual; target.shithp=self.shithp;
-            self.showNumbs=show;
-            if(show) feedback.show(target,loss,Math.max(0,shieldBefore-Number(self.shithp)));
+            if(show) feedback.show(target,0,Math.max(0,shieldBefore-Number(self.shithp)));
             inDamage=false;
          }
          try { target.visDetails(); } catch(err:*) {}
          return result;
+      }
+
+      public function tickFeedback():void {
+         if(!disposed && !inDamage)RConnectFeedbackAccess.tick(this);
       }
 
       override public function die(type:int=0):*

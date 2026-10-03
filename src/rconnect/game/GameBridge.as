@@ -226,6 +226,7 @@ package rconnect.game
                releaseMirrorMask(vis);
                vis["visible"] = true;
                u["prior"] = 1;
+               presentUnitHealth(u);
                }
                catch(unitError:*) {logViewError(String(probe(u,"id")),unitError);}
             }
@@ -297,7 +298,10 @@ package rconnect.game
          // Native camouflage uses isVis for targeting, not for its faint pixels.
          // Burrowed/otherwise hidden units still use their ordinary visibility gate.
          if(vis!=null && ((state.isVis===false && state.fade!==true) || Number(state.alpha)<=0))
+         {
             vis["visible"]=false;
+            var bar:Object=probe(u,"hpbar");if(bar!=null)bar.visible=false;
+         }
       }
 
       private function unitCanShow(u:Object):Boolean
@@ -309,6 +313,17 @@ package rconnect.game
          // Native camouflage can still shimmer while moving or firing. Keep
          // its gameplay invisibility, but show the host's partial fade.
          return rec!=null && Number(rec.host.alpha)>0;
+      }
+
+      /** Frozen units skip Unit.step, including its health-bar display work. */
+      private function presentUnitHealth(u:Object):void
+      {
+         var bar:Object=probe(u,"hpbar");
+         if(bar==null)return;
+         u["visDetails"]();
+         u["setHpbarPos"]();
+         var layer:Object=world.grafon.visObjs[3];
+         if(bar.parent!==layer)layer.addChild(bar);
       }
 
       private function restoreUnitViews():void
@@ -3266,6 +3281,19 @@ package rconnect.game
       private var _lootLoc:Object = null;  // 房间守卫（换房清空身份表）
       private var _lootMotion:Object = {};
 
+      /** RemoteLoot keeps native interaction, but a network trajectory must not
+       * compete with a second gravity simulation. Local grabs/suction take over. */
+      public function controlsLoot(o:Object):Boolean
+      {
+         return _mirroring && _lootKeyOfJ!=null && _lootMotion[_lootKeyOfJ[o]]!=null
+            && !boxHeldLocally(o) && probe(o,"vsos")!=true;
+      }
+
+      public function releaseLootMotion(o:Object):void
+      {
+         if(_lootKeyOfJ!=null)delete _lootMotion[_lootKeyOfJ[o]];
+      }
+
       /** Visual/position interpolation only; never call Loot.take on a mirror. */
       private function tickLootMotion():void
       {
@@ -3274,17 +3302,22 @@ package rconnect.game
             var target:Object = _lootMotion[key];
             var o:Object = target.o;
             if(probe(o,"loc") !== loc || probe(o,"in_chain") != true
-               || boxHeldLocally(o) || probe(o,"vsos") == true)
+               || boxHeldLocally(o) || probe(o,"vsos") == true
+               || (o is RemoteLoot && (o as RemoteLoot).requested))
+            { delete _lootMotion[key]; continue; }
+            var baseline:Object=_lootPos[key];
+            if(baseline!=null && (Math.pow(Number(o.X)-Number(baseline.x),2)+Math.pow(Number(o.Y)-Number(baseline.y),2)>625))
             { delete _lootMotion[key]; continue; }
             try
             {
-               var x:Number = Number(probe(o,"X"));
-               var y:Number = Number(probe(o,"Y"));
-               x += (Number(target.x)-x)*0.4;
-               y += (Number(target.y)-y)*0.4;
+               var oldX:Number=Number(o.X),oldY:Number=Number(o.Y);
+               var sample:Object=(target.motion as RemoteMotion).sample(presentationTime());
+               var x:Number=Number(sample.x),y:Number=Number(sample.y);
                o["X"]=x; o["Y"]=y; o["dx"]=0; o["dy"]=0;
                var vis:Object=probe(o,"vis");
-               if(vis!=null) { vis["x"]=x; vis["y"]=y; }
+               // Native Loot applies an item-specific vertical offset (weapons
+               // use 10px). Move its existing display by the same displacement.
+               if(vis!=null) { vis["x"]+=x-oldX; vis["y"]+=y-oldY; }
                _lootPos[key]={x:x,y:y};
             }
             catch(err:*) { delete _lootMotion[key]; }
@@ -3361,7 +3394,7 @@ package rconnect.game
                }
                var itemData:Object = GroundItemState.capture(probe(o, "item"));
                out.push({k: k, x: numOr(probe(o, "X"), 0),
-                  y: numOr(probe(o, "Y"), 0), b: String(e[1]), item: itemData,
+                  y: numOr(probe(o, "Y"), 0), sampleTime: _sampleAt>0?_sampleAt:getTimer(), b: String(e[1]), item: itemData,
                   suction: probe(o, "vsos") == true});
             }
          }
@@ -3425,18 +3458,9 @@ package rconnect.game
                {
                   if(lo is RemoteLoot && (lo as RemoteLoot).requested)continue;
                   if(probe(lo,"vsos")==true)continue;
-                  if(s.suction == true && !boxHeldLocally(lo) && probe(lo,"vsos") != true)
-                  {
-                     _lootMotion[k]={o:lo,x:Number(s.x),y:Number(s.y)};
-                     continue;
-                  }
-                  delete _lootMotion[k];
-                  // 位置镜像：直接落位并清速度（防双端物理分叉），vis 由
-                  // Loot.step 每帧自跟随。
-                  // 本地偏差保护（与 M25 trackBoxPos 同理）：本地已偏离
-                  // 宿主基线 >25px（本地推动/念力进行中）时不覆写不刷
-                  // 基线，交给 scanLootReports 上报——否则 5Hz 旧快照会
-                  // 把本地推动拽回吞掉
+                  if(boxHeldLocally(lo)){delete _lootMotion[k];continue;}
+                  // Keep explicit local pushes until the owner acknowledges.
+                  // Ordinary host movement is buffered and presented each frame.
                   var baseP:Object = _lootPos[k];
                   var ldev:Number = baseP != null
                      ? (numOr(probe(lo, "X"), 0) - Number(baseP.x))
@@ -3457,16 +3481,16 @@ package rconnect.game
                            + Math.round(Number(s.x)) + ","
                            + Math.round(Number(s.y)));
                      }
-                     lo["X"] = Number(s.x);
-                     lo["Y"] = Number(s.y);
-                     lo["dx"] = 0;
-                     lo["dy"] = 0;
-                     _lootPos[k] = {x: Number(s.x), y: Number(s.y)};
+                     var track:Object=_lootMotion[k];
+                     if(track==null)track=_lootMotion[k]={o:lo,motion:new RemoteMotion(200)};
+                     (track.motion as RemoteMotion).push({x:Number(s.x),y:Number(s.y),sampleTime:s.sampleTime},getTimer());
+                     if(baseP==null)_lootPos[k]={x:Number(lo.X),y:Number(lo.Y)};
                   }
                   else
                   {
                      // 本地推动挂起：若宿主快照已与本地一致（上报已被
                      // 采纳），刷新基线防无限重报
+                     delete _lootMotion[k];
                      var cvx:Number = numOr(probe(lo, "X"), 0) - Number(s.x);
                      var cvy:Number = numOr(probe(lo, "Y"), 0) - Number(s.y);
                      if(cvx * cvx + cvy * cvy <= 625)
@@ -3627,7 +3651,6 @@ package rconnect.game
                   picked.push({k:k,token:token});
                   continue;
                }
-               if(_lootMotion[k] != null && !boxHeldLocally(o) && probe(o,"vsos") != true) continue;
                var p:Object = _lootPos[k];
                if(p == null)
                {
@@ -3637,6 +3660,7 @@ package rconnect.game
                var dy:Number = numOr(probe(o, "Y"), 0) - Number(p.y);
                if(dx * dx + dy * dy > 625)
                {
+                  delete _lootMotion[k];
                   if(now - numOr(_lootRepT[k], 0) > 200)
                   {
                      _lootRepT[k] = now;
@@ -4998,6 +5022,7 @@ package rconnect.game
                   fraction: numOr(probe(u, "fraction"), 0),
                   anim: String(probe(u, "animState")),
                   pose: RConnectAnimationAccess.capture(u as Unit),
+                  death: DeathVisuals.capture(u),
                   motion: unitFields(u, ["dx","dy","stay","isFly","isLaz","levit","scX","scY"]),
                   // Mechanical visibility, never the local RV/FOV visible flag.
                   view: unitView(u),
@@ -5742,7 +5767,7 @@ package rconnect.game
                _presentation.animateBody(u);
                _presentation.tick(u);
                var hit:MirrorHitUnit = _hitUnits[u];
-               if(hit != null) hit.syncMotion();
+               if(hit != null) {hit.syncMotion();hit.tickFeedback();}
             }
             catch(err:*)
             {

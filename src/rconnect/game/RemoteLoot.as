@@ -10,7 +10,20 @@ package rconnect.game {
          super(loc,item,x,y,false,false,true);bridge=b;
       }
       override public function toTake():* {manual=true;delay=0;super.toTake();}
-      override public function step():* {if(delay>0)delay--;if(!requested)super.step();}
+      override public function step():* {
+         if(delay>0)delay--;
+         var self:Object=this;
+         // An actual local impulse hands motion back to native physics. Network
+         // playback itself leaves zero velocity after every displayed frame.
+         if(bridge.controlsLoot(this) && (Math.abs(Number(self.dx))>.01 || Math.abs(Number(self.dy))>.01))
+            bridge.releaseLootMotion(this);
+         if(!requested)super.step();
+         if(bridge.controlsLoot(this))self.dx=self.dy=0;
+      }
+      override public function run(divisor:int=1):* {
+         if(bridge.controlsLoot(this))return;
+         super.run(divisor);
+      }
       override public function take(force:Boolean=false):* {
          if(!bridge.mirrorsRoom){super.take(force);return;}
          if(awarded || requested || (!force && delay>0))return;

@@ -4,9 +4,9 @@ Two-player online co-op for **Fallout Equestria: REMAINS** — see each other, c
 
 English (this page) · [简体中文](README.zh-CN.md)
 
-> Current local candidate: **0.2.12-dev (M40)**, deployed 2026-10-03. Smooths enemy and teammate movement under uneven update timing, and restores faint native zebra/alicorn camouflage on the joining side. All 389 automated checks passed; see the [validation record](knowledge/experiments/2026-10-03-m40-presentation.md). Retains M39 combat, shared drops, following, XP-point and checkpoint features. Game v1.02, two players on one machine; stable reconnection, 3+ players, real-network play and other versions remain unverified.
+> Current local candidate: **0.2.13-dev (M41)**, deployed 2026-10-03. Restores wounded enemy health bars and native damage-number position, style and burst totals on the joining side; also fixes moving drops, bloat flight playback and spider-mine explosion visuals. All 503 automated checks passed; see the [validation record](knowledge/experiments/2026-10-03-m41-feedback.md). Retains M40 motion and camouflage fixes. Game v1.02, two players on one machine; stable reconnection, 3+ players, real-network play and other versions remain unverified.
 >
-> For local co-op, save and close both games, then use **[Start-Coop.bat](Start-Coop.bat)**. It keeps only the processes it starts responsive in the background and preserves each character's saves. This may use more power. The 80-enemy stress test sustained roughly 16–17 FPS for 56 seconds; large encounters remain limited by rendering load.
+> For local co-op, save and close both games, then use **[Start-Coop.bat](Start-Coop.bat)**. It keeps only the processes it starts responsive in the background and preserves each character's saves. This may use more power. The latest 80-enemy stress run sustained roughly 13–15 FPS for 56 seconds; large encounters can still stutter. This is not a matched performance comparison with M40.
 
 ## Features
 
