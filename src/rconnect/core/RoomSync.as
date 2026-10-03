@@ -202,6 +202,23 @@ package rconnect.core
       }
       public function accepts(msg:Object):Boolean
       {return !busy && acceptsReceipt(msg);}
+      /** Explicit local travel shares the ordinary-room handoff with walking. */
+      public function travelToTeammate(info:Object):Boolean
+      {
+         if(!connected() || !ready || busy || pending!=0 || info==null || game.isTransitioning() || game.isPlayerDead())return false;
+         var mine:Object=game.readWorldInfo(),target:Object;
+         if(mine==null || String(info.curLandId)!=String(mine.curLandId) || int(info.roomEpoch)!=epoch
+            || String(info.landProb || "")!="" || TravelGuard.restricted(game.loc))return false;
+         try {target=game.world.land.locs[int(info.landX)][int(info.landY)][int(info.landZ)];}catch(e:*){}
+         if(target==null || String(info.roomKey)!=game.roomKey(target) || TravelGuard.restricted(target))return false;
+         followPending=null;
+         if(target!==game.loc)
+         {
+            TravelGuard.follow(game,{landX:info.landX,landY:info.landY,landZ:info.landZ,landProb:""},!host());
+            check();
+         }
+         return true;
+      }
       public function acceptsReceipt(msg:Object):Boolean
       {return ready && !authority && String(msg.roomKey)==settledKey && int(msg.roomEpoch)==epoch && int(msg.roomTerm)==term;}
       public function handle(msg:Object):Boolean

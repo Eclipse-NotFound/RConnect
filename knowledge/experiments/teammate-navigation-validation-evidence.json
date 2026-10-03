@@ -1,0 +1,27 @@
+{
+  "run": "b2f24d6f83",
+  "candidate_sha256": "62870ce133c56692123e1d834aef8760fc95e47d8c4e13b53389790f68c42f89",
+  "roles": {
+    "host": {
+      "pass": 30,
+      "failures": [],
+      "arrivals": [
+        "RConnectNavigation: arrived room=random_mane//0,1,0 x=308 y=320"
+      ],
+      "done": true
+    },
+    "join": {
+      "pass": 25,
+      "failures": [],
+      "arrivals": [
+        "RConnectNavigation: arrived room=random_mane//0,0,0 x=308 y=640",
+        "RConnectNavigation: arrived room=random_mane//0,0,0 x=308 y=640"
+      ],
+      "done": true
+    }
+  },
+  "identical_inputs": true,
+  "protected_changes": [],
+  "current_release_sha256": "2b25a7d2301d1baac40e04e70ba48e9bc40b5c292c0b3938a69bf6b151b41186",
+  "accepted": true
+}

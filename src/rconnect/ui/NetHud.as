@@ -35,6 +35,7 @@ package rconnect.ui
       private var _btnSend:TextField;
       private var _btnExploration:TextField;
       private var _btnFollow:TextField;
+      private var _btnTeleport:TextField;
       private var _visible:Boolean = true;
       private var _chatLines:int = 0;
 
@@ -60,7 +61,7 @@ package rconnect.ui
          var fmtBold:TextFormat = new TextFormat("_sans", 12, 0xFFD040, true);
 
          graphics.beginFill(0x000000, 0.62);
-         graphics.drawRect(0, 0, 280, 300);
+         graphics.drawRect(0, 0, 280, 326);
          graphics.endFill();
 
          statusTf = makeLabel(8, 8, 264, 44, new TextFormat("_sans",10,0xFFFFFF));
@@ -96,6 +97,13 @@ package rconnect.ui
          _btnFollow.addEventListener(MouseEvent.CLICK,function(e:MouseEvent):void {
             mod.config.setValue("followTeammate",mod.config.getValue("followTeammate")=="1"?"0":"1");
             mod.config.save();refresh();
+         });
+         _btnTeleport=makeButton(8,302,264,fmtBold,"传送到队友身边");
+         _btnTeleport.name="rconnect-teleport";
+         _btnTeleport.addEventListener(MouseEvent.MOUSE_DOWN,stopTeleportMouse);
+         _btnTeleport.addEventListener(MouseEvent.MOUSE_UP,stopTeleportMouse);
+         _btnTeleport.addEventListener(MouseEvent.CLICK,function(e:MouseEvent):void {
+            e.stopImmediatePropagation();if(mod.navigation!=null)mod.navigation.request();refresh();
          });
       }
 
@@ -152,6 +160,8 @@ package rconnect.ui
       }
 
       // ---- 事件 ---------------------------------------------------------
+
+      private function stopTeleportMouse(e:MouseEvent):void {e.stopImmediatePropagation();}
 
       private function onClickHost(e:MouseEvent):void
       {
@@ -228,6 +238,10 @@ package rconnect.ui
       {
          RCLocale.bind(_btnExploration,"接收队友探索：" + (mod.exploration.enabled ? "开" : "关"),true);
          RCLocale.bind(_btnFollow,"跟随队友："+(mod.config.getValue("followTeammate")=="1"?"开":"关"),true);
+         RCLocale.bind(_btnTeleport,mod.navigation!=null && mod.navigation.travelling?"正在传送…":"传送到队友身边",true);
+         // Full destination/script validation runs on click, not on every 20Hz HUD refresh.
+         _btnTeleport.alpha=mod.navigation!=null && !mod.navigation.travelling && mod.navigation.players.length>0
+            && mod.session!=null && mod.session.rooms.ready && !mod.session.rooms.busy?1:.55;
          statusTf.text = mod.session != null
             ? mod.session.statusText() : "RConnect";
       }

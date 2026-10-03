@@ -5,10 +5,12 @@ package
    import rconnect.core.Config;
    import rconnect.core.Log;
    import rconnect.core.Session;
+   import rconnect.core.TeammateNavigation;
    import rconnect.game.GameBridge;
    import rconnect.game.ExplorationSync;
    import rconnect.game.VersionProbe;
    import rconnect.ui.NetHud;
+   import rconnect.ui.TeammateMap;
 
    /**
     * RConnect 模组入口类（必须位于默认包，类名精确为 RConnectMod）。
@@ -46,6 +48,8 @@ package
       public var exploration:ExplorationSync;
       public var session:Session;
       public var hud:NetHud;
+      public var navigation:TeammateNavigation;
+      public var teammateMap:TeammateMap;
       public var versionInfo:Object;
 
       public function RConnectMod(main:Object)
@@ -72,6 +76,8 @@ package
          this.exploration = new ExplorationSync(this);
          this.hud = new NetHud(stage, this);
          this.session = new Session(this);
+         this.navigation = new TeammateNavigation(this);
+         this.teammateMap = new TeammateMap(this);
          hud.refresh();
          session.autoStart();
          Log.d("RConnectMod: game version=" + versionInfo.version

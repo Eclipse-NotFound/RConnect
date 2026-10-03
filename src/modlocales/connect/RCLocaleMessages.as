@@ -152,6 +152,50 @@ package modlocales.connect {
   "connect failed (check ip/port)": {
     "en": "Connection failed. Check the IP address and port.",
     "ru": "Не удалось подключиться. Проверьте IP-адрес и порт."
+  },
+  "传送到队友身边": {
+    "en": "Teleport to teammate",
+    "ru": "К напарнику"
+  },
+  "正在传送…": {
+    "en": "Teleporting…",
+    "ru": "Телепортация…"
+  },
+  "队友尚未连接或位置已失效": {
+    "en": "No teammate with a current position.",
+    "ru": "Нет актуальной позиции напарника."
+  },
+  "请等待房间准备完成": {
+    "en": "Please wait for the room to be ready.",
+    "ru": "Подождите, пока комната будет готова."
+  },
+  "角色倒地或复活中，暂不能传送": {
+    "en": "Cannot teleport while either player is down or respawning.",
+    "ru": "Телепортация недоступна: игрок погиб или возрождается."
+  },
+  "传送仅支持同一地图": {
+    "en": "Teleporting requires the same map.",
+    "ru": "Телепортация доступна только на одной карте."
+  },
+  "请先结束当前操作": {
+    "en": "Finish the current action first.",
+    "ru": "Сначала завершите текущее действие."
+  },
+  "传送已取消：队友状态发生变化": {
+    "en": "Teleport cancelled: teammate state changed.",
+    "ru": "Телепортация отменена: состояние напарника изменилось."
+  },
+  "队友附近没有可站立的落点": {
+    "en": "No clear standing spot near your teammate.",
+    "ru": "Рядом с напарником нет свободного места с опорой."
+  },
+  "已传送到队友身边": {
+    "en": "Teleported to teammate.",
+    "ru": "Вы переместились к напарнику."
+  },
+  "暂时无法传送，请稍后再试": {
+    "en": "Unable to teleport now. Try again shortly.",
+    "ru": "Сейчас телепортация недоступна. Попробуйте позже."
   }
 };
    }
