@@ -19,7 +19,13 @@ def main():
     ap.add_argument('--sdk',type=Path,default=Path(r'D:\RemainsMod\mods\Sandevistan\build\tools\flexsdk'))
     ap.add_argument('--output',type=Path,required=True)
     ap.add_argument('--source-root',type=Path,help='Optional frozen production source directory for external declarations')
-    ap.add_argument('--entry',default='EffectsTerrainTestDoc',choices=['EffectsTerrainTestDoc','TurretTestDoc','PresentationTestDoc','SmoothPresentationTestDoc','SmoothNetworkTestDoc','AppearanceTestDoc','CombatFeedbackTestDoc','CombatFeedbackNetworkTestDoc','AnimationGapsTestDoc','RoomCooperationTestDoc','CoopTestDoc','SatsTestDoc','CombatStateTestDoc','CombatNetworkTestDoc','GameplayGapTestDoc','GameplayNetworkTestDoc','ProjectileNetworkTestDoc','FollowNetworkTestDoc','SustainedDensityTestDoc'])
+    ap.add_argument('--entry',default='EffectsTerrainTestDoc',choices=[
+        'EffectsTerrainTestDoc','TurretTestDoc','PresentationTestDoc','SmoothPresentationTestDoc',
+        'SmoothNetworkTestDoc','AppearanceTestDoc','CombatFeedbackTestDoc','CombatFeedbackNetworkTestDoc',
+        'AnimationGapsTestDoc','RoomCooperationTestDoc','CoopTestDoc','SatsTestDoc','CombatStateTestDoc',
+        'CombatNetworkTestDoc','GameplayGapTestDoc','GameplayNetworkTestDoc','ProjectileNetworkTestDoc',
+        'FollowNetworkTestDoc','SustainedDensityTestDoc','BeamTerrainTestDoc','TeammateNavigationTestDoc',
+        'HiddenRoomTestDoc','HiddenRoomFollowTestDoc','HiddenRoomCorpseTestDoc','HiddenRoomOverlayTestDoc','HiddenRoomProbeTestDoc'])
     args=ap.parse_args()
     out=args.output.resolve()
     if not out.is_relative_to(ROOT/'build'): ap.error('Output must be inside this mod build directory')

@@ -1,0 +1,523 @@
+{
+  "status": "deployed-smoke-passed",
+  "hidden_room_bug": "not-reproduced-no-production-fix",
+  "candidate": {
+    "path": "build/m43/final2/RConnectMod.swf",
+    "version": "0.2.14-dev",
+    "bytes": 99900,
+    "sha256": "ed240f09883b091fef5474ff6ef5219bdeae669948ca1331c76007faeef24b20",
+    "production_classes": 44,
+    "source_files": 45,
+    "test_input_manifest": "build/m43/final2/verified-test-input.json"
+  },
+  "baseline_sha256": "2b25a7d2301d1baac40e04e70ba48e9bc40b5c292c0b3938a69bf6b151b41186",
+  "baseline_cases": [
+    {
+      "run": "1d44c11579",
+      "scenario": "saved native background doors, default vision",
+      "sha256": "2b25a7d2301d1baac40e04e70ba48e9bc40b5c292c0b3938a69bf6b151b41186",
+      "roles": {
+        "host": {
+          "pass": 51,
+          "failures": [],
+          "done": true,
+          "initialized": true,
+          "log_sha256": "5616677c883fe9d869dac2f83f90f083be6d979a2a5a3492e0e2d0e319c04418"
+        },
+        "join": {
+          "pass": 56,
+          "failures": [],
+          "done": true,
+          "initialized": true,
+          "log_sha256": "6d4fff387e64d8ae18cab01ed42c7776037536e735ddf7ddfa4349f9bc8d90c6"
+        }
+      },
+      "inputs_identical": true,
+      "pass_total": 107,
+      "run_manifest_sha256": "07a0b3a03df3920550efaceba72b1b636967f0bbd47602ea879f4d17148415dc",
+      "save_templates": {
+        "host": {
+          "source_sha256": "6ff63ef3556f38cb882ecf7fa4071d57124bfe0c19c5dbe008fdd0f516d439c8",
+          "isolated_sha256": "a5d0b5e6b9d6b9e41a25b376c3bb5fa0e36ebb2e5f7ee6bf6210b072902e8080",
+          "slot": 9
+        },
+        "join": {
+          "source_sha256": "356326da5cce588c58de356c3b24af055d89e98ea39a371b586cf5f4b4761bb3",
+          "isolated_sha256": "6d2cbb8186cc2d38f43597b4f71bb76992cd32a55c82514d4dd5a3747ca08209",
+          "slot": 9
+        }
+      },
+      "vision_config_templates": {}
+    },
+    {
+      "run": "be4b71d48c",
+      "scenario": "saved background doors with corpses, default vision",
+      "sha256": "2b25a7d2301d1baac40e04e70ba48e9bc40b5c292c0b3938a69bf6b151b41186",
+      "roles": {
+        "host": {
+          "pass": 56,
+          "failures": [],
+          "done": true,
+          "initialized": true,
+          "log_sha256": "cd9297b3ef80298677511c8ef417b25614143fc06ea9fbf8ae314e6fa2b88020"
+        },
+        "join": {
+          "pass": 61,
+          "failures": [],
+          "done": true,
+          "initialized": true,
+          "log_sha256": "a76258b2f30c7dc32eacd1a3ca2d5811e309b73a89a4612d6715915392569078"
+        }
+      },
+      "inputs_identical": true,
+      "pass_total": 117,
+      "run_manifest_sha256": "e2fb834250bc6d90582b38b810ebd03b0eacf0aa583de63b5bb0f5934cbff737",
+      "save_templates": {
+        "host": {
+          "source_sha256": "6ff63ef3556f38cb882ecf7fa4071d57124bfe0c19c5dbe008fdd0f516d439c8",
+          "isolated_sha256": "a5d0b5e6b9d6b9e41a25b376c3bb5fa0e36ebb2e5f7ee6bf6210b072902e8080",
+          "slot": 9
+        },
+        "join": {
+          "source_sha256": "356326da5cce588c58de356c3b24af055d89e98ea39a371b586cf5f4b4761bb3",
+          "isolated_sha256": "6d2cbb8186cc2d38f43597b4f71bb76992cd32a55c82514d4dd5a3747ca08209",
+          "slot": 9
+        }
+      },
+      "vision_config_templates": {}
+    },
+    {
+      "run": "19d0406f28",
+      "scenario": "saved background doors with PipBuck/SATS, default vision",
+      "sha256": "2b25a7d2301d1baac40e04e70ba48e9bc40b5c292c0b3938a69bf6b151b41186",
+      "roles": {
+        "host": {
+          "pass": 56,
+          "failures": [],
+          "done": true,
+          "initialized": true,
+          "log_sha256": "bdd07e103cfca393be6f927565631c7768e8b427e8f77caaa3748efad7e8091b"
+        },
+        "join": {
+          "pass": 61,
+          "failures": [],
+          "done": true,
+          "initialized": true,
+          "log_sha256": "3362276bd85a69c48a21486964287c3fef30c44e5839be0069faa144fce7b7e4"
+        }
+      },
+      "inputs_identical": true,
+      "pass_total": 117,
+      "run_manifest_sha256": "68702a22a79d23a2a2ace396a99a2610f0d2f69655a80888acec28a2982ad6c8",
+      "save_templates": {
+        "host": {
+          "source_sha256": "6ff63ef3556f38cb882ecf7fa4071d57124bfe0c19c5dbe008fdd0f516d439c8",
+          "isolated_sha256": "a5d0b5e6b9d6b9e41a25b376c3bb5fa0e36ebb2e5f7ee6bf6210b072902e8080",
+          "slot": 9
+        },
+        "join": {
+          "source_sha256": "356326da5cce588c58de356c3b24af055d89e98ea39a371b586cf5f4b4761bb3",
+          "isolated_sha256": "6d2cbb8186cc2d38f43597b4f71bb76992cd32a55c82514d4dd5a3747ca08209",
+          "slot": 9
+        }
+      },
+      "vision_config_templates": {}
+    },
+    {
+      "run": "d7e4460a8a",
+      "scenario": "one saved background-door round trip with actual role vision settings",
+      "sha256": "2b25a7d2301d1baac40e04e70ba48e9bc40b5c292c0b3938a69bf6b151b41186",
+      "roles": {
+        "host": {
+          "pass": 11,
+          "failures": [],
+          "done": true,
+          "initialized": true,
+          "log_sha256": "b7a16564259c2536e7331b7814e85f22f0b8ac7ec92f3a23b5d234a7029e8b34"
+        },
+        "join": {
+          "pass": 12,
+          "failures": [],
+          "done": true,
+          "initialized": true,
+          "log_sha256": "49db5b087e34ccf7406fe0340b0d6dd1379d9609d752ef4b8c2d34780f8e79b1"
+        }
+      },
+      "inputs_identical": true,
+      "pass_total": 23,
+      "run_manifest_sha256": "b0fb7c71e592318f2b882e6bf0005bcc792e1dc3a6cabcd21d85dacf2ab15348",
+      "save_templates": {
+        "host": {
+          "source_sha256": "6ff63ef3556f38cb882ecf7fa4071d57124bfe0c19c5dbe008fdd0f516d439c8",
+          "isolated_sha256": "a5d0b5e6b9d6b9e41a25b376c3bb5fa0e36ebb2e5f7ee6bf6210b072902e8080",
+          "slot": 9
+        },
+        "join": {
+          "source_sha256": "356326da5cce588c58de356c3b24af055d89e98ea39a371b586cf5f4b4761bb3",
+          "isolated_sha256": "6d2cbb8186cc2d38f43597b4f71bb76992cd32a55c82514d4dd5a3747ca08209",
+          "slot": 9
+        }
+      },
+      "vision_config_templates": {
+        "host": "c2a4c706cf5b43835818b494948c3a6ccea7e3e1f83953bcbcbc3f284b7d8995",
+        "join": "179f97016a9d5f6808b8cb9e0f5d21913b363dff74b106dc132fb8a0fd4cf616"
+      }
+    }
+  ],
+  "candidate_cases": [
+    {
+      "run": "a3d8680409",
+      "scenario": "BeamTerrainTestDoc",
+      "sha256": "ed240f09883b091fef5474ff6ef5219bdeae669948ca1331c76007faeef24b20",
+      "roles": {
+        "host": {
+          "pass": 16,
+          "failures": [],
+          "done": true,
+          "initialized": true,
+          "log_sha256": "6bf740661a4fea4852376e824cdc19ca4137b206db0721c02faa241db35513b5"
+        },
+        "join": {
+          "pass": 7,
+          "failures": [],
+          "done": true,
+          "initialized": true,
+          "log_sha256": "88b79ead29d4406baf9e12519ba8c23e09993c4a540fac6d35ce10ac8461379d"
+        }
+      },
+      "inputs_identical": true,
+      "pass_total": 23,
+      "run_manifest_sha256": "163f985c5344105ddd5aa8b247f2a28190d64ebbf29a25bcafb660892111abf5",
+      "save_templates": {},
+      "vision_config_templates": {}
+    },
+    {
+      "run": "07f2f248b6",
+      "scenario": "ProjectileNetworkTestDoc",
+      "sha256": "ed240f09883b091fef5474ff6ef5219bdeae669948ca1331c76007faeef24b20",
+      "roles": {
+        "host": {
+          "pass": 6,
+          "failures": [],
+          "done": true,
+          "initialized": true,
+          "log_sha256": "b4b919fb3d21f7e3aaa1b58679158561f365fe8ce4f6d90dba15e3b05638469d"
+        },
+        "join": {
+          "pass": 3,
+          "failures": [],
+          "done": true,
+          "initialized": true,
+          "log_sha256": "2598cb955a413350af9181ff4b3b5c2c0fa4593c5c8867719b47ae62d1e1f20e"
+        }
+      },
+      "inputs_identical": true,
+      "pass_total": 9,
+      "run_manifest_sha256": "6dd02002b23645027ee396af66ba2e05bf0ba197a9a0a2707432e61be64fdb49",
+      "save_templates": {},
+      "vision_config_templates": {}
+    },
+    {
+      "run": "8c657607a8",
+      "scenario": "TeammateNavigationTestDoc",
+      "sha256": "ed240f09883b091fef5474ff6ef5219bdeae669948ca1331c76007faeef24b20",
+      "roles": {
+        "host": {
+          "pass": 30,
+          "failures": [],
+          "done": true,
+          "initialized": true,
+          "log_sha256": "2367bc0e856d417d6caafffbdc2b514cfae3f6546857f6828ce8713f8338edb0"
+        },
+        "join": {
+          "pass": 25,
+          "failures": [],
+          "done": true,
+          "initialized": true,
+          "log_sha256": "9700f498d9560804f9b5e8b7ddac9f93812c20fdb8ea8abe4dca0edd3e999f6b"
+        }
+      },
+      "inputs_identical": true,
+      "pass_total": 55,
+      "run_manifest_sha256": "96b282894f5f63fc1f65606fda899a38f26d478ce1b71cd0ca92a14e142e9091",
+      "save_templates": {},
+      "vision_config_templates": {}
+    },
+    {
+      "run": "5fd52e55f0",
+      "scenario": "HiddenRoomOverlayTestDoc",
+      "sha256": "ed240f09883b091fef5474ff6ef5219bdeae669948ca1331c76007faeef24b20",
+      "roles": {
+        "host": {
+          "pass": 56,
+          "failures": [],
+          "done": true,
+          "initialized": true,
+          "log_sha256": "d1972ec0ea3b6dcc9b704e5ec6309e74443fde3330b39afb8ac43b8f96c123ab"
+        },
+        "join": {
+          "pass": 61,
+          "failures": [],
+          "done": true,
+          "initialized": true,
+          "log_sha256": "804232bb756177e0376d933d5717573a0ff4bd7cac8708376ecb4d017368893b"
+        }
+      },
+      "inputs_identical": true,
+      "pass_total": 117,
+      "run_manifest_sha256": "67ef33994205b2cf5672246b163589a596e21593d7a4ff8bce0ac0b4efd0f59c",
+      "save_templates": {
+        "host": {
+          "source_sha256": "6ff63ef3556f38cb882ecf7fa4071d57124bfe0c19c5dbe008fdd0f516d439c8",
+          "isolated_sha256": "a5d0b5e6b9d6b9e41a25b376c3bb5fa0e36ebb2e5f7ee6bf6210b072902e8080",
+          "slot": 9
+        },
+        "join": {
+          "source_sha256": "356326da5cce588c58de356c3b24af055d89e98ea39a371b586cf5f4b4761bb3",
+          "isolated_sha256": "6d2cbb8186cc2d38f43597b4f71bb76992cd32a55c82514d4dd5a3747ca08209",
+          "slot": 9
+        }
+      },
+      "vision_config_templates": {
+        "host": "c2a4c706cf5b43835818b494948c3a6ccea7e3e1f83953bcbcbc3f284b7d8995",
+        "join": "179f97016a9d5f6808b8cb9e0f5d21913b363dff74b106dc132fb8a0fd4cf616"
+      }
+    },
+    {
+      "run": "735ea3ffd7",
+      "scenario": "HiddenRoomTestDoc",
+      "sha256": "ed240f09883b091fef5474ff6ef5219bdeae669948ca1331c76007faeef24b20",
+      "roles": {
+        "host": {
+          "pass": 51,
+          "failures": [],
+          "done": true,
+          "initialized": true,
+          "log_sha256": "16f9a51444e1b18f9fb29a3d880f9c63a926a46749b39662e02aae242aaff11e"
+        },
+        "join": {
+          "pass": 56,
+          "failures": [],
+          "done": true,
+          "initialized": true,
+          "log_sha256": "7455c8939ae433eccb3a4028d46f4994130269c4171bf59467da860f3895f38a"
+        }
+      },
+      "inputs_identical": true,
+      "pass_total": 107,
+      "run_manifest_sha256": "f16e4628f4f689a8b97e961b15b210d696acd93012ef57c9b630541e869318a7",
+      "save_templates": {
+        "host": {
+          "source_sha256": "6ff63ef3556f38cb882ecf7fa4071d57124bfe0c19c5dbe008fdd0f516d439c8",
+          "isolated_sha256": "a5d0b5e6b9d6b9e41a25b376c3bb5fa0e36ebb2e5f7ee6bf6210b072902e8080",
+          "slot": 9
+        },
+        "join": {
+          "source_sha256": "356326da5cce588c58de356c3b24af055d89e98ea39a371b586cf5f4b4761bb3",
+          "isolated_sha256": "6d2cbb8186cc2d38f43597b4f71bb76992cd32a55c82514d4dd5a3747ca08209",
+          "slot": 9
+        }
+      },
+      "vision_config_templates": {
+        "host": "c2a4c706cf5b43835818b494948c3a6ccea7e3e1f83953bcbcbc3f284b7d8995",
+        "join": "179f97016a9d5f6808b8cb9e0f5d21913b363dff74b106dc132fb8a0fd4cf616"
+      }
+    },
+    {
+      "run": "adb5c07a62",
+      "scenario": "RoomCooperationTestDoc",
+      "sha256": "ed240f09883b091fef5474ff6ef5219bdeae669948ca1331c76007faeef24b20",
+      "roles": {
+        "host": {
+          "pass": 21,
+          "failures": [],
+          "done": true,
+          "initialized": true,
+          "log_sha256": "7030f6823414c27524715547d235a4c6881710dac9f292e7818c926171f60bf3"
+        },
+        "join": {
+          "pass": 45,
+          "failures": [],
+          "done": true,
+          "initialized": true,
+          "log_sha256": "06ffa7747cc4c1934e3dae6f0b601cc946b2cd4f68d3332079c00a7a77b101a9"
+        }
+      },
+      "inputs_identical": true,
+      "pass_total": 66,
+      "run_manifest_sha256": "ed14fb718bf4dfef51e771c8cd32e09c297255a549df1a7d829d8841ebf999ab",
+      "save_templates": {},
+      "vision_config_templates": {}
+    },
+    {
+      "run": "50cd027347",
+      "scenario": "CombatFeedbackNetworkTestDoc",
+      "sha256": "ed240f09883b091fef5474ff6ef5219bdeae669948ca1331c76007faeef24b20",
+      "roles": {
+        "host": {
+          "pass": 3,
+          "failures": [],
+          "done": true,
+          "initialized": true,
+          "log_sha256": "4befd8eb8f0618741a855f3abefaed9f98d6ff20065393473670bbbf485a5237"
+        },
+        "join": {
+          "pass": 13,
+          "failures": [],
+          "done": true,
+          "initialized": true,
+          "log_sha256": "be94b69967a541b99b4a9d989da1c1fb65712520b3347a771c013ca193f0d2d8"
+        }
+      },
+      "inputs_identical": true,
+      "pass_total": 16,
+      "run_manifest_sha256": "691a46593e82d85395800cc597bf5e2bd92e7805227a77435299567d0f2c4de9",
+      "save_templates": {},
+      "vision_config_templates": {}
+    },
+    {
+      "run": "cdeaf8f83f",
+      "scenario": "AnimationGapsTestDoc",
+      "sha256": "ed240f09883b091fef5474ff6ef5219bdeae669948ca1331c76007faeef24b20",
+      "roles": {
+        "host": {
+          "pass": 17,
+          "failures": [],
+          "done": true,
+          "initialized": true,
+          "log_sha256": "5a9745cf77541ede77b5886b8db070bad491507b8fe47e3bb2ab3a2811667004"
+        },
+        "join": {
+          "pass": 9,
+          "failures": [],
+          "done": true,
+          "initialized": true,
+          "log_sha256": "739f895f9db747e35edad95d006bff062efa2d53c568351e63d6515bb9dbf616"
+        }
+      },
+      "inputs_identical": true,
+      "pass_total": 26,
+      "run_manifest_sha256": "3e5e91da4357188a56a78c1b252cb7cd91d32e9d4a1ff5692aa7830a62acbd57",
+      "save_templates": {},
+      "vision_config_templates": {}
+    },
+    {
+      "run": "eda98a81a8",
+      "scenario": "SustainedDensityTestDoc",
+      "sha256": "ed240f09883b091fef5474ff6ef5219bdeae669948ca1331c76007faeef24b20",
+      "roles": {
+        "host": {
+          "pass": 22,
+          "failures": [],
+          "done": true,
+          "initialized": true,
+          "log_sha256": "235b9a18b11a55b9980aa0ceb5c7c4887c5d2c31fc0ead1b9ba2ec6fe86de65c"
+        },
+        "join": {
+          "pass": 29,
+          "failures": [],
+          "done": true,
+          "initialized": true,
+          "log_sha256": "8bf44e77b4072cc19562369646442612205b4b32d5eba9a184dc4be4fea8b578"
+        }
+      },
+      "inputs_identical": true,
+      "pass_total": 51,
+      "run_manifest_sha256": "b48a131d1fde2771b0adcf311c8b117cfd4e74fcfb603ace3660b5818dced2ae",
+      "save_templates": {},
+      "vision_config_templates": {}
+    }
+  ],
+  "candidate_pass_total": 470,
+  "pending": [],
+  "diagnostics": {
+    "5fd52e55f0": {
+      "host": {
+        "records": 30,
+        "episodes": 10,
+        "settled": 10,
+        "settled_room_mismatches": [],
+        "settled_player_pointer_mismatches": [],
+        "unit_problems": []
+      },
+      "join": {
+        "records": 30,
+        "episodes": 10,
+        "settled": 10,
+        "settled_room_mismatches": [],
+        "settled_player_pointer_mismatches": [],
+        "unit_problems": []
+      }
+    },
+    "735ea3ffd7": {
+      "host": {
+        "records": 0,
+        "episodes": 0,
+        "settled": 0,
+        "settled_room_mismatches": [],
+        "settled_player_pointer_mismatches": [],
+        "unit_problems": []
+      },
+      "join": {
+        "records": 30,
+        "episodes": 10,
+        "settled": 10,
+        "settled_room_mismatches": [],
+        "settled_player_pointer_mismatches": [],
+        "unit_problems": []
+      }
+    }
+  },
+  "protected_count": 54,
+  "protected_changes": [],
+  "deployment": {
+    "status": "deployed-smoke-passed",
+    "version": "0.2.14-dev",
+    "timestamp": "2026-10-04T00:26:37.296735+08:00",
+    "target": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\release\\RConnectMod.swf",
+    "sha256": "ed240f09883b091fef5474ff6ef5219bdeae669948ca1331c76007faeef24b20",
+    "bytes": 99900,
+    "backup": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\backup\\m43-release-20261004-002637-b630e6\\RConnectMod.before.swf",
+    "previous_sha256": "2b25a7d2301d1baac40e04e70ba48e9bc40b5c292c0b3938a69bf6b151b41186",
+    "checks": 470,
+    "hidden_room_bug": "not-reproduced-no-production-fix",
+    "smoke_run": "af13e437c4",
+    "protected_count": 54,
+    "protected_changes": []
+  },
+  "density": {
+    "run": "eda98a81a8",
+    "windows": [
+      {
+        "frames": 104,
+        "p95_ms": 115
+      },
+      {
+        "frames": 100,
+        "p95_ms": 115
+      },
+      {
+        "frames": 105,
+        "p95_ms": 116
+      },
+      {
+        "frames": 107,
+        "p95_ms": 104
+      },
+      {
+        "frames": 100,
+        "p95_ms": 106
+      },
+      {
+        "frames": 101,
+        "p95_ms": 116
+      },
+      {
+        "frames": 102,
+        "p95_ms": 111
+      }
+    ],
+    "window_seconds_approx": 8,
+    "performance_claim": "No matched baseline; no general FPS improvement claimed."
+  }
+}

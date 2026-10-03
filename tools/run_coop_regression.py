@@ -1,5 +1,6 @@
 """Unique AIR ids and independent game copies; no installed SWF/save mutations.
-Only terminates the processes created by this invocation. Uses fresh characters.
+Only terminates the processes created by this invocation. Uses fresh characters
+unless explicit read-only save templates are supplied for an isolated replay.
 """
 import argparse
 import hashlib
@@ -30,12 +31,18 @@ def main():
     ap.add_argument('--land', default='', help='Host travels to this real mission before a scenario starts')
     ap.add_argument('--all-mods', action='store_true', help='Load all installed manifest modules in the isolated scenario')
     ap.add_argument('--responsive', action='store_true', help='Use the same process-local HighQoS policy as Start-Coop.bat')
+    ap.add_argument('--host-save-template',type=Path,help='Copy this slot-zero SOL into isolated slot nine; never modify the source')
+    ap.add_argument('--join-save-template',type=Path,help='Copy this slot-zero SOL into isolated slot nine; never modify the source')
+    ap.add_argument('--host-vision-config-template',type=Path,help='Read-only RV settings copied into unique host storage')
+    ap.add_argument('--join-vision-config-template',type=Path,help='Read-only RV settings copied into unique join storage')
     ap.add_argument('--expected-version',default=re.search(r'VERSION:String\s*=\s*"([^"]+)"',
                     (ROOT/'src'/'RConnectMod.as').read_text(encoding='utf-8')).group(1))
     args=ap.parse_args()
     if args.all_mods and not (args.presentation or args.effects or args.smoke): ap.error('--all-mods requires --presentation, --effects or --smoke')
     if args.presentation and not args.land: args.land='random_mane'
     if args.vision_candidate: args.with_vision=True
+    if (args.host_vision_config_template or args.join_vision_config_template) and not (args.all_mods or args.with_vision):
+        ap.error('Vision config templates require --all-mods or --with-vision')
     game=args.game_root.resolve()
     token=uuid.uuid4().hex[:10]
     output=ROOT/'build'/'cooperation'/token
@@ -45,6 +52,20 @@ def main():
     candidate=output/'candidate.swf'
     candidate.write_bytes(args.candidate.read_bytes())
     candidate_hash=hashlib.sha256(candidate.read_bytes()).hexdigest()
+    save_templates={};save_inputs={}
+    for role,path in [('host',args.host_save_template),('join',args.join_save_template)]:
+        if path is None: continue
+        data=path.read_bytes()
+        # Native newGame bootstrap clears slot zero before comLoad is ready.
+        # A separate slot preserves the replay input until native loadGame.
+        if data[:2]!=b'\x00\xbf' or data[6:10]!=b'TCSO' or data[16:26]!=b'\x00\x08PFEgame0':
+            ap.error(role+' save template must be a native PFEgame0 SOL')
+        save_templates[role]=data[:18]+b'PFEgame9'+data[26:]
+        save_inputs[role]={'source_sha256':hashlib.sha256(data).hexdigest(),
+                          'isolated_sha256':hashlib.sha256(save_templates[role]).hexdigest(),'slot':9}
+    vision_templates={role:path.read_bytes() for role,path in [
+        ('host',args.host_vision_config_template),('join',args.join_vision_config_template)] if path is not None}
+    vision_inputs={role:hashlib.sha256(data).hexdigest() for role,data in vision_templates.items()}
     with socket.socket() as probe:
         probe.bind(('127.0.0.1',0)); port=probe.getsockname()[1]
     procs=[]; artifacts=[]; inputs={}
@@ -118,7 +139,8 @@ def main():
             cfg=dict(nickname=role,hostIp='127.0.0.1',port=port,tickMs=50,
                      autoRole=role,autoGame='1',autoFollow='1',freezeAI='1',
                      worldInject='1',ghostCombat='1',autoHeal='1')
-            if role=='host' and args.land: cfg['autoTravelLand']=args.land
+            if role in save_templates: cfg.update(autoGame='',autoLoadSave='9',autoHeal='0')
+            elif role=='host' and args.land: cfg['autoTravelLand']=args.land
             (release/'config.txt').write_text(json.dumps(cfg),encoding='utf-8')
             # This established integration namespace opts out of MSW's menu
             # auto-driver. The RConnect scenario alone owns test world creation.
@@ -130,6 +152,16 @@ def main():
 <initialWindow><content>pfe.swf</content><visible>false</visible><renderMode>direct</renderMode></initialWindow>
 </application>''',encoding='utf-8')
             storage=Path(os.environ['APPDATA'])/appid/'Local Store'
+            if role in vision_templates:
+                settings=storage/'RealisticVision_config.txt'
+                settings.parent.mkdir(parents=True,exist_ok=True)
+                assert not settings.exists(), 'Unique test storage must not overwrite existing settings'
+                settings.write_bytes(vision_templates[role])
+            if role in save_templates:
+                template=storage/'#SharedObjects'/'pfe.swf'/'PFEgame9.sol'
+                template.parent.mkdir(parents=True,exist_ok=True)
+                assert not template.exists(), 'Unique test storage must not overwrite an existing save'
+                template.write_bytes(save_templates[role])
             artifacts.append((role,storage/'RConnect.log'))
             stdout=(output/(role+'.stdout.log')).open('w',encoding='utf-8')
             proc=subprocess.Popen([str(game/'adl64.exe'),'-runtime',str(game/'runtimes/air/win64'),str(desc)],
@@ -144,7 +176,8 @@ def main():
             print(json.dumps(dict(role=role,pid=proc.pid,appid=appid,log=str(storage/'RConnect.log'))),flush=True)
             time.sleep(15 if role=='host' else 0)
         (output/'run.json').write_text(json.dumps(dict(port=port,pids=[p.pid for p in procs],
-            candidate=str(args.candidate.resolve()),sha256=candidate_hash,inputs=inputs),indent=2))
+            candidate=str(args.candidate.resolve()),sha256=candidate_hash,inputs=inputs,save_templates=save_inputs,
+            vision_config_templates=vision_inputs),indent=2))
         print('OUTPUT '+str(output),flush=True)
         deadline=time.monotonic()+args.seconds
         while time.monotonic()<deadline:
@@ -165,6 +198,8 @@ def main():
                 except subprocess.TimeoutExpired: p.kill(); p.wait()
         for role,path in artifacts:
             if path.exists(): shutil.copy2(path,output/(role+'.log'))
+            vision_log=path.parent/'RVision.log'
+            if vision_log.exists(): shutil.copy2(vision_log,output/(role+'-vision.log'))
             for picture in path.parent.glob('presentation-*.png'):
                 shutil.copy2(picture,output/(role+'-'+picture.name))
         if not args.keep_copies:
@@ -183,7 +218,8 @@ def main():
         path=output/(role+'.log')
         content=path.read_text(encoding='utf-8',errors='replace') if path.exists() else ''
         bad=list(dict.fromkeys(s for s in content.splitlines() if 'COOP FAIL' in s or 'game error dialog' in s or 'RConnectRoom: ERROR' in s or 'handoff timed out' in s
-            or (' failed:' in s and ('RConnectGame: unit effects ' in s or 'RConnectGame: presentation ' in s))))
+            or 'RConnectNavigation: failed' in s or 'RConnectMap: failed' in s or 'RConnectRoomTrace: failed' in s
+            or (' failed:' in s and ('RConnectGame: unit effects ' in s or 'RConnectGame: presentation ' in s or 'RConnectGame: projectile visual ' in s))))
         if args.presentation or args.effects:
             ok=ok and not bad and ('COOP EFFECTS DONE' if args.effects else 'COOP PRESENTATION DONE') in content
             if role=='join': ok=ok and 'welcome id=' in content and 'unitsync matched' in content

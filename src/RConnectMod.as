@@ -6,6 +6,7 @@ package
    import rconnect.core.Log;
    import rconnect.core.Session;
    import rconnect.core.TeammateNavigation;
+   import rconnect.core.RoomDiagnostics;
    import rconnect.game.GameBridge;
    import rconnect.game.ExplorationSync;
    import rconnect.game.VersionProbe;
@@ -23,7 +24,7 @@ package
     */
    public class RConnectMod
    {
-      public static const VERSION:String = "0.2.13-dev";
+      public static const VERSION:String = "0.2.14-dev";
 
       public static var instance:RConnectMod;
 
@@ -50,6 +51,7 @@ package
       public var hud:NetHud;
       public var navigation:TeammateNavigation;
       public var teammateMap:TeammateMap;
+      private var roomDiagnostics:RoomDiagnostics;
       public var versionInfo:Object;
 
       public function RConnectMod(main:Object)
@@ -78,6 +80,7 @@ package
          this.session = new Session(this);
          this.navigation = new TeammateNavigation(this);
          this.teammateMap = new TeammateMap(this);
+         this.roomDiagnostics = new RoomDiagnostics(this);
          hud.refresh();
          session.autoStart();
          Log.d("RConnectMod: game version=" + versionInfo.version
