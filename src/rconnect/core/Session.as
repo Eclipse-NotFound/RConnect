@@ -1,5 +1,6 @@
 package rconnect.core
 {
+   import modlocales.connect.RCLocale;
    import flash.events.Event;
    import flash.events.TimerEvent;
    import flash.utils.Timer;
@@ -1288,15 +1289,15 @@ package rconnect.core
       {
          var s:String = "RConnect v" + RConnectMod.VERSION
             + " | " + mod.versionInfo.version;
-         s += "\nmode: " + mode;
+         s += "\n" + RCLocale.text("mode: ") + RCLocale.text(mode);
          if(mode == HOSTING)
          {
-            s += " (port " + mod.config.getValue("port")
-               + ", peers " + peers.length + ")";
+            s += RCLocale.text(" (port ") + mod.config.getValue("port")
+               + RCLocale.text(", peers ") + peers.length + ")";
          }
          else if(mode == CONNECTED)
          {
-            s += " (id " + myId + " of " + hostName + ", remotes "
+            s += RCLocale.text(" (id ") + myId + RCLocale.text(" of ") + hostName + RCLocale.text(", remotes ")
                + remotes.length + ")";
          }
          else if(mode == JOINING)
@@ -1320,9 +1321,9 @@ package rconnect.core
          }
          if(error != "")
          {
-            s += "\nerror: " + error;
+            s += "\n" + RCLocale.text("error: ") + RCLocale.text(error);
          }
-         if(rooms.status!="")s+="\n"+rooms.status;
+         if(rooms.status!="")s+="\n"+RCLocale.text(rooms.status);
          return s;
       }
 

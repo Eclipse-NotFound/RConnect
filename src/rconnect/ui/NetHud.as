@@ -1,5 +1,6 @@
 package rconnect.ui
 {
+   import modlocales.connect.RCLocale;
    import flash.display.Sprite;
    import flash.display.Stage;
    import flash.events.KeyboardEvent;
@@ -62,7 +63,7 @@ package rconnect.ui
          graphics.drawRect(0, 0, 280, 300);
          graphics.endFill();
 
-         statusTf = makeLabel(8, 8, 264, 44, fmt);
+         statusTf = makeLabel(8, 8, 264, 44, new TextFormat("_sans",10,0xFFFFFF));
          tfNick = makeInput(8, 56, 90, fmt);
          tfIp = makeInput(100, 56, 110, fmt);
          tfPort = makeInput(212, 56, 56, fmt);
@@ -82,7 +83,7 @@ package rconnect.ui
          _btnSend.addEventListener(MouseEvent.CLICK, onClickSend);
 
          var hint:TextField = makeLabel(8, 214, 264, 14, fmt);
-         hint.text = "F10 hide/show | chat: Enter";
+         RCLocale.bind(hint,"F10 hide/show / chat: Enter",true);
          hint.alpha = 0.6;
          _btnExploration = makeButton(8, 234, 264, fmtBold, "接收队友探索：开");
          _btnExploration.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void {
@@ -90,7 +91,7 @@ package rconnect.ui
             refresh();
          });
          var explorationHint:TextField = makeLabel(8, 254, 264, 16, fmt);
-         explorationHint.text = "关闭后保留已收到的区域";
+         RCLocale.bind(explorationHint,"关闭后保留已收到的区域",true);
          _btnFollow=makeButton(8,276,264,fmtBold,"跟随队友：关");
          _btnFollow.addEventListener(MouseEvent.CLICK,function(e:MouseEvent):void {
             mod.config.setValue("followTeammate",mod.config.getValue("followTeammate")=="1"?"0":"1");
@@ -141,7 +142,7 @@ package rconnect.ui
          tf.width = w;
          tf.height = 18;
          tf.defaultTextFormat = fmt;
-         tf.text = label;
+         RCLocale.bind(tf,label,true);
          tf.selectable = false;
          tf.mouseEnabled = true;
          tf.background = true;
@@ -199,7 +200,7 @@ package rconnect.ui
          var focus:Object = stage.focus;
          if(focus == tfNick || focus == tfIp || focus == tfPort || focus == tfChat)
          {
-            if(e.charCode >= 32 && e.charCode <= 126 || e.keyCode == 8)
+            if(e.charCode >= 32 || e.keyCode == 8)
             {
                e.stopImmediatePropagation();
             }
@@ -225,8 +226,8 @@ package rconnect.ui
 
       public function refresh():void
       {
-         _btnExploration.text = "接收队友探索：" + (mod.exploration.enabled ? "开" : "关");
-         _btnFollow.text="跟随队友："+(mod.config.getValue("followTeammate")=="1"?"开":"关");
+         RCLocale.bind(_btnExploration,"接收队友探索：" + (mod.exploration.enabled ? "开" : "关"),true);
+         RCLocale.bind(_btnFollow,"跟随队友："+(mod.config.getValue("followTeammate")=="1"?"开":"关"),true);
          statusTf.text = mod.session != null
             ? mod.session.statusText() : "RConnect";
       }

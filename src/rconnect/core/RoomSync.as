@@ -1,5 +1,6 @@
 package rconnect.core
 {
+   import modlocales.connect.RCLocale;
    import flash.events.Event;
    import flash.utils.getTimer;
    import rconnect.game.GameBridge;
@@ -309,7 +310,7 @@ package rconnect.core
          });
          return true;
       }
-      public function notice(s:String):void {status=s;if(mod.hud!=null)mod.hud.addChatLine("RConnect",s);}
+      public function notice(s:String):void {status=s;if(mod.hud!=null)mod.hud.addChatLine("RConnect",RCLocale.text(s));}
       private function fail(error:Error):void
       {
          hold();blocked=true;status="房间同步失败，请断开连接后重试";

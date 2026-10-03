@@ -1,5 +1,6 @@
 package rconnect.game
 {
+   import modlocales.connect.RCLocale;
    import flash.display.BitmapData;
    import flash.display.DisplayObjectContainer;
    import flash.events.Event;
@@ -84,13 +85,15 @@ package rconnect.game
                if(settings != null && settings["modAPI"] != null)
                {
                   var self:ExplorationSync = this;
-                  settings["modAPI"]["registerPage"]("rconnect", "RConnect 联机", [
+                  var pageArgs:Array = ["rconnect", "RConnect 联机", [
                      {key:"sharedExploration", label:"接收队友探索", kind:"check",
                       min:0, max:1, step:1, def:true,
                       hint:"只控制本端接收；关闭后保留已收到的区域",
                       get:function():* { return self.enabled; },
                       set:function(v:*):void { self.setEnabled(v == true); }}
-                  ], function():void {}, "双向共享探索，各端独立开关");
+                  ], function():void {}, "双向共享探索，各端独立开关"];
+                  if("localizationVersion" in settings["modAPI"]) pageArgs.push({translate:RCLocale.render});
+                  settings["modAPI"]["registerPage"].apply(settings["modAPI"], pageArgs);
                   settingsRegistered = true;
                }
             }

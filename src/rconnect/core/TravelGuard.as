@@ -1,5 +1,6 @@
 package rconnect.core
 {
+   import modlocales.connect.RCLocale;
    import flash.display.DisplayObject;
    import flash.events.MouseEvent;
    import flash.utils.getQualifiedClassName;
@@ -93,7 +94,7 @@ package rconnect.core
             {
                changed.push({o:inter,action:inter.action,active:inter.active,is_act:inter.is_act,text:inter.actionText});
                inter.action=0;inter.active=false;inter.is_act=false;
-               inter.actionText="请由宿主带队进入";
+               inter.actionText=RCLocale.text("请由宿主带队进入");
             }
          }
       }
