@@ -15,26 +15,46 @@ package rconnect.game {
             dx:b.dx,dy:b.dy,ddy:b.ddy,rot:b.rot,vel:b.vel,spring:b.spring,
             ended:b.babah || !b.in_chain,blend:b.vis.blendMode};
       }
+      /** Sample the native display after its real simulation frame. A beam can
+       * finish before the next world packet; its final endpoint alone is not
+       * enough to reconstruct the visible lifetime or its muzzle attachment. */
+      public static function beamFrame(b:Object,stamp:int):Object {
+         var v:DisplayObject=GameBridge.probe(b,"vis") as DisplayObject;
+         if(v==null || !v.visible || v.stage==null)return null;
+         var laser:Object=GameBridge.probe(v,"laser");
+         return {at:stamp,x:v.x,y:v.y,rot:v.rotation,sx:v.scaleX,sy:v.scaleY,a:v.alpha,
+            f:v is MovieClip?MovieClip(v).currentFrame:1,
+            ls:laser==null?1:Number(laser.scaleX),lf:laser is MovieClip?MovieClip(laser).currentFrame:1};
+      }
       public function receive(owner:Object,guns:Array,main:Object,player:Boolean=false):void {
          if(owner==null || guns==null)return;
          var slots:Object=seen[owner];if(slots==null)slots=seen[owner]={};
          for each(var gun:Object in guns) {
-            var key:String=String(gun.slot)+":"+String(gun.id)+":"+String(gun.variant)+":"+String(gun.stream),last:int=int(slots[key]);
+            var key:String=String(gun.slot)+":"+String(gun.id)+":"+String(gun.variant)+":"+String(gun.stream);
+            var channel:Object=slots[key];
+            var now:int=getTimer(),source:Number=Number(gun.sampleTime);
+            if(!isFinite(source))source=now;
+            if(channel==null)channel=slots[key]={last:0,records:{},offset:now-source};
+            channel.offset=Math.min(Number(channel.offset),now-source);
+            var last:int=int(channel.last);
             for each(var event:Object in gun.events) {
-               if(int(event.seq)<=last)continue;
+               var existing:Object=channel.records[String(event.seq)];
+               if(int(event.seq)<=last) {
+                  if(existing!=null && existing.beam && event.flight!=null)existing.s=event.flight;
+                  continue;
+               }
                last=int(event.seq);var s:Object=event.flight;if(s==null)continue;
                try {
                   var cls:Class=main.loaderInfo.applicationDomain.getDefinition(String(s.cls)) as Class;
-                  var vis:DisplayObject=new cls() as DisplayObject;
-                  if(vis==null)continue;
-                  if(vis is MovieClip)(vis as MovieClip).play();
-                  vis.blendMode=String(s.blend);vis.rotation=Number(s.rot)*180/Math.PI;
-                  vis.x=Number(s.x);vis.y=Number(s.y);
                   var world:Object=GameBridge.probe(owner,"loc");
-                  var layer:DisplayObjectContainer=main.loaderInfo.applicationDomain.getDefinition("fe.World").w.grafon.visObjs[2] as DisplayObjectContainer;
+                  var grafon:Object=main.loaderInfo.applicationDomain.getDefinition("fe.World").w.grafon;
+                  var layer:DisplayObjectContainer=grafon.visObjs[2] as DisplayObjectContainer;
                   if(layer==null)continue;
-                  layer.addChild(vis);vis.visible=true;
-                  active.push({vis:vis,s:s,at:getTimer(),loc:world,last:0});
+                  var rec:Object={vis:null,cls:cls,s:s,at:now,loc:world,grafon:grafon,last:0,
+                     beam:s.frames is Array,offset:channel.offset,delay:player?100:300,channel:channel,seq:event.seq};
+                  channel.records[String(event.seq)]=rec;
+                  if(!rec.beam)createVisual(rec);
+                  active.push(rec);
                   if(active.length>160)remove(0);
                   if(player) {
                      var w:Object=GameBridge.probe(owner,"currentWeapon"),v:MovieClip=GameBridge.probe(w,"vis") as MovieClip;
@@ -42,15 +62,26 @@ package rconnect.game {
                   }
                } catch(e:*) {if(!errors[String(s.cls)]){errors[String(s.cls)]=true;Log.d("RConnectGame: projectile visual "+s.cls+" failed: "+e);}}
             }
-            slots[key]=last;
+            channel.last=last;
          }
       }
-      public function tick(loc:Object):void {
-         var now:int=getTimer();
+      private function createVisual(a:Object):DisplayObject {
+         var cls:Class=a.cls as Class,v:DisplayObject=new cls() as DisplayObject;
+         if(v==null)return null;
+         if(v is MovieClip){if(a.beam)MovieClip(v).gotoAndStop(1);else MovieClip(v).play();}
+         v.blendMode=String(a.s.blend);v.rotation=Number(a.s.rot)*180/Math.PI;
+         v.x=Number(a.s.x);v.y=Number(a.s.y);v.visible=true;
+         a.grafon.visObjs[2].addChild(v);a.vis=v;return v;
+      }
+      public function tick(loc:Object,now:int=-1):void {
+         if(now<0)now=getTimer();
          for(var i:int=active.length-1;i>=0;i--) {
             var a:Object=active[i],s:Object=a.s,v:DisplayObject=a.vis;
-            var age:Number=(now-int(a.at))/1000,frames:Number=age*30;
-            if(a.loc!==loc || age>(s.ended?0.16:2.5) || v.parent==null){remove(i);continue;}
+            var age:Number=Math.max(0,now-int(a.at))/1000,frames:Number=age*30;
+            if(a.loc!==loc){remove(i);continue;}
+            if(a.beam) {if(!tickBeam(a,now))remove(i);continue;}
+            if(age>(s.ended?0.16:2.5) || v==null){remove(i);continue;}
+            if(v.parent!==a.grafon.visObjs[2])a.grafon.visObjs[2].addChild(v);
             var x:Number=Number(s.x)+Number(s.dx)*frames;
             var y:Number=Number(s.y)+Number(s.dy)*frames+Number(s.ddy)*frames*frames/2;
             if(s.ended) {var p:Number=Math.min(1,age/0.08);x=Number(s.x)+(Number(s.ex)-Number(s.x))*p;y=Number(s.y)+(Number(s.ey)-Number(s.y))*p;}
@@ -66,7 +97,24 @@ package rconnect.game {
             v.alpha=s.ended?Math.max(0,1-age/0.16):1;
          }
       }
-      private function remove(i:int):void {var v:DisplayObject=active[i].vis;if(v.parent!=null)v.parent.removeChild(v);active.splice(i,1);}
+      private function tickBeam(a:Object,now:int):Boolean {
+         var s:Object=a.s,list:Array=s.frames as Array,time:Number=now-Number(a.offset)-Number(a.delay);
+         if(int(s.end)>0 && time>=Number(s.end))return false;
+         if(now-int(a.at)>15000)return false;
+         if(list==null || list.length==0 || time<Number(list[0].at))return true;
+         var point:Object=list[0];
+         for each(var p:Object in list){if(Number(p.at)>time)break;point=p;}
+         var v:DisplayObject=a.vis as DisplayObject;if(v==null)v=createVisual(a);
+         if(v==null)return false;
+         if(v.parent!==a.grafon.visObjs[2])a.grafon.visObjs[2].addChild(v);
+         if(v is MovieClip && MovieClip(v).currentFrame!=int(point.f))MovieClip(v).gotoAndStop(int(point.f));
+         v.x=Number(point.x);v.y=Number(point.y);v.rotation=Number(point.rot);
+         v.scaleX=Number(point.sx);v.scaleY=Number(point.sy);v.alpha=Number(point.a);v.visible=true;
+         var laser:Object=GameBridge.probe(v,"laser");
+         if(laser!=null){laser.scaleX=Number(point.ls);if(laser is MovieClip && MovieClip(laser).currentFrame!=int(point.lf))MovieClip(laser).gotoAndStop(int(point.lf));}
+         return true;
+      }
+      private function remove(i:int):void {var a:Object=active[i],v:DisplayObject=a.vis;if(v!=null && v.parent!=null)v.parent.removeChild(v);delete a.channel.records[String(a.seq)];active.splice(i,1);}
       public function reset():void {while(active.length)remove(active.length-1);seen=new Dictionary(true);}
       public function get count():int {return active.length;}
    }

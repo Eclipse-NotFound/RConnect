@@ -196,6 +196,9 @@ package rconnect.game
                }
                catch(armorError:*) {logViewError("remote-"+remoteId,armorError);}
             }
+            // Native redraws may replace the object layer after ENTER_FRAME.
+            // The same frame clock reattaches a beam without advancing it twice.
+            _projectiles.tick(loc,presentationTime());
             if(!_mirroring) return;
             tickLootMotion();
             for(var viewed:Object in _unitView)
@@ -243,9 +246,9 @@ package rconnect.game
       private function onMirrorFrame(e:Event):void
       {
          if(roomHold)return;
-         if(!_mirroring) _presentation.observe(loc);
-         if(gg!=null)_presentation.observePlayer(gg);
-         _projectiles.tick(loc);
+         if(!_mirroring) _presentation.observe(loc,_sampleAt);
+         if(gg!=null)_presentation.observePlayer(gg,_sampleAt);
+         _projectiles.tick(loc,presentationTime());
          try {main.stage.invalidate();} catch(stageError:*) {}
          // Native ghost physics and packet arrivals must not dictate display cadence.
          for(var id:String in _remotes)

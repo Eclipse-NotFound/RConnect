@@ -15,6 +15,7 @@ package rconnect.game
       private var hostShots:Dictionary = new Dictionary(true);
       private var errors:Object = {};
       private var shotStream:int=0;
+      private var frameTime:int=0;
 
       private static function get(o:Object,k:String):* {return GameBridge.probe(o,k);}
 
@@ -29,20 +30,23 @@ package rconnect.game
 
       /** kol_shoot resets when a burst ends. Observe every game frame and
        * retain our own event count, including bullets fired between snapshots. */
-      public function observe(loc:Object):void
+      public function observe(loc:Object,stamp:int=0):void
       {
+         frameTime=stamp>0?stamp:getTimer();
          var units:Array=get(loc,"units") as Array;if(units==null) return;
          for each(var u:Object in units)
          {
-            if(int(get(u,"fraction"))>=100 || int(get(u,"sost"))>=3) continue;
-            RConnectAnimationAccess.observe(u as Unit);
-            for each(var w:Object in weaponList(u)) if(get(w,"kol_shoot")!=null) observeWeapon(w);
+            if(int(get(u,"fraction"))>=100) continue;
+            if(int(get(u,"sost"))<3)RConnectAnimationAccess.observe(u as Unit);
+            // A dead shooter can still have a beam fading in the native chain.
+            // Its final display frames and end must reach the receiver too.
+            for each(var w:Object in weaponList(u)) if(get(w,"kol_shoot")!=null) observeWeapon(w,frameTime);
          }
       }
 
-      public function observePlayer(u:Object):void {for each(var w:Object in weaponList(u))if(get(w,"kol_shoot")!=null)observeWeapon(w);}
+      public function observePlayer(u:Object,stamp:int=0):void {frameTime=stamp>0?stamp:getTimer();for each(var w:Object in weaponList(u))if(get(w,"kol_shoot")!=null)observeWeapon(w,frameTime);}
 
-      private function observeWeapon(w:Object):int
+      private function observeWeapon(w:Object,stamp:int=0):int
       {
          var n:int=int(get(w,"kol_shoot")),bullet:Object=get(w,"b"),ammo:Number=Number(get(w,"hold"));
          var r:Object=hostShots[w];
@@ -54,9 +58,17 @@ package rconnect.game
             if(isFinite(ammo) && ammo<Number(r.ammo))
                delta=Math.max(delta,Math.ceil((Number(r.ammo)-ammo)/Math.max(1,Number(get(w,"rashod")))));
             r.total+=delta;r.n=n;r.bullet=bullet;r.ammo=ammo;
-            if(delta>0 && bullet!=null)r.events.push({seq:r.total,at:getTimer(),bullet:bullet});
+            if(delta>0 && bullet!=null)r.events.push({seq:r.total,at:frameTime>0?frameTime:getTimer(),bullet:bullet,frames:[],sampled:0,end:0});
          }
-         while(r.events.length>0 && (r.events.length>24 || getTimer()-r.events[0].at>700))r.events.shift();
+         if(stamp>0)for each(var shot:Object in r.events) {
+            if(int(get(shot.bullet,"spring"))<2 || int(shot.sampled)==stamp)continue;
+            shot.sampled=stamp;
+            var point:Object=ProjectileVisuals.beamFrame(shot.bullet,stamp);
+            if(point!=null){shot.frames.push(point);if(shot.frames.length>64)shot.frames.shift();}
+            if(get(shot.bullet,"in_chain")!=true && int(shot.end)==0)shot.end=stamp;
+         }
+         while(r.events.length>0 && (r.events.length>24 || (getTimer()-r.events[0].at>700
+            && (int(get(r.events[0].bullet,"spring"))<2 || int(r.events[0].end)>0))))r.events.shift();
          return int(r.total);
       }
 
@@ -68,8 +80,13 @@ package rconnect.game
             var w:Object=list[i];
             if(w==null || get(w,"kol_shoot")==null) continue;
             var count:int=observeWeapon(w),events:Array=[];
-            for each(var shot:Object in hostShots[w].events)events.push({seq:shot.seq,flight:ProjectileVisuals.capture(shot.bullet)});
+            for each(var shot:Object in hostShots[w].events) {
+               var flight:Object=ProjectileVisuals.capture(shot.bullet);
+               if(flight!=null && int(flight.spring)>=2){flight.frames=shot.frames;flight.end=shot.end;}
+               events.push({seq:shot.seq,at:shot.at,flight:flight});
+            }
             result.push({stream:hostShots[w].stream,slot:i,id:String(get(w,"id")),variant:int(get(w,"variant")),main:w===current,events:events,
+               sampleTime:frameTime>0?frameTime:getTimer(),
                shots:count,ox:Number(get(w,"X"))-Number(get(u,"X")),
                oy:Number(get(w,"Y"))-Number(get(u,"Y")),rot:Number(get(w,"rot")),
                prep:int(get(w,"t_prep")),reload:int(get(w,"t_reload")),
@@ -252,6 +269,7 @@ package rconnect.game
          RConnectAnimationAccess.reset();
          states=new Dictionary();
          hostShots=new Dictionary(true);
+         frameTime=0;
       }
 
       private function failed(u:Object,e:*):void

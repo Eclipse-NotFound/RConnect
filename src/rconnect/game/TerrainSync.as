@@ -176,9 +176,13 @@ package rconnect.game
             observed[k]=state(t,x,y);
             if(!equal(before,observed[k]))
             {
+               // A destroyed native tile changes the foreground bitmap in place.
+               // Rebuilding drawLoc for each enemy hit resets all display layers
+               // and the camera, and omits the actual fragment animation.
+               var painted:Boolean=predict && paintDestruction(t,before,observed[k]);
                // HP-only corrections do not change the room image or camera.
                for(var visual:String in FIELDS)
-                  if(visual!="h" && before[visual]!==observed[k][visual]) dirty=true;
+                  if(visual!="h" && before[visual]!==observed[k][visual] && !painted) dirty=true;
                if(Number(before.p)!=Number(observed[k].p))
                   try
                   {
@@ -188,6 +192,21 @@ package rconnect.game
                   catch(waterError:*) {}
             }
          }
+      }
+
+      /** Presentation only: do not call hitTile/dieTile again on the receiver.
+       * Checkpoints and unrelated structural changes retain the full redraw. */
+      private function paintDestruction(t:Object,before:Object,after:Object):Boolean
+      {
+         if(Number(before.p)<1 || Number(after.p)!=0)return false;
+         for each(var field:String in ["b","z","zf","w","st","d","sh"])
+            if(before[field]!==after[field])return false;
+         try {
+            if(room.active!=true || room.grafon==null)return false;
+            room.grafon.tileDie(t,9);
+            return true;
+         } catch(visualError:*) {}
+         return false;
       }
 
       /** Host settles once through native collision/graphics rules, never trusts a
