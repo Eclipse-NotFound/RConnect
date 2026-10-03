@@ -7,6 +7,7 @@ package
    import rconnect.core.Session;
    import rconnect.core.TeammateNavigation;
    import rconnect.core.RoomDiagnostics;
+   import rconnect.core.ManualStartup;
    import rconnect.game.GameBridge;
    import rconnect.game.ExplorationSync;
    import rconnect.game.VersionProbe;
@@ -81,6 +82,7 @@ package
          this.navigation = new TeammateNavigation(this);
          this.teammateMap = new TeammateMap(this);
          this.roomDiagnostics = new RoomDiagnostics(this);
+         new ManualStartup(this);
          hud.refresh();
          session.autoStart();
          Log.d("RConnectMod: game version=" + versionInfo.version
