@@ -65,6 +65,7 @@ package rconnect.core
          if(pending!=null)return "正在传送…";
          var game:GameBridge=mod.game,s:Session=mod.session,peer:Object=teammate();
          if(peer==null)return "队友尚未连接或位置已失效";
+         if(s.pause!=null && s.pause.paused)return "请先结束联机暂停";
          if(game.gg==null || game.loc==null)return "请等待房间准备完成";
          if(game.isPlayerDead() || Number(peer.snap.hp)<=0 || int(peer.snap.sost)>=3)return "角色倒地或复活中，暂不能传送";
          if(!s.rooms.ready || s.rooms.busy || game.isTransitioning())return "请等待房间准备完成";
@@ -109,7 +110,7 @@ package rconnect.core
             || String(peer.snap.roomKey)!=pending.key || Number(peer.snap.hp)<=0 || int(peer.snap.sost)>=3
             || game.isPlayerDead() || getTimer()>pending.until)
          {pending=null;mod.session.rooms.notice("传送已取消：队友状态发生变化");return;}
-         if(mod.session.rooms.busy || !mod.session.rooms.ready || game.isTransitioning())return;
+         if((mod.session.pause!=null && mod.session.pause.paused) || mod.session.rooms.busy || !mod.session.rooms.ready || game.isTransitioning())return;
          if(game.roomKey()!=pending.key) {pending=null;mod.session.rooms.notice("传送已取消：队友状态发生变化");return;}
          var spot:Object=findLanding(game.gg,Number(peer.snap.x),Number(peer.snap.y));
          pending=null;

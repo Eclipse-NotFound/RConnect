@@ -36,6 +36,7 @@ package rconnect.ui
       private var _btnExploration:TextField;
       private var _btnFollow:TextField;
       private var _btnTeleport:TextField;
+      private var _btnPauseMenus:TextField,_btnPauseSats:TextField,_pauseBanner:TextField;
       private var _visible:Boolean = true;
       private var _chatLines:int = 0;
 
@@ -47,6 +48,12 @@ package rconnect.ui
          if(stage != null)
          {
             stage.addChild(this);
+            _pauseBanner=new TextField();_pauseBanner.name="rconnect-pause-banner";
+            _pauseBanner.width=500;_pauseBanner.height=40;_pauseBanner.y=8;
+            _pauseBanner.defaultTextFormat=new TextFormat("_sans",13,0xFFE890,true,null,null,null,null,"center");
+            _pauseBanner.multiline=true;_pauseBanner.wordWrap=true;_pauseBanner.selectable=false;
+            _pauseBanner.mouseEnabled=false;_pauseBanner.background=true;_pauseBanner.backgroundColor=0x202020;
+            _pauseBanner.visible=false;stage.addChild(_pauseBanner);
             stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyCapture, true, 0, true);
             stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyBubble, false, 0, true);
          }
@@ -61,7 +68,7 @@ package rconnect.ui
          var fmtBold:TextFormat = new TextFormat("_sans", 12, 0xFFD040, true);
 
          graphics.beginFill(0x000000, 0.62);
-         graphics.drawRect(0, 0, 280, 326);
+         graphics.drawRect(0, 0, 280, 404);
          graphics.endFill();
 
          statusTf = makeLabel(8, 8, 264, 44, new TextFormat("_sans",10,0xFFFFFF));
@@ -99,6 +106,16 @@ package rconnect.ui
             mod.config.save();refresh();
          });
          _btnTeleport=makeButton(8,302,264,fmtBold,"传送到队友身边");
+         _btnPauseMenus=makeButton(8,328,264,fmtBold,"菜单同步暂停：关");
+         _btnPauseSats=makeButton(8,354,264,fmtBold,"SATS同步暂停：关");
+         _btnPauseMenus.name="rconnect-pause-menus";_btnPauseSats.name="rconnect-pause-sats";
+         for each(var button:TextField in [_btnPauseMenus,_btnPauseSats]) {
+            button.addEventListener(MouseEvent.MOUSE_DOWN,stopTeleportMouse);
+            button.addEventListener(MouseEvent.MOUSE_UP,stopTeleportMouse);
+            button.addEventListener(MouseEvent.CLICK,onClickPause);
+         }
+         var pauseHint:TextField=makeLabel(8,378,264,22,new TextFormat("_sans",10,0xCCCCCC));
+         RCLocale.bind(pauseHint,"由宿主设置；任意一方打开后全队暂停",true);
          _btnTeleport.name="rconnect-teleport";
          _btnTeleport.addEventListener(MouseEvent.MOUSE_DOWN,stopTeleportMouse);
          _btnTeleport.addEventListener(MouseEvent.MOUSE_UP,stopTeleportMouse);
@@ -162,6 +179,16 @@ package rconnect.ui
       // ---- 事件 ---------------------------------------------------------
 
       private function stopTeleportMouse(e:MouseEvent):void {e.stopImmediatePropagation();}
+
+      private function onClickPause(e:MouseEvent):void
+      {
+         e.stopImmediatePropagation();
+         if(mod.session==null || mod.session.pause==null)return;
+         var pause:Object=mod.session.pause;
+         pause.setPolicy(e.currentTarget===_btnPauseMenus?!pause.policyMenus:pause.policyMenus,
+            e.currentTarget===_btnPauseSats?!pause.policySats:pause.policySats);
+         refresh();
+      }
 
       private function onClickHost(e:MouseEvent):void
       {
@@ -239,6 +266,17 @@ package rconnect.ui
          RCLocale.bind(_btnExploration,"接收队友探索：" + (mod.exploration.enabled ? "开" : "关"),true);
          RCLocale.bind(_btnFollow,"跟随队友："+(mod.config.getValue("followTeammate")=="1"?"开":"关"),true);
          RCLocale.bind(_btnTeleport,mod.navigation!=null && mod.navigation.travelling?"正在传送…":"传送到队友身边",true);
+         var pause:Object=mod.session==null?null:mod.session.pause;
+         RCLocale.bind(_btnPauseMenus,"菜单同步暂停："+(pause!=null && pause.policyMenus?"开":"关"),true);
+         RCLocale.bind(_btnPauseSats,"SATS同步暂停："+(pause!=null && pause.policySats?"开":"关"),true);
+         _btnPauseMenus.alpha=_btnPauseSats.alpha=pause==null || pause.canChangePolicy?1:.6;
+         if(_pauseBanner!=null) {
+            _pauseBanner.visible=pause!=null && pause.paused;
+            if(_pauseBanner.visible) {
+               _pauseBanner.width=Math.min(500,stage.stageWidth-16);_pauseBanner.x=(stage.stageWidth-_pauseBanner.width)/2;
+               _pauseBanner.text=pause.description();
+            }
+         }
          // Full destination/script validation runs on click, not on every 20Hz HUD refresh.
          _btnTeleport.alpha=mod.navigation!=null && !mod.navigation.travelling && mod.navigation.players.length>0
             && mod.session!=null && mod.session.rooms.ready && !mod.session.rooms.busy?1:.55;

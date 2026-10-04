@@ -13,6 +13,8 @@ package rconnect.game
          "dodge","invulner","transp","opt","mech","blood","mat","maxShok","showNumbs"];
       private static const MOTION:Array = ["loc","X","Y","X1","X2","Y1","Y2","scX","scY","storona","fraction","hp","sost","trigDis","nazv","level","invis"];
       private var target:Object;
+      public static const GRIP:Array=["massa","massaMove","levitPoss","levit_max","levit_r","fracLevit","t_throw"];
+      public function get body():Object {return disposed?null:target;}
       private var inDamage:Boolean=false;
       private var disposed:Boolean=false;
       private var feedback:HitFeedback = new HitFeedback();
@@ -36,6 +38,10 @@ package rconnect.game
             if(value!=null) self[name]=value is Array ? (value as Array).concat() : value;
          }
          syncMotion();
+         for each(name in GRIP) {
+            value=GameBridge.probe(target,name);
+            if(value!=null)self[name]=value;
+         }
       }
 
       /** Defense changes with authoritative snapshots and local hits. Movement

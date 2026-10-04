@@ -4,7 +4,6 @@ package rconnect.core
    import flash.display.DisplayObject;
    import flash.events.MouseEvent;
    import flash.utils.getQualifiedClassName;
-   import flash.utils.getTimer;
    import flash.utils.Dictionary;
    import fe.inter.RConnectTravelAccess;
    import rconnect.game.GameBridge;
@@ -14,7 +13,9 @@ package rconnect.core
    public class TravelGuard
    {
       private static var changed:Array=[];
-      private static var permitUntil:int=0;
+      private static var permittedLand:String="";
+      private static var authorizedExitWorld:Object;
+      private static var authorizedExitRemaining:int=0;
       private static var travelState:Object;
       private static var storyOriginal:Dictionary=new Dictionary();
       private var mod:RConnectMod;
@@ -32,11 +33,14 @@ package rconnect.core
          for each(var s:Object in changed)try {s.o.action=s.action;s.o.active=s.active;s.o.is_act=s.is_act;s.o.actionText=s.text;}catch(e:*){}
          changed=[];
       }
-      public static function allowTravel():void {permitUntil=getTimer()+15000;}
-      public static function endTravel():void {permitUntil=0;}
+      /** Authorize one native exit to the host's destination. Native loading
+       * can exceed a timeout and Encounter may redirect the map mid-exit. */
+      public static function allowTravel(landId:String):void {permittedLand=landId;}
+      public static function endTravel():void
+      {permittedLand="";authorizedExitWorld=null;authorizedExitRemaining=0;}
       public static function reset():void
       {
-         clear();permitUntil=0;travelState=null;
+         clear();endTravel();travelState=null;
          for(var o:Object in storyOriginal)for(var k:String in storyOriginal[o])o[k]=storyOriginal[o][k];
          storyOriginal=new Dictionary();
       }
@@ -63,10 +67,20 @@ package rconnect.core
       public static function guardTravel(game:GameBridge,rooms:RoomSync):void
       {
          if(game.world==null || game.gg==null || game.isPlayerDead())return;
-         var w:Object=game.world,g:Object=w.game;
-         if(int(w.t_exit)>0)
+         var w:Object=game.world,g:Object=w.game,remaining:int=int(w.t_exit);
+         // A completed, replaced or restarted exit cannot reuse the old grant.
+         // Normal exitStep only decrements (or waits), including during loading.
+         if(authorizedExitWorld!==w || remaining<=0 || remaining>authorizedExitRemaining)
+         {authorizedExitWorld=null;authorizedExitRemaining=0;}
+         if(remaining>0)
          {
-            if(getTimer()<permitUntil || travelState==null)return;
+            if(authorizedExitWorld===w)
+            {authorizedExitRemaining=remaining;return;}
+            if(permittedLand!="" && String(g.curLandId)==permittedLand)
+            {
+               permittedLand="";authorizedExitWorld=w;authorizedExitRemaining=remaining;return;
+            }
+            if(travelState==null)return;
             for(var k:String in travelState)g[k]=travelState[k];
             w.t_exit=0;w.pip.noAct=false;game.gg.controlOn();w.cam.dblack=0;w.vblack.alpha=0;
             rooms.notice("请由宿主发起全队换图");

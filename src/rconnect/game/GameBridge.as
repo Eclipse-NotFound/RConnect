@@ -54,9 +54,17 @@ package rconnect.game
       public var roomEpoch:int=0;
       public var independentRooms:Boolean=false;
       public var roomHold:Boolean=false;
+      private var _coopPauseAt:int=-1;
+      public function get coopPaused():Boolean {return _coopPauseAt>=0;}
+      public function setCoopPaused(value:Boolean):void {
+         if(value==coopPaused)return;
+         _coopPauseAt=value?getTimer():-1;
+         _projectiles.setPaused(value);
+      }
       /** M5a：客户端冻结被同步单位 AI（由 Session 按配置注入）。 */
       public var freezeAI:Boolean = false;
       public var mapProgress:WorldProgress;
+      public var enemyGrip:rconnect.core.EnemyGrip;
       /** M9：宿主侧客户端幽灵作为可攻击化身（可被打、可被敌人瞄准）。 */
       public var ghostCombat:Boolean = true;
       public function get mirrorsRoom():Boolean {return _mirroring;}
@@ -122,6 +130,7 @@ package rconnect.game
 
       public function endSession():void
       {
+         setCoopPaused(false);
          restoreContainerActions();
          _mirroring = false;
          _terrain.reset();
@@ -260,7 +269,7 @@ package rconnect.game
                driveGhost(rec.ghost,rec.motion.sample(presentationTime()),int(id));
          }
          presentHeldVisuals();
-         if(!_mirroring) return;
+         if(!_mirroring || coopPaused) return;
          mirrorContainerActions();
          tickFrozenAnims();
       }
@@ -272,10 +281,10 @@ package rconnect.game
          _sampleAt=getTimer();
          // Native findCel only offers the local player. Supply visible teammate
          // candidates before control can patrol/turn away in the same frame.
-         if(!roomHold && !_mirroring)redirectNearbyAggro();
+         if(!roomHold && !coopPaused && !_mirroring)redirectNearbyAggro();
       }
 
-      private function presentationTime():int {return _sampleAt>0?_sampleAt:getTimer();}
+      private function presentationTime():int {return coopPaused?_coopPauseAt:(_sampleAt>0?_sampleAt:getTimer());}
 
       private function logViewError(id:String,error:*):void
       {
@@ -679,7 +688,6 @@ package rconnect.game
             if(rec.motion == null) rec.motion = new RemoteMotion();
             rec.motion.push(snap,getTimer());
             driveGhost(ghost, rec.motion.sample(presentationTime()), id);
-            syncRemoteWeapon(ghost, snap, id);
             _projectiles.receive(ghost,snap.weapons as Array,main,true);
             // M20：外观热更——对方换装/换护甲后按 apKey 变化重装视觉
             var ak:String = apKeyOf(snap.ap);
@@ -692,13 +700,23 @@ package rconnect.game
          }
       }
 
+      /** Resolve the native enemy body, including the collision-only proxy. */
+      public function grabBody(o:Object):Object
+      {
+         if(o is MirrorHitUnit)o=MirrorHitUnit(o).body;
+         return o is Unit && o!==gg && !isSceneHitUnit(o) && !isTrigger(o)
+            && numOr(probe(o,"fraction"),100)<100 ? o : null;
+      }
+      public function unitKey(o:Object):String {_units.enter(loc);return _units.known(o);}
+      public function unitForKey(key:String):Object {_units.enter(loc);return _units.lookup(key);}
+
       private function readHeldVisual():Object
       {
          var o:Object=probe(gg,"teleObj"),style:Object=TelekinesisVisuals.captureObject(o);
          if(o==null || style==null || probe(o,"loc")!==loc)return null;
          _objects.enter(loc);_units.enter(loc);
          var kind:String="box",key:String=_objects.known(o);
-         if(key==""){kind="unit";key=_units.known(o);}
+         if(key==""){kind="unit";key=_units.known(grabBody(o));}
          if(key=="") {
             kind="loot";
             var keys:Dictionary=_mirroring?_lootKeyOfJ:_lootIdOf;
@@ -721,7 +739,7 @@ package rconnect.game
             }
             _telekinesis.hold(id,o,held==null?null:held.style);
          }
-         _telekinesis.tick(loc,probe(gg,"teleObj"),!_mirroring);
+         _telekinesis.tick(loc,probe(gg,"teleObj"),!_mirroring,enemyGrip==null?null:enemyGrip.remotelyHeld);
       }
 
       private function apKeyOf(ap:Object):String
@@ -1447,6 +1465,9 @@ package rconnect.game
             driveVisAnim(ghost, snap, id);
             if(snap.wi != undefined)
             {
+               // Weapon identity and aura belong to the same presentation
+               // sample. A fresh packet may still be ahead of the motion clock.
+               syncRemoteWeapon(ghost, snap, id);
                driveWeaponVis(ghost, snap, id);
             }
          }
@@ -5070,6 +5091,7 @@ package rconnect.game
                   pose: RConnectAnimationAccess.capture(u as Unit),
                   death: DeathVisuals.capture(u),
                   motion: unitFields(u, ["dx","dy","stay","isFly","isLaz","levit","scX","scY"]),
+                  grip: unitFields(u, MirrorHitUnit.GRIP),
                   // Mechanical visibility, never the local RV/FOV visible flag.
                   view: unitView(u),
                   body: TurretDisplay.capture(u),
@@ -5175,6 +5197,10 @@ package rconnect.game
                   }
                }
                applyUnitFields(target, e.motion);
+               applyUnitFields(target, e.grip);
+               // Old in-flight snapshots cannot cancel an accepted local input.
+               // Denials, native resistance and release are handled by EnemyGrip.
+               if(enemyGrip!=null)enemyGrip.preserveLocal(target);
                _telekinesis.object(target,e.aura);
                // Burrowed native ghoul instances have scY=0. Restore the host's
                // collision shape before creating/updating the bullet receiver.

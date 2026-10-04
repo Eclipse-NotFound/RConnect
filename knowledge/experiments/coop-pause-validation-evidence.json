@@ -1,0 +1,276 @@
+{
+  "status": "integrated-34-stages-passed; final-release-byte-validation-pending",
+  "latest_integrated_run": "5b2619f75c",
+  "run": "300446d30f",
+  "prototype_base": "M44 / 0.2.15-dev plus pause only",
+  "candidate_sha256": "8271b2c419a924e4209b779adc2a442c6ac4e90acea24e873ca0b4fb8220eeb7",
+  "input_manifest": "build/cooperation/300446d30f/run.json",
+  "source_and_driver_manifest": "build/coop-pause/v2b/input-lock.json",
+  "roles": {
+    "host": {
+      "pass": 119,
+      "fail": [],
+      "completed": true,
+      "log_sha256": "f1a1fa82d9179b2c3c00bd2f77c2162561f1c5640fe6a8d1e594c24a8982ade9"
+    },
+    "join": {
+      "pass": 119,
+      "fail": [],
+      "completed": true,
+      "log_sha256": "d78b16a4f75a153982537e2e41db92c4b2eebfa907cdd7ba13dcb80efa3574e5"
+    }
+  },
+  "test_processes": [
+    8176,
+    39316
+  ],
+  "test_processes_remaining_after_run": 0,
+  "initial_invalid_run": {
+    "id": "9e0e08143d",
+    "reason": "test read internal World.t_save; #1069 on both; not pause evidence"
+  },
+  "pending": [
+    "final 0.2.16 combined bytes after reverse native-grip room handoff",
+    "unified final regression and deployment by the original RConnect chat"
+  ],
+  "integration_gate_runs": [
+    {
+      "run": "b36c27c4ea",
+      "meaning": "Valid red: native world frozen; installed TDFC still advances on remote pause",
+      "candidate_sha256": "a087249ea9d2f596402df5374d637b105aa896cde9d2982e9ad10b89851f0b73",
+      "manifest": "build\\cooperation\\b36c27c4ea\\run.json",
+      "test_pids": [
+        52204,
+        37096
+      ],
+      "roles": {
+        "host": {
+          "pass": 19,
+          "fail": [
+            "COOP FAIL pause host enables menu switch installed TDFC tactical steps 27"
+          ],
+          "complete": true,
+          "log_sha256": "13ccb035bee95ea73b534428960115be22d4fb32f49bb815610387f7e0ba2945",
+          "tactical_checks": [
+            "COOP PASS pause default join settings installed TDFC tactical steps 27",
+            "COOP FAIL pause host enables menu switch installed TDFC tactical steps 27"
+          ],
+          "volley_checks": []
+        },
+        "join": {
+          "pass": 13,
+          "fail": [],
+          "complete": true,
+          "log_sha256": "a946545169e89cfa3f24bae25175cabae8661e0c19fd9d06d6a027aefbd94088",
+          "tactical_checks": [
+            "COOP PASS pause default join settings installed TDFC tactical steps 0",
+            "COOP PASS pause host enables menu switch installed TDFC tactical steps 0"
+          ],
+          "volley_checks": []
+        }
+      }
+    },
+    {
+      "run": "29c14a1601",
+      "meaning": "414 PASS / 1 FAIL: stand gate and 34 phases completed; SATS queue completion checked too early at fixed 2.8 seconds, awaiting bounded native-queue completion recheck",
+      "candidate_sha256": "0e8af232e621d521ccc2af5ec5e6e16d53fb17bc40c33f8f127a2765983d6173",
+      "manifest": "build\\cooperation\\29c14a1601\\run.json",
+      "test_pids": [
+        46188,
+        31308
+      ],
+      "roles": {
+        "host": {
+          "pass": 217,
+          "fail": [],
+          "complete": true,
+          "log_sha256": "4a67ee3ca0e87fcd2a7cb949d6874bd76f27fe568d1635fcaf61284eef884e9d",
+          "tactical_checks": [
+            "COOP PASS pause default join settings installed TDFC tactical steps 24",
+            "COOP PASS pause host enables menu switch installed TDFC tactical steps 0",
+            "COOP PASS pause both menus installed TDFC tactical steps 0",
+            "COOP PASS pause joining player closes first installed TDFC tactical steps 0",
+            "COOP PASS pause host closes last installed TDFC tactical steps 24",
+            "COOP PASS pause joining map also pauses installed TDFC tactical steps 0",
+            "COOP PASS pause disable policy during menu installed TDFC tactical steps 27",
+            "COOP PASS pause independent SATS option installed TDFC tactical steps 21",
+            "COOP PASS pause prepare native SATS installed TDFC tactical steps 21",
+            "COOP PASS pause teammate pauses before SATS installed TDFC tactical steps 0",
+            "COOP PASS pause joining native SATS installed TDFC tactical steps 0",
+            "COOP PASS pause queue while paused installed TDFC tactical steps 0",
+            "COOP PASS pause host menu holds queued shot installed TDFC tactical steps 0",
+            "COOP PASS pause confirm waits for host installed TDFC tactical steps 0",
+            "COOP PASS pause sats volley resumes once installed TDFC tactical steps 30",
+            "COOP PASS pause remote menu before native stand installed TDFC tactical steps 0",
+            "COOP PASS pause real stand opens during pause frame installed TDFC tactical steps 0",
+            "COOP PASS pause native stand retains pause ownership installed TDFC tactical steps 0",
+            "COOP PASS pause close native stand installed TDFC tactical steps 24",
+            "COOP PASS pause remote menu before native message installed TDFC tactical steps 0",
+            "COOP PASS pause real message opens during pause frame installed TDFC tactical steps 0",
+            "COOP PASS pause native message retains pause ownership installed TDFC tactical steps 0",
+            "COOP PASS pause dismiss native message installed TDFC tactical steps 21",
+            "COOP PASS pause external native pause installed TDFC tactical steps 0",
+            "COOP PASS pause preserve native pause owner installed TDFC tactical steps 0",
+            "COOP PASS pause external pause released installed TDFC tactical steps 24",
+            "COOP PASS pause split ordinary rooms installed TDFC tactical steps 18",
+            "COOP PASS pause pause across separate rooms installed TDFC tactical steps 0",
+            "COOP PASS pause resume both separate rooms installed TDFC tactical steps 18",
+            "COOP PASS pause pause before map transition installed TDFC tactical steps 0",
+            "COOP PASS pause host map travel clears old UI pause installed TDFC tactical steps 36",
+            "COOP PASS pause old map pause report is ignored installed TDFC tactical steps 21",
+            "COOP PASS pause pause before disconnect installed TDFC tactical steps 0",
+            "COOP PASS pause disconnect releases remote hold installed TDFC tactical steps 36"
+          ],
+          "volley_checks": []
+        },
+        "join": {
+          "pass": 220,
+          "fail": [
+            "COOP FAIL pause resume executes the native queued volley"
+          ],
+          "complete": true,
+          "log_sha256": "380a4c726933266fe081fd0663977fc51e083fe29770495283bb7e2ae2c0370c",
+          "tactical_checks": [
+            "COOP PASS pause default join settings installed TDFC tactical steps 0",
+            "COOP PASS pause host enables menu switch installed TDFC tactical steps 0",
+            "COOP PASS pause both menus installed TDFC tactical steps 0",
+            "COOP PASS pause joining player closes first installed TDFC tactical steps 0",
+            "COOP PASS pause host closes last installed TDFC tactical steps 27",
+            "COOP PASS pause joining map also pauses installed TDFC tactical steps 0",
+            "COOP PASS pause disable policy during menu installed TDFC tactical steps 0",
+            "COOP PASS pause independent SATS option installed TDFC tactical steps 0",
+            "COOP PASS pause prepare native SATS installed TDFC tactical steps 21",
+            "COOP PASS pause teammate pauses before SATS installed TDFC tactical steps 0",
+            "COOP PASS pause joining native SATS installed TDFC tactical steps 0",
+            "COOP PASS pause queue while paused installed TDFC tactical steps 0",
+            "COOP PASS pause host menu holds queued shot installed TDFC tactical steps 0",
+            "COOP PASS pause confirm waits for host installed TDFC tactical steps 0",
+            "COOP PASS pause sats volley resumes once installed TDFC tactical steps 9",
+            "COOP PASS pause remote menu before native stand installed TDFC tactical steps 0",
+            "COOP PASS pause real stand opens during pause frame installed TDFC tactical steps 0",
+            "COOP PASS pause native stand retains pause ownership installed TDFC tactical steps 0",
+            "COOP PASS pause close native stand installed TDFC tactical steps 24",
+            "COOP PASS pause remote menu before native message installed TDFC tactical steps 0",
+            "COOP PASS pause real message opens during pause frame installed TDFC tactical steps 0",
+            "COOP PASS pause native message retains pause ownership installed TDFC tactical steps 0",
+            "COOP PASS pause dismiss native message installed TDFC tactical steps 24",
+            "COOP PASS pause external native pause installed TDFC tactical steps 0",
+            "COOP PASS pause preserve native pause owner installed TDFC tactical steps 27",
+            "COOP PASS pause external pause released installed TDFC tactical steps 21",
+            "COOP PASS pause split ordinary rooms installed TDFC tactical steps 24",
+            "COOP PASS pause pause across separate rooms installed TDFC tactical steps 0",
+            "COOP PASS pause resume both separate rooms installed TDFC tactical steps 21",
+            "COOP PASS pause pause before map transition installed TDFC tactical steps 0",
+            "COOP PASS pause host map travel clears old UI pause installed TDFC tactical steps 24",
+            "COOP PASS pause old map pause report is ignored installed TDFC tactical steps 18",
+            "COOP PASS pause pause before disconnect installed TDFC tactical steps 0",
+            "COOP PASS pause disconnect releases remote hold installed TDFC tactical steps 0"
+          ],
+          "volley_checks": [
+            "COOP FAIL pause resume executes the native queued volley"
+          ]
+        }
+      }
+    },
+    {
+      "run": "5b2619f75c",
+      "meaning": "34 stages completed; stand gate and bounded native SATS queue completion passed, final release bytes pending",
+      "candidate_sha256": "0e8af232e621d521ccc2af5ec5e6e16d53fb17bc40c33f8f127a2765983d6173",
+      "manifest": "build\\cooperation\\5b2619f75c\\run.json",
+      "test_pids": [
+        48088,
+        52788
+      ],
+      "roles": {
+        "host": {
+          "pass": 217,
+          "fail": [],
+          "complete": true,
+          "log_sha256": "1a2b3d53b512dc7944f0f6cf9c62d4c2d951a115758e157e249c103f7cce780f",
+          "tactical_checks": [
+            "COOP PASS pause default join settings installed TDFC tactical steps 30",
+            "COOP PASS pause host enables menu switch installed TDFC tactical steps 0",
+            "COOP PASS pause both menus installed TDFC tactical steps 0",
+            "COOP PASS pause joining player closes first installed TDFC tactical steps 0",
+            "COOP PASS pause host closes last installed TDFC tactical steps 27",
+            "COOP PASS pause joining map also pauses installed TDFC tactical steps 0",
+            "COOP PASS pause disable policy during menu installed TDFC tactical steps 27",
+            "COOP PASS pause independent SATS option installed TDFC tactical steps 30",
+            "COOP PASS pause prepare native SATS installed TDFC tactical steps 21",
+            "COOP PASS pause teammate pauses before SATS installed TDFC tactical steps 0",
+            "COOP PASS pause joining native SATS installed TDFC tactical steps 0",
+            "COOP PASS pause queue while paused installed TDFC tactical steps 0",
+            "COOP PASS pause host menu holds queued shot installed TDFC tactical steps 0",
+            "COOP PASS pause confirm waits for host installed TDFC tactical steps 0",
+            "COOP PASS pause sats volley resumes once installed TDFC tactical steps 69",
+            "COOP PASS pause remote menu before native stand installed TDFC tactical steps 0",
+            "COOP PASS pause real stand opens during pause frame installed TDFC tactical steps 0",
+            "COOP PASS pause native stand retains pause ownership installed TDFC tactical steps 0",
+            "COOP PASS pause close native stand installed TDFC tactical steps 27",
+            "COOP PASS pause remote menu before native message installed TDFC tactical steps 0",
+            "COOP PASS pause real message opens during pause frame installed TDFC tactical steps 0",
+            "COOP PASS pause native message retains pause ownership installed TDFC tactical steps 0",
+            "COOP PASS pause dismiss native message installed TDFC tactical steps 30",
+            "COOP PASS pause external native pause installed TDFC tactical steps 0",
+            "COOP PASS pause preserve native pause owner installed TDFC tactical steps 0",
+            "COOP PASS pause external pause released installed TDFC tactical steps 24",
+            "COOP PASS pause split ordinary rooms installed TDFC tactical steps 27",
+            "COOP PASS pause pause across separate rooms installed TDFC tactical steps 0",
+            "COOP PASS pause resume both separate rooms installed TDFC tactical steps 27",
+            "COOP PASS pause pause before map transition installed TDFC tactical steps 0",
+            "COOP PASS pause host map travel clears old UI pause installed TDFC tactical steps 33",
+            "COOP PASS pause old map pause report is ignored installed TDFC tactical steps 33",
+            "COOP PASS pause pause before disconnect installed TDFC tactical steps 0",
+            "COOP PASS pause disconnect releases remote hold installed TDFC tactical steps 33"
+          ],
+          "volley_checks": []
+        },
+        "join": {
+          "pass": 221,
+          "fail": [],
+          "complete": true,
+          "log_sha256": "2768f052cf5272028447e55c967f7b9e77b834992594aaf2891dc3f05a2734c8",
+          "tactical_checks": [
+            "COOP PASS pause default join settings installed TDFC tactical steps 0",
+            "COOP PASS pause host enables menu switch installed TDFC tactical steps 0",
+            "COOP PASS pause both menus installed TDFC tactical steps 0",
+            "COOP PASS pause joining player closes first installed TDFC tactical steps 0",
+            "COOP PASS pause host closes last installed TDFC tactical steps 33",
+            "COOP PASS pause joining map also pauses installed TDFC tactical steps 0",
+            "COOP PASS pause disable policy during menu installed TDFC tactical steps 0",
+            "COOP PASS pause independent SATS option installed TDFC tactical steps 0",
+            "COOP PASS pause prepare native SATS installed TDFC tactical steps 27",
+            "COOP PASS pause teammate pauses before SATS installed TDFC tactical steps 0",
+            "COOP PASS pause joining native SATS installed TDFC tactical steps 0",
+            "COOP PASS pause queue while paused installed TDFC tactical steps 0",
+            "COOP PASS pause host menu holds queued shot installed TDFC tactical steps 0",
+            "COOP PASS pause confirm waits for host installed TDFC tactical steps 0",
+            "COOP PASS pause sats volley resumes once installed TDFC tactical steps 72",
+            "COOP PASS pause remote menu before native stand installed TDFC tactical steps 0",
+            "COOP PASS pause real stand opens during pause frame installed TDFC tactical steps 0",
+            "COOP PASS pause native stand retains pause ownership installed TDFC tactical steps 0",
+            "COOP PASS pause close native stand installed TDFC tactical steps 30",
+            "COOP PASS pause remote menu before native message installed TDFC tactical steps 0",
+            "COOP PASS pause real message opens during pause frame installed TDFC tactical steps 0",
+            "COOP PASS pause native message retains pause ownership installed TDFC tactical steps 0",
+            "COOP PASS pause dismiss native message installed TDFC tactical steps 30",
+            "COOP PASS pause external native pause installed TDFC tactical steps 0",
+            "COOP PASS pause preserve native pause owner installed TDFC tactical steps 30",
+            "COOP PASS pause external pause released installed TDFC tactical steps 27",
+            "COOP PASS pause split ordinary rooms installed TDFC tactical steps 27",
+            "COOP PASS pause pause across separate rooms installed TDFC tactical steps 0",
+            "COOP PASS pause resume both separate rooms installed TDFC tactical steps 27",
+            "COOP PASS pause pause before map transition installed TDFC tactical steps 0",
+            "COOP PASS pause host map travel clears old UI pause installed TDFC tactical steps 35",
+            "COOP PASS pause old map pause report is ignored installed TDFC tactical steps 30",
+            "COOP PASS pause pause before disconnect installed TDFC tactical steps 0",
+            "COOP PASS pause disconnect releases remote hold installed TDFC tactical steps 0"
+          ],
+          "volley_checks": [
+            "COOP PASS pause resume executes the native queued volley queue=0 ammo=84/90 AP=62.00000000000009/80"
+          ]
+        }
+      }
+    }
+  ]
+}

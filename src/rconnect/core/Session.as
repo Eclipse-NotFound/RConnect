@@ -34,6 +34,7 @@ package rconnect.core
       public var myName:String = "";
       public var hostName:String = "";
       public var rooms:RoomSync;
+      public var pause:CoopPause;
       private var travelGuard:TravelGuard;
 
       /** 宿主维护的 peer 表：{id, name, link, snap} */
@@ -108,6 +109,7 @@ package rconnect.core
          this.mod = mod;
          progress=new WorldProgress(mod.game);mod.game.mapProgress=progress;
          rooms=new RoomSync(this);travelGuard=new TravelGuard(mod);
+         pause=new CoopPause(this);
          this.myName = mod.config.getValue("nickname");
          this._autoRole = String(mod.config.getValue("autoRole"));
          var ag:String = String(mod.config.getValue("autoGame"));
@@ -262,7 +264,9 @@ package rconnect.core
 
       private function stop():void
       {
+         if(mod.enemyGrip!=null)mod.enemyGrip.reset();
          _nextWorldSnapshot=_nextSceneReport=0;
+         if(pause!=null)pause.reset();
          if(progress!=null)progress.reset();
          if(rooms!=null)rooms.reset();TravelGuard.clear();
          if(mod.exploration != null) mod.exploration.resetLink();

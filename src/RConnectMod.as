@@ -25,7 +25,7 @@ package
     */
    public class RConnectMod
    {
-      public static const VERSION:String = "0.2.15-dev";
+      public static const VERSION:String = "0.2.16-dev";
 
       public static var instance:RConnectMod;
 
@@ -49,6 +49,7 @@ package
       public var game:GameBridge;
       public var exploration:ExplorationSync;
       public var session:Session;
+      public var enemyGrip:rconnect.core.EnemyGrip;
       public var hud:NetHud;
       public var navigation:TeammateNavigation;
       public var teammateMap:TeammateMap;
@@ -79,6 +80,8 @@ package
          this.exploration = new ExplorationSync(this);
          this.hud = new NetHud(stage, this);
          this.session = new Session(this);
+         this.enemyGrip = new rconnect.core.EnemyGrip(this);
+         game.enemyGrip = this.enemyGrip;
          this.navigation = new TeammateNavigation(this);
          this.teammateMap = new TeammateMap(this);
          this.roomDiagnostics = new RoomDiagnostics(this);

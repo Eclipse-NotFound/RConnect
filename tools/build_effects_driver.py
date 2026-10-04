@@ -24,7 +24,7 @@ def main():
         'SmoothNetworkTestDoc','AppearanceTestDoc','CombatFeedbackTestDoc','CombatFeedbackNetworkTestDoc',
         'AnimationGapsTestDoc','RoomCooperationTestDoc','CoopTestDoc','SatsTestDoc','CombatStateTestDoc',
         'CombatNetworkTestDoc','GameplayGapTestDoc','GameplayNetworkTestDoc','ProjectileNetworkTestDoc',
-        'FollowNetworkTestDoc','SustainedDensityTestDoc','BeamTerrainTestDoc','TeammateNavigationTestDoc','TelekinesisTestDoc',
+        'FollowNetworkTestDoc','SustainedDensityTestDoc','BeamTerrainTestDoc','TeammateNavigationTestDoc','TelekinesisTestDoc','EnemyGrabTestDoc','CoopPauseTestDoc','SlowTravelTestDoc',
         'HiddenRoomTestDoc','HiddenRoomFollowTestDoc','HiddenRoomCorpseTestDoc','HiddenRoomOverlayTestDoc','HiddenRoomProbeTestDoc'])
     args=ap.parse_args()
     out=args.output.resolve()
@@ -42,7 +42,16 @@ def main():
     declarations=list(compiler);declarations[3]=str(args.sdk/'lib/compc.jar')
     subprocess.run(declarations+['-source-path='+str(source_root),'-external-library-path+='+str(ROOT/'build/GameCombatStubs.swc'),
         '-include-classes='+','.join(classes),'-output='+str(external)],check=True,env=env)
-    subprocess.run(compiler+['-source-path='+str(ROOT/'tests'),'-external-library-path+='+str(external),
+    test_externals=[]
+    if args.entry=='CoopPauseTestDoc':
+        # A native Pt in the real Location.step chain counts simulation calls.
+        # Its compile-only base declaration stays external to the test SWF too.
+        clock_external=out/'ClockDeclarations.swc'
+        subprocess.run(declarations+['-source-path='+str(ROOT/'tests/pause-extern'),
+            '-external-library-path+='+str(ROOT/'build/GameCombatStubs.swc'),
+            '-include-classes=fe.Pt','-output='+str(clock_external)],check=True,env=env)
+        test_externals=['-external-library-path+='+str(clock_external)]
+    subprocess.run(compiler+test_externals+['-source-path='+str(ROOT/'tests'),'-external-library-path+='+str(external),
         '-external-library-path+='+str(ROOT/'build/GameCombatStubs.swc'),'-output='+str(out/'EffectsDriver.swf'),
         str(ROOT/'tests'/(args.entry+'.as'))],check=True,env=env)
     subprocess.run(compiler+['-source-path='+str(ROOT/'tests/harness'),'-output='+str(out/'EffectsHarness.swf'),

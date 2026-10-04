@@ -19,6 +19,8 @@ package rconnect.core
          tickMs: 50,
          sharedExploration: "1",
          followTeammate: "0",
+         pauseMenus: "0",
+         pauseSats: "0",
          autoRole: "",
          autoGame: "",
          autoMove: "",

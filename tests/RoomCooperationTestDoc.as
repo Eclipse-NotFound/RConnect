@@ -7,6 +7,7 @@ package {
    import flash.utils.Dictionary;
    import flash.utils.getTimer;
    import fe.unit.Unit;
+   import fe.unit.EnemyGrabProbe;
    import fe.unit.RConnectUnitAccess;
    import fe.inter.RoomTravelUiProbe;
    import rconnect.core.Log;
@@ -20,6 +21,7 @@ package {
       private var timer:Timer=new Timer(200),mod:RConnectMod,host:Boolean;
       private var links:Dictionary=new Dictionary(),phase:String="boot",at:int=0;
       private var a:Object,b:Object,expected:Object,fixture:Object,readySent:Boolean=false;
+      private var gripFixture:Object;
       private var stale:Object,stageSeq:int=0,oldLand:Object,challenge:String="";
       public function RoomCooperationTestDoc(){
          var app:String=NativeApplication.nativeApplication.applicationID;
@@ -38,6 +40,17 @@ package {
       private function go(i:Object):void {TravelGuard.follow(mod.game,i);}
       private function stable():Boolean{return mod.session.rooms.ready && !mod.session.rooms.busy && !mod.game.isTransitioning();}
       private function findFixture():Object {for each(var u:Object in mod.game.loc.units)if(u.code=="rooms-fixture")return u;return null;}
+      private function findGrip():Object {
+         for(var u:Object=mod.game.loc.firstObj;u!=null;u=u.nobj)if(GameBridge.probe(u,"code")=="room-grip-fixture")return u;
+         return null;
+      }
+      private function grabEnemy():void {
+         gripFixture=findGrip();check(gripFixture!=null,"enemy-grab handoff fixture exists");if(gripFixture==null)return;
+         var caster:Object=mod.game.gg;caster.mana=10000;caster.pers.maxTeleMassa=1000;
+         caster.pers.teleDist=1000000;caster.pers.telemaster=1;caster.pers.unitLevitMult=100;
+         mod.game.loc.portOn=true;mod.game.loc.celObj=gripFixture;mod.game.loc.celDist=0;gripFixture.onCursor=1;
+         EnemyGrabProbe.grab(caster);check(caster.teleObj===gripFixture,"native grab starts before room handoff");
+      }
       private function receive(e:NetMessageEvent):void {
          var p:Object=e.data;if(p==null || p.type!="room-test")return;
          try {
@@ -105,17 +118,27 @@ package {
                check(mod.session.rooms.authority,"join obtains native authority in an independent room");
                check(RoomTravelUiProbe.blocked(mod.game.world.pip,false),"map travel button is intercepted before the native handler");
                check(RoomTravelUiProbe.blocked(mod.game.world.pip,true),"return scroll button is intercepted before consuming an item");
-               setup();send("prepared",{expected:expected});setPhase("wait-merge");
+               setup();grabEnemy();send("prepared",{expected:expected});setPhase("wait-merge");
             }
             if(host && phase=="split-hold" && getTimer()-at>2500) {
                check(mod.game.roomKey()==a.key,"different rooms remain separate across many network ticks");
                go(b);setPhase("merge");
             }
             if(host && phase=="merge" && mod.game.roomKey()==b.key && getTimer()-at>700) {
-               inspect(false);send("mirror",{expected:expected});setPhase("mirror-wait");
+               inspect(false);
+               gripFixture=findGrip();
+               check(gripFixture!=null && gripFixture.levit==0,"native holder checkpoint has no orphan levitation on new authority");
+               send("mirror",{expected:expected});setPhase("mirror-wait");
             }
             if(!host && phase=="mirror" && !mod.session.rooms.authority && getTimer()-at>1000) {
                inspect(false);check(!mod.session.rooms.authority,"join becomes mirror when host enters");
+               gripFixture=findGrip();
+               check(mod.game.gg.teleObj==null && gripFixture!=null && gripFixture.levit==0,"native caster releases before becoming mirror");
+               grabEnemy();
+               setPhase("grip-before-promote");
+            }
+            if(!host && phase=="grip-before-promote" && getTimer()-at>800) {
+               check(mod.game.gg.teleObj===gripFixture && gripFixture.levit==1,"remote grip remains active before handoff");
                stale=mod.session.rooms.stamp({type:"damage",hits:[{id:fixture.id,k:mod.game.readUnitsSnapshot()[0].k,dmg:777}]});
                var burst:Object=mod.game.loc.space[expected.burstX][expected.ty];
                mod.game.loc.hitTile(burst,10,expected.burstX*40+20,expected.ty*40+20);
@@ -127,6 +150,7 @@ package {
             }
             if(!host && phase=="promote" && mod.session.rooms.authority && getTimer()-at>1000) {
                inspect(false);check(mod.game.freezeAI==false,"promoted room uses native combat");
+               check(mod.game.gg.teleObj==null && gripFixture.levit==0,"handoff releases grip before enemy checkpoint");
                fixture.disabled=false;fixture.currentWeapon.t_reload=60;
                setPhase("native-combat");
             }
@@ -192,6 +216,10 @@ package {
          fixture=new cls("hidden",12,<unit tr="3"/>,null);fixture.putLoc(g.loc,g.gg.X+100,g.gg.Y);g.loc.addObj(fixture);g.loc.units.push(fixture);
          fixture.code="rooms-fixture";fixture.alarma();fixture.disabled=true;fixture.maxhp=901;fixture.hp=613;fixture.armor=37;fixture.xp=23;
          fixture.currentWeapon.damage=17.25;fixture.currentWeapon.hold=47;
+         var gripClass:Class=mod.main.loaderInfo.applicationDomain.getDefinition("fe.unit.UnitRaider") as Class;
+         gripFixture=new gripClass("1",10,<unit/>,null);gripFixture.code="room-grip-fixture";
+         gripFixture.putLoc(g.loc,g.gg.X+70,g.gg.Y);g.loc.addObj(gripFixture);g.loc.units.push(gripFixture);
+         gripFixture.disabled=true;gripFixture.invulner=true;gripFixture.xp=0;
          var props:Object=NativeRoomState.unit(fixture);
          check(props.p.hp==613 && props.p.maxhp==901,"checkpoint captures real native scalar stats");
          check(props.internal.ai==3 && props.internal.groups.UnitTurret.hidden==1,"checkpoint captures native AI and hidden turret kind");

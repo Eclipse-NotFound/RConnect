@@ -1,6 +1,6 @@
 # RConnect —— 开发记忆入口
 
-> 2026-10-04 当前安装：**M44 / 0.2.15-dev**，102735字节，SHA256 `8b6fb844bb5295448d3a29e763378a6f3d63f111eb83dc0a5a381da49ff569ae`。念力光晕与第二窗口手动选档已部署：216项双端回归、11项选档及正常加载冒烟通过。[部署/回滚](deployment-m44-2026-10-04.md)。背景房和密集战斗边界保留。
+> 2026-10-04 当前安装：**M45 / 0.2.16-dev**，110626字节，SHA256 `59a03d1eb3ca7d8467015c709301bc1fbe6d585342de5857e984344a33572790`。念力抓敌与换枪光晕、可选全队菜单/SATS暂停及慢换图修复已部署：10组1003项及正常加载冒烟通过。[部署/回滚](deployment-m45-2026-10-04.md)。背景房与密集战斗边界保留。
 
 > 协议见 GOVERNANCE.md §8；参数与边界见 ../AGENT_SCOPE.md。
 
@@ -21,15 +21,20 @@
 
 ## 3. 当前安装状态
 
-- **M44 / 0.2.15-dev已部署**，102735字节、SHA `8b6fb844bb5295448d3a29e763378a6f3d63f111eb83dc0a5a381da49ff569ae`，46生产类无原生存根/测试类。源和验证输入冻结build/m44/final；证据knowledge/experiments/m44-validation-evidence.json。
-- 同字节5组216 PASS/0 FAIL，原生选档11 PASS/0 FAIL；正常无驱动双端冒烟`8ec6e25217`通过，56项保护指纹不变，测试进程已结束。只换本模组release，原游戏窗口未关闭，需保存后完全重启两端。
-- 旧M43备份`build/backup/m44-release-20261004-083245-73447f/RConnectMod.before.swf`，SHA `ed240f09883b091fef5474ff6ef5219bdeae669948ca1331c76007faeef24b20`；复制回release并重启可回退SWF。未远程发布或推送。
-- 同机用Start-Coop.bat。第二窗口手动身份pfe-modsettings-rconnect-player2，首次只读复制旧pfe2全部存档/个人配置并校验，新身份后续进度不再被旧档覆盖；旧档保留。启动显示原生读档列表，用户选槽，已进游戏不打断。真实首次迁移未在本轮执行。
+- **M45 / 0.2.16-dev已部署**，110626字节，SHA `59a03d1eb3ca7d8467015c709301bc1fbe6d585342de5857e984344a33572790`，48生产类无原生存根/测试类。源与测试输入冻结build/m45/final；证据knowledge/experiments/m45-validation-evidence.json。
+- 同字节10组1003 PASS/0 FAIL，正常无驱动双端冒烟`c09279cc99`通过；56项保护指纹不变，测试进程已退出。仅更新本模组release，需保存后完全重启两端。
+- 旧M44备份`build/backup/m45-release-20261004-183127-3afe1d/RConnectMod.before.swf`，SHA `8b6fb844bb5295448d3a29e763378a6f3d63f111eb83dc0a5a381da49ff569ae`；复制回release并重启可回退SWF，不回滚玩家存档。未推送或对外打包。
+- 同机仍用Start-Coop.bat。第二角色手动身份pfe-modsettings-rconnect-player2，首次继承旧pfe2存档/配置且保留原件，后续不重复覆盖；启动原生读档列表由玩家选角色。
 
 ## 4. 实现与当前接点
 
 - **M44完成**：武器快照补真实GlowFilter和root/kor目标；Box/Loot/Unit补光晕/ColorTransform，加入侧本地抓持经玩家稳定键反向送达。TelekinesisVisuals只管显示，不写levit/AI；本地抓取优先，松手/替换/换房/离线清理，保留无关滤镜。最终八阶段c59e4214a4通过；详见2026-10-04-m44-telekinesis.md。
-- **三方后续分工**：R2调查M45“加入侧抓敌有光但仍正常运动”的实际权属，R3调查菜单/SATS暂停开关。M44冻结期间双方仅独立测试/原型，未混入本候选；今后仍由本会话统一部署、编译/AIR串行。
+- **M45完成**：EnemyGrip把加入侧原生抓持意图交给唯一房间模拟端，保留原版耗魔/抓取资格/挣脱；投掷只转发原版冲量一次。RoomSync交接前释放本机及远端抓持，Session停止时清理网络抓持，离线原生持有保留；M44光晕显示与实际控制保持分离。
+- **可选联机暂停完成**：用户确认任一端触发全队暂停（含分房），双方都关才恢复。F10两开关默认关、宿主设置保存；菜单范围按已说明的全部原版暂停菜单实现。网络/UI/SATS排队继续，恢复后执行战斗；不以暂停阻塞房间/地图交接。
+- 关Pip后的allStat残留一帧误松手已在联合测试中修复；最终抓取包含暂停位置/耗魔/挣脱计时、恢复、短持、精确投掷去重。原型失败、测试阈值修正及其他模组暂停检查分别留在2026-10-04-m45-enemy-grip.md与2026-10-04-coop-pause.md，最终同字节1003项通过。
+- 三方本轮已统一合并、验证、部署；R2负责抓敌，R3负责暂停，原会话负责最终候选与门禁。后续仍串行编译/AIR，不各自覆盖release。
+- **慢换图许可修复**：首次冻结ff977候选在b82c882fb0/ee5790974c连续初始换图超时。受控检查和修复详见2026-10-04-m45-travel-permit.md；最终以目的地匹配授权一次原生退出，跨过15秒仍可完成且允许Encounter本轮重定向，结束/重启/断开后不能复用旧许可。保留原45秒房间交接保护。
+- **换枪光晕修复**：syncRemoteWeapon与driveWeaponVis共用同一RemoteMotion采样，避免最新武器配旧帧光晕。旧e9b候选c64816fd73宿主485帧9错；最终e2bdb8a864为102项通过，宿主485帧/加入450帧零错。原失败、开场黑幕和Timer夹具修正见2026-10-04-m45-weapon-aura-timing.md；原84断言完整保留。
 
 - **M43背景房调查未复现、未认定根因**：用户明确宿主角色消失/无法控制，不能解释为正常跟随。最终实际存档/视野设置下，界面+跟随五轮`5fd52e55f0`117项、关闭跟随五轮`735ea3ffd7`107项通过。早期冻结玩家、缺RENDER、累计走出房、浮点尾差等测试干扰已留档；一次门时序失败未认定原因，不抹去。候选仅加最多32次背景房切换的只读诊断，未修改背景房玩法。详见2026-10-03-m43-hidden-rooms.md。
 - **M43三方合并完成**：R2光束逐帧记录/死亡后结束、墙碎片；R3地图位置与主动传送。最终专项32+55项，既有分房66、反馈16、动画26、密集51项通过。80敌人连续七段、每段约8秒，加入侧每段100–107帧（约12.5–13.4 FPS），p95 104–116ms。没有同负载基线配对，不作性能增减归因；密集战斗仍可能卡顿。
@@ -50,18 +55,19 @@
 - 源码标量与简单数组可交接，特殊状态效果对象引用、Boss全部分支、第三方新增敌人和长期全组合未穷举；不声称任意原生对象图可序列化。
 - 同时互换房、失联交接及全部死亡回城时序未穷举；稳定重连在排除范围。几何尺寸不一致会暂停交接并提示。
 - 当前根游戏1.02；RV及其他模组具体构建按本轮输入指纹区分。保护指纹与各轮其他模组输入见证据JSON，不把旧时期版本哈希当作当前版本。
-- 原有Area场景对象注入#1063后跳过仍在日志中，旧0.2.9对照也存在；M38未修改此构造路径，不把行为门禁通过解释成所有历史诊断消失。
+- 原有Area场景对象注入#1063后跳过仍在日志中，旧0.2.9对照也存在；M45暂停组还记录spikes/fspikes的Trap #1063，被现有重建逻辑捕获。该构造路径未在本轮修改，不把行为门禁通过解释成所有历史诊断消失；最终证据逐组保留这些日志。
 - 磁盘曾不足：测试runner已只复制所需8个运行SWF及xml/cfg，启动前检查空间；已清理三个旧试验的可再生成游戏副本，日志/候选/备份保留。不得为腾空间删用户存档或其他模组。
 
 ## 6. 下一步
 
-1. 用户保存关闭两端，用Start-Coop.bat重启，F10核对0.2.15-dev；测试念力武器/物品光晕与松手，第二窗口选已有存档。
-2. M44发布检查完成；后续R2推进加入侧抓敌物理，R3确认暂停选项，不把正在显示光晕等同为已控制敌人。
+1. 用户保存关闭两端，通过Start-Coop.bat重启，F10核对0.2.16-dev；按需由宿主开启菜单/SATS同步暂停，测试抓敌、松手、投掷及双方最后关闭界面后的恢复。
+2. M45发布门禁完成，没有待跑最终验证。若出现新反馈，先保留双方日志和房间/暂停状态，再针对复现修复。
 3. 背景房若重现，核对两端RConnectRoomTrace与角色状态；未认定根因，不盲改。既有性能边界和排除范围保持，不自动推送。
 
 ## 7. 记录与工具入口
 
-- 最新M44见 `state/deployment-m44-2026-10-04.md`、`knowledge/experiments/m44-validation-evidence.json`与`2026-10-04-m44-telekinesis.md`；启动器见`2026-10-04-manual-second-player.md`。
+- 最新M45见 `state/deployment-m45-2026-10-04.md`、`knowledge/experiments/m45-validation-evidence.json`、抓敌与暂停两份实验记录。
+- M44历史见 `state/deployment-m44-2026-10-04.md`、`knowledge/experiments/m44-validation-evidence.json`与`2026-10-04-m44-telekinesis.md`；启动器见`2026-10-04-manual-second-player.md`。
 - M43历史 `state/deployment-m43-2026-10-04.md`、`knowledge/experiments/m43-validation-evidence.json`及三份M43实验记录；历史 `knowledge/experiments/2026-10-03-m41-feedback.md`、`2026-10-03-m41-animation-gaps.md`、`m41-validation-evidence.json`；M40连续运动与淡影见2026-10-03-m40-presentation.md。M39合作与后台策略见2026-09-30-m39-gameplay.md；M38伤害、M37 SATS、M36分房历史证据和design/separate-rooms.md保留。
 - 构建 `tools/build_mod.py --java <java> --output build/<轮次>/RConnectMod.swf`；必须显式候选输出，默认写release。
 - 同字节外部驱动 `tools/build_effects_driver.py --candidate <正式SWF> --java <java> --output build/<轮次>/driver --entry SatsTestDoc`。另可RoomCooperationTestDoc/CoopTestDoc/TurretTestDoc/EffectsTerrainTestDoc/PresentationTestDoc。

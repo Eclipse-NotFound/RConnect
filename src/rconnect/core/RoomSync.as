@@ -65,6 +65,8 @@ package rconnect.core
       }
       private function hold():void
       {
+         // A room checkpoint must never preserve levitation without its caster.
+         if(mod.enemyGrip!=null)mod.enemyGrip.releaseForHandoff();
          if(!busy)
          {
             pauseWorld=game.world;savedPause=Boolean(GameBridge.probe(pauseWorld,"onPause"));
@@ -159,14 +161,14 @@ package rconnect.core
          var mapChange:Boolean=String(mine.curLandId)!=String(info.curLandId);
          if(mapChange || initial)
          {
-            TravelGuard.allowTravel();
+            TravelGuard.allowTravel(String(info.curLandId));
             game.independentRooms=false;
             game.followHostWorld(info);
             game.refreshWorld();
          }
          if(!mapChange && int(info.roomEpoch)>0 && epoch!=int(info.roomEpoch))
          {
-            if(epoch>0 && !initial && nativeLand===game.world.land){TravelGuard.allowTravel();game.followMapGeneration(info);}
+            if(epoch>0 && !initial && nativeLand===game.world.land){TravelGuard.allowTravel(String(info.curLandId));game.followMapGeneration(info);}
             epoch=int(info.roomEpoch);game.roomEpoch=epoch;
             settledRoom=null;settledKey="";ready=false;nativeRoom=null;
          }
@@ -186,7 +188,7 @@ package rconnect.core
          teammate=info;
       }
       private function followTeammate():void {
-         if(followPending==null)return;
+         if(followPending==null || (session.pause!=null && session.pause.paused))return;
          if(mod.config.getValue("followTeammate")!="1"){followPending=null;return;}
          if(!ready || busy || pending!=0 || game.isTransitioning() || game.isPlayerDead())return;
          var info:Object=followPending,mine:Object=game.readWorldInfo();
@@ -205,7 +207,7 @@ package rconnect.core
       /** Explicit local travel shares the ordinary-room handoff with walking. */
       public function travelToTeammate(info:Object):Boolean
       {
-         if(!connected() || !ready || busy || pending!=0 || info==null || game.isTransitioning() || game.isPlayerDead())return false;
+         if((session.pause!=null && session.pause.paused) || !connected() || !ready || busy || pending!=0 || info==null || game.isTransitioning() || game.isPlayerDead())return false;
          var mine:Object=game.readWorldInfo(),target:Object;
          if(mine==null || String(info.curLandId)!=String(mine.curLandId) || int(info.roomEpoch)!=epoch
             || String(info.landProb || "")!="" || TravelGuard.restricted(game.loc))return false;

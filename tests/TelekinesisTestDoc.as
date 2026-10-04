@@ -28,6 +28,8 @@ package {
       private var samples:int=0,good:int=0,pixelCount:int=0,enemyGood:int=0,boxGood:int=0;
       private var ownColor:uint,peerColor:uint;
       private var wire:Object;
+      private var sourceReadyAt:int=0,frameSerial:int=0,renderedSerial:int=-1;
+      private var knownWeaponStyles:Object={},transitionFrames:int=0,transitionBad:int=0;
       private var round:int=0,alicorn:Object,loot:Object,boxTint:String,heldExpected:Object;
       public function TelekinesisTestDoc() {
          var app:String=NativeApplication.nativeApplication.applicationID;
@@ -46,10 +48,19 @@ package {
          var p:Object=e.data;
          var incoming:Object=host?p.snap:null;
          if(!host && p.players is Array)for each(var player:Object in p.players)if(player.id==0)incoming=player.snap;
-         if(incoming!=null)wire={wi:incoming.wi,weapons:incoming.weapons,tele:incoming.tele};
+         if(incoming!=null) {
+            wire={wi:incoming.wi,weapons:incoming.weapons,tele:incoming.tele};
+            for each(var ws:Object in incoming.weapons as Array)if(ws.main===true && ws.aura!=null) {
+               var styles:Array=knownWeaponStyles[ws.id] as Array;
+               if(styles==null)styles=knownWeaponStyles[ws.id]=[];
+               var encoded:String=JSON.stringify(ws.aura),found:Boolean=false;
+               for each(var old:Object in styles)if(JSON.stringify(old)==encoded)found=true;
+               if(!found)styles.push(ws.aura);
+            }
+         }
          if(p.type!="telekinesis-test")return;
          try {
-            if(host && phase=="boot" && p.stage=="ready") {baseX=mod.game.gg.X;baseY=mod.game.gg.Y;setup();send("setup",{x:baseX,y:baseY,enemy:enemy.id,enemyColor:glow(target(enemy.currentWeapon)).color});}
+            if(host && phase=="boot" && p.stage=="ready" && nativeReady()) {baseX=mod.game.gg.X;baseY=mod.game.gg.Y;setup();send("setup",{x:baseX,y:baseY,enemy:enemy.id,enemyColor:glow(target(enemy.currentWeapon)).color});}
             else if(!host && p.stage=="setup") {baseX=p.x;baseY=p.y;peerExpected=p;setup();send("prepared");}
             else if(host && p.stage=="prepared"){startRound(0);send("show",{round:0});}
             else if(!host && p.stage=="show")startRound(int(p.round));
@@ -65,9 +76,15 @@ package {
          if(host && mod.session.server!=null)for each(var l:TcpLink in mod.session.server.clients)watch(l);else if(!host)watch(mod.session.link);
          if(mod.game.gg!=null){mod.game.gg.invulner=true;mod.game.gg.hp=mod.game.gg.maxhp;}
          if(!mod.session.rooms.ready || mod.session.rooms.busy || mod.game.isTransitioning() || mod.game.gg==null)return;
-         if(phase=="boot" && !host && getTimer()-readyAt>500){readyAt=getTimer();send("ready");}
-         if(phase=="show")sample();
+         if(phase=="boot" && !host && nativeReady() && getTimer()-readyAt>500){readyAt=getTimer();send("ready");}
          if(phase!="done" && at>0 && getTimer()-at>20000){check(false,"timeout "+phase);send("done");finish();}
+      }
+      private function nativeReady():Boolean {
+         var w:Object=mod.game.world,g:Object=mod.game.gg;
+         // Do not freeze the new character in its opening/revival animation
+         // or measure through the native fade covering the whole scene.
+         return g!=null && !g.disabled && g.work!="res" && Number(g.t_work)<=0
+            && !w.onPause && (!w.vblack.visible || w.vblack.alpha<=0);
       }
       private function setup():void {
          var b:Object=mod.game,g:Object=b.gg;phase="prepared";at=getTimer();
@@ -94,10 +111,16 @@ package {
             alicorn.disabled=true;alicorn.doop=true;alicorn.xp=0;
          }
          mod.stage.addEventListener(Event.ENTER_FRAME,drive,false,-5000);
+         mod.stage.addEventListener(Event.RENDER,renderSample,false,-30000);
       }
       private function equip(g:Object,id:String,mount:int=0):void {
          if(g.currentWeapon!=null)g.currentWeapon.remVisual();
          var factory:Object=klass("fe.weapon.Weapon");g.currentWeapon=factory.create(g,id,0);g.childObjs=[g.currentWeapon];g.weaponKrep=mount;g.weaponLevit();g.currentWeapon.addVisual();
+         aimWeapon(g);
+      }
+      private function aimWeapon(g:Object):void {
+         g.storona=1;g.celX=g.X+250;g.celY=g.Y-45;
+         g.setWeaponPos(g.currentWeapon.tip);g.currentWeapon.step();
       }
       private function tint(o:Object):String {return o==null?"missing":JSON.stringify(o.vis.transform.colorTransform);}
       private function findBox():Object {
@@ -118,7 +141,7 @@ package {
          send("held-style",{style:{color:glow(o.vis)==null?0:glow(o.vis).color,tint:tint(o)}});
       }
       private function startRound(n:int):void {
-         round=n;phase="show";at=getTimer();localDone=peerDone=false;samples=good=enemyGood=boxGood=pixelCount=0;
+         round=n;phase="show";at=getTimer();sourceReadyAt=0;localDone=peerDone=false;samples=good=enemyGood=boxGood=pixelCount=0;
          var b:Object=mod.game,g:Object=b.gg;
          if(box==null)box=findBox();
          if(n==0 && host)send("held-style",{style:{color:ownColor,tint:tint(box)}});
@@ -144,6 +167,7 @@ package {
          if(n==5){if(host)g.dropTeleObj();else {loot=findLoot();grab(loot);}}
          if(n==6){if(!host)g.dropTeleObj();equip(g,"lmg",1);b.world.redrawLoc();}
          if(n==7){equip(g,"lmg");if(host)box.vis.filters=[new BlurFilter(0,0)];else grab(box);}
+         check(isFinite(Number(g.currentWeapon.rot)),"round="+round+" native aim produces a finite weapon angle");
       }
       private function advance():void {
          if(round<7){var n:int=round+1;startRound(n);send("show",{round:n});}
@@ -157,12 +181,43 @@ package {
          check(hasBlur(box.vis),"leaving preserves unrelated native filters");finish();
       }
       private function drive(e:Event):void {
-         if(phase=="done")return;var g:Object=mod.game.gg;
+         if(phase=="done")return;++frameSerial;var g:Object=mod.game.gg;
          mod.game.forceCloseOverlays();g.disabled=true;g.isTake=0;g.dx=g.dy=0;
          g.setPos(baseX+(host?0:80),baseY);g.setVisPos();
+         aimWeapon(g);
          if(host){enemy.disabled=true;enemy.dx=enemy.dy=0;enemy.setVisPos();alicorn.disabled=true;alicorn.dx=alicorn.dy=0;}
          if(g.teleObj!=null){var held:Object=g.teleObj;held.dx=held.dy=0;held.stay=true;}
          mod.stage.invalidate();
+      }
+      private function wireReady():Boolean {
+         if(wire==null || !(wire.weapons is Array))return false;
+         var expectedId:String=round>=1 && round<=5?"assr":"lmg";
+         for each(var s:Object in wire.weapons)if(s.main===true && s.id==expectedId && s.aura!=null) {
+            var list:Array=s.aura.glow as Array;
+            return round==6?list!=null && list.length==0:list!=null && list.length>0 && uint(list[0][0])==peerColor;
+         }
+         return false;
+      }
+      private function renderSample(e:Event):void {
+         if(phase!="show" || renderedSerial==frameSerial)return;
+         renderedSerial=frameSerial;
+         var ghost:Object=mod.game.getRemoteGhost(host?1:0),weapon:Object=GameBridge.probe(ghost,"currentWeapon");
+         var styles:Array=knownWeaponStyles[GameBridge.probe(weapon,"id")] as Array;
+         if(weapon!=null && styles!=null) {
+            var matched:Boolean=false;
+            for each(var style:Object in styles) {
+               var root:Object=weapon.vis,v:Object=style.kor===true?GameBridge.probe(root,"kor"):root;
+               var f:GlowFilter=glow(v),list:Array=style.glow as Array;
+               if(v!=null && list!=null && (list.length==0?f==null:f!=null && f.color==uint(list[0][0])))matched=true;
+            }
+            transitionFrames++;
+            if(!matched) {
+               transitionBad++;
+               if(transitionBad<=4)Log.d("TELEKINESIS TRANSITION "+JSON.stringify({round:round,weapon:weapon.id,known:styles,root:glow(weapon.vis),body:glow(target(weapon))}));
+            }
+         }
+         if(sourceReadyAt==0 && wireReady())sourceReadyAt=getTimer();
+         if(sourceReadyAt>0)sample();
       }
       private function target(w:Object):DisplayObject {
          var v:Object=GameBridge.probe(w,"vis");return (GameBridge.probe(v,"kor") || v) as DisplayObject;
@@ -182,7 +237,8 @@ package {
          for(var i:int=0;i<av.length;i++)if(av[i]!=bv[i])n++;a.dispose();b.dispose();return n;
       }
       private function sample():void {
-         if(getTimer()-at<1500)return;
+         // Wait for source input, not for the renderer to become correct.
+         if(getTimer()-sourceReadyAt<1500)return;
          if(box==null)box=findBox();
          var ghost:Object=mod.game.getRemoteGhost(host?1:0),v:DisplayObject=target(GameBridge.probe(ghost,"currentWeapon")),f:GlowFilter=glow(v);
          samples++;if(round==6?f==null:(f!=null && f.color==peerColor))good++;
@@ -191,7 +247,7 @@ package {
             for each(var u:Object in mod.game.loc.units)if(u.id==peerExpected.enemy){var ef:GlowFilter=glow(target(u.currentWeapon));if(ef!=null && ef.color==peerExpected.enemyColor)enemyGood++;}
             if(round==0 && box!=null && glow(box.vis)!=null && glow(box.vis).color==peerColor)boxGood++;
          }
-         if(getTimer()-at<3000)return;
+         if(getTimer()-sourceReadyAt<3000)return;
          check(samples>=5,"round="+round+" network-converged samples="+samples);
          check(good==samples,"round="+round+" remote weapon "+(round==6?"removes non-levitating glow":"uses peer color")+" frames="+good+"/"+samples);
          if(round==0){check(pixelCount>5,"remote weapon contributes scene pixels="+pixelCount);
@@ -203,7 +259,7 @@ package {
          if(round==5 && host)observed=loot;
          if(observed!=null){
             check(glow(observed.vis)!=null && heldExpected!=null && glow(observed.vis).color==heldExpected.color,"round="+round+" remote held object has caster color");
-            check(heldExpected!=null && tint(observed)==heldExpected.tint,"round="+round+" remote held tint matches native source");
+            check(heldExpected!=null && tint(observed)==heldExpected.tint,"round="+round+" remote held tint matches native source expected="+(heldExpected==null?null:heldExpected.tint)+" actual="+tint(observed));
             check(pixels(observed.vis)>5,"round="+round+" held aura produces visible pixels");
          }
          if(round==6)check(loot!=null && glow(loot.vis)==null,"released loot removes aura despite retained fracLevit");
@@ -216,7 +272,8 @@ package {
          localDone=true;phase="sampled";send("sampled",{round:round});if(host && peerDone)advance();
       }
       private function finish():void {
-         if(phase=="done")return;phase="done";timer.stop();if(mod!=null)mod.stage.removeEventListener(Event.ENTER_FRAME,drive);
+         if(phase=="done")return;phase="done";timer.stop();if(mod!=null){mod.stage.removeEventListener(Event.ENTER_FRAME,drive);mod.stage.removeEventListener(Event.RENDER,renderSample);}
+         check(transitionFrames>10 && transitionBad==0,"weapon and aura share one presentation state frames="+transitionFrames+" mismatches="+transitionBad);
          Log.d("COOP EFFECTS DONE telekinesis "+(host?"host":"join"));
       }
    }

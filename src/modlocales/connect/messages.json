@@ -194,5 +194,33 @@
   "暂时无法传送，请稍后再试": {
     "en": "Unable to teleport now. Try again shortly.",
     "ru": "Сейчас телепортация недоступна. Попробуйте позже."
+  },
+  "菜单同步暂停：": {
+    "en": "Pause together in menus: ",
+    "ru": "Пауза команды в меню: "
+  },
+  "SATS同步暂停：": {
+    "en": "Pause together in SATS: ",
+    "ru": "Пауза команды в SATS: "
+  },
+  "由宿主设置；任意一方打开后全队暂停": {
+    "en": "Host sets options; either player can pause both.",
+    "ru": "Настройки хозяина. Пауза действует на обоих."
+  },
+  "联机暂停开关由宿主设置": {
+    "en": "Only the host can change shared pause options.",
+    "ru": "Общую паузу настраивает хозяин."
+  },
+  "请先结束联机暂停": {
+    "en": "Resume the shared game before teleporting.",
+    "ru": "Для телепортации завершите общую паузу."
+  },
+  "联机已暂停：{0}": {
+    "en": "Co-op paused: {0}",
+    "ru": "Общая пауза: {0}"
+  },
+  "菜单": {
+    "en": "Menu",
+    "ru": "Меню"
   }
 }

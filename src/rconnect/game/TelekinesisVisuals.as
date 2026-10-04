@@ -72,7 +72,7 @@ package rconnect.game {
       }
       /** Resolve the native owner first. A locally grabbed object keeps the
        * game's own filters/physics, even while an older remote packet arrives. */
-      public function tick(loc:Object,localHeld:Object,authority:Boolean):void {
+      public function tick(loc:Object,localHeld:Object,authority:Boolean,remoteOwner:Function=null):void {
          var desired:Dictionary=new Dictionary(),o:Object,s:Object,rec:Object;
          for(o in objects)desired[o]=objects[o];
          for each(rec in held)desired[rec.o]=rec.s;
@@ -81,7 +81,7 @@ package rconnect.game {
             if(get(o,"loc")!==loc || get(o,"in_chain")!=true || get(o,"dead")==true || Number(get(o,"sost"))>=3) {
                release(o);delete objects[o];continue;
             }
-            if(o===localHeld || (authority && Number(get(o,"levit"))>0)) {
+            if(o===localHeld || (authority && Number(get(o,"levit"))>0 && (remoteOwner==null || !remoteOwner(o)))) {
                // Native grab has already replaced the visual. Do not restore
                // the old remote style over the new local owner.
                delete active[o];continue;

@@ -9,6 +9,18 @@ package rconnect.game {
    /** Pure display copies: no Bullet, collision, damage or ammunition changes. */
    public class ProjectileVisuals {
       private var seen:Dictionary=new Dictionary(true),active:Array=[],errors:Object={};
+      private var pauseAt:int=-1;
+      public function setPaused(value:Boolean):void {
+         if(value==(pauseAt>=0))return;
+         var now:int=getTimer();
+         if(value)pauseAt=now;
+         else {
+            // Ordinary cosmetics use local elapsed time; native beam samples
+            // retain real source timestamps and resume on their newest frame.
+            for each(var a:Object in active)a.at=int(a.at)+now-Math.max(pauseAt,int(a.at));
+            pauseAt=-1;
+         }
+      }
       public static function capture(b:Object):Object {
          if(b==null || GameBridge.probe(b,"vis")==null)return null;
          return {cls:getQualifiedClassName(b.vis),x:b.begx,y:b.begy,ex:b.X,ey:b.Y,
@@ -75,6 +87,7 @@ package rconnect.game {
       }
       public function tick(loc:Object,now:int=-1):void {
          if(now<0)now=getTimer();
+         if(pauseAt>=0)now=Math.min(now,pauseAt);
          for(var i:int=active.length-1;i>=0;i--) {
             var a:Object=active[i],s:Object=a.s,v:DisplayObject=a.vis;
             var age:Number=Math.max(0,now-int(a.at))/1000,frames:Number=age*30;

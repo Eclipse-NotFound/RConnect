@@ -4,13 +4,16 @@ Two-player online co-op for **Fallout Equestria: REMAINS** — see each other, c
 
 English (this page) · [简体中文](README.zh-CN.md)
 
-> Current local candidate: **0.2.15-dev (M44)**, deployed 2026-10-04. Restores teammate/enemy weapon and held-item telekinesis glows, including caster colors and release cleanup. Includes manual second-player save selection. 216 co-op checks, 11 native save-menu checks and normal-loader smoke passed; see the [release record](state/deployment-m44-2026-10-04.md). Hidden-room control loss/enemy respawn and dense-combat stutter remain open; enemy-grab physics is being investigated separately. Retains Chinese/English/Russian UI. Current validation is game 1.02, two players on one machine.
+> Current local candidate: **0.2.16-dev (M45)**, deployed 2026-10-04. Joining players can levitate and throw eligible enemies with native limits and mana costs. Adds optional shared menu/SATS pause, controlled by the host; both switches default off. 1003 checks on the same final candidate and normal-loader smoke passed; see the [release record](state/deployment-m45-2026-10-04.md). Fixes aura flicker when switching weapons and retains manual second-character save selection. Hidden-room control loss/enemy respawn and dense-combat stutter remain open. Validated on game 1.02 with two local players.
 >
 > For local co-op, save and close both games, then use **[Start-Coop.bat](Start-Coop.bat)**. It keeps only the processes it starts responsive in the background and preserves each character's saves. This may use more power. Large encounters can still stutter. The current validation does not establish a general frame-rate improvement.
 >
 > Launcher fix (2026-10-04): the second window now uses a manual profile that avoids unintended automatic test gameplay. Its first launch copies the old second character's saves and settings, retaining the originals; later launches preserve its own progress. The native save list opens automatically; choose the character to continue. Both windows load the current mods from the same game directory. [Local co-op details](docs/local-coop.md)
 
 ## Features
+
+- Native enemy levitation and throwing from either player, with native eligibility, mana and resistance; room handoffs and disconnects release remote holds.
+- Optional **shared menu pause** and **shared SATS pause** in F10. Both default off and are set by the host. Either player pauses both rooms; combat resumes after both close the relevant interfaces. Menus, chat and SATS targeting remain usable.
 
 - One player **hosts**, the other **joins** (3+ untested). The joining side needs no matching save: the host's world is mirrored to them (world injection — missing enemies spawn, extras are removed, state synced at 5 Hz).
 - Players see each other as translucent ghost ponies with floating name tags, walk/run/jump pose animations and **held-weapon display**; remote health shows in the co-op panel.
