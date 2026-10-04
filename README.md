@@ -4,11 +4,11 @@ Two-player online co-op for **Fallout Equestria: REMAINS** — see each other, c
 
 English (this page) · [简体中文](README.zh-CN.md)
 
-> Current local candidate: **0.2.14-dev (M43)**, deployed 2026-10-04. Improves beam playback and remote wall fragments; adds teammate markers on the native map and **Teleport to teammate** in F10. All 470 checks and the normal-loader smoke passed; see the [release record](state/deployment-m43-2026-10-04.md). **The reported hidden-room loss of control and enemy respawn remain unconfirmed; this build adds bounded diagnostics, not a claimed fix.** Retains existing co-op and Chinese/English/Russian UI. Game v1.02, two players on one machine; stable reconnection, 3+ players, real-network play and other versions remain unverified.
+> Current local candidate: **0.2.15-dev (M44)**, deployed 2026-10-04. Restores teammate/enemy weapon and held-item telekinesis glows, including caster colors and release cleanup. Includes manual second-player save selection. 216 co-op checks, 11 native save-menu checks and normal-loader smoke passed; see the [release record](state/deployment-m44-2026-10-04.md). Hidden-room control loss/enemy respawn and dense-combat stutter remain open; enemy-grab physics is being investigated separately. Retains Chinese/English/Russian UI. Current validation is game 1.02, two players on one machine.
 >
 > For local co-op, save and close both games, then use **[Start-Coop.bat](Start-Coop.bat)**. It keeps only the processes it starts responsive in the background and preserves each character's saves. This may use more power. Large encounters can still stutter. The current validation does not establish a general frame-rate improvement.
 >
-> Launcher fix (2026-10-04): the second window now uses a manual profile that avoids unintended automatic test gameplay. Its first launch copies the old second character's saves and settings, retaining the originals; later launches preserve its own progress. Choose **Load Game** to select a save. Both windows load the current mods from the same game directory. [Local co-op details](docs/local-coop.md)
+> Launcher fix (2026-10-04): the second window now uses a manual profile that avoids unintended automatic test gameplay. Its first launch copies the old second character's saves and settings, retaining the originals; later launches preserve its own progress. The native save list opens automatically; choose the character to continue. Both windows load the current mods from the same game directory. [Local co-op details](docs/local-coop.md)
 
 ## Features
 

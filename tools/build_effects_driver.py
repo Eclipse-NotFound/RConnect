@@ -24,7 +24,7 @@ def main():
         'SmoothNetworkTestDoc','AppearanceTestDoc','CombatFeedbackTestDoc','CombatFeedbackNetworkTestDoc',
         'AnimationGapsTestDoc','RoomCooperationTestDoc','CoopTestDoc','SatsTestDoc','CombatStateTestDoc',
         'CombatNetworkTestDoc','GameplayGapTestDoc','GameplayNetworkTestDoc','ProjectileNetworkTestDoc',
-        'FollowNetworkTestDoc','SustainedDensityTestDoc','BeamTerrainTestDoc','TeammateNavigationTestDoc',
+        'FollowNetworkTestDoc','SustainedDensityTestDoc','BeamTerrainTestDoc','TeammateNavigationTestDoc','TelekinesisTestDoc',
         'HiddenRoomTestDoc','HiddenRoomFollowTestDoc','HiddenRoomCorpseTestDoc','HiddenRoomOverlayTestDoc','HiddenRoomProbeTestDoc'])
     args=ap.parse_args()
     out=args.output.resolve()

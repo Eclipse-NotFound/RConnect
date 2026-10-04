@@ -16,6 +16,7 @@ package rconnect.game
       private var errors:Object = {};
       private var shotStream:int=0;
       private var frameTime:int=0;
+      private var telekinesis:TelekinesisVisuals=new TelekinesisVisuals();
 
       private static function get(o:Object,k:String):* {return GameBridge.probe(o,k);}
 
@@ -86,7 +87,7 @@ package rconnect.game
                events.push({seq:shot.seq,at:shot.at,flight:flight});
             }
             result.push({stream:hostShots[w].stream,slot:i,id:String(get(w,"id")),variant:int(get(w,"variant")),main:w===current,events:events,
-               sampleTime:frameTime>0?frameTime:getTimer(),
+               sampleTime:frameTime>0?frameTime:getTimer(),aura:TelekinesisVisuals.captureWeapon(w),
                shots:count,ox:Number(get(w,"X"))-Number(get(u,"X")),
                oy:Number(get(w,"Y"))-Number(get(u,"Y")),rot:Number(get(w,"rot")),
                prep:int(get(w,"t_prep")),reload:int(get(w,"t_reload")),
@@ -139,7 +140,7 @@ package rconnect.game
                var gun:Object=rec.guns[String(s.slot)];
                if(gun==null || gun.id!=s.id || gun.variant!=s.variant)
                {
-                  if(gun!=null) gun.weapon.remVisual();
+                  if(gun!=null) {telekinesis.forgetWeapon(gun.weapon);gun.weapon.remVisual();}
                   var local:Array=get(u,"childObjs") as Array;
                   var weapon:Object=s.main===true?get(u,"currentWeapon"):(local==null?null:local[int(s.slot)]);
                   if(weapon==null || String(get(weapon,"id"))!=s.id || int(get(weapon,"variant"))!=int(s.variant))
@@ -216,6 +217,7 @@ package rconnect.game
                if(gun.flash>0) gun.flash--;
                // animate updates aim and position only. Never call step/actions/attack.
                w.animate();
+               telekinesis.weapon(w,s.aura);
                if(v!=null && get(u,"vis")!=null)
                {
                   v.visible=u.vis.visible;v.alpha=u.vis.alpha;
@@ -252,6 +254,7 @@ package rconnect.game
 
       public function reset():void
       {
+         telekinesis.reset();
          for(var u:Object in states)
          {
             var rec:Object=states[u];

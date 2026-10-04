@@ -58,6 +58,8 @@ package rconnect.game
          return keys[o] == null ? "" : String(keys[o]);
       }
 
+      public function lookup(k:String):Object {return objects[k];}
+
       public function bind(k:String, o:Object):void
       {
          objects[k] = o;

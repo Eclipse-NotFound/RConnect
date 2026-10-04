@@ -102,6 +102,7 @@ package rconnect.game
       private var _mirroring:Boolean = false;
       private var _sampleAt:int=0;
       private var _objects:ObjectIdentity = new ObjectIdentity();
+      private var _telekinesis:TelekinesisVisuals = new TelekinesisVisuals();
       private var _units:ObjectIdentity = new ObjectIdentity("U");
       private var _mirrorMasks:Dictionary = new Dictionary();
       private var _sceneExpected:Dictionary = new Dictionary();
@@ -124,7 +125,7 @@ package rconnect.game
          restoreContainerActions();
          _mirroring = false;
          _terrain.reset();
-         _presentation.reset();_projectiles.reset();
+         _presentation.reset();_projectiles.reset();_telekinesis.reset();
          _shieldFeedback = new Dictionary(true);
          clearHitUnits();
          _unitMotion = new Dictionary();
@@ -199,6 +200,7 @@ package rconnect.game
             // Native redraws may replace the object layer after ENTER_FRAME.
             // The same frame clock reattaches a beam without advancing it twice.
             _projectiles.tick(loc,presentationTime());
+            presentHeldVisuals();
             if(!_mirroring) return;
             tickLootMotion();
             for(var viewed:Object in _unitView)
@@ -257,6 +259,7 @@ package rconnect.game
             if(rec.ghost!=null && rec.motion!=null && probe(rec.ghost,"loc")===loc)
                driveGhost(rec.ghost,rec.motion.sample(presentationTime()),int(id));
          }
+         presentHeldVisuals();
          if(!_mirroring) return;
          mirrorContainerActions();
          tickFrozenAnims();
@@ -566,6 +569,7 @@ package rconnect.game
          s.wi = cw != null ? String(probe(cw, "id")) : "";
          s.wv = cw != null ? int(numOr(probe(cw, "variant"), 0)) : 0;
          s.weapons=_presentation.capture(gg);
+         s.tele=readHeldVisual();
          // M16：本机当前姿态标签（vis.osn.currentLabel）——让远端幽灵直接
          // 播放对方真实姿态（站/走/跑/蹲/趴都由对方游戏决定，不再本地猜测）
          s.pose = localPoseLabel();
@@ -686,6 +690,38 @@ package rconnect.game
                restyleGhost(rec, id, snap);
             }
          }
+      }
+
+      private function readHeldVisual():Object
+      {
+         var o:Object=probe(gg,"teleObj"),style:Object=TelekinesisVisuals.captureObject(o);
+         if(o==null || style==null || probe(o,"loc")!==loc)return null;
+         _objects.enter(loc);_units.enter(loc);
+         var kind:String="box",key:String=_objects.known(o);
+         if(key==""){kind="unit";key=_units.known(o);}
+         if(key=="") {
+            kind="loot";
+            var keys:Dictionary=_mirroring?_lootKeyOfJ:_lootIdOf;
+            if(keys!=null && keys[o]!=null)key=String(keys[o]);
+         }
+         return key==""?null:{kind:kind,k:key,style:style};
+      }
+
+      private function presentHeldVisuals():void
+      {
+         _objects.enter(loc);_units.enter(loc);
+         for(var id:String in _remotes) {
+            var rec:Object=_remotes[id],s:Object=rec.snap,held:Object=null,o:Object=null;
+            if(rec.ghost!=null && probe(rec.ghost,"loc")===loc && s!=null
+               && String(s.roomKey)==roomKey() && int(s.roomEpoch)==roomEpoch && Number(s.sost)<3)held=s.tele;
+            if(held!=null) {
+               if(held.kind=="box")o=_objects.lookup(String(held.k));
+               else if(held.kind=="unit")o=_units.lookup(String(held.k));
+               else if(held.kind=="loot")o=_lootObjOf[String(held.k)];
+            }
+            _telekinesis.hold(id,o,held==null?null:held.style);
+         }
+         _telekinesis.tick(loc,probe(gg,"teleObj"),!_mirroring);
       }
 
       private function apKeyOf(ap:Object):String
@@ -887,6 +923,8 @@ package rconnect.game
             var gy:Number = numOr(probe(ghost, "Y"), 0);
             wvis["rotation"] = Math.atan2(ay - gy, (ax - gx) * storona)
                * 180 / Math.PI;
+            for each(var weaponState:Object in snap.weapons as Array)
+               if(weaponState.main===true)_telekinesis.weapon(probe(ghost,"currentWeapon"),weaponState.aura);
          }
          catch(err:*)
          {
@@ -895,6 +933,7 @@ package rconnect.game
 
       private function removeWeaponVis(id:int):void
       {
+         _telekinesis.forgetWeapon(probe(probe(_remotes[id],"ghost"),"currentWeapon"));
          var wvis:Object = _weaponVis[id];
          if(wvis != null)
          {
@@ -1546,6 +1585,7 @@ package rconnect.game
 
       private function despawnGhost(ghost:Object, id:int):void
       {
+         _telekinesis.hold(String(id),null,null);
          try
          {
             // 用化身自己所在的 loc（跨房后 this.loc 可能已不是它的 loc）
@@ -2566,6 +2606,7 @@ package rconnect.game
                   q: (numOr(probe(b, "levit"), 0) != 0
                      || numOr(probe(b, "fracLevit"), 0) > 0),
                   dead: probe(b, "dead") == true,
+                  aura: TelekinesisVisuals.captureObject(b),
                   hp: numOr(probe(b,"hp"),0),
                   door: numOr(probe(b, "door"), -1),
                   door_opac: numOr(probe(b, "door_opac"), -1),
@@ -2794,6 +2835,7 @@ package rconnect.game
                   applyIst(lb, String(h.id), h.ist);
                }
                applySceneState(lb, h);
+               _telekinesis.object(lb,h.aura);
                // M25：可移动 Box（念力可移动物品：wall==0 且非门）位置镜像
                // ——就近匹配同 id（房间可有多个同 id 箱子），本地正被念力
                // 托举的跳过（防镜像与本地持有互抢，由上报通道主导）
@@ -3398,7 +3440,7 @@ package rconnect.game
                var itemData:Object = GroundItemState.capture(probe(o, "item"));
                out.push({k: k, x: numOr(probe(o, "X"), 0),
                   y: numOr(probe(o, "Y"), 0), sampleTime: _sampleAt>0?_sampleAt:getTimer(), b: String(e[1]), item: itemData,
-                  suction: probe(o, "vsos") == true});
+                  suction: probe(o, "vsos") == true,aura:TelekinesisVisuals.captureObject(o)});
             }
          }
          catch(err:*)
@@ -3459,6 +3501,7 @@ package rconnect.game
                }
                if(lo != null)
                {
+                  _telekinesis.object(lo,s.aura);
                   if(lo is RemoteLoot && (lo as RemoteLoot).requested)continue;
                   if(probe(lo,"vsos")==true)continue;
                   if(boxHeldLocally(lo)){delete _lootMotion[k];continue;}
@@ -5031,6 +5074,7 @@ package rconnect.game
                   view: unitView(u),
                   body: TurretDisplay.capture(u),
                   weapons: _presentation.capture(u),
+                  aura: TelekinesisVisuals.captureObject(u),
                   defense: unitFields(u, MirrorHitUnit.DEFENSE),
                   // M19：外观帧（小马类 osn.pon 帧=配色/皮肤）与瞄准点
                   // （celX/celY=敌人当前目标方向，仇恨可视化一致）
@@ -5131,6 +5175,7 @@ package rconnect.game
                   }
                }
                applyUnitFields(target, e.motion);
+               _telekinesis.object(target,e.aura);
                // Burrowed native ghoul instances have scY=0. Restore the host's
                // collision shape before creating/updating the bullet receiver.
                target["setPos"](target.X,target.Y);
@@ -5603,7 +5648,7 @@ package rconnect.game
       public function roomRole(authority:Boolean):void
       {
          restoreContainerActions();
-         _presentation.reset();_projectiles.reset();clearHitUnits();restoreMirrorMasks();restoreUnitViews();
+         _presentation.reset();_projectiles.reset();_telekinesis.reset();clearHitUnits();restoreMirrorMasks();restoreUnitViews();
          for(var u:Object in _freezeOriginal) try {u.disabled=_freezeOriginal[u];}catch(e:*){}
          _freezeOriginal=new Dictionary();_frozen=new Dictionary();_hostAlive=new Dictionary();
          _pendingHits=new Dictionary();_baseHp=new Dictionary();_baseDefense=new Dictionary();
@@ -5715,7 +5760,7 @@ package rconnect.game
          if(_lastLocRef != loc)
          {
             _lastLocRef = loc;
-            _presentation.reset();_projectiles.reset();
+            _presentation.reset();_projectiles.reset();_telekinesis.reset();
             _objects.enter(loc);
             _units.enter(loc);
             restoreMirrorMasks();

@@ -1,6 +1,6 @@
 # RConnect —— 开发记忆入口
 
-> 2026-10-04 当前安装：**M43 / 0.2.14-dev**，99900字节，SHA256 `ed240f09883b091fef5474ff6ef5219bdeae669948ca1331c76007faeef24b20`。三方合并、9组470项及正常加载冒烟通过。隐藏房间故障仍未确认修复，已加有限现场诊断；[部署/回滚](deployment-m43-2026-10-04.md)。中英俄界面保留。
+> 2026-10-04 当前安装：**M44 / 0.2.15-dev**，102735字节，SHA256 `8b6fb844bb5295448d3a29e763378a6f3d63f111eb83dc0a5a381da49ff569ae`。念力光晕与第二窗口手动选档已部署：216项双端回归、11项选档及正常加载冒烟通过。[部署/回滚](deployment-m44-2026-10-04.md)。背景房和密集战斗边界保留。
 
 > 协议见 GOVERNANCE.md §8；参数与边界见 ../AGENT_SCOPE.md。
 
@@ -13,6 +13,7 @@
 - 已授权修复已有合作探索/战斗/交互，允许大幅重构和候选部署。不新增任务/背包/交易规则，排除稳定重连、三人以上、公网和其他版本。
 - 此前炮塔显示与分房请求点名grilling，Q1–Q5全部确认“符合，按此实现”：同地图普通房自由分头；空房暂停保留；宿主发起共同换图；剧情挑战共同进出；关闭游戏沿用原版，不新增随机房完整战斗存档。不得重复确认。
 - M39九项反馈：密集敌人卡顿，炮塔/地雷/狮鹫索敌，容器掉落与拾取，跟随队友，闪电/双方开火/天角兽护盾，经验点与存档点。用户确认：地上物品一份，先拾取者获得；经验点双方奖励；存档点共同解锁，各自保存角色。继续既定修复/候选部署授权。
+- 用户最新偏好：第二窗口保留自己的角色，启动时选择已有存档，已由R2落实手动启动和迁移保护。
 - 最新M41反馈为加入侧血条缺失、数字位置/数值或颜色异常。用户已明确授权与「RConnect (2)」互通进度，并由本会话统一合并验证和部署；该会话另修掉落/肉食灵/蜘蛛地雷显示，保留双方改动，不并行跑性能测试。
 - M43用户进一步明确授权与「RConnect (2)」「RConnect (3)」三方直接协调，仍由原RConnect统一合并、验证、版本、部署、MEMORY/journal及提交。R2负责光束/墙体，R3负责地图标记与主动传送；编译/AIR窗口串行，其他两会话不各自覆盖release。
 - 只写RConnect；其他模组仅最小必要读取。测试隔离新角色和唯一AIR标识，只结束自己创建的进程；全部输入在任一端启动前冻结。用户进程和存档不动。
@@ -20,12 +21,15 @@
 
 ## 3. 当前安装状态
 
-- **M43 / 0.2.14-dev已部署并通过正常加载冒烟（2026-10-04）**：99900字节，SHA `ed240f09883b091fef5474ff6ef5219bdeae669948ca1331c76007faeef24b20`；44生产类无原生存根/测试类。源冻结于build/m43/final2/src，生产清单source-input.json，最终测试输入verified-test-input.json；此前测试修正前清单另存，不混用。
-- 最终同字节9组470 PASS/0 FAIL；安装后无外部驱动双端冒烟`af13e437c4`通过，54项游戏/其他模组/配置保护指纹不变，测试实例已结束。完整摘要`knowledge/experiments/m43-validation-evidence.json`。
-- 旧语言版备份`build/backup/m43-release-20261004-002637-b630e6/RConnectMod.before.swf`，SHA `2b25a7d2301d1baac40e04e70ba48e9bc40b5c292c0b3938a69bf6b151b41186`；关闭两端后复制回本模组release并重启可回滚。回执build/m43/deployment.json为deployed-smoke-passed；没有远程发布或推送。
-- 同机双人用Start-Coop.bat，保存关闭原窗口后重启两端；只对新开的本轮进程设置HighQoS，pfe/pfe2分别保存，保留原有配置。当前玩家窗口未被关闭，重启前仍运行内存中的旧版。
+- **M44 / 0.2.15-dev已部署**，102735字节、SHA `8b6fb844bb5295448d3a29e763378a6f3d63f111eb83dc0a5a381da49ff569ae`，46生产类无原生存根/测试类。源和验证输入冻结build/m44/final；证据knowledge/experiments/m44-validation-evidence.json。
+- 同字节5组216 PASS/0 FAIL，原生选档11 PASS/0 FAIL；正常无驱动双端冒烟`8ec6e25217`通过，56项保护指纹不变，测试进程已结束。只换本模组release，原游戏窗口未关闭，需保存后完全重启两端。
+- 旧M43备份`build/backup/m44-release-20261004-083245-73447f/RConnectMod.before.swf`，SHA `ed240f09883b091fef5474ff6ef5219bdeae669948ca1331c76007faeef24b20`；复制回release并重启可回退SWF。未远程发布或推送。
+- 同机用Start-Coop.bat。第二窗口手动身份pfe-modsettings-rconnect-player2，首次只读复制旧pfe2全部存档/个人配置并校验，新身份后续进度不再被旧档覆盖；旧档保留。启动显示原生读档列表，用户选槽，已进游戏不打断。真实首次迁移未在本轮执行。
 
 ## 4. 实现与当前接点
+
+- **M44完成**：武器快照补真实GlowFilter和root/kor目标；Box/Loot/Unit补光晕/ColorTransform，加入侧本地抓持经玩家稳定键反向送达。TelekinesisVisuals只管显示，不写levit/AI；本地抓取优先，松手/替换/换房/离线清理，保留无关滤镜。最终八阶段c59e4214a4通过；详见2026-10-04-m44-telekinesis.md。
+- **三方后续分工**：R2调查M45“加入侧抓敌有光但仍正常运动”的实际权属，R3调查菜单/SATS暂停开关。M44冻结期间双方仅独立测试/原型，未混入本候选；今后仍由本会话统一部署、编译/AIR串行。
 
 - **M43背景房调查未复现、未认定根因**：用户明确宿主角色消失/无法控制，不能解释为正常跟随。最终实际存档/视野设置下，界面+跟随五轮`5fd52e55f0`117项、关闭跟随五轮`735ea3ffd7`107项通过。早期冻结玩家、缺RENDER、累计走出房、浮点尾差等测试干扰已留档；一次门时序失败未认定原因，不抹去。候选仅加最多32次背景房切换的只读诊断，未修改背景房玩法。详见2026-10-03-m43-hidden-rooms.md。
 - **M43三方合并完成**：R2光束逐帧记录/死亡后结束、墙碎片；R3地图位置与主动传送。最终专项32+55项，既有分房66、反馈16、动画26、密集51项通过。80敌人连续七段、每段约8秒，加入侧每段100–107帧（约12.5–13.4 FPS），p95 104–116ms。没有同负载基线配对，不作性能增减归因；密集战斗仍可能卡顿。
@@ -51,13 +55,14 @@
 
 ## 6. 下一步
 
-1. 用户保存并关闭两端，用Start-Coop.bat重启，F10核对0.2.14-dev；测试背景门与返回前景、光束/破墙、地图位置和主动传送。
-2. 若背景门问题重现，先比对双方相同房间/term附近RConnectRoomTrace及角色状态，再确定修复；不要按旧代码疑点盲改，不把本轮绿验说成已修好。
-3. 本轮验证与部署完成，无待跑门禁。性能测试没有同负载基线配对；原有排除范围保持，不自动推送。
+1. 用户保存关闭两端，用Start-Coop.bat重启，F10核对0.2.15-dev；测试念力武器/物品光晕与松手，第二窗口选已有存档。
+2. M44发布检查完成；后续R2推进加入侧抓敌物理，R3确认暂停选项，不把正在显示光晕等同为已控制敌人。
+3. 背景房若重现，核对两端RConnectRoomTrace与角色状态；未认定根因，不盲改。既有性能边界和排除范围保持，不自动推送。
 
 ## 7. 记录与工具入口
 
-- 最新 `state/deployment-m43-2026-10-04.md`、`knowledge/experiments/m43-validation-evidence.json`及三份M43实验记录；历史 `knowledge/experiments/2026-10-03-m41-feedback.md`、`2026-10-03-m41-animation-gaps.md`、`m41-validation-evidence.json`；M40连续运动与淡影见2026-10-03-m40-presentation.md。M39合作与后台策略见2026-09-30-m39-gameplay.md；M38伤害、M37 SATS、M36分房历史证据和design/separate-rooms.md保留。
+- 最新M44见 `state/deployment-m44-2026-10-04.md`、`knowledge/experiments/m44-validation-evidence.json`与`2026-10-04-m44-telekinesis.md`；启动器见`2026-10-04-manual-second-player.md`。
+- M43历史 `state/deployment-m43-2026-10-04.md`、`knowledge/experiments/m43-validation-evidence.json`及三份M43实验记录；历史 `knowledge/experiments/2026-10-03-m41-feedback.md`、`2026-10-03-m41-animation-gaps.md`、`m41-validation-evidence.json`；M40连续运动与淡影见2026-10-03-m40-presentation.md。M39合作与后台策略见2026-09-30-m39-gameplay.md；M38伤害、M37 SATS、M36分房历史证据和design/separate-rooms.md保留。
 - 构建 `tools/build_mod.py --java <java> --output build/<轮次>/RConnectMod.swf`；必须显式候选输出，默认写release。
 - 同字节外部驱动 `tools/build_effects_driver.py --candidate <正式SWF> --java <java> --output build/<轮次>/driver --entry SatsTestDoc`。另可RoomCooperationTestDoc/CoopTestDoc/TurretTestDoc/EffectsTerrainTestDoc/PresentationTestDoc。
 - runner `tools/run_coop_regression.py --candidate <SWF> --effects-driver <目录>`：分房加`--effects --all-mods --land random_mane --seconds 240`，完整合作`--with-vision --seconds 340`，炮塔/特效`--effects --all-mods --seconds 180`，画面`--presentation --all-mods --seconds 210`。正常路径不加driver，用`--smoke --with-vision --seconds 150`。
