@@ -20,6 +20,7 @@ package {
    import rconnect.core.Log;
    import rconnect.core.TravelGuard;
    import rconnect.game.GameBridge;
+   import rconnect.game.MirrorHitUnit;
    import rconnect.net.NetMessageEvent;
    import rconnect.net.TcpLink;
 
@@ -186,8 +187,8 @@ package {
       }
       private function prepareJoin():Boolean {
          for each(var u:Object in mod.game.loc.units) {
-            if(u.id=="slaver2"&&Number(u.maxhp)==43210)enemy=u;
-            if(u.id=="rconnect_hit_slaver2"&&Number(u.maxhp)==43210)proxy=u;
+            if(!(u is MirrorHitUnit) && u.id=="slaver2"&&Number(u.maxhp)==43210)enemy=u;
+            if(u is MirrorHitUnit && MirrorHitUnit(u).body!=null && MirrorHitUnit(u).body.id=="slaver2"&&Number(u.maxhp)==43210)proxy=u;
          }
          if(enemy==null||proxy==null)return false;
          var w:Object=mod.game.world,g:Object=mod.game.gg;

@@ -1,4 +1,6 @@
-package fe.unit { public class UnitBossAlicorn extends UnitPon {
+package fe.unit { import fe.Obj; public class UnitBossAlicorn extends UnitPon {
+internal var teleObj:Obj;
+public function dropTeleObj():* {}
 internal var weap:String;
 internal var shitMaxHp:Number;
 internal var isShit:Boolean;

@@ -12,6 +12,7 @@ package {
    import fe.unit.CombatStateProbe;
    import flash.system.System;
    import rconnect.game.GameBridge;
+   import rconnect.game.MirrorHitUnit;
    import rconnect.core.Log;
    import rconnect.net.TcpLink;
    import rconnect.net.Protocol;
@@ -43,7 +44,7 @@ package {
          l.addEventListener(TcpLink.MESSAGE,function(e:NetMessageEvent):void{if(phase=="load"){var n:int=getTimer()-netAt;netMs+=n;netMax=Math.max(netMax,n);}},false,-100000);
       }}
       private function finish():void {if(phase=="done")return;phase="done";timer.stop();Log.d("COOP EFFECTS DONE network-state "+(host?"host":"join"));}
-      private function find(id:String):Object {for each(var u:Object in mod.game.loc.units)if(u.id==id)return u;return null;}
+      private function find(id:String):Object {for each(var u:Object in mod.game.loc.units)if(!(u is MirrorHitUnit) && u.id==id)return u;return null;}
       private function spawn(name:String,id:String,map:XML,x:Number):Object {
          var c:Class=mod.main.loaderInfo.applicationDomain.getDefinition("fe.unit."+name) as Class;
          var u:Object=new c(id,100,map,null);u.putLoc(mod.game.loc,x,mod.game.gg.Y);
@@ -163,7 +164,7 @@ package {
                check(enemy!=null,"TCP ghoul appears");var hp:Number=enemy.hp;
                var gun:NativeTestGun=new NativeTestGun(mod.game.gg as Unit);var gw:Object=gun;gw.setPers(mod.game.gg,mod.game.gg.pers);gw.damage=60;gw.critCh=0;
                var projectile:Object=gun.fireAt(enemy,true);check(expected>0 && Math.abs(hp-enemy.hp-expected)<0.001,"TCP join LMG matches native ghoul damage expected="+expected+" actual="+(hp-enemy.hp)+" height="+enemy.scY);
-               var receiver:Object=find("rconnect_hit_zombie1");
+               var receiver:Object;for each(var hit:Object in mod.game.loc.units)if(hit is MirrorHitUnit && MirrorHitUnit(hit).body===enemy)receiver=hit;
                Log.d("COOP PROBE ghoul body="+[enemy.fraction,enemy.hp,enemy.scY,enemy.invulner,enemy.sost,enemy.trigDis]
                   +" receiver="+(receiver==null?"null":[receiver.fraction,receiver.hp,receiver.scY,receiver.invulner,receiver.disabled,receiver.trigDis,receiver.X1,receiver.X2,receiver.Y1,receiver.Y2])
                   +" bullet="+[projectile.damage,projectile.off,projectile.babah,projectile.X,projectile.Y,projectile.parr,projectile.tipDamage,mod.game.gg.pers.damZombie]);

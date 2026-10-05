@@ -12,6 +12,7 @@ package {
    import fe.weapon.Bullet;
    import rconnect.core.Log;
    import rconnect.game.GameBridge;
+   import rconnect.game.MirrorHitUnit;
 
    /** Native damage feedback compared with the exact production mirror path. */
    public class CombatFeedbackTestDoc extends Sprite {
@@ -120,11 +121,11 @@ package {
       private function shot(u:Object,critical:Boolean,periodic:Boolean,mirror:Boolean,visible:Boolean=true):Object {
          var receiver:Object=u;
          if(mirror) {
-            for each(var candidate:Object in bridge.loc.units)if(candidate.id=="rconnect_hit_"+u.id)receiver=candidate;
+            for each(var candidate:Object in bridge.loc.units)if(candidate is MirrorHitUnit && MirrorHitUnit(candidate).body===u)receiver=candidate;
             if(receiver===u) {
                var list:Array=JSON.parse(JSON.stringify(bridge.readUnitsSnapshot())) as Array;
                bridge.applyUnitsSync(list);
-               for each(candidate in bridge.loc.units)if(candidate.id=="rconnect_hit_"+u.id)receiver=candidate;
+               for each(candidate in bridge.loc.units)if(candidate is MirrorHitUnit && MirrorHitUnit(candidate).body===u)receiver=candidate;
             }
          }
          var previous:Dictionary=new Dictionary();for each(var p:Object in numbers())previous[p]=String(p.vis.numb.text);

@@ -966,11 +966,6 @@ package rconnect.core
          {
             mod.game.tileRedrawIfDirty();
          }
-         // M26：Box 平滑插值驱动（50ms/tick，tween 逼近宿主目标位）
-         if(mod.game != null)
-         {
-            mod.game.tickBoxTweens();
-         }
          // M26 诊断：宿主每房记一次门清单（id/autoClose/open）
          if(mod.game != null && _tickCount % 200 == 0
             && mode == HOSTING)

@@ -33,12 +33,15 @@ def main():
     ap.add_argument('--responsive', action='store_true', help='Use the same process-local HighQoS policy as Start-Coop.bat')
     ap.add_argument('--host-save-template',type=Path,help='Copy this slot-zero SOL into isolated slot nine; never modify the source')
     ap.add_argument('--join-save-template',type=Path,help='Copy this slot-zero SOL into isolated slot nine; never modify the source')
+    ap.add_argument('--connect-after-load',action='store_true',help='External scenario driver loads isolated saves before starting TCP')
     ap.add_argument('--host-vision-config-template',type=Path,help='Read-only RV settings copied into unique host storage')
     ap.add_argument('--join-vision-config-template',type=Path,help='Read-only RV settings copied into unique join storage')
     ap.add_argument('--expected-version',default=re.search(r'VERSION:String\s*=\s*"([^"]+)"',
                     (ROOT/'src'/'RConnectMod.as').read_text(encoding='utf-8')).group(1))
     args=ap.parse_args()
     if args.all_mods and not (args.presentation or args.effects or args.smoke): ap.error('--all-mods requires --presentation, --effects or --smoke')
+    if args.connect_after_load and (not args.effects_driver or not args.host_save_template or not args.join_save_template):
+        ap.error('--connect-after-load requires an external driver and both isolated save templates')
     if args.presentation and not args.land: args.land='random_mane'
     if args.vision_candidate: args.with_vision=True
     if (args.host_vision_config_template or args.join_vision_config_template) and not (args.all_mods or args.with_vision):
@@ -118,6 +121,7 @@ def main():
             source=game/'mods'/'RealisticVision'/'release'/name
             if name=='RealisticVisionMod.swf' and args.vision_candidate: source=args.vision_candidate.resolve()
             if source.exists(): shutil.copy2(source,vision/name)
+    configuration_files={};descriptors={};launches=[]
     try:
         for role in ('host','join'):
             folder=output/role; shutil.copytree(frozen,folder)
@@ -141,6 +145,12 @@ def main():
                      worldInject='1',ghostCombat='1',autoHeal='1')
             if role in save_templates: cfg.update(autoGame='',autoLoadSave='9',autoHeal='0')
             elif role=='host' and args.land: cfg['autoTravelLand']=args.land
+            if args.connect_after_load:
+                # Negative slots disable the production auto-loader. The
+                # external scenario recognizes -9 and owns native read/connect
+                # sequencing; no new production config fields are required.
+                cfg.update(autoRole='',autoGame='1',autoLoadSave='-9')
+                if role=='host' and args.land: cfg['autoTravelLand']=args.land
             (release/'config.txt').write_text(json.dumps(cfg),encoding='utf-8')
             # This established integration namespace opts out of MSW's menu
             # auto-driver. The RConnect scenario alone owns test world creation.
@@ -162,7 +172,22 @@ def main():
                 template.parent.mkdir(parents=True,exist_ok=True)
                 assert not template.exists(), 'Unique test storage must not overwrite an existing save'
                 template.write_bytes(save_templates[role])
+            configuration_files[role]={}
+            for config_path in sorted((folder/'mods').glob('*/release/*.txt')):
+                relative=config_path.relative_to(folder).as_posix()
+                payload=config_path.read_bytes()
+                preserved=output/'configuration'/role/relative
+                preserved.parent.mkdir(parents=True,exist_ok=True);preserved.write_bytes(payload)
+                configuration_files[role][relative]=hashlib.sha256(payload).hexdigest()
+            descriptors[role]=hashlib.sha256(desc.read_bytes()).hexdigest()
             artifacts.append((role,storage/'RConnect.log'))
+            launches.append((role,folder,desc,storage,appid))
+        # Both role inputs and configuration bytes exist before either AIR
+        # instance starts. Keep configuration evidence after runtime cleanup.
+        (output/'input.json').write_text(json.dumps(dict(candidate_sha256=candidate_hash,inputs=inputs,
+            configuration_files=configuration_files,descriptors=descriptors,
+            save_templates=save_inputs,vision_config_templates=vision_inputs),indent=2))
+        for role,folder,desc,storage,appid in launches:
             stdout=(output/(role+'.stdout.log')).open('w',encoding='utf-8')
             proc=subprocess.Popen([str(game/'adl64.exe'),'-runtime',str(game/'runtimes/air/win64'),str(desc)],
                        cwd=folder,stdout=stdout,stderr=subprocess.STDOUT,creationflags=subprocess.CREATE_NO_WINDOW)
@@ -177,7 +202,8 @@ def main():
             time.sleep(15 if role=='host' else 0)
         (output/'run.json').write_text(json.dumps(dict(port=port,pids=[p.pid for p in procs],
             candidate=str(args.candidate.resolve()),sha256=candidate_hash,inputs=inputs,save_templates=save_inputs,
-            vision_config_templates=vision_inputs),indent=2))
+            vision_config_templates=vision_inputs,configuration_files=configuration_files,descriptors=descriptors,
+            input_manifest_sha256=hashlib.sha256((output/'input.json').read_bytes()).hexdigest()),indent=2))
         print('OUTPUT '+str(output),flush=True)
         deadline=time.monotonic()+args.seconds
         while time.monotonic()<deadline:

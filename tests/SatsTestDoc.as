@@ -12,6 +12,7 @@ package {
    import fe.unit.Unit;
    import rconnect.core.Log;
    import rconnect.game.GameBridge;
+   import rconnect.game.MirrorHitUnit;
    import rconnect.net.NetMessageEvent;
    import rconnect.net.TcpLink;
 
@@ -116,8 +117,8 @@ package {
             }
             if(!host && phase=="boot") {
                for each(var u:Object in mod.game.loc.units) {
-                  if(u.id=="slaver2")enemy=u;
-                  if(u.id=="rconnect_hit_slaver2")proxy=u;
+                  if(!(u is MirrorHitUnit) && u.id=="slaver2")enemy=u;
+                  if(u is MirrorHitUnit && MirrorHitUnit(u).body!=null && MirrorHitUnit(u).body.id=="slaver2")proxy=u;
                }
                if(enemy==null || proxy==null)return;
                g.invulner=true;g.storona=1;

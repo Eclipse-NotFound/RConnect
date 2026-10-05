@@ -24,7 +24,7 @@ def main():
         'SmoothNetworkTestDoc','AppearanceTestDoc','CombatFeedbackTestDoc','CombatFeedbackNetworkTestDoc',
         'AnimationGapsTestDoc','RoomCooperationTestDoc','CoopTestDoc','SatsTestDoc','CombatStateTestDoc',
         'CombatNetworkTestDoc','GameplayGapTestDoc','GameplayNetworkTestDoc','ProjectileNetworkTestDoc',
-        'FollowNetworkTestDoc','SustainedDensityTestDoc','BeamTerrainTestDoc','TeammateNavigationTestDoc','TelekinesisTestDoc','EnemyGrabTestDoc','CoopPauseTestDoc','SlowTravelTestDoc',
+        'FollowNetworkTestDoc','SustainedDensityTestDoc','BeamTerrainTestDoc','LightningSmartTestDoc','TeammateNavigationTestDoc','TelekinesisTestDoc','TelekinesisMotionTestDoc','EnemyGrabTestDoc','CoopPauseTestDoc','SlowTravelTestDoc',
         'HiddenRoomTestDoc','HiddenRoomFollowTestDoc','HiddenRoomCorpseTestDoc','HiddenRoomOverlayTestDoc','HiddenRoomProbeTestDoc'])
     args=ap.parse_args()
     out=args.output.resolve()
@@ -43,7 +43,7 @@ def main():
     subprocess.run(declarations+['-source-path='+str(source_root),'-external-library-path+='+str(ROOT/'build/GameCombatStubs.swc'),
         '-include-classes='+','.join(classes),'-output='+str(external)],check=True,env=env)
     test_externals=[]
-    if args.entry=='CoopPauseTestDoc':
+    if args.entry in ('CoopPauseTestDoc','LightningSmartTestDoc'):
         # A native Pt in the real Location.step chain counts simulation calls.
         # Its compile-only base declaration stays external to the test SWF too.
         clock_external=out/'ClockDeclarations.swc'
@@ -51,6 +51,13 @@ def main():
             '-external-library-path+='+str(ROOT/'build/GameCombatStubs.swc'),
             '-include-classes=fe.Pt','-output='+str(clock_external)],check=True,env=env)
         test_externals=['-external-library-path+='+str(clock_external)]
+    if args.entry=='LightningSmartTestDoc':
+        # Read the already-loaded sibling MSW domain through MainFE's native
+        # loader registry; do not initialize a second copy of that mod.
+        loader_external=out/'LoaderDeclarations.swc'
+        subprocess.run(declarations+['-source-path='+str(ROOT/'tests/lightning-extern'),
+            '-include-classes=MainFE','-output='+str(loader_external)],check=True,env=env)
+        test_externals.append('-external-library-path+='+str(loader_external))
     subprocess.run(compiler+test_externals+['-source-path='+str(ROOT/'tests'),'-external-library-path+='+str(external),
         '-external-library-path+='+str(ROOT/'build/GameCombatStubs.swc'),'-output='+str(out/'EffectsDriver.swf'),
         str(ROOT/'tests'/(args.entry+'.as'))],check=True,env=env)

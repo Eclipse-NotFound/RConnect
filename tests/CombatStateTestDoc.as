@@ -9,6 +9,7 @@ package {
    import fe.unit.CombatStateProbe;
    import rconnect.core.Log;
    import rconnect.game.GameBridge;
+   import rconnect.game.MirrorHitUnit;
 
    /** Differential tests execute native damage and the production mirror seam.
     * Run in the host of an isolated connected pair; no source substitutions. */
@@ -55,7 +56,7 @@ package {
          z.scY=0;z.invis=true;z.setPos(z.X,z.Y);CombatStateProbe.ai(z as Unit,5);
          b.applyUnitsSync(list);b.tickFrozenAnims();
          check(z.scY==sy && z.Y2-z.Y1>0,"awake ghoul restores client collision height host="+sy+" local="+z.scY);
-         var proxy:Object;for each(var u:Object in b.loc.units)if(u.id=="rconnect_hit_zombie1")proxy=u;
+         var proxy:Object;for each(var u:Object in b.loc.units)if(u is MirrorHitUnit && MirrorHitUnit(u).body===z)proxy=u;
          check(proxy!=null,"awake ghoul collision receiver exists");
          gun.fireAt(z,true);var mirrorLoss:Number=h-z.hp;
          check(Math.abs(mirrorLoss-nativeLoss)<0.001,"LMG native/mirror ghoul loss matches native="+nativeLoss+" mirror="+mirrorLoss);

@@ -76,12 +76,17 @@ package rconnect.game {
          var desired:Dictionary=new Dictionary(),o:Object,s:Object,rec:Object;
          for(o in objects)desired[o]=objects[o];
          for each(rec in held)desired[rec.o]=rec.s;
-         for(o in active)if(desired[o]==null)release(o);
+         for(o in active) {
+            // Native Q/NPC takeover can replace the visual before the next
+            // packet removes the previous holder. Its style is already native.
+            if(nativeOwns(o,localHeld,authority,remoteOwner))delete active[o];
+            else if(desired[o]==null)release(o);
+         }
          for(o in desired) {
             if(get(o,"loc")!==loc || get(o,"in_chain")!=true || get(o,"dead")==true || Number(get(o,"sost"))>=3) {
                release(o);delete objects[o];continue;
             }
-            if(o===localHeld || (authority && Number(get(o,"levit"))>0 && (remoteOwner==null || !remoteOwner(o)))) {
+            if(nativeOwns(o,localHeld,authority,remoteOwner)) {
                // Native grab has already replaced the visual. Do not restore
                // the old remote style over the new local owner.
                delete active[o];continue;
@@ -96,6 +101,9 @@ package rconnect.game {
                v.transform.colorTransform=new ColorTransform(s.ct[0],s.ct[1],s.ct[2],s.ct[3],s.ct[4],s.ct[5],s.ct[6],s.ct[7]);
             rec.style=s;
          }
+      }
+      private static function nativeOwns(o:Object,localHeld:Object,authority:Boolean,remoteOwner:Function):Boolean {
+         return o===localHeld || (authority && Number(get(o,"levit"))>0 && (remoteOwner==null || !remoteOwner(o)));
       }
       private function release(o:Object):void {
          var rec:Object=active[o];if(rec==null)return;

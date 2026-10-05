@@ -67,6 +67,7 @@ package rconnect.core
       {
          // A room checkpoint must never preserve levitation without its caster.
          if(mod.enemyGrip!=null)mod.enemyGrip.releaseForHandoff();
+         game.releaseMovablesForHandoff();
          if(!busy)
          {
             pauseWorld=game.world;savedPause=Boolean(GameBridge.probe(pauseWorld,"onPause"));

@@ -9,6 +9,7 @@ package
    import flash.utils.getTimer;
    import rconnect.core.Log;
    import rconnect.game.GameBridge;
+   import rconnect.game.MirrorHitUnit;
 
    public class CombatRegression
    {
@@ -46,9 +47,9 @@ package
             shithp:0,allVulnerMult:1,vulner:vulnerable,opt:{},invulner:false};
          list.push(e); b.reconcileWorld(list); b.applyUnitsSync(list);
          var enemy:Object;
-         for each(var u:Object in b.loc.units) if(u.id=="slaver2") enemy=u;
+         for each(var u:Object in b.loc.units) if(!(u is MirrorHitUnit) && u.id=="slaver2") enemy=u;
          var proxy:Object;
-         for each(u in b.loc.units) if(u.id=="rconnect_hit_slaver2") proxy=u;
+         for each(u in b.loc.units) if(u is MirrorHitUnit && MirrorHitUnit(u).body===enemy) proxy=u;
          check(proxy!=null && !proxy.disabled && !proxy.in_chain,"collision receiver active without local AI");
          if(proxy!=null) Log.d("COMBAT proxy hp="+proxy.hp+" fraction="+proxy.fraction+" loc="+(proxy.loc===b.loc)
             +" player="+(proxy.loc.gg===b.gg)+" bounds="+[proxy.X1,proxy.X2,proxy.Y1,proxy.Y2]+" invulner="+proxy.invulner);

@@ -11,7 +11,7 @@ package rconnect.game
       public static const DEFENSE:Array = ["maxhp","skin","armor","marmor","armor_hp","armor_maxhp",
          "armor_qual","shithp","shitArmor","allVulnerMult","vulner","dexter","dexterPlus",
          "dodge","invulner","transp","opt","mech","blood","mat","maxShok","showNumbs"];
-      private static const MOTION:Array = ["loc","X","Y","X1","X2","Y1","Y2","scX","scY","storona","fraction","hp","sost","trigDis","nazv","level","invis"];
+      private static const MOTION:Array = ["loc","id","X","Y","X1","X2","Y1","Y2","scX","scY","storona","fraction","hp","sost","trigDis","nazv","level","invis","isVis","npc","noAgro"];
       private var target:Object;
       public static const GRIP:Array=["massa","massaMove","levitPoss","levit_max","levit_r","fracLevit","t_throw"];
       public function get body():Object {return disposed?null:target;}
@@ -23,8 +23,13 @@ package rconnect.game
       {
          super(); this.target=target;
          var self:Object=this;
-         self.id="rconnect_hit_"+String(target.id);
-         self.doop=true; self.unres=true; self.npc=true; self.warn=0; self.xp=0;
+         // Native target selectors and MSW's exclusions must see the enemy's
+         // real identity/eligibility. Being outside firstObj stops this receiver's
+         // AI; marking every enemy as an NPC also prevents legitimate locks.
+         self.doop=true; self.unres=true; self.warn=0; self.xp=0;
+         // The room owner settles native box collisions once. This receiver
+         // must not relay a second impact when a released box falls locally.
+         self.noBox=true;
          sync();
       }
 

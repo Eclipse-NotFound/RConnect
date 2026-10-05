@@ -59,17 +59,21 @@ package rconnect.game
             if(isFinite(ammo) && ammo<Number(r.ammo))
                delta=Math.max(delta,Math.ceil((Number(r.ammo)-ammo)/Math.max(1,Number(get(w,"rashod")))));
             r.total+=delta;r.n=n;r.bullet=bullet;r.ammo=ammo;
-            if(delta>0 && bullet!=null)r.events.push({seq:r.total,at:frameTime>0?frameTime:getTimer(),bullet:bullet,frames:[],sampled:0,end:0});
+            if(delta>0 && bullet!=null)r.events.push({seq:r.total,at:frameTime>0?frameTime:getTimer(),bullet:bullet,
+               recorded:ProjectileVisuals.usesNativeFrames(bullet),frames:[],sampled:0,end:0});
          }
          if(stamp>0)for each(var shot:Object in r.events) {
-            if(int(get(shot.bullet,"spring"))<2 || int(shot.sampled)==stamp)continue;
+            if(!shot.recorded || int(shot.sampled)==stamp)continue;
             shot.sampled=stamp;
             var point:Object=ProjectileVisuals.beamFrame(shot.bullet,stamp);
             if(point!=null){shot.frames.push(point);if(shot.frames.length>64)shot.frames.shift();}
             if(get(shot.bullet,"in_chain")!=true && int(shot.end)==0)shot.end=stamp;
          }
-         while(r.events.length>0 && (r.events.length>24 || (getTimer()-r.events[0].at>700
-            && (int(get(r.events[0].bullet,"spring"))<2 || int(r.events[0].end)>0))))r.events.shift();
+         // Retain the final state for a full send window after native removal.
+         // Measuring only from birth can discard end before a delayed world
+         // snapshot sends it, leaving the last visible frame on the joiner.
+         while(r.events.length>0 && (r.events.length>24 || (getTimer()-Math.max(int(r.events[0].at),int(r.events[0].end))>700
+            && (!r.events[0].recorded || int(r.events[0].end)>0))))r.events.shift();
          return int(r.total);
       }
 
@@ -83,7 +87,7 @@ package rconnect.game
             var count:int=observeWeapon(w),events:Array=[];
             for each(var shot:Object in hostShots[w].events) {
                var flight:Object=ProjectileVisuals.capture(shot.bullet);
-               if(flight!=null && int(flight.spring)>=2){flight.frames=shot.frames;flight.end=shot.end;}
+               if(flight!=null && shot.recorded){flight.frames=shot.frames;flight.end=shot.end;}
                events.push({seq:shot.seq,at:shot.at,flight:flight});
             }
             result.push({stream:hostShots[w].stream,slot:i,id:String(get(w,"id")),variant:int(get(w,"variant")),main:w===current,events:events,

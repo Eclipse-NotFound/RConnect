@@ -27,9 +27,19 @@ package rconnect.game {
             dx:b.dx,dy:b.dy,ddy:b.ddy,rot:b.rot,vel:b.vel,spring:b.spring,
             ended:b.babah || !b.in_chain,blend:b.vis.blendMode};
       }
-      /** Sample the native display after its real simulation frame. A beam can
-       * finish before the next world packet; its final endpoint alone is not
-       * enough to reconstruct the visible lifetime or its muzzle attachment. */
+      /** Alicorn lightning is spring=1, not a laser beam. Reproduce its real
+       * display trajectory/lifetime instead of the short endpoint approximation.
+       * Keep ordinary bullet packets small; only these native effects need this. */
+      public static function usesNativeFrames(b:Object):Boolean {
+         if(int(GameBridge.probe(b,"spring"))>=2)return true;
+         var v:Object=GameBridge.probe(b,"vis");
+         if(v==null)return false;
+         var cls:String=getQualifiedClassName(v);
+         return cls=="visbullightning" || cls=="visbullightning2";
+      }
+      /** Sample the native display after its real simulation frame. An effect
+       * can finish before the next world packet; its final endpoint alone is
+       * not enough to reconstruct its visible lifetime, path or muzzle. */
       public static function beamFrame(b:Object,stamp:int):Object {
          var v:DisplayObject=GameBridge.probe(b,"vis") as DisplayObject;
          if(v==null || !v.visible || v.stage==null)return null;

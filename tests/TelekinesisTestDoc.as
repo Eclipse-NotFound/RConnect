@@ -2,7 +2,12 @@ package {
    import flash.desktop.NativeApplication;
    import flash.display.Sprite;
    import flash.display.DisplayObject;
+   import flash.display.DisplayObjectContainer;
    import flash.display.BitmapData;
+   import flash.display.PNGEncoderOptions;
+   import flash.filesystem.File;
+   import flash.filesystem.FileMode;
+   import flash.filesystem.FileStream;
    import flash.filters.GlowFilter;
    import flash.filters.BlurFilter;
    import flash.geom.Matrix;
@@ -13,6 +18,7 @@ package {
    import flash.utils.Timer;
    import flash.utils.Dictionary;
    import flash.utils.getTimer;
+   import flash.utils.getQualifiedClassName;
    import rconnect.core.Log;
    import rconnect.game.GameBridge;
    import rconnect.net.TcpLink;
@@ -31,6 +37,8 @@ package {
       private var sourceReadyAt:int=0,frameSerial:int=0,renderedSerial:int=-1;
       private var knownWeaponStyles:Object={},transitionFrames:int=0,transitionBad:int=0;
       private var round:int=0,alicorn:Object,loot:Object,boxTint:String,heldExpected:Object;
+      private var colorMiss:int=0;
+      private var sceneWire:Array=[];
       public function TelekinesisTestDoc() {
          var app:String=NativeApplication.nativeApplication.applicationID;
          if(app.indexOf("rconnect-coop-")<0)return;host=app.indexOf("-host-")>=0;
@@ -46,6 +54,7 @@ package {
       private function send(s:String,p:Object=null):void {p=p||{};p.type="telekinesis-test";p.stage=s;if(host)mod.session.server.broadcast(p);else mod.session.link.send(p);}
       private function receive(e:NetMessageEvent):void {
          var p:Object=e.data;
+         if(p.loots is Array)sceneWire=p.loots;
          var incoming:Object=host?p.snap:null;
          if(!host && p.players is Array)for each(var player:Object in p.players)if(player.id==0)incoming=player.snap;
          if(incoming!=null) {
@@ -141,7 +150,7 @@ package {
          send("held-style",{style:{color:glow(o.vis)==null?0:glow(o.vis).color,tint:tint(o)}});
       }
       private function startRound(n:int):void {
-         round=n;phase="show";at=getTimer();sourceReadyAt=0;localDone=peerDone=false;samples=good=enemyGood=boxGood=pixelCount=0;
+         round=n;phase="show";at=getTimer();sourceReadyAt=0;localDone=peerDone=false;samples=good=enemyGood=boxGood=pixelCount=colorMiss=0;
          var b:Object=mod.game,g:Object=b.gg;
          if(box==null)box=findBox();
          if(n==0 && host)send("held-style",{style:{color:ownColor,tint:tint(box)}});
@@ -236,12 +245,54 @@ package {
          var av:Vector.<uint>=a.getVector(a.rect),bv:Vector.<uint>=b.getVector(b.rect),n:int=0;
          for(var i:int=0;i<av.length;i++)if(av[i]!=bv[i])n++;a.dispose();b.dispose();return n;
       }
+      /** Bounded read-only evidence; unchanged pixel and ownership assertions below. */
+      private function objectState(o:Object):Object {
+         if(o==null)return null;
+         var item:Object=GameBridge.probe(o,"item");
+         return {cls:getQualifiedClassName(o),id:GameBridge.probe(o,"id"),item:GameBridge.probe(item,"id"),kol:GameBridge.probe(item,"kol"),
+            x:GameBridge.probe(o,"X"),y:GameBridge.probe(o,"Y"),begX:GameBridge.probe(o,"begX"),begY:GameBridge.probe(o,"begY"),
+            levit:GameBridge.probe(o,"levit"),stay:GameBridge.probe(o,"stay"),invis:GameBridge.probe(o,"invis"),
+            inChain:GameBridge.probe(o,"in_chain"),localHeld:mod.game.gg.teleObj===o,
+            enemyHeld:alicorn!=null && TelekinesisProbe.enemyHeld(alicorn)===o,
+            glow:glow(GameBridge.probe(o,"vis")),tint:GameBridge.probe(o,"vis")==null?null:tint(o)};
+      }
+      private function displayState(v:DisplayObject):Object {
+         if(v==null)return null;
+         var root:DisplayObject=mod.main as DisplayObject,r:Rectangle=v.getBounds(root),chain:Array=[];
+         for(var node:DisplayObject=v;node!=null && chain.length<12;node=node.parent) {
+            chain.push({cls:getQualifiedClassName(node),name:node.name,visible:node.visible,alpha:node.alpha,x:node.x,y:node.y,
+               scaleX:node.scaleX,scaleY:node.scaleY,scrollRect:node.scrollRect,
+               mask:node.mask==null?null:{name:node.mask.name,bounds:node.mask.getBounds(root)},
+               parentIndex:node.parent==null?-1:node.parent.getChildIndex(node)});
+         }
+         var clipped:Rectangle=r.clone();clipped.inflate(10,10);
+         clipped=clipped.intersection(new Rectangle(0,0,mod.stage.stageWidth,mod.stage.stageHeight));
+         return {onStage:v.stage!=null,contained:root is DisplayObjectContainer && DisplayObjectContainer(root).contains(v),
+            bounds:r,clipped:clipped,chain:chain};
+      }
+      private function diagnose(v:DisplayObject,observed:Object):void {
+         var coffee:Array=[],cases:Array=[];
+         for(var o:Object=mod.game.loc.firstObj;o!=null && coffee.length<12;o=o.nobj)
+            if(GameBridge.probe(GameBridge.probe(o,"item"),"id")=="kofe")coffee.push(objectState(o));
+         for each(o in mod.game.loc.objs)if(o.id=="case" && cases.length<12)cases.push(objectState(o));
+         Log.d("TELEKINESIS DISPLAY "+JSON.stringify({host:host,round:round,stage:[mod.stage.stageWidth,mod.stage.stageHeight],
+            room:mod.game.roomKey(),player:objectState(mod.game.gg),wire:wire,sceneWire:sceneWire,
+            weapon:displayState(v),observed:objectState(observed),heldDisplay:displayState(GameBridge.probe(observed,"vis") as DisplayObject),
+            box:objectState(box),loot:objectState(loot),coffee:coffee,cases:cases}));
+         var image:BitmapData=new BitmapData(mod.stage.stageWidth,mod.stage.stageHeight,false,0);
+         image.draw(mod.main as DisplayObject);
+         var out:FileStream=new FileStream();
+         out.open(File.applicationStorageDirectory.resolvePath("presentation-aura-round"+round+"-scene.png"),FileMode.WRITE);
+         out.writeBytes(image.encode(image.rect,new PNGEncoderOptions()));out.close();image.dispose();
+      }
       private function sample():void {
          // Wait for source input, not for the renderer to become correct.
          if(getTimer()-sourceReadyAt<1500)return;
          if(box==null)box=findBox();
          var ghost:Object=mod.game.getRemoteGhost(host?1:0),v:DisplayObject=target(GameBridge.probe(ghost,"currentWeapon")),f:GlowFilter=glow(v);
          samples++;if(round==6?f==null:(f!=null && f.color==peerColor))good++;
+         else if(colorMiss++<4)Log.d("TELEKINESIS COLOR MISS "+JSON.stringify({round:round,host:host,
+            elapsed:getTimer()-sourceReadyAt,expected:peerColor,actual:f==null?null:f.color,wire:wire}));
          if(pixelCount==0 && f!=null)pixelCount=pixels(v);
          if(!host){
             for each(var u:Object in mod.game.loc.units)if(u.id==peerExpected.enemy){var ef:GlowFilter=glow(target(u.currentWeapon));if(ef!=null && ef.color==peerExpected.enemyColor)enemyGood++;}
@@ -254,9 +305,15 @@ package {
             if(!host){check(enemyGood==samples,"native enemy weapon aura frames="+enemyGood+"/"+samples);check(boxGood==samples,"host-held box aura frames="+boxGood+"/"+samples);}}
          if(round==1)check(pixelCount>5 && v===GameBridge.probe(ghost.currentWeapon.vis,"kor"),"alternate weapon aura stays on the native child and produces pixels");
          if(round==1 || round==4 || round==6)check(box!=null && glow(box.vis)==null,"round="+round+" released box has no stale glow");
+         if(round==3 && host) {
+            check(TelekinesisProbe.enemyHeld(alicorn)===box && box.levit==2,"new native enemy caster survives the previous remote Q release");
+            Log.d("TELEKINESIS NATIVE ENEMY OWNER "+JSON.stringify({held:TelekinesisProbe.enemyHeld(alicorn)===box,
+               levit:box.levit,glow:glow(box.vis),tint:tint(box)}));
+         }
          var observed:Object=((round==0 || round==3) && !host) || ((round==2 || round==7) && host)?box:null;
          if(round==4 && !host){loot=findLoot();observed=loot;}
          if(round==5 && host)observed=loot;
+         diagnose(v,observed);
          if(observed!=null){
             check(glow(observed.vis)!=null && heldExpected!=null && glow(observed.vis).color==heldExpected.color,"round="+round+" remote held object has caster color");
             check(heldExpected!=null && tint(observed)==heldExpected.tint,"round="+round+" remote held tint matches native source expected="+(heldExpected==null?null:heldExpected.tint)+" actual="+tint(observed));
@@ -265,7 +322,12 @@ package {
          if(round==6)check(loot!=null && glow(loot.vis)==null,"released loot removes aura despite retained fracLevit");
          if(round==2 || round==5 || round==7) {
             if(!host)check(mod.game.gg.teleObj===(round==5?loot:box) && glow(mod.game.gg.teleObj.vis).color==ownColor,"round="+round+" local grab keeps its native ownership and glow");
-            else check(Number((round==5?loot:box).levit)==0,"round="+round+" remote glow does not enable host telekinetic physics");
+            else {
+               var remoteHeld:Object=round==5?loot:box;
+               check(mod.game.gg.teleObj==null && Number(remoteHeld.levit)==(round==5?0:1)
+                  && remoteHeld.stay===true && Math.abs(Number(remoteHeld.dx))+Math.abs(Number(remoteHeld.dy))<.001,
+                  "round="+round+" remote motion holds its object without enabling a local caster");
+            }
          }
          if(host && (round==2 || round==7))check(hasBlur(box.vis),"round="+round+" aura preserves unrelated object filter");
          Log.d("TELEKINESIS TRACE "+JSON.stringify({host:host,round:round,remote:f,wire:wire}));

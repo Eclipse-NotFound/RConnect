@@ -14,6 +14,8 @@ package rconnect.game
    import fe.serv.Item;
    import fe.unit.RConnectAnimationAccess;
    import fe.unit.RConnectPerceptionAccess;
+   import fe.unit.RConnectTelekinesisAccess;
+   import fe.Obj;
    import flash.utils.getTimer;
    import flash.utils.getQualifiedClassName;
    import rconnect.core.Log;
@@ -58,6 +60,12 @@ package rconnect.game
       public function get coopPaused():Boolean {return _coopPauseAt>=0;}
       public function setCoopPaused(value:Boolean):void {
          if(value==coopPaused)return;
+         if(!value) {
+            var elapsed:int=Math.max(0,getTimer()-_coopPauseAt);
+            for each(var item:Object in _lootMotion)if(item.remoteHeld==true)item.until+=elapsed;
+            for each(var box:Object in _boxTween)if(box.q==true)box.until+=elapsed;
+            _boxPresentAt=0;
+         }
          _coopPauseAt=value?getTimer():-1;
          _projectiles.setPaused(value);
       }
@@ -167,8 +175,7 @@ package rconnect.game
          _units.reset();
          _sceneExpected = new Dictionary();
          _scenePending = new Dictionary();
-         _boxTween = new Dictionary();
-         _boxTrack = new Dictionary();
+         boxTrackReset();
          _istExpectO = new Dictionary();
          _istPending = new Dictionary();
          _istSeen = new Dictionary();
@@ -209,9 +216,10 @@ package rconnect.game
             // Native redraws may replace the object layer after ENTER_FRAME.
             // The same frame clock reattaches a beam without advancing it twice.
             _projectiles.tick(loc,presentationTime());
+            tickBoxTweens();
+            tickLootMotion();
             presentHeldVisuals();
             if(!_mirroring) return;
-            tickLootMotion();
             for(var viewed:Object in _unitView)
                if(probe(viewed,"loc")===loc)
                   try {applyUnitView(viewed,_unitView[viewed].host);_presentation.enforce(viewed);}
@@ -739,7 +747,17 @@ package rconnect.game
             }
             _telekinesis.hold(id,o,held==null?null:held.style);
          }
-         _telekinesis.tick(loc,probe(gg,"teleObj"),!_mirroring,enemyGrip==null?null:enemyGrip.remotelyHeld);
+         _telekinesis.tick(loc,probe(gg,"teleObj"),!_mirroring,remotelyHeldObject);
+      }
+
+      private function remotelyHeldObject(o:Object):Boolean
+      {
+         if(boxHeldByNativeEnemy(o))return false;
+         if(enemyGrip!=null && enemyGrip.remotelyHeld(o))return true;
+         var box:Object=_boxTween[o];if(box!=null && box.q==true)return true;
+         var key:String=_lootIdOf==null?null:_lootIdOf[o];
+         var item:Object=key==null?null:_lootMotion[key];
+         return item!=null && item.remoteHeld==true;
       }
 
       private function apKeyOf(ap:Object):String
@@ -2622,10 +2640,12 @@ package rconnect.game
                   x: numOr(probe(b, "X"), -1),
                   y: numOr(probe(b, "Y"), -1),
                   w: numOr(probe(b, "wall"), 0),
-                  // M25：念力托举态（levit/fracLevit）——接收端据此保持悬浮
-                  // （stay=true 抗重力）而不是让它下坠
+                  // fracLevit is collision attribution retained until landing,
+                  // not an active grab. A remote hold lives in its tween.
                   q: (numOr(probe(b, "levit"), 0) != 0
-                     || numOr(probe(b, "fracLevit"), 0) > 0),
+                     || (_boxTween[b]!=null && _boxTween[b].q==true)),
+                  dx: numOr(probe(b,"dx"),0), dy: numOr(probe(b,"dy"),0),
+                  f: numOr(probe(b,"fracLevit"),0),sampleTime:_sampleAt>0?_sampleAt:getTimer(),
                   dead: probe(b, "dead") == true,
                   aura: TelekinesisVisuals.captureObject(b),
                   hp: numOr(probe(b,"hp"),0),
@@ -2867,7 +2887,7 @@ package rconnect.game
                   if(cand != null && !boxHeldLocally(cand))
                   {
                      trackBoxPos(cand, Number(h.x), Number(h.y),
-                        h.q == true);
+                        h.q == true, false, numOr(h.dx,0), numOr(h.dy,0),int(numOr(h.f,0)),h.sampleTime);
                   }
                }
                synced++;
@@ -3346,6 +3366,7 @@ package rconnect.game
       private var _lootRepT:Object = {};   // joiner：键 → 上次移动上报时刻
       private var _lootLoc:Object = null;  // 房间守卫（换房清空身份表）
       private var _lootMotion:Object = {};
+      private var _lootLocalHeld:Object = {};
 
       /** RemoteLoot keeps native interaction, but a network trajectory must not
        * compete with a second gravity simulation. Local grabs/suction take over. */
@@ -3357,7 +3378,7 @@ package rconnect.game
 
       public function releaseLootMotion(o:Object):void
       {
-         if(_lootKeyOfJ!=null)delete _lootMotion[_lootKeyOfJ[o]];
+         if(_lootKeyOfJ!=null)endRemoteLootMotion(_lootKeyOfJ[o]);
       }
 
       /** Visual/position interpolation only; never call Loot.take on a mirror. */
@@ -3367,31 +3388,59 @@ package rconnect.game
          {
             var target:Object = _lootMotion[key];
             var o:Object = target.o;
+            // A checkpoint may seed ordinary trajectories while this room
+            // becomes ours. Only a live remote grab may drive the room owner.
+            if(!_mirroring && target.remoteHeld!=true)
+            { delete _lootMotion[key]; continue; }
             if(probe(o,"loc") !== loc || probe(o,"in_chain") != true
                || boxHeldLocally(o) || probe(o,"vsos") == true
                || (o is RemoteLoot && (o as RemoteLoot).requested))
-            { delete _lootMotion[key]; continue; }
+            { endRemoteLootMotion(key); continue; }
+            if(target.remoteHeld==true && !coopPaused && presentationTime()>int(target.until))
+            { endRemoteLootMotion(key); continue; }
             var baseline:Object=_lootPos[key];
-            if(baseline!=null && (Math.pow(Number(o.X)-Number(baseline.x),2)+Math.pow(Number(o.Y)-Number(baseline.y),2)>625))
-            { delete _lootMotion[key]; continue; }
+            if(target.remoteHeld!=true && baseline!=null && (Math.pow(Number(o.X)-Number(baseline.x),2)+Math.pow(Number(o.Y)-Number(baseline.y),2)>625))
+            { endRemoteLootMotion(key); continue; }
             try
             {
-               var oldX:Number=Number(o.X),oldY:Number=Number(o.Y);
                var sample:Object=(target.motion as RemoteMotion).sample(presentationTime());
                var x:Number=Number(sample.x),y:Number=Number(sample.y);
-               o["X"]=x; o["Y"]=y; o["dx"]=0; o["dy"]=0;
-               var vis:Object=probe(o,"vis");
-               // Native Loot applies an item-specific vertical offset (weapons
-               // use 10px). Move its existing display by the same displacement.
-               if(vis!=null) { vis["x"]+=x-oldX; vis["y"]+=y-oldY; }
+               placeMovable(o,x,y);o["dx"]=0;o["dy"]=0;
+               if(target.remoteHeld!=true && sample.stay!=null)o["stay"]=sample.stay===true;
+               // The authoritative native Loot cannot override this receiver's
+               // trajectory with gravity. Release hands it back to native step.
+               if(target.remoteHeld==true){o["levit"]=0;o["osnova"]=null;o["stay"]=true;}
                _lootPos[key]={x:x,y:y};
             }
-            catch(err:*) { delete _lootMotion[key]; }
+            catch(err:*) { endRemoteLootMotion(key); }
+         }
+      }
+
+      private function endRemoteLootMotion(key:String):void {
+         var rec:Object=_lootMotion[key];delete _lootMotion[key];
+         // Any discarded network trajectory must hand gravity back. A mirror
+         // may have received stay=true while the source was holding the item.
+         if(rec!=null && !boxHeldLocally(rec.o)) {
+            try {rec.o["levit"]=0;rec.o["stay"]=false;} catch(error:*) {}
+         }
+      }
+
+      /** Keep native bounds and its item-specific display offset together. */
+      private function placeMovable(o:Object,x:Number,y:Number):void {
+         var oldX:Number=Number(o.X),oldY:Number=Number(o.Y);
+         o["X"]=x;o["Y"]=y;
+         if("X1" in o){o["X1"]=x-Number(o.scX)/2;o["X2"]=x+Number(o.scX)/2;o["Y1"]=y-Number(o.scY);o["Y2"]=y;}
+         var run:Function=probe(o,"runVis") as Function;
+         if(run!=null)run();
+         else {
+            var vis:Object=probe(o,"vis");
+            if(vis!=null){vis["x"]+=x-oldX;vis["y"]+=y-oldY;}
          }
       }
 
       private function lootSyncReset():void
       {
+         for(var key:String in _lootMotion)endRemoteLootMotion(key);
          _lootIdOf = new Dictionary();
          _lootKeyOfJ = new Dictionary();
          _lootObjOf = {};
@@ -3400,6 +3449,7 @@ package rconnect.game
          _lootIdSeq = 0;
          _lootDecisions={};
          _lootMotion = {};
+         _lootLocalHeld = {};
       }
 
       /** 沿 Pt 链枚举本房间全部 Loot。@return [obj, base] 数组 */
@@ -3461,7 +3511,7 @@ package rconnect.game
                var itemData:Object = GroundItemState.capture(probe(o, "item"));
                out.push({k: k, x: numOr(probe(o, "X"), 0),
                   y: numOr(probe(o, "Y"), 0), sampleTime: _sampleAt>0?_sampleAt:getTimer(), b: String(e[1]), item: itemData,
-                  suction: probe(o, "vsos") == true,aura:TelekinesisVisuals.captureObject(o)});
+                  stay:probe(o,"stay")==true,suction: probe(o, "vsos") == true,aura:TelekinesisVisuals.captureObject(o)});
             }
          }
          catch(err:*)
@@ -3550,7 +3600,7 @@ package rconnect.game
                      }
                      var track:Object=_lootMotion[k];
                      if(track==null)track=_lootMotion[k]={o:lo,motion:new RemoteMotion(200)};
-                     (track.motion as RemoteMotion).push({x:Number(s.x),y:Number(s.y),sampleTime:s.sampleTime},getTimer());
+                     (track.motion as RemoteMotion).push({x:Number(s.x),y:Number(s.y),stay:s.stay,sampleTime:s.sampleTime},getTimer());
                      if(baseP==null)_lootPos[k]={x:Number(lo.X),y:Number(lo.Y)};
                   }
                   else
@@ -3725,14 +3775,17 @@ package rconnect.game
                }
                var dx:Number = numOr(probe(o, "X"), 0) - Number(p.x);
                var dy:Number = numOr(probe(o, "Y"), 0) - Number(p.y);
-               if(dx * dx + dy * dy > 625)
+               var held:Boolean=boxHeldLocally(o),edge:Boolean=held!=(_lootLocalHeld[k]===true);
+               if(dx * dx + dy * dy > 625 || held || edge)
                {
                   delete _lootMotion[k];
-                  if(now - numOr(_lootRepT[k], 0) > 200)
+                  if(edge || now - numOr(_lootRepT[k], 0) > 200)
                   {
                      _lootRepT[k] = now;
+                     _lootLocalHeld[k]=held;
                      moved.push({k: k, x: numOr(probe(o, "X"), 0),
-                        y: numOr(probe(o, "Y"), 0)});
+                        y: numOr(probe(o, "Y"), 0),q:held,sampleTime:_sampleAt>0?_sampleAt:now,
+                        dx:numOr(probe(o,"dx"),0),dy:numOr(probe(o,"dy"),0)});
                   }
                }
             }
@@ -3765,7 +3818,20 @@ package rconnect.game
          }
          for each(var m:Object in o.moved) {
             var moved:Object=_lootObjOf[String(m.k)];
-            if(moved!=null){moved.X=Number(m.x);moved.Y=Number(m.y);moved.dx=moved.dy=0;}
+            if(moved==null || boxHeldLocally(moved))continue;
+            key=String(m.k);
+            if(m.q===true) {
+               var rec:Object=_lootMotion[key];
+               if(rec==null)rec=_lootMotion[key]={o:moved,motion:new RemoteMotion(200)};
+               rec.remoteHeld=true;rec.until=presentationTime()+1500;
+               moved.levit=0;moved.osnova=null;moved.stay=true;moved.dx=moved.dy=0;
+               (rec.motion as RemoteMotion).push({x:Number(m.x),y:Number(m.y),sampleTime:m.sampleTime},getTimer());
+            } else {
+               endRemoteLootMotion(key);
+               placeMovable(moved,Number(m.x),Number(m.y));
+               moved.dx=numOr(m.dx,0);moved.dy=numOr(m.dy,0);moved.stay=false;
+               _lootPos[key]={x:Number(moved.X),y:Number(moved.Y)};
+            }
          }
          return receipt;
       }
@@ -4005,7 +4071,27 @@ package rconnect.game
 
       private function boxTrackReset():void
       {
+         for(var b:Object in _boxTween)endBoxTween(b);
+         _boxTween = new Dictionary();
+         _boxPresentAt=0;
          _boxTrack = new Dictionary();
+      }
+
+      private function endBoxTween(b:Object):void
+      {
+         var tw:Object=_boxTween[b];delete _boxTween[b];
+         if(tw!=null && tw.q==true && !boxHeldLocally(b))
+            try {if(numOr(probe(b,"levit"),0)==1)b["levit"]=0;b["stay"]=false;} catch(error:*) {}
+      }
+
+      /** A room checkpoint cannot retain a hold whose caster is elsewhere. */
+      public function releaseMovablesForHandoff():void
+      {
+         var held:Object=probe(gg,"teleObj");
+         if(held!=null && grabBody(held)==null)
+            try {gg["dropTeleObj"]();} catch(error:*) {}
+         for(var b:Object in _boxTween)if(_boxTween[b].q==true)endBoxTween(b);
+         for(var key:String in _lootMotion)if(_lootMotion[key].remoteHeld==true)endRemoteLootMotion(key);
       }
 
       /** 同 id 就近匹配（未消费的里挑离 (x,y) 最近者，150px 内才算）。
@@ -4041,11 +4127,16 @@ package rconnect.game
          return best;
       }
 
-      /** 本地正被念力托举？（levit/fracLevit 由施法侧设置） */
+      /** Only the active native caster pointer owns local motion. fracLevit
+       *  outlives release/throw and must not block network handback. */
       private function boxHeldLocally(b:Object):Boolean
       {
-         return numOr(probe(b, "levit"), 0) != 0
-            || numOr(probe(b, "fracLevit"), 0) > 0;
+         return b!=null && probe(gg,"teleObj")===b && numOr(probe(b,"levit"),0)>0;
+      }
+
+      private function boxHeldByNativeEnemy(b:Object):Boolean {
+         return !_mirroring && numOr(probe(b,"levit"),0)>1
+            && RConnectTelekinesisAccess.enemyHolding(probe(loc,"units") as Array,b as Obj);
       }
 
       /** 同 id 就近匹配（未消费的里挑离 (x,y) 最近者，150px 内才算）。 */
@@ -4248,16 +4339,19 @@ package rconnect.game
          }
       }
 
-      /** 落位到宿主/对端报告的位置——M26 平滑插值：不硬跳，设 tween 目标
-       *  由 tickBoxTweens 每 50ms 渐进（25%/tick），念力搬运观感平滑。
+      /** Held boxes use source-time interpolation on each rendered frame.
+       * Release hands position/velocity back to native physics.
        *  本地偏差保护（force=false 的镜像路径）：本地已偏离基线 >25px
        *  （本地念力/推挤进行中）时不覆写也不刷新基线——否则宿主旧快照
        *  会把本地移动拽回、上报通道永远发不出。force=true 强制收目标。 */
       private function trackBoxPos(b:Object, x:Number, y:Number,
-         held:Boolean, force:Boolean = false):void
+         held:Boolean, force:Boolean = false,vx:Number=0,vy:Number=0,fraction:int=0,stamp:*=null):void
       {
          try
          {
+            // A late release belongs to the old remote hold. It cannot cancel
+            // a newer native enemy caster that has already taken this box.
+            if(!held && boxHeldByNativeEnemy(b)){endBoxTween(b);return;}
             var rec:Object = _boxTrack[b];
             var tween:Object = _boxTween[b];
             if(rec != null && !force && tween == null)
@@ -4280,7 +4374,26 @@ package rconnect.game
             }
             var bx:Number = numOr(probe(b, "X"), 0);
             var by:Number = numOr(probe(b, "Y"), 0);
-            if(held || Math.abs(bx - x) >= 2 || Math.abs(by - y) >= 2)
+            if(held)
+            {
+               if(force)RConnectTelekinesisAccess.releaseEnemyCaster(probe(loc,"units") as Array,b as Obj);
+               // Native enemy findBox excludes levitating boxes. A live remote
+               // grip owns this physics flag, independently of the local caster.
+               b["levit"]=1;
+               if(tween==null || tween.q!=true)tween=_boxTween[b]={q:true,motion:new RemoteMotion(200)};
+               tween.until=presentationTime()+1500;
+               (tween.motion as RemoteMotion).push({x:x,y:y,sampleTime:stamp},getTimer());
+               b["fracLevit"]=fraction;
+            }
+            else if((tween!=null && tween.q==true) || (rec!=null && rec.q==true) || fraction>0)
+            {
+               // A stale held tween with zeroed velocity can otherwise pin a
+               // released box above the floor forever. Native step owns falling.
+               if((tween!=null && tween.q==true) || (rec!=null && rec.q==true))b["levit"]=0;
+               delete _boxTween[b];placeMovable(b,x,y);
+               b["dx"]=vx;b["dy"]=vy;b["stay"]=false;b["fracLevit"]=fraction;
+            }
+            else if(Math.abs(bx - x) >= .001 || Math.abs(by - y) >= .001)
             {
                // M26：设 tween 目标（平滑逼近），不直接写坐标
                _boxTween[b] = {tx: x, ty: y, q: held};
@@ -4299,7 +4412,7 @@ package rconnect.game
             }
             if(rec == null)
             {
-               _boxTrack[b] = {x: bx, y: by, q: held, lastR: 0};
+               _boxTrack[b] = {x: bx, y: by, q: held, lastR: 0,localQ:false};
             }
             else
             {
@@ -4313,8 +4426,7 @@ package rconnect.game
          }
       }
 
-      /** M26：Box 平滑插值驱动（Session 每 50ms tick 调用）——每步向
-       *  tween 目标逼近 25%，到位即停；托举态保持抗重力。 */
+      /** Advance presentation once per rendered game frame, including hosts. */
       public function tickBoxTweens():void
       {
          if(_boxTween == null)
@@ -4323,11 +4435,24 @@ package rconnect.game
          }
          try
          {
+            var now:int=presentationTime();
+            var elapsed:int=_boxPresentAt==0?50:Math.max(0,now-_boxPresentAt);_boxPresentAt=now;
+            var factor:Number=1-Math.pow(.75,Math.min(250,elapsed)/50);
             for(var b:Object in _boxTween)
             {
                var tw:Object = _boxTween[b];
+               if(boxHeldByNativeEnemy(b)){endBoxTween(b);continue;}
                if(probe(b, "loc") !== loc || probe(b, "dead") == true || boxHeldLocally(b))
-               { delete _boxTween[b]; continue; }
+               { endBoxTween(b); continue; }
+               if(tw.q==true && !coopPaused && now>int(tw.until))
+               { endBoxTween(b); continue; }
+               if(tw.q==true && tw.motion!=null) {
+                  var p:Object=(tw.motion as RemoteMotion).sample(now);
+                  if(p!=null){placeMovable(b,Number(p.x),Number(p.y));b["stay"]=true;b["dx"]=b["dy"]=0;}
+                  var heldBaseline:Object=_boxTrack[b];
+                  if(heldBaseline!=null){heldBaseline.x=b.X;heldBaseline.y=b.Y;}
+                  continue;
+               }
                var x:Number = numOr(probe(b, "X"), 0);
                var y:Number = numOr(probe(b, "Y"), 0);
                var dx:Number = Number(tw.tx) - x;
@@ -4335,11 +4460,11 @@ package rconnect.game
                if(dx * dx + dy * dy <= 1)
                {
                   if(tw.q == true) { b["stay"] = true; b["dx"] = 0; b["dy"] = 0; }
-                  else delete _boxTween[b];
+                  else {placeMovable(b,Number(tw.tx),Number(tw.ty));delete _boxTween[b];}
                   continue;
                }
-               var nx:Number = x + dx * 0.25;
-               var ny:Number = y + dy * 0.25;
+               var nx:Number = x + dx * factor;
+               var ny:Number = y + dy * factor;
                var scX:Number = numOr(probe(b, "scX"), 20);
                var scY:Number = numOr(probe(b, "scY"), 20);
                b["X"] = nx;
@@ -4365,6 +4490,7 @@ package rconnect.game
       }
 
       private var _boxTween:Dictionary = new Dictionary();
+      private var _boxPresentAt:int=0;
 
       private var _boxMoveLogged:Dictionary = new Dictionary();
       private var _objScanErrLogged:Boolean = false;
@@ -4395,14 +4521,17 @@ package rconnect.game
                var rec:Object = _boxTrack[b];
                var dx:Number = numOr(probe(b, "X"), 0) - Number(rec.x);
                var dy:Number = numOr(probe(b, "Y"), 0) - Number(rec.y);
-               if((_boxTween[b] == null || boxHeldLocally(b)) && dx * dx + dy * dy > 625
-                  && now - numOr(rec.lastR, 0) > 200)
+               var held:Boolean=boxHeldLocally(b),edge:Boolean=held!=(rec.localQ===true);
+               if((_boxTween[b] == null || held || edge) && (dx * dx + dy * dy > 625 || held || edge)
+                  && (edge || now - numOr(rec.lastR, 0) > 200))
                {
                   rec.lastR = now;
+                  rec.localQ=held;
                   moved.push({id: String(probe(b, "id")), k: _objects.known(b),
                      x: numOr(probe(b, "X"), 0),
                      y: numOr(probe(b, "Y"), 0),
-                     q: boxHeldLocally(b)});
+                     q:held,dx:numOr(probe(b,"dx"),0),dy:numOr(probe(b,"dy"),0),
+                     f:numOr(probe(b,"fracLevit"),0),sampleTime:_sampleAt>0?_sampleAt:now});
                }
             }
             // Send local intent on the first scan; repeat until echoed. Automatic
@@ -4455,10 +4584,10 @@ package rconnect.game
                for each(var m:Object in moved)
                {
                   var mb:Object = _objects.resolve(m, probe(loc, "objs") as Array, new Dictionary());
-                  if(mb != null)
+                  if(mb != null && !boxHeldLocally(mb))
                   {
                      trackBoxPos(mb, Number(m.x), Number(m.y),
-                        m.q == true, true);
+                        m.q == true, true,numOr(m.dx,0),numOr(m.dy,0),int(numOr(m.f,0)),m.sampleTime);
                      Log.d("RConnectGame: box move applied '" + String(m.id)
                         + "'");
                   }
@@ -5092,6 +5221,7 @@ package rconnect.game
                   death: DeathVisuals.capture(u),
                   motion: unitFields(u, ["dx","dy","stay","isFly","isLaz","levit","scX","scY"]),
                   grip: unitFields(u, MirrorHitUnit.GRIP),
+                  targeting: unitFields(u, ["npc","noAgro"]),
                   // Mechanical visibility, never the local RV/FOV visible flag.
                   view: unitView(u),
                   body: TurretDisplay.capture(u),
@@ -5208,6 +5338,7 @@ package rconnect.game
                // Older/test snapshots may provide movement directly.
                applyUnitFields(target, unitFields(e, ["dx","dy","stay","isFly","isLaz","levit"]));
                applyUnitFields(target, e.defense);
+               applyUnitFields(target, e.targeting);
                if(e.view!=null)
                {
                   if(_unitView[target]==null) _unitView[target]={original:unitView(target),host:e.view};
@@ -5357,6 +5488,9 @@ package rconnect.game
          for each(var name:String in names)
          {
             var value:* = probe(u,name);
+            // Unit loads this untyped limit directly from an XML attribute.
+            // JSON.stringify(XMLList) produces "XMLList", not its numeric value.
+            if(name=="levit_max" && value!=null)value=Number(value);
             if(value != null) out[name] = name=="vulner" && value is Array
                ? NativeRoomState.numbers(value) : (value is Array ? value.concat() : value);
          }
@@ -5703,6 +5837,7 @@ package rconnect.game
             var box:Object=_objects.resolve(os,loc.objs,used);
             if(box!=null){NativeRoomState.restore(box,os.runtime);NativeRoomState.restore(probe(box,"inter"),os.inter);RConnectInteractionAccess.restore(probe(box,"inter"),os.interNative);}
          }
+         if(authority)boxTrackReset(); // Restored owner velocities belong to native physics.
          _terrain.restoreCheckpoint(loc,s.tiles as Array);
          // A mirror is a display surrogate. Reconstruct native units when its
          // authority changes, with original difficulty, AI and weapons.
@@ -5793,8 +5928,7 @@ package rconnect.game
             restoreUnitViews();
             _sceneExpected = new Dictionary();
             _scenePending = new Dictionary();
-            _boxTween = new Dictionary();
-            _boxTrack = new Dictionary();
+            boxTrackReset();
             _istExpectO = new Dictionary();
             _istPending = new Dictionary();
             // Original AI flags belong to the whole session, including rooms

@@ -1,5 +1,7 @@
 package fe.unit { import flash.display.MovieClip; import fe.Obj; public class UnitAlicorn extends UnitPon {
 internal function upTeleObj(target:Obj):* {}
+internal var teleObj:Obj;
+public function dropTeleObj():* {}
 internal var visshit:MovieClip;
 internal var floatX:Number;
 internal var floatY:Number;
