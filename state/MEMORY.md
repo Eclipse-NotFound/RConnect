@@ -39,7 +39,7 @@
 - **旧Motion诊断保留**：首轮d8为179/2，leave后Q清除缺前帧，根因未定；final-3同驱动d883为178/3，pinok21.537→65.234跨原生松手60阈值。final-4只隔离夹具无关弹丸，57e3/9436/f6b9三轮各186/0；M45同夹具0967为142/44，5原生伤害负对照通过。不倒推旧d8/Style4原因，见2026-10-06-m46-joint-validation.md及motion-control-audit.json。
 - **旧冻结与失败出处**：R2的final-12包`build/m46/r2-handoff-mask-grip.json`及root final-13/root-adoption.json已核对；905总门禁因恢复审查中断。Lightning/aff85d2db3退出0未总审计，Beam/225db0e4ab中断不计通过；PID45972/69260已退出。恢复夹具final-14至final-22的编译、条件等待、原生单mask引用及裁剪取样失败均在journal顶部和各冻结目录保留。不得覆盖这些输出或把条件修正倒推成生产根因。
 - **恢复专项接点**：旧905在final-20实测P2（存活本体即时leave后mask空），P1几何猜认仍仅静态风险。已删除顺序/几何认nativeMask，prepare共享前保存直接引用；无法安全还原时用自有过渡位图，不读/克隆/释放RV像素存储。提前ENTER_FRAME纯observe、晚RENDER capture去重；clean在offline/roomHold前。final-33/62fe2777d4两端各149/0/DONE，8case严格mask和字段裁剪hash绿，51源/138验证/57保护闭包核对，PID49528/9068已退出；仍含DEBUG故不部署。
-- **恢复根因与边界**：37明确maskReferences→restore #1009，38实测原生MovieClip but1–but5有3子项却getChildAt(0)=null；null守卫解决字段恢复，再退役补同签名孤立Shape检查及无引用旧alias隐藏解决case4即时白块。不能把匿名Timer11、final19/32停止倒推为同因。full-scene固定白矩形检查不等于任意像素一致；5px整Tile回退是当前RV格式假设，case7只覆盖last观察之后接管。35/36失败与34独立字段绿但真实PNG红保留。完整证据knowledge/experiments/2026-10-06-m46-native-mask-restoration.md、final39/restore-closure-audit.json。R2/R3只读，root唯一窗口。
+- **恢复根因与边界**：37明确maskReferences→restore #1009，38实测原生MovieClip but1–but5有3子项却getChildAt(0)=null；null守卫解决字段恢复，再退役补同签名孤立Shape检查及无引用旧alias隐藏解决case4即时白块。不能把匿名Timer11、final19/32停止倒推为同因。full-scene固定白矩形检查不等于任意像素一致；5px整Tile回退是当前RV格式假设，case7只覆盖last观察之后接管。35/36失败与34独立字段绿但真实PNG红保留。完整证据knowledge/experiments/2026-10-06-m46-native-mask-restoration.md、final39/restore-closure-audit.json。R3已只读独立复核final39源和两端case4 PNG，未发现新实证阻断。
 - **M44完成**：武器快照补真实GlowFilter和root/kor目标；Box/Loot/Unit补光晕/ColorTransform，加入侧本地抓持经玩家稳定键反向送达。TelekinesisVisuals只管显示，不写levit/AI；本地抓取优先，松手/替换/换房/离线清理，保留无关滤镜。最终八阶段c59e4214a4通过；详见2026-10-04-m44-telekinesis.md。
 - **M45完成**：EnemyGrip把加入侧原生抓持意图交给唯一房间模拟端，保留原版耗魔/抓取资格/挣脱；投掷只转发原版冲量一次。RoomSync交接前释放本机及远端抓持，Session停止时清理网络抓持，离线原生持有保留；M44光晕显示与实际控制保持分离。
 - **可选联机暂停完成**：用户确认任一端触发全队暂停（含分房），双方都关才恢复。F10两开关默认关、宿主设置保存；菜单范围按已说明的全部原版暂停菜单实现。网络/UI/SATS排队继续，恢复后执行战斗；不以暂停阻塞房间/地图交接。
@@ -73,7 +73,7 @@
 ## 6. 下一步
 
 1. 用户查看design/ui-preview/index.html的占位与展开方式；后续按反馈实施AS3，依方案验收真实字号、输入焦点、鼠标和多语言。不把本轮设计预览自动变成生产UI部署。
-2. 联合门禁已在final39首组Motion红后停止，当前无测试进程；root仍唯一构建/AIR/部署窗口。接续先读MovableGripLifecycle与真实快照，记录暂停边缘掉落类型/Y/stay及track/cursor，区分实际轨迹结束与缓冲冻结，不改原时间/阈值。修复后新冻结并重跑13组；齐全再审计50类/源/测试/配置及56保护指纹，绿后仅备份/部署本模组，无驱动冒烟失败先回滚M45。不得用历史绿或字段hash代替当前实际场景門槛。
+2. 联合门禁已在final39首组Motion红后停止，当前无测试进程。10-06 UI交付后将源码/测试/helper/编译与隔离AIR窗口串行交回R2继续其念力修复；R3保持只读。root保留UI、VERSION/release/MEMORY、最终审计/部署。R2先读MovableGripLifecycle与真实快照，取暂停边缘掉落类型/Y/stay及track/cursor，区分实际轨迹结束与缓冲冻结，不改原时间/阈值；journal立即失败条目可追加，历史不改。修复后新冻结，回传闭包与窗口，再由root组织13组总门禁及部署；无驱动冒烟失败先回滚M45，不用历史绿替代当前场景门槛。
 3. 当前已部署M45仍需重启两端生效。背景房若重现，核对两端RConnectRoomTrace与角色状态；未认定根因，不盲改。性能边界和排除范围保持，不自动推送。
 
 ## 7. 记录与工具入口
