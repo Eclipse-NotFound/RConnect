@@ -36,6 +36,7 @@
 - 已向R2提出原生天角兽levit=2持箱与远端抢夺的位置控制竞争风险，尚未复现。R3红外识别按原生类名匹配的特殊分支未覆盖；不得把普通可见目标通过解释成完整兼容。交付细节见knowledge/experiments/2026-10-05-lightning-smart.md；失败记录保留。
 - R2 C11（f13fe768…/112269字节）19817e0dfb动作/生命周期176项首绿，M45同驱动c960697dc1已核对130 PASS/46 FAIL；但C11 Aura回归1d792dc4a2为98 PASS/4 FAIL，**C11不能作为最终候选**。新失败为加入侧round2武器换色25/31帧与round3天角兽持箱颜色/染色/像素。R2保留并加源端持续指针断言做旧版对照，再修较晚Q释放覆盖新native levit2/敌方指针的交接竞态；窗口仍归R2，联合候选未构建。
 - 本会话已提示旧释放、旧Box缓动及remotelyHeldObject视觉回调都需保护新的真实敌方指针；presentHeldVisuals先于tickBoxTweens，旧tween.q会让旧玩家光晕继续覆盖新NPC。保护只按房间模拟端真实指针，不能用镜像残留指针拒绝权威快照，也不能拦住真正新Q抢敌方箱子。换色失败先与旧版同夹具区分，不改阈值；C10的偶发退出Q丢失仍未归因，原失败保留。
+- R2 C12（89dd544b…/112361字节）已编译未验绿；C11加强Aura 9988740d17已核对99 PASS/4 FAIL，源端held=true但levit0/glow=null。本会话读到C12保护旧释放与缓动、RENDER先清缓动后画光晕，但onMirrorFrame的ENTER_FRAME入口仍先presentHeldVisuals，回调未直接排除新NPC指针，仍可能提前覆色；已要求核对冻结源码并另冻修改，尚未实测C12失败。当前先跑M45 Aura同输入对照，窗口归R2。
 - RemoteLoot着地stay已随位置进入同一RemoteMotion样本，C9原失败保留。活动远端Box使用levit1与原生天角兽指针/冷却桥接，旧纯光晕断言已明确改为实际抓持契约。退出Q根因尚未认定：Session/RoomSync退出不直接走hold，原生actions会检查celDist/teleDist、魔力与levitPoss；endSession还会恢复敌人disabled，已提示R2保留诊断并与旧版区分，不能为保Q绕过原生资格。
 - **M44完成**：武器快照补真实GlowFilter和root/kor目标；Box/Loot/Unit补光晕/ColorTransform，加入侧本地抓持经玩家稳定键反向送达。TelekinesisVisuals只管显示，不写levit/AI；本地抓取优先，松手/替换/换房/离线清理，保留无关滤镜。最终八阶段c59e4214a4通过；详见2026-10-04-m44-telekinesis.md。
 - **M45完成**：EnemyGrip把加入侧原生抓持意图交给唯一房间模拟端，保留原版耗魔/抓取资格/挣脱；投掷只转发原版冲量一次。RoomSync交接前释放本机及远端抓持，Session停止时清理网络抓持，离线原生持有保留；M44光晕显示与实际控制保持分离。
