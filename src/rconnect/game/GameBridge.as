@@ -2,6 +2,7 @@ package rconnect.game
 {
    import flash.display.Stage;
    import flash.display.DisplayObjectContainer;
+   import flash.display.DisplayObject;
    import flash.events.Event;
    import flash.geom.ColorTransform;
    import flash.text.TextField;
@@ -120,7 +121,7 @@ package rconnect.game
       private var _objects:ObjectIdentity = new ObjectIdentity();
       private var _telekinesis:TelekinesisVisuals = new TelekinesisVisuals();
       private var _units:ObjectIdentity = new ObjectIdentity("U");
-      private var _mirrorMasks:Dictionary = new Dictionary();
+      private var _mirrorMasks:MirrorMasks = new MirrorMasks();
       private var _sceneExpected:Dictionary = new Dictionary();
       private var _scenePending:Dictionary = new Dictionary();
       private var _freezeOriginal:Dictionary = new Dictionary();
@@ -192,6 +193,7 @@ package rconnect.game
        *  死亡/离房自动移出——不强制显示尸体）。 */
       private function onVisForceFrame(e:Event):void
       {
+         _mirrorMasks.clean(loc,world,main as DisplayObject);
          if(roomHold)return;
          if(_forcingVisibility || _animatingMirrors || _applyingUnits) return;
          var measureAt:int=presentationTiming==null?0:getTimer();
@@ -220,6 +222,7 @@ package rconnect.game
             tickLootMotion();
             presentHeldVisuals();
             if(!_mirroring) return;
+            _mirrorMasks.capture(loc,world,main as DisplayObject);
             for(var viewed:Object in _unitView)
                if(probe(viewed,"loc")===loc)
                   try {applyUnitView(viewed,_unitView[viewed].host);_presentation.enforce(viewed);}
@@ -249,6 +252,7 @@ package rconnect.game
                vis["visible"] = true;
                u["prior"] = 1;
                presentUnitHealth(u);
+               releaseMirrorMask(probe(u,"hpbar"));
                }
                catch(unitError:*) {logViewError(String(probe(u,"id")),unitError);}
             }
@@ -264,6 +268,7 @@ package rconnect.game
 
       private function onMirrorFrame(e:Event):void
       {
+         _mirrorMasks.clean(loc,world,main as DisplayObject);
          if(roomHold)return;
          if(!_mirroring) _presentation.observe(loc,_sampleAt);
          if(gg!=null)_presentation.observePlayer(gg,_sampleAt);
@@ -360,33 +365,17 @@ package rconnect.game
       // Hide the detached mask itself to prevent white rectangles in its layer.
       private function releaseMirrorMask(vis:Object):void
       {
-         var mask:Object = probe(vis, "mask");
-         if(mask == null) return;
-         if(_mirrorMasks[vis] == null)
-            _mirrorMasks[vis] = {mask:mask, visible:probe(mask,"visible"), cache:probe(vis,"cacheAsBitmap")};
-         mask["visible"] = false;
-         vis["mask"] = null;
-         vis["cacheAsBitmap"] = false;
+         _mirrorMasks.release(vis as DisplayObject);
       }
 
       private function restoreMirrorMasks():void
       {
-         for(var vis:Object in _mirrorMasks) restoreMirrorMask(vis);
-         _mirrorMasks = new Dictionary();
+         _mirrorMasks.reset();
       }
 
       private function restoreMirrorMask(vis:Object):void
       {
-         var saved:Object = _mirrorMasks[vis];
-         if(saved == null) return;
-         try
-         {
-            if(probe(saved.mask,"parent") != null) vis["mask"] = saved.mask;
-            saved.mask.visible = saved.visible;
-            vis["cacheAsBitmap"] = saved.cache;
-         }
-         catch(err:*) {}
-         delete _mirrorMasks[vis];
+         _mirrorMasks.restore(vis as DisplayObject);
       }
 
       /** M12：抢在游戏 onDeactivate 前拦住失焦事件（失焦开 pip 是游戏 bug）。 */
@@ -4075,6 +4064,7 @@ package rconnect.game
          _boxTween = new Dictionary();
          _boxPresentAt=0;
          _boxTrack = new Dictionary();
+         _boxRemoteQ = new Dictionary();
       }
 
       private function endBoxTween(b:Object):void
@@ -4349,9 +4339,12 @@ package rconnect.game
       {
          try
          {
-            // A late release belongs to the old remote hold. It cannot cancel
-            // a newer native enemy caster that has already taken this box.
-            if(!held && boxHeldByNativeEnemy(b)){endBoxTween(b);return;}
+            // q=true renews an existing grab as well as starting a new one.
+            // Remember only received player intent: an old renewal cannot
+            // evict a newer native caster. A release followed by a new grab can.
+            var continuing:Boolean=force && _boxRemoteQ[b]===true;
+            if(force)_boxRemoteQ[b]=held;
+            if(boxHeldByNativeEnemy(b) && (!held || continuing)){endBoxTween(b);return;}
             var rec:Object = _boxTrack[b];
             var tween:Object = _boxTween[b];
             if(rec != null && !force && tween == null)
@@ -4490,6 +4483,7 @@ package rconnect.game
       }
 
       private var _boxTween:Dictionary = new Dictionary();
+      private var _boxRemoteQ:Dictionary = new Dictionary();
       private var _boxPresentAt:int=0;
 
       private var _boxMoveLogged:Dictionary = new Dictionary();
@@ -5400,11 +5394,14 @@ package rconnect.game
                {
                   if(hit == null)
                   {
+                     _mirrorMasks.prepare(target);
                      hit = new MirrorHitUnit(target);
                      _hitUnits[target] = hit;
                      (units as Array).push(hit);
                   }
+                  _mirrorMasks.prepare(target);
                   hit.sync();
+                  _mirrorMasks.register(target,hit);
                }
                else if(hit != null) removeHitUnit(target);
                res.matched++;
@@ -5506,6 +5503,7 @@ package rconnect.game
 
       private function removeHitUnit(u:Object):void
       {
+         _mirrorMasks.forget(u);
          var hit:MirrorHitUnit = _hitUnits[u];
          if(hit != null) hit.dispose();
          delete _hitUnits[u];
@@ -5975,7 +5973,7 @@ package rconnect.game
                _presentation.animateBody(u);
                _presentation.tick(u);
                var hit:MirrorHitUnit = _hitUnits[u];
-               if(hit != null) {hit.syncMotion();hit.tickFeedback();}
+               if(hit != null) {_mirrorMasks.prepare(u);hit.syncMotion();hit.tickFeedback();}
             }
             catch(err:*)
             {

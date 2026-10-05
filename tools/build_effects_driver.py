@@ -25,7 +25,7 @@ def main():
         'AnimationGapsTestDoc','RoomCooperationTestDoc','CoopTestDoc','SatsTestDoc','CombatStateTestDoc',
         'CombatNetworkTestDoc','GameplayGapTestDoc','GameplayNetworkTestDoc','ProjectileNetworkTestDoc',
         'FollowNetworkTestDoc','SustainedDensityTestDoc','BeamTerrainTestDoc','LightningSmartTestDoc','TeammateNavigationTestDoc','TelekinesisTestDoc','TelekinesisMotionTestDoc','EnemyGrabTestDoc','CoopPauseTestDoc','SlowTravelTestDoc',
-        'HiddenRoomTestDoc','HiddenRoomFollowTestDoc','HiddenRoomCorpseTestDoc','HiddenRoomOverlayTestDoc','HiddenRoomProbeTestDoc'])
+        'HiddenRoomTestDoc','HiddenRoomFollowTestDoc','HiddenRoomCorpseTestDoc','HiddenRoomOverlayTestDoc','HiddenRoomProbeTestDoc','MirrorMaskRestoreTestDoc'])
     args=ap.parse_args()
     out=args.output.resolve()
     if not out.is_relative_to(ROOT/'build'): ap.error('Output must be inside this mod build directory')

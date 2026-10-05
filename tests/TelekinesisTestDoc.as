@@ -39,6 +39,12 @@ package {
       private var round:int=0,alicorn:Object,loot:Object,boxTint:String,heldExpected:Object;
       private var colorMiss:int=0;
       private var sceneWire:Array=[];
+      // A quantity marker keeps map-generated coffee out of this fixture.
+      // Network identity is additionally checked after the native grab.
+      private static const FIXTURE_COFFEE:int=997;
+      private var lootKey:String="",npcPrevious:Object;
+      private var cleanupSnapshot:Array=[];
+      private var cleanupLeft:Boolean=false;
       public function TelekinesisTestDoc() {
          var app:String=NativeApplication.nativeApplication.applicationID;
          if(app.indexOf("rconnect-coop-")<0)return;host=app.indexOf("-host-")>=0;
@@ -50,7 +56,10 @@ package {
       }
       private function check(ok:Boolean,s:String):void {Log.d("COOP "+(ok?"PASS ":"FAIL ")+"telekinesis "+s);}
       private function klass(s:String):Class {return mod.main.loaderInfo.applicationDomain.getDefinition(s) as Class;}
-      private function watch(l:TcpLink):void {if(l!=null && !links[l]){links[l]=true;l.addEventListener(TcpLink.MESSAGE,receive);}}
+      private function watch(l:TcpLink):void {if(l!=null && !links[l]){links[l]=true;
+         l.addEventListener(TcpLink.MESSAGE,packetBefore,false,10000);
+         l.addEventListener(TcpLink.MESSAGE,receive);
+         l.addEventListener(TcpLink.MESSAGE,packetAfter,false,-10000);}}
       private function send(s:String,p:Object=null):void {p=p||{};p.type="telekinesis-test";p.stage=s;if(host)mod.session.server.broadcast(p);else mod.session.link.send(p);}
       private function receive(e:NetMessageEvent):void {
          var p:Object=e.data;
@@ -69,7 +78,13 @@ package {
          }
          if(p.type!="telekinesis-test")return;
          try {
-            if(host && phase=="boot" && p.stage=="ready" && nativeReady()) {baseX=mod.game.gg.X;baseY=mod.game.gg.Y;setup();send("setup",{x:baseX,y:baseY,enemy:enemy.id,enemyColor:glow(target(enemy.currentWeapon)).color});}
+            if(p.stage=="loot-fixture"){lootKey=String(p.key);return;}
+            if(host && phase=="boot" && p.stage=="ready" && nativeReady()) {
+               baseX=mod.game.gg.X;baseY=mod.game.gg.Y;
+               // Use the exact native partial-vision room position that exposed
+               // the alias masks. A different entrance can be wholly visible.
+               if(mod.game.roomKey()=="random_mane//0,4,0"){baseX=1681.8;baseY=320;}
+               setup();send("setup",{x:baseX,y:baseY,enemy:enemy.id,enemyColor:glow(target(enemy.currentWeapon)).color});}
             else if(!host && p.stage=="setup") {baseX=p.x;baseY=p.y;peerExpected=p;setup();send("prepared");}
             else if(host && p.stage=="prepared"){startRound(0);send("show",{round:0});}
             else if(!host && p.stage=="show")startRound(int(p.round));
@@ -82,6 +97,24 @@ package {
       }
       private function tick(e:TimerEvent):void {
          mod=RConnectMod.instance;if(mod==null || mod.game==null || mod.session==null)return;
+         if(phase=="cleanup") {
+            if(mod.session.mode=="offline" && !cleanupLeft) {
+               // This suite covers explicit leaving, not autoRole reconnect to
+               // the deliberately closed host. Use the real user-leave path.
+               mod.session.leave();cleanupLeft=true;at=getTimer();
+            }
+            if(mod.session.mode!="offline" && getTimer()-at<8000)return;
+            if(getTimer()-at<3000)return;
+            if(!host) {
+               var state:Object=AuraMaskProbe.retirementState(mod,cleanupSnapshot);
+               check(mod.session.mode=="offline","native mask cleanup follows actual disconnect");
+               check(state.pairs>0 && state.retired==state.pairs,"all borrowed visual receivers retire without removing their bodies");
+               check(state.proxyMasksRestored==0,"remaining native visuals never restore a retired receiver mask");
+               check(state.visibleOrphans==0,"disconnect leaves no visible unreferenced alias bitmap masks");
+               Log.d("TELEKINESIS MASK RETIREMENT "+JSON.stringify(state));
+            }
+            complete();return;
+         }
          if(host && mod.session.server!=null)for each(var l:TcpLink in mod.session.server.clients)watch(l);else if(!host)watch(mod.session.link);
          if(mod.game.gg!=null){mod.game.gg.invulner=true;mod.game.gg.hp=mod.game.gg.maxhp;}
          if(!mod.session.rooms.ready || mod.session.rooms.busy || mod.game.isTransitioning() || mod.game.gg==null)return;
@@ -120,6 +153,7 @@ package {
             alicorn.disabled=true;alicorn.doop=true;alicorn.xp=0;
          }
          mod.stage.addEventListener(Event.ENTER_FRAME,drive,false,-5000);
+         mod.stage.addEventListener(Event.ENTER_FRAME,captureMasks,false,-9500);
          mod.stage.addEventListener(Event.RENDER,renderSample,false,-30000);
       }
       private function equip(g:Object,id:String,mount:int=0):void {
@@ -137,7 +171,7 @@ package {
       }
       private function findLoot():Object {
          for(var o:Object=mod.game.loc.firstObj;o!=null;o=o.nobj)
-            if(GameBridge.probe(o,"item")!=null && o.item.id=="kofe")return o;return null;
+            if(GameBridge.probe(o,"item")!=null && o.item.id=="kofe" && int(o.item.kol)==FIXTURE_COFFEE)return o;return null;
       }
       private function grab(o:Object):void {
          var b:Object=mod.game,g:Object=b.gg;if(o==null)throw new Error("missing grab fixture round "+round);
@@ -171,9 +205,11 @@ package {
          }
          if(n==4){
             if(host){alicorn.dropTeleObj();var lc:Class=klass("fe.loc.Loot"),ic:Class=klass("fe.serv.Item");
-               loot=new lc(b.loc,new ic(null,"kofe",1),baseX+50,baseY-90,false,false,false);loot.auto=false;loot.stay=true;grab(loot);}
+               loot=new lc(b.loc,new ic(null,"kofe",FIXTURE_COFFEE),baseX+50,baseY-90,false,false,false);loot.auto=false;loot.stay=true;
+               b.readLootSync();grab(loot);lootKey=String(b.readSnapshot().tele.k);send("loot-fixture",{key:lootKey});}
          }
-         if(n==5){if(host)g.dropTeleObj();else {loot=findLoot();grab(loot);}}
+         if(n==5){if(host)g.dropTeleObj();else {loot=findLoot();grab(loot);
+            check(String(b.readSnapshot().tele.k)==lootKey,"native join grab addresses the host fixture loot key="+lootKey);}}
          if(n==6){if(!host)g.dropTeleObj();equip(g,"lmg",1);b.world.redrawLoc();}
          if(n==7){equip(g,"lmg");if(host)box.vis.filters=[new BlurFilter(0,0)];else grab(box);}
          check(isFinite(Number(g.currentWeapon.rot)),"round="+round+" native aim produces a finite weapon angle");
@@ -196,8 +232,30 @@ package {
          aimWeapon(g);
          if(host){enemy.disabled=true;enemy.dx=enemy.dy=0;enemy.setVisPos();alicorn.disabled=true;alicorn.dx=alicorn.dy=0;}
          if(g.teleObj!=null){var held:Object=g.teleObj;held.dx=held.dy=0;held.stay=true;}
+         observeNpc("frame",null);
          mod.stage.invalidate();
       }
+      private var npcPacketBefore:Object;
+      private function npcState():Object {
+         if(!host || round!=3 || alicorn==null || box==null)return null;
+         return {time:getTimer(),held:TelekinesisProbe.enemyHeld(alicorn)===box,
+            cooldown:TelekinesisProbe.enemyCooldown(alicorn),levit:box.levit,disabled:alicorn.disabled,
+            x:box.X,y:box.Y,dx:box.dx,dy:box.dy,glow:glow(box.vis)};
+      }
+      private function packetBefore(e:NetMessageEvent):void {npcPacketBefore=npcState();}
+      private function packetAfter(e:NetMessageEvent):void {
+         var after:Object=npcState();
+         if(npcPacketBefore!=null && npcPacketBefore.held && after!=null && !after.held)
+            Log.d("TELEKINESIS NPC DROP PACKET "+JSON.stringify({before:npcPacketBefore,after:after,packet:e.data}));
+         observeNpc("packet",e.data);
+      }
+      private function observeNpc(where:String,p:Object):void {
+         var now:Object=npcState();if(now==null){npcPrevious=null;return;}
+         if(npcPrevious!=null && npcPrevious.held && !now.held)
+            Log.d("TELEKINESIS NPC FIRST DROP "+JSON.stringify({where:where,before:npcPrevious,after:now,packet:p}));
+         npcPrevious=now;
+      }
+      private function captureMasks(e:Event):void {AuraMaskProbe.capture(mod);}
       private function wireReady():Boolean {
          if(wire==null || !(wire.weapons is Array))return false;
          var expectedId:String=round>=1 && round<=5?"assr":"lmg";
@@ -279,6 +337,7 @@ package {
             room:mod.game.roomKey(),player:objectState(mod.game.gg),wire:wire,sceneWire:sceneWire,
             weapon:displayState(v),observed:objectState(observed),heldDisplay:displayState(GameBridge.probe(observed,"vis") as DisplayObject),
             box:objectState(box),loot:objectState(loot),coffee:coffee,cases:cases}));
+         if(!host && round==0)AuraMaskProbe.diagnose(mod,GameBridge.probe(observed,"vis") as DisplayObject,pixels);
          var image:BitmapData=new BitmapData(mod.stage.stageWidth,mod.stage.stageHeight,false,0);
          image.draw(mod.main as DisplayObject);
          var out:FileStream=new FileStream();
@@ -334,7 +393,12 @@ package {
          localDone=true;phase="sampled";send("sampled",{round:round});if(host && peerDone)advance();
       }
       private function finish():void {
-         if(phase=="done")return;phase="done";timer.stop();if(mod!=null){mod.stage.removeEventListener(Event.ENTER_FRAME,drive);mod.stage.removeEventListener(Event.RENDER,renderSample);}
+         if(phase=="done" || phase=="cleanup")return;
+         cleanupSnapshot=AuraMaskProbe.retirementSnapshot(mod);phase="cleanup";at=getTimer();
+         if(mod!=null){mod.stage.removeEventListener(Event.ENTER_FRAME,drive);mod.stage.removeEventListener(Event.ENTER_FRAME,captureMasks);mod.stage.removeEventListener(Event.RENDER,renderSample);}
+      }
+      private function complete():void {
+         phase="done";timer.stop();
          check(transitionFrames>10 && transitionBad==0,"weapon and aura share one presentation state frames="+transitionFrames+" mismatches="+transitionBad);
          Log.d("COOP EFFECTS DONE telekinesis "+(host?"host":"join"));
       }
