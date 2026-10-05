@@ -63,7 +63,9 @@ package rconnect.game {
          return "";
       }
       private function maskReferences(node:DisplayObject,refs:Dictionary):void {
-         if(node.mask!=null)refs[node.mask]=true;
+         if(node==null)return;
+         var mask:DisplayObject=node.mask;
+         if(mask!=null)refs[mask]=true;
          var c:DisplayObjectContainer=node as DisplayObjectContainer;
          if(c!=null)for(var i:int=0;i<c.numChildren;i++)maskReferences(c.getChildAt(i),refs);
       }
@@ -71,10 +73,25 @@ package rconnect.game {
          if(rec.hidden[s]==null)rec.hidden[s]={visible:s.visible};
          s.visible=false;
       }
+      /** Pure reference observation after native frame callbacks. No drawing,
+       * graphics export or display-tree scan runs in this early callback. */
+      public function observe(room:Object,world:Object,root:DisplayObject):void {
+         if(room==null || world==null || root==null)return;
+         roomRef=room;worldRef=world;rootRef=root;
+         for(var body:Object in aliases) {
+            var proxy:MirrorHitUnit=aliases[body] as MirrorHitUnit;
+            if(proxy==null || proxy.body!==body || GameBridge.probe(body,"loc")!==room)continue;
+            register(body,proxy);
+            for each(var field:String in ["vis","hpbar"]) {
+               var v:DisplayObject=GameBridge.probe(body,field) as DisplayObject;
+               if(v!=null && GameBridge.probe(proxy,field)===v && v.mask!=null)views[v].last=v.mask;
+            }
+         }
+      }
       /** Called after native visibility callbacks and before the final render.
        * Inspect layer graphics only when a new mask appears; ordinary frames
        * retain the already-identified mask objects without rescanning graphics. */
-      public function capture(room:Object,world:Object,root:DisplayObject):void {
+      public function capture(room:Object,world:Object,root:DisplayObject,observedOnly:Boolean=false):void {
          if(room==null || world==null || root==null)return;
          roomRef=room;worldRef=world;rootRef=root;
          var pending:Array=[],record:Object,body:Object,proxy:MirrorHitUnit;
@@ -85,8 +102,12 @@ package rconnect.game {
             for each(var field:String in ["vis","hpbar"]) {
                var v:DisplayObject=GameBridge.probe(body,field) as DisplayObject;
                if(v==null || GameBridge.probe(proxy,field)!==v || v.mask==null)continue;
-               record=views[v];if(record==null || record.last===v.mask)continue;
-               record.last=v.mask;
+               record=views[v];if(record==null || record.captured===v.mask)continue;
+               // Retirement may precede the late render. Inspect only a mask
+               // actually observed while aliased; a later owner cannot become
+               // our last/native reference just because the player leaves.
+               if(observedOnly && record.last!==v.mask)continue;
+               record.last=v.mask;record.captured=v.mask;
                var s:Shape=v.mask as Shape,sig:String=bitmapSignature(s);
                if(sig!="" && s.parent!=null)pending.push({v:v,rec:record,mask:s,sig:sig,proxy:proxy});
             }
@@ -126,27 +147,56 @@ package rconnect.game {
          } catch(error:Error) {}
          return true;
       }
-      /** Independent bitmap storage: never export, clone or dispose RV's BMD.
+      /** Independent bitmap storage: never clone, sample or dispose RV's BMD.
        * The transitional clip belongs to us, not to a guessed native owner. */
       private function snapshotMask(source:Shape,v:DisplayObject,record:Object):Shape {
          var b:BitmapData=null,out:Shape=null;
          try {
-            var r:Rectangle=source.getBounds(source),w:int=Math.ceil(r.width),h:int=Math.ceil(r.height);
+            var r:Rectangle=source.getBounds(source),w:int=Math.ceil(r.width),h:int=Math.ceil(r.height),grid:Boolean=false;
+            // Installed RV uses eight subcells per 40px tile. Its graphics
+            // export can omit the bitmap recipe after caching. Preserve that
+            // grid only for its axis-aligned whole-tile field rectangle; this
+            // chooses sampling, never native ownership or a sibling object.
+            if(r.x%40==0 && r.y%40==0 && r.width%40==0 && r.height%40==0) {
+               w=int(r.width/5);h=int(r.height/5);grid=true;
+            }
+            // Preserve RV's original fill grid, rather than freezing a 1px
+            // world raster that changes clipping at fractional view offsets.
+            // Export only dimensions; never retain or read its source pixels.
+            var list:Object=source.graphics["readGraphicsData"](false);
+            for each(var part:Object in list)if(getQualifiedClassName(part)=="flash.display::GraphicsBitmapFill"
+               && part.bitmapData!=null && part.matrix!=null && part.matrix.b==0 && part.matrix.c==0
+               && part.matrix.tx==r.x && part.matrix.ty==r.y
+               && Math.abs(part.bitmapData.width*part.matrix.a-r.width)<=0.125
+               && Math.abs(part.bitmapData.height*part.matrix.d-r.height)<=0.125) {
+               // Exported matrices have finite precision. Accept only a full
+               // field at RV's installed 5px grid or an already-rasterized 1px
+               // field; a small/repeated fill does not describe this rectangle.
+               var coarse:Boolean=Math.abs(part.matrix.a-5)<0.002 && Math.abs(part.matrix.d-5)<0.002;
+               var pixel:Boolean=Math.abs(part.matrix.a-1)<0.00001 && Math.abs(part.matrix.d-1)<0.00001;
+               if(!coarse && !pixel)continue;
+               w=part.bitmapData.width;h=part.bitmapData.height;grid=coarse;break;
+            }
             if(w<1 || h<1 || w*h>1000000)return null;
             // A Shape currently used as a mask is not ordinary drawing content.
             // Copy graphics only for this synchronous draw, without exporting
             // its bitmap storage or changing any live mask/visible reference.
             var paint:Shape=new Shape();paint.graphics.copyFrom(source.graphics);
             b=new BitmapData(w,h,true,0);
-            b.draw(paint,new Matrix(1,0,0,1,-r.x,-r.y));
+            var sx:Number=w/r.width,sy:Number=h/r.height;
+            b.draw(paint,new Matrix(sx,0,0,sy,-r.x*sx,-r.y*sy));
             out=new Shape();out.name="RConnectRestoredMask";
-            out.graphics.beginBitmapFill(b,new Matrix(1,0,0,1,r.x,r.y),false,true);
+            // Only the original coarse fill needs interpolation. The fallback
+            // world-pixel buffer must not undergo a second bilinear pass.
+            out.graphics.beginBitmapFill(b,new Matrix(1/sx,0,0,1/sy,r.x,r.y),false,grid);
             out.graphics.drawRect(r.x,r.y,r.width,r.height);out.graphics.endFill();
             out.transform.matrix=source.transform.matrix.clone();out.cacheAsBitmap=true;
             source.parent.addChild(out);
             owned[out]={view:v,body:record.body,field:record.field,room:roomRef,world:worldRef,bitmap:b};
             b=null;
-         } catch(error:Error) {if(out!=null && out.parent!=null)out.parent.removeChild(out);out=null;}
+         } catch(error:Error) {
+            if(out!=null && out.parent!=null)out.parent.removeChild(out);out=null;
+         }
          finally {if(b!=null)b.dispose();}
          return out;
       }
@@ -177,14 +227,15 @@ package rconnect.game {
          // mask to a detached image after the new body has claimed that mask.
          if(record.body!=null && GameBridge.probe(record.body,record.field)!==v){delete views[v];return;}
          try {
+            if(aliased && v.mask!=null && v.mask===record.last)
+               capture(roomRef,worldRef,rootRef,true);
             // A newer third-party mask owns its own display state.
             // The user may leave after RV, before our late render callback.
             // A fresh RV mask then has not reached last/released yet.
-            var aliasMask:Boolean=aliased && v.mask is Shape && worldRef!=null
-               && (v.mask.parent===worldRef.grafon.visObjs[2] || v.mask.parent===worldRef.grafon.visObjs[3])
-               && bitmapSignature(v.mask as Shape)!="";
-            if(aliasMask)record.last=v.mask;
-            if(v.mask==null || record.hidden[v.mask]!=null || v.mask===record.nativeMask || aliasMask) {
+            // The frame observer records the shared renderer's actual mask
+            // before retirement. A later replacement belongs to its new owner,
+            // including white bitmap shapes in the same display layer.
+            if(v.mask==null || record.hidden[v.mask]!=null || v.mask===record.nativeMask || v.mask===record.last) {
                var nativeMask:DisplayObject=record.nativeMask as DisplayObject,refs:Dictionary=new Dictionary(true);
                if(rootRef!=null)maskReferences(rootRef,refs);
                var active:Boolean=visionActive(roomRef,rootRef);
@@ -202,6 +253,15 @@ package rconnect.game {
                      copy=snapshotMask(source,v,record);
                   v.mask=copy;v.cacheAsBitmap=copy!=null;
                }
+            }
+            // A mask ceases to be non-drawing content when its sole holder is
+            // replaced. Suppress only the observed retired alias, never a
+            // proven native mask or a shape still used by a weapon/new owner.
+            var retired:DisplayObject=record.last as DisplayObject;
+            if(aliased && retired!=null && retired!==record.nativeMask && retired!==v.mask) {
+               var remaining:Dictionary=new Dictionary(true);
+               if(rootRef!=null)maskReferences(rootRef,remaining);
+               if(!remaining[retired])hide(record,retired);
             }
             // The receiver's mask remains hidden until RV sweeps that retired
             // receiver. Restoring its visibility would expose another white quad.

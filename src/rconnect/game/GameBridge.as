@@ -105,6 +105,7 @@ package rconnect.game
                // also fires inside gotoAndStop and used to repeat whole-room
                // display work without producing another rendered game frame.
                st.addEventListener(Event.ENTER_FRAME, onMirrorFrame, false, -10000, true);
+               st.addEventListener(Event.ENTER_FRAME, onMirrorMaskFrame, false, -9000, true);
                st.addEventListener(Event.ENTER_FRAME, onPerceptionFrame, false, 90000, true);
                st.addEventListener(Event.RENDER, onVisForceFrame, false, -10000, true);
             }
@@ -285,6 +286,11 @@ package rconnect.game
          if(!_mirroring || coopPaused) return;
          mirrorContainerActions();
          tickFrozenAnims();
+      }
+
+      private function onMirrorMaskFrame(e:Event):void {
+         if(_mirroring && !roomHold && !_forcingVisibility && !_applyingUnits)
+            _mirrorMasks.observe(loc,world,main as DisplayObject);
       }
 
       private function onPerceptionFrame(e:Event):void

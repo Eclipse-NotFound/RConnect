@@ -191,17 +191,36 @@ package {
       }
       private function leave():void {
          var v:DisplayObject=body.vis as DisplayObject,h:DisplayObject=body.hpbar as DisplayObject;
+         if(round==7) {
+            var later:Array=[];
+            for each(var live:DisplayObject in [v,h]) {
+               var third:Shape=makeDecoy(template);third.name="MaskRestoreLaterOwner";live.parent.addChild(third);
+               live.cacheAsBitmap=true;live.mask=third;later.push(third);
+            }
+            mod.session.leave();
+            check(mod.session.mode=="offline" && mod.game.loc.units.indexOf(body)>=0 && body.in_chain
+               && v===body.vis && h===body.hpbar,"leave retains the native body and both live fields");
+            check(v.mask===later[0] && h.mask===later[1] && v.cacheAsBitmap && h.cacheAsBitmap,
+               "later white bitmap owner keeps exact mask references and cache state after leave");
+            check(later[0].parent===v.parent && later[1].parent===h.parent && later[0].visible && later[1].visible,
+               "later owner shapes remain attached and visible in the native RV layers");
+            for each(third in later){if(v.mask===third)v.mask=null;if(h.mask===third)h.mask=null;third.parent.removeChild(third);}
+            endCase();return;
+         }
          // A directly observed native mask is updated by its true renderer;
          // the proxy's bitmap can differ and is not the native oracle.
          var sources:Array=round==1 || round>=4?borrowed:originals;
          var expected:Array=[signature(sources[0] as Shape),signature(sources[1] as Shape)];
          var pictures:Array=[fieldPicture(v),fieldPicture(h)];
          var sceneBefore:Array=[scene(v,sources[0] as Shape,pictures[0]),scene(h,sources[1] as Shape,pictures[1])];
+         var fieldMatrices:Array=[JSON.stringify(v.transform.matrix),JSON.stringify(h.transform.matrix)];
          var positions:Array=[JSON.stringify(sources[0].transform.matrix),JSON.stringify(sources[1].transform.matrix)];
          check(partialFrames>=(round==4?1:4) && (round>=4 || (nativeWeaponMask!=null && borrowed[0]!==nativeWeaponMask)),
             "actual partial RV masks distinguish native and receiver objects");
          if(round==0)check(originals.length==2 && originals[0]===nativeWeaponMask,"native mask identities were observed before alias creation");
+         Log.d("MASK RESTORE BEFORE "+JSON.stringify({caseId:round,vis:maskMeta(v.mask as Shape),hpbar:maskMeta(h.mask as Shape),source:maskMeta(sources[0] as Shape)}));
          mod.session.leave();
+         Log.d("MASK RESTORE AFTER "+JSON.stringify({caseId:round,vis:maskMeta(v.mask as Shape),hpbar:maskMeta(h.mask as Shape)}));
          if(round==1 || round==3)check(body.currentWeapon.vis.mask===nativeWeaponMask,
             "restoration preserves the real native weapon mask reference");
          check(mod.session.mode=="offline" && mod.game.loc.units.indexOf(body)>=0 && body.in_chain
@@ -210,14 +229,23 @@ package {
             && mod.game.loc.units.indexOf(proxy)<0,"receiver retires without deleting its native body");
          for(var i:int=0;i<2;i++) {
             var field:String=i==0?"vis":"hpbar",view:DisplayObject=i==0?v:h;
+            var retired:DisplayObject=retiredMasks[i] as DisplayObject;
+            var referenced:Boolean=retired!=null && maskReferenced(mod.main as DisplayObject,retired);
+            check(retired!=null && (retired.parent==null || !retired.visible || referenced),
+               field+" retired receiver mask is not visible without a holder on the leave frame");
+            Log.d("MASK RESTORE IMMEDIATE "+JSON.stringify({caseId:round,field:field,
+               visible:retired!=null && retired.visible,attached:retired!=null && retired.parent!=null,referenced:referenced}));
             check(view.mask!=null && view.mask!==retiredMasks[i] && decoys.indexOf(view.mask)<0,
                field+" restores a live clip without borrowing retired or unrelated masks");
             check(view.mask is Shape && signature(view.mask as Shape)===expected[i],field+" preserves the actual alpha clipping bitmap");
             check(view.mask!=null && JSON.stringify(view.mask.transform.matrix)===positions[i]
                && view.mask.stage===view.stage,field+" preserves the mask transform and stage coordinates");
+            var actualScene:String=view.mask is Shape?scene(view,view.mask as Shape,pictures[i]):"";
             check(view.mask is Shape && view.mask.parent===view.parent
-               && scene(view,view.mask as Shape,pictures[i])===sceneBefore[i],field+" restores identical clipped field pixels at its real parent coordinates");
-            Log.d("MASK RESTORE CLIP "+JSON.stringify({field:field,expected:expected[i],actual:signature(view.mask as Shape)}));
+               && actualScene===sceneBefore[i],field+" restores identical clipped field pixels at its real parent coordinates");
+            Log.d("MASK RESTORE CLIP "+JSON.stringify({field:field,expected:expected[i],actual:signature(view.mask as Shape),
+               beforeMatrix:fieldMatrices[i],afterMatrix:JSON.stringify(view.transform.matrix),beforeScene:sceneBefore[i],afterScene:actualScene}));
+            if(view.mask is Shape && signature(view.mask as Shape)!==expected[i])pixelDifference(sources[i] as Shape,view.mask as Shape,field);
             if(round==0)check(view.mask===originals[i],field+" restores the proven native mask identity");
          }
          for each(var pic:Object in pictures)BitmapData(pic.bitmap).dispose();
@@ -264,9 +292,16 @@ package {
       }
       private function endCase():void {
          mod.game.loc.remObj(body.currentWeapon);mod.game.loc.remObj(body);var n:int=mod.game.loc.units.indexOf(body);if(n>=0)mod.game.loc.units.splice(n,1);body=null;
-         if(++round>=7)finish();else create();
+         if(++round>=8)finish();else create();
       }
       private function maskGraphics(s:Shape):Object {var g:Object=s.graphics;return g["readGraphicsData"](false);}
+      private function maskReferenced(node:DisplayObject,mask:DisplayObject):Boolean {
+         if(node==null)return false;
+         if(node.mask===mask)return true;
+         var c:DisplayObjectContainer=node as DisplayObjectContainer;
+         if(c!=null)for(var i:int=0;i<c.numChildren;i++)if(maskReferenced(c.getChildAt(i),mask))return true;
+         return false;
+      }
       private function fieldPicture(view:DisplayObject):Object {
          var r:Rectangle=view.getBounds(view),b:BitmapData=new BitmapData(Math.ceil(r.width),Math.ceil(r.height),true,0);
          b.draw(view,new Matrix(1,0,0,1,-r.x,-r.y));return {bitmap:b,bounds:r};
@@ -298,6 +333,36 @@ package {
             var hash:uint=2166136261;for each(var pixel:uint in b.getVector(b.rect))hash=uint((hash^pixel)*65599);
             result=JSON.stringify([r.x,r.y,w,h,hash]);
          } catch(e:Error){}finally {if(b!=null)b.dispose();}return result;
+      }
+      private function pixels(s:Shape):BitmapData {
+         var r:Rectangle=s.getBounds(s),paint:Shape=new Shape();paint.graphics.copyFrom(s.graphics);
+         var b:BitmapData=new BitmapData(Math.ceil(r.width),Math.ceil(r.height),true,0);
+         b.draw(paint,new Matrix(1,0,0,1,-r.x,-r.y));return b;
+      }
+      private function maskMeta(s:Shape):Object {
+         if(s==null)return null;
+         var r:Rectangle=s.getBounds(s),paint:Shape=new Shape(),sample:BitmapData=new BitmapData(1,1,true,0),points:Array=[];
+         paint.graphics.copyFrom(s.graphics);
+         try {
+            for each(var point:Array in [[r.x,r.y],[r.right-1,r.y],[r.x,r.bottom-1],[r.right-1,r.bottom-1],[r.x+r.width/2,r.y+r.height/2]]) {
+               sample.fillRect(sample.rect,0);sample.draw(paint,new Matrix(1,0,0,1,-point[0],-point[1]));points.push(sample.getPixel32(0,0).toString(16));
+            }
+            return {name:s.name,cache:s.cacheAsBitmap,parentLayer:s.parent===mod.game.world.grafon.visObjs[2]?2:s.parent===mod.game.world.grafon.visObjs[3]?3:-1,
+               width:r.width,height:r.height,points:points,layout:maskLayout(s)};
+         } finally {sample.dispose();}
+         return null;
+      }
+      private function pixelDifference(a:Shape,b:Shape,field:String):void {
+         var x:BitmapData=pixels(a),y:BitmapData=pixels(b),alpha:int=0,rgb:int=0,examples:Array=[];
+         try {
+            var xx:Vector.<uint>=x.getVector(x.rect),yy:Vector.<uint>=y.getVector(y.rect);
+            for(var i:int=0;i<Math.min(xx.length,yy.length);i++)if(xx[i]!=yy[i]) {
+               if((xx[i]>>>24)!=(yy[i]>>>24))alpha++;
+               if((xx[i]&0xFFFFFF)!=(yy[i]&0xFFFFFF))rgb++;
+               if(examples.length<8)examples.push({x:i%x.width,y:int(i/x.width),before:xx[i].toString(16),after:yy[i].toString(16)});
+            }
+            Log.d("MASK RESTORE PIXEL DIFF "+JSON.stringify({caseId:round,field:field,alpha:alpha,rgb:rgb,examples:examples}));
+         } finally {x.dispose();y.dispose();}
       }
       private function maskLayout(s:Shape):Object {
          for each(var p:Object in maskGraphics(s))if(p is GraphicsBitmapFill) {

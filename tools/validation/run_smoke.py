@@ -1,0 +1,48 @@
+"""Restart isolated normal-loading instances; roll back any smoke validation failure."""
+import datetime,hashlib,json,os,re,shutil,subprocess,sys,uuid
+from pathlib import Path
+ROOT=Path(__file__).resolve().parents[2];GAME=ROOT.parents[1]
+def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+def read(p):return json.loads(p.read_text(encoding='utf-8-sig'))
+receipt=ROOT/'build/m46/deployment.json';d=read(receipt);OUT=ROOT/d['snapshot'];target=ROOT/'release/RConnectMod.swf'
+assert d['status']=='deployed-awaiting-smoke' and sha(target)==d['sha256']
+record={'run':None,'exit':None};runner_output=''
+try:
+    command=[sys.executable,str(ROOT/'tools/run_coop_regression.py'),'--candidate',str(target),'--smoke','--all-mods',
+        '--responsive','--seconds','150','--expected-version',d['version']]
+    result=subprocess.run(command,cwd=ROOT,capture_output=True,text=True,encoding='utf-8',errors='replace')
+    runner_output=result.stdout+'\n'+result.stderr
+    (OUT/'normal-smoke-runner.log').write_text(runner_output,encoding='utf-8')
+    found=re.search(r'OUTPUT .*?([0-9a-f]{10})\s*$',result.stdout,re.M)
+    record={'run':found.group(1) if found else None,'exit':result.returncode}
+    assert result.returncode==0 and record['run'],record
+    folder=ROOT/'build/cooperation'/record['run'];r=read(folder/'run.json');inp=read(folder/'input.json')
+    assert r['sha256']==d['sha256']==sha(folder/'candidate.swf') and r['inputs']==inp['inputs']
+    assert r['inputs']['host']==r['inputs']['join'] and sha(folder/'input.json')==r['input_manifest_sha256']
+    assert r['configuration_files']==inp['configuration_files']
+    record.update(pids=r['pids'],inputs=r['inputs'],configuration_files=r['configuration_files'],log_sha256={})
+    for role in ('host','join'):
+        assert 'production' not in r['inputs'][role]
+        assert r['inputs'][role]['modules']['mods\\Rconnect\\release\\RConnectMod.swf']==d['sha256']
+        for name,digest in r['configuration_files'][role].items():assert sha(folder/'configuration'/role/name)==digest,name
+        p=folder/(role+'.log');s=p.read_text(encoding='utf-8-sig')
+        assert ('v'+d['version']+' initialized') in s and 'tick 200' in s
+        for bad in ('COOP FAIL','game error dialog','RConnectRoom: ERROR','handoff timed out','RConnectPause: failed','RConnectGrip: failed','Error #1009'):
+            assert bad not in s,(role,bad)
+        if role=='join':assert 'welcome id=' in s and 'unitsync matched' in s
+        record['log_sha256'][role]=sha(p)
+    evidence=read(ROOT/'knowledge/experiments/m46-validation-evidence.json')
+    for name,digest in evidence['protected']['hashes'].items():assert sha(GAME/name)==digest,name
+    assert sha(target)==d['sha256']
+except BaseException as error:
+    backup=ROOT/d['backup'];assert sha(backup)==d['previous_sha256']
+    temp=target.with_name('RConnectMod.'+uuid.uuid4().hex+'.tmp');shutil.copy2(backup,temp);os.replace(temp,target)
+    assert sha(target)==d['previous_sha256']
+    d.update(status='rolled-back-after-smoke-failed',smoke=record,error=str(error),at=datetime.datetime.now().astimezone().isoformat())
+    receipt.write_text(json.dumps(d,indent=2),encoding='utf-8')
+    (OUT/'normal-smoke-result.json').write_text(json.dumps(record,indent=2),encoding='utf-8')
+    print(json.dumps(d),flush=True);print(runner_output[-5000:],flush=True);raise
+d.update(status='deployed-smoke-passed',smoke=record)
+receipt.write_text(json.dumps(d,indent=2),encoding='utf-8')
+(OUT/'normal-smoke-result.json').write_text(json.dumps(record,indent=2),encoding='utf-8')
+print(json.dumps({'status':d['status'],'run':record['run'],'pids':record['pids'],'sha256':d['sha256']}),flush=True)

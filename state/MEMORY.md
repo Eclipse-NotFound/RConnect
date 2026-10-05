@@ -32,14 +32,14 @@
 ## 4. 实现与当前接点
 
 - **浮窗设计待实施**：拟常驻280×36、展开280×240，连接/队友/聊天/设置四页，拖动与四角停靠，隐藏/收起分离，未读角标与暂停原因独立。示例HTML具备状态和尺寸切换；6项静态检查含9组尺寸公式通过，浏览器file:被拒绝，不声称视觉或游戏交互通过。详见design/2026-10-05-hud-ui-plan.md及ui-preview/validation.md。
-- **M46总门禁接续，尚未部署**：R2已正式回交全部源码/编译/AIR窗口。905047…/114046B是回交时旧联合字节；最新已编译候选为final-22的80b409ead145e07c18bf411505b03d8339f69ad14c7661596266cd6cb98e76ca、115044B、50生产AS类/51源，恢复回归未通过。当前源又有尚未编译的修正，不能以旧108/186绿计最新源通过。联合仍包括C13运动/生命周期及R3闪电与智能锁定，UI仅规划；原安装M45不变。
+- **M46恢复专项绿、总门禁接续，尚未部署**：final39 d4c42d1f4f69aa5d4e56cd9945a610be21fc42137de70cabb2b818d52ca4a9b8/115943B/50类，51源139验证项。1beb6133c4两端163/0/DONE；149原断言＋14即时退役断言，14真实即时PNG白矩形检查全清，原失败case4两端人工看图也无白块。无生产DEBUG。仍需旧905同最终驱动负控和13组总门禁，M45安装未动。
 - **已独立核对两组同字节联合绿**：Aura16c3ac0b90为108/0（103原断言+咖啡唯一身份+4退出回收），在原白块位置1681.8/320；Motion647fde0dc2为186/0（原181+5真实damage负向对照），复制档指纹保持。原生新Q合法从NPC抢箱、NPC AI推进83次/零重抢、实际Q/E抓抛狮鹫、地板落地、租期/暂停/分房/离线通过。
 - **原失败与修复依据**：91fb453ffe和3f94367f45均98/6，收包前后确认旧q=true续报取消新NPC指针、levit2→1/t_tele-100→-600；四个已归属遮罩可逆隐藏使光晕像素0→523。新MirrorMasks只处理共享vis/hpbar产生的重复遮罩，不改npc/isVis/隐身或他模组位图；q边沿保护续报且允许新的真实Q。细节见`knowledge/experiments/2026-10-06-m46-mask-ownership.md`。
 - **门禁边界**：final-11/531c0edabc为108/66，join自动再加入前后有匿名Timer #1009，来源/因果未定未修，无原版/无驱动对照；66原堆栈见final11-timer-failure-provenance.json。final-12真实Session.leave通过不计重连修复；回收liveFields=0也不计存活原生本体mask恢复完整覆盖。R3只读复核此项，需把具体缺陷纳入总门禁。
 - **旧Motion诊断保留**：首轮d8为179/2，leave后Q清除缺前帧，根因未定；final-3同驱动d883为178/3，pinok21.537→65.234跨原生松手60阈值。final-4只隔离夹具无关弹丸，57e3/9436/f6b9三轮各186/0；M45同夹具0967为142/44，5原生伤害负对照通过。不倒推旧d8/Style4原因，见2026-10-06-m46-joint-validation.md及motion-control-audit.json。
 - **旧冻结与失败出处**：R2的final-12包`build/m46/r2-handoff-mask-grip.json`及root final-13/root-adoption.json已核对；905总门禁因恢复审查中断。Lightning/aff85d2db3退出0未总审计，Beam/225db0e4ab中断不计通过；PID45972/69260已退出。恢复夹具final-14至final-22的编译、条件等待、原生单mask引用及裁剪取样失败均在journal顶部和各冻结目录保留。不得覆盖这些输出或把条件修正倒推成生产根因。
-- **当前阻断与源改动**：final-20/d173763da3已实测P2：存活原生本体在leave后vis/hpbar.mask为空；P1同形对象错认仍仅审查风险。已删除几何/顺序猜认nativeMask，prepare在共享前记录直接引用、恢复时避免抢走实际Weapon的mask；需要时以临时Shape.graphics.copyFrom绘入自有ARGB副本，RV接管后回收。final-22/2f710ab3a0两端DONE但3case即时恢复仍红，实际RV清扫/后续接管绿。最新修正覆盖未released但已alias及RV后、晚RENDER前leave；生产不读取RV位图像素，签名亦用自有采样。源SHA2534b904…，7case新驱动SHAb5eb9aaf…尚未编译/运行，final-23尚未创建。
-- **测试边界**：新驱动只读绘制独立字段/父坐标裁剪对照，不再写现场mask/cache/visible；真实全场景PNG另留待视觉检查。case0–6拟覆盖直接所属、初始空mask/武器引用/同形反例、字段重建、晚武器接管、早leave、inactive+roomHold、自有副本后字段替换。清理位图dispose目前只是源码证据，不计运行证明。final-22自建PID31784/62636已确认退出，2026-10-06收尾57保护指纹不变；R2/R3仍只读，不部署、不改NetHud。
+- **恢复专项接点**：旧905在final-20实测P2（存活本体即时leave后mask空），P1几何猜认仍仅静态风险。已删除顺序/几何认nativeMask，prepare共享前保存直接引用；无法安全还原时用自有过渡位图，不读/克隆/释放RV像素存储。提前ENTER_FRAME纯observe、晚RENDER capture去重；clean在offline/roomHold前。final-33/62fe2777d4两端各149/0/DONE，8case严格mask和字段裁剪hash绿，51源/138验证/57保护闭包核对，PID49528/9068已退出；仍含DEBUG故不部署。
+- **恢复根因与边界**：37明确maskReferences→restore #1009，38实测原生MovieClip but1–but5有3子项却getChildAt(0)=null；null守卫解决字段恢复，再退役补同签名孤立Shape检查及无引用旧alias隐藏解决case4即时白块。不能把匿名Timer11、final19/32停止倒推为同因。full-scene固定白矩形检查不等于任意像素一致；5px整Tile回退是当前RV格式假设，case7只覆盖last观察之后接管。35/36失败与34独立字段绿但真实PNG红保留。完整证据knowledge/experiments/2026-10-06-m46-native-mask-restoration.md、final39/restore-closure-audit.json。R2/R3只读，root唯一窗口。
 - **M44完成**：武器快照补真实GlowFilter和root/kor目标；Box/Loot/Unit补光晕/ColorTransform，加入侧本地抓持经玩家稳定键反向送达。TelekinesisVisuals只管显示，不写levit/AI；本地抓取优先，松手/替换/换房/离线清理，保留无关滤镜。最终八阶段c59e4214a4通过；详见2026-10-04-m44-telekinesis.md。
 - **M45完成**：EnemyGrip把加入侧原生抓持意图交给唯一房间模拟端，保留原版耗魔/抓取资格/挣脱；投掷只转发原版冲量一次。RoomSync交接前释放本机及远端抓持，Session停止时清理网络抓持，离线原生持有保留；M44光晕显示与实际控制保持分离。
 - **可选联机暂停完成**：用户确认任一端触发全队暂停（含分房），双方都关才恢复。F10两开关默认关、宿主设置保存；菜单范围按已说明的全部原版暂停菜单实现。网络/UI/SATS排队继续，恢复后执行战斗；不以暂停阻塞房间/地图交接。
@@ -73,7 +73,7 @@
 ## 6. 下一步
 
 1. 用户查看design/ui-preview/index.html的占位与展开方式；后续按反馈实施AS3，依方案验收真实字号、输入焦点、鼠标和多语言。不把本轮设计预览自动变成生产UI部署。
-2. 本会话持有全部窗口；先冻结final-23，编译当前源与7case恢复驱动并验证，任何红立即记journal且不部署。保留905旧字节负向对照与531c匿名Timer来源未定；恢复绿后重新跑13组受影响检查、核对候选类数和输入闭包。build/m46/deploy_verified.py仍有旧12组/49类硬编码，必须先修正再审核部署；正常加载冒烟失败先回滚M45。旧108/186绿及UI静态检查不能计新字节通过。
+2. 本会话持有全部窗口；先收final39同最终驱动旧905负控，随后同字节其余12组（恢复已绿），13组齐全后审计50类/源/测试/配置闭包及56保护指纹。任何红立即journal且停后续门禁；绿后仅备份/部署本模组，无驱动冒烟失败先回滚M45。不得用历史绿或字段hash代替当前实际场景门槛。
 3. 当前已部署M45仍需重启两端生效。背景房若重现，核对两端RConnectRoomTrace与角色状态；未认定根因，不盲改。性能边界和排除范围保持，不自动推送。
 
 ## 7. 记录与工具入口
