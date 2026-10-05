@@ -1,5 +1,11 @@
 # RConnect —— 开发日志
 
+## 2026-10-06 C13同字节三组490项通过，Style4加严待交接
+
+- 本会话核对C13 4f3f94f8…的Motion/生命周期83e46432bf为176 PASS/0 FAIL、EnemyGrab f13a9b9c0e为211 PASS/0 FAIL，加上Aura103项共490项通过；两端DONE，run.json、冻结测试文件、驱动和候选指纹相符。Motion/EnemyGrab自建4个PID已退出，未操作其他进程。
+- host真实leave前后pointer=case、levit1保持，3秒后仍抓持；首次清除KEY=true为测试主动Q松手。尚未因此认定C10原偶发退出失败根因。
+- R2仅加严Style4真实Q接管与leave前后光晕/CT断言，继续相同候选和M45对照；reset缺陷未实证，不先改生产。正式交付和窗口移交前本会话不编译/AIR，联合R3尚未构建、部署；UI仍设计预览。
+
 ## 2026-10-06 C12颜色回归确认，C13光晕首绿已核对
 
 - 本会话重算C12 7714b288d6为102 PASS/1 FAIL，真实新天角兽指针与levit2保持，但旧ENTER_FRAME呈现将新光晕覆为旧玩家色；M45 fa84f89249为99 PASS/4 FAIL，原生敌方持箱正确，新物理契约与已有换色瞬态分别记录。
