@@ -1,0 +1,171 @@
+{
+  "kind": "static-only",
+  "checks": {
+    "unique_ids": true,
+    "referenced_controls_exist": true,
+    "script_ids_exist": true,
+    "local_links_exist": true,
+    "javascript_syntax": true,
+    "geometry_formulas_fit_all_9_cases": true
+  },
+  "details": {
+    "ids": 72,
+    "missing_refs": [],
+    "missing_js_ids": [],
+    "missing_files": [],
+    "syntax_stderr": ""
+  },
+  "geometry": [
+    {
+      "region": [
+        1280,
+        800
+      ],
+      "scale": 1,
+      "collapsed": [
+        280,
+        36
+      ],
+      "expanded": [
+        280,
+        240
+      ],
+      "fits_margin": true
+    },
+    {
+      "region": [
+        1280,
+        800
+      ],
+      "scale": 1.5,
+      "collapsed": [
+        420.0,
+        54.0
+      ],
+      "expanded": [
+        420.0,
+        360.0
+      ],
+      "fits_margin": true
+    },
+    {
+      "region": [
+        1280,
+        800
+      ],
+      "scale": 2,
+      "collapsed": [
+        560,
+        72
+      ],
+      "expanded": [
+        560,
+        480
+      ],
+      "fits_margin": true
+    },
+    {
+      "region": [
+        960,
+        600
+      ],
+      "scale": 1,
+      "collapsed": [
+        280,
+        36
+      ],
+      "expanded": [
+        280,
+        240
+      ],
+      "fits_margin": true
+    },
+    {
+      "region": [
+        960,
+        600
+      ],
+      "scale": 1.5,
+      "collapsed": [
+        420.0,
+        54.0
+      ],
+      "expanded": [
+        420.0,
+        360.0
+      ],
+      "fits_margin": true
+    },
+    {
+      "region": [
+        960,
+        600
+      ],
+      "scale": 2,
+      "collapsed": [
+        560,
+        72
+      ],
+      "expanded": [
+        560,
+        480
+      ],
+      "fits_margin": true
+    },
+    {
+      "region": [
+        640,
+        480
+      ],
+      "scale": 1,
+      "collapsed": [
+        280,
+        36
+      ],
+      "expanded": [
+        280,
+        240
+      ],
+      "fits_margin": true
+    },
+    {
+      "region": [
+        640,
+        480
+      ],
+      "scale": 1.5,
+      "collapsed": [
+        420.0,
+        54.0
+      ],
+      "expanded": [
+        420.0,
+        360.0
+      ],
+      "fits_margin": true
+    },
+    {
+      "region": [
+        640,
+        480
+      ],
+      "scale": 2,
+      "collapsed": [
+        560,
+        72
+      ],
+      "expanded": [
+        560,
+        464.0
+      ],
+      "fits_margin": true
+    }
+  ],
+  "sha256": {
+    "preview": "fa26d19c70e35d0d6f4fb5b2da169cea1d3afc9c89d4216f7b0162dac8c7c2e6",
+    "ui_skill": "a51eda29c31dbb5c5771cd924728bd4d8f92c191b3341b950d448a0cd51c84d8",
+    "release": "59a03d1eb3ca7d8467015c709301bc1fbe6d585342de5857e984344a33572790",
+    "attachment_copy": "0dcbaf6e151d2d2cf01e74b90615506af9f528133ae4a81e60ddc1e1d5299051"
+  },
+  "actual_browser_render": "not_run: file protocol rejected by browser security policy"
+}
