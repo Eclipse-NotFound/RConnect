@@ -3398,7 +3398,8 @@ package rconnect.game
             { endRemoteLootMotion(key); continue; }
             try
             {
-               var sample:Object=(target.motion as RemoteMotion).sample(presentationTime());
+               var motion:RemoteMotion=target.motion as RemoteMotion;
+               var sample:Object=coopPaused?motion.settle(presentationTime()):motion.sample(presentationTime());
                var x:Number=Number(sample.x),y:Number=Number(sample.y);
                placeMovable(o,x,y);o["dx"]=0;o["dy"]=0;
                if(target.remoteHeld!=true && sample.stay!=null)o["stay"]=sample.stay===true;

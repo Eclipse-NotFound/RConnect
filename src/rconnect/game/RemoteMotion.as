@@ -57,6 +57,19 @@ package rconnect.game
          return state;
       }
 
+      /** A paused world may still receive its last in-flight snapshots. Close
+       * the display buffer at the received endpoint, without extrapolation.
+       * Retain that cursor so resume cannot replay the pre-pause position. */
+      public function settle(now:int):Object {
+         if(frames.length>0) {
+            cursor=Number(frames[frames.length-1].at);
+            return sampleTimed(now);
+         }
+         if(state==null)return null;
+         at=now-duration;
+         return sample(now);
+      }
+
       private function pushTimed(snap:Object,now:int):void {
          var copy:Object={};for(var key:String in snap)copy[key]=snap[key];snap=copy;
          var stamp:Number=Number(snap.sampleTime),last:Object=frames.length?frames[frames.length-1]:null;

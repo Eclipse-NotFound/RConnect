@@ -1,5 +1,17 @@
 # RConnect —— 开发日志
 
+## 2026-10-06 root接回2c83候选与全部窗口，Motion198项已核对
+
+- R2明确交回源码/测试/helper/构建/隔离AIR；root独立核对12b52871d3宿主110 PASS/0 FAIL、加入88/0，各DONE，正式候选2c83df6b…两端实际字节、配置/驱动输入、51源140验证/57保护闭包一致，50生产类无新增测试类；PID31812/68620已退出。原186断言＋双方各6顺序检查，未改生命周期时间/阈值。build/m46/root-pause-adoption.json。
+- R3只读复核仅GameBridge/RemoteMotion两处暂停改动、本地持有和正常采样守卫不变，无新实证阻断；纯AS3旧3红新6绿成立但不反向认定原7df唯一因果。保留R2独立app输出失败0fdd记录及所有旧失败。
+- root统一接续同2c83字节其余12组（含重新Restore）及同最终驱动旧905负控，齐绿才审计、备份部署与无驱动冒烟。R2/R3回到只读；当前M45未动，UI保持方案/HTML范围。
+
+## 2026-10-06 R2暂停缓冲诊断：保留输出失败与固定顺序负控
+
+- 只读诊断abe8a83a22两端104/0、82/0/DONE，未复现7df原红。加入侧为普通RemoteLoot缓冲轨迹，remoteHeld/until缺失，断言时Y=200；不能称旧红为已证租约过期。临时生产读取API与逐包日志已移除，原生命周期断言/时间/阈值保持。
+- 独立AS3首试0fddcc43fd编译成功，结果写app:/遭FileStream.open错误后30s超时；自身PID50732已终止，原input/build/adl证据保留。改唯一appid专用storage后，同一测试旧源47467ce38c三项预期红、新源d37af256be六项绿，明确已收到抬起位置仍被暂停缓冲留在旧位置的到达顺序缺陷。这不反向认定7df唯一因果。
+- 修正仅RemoteMotion.settle及GameBridge暂停loot调用。final-r2-pause-02 /2c83df6b…/116001B/50类/51源/140验证，原生双人Motion 12b52871d3在跑，暂停物品原断言已两端通过，其余交接仍待DONE；M45/57保护指纹未变。诊断入口r2-pause-diagnosis.json与2026-10-06-r2-paused-loot-buffer.md；仍不部署，完成后向原会话交回源码/AIR供最终门禁。
+
 ## 2026-10-06 R2暂停首轮诊断186项绿，但原失败仍未闭合
 
 - root回读abe8a83a22实际日志：宿主104 PASS/0 FAIL、加入82/0，各1个COOP EFFECTS DONE tele-motion；正式诊断候选760e7375…与冻结manifest匹配，57保护指纹不变，PID67872/64716不存在。初始回读程序误搜COOP DONE得0，原receipt保留并新建corrected回读，不篡改原始日志。

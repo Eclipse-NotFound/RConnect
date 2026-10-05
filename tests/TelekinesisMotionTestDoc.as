@@ -50,6 +50,7 @@ package {
          loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR,function(e:UncaughtErrorEvent):void {
             check(false,"uncaught "+(e.error is Error?Error(e.error).getStackTrace():e.error));e.preventDefault();finish();
          });
+         RemoteMotionPauseRegression.run(check);
          timer.addEventListener(TimerEvent.TIMER,tick);timer.start();
       }
       private function check(ok:Boolean,label:String):void {Log.d("COOP "+(ok?"PASS ":"FAIL ")+"tele-motion "+label+" case="+CASES[round]);}
