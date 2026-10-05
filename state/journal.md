@@ -1,5 +1,11 @@
 # RConnect —— 开发日志
 
+## 2026-10-06 R2暂停首轮诊断186项绿，但原失败仍未闭合
+
+- root回读abe8a83a22实际日志：宿主104 PASS/0 FAIL、加入82/0，各1个COOP EFFECTS DONE tele-motion；正式诊断候选760e7375…与冻结manifest匹配，57保护指纹不变，PID67872/64716不存在。初始回读程序误搜COOP DONE得0，原receipt保留并新建corrected回读，不篡改原始日志。
+- 暂停断言时加入RemoteLoot仍是普通track，remoteHeld/until缺失，stay=true、Y=200，cursor已选抬起帧；此轮未复现，不足以把旧7df红解释成租期过期，也不证明已经修复。记录build/m46/root-r2-pause-01-readback-corrected.json；不将诊断查询字节部署。
+- R2继续持有源码/测试/helper/编译/隔离AIR，准备“先冻结、后到抬起帧”的确定性取证；root仅更新接续记录，VERSION/release/UI/MEMORY及最终部署职责不变。
+
 ## 2026-10-06 UI交付后串行交回R2念力诊断窗口
 
 - UI方案已交付并提交eecb4a0，工作树干净；Motion自有PID56044/3848及恢复38828/62288均再次确认不存在。final39的51源139验证及当前M45安装保持原字节，旧905最终负控已完成。
