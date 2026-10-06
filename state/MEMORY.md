@@ -1,8 +1,8 @@
 # RConnect —— 开发记忆入口
 
-> 2026-10-04 当前安装：**M45 / 0.2.16-dev**，110626字节，SHA256 `59a03d1eb3ca7d8467015c709301bc1fbe6d585342de5857e984344a33572790`。念力抓敌与换枪光晕、可选全队菜单/SATS暂停及慢换图修复已部署：10组1003项及正常加载冒烟通过。[部署/回滚](deployment-m45-2026-10-04.md)。背景房与密集战斗边界保留。
+> 2026-10-06 当前安装：**0.2.17-dev 紧凑浮窗（M45核心）**，117821字节，SHA256 `a5698f9f5941b27c2fd47de56366c4d867bf256b2dcb7d484596844dea093971`。681项双端检查和正常无驱动加载通过。[部署/回滚](deployment-ui-2026-10-06.md)。默认36状态条、四页、标题拖动/四角停靠/内部滚动、玩家分别保存位置和开合；Ctrl+Enter打开聊天，Enter发送，F10隐藏/恢复。真人IME与鼠标未认证。
 
-> 2026-10-06 本会话完成浮窗**设计规划与独立HTML预览**，尚未实施/部署UI：[方案](../design/2026-10-05-hud-ui-plan.md)、[预览](../design/ui-preview/index.html)。顶部停靠已给示意游戏信息带留位；本地file:被内置浏览器策略拒绝，实际渲染未验。静态检查范围见预览目录validation.md。
+> **未发布M46核心仍红**，没有混入UI版本；当前工作树为0.2.18-dev，不等同已安装字节。发行UI仅认build/ui-20261006/stable-ui-07的M45派生冻结；旧M46失败和M45安装基线保留，新基线build/m46/integration-baseline-after-ui-20261006。R2/R3只读协调，root统一源码/测试/AIR/部署窗口。
 
 > 协议见 GOVERNANCE.md §8；参数与边界见 ../AGENT_SCOPE.md。
 
@@ -12,7 +12,7 @@
 
 ## 2. 用户偏好与最新决定
 
-- 最新UI任务只要求设计和规划，可创建HTML：现有浮窗过高且遮挡关键游戏操作。推荐常驻状态条＋四分页方案，等待用户查看反馈；不能把此预览称为已接入游戏，也不为本轮设计自动部署。
+- 最新UI任务已从设计进入实装：用户查看预览后明确“开始实装”，随后“继续”。按280×36状态条与四分页方案实现并验证；本会话沿用既有统一候选部署授权。原版Enter为全屏，已说明Ctrl+Enter开聊，聊天输入框Enter发送。
 - 已授权修复已有合作探索/战斗/交互，允许大幅重构和候选部署。不新增任务/背包/交易规则，排除稳定重连、三人以上、公网和其他版本。
 - 此前炮塔显示与分房请求点名grilling，Q1–Q5全部确认“符合，按此实现”：同地图普通房自由分头；空房暂停保留；宿主发起共同换图；剧情挑战共同进出；关闭游戏沿用原版，不新增随机房完整战斗存档。不得重复确认。
 - M39九项反馈：密集敌人卡顿，炮塔/地雷/狮鹫索敌，容器掉落与拾取，跟随队友，闪电/双方开火/天角兽护盾，经验点与存档点。用户确认：地上物品一份，先拾取者获得；经验点双方奖励；存档点共同解锁，各自保存角色。继续既定修复/候选部署授权。
@@ -24,15 +24,17 @@
 
 ## 3. 当前安装状态
 
-- **M45 / 0.2.16-dev已部署**，110626字节，SHA `59a03d1eb3ca7d8467015c709301bc1fbe6d585342de5857e984344a33572790`，48生产类无原生存根/测试类。源与测试输入冻结build/m45/final；证据knowledge/experiments/m45-validation-evidence.json。
-- 同字节10组1003 PASS/0 FAIL，正常无驱动双端冒烟`c09279cc99`通过；56项保护指纹不变，测试进程已退出。仅更新本模组release，需保存后完全重启两端。
-- 旧M44备份`build/backup/m45-release-20261004-183127-3afe1d/RConnectMod.before.swf`，SHA `8b6fb844bb5295448d3a29e763378a6f3d63f111eb83dc0a5a381da49ff569ae`；复制回release并重启可回退SWF，不回滚玩家存档。未推送或对外打包。
-- 同机仍用Start-Coop.bat。第二角色手动身份pfe-modsettings-rconnect-player2，首次继承旧pfe2存档/配置且保留原件，后续不重复覆盖；启动原生读档列表由玩家选角色。
+- **0.2.17-dev已部署**，117821字节，SHA `a5698f9f5941b27c2fd47de56366c4d867bf256b2dcb7d484596844dea093971`，49生产类，无原生存根/测试类。源50项/验证131项冻结build/ui-20261006/stable-ui-07，M45的47份非UI非入口源逐字节不变；仅NetHud、HudLayout与版本改变。
+- 同字节UI114＋暂停438＋导航55＋分房74＝681 PASS/0 FAIL，各端DONE；22张原生PNG。正常无驱动双端冒烟4a3257643f通过，其他56项保护未变，全部自有测试PID已退出。仅更换本模组release；用户保存后完全重启两端生效。
+- 上一M45备份`build/backup/ui-release-retry-20261006-232432-d168f9/RConnectMod.before.swf`，SHA `59a03d1eb3ca7d8467015c709301bc1fbe6d585342de5857e984344a33572790`；复制回release并重启可回退，不回滚存档。首工具冒烟预检编码失败时立即回滚并保留原receipt；同候选显式-X utf8重试正常加载成功。
+- M45原部署10组1003项的历史证据和回滚保留，不拿UI681项宣称新增核心修复通过。未推送或对外打包。
+- 同机仍用Start-Coop.bat。第二角色手动身份pfe-modsettings-rconnect-player2，首次继承旧pfe2存档/配置且保留原件，后续不重复覆盖；原生读档列表由玩家选角色。点击▼进入连接页，不用F10当展开键；设置页核对版本。
 
 ## 4. 实现与当前接点
 
-- **最新门禁停止：2c83同字节Aura出现两项颜色错帧与17次空引用**：e329299888宿主53/0、加入53/19，各DONE；加入round0为30/40、round2为45/46，最终RENDER读到缺失或旧颜色。Timer栈仅MethodInfo-1，不能据此认定匿名函数、来源模组或归因新暂停修复。失败出处build/m46/final-r2-pause-02/aura-failure-provenance.json；51源/140验证/57保护无变，PID51940/11132已退出。此前同候选Motion198项及Restore326项＋14PNG专项绿不代表联合绿；后10组和本候选旧905负控未启动，M45安装未动。UI收尾后R2接回核心诊断窗口，R3只读，root保留UI/NetHud及统一部署，详见第6节。UI本轮方案和HTML已完成，不实施生产浮窗。
-- **浮窗设计完成、未实施**：拟常驻280×36、通常展开280×240，四页、拖动/四角停靠、隐藏/收起分离、未读与暂停原因独立。10-06顶部停靠避让72单位示意带，主操作/聊天保留12字号；正式接入取原版具体控件边界。新七项静态检查含72组尺寸/位置公式、57安装指纹通过；51源139验证不变。浏览器file:被拒绝，实际渲染和游戏交互未验。方案及验证边界见design/2026-10-05-hud-ui-plan.md和ui-preview/validation.md。
+- **UI独立发行完成**：stable-ui-07 /a5698f9f…按M45冻结源派生，0.2.17-dev，681/0＋正常加载4a3257643f绿；主字号12、常驻36、展开最多240，四页/滚动/位置与开合/输入隔离/独立暂停提示。持Shift旧907负对照红已修，首工具GBK读取预检失败先回滚、-X utf8重试通过。真人IME/鼠标边界、浏览器file:限制保留；新核心基线不覆盖旧基线。
+- **M46仍红，UI已独立部署**：原e329299888两项颜色错帧与17次空引用不抹去。R2短诊断 `5640e056b6` 保持原2c83生产与1500/3000ms/全部断言，双端真实房间/epoch握手匹配后仍宿主53/0、加入52/3/DONE；本轮零#1009不证明旧错误修复，迟显示未解。R2输出build/m46/aura-debug-ready-02/observed-result.json。root已独立确认PID49640/38776退出并接回窗口；R2/R3只读。M46后10组与旧905负控仍未执行，不能部署；UI只使用已部署M45核心。
+- **UI原失败保留**：93202493c2为74/5，b9ea87dad5为0/2夹具字段错，25d26ab960为106/1完成通知握手；之后旧907字节持Shift负控7d947ade07为112/2，新a569相同测试114/0。初始失败与前提修正不可倒推成所有生产根因；细节在journal、ui-preview/validation.md与最终证据，不把早期临时版本当当前安装。
 - **M46恢复专项绿、联合首组红，尚未部署**：final39 d4c42d1f4f69aa5d4e56cd9945a610be21fc42137de70cabb2b818d52ca4a9b8/115943B/50类，51源139验证项。恢复1beb6133c4两端163/0/DONE，14真实即时PNG白块检查全清；同最终驱动旧905负控c1b0bd4462两端130/33/DONE，预期红已核对。Motion7df722ef4c宿主104/0、加入81/1，两端DONE，唯一红为共享暂停中远程掉落stay/Y合取检查；其余11组未启动。尚无失败点字段实证，不能由断言名称认定租期到期或归因遮罩修复。R2只读预测显示缓冲暂停边缘问题，待取证；M45安装未动。
 - **R2暂停诊断首轮**：final-r2-pause-01 /760e7375…的abe8a83a22，root回读宿主104/0、加入82/0，各1个COOP EFFECTS DONE；57保护不变、PID67872/64716已退出。加入断言时RemoteLoot普通track，remoteHeld/until缺失、stay=true/Y=200，cursor已选抬起帧；本轮未重现原红，不证明原7df原因或修复完成。R2保留源码/AIR窗口继续确定性诊断，不部署查询字节。独立回读见build/m46/root-r2-pause-01-readback-corrected.json；初始done误查COOP DONE的原receipt保留并附纠正。
 - **暂停顺序缺陷取证及Motion198项绿、root接回窗口**：纯AS3同测试/doc字节，旧final39 /47467ce38c为3/3、修正/d37af256be为6/0；固定720ms暂停时已收末帧但游标未到，原sample停旧位置，含无时间戳。生产仅settle与暂停loot采样，原守卫/TTL/非暂停sample未改，查询已去；R3独立只读复核无新阻断。final-r2-pause-02 /2c83df6b…116001B/50类/51源/140验证的Motion12b52871d3两端110/0、88/0/DONE，原186＋各6项固定顺序；root核对源/测试/配置/两端实际字节/57保护完整闭包，PID31812/68620已退出，build/m46/root-pause-adoption.json。原7df具体因果仍未认定；本候选其余12组含恢复必须重验，root已接回全部窗口，R2/R3只读。实证见knowledge/experiments/2026-10-06-r2-paused-loot-buffer.md。
@@ -75,13 +77,15 @@
 
 ## 6. 下一步
 
-1. 用户查看design/ui-preview/index.html的占位与展开方式；后续按反馈实施AS3，依方案验收真实字号、输入焦点、鼠标和多语言。不把本轮设计预览自动变成生产UI部署。
-2. UI设计收尾后，已交回R2念力核心源/测试/helper/编译/隔离AIR诊断窗口，R3只读；root保留design/UI、NetHud、VERSION/release/MEMORY及统一审计部署。R2先定位e329两项最终颜色失败和17次Timer空引用，不能扩大时间/阈值或跳过错误追绿。来源若需调试名，先评估仅隔离诊断驱动取证、保留正式2c83字节；交回时尚未执行。修复完成明确把窗口交回root，新冻结候选重新走全部13组、同最终驱动旧905负控及闭包审计，齐绿才仅部署本模组；正常无驱动冒烟失败先回滚M45。当前后10组未启动，旧失败和专项绿均保留，UI仍只交设计。
-3. 当前已部署M45仍需重启两端生效。背景房若重现，核对两端RConnectRoomTrace与角色状态；未认定根因，不盲改。性能边界和排除范围保持，不自动推送。
+1. 用户保存后完全重启两端测试0.2.17-dev。重点实测中文输入法提交、实际鼠标拖动/点击、常用菜单遮挡；合成事件与原生截图不是真人使用满意度证明。UI入口/回滚见部署记录。
+2. M46核心仍未部署：最新5640e056b6仍有3项颜色错误，原e329299888颜色错帧与17次匿名Timer #1009保留。后续使用0.2.18-dev与新integration-baseline-after-ui-20261006；tools/validation正本绑定baseline路径/哈希，14组（原13＋Hud）/最终同驱动旧905负控/正常加载仍须完整通过。新脚本只完成准备/边界自检，没有宣称核心绿；旧build/m46执行副本与原M45基线不改。
+3. R2下一窗口仅在root明确移交后进入；从公开RemoteMotion.readSnapshot().sampleTime、getTimer、coopPaused、roomHold等实际样本定位错色，不延长1500/3000ms或放宽阈值追绿。root统一审核/14组/部署；不要用当前默认工作树构建发布UI。当前R2/R3保持只读。
+4. 背景房若重现核对两端RoomTrace与角色状态；未认定根因不盲改。密集性能和排除范围保持，不自动推送。
 
 ## 7. 记录与工具入口
 
-- 最新M45见 `state/deployment-m45-2026-10-04.md`、`knowledge/experiments/m45-validation-evidence.json`、抓敌与暂停两份实验记录。
+- 最新UI见 `state/deployment-ui-2026-10-06.md`、`knowledge/experiments/ui-20261006-validation-evidence.json`；门禁 `tools/validation/README.md`。
+- M45历史见 `state/deployment-m45-2026-10-04.md`、`knowledge/experiments/m45-validation-evidence.json`、抓敌与暂停两份实验记录。
 - M44历史见 `state/deployment-m44-2026-10-04.md`、`knowledge/experiments/m44-validation-evidence.json`与`2026-10-04-m44-telekinesis.md`；启动器见`2026-10-04-manual-second-player.md`。
 - M43历史 `state/deployment-m43-2026-10-04.md`、`knowledge/experiments/m43-validation-evidence.json`及三份M43实验记录；历史 `knowledge/experiments/2026-10-03-m41-feedback.md`、`2026-10-03-m41-animation-gaps.md`、`m41-validation-evidence.json`；M40连续运动与淡影见2026-10-03-m40-presentation.md。M39合作与后台策略见2026-09-30-m39-gameplay.md；M38伤害、M37 SATS、M36分房历史证据和design/separate-rooms.md保留。
 - 构建 `tools/build_mod.py --java <java> --output build/<轮次>/RConnectMod.swf`；必须显式候选输出，默认写release。

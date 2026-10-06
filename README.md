@@ -4,7 +4,7 @@ Two-player online co-op for **Fallout Equestria: REMAINS** — see each other, c
 
 English (this page) · [简体中文](README.zh-CN.md)
 
-> Current local candidate: **0.2.16-dev (M45)**, deployed 2026-10-04. Joining players can levitate and throw eligible enemies with native limits and mana costs. Adds optional shared menu/SATS pause, controlled by the host; both switches default off. 1003 checks on the same final candidate and normal-loader smoke passed; see the [release record](state/deployment-m45-2026-10-04.md). Fixes aura flicker when switching weapons and retains manual second-character save selection. Hidden-room control loss/enemy respawn and dense-combat stutter remain open. Validated on game 1.02 with two local players.
+> Current local candidate: **0.2.17-dev (compact HUD)**, deployed 2026-10-06. The default panel is a 280 × 36 status strip; expanding opens Connect, Teammate, Chat and Settings tabs within a bounded panel. Drag the title or use Dock to change corners; position and expansion are saved per player. 681 checks on the same final candidate and normal-loader smoke passed; see the [release record](state/deployment-ui-2026-10-06.md). This release keeps the verified M45 gameplay core; pending M46 fixes are excluded. Hidden-room control loss/enemy respawn and dense-combat stutter remain open. Validated on game 1.02 with two local players.
 >
 > For local co-op, save and close both games, then use **[Start-Coop.bat](Start-Coop.bat)**. It keeps only the processes it starts responsive in the background and preserves each character's saves. This may use more power. Large encounters can still stutter. The current validation does not establish a general frame-rate improvement.
 >
@@ -13,7 +13,7 @@ English (this page) · [简体中文](README.zh-CN.md)
 ## Features
 
 - Native enemy levitation and throwing from either player, with native eligibility, mana and resistance; room handoffs and disconnects release remote holds.
-- Optional **shared menu pause** and **shared SATS pause** in F10. Both default off and are set by the host. Either player pauses both rooms; combat resumes after both close the relevant interfaces. Menus, chat and SATS targeting remain usable.
+- Optional **shared menu pause** and **shared SATS pause** in the Settings tab. Both default off and are set by the host. Either player pauses both rooms; combat resumes after both close the relevant interfaces. Menus, chat and SATS targeting remain usable. The pause notice stays visible when F10 hides the panel.
 
 - One player **hosts**, the other **joins** (3+ untested). The joining side needs no matching save: the host's world is mirrored to them (world injection — missing enemies spawn, extras are removed, state synced at 5 Hz).
 - Players see each other as translucent ghost ponies with floating name tags, walk/run/jump pose animations and **held-weapon display**; remote health shows in the co-op panel.
@@ -21,7 +21,7 @@ English (this page) · [简体中文](README.zh-CN.md)
 - In-panel **chat** between both sides.
 - Shared ground items: one copy, first collector owns it; container drops can be collected on either side.
 - Shared XP-point rewards and checkpoint unlocks; each player saves their own character.
-- Optional **Follow teammate** switch in F10, off by default; follows departures from a shared ordinary room.
+- Optional **Follow teammate** switch in the Teammate tab, off by default; follows departures from a shared ordinary room.
 - The native local map shows your teammate as a cyan marker with their name, including other rooms on the same map. **Teleport to teammate** in F10 places you on a clear, supported spot nearby after room handoff; story/challenge areas and different maps still require host-led travel.
 - Player firing/projectile visuals, alicorn lightning and shield state; native turret, mine and griffon perception of the joining player.
 - **Shared exploration** (M31): two-way fog-of-war sharing with an independent toggle on each side; whatever you already received stays when you turn it off.
@@ -42,7 +42,7 @@ English (this page) · [简体中文](README.zh-CN.md)
 
 1. Download a published RConnect package from [Releases](../../releases). The local candidate noted above has not been published by this update.
 2. Copy the zip's `mods` folder into your game root (next to `pfe.swf`).
-3. Restart the game — a translucent RConnect panel appears at the top-right of the main menu.
+3. Fully restart the game — a short RConnect status strip appears, initially below the top-left game information. Click ▼ to expand it.
 
 ## Connecting
 
@@ -52,6 +52,8 @@ English (this page) · [简体中文](README.zh-CN.md)
 | Join | set `hostIp` to the host's LAN IP (e.g. `192.168.1.10`) |
 
 Both players then start the game. The host opens the room from the panel; the joiner connects. Port `23456` (configurable) must be allowed through the host's firewall.
+
+Click ▼ and open **Connect** to enter your name, address and port, then Host or Join. A successful connection collapses the panel. **Teammate** contains exploration, follow and teleport; **Settings** contains pause policies and the running version. Use the wheel to scroll long text in small windows. **F10** hides/restores the current panel state; **Ctrl+Enter** opens chat during ordinary play, **Enter** sends from its input and **Esc** collapses it. Native menus keep their keyboard priority and Enter keeps its native full-screen function outside chat. Real Chinese IME and hardware mouse use still need player testing.
 
 > Both sides must update the mod and fully restart the game when versions change. In-game shield damage shows as a blue `S -number`, regular numbers are HP damage.
 

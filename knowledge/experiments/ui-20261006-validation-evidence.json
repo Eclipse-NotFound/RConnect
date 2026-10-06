@@ -1,0 +1,885 @@
+{
+  "date": "2026-10-06",
+  "version": "0.2.17-dev",
+  "candidate": {
+    "candidate_sha256": "a5698f9f5941b27c2fd47de56366c4d867bf256b2dcb7d484596844dea093971",
+    "size": 117821,
+    "classes": 49,
+    "source_count": 49,
+    "stub_sha256": "ad2e6753d97a39f63fc9ff343c05d4f142371a66daff3451818ef9ea5b76a803",
+    "exit": 0
+  },
+  "snapshot": "build/ui-20261006/stable-ui-07",
+  "input_sha256": "425beed373a5f6538301114911aa067b6ca485976f886db452df739687bbfc8a",
+  "required_entries": [
+    "HudTestDoc",
+    "CoopPauseTestDoc",
+    "TeammateNavigationTestDoc",
+    "RoomCooperationTestDoc"
+  ],
+  "runs": [
+    {
+      "entry": "HudTestDoc",
+      "run": "013025159e",
+      "exit": 0,
+      "pids": [
+        24604,
+        46012
+      ],
+      "inputs": {
+        "host": {
+          "game": "c631cbf3511b6ee303f533d08d51511fe0eb702f43e5db17f5241d8576c64867",
+          "process_policy": {
+            "RConnect.Process.ps1": "b3fe91f9544a3a57f45b6f1c3a47fcde207f62524cedea846f45d3d4599be88d",
+            "keep_test_responsive.ps1": "ce125a1d3904fe5b0f29c3ca8df306fb848148057cff8a0bc5f44a33e71b97a3"
+          },
+          "production": "a5698f9f5941b27c2fd47de56366c4d867bf256b2dcb7d484596844dea093971",
+          "driver": "4ee1157339e9f80f0d918a33ca6ebc70cb503a0a8347894dc44f8c680498ae54",
+          "harness": "bf16a1e654f1e13e262a86f1a96b2e294d7e635925779e714625a1db7731fbfa",
+          "modules": {
+            "mods\\ModLoader\\release\\ModLoaderMod.swf": "2d01241a89fb25d608ac5138254e14dc3e5fb46e7120319a0d5922e4cf9816fd",
+            "mods\\ModSettings\\release\\ModSettingsMod.swf": "c2bc2cce45a9b7125d8cf048b352e059ec6ddf466f8625ca77bcc4b3e6a4b451",
+            "mods\\MoreSkills&Weapons\\release\\MoreSkillsWeaponsMod.swf": "f9cecf74823d6dca7009e04f01b83f49788fb5f2e874bc529c5f6124a9986362",
+            "mods\\RandomRooms\\release\\RandomRoomsMod.swf": "f21d7c04ff1ccf59779f0b8d9f52d982585145447c47727c660e9ecc7d62c0df",
+            "mods\\Rconnect\\release\\RConnectMod.swf": "bf16a1e654f1e13e262a86f1a96b2e294d7e635925779e714625a1db7731fbfa",
+            "mods\\RealisticVision\\release\\RealisticVisionMod.swf": "72d2f75ba89e7b40cc78c5a5e48e1c61af297753cbe2dca929e0f1ad5ba6a303",
+            "mods\\RModifier\\release\\LootEditorMod.swf": "4f1d6cf19979f4ea4960f8ccd8377c1d3cac490bed9949866885357d073c8625",
+            "mods\\Sandevistan\\release\\SandevistanMod.swf": "a6e706f0af8cc912a600d3b2262d3aae1ccffb7a9dd18b6b45f354fa860272e4",
+            "mods\\TDFC\\release\\TDFCMod.swf": "99bfbaa68229635fbaa496ef9287a94bb9ea7c65d71339cef3fde65f47e30275"
+          }
+        },
+        "join": {
+          "game": "c631cbf3511b6ee303f533d08d51511fe0eb702f43e5db17f5241d8576c64867",
+          "process_policy": {
+            "RConnect.Process.ps1": "b3fe91f9544a3a57f45b6f1c3a47fcde207f62524cedea846f45d3d4599be88d",
+            "keep_test_responsive.ps1": "ce125a1d3904fe5b0f29c3ca8df306fb848148057cff8a0bc5f44a33e71b97a3"
+          },
+          "production": "a5698f9f5941b27c2fd47de56366c4d867bf256b2dcb7d484596844dea093971",
+          "driver": "4ee1157339e9f80f0d918a33ca6ebc70cb503a0a8347894dc44f8c680498ae54",
+          "harness": "bf16a1e654f1e13e262a86f1a96b2e294d7e635925779e714625a1db7731fbfa",
+          "modules": {
+            "mods\\ModLoader\\release\\ModLoaderMod.swf": "2d01241a89fb25d608ac5138254e14dc3e5fb46e7120319a0d5922e4cf9816fd",
+            "mods\\ModSettings\\release\\ModSettingsMod.swf": "c2bc2cce45a9b7125d8cf048b352e059ec6ddf466f8625ca77bcc4b3e6a4b451",
+            "mods\\MoreSkills&Weapons\\release\\MoreSkillsWeaponsMod.swf": "f9cecf74823d6dca7009e04f01b83f49788fb5f2e874bc529c5f6124a9986362",
+            "mods\\RandomRooms\\release\\RandomRoomsMod.swf": "f21d7c04ff1ccf59779f0b8d9f52d982585145447c47727c660e9ecc7d62c0df",
+            "mods\\Rconnect\\release\\RConnectMod.swf": "bf16a1e654f1e13e262a86f1a96b2e294d7e635925779e714625a1db7731fbfa",
+            "mods\\RealisticVision\\release\\RealisticVisionMod.swf": "72d2f75ba89e7b40cc78c5a5e48e1c61af297753cbe2dca929e0f1ad5ba6a303",
+            "mods\\RModifier\\release\\LootEditorMod.swf": "4f1d6cf19979f4ea4960f8ccd8377c1d3cac490bed9949866885357d073c8625",
+            "mods\\Sandevistan\\release\\SandevistanMod.swf": "a6e706f0af8cc912a600d3b2262d3aae1ccffb7a9dd18b6b45f354fa860272e4",
+            "mods\\TDFC\\release\\TDFCMod.swf": "99bfbaa68229635fbaa496ef9287a94bb9ea7c65d71339cef3fde65f47e30275"
+          }
+        }
+      },
+      "input_manifest_sha256": "87dea868624c5108504d07538320d6f36ddf4a153f093ee5ebfeaeed957a50f2",
+      "configuration_files": {
+        "host": {
+          "mods/Rconnect/release/config.txt": "6e97ceb5a9a29d0c7f10a3d1eb0fd9c28ee77957b27a52ecc59200083024a1f3",
+          "mods/RealisticVision/release/config.txt": "5136ee1923a77f5f10eab1b3994b64cbd67b09d687a7e829fb1e81d2e79a3c7f",
+          "mods/Sandevistan/release/config.txt": "d91c4c2889aba19b1bcfb356885921b0605a50188b270a9e7619d2116e7ebdc3"
+        },
+        "join": {
+          "mods/Rconnect/release/config.txt": "a4d64eb6ef4061b61c2dcdd06d065654702d2b7b6b5ba72fa176c819d417e614",
+          "mods/RealisticVision/release/config.txt": "5136ee1923a77f5f10eab1b3994b64cbd67b09d687a7e829fb1e81d2e79a3c7f",
+          "mods/Sandevistan/release/config.txt": "d91c4c2889aba19b1bcfb356885921b0605a50188b270a9e7619d2116e7ebdc3"
+        }
+      },
+      "roles": {
+        "host": {
+          "pass": 57,
+          "fail": 0,
+          "log_sha256": "64eead562cf09eac1837baba232e6f920912b5fe7303f7f45711afeeacaa7f8d"
+        },
+        "join": {
+          "pass": 57,
+          "fail": 0,
+          "log_sha256": "84fcab2f54362d3b3ae8657a00e9a46f2070ecedde37d0d782f6840e022a293f"
+        }
+      },
+      "images": {
+        "host": {
+          "host-hud-bottom-expanded.png": "ebfec9a408a3afae714c7abc104520127dfe682fc5612960ce92ca3ca8b41286",
+          "host-hud-chat.png": "fc948fc9ffff975e62277a669433781cf30d73f5a9a75894e1d34dd357585b7c",
+          "host-hud-collapsed.png": "99e6663d2682cb1e7b55f9b4b7c3c9ecaf357eeac3666735f98c8ed4ae56750a",
+          "host-hud-connect.png": "1caf3944fa5a3fdec15267073449776efb3710b0cf942d734373e6d66c758bff",
+          "host-hud-long-error.png": "cc17339ce01a203ad6ae24074cbcd6c648931bfa71608f8576fd510ee28e4ceb",
+          "host-hud-pause-hidden.png": "7d213d5447e24be302b291dd973abef308d79ee7954893e03908783e5f0cd30d",
+          "host-hud-peer.png": "10c70559f538065169e2cc4116a1cd1a39ec11f35e8d3da9c980a3e7c4e76dc2",
+          "host-hud-settings-en.png": "c90251ea214977ffd3cac4e9e543c1f2cfb2aeae31bf17e7acb437599ad15445",
+          "host-hud-settings-ru.png": "44b62d3b983dc4043c42e337e503f7cd87957fa3e6f01073dca1344e2e93002c",
+          "host-hud-settings-tw.png": "fe4a861e786de9fa6ae798a9a73980356be5a78649c0a2105e51ab428f9ae310",
+          "host-hud-small-scrolled.png": "12da820baebd1fa2bf9f94359c754fd7dc5346bcd10bb07dc4218ab5c80491f6"
+        },
+        "join": {
+          "join-hud-bottom-expanded.png": "24b2a63b29f25f29762e2da5a701c07c58f767088093a0e064c36c8f5ab1a2e1",
+          "join-hud-chat.png": "370d2d195735f19d98864659c114f545429bd2deb5b7ac3f307cc3ab99d2b7b3",
+          "join-hud-collapsed.png": "f7118877b330af1856ed788dd3a7c2469a7991f42b32c88948cc3bd797b8fdbf",
+          "join-hud-connect.png": "cfe52a0e183891b61aab21d00605c5737ead2c435cee45b00ea9caf9053143a5",
+          "join-hud-long-error.png": "cc0c011c65e62def3145b43e2efe10f7cbac1ed57f38c8f424915986d1970a6b",
+          "join-hud-pause-hidden.png": "73c54b429442d05573bbb3c6f890195f032ff7ddde6b3be7883fe5376e5676e9",
+          "join-hud-peer.png": "caea8eb283f9c729a77fcf60030d081e200e626b6c7a41e0360df1050eb33443",
+          "join-hud-settings-en.png": "96a0d625c8f8ee780e6366c35dc056fb3b67a099c2eac775e312a2e469145ce8",
+          "join-hud-settings-ru.png": "54966a308d532c93457d6ab49134f4a3c2531abc28089829eb6e0db53900cc91",
+          "join-hud-settings-tw.png": "6b42fa7219f3b368a02ddeb0dc2a1633eecdf9e3a48e8be49c9036589401b613",
+          "join-hud-small-scrolled.png": "d6a74493d2a47b517cefbd80b794138b74f2fa8c78052b714406feccb7758f35"
+        }
+      },
+      "pass": 114
+    },
+    {
+      "entry": "CoopPauseTestDoc",
+      "run": "6ebbe208b6",
+      "exit": 0,
+      "pids": [
+        60100,
+        70196
+      ],
+      "inputs": {
+        "host": {
+          "game": "c631cbf3511b6ee303f533d08d51511fe0eb702f43e5db17f5241d8576c64867",
+          "process_policy": {
+            "RConnect.Process.ps1": "b3fe91f9544a3a57f45b6f1c3a47fcde207f62524cedea846f45d3d4599be88d",
+            "keep_test_responsive.ps1": "ce125a1d3904fe5b0f29c3ca8df306fb848148057cff8a0bc5f44a33e71b97a3"
+          },
+          "production": "a5698f9f5941b27c2fd47de56366c4d867bf256b2dcb7d484596844dea093971",
+          "driver": "c37e7949c7239c4cf28c6608a53c1990b50b69062d3904006f75417455b1e5fc",
+          "harness": "1e397e0c73cca3039b949b70f3b4fbddb820df61c162566f93711f273d38fb96",
+          "modules": {
+            "mods\\ModLoader\\release\\ModLoaderMod.swf": "2d01241a89fb25d608ac5138254e14dc3e5fb46e7120319a0d5922e4cf9816fd",
+            "mods\\ModSettings\\release\\ModSettingsMod.swf": "c2bc2cce45a9b7125d8cf048b352e059ec6ddf466f8625ca77bcc4b3e6a4b451",
+            "mods\\MoreSkills&Weapons\\release\\MoreSkillsWeaponsMod.swf": "f9cecf74823d6dca7009e04f01b83f49788fb5f2e874bc529c5f6124a9986362",
+            "mods\\RandomRooms\\release\\RandomRoomsMod.swf": "f21d7c04ff1ccf59779f0b8d9f52d982585145447c47727c660e9ecc7d62c0df",
+            "mods\\Rconnect\\release\\RConnectMod.swf": "1e397e0c73cca3039b949b70f3b4fbddb820df61c162566f93711f273d38fb96",
+            "mods\\RealisticVision\\release\\RealisticVisionMod.swf": "72d2f75ba89e7b40cc78c5a5e48e1c61af297753cbe2dca929e0f1ad5ba6a303",
+            "mods\\RModifier\\release\\LootEditorMod.swf": "4f1d6cf19979f4ea4960f8ccd8377c1d3cac490bed9949866885357d073c8625",
+            "mods\\Sandevistan\\release\\SandevistanMod.swf": "a6e706f0af8cc912a600d3b2262d3aae1ccffb7a9dd18b6b45f354fa860272e4",
+            "mods\\TDFC\\release\\TDFCMod.swf": "99bfbaa68229635fbaa496ef9287a94bb9ea7c65d71339cef3fde65f47e30275"
+          }
+        },
+        "join": {
+          "game": "c631cbf3511b6ee303f533d08d51511fe0eb702f43e5db17f5241d8576c64867",
+          "process_policy": {
+            "RConnect.Process.ps1": "b3fe91f9544a3a57f45b6f1c3a47fcde207f62524cedea846f45d3d4599be88d",
+            "keep_test_responsive.ps1": "ce125a1d3904fe5b0f29c3ca8df306fb848148057cff8a0bc5f44a33e71b97a3"
+          },
+          "production": "a5698f9f5941b27c2fd47de56366c4d867bf256b2dcb7d484596844dea093971",
+          "driver": "c37e7949c7239c4cf28c6608a53c1990b50b69062d3904006f75417455b1e5fc",
+          "harness": "1e397e0c73cca3039b949b70f3b4fbddb820df61c162566f93711f273d38fb96",
+          "modules": {
+            "mods\\ModLoader\\release\\ModLoaderMod.swf": "2d01241a89fb25d608ac5138254e14dc3e5fb46e7120319a0d5922e4cf9816fd",
+            "mods\\ModSettings\\release\\ModSettingsMod.swf": "c2bc2cce45a9b7125d8cf048b352e059ec6ddf466f8625ca77bcc4b3e6a4b451",
+            "mods\\MoreSkills&Weapons\\release\\MoreSkillsWeaponsMod.swf": "f9cecf74823d6dca7009e04f01b83f49788fb5f2e874bc529c5f6124a9986362",
+            "mods\\RandomRooms\\release\\RandomRoomsMod.swf": "f21d7c04ff1ccf59779f0b8d9f52d982585145447c47727c660e9ecc7d62c0df",
+            "mods\\Rconnect\\release\\RConnectMod.swf": "1e397e0c73cca3039b949b70f3b4fbddb820df61c162566f93711f273d38fb96",
+            "mods\\RealisticVision\\release\\RealisticVisionMod.swf": "72d2f75ba89e7b40cc78c5a5e48e1c61af297753cbe2dca929e0f1ad5ba6a303",
+            "mods\\RModifier\\release\\LootEditorMod.swf": "4f1d6cf19979f4ea4960f8ccd8377c1d3cac490bed9949866885357d073c8625",
+            "mods\\Sandevistan\\release\\SandevistanMod.swf": "a6e706f0af8cc912a600d3b2262d3aae1ccffb7a9dd18b6b45f354fa860272e4",
+            "mods\\TDFC\\release\\TDFCMod.swf": "99bfbaa68229635fbaa496ef9287a94bb9ea7c65d71339cef3fde65f47e30275"
+          }
+        }
+      },
+      "input_manifest_sha256": "f0f30f21aa2757b0edafc23daa756f9b9d489a76a5dda4ed601f976d6fce7171",
+      "configuration_files": {
+        "host": {
+          "mods/Rconnect/release/config.txt": "6ae12e47b18a4ad601b97361d08189a11653db74a0b11ec5e5671e9356885579",
+          "mods/RealisticVision/release/config.txt": "5136ee1923a77f5f10eab1b3994b64cbd67b09d687a7e829fb1e81d2e79a3c7f",
+          "mods/Sandevistan/release/config.txt": "d91c4c2889aba19b1bcfb356885921b0605a50188b270a9e7619d2116e7ebdc3"
+        },
+        "join": {
+          "mods/Rconnect/release/config.txt": "2d4ab04c5941bec10422887ff0f766cecb690dc2eda649c7ca6d68fcc1fb9013",
+          "mods/RealisticVision/release/config.txt": "5136ee1923a77f5f10eab1b3994b64cbd67b09d687a7e829fb1e81d2e79a3c7f",
+          "mods/Sandevistan/release/config.txt": "d91c4c2889aba19b1bcfb356885921b0605a50188b270a9e7619d2116e7ebdc3"
+        }
+      },
+      "roles": {
+        "host": {
+          "pass": 217,
+          "fail": 0,
+          "log_sha256": "407c4cea99c8aa380e037f32a4fdad2f13b629e91f85372e39fe535ed4be5828"
+        },
+        "join": {
+          "pass": 221,
+          "fail": 0,
+          "log_sha256": "09dc73889a5809ee9d0f68dae0087b00f63d263d8dfe884b5754bc2d8452cfb0"
+        }
+      },
+      "images": {
+        "host": {},
+        "join": {}
+      },
+      "pass": 438
+    },
+    {
+      "entry": "TeammateNavigationTestDoc",
+      "run": "52d472ef50",
+      "exit": 0,
+      "pids": [
+        20312,
+        19888
+      ],
+      "inputs": {
+        "host": {
+          "game": "c631cbf3511b6ee303f533d08d51511fe0eb702f43e5db17f5241d8576c64867",
+          "process_policy": {
+            "RConnect.Process.ps1": "b3fe91f9544a3a57f45b6f1c3a47fcde207f62524cedea846f45d3d4599be88d",
+            "keep_test_responsive.ps1": "ce125a1d3904fe5b0f29c3ca8df306fb848148057cff8a0bc5f44a33e71b97a3"
+          },
+          "production": "a5698f9f5941b27c2fd47de56366c4d867bf256b2dcb7d484596844dea093971",
+          "driver": "47802f070349711d115d87527975ecd878aac2807c18d52082cee606be525a1f",
+          "harness": "2386c6c269042ce7fb6810a5601da8956decbc216bdc0ee317f5dc2c10a28e52",
+          "modules": {
+            "mods\\ModLoader\\release\\ModLoaderMod.swf": "2d01241a89fb25d608ac5138254e14dc3e5fb46e7120319a0d5922e4cf9816fd",
+            "mods\\ModSettings\\release\\ModSettingsMod.swf": "c2bc2cce45a9b7125d8cf048b352e059ec6ddf466f8625ca77bcc4b3e6a4b451",
+            "mods\\MoreSkills&Weapons\\release\\MoreSkillsWeaponsMod.swf": "f9cecf74823d6dca7009e04f01b83f49788fb5f2e874bc529c5f6124a9986362",
+            "mods\\RandomRooms\\release\\RandomRoomsMod.swf": "f21d7c04ff1ccf59779f0b8d9f52d982585145447c47727c660e9ecc7d62c0df",
+            "mods\\Rconnect\\release\\RConnectMod.swf": "2386c6c269042ce7fb6810a5601da8956decbc216bdc0ee317f5dc2c10a28e52",
+            "mods\\RealisticVision\\release\\RealisticVisionMod.swf": "72d2f75ba89e7b40cc78c5a5e48e1c61af297753cbe2dca929e0f1ad5ba6a303",
+            "mods\\RModifier\\release\\LootEditorMod.swf": "4f1d6cf19979f4ea4960f8ccd8377c1d3cac490bed9949866885357d073c8625",
+            "mods\\Sandevistan\\release\\SandevistanMod.swf": "a6e706f0af8cc912a600d3b2262d3aae1ccffb7a9dd18b6b45f354fa860272e4",
+            "mods\\TDFC\\release\\TDFCMod.swf": "99bfbaa68229635fbaa496ef9287a94bb9ea7c65d71339cef3fde65f47e30275"
+          }
+        },
+        "join": {
+          "game": "c631cbf3511b6ee303f533d08d51511fe0eb702f43e5db17f5241d8576c64867",
+          "process_policy": {
+            "RConnect.Process.ps1": "b3fe91f9544a3a57f45b6f1c3a47fcde207f62524cedea846f45d3d4599be88d",
+            "keep_test_responsive.ps1": "ce125a1d3904fe5b0f29c3ca8df306fb848148057cff8a0bc5f44a33e71b97a3"
+          },
+          "production": "a5698f9f5941b27c2fd47de56366c4d867bf256b2dcb7d484596844dea093971",
+          "driver": "47802f070349711d115d87527975ecd878aac2807c18d52082cee606be525a1f",
+          "harness": "2386c6c269042ce7fb6810a5601da8956decbc216bdc0ee317f5dc2c10a28e52",
+          "modules": {
+            "mods\\ModLoader\\release\\ModLoaderMod.swf": "2d01241a89fb25d608ac5138254e14dc3e5fb46e7120319a0d5922e4cf9816fd",
+            "mods\\ModSettings\\release\\ModSettingsMod.swf": "c2bc2cce45a9b7125d8cf048b352e059ec6ddf466f8625ca77bcc4b3e6a4b451",
+            "mods\\MoreSkills&Weapons\\release\\MoreSkillsWeaponsMod.swf": "f9cecf74823d6dca7009e04f01b83f49788fb5f2e874bc529c5f6124a9986362",
+            "mods\\RandomRooms\\release\\RandomRoomsMod.swf": "f21d7c04ff1ccf59779f0b8d9f52d982585145447c47727c660e9ecc7d62c0df",
+            "mods\\Rconnect\\release\\RConnectMod.swf": "2386c6c269042ce7fb6810a5601da8956decbc216bdc0ee317f5dc2c10a28e52",
+            "mods\\RealisticVision\\release\\RealisticVisionMod.swf": "72d2f75ba89e7b40cc78c5a5e48e1c61af297753cbe2dca929e0f1ad5ba6a303",
+            "mods\\RModifier\\release\\LootEditorMod.swf": "4f1d6cf19979f4ea4960f8ccd8377c1d3cac490bed9949866885357d073c8625",
+            "mods\\Sandevistan\\release\\SandevistanMod.swf": "a6e706f0af8cc912a600d3b2262d3aae1ccffb7a9dd18b6b45f354fa860272e4",
+            "mods\\TDFC\\release\\TDFCMod.swf": "99bfbaa68229635fbaa496ef9287a94bb9ea7c65d71339cef3fde65f47e30275"
+          }
+        }
+      },
+      "input_manifest_sha256": "400e11293ad551a805842022416d07076b299096568c640d6a9b7f7d225d45c5",
+      "configuration_files": {
+        "host": {
+          "mods/Rconnect/release/config.txt": "086c8d609ec9f740f0af7751c38e24ff9418535c934dd26093326da442d8234b",
+          "mods/RealisticVision/release/config.txt": "5136ee1923a77f5f10eab1b3994b64cbd67b09d687a7e829fb1e81d2e79a3c7f",
+          "mods/Sandevistan/release/config.txt": "d91c4c2889aba19b1bcfb356885921b0605a50188b270a9e7619d2116e7ebdc3"
+        },
+        "join": {
+          "mods/Rconnect/release/config.txt": "032780284eff9834c86bdf9b5e541b3ecc9a8ec6b38bfdefe2070cdc7bdcfe3f",
+          "mods/RealisticVision/release/config.txt": "5136ee1923a77f5f10eab1b3994b64cbd67b09d687a7e829fb1e81d2e79a3c7f",
+          "mods/Sandevistan/release/config.txt": "d91c4c2889aba19b1bcfb356885921b0605a50188b270a9e7619d2116e7ebdc3"
+        }
+      },
+      "roles": {
+        "host": {
+          "pass": 30,
+          "fail": 0,
+          "log_sha256": "834519a5f7d1b4a22e6a4f41d34d7f7ce9d46f893b84516d1fa8a52614f347e9"
+        },
+        "join": {
+          "pass": 25,
+          "fail": 0,
+          "log_sha256": "0fabbdfe52f66cdf4f81ebf3506fce4d6cad6bb3fe9a7b10b31c64bd584d9eba"
+        }
+      },
+      "images": {
+        "host": {},
+        "join": {}
+      },
+      "pass": 55
+    },
+    {
+      "entry": "RoomCooperationTestDoc",
+      "run": "e9e7402c87",
+      "exit": 0,
+      "pids": [
+        6328,
+        18664
+      ],
+      "inputs": {
+        "host": {
+          "game": "c631cbf3511b6ee303f533d08d51511fe0eb702f43e5db17f5241d8576c64867",
+          "process_policy": {
+            "RConnect.Process.ps1": "b3fe91f9544a3a57f45b6f1c3a47fcde207f62524cedea846f45d3d4599be88d",
+            "keep_test_responsive.ps1": "ce125a1d3904fe5b0f29c3ca8df306fb848148057cff8a0bc5f44a33e71b97a3"
+          },
+          "production": "a5698f9f5941b27c2fd47de56366c4d867bf256b2dcb7d484596844dea093971",
+          "driver": "d4541c7c12e4c6566e9bc6e37dc2c5cb6d9f726ede91c3f7c56bee3807416f01",
+          "harness": "98f0037cb2a1f0fabf8101868b862a84fe36835f7438d7d9823f427b0354c0dc",
+          "modules": {
+            "mods\\ModLoader\\release\\ModLoaderMod.swf": "2d01241a89fb25d608ac5138254e14dc3e5fb46e7120319a0d5922e4cf9816fd",
+            "mods\\ModSettings\\release\\ModSettingsMod.swf": "c2bc2cce45a9b7125d8cf048b352e059ec6ddf466f8625ca77bcc4b3e6a4b451",
+            "mods\\MoreSkills&Weapons\\release\\MoreSkillsWeaponsMod.swf": "f9cecf74823d6dca7009e04f01b83f49788fb5f2e874bc529c5f6124a9986362",
+            "mods\\RandomRooms\\release\\RandomRoomsMod.swf": "f21d7c04ff1ccf59779f0b8d9f52d982585145447c47727c660e9ecc7d62c0df",
+            "mods\\Rconnect\\release\\RConnectMod.swf": "98f0037cb2a1f0fabf8101868b862a84fe36835f7438d7d9823f427b0354c0dc",
+            "mods\\RealisticVision\\release\\RealisticVisionMod.swf": "72d2f75ba89e7b40cc78c5a5e48e1c61af297753cbe2dca929e0f1ad5ba6a303",
+            "mods\\RModifier\\release\\LootEditorMod.swf": "4f1d6cf19979f4ea4960f8ccd8377c1d3cac490bed9949866885357d073c8625",
+            "mods\\Sandevistan\\release\\SandevistanMod.swf": "a6e706f0af8cc912a600d3b2262d3aae1ccffb7a9dd18b6b45f354fa860272e4",
+            "mods\\TDFC\\release\\TDFCMod.swf": "99bfbaa68229635fbaa496ef9287a94bb9ea7c65d71339cef3fde65f47e30275"
+          }
+        },
+        "join": {
+          "game": "c631cbf3511b6ee303f533d08d51511fe0eb702f43e5db17f5241d8576c64867",
+          "process_policy": {
+            "RConnect.Process.ps1": "b3fe91f9544a3a57f45b6f1c3a47fcde207f62524cedea846f45d3d4599be88d",
+            "keep_test_responsive.ps1": "ce125a1d3904fe5b0f29c3ca8df306fb848148057cff8a0bc5f44a33e71b97a3"
+          },
+          "production": "a5698f9f5941b27c2fd47de56366c4d867bf256b2dcb7d484596844dea093971",
+          "driver": "d4541c7c12e4c6566e9bc6e37dc2c5cb6d9f726ede91c3f7c56bee3807416f01",
+          "harness": "98f0037cb2a1f0fabf8101868b862a84fe36835f7438d7d9823f427b0354c0dc",
+          "modules": {
+            "mods\\ModLoader\\release\\ModLoaderMod.swf": "2d01241a89fb25d608ac5138254e14dc3e5fb46e7120319a0d5922e4cf9816fd",
+            "mods\\ModSettings\\release\\ModSettingsMod.swf": "c2bc2cce45a9b7125d8cf048b352e059ec6ddf466f8625ca77bcc4b3e6a4b451",
+            "mods\\MoreSkills&Weapons\\release\\MoreSkillsWeaponsMod.swf": "f9cecf74823d6dca7009e04f01b83f49788fb5f2e874bc529c5f6124a9986362",
+            "mods\\RandomRooms\\release\\RandomRoomsMod.swf": "f21d7c04ff1ccf59779f0b8d9f52d982585145447c47727c660e9ecc7d62c0df",
+            "mods\\Rconnect\\release\\RConnectMod.swf": "98f0037cb2a1f0fabf8101868b862a84fe36835f7438d7d9823f427b0354c0dc",
+            "mods\\RealisticVision\\release\\RealisticVisionMod.swf": "72d2f75ba89e7b40cc78c5a5e48e1c61af297753cbe2dca929e0f1ad5ba6a303",
+            "mods\\RModifier\\release\\LootEditorMod.swf": "4f1d6cf19979f4ea4960f8ccd8377c1d3cac490bed9949866885357d073c8625",
+            "mods\\Sandevistan\\release\\SandevistanMod.swf": "a6e706f0af8cc912a600d3b2262d3aae1ccffb7a9dd18b6b45f354fa860272e4",
+            "mods\\TDFC\\release\\TDFCMod.swf": "99bfbaa68229635fbaa496ef9287a94bb9ea7c65d71339cef3fde65f47e30275"
+          }
+        }
+      },
+      "input_manifest_sha256": "985d1a51eff8cd6616f8be2504f4cd2635de84a027817214c87ac88560cd7550",
+      "configuration_files": {
+        "host": {
+          "mods/Rconnect/release/config.txt": "1d8c681c7104e75ee73e4f6c073024e6686d6e8c4d925e514d6f0d7fefce8488",
+          "mods/RealisticVision/release/config.txt": "5136ee1923a77f5f10eab1b3994b64cbd67b09d687a7e829fb1e81d2e79a3c7f",
+          "mods/Sandevistan/release/config.txt": "d91c4c2889aba19b1bcfb356885921b0605a50188b270a9e7619d2116e7ebdc3"
+        },
+        "join": {
+          "mods/Rconnect/release/config.txt": "70aeafa041acf223d78ea5e3baf7a0724e5f5dee777e4dcfe9ddb9be8380839c",
+          "mods/RealisticVision/release/config.txt": "5136ee1923a77f5f10eab1b3994b64cbd67b09d687a7e829fb1e81d2e79a3c7f",
+          "mods/Sandevistan/release/config.txt": "d91c4c2889aba19b1bcfb356885921b0605a50188b270a9e7619d2116e7ebdc3"
+        }
+      },
+      "roles": {
+        "host": {
+          "pass": 22,
+          "fail": 0,
+          "log_sha256": "99ccbf1c287d78d7e8ddad5eda622954e74e865ae265c7503953982ed12f311d"
+        },
+        "join": {
+          "pass": 52,
+          "fail": 0,
+          "log_sha256": "52765bb09b93939677e933440b698032c7b20cc3f876260d93cc99b4b9568e51"
+        }
+      },
+      "images": {
+        "host": {},
+        "join": {}
+      },
+      "pass": 74
+    }
+  ],
+  "fail": 0,
+  "pass": 681,
+  "protected": {
+    "pfe.swf": "c631cbf3511b6ee303f533d08d51511fe0eb702f43e5db17f5241d8576c64867",
+    "DLC/pfe.swf": "90dec445e60e352dcad06b3171a3ae7b588dbf1fe6c8fb452fceec392aa9db02",
+    "DLC/pfeUI.swf": "0bd5d24381b5aaea50e40b2f95a9e54dfe4a7911aafba27aff06961c82f350c7",
+    "application.xml": "70dd3b085e5f6c66c03693cf68ce5e93a4e4136dd745d40d1a5b2a49863ba236",
+    "mods/loader-manifest.txt": "2d4a64a608a6482168fbfe9e8cd7bb53f006ab1f8993fcc737cf9d32f2293592",
+    "mods/ModLoader/release/ModLoaderMod.swf": "2d01241a89fb25d608ac5138254e14dc3e5fb46e7120319a0d5922e4cf9816fd",
+    "mods/ModSettings/release/ModSettingsMod.swf": "c2bc2cce45a9b7125d8cf048b352e059ec6ddf466f8625ca77bcc4b3e6a4b451",
+    "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-laser-eyes-20260923.swf": "909cef05d810a8f0c0093b34dd0999dc0ce6847e24e0402c1818bfcf435c3744",
+    "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-laser-reload-debug-20260923.swf": "f02ff3dbc917f557c59adef2ebc9605163e132fac964952a1b437b8bf1bb5e97",
+    "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.10.0-body-assist-20260923.swf": "a56e3b46d22cbc5ceccc086aa86c5e58917ec0fa5fff4d3178daabf02a49f659",
+    "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.11.0-adaptive-radius-20260923.swf": "132bc390598296bd6237b3991d762f587cf66466ebb907334ea7cf972277f3ce",
+    "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.11.1-turret-blind-20260924.swf": "f8dd73dd47e2e14a90097698317884e42eb3a0ebc163b91ada12b6f8a1700f10",
+    "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.12.0-nonfront-laser-20260924.swf": "c233d67ea0c5fc74bd0499adfb1ad1c45823caeeda7145806d84be101abf0827",
+    "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.12.0-nonfront-laser-final-20260924.swf": "c233d67ea0c5fc74bd0499adfb1ad1c45823caeeda7145806d84be101abf0827",
+    "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.13.0-laser-pointer-20260924.swf": "b8eb77d2005b427fa06f40d8fc2a9a5aa68c3e5a5e4df282cc43fc2629b2684f",
+    "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.13.2-laser-response-20260924-083702.swf": "e1ea2ac2acaa1f9f7d91dc9efe72f07e782609eb1c8b4e5ed42072fb1c53fe28",
+    "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.14.0-laser-contact-20260924.swf": "620a5bb9459e7e50f74644a3fcc24c548c5c15ba225d5335a204d3448c715b91",
+    "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.14.1-sats-20260924.swf": "7ae25c6babef61dbb3a158ad9e20fd8dbb3b473e4e66e34d2226cf2da4f73acf",
+    "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.14.2-smart-near-20260924-135857.swf": "17bdf40ad86c66a7f6c95c27abb86d397a17e450d11b22d32ceba7fa7eb857c5",
+    "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.14.3-laser-props-20260924.swf": "c01f426a358bb995829a200854039a2e836b285b59183364b43256f104f48f81",
+    "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.15.0-smart-focus-20260927-210640.swf": "3ecfa98b9e8a58e14314f1295b994f54bf5605bccec2f82d796ca2faf03745f9",
+    "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.15.1-eye-alignment-20260927-214032.swf": "49944ba875ecfe2aac847cd30c5b23a41d8367dac0a8708d74cfdc02de2682e0",
+    "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.15.2-native-tracer-20260928-082342.swf": "8817748176e17d3c32b286eb5780a818c580818393562973da36ea3799f4425f",
+    "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.15.3-visible-lock-20260928-212428.swf": "36b9c19193d231c99db02bbf9ccf9f801eca81c5347ad01e9fd961ed4e67b474",
+    "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.4.0-20260919.swf": "bef4d857b6b78d6ccb1f9e012b8bf33cd1e9892b7347892da984176789de648f",
+    "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.4.1-20260920.swf": "d87b233391e87ae6be4bb224055d5f2615b2dc3e1dff0ef6929391508d3cf1ec",
+    "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.5.0-20260920.swf": "f9dcd668b57b3ee9b44a52649d55432276afade9def0ef9e46ba5ab9b9adcdb3",
+    "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.5.2-20260920.swf": "4783cc1943cb8cc58db4610144fb959e37e3a41c652e82bfe714c74e3a30a8a1",
+    "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.5.3-20260920.swf": "695109fdcd702cefbcbb554748695f87740da93f7654187807a1735d5d4961e9",
+    "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.5.3-final-20260920.swf": "695109fdcd702cefbcbb554748695f87740da93f7654187807a1735d5d4961e9",
+    "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.6.0-20260920.swf": "671fd977eca722b9272ff916426e64e5df8c8c4defda1ecadacdf1778c5eb72a",
+    "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.6.1-20260923.swf": "ef5fba0f8407e25432f38cf9a9342d8d802b1f80243011c43a8693cef92a713e",
+    "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.6.1-laser-fix-20260923.swf": "439a477f9487deb2465db180aa5360971be5c59f1261b203a795901d6a4d3b62",
+    "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.6.2-keep-lock-20260923.swf": "573709f879ed6a538d49110a73836053123dc859f47376d2c63d221090e5b089",
+    "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.7.0-multi-lock-20260923.swf": "d16523c35be414fb200d5ffdd31b1453b85f1af3802a91180805d8fdd0f21bbd",
+    "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.8.0-smooth-mode-20260923.swf": "04a7e69f62044840f9bca112e235632546096fb9c360c6f5869446daf4e1e0b9",
+    "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.9.0-lock-exemption-20260923.swf": "f18097a6681993e1b894b2b25b31781dbd2b9407fed8f6f6f45cfdb9a7ab7c05",
+    "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.9.1-exemption-menu-20260923.swf": "15d7e3a56393d252656add2b1631f780cda4ee6eb752a9ad3d12f286f5b48707",
+    "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.swf": "f9cecf74823d6dca7009e04f01b83f49788fb5f2e874bc529c5f6124a9986362",
+    "mods/RandomRooms/release/RandomRoomsEditor.swf": "fb1537f54b2c32af02aca771cb09366441fb74ca01ee3a6099e35c4d3a35dfd8",
+    "mods/RandomRooms/release/RandomRoomsMod.swf": "f21d7c04ff1ccf59779f0b8d9f52d982585145447c47727c660e9ecc7d62c0df",
+    "mods/RandomRooms/release/RandomRoomsMod_v53_backup.swf": "7feb9157e7cd21785eb24077187ce84342c1102f3e6758163401c490a25085c9",
+    "mods/RealisticVision/release/RealisticVisionMod.swf": "72d2f75ba89e7b40cc78c5a5e48e1c61af297753cbe2dca929e0f1ad5ba6a303",
+    "mods/RModifier/release/LootEditorMod.swf": "4f1d6cf19979f4ea4960f8ccd8377c1d3cac490bed9949866885357d073c8625",
+    "mods/Sandevistan/release/SandevistanMod.before-v1.141-20260923.swf": "0506615963176d937c596f43b8ff6d865b3bac5d2dece8490a47629d65a9a0ba",
+    "mods/Sandevistan/release/SandevistanMod.before-v1.142-20260923.swf": "f556c0728da406a4a6a05399df93e9a0349c4225107547f1e12fe88a2aee3e48",
+    "mods/Sandevistan/release/SandevistanMod.before-v1.143-20260923.swf": "28449b2646223a8eee20eb4bb361dda2d5dc0572c6aaa9cd5fcb5d072a374c44",
+    "mods/Sandevistan/release/SandevistanMod.before-v1.144-20260923.swf": "b8805dbacc9a1313fd96bb68889911195ac6eafcbb526e50c313b86ad1e9c748",
+    "mods/Sandevistan/release/SandevistanMod.before-v1.145-20260927.swf": "2c26eadcfe760ec3bd998ddbedf0fad333151e203b0688af268bdf0612ba0263",
+    "mods/Sandevistan/release/SandevistanMod.swf": "a6e706f0af8cc912a600d3b2262d3aae1ccffb7a9dd18b6b45f354fa860272e4",
+    "mods/TDFC/release/TDFCMod.swf": "99bfbaa68229635fbaa496ef9287a94bb9ea7c65d71339cef3fde65f47e30275",
+    "mods/RConnect/release/config.txt": "5ca72017f1f811b5f8a2b1f18f6cb8b2c24239e2240716c4059cbc073913fc0a",
+    "mods/RealisticVision/release/config.txt": "5136ee1923a77f5f10eab1b3994b64cbd67b09d687a7e829fb1e81d2e79a3c7f",
+    "mods/Sandevistan/release/config.txt": "d91c4c2889aba19b1bcfb356885921b0605a50188b270a9e7619d2116e7ebdc3",
+    "mods/Sandevistan/release/说明.txt": "59965b2909eb9c3af4150633b63b193f37ad96679db6ca23f42d75e143877b9e",
+    "mods/Sandevistan/release/音乐配置.txt": "bdd3005239cfedc9c6005ca03161982d5b0cb205f0d6210047b425490463ab00"
+  },
+  "base": "59a03d1eb3ca7d8467015c709301bc1fbe6d585342de5857e984344a33572790",
+  "scope": "M45 core unchanged; compact HUD, tabs, local preferences, event handling and co-op UI integration.",
+  "limits": [
+    "Synthetic input events; real Chinese IME and hardware mouse were not automated.",
+    "Pending M46 core fixes are excluded; all retained M46 red runs remain red."
+  ],
+  "deployment": {
+    "status": "deployed-smoke-passed",
+    "at": "2026-10-06T23:24:32.950819+08:00",
+    "version": "0.2.17-dev",
+    "sha256": "a5698f9f5941b27c2fd47de56366c4d867bf256b2dcb7d484596844dea093971",
+    "size": 117821,
+    "previous_sha256": "59a03d1eb3ca7d8467015c709301bc1fbe6d585342de5857e984344a33572790",
+    "backup": "build/backup/ui-release-retry-20261006-232432-d168f9/RConnectMod.before.swf",
+    "snapshot": "build/ui-20261006/stable-ui-07",
+    "authorization": "用户已授权开始实装及本会话统一候选部署；仅本模组release。",
+    "deployment_script_sha256": "45dc234256ac15ac34eeb10858ea5d10a435b3b9fdc077c09d353911f8a6deb2",
+    "attempt": 2,
+    "previous_attempt_receipt": "build/ui-20261006/stable-ui-07/deployment-attempt-01.json",
+    "previous_attempt_receipt_sha256": "78ea251ac4091b60e53b50a2a5b9126def00d4ffe96adca37d9731c65fd5a80e",
+    "smoke_invocation": "python -X utf8 ui_release.py smoke",
+    "deployment_retry_script_sha256": "9d8d289b0bc19b0eb2868ecb827578205442dd13dd37275c4231b32fc00b781e",
+    "smoke": {
+      "entry": "normal-smoke",
+      "run": "4a3257643f",
+      "exit": 0,
+      "pids": [
+        28956,
+        69300
+      ],
+      "inputs": {
+        "host": {
+          "game": "c631cbf3511b6ee303f533d08d51511fe0eb702f43e5db17f5241d8576c64867",
+          "process_policy": {
+            "RConnect.Process.ps1": "b3fe91f9544a3a57f45b6f1c3a47fcde207f62524cedea846f45d3d4599be88d",
+            "keep_test_responsive.ps1": "ce125a1d3904fe5b0f29c3ca8df306fb848148057cff8a0bc5f44a33e71b97a3"
+          },
+          "modules": {
+            "mods\\ModLoader\\release\\ModLoaderMod.swf": "2d01241a89fb25d608ac5138254e14dc3e5fb46e7120319a0d5922e4cf9816fd",
+            "mods\\ModSettings\\release\\ModSettingsMod.swf": "c2bc2cce45a9b7125d8cf048b352e059ec6ddf466f8625ca77bcc4b3e6a4b451",
+            "mods\\MoreSkills&Weapons\\release\\MoreSkillsWeaponsMod.swf": "f9cecf74823d6dca7009e04f01b83f49788fb5f2e874bc529c5f6124a9986362",
+            "mods\\RandomRooms\\release\\RandomRoomsMod.swf": "f21d7c04ff1ccf59779f0b8d9f52d982585145447c47727c660e9ecc7d62c0df",
+            "mods\\Rconnect\\release\\RConnectMod.swf": "a5698f9f5941b27c2fd47de56366c4d867bf256b2dcb7d484596844dea093971",
+            "mods\\RealisticVision\\release\\RealisticVisionMod.swf": "72d2f75ba89e7b40cc78c5a5e48e1c61af297753cbe2dca929e0f1ad5ba6a303",
+            "mods\\RModifier\\release\\LootEditorMod.swf": "4f1d6cf19979f4ea4960f8ccd8377c1d3cac490bed9949866885357d073c8625",
+            "mods\\Sandevistan\\release\\SandevistanMod.swf": "a6e706f0af8cc912a600d3b2262d3aae1ccffb7a9dd18b6b45f354fa860272e4",
+            "mods\\TDFC\\release\\TDFCMod.swf": "99bfbaa68229635fbaa496ef9287a94bb9ea7c65d71339cef3fde65f47e30275"
+          }
+        },
+        "join": {
+          "game": "c631cbf3511b6ee303f533d08d51511fe0eb702f43e5db17f5241d8576c64867",
+          "process_policy": {
+            "RConnect.Process.ps1": "b3fe91f9544a3a57f45b6f1c3a47fcde207f62524cedea846f45d3d4599be88d",
+            "keep_test_responsive.ps1": "ce125a1d3904fe5b0f29c3ca8df306fb848148057cff8a0bc5f44a33e71b97a3"
+          },
+          "modules": {
+            "mods\\ModLoader\\release\\ModLoaderMod.swf": "2d01241a89fb25d608ac5138254e14dc3e5fb46e7120319a0d5922e4cf9816fd",
+            "mods\\ModSettings\\release\\ModSettingsMod.swf": "c2bc2cce45a9b7125d8cf048b352e059ec6ddf466f8625ca77bcc4b3e6a4b451",
+            "mods\\MoreSkills&Weapons\\release\\MoreSkillsWeaponsMod.swf": "f9cecf74823d6dca7009e04f01b83f49788fb5f2e874bc529c5f6124a9986362",
+            "mods\\RandomRooms\\release\\RandomRoomsMod.swf": "f21d7c04ff1ccf59779f0b8d9f52d982585145447c47727c660e9ecc7d62c0df",
+            "mods\\Rconnect\\release\\RConnectMod.swf": "a5698f9f5941b27c2fd47de56366c4d867bf256b2dcb7d484596844dea093971",
+            "mods\\RealisticVision\\release\\RealisticVisionMod.swf": "72d2f75ba89e7b40cc78c5a5e48e1c61af297753cbe2dca929e0f1ad5ba6a303",
+            "mods\\RModifier\\release\\LootEditorMod.swf": "4f1d6cf19979f4ea4960f8ccd8377c1d3cac490bed9949866885357d073c8625",
+            "mods\\Sandevistan\\release\\SandevistanMod.swf": "a6e706f0af8cc912a600d3b2262d3aae1ccffb7a9dd18b6b45f354fa860272e4",
+            "mods\\TDFC\\release\\TDFCMod.swf": "99bfbaa68229635fbaa496ef9287a94bb9ea7c65d71339cef3fde65f47e30275"
+          }
+        }
+      },
+      "input_manifest_sha256": "d2585d395329ec24788d7c95b22037ef9f2b469a8a07aec9511a52fc407b87a1",
+      "configuration_files": {
+        "host": {
+          "mods/Rconnect/release/config.txt": "c56a0fcf442a215c734c7c331476e3ee4faf79f5b79892e677aaff5e989a25f2",
+          "mods/RealisticVision/release/config.txt": "5136ee1923a77f5f10eab1b3994b64cbd67b09d687a7e829fb1e81d2e79a3c7f",
+          "mods/Sandevistan/release/config.txt": "d91c4c2889aba19b1bcfb356885921b0605a50188b270a9e7619d2116e7ebdc3"
+        },
+        "join": {
+          "mods/Rconnect/release/config.txt": "3528dccdfa40efefad3efd93a63e3c24c5a7c227fe60fda1c87f5b562c69ca97",
+          "mods/RealisticVision/release/config.txt": "5136ee1923a77f5f10eab1b3994b64cbd67b09d687a7e829fb1e81d2e79a3c7f",
+          "mods/Sandevistan/release/config.txt": "d91c4c2889aba19b1bcfb356885921b0605a50188b270a9e7619d2116e7ebdc3"
+        }
+      },
+      "roles": {
+        "host": {
+          "pass": 0,
+          "fail": 0,
+          "log_sha256": "767f282f3ee4f3d937b332c930eed36b4f89fdb37337c0be661f652ba9602411"
+        },
+        "join": {
+          "pass": 0,
+          "fail": 0,
+          "log_sha256": "9a7cc3537d4cdd958188973f771faad6f25579ea33907a12429999319bb801c5"
+        }
+      },
+      "images": {
+        "host": {},
+        "join": {}
+      },
+      "pass": 0
+    }
+  },
+  "source": {
+    "src/fe/inter/RConnectTravelAccess.as": "ee2fb60621ba8ee21b6d585a284858be01eb6b9aee06cd4fe68e8c867dc1cec8",
+    "src/fe/serv/RConnectInteractionAccess.as": "118533088a2d7dadf4cf5016f376a96374e22c539f7732c052598f6211fa4886",
+    "src/fe/unit/RConnectAnimationAccess.as": "301babec3ec5074c6943ce8f0b2c0c02eb7f43cb4fb76a1be6b3f3482fdcc8cd",
+    "src/fe/unit/RConnectFeedbackAccess.as": "92f35d760620a1277f21202b77549bafad00f2b3217dfeeadf341d22ef52b123",
+    "src/fe/unit/RConnectPerceptionAccess.as": "be6ee0a5795addfe0a55573b950b5990441731f9fc3233a39708bca832e967b8",
+    "src/fe/unit/RConnectUnitAccess.as": "1e49291317222540157667c5c2cd0ea6db9538844e74516b1d08a2b27aea47bb",
+    "src/modlocales/connect/messages.json": "aa9a28720636df60c907d1751e1f6e1f81683611abd6376ab2170e9c90018c24",
+    "src/modlocales/connect/RCLocale.as": "96d80b0f2d21620e08caf93864a77a58e10214a0dc817ea21e6a1e6ce8548ffb",
+    "src/modlocales/connect/RCLocaleMessages.as": "06ad485dd3e5b174edf7d30c93f715dbd8f15b47af852d95bb5a4cd9566336f7",
+    "src/rconnect/core/Config.as": "c671c61d3d9b28504b4f667fd87c046c3cdc735b6369c690796510ab323ff796",
+    "src/rconnect/core/CoopPause.as": "1ea5e5a0225d989e0dbfb5076fb00a2e0ee694354d54ed75769b8d4b0606334e",
+    "src/rconnect/core/EnemyGrip.as": "b98ac50e36789f921eed0d8a0d5cfe9076eca19b9c917b6be8a58d160812e275",
+    "src/rconnect/core/Log.as": "3863a2136c06c7769483945f3c24456ca8b2ddefe842ca6f696049cf750428f7",
+    "src/rconnect/core/ManualStartup.as": "16ed42504c3bb5ccd4211d8cda7c0bb030eafbfe80d46e5ec761d1e40abb010e",
+    "src/rconnect/core/RoomDiagnostics.as": "fabbb2506701b1da9b88f89c81141f7ec3cec06be248c332bfc132b7d68cd175",
+    "src/rconnect/core/RoomSync.as": "604800ecc33897f2680efd3b0a4ba5658e703c5ed5fabf4e1f564cf6acf3e35d",
+    "src/rconnect/core/Session.as": "dfff615b68efa7018dfe870d29b3242ef932f68dd831e35ad317c958c630e41d",
+    "src/rconnect/core/TeammateNavigation.as": "91082babebb2fa2dbe2425c9f2e2c3f9b8fb9637864948a8efce074927039f59",
+    "src/rconnect/core/TravelGuard.as": "6aba0494d23061113702d9b1e02bb8a9e5ee640d978fdfb401fde2a46d8762d3",
+    "src/rconnect/game/CooperativeBonus.as": "d5de26364ff3b4c571257c6c074be67e8f9d8d5bf0c8767034b91d59bdab7c1f",
+    "src/rconnect/game/DeathVisuals.as": "16bf7e1903bf72890cdbcb15b3da175e5b8afe268d24e14406f5229bb3fd2f89",
+    "src/rconnect/game/ExplorationSync.as": "31f6e06c0bbc08f70f01a02fee700030efc9e5649b5b27bb5bcbd1d8246e0417",
+    "src/rconnect/game/GameBridge.as": "b06decb899150b547e4684dab0b325c484181d71f6a669cd9d072347e02de161",
+    "src/rconnect/game/GroundItemState.as": "2667094e8080d95624b92f3afafdf390c04d46664aded3844c919beebf0495e6",
+    "src/rconnect/game/HitFeedback.as": "72441f9c5c5a5e45328aae78bbd6592dcd6630293e7a785c7b2af1ba47a07a17",
+    "src/rconnect/game/MirrorHitUnit.as": "01c07d53e9fd021f3a6ab9b3254611b2a07c9645b242bfd39a0f74fe2a6adfe5",
+    "src/rconnect/game/NativeHit.as": "04a3f3f1cc2c2f9331ce2095c04d1bd6cdd2d7f44249fae17b189bf558046f41",
+    "src/rconnect/game/NativeRoomState.as": "07981fdaf2374a0612db7f8ac70f1118407d24679d6a654022671ede60db7364",
+    "src/rconnect/game/ObjectIdentity.as": "0bc4cc3429f78f0e43164dea4af4481e4230fdf335bd0eed6e7090baf0937774",
+    "src/rconnect/game/ProjectileVisuals.as": "1e3232ce6e789378483969d9e45d8242296b21d9c014654e23e01fa3adddde96",
+    "src/rconnect/game/RemoteArmor.as": "f9de592e2d079cabafcad9625dbb1f2739f8337db8b90aaaf4992cad1fc52249",
+    "src/rconnect/game/RemoteDamageUnit.as": "df0bab5393180adb4bc7b02841f1d6d712099cdb1fd121d9e4b7134b4e469e08",
+    "src/rconnect/game/RemoteLoot.as": "b051ea9a719a135534aa84315064595ad085f75474b080f742d2addb881dce12",
+    "src/rconnect/game/RemoteMotion.as": "ecc88f313374f9a9cae0b983c314eb364bbae46de54a00325c33304560875537",
+    "src/rconnect/game/TelekinesisVisuals.as": "60366edd54109b6d7fb2c2ea1a12e2bfe8cbe9d8dade56b81a6dd18a1ec49213",
+    "src/rconnect/game/TerrainSync.as": "6cd13e65960c4bee9c3a194d0b4d51972777232a573d70b0d8b65597e4081c86",
+    "src/rconnect/game/TurretDisplay.as": "b9bf6c7be6343d123d4e7d9df91efcf58a09cd69fda0ee55040a8969a9f86cd7",
+    "src/rconnect/game/UnitPresentation.as": "4bc2865241687913fd39dde9600970a3719000f20c7be5e6e96957da7cf3f6e0",
+    "src/rconnect/game/VersionProbe.as": "b565f16eac1bde5bc036f774cfb9b730ae38b270899aaf0f0adf05e4771f07f1",
+    "src/rconnect/game/WorldProgress.as": "9d1ef52d3710581906c61d23d0daa641b64a66c77db6f812d9001944de723d13",
+    "src/rconnect/net/HostServer.as": "db414124b24bf72285c49992d7e4faacecd39b9dae834cf976588d22dcba3ee2",
+    "src/rconnect/net/NetMessageEvent.as": "45886a1f4c10ca4f1fc831803ff54ccc91c2f8c0d12d4a37f2e2a952ff91db7b",
+    "src/rconnect/net/Protocol.as": "9655eb28a4c417750bbbf318a0ce20bd485080051447c0caf0500ce76218b39d",
+    "src/rconnect/net/RoomCodec.as": "0a5903d409914791323f9775db5a5bb253e67ba583f5d4f4b926ac72b9c8bd48",
+    "src/rconnect/net/TcpLink.as": "144c4efab569338e996fe5a072e503aea7c7ca05436b22cee44241378297c9c0",
+    "src/rconnect/ui/NetHud.as": "4e3aaf7ebac46027f364c3f684b3be3e874026ed89370b3f1fb9118a8c9914ae",
+    "src/rconnect/ui/TeammateMap.as": "2043b149453cc710e39163e2cc2c89c8f77abf61c577133b76fb4a8119bba080",
+    "src/RConnectDoc.as": "764967e351e57e10fbcf1c3136d5170e633c6cd2e750a7427c6a180e3a1e34e1",
+    "src/RConnectMod.as": "1d853a1cdf0572754b82e321a8d26643644015f16015b555600d1c679728e0a8",
+    "src/rconnect/ui/HudLayout.as": "da332cdfdb1776a8a8666dc6c22754f093cd5dd2652da9d1a22a1536b3ac2ef5"
+  },
+  "verification": {
+    "tests/AnimationGapsTestDoc.as": "32f1de198fd9f38b90b1e22a5ab44ad308994ee6585eb7e43ce1387e65522490",
+    "tests/AppearanceDamageRegression.as": "9407d876b28da06fad37829affc7441676093cefdb7feeee55f6645efbf3b3c3",
+    "tests/AppearanceTestDoc.as": "8d0796798ac93bc358a61c73993fbf17ee250ba76a2eaa7665d2b2da9012487a",
+    "tests/AuraMaskProbe.as": "6b3af14389f6bb29845df9a3da6125d25bce56995d1301064bf8b4756716e2f5",
+    "tests/BeamTerrainTestDoc.as": "9882f5f366ad6769736a9e70354c98e46b96fca4188c93c60179f0e18a4be243",
+    "tests/CombatFeedbackNetworkTestDoc.as": "5097eb9e14393f1ca7e4c97d5c4524a3c25a3c17f54f60456a2bca72528c0922",
+    "tests/CombatFeedbackTestDoc.as": "269413e49de80e9585a1d64d730ef4263dc2ccdec443235ae3f23b18623f0142",
+    "tests/CombatNetworkTestDoc.as": "c3c295742ce23c925db75eab7c2bbccdceb08d70a7037967311ca26c18e6fb6a",
+    "tests/CombatRegression.as": "dcb982a295d06d1384c45d5ec0172dbe5dff299adbba2bff287a877699c97650",
+    "tests/CombatStateTestDoc.as": "1aca53d5072ff005655ba9d83897a1157a509ff97f2d78b36606e82b66f455c8",
+    "tests/CoopNetworkScenario.as": "b7b0831e400ca5a969a821d4dcacb89e22025036a31f331044aa0c7cb6414556",
+    "tests/CoopPauseTestDoc.as": "b94cbbfbc4d86ad3855a215c69338d83c0455b8039d855986c15b7b24b07b2d2",
+    "tests/CoopRegression.as": "310460d1a2b974aa5e8c503faa1d7fa4b8e7ea7896775e357f31a31a316de1ff",
+    "tests/CoopTestDoc.as": "30fb6cef1c59c44d3574402cc172a9dad2dff2f8f8f486247fe13bb2364ad1b6",
+    "tests/EffectsTerrainTestDoc.as": "676a74703dcdb6693050d9b3f736421e1035573c0ceb76c403a1fab24c2cbaf4",
+    "tests/EnemyGrabTestDoc.as": "3ad84ae47ab211a49664f6a3324a1500864b4378e87ba091ff75aa3b4b4239d6",
+    "tests/EnemyRegression.as": "2e046892c1a11e68a2b3e4f5eafdf40a74780c65141486fc7f6fb48a17c7848a",
+    "tests/ExplorationRegression.as": "8f5b3c571d6aabb742bc9a0852fdca3e7be69f01e330e80c14a4fc18f13a6914",
+    "tests/FollowNetworkTestDoc.as": "df440afc27345dbd6428de7482a242e319187f86ddb98a930646431d8ddc5962",
+    "tests/GameplayGapTestDoc.as": "e881536d00bfd279d32300cf96f7145f1a789cc44d7f941c3634c1d81acb9eae",
+    "tests/GameplayNetworkTestDoc.as": "91e817887d6e783c3462b9cf5617ba2bb413a71970aad7799413718872eebbbf",
+    "tests/HiddenRoomCorpseTestDoc.as": "0bf2305fa0acfc2e37fe2a9f3bde138fcb9be378937c9c383321bb815aab8ba4",
+    "tests/HiddenRoomFollowTestDoc.as": "ae9c187872a4d771baf7e1ec717333e482f52b0f8b5f1b2889da866267e95314",
+    "tests/HiddenRoomOverlayTestDoc.as": "c3ec8214ee0c7e0c5d495af51970d83d77047e213d6c9024cc675e725baa3e53",
+    "tests/HiddenRoomProbeTestDoc.as": "18e86a5b6120e44ba095202b83ac7878b979fb8bf28e27e6c72eef48913d894d",
+    "tests/HiddenRoomTestDoc.as": "a650a0167599ccf6ed509a69f8a7fa1dc10137b83ecb503a79fa41c6f023fec4",
+    "tests/HudTestDoc.as": "cc645762d505da318bec911788a9833b099023e85200b7600dde6c0dd62fb1da",
+    "tests/LightMachineGunScenario.as": "3fc9d0858e61e4191c99e10ca0707251670083dafce14ecc897bc8bf49351774",
+    "tests/LightningModAccess.as": "7db6331b3ea797c4a640abd7bd4764dfcab9de36b09ad7d281c724b1be64ad72",
+    "tests/LightningSmartStep.as": "ad350094304937e64cfd4e25ff323e0f0d61c11985cc8f3c7215ca7150a7d3d0",
+    "tests/LightningSmartTestDoc.as": "a12cc623a4ffeb86bc3b0713a4af102e2a90d1c6b2daa01562a082c37f5550a3",
+    "tests/ManualStartupTestDoc.as": "3e1269c63ae7772d95fee536fe80a43cf7fc0e47c8436b189c49d2ed7cc5a30b",
+    "tests/MirrorMaskRestoreTestDoc.as": "bff0dbb60da0184ab115ca77e3599204bc64720413f6839f4ad6ffdb6adb57e5",
+    "tests/MovableGripLifecycle.as": "01c2b2b93ea0c233d17bc5f88047092a0233b20f685e46a343cec751cc564651",
+    "tests/NativeBeamGun.as": "032fabe8b1990732795f5c6ae57d0b82da805db1d169b6fff8cde8fd39d099dc",
+    "tests/NativePauseClock.as": "9be427b25209cd9e9841b076f2c6e1d8facfefdd751823177f01657dc3c75c98",
+    "tests/NativeTestGun.as": "6808ef09b1cb4a5947deab6d0434e3a2802ace49340e40a6310e922055c17200",
+    "tests/PresentationTestDoc.as": "beddd97c86ff606314759dc0221ddcf174d6504a6e3b3dc5efc7791c9915bacc",
+    "tests/ProjectileNetworkTestDoc.as": "29abf2fcdae60d2908d7cd9d1336e228af9992d10ffde9e1c21bc84b3c2e884b",
+    "tests/RemoteMotionPauseRegression.as": "ae81d9a4db9886423c5291db9f0035bbaa19f43b7ec98efb0733e76902f73844",
+    "tests/RoomCooperationTestDoc.as": "85b7d5fe4ef499ae187c80eb6d589f8a04b90616a61149063e9cd19fa63d1157",
+    "tests/SatsTestDoc.as": "6d1f29fe73d45c885d0c0c0b8ec174045e75f94cb117c30e4b4f8af2257a79fd",
+    "tests/SlowTravelTestDoc.as": "f7c0531340c42d31e20396a12673229420dce6d1580139ce1835807e98badb0d",
+    "tests/SmoothNetworkTestDoc.as": "2fb4b6fdc6ef29653513372e79cc22f269bdc0d5731ea237ff1fc5fdeb17f585",
+    "tests/SmoothPresentationTestDoc.as": "1ee83003bebe0bf882ac3507b922533343d445339954897cf753f08f921c5406",
+    "tests/SustainedDensityTestDoc.as": "ccd42f47cfc3d4044be8c85c9709464695528525ed2282e3c890549f6eb7ff20",
+    "tests/TeammateNavigationTestDoc.as": "608013ce6ec9977dc0393f6975ac9010c7203eddc368f33a5582061293514900",
+    "tests/TelekinesisMotionTestDoc.as": "570868ccec43503f3d4b136880ca911e8afa12abbabf970ca3b6012825bfecc1",
+    "tests/TelekinesisTestDoc.as": "b3765dd9e8ccd734a9556f685c2955e55215f205b47c3d5c2e40e2034ab3f810",
+    "tests/TerrainRegression.as": "8e8b4a98d70c7c3202ed46b3afd1a5e165d55c03d2682c01ebdcd3895217ad17",
+    "tests/TurretTestDoc.as": "da69e8811bb968c1c0f034d3825f140d29938cf939a2804d4ce9bb0a6372961f",
+    "tests/harness/RConnectDoc.as": "f6fea5a08ba2e73ae97a5d5bf5f0472862a0b160bed9ce1d7ca58a01684f80ab",
+    "tests/harness/RConnectMod.as": "c1de8bdb6d73075943cbf1a5cd3514dcaee08083da490233e3878c07d23afd4c",
+    "tests/lightning-extern/MainFE.as": "eebc4c8ca5fec80cdc3c18c698cc5b956e70c0f3114b4d11ed3d21e10660f7f3",
+    "tests/fe/inter/RoomTravelUiProbe.as": "1672b67835d90def61d3586b70fc4bb58eb1138d24cd8d86fc859d46d32a6ce4",
+    "tests/fe/unit/CombatStateProbe.as": "788d05b3cfc7a6eee18a098aaa4c7e0e1ff93a17764f01ddd05ddce2b7f13771",
+    "tests/fe/unit/EnemyGrabProbe.as": "c80bacf3d0d300309440488e9f3bd7c3682654ecf9e7ad57124784344f7c2f46",
+    "tests/fe/unit/FeedbackProbe.as": "44f2637bd170031b0d16e5dc68db8362573ea685c65eb92750274601e775aa1d",
+    "tests/fe/unit/PresentationProbe.as": "cb8ad9824cd980304ed46194ea8b73434fbe526063892442219597cb43641de9",
+    "tests/fe/unit/TelekinesisProbe.as": "698623b8f5442544a7dc90e45105b138d2efc5617a671d92aef6a10d44e494e6",
+    "tests/pause-extern/fe/Pt.as": "f713f4fc6dafafe546db8a84580cbcd5367a6cb705620f7b73cde056a593abc3",
+    "tools/stubs/fe/Obj.as": "e9cb9126eb701eab3dafc640514c068008ff2865d735f5dc938ddec32569c452",
+    "tools/stubs/fe/inter/PipPage.as": "bdb8bf4bf3734e59380e7bba099a86340c25b606d8379987f0f031b565ef28f2",
+    "tools/stubs/fe/inter/PipPageInfo.as": "eda60e94cf8aaa4aca1e6eab69f94436091f4f6a1a414008606dd9531233cba5",
+    "tools/stubs/fe/inter/PipPageInv.as": "0ad6afd027887e10e4f5423d9eb5d27f49962105bebcf4f2c3c5ad51442fb881",
+    "tools/stubs/fe/loc/Bonus.as": "727f488765f24b33174807e6f0ac0766fc8e37250974977e5467b33d43360e0a",
+    "tools/stubs/fe/loc/Location.as": "259876f621e307f2b9a14d989b044cf4cad72434dc8a2aca6306a440f497f1a0",
+    "tools/stubs/fe/loc/Loot.as": "de695dc06727e7ac6ef137d1157600415795b5849508ab894ba4e2a05e5f4956",
+    "tools/stubs/fe/serv/Interact.as": "7fe9c01bb7730e1c40a62360bd4b548bb027d4ddda3960c06cdb7cb93cc64a65",
+    "tools/stubs/fe/serv/Item.as": "59db9fbef320eb08a6fb1976c1354003dce9d41e3448949f61a6e87fba1e39e3",
+    "tools/stubs/fe/unit/Mine.as": "b929bf78a7eed36fb272078aba7deb32280fb9e79b6f304cecbd9035a15c1d1b",
+    "tools/stubs/fe/unit/Unit.as": "baf3395dcfa0a1df4c6eced9f6a9c12711e00d2d9e4cb7ff51fd254b413aa8c9",
+    "tools/stubs/fe/unit/UnitAIRobot.as": "3afdd2aa5f87fb89d466de7e2c77d1373f0f79ad5c7e871a25a3bd7436ea8b10",
+    "tools/stubs/fe/unit/UnitAlicorn.as": "126eeb2417ed22ab47efdcbf62241dcf36f32b225f0abcf4a5b8195eaa0bd554",
+    "tools/stubs/fe/unit/UnitAnt.as": "d59ea3be5c32151311c05364f3f50e2dd4f6c28fb1a1efc10190838eaf0ee36c",
+    "tools/stubs/fe/unit/UnitBat.as": "6a3dbcc5f401fe4e64e61c879d68eaf4deb6a0df1f827bae7e0225271e6b5c07",
+    "tools/stubs/fe/unit/UnitBloat.as": "eda042ce5be745f944e7fcf99a61cb27ace0e7f2509f88878f212f2d91fbf407",
+    "tools/stubs/fe/unit/UnitBloatEmitter.as": "da09225599af20ca69b1e428044d1de5eaced0cc8f66d04be5dadada2f581cae",
+    "tools/stubs/fe/unit/UnitBossAlicorn.as": "4f342bb30a476169fa6650d058a7030cb8db401bbf43c2d6730859203e3d3f18",
+    "tools/stubs/fe/unit/UnitBossDron.as": "6358c914b17e3bdba8a7027f676bb19668dbfc82cedd33a1b116ae534d51a316",
+    "tools/stubs/fe/unit/UnitBossEncl.as": "f71054e22c0e40c78c771de37f847e24efac4a7d289d4656842527b1f1ef6079",
+    "tools/stubs/fe/unit/UnitBossNecr.as": "2b1198452b344cdc04fec1451b67f71345d469099a68276a7492c816ea896ba4",
+    "tools/stubs/fe/unit/UnitBossRaider.as": "ed9c86746ecac2f6672de98108f1b02c9ee52a812a2cdfcf78dfc62d0f94ca6f",
+    "tools/stubs/fe/unit/UnitBossUltra.as": "33b2d1190a5ca26018825e54aaec9ce165fb0c94d19514a4cae0b47f9373e5d9",
+    "tools/stubs/fe/unit/UnitCaptive.as": "40925867b593b355c20f6bbdcc81deffbe786f379930a63da50f97b37f548e34",
+    "tools/stubs/fe/unit/UnitDamager.as": "a451f7774b1173c24c3229b0bd6f23e1e78e58ac029eb8ae48fdfc4af57924b2",
+    "tools/stubs/fe/unit/UnitDestr.as": "248cad6b84fe72b27903c06b4788e48b4f552cad395a33f9d2d363467f0f0f02",
+    "tools/stubs/fe/unit/UnitDron.as": "27aabe5f816352c0fd484379e29ac3180eaaa2c8a505e4baf943e4aaa9982438",
+    "tools/stubs/fe/unit/UnitEncl.as": "3345669f2b5f9cbe55721ff0491b2259608be320293aad590f18d682b51aecf2",
+    "tools/stubs/fe/unit/UnitEqd.as": "3c5f83e474e3b49808cf1367ffadd86af405c12236074ddae5a5355e45bb8cbd",
+    "tools/stubs/fe/unit/UnitFish.as": "9230fc7ae36d3f2191420b0e2a83307ca8c88cdeff1ae718514682a2912f62d5",
+    "tools/stubs/fe/unit/UnitGutsy.as": "463d138dfa916e6627d0f6364e24fee843bdf903955fd77d8eb2502e2738abf3",
+    "tools/stubs/fe/unit/UnitHellhound.as": "0d7d0094f5fc993673e2ce59a7dd8291b33793b2f1409e8f6530f8168d9d9a61",
+    "tools/stubs/fe/unit/UnitMerc.as": "2ab9dd41c89856725f03a461e3e9788c8eef38151a4f99b447bc7c3770383755",
+    "tools/stubs/fe/unit/UnitMonstrik.as": "8a284f6655030f2594b9db1918a9599998b57b0d0fc3ded190533a9c9e265b42",
+    "tools/stubs/fe/unit/UnitMsp.as": "0c1d10a343bf6bb2fdbc2866bb14e8d18143a3f8ed8e187eac7dc52aef289d83",
+    "tools/stubs/fe/unit/UnitMWall.as": "efcf0afb8cf207cabe3cda7cd7a83bfcfae74742971789d761d1cd386f1e80db",
+    "tools/stubs/fe/unit/UnitNecros.as": "afcf3c72c8c9944178056a0e4bc008c96a1a383af3527cba8496556d879d81f0",
+    "tools/stubs/fe/unit/UnitNPC.as": "27f6ed3f675482bbe454c568ee254967fc1f09f1cf9281d3ef3ee034f7f24d88",
+    "tools/stubs/fe/unit/UnitPhoenix.as": "548ac4258dd5f961d40217400686dfa314e5894ba25dd18faa14835541edc604",
+    "tools/stubs/fe/unit/UnitPlayer.as": "24df563d8b75a69e0bf4c6bc6b809a06a8a69c86da24b501a3cfda4907fdb10a",
+    "tools/stubs/fe/unit/UnitPon.as": "fd2d457f1e16f7baa48654b31dfdda79673dae4404c32d06e01f85fe0ebaa8d0",
+    "tools/stubs/fe/unit/UnitPonPon.as": "202d06022afd475c695105d48d647c55b2d693ad3798c38a6b38ee839563b69d",
+    "tools/stubs/fe/unit/UnitProtect.as": "307def35c4565f2bf07fcf9babec7192076963334635d4bc54ef3341e4796721",
+    "tools/stubs/fe/unit/UnitRaider.as": "4caed9a6f4163bc767caef7de9f1e65b8d603cc66fe75322f387fbbfd0dcaf20",
+    "tools/stubs/fe/unit/UnitRanger.as": "f2984a696dfd1d5477a09957e312f4989733b3b6835ff70e15bbe69e6ee751c5",
+    "tools/stubs/fe/unit/UnitRobobrain.as": "6ef86d1a140e5874559584569af394e99ae05c23f2ae0a27761724f9a69eecad",
+    "tools/stubs/fe/unit/UnitRoller.as": "1f17f014d067194ef4c07c28272afd11afae7321699a1e807bcfaef6cf8c3c8a",
+    "tools/stubs/fe/unit/UnitScythe.as": "0a6c9ff30c4a25585be63f4bcfe3534fd2a2685c2bcb5ce47f17bf3b1c15435e",
+    "tools/stubs/fe/unit/UnitSentinel.as": "54b873793d176806fe1eee970ad3060eb822765f86729c9c7c50323ae26637b1",
+    "tools/stubs/fe/unit/UnitSlaver.as": "8426531275ce4d2b0c8b3988d967779ec561b914cd75e6c4581548ba88c93a71",
+    "tools/stubs/fe/unit/UnitSlime.as": "3b42ec483145de5a8b7d814e0b980715ae1a01ebb88ab470e26d90718702fa68",
+    "tools/stubs/fe/unit/UnitSpectre.as": "02baa8533ad0d203c99b636caad3d7023cd609ba898be5c6ca10f8d4c7627179",
+    "tools/stubs/fe/unit/UnitSpriteBot.as": "ff5a9f90838b5dc270b9b4637cfbed327985a502b72e118d75971ac18b47ac36",
+    "tools/stubs/fe/unit/UnitThunderHead.as": "69ca2d756ae278a1b9bf35df1a1843dd35dfde14ac5548f5bc970340e9683f8b",
+    "tools/stubs/fe/unit/UnitThunderTurret.as": "cd220c67c6c0fef70af7cd5323be6a3624bb17b9e7583ffad791dff447223104",
+    "tools/stubs/fe/unit/UnitTrain.as": "441fe6e8a7a507715e15c9cab518480df94ffe504f41764b0a386aaa46d135b5",
+    "tools/stubs/fe/unit/UnitTransmitter.as": "c926c485fe0213013c1a9789c8fc6d9b6b5d1effc122a58b30d932331c15671d",
+    "tools/stubs/fe/unit/UnitTrap.as": "5a324cb6f920ff7cab354865f0e6f8028955715c6df2dbda0b02e33c83a76666",
+    "tools/stubs/fe/unit/UnitTrigger.as": "3bd3955d69707e2df88eb4efad3195c4fae7640e1a3fad936e2e2feabdb9b910",
+    "tools/stubs/fe/unit/UnitTurret.as": "ee00a3662abbb400993fa227343be256137b92aad907d833320b1a2325b4bd91",
+    "tools/stubs/fe/unit/UnitVortex.as": "602911e29d7e7dedee09ddcd277a9f6902f1ff064acaa416e1756dc33b3e5f3a",
+    "tools/stubs/fe/unit/UnitZebra.as": "7082951d296d88f2cc7e6d2ecb1de833db6deee19d3cfa548856debd1dcc3c19",
+    "tools/stubs/fe/unit/UnitZombie.as": "2817ca94eba71bc2eb4054c010125b0c5f261c65320e18bed8384af2caedc4f8",
+    "tools/stubs/fe/weapon/Bullet.as": "bcb61c0c57468dbdb9bdba57be3d7639eb8c282db7ae18df10fb6c93a39f7441",
+    "tools/stubs/fe/weapon/Weapon.as": "d72edfc920219cd954a1c2dfbe1438b6ac6a89364fbb9cf661e1e3faa6b2d280",
+    "tools/build_effects_driver.py": "25abc9779ca3498f06f59d660dfdb761185d1ff249584d88086fa1c175152dfa",
+    "tools/run_coop_regression.py": "54745916b9c9265c257adf8fec4ef1c6baf6e28bce7af3e7170c5e3d17fe98c5",
+    "tools/RConnect.Process.ps1": "b3fe91f9544a3a57f45b6f1c3a47fcde207f62524cedea846f45d3d4599be88d",
+    "tools/keep_test_responsive.ps1": "ce125a1d3904fe5b0f29c3ca8df306fb848148057cff8a0bc5f44a33e71b97a3",
+    "tools/validation/ui_release.py": "45dc234256ac15ac34eeb10858ea5d10a435b3b9fdc077c09d353911f8a6deb2"
+  },
+  "source_provenance": {
+    "base_manifest": "build/m45/final/source-input.json",
+    "base_sha256": "59a03d1eb3ca7d8467015c709301bc1fbe6d585342de5857e984344a33572790",
+    "unchanged_M45_sources": [
+      "src/fe/inter/RConnectTravelAccess.as",
+      "src/fe/serv/RConnectInteractionAccess.as",
+      "src/fe/unit/RConnectAnimationAccess.as",
+      "src/fe/unit/RConnectFeedbackAccess.as",
+      "src/fe/unit/RConnectPerceptionAccess.as",
+      "src/fe/unit/RConnectUnitAccess.as",
+      "src/modlocales/connect/messages.json",
+      "src/modlocales/connect/RCLocale.as",
+      "src/modlocales/connect/RCLocaleMessages.as",
+      "src/rconnect/core/Config.as",
+      "src/rconnect/core/CoopPause.as",
+      "src/rconnect/core/EnemyGrip.as",
+      "src/rconnect/core/Log.as",
+      "src/rconnect/core/ManualStartup.as",
+      "src/rconnect/core/RoomDiagnostics.as",
+      "src/rconnect/core/RoomSync.as",
+      "src/rconnect/core/Session.as",
+      "src/rconnect/core/TeammateNavigation.as",
+      "src/rconnect/core/TravelGuard.as",
+      "src/rconnect/game/CooperativeBonus.as",
+      "src/rconnect/game/DeathVisuals.as",
+      "src/rconnect/game/ExplorationSync.as",
+      "src/rconnect/game/GameBridge.as",
+      "src/rconnect/game/GroundItemState.as",
+      "src/rconnect/game/HitFeedback.as",
+      "src/rconnect/game/MirrorHitUnit.as",
+      "src/rconnect/game/NativeHit.as",
+      "src/rconnect/game/NativeRoomState.as",
+      "src/rconnect/game/ObjectIdentity.as",
+      "src/rconnect/game/ProjectileVisuals.as",
+      "src/rconnect/game/RemoteArmor.as",
+      "src/rconnect/game/RemoteDamageUnit.as",
+      "src/rconnect/game/RemoteLoot.as",
+      "src/rconnect/game/RemoteMotion.as",
+      "src/rconnect/game/TelekinesisVisuals.as",
+      "src/rconnect/game/TerrainSync.as",
+      "src/rconnect/game/TurretDisplay.as",
+      "src/rconnect/game/UnitPresentation.as",
+      "src/rconnect/game/VersionProbe.as",
+      "src/rconnect/game/WorldProgress.as",
+      "src/rconnect/net/HostServer.as",
+      "src/rconnect/net/NetMessageEvent.as",
+      "src/rconnect/net/Protocol.as",
+      "src/rconnect/net/RoomCodec.as",
+      "src/rconnect/net/TcpLink.as",
+      "src/rconnect/ui/TeammateMap.as",
+      "src/RConnectDoc.as"
+    ],
+    "changes": [
+      "NetHud",
+      "new HudLayout",
+      "version only"
+    ],
+    "pending_M46_core_included": false
+  },
+  "process_exit_check": {
+    "pids": [
+      24604,
+      46012,
+      60100,
+      70196,
+      20312,
+      19888,
+      6328,
+      18664,
+      28956,
+      69300
+    ],
+    "independently_checked": true,
+    "still_present": [],
+    "at": "2026-10-06T23:29:54.7093766+08:00"
+  },
+  "shared_knowledge": {
+    "at": "2026-10-06T23:26:28.146021+08:00",
+    "source": "D:\\RemainsMod",
+    "game": "D:\\Program Files\\Steam\\steamapps\\common\\Remains",
+    "files": {
+      "ui-systems/facts/input-system.md": {
+        "old_source_sha256": "6c352c4ea3292d911ea392b37b1124b803e1e082bbe5c19f7b44399762f35229",
+        "new_sha256": "27b2bef88cc5a21fcf7671f495560532242a1321865cd0679649cc3c41b07534",
+        "mirrored": true
+      },
+      "knowledge-validation/coordination/registry.md": {
+        "old_source_sha256": "ed396bb73e3c899d78be5756ba9c0ca44ccd8f99d58410099192073e84988fad",
+        "new_sha256": "61841cd046d5bafa3e39d6dc4481fe593d85674e25a4d2f2ca77778c97a690ff",
+        "mirrored": true
+      }
+    },
+    "source_registry_existing_content_preserved": true,
+    "scope": "two shared-knowledge files only; no other mod or game edits",
+    "source_commit": "2e5cef5",
+    "receipt_path": "build/ui-20261006/shared-sync-20261006-232628-c63d95/receipt.json",
+    "receipt_sha256": "96a20453af667db3d12fe1fc32261a80eb7944e3674687034449de9abf3d8c4c"
+  },
+  "held_shift_negative_control": {
+    "run": "7d947ade07",
+    "candidate_sha256": "90731e82e77f69531c1af99b805a615210c250ebd975c1e36be13f2c609a61e2",
+    "roles": {
+      "host": {
+        "pass": 56,
+        "fail": 1,
+        "done": 1,
+        "log_sha256": "2a61f64e562313bd7d0bce85cb0415b87eedf540d83cd1581671ec1b2dcd42ab"
+      },
+      "join": {
+        "pass": 56,
+        "fail": 1,
+        "done": 1,
+        "log_sha256": "bf92c86d76c6573b289f18a1cc432b00a3e3025eec66f9da96dfc425afcdd4bc"
+      }
+    },
+    "result_path": "build/ui-20261006/held-key-red/HudTestDoc-result.json",
+    "result_sha256": "621e9b63d955f3f6cb7574087a2be4f074c16434984032245f44419cb14c0dd5",
+    "only_failure": "Shift/keyRun survives release inside chat; A recovery already passed"
+  },
+  "retained_failures": [
+    {
+      "run": "93202493c2",
+      "pass": 74,
+      "fail": 5
+    },
+    {
+      "run": "b9ea87dad5",
+      "pass": 0,
+      "fail": 2
+    },
+    {
+      "run": "25d26ab960",
+      "pass": 106,
+      "fail": 1
+    },
+    {
+      "run": "7d947ade07",
+      "pass": 112,
+      "fail": 2
+    },
+    {
+      "path": "build/ui-20261006/stable-ui-07/smoke-preflight-failure.json",
+      "kind": "tool GBK read before AIR; rolled back M45 then same byte retried with -X utf8"
+    }
+  ],
+  "release_gate": {
+    "build_exit": 0,
+    "version": "0.2.17-dev",
+    "automated_pass": 681,
+    "automated_fail": 0,
+    "authorization": "开始实装及既有候选部署授权；本会话统一部署",
+    "game_swfs_modified": false,
+    "backup": "build/backup/ui-release-retry-20261006-232432-d168f9/RConnectMod.before.swf",
+    "deployed_smoke_passed": true,
+    "changelog": "No existing changelog; dedicated release record",
+    "memory_and_git": "Final handoff recorded in MEMORY/journal and local commits; no push"
+  },
+  "next_core_baseline": {
+    "path": "build/m46/integration-baseline-after-ui-20261006/inputs.json",
+    "sha256": "7e0aaead77996dfc10f3db400d1a86f3b8d986c79337a5e30e84876ddb2f479d",
+    "next_version": "0.2.18-dev"
+  }
+}
