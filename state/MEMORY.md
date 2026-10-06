@@ -2,7 +2,7 @@
 
 > 2026-10-06 当前安装：**0.2.17-dev 紧凑浮窗（M45核心）**，117821字节，SHA256 `a5698f9f5941b27c2fd47de56366c4d867bf256b2dcb7d484596844dea093971`。681项双端检查和正常无驱动加载通过。[部署/回滚](deployment-ui-2026-10-06.md)。默认36状态条、四页、标题拖动/四角停靠/内部滚动、玩家分别保存位置和开合；Ctrl+Enter打开聊天，Enter发送，F10隐藏/恢复。真人IME与鼠标未认证。
 
-> **未发布M46核心仍红**，没有混入UI版本；当前工作树为0.2.18-dev，不等同已安装字节。发行UI仅认build/ui-20261006/stable-ui-07的M45派生冻结；旧M46失败和M45安装基线保留，新基线build/m46/integration-baseline-after-ui-20261006。R2/R3只读协调，root统一源码/测试/AIR/部署窗口。
+> **未发布M46核心仍红**，没有混入UI版本；当前工作树为0.2.18-dev，不等同已安装字节。发行UI仅认build/ui-20261006/stable-ui-07的M45派生冻结；旧M46失败和M45安装基线保留，新基线build/m46/integration-baseline-after-ui-20261006。root统一共享源码/测试/部署；R2已获仅自有复制诊断目录的编译/AIR窗口，R3只读。
 
 > 协议见 GOVERNANCE.md §8；参数与边界见 ../AGENT_SCOPE.md。
 
@@ -79,7 +79,7 @@
 
 1. 用户保存后完全重启两端测试0.2.17-dev。重点实测中文输入法提交、实际鼠标拖动/点击、常用菜单遮挡；合成事件与原生截图不是真人使用满意度证明。UI入口/回滚见部署记录。
 2. M46核心仍未部署：最新5640e056b6仍有3项颜色错误，原e329299888颜色错帧与17次匿名Timer #1009保留。后续使用0.2.18-dev与新integration-baseline-after-ui-20261006；tools/validation正本绑定baseline路径/哈希，14组（原13＋Hud）/最终同驱动旧905负控/正常加载仍须完整通过。新脚本只完成准备/边界自检，没有宣称核心绿；旧build/m46执行副本与原M45基线不改。
-3. R2下一窗口仅在root明确移交后进入；从公开RemoteMotion.readSnapshot().sampleTime、getTimer、coopPaused、roomHold等实际样本定位错色，不延长1500/3000ms或放宽阈值追绿。root统一审核/14组/部署；不要用当前默认工作树构建发布UI。当前R2/R3保持只读。
+3. R2下一窗口已由root明确移交，仅限自有复制诊断目录；从公开RemoteMotion.readSnapshot().sampleTime、getTimer、coopPaused、roomHold等实际样本定位错色，不延长1500/3000ms或放宽阈值追绿。root统一审核/14组/部署；不要用当前默认工作树构建发布UI。2026-10-06已向R2明确移交仅自有复制诊断目录的编译/AIR窗口，禁止改共享src/tests/tools、VERSION/release或MEMORY；R3只读。
 4. 背景房若重现核对两端RoomTrace与角色状态；未认定根因不盲改。密集性能和排除范围保持，不自动推送。
 
 ## 7. 记录与工具入口
