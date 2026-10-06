@@ -48,8 +48,17 @@ package {
       private function setPhase(s:String):void {phase=s;at=getTimer();frames=shown=gap=maxGap=0;visTrace=[];lastShot=0;shots=0;visibleMs=darkMs=maxDarkMs=0;previousFrame=0;}
       private function receive(e:NetMessageEvent):void {
          var p:Object=e.data;if(p.type!="beam-terrain-test")return;
-         if(host && p.stage=="ready" && phase=="boot") {setup();send("setup",{x:baseX,y:baseY,wx:wallX,wy:wallY});setPhase("ready");}
-         else if(!host && p.stage=="setup" && phase=="boot") {baseX=p.x;baseY=p.y;wallX=p.wx;wallY=p.wy;setup();setPhase("ready");send("prepared");}
+         if(host && p.stage=="ready" && phase=="boot") {setup();send("setup",{x:baseX,y:baseY,wx:wallX,wy:wallY,layout:layout()});setPhase("ready");}
+         else if(!host && p.stage=="setup" && phase=="boot") {
+            baseX=p.x;baseY=p.y;wallX=p.wx;wallY=p.wy;
+            // Keep the reduced 300 -> 60 fixture case deterministic. A direct
+            // local HP assignment would be a real client terrain-damage report.
+            mod.game.applyTilePatch([{x:wallX,y:wallY,p:1,f:"A",h:300,o:1}]);
+            check(mod.game.loc.space[wallX][wallY].hp==300,"fixture starts from a real 300 HP baseline");
+            mod.game.applyTilePatch(p.layout as Array);
+            check(mod.game.loc.space[wallX][wallY].hp==60,"host fixture layout establishes the 60 HP baseline");
+            setup();setPhase("ready");send("prepared");
+         }
          else if(host && p.stage=="prepared" && phase=="ready")startBeam(0);
          else if(!host && p.stage=="beam"){beamClass=p.cls;gunIndex=p.index;periodMs=p.period;setPhase("beam");}
          else if(host && p.stage=="beam-result") {
@@ -91,13 +100,14 @@ package {
          u.disabled=true;u.doop=true;u.lootIsDrop=true;u.xp=0;owners.push(u);return u;
       }
       private function setup():void {
-         var b:Object=mod.game;if(host){baseX=b.gg.X;baseY=b.gg.Y;wallX=int(baseX/40)+4;wallY=int(baseY/40)-2;}
+         var b:Object=mod.game;quietArena();clearIncidentalBullets();
+         if(host){baseX=b.gg.X;baseY=b.gg.Y;wallX=int(baseX/40)+4;wallY=int(baseY/40)-2;}
          b.gg.invulner=true;b.gg.disabled=true;b.gg.isTake=0;b.gg.dx=b.gg.dy=0;b.gg.anim("stay",true);
          b.loc.base=false;b.loc.black=false;b.world.black=false;b.loc.destroyOn=true;b.loc.tileSpawn=0;
          // Identical open corridor and one ordinary stone wall in both worlds.
          for(var x:int=Math.max(1,int(baseX/40)-1);x<=Math.min(b.loc.spaceX-2,wallX+5);x++)
             for(var y:int=Math.max(1,wallY-3);y<=wallY+2;y++){var t:Object=b.loc.space[x][y];t.phis=0;t.opac=0;t.front="";}
-         wall=b.loc.space[wallX][wallY];wall.mainFrame("A");wall.indestruct=false;wall.hp=60;wall.thre=0;wall.mat=2;wall.door=null;wall.trap=null;
+         wall=b.loc.space[wallX][wallY];wall.mainFrame("A");wall.indestruct=false;wall.hp=60;wall.thre=0;wall.mat=2;wall.fake=false;wall.door=null;wall.trap=null;
          b.world.redrawLoc();
          var emitter:Object=mod.main.loaderInfo.applicationDomain.getDefinition("fe.graph.Emitter");
          var piece:Object=emitter.arr["kusok"].cast(b.loc,baseX,baseY-100);
@@ -131,7 +141,29 @@ package {
          lastShot=clock;shots++;var b:Object=NativeBeamGun(guns[gunIndex]).fire(baseX+20,baseY-140,0);
          nativeBullets.push(b);return b;
       }
-      private function beginFrame(e:Event):void {serial++;clock=getTimer();}
+      private function beginFrame(e:Event):void {serial++;clock=getTimer();quietArena();}
+      /** Publish the host's constructed corridor through the actual terrain
+       * receiver before the join fixture touches native tile fields. */
+      private function layout():Array {
+         var out:Array=[],fields:Object={p:"phis",f:"front",b:"back",z:"zad",zf:"zForm",w:"water",st:"stair",h:"hp",o:"opac",v:"vid",v2:"vid2",d:"diagon",sh:"shelf"};
+         for(var x:int=Math.max(1,int(baseX/40)-1);x<=Math.min(mod.game.loc.spaceX-2,wallX+5);x++)
+            for(var y:int=Math.max(1,wallY-3);y<=wallY+2;y++) {
+               var t:Object=mod.game.loc.space[x][y],s:Object={x:x,y:y};
+               for(var key:String in fields)s[key]=t[fields[key]];
+               out.push(s);
+            }
+         return out;
+      }
+      private function quietArena():void {
+         for each(var u:Object in mod.game.loc.units)
+            if(u!==mod.game.gg && int(GameBridge.probe(u,"fraction"))<100 && owners.indexOf(u)<0)u.disabled=true;
+      }
+      private function clearIncidentalBullets():void {
+         var list:Array=[];
+         for(var o:Object=mod.game.loc.firstObj;o!=null;o=o.nobj)
+            if(getQualifiedClassName(o).indexOf("fe.weapon::")===0 && getQualifiedClassName(o).indexOf("Bullet")>=0)list.push(o);
+         for each(o in list)mod.game.loc.remObj(o);
+      }
       private function drive(e:Event):void {
          if(phase=="done")return;
          mod.game.forceCloseOverlays();mod.game.gg.disabled=true;mod.game.gg.invulner=true;
@@ -233,6 +265,7 @@ package {
          }catch(err:Error){check(false,err.getStackTrace());send("done");finish();}
       }
       private function breakWall():void {
+         check(wall.phis==1 && wall.hp==60,"fixture survives until the deliberate enemy wall hit");
          var c:Class=mod.main.loaderInfo.applicationDomain.getDefinition("fe.weapon.Bullet") as Class;
          var b:Object=new c(owners[1],wallX*40+20,wallY*40+20,null,false);
          b.damage=0;b.destroy=1000;b.dx=1;b.dy=0;b.precision=0;b.partEmit=false;b.run();

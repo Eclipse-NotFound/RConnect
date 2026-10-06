@@ -87,7 +87,9 @@ package rconnect.game
             if(stamp==Number(last.at)) {last.snap=snap;return;}
             // Initial room transfer can deliver an old frame first. Calibrate
             // from fresher arrivals instead of retaining that startup delay.
+            var previousOffset:Number=offset;
             offset=Math.min(offset,clockOffset);
+            cursor+=previousOffset-offset;
             gaps.push(stamp-Number(last.at));if(gaps.length>8)gaps.shift();
          }
          arrivedAt=now;frames.push({at:stamp,snap:snap});

@@ -121,6 +121,11 @@ package {
                   if(u is MirrorHitUnit && MirrorHitUnit(u).body!=null && MirrorHitUnit(u).body.id=="slaver2")proxy=u;
                }
                if(enemy==null || proxy==null)return;
+               // Separate-room spawning does not place the joining character
+               // beside this target. Keep the native sight/targeting gates and
+               // establish their spatial premise before opening SATS.
+               g.setPos(Math.max(80,Math.min(mod.game.loc.spaceX*40-80,enemy.X-90)),enemy.Y);
+               g.setVisPos();g.eyeX=g.X;g.eyeY=g.Y-g.scY*0.75;
                g.invulner=true;g.storona=1;
                gun=new NativeTestGun(g as Unit);gun.hold=90;gun.loc=mod.game.loc;
                gun.X=g.X;gun.Y=g.Y-g.scY/2;g.currentWeapon=gun;
@@ -131,6 +136,8 @@ package {
                // Native vision still decides selection. Prime the visible corridor,
                // exactly as the isolated rendering fixtures do after a room import.
                var tile:Object=mod.game.loc.getAbsTile(enemy.X,enemy.Y-enemy.scY/2);tile.visi=1;
+               check(proxy.body===enemy && g.isMeet(proxy) && proxy.vis===enemy.vis,"fixture uses the live bound collision receiver");
+               check(g.look(proxy)>0 && proxy.getTileVisi(),"fixture target passes native sight and tile visibility gates");
                check(gun.status()<=1 && !gun.noSats,"native LMG permits SATS entry");
                // The isolated new character must meet the native input gates.
                g.ggControl=true;g.pipOff=0;w.catPause=false;w.pip.onoff(-1);gun.lvl=0;
@@ -145,6 +152,7 @@ package {
                check(w.sats.active,"native World.step SATS entry opens without null-reference error");
                selected=targetEntry();
                check(selected!=null && selected.du.width>0,"mirrored enemy has exactly one drawable SATS target");
+               if(selected==null){send("done");finish();return;}
                check(selected.v.getChildAt(1).txt.text.indexOf(enemy.nazv)==0 && proxy.level==enemy.level,"SATS shows the real enemy name and level");
                check(proxy.vis===enemy.vis && proxy.hpbar===enemy.hpbar && proxy.armor_maxhp==enemy.armor_maxhp,"receiver uses matching body and health-bar data");
                var repeated:Boolean=true;

@@ -20,7 +20,7 @@ package {
    public class ProjectileNetworkTestDoc extends Sprite {
       public static const MOD_CLASS:Class=RConnectMod;
       private var mod:RConnectMod,host:Boolean,t:Timer=new Timer(150),links:Dictionary=new Dictionary();
-      private var phase:String="boot",at:int=0,ali:Object,oldGun:Object,oldChildren:Object,gun:NativeTestGun;
+      private var phase:String="boot",at:int=0,ali:Object,oldGun:Object,oldChildren:Object,gun:Object;
       private var nativeClass:String="",visibleFrames:int=0,shotFrames:int=0,shieldFrames:int=0,peak:int=0;
       private var playerChecked:Boolean=false,peerPlayerResult:Object;
       public function ProjectileNetworkTestDoc(){var app:String=NativeApplication.nativeApplication.applicationID;if(app.indexOf("rconnect-coop-")<0)return;
@@ -43,7 +43,8 @@ package {
       }
       private function setupAli():void{var c:Class=mod.main.loaderInfo.applicationDomain.getDefinition("fe.unit.UnitAlicorn") as Class;ali=new c("1",100,<unit tr="1"/>,null);
          ali.putLoc(mod.game.loc,mod.game.gg.X+160,mod.game.gg.Y);mod.game.loc.addObj(ali);mod.game.loc.units.push(ali);ali.disabled=true;ali.shithp=300;ali.xp=0;
-         gun=new NativeTestGun(ali as Unit,"alilight");ali.currentWeapon=gun;ali.childObjs=[gun];mod.game.readUnitsSnapshot();}
+         gun=ali.currentWeapon;
+         check(gun!=null && gun.id=="alilight","fixture uses alicorn's native lightning weapon");mod.game.readUnitsSnapshot();}
       private function setupPlayer():void{oldGun=mod.game.gg.currentWeapon;oldChildren=mod.game.gg.childObjs;gun=new NativeTestGun(mod.game.gg as Unit);var w:Object=gun;w.setPers(mod.game.gg,mod.game.gg.pers);mod.game.gg.currentWeapon=gun;mod.game.gg.childObjs=[gun];mod.game.readSnapshot();}
       private function tick(e:TimerEvent):void {
          mod=RConnectMod.instance;if(mod==null || mod.game.gg==null || !mod.session.rooms.ready || mod.session.rooms.busy)return;
@@ -52,7 +53,13 @@ package {
          try {
             mod.game.gg.invulner=true;mod.game.gg.disabled=true;mod.game.world.testDam=true;
             if(phase=="boot"){if(!host)send("ready");setPhase("wait");}
-            if(phase=="enemy"&&host){var b:Object=gun.fireAt(mod.game.gg,true);nativeClass=getQualifiedClassName(b.vis);}
+            if(phase=="enemy"&&host){
+               // Native lightning needs Bullet.step to create display frames;
+               // the ordinary hit helper removes its bullet before that step.
+               ali.celX=mod.game.gg.X;ali.celY=mod.game.gg.Y-mod.game.gg.scY/2;
+               ali.setWeaponPos(gun.tip);gun.attack();gun.step();
+               if(gun.b!=null)nativeClass=getQualifiedClassName(gun.b.vis);
+            }
             if(phase=="enemy"&&!host&&getTimer()-at>5500){send("enemy-result",{visible:visibleFrames,peak:peak,shield:shieldFrames});setPhase("wait");}
             if(phase=="shield-off"&&!host&&getTimer()-at>1000){ali=findAli();check(ali!=null&&!CombatStateProbe.shield(ali as Unit).visible,"depleted alicorn shield disappears");send("players");setPhase("wait");}
             if(phase=="players") {

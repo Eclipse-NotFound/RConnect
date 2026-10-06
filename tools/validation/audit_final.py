@@ -35,6 +35,227 @@ for name, digest in manifest["source"].items():
 verification = read(OUT / "verified-test-input.json")
 for name, digest in verification.items():
     assert sha(ROOT / name) == digest, name
+clock_evidence = None
+if manifest.get('baseline_path'):
+    clock_evidence = read(OUT / 'clock-regression.json')
+    clock_runs = {}
+    for role in ('original', 'delay_control', 'fixed'):
+        p = (ROOT / clock_evidence[role]).resolve()
+        assert p.parent == ROOT / 'build/m46' and p.name.startswith('clock-'), p
+        c = read(p / 'process.json'); result = read(p / 'result.json')
+        assert c['owned_process_exited'] and c['result_sha256'] == sha(p / 'result.json')
+        assert c['driver_sha256'] == sha(p / 'RemoteMotionClockTestDoc.swf')
+        assert c['actual_source_sha256'] == sha(p / 'src/rconnect/game/RemoteMotion.as')
+        assert c['test_source_sha256'] == verification['tests/RemoteMotionClockTestDoc.as'] == sha(p / 'RemoteMotionClockTestDoc.as')
+        assert c['runner_sha256'] == verification['tools/validation/run_motion_clock.py']
+        assert not any(x['name'] == 'uncaught' for x in result['checks'])
+        if role == 'fixed':
+            assert c['original_source_sha256'] == manifest['source']['src/rconnect/game/RemoteMotion.as']
+            assert c['exit'] == 0 and result['pass'] == 18 and result['fail'] == 0
+        else:
+            assert c['exit'] == 1 and result['pass'] == 15 and result['fail'] == 3
+            assert any(x['value'].get('firstStaleCount') == 9 for x in result['checks'] if isinstance(x.get('value'), dict))
+        clock_runs[role] = {'path': p.relative_to(ROOT).as_posix(), 'process': c,
+                            'result': result, 'process_sha256': sha(p / 'process.json')}
+    assert clock_runs['original']['process']['original_source_sha256'] == clock_runs['delay_control']['process']['original_source_sha256']
+    clock_evidence = clock_runs
+carried_checks = None
+if (OUT / 'carried-checks.json').exists():
+    carried_checks = read(OUT / 'carried-checks.json')
+    assert carried_checks['controller_sha256'] == verification['tools/validation/carry_same_byte_checks.py']
+    assert carried_checks['new_source_manifest_sha256'] == sha(OUT / 'source-input.json')
+    assert carried_checks['new_verification_manifest_sha256'] == sha(OUT / 'verified-test-input.json')
+    changed_drivers = carried_checks['changed_driver_source']
+    assert set(changed_drivers) <= {'tests/BeamTerrainTestDoc.as', 'tests/SatsTestDoc.as', 'tests/ProjectileNetworkTestDoc.as'}
+    changed_classes = {Path(name).stem for name in changed_drivers}
+    for rec in carried_checks['entries']:
+        origin = (ROOT / rec['origin']).resolve()
+        assert origin.parent == ROOT / 'build/m46' and origin.name.startswith('final')
+        assert read(origin / 'source-input.json')['source'] == manifest['source']
+        assert carried_checks['old_source_manifest_sha256'] == sha(origin / 'source-input.json')
+        assert carried_checks['old_verification_manifest_sha256'] == sha(origin / 'verified-test-input.json')
+        ov = read(origin / 'verified-test-input.json')
+        actual_changed = []
+        for name, digest in ov.items():
+            assert sha(origin / 'verified-files' / name) == digest, name
+            if name.startswith(('tests/', 'tools/stubs/')) or name in (
+                'tools/build_mod.py', 'tools/build_effects_driver.py', 'tools/run_coop_regression.py',
+                'tools/RConnect.Process.ps1', 'tools/keep_test_responsive.ps1', 'tools/verify_mask_png.py'):
+                assert name in verification
+                if verification[name] != digest: actual_changed.append(name)
+        assert actual_changed == changed_drivers
+        validation_changes = [name for name, digest in ov.items() if name.startswith('tools/validation/') and verification.get(name) != digest]
+        assert validation_changes == carried_checks.get('changed_validation_source', validation_changes)
+        if not changed_drivers:
+            assert validation_changes and set(validation_changes) <= {
+                'tools/validation/audit_final.py', 'tools/validation/carry_same_byte_checks.py'}
+        if rec.get('origin_carry_receipt_sha256'):
+            assert rec['origin_carry_receipt_sha256'] == sha(origin / 'carried-checks.json')
+        entry = rec['entry']; driver = OUT / (entry + '-driver')
+        assert rec['unchanged_test_sha256'] == verification['tests/' + entry + '.as']
+        assert rec['unchanged_test_sha256'] == read(origin / 'verified-test-input.json')['tests/' + entry + '.as']
+        assert rec['result_sha256'] == sha(OUT / (entry + '-result.json')) == sha(origin / (entry + '-result.json'))
+        assert rec['driver_sha256'] == sha(driver / 'EffectsDriver.swf') == sha(origin / (entry + '-driver/EffectsDriver.swf'))
+        assert rec['harness_sha256'] == sha(driver / 'EffectsHarness.swf')
+        class_path = OUT / (entry + '-driver-classes.txt')
+        assert rec['driver_classes_sha256'] == sha(class_path)
+        names = {line.split()[0] for line in class_path.read_text(encoding='utf-8-sig').splitlines() if line.strip()}
+        assert entry in names and not names.intersection(changed_classes)
+        assert rec['inputs_sha256'] == sha(ROOT / 'build/cooperation' / rec['run'] / 'input.json')
+beam_fixture = None
+if manifest.get('beam_fixture_controls'):
+    beam_fixture = {}
+    for label, name in manifest['beam_fixture_controls'].items():
+        folder = (ROOT / name).resolve()
+        assert folder.parent == ROOT / 'build/m46' and folder.name.startswith('beam-debug-'), folder
+        rec = read(folder / 'result.json'); frozen = read(folder / 'input.json')
+        assert rec['candidate_sha256'] == candidate_sha
+        assert rec['diagnostic_input_sha256'] == sha(folder / 'input.json')
+        for n, h in frozen['files'].items(): assert sha(folder / 'copy' / n) == h, n
+        driver = folder / 'copy/build/driver'
+        assert rec['driver_sha256'] == sha(driver / 'EffectsDriver.swf')
+        assert rec['harness_sha256'] == sha(driver / 'EffectsHarness.swf')
+        run_folder = ROOT / 'build/cooperation' / rec['run']
+        inp, data = read(run_folder / 'input.json'), read(run_folder / 'run.json')
+        assert sha(run_folder / 'input.json') == data['input_manifest_sha256']
+        assert data['inputs'] == inp['inputs'] and data['sha256'] == candidate_sha == sha(run_folder / 'candidate.swf')
+        for role in ('host', 'join'):
+            assert data['inputs'][role]['driver'] == rec['driver_sha256']
+            assert data['inputs'][role]['harness'] == rec['harness_sha256']
+            log = (run_folder / (role + '.log')).read_text(encoding='utf-8-sig')
+            assert 'COOP EFFECTS DONE' in log and 'Error #1009' not in log
+            assert rec['roles'][role]['pass'] == len(re.findall(r'^COOP PASS ', log, re.M))
+            assert rec['roles'][role]['fail'] == len(re.findall(r'^COOP FAIL ', log, re.M))
+        host_log = (run_folder / 'host.log').read_text(encoding='utf-8-sig')
+        if label == 'negative':
+            assert rec['exit'] == 1 and sum(r['pass'] for r in rec['roles'].values()) == 21
+            assert sum(r['fail'] for r in rec['roles'].values()) == 2
+            assert any(json.loads(line.split('BEAM TERRAIN REPORT ', 1)[1])['tile']['damage'] == 240
+                       for line in host_log.splitlines() if 'BEAM TERRAIN REPORT ' in line)
+        else:
+            assert label == 'fixed' and rec['exit'] == 0
+            assert sum(r['pass'] for r in rec['roles'].values()) == 23 and sum(r['fail'] for r in rec['roles'].values()) == 0
+            assert not any(json.loads(line.split('BEAM TERRAIN REPORT ', 1)[1])['tile']['damage'] == 240
+                           for line in host_log.splitlines() if 'BEAM TERRAIN REPORT ' in line)
+            assert 'host native wall fragments count=6' in host_log
+            before_wall = [json.loads(line.split('BEAM DIAGNOSTIC ', 1)[1]) for line in host_log.splitlines()
+                           if 'BEAM DIAGNOSTIC ' in line and '"tag":"wall-before"' in line]
+            assert len(before_wall) == 1 and before_wall[0]['wall']['hp'] == 60 and before_wall[0]['wall']['phis'] == 1
+        beam_fixture[label] = {'path': name, 'result': rec, 'result_sha256': sha(folder / 'result.json'),
+                               'log_sha256': {role: sha(run_folder / (role + '.log')) for role in ('host', 'join')}}
+    assert set(beam_fixture) == {'negative', 'fixed'}
+    negative = (ROOT / manifest['beam_fixture_controls']['negative'] / 'copy/tests/BeamTerrainTestDoc.as').read_text(encoding='utf-8')
+    fixed = (ROOT / manifest['beam_fixture_controls']['fixed'] / 'copy/tests/BeamTerrainTestDoc.as').read_text(encoding='utf-8')
+    reduced = fixed.replace(',layout:layout()', '').replace('mod.game.applyTilePatch(p.layout as Array);', '')
+    first, last = reduced.index('private function layout():Array {'), reduced.index('private function quietArena():void {')
+    reduced = reduced[:first] + reduced[last:]
+    assert reduced == negative, 'Control changed more than fixture layout delivery'
+sats_fixture = None
+if manifest.get('sats_fixture_controls'):
+    sats_fixture = {}
+    for label, name in manifest['sats_fixture_controls'].items():
+        folder = (ROOT / name).resolve()
+        assert folder.parent == ROOT / 'build/m46' and folder.name.startswith('sats-debug-'), folder
+        rec, frozen = read(folder / 'result.json'), read(folder / 'input.json')
+        assert rec['candidate_sha256'] == frozen['production_sha256'] == candidate_sha
+        assert rec['diagnostic_input_sha256'] == sha(folder / 'input.json')
+        assert rec['script_sha256'] == sha(folder / 'run.py')
+        assert rec['runner_sha256'] == verification['tools/run_coop_regression.py']
+        for n, h in frozen['files'].items(): assert sha(folder / 'copy' / n) == h, n
+        driver = folder / 'copy/build/driver'
+        assert rec['driver_sha256'] == sha(driver / 'EffectsDriver.swf')
+        assert rec['harness_sha256'] == sha(driver / 'EffectsHarness.swf')
+        assert rec['driver_input_sha256'] == sha(driver / 'driver-input.json')
+        run_folder = ROOT / 'build/cooperation' / rec['run']
+        inp, data = read(run_folder / 'input.json'), read(run_folder / 'run.json')
+        assert sha(run_folder / 'input.json') == data['input_manifest_sha256']
+        assert data['inputs'] == inp['inputs'] and data['configuration_files'] == inp['configuration_files']
+        assert data['sha256'] == candidate_sha == sha(run_folder / 'candidate.swf')
+        for role in ('host', 'join'):
+            assert data['inputs'][role]['driver'] == rec['driver_sha256']
+            assert data['inputs'][role]['harness'] == rec['harness_sha256']
+            log = (run_folder / (role + '.log')).read_text(encoding='utf-8-sig')
+            assert 'COOP EFFECTS DONE' in log
+            assert rec['roles'][role]['pass'] == len(re.findall(r'^COOP PASS ', log, re.M))
+            assert rec['roles'][role]['fail'] == len(re.findall(r'^COOP FAIL ', log, re.M))
+        diagnostics = [json.loads(line.split('SATS DIAGNOSTIC ', 1)[1])
+                       for line in rec['roles']['join']['diagnostics']]
+        assert len(diagnostics) == 1
+        d = diagnostics[0]
+        assert d['bound'] and not d['nativeError']
+        receivers = [u for u in d['matches'] if u['chosenProxy']]
+        assert len(receivers) == 1
+        u = receivers[0]
+        assert u['meet'] and u['tileVis'] and u['isSats'] and u['stage'] and u['width'] > 0 and u['height'] > 0
+        if label == 'negative':
+            assert rec['exit'] == 1 and sum(r['pass'] for r in rec['roles'].values()) == 4
+            assert sum(r['fail'] for r in rec['roles'].values()) == 2
+            assert u['look'] == 0 and not d['targets']
+            join_log = (run_folder / 'join.log').read_text(encoding='utf-8-sig')
+            assert 'SatsTestDoc/tick' in join_log and 'Error #1009' in join_log
+        else:
+            assert label == 'fixed' and rec['exit'] == 0
+            assert sum(r['pass'] for r in rec['roles'].values()) == 24 and sum(r['fail'] for r in rec['roles'].values()) == 0
+            assert u['look'] > 0 and len(d['targets']) == 1 and d['targets'][0]['chosen']
+        sats_fixture[label] = {'path': name, 'result': rec, 'result_sha256': sha(folder / 'result.json'),
+                              'log_sha256': {role: sha(run_folder / (role + '.log')) for role in ('host', 'join')}}
+    assert set(sats_fixture) == {'negative', 'fixed'}
+    negative = (ROOT / manifest['sats_fixture_controls']['negative'] / 'copy/tests/SatsTestDoc.as').read_text(encoding='utf-8')
+    fixed = (ROOT / manifest['sats_fixture_controls']['fixed'] / 'copy/tests/SatsTestDoc.as').read_text(encoding='utf-8')
+    assert negative.replace('enemy.X<mod.game.loc.spaceX*20?1200:-1200', '-90') == fixed
+projectile_fixture = None
+if manifest.get('projectile_fixture_controls'):
+    projectile_fixture = {}
+    for label, name in manifest['projectile_fixture_controls'].items():
+        folder = (ROOT / name).resolve()
+        assert folder.parent == ROOT / 'build/m46' and folder.name.startswith('projectile-debug-'), folder
+        rec, frozen = read(folder / 'result.json'), read(folder / 'input.json')
+        assert rec['candidate_sha256'] == frozen['production_sha256'] == candidate_sha
+        assert rec['diagnostic_input_sha256'] == sha(folder / 'input.json')
+        assert rec['script_sha256'] == sha(folder / 'run.py')
+        assert rec['runner_sha256'] == verification['tools/run_coop_regression.py']
+        for n, h in frozen['files'].items(): assert sha(folder / 'copy' / n) == h, n
+        driver = folder / 'copy/build/driver'
+        assert rec['driver_sha256'] == sha(driver / 'EffectsDriver.swf')
+        assert rec['harness_sha256'] == sha(driver / 'EffectsHarness.swf')
+        assert rec['driver_input_sha256'] == sha(driver / 'driver-input.json')
+        run_folder = ROOT / 'build/cooperation' / rec['run']
+        inp, data = read(run_folder / 'input.json'), read(run_folder / 'run.json')
+        assert sha(run_folder / 'input.json') == data['input_manifest_sha256']
+        assert data['inputs'] == inp['inputs'] and data['configuration_files'] == inp['configuration_files']
+        assert data['sha256'] == candidate_sha == sha(run_folder / 'candidate.swf')
+        for role in ('host', 'join'):
+            assert data['inputs'][role]['driver'] == rec['driver_sha256']
+            assert data['inputs'][role]['harness'] == rec['harness_sha256']
+            log = (run_folder / (role + '.log')).read_text(encoding='utf-8-sig')
+            assert 'COOP EFFECTS DONE' in log and 'Error #1009' not in log
+            assert rec['roles'][role]['pass'] == len(re.findall(r'^COOP PASS ', log, re.M))
+            assert rec['roles'][role]['fail'] == len(re.findall(r'^COOP FAIL ', log, re.M))
+        rows = [json.loads(line.split('PROJECTILE OBSERVER ', 1)[1]) for line in rec['roles']['join']['diagnostics']]
+        summaries = [d for d in rows if d['tag'] == 'join-final']
+        assert len(summaries) == 1
+        d = summaries[0]
+        assert d['wireShots'] > 0 and d['peak'] > 0 and d['shield'] > 0
+        if label == 'negative':
+            assert rec['exit'] == 1 and sum(r['pass'] for r in rec['roles'].values()) == 8
+            assert sum(r['fail'] for r in rec['roles'].values()) == 1
+            assert d['visible'] == d['wireFrames'] == 0 and d['wireEmpty'] == d['wireShots']
+            source = [json.loads(line.split('PROJECTILE OBSERVER ', 1)[1]) for line in rec['roles']['host']['diagnostics']]
+            assert source and all(not s['inChain'] and not s['visible'] and not s['stage'] and s['frame'] is None for s in source)
+        else:
+            assert label == 'fixed' and rec['exit'] == 0
+            assert sum(r['pass'] for r in rec['roles'].values()) == 9 and sum(r['fail'] for r in rec['roles'].values()) == 0
+            assert d['visible'] > 0 and d['wireFrames'] > 0
+        projectile_fixture[label] = {'path': name, 'result': rec, 'result_sha256': sha(folder / 'result.json'),
+                                    'log_sha256': {role: sha(run_folder / (role + '.log')) for role in ('host', 'join')}}
+    assert set(projectile_fixture) == {'negative', 'fixed'}
+    negative = (ROOT / manifest['projectile_fixture_controls']['negative'] / 'copy/tests/ProjectileNetworkTestDoc.as').read_text(encoding='utf-8')
+    fixed = (ROOT / manifest['projectile_fixture_controls']['fixed'] / 'copy/tests/ProjectileNetworkTestDoc.as').read_text(encoding='utf-8')
+    reduced = fixed.replace('oldChildren:Object,gun:Object;', 'oldChildren:Object,gun:NativeTestGun;')
+    reduced = reduced.replace('gun=ali.currentWeapon;', 'gun=new NativeTestGun(ali as Unit,"alilight");ali.currentWeapon=gun;ali.childObjs=[gun];')
+    first, last = reduced.index('if(phase=="enemy"&&host){'), reduced.index('if(phase=="enemy"&&!host')
+    old_first, old_last = negative.index('if(phase=="enemy"&&host){'), negative.index('if(phase=="enemy"&&!host')
+    assert reduced[:first] + negative[old_first:old_last] + reduced[last:] == negative
 actual = {line.split()[0] for line in (OUT / "classes.txt").read_text(encoding="utf-8-sig").splitlines() if line.strip()}
 expected = {source.relative_to(OUT / "src").with_suffix("").as_posix().replace("/", ".") for source in (OUT / "src").rglob("*.as")}
 assert actual == expected and len(actual) == manifest["classes"]
@@ -132,10 +353,23 @@ evidence = {"generated_at": datetime.datetime.now().astimezone().isoformat(), "v
                           "source_manifest_sha256": sha(OUT / "source-input.json"), "verification_manifest_sha256": sha(OUT / "verified-test-input.json")},
             "required_entries": REQUIRED, "runs": runs, "pass": sum(run["pass"] for run in runs), "fail": 0,
             "protected": {"count": len(protected), "changed": changed, "hashes": protected},
-            "source_merge_audit_sha256": sha(ROOT / "build/m46/source-merge-audit.json"),
+            "source_merge_audit_path": manifest.get('source_merge_audit_path', 'build/m46/source-merge-audit.json'),
+            "source_merge_audit_sha256": sha(ROOT / manifest.get('source_merge_audit_path', 'build/m46/source-merge-audit.json')),
             "baseline_path": manifest.get('baseline_path', 'build/m46/integration-baseline'),
+            "clock_regression": clock_evidence,
+            "retained_same_byte_checks": carried_checks,
+            "beam_fixture_controls": beam_fixture,
+            "sats_fixture_controls": sats_fixture,
+            "projectile_fixture_controls": projectile_fixture,
             "scope": "Joint movable telekinesis/native release and leases, numeric enemy resistance, native lightning frames/end delivery, mirrored targeting and native mask restoration; post-UI snapshots also require the production compact HUD regression.",
             "retained_failures": [
+                {"run":"d4efbfe668","pass":8,"fail":1,"cause":"Original enemy fixture used NativeTestGun.fireAt to shoot/run/remObj before a native display step; source observation 3d63125cb7 confirmed removed invisible bullets and all 31 wire events had empty frames. Native weapon input control 6ad438b6e2 passed the same nine checks."},
+                {"run":"3d63125cb7","pass":8,"fail":1,"cause":"Readonly observation reproduced the original projectile fixture failure; native frames absent before serialization, not inferred packet loss."},
+                {"run":"6bdab59280","pass":4,"fail":2,"cause":"Native SATS opened; fixture target absent followed by SatsTestDoc/tick null access. Full original native visibility/binding fields were not recorded, so this is not assigned to the user's fe.inter.Sats/getUnits report."},
+                {"run":"fbfcbe72d9","pass":4,"fail":2,"cause":"Fixed far-position fixture reproduces native look=0 with a correctly bound live receiver and no selectable target; unchanged original checks pass at near position 7e8d7b27fc without production targeting changes."},
+                {"run":"3118447fbe","pass":19,"fail":4,"cause":"Original Beam fixture retained incidental enemies and locally assigned wall HP; all original failures retained, exact individual causal paths unassigned."},
+                {"run":"134de80749","pass":21,"fail":2,"cause":"Quiet incidental enemies fixed beam cleanup metrics; local wall construction still destroyed the target before deliberate test hit."},
+                {"run":"f327aa428e","pass":21,"fail":2,"cause":"Pinned native wall baseline 300 -> local fixture 60 produced actual terrain damage=240. Host-published layout control 72a2d35b10 passed the same 23 original checks without production changes."},
                 {"run": "0533f0415d", "pass": 179, "fail": 2, "cause": "Early source Q pointer clear before planned release lacks native pre-frame fields; no causal production-fix claim."},
                 {"run": "d8ea183f0c", "pass": 179, "fail": 2, "cause": "Local Q clear on first post-leave frame lacks pinok/control pre-frame fields; exact cause remains unassigned."},
                 {"run": "d88300c9bc", "pass": 178, "fail": 3, "cause": "Incidental native knockdown crossed 60 during box-host hold (21.537 to 65.234), invalidating the later stationary release premise."},

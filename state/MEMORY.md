@@ -1,95 +1,60 @@
 # RConnect —— 开发记忆入口
 
-> 2026-10-06 当前安装：**0.2.17-dev 紧凑浮窗（M45核心）**，117821字节，SHA256 `a5698f9f5941b27c2fd47de56366c4d867bf256b2dcb7d484596844dea093971`。681项双端检查和正常无驱动加载通过。[部署/回滚](deployment-ui-2026-10-06.md)。默认36状态条、四页、标题拖动/四角停靠/内部滚动、玩家分别保存位置和开合；Ctrl+Enter打开聊天，Enter发送，F10隐藏/恢复。真人IME与鼠标未认证。
+> 2026-10-07 当前安装：**0.2.18-dev**，123147字节，51生产类，SHA256 `044382765a2340ce9babe6f3d01eb61197a438f7d1f9ea70262601535714f042`。紧凑浮窗保留，M46核心已完成联合验证与部署：14组1648/0、各端DONE；正常无驱动150秒eb84c49f11通过。32个最终专项/旧905负控/冒烟自有游戏PID已退出，其他56保护未变。[部署与回滚](deployment-m46-2026-10-07.md)。
 
-> **未发布M46核心仍红**，没有混入UI版本；当前工作树为0.2.18-dev，不等同已安装字节。发行UI仅认build/ui-20261006/stable-ui-07的M45派生冻结；旧M46失败和M45安装基线保留，新基线build/m46/integration-baseline-after-ui-20261006。root统一共享源码/测试/部署；R2已获仅自有复制诊断目录的编译/AIR窗口，R3只读。
+> root统一源码、测试、编译/AIR与部署；RConnect (2)/(3)已交回窗口，仍只读。本轮无待运行检查，未推送或对外分发。真实鼠标/中文输入法、背景门原反馈及密集卡顿仍需后续实测。历史失败见journal及各实验原件，不由本轮绿倒推所有旧因果。
 
-> 协议见 GOVERNANCE.md §8；参数与边界见 ../AGENT_SCOPE.md。
+## 1. 定位与边界
 
-## 1. 模组定位
+双人合作，各自原生角色进入同一世界。同房由宿主结算，普通房分头时各端运行所在房的原生战斗；RoomSync交接空房/汇合状态。玩家约20Hz，敌人/场景约5Hz，显示逐帧推进。当前根游戏1.02，World.constructor.boxDamage=0.2；参考路径game-reference/decompiled/1.02/src102/scripts。入口RConnectMod.init(main)，AIR/amxmlc、swf-version=38。
 
-双人合作：各自角色进入同一世界。同房由宿主结算，普通房分头时各端运行所在房的原生战斗。RoomSync交接空房与汇合状态，玩家约20Hz、敌人和场景约5Hz、显示逐帧推进。入口RConnectMod.init(main)，AIR/amxmlc，swf-version=38。
+只写RConnect；游戏SWF/描述符、game-reference、其他模组默认只读。loader路径app:/mods/Rconnect/release/RConnectMod.swf（小写c），勿改目录/文件/入口名。根application.xml实际指向pfe.swf，app.xml是另一版本，不能混淆。先读AGENT_SCOPE，再按需GOVERNANCE。
 
-## 2. 用户偏好与最新决定
+## 2. 用户授权与玩法
 
-- 最新UI任务已从设计进入实装：用户查看预览后明确“开始实装”，随后“继续”。按280×36状态条与四分页方案实现并验证；本会话沿用既有统一候选部署授权。原版Enter为全屏，已说明Ctrl+Enter开聊，聊天输入框Enter发送。
-- 已授权修复已有合作探索/战斗/交互，允许大幅重构和候选部署。不新增任务/背包/交易规则，排除稳定重连、三人以上、公网和其他版本。
-- 此前炮塔显示与分房请求点名grilling，Q1–Q5全部确认“符合，按此实现”：同地图普通房自由分头；空房暂停保留；宿主发起共同换图；剧情挑战共同进出；关闭游戏沿用原版，不新增随机房完整战斗存档。不得重复确认。
-- M39九项反馈：密集敌人卡顿，炮塔/地雷/狮鹫索敌，容器掉落与拾取，跟随队友，闪电/双方开火/天角兽护盾，经验点与存档点。用户确认：地上物品一份，先拾取者获得；经验点双方奖励；存档点共同解锁，各自保存角色。继续既定修复/候选部署授权。
-- 用户最新偏好：第二窗口保留自己的角色，启动时选择已有存档，已由R2落实手动启动和迁移保护。
-- 最新M41反馈为加入侧血条缺失、数字位置/数值或颜色异常。用户已明确授权与「RConnect (2)」互通进度，并由本会话统一合并验证和部署；该会话另修掉落/肉食灵/蜘蛛地雷显示，保留双方改动，不并行跑性能测试。
-- M43用户进一步明确授权与「RConnect (2)」「RConnect (3)」三方直接协调，仍由原RConnect统一合并、验证、版本、部署、MEMORY/journal及提交。R2负责光束/墙体，R3负责地图标记与主动传送；编译/AIR窗口串行，其他两会话不各自覆盖release。
-- 只写RConnect；其他模组仅最小必要读取。测试隔离新角色和唯一AIR标识，只结束自己创建的进程；全部输入在任一端启动前冻结。用户进程和存档不动。
-- 保留M31共享探索、M32轻机枪/天角兽伤害与不同护甲、M33动作平滑、M34开火/机械死亡/破墙、M35八类炮塔。旋翼机是UnitVortex，无马机是UnitDron。
+- 已授权修复已有合作功能、允许大幅重构和候选部署；不新增任务/背包/交易规则，排除稳定重连、三人以上、公网和版本兼容。
+- grilling Q1–Q5已确认：同地图普通房自由分头；空房暂停并保留进度；宿主发起共同换图；剧情/挑战共同进出；跨游戏退出沿用原版保存，不新增随机房完整战斗存档。不得重复确认。
+- 地面物品一份，先拾取者原生入包；经验点双方奖励；存档点共同解锁，各自保存角色。跟随默认关，地图标记/主动传送沿用共同旅程限制。
+- 任一端菜单/SATS可触发全队暂停（含分房），双方全部关闭才恢复；两开关默认关、宿主设置。网络、菜单、聊天与SATS排队继续。
+- 用户查看浮窗HTML后已明确“开始实装”“继续”。常驻280×36、通常展开280×240、四页/滚动/标题拖动/四角停靠、分别保存位置和开合；主字号12。原版Enter全屏保留，Ctrl+Enter普通游玩开聊、输入框Enter发送、Esc收起，F10隐藏/恢复。释放Shift等键交原生接口，暂停原因独立显示。
+- 用户授权与RConnect (2)/(3)三方直接协调，由本会话统一验证/版本/部署/记录。其余会话不得各自覆盖release；后续AIR/编译窗口串行。
+- 同机第二角色保留自己身份与存档；原生读档列表选择角色，首次迁移保留原件，以后不重复覆盖。Start-Coop.bat只管理自己启动的进程。
 
-## 3. 当前安装状态
+## 3. 当前安装、证据与回滚
 
-- **0.2.17-dev已部署**，117821字节，SHA `a5698f9f5941b27c2fd47de56366c4d867bf256b2dcb7d484596844dea093971`，49生产类，无原生存根/测试类。源50项/验证131项冻结build/ui-20261006/stable-ui-07，M45的47份非UI非入口源逐字节不变；仅NetHud、HudLayout与版本改变。
-- 同字节UI114＋暂停438＋导航55＋分房74＝681 PASS/0 FAIL，各端DONE；22张原生PNG。正常无驱动双端冒烟4a3257643f通过，其他56项保护未变，全部自有测试PID已退出。仅更换本模组release；用户保存后完全重启两端生效。
-- 上一M45备份`build/backup/ui-release-retry-20261006-232432-d168f9/RConnectMod.before.swf`，SHA `59a03d1eb3ca7d8467015c709301bc1fbe6d585342de5857e984344a33572790`；复制回release并重启可回退，不回滚存档。首工具冒烟预检编码失败时立即回滚并保留原receipt；同候选显式-X utf8重试正常加载成功。
-- M45原部署10组1003项的历史证据和回滚保留，不拿UI681项宣称新增核心修复通过。未推送或对外打包。
-- 同机仍用Start-Coop.bat。第二角色手动身份pfe-modsettings-rconnect-player2，首次继承旧pfe2存档/配置且保留原件，后续不重复覆盖；原生读档列表由玩家选角色。点击▼进入连接页，不用F10当展开键；设置页核对版本。
+- 最终冻结build/m46/final-after-ui-clock-05：52源/146验证输入/51AS生产类。实际编译出处clock-01，后续只有测试/审计变更，生产源及SWF完全相同，candidate-reuse.json如实记录；无原生存根/测试类混入。
+- 14组念力108、运动198、抓持211、Lightning27、Beam26、SATS26、Pause438、Room74、Projectile10、Combat33、Animation26、Gameplay31、Restore326、HUD114，共1648/0。前八组核对实际driver类表、源/运行依赖后保留旧绿，不伪称新跑；原红/编译失败/设置失败均保留。
+- 源时钟独立原类与固定100ms控制均15/3，实际共享修正18/0；最终恢复旧905负控8221fc329d两端各130/33/DONE、记录真实空mask。新恢复8case和14即时PNG通过；UI22PNG，目视常驻/中文设置/640×480与200%窗口。
+- 正常加载eb84c49f11无driver、全部已安装模组、150秒，版本/心跳/世界匹配绿；32自有游戏PID退出。knowledge/experiments/m46-validation-evidence.json闭合实际源、配置、日志、PNG、控制、保护和部署出处。
+- 回滚备份build/backup/m46-release-20261007-024209-047d31/RConnectMod.before.swf，上一UI17/M45 SHA a5698f9f5941b27c2fd47de56366c4d867bf256b2dcb7d484596844dea093971。双方保存退出，复制回release/RConnectMod.swf后完全重启；不回退角色存档。
+- 原UI17独立发布681/0与正常加载4a3257643f保留在deployment-ui-2026-10-06.md、ui-20261006-validation-evidence.json。首GBK读取预检失败先回滚、-X utf8重试成功，原receipt不覆盖。更早M45备份/1003项历史仍保留。
 
-## 4. 实现与当前接点
+## 4. M46实现与失败边界
 
-- **UI独立发行完成**：stable-ui-07 /a5698f9f…按M45冻结源派生，0.2.17-dev，681/0＋正常加载4a3257643f绿；主字号12、常驻36、展开最多240，四页/滚动/位置与开合/输入隔离/独立暂停提示。持Shift旧907负对照红已修，首工具GBK读取预检失败先回滚、-X utf8重试通过。真人IME/鼠标边界、浏览器file:限制保留；新核心基线不覆盖旧基线。
-- **M46仍红，UI已独立部署**：原e329299888两项颜色错帧与17次空引用不抹去。R2短诊断 `5640e056b6` 保持原2c83生产与1500/3000ms/全部断言，双端真实房间/epoch握手匹配后仍宿主53/0、加入52/3/DONE；本轮零#1009不证明旧错误修复，迟显示未解。R2输出build/m46/aura-debug-ready-02/observed-result.json。root已独立确认PID49640/38776退出并接回窗口；R2/R3只读。M46后10组与旧905负控仍未执行，不能部署；UI只使用已部署M45核心。
-- **UI原失败保留**：93202493c2为74/5，b9ea87dad5为0/2夹具字段错，25d26ab960为106/1完成通知握手；之后旧907字节持Shift负控7d947ade07为112/2，新a569相同测试114/0。初始失败与前提修正不可倒推成所有生产根因；细节在journal、ui-preview/validation.md与最终证据，不把早期临时版本当当前安装。
-- **M46恢复专项绿、联合首组红，尚未部署**：final39 d4c42d1f4f69aa5d4e56cd9945a610be21fc42137de70cabb2b818d52ca4a9b8/115943B/50类，51源139验证项。恢复1beb6133c4两端163/0/DONE，14真实即时PNG白块检查全清；同最终驱动旧905负控c1b0bd4462两端130/33/DONE，预期红已核对。Motion7df722ef4c宿主104/0、加入81/1，两端DONE，唯一红为共享暂停中远程掉落stay/Y合取检查；其余11组未启动。尚无失败点字段实证，不能由断言名称认定租期到期或归因遮罩修复。R2只读预测显示缓冲暂停边缘问题，待取证；M45安装未动。
-- **R2暂停诊断首轮**：final-r2-pause-01 /760e7375…的abe8a83a22，root回读宿主104/0、加入82/0，各1个COOP EFFECTS DONE；57保护不变、PID67872/64716已退出。加入断言时RemoteLoot普通track，remoteHeld/until缺失、stay=true/Y=200，cursor已选抬起帧；本轮未重现原红，不证明原7df原因或修复完成。R2保留源码/AIR窗口继续确定性诊断，不部署查询字节。独立回读见build/m46/root-r2-pause-01-readback-corrected.json；初始done误查COOP DONE的原receipt保留并附纠正。
-- **暂停顺序缺陷取证及Motion198项绿、root接回窗口**：纯AS3同测试/doc字节，旧final39 /47467ce38c为3/3、修正/d37af256be为6/0；固定720ms暂停时已收末帧但游标未到，原sample停旧位置，含无时间戳。生产仅settle与暂停loot采样，原守卫/TTL/非暂停sample未改，查询已去；R3独立只读复核无新阻断。final-r2-pause-02 /2c83df6b…116001B/50类/51源/140验证的Motion12b52871d3两端110/0、88/0/DONE，原186＋各6项固定顺序；root核对源/测试/配置/两端实际字节/57保护完整闭包，PID31812/68620已退出，build/m46/root-pause-adoption.json。原7df具体因果仍未认定；本候选其余12组含恢复必须重验，root已接回全部窗口，R2/R3只读。实证见knowledge/experiments/2026-10-06-r2-paused-loot-buffer.md。
-- **已独立核对两组同字节联合绿**：Aura16c3ac0b90为108/0（103原断言+咖啡唯一身份+4退出回收），在原白块位置1681.8/320；Motion647fde0dc2为186/0（原181+5真实damage负向对照），复制档指纹保持。原生新Q合法从NPC抢箱、NPC AI推进83次/零重抢、实际Q/E抓抛狮鹫、地板落地、租期/暂停/分房/离线通过。
-- **原失败与修复依据**：91fb453ffe和3f94367f45均98/6，收包前后确认旧q=true续报取消新NPC指针、levit2→1/t_tele-100→-600；四个已归属遮罩可逆隐藏使光晕像素0→523。新MirrorMasks只处理共享vis/hpbar产生的重复遮罩，不改npc/isVis/隐身或他模组位图；q边沿保护续报且允许新的真实Q。细节见`knowledge/experiments/2026-10-06-m46-mask-ownership.md`。
-- **门禁边界**：final-11/531c0edabc为108/66，join自动再加入前后有匿名Timer #1009，来源/因果未定未修，无原版/无驱动对照；66原堆栈见final11-timer-failure-provenance.json。final-12真实Session.leave通过不计重连修复；回收liveFields=0也不计存活原生本体mask恢复完整覆盖。R3只读复核此项，需把具体缺陷纳入总门禁。
-- **旧Motion诊断保留**：首轮d8为179/2，leave后Q清除缺前帧，根因未定；final-3同驱动d883为178/3，pinok21.537→65.234跨原生松手60阈值。final-4只隔离夹具无关弹丸，57e3/9436/f6b9三轮各186/0；M45同夹具0967为142/44，5原生伤害负对照通过。不倒推旧d8/Style4原因，见2026-10-06-m46-joint-validation.md及motion-control-audit.json。
-- **旧冻结与失败出处**：R2的final-12包`build/m46/r2-handoff-mask-grip.json`及root final-13/root-adoption.json已核对；905总门禁因恢复审查中断。Lightning/aff85d2db3退出0未总审计，Beam/225db0e4ab中断不计通过；PID45972/69260已退出。恢复夹具final-14至final-22的编译、条件等待、原生单mask引用及裁剪取样失败均在journal顶部和各冻结目录保留。不得覆盖这些输出或把条件修正倒推成生产根因。
-- **恢复专项接点**：旧905在final-20实测P2（存活本体即时leave后mask空），P1几何猜认仍仅静态风险。已删除顺序/几何认nativeMask，prepare共享前保存直接引用；无法安全还原时用自有过渡位图，不读/克隆/释放RV像素存储。提前ENTER_FRAME纯observe、晚RENDER capture去重；clean在offline/roomHold前。final-33/62fe2777d4两端各149/0/DONE，8case严格mask和字段裁剪hash绿，51源/138验证/57保护闭包核对，PID49528/9068已退出；仍含DEBUG故不部署。
-- **恢复根因与边界**：37明确maskReferences→restore #1009，38实测原生MovieClip but1–but5有3子项却getChildAt(0)=null；null守卫解决字段恢复，再退役补同签名孤立Shape检查及无引用旧alias隐藏解决case4即时白块。不能把匿名Timer11、final19/32停止倒推为同因。full-scene固定白矩形检查不等于任意像素一致；5px整Tile回退是当前RV格式假设，case7只覆盖last观察之后接管。35/36失败与34独立字段绿但真实PNG红保留。完整证据knowledge/experiments/2026-10-06-m46-native-mask-restoration.md、final39/restore-closure-audit.json。R3已只读独立复核final39源和两端case4 PNG，未发现新实证阻断。
-- **M44完成**：武器快照补真实GlowFilter和root/kor目标；Box/Loot/Unit补光晕/ColorTransform，加入侧本地抓持经玩家稳定键反向送达。TelekinesisVisuals只管显示，不写levit/AI；本地抓取优先，松手/替换/换房/离线清理，保留无关滤镜。最终八阶段c59e4214a4通过；详见2026-10-04-m44-telekinesis.md。
-- **M45完成**：EnemyGrip把加入侧原生抓持意图交给唯一房间模拟端，保留原版耗魔/抓取资格/挣脱；投掷只转发原版冲量一次。RoomSync交接前释放本机及远端抓持，Session停止时清理网络抓持，离线原生持有保留；M44光晕显示与实际控制保持分离。
-- **可选联机暂停完成**：用户确认任一端触发全队暂停（含分房），双方都关才恢复。F10两开关默认关、宿主设置保存；菜单范围按已说明的全部原版暂停菜单实现。网络/UI/SATS排队继续，恢复后执行战斗；不以暂停阻塞房间/地图交接。
-- 关Pip后的allStat残留一帧误松手已在联合测试中修复；最终抓取包含暂停位置/耗魔/挣脱计时、恢复、短持、精确投掷去重。原型失败、测试阈值修正及其他模组暂停检查分别留在2026-10-04-m45-enemy-grip.md与2026-10-04-coop-pause.md，最终同字节1003项通过。
-- 三方本轮已统一合并、验证、部署；R2负责抓敌，R3负责暂停，原会话负责最终候选与门禁。后续仍串行编译/AIR，不各自覆盖release。
-- **慢换图许可修复**：首次冻结ff977候选在b82c882fb0/ee5790974c连续初始换图超时。受控检查和修复详见2026-10-04-m45-travel-permit.md；最终以目的地匹配授权一次原生退出，跨过15秒仍可完成且允许Encounter本轮重定向，结束/重启/断开后不能复用旧许可。保留原45秒房间交接保护。
-- **换枪光晕修复**：syncRemoteWeapon与driveWeaponVis共用同一RemoteMotion采样，避免最新武器配旧帧光晕。旧e9b候选c64816fd73宿主485帧9错；最终e2bdb8a864为102项通过，宿主485帧/加入450帧零错。原失败、开场黑幕和Timer夹具修正见2026-10-04-m45-weapon-aura-timing.md；原84断言完整保留。
+- 念力旧q=true续报解除NPC指针已有包前后实证；新Q可合法抢箱。共享body/proxy显示引用产生已归属的孤立遮罩，隐藏四个对象时光晕像素0→523；只隐藏孤立副本，保留无关滤镜/活跃引用，不读或释放RV的像素存储。
+- MirrorMasks在共享前保存直接原生mask，删除按绘制顺序/几何猜认所有权；早ENTER_FRAME只观察引用，晚RENDER捕获/去重。退出/roomHold/原生字段重建均清理；引用不可安全还原时用自有过渡图形。case7覆盖最后观察后出现新持有者，非全部第三方时序。
+- getChildAt可能在原生MovieClip报告numChildren>0时返回null；恢复链加空守卫。孤立旧alias隐藏与同签名清理修复已观测的case4白块，不能把全部匿名Timer认作同因。
+- 共享暂停收到末帧时settle收齐掉落缓冲，恢复不倒播；源时钟offset改善时cursor同量换算，固定累计时序族最少9帧触发旧显示迟滞。延迟/TTL/传送/无时间戳路径保持。
+- 天角兽闪电实际spring1/visbullightning，记录真实显示帧和结束，结束从max(出生,结束)+700ms保留。代理传递id/isVis/npc/noAgro/isSats及数值化抗性；借用真实vis/hpbar而不运行本体AI，原生隐身/资格规则保持。红外特有类型匹配尚未穷举。
+- Beam原夹具人工300→60真实误发240破坏；只修host布局接收/基线，并保留原23断言/时窗。SATS远距look0、近距look20红绿，只修测试角色位置、保留原24项，空目标先报FAIL不再读selected.v。Projectile旧fireAt跳过显示且立即移除，31个真实事件帧全空；原生武器输入原9项通过，正式补一项武器前提。生产破墙/锁定/弹道未因这三条夹具修正而修改。
+- 原e329/5640错色和匿名Timer、7df暂停掉落、31184 Beam、6bd SATS及d4ef弹道失败全部保留。新控制证明固定路径，不逐条反推旧随机失败原因；没有宣称所有1009均修复。收尾表格误读roles字段的KeyError在正常加载之后，记录/截图已完成，随后核对原日志补表，不属运行故障。
 
-- **M43背景房调查未复现、未认定根因**：用户明确宿主角色消失/无法控制，不能解释为正常跟随。最终实际存档/视野设置下，界面+跟随五轮`5fd52e55f0`117项、关闭跟随五轮`735ea3ffd7`107项通过。早期冻结玩家、缺RENDER、累计走出房、浮点尾差等测试干扰已留档；一次门时序失败未认定原因，不抹去。候选仅加最多32次背景房切换的只读诊断，未修改背景房玩法。详见2026-10-03-m43-hidden-rooms.md。
-- **M43三方合并完成**：R2光束逐帧记录/死亡后结束、墙碎片；R3地图位置与主动传送。最终专项32+55项，既有分房66、反馈16、动画26、密集51项通过。80敌人连续七段、每段约8秒，加入侧每段100–107帧（约12.5–13.4 FPS），p95 104–116ms。没有同负载基线配对，不作性能增减归因；密集战斗仍可能卡顿。
-- **M41完成**：镜像血条每帧按原生规则刷新与跟随，显示层重建后重挂；HP数字回归原生弹着点、暴击/持续伤害样式和10模拟帧合并窗口，只维护反馈计数不运行AI。最终41项原生对照、16项真TCP通过，普通LMG显示40且宿主扣40。专项中的单次损伤本来一致，不声称本轮修复所有伤害运算。
-- **联合动画修复完成**：掉落沿宿主轨迹逐帧显示，保留武器10px偏移、本地念力/吸取接管及房间权属；肉食灵以实际帧变化补足isPlaying错误，并显式处理同帧停止/恢复与动画对象替换；蜘蛛地雷等单次死亡只播放粒子/声音，不重复伤害掉落。26项动画、24项交互、31项真网络业务通过。两端API播放标志与实际帧不一致的红绿链见动画记录。
-- **M41性能边界**：80敌人持续03c66a5357的7段各约8秒，加入侧109–117帧/段（约13–15 FPS），p95 95–109ms；51项既有阈值通过，但仍有卡顿。没有同负载M40配对，不作性能增减归因；整机另有语言适配任务，不能声称独占负载。
-- **M40完成，无待运行检查**：RemoteMotion按真实游戏帧采样时间保存短队列，敌人和玩家统一逐帧插值；重复发送不伪造新帧，收包不额外推进显示。初始旧帧/大时间偏移重校准，传送与长停顿重置，不无限外推。加入侧只对原生UnitZebra/UnitAlicorn保留正alpha淡影，invis/isVis/isSats保持。
-- 最终平滑15、双向TCP10、画面26、战斗状态22、SATS24、合作133、分房66、弹道9、战斗网络33、持续密集51全部通过。aceb915c53中三条运动流0停顿，队友各16种身体帧、敌人24帧；隐身轮廓有最终场景像素。密集41fa69404b连续56秒每8秒133–137帧，p95 81–87ms，约16–17FPS，原门槛保留；不声称通用帧率提升。
-- M40失败/夹具边界留在实验记录：旧M39抖动58次；RENDER会重复，按ENTER_FRAME去重；新档开场anim("die",true)并非死亡；internal lurked不可动态写。Appearance测试Timer可能读到绘制中间态，4e85806305显示2次中间态错误但262次最终RENDER全正确；改按最终绘制验证后完整合作61829fb49d通过、护甲136帧一致，生产护甲代码未改。
-- M39合作规则保留：地面物品只有一份，由房间所有者裁定、先拾取者原生入包；开柜由所有者生成；双方武器/弹道、闪电/护盾、地雷/炮塔/狮鹫感知，F10跟随默认关；经验点双方奖励、存档点共同解锁各自保存。地图经验点在loc.bonuses、存档点在acts、Box在objs。
-- M38伤害/动画修复保留：尸鬼碰撞尺寸与数值化抗性；RemoteDamageUnit + NativeHit交实际UnitPlayer结算，原生/加入/宿主LMG伤害一致、五种炮塔弹种一致。血翼AI/播放状态、炮塔展开后炮管、门柜首次立即/重复不重启动画。Box管理的VirtualUnit不进入敌人快照与重建链。
-- M37 SATS沿用原生vis/hpbar及隐身/锁定资格，退役代理失效。M36 RoomSync按地图epoch/roomKey/term交接，旧房伤害/场景修改先发完；loc_t=0禁止旧房stepInvis。空房由NativeRoomState保留，交接期间暂停，优先沿用本地原生实例。跨图/挑战由TravelGuard限制，房间细则见design/separate-rooms.md。
-- Windows后台策略因果证据见KB-000071 rev1与M39报告；不以重编译/后台状态不同的性能数字作代码对照。M40公共原生淡影机制见shared-knowledge/entities/facts/camouflage-render-vs-targeting.md；模组插值和测试方法记录留模组内。
+## 5. 已知边界与接续
 
-## 5. 已知边界
+- 真人实体鼠标、中文IME提交和实际常用菜单遮挡需玩家测试；合成事件/截图不是满意度认证。HTML file:浏览器限制未绕过，原生AIR截图不冒充HTML浏览器验证。
+- 背景嵌门原反馈为宿主失去自己的角色/控制、返前景死敌重现且无法伤害；不解释成正常跟随。M43实际档/视野下开跟随五轮117、关跟随107未可靠重现，诊断保留，根因未认定。后续若重现看两端RoomTrace/角色状态，不能盲改。
+- 密集战斗仍可能卡顿。当前Combat 80敌人88帧、p95 126ms；基础254帧/8448ms/p95 44ms仅为同候选不同负载，不是版本性能配对，不声称提升。M40/M41/M43持续7段历史与后台策略KB-000071边界保留。
+- 房间只保留本次同地图联机；特殊对象引用、全部Boss/第三方状态/所有换房竞争未穷举。IR分支、任意遮罩接管和全可见→部分可见组合没有完整证明；5px整Tile回退依赖当前RV格式。
+- 既有Area/Trap #1063构造诊断仍可能出现并被捕获，旧版本已有，本轮未改此路径；总门禁绿不等于全部历史诊断消失。
+- 本轮已收尾，无待运行门禁。不再重复跑已绿的同输入；新变化/实际失败才重开。若继续发行，建立新安装基线和新版本，不覆盖UI17/本M46冻结，也不直接重跑绑定UI17→18的旧prepare/deploy脚本。
+- 后续用户保存后重启实测18；重点常驻/展开高度、真实拖动/四角、中文输入、念力光晕、断开后原生敌人/血条与闪电持续/结束。不自动推送。
 
-- 只承诺当前地图、本次联机内房间保留；跨游戏退出保存沿用原版。任务/波次没有新增同步协议，挑战只允许宿主带队。
-- 源码标量与简单数组可交接，特殊状态效果对象引用、Boss全部分支、第三方新增敌人和长期全组合未穷举；不声称任意原生对象图可序列化。
-- 同时互换房、失联交接及全部死亡回城时序未穷举；稳定重连在排除范围。几何尺寸不一致会暂停交接并提示。
-- 当前根游戏1.02；RV及其他模组具体构建按本轮输入指纹区分。保护指纹与各轮其他模组输入见证据JSON，不把旧时期版本哈希当作当前版本。
-- 原有Area场景对象注入#1063后跳过仍在日志中，旧0.2.9对照也存在；M45暂停组还记录spikes/fspikes的Trap #1063，被现有重建逻辑捕获。该构造路径未在本轮修改，不把行为门禁通过解释成所有历史诊断消失；最终证据逐组保留这些日志。
-- 磁盘曾不足：测试runner已只复制所需8个运行SWF及xml/cfg，启动前检查空间；已清理三个旧试验的可再生成游戏副本，日志/候选/备份保留。不得为腾空间删用户存档或其他模组。
+## 6. 记录与工具
 
-## 6. 下一步
-
-1. 用户保存后完全重启两端测试0.2.17-dev。重点实测中文输入法提交、实际鼠标拖动/点击、常用菜单遮挡；合成事件与原生截图不是真人使用满意度证明。UI入口/回滚见部署记录。
-2. M46核心仍未部署：最新5640e056b6仍有3项颜色错误，原e329299888颜色错帧与17次匿名Timer #1009保留。后续使用0.2.18-dev与新integration-baseline-after-ui-20261006；tools/validation正本绑定baseline路径/哈希，14组（原13＋Hud）/最终同驱动旧905负控/正常加载仍须完整通过。新脚本只完成准备/边界自检，没有宣称核心绿；旧build/m46执行副本与原M45基线不改。
-3. R2下一窗口已由root明确移交，仅限自有复制诊断目录；从公开RemoteMotion.readSnapshot().sampleTime、getTimer、coopPaused、roomHold等实际样本定位错色，不延长1500/3000ms或放宽阈值追绿。root统一审核/14组/部署；不要用当前默认工作树构建发布UI。2026-10-06已向R2明确移交仅自有复制诊断目录的编译/AIR窗口，禁止改共享src/tests/tools、VERSION/release或MEMORY；R3只读。
-4. 背景房若重现核对两端RoomTrace与角色状态；未认定根因不盲改。密集性能和排除范围保持，不自动推送。
-
-## 7. 记录与工具入口
-
-- 最新UI见 `state/deployment-ui-2026-10-06.md`、`knowledge/experiments/ui-20261006-validation-evidence.json`；门禁 `tools/validation/README.md`。
-- M45历史见 `state/deployment-m45-2026-10-04.md`、`knowledge/experiments/m45-validation-evidence.json`、抓敌与暂停两份实验记录。
-- M44历史见 `state/deployment-m44-2026-10-04.md`、`knowledge/experiments/m44-validation-evidence.json`与`2026-10-04-m44-telekinesis.md`；启动器见`2026-10-04-manual-second-player.md`。
-- M43历史 `state/deployment-m43-2026-10-04.md`、`knowledge/experiments/m43-validation-evidence.json`及三份M43实验记录；历史 `knowledge/experiments/2026-10-03-m41-feedback.md`、`2026-10-03-m41-animation-gaps.md`、`m41-validation-evidence.json`；M40连续运动与淡影见2026-10-03-m40-presentation.md。M39合作与后台策略见2026-09-30-m39-gameplay.md；M38伤害、M37 SATS、M36分房历史证据和design/separate-rooms.md保留。
-- 构建 `tools/build_mod.py --java <java> --output build/<轮次>/RConnectMod.swf`；必须显式候选输出，默认写release。
-- 同字节外部驱动 `tools/build_effects_driver.py --candidate <正式SWF> --java <java> --output build/<轮次>/driver --entry SatsTestDoc`。另可RoomCooperationTestDoc/CoopTestDoc/TurretTestDoc/EffectsTerrainTestDoc/PresentationTestDoc。
-- runner `tools/run_coop_regression.py --candidate <SWF> --effects-driver <目录>`：分房加`--effects --all-mods --land random_mane --seconds 240`，完整合作`--with-vision --seconds 340`，炮塔/特效`--effects --all-mods --seconds 180`，画面`--presentation --all-mods --seconds 210`。正常路径不加driver，用`--smoke --with-vision --seconds 150`。
-- Python C:/Users/hello/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe；Java C:/Users/hello/Documents/_sandevistan_dev/jdk-11.0.32.1+1-jre/bin/java.exe；SDK D:/RemainsMod/mods/Sandevistan/build/tools/flexsdk。AIR/FFDec沙箱受限走正常工具审核。
-- 性能及同机双端使用runner --responsive（同Start-Coop的helper），SustainedDensityTestDoc连续7段；启动函数回归tests/windows/VerifyCoopLauncher.ps1需要--keep-copies保留的隔离模板。旧tools/make_release.py仍是0.1.0整包脚本，本轮未运行；以后分发前需更新包清单纳入启动器，不能当作本轮发布工具。
+- 当前发布deployment-m46-2026-10-07.md和m46-validation-evidence.json；门禁tools/validation/README.md。clock、Beam/SATS/Projectile夹具和native-mask-restoration各自实验；历史过程在journal。
+- M45/M44/M43发布记录和各mXX-validation-evidence保留；M41反馈/动画、M40连续显示、M39合作/后台策略、M38伤害、M37SATS、M36分房机制均有原实验与设计证据。
+- 构建tools/build_mod.py --java <java> --output build/<新目录>/RConnectMod.swf，必须显式输出，默认会写release。原子部署走release-gate，无游戏文件补丁时loader步骤不适用。
+- 正本tools/validation：prepare_integration → 显式构建/类表 → finalize_restore_build → 明确entry串行 → 最终测试旧905负控 → audit_final → 唯一备份/deploy_verified → run_smoke（失败先回滚）。全部Python用-X utf8。Motion须冻结真实角色模板与--connect-after-load。
+- 外部driver用tools/build_effects_driver.py --candidate <SWF> --source-root <冻结src> --output build/<新目录>/driver --entry <Doc>；runner tools/run_coop_regression.py，--all-mods --responsive --effects。只管理自有AIR标识/PID，不动用户进程和存档；磁盘不足不删原日志/备份/唯一资料。
+- Python C:/Users/hello/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe；Java C:/Users/hello/Documents/_sandevistan_dev/jdk-11.0.32.1+1-jre/bin/java.exe；SDK D:/RemainsMod/mods/Sandevistan/build/tools/flexsdk，FFDec同tools/ffdec/ffdec-cli.jar。AIR/编译受限走工具审核，不绕过。
+- 旧tools/make_release.py是0.1.0整包脚本，本轮未运行；今后分发先更新包清单纳入启动器，不当作当前发布入口。

@@ -4,7 +4,7 @@ Two-player online co-op for **Fallout Equestria: REMAINS** — see each other, c
 
 English (this page) · [简体中文](README.zh-CN.md)
 
-> Current local candidate: **0.2.17-dev (compact HUD)**, deployed 2026-10-06. The default panel is a 280 × 36 status strip; expanding opens Connect, Teammate, Chat and Settings tabs within a bounded panel. Drag the title or use Dock to change corners; position and expansion are saved per player. 681 checks on the same final candidate and normal-loader smoke passed; see the [release record](state/deployment-ui-2026-10-06.md). This release keeps the verified M45 gameplay core; pending M46 fixes are excluded. Hidden-room control loss/enemy respawn and dense-combat stutter remain open. Validated on game 1.02 with two local players.
+> Current local candidate: **0.2.18-dev**, deployed 2026-10-07. The compact HUD remains a 280 × 36 status strip with four tabs, internal scrolling, title dragging, corner docking and saved position/expansion. This version adds native telekinesis/display restoration, lightning frame delivery and source-clock calibration fixes. Fourteen checks on the same candidate passed **1648 assertions**, followed by normal-loader smoke; see the [release record](state/deployment-m46-2026-10-07.md). Real mouse/Chinese IME use still needs player testing. Hidden-room control loss/enemy respawn and dense-combat stutter remain open. Validated on game 1.02 with two local players.
 >
 > For local co-op, save and close both games, then use **[Start-Coop.bat](Start-Coop.bat)**. It keeps only the processes it starts responsive in the background and preserves each character's saves. This may use more power. Large encounters can still stutter. The current validation does not establish a general frame-rate improvement.
 >
