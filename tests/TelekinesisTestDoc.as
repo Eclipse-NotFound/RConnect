@@ -50,7 +50,8 @@ package {
          if(app.indexOf("rconnect-coop-")<0)return;host=app.indexOf("-host-")>=0;
          ownColor=host?0x20D0FF:0xE040B0;peerColor=host?0xE040B0:0x20D0FF;
          loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR,function(e:UncaughtErrorEvent):void {
-            check(false,"uncaught "+(e.error is Error?Error(e.error).getStackTrace():e.error));e.preventDefault();finish();
+            check(false,"uncaught "+(e.error is Error?Error(e.error).getStackTrace():e.error));e.preventDefault();
+            try {finish();}catch(cleanupError:Error){check(false,"cleanup after uncaught "+cleanupError.getStackTrace());}
          });
          timer.addEventListener(TimerEvent.TIMER,tick);timer.start();
       }
@@ -60,7 +61,12 @@ package {
          l.addEventListener(TcpLink.MESSAGE,packetBefore,false,10000);
          l.addEventListener(TcpLink.MESSAGE,receive);
          l.addEventListener(TcpLink.MESSAGE,packetAfter,false,-10000);}}
-      private function send(s:String,p:Object=null):void {p=p||{};p.type="telekinesis-test";p.stage=s;if(host)mod.session.server.broadcast(p);else mod.session.link.send(p);}
+      private function send(s:String,p:Object=null):void {
+         p=p||{};p.type="telekinesis-test";p.stage=s;
+         if(mod==null || mod.session==null)return;
+         if(host){if(mod.session.server!=null)mod.session.server.broadcast(p);}
+         else if(mod.session.link!=null && mod.session.link.isOpen)mod.session.link.send(p);
+      }
       private function receive(e:NetMessageEvent):void {
          var p:Object=e.data;
          if(p.loots is Array)sceneWire=p.loots;
@@ -123,6 +129,12 @@ package {
       }
       private function nativeReady():Boolean {
          var w:Object=mod.game.world,g:Object=mod.game.gg;
+         var wanted:String=String(mod.config.getValue("autoTravelLand"));
+         // Validate the configured arena before creating fixtures. curLandId
+         // changes before the native land finishes loading, so check both.
+         if(wanted!="" && wanted!="null" && wanted!="undefined"
+            && (String(GameBridge.probe(GameBridge.probe(w,"game"),"curLandId"))!=wanted
+               || String(GameBridge.probe(GameBridge.probe(GameBridge.probe(w,"land"),"act"),"id"))!=wanted))return false;
          // Do not freeze the new character in its opening/revival animation
          // or measure through the native fade covering the whole scene.
          return g!=null && !g.disabled && g.work!="res" && Number(g.t_work)<=0
@@ -394,8 +406,11 @@ package {
       }
       private function finish():void {
          if(phase=="done" || phase=="cleanup")return;
-         cleanupSnapshot=AuraMaskProbe.retirementSnapshot(mod);phase="cleanup";at=getTimer();
-         if(mod!=null){mod.stage.removeEventListener(Event.ENTER_FRAME,drive);mod.stage.removeEventListener(Event.ENTER_FRAME,captureMasks);mod.stage.removeEventListener(Event.RENDER,renderSample);}
+         phase="cleanup";at=getTimer();
+         try {cleanupSnapshot=AuraMaskProbe.retirementSnapshot(mod);}
+         finally {
+            if(mod!=null && mod.stage!=null){mod.stage.removeEventListener(Event.ENTER_FRAME,drive);mod.stage.removeEventListener(Event.ENTER_FRAME,captureMasks);mod.stage.removeEventListener(Event.RENDER,renderSample);}
+         }
       }
       private function complete():void {
          phase="done";timer.stop();

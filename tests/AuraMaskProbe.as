@@ -50,6 +50,9 @@ package {
          }
       }
       private static function references(node:DisplayObject,refs:Dictionary):void {
+         // Native timeline containers can retain a child slot that yields null.
+         // No displayed object exists at that slot, hence no mask reference.
+         if(node==null)return;
          if(node.mask!=null){if(refs[node.mask]==null)refs[node.mask]=[];refs[node.mask].push(id(node));}
          var c:DisplayObjectContainer=node as DisplayObjectContainer;
          if(c!=null)for(var i:int=0;i<c.numChildren;i++)references(c.getChildAt(i),refs);
@@ -103,6 +106,7 @@ package {
       }
       public static function retirementSnapshot(mod:RConnectMod):Array {
          var out:Array=[];
+         if(mod==null || mod.game==null || mod.game.loc==null)return out;
          for each(var u:Object in mod.game.loc.units)if(u is MirrorHitUnit) {
             var b:Object=MirrorHitUnit(u).body;if(b==null)continue;
             var fields:Array=[];
