@@ -4,7 +4,8 @@ import hashlib
 import json
 import re
 from pathlib import Path
-from run_final_regressions import REQUIRED
+from run_final_regressions import required_entries
+from validation_baseline import verify_protected, read_baseline
 
 ROOT = Path(__file__).resolve().parents[2]
 GAME = ROOT.parents[1]
@@ -24,6 +25,8 @@ def read(path):
 
 
 manifest = read(OUT / "source-input.json")
+REQUIRED = required_entries(manifest)
+verify_protected(manifest)
 candidate_sha = manifest["candidate_sha256"]
 assert sha(OUT / "RConnectMod.swf") == candidate_sha
 assert sha(ROOT / "build/GameCombatStubs.swc") == sha(OUT / "GameCombatStubs.swc") == manifest["stub_sha256"]
@@ -107,8 +110,20 @@ for entry in REQUIRED:
     if entry == "TelekinesisMotionTestDoc":
         for role in ("host", "join"):
             assert data["save_templates"][role]["source_sha256"] == manifest["profiles"][role]["sha256"], role
+    if entry == "HudTestDoc":
+        result['hud_images'] = {}
+        for role in ('host', 'join'):
+            images = {p.name: sha(p) for p in folder.glob(role + '-hud-*.png')}
+            assert len(images) >= 11, (role, 'HUD evidence missing')
+            result['hud_images'][role] = images
+            text = (folder / (role + '.log')).read_text(encoding='utf-8-sig')
+            for marker in ('new production HUD restores saved bottom anchor and expansion',
+                           'real co-op pause notice survives F10 hiding',
+                           'title drag follows event coordinates and persists free position',
+                           'releasing Shift in chat clears the previous native run state'):
+                assert marker in text, (role, marker)
     runs.append(result)
-baseline = read(ROOT / "build/m46/integration-baseline/inputs.json")
+baseline = read_baseline(manifest)
 protected = {name: digest for name, digest in baseline["protected"].items() if name.lower() != "mods/rconnect/release/rconnectmod.swf"}
 changed = [name for name, digest in protected.items() if not (GAME / name).is_file() or sha(GAME / name) != digest]
 assert not changed, changed
@@ -118,7 +133,8 @@ evidence = {"generated_at": datetime.datetime.now().astimezone().isoformat(), "v
             "required_entries": REQUIRED, "runs": runs, "pass": sum(run["pass"] for run in runs), "fail": 0,
             "protected": {"count": len(protected), "changed": changed, "hashes": protected},
             "source_merge_audit_sha256": sha(ROOT / "build/m46/source-merge-audit.json"),
-            "scope": "Joint movable telekinesis/native release and leases, numeric enemy resistance, native lightning frames/end delivery, real mirrored targeting flags and surviving native vis/hpbar restoration after receiver retirement; UI remains a design preview.",
+            "baseline_path": manifest.get('baseline_path', 'build/m46/integration-baseline'),
+            "scope": "Joint movable telekinesis/native release and leases, numeric enemy resistance, native lightning frames/end delivery, mirrored targeting and native mask restoration; post-UI snapshots also require the production compact HUD regression.",
             "retained_failures": [
                 {"run": "0533f0415d", "pass": 179, "fail": 2, "cause": "Early source Q pointer clear before planned release lacks native pre-frame fields; no causal production-fix claim."},
                 {"run": "d8ea183f0c", "pass": 179, "fail": 2, "cause": "Local Q clear on first post-leave frame lacks pinok/control pre-frame fields; exact cause remains unassigned."},
@@ -141,7 +157,7 @@ evidence = {"generated_at": datetime.datetime.now().astimezone().isoformat(), "v
                 "later_owner_case":"Case7 replaces the mask after the last frame observation; masks assigned before observation and all third-party timing combinations are not covered.",
                 "legacy_evidence":"build/m46/r2-handoff-mask-grip.json; restoration failures final-14 through final-32 and journal preserved; final-33 diagnostic build green is not the deployed byte"},
             "limits": ["Dense combat FPS not benchmarked here", "IR class-specific branch and all boss/third-party states not exhausted", "1.02 only; stable reconnect/public network/more than two players excluded", "Hidden-background-room report not reproduced or assigned a root cause", "Mask restoration does not claim full object graph, full-visible-to-partial transitions or all world-change paths are exhausted", "Orphan duplicate suppression still uses the installed RV bitmap-format signature; arbitrary third-party drawing and earlier replacement masks are not comprehensively proven"]}
-receipt = ROOT / "build/m46/deployment.json"
+receipt = OUT / "deployment.json"
 if receipt.exists():
     evidence["deployment"] = read(receipt)
 (ROOT / "knowledge/experiments/m46-validation-evidence.json").write_text(json.dumps(evidence, indent=2, ensure_ascii=False), encoding="utf-8")

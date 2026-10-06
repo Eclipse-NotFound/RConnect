@@ -1,6 +1,7 @@
 """Current unchanged restoration driver on the retained old production byte."""
 import hashlib,json,re,subprocess,sys
 from pathlib import Path
+from validation_baseline import verify_protected
 ROOT=Path(__file__).resolve().parents[2]
 OUT=(ROOT/sys.argv[1]).resolve()
 assert OUT.parent==ROOT/'build/m46' and OUT.name.startswith('final')
@@ -15,7 +16,7 @@ def verify():
     for n,h in m['source'].items():assert sha(ROOT/n)==sha(OUT/n)==h,n
     for n,h in old['source'].items():assert sha(OLD/n)==h,n
     for n,h in v.items():assert sha(ROOT/n)==sha(OUT/'verified-files'/n)==h,n
-    for n,h in read(ROOT/'build/m46/integration-baseline/inputs.json')['protected'].items():assert sha(ROOT.parents[1]/n)==h,n
+    verify_protected(m)
 verify()
 entry='MirrorMaskRestoreTestDoc';driver=OUT/'old-restore-driver'
 assert not driver.exists()

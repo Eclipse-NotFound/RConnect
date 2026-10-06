@@ -1,13 +1,20 @@
 """Restart isolated normal-loading instances; roll back any smoke validation failure."""
-import datetime,hashlib,json,os,re,shutil,subprocess,sys,uuid
+import argparse,datetime,hashlib,json,os,re,shutil,subprocess,sys,uuid
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2];GAME=ROOT.parents[1]
+from validation_baseline import verify_protected
 def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
 def read(p):return json.loads(p.read_text(encoding='utf-8-sig'))
-receipt=ROOT/'build/m46/deployment.json';d=read(receipt);OUT=ROOT/d['snapshot'];target=ROOT/'release/RConnectMod.swf'
+ap=argparse.ArgumentParser();ap.add_argument('--snapshot',type=Path);args=ap.parse_args()
+if args.snapshot:
+    OUT=args.snapshot.resolve();assert OUT.parent==ROOT/'build/m46' and OUT.name.startswith('final')
+    receipt=OUT/'deployment.json'
+else:receipt=ROOT/'build/m46/deployment.json'
+d=read(receipt);OUT=ROOT/d['snapshot'];target=ROOT/'release/RConnectMod.swf'
 assert d['status']=='deployed-awaiting-smoke' and sha(target)==d['sha256']
 record={'run':None,'exit':None};runner_output=''
 try:
+    verify_protected(read(OUT/'source-input.json'),own_release=d['sha256'])
     command=[sys.executable,str(ROOT/'tools/run_coop_regression.py'),'--candidate',str(target),'--smoke','--all-mods',
         '--responsive','--seconds','150','--expected-version',d['version']]
     result=subprocess.run(command,cwd=ROOT,capture_output=True,text=True,encoding='utf-8',errors='replace')
@@ -34,6 +41,7 @@ try:
     evidence=read(ROOT/'knowledge/experiments/m46-validation-evidence.json')
     for name,digest in evidence['protected']['hashes'].items():assert sha(GAME/name)==digest,name
     assert sha(target)==d['sha256']
+    verify_protected(read(OUT/'source-input.json'),own_release=d['sha256'])
 except BaseException as error:
     backup=ROOT/d['backup'];assert sha(backup)==d['previous_sha256']
     temp=target.with_name('RConnectMod.'+uuid.uuid4().hex+'.tmp');shutil.copy2(backup,temp);os.replace(temp,target)

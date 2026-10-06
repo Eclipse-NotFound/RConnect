@@ -1,19 +1,31 @@
-# M46联合候选门禁
+# RConnect候选门禁入口
 
-这里保存本轮实际使用的门禁脚本；执行证据与冻结输入留在`build/m46/final-*`，可再生SWF不入Git。当前final39正在验证，尚未部署。
+当前安装 **0.2.17-dev紧凑UI / a5698f9f…**，M45游戏核心。UI681/0、正常无驱动加载4a3257643f绿，见state/deployment-ui-2026-10-06.md。当前工作树M46核心为0.2.18-dev，仍有念力错色及旧匿名Timer红，未部署。
 
-本轮执行的是`build/m46/`的冻结副本。下次继续或更改门禁时，先核对这里的正本与执行副本；把这七个脚本按原文件名复制到`build/m46/`，不要更改已冻结目录。旧`refreeze_diagnostic.py`是特定旧轮次的历史工具，不作为通用入口。路径根均为脚本向上两级，两个位置都指向模组根。
+## 已完成UI发行
 
-流程：新目录freeze→显式输出候选构建→FFDec类清单→finalize_restore_build→明确列出回归入口→audit_final→仅本模组备份部署→正常加载冒烟，失败先回滚。不能用构建默认输出（会直接写release），不能覆盖失败目录/driver，不能同时运行其他AIR测试或构建。
+独立编排ui_release.py只从已验证M45冻结源派生，不使用含M46的工作树核心。最终build/ui-20261006/stable-ui-07保存50源/131验证/49类、四组同字节、22原生PNG与部署/正常加载receipt。生产仅NetHud、新HudLayout与版本变动；17UI不能替代18核心验证。
 
-- `prepare_integration.py freeze build/m46/final-N`：冻结源、所有AS3测试/存根、执行工具、真实复制模板档；新目录不得存在。
-- `finalize_restore_build.py build/m46/final-N`：构建后核对类清单与源的逐文件指纹，记录候选/存根来源。
-- `run_final_regressions.py --list --snapshot build/m46/final-N`：只查看13组必需门禁。执行须列明确入口；Motion须传冻结目录中双方模板档。可分批串行，任何红停后续组并即时记journal。
-- `run_old_restore_control.py build/m46/final-N`：用当前不变恢复驱动检查保留的905旧候选；预期严格即时恢复断言失败且两端DONE，不把程序崩溃当作有效负控。当前decl来源final13、旧实际编译来源final9、编译用当前已冻结存根在receipt分别记录。
-- `audit_final.py --snapshot build/m46/final-N`：独立核对13组退出/原始日志/驱动/模块与配置闭包、旧负控、实际PNG白矩形、50生产类与保护文件。通过后写m46-validation-evidence.json。
-- `deploy_verified.py --snapshot build/m46/final-N`：必须有已审计证据和既有部署授权；备份唯一命名，仅原子替换本模组release，不改游戏SWF/描述符或其他模组。
-- `run_smoke.py`：正常无驱动加载双端、版本和网络心跳，失败立即还原备份再报告。
+所有入口用明确UTF-8启动：`python -X utf8 tools/validation/ui_release.py <mode> --snapshot build/ui-20261006/<新目录>`。prepare/build/test/audit/deploy/smoke；每步新输入在启动前冻结，输出不覆盖。当前脚本绑定M45安装起点，已经部署后不再重跑prepare或deploy。首次默认GBK读取deployment receipt在AIR前失败已先回滚，原错误和receipt保留；同字节-X utf8重试正常加载成功。该失败不是UI运行崩溃。
 
-恢复的实际PNG规则实现位于`../verify_mask_png.py`：捕捉已实测的32×24连续不透明近白矩形，不等同整场景逐像素一致，也不自动保证所有第三方绘图合法。原149项/端恢复断言＋14项即时退役引用断言保留，真实PNG另验。F39根生产DEBUG已删除。
+## UI之后的M46核心
 
-运行所需Java/AIR/编译器路径及实验边界见MEMORY和`knowledge/experiments/2026-10-06-m46-native-mask-restoration.md`。当前安装M45保护基线不可覆盖。发布后更新这里的状态说明及MEMORY/journal/changelog；游戏内UI仍只规划。
+- 旧build/m46/integration-baseline仍保存M45；旧final-* / build/m46执行副本/全部失败不改。
+- 新build/m46/integration-baseline-after-ui-20261006保存当前UI字节、57保护、UI源出处与正常加载run。只能创建一次，不能用新基线抹去旧失败。
+- 正本在本目录执行，**不再复制覆盖旧build/m46脚本**；新freeze冻结所有本目录Python及验证依赖，源manifest记录baseline路径和指纹。validation_baseline.py检查当前输入，拒绝旧M45基线用于新安装、篡改baseline hash、18核心复用17版本、漏掉Hud专项。
+- 0.2.18-dev准备冻结build/m46/final-after-ui-01：52源/143验证。仅准备闭包及拒绝守卫通过，没有构建SWF/启动AIR/新增核心绿。若改核心/测试/工具，重新freeze到新目录；不能复用该准备冻结的绿声明。
+
+顺序：新freeze → 显式输出候选构建 → FFDec类清单 → finalize_restore_build → 明确回归入口串行 → 当前不变恢复驱动旧905负控 → audit_final → 备份部署 → 正常无驱动加载，失败先回滚。
+
+1. `python -X utf8 tools/validation/prepare_integration.py baseline`已创建新安装基线；不要重复执行或覆盖。
+2. `python -X utf8 tools/validation/prepare_integration.py freeze build/m46/final-after-ui-N`冻结源、AS3测试/存根、正本工具和原真实模板档；目录必须全新。
+3. 显式输出候选，不能用默认构建（会写release）。类清单与当前build/GameCombatStubs.swc都按本次编译记录，然后`python -X utf8 tools/validation/finalize_restore_build.py build/m46/final-after-ui-N`。
+4. `python -X utf8 tools/validation/run_final_regressions.py --list --snapshot build/m46/final-after-ui-N`只列计划；执行必须明确entry。Motion须传本次冻结的两份profile。14组为原13组加HudTestDoc；导航/慢换图仍可按变化额外跑。不放宽时长/阈值追绿，任一红停后续并即时记journal。
+5. `python -X utf8 tools/validation/run_old_restore_control.py build/m46/final-after-ui-N`检查保留旧905实际生产字节；预期严格即时恢复红、两端DONE、实际空mask记录，不把崩溃当有效负控。编译声明来源和当前存根分别记receipt。
+6. `python -X utf8 tools/validation/audit_final.py --snapshot build/m46/final-after-ui-N`核对14组/驱动/配置/实际字节/类/PNG/保护/负控。只在全部真绿后更新m46-validation-evidence.json。
+7. `python -X utf8 tools/validation/deploy_verified.py --snapshot build/m46/final-after-ui-N`仅替换本模组release，唯一备份；receipt存该snapshot，旧记录不覆盖。
+8. `python -X utf8 tools/validation/run_smoke.py --snapshot build/m46/final-after-ui-N`正常加载双端，失败先回滚。无snapshot只用于旧历史global receipt。
+
+恢复PNG规则在../verify_mask_png.py：检测实证的32×24连续近白矩形，不能等同整场景像素一致或所有第三方绘图都合法。149原恢复断言/端＋14即时退役引用断言保留，实时PNG另验。新核心仍须用最终同驱动重新旧905负控。
+
+Java/AIR路径与业务边界见MEMORY；只有当前源/测试/字节闭包及新基线同时满足才可能部署。R2/R3仍只读，root移交具体窗口后才能运行；不同时编译/跑其他AIR，不改用户进程、存档或其他模组。UI关闭/正常部署不算稳定重连修复。

@@ -3,9 +3,12 @@ import argparse
 import hashlib
 import json
 import re
+import os
+import shutil
 import subprocess
 import sys
 from pathlib import Path
+from validation_baseline import verify_protected
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "build/m46/final"
@@ -26,8 +29,14 @@ CHECKS = {
     "MirrorMaskRestoreTestDoc": (180, "random_mane", False),
     "SlowTravelTestDoc": (360, "", False),
     "TeammateNavigationTestDoc": (240, "random_mane", False),
+    "HudTestDoc": (180, "rbl", False),
 }
 REQUIRED = list(CHECKS)[:13]
+
+def required_entries(manifest):
+    expected = REQUIRED + (["HudTestDoc"] if manifest.get("baseline_path") else [])
+    assert manifest.get("required_entries", expected) == expected, "Incomplete required check list"
+    return expected
 
 
 def sha(path):
@@ -50,8 +59,9 @@ def main():
     OUT=args.snapshot.resolve()
     assert OUT.parent==ROOT/'build/m46' and OUT.name.startswith('final'),OUT
     if args.list:
-        print(json.dumps({"status": "serial-joint-candidate-validation", "required": REQUIRED,
-                          "checks": CHECKS, "snapshot": str(OUT), "UI": "design preview only"}, indent=2))
+        manifest = read(OUT / "source-input.json") if (OUT / "source-input.json").exists() else {}
+        print(json.dumps({"status": "serial-joint-candidate-validation", "required": required_entries(manifest),
+                          "checks": CHECKS, "snapshot": str(OUT), "UI": "compact HUD deployed separately; new core retains UI regression"}, indent=2))
         return
     if not args.entries:
         parser.error("Explicit entries required; list the preparation plan with --list")
@@ -67,9 +77,7 @@ def main():
             assert sha(OUT / name) == digest, name
         for name, digest in verification.items():
             assert sha(ROOT / name) == digest, name
-        installed = read(ROOT / "build/m46/integration-baseline/inputs.json")
-        for name, digest in installed["protected"].items():
-            assert sha(ROOT.parents[1] / name) == digest, name
+        verify_protected(manifest)
 
     verify()
     actual = {line.split()[0] for line in (OUT / "classes.txt").read_text(encoding="utf-8-sig").splitlines() if line.strip()}
@@ -108,6 +116,12 @@ def main():
         (OUT / (entry + "-runner.log")).write_text(result.stdout + "\n" + result.stderr, encoding="utf-8")
         found = re.search(r"OUTPUT .*?([0-9a-f]{10})\s*$", result.stdout, re.M)
         record = {"entry": entry, "run": found.group(1) if found else None, "exit": result.returncode}
+        if entry == "HudTestDoc" and record["run"]:
+            folder = ROOT / "build/cooperation" / record["run"]
+            for role in ("host", "join"):
+                storage = Path(os.environ['APPDATA']) / ('pfe-modsettings-rconnect-coop-' + role + '-' + record["run"]) / 'Local Store'
+                for picture in storage.glob('hud-*.png'):
+                    shutil.copy2(picture, folder / (role + '-' + picture.name))
         if entry == "MirrorMaskRestoreTestDoc" and record["run"]:
             sys.path.insert(0, str(ROOT / "tools"))
             from verify_mask_png import inspect
