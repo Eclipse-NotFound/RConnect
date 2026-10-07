@@ -30,11 +30,15 @@ CHECKS = {
     "SlowTravelTestDoc": (360, "", False),
     "TeammateNavigationTestDoc": (240, "random_mane", False),
     "HudTestDoc": (180, "rbl", False),
+    "FastHeldTestDoc": (360, "random_mane", True),
+    "WeaponAngleTestDoc": (180, "rbl", False),
 }
 REQUIRED = list(CHECKS)[:13]
 
 def required_entries(manifest):
     expected = REQUIRED + (["HudTestDoc"] if manifest.get("baseline_path") else [])
+    if manifest.get('version') == '0.2.19-dev':
+        expected += ['FastHeldTestDoc', 'WeaponAngleTestDoc']
     assert manifest.get("required_entries", expected) == expected, "Incomplete required check list"
     return expected
 
@@ -57,7 +61,7 @@ def main():
     parser.add_argument("--join-save-template", type=Path)
     args = parser.parse_args()
     OUT=args.snapshot.resolve()
-    assert OUT.parent==ROOT/'build/m46' and OUT.name.startswith('final'),OUT
+    assert OUT.parent in (ROOT/'build/m46', ROOT/'build/m47') and OUT.name.startswith(('final','red-')),OUT
     if args.list:
         manifest = read(OUT / "source-input.json") if (OUT / "source-input.json").exists() else {}
         print(json.dumps({"status": "serial-joint-candidate-validation", "required": required_entries(manifest),

@@ -122,6 +122,8 @@ package rconnect.game
             var first:Number=Number(a.snap[key]),last:Number=Number(b.snap[key]);
             if(isFinite(first) && isFinite(last))state[key]=first+(last-first)*t;
          }
+         if(a.snap.weapons is Array && b.snap.weapons is Array)
+            state.weapons=WeaponDisplay.interpolate(a.snap.weapons as Array,b.snap.weapons as Array,t);
          return state;
       }
    }

@@ -40,6 +40,7 @@ package {
       private var cleanupMasks:Array=[];
       private var decoys:Array=[],copies:Array=[],template:Object;
       private var partialFrames:int=0,visibleFields:int=0,replaced:Boolean=false;
+      private var worldSeen:Boolean=false;
       public function MirrorMaskRestoreTestDoc() {
          var id:String=NativeApplication.nativeApplication.applicationID;
          if(id.indexOf("rconnect-coop-")<0)return;host=id.indexOf("-host-")>=0;
@@ -53,6 +54,9 @@ package {
       private function watch(l:TcpLink):void {if(l!=null && !links[l]){links[l]=true;l.addEventListener(TcpLink.MESSAGE,receive);}}
       private function send(s:String):void {var p:Object={type:"mask-restore-test",stage:s};if(host)mod.session.server.broadcast(p);else mod.session.link.send(p);}
       private function receive(e:NetMessageEvent):void {
+         // A room commit can precede the first 200ms world snapshot. Finish
+         // the actual Session receive before exercising its leave seam.
+         if(!host && phase=="boot" && e.data.type=="unitsync" && mod.session.rooms.accepts(e.data))worldSeen=true;
          if(e.data.type!="mask-restore-test")return;
          if(host && phase=="boot" && e.data.stage=="ready"){send("begin");state("drain");}
          else if(!host && e.data.stage=="begin"){mod.session.leave();begin();}
@@ -70,7 +74,8 @@ package {
                if(mod.game.gg!=null)mod.game.gg.invulner=true;
                if(host && mod.session.server!=null)for each(var l:TcpLink in mod.session.server.clients)watch(l);else if(!host)watch(mod.session.link);
                if(mod.session.rooms.ready && !mod.session.rooms.busy && !mod.game.isTransitioning() && ready()
-                  && !host && getTimer()-readyAt>500){readyAt=getTimer();send("ready");}
+                  && !host && worldSeen && getTimer()-readyAt>500){readyAt=getTimer();
+                     check(worldSeen,"real accepted world sync precedes leave fixture");send("ready");}
                return;
             }
             if(phase=="drain" && getTimer()-at>500){mod.session.leave();begin();return;}

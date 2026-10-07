@@ -1,0 +1,4590 @@
+{
+  "at": "2026-10-07T18:41:55.283090+08:00",
+  "required_entries": [
+    "TelekinesisMotionTestDoc",
+    "TelekinesisTestDoc",
+    "EnemyGrabTestDoc",
+    "LightningSmartTestDoc",
+    "BeamTerrainTestDoc",
+    "SatsTestDoc",
+    "CoopPauseTestDoc",
+    "RoomCooperationTestDoc",
+    "ProjectileNetworkTestDoc",
+    "CombatNetworkTestDoc",
+    "AnimationGapsTestDoc",
+    "GameplayNetworkTestDoc",
+    "MirrorMaskRestoreTestDoc",
+    "HudTestDoc",
+    "FastHeldTestDoc",
+    "WeaponAngleTestDoc"
+  ],
+  "candidate": {
+    "version": "0.2.19-dev",
+    "sha256": "4008999be4c15a84ae6975115886fe481983c5b1c4151197c5795b57c2a2de6a",
+    "size": 125466,
+    "classes": 52,
+    "snapshot": "build/m47/final-presentation-07",
+    "source_manifest_sha256": "4e2524053ba9e5d550213cdf48c9afbe179e53e2f8e8ef780e155a98e3ba3052",
+    "verification_manifest_sha256": "ccedeec00985208552165996749965039eae7647d573681b9ca8873be0ee89be"
+  },
+  "runs": [
+    {
+      "entry": "TelekinesisMotionTestDoc",
+      "run": "beef32a462",
+      "exit": 0,
+      "roles": {
+        "host": {
+          "pass_count": 110,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "2a9af51acdf1030f50ac5686dad3af1ea1db8c23259be096d744887c188cf671"
+        },
+        "join": {
+          "pass_count": 88,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "8d6a67b17cce94d5a05ce13d80c4259bbfdb46063b5d95e8465fb597975088db"
+        }
+      },
+      "pass_count": 198,
+      "fail": 0,
+      "result_sha256": "c5b268b269c3af48b599801378db6f9e0c4d0fd01d2319b7879943a834451ea8",
+      "input_sha256": "fb26057ea8701fbdb611da83458459cac4b7b97424cc993e542522f77edee826",
+      "driver_sha256": "344ad023f1fa9c0e10f770714bb1353b516e13a2ddd42f409b96a910f6329f4a",
+      "harness_sha256": "c7acf6e94fe25d4bf566de54507069bf6d8e675af0b3daa5ba76afb05be8652c",
+      "driver_classes": [
+        "MovableGripLifecycle",
+        "RemoteMotionPauseRegression",
+        "TelekinesisMotionTestDoc",
+        "fe.unit.TelekinesisProbe"
+      ],
+      "run_manifest_sha256": "6b22729f09768e72d9403ccae71ebc8e630c188d7efb1697823b80534c393d48"
+    },
+    {
+      "entry": "TelekinesisTestDoc",
+      "run": "5ebc724bd1",
+      "exit": 0,
+      "roles": {
+        "host": {
+          "pass_count": 53,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "5bd29e25ceab86c49191176045140ec2cf06ff2abf531545e0d525c00557e0c8"
+        },
+        "join": {
+          "pass_count": 55,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "1e5ad3c5153c5009b608f093749cd8a0cbcd27d25c3e462d92aef9ec952696cc"
+        }
+      },
+      "pass_count": 108,
+      "fail": 0,
+      "result_sha256": "8ee8ef97cd697bb9bb6bb9aa970855bc8d2d6a0cf51c74685537822d882e322d",
+      "input_sha256": "43669d077f88c069e23b27b92f51e8e9c7dec6df17d6c8503dbe1d3d5b559efc",
+      "driver_sha256": "89b88716df2d93913c62a4d3ea50613434725b5d9d4e0dca4a0a93ccf13dbdaf",
+      "harness_sha256": "471658b067c0dd3933eb713311dfb4334970006af14afe2843c81d840b19f42a",
+      "driver_classes": [
+        "AuraMaskProbe",
+        "TelekinesisTestDoc",
+        "fe.unit.TelekinesisProbe"
+      ],
+      "run_manifest_sha256": "c0d559b85da97ea2636c5f9bba65933a7f536b1e51dee1e68d279b59db90d012"
+    },
+    {
+      "entry": "EnemyGrabTestDoc",
+      "run": "c0cbc2dbc5",
+      "exit": 0,
+      "roles": {
+        "host": {
+          "pass_count": 115,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "e24ccd83249eb663ebeef8da486f3debf3c0de798b853b6d34afcd3bb0b656ef"
+        },
+        "join": {
+          "pass_count": 141,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "20725a8ae7cd456d48c656d05b1a72e4687f2c4db4ec3d4edede2c8b72182472"
+        }
+      },
+      "pass_count": 256,
+      "fail": 0,
+      "result_sha256": "bce81a269950012286c03f8595b40685e5d1ee44bd912e53b4f3d483519ac156",
+      "input_sha256": "e7c55048ff9883fefb24270f0df92f12cb85cde7ae60333dc9f9a7f12866f9d3",
+      "driver_sha256": "37add3da9fb870d313da6e01e0eb0460ce72ae163de3ca84c626928cf38d9f7e",
+      "harness_sha256": "a5c3ed986c2d150af4afa1dc58b2fd60812fcd8929837d225eecceea168a6619",
+      "driver_classes": [
+        "EnemyGrabTestDoc",
+        "fe.unit.EnemyGrabProbe"
+      ],
+      "run_manifest_sha256": "3d582bc021d34724852726a6f183aa6d247211a5da8f123ad879e7db86910c85"
+    },
+    {
+      "entry": "LightningSmartTestDoc",
+      "run": "a31bc28757",
+      "exit": 0,
+      "roles": {
+        "host": {
+          "pass_count": 10,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "806b3a4d07d06e588883b5a4ef31d2458a82f6bcd075c68d77bc2376c6d9437e"
+        },
+        "join": {
+          "pass_count": 17,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "25cb84a94052e26880e2f8625a4fa36b68a05e1a4b678590a5b821818632a2ad"
+        }
+      },
+      "pass_count": 27,
+      "fail": 0,
+      "result_sha256": "33b3285f573400f1cc0c7e0c5db45a07bb9272886f4fc5ff19090eba34446c7b",
+      "input_sha256": "329ca7f1501cd01f7acbb614b304832c9c7266d4d7e02f490705c05468e0a872",
+      "driver_sha256": "e7dda092907a1e649ed5cae3772656bf4ed9f26aa3efe37fcc5ed6ca8e9d080e",
+      "harness_sha256": "f3fadf742e1602e97270cc84a1832e63699bc7c5ad5cb9d1c51718a4e6a0971d",
+      "driver_classes": [
+        "LightningModAccess",
+        "LightningSmartStep",
+        "LightningSmartTestDoc"
+      ],
+      "run_manifest_sha256": "fdf1b74259e69ee6c5ac0811d99ac8e4c6f1b89079fdf94a1b45c1cd430fed3c"
+    },
+    {
+      "entry": "BeamTerrainTestDoc",
+      "run": "4f399ce6c8",
+      "exit": 0,
+      "roles": {
+        "host": {
+          "pass_count": 17,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "80dc73a4be34b3fb7e69c2b51c7acd0a365e3abd807a298bdb2ba6f0cf0db7ac"
+        },
+        "join": {
+          "pass_count": 9,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "1bc7cf15d44bcad906eb0ed14681bfd0732875e36726a1dca65930c92b2b5be5"
+        }
+      },
+      "pass_count": 26,
+      "fail": 0,
+      "result_sha256": "24acd7e0b36f946f9d3fa2cf563751c77f9e52718b54bac2f60ccbea0ed002f5",
+      "input_sha256": "0ff18410769ea1c08172cfdc8a9cac8a6572928234c7e856031386793152c0d3",
+      "driver_sha256": "8ab10477166778c4eb4ba900cd5f87b2ee61a99ab360ed5ee418f5fb211734a9",
+      "harness_sha256": "fe718d1bec8ac19a62874c05cfbf87aa626b5cbecec30ad3b6c85787c111fea0",
+      "driver_classes": [
+        "BeamTerrainTestDoc",
+        "NativeBeamGun"
+      ],
+      "run_manifest_sha256": "fdd04d2d564ddcb9d214c1e39d5f5500b5e1314c18dec39c5d6208dedf4debf1"
+    },
+    {
+      "entry": "SatsTestDoc",
+      "run": "3c3a825c89",
+      "exit": 0,
+      "roles": {
+        "host": {
+          "pass_count": 3,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "5f2965c1513dc1910e43d302e44fe258d1aa7fb82cb9f8c3343b162c8977b5df"
+        },
+        "join": {
+          "pass_count": 23,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "50e61e5f08f3752e5c1524de91a86fdbb836868ff2bf86ec7e1fbd45c3f5b30b"
+        }
+      },
+      "pass_count": 26,
+      "fail": 0,
+      "result_sha256": "1f7558c3208bd7b0e8f41f7b8609da05fb4d23d01516aaf45696c831ad02d2b0",
+      "input_sha256": "226cf440edb3f94103dd8a217e5de66cc34781857775ccbec8dba8995cf8f254",
+      "driver_sha256": "2f69f1d7e5cd7133892790762204fd9cecc6a5edeb55c48601834ac76a7aa4e6",
+      "harness_sha256": "92131ec69a830bfc408257508798a7c7165578376194927169b8a05a64795413",
+      "driver_classes": [
+        "NativeTestGun",
+        "SatsTestDoc"
+      ],
+      "run_manifest_sha256": "b2514dbf1e2b60176dfefbc77ab2fcaaaedbccb3a6ed48adf39ff952e1ac514b"
+    },
+    {
+      "entry": "CoopPauseTestDoc",
+      "run": "e4bfb0ca07",
+      "exit": 0,
+      "roles": {
+        "host": {
+          "pass_count": 217,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "c262108467dec10d719174961682f25e0211e1554553cc03af537abe8deb4598"
+        },
+        "join": {
+          "pass_count": 221,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "f5c956012729a3fe24ec2340522132a2ac10b2cab9090d2b565348596e6c12bc"
+        }
+      },
+      "pass_count": 438,
+      "fail": 0,
+      "result_sha256": "97f4a6f8280b8851dfb75263ff3b557e4f06587d2e896ab4ae3edb91d415815d",
+      "input_sha256": "fa0cbb91a3fdb3de99fad49f8685545577375242291e412e8225497132503585",
+      "driver_sha256": "4b7e0503069cb658cbc5160f930c5ea8b74db74534bd15f880b088d852163c55",
+      "harness_sha256": "9de628e4d5f59f980e77683aee8144fdcdc0c262962de7f0e52009a81f9c6c60",
+      "driver_classes": [
+        "CoopPauseTestDoc",
+        "NativePauseClock",
+        "NativeTestGun"
+      ],
+      "run_manifest_sha256": "230696858de7692ecb5e8fef5878f7ebd7b0607e16b183dd506c479de6d65dae"
+    },
+    {
+      "entry": "RoomCooperationTestDoc",
+      "run": "dffc8ce3ac",
+      "exit": 0,
+      "roles": {
+        "host": {
+          "pass_count": 22,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "13d5b1ad14c6db6f7b0a6c442be996dc7520f6e0bb98dcf176665d9d4c17eb53"
+        },
+        "join": {
+          "pass_count": 52,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "72ea6b5e54283e5541e3a7e47091e186c0c531bc3d37264f61208836f310a0af"
+        }
+      },
+      "pass_count": 74,
+      "fail": 0,
+      "result_sha256": "442747b093a0c9a4902aa7af541cd0cd3ada239a09efcd9c03af34dbd1d47539",
+      "input_sha256": "01402c70546ae183c48d3e870d778fd1ccae8efdd8106677339bf32a0f1bf318",
+      "driver_sha256": "961c5420b19318d76e84a7f32514cd44fba4c53d7d579c409cfdd616784ab454",
+      "harness_sha256": "1d8a3fed4c668e3f0248ab4a5b3c0feb6b4888e7d6d8f9d58d113d935c7ebdf8",
+      "driver_classes": [
+        "RoomCooperationTestDoc",
+        "fe.inter.RoomTravelUiProbe",
+        "fe.unit.EnemyGrabProbe"
+      ],
+      "run_manifest_sha256": "9c26bf99f616ac26c224c248f4420ec6967af0a9d1b6429df1786546fa85dd83"
+    },
+    {
+      "entry": "ProjectileNetworkTestDoc",
+      "run": "72d8431c5d",
+      "exit": 0,
+      "roles": {
+        "host": {
+          "pass_count": 9,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "7f9ccfa44c86f09d5d581b9c57c13028a1ccaf5391ebc22ee56cf27e340f33fe"
+        },
+        "join": {
+          "pass_count": 5,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "076649af9755cc092d8c70a337223394109fa42876d0d6e3dd1547b9de4f6803"
+        }
+      },
+      "pass_count": 14,
+      "fail": 0,
+      "result_sha256": "135c09c7fbc98ca58634a57c49d71d144fb5b66d7fca9b3a9466f616d73b9bd1",
+      "input_sha256": "4f963c53a2d22760b27f0fbe0af055cbd3ca882b66f693910edafa75e2137d78",
+      "driver_sha256": "5c9cba63e7103456bba0339ff293fe8c977239c5e95077816786179043bb415b",
+      "harness_sha256": "abf7f1a4e6cdf4d4a6e18c6ce37fedf6e57762b0331e2466dd5b0901320b37d3",
+      "driver_classes": [
+        "ProjectileNetworkTestDoc",
+        "fe.unit.CombatStateProbe"
+      ],
+      "run_manifest_sha256": "74738d693874a60e119e7557556d48c23a82b74f915250ef644ebf5f51731e55"
+    },
+    {
+      "entry": "CombatNetworkTestDoc",
+      "run": "8985a8de9b",
+      "exit": 0,
+      "roles": {
+        "host": {
+          "pass_count": 22,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "7b11b42b04864bf8ec6b10ab079bf112d05a427a461a26187d7f2b8dc58edb4d"
+        },
+        "join": {
+          "pass_count": 11,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "dbd732a02830740555f28bddcb5d34a983140302b335811cb83c5188144678a7"
+        }
+      },
+      "pass_count": 33,
+      "fail": 0,
+      "result_sha256": "fa1c40f37b4bbf6eb7077ef7916f6e8a7cfc2d23739f2dce66c5a109d43626de",
+      "input_sha256": "6482cb38e45f402cc78b2937ae5cadd238cfb2f123f9a8d09c8ac4c26902023b",
+      "driver_sha256": "45c3e39f6f5f9971ca750e32c824241d17a834f8a24103d1d912907fa8ed527a",
+      "harness_sha256": "ad143ebd49aedad44df9a992f2c49857a5d65a71a6271c4156a908058750bfd9",
+      "driver_classes": [
+        "CombatNetworkTestDoc",
+        "NativeTestGun",
+        "fe.unit.CombatStateProbe"
+      ],
+      "run_manifest_sha256": "ec85dd8e21750b5a93a5c4acc9e16afb49492b21980ee18470814f0e1e02b036"
+    },
+    {
+      "entry": "AnimationGapsTestDoc",
+      "run": "64246bcc9e",
+      "exit": 0,
+      "roles": {
+        "host": {
+          "pass_count": 17,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "b3de26af9cd2b3b2f758d6157a7a49bed7d83f0f22ecdbd787394ca2cb44aad6"
+        },
+        "join": {
+          "pass_count": 9,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "a505af1b8ddc972565125fffe2845ee189d88edbf5f0faa94c8c619a010defd2"
+        }
+      },
+      "pass_count": 26,
+      "fail": 0,
+      "result_sha256": "a0c700e84560a04329cd08ef98ca4ad2a4ca7c8709f38bc4b0617a64e7296035",
+      "input_sha256": "1340c14a35b673205c2e37007f9073ab5bbe8f3127e557289db4dabf0004602b",
+      "driver_sha256": "9d4dfe03726b4c49c612b3ec9a5a97000e138df4d5f368f82350a43ab7504355",
+      "harness_sha256": "593cd8f4c854c4927aa519b804e4fe7a1b1900bc7b7a4de540f1d233ac4306d6",
+      "driver_classes": [
+        "AnimationGapsTestDoc"
+      ],
+      "run_manifest_sha256": "5cd8de77f87792410ae5994b07a81b8dd5247ffa13a1f301f8ed787750af62a9"
+    },
+    {
+      "entry": "GameplayNetworkTestDoc",
+      "run": "7b3fb12c4e",
+      "exit": 0,
+      "roles": {
+        "host": {
+          "pass_count": 27,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "6a20ccd95bf45f35d02539c562b6bb7b549077b71302e718c3af087938968787"
+        },
+        "join": {
+          "pass_count": 4,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "e86c2cffb1ef93682a2b3a88120a3fd066e1d6875e90950971dec807e599e97d"
+        }
+      },
+      "pass_count": 31,
+      "fail": 0,
+      "result_sha256": "e0f738ec3a53e531047b01a76d1ba96b029169c0b6231077a6520fa35d00872f",
+      "input_sha256": "dc306782feb83253c79d4b50132bb587b712ed837402566295302bf0dd30be0d",
+      "driver_sha256": "88c149d03451db3b151dec52ee1250c2fb1d29a690c18cd456291d15d92716be",
+      "harness_sha256": "e83f986da213cc8d07e00b7519052f12620e889852b34e8019f0b727fe4d6b85",
+      "driver_classes": [
+        "GameplayNetworkTestDoc",
+        "fe.unit.CombatStateProbe"
+      ],
+      "run_manifest_sha256": "4fe82b602ccec8886820a437946202fda6b479bf91f6d5a2c87c192ff1f291ca"
+    },
+    {
+      "entry": "MirrorMaskRestoreTestDoc",
+      "run": "8bc997dac6",
+      "exit": 0,
+      "roles": {
+        "host": {
+          "pass_count": 163,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "bb4cd18f79734f5e0f050433b3075d081a5df519fdde82566fecac5b4af513e1"
+        },
+        "join": {
+          "pass_count": 164,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "cdb96b17fc471d51686d2c9f991eb7d567e7f080c5832acfb8820ecf180fbdf2"
+        }
+      },
+      "pass_count": 327,
+      "fail": 0,
+      "result_sha256": "93e20d01f357a11bac6d83aa08e6c80f43dc5d3e7cca96ca464416d11243a760",
+      "input_sha256": "076348ba378d6d2c514e7089b79414cfb6f0b5566e7a90bd7ce9be65e80958f7",
+      "driver_sha256": "6274bb785f86f1b48f35b74dfe9f7470d79d718de684dc991abbd7a07ecf25c7",
+      "harness_sha256": "b9357ee0153321c9614e9ad04d124af10894fb3786124a45316341a88326a34b",
+      "driver_classes": [
+        "MirrorMaskRestoreTestDoc"
+      ],
+      "run_manifest_sha256": "3c12833f0bf3f04e13f996f492d2530fadfb6380bd6a05ca337bf8d1a35ef807"
+    },
+    {
+      "entry": "HudTestDoc",
+      "run": "52601ca525",
+      "exit": 0,
+      "roles": {
+        "host": {
+          "pass_count": 69,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "e213ef4f38695c3eee39c69fd63efffd62e48380d594c668a23074d302f49276"
+        },
+        "join": {
+          "pass_count": 69,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "176040cb35d51f467071c951b3a8e9ecbf4a828332cd0bf931fdf1fc9a8a54a5"
+        }
+      },
+      "pass_count": 138,
+      "fail": 0,
+      "result_sha256": "56f89688017f22a4b9d101ad858cd85a1186f3158175f7855893879eabb4780b",
+      "input_sha256": "26b6168f9bda29efa1492de51e4bfb9f85eafa4e2cfc167b2fa142a86377b350",
+      "driver_sha256": "5e5fe3f79dc48bdf69d6e84e8c68d6a16131fd37eda5ca49f806fdfea4a119ad",
+      "harness_sha256": "a1d621c8066bf45d9e61db0166de3d7305c953772360750ab676d3a901fa452b",
+      "driver_classes": [
+        "HudTestDoc"
+      ],
+      "run_manifest_sha256": "3e32c0482e43bde0c10654afc99a46633e2dbd78503e32379c66682f7ad68cca"
+    },
+    {
+      "entry": "FastHeldTestDoc",
+      "run": "bef1c63bb8",
+      "exit": 0,
+      "roles": {
+        "host": {
+          "pass_count": 37,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "cd8e659384eac35485f90afb44732d31204967666351a33451336a542d9e14de"
+        },
+        "join": {
+          "pass_count": 36,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "ce26479a4a9babcefa2bc71de2a14dfd0b7abc414a8640732a1e28f80680913c"
+        }
+      },
+      "pass_count": 73,
+      "fail": 0,
+      "result_sha256": "372a478c0d6a844d31f2ab26c4c9a490aea2b8faa315f06c92cc973ca9ce50a6",
+      "input_sha256": "90910f7f7d4102539466389c515cb00f96365586a7e9a6b4cc42d8eef1562412",
+      "driver_sha256": "91c6c827e00c45ad6c531e4c5989747a4b586ac30c49ae1138299e2d2259ba68",
+      "harness_sha256": "0b0d39e855b79c0ec89c0fffeb31fbc9a22fdce9087fe680e7bad35ba972a595",
+      "driver_classes": [
+        "FastHeldTestDoc",
+        "MovableGripLifecycle",
+        "RemoteMotionPauseRegression",
+        "fe.unit.TelekinesisProbe"
+      ],
+      "run_manifest_sha256": "a32c14b607970f503ac461dd87cae67f0663847b5709aada5e99dccb924f8280"
+    },
+    {
+      "entry": "WeaponAngleTestDoc",
+      "run": "50605d6f47",
+      "exit": 0,
+      "roles": {
+        "host": {
+          "pass_count": 36,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "60d83d223833b899ddc0f0c69cfcd12616f5cdac8bf4358894e5e2d0e4f7bd54"
+        },
+        "join": {
+          "pass_count": 29,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "6b9bfe2f726587653d2ed8defef5c2f764328790204f4cd15cdbdb5d3eb91870"
+        }
+      },
+      "pass_count": 65,
+      "fail": 0,
+      "result_sha256": "edeb34d2580e5d2ae11152067c8a8ab6fe6bb3578a68fcb419318aee960f049d",
+      "input_sha256": "45472d749bfdd1b1679cd111ab24261762b81c768a655c5914ae29e58232ebbf",
+      "driver_sha256": "1bf0fabbfaa8c332a221a8cfab3ac3b0fe873468d4ad3bbcdf2f68adbc13b4fa",
+      "harness_sha256": "ecaa4768ffe6c10b9bf066c97df87d680d6fcdffa602bb703049b8036b52fa2a",
+      "driver_classes": [
+        "WeaponAngleTestDoc"
+      ],
+      "run_manifest_sha256": "c9e5049fb03992108ee39e7c2bfbaaf289bea9a6c22f5383b49e209fa90d2bbf"
+    }
+  ],
+  "pass_count": 1860,
+  "fail": 0,
+  "pids": [
+    60888,
+    21668,
+    64128,
+    56768,
+    49776,
+    67388,
+    66400,
+    65756,
+    46124,
+    2872,
+    41424,
+    28244,
+    24240,
+    38224,
+    53968,
+    72484,
+    40836,
+    63156,
+    66200,
+    72008,
+    53412,
+    67104,
+    67468,
+    61556,
+    31396,
+    21640,
+    53424,
+    64188,
+    71976,
+    46900,
+    40036,
+    61712
+  ],
+  "protected": {
+    "count": 56,
+    "hashes": {
+      "pfe.swf": "c631cbf3511b6ee303f533d08d51511fe0eb702f43e5db17f5241d8576c64867",
+      "DLC/pfe.swf": "90dec445e60e352dcad06b3171a3ae7b588dbf1fe6c8fb452fceec392aa9db02",
+      "DLC/pfeUI.swf": "0bd5d24381b5aaea50e40b2f95a9e54dfe4a7911aafba27aff06961c82f350c7",
+      "application.xml": "70dd3b085e5f6c66c03693cf68ce5e93a4e4136dd745d40d1a5b2a49863ba236",
+      "mods/loader-manifest.txt": "2d4a64a608a6482168fbfe9e8cd7bb53f006ab1f8993fcc737cf9d32f2293592",
+      "mods/ModLoader/release/ModLoaderMod.swf": "2d01241a89fb25d608ac5138254e14dc3e5fb46e7120319a0d5922e4cf9816fd",
+      "mods/ModSettings/release/ModSettingsMod.swf": "c2bc2cce45a9b7125d8cf048b352e059ec6ddf466f8625ca77bcc4b3e6a4b451",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-laser-eyes-20260923.swf": "909cef05d810a8f0c0093b34dd0999dc0ce6847e24e0402c1818bfcf435c3744",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-laser-reload-debug-20260923.swf": "f02ff3dbc917f557c59adef2ebc9605163e132fac964952a1b437b8bf1bb5e97",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.10.0-body-assist-20260923.swf": "a56e3b46d22cbc5ceccc086aa86c5e58917ec0fa5fff4d3178daabf02a49f659",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.11.0-adaptive-radius-20260923.swf": "132bc390598296bd6237b3991d762f587cf66466ebb907334ea7cf972277f3ce",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.11.1-turret-blind-20260924.swf": "f8dd73dd47e2e14a90097698317884e42eb3a0ebc163b91ada12b6f8a1700f10",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.12.0-nonfront-laser-20260924.swf": "c233d67ea0c5fc74bd0499adfb1ad1c45823caeeda7145806d84be101abf0827",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.12.0-nonfront-laser-final-20260924.swf": "c233d67ea0c5fc74bd0499adfb1ad1c45823caeeda7145806d84be101abf0827",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.13.0-laser-pointer-20260924.swf": "b8eb77d2005b427fa06f40d8fc2a9a5aa68c3e5a5e4df282cc43fc2629b2684f",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.13.2-laser-response-20260924-083702.swf": "e1ea2ac2acaa1f9f7d91dc9efe72f07e782609eb1c8b4e5ed42072fb1c53fe28",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.14.0-laser-contact-20260924.swf": "620a5bb9459e7e50f74644a3fcc24c548c5c15ba225d5335a204d3448c715b91",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.14.1-sats-20260924.swf": "7ae25c6babef61dbb3a158ad9e20fd8dbb3b473e4e66e34d2226cf2da4f73acf",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.14.2-smart-near-20260924-135857.swf": "17bdf40ad86c66a7f6c95c27abb86d397a17e450d11b22d32ceba7fa7eb857c5",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.14.3-laser-props-20260924.swf": "c01f426a358bb995829a200854039a2e836b285b59183364b43256f104f48f81",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.15.0-smart-focus-20260927-210640.swf": "3ecfa98b9e8a58e14314f1295b994f54bf5605bccec2f82d796ca2faf03745f9",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.15.1-eye-alignment-20260927-214032.swf": "49944ba875ecfe2aac847cd30c5b23a41d8367dac0a8708d74cfdc02de2682e0",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.15.2-native-tracer-20260928-082342.swf": "8817748176e17d3c32b286eb5780a818c580818393562973da36ea3799f4425f",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.15.3-visible-lock-20260928-212428.swf": "36b9c19193d231c99db02bbf9ccf9f801eca81c5347ad01e9fd961ed4e67b474",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.4.0-20260919.swf": "bef4d857b6b78d6ccb1f9e012b8bf33cd1e9892b7347892da984176789de648f",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.4.1-20260920.swf": "d87b233391e87ae6be4bb224055d5f2615b2dc3e1dff0ef6929391508d3cf1ec",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.5.0-20260920.swf": "f9dcd668b57b3ee9b44a52649d55432276afade9def0ef9e46ba5ab9b9adcdb3",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.5.2-20260920.swf": "4783cc1943cb8cc58db4610144fb959e37e3a41c652e82bfe714c74e3a30a8a1",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.5.3-20260920.swf": "695109fdcd702cefbcbb554748695f87740da93f7654187807a1735d5d4961e9",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.5.3-final-20260920.swf": "695109fdcd702cefbcbb554748695f87740da93f7654187807a1735d5d4961e9",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.6.0-20260920.swf": "671fd977eca722b9272ff916426e64e5df8c8c4defda1ecadacdf1778c5eb72a",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.6.1-20260923.swf": "ef5fba0f8407e25432f38cf9a9342d8d802b1f80243011c43a8693cef92a713e",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.6.1-laser-fix-20260923.swf": "439a477f9487deb2465db180aa5360971be5c59f1261b203a795901d6a4d3b62",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.6.2-keep-lock-20260923.swf": "573709f879ed6a538d49110a73836053123dc859f47376d2c63d221090e5b089",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.7.0-multi-lock-20260923.swf": "d16523c35be414fb200d5ffdd31b1453b85f1af3802a91180805d8fdd0f21bbd",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.8.0-smooth-mode-20260923.swf": "04a7e69f62044840f9bca112e235632546096fb9c360c6f5869446daf4e1e0b9",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.9.0-lock-exemption-20260923.swf": "f18097a6681993e1b894b2b25b31781dbd2b9407fed8f6f6f45cfdb9a7ab7c05",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.9.1-exemption-menu-20260923.swf": "15d7e3a56393d252656add2b1631f780cda4ee6eb752a9ad3d12f286f5b48707",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.swf": "f9cecf74823d6dca7009e04f01b83f49788fb5f2e874bc529c5f6124a9986362",
+      "mods/RandomRooms/release/RandomRoomsEditor.swf": "fb1537f54b2c32af02aca771cb09366441fb74ca01ee3a6099e35c4d3a35dfd8",
+      "mods/RandomRooms/release/RandomRoomsMod.swf": "f21d7c04ff1ccf59779f0b8d9f52d982585145447c47727c660e9ecc7d62c0df",
+      "mods/RandomRooms/release/RandomRoomsMod_v53_backup.swf": "7feb9157e7cd21785eb24077187ce84342c1102f3e6758163401c490a25085c9",
+      "mods/RealisticVision/release/RealisticVisionMod.swf": "72d2f75ba89e7b40cc78c5a5e48e1c61af297753cbe2dca929e0f1ad5ba6a303",
+      "mods/RModifier/release/LootEditorMod.swf": "4f1d6cf19979f4ea4960f8ccd8377c1d3cac490bed9949866885357d073c8625",
+      "mods/Sandevistan/release/SandevistanMod.before-v1.141-20260923.swf": "0506615963176d937c596f43b8ff6d865b3bac5d2dece8490a47629d65a9a0ba",
+      "mods/Sandevistan/release/SandevistanMod.before-v1.142-20260923.swf": "f556c0728da406a4a6a05399df93e9a0349c4225107547f1e12fe88a2aee3e48",
+      "mods/Sandevistan/release/SandevistanMod.before-v1.143-20260923.swf": "28449b2646223a8eee20eb4bb361dda2d5dc0572c6aaa9cd5fcb5d072a374c44",
+      "mods/Sandevistan/release/SandevistanMod.before-v1.144-20260923.swf": "b8805dbacc9a1313fd96bb68889911195ac6eafcbb526e50c313b86ad1e9c748",
+      "mods/Sandevistan/release/SandevistanMod.before-v1.145-20260927.swf": "2c26eadcfe760ec3bd998ddbedf0fad333151e203b0688af268bdf0612ba0263",
+      "mods/Sandevistan/release/SandevistanMod.swf": "a6e706f0af8cc912a600d3b2262d3aae1ccffb7a9dd18b6b45f354fa860272e4",
+      "mods/TDFC/release/TDFCMod.swf": "99bfbaa68229635fbaa496ef9287a94bb9ea7c65d71339cef3fde65f47e30275",
+      "mods/RConnect/release/config.txt": "5ca72017f1f811b5f8a2b1f18f6cb8b2c24239e2240716c4059cbc073913fc0a",
+      "mods/RealisticVision/release/config.txt": "5136ee1923a77f5f10eab1b3994b64cbd67b09d687a7e829fb1e81d2e79a3c7f",
+      "mods/Sandevistan/release/config.txt": "d91c4c2889aba19b1bcfb356885921b0605a50188b270a9e7619d2116e7ebdc3",
+      "mods/Sandevistan/release/说明.txt": "59965b2909eb9c3af4150633b63b193f37ad96679db6ca23f42d75e143877b9e",
+      "mods/Sandevistan/release/音乐配置.txt": "bdd3005239cfedc9c6005ca03161982d5b0cb205f0d6210047b425490463ab00"
+    }
+  },
+  "fast_comparison": {
+    "old_run": "8cf53db5a2",
+    "new_run": "bef1c63bb8",
+    "old": [
+      {
+        "render": [
+          {
+            "at": 68845,
+            "x": 1575.15
+          },
+          {
+            "at": 68887,
+            "x": 1577.05
+          },
+          {
+            "at": 68949,
+            "x": 1578.4
+          },
+          {
+            "at": 68990,
+            "x": 1581.35
+          },
+          {
+            "at": 69021,
+            "x": 1582.7
+          },
+          {
+            "at": 69067,
+            "x": 1583.8
+          },
+          {
+            "at": 69101,
+            "x": 1585.1
+          },
+          {
+            "at": 69156,
+            "x": 1586.1
+          },
+          {
+            "at": 69208,
+            "x": 1588.35
+          },
+          {
+            "at": 69240,
+            "x": 1589.75
+          },
+          {
+            "at": 69273,
+            "x": 1590.6
+          },
+          {
+            "at": 69304,
+            "x": 1591.75
+          },
+          {
+            "at": 69349,
+            "x": 1594.05
+          },
+          {
+            "at": 69417,
+            "x": 1597.7
+          },
+          {
+            "at": 69473,
+            "x": 1602.9
+          },
+          {
+            "at": 69515,
+            "x": 1606.7
+          },
+          {
+            "at": 69543,
+            "x": 1609.2
+          },
+          {
+            "at": 69655,
+            "x": 1615.25
+          },
+          {
+            "at": 69704,
+            "x": 1620.65
+          },
+          {
+            "at": 69732,
+            "x": 1623.15
+          },
+          {
+            "at": 69781,
+            "x": 1625.45
+          },
+          {
+            "at": 69809,
+            "x": 1626.9
+          },
+          {
+            "at": 69846,
+            "x": 1626.85
+          },
+          {
+            "at": 69880,
+            "x": 1626.85
+          },
+          {
+            "at": 69926,
+            "x": 1626.8
+          },
+          {
+            "at": 69961,
+            "x": 1626.8
+          },
+          {
+            "at": 70003,
+            "x": 1625.95
+          },
+          {
+            "at": 70030,
+            "x": 1623.65
+          },
+          {
+            "at": 70089,
+            "x": 1621.1
+          },
+          {
+            "at": 70120,
+            "x": 1617
+          },
+          {
+            "at": 70149,
+            "x": 1614.4
+          },
+          {
+            "at": 70196,
+            "x": 1612.2
+          },
+          {
+            "at": 70220,
+            "x": 1609.2
+          },
+          {
+            "at": 70253,
+            "x": 1607.05
+          },
+          {
+            "at": 70281,
+            "x": 1605
+          },
+          {
+            "at": 70342,
+            "x": 1602.85
+          },
+          {
+            "at": 70378,
+            "x": 1599.25
+          },
+          {
+            "at": 70418,
+            "x": 1596.15
+          },
+          {
+            "at": 70468,
+            "x": 1594.1
+          },
+          {
+            "at": 70497,
+            "x": 1591.55
+          },
+          {
+            "at": 70539,
+            "x": 1592.3
+          },
+          {
+            "at": 70567,
+            "x": 1593.3
+          },
+          {
+            "at": 70610,
+            "x": 1594.05
+          },
+          {
+            "at": 70670,
+            "x": 1595.3
+          },
+          {
+            "at": 70699,
+            "x": 1596.5
+          },
+          {
+            "at": 70764,
+            "x": 1598.1
+          },
+          {
+            "at": 70798,
+            "x": 1601.8
+          },
+          {
+            "at": 70832,
+            "x": 1604.15
+          },
+          {
+            "at": 70881,
+            "x": 1606.25
+          },
+          {
+            "at": 70911,
+            "x": 1609
+          },
+          {
+            "at": 70964,
+            "x": 1610.9
+          },
+          {
+            "at": 70990,
+            "x": 1613.75
+          },
+          {
+            "at": 71028,
+            "x": 1614.2
+          },
+          {
+            "at": 71057,
+            "x": 1612.85
+          },
+          {
+            "at": 71092,
+            "x": 1611.9
+          },
+          {
+            "at": 71118,
+            "x": 1610.95
+          },
+          {
+            "at": 71194,
+            "x": 1609.55
+          },
+          {
+            "at": 71238,
+            "x": 1606.75
+          },
+          {
+            "at": 71262,
+            "x": 1604.6
+          },
+          {
+            "at": 71314,
+            "x": 1601.65
+          },
+          {
+            "at": 71357,
+            "x": 1597.25
+          },
+          {
+            "at": 71381,
+            "x": 1595.25
+          }
+        ],
+        "samples": 38,
+        "lagMs": 370,
+        "sourceOffset": 16552,
+        "rmsPixels": 2.3649074748035845,
+        "round": 1,
+        "reference": [
+          {
+            "at": 52298,
+            "x": 1589.4
+          },
+          {
+            "at": 52336,
+            "x": 1590.6
+          },
+          {
+            "at": 52388,
+            "x": 1591.6
+          },
+          {
+            "at": 52428,
+            "x": 1593.7
+          },
+          {
+            "at": 52494,
+            "x": 1596.6
+          },
+          {
+            "at": 52534,
+            "x": 1600.25
+          },
+          {
+            "at": 52575,
+            "x": 1604.45
+          },
+          {
+            "at": 52625,
+            "x": 1609.05
+          },
+          {
+            "at": 52674,
+            "x": 1614.05
+          },
+          {
+            "at": 52744,
+            "x": 1619.3
+          },
+          {
+            "at": 52797,
+            "x": 1623.55
+          },
+          {
+            "at": 52884,
+            "x": 1626.9
+          },
+          {
+            "at": 52939,
+            "x": 1628.3
+          },
+          {
+            "at": 53009,
+            "x": 1628.15
+          },
+          {
+            "at": 53072,
+            "x": 1626.75
+          },
+          {
+            "at": 53147,
+            "x": 1624.35
+          },
+          {
+            "at": 53182,
+            "x": 1621.15
+          },
+          {
+            "at": 53223,
+            "x": 1617.35
+          },
+          {
+            "at": 53263,
+            "x": 1613
+          },
+          {
+            "at": 53323,
+            "x": 1608.2
+          },
+          {
+            "at": 53368,
+            "x": 1603.15
+          },
+          {
+            "at": 53407,
+            "x": 1597.8
+          },
+          {
+            "at": 53489,
+            "x": 1593.5
+          },
+          {
+            "at": 53569,
+            "x": 1591.35
+          },
+          {
+            "at": 53629,
+            "x": 1590.9
+          },
+          {
+            "at": 53671,
+            "x": 1591.85
+          },
+          {
+            "at": 53733,
+            "x": 1593.85
+          },
+          {
+            "at": 53780,
+            "x": 1596.75
+          },
+          {
+            "at": 53840,
+            "x": 1600.35
+          },
+          {
+            "at": 53887,
+            "x": 1604.55
+          },
+          {
+            "at": 53921,
+            "x": 1609.15
+          },
+          {
+            "at": 53984,
+            "x": 1612.85
+          },
+          {
+            "at": 54088,
+            "x": 1614.5
+          },
+          {
+            "at": 54141,
+            "x": 1614.55
+          },
+          {
+            "at": 54179,
+            "x": 1613.3
+          },
+          {
+            "at": 54245,
+            "x": 1611.05
+          },
+          {
+            "at": 54289,
+            "x": 1607.95
+          },
+          {
+            "at": 54394,
+            "x": 1604.2
+          },
+          {
+            "at": 54452,
+            "x": 1599.9
+          },
+          {
+            "at": 54484,
+            "x": 1595.2
+          },
+          {
+            "at": 54534,
+            "x": 1590.15
+          },
+          {
+            "at": 54568,
+            "x": 1586.1
+          },
+          {
+            "at": 54614,
+            "x": 1582.9
+          },
+          {
+            "at": 54669,
+            "x": 1580.3
+          },
+          {
+            "at": 54700,
+            "x": 1578.25
+          },
+          {
+            "at": 54756,
+            "x": 1577.85
+          },
+          {
+            "at": 54820,
+            "x": 1578.85
+          }
+        ],
+        "role": "host"
+      },
+      {
+        "render": [
+          {
+            "at": 87309,
+            "x": 1576.7
+          },
+          {
+            "at": 87354,
+            "x": 1576.7
+          },
+          {
+            "at": 87415,
+            "x": 1576.7
+          },
+          {
+            "at": 87469,
+            "x": 1579.45
+          },
+          {
+            "at": 87516,
+            "x": 1582.5
+          },
+          {
+            "at": 87557,
+            "x": 1585.95
+          },
+          {
+            "at": 87600,
+            "x": 1587.55
+          },
+          {
+            "at": 87623,
+            "x": 1589.8
+          },
+          {
+            "at": 87667,
+            "x": 1590.95
+          },
+          {
+            "at": 87717,
+            "x": 1592.6
+          },
+          {
+            "at": 87759,
+            "x": 1594.1
+          },
+          {
+            "at": 87800,
+            "x": 1595.65
+          },
+          {
+            "at": 87847,
+            "x": 1596.45
+          },
+          {
+            "at": 87878,
+            "x": 1598.9
+          },
+          {
+            "at": 87973,
+            "x": 1604.6
+          },
+          {
+            "at": 88009,
+            "x": 1611.05
+          },
+          {
+            "at": 88046,
+            "x": 1614.6
+          },
+          {
+            "at": 88089,
+            "x": 1617.3
+          },
+          {
+            "at": 88121,
+            "x": 1621.45
+          },
+          {
+            "at": 88198,
+            "x": 1625.7
+          },
+          {
+            "at": 88243,
+            "x": 1628.65
+          },
+          {
+            "at": 88282,
+            "x": 1630.7
+          },
+          {
+            "at": 88334,
+            "x": 1632
+          },
+          {
+            "at": 88460,
+            "x": 1633.05
+          },
+          {
+            "at": 88502,
+            "x": 1624.25
+          },
+          {
+            "at": 88532,
+            "x": 1621.85
+          },
+          {
+            "at": 88583,
+            "x": 1619.7
+          },
+          {
+            "at": 88625,
+            "x": 1614.95
+          },
+          {
+            "at": 88666,
+            "x": 1609.45
+          },
+          {
+            "at": 88719,
+            "x": 1605.9
+          },
+          {
+            "at": 88757,
+            "x": 1599.3
+          },
+          {
+            "at": 88795,
+            "x": 1594.25
+          },
+          {
+            "at": 88857,
+            "x": 1592
+          },
+          {
+            "at": 88894,
+            "x": 1591.5
+          },
+          {
+            "at": 88931,
+            "x": 1591.2
+          },
+          {
+            "at": 88990,
+            "x": 1590.85
+          },
+          {
+            "at": 89039,
+            "x": 1590.3
+          },
+          {
+            "at": 89070,
+            "x": 1590
+          },
+          {
+            "at": 89115,
+            "x": 1591.35
+          },
+          {
+            "at": 89146,
+            "x": 1595.55
+          },
+          {
+            "at": 89199,
+            "x": 1598.8
+          },
+          {
+            "at": 89229,
+            "x": 1602.75
+          },
+          {
+            "at": 89270,
+            "x": 1605.4
+          },
+          {
+            "at": 89296,
+            "x": 1609.3
+          },
+          {
+            "at": 89326,
+            "x": 1611.85
+          },
+          {
+            "at": 89363,
+            "x": 1615.55
+          },
+          {
+            "at": 89413,
+            "x": 1616.2
+          },
+          {
+            "at": 89445,
+            "x": 1616.05
+          },
+          {
+            "at": 89477,
+            "x": 1615.95
+          },
+          {
+            "at": 89537,
+            "x": 1615.8
+          },
+          {
+            "at": 89565,
+            "x": 1615.65
+          },
+          {
+            "at": 89612,
+            "x": 1615.55
+          },
+          {
+            "at": 89669,
+            "x": 1613.4
+          },
+          {
+            "at": 89715,
+            "x": 1611.2
+          },
+          {
+            "at": 89747,
+            "x": 1608.8
+          },
+          {
+            "at": 89794,
+            "x": 1607.1
+          },
+          {
+            "at": 89853,
+            "x": 1604.2
+          },
+          {
+            "at": 89887,
+            "x": 1599.8
+          }
+        ],
+        "samples": 35,
+        "lagMs": 350,
+        "sourceOffset": 16552,
+        "rmsPixels": 2.3017161836289213,
+        "round": 3,
+        "reference": [
+          {
+            "at": 70773,
+            "x": 1590.6
+          },
+          {
+            "at": 70811,
+            "x": 1591.6
+          },
+          {
+            "at": 70860,
+            "x": 1592.4
+          },
+          {
+            "at": 70916,
+            "x": 1593.05
+          },
+          {
+            "at": 70952,
+            "x": 1594.85
+          },
+          {
+            "at": 71003,
+            "x": 1597.55
+          },
+          {
+            "at": 71031,
+            "x": 1601
+          },
+          {
+            "at": 71076,
+            "x": 1605
+          },
+          {
+            "at": 71116,
+            "x": 1609.55
+          },
+          {
+            "at": 71179,
+            "x": 1614.4
+          },
+          {
+            "at": 71208,
+            "x": 1619.6
+          },
+          {
+            "at": 71256,
+            "x": 1625.05
+          },
+          {
+            "at": 71313,
+            "x": 1629.4
+          },
+          {
+            "at": 71364,
+            "x": 1632.85
+          },
+          {
+            "at": 71399,
+            "x": 1634.35
+          },
+          {
+            "at": 71474,
+            "x": 1634.3
+          },
+          {
+            "at": 71512,
+            "x": 1632.95
+          },
+          {
+            "at": 71551,
+            "x": 1630.6
+          },
+          {
+            "at": 71598,
+            "x": 1627.45
+          },
+          {
+            "at": 71631,
+            "x": 1623.6
+          },
+          {
+            "at": 71707,
+            "x": 1619.3
+          },
+          {
+            "at": 71752,
+            "x": 1614.55
+          },
+          {
+            "at": 71785,
+            "x": 1609.45
+          },
+          {
+            "at": 71830,
+            "x": 1604.15
+          },
+          {
+            "at": 71871,
+            "x": 1598.6
+          },
+          {
+            "at": 71943,
+            "x": 1592.85
+          },
+          {
+            "at": 71987,
+            "x": 1588.3
+          },
+          {
+            "at": 72017,
+            "x": 1585.9
+          },
+          {
+            "at": 72062,
+            "x": 1585.3
+          },
+          {
+            "at": 72103,
+            "x": 1586.05
+          },
+          {
+            "at": 72133,
+            "x": 1587.95
+          },
+          {
+            "at": 72200,
+            "x": 1590.75
+          },
+          {
+            "at": 72252,
+            "x": 1594.3
+          },
+          {
+            "at": 72284,
+            "x": 1598.4
+          },
+          {
+            "at": 72333,
+            "x": 1602.95
+          },
+          {
+            "at": 72373,
+            "x": 1607.85
+          },
+          {
+            "at": 72407,
+            "x": 1613.1
+          },
+          {
+            "at": 72496,
+            "x": 1617.25
+          },
+          {
+            "at": 72544,
+            "x": 1619.35
+          },
+          {
+            "at": 72586,
+            "x": 1619.7
+          },
+          {
+            "at": 72642,
+            "x": 1618.7
+          },
+          {
+            "at": 72714,
+            "x": 1616.65
+          },
+          {
+            "at": 72778,
+            "x": 1613.7
+          },
+          {
+            "at": 72849,
+            "x": 1610.1
+          },
+          {
+            "at": 72941,
+            "x": 1605.9
+          },
+          {
+            "at": 72975,
+            "x": 1601.3
+          },
+          {
+            "at": 73019,
+            "x": 1596.3
+          },
+          {
+            "at": 73078,
+            "x": 1592.3
+          },
+          {
+            "at": 73117,
+            "x": 1589.1
+          },
+          {
+            "at": 73149,
+            "x": 1586.55
+          },
+          {
+            "at": 73203,
+            "x": 1584.55
+          },
+          {
+            "at": 73238,
+            "x": 1582.9
+          },
+          {
+            "at": 73267,
+            "x": 1581.6
+          },
+          {
+            "at": 73321,
+            "x": 1580.55
+          },
+          {
+            "at": 73363,
+            "x": 1579.7
+          }
+        ],
+        "role": "host"
+      },
+      {
+        "render": [
+          {
+            "at": 43184,
+            "x": 1578.5
+          },
+          {
+            "at": 43244,
+            "x": 1583.5
+          },
+          {
+            "at": 43310,
+            "x": 1584.45
+          },
+          {
+            "at": 43378,
+            "x": 1585.7
+          },
+          {
+            "at": 43439,
+            "x": 1586.95
+          },
+          {
+            "at": 43518,
+            "x": 1588.8
+          },
+          {
+            "at": 43562,
+            "x": 1590.3
+          },
+          {
+            "at": 43621,
+            "x": 1592.5
+          },
+          {
+            "at": 43678,
+            "x": 1597
+          },
+          {
+            "at": 43720,
+            "x": 1599.95
+          },
+          {
+            "at": 43782,
+            "x": 1602.95
+          },
+          {
+            "at": 43837,
+            "x": 1607.3
+          },
+          {
+            "at": 43911,
+            "x": 1612.15
+          },
+          {
+            "at": 43956,
+            "x": 1616.2
+          },
+          {
+            "at": 44018,
+            "x": 1619.4
+          },
+          {
+            "at": 44080,
+            "x": 1621.55
+          },
+          {
+            "at": 44146,
+            "x": 1623.8
+          },
+          {
+            "at": 44188,
+            "x": 1625.75
+          },
+          {
+            "at": 44225,
+            "x": 1624.6
+          },
+          {
+            "at": 44294,
+            "x": 1623.2
+          },
+          {
+            "at": 44352,
+            "x": 1621.05
+          },
+          {
+            "at": 44393,
+            "x": 1619.25
+          },
+          {
+            "at": 44446,
+            "x": 1616.15
+          },
+          {
+            "at": 44527,
+            "x": 1609.75
+          },
+          {
+            "at": 44600,
+            "x": 1604.75
+          },
+          {
+            "at": 44649,
+            "x": 1601.65
+          },
+          {
+            "at": 44741,
+            "x": 1600.1
+          },
+          {
+            "at": 44789,
+            "x": 1598.15
+          },
+          {
+            "at": 44826,
+            "x": 1598.4
+          },
+          {
+            "at": 44878,
+            "x": 1599.85
+          },
+          {
+            "at": 44940,
+            "x": 1603.1
+          },
+          {
+            "at": 44980,
+            "x": 1605.25
+          },
+          {
+            "at": 45043,
+            "x": 1607.3
+          },
+          {
+            "at": 45182,
+            "x": 1609.85
+          },
+          {
+            "at": 45242,
+            "x": 1613.35
+          },
+          {
+            "at": 45278,
+            "x": 1611.25
+          },
+          {
+            "at": 45328,
+            "x": 1608.9
+          },
+          {
+            "at": 45375,
+            "x": 1606.2
+          },
+          {
+            "at": 45410,
+            "x": 1603.65
+          },
+          {
+            "at": 45458,
+            "x": 1601.4
+          },
+          {
+            "at": 45492,
+            "x": 1598.05
+          },
+          {
+            "at": 45524,
+            "x": 1595.95
+          },
+          {
+            "at": 45553,
+            "x": 1593.9
+          },
+          {
+            "at": 45605,
+            "x": 1592.1
+          }
+        ],
+        "samples": 27,
+        "round": 0,
+        "rmsPixels": 1.988819292771281,
+        "role": "join",
+        "sourceOffset": -16550,
+        "reference": [
+          {
+            "at": 59659,
+            "x": 1587.85
+          },
+          {
+            "at": 59718,
+            "x": 1589.4
+          },
+          {
+            "at": 59775,
+            "x": 1591.9
+          },
+          {
+            "at": 59824,
+            "x": 1595.2
+          },
+          {
+            "at": 59889,
+            "x": 1599.1
+          },
+          {
+            "at": 59963,
+            "x": 1603.55
+          },
+          {
+            "at": 60027,
+            "x": 1608.35
+          },
+          {
+            "at": 60094,
+            "x": 1613.45
+          },
+          {
+            "at": 60175,
+            "x": 1618.85
+          },
+          {
+            "at": 60230,
+            "x": 1623.15
+          },
+          {
+            "at": 60295,
+            "x": 1625.3
+          },
+          {
+            "at": 60376,
+            "x": 1625.75
+          },
+          {
+            "at": 60449,
+            "x": 1624.85
+          },
+          {
+            "at": 60503,
+            "x": 1622.85
+          },
+          {
+            "at": 60575,
+            "x": 1619.95
+          },
+          {
+            "at": 60631,
+            "x": 1616.35
+          },
+          {
+            "at": 60670,
+            "x": 1612.2
+          },
+          {
+            "at": 60727,
+            "x": 1607.6
+          },
+          {
+            "at": 60792,
+            "x": 1602.65
+          },
+          {
+            "at": 60839,
+            "x": 1598.65
+          },
+          {
+            "at": 60889,
+            "x": 1596.75
+          },
+          {
+            "at": 60929,
+            "x": 1596.5
+          },
+          {
+            "at": 61010,
+            "x": 1597.6
+          },
+          {
+            "at": 61061,
+            "x": 1599.75
+          },
+          {
+            "at": 61139,
+            "x": 1602.75
+          },
+          {
+            "at": 61217,
+            "x": 1606.45
+          },
+          {
+            "at": 61282,
+            "x": 1610.65
+          },
+          {
+            "at": 61325,
+            "x": 1614.05
+          },
+          {
+            "at": 61364,
+            "x": 1615.5
+          },
+          {
+            "at": 61437,
+            "x": 1615.35
+          },
+          {
+            "at": 61485,
+            "x": 1613.95
+          },
+          {
+            "at": 61526,
+            "x": 1611.55
+          },
+          {
+            "at": 61581,
+            "x": 1608.35
+          },
+          {
+            "at": 61633,
+            "x": 1604.5
+          },
+          {
+            "at": 61687,
+            "x": 1600.15
+          },
+          {
+            "at": 61730,
+            "x": 1595.4
+          },
+          {
+            "at": 61858,
+            "x": 1590.3
+          },
+          {
+            "at": 61896,
+            "x": 1586.25
+          },
+          {
+            "at": 61929,
+            "x": 1583
+          },
+          {
+            "at": 61984,
+            "x": 1580.4
+          },
+          {
+            "at": 62022,
+            "x": 1578.3
+          },
+          {
+            "at": 62057,
+            "x": 1577.9
+          },
+          {
+            "at": 62118,
+            "x": 1578.9
+          },
+          {
+            "at": 62150,
+            "x": 1580.95
+          },
+          {
+            "at": 62184,
+            "x": 1582.6
+          }
+        ],
+        "lagMs": 350
+      },
+      {
+        "render": [
+          {
+            "at": 61570,
+            "x": 1576.2
+          },
+          {
+            "at": 61633,
+            "x": 1579.65
+          },
+          {
+            "at": 61674,
+            "x": 1582.85
+          },
+          {
+            "at": 61739,
+            "x": 1586
+          },
+          {
+            "at": 61802,
+            "x": 1590.1
+          },
+          {
+            "at": 61854,
+            "x": 1591.5
+          },
+          {
+            "at": 61914,
+            "x": 1592.8
+          },
+          {
+            "at": 61989,
+            "x": 1594
+          },
+          {
+            "at": 62118,
+            "x": 1595.2
+          },
+          {
+            "at": 62164,
+            "x": 1605.5
+          },
+          {
+            "at": 62202,
+            "x": 1608.65
+          },
+          {
+            "at": 62253,
+            "x": 1611.2
+          },
+          {
+            "at": 62292,
+            "x": 1615.5
+          },
+          {
+            "at": 62364,
+            "x": 1620.25
+          },
+          {
+            "at": 62422,
+            "x": 1626.35
+          },
+          {
+            "at": 62464,
+            "x": 1629.2
+          },
+          {
+            "at": 62519,
+            "x": 1630.85
+          },
+          {
+            "at": 62549,
+            "x": 1629.15
+          },
+          {
+            "at": 62616,
+            "x": 1628.1
+          },
+          {
+            "at": 62654,
+            "x": 1625.7
+          },
+          {
+            "at": 62717,
+            "x": 1623.7
+          },
+          {
+            "at": 62751,
+            "x": 1621
+          },
+          {
+            "at": 62781,
+            "x": 1618.6
+          },
+          {
+            "at": 62812,
+            "x": 1615.15
+          },
+          {
+            "at": 62864,
+            "x": 1612.15
+          },
+          {
+            "at": 62909,
+            "x": 1606.25
+          },
+          {
+            "at": 62954,
+            "x": 1602.05
+          },
+          {
+            "at": 62998,
+            "x": 1599
+          },
+          {
+            "at": 63035,
+            "x": 1597.15
+          },
+          {
+            "at": 63069,
+            "x": 1596.15
+          },
+          {
+            "at": 63127,
+            "x": 1595.05
+          },
+          {
+            "at": 63168,
+            "x": 1593.45
+          },
+          {
+            "at": 63200,
+            "x": 1592.55
+          },
+          {
+            "at": 63249,
+            "x": 1593
+          },
+          {
+            "at": 63292,
+            "x": 1595.85
+          },
+          {
+            "at": 63358,
+            "x": 1599.5
+          },
+          {
+            "at": 63386,
+            "x": 1602.4
+          },
+          {
+            "at": 63420,
+            "x": 1604.25
+          },
+          {
+            "at": 63444,
+            "x": 1606.7
+          },
+          {
+            "at": 63505,
+            "x": 1610.45
+          },
+          {
+            "at": 63557,
+            "x": 1615
+          },
+          {
+            "at": 63622,
+            "x": 1618.9
+          },
+          {
+            "at": 63661,
+            "x": 1617.4
+          },
+          {
+            "at": 63722,
+            "x": 1613.85
+          },
+          {
+            "at": 63777,
+            "x": 1609.8
+          },
+          {
+            "at": 63853,
+            "x": 1606.1
+          },
+          {
+            "at": 63900,
+            "x": 1599.4
+          },
+          {
+            "at": 63942,
+            "x": 1594
+          },
+          {
+            "at": 64006,
+            "x": 1589.1
+          },
+          {
+            "at": 64050,
+            "x": 1584.6
+          },
+          {
+            "at": 64094,
+            "x": 1582.75
+          }
+        ],
+        "samples": 33,
+        "round": 2,
+        "rmsPixels": 1.6465383024282927,
+        "role": "join",
+        "sourceOffset": -16551,
+        "reference": [
+          {
+            "at": 78096,
+            "x": 1592.4
+          },
+          {
+            "at": 78130,
+            "x": 1593.05
+          },
+          {
+            "at": 78176,
+            "x": 1593.55
+          },
+          {
+            "at": 78233,
+            "x": 1595.25
+          },
+          {
+            "at": 78290,
+            "x": 1597.85
+          },
+          {
+            "at": 78329,
+            "x": 1601.25
+          },
+          {
+            "at": 78370,
+            "x": 1605.25
+          },
+          {
+            "at": 78426,
+            "x": 1609.7
+          },
+          {
+            "at": 78484,
+            "x": 1614.55
+          },
+          {
+            "at": 78549,
+            "x": 1619.7
+          },
+          {
+            "at": 78590,
+            "x": 1625.15
+          },
+          {
+            "at": 78631,
+            "x": 1629.45
+          },
+          {
+            "at": 78697,
+            "x": 1631.65
+          },
+          {
+            "at": 78730,
+            "x": 1632.1
+          },
+          {
+            "at": 78798,
+            "x": 1631.2
+          },
+          {
+            "at": 78838,
+            "x": 1629.2
+          },
+          {
+            "at": 78876,
+            "x": 1626.3
+          },
+          {
+            "at": 78944,
+            "x": 1622.7
+          },
+          {
+            "at": 78989,
+            "x": 1618.55
+          },
+          {
+            "at": 79053,
+            "x": 1613.95
+          },
+          {
+            "at": 79105,
+            "x": 1609
+          },
+          {
+            "at": 79142,
+            "x": 1603.75
+          },
+          {
+            "at": 79205,
+            "x": 1598.3
+          },
+          {
+            "at": 79259,
+            "x": 1593.9
+          },
+          {
+            "at": 79304,
+            "x": 1591.7
+          },
+          {
+            "at": 79363,
+            "x": 1591.2
+          },
+          {
+            "at": 79432,
+            "x": 1592.05
+          },
+          {
+            "at": 79483,
+            "x": 1594.05
+          },
+          {
+            "at": 79538,
+            "x": 1596.9
+          },
+          {
+            "at": 79584,
+            "x": 1600.5
+          },
+          {
+            "at": 79650,
+            "x": 1604.6
+          },
+          {
+            "at": 79692,
+            "x": 1609.2
+          },
+          {
+            "at": 79720,
+            "x": 1614.15
+          },
+          {
+            "at": 79765,
+            "x": 1618.15
+          },
+          {
+            "at": 79794,
+            "x": 1620
+          },
+          {
+            "at": 79838,
+            "x": 1620.25
+          },
+          {
+            "at": 79870,
+            "x": 1619.15
+          },
+          {
+            "at": 79920,
+            "x": 1617
+          },
+          {
+            "at": 79966,
+            "x": 1614
+          },
+          {
+            "at": 80003,
+            "x": 1610.3
+          },
+          {
+            "at": 80061,
+            "x": 1606.1
+          },
+          {
+            "at": 80108,
+            "x": 1601.4
+          },
+          {
+            "at": 80147,
+            "x": 1596.4
+          },
+          {
+            "at": 80198,
+            "x": 1591.1
+          },
+          {
+            "at": 80272,
+            "x": 1585.6
+          },
+          {
+            "at": 80330,
+            "x": 1581.2
+          },
+          {
+            "at": 80380,
+            "x": 1577.7
+          },
+          {
+            "at": 80443,
+            "x": 1576.15
+          },
+          {
+            "at": 80581,
+            "x": 1576.2
+          },
+          {
+            "at": 80642,
+            "x": 1577.5
+          }
+        ],
+        "lagMs": 340
+      }
+    ],
+    "new": [
+      {
+        "reference": [
+          {
+            "at": 55016,
+            "x": 1589.4
+          },
+          {
+            "at": 55054,
+            "x": 1590.6
+          },
+          {
+            "at": 55099,
+            "x": 1591.6
+          },
+          {
+            "at": 55154,
+            "x": 1592.4
+          },
+          {
+            "at": 55194,
+            "x": 1594.3
+          },
+          {
+            "at": 55230,
+            "x": 1597.15
+          },
+          {
+            "at": 55274,
+            "x": 1600.65
+          },
+          {
+            "at": 55307,
+            "x": 1604.75
+          },
+          {
+            "at": 55359,
+            "x": 1609.3
+          },
+          {
+            "at": 55451,
+            "x": 1614.25
+          },
+          {
+            "at": 55496,
+            "x": 1619.5
+          },
+          {
+            "at": 55535,
+            "x": 1624.95
+          },
+          {
+            "at": 55623,
+            "x": 1629.3
+          },
+          {
+            "at": 55671,
+            "x": 1631.5
+          },
+          {
+            "at": 55709,
+            "x": 1632
+          },
+          {
+            "at": 55779,
+            "x": 1631.1
+          },
+          {
+            "at": 55834,
+            "x": 1629.15
+          },
+          {
+            "at": 55892,
+            "x": 1626.25
+          },
+          {
+            "at": 55924,
+            "x": 1622.7
+          },
+          {
+            "at": 55961,
+            "x": 1618.55
+          },
+          {
+            "at": 55998,
+            "x": 1613.95
+          },
+          {
+            "at": 56066,
+            "x": 1609
+          },
+          {
+            "at": 56123,
+            "x": 1603.75
+          },
+          {
+            "at": 56190,
+            "x": 1598.3
+          },
+          {
+            "at": 56233,
+            "x": 1593.9
+          },
+          {
+            "at": 56273,
+            "x": 1591.65
+          },
+          {
+            "at": 56345,
+            "x": 1591.15
+          },
+          {
+            "at": 56400,
+            "x": 1592.05
+          },
+          {
+            "at": 56438,
+            "x": 1594.05
+          },
+          {
+            "at": 56490,
+            "x": 1596.9
+          },
+          {
+            "at": 56557,
+            "x": 1600.5
+          },
+          {
+            "at": 56619,
+            "x": 1604.6
+          },
+          {
+            "at": 56659,
+            "x": 1609.2
+          },
+          {
+            "at": 56697,
+            "x": 1612.9
+          },
+          {
+            "at": 56746,
+            "x": 1615.8
+          },
+          {
+            "at": 56802,
+            "x": 1616.9
+          },
+          {
+            "at": 56835,
+            "x": 1616.45
+          },
+          {
+            "at": 56883,
+            "x": 1614.85
+          },
+          {
+            "at": 56984,
+            "x": 1612.25
+          },
+          {
+            "at": 57035,
+            "x": 1608.95
+          },
+          {
+            "at": 57067,
+            "x": 1605
+          },
+          {
+            "at": 57115,
+            "x": 1600.55
+          },
+          {
+            "at": 57147,
+            "x": 1595.7
+          },
+          {
+            "at": 57181,
+            "x": 1590.55
+          },
+          {
+            "at": 57248,
+            "x": 1585.15
+          },
+          {
+            "at": 57285,
+            "x": 1580.85
+          },
+          {
+            "at": 57320,
+            "x": 1577.4
+          },
+          {
+            "at": 57368,
+            "x": 1575.9
+          },
+          {
+            "at": 57406,
+            "x": 1576
+          },
+          {
+            "at": 57439,
+            "x": 1577.35
+          },
+          {
+            "at": 57509,
+            "x": 1579.7
+          },
+          {
+            "at": 57546,
+            "x": 1582.9
+          },
+          {
+            "at": 57577,
+            "x": 1585.45
+          }
+        ],
+        "render": [
+          {
+            "at": 71692,
+            "x": 1586.75
+          },
+          {
+            "at": 71745,
+            "x": 1589.3
+          },
+          {
+            "at": 71786,
+            "x": 1590.45
+          },
+          {
+            "at": 71827,
+            "x": 1591.45
+          },
+          {
+            "at": 71880,
+            "x": 1592.25
+          },
+          {
+            "at": 71913,
+            "x": 1593.9
+          },
+          {
+            "at": 71969,
+            "x": 1596.45
+          },
+          {
+            "at": 72027,
+            "x": 1601.75
+          },
+          {
+            "at": 72071,
+            "x": 1607.75
+          },
+          {
+            "at": 72109,
+            "x": 1611.05
+          },
+          {
+            "at": 72177,
+            "x": 1613.3
+          },
+          {
+            "at": 72332,
+            "x": 1618.5
+          },
+          {
+            "at": 72368,
+            "x": 1630.5
+          },
+          {
+            "at": 72397,
+            "x": 1631.3
+          },
+          {
+            "at": 72456,
+            "x": 1631.45
+          },
+          {
+            "at": 72492,
+            "x": 1631.2
+          },
+          {
+            "at": 72525,
+            "x": 1630.4
+          },
+          {
+            "at": 72568,
+            "x": 1629.45
+          },
+          {
+            "at": 72611,
+            "x": 1626.8
+          },
+          {
+            "at": 72643,
+            "x": 1623.75
+          },
+          {
+            "at": 72718,
+            "x": 1620.55
+          },
+          {
+            "at": 72758,
+            "x": 1612.5
+          },
+          {
+            "at": 72792,
+            "x": 1608.45
+          },
+          {
+            "at": 72846,
+            "x": 1606
+          },
+          {
+            "at": 72911,
+            "x": 1601.65
+          },
+          {
+            "at": 72967,
+            "x": 1595.35
+          },
+          {
+            "at": 73022,
+            "x": 1592.85
+          },
+          {
+            "at": 73059,
+            "x": 1591.45
+          },
+          {
+            "at": 73128,
+            "x": 1591.6
+          },
+          {
+            "at": 73166,
+            "x": 1593.8
+          },
+          {
+            "at": 73203,
+            "x": 1596.35
+          },
+          {
+            "at": 73252,
+            "x": 1598.1
+          },
+          {
+            "at": 73290,
+            "x": 1600.7
+          },
+          {
+            "at": 73327,
+            "x": 1603.8
+          },
+          {
+            "at": 73391,
+            "x": 1606.65
+          },
+          {
+            "at": 73431,
+            "x": 1612.1
+          },
+          {
+            "at": 73461,
+            "x": 1615.25
+          },
+          {
+            "at": 73510,
+            "x": 1616.35
+          },
+          {
+            "at": 73541,
+            "x": 1616.35
+          },
+          {
+            "at": 73589,
+            "x": 1615.4
+          },
+          {
+            "at": 73638,
+            "x": 1613
+          },
+          {
+            "at": 73677,
+            "x": 1611.3
+          },
+          {
+            "at": 73707,
+            "x": 1610.4
+          },
+          {
+            "at": 73763,
+            "x": 1609.3
+          },
+          {
+            "at": 73815,
+            "x": 1605.3
+          },
+          {
+            "at": 73846,
+            "x": 1600.45
+          },
+          {
+            "at": 73895,
+            "x": 1596.5
+          },
+          {
+            "at": 73927,
+            "x": 1590.85
+          },
+          {
+            "at": 73963,
+            "x": 1587.8
+          },
+          {
+            "at": 73996,
+            "x": 1584.35
+          },
+          {
+            "at": 74066,
+            "x": 1581.55
+          },
+          {
+            "at": 74105,
+            "x": 1576.25
+          },
+          {
+            "at": 74143,
+            "x": 1575.95
+          },
+          {
+            "at": 74197,
+            "x": 1577.1
+          }
+        ],
+        "round": 1,
+        "role": "host",
+        "sourceOffset": 16614,
+        "samples": 39,
+        "rmsPixels": 1.3354247676594633,
+        "lagMs": 130
+      },
+      {
+        "reference": [
+          {
+            "at": 73480,
+            "x": 1593.05
+          },
+          {
+            "at": 73514,
+            "x": 1593.55
+          },
+          {
+            "at": 73561,
+            "x": 1593.95
+          },
+          {
+            "at": 73593,
+            "x": 1595.55
+          },
+          {
+            "at": 73627,
+            "x": 1598.1
+          },
+          {
+            "at": 73656,
+            "x": 1601.45
+          },
+          {
+            "at": 73722,
+            "x": 1605.4
+          },
+          {
+            "at": 73759,
+            "x": 1609.85
+          },
+          {
+            "at": 73792,
+            "x": 1614.65
+          },
+          {
+            "at": 73859,
+            "x": 1619.8
+          },
+          {
+            "at": 73910,
+            "x": 1625.2
+          },
+          {
+            "at": 73944,
+            "x": 1630.8
+          },
+          {
+            "at": 73993,
+            "x": 1635.25
+          },
+          {
+            "at": 74036,
+            "x": 1637.55
+          },
+          {
+            "at": 74069,
+            "x": 1638.15
+          },
+          {
+            "at": 74125,
+            "x": 1637.3
+          },
+          {
+            "at": 74174,
+            "x": 1635.35
+          },
+          {
+            "at": 74202,
+            "x": 1632.5
+          },
+          {
+            "at": 74251,
+            "x": 1628.95
+          },
+          {
+            "at": 74291,
+            "x": 1624.85
+          },
+          {
+            "at": 74333,
+            "x": 1620.3
+          },
+          {
+            "at": 74387,
+            "x": 1615.35
+          },
+          {
+            "at": 74424,
+            "x": 1610.1
+          },
+          {
+            "at": 74459,
+            "x": 1604.65
+          },
+          {
+            "at": 74512,
+            "x": 1599
+          },
+          {
+            "at": 74556,
+            "x": 1593.2
+          },
+          {
+            "at": 74592,
+            "x": 1588.55
+          },
+          {
+            "at": 74645,
+            "x": 1584.85
+          },
+          {
+            "at": 74687,
+            "x": 1583.15
+          },
+          {
+            "at": 74720,
+            "x": 1583.05
+          },
+          {
+            "at": 74769,
+            "x": 1584.3
+          },
+          {
+            "at": 74831,
+            "x": 1586.55
+          },
+          {
+            "at": 74896,
+            "x": 1589.65
+          },
+          {
+            "at": 74941,
+            "x": 1593.4
+          },
+          {
+            "at": 74985,
+            "x": 1597.65
+          },
+          {
+            "at": 75066,
+            "x": 1602.35
+          },
+          {
+            "at": 75110,
+            "x": 1607.4
+          },
+          {
+            "at": 75138,
+            "x": 1611.45
+          },
+          {
+            "at": 75201,
+            "x": 1614.65
+          },
+          {
+            "at": 75301,
+            "x": 1615.95
+          },
+          {
+            "at": 75348,
+            "x": 1615.75
+          },
+          {
+            "at": 75391,
+            "x": 1614.25
+          },
+          {
+            "at": 75437,
+            "x": 1611.8
+          },
+          {
+            "at": 75479,
+            "x": 1608.55
+          },
+          {
+            "at": 75516,
+            "x": 1604.7
+          },
+          {
+            "at": 75566,
+            "x": 1600.3
+          },
+          {
+            "at": 75605,
+            "x": 1595.5
+          },
+          {
+            "at": 75647,
+            "x": 1590.4
+          },
+          {
+            "at": 75696,
+            "x": 1585.05
+          },
+          {
+            "at": 75729,
+            "x": 1580.75
+          },
+          {
+            "at": 75775,
+            "x": 1577.3
+          },
+          {
+            "at": 75806,
+            "x": 1575.85
+          },
+          {
+            "at": 75848,
+            "x": 1575.95
+          },
+          {
+            "at": 75880,
+            "x": 1577.3
+          },
+          {
+            "at": 75929,
+            "x": 1579.7
+          },
+          {
+            "at": 75963,
+            "x": 1582.85
+          },
+          {
+            "at": 76014,
+            "x": 1585.4
+          }
+        ],
+        "render": [
+          {
+            "at": 90041,
+            "x": 1589.15
+          },
+          {
+            "at": 90103,
+            "x": 1590.65
+          },
+          {
+            "at": 90141,
+            "x": 1591.85
+          },
+          {
+            "at": 90170,
+            "x": 1592.3
+          },
+          {
+            "at": 90216,
+            "x": 1592.65
+          },
+          {
+            "at": 90267,
+            "x": 1593.25
+          },
+          {
+            "at": 90296,
+            "x": 1594.45
+          },
+          {
+            "at": 90341,
+            "x": 1595.9
+          },
+          {
+            "at": 90372,
+            "x": 1598.8
+          },
+          {
+            "at": 90405,
+            "x": 1601.65
+          },
+          {
+            "at": 90435,
+            "x": 1605.15
+          },
+          {
+            "at": 90493,
+            "x": 1607.5
+          },
+          {
+            "at": 90528,
+            "x": 1613.95
+          },
+          {
+            "at": 90558,
+            "x": 1618.65
+          },
+          {
+            "at": 90605,
+            "x": 1621.05
+          },
+          {
+            "at": 90641,
+            "x": 1625.35
+          },
+          {
+            "at": 90671,
+            "x": 1630.05
+          },
+          {
+            "at": 90736,
+            "x": 1634.65
+          },
+          {
+            "at": 90773,
+            "x": 1637
+          },
+          {
+            "at": 90799,
+            "x": 1636.85
+          },
+          {
+            "at": 90843,
+            "x": 1636.55
+          },
+          {
+            "at": 90871,
+            "x": 1635.2
+          },
+          {
+            "at": 90923,
+            "x": 1633.05
+          },
+          {
+            "at": 90977,
+            "x": 1627.95
+          },
+          {
+            "at": 91017,
+            "x": 1623.85
+          },
+          {
+            "at": 91050,
+            "x": 1619.45
+          },
+          {
+            "at": 91096,
+            "x": 1616
+          },
+          {
+            "at": 91145,
+            "x": 1611
+          },
+          {
+            "at": 91178,
+            "x": 1603.35
+          },
+          {
+            "at": 91229,
+            "x": 1598.05
+          },
+          {
+            "at": 91257,
+            "x": 1593.85
+          },
+          {
+            "at": 91309,
+            "x": 1590.3
+          },
+          {
+            "at": 91343,
+            "x": 1584.05
+          },
+          {
+            "at": 91403,
+            "x": 1583.05
+          },
+          {
+            "at": 91437,
+            "x": 1582.8
+          },
+          {
+            "at": 91465,
+            "x": 1583.3
+          },
+          {
+            "at": 91510,
+            "x": 1584.05
+          },
+          {
+            "at": 91543,
+            "x": 1585.85
+          },
+          {
+            "at": 91619,
+            "x": 1587.85
+          },
+          {
+            "at": 91648,
+            "x": 1592.35
+          },
+          {
+            "at": 91691,
+            "x": 1595.05
+          },
+          {
+            "at": 91743,
+            "x": 1598.1
+          },
+          {
+            "at": 91808,
+            "x": 1602.5
+          },
+          {
+            "at": 91860,
+            "x": 1607.05
+          },
+          {
+            "at": 91892,
+            "x": 1611.15
+          },
+          {
+            "at": 91929,
+            "x": 1613.7
+          },
+          {
+            "at": 91970,
+            "x": 1614.25
+          },
+          {
+            "at": 92046,
+            "x": 1614.9
+          },
+          {
+            "at": 92084,
+            "x": 1614.7
+          },
+          {
+            "at": 92121,
+            "x": 1613.35
+          },
+          {
+            "at": 92172,
+            "x": 1611.75
+          },
+          {
+            "at": 92233,
+            "x": 1607.95
+          },
+          {
+            "at": 92262,
+            "x": 1602.4
+          },
+          {
+            "at": 92308,
+            "x": 1598.8
+          },
+          {
+            "at": 92346,
+            "x": 1593.8
+          },
+          {
+            "at": 92378,
+            "x": 1588.4
+          },
+          {
+            "at": 92424,
+            "x": 1583.65
+          },
+          {
+            "at": 92457,
+            "x": 1579.25
+          },
+          {
+            "at": 92511,
+            "x": 1576.25
+          },
+          {
+            "at": 92539,
+            "x": 1575
+          },
+          {
+            "at": 92588,
+            "x": 1574.8
+          }
+        ],
+        "round": 3,
+        "role": "host",
+        "sourceOffset": 16612,
+        "samples": 39,
+        "rmsPixels": 1.4096016918637264,
+        "lagMs": 110
+      },
+      {
+        "role": "join",
+        "render": [
+          {
+            "at": 45834,
+            "x": 1583.85
+          },
+          {
+            "at": 45913,
+            "x": 1586.8
+          },
+          {
+            "at": 45971,
+            "x": 1588.1
+          },
+          {
+            "at": 46028,
+            "x": 1590.7
+          },
+          {
+            "at": 46109,
+            "x": 1593.3
+          },
+          {
+            "at": 46173,
+            "x": 1595.2
+          },
+          {
+            "at": 46340,
+            "x": 1601.35
+          },
+          {
+            "at": 46395,
+            "x": 1603.5
+          },
+          {
+            "at": 46475,
+            "x": 1609
+          },
+          {
+            "at": 46533,
+            "x": 1613.5
+          },
+          {
+            "at": 46599,
+            "x": 1615.95
+          },
+          {
+            "at": 46662,
+            "x": 1618.8
+          },
+          {
+            "at": 46722,
+            "x": 1619.75
+          },
+          {
+            "at": 46775,
+            "x": 1619.2
+          },
+          {
+            "at": 46839,
+            "x": 1617.4
+          },
+          {
+            "at": 46900,
+            "x": 1613.8
+          },
+          {
+            "at": 46958,
+            "x": 1608.75
+          },
+          {
+            "at": 47012,
+            "x": 1603.5
+          },
+          {
+            "at": 47051,
+            "x": 1600.45
+          },
+          {
+            "at": 47142,
+            "x": 1594.7
+          },
+          {
+            "at": 47199,
+            "x": 1591.1
+          },
+          {
+            "at": 47236,
+            "x": 1590.45
+          },
+          {
+            "at": 47347,
+            "x": 1590.25
+          },
+          {
+            "at": 47440,
+            "x": 1590.9
+          },
+          {
+            "at": 47559,
+            "x": 1595.1
+          },
+          {
+            "at": 47632,
+            "x": 1598.95
+          },
+          {
+            "at": 47712,
+            "x": 1601.6
+          },
+          {
+            "at": 47752,
+            "x": 1603.15
+          },
+          {
+            "at": 47793,
+            "x": 1603.65
+          },
+          {
+            "at": 47869,
+            "x": 1603.9
+          },
+          {
+            "at": 47909,
+            "x": 1602.75
+          },
+          {
+            "at": 47950,
+            "x": 1600.95
+          },
+          {
+            "at": 48008,
+            "x": 1599.05
+          },
+          {
+            "at": 48091,
+            "x": 1593
+          },
+          {
+            "at": 48147,
+            "x": 1587.75
+          },
+          {
+            "at": 48190,
+            "x": 1584.9
+          },
+          {
+            "at": 48226,
+            "x": 1582.1
+          },
+          {
+            "at": 48306,
+            "x": 1579
+          },
+          {
+            "at": 48352,
+            "x": 1578.65
+          },
+          {
+            "at": 48388,
+            "x": 1579.3
+          }
+        ],
+        "samples": 28,
+        "reference": [
+          {
+            "at": 62439,
+            "x": 1587.85
+          },
+          {
+            "at": 62505,
+            "x": 1589.4
+          },
+          {
+            "at": 62585,
+            "x": 1591.9
+          },
+          {
+            "at": 62653,
+            "x": 1595.2
+          },
+          {
+            "at": 62791,
+            "x": 1599.1
+          },
+          {
+            "at": 62857,
+            "x": 1603.55
+          },
+          {
+            "at": 62920,
+            "x": 1608.35
+          },
+          {
+            "at": 62995,
+            "x": 1613.45
+          },
+          {
+            "at": 63060,
+            "x": 1617.55
+          },
+          {
+            "at": 63112,
+            "x": 1619.55
+          },
+          {
+            "at": 63179,
+            "x": 1619.9
+          },
+          {
+            "at": 63241,
+            "x": 1618.85
+          },
+          {
+            "at": 63296,
+            "x": 1616.75
+          },
+          {
+            "at": 63342,
+            "x": 1613.8
+          },
+          {
+            "at": 63382,
+            "x": 1610.15
+          },
+          {
+            "at": 63463,
+            "x": 1605.95
+          },
+          {
+            "at": 63508,
+            "x": 1601.35
+          },
+          {
+            "at": 63576,
+            "x": 1596.35
+          },
+          {
+            "at": 63657,
+            "x": 1592.35
+          },
+          {
+            "at": 63729,
+            "x": 1590.45
+          },
+          {
+            "at": 63856,
+            "x": 1590.2
+          },
+          {
+            "at": 63916,
+            "x": 1591.25
+          },
+          {
+            "at": 63969,
+            "x": 1593.4
+          },
+          {
+            "at": 64012,
+            "x": 1596.4
+          },
+          {
+            "at": 64097,
+            "x": 1600.05
+          },
+          {
+            "at": 64213,
+            "x": 1603
+          },
+          {
+            "at": 64272,
+            "x": 1604.1
+          },
+          {
+            "at": 64344,
+            "x": 1603.65
+          },
+          {
+            "at": 64403,
+            "x": 1602.05
+          },
+          {
+            "at": 64461,
+            "x": 1599.45
+          },
+          {
+            "at": 64525,
+            "x": 1596.15
+          },
+          {
+            "at": 64566,
+            "x": 1592.2
+          },
+          {
+            "at": 64634,
+            "x": 1587.75
+          },
+          {
+            "at": 64688,
+            "x": 1584.2
+          },
+          {
+            "at": 64727,
+            "x": 1581.35
+          },
+          {
+            "at": 64786,
+            "x": 1579.05
+          },
+          {
+            "at": 64845,
+            "x": 1578.55
+          },
+          {
+            "at": 64903,
+            "x": 1579.4
+          },
+          {
+            "at": 64945,
+            "x": 1581.35
+          },
+          {
+            "at": 64988,
+            "x": 1582.9
+          }
+        ],
+        "lagMs": 140,
+        "round": 0,
+        "sourceOffset": -16611,
+        "rmsPixels": 0.925238947982099
+      },
+      {
+        "role": "join",
+        "render": [
+          {
+            "at": 64248,
+            "x": 1588.3
+          },
+          {
+            "at": 64318,
+            "x": 1589.4
+          },
+          {
+            "at": 64367,
+            "x": 1591.1
+          },
+          {
+            "at": 64402,
+            "x": 1591.3
+          },
+          {
+            "at": 64475,
+            "x": 1591.75
+          },
+          {
+            "at": 64545,
+            "x": 1592.65
+          },
+          {
+            "at": 64580,
+            "x": 1593.2
+          },
+          {
+            "at": 64642,
+            "x": 1593.55
+          },
+          {
+            "at": 64682,
+            "x": 1595.85
+          },
+          {
+            "at": 64715,
+            "x": 1597.75
+          },
+          {
+            "at": 64758,
+            "x": 1599.45
+          },
+          {
+            "at": 64819,
+            "x": 1604.9
+          },
+          {
+            "at": 64853,
+            "x": 1609.35
+          },
+          {
+            "at": 64909,
+            "x": 1611.95
+          },
+          {
+            "at": 65029,
+            "x": 1616.05
+          },
+          {
+            "at": 65080,
+            "x": 1621.85
+          },
+          {
+            "at": 65111,
+            "x": 1621.65
+          },
+          {
+            "at": 65161,
+            "x": 1621
+          },
+          {
+            "at": 65196,
+            "x": 1619.8
+          },
+          {
+            "at": 65234,
+            "x": 1617.4
+          },
+          {
+            "at": 65302,
+            "x": 1614.45
+          },
+          {
+            "at": 65344,
+            "x": 1608.15
+          },
+          {
+            "at": 65378,
+            "x": 1604.15
+          },
+          {
+            "at": 65434,
+            "x": 1601.65
+          },
+          {
+            "at": 65474,
+            "x": 1595.35
+          },
+          {
+            "at": 65540,
+            "x": 1589.9
+          },
+          {
+            "at": 65591,
+            "x": 1587.25
+          },
+          {
+            "at": 65621,
+            "x": 1587.35
+          },
+          {
+            "at": 65677,
+            "x": 1588.1
+          },
+          {
+            "at": 65718,
+            "x": 1591.75
+          },
+          {
+            "at": 65758,
+            "x": 1595.15
+          },
+          {
+            "at": 65808,
+            "x": 1597.3
+          },
+          {
+            "at": 65840,
+            "x": 1601
+          },
+          {
+            "at": 65877,
+            "x": 1603.35
+          },
+          {
+            "at": 65935,
+            "x": 1606.5
+          },
+          {
+            "at": 65988,
+            "x": 1615.45
+          },
+          {
+            "at": 66021,
+            "x": 1617.65
+          },
+          {
+            "at": 66070,
+            "x": 1618.55
+          },
+          {
+            "at": 66117,
+            "x": 1618.55
+          },
+          {
+            "at": 66150,
+            "x": 1617.7
+          },
+          {
+            "at": 66203,
+            "x": 1615.85
+          },
+          {
+            "at": 66252,
+            "x": 1611.55
+          },
+          {
+            "at": 66283,
+            "x": 1608.95
+          },
+          {
+            "at": 66339,
+            "x": 1606.3
+          },
+          {
+            "at": 66379,
+            "x": 1601.6
+          },
+          {
+            "at": 66411,
+            "x": 1598.6
+          },
+          {
+            "at": 66472,
+            "x": 1593.9
+          },
+          {
+            "at": 66515,
+            "x": 1588.9
+          },
+          {
+            "at": 66548,
+            "x": 1586.95
+          },
+          {
+            "at": 66606,
+            "x": 1585.35
+          },
+          {
+            "at": 66654,
+            "x": 1580
+          },
+          {
+            "at": 66689,
+            "x": 1578.2
+          },
+          {
+            "at": 66735,
+            "x": 1577
+          },
+          {
+            "at": 66767,
+            "x": 1576.7
+          },
+          {
+            "at": 66806,
+            "x": 1576.5
+          }
+        ],
+        "samples": 40,
+        "reference": [
+          {
+            "at": 80822,
+            "x": 1590.6
+          },
+          {
+            "at": 80890,
+            "x": 1591.6
+          },
+          {
+            "at": 81039,
+            "x": 1592.4
+          },
+          {
+            "at": 81100,
+            "x": 1594.3
+          },
+          {
+            "at": 81157,
+            "x": 1597.15
+          },
+          {
+            "at": 81196,
+            "x": 1600.65
+          },
+          {
+            "at": 81236,
+            "x": 1604.75
+          },
+          {
+            "at": 81291,
+            "x": 1609.3
+          },
+          {
+            "at": 81351,
+            "x": 1614.25
+          },
+          {
+            "at": 81385,
+            "x": 1618.2
+          },
+          {
+            "at": 81445,
+            "x": 1621.35
+          },
+          {
+            "at": 81498,
+            "x": 1622.6
+          },
+          {
+            "at": 81603,
+            "x": 1622.3
+          },
+          {
+            "at": 81643,
+            "x": 1620.8
+          },
+          {
+            "at": 81709,
+            "x": 1618.3
+          },
+          {
+            "at": 81751,
+            "x": 1615.05
+          },
+          {
+            "at": 81786,
+            "x": 1611.15
+          },
+          {
+            "at": 81858,
+            "x": 1606.75
+          },
+          {
+            "at": 81901,
+            "x": 1601.95
+          },
+          {
+            "at": 81939,
+            "x": 1596.85
+          },
+          {
+            "at": 81996,
+            "x": 1592.75
+          },
+          {
+            "at": 82024,
+            "x": 1589.5
+          },
+          {
+            "at": 82081,
+            "x": 1588.15
+          },
+          {
+            "at": 82143,
+            "x": 1588.35
+          },
+          {
+            "at": 82181,
+            "x": 1589.8
+          },
+          {
+            "at": 82220,
+            "x": 1592.25
+          },
+          {
+            "at": 82276,
+            "x": 1595.45
+          },
+          {
+            "at": 82334,
+            "x": 1599.3
+          },
+          {
+            "at": 82390,
+            "x": 1603.7
+          },
+          {
+            "at": 82432,
+            "x": 1608.45
+          },
+          {
+            "at": 82463,
+            "x": 1613.55
+          },
+          {
+            "at": 82515,
+            "x": 1617.65
+          },
+          {
+            "at": 82568,
+            "x": 1619.65
+          },
+          {
+            "at": 82622,
+            "x": 1619.95
+          },
+          {
+            "at": 82660,
+            "x": 1618.9
+          },
+          {
+            "at": 82702,
+            "x": 1616.8
+          },
+          {
+            "at": 82759,
+            "x": 1613.85
+          },
+          {
+            "at": 82811,
+            "x": 1610.2
+          },
+          {
+            "at": 82866,
+            "x": 1606
+          },
+          {
+            "at": 82911,
+            "x": 1601.35
+          },
+          {
+            "at": 82948,
+            "x": 1596.35
+          },
+          {
+            "at": 83041,
+            "x": 1591.05
+          },
+          {
+            "at": 83084,
+            "x": 1586.85
+          },
+          {
+            "at": 83122,
+            "x": 1583.5
+          },
+          {
+            "at": 83178,
+            "x": 1580.8
+          },
+          {
+            "at": 83237,
+            "x": 1578.6
+          },
+          {
+            "at": 83316,
+            "x": 1578.15
+          },
+          {
+            "at": 83366,
+            "x": 1579.1
+          }
+        ],
+        "lagMs": 120,
+        "round": 2,
+        "sourceOffset": -16610,
+        "rmsPixels": 2.062604615320189
+      }
+    ]
+  },
+  "angle_comparison": {
+    "old_run": "d8de7e1749",
+    "old": [
+      {
+        "sourceFlashes": 166,
+        "flashes": 66,
+        "round": 0,
+        "samples": 128,
+        "facing": 1,
+        "degree": 0,
+        "wrong": 0,
+        "role": "host"
+      },
+      {
+        "sourceFlashes": 166,
+        "flashes": 60,
+        "round": 1,
+        "samples": 122,
+        "facing": 1,
+        "degree": 160,
+        "wrong": 122,
+        "role": "host"
+      },
+      {
+        "sourceFlashes": 168,
+        "flashes": 60,
+        "round": 2,
+        "samples": 124,
+        "facing": -1,
+        "degree": -160,
+        "wrong": 124,
+        "role": "host"
+      },
+      {
+        "sourceFlashes": 162,
+        "flashes": 64,
+        "round": 3,
+        "samples": 122,
+        "facing": -1,
+        "degree": 85,
+        "wrong": 122,
+        "role": "host"
+      },
+      {
+        "sourceFlashes": 154,
+        "flashes": 54,
+        "round": 4,
+        "samples": 114,
+        "facing": 1,
+        "degree": 95,
+        "wrong": 114,
+        "role": "host"
+      },
+      {
+        "sourceFlashes": 168,
+        "flashes": 63,
+        "round": 5,
+        "samples": 127,
+        "facing": 1,
+        "degree": -95,
+        "wrong": 127,
+        "role": "host"
+      },
+      {
+        "sourceFlashes": 154,
+        "flashes": 58,
+        "round": 6,
+        "samples": 114,
+        "facing": -1,
+        "degree": 180,
+        "wrong": 114,
+        "role": "host"
+      },
+      {
+        "facing": 1,
+        "wrong": 0,
+        "degree": 0,
+        "sourceFlashes": 166,
+        "flashes": 62,
+        "samples": 128,
+        "round": 0,
+        "role": "join"
+      },
+      {
+        "facing": 1,
+        "wrong": 124,
+        "degree": 160,
+        "sourceFlashes": 162,
+        "flashes": 60,
+        "samples": 124,
+        "round": 1,
+        "role": "join"
+      },
+      {
+        "facing": -1,
+        "wrong": 122,
+        "degree": -160,
+        "sourceFlashes": 160,
+        "flashes": 60,
+        "samples": 122,
+        "round": 2,
+        "role": "join"
+      },
+      {
+        "facing": -1,
+        "wrong": 126,
+        "degree": 85,
+        "sourceFlashes": 168,
+        "flashes": 62,
+        "samples": 126,
+        "round": 3,
+        "role": "join"
+      },
+      {
+        "facing": 1,
+        "wrong": 114,
+        "degree": 95,
+        "sourceFlashes": 156,
+        "flashes": 60,
+        "samples": 114,
+        "round": 4,
+        "role": "join"
+      },
+      {
+        "facing": 1,
+        "wrong": 130,
+        "degree": -95,
+        "sourceFlashes": 170,
+        "flashes": 66,
+        "samples": 130,
+        "round": 5,
+        "role": "join"
+      },
+      {
+        "facing": -1,
+        "wrong": 122,
+        "degree": 180,
+        "sourceFlashes": 166,
+        "flashes": 56,
+        "samples": 122,
+        "round": 6,
+        "role": "join"
+      }
+    ],
+    "new": [
+      {
+        "flashes": 104,
+        "samples": 130,
+        "round": 0,
+        "facing": 1,
+        "role": "host",
+        "degree": 0,
+        "wrong": 0,
+        "sourceFlashes": 164
+      },
+      {
+        "flashes": 98,
+        "samples": 114,
+        "round": 1,
+        "facing": 1,
+        "role": "host",
+        "degree": 160,
+        "wrong": 0,
+        "sourceFlashes": 158
+      },
+      {
+        "flashes": 92,
+        "samples": 112,
+        "round": 2,
+        "facing": -1,
+        "role": "host",
+        "degree": -160,
+        "wrong": 0,
+        "sourceFlashes": 150
+      },
+      {
+        "flashes": 104,
+        "samples": 116,
+        "round": 3,
+        "facing": -1,
+        "role": "host",
+        "degree": 85,
+        "wrong": 0,
+        "sourceFlashes": 154
+      },
+      {
+        "flashes": 100,
+        "samples": 118,
+        "round": 4,
+        "facing": 1,
+        "role": "host",
+        "degree": 95,
+        "wrong": 0,
+        "sourceFlashes": 156
+      },
+      {
+        "flashes": 102,
+        "samples": 124,
+        "round": 5,
+        "facing": 1,
+        "role": "host",
+        "degree": -95,
+        "wrong": 0,
+        "sourceFlashes": 160
+      },
+      {
+        "flashes": 104,
+        "samples": 124,
+        "round": 6,
+        "facing": -1,
+        "role": "host",
+        "degree": 180,
+        "wrong": 0,
+        "sourceFlashes": 160
+      },
+      {
+        "samples": 114,
+        "role": "join",
+        "wrong": 0,
+        "facing": 1,
+        "flashes": 104,
+        "degree": 0,
+        "round": 0,
+        "sourceFlashes": 156
+      },
+      {
+        "samples": 112,
+        "role": "join",
+        "wrong": 0,
+        "facing": 1,
+        "flashes": 102,
+        "degree": 160,
+        "round": 1,
+        "sourceFlashes": 152
+      },
+      {
+        "samples": 116,
+        "role": "join",
+        "wrong": 0,
+        "facing": -1,
+        "flashes": 104,
+        "degree": -160,
+        "round": 2,
+        "sourceFlashes": 154
+      },
+      {
+        "samples": 116,
+        "role": "join",
+        "wrong": 0,
+        "facing": -1,
+        "flashes": 104,
+        "degree": 85,
+        "round": 3,
+        "sourceFlashes": 158
+      },
+      {
+        "samples": 126,
+        "role": "join",
+        "wrong": 0,
+        "facing": 1,
+        "flashes": 110,
+        "degree": 95,
+        "round": 4,
+        "sourceFlashes": 168
+      },
+      {
+        "samples": 126,
+        "role": "join",
+        "wrong": 0,
+        "facing": 1,
+        "flashes": 104,
+        "degree": -95,
+        "round": 5,
+        "sourceFlashes": 166
+      },
+      {
+        "samples": 130,
+        "role": "join",
+        "wrong": 0,
+        "facing": -1,
+        "flashes": 108,
+        "degree": 180,
+        "round": 6,
+        "sourceFlashes": 172
+      }
+    ]
+  },
+  "mask_png": [
+    {
+      "file": "host-presentation-mask-restore-0-leave.png",
+      "sha256": "defd904413b2832d236294ad2fc67dc3ca0b148bd4d59dd2ae206fb86acfec3b",
+      "size": [
+        1280,
+        800
+      ],
+      "white_block": null,
+      "pillow": "12.3.0",
+      "criterion": "32x24 opaque contiguous pixels, each RGB channel >=248 and alpha >=240"
+    },
+    {
+      "file": "host-presentation-mask-restore-1-leave.png",
+      "sha256": "716e62528b62d23694de0f5630ed473657d691955d88817666df86c94f6a89b8",
+      "size": [
+        1280,
+        800
+      ],
+      "white_block": null,
+      "pillow": "12.3.0",
+      "criterion": "32x24 opaque contiguous pixels, each RGB channel >=248 and alpha >=240"
+    },
+    {
+      "file": "host-presentation-mask-restore-2-leave.png",
+      "sha256": "4ed0602d8e489582a6d19b6dbaed55dcc7fbef72a54f53802427e19983e44dde",
+      "size": [
+        1280,
+        800
+      ],
+      "white_block": null,
+      "pillow": "12.3.0",
+      "criterion": "32x24 opaque contiguous pixels, each RGB channel >=248 and alpha >=240"
+    },
+    {
+      "file": "host-presentation-mask-restore-3-leave.png",
+      "sha256": "8e77196e0c3ed57636ff4f7d10798178795b2f6389f4366bc3eefda8bca5c167",
+      "size": [
+        1280,
+        800
+      ],
+      "white_block": null,
+      "pillow": "12.3.0",
+      "criterion": "32x24 opaque contiguous pixels, each RGB channel >=248 and alpha >=240"
+    },
+    {
+      "file": "host-presentation-mask-restore-4-leave.png",
+      "sha256": "b84cdc48d45194ffd4b017946c64f6a17dd73f43cd2ecb4ffd6382016e624468",
+      "size": [
+        1280,
+        800
+      ],
+      "white_block": null,
+      "pillow": "12.3.0",
+      "criterion": "32x24 opaque contiguous pixels, each RGB channel >=248 and alpha >=240"
+    },
+    {
+      "file": "host-presentation-mask-restore-5-leave.png",
+      "sha256": "dba434a3b6f26fd169d8248c787f45c03d4209901155bd42a225062bcc46fada",
+      "size": [
+        1280,
+        800
+      ],
+      "white_block": null,
+      "pillow": "12.3.0",
+      "criterion": "32x24 opaque contiguous pixels, each RGB channel >=248 and alpha >=240"
+    },
+    {
+      "file": "host-presentation-mask-restore-6-leave.png",
+      "sha256": "8e77196e0c3ed57636ff4f7d10798178795b2f6389f4366bc3eefda8bca5c167",
+      "size": [
+        1280,
+        800
+      ],
+      "white_block": null,
+      "pillow": "12.3.0",
+      "criterion": "32x24 opaque contiguous pixels, each RGB channel >=248 and alpha >=240"
+    },
+    {
+      "file": "join-presentation-mask-restore-0-leave.png",
+      "sha256": "aa146d471ee531db3db693bbad5e65168439ca4d868bfdbbf8f2d7fc64d8e0e9",
+      "size": [
+        1280,
+        800
+      ],
+      "white_block": null,
+      "pillow": "12.3.0",
+      "criterion": "32x24 opaque contiguous pixels, each RGB channel >=248 and alpha >=240"
+    },
+    {
+      "file": "join-presentation-mask-restore-1-leave.png",
+      "sha256": "62f12635db48d7a17595d112b5eae262dcf7a585fca6398a4f8c0bd3a0b0dc7e",
+      "size": [
+        1280,
+        800
+      ],
+      "white_block": null,
+      "pillow": "12.3.0",
+      "criterion": "32x24 opaque contiguous pixels, each RGB channel >=248 and alpha >=240"
+    },
+    {
+      "file": "join-presentation-mask-restore-2-leave.png",
+      "sha256": "4a928008aa429a6adc07b4137af2d40786f8737d2f16e42fdb90ca5fddc5ee77",
+      "size": [
+        1280,
+        800
+      ],
+      "white_block": null,
+      "pillow": "12.3.0",
+      "criterion": "32x24 opaque contiguous pixels, each RGB channel >=248 and alpha >=240"
+    },
+    {
+      "file": "join-presentation-mask-restore-3-leave.png",
+      "sha256": "3cc165b49a7c3cd3f418d711afb453fc4769245c47acc57c23e1ca1635e3aadc",
+      "size": [
+        1280,
+        800
+      ],
+      "white_block": null,
+      "pillow": "12.3.0",
+      "criterion": "32x24 opaque contiguous pixels, each RGB channel >=248 and alpha >=240"
+    },
+    {
+      "file": "join-presentation-mask-restore-4-leave.png",
+      "sha256": "94517df1902284a85e4eca936f190d7296880e2e77763f401c62be885e86b71e",
+      "size": [
+        1280,
+        800
+      ],
+      "white_block": null,
+      "pillow": "12.3.0",
+      "criterion": "32x24 opaque contiguous pixels, each RGB channel >=248 and alpha >=240"
+    },
+    {
+      "file": "join-presentation-mask-restore-5-leave.png",
+      "sha256": "3cc165b49a7c3cd3f418d711afb453fc4769245c47acc57c23e1ca1635e3aadc",
+      "size": [
+        1280,
+        800
+      ],
+      "white_block": null,
+      "pillow": "12.3.0",
+      "criterion": "32x24 opaque contiguous pixels, each RGB channel >=248 and alpha >=240"
+    },
+    {
+      "file": "join-presentation-mask-restore-6-leave.png",
+      "sha256": "3cc165b49a7c3cd3f418d711afb453fc4769245c47acc57c23e1ca1635e3aadc",
+      "size": [
+        1280,
+        800
+      ],
+      "white_block": null,
+      "pillow": "12.3.0",
+      "criterion": "32x24 opaque contiguous pixels, each RGB channel >=248 and alpha >=240"
+    }
+  ],
+  "carried_checks": {
+    "kind": "retained exact-byte checks, not new runs",
+    "entries": [
+      {
+        "entry": "TelekinesisMotionTestDoc",
+        "run": "beef32a462",
+        "origin": "build/m47/final-presentation-06",
+        "unchanged_test_sha256": "570868ccec43503f3d4b136880ca911e8afa12abbabf970ca3b6012825bfecc1",
+        "driver_classes_sha256": "d2e1fc1b3be923ecb1df99c67ae440e62559f6ab894d27aa1e4894b81c3c83bc",
+        "result_sha256": "c5b268b269c3af48b599801378db6f9e0c4d0fd01d2319b7879943a834451ea8",
+        "input_sha256": "fb26057ea8701fbdb611da83458459cac4b7b97424cc993e542522f77edee826"
+      },
+      {
+        "entry": "TelekinesisTestDoc",
+        "run": "5ebc724bd1",
+        "origin": "build/m47/final-presentation-06",
+        "unchanged_test_sha256": "b3765dd9e8ccd734a9556f685c2955e55215f205b47c3d5c2e40e2034ab3f810",
+        "driver_classes_sha256": "6826246b86ba642dc19f7510911aaf46c2405d3a8a52958ca5e4b5fca550405b",
+        "result_sha256": "8ee8ef97cd697bb9bb6bb9aa970855bc8d2d6a0cf51c74685537822d882e322d",
+        "input_sha256": "43669d077f88c069e23b27b92f51e8e9c7dec6df17d6c8503dbe1d3d5b559efc"
+      },
+      {
+        "entry": "EnemyGrabTestDoc",
+        "run": "c0cbc2dbc5",
+        "origin": "build/m47/final-presentation-06",
+        "unchanged_test_sha256": "97a3a36503bd9853683f9ae4f7277ea0d874c1525e00e035c97253ee5e884aa0",
+        "driver_classes_sha256": "98e9bd0f8c6df999131da1e5b283e03e9572c0d0ddfe9ebef03e0581305ca7b9",
+        "result_sha256": "bce81a269950012286c03f8595b40685e5d1ee44bd912e53b4f3d483519ac156",
+        "input_sha256": "e7c55048ff9883fefb24270f0df92f12cb85cde7ae60333dc9f9a7f12866f9d3"
+      },
+      {
+        "entry": "LightningSmartTestDoc",
+        "run": "a31bc28757",
+        "origin": "build/m47/final-presentation-06",
+        "unchanged_test_sha256": "a12cc623a4ffeb86bc3b0713a4af102e2a90d1c6b2daa01562a082c37f5550a3",
+        "driver_classes_sha256": "8b28d4fd77b256dd44e35ba7ef889dbd385cb0bc4291adcfe06501e0345095bd",
+        "result_sha256": "33b3285f573400f1cc0c7e0c5db45a07bb9272886f4fc5ff19090eba34446c7b",
+        "input_sha256": "329ca7f1501cd01f7acbb614b304832c9c7266d4d7e02f490705c05468e0a872"
+      },
+      {
+        "entry": "BeamTerrainTestDoc",
+        "run": "4f399ce6c8",
+        "origin": "build/m47/final-presentation-06",
+        "unchanged_test_sha256": "0a2db0f2a9b1bdf122b1b6674f31dea2a930e61e1ad4c19eba0a4666bcdce264",
+        "driver_classes_sha256": "3cff555e4cbeb8f231646f3a800295030ba562f0c8894c9e8a9a519c64988b33",
+        "result_sha256": "24acd7e0b36f946f9d3fa2cf563751c77f9e52718b54bac2f60ccbea0ed002f5",
+        "input_sha256": "0ff18410769ea1c08172cfdc8a9cac8a6572928234c7e856031386793152c0d3"
+      },
+      {
+        "entry": "SatsTestDoc",
+        "run": "3c3a825c89",
+        "origin": "build/m47/final-presentation-06",
+        "unchanged_test_sha256": "3ad0f79cb9416baad87d3eb369958c530992d1f41a17db26313c546986daef14",
+        "driver_classes_sha256": "d61835173714ac01c88ec35f70c44688c51889962e68ef26a6263c659c23945e",
+        "result_sha256": "1f7558c3208bd7b0e8f41f7b8609da05fb4d23d01516aaf45696c831ad02d2b0",
+        "input_sha256": "226cf440edb3f94103dd8a217e5de66cc34781857775ccbec8dba8995cf8f254"
+      },
+      {
+        "entry": "CoopPauseTestDoc",
+        "run": "e4bfb0ca07",
+        "origin": "build/m47/final-presentation-06",
+        "unchanged_test_sha256": "b94cbbfbc4d86ad3855a215c69338d83c0455b8039d855986c15b7b24b07b2d2",
+        "driver_classes_sha256": "19220b3df05255013f5b24e95b528d2db6a0d6a2b35ef488efdbbddc3cf12d23",
+        "result_sha256": "97f4a6f8280b8851dfb75263ff3b557e4f06587d2e896ab4ae3edb91d415815d",
+        "input_sha256": "fa0cbb91a3fdb3de99fad49f8685545577375242291e412e8225497132503585"
+      },
+      {
+        "entry": "RoomCooperationTestDoc",
+        "run": "dffc8ce3ac",
+        "origin": "build/m47/final-presentation-06",
+        "unchanged_test_sha256": "85b7d5fe4ef499ae187c80eb6d589f8a04b90616a61149063e9cd19fa63d1157",
+        "driver_classes_sha256": "784d19de20ecaa082fd456534a6d1e729e1eebf7eba4c182938824c18927ac5f",
+        "result_sha256": "442747b093a0c9a4902aa7af541cd0cd3ada239a09efcd9c03af34dbd1d47539",
+        "input_sha256": "01402c70546ae183c48d3e870d778fd1ccae8efdd8106677339bf32a0f1bf318"
+      },
+      {
+        "entry": "ProjectileNetworkTestDoc",
+        "run": "72d8431c5d",
+        "origin": "build/m47/final-presentation-06",
+        "unchanged_test_sha256": "b39c7a23d2ed4eae586cda882d606786cacbb8f96d6b58ce237a8c9b15d38224",
+        "driver_classes_sha256": "5c3042100b4f660640da659f3081c53e5f6f5203f46b949af302e09e1057bca5",
+        "result_sha256": "135c09c7fbc98ca58634a57c49d71d144fb5b66d7fca9b3a9466f616d73b9bd1",
+        "input_sha256": "4f963c53a2d22760b27f0fbe0af055cbd3ca882b66f693910edafa75e2137d78"
+      },
+      {
+        "entry": "CombatNetworkTestDoc",
+        "run": "8985a8de9b",
+        "origin": "build/m47/final-presentation-06",
+        "unchanged_test_sha256": "c3c295742ce23c925db75eab7c2bbccdceb08d70a7037967311ca26c18e6fb6a",
+        "driver_classes_sha256": "3f4900212876b203e8ff4bccebe4933b997b40b86cba8d2cedfc0ecd53cf1e2f",
+        "result_sha256": "fa1c40f37b4bbf6eb7077ef7916f6e8a7cfc2d23739f2dce66c5a109d43626de",
+        "input_sha256": "6482cb38e45f402cc78b2937ae5cadd238cfb2f123f9a8d09c8ac4c26902023b"
+      },
+      {
+        "entry": "AnimationGapsTestDoc",
+        "run": "64246bcc9e",
+        "origin": "build/m47/final-presentation-06",
+        "unchanged_test_sha256": "32f1de198fd9f38b90b1e22a5ab44ad308994ee6585eb7e43ce1387e65522490",
+        "driver_classes_sha256": "2d9280aafe34e90625868f2493ebe7d45a33f3f065fe8387b98e0df6b38466e2",
+        "result_sha256": "a0c700e84560a04329cd08ef98ca4ad2a4ca7c8709f38bc4b0617a64e7296035",
+        "input_sha256": "1340c14a35b673205c2e37007f9073ab5bbe8f3127e557289db4dabf0004602b"
+      },
+      {
+        "entry": "GameplayNetworkTestDoc",
+        "run": "7b3fb12c4e",
+        "origin": "build/m47/final-presentation-06",
+        "unchanged_test_sha256": "91e817887d6e783c3462b9cf5617ba2bb413a71970aad7799413718872eebbbf",
+        "driver_classes_sha256": "42c96a23a878341aeb15ba8fa7a78e99d573ef3844a1d1f2305243d1d6423726",
+        "result_sha256": "e0f738ec3a53e531047b01a76d1ba96b029169c0b6231077a6520fa35d00872f",
+        "input_sha256": "dc306782feb83253c79d4b50132bb587b712ed837402566295302bf0dd30be0d"
+      },
+      {
+        "entry": "HudTestDoc",
+        "run": "52601ca525",
+        "origin": "build/m47/final-presentation-06",
+        "unchanged_test_sha256": "e9127157922cbbba29dfaeba516e48d58e4694548a549fb13d6f0f40196fbbfc",
+        "driver_classes_sha256": "314604b324b1e1997c96e787999a34222921110b10fd37ec25e45c5ffc2cfd42",
+        "result_sha256": "56f89688017f22a4b9d101ad858cd85a1186f3158175f7855893879eabb4780b",
+        "input_sha256": "26b6168f9bda29efa1492de51e4bfb9f85eafa4e2cfc167b2fa142a86377b350"
+      },
+      {
+        "entry": "FastHeldTestDoc",
+        "run": "bef1c63bb8",
+        "origin": "build/m47/final-presentation-06",
+        "unchanged_test_sha256": "6e30a64c0781a73908cbd309be478ce80e085505f9785914f85af7dd20968e03",
+        "driver_classes_sha256": "4d49c6d8f16f35859e86e8951b69ad0987cac0691c7f11423deabd011c0c187f",
+        "result_sha256": "372a478c0d6a844d31f2ab26c4c9a490aea2b8faa315f06c92cc973ca9ce50a6",
+        "input_sha256": "90910f7f7d4102539466389c515cb00f96365586a7e9a6b4cc42d8eef1562412"
+      },
+      {
+        "entry": "WeaponAngleTestDoc",
+        "run": "50605d6f47",
+        "origin": "build/m47/final-presentation-06",
+        "unchanged_test_sha256": "39d92e6255cd347bfe26bb38464c74f783e6a625c3f0078e2739f6054dc0b147",
+        "driver_classes_sha256": "e5b5e97091e1ebe159d838ecb4be5e14d537b023bb9c7e642c6a91aa6b367435",
+        "result_sha256": "edeb34d2580e5d2ae11152067c8a8ab6fe6bb3578a68fcb419318aee960f049d",
+        "input_sha256": "45472d749bfdd1b1679cd111ab24261762b81c768a655c5914ae29e58232ebbf"
+      }
+    ],
+    "changed_input": [
+      "tests/MirrorMaskRestoreTestDoc.as",
+      "tools/validation/carry_m47_checks.py"
+    ],
+    "old_source_manifest_sha256": "c137c2f5edc130a09b30f29d8f7020c7072066b36ea03f0f07a502a6e0c3d4e4",
+    "new_source_manifest_sha256": "4e2524053ba9e5d550213cdf48c9afbe179e53e2f8e8ef780e155a98e3ba3052",
+    "old_verification_manifest_sha256": "d70621859bcfe12762231aa92dfbd82ebdce4cd54965c0afd2d1c38ba2d632fb",
+    "new_verification_manifest_sha256": "ccedeec00985208552165996749965039eae7647d573681b9ca8873be0ee89be",
+    "controller_sha256": "08d77287ca5100eeb8c3c70782ad6dc7e96d0b44886631c2c6e63bf31fb04726"
+  }
+}

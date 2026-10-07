@@ -77,7 +77,7 @@ package rconnect.game
          return int(r.total);
       }
 
-      public function capture(u:Object):Array
+      public function capture(u:Object,playerDisplay:Boolean=false):Array
       {
          var result:Array=[],list:Array=weaponList(u),current:Object=get(u,"currentWeapon");
          for(var i:int=0;i<list.length;i++)
@@ -92,6 +92,7 @@ package rconnect.game
             }
             result.push({stream:hostShots[w].stream,slot:i,id:String(get(w,"id")),variant:int(get(w,"variant")),main:w===current,events:events,
                sampleTime:frameTime>0?frameTime:getTimer(),aura:TelekinesisVisuals.captureWeapon(w),
+               display:playerDisplay?WeaponDisplay.capture(u,w):null,
                shots:count,ox:Number(get(w,"X"))-Number(get(u,"X")),
                oy:Number(get(w,"Y"))-Number(get(u,"Y")),rot:Number(get(w,"rot")),
                prep:int(get(w,"t_prep")),reload:int(get(w,"t_reload")),

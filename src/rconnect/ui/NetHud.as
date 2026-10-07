@@ -31,6 +31,8 @@ package rconnect.ui {
       private var nickLabel:TextField,ipLabel:TextField,portLabel:TextField,liveLabel:TextField;
       private var peerLabel:TextField,healthLabel:TextField,peerHint:TextField,chatHint:TextField;
       private var policyLabel:TextField,policyHint:TextField,versionLabel:TextField;
+      private var opacityLabel:TextField,opacityValue:TextField,opacityLess:TextField,opacityMore:TextField;
+      private var opacityPercent:int=100;
       private var _btnHost:TextField,_btnJoin:TextField,_btnLeave:TextField,_btnSend:TextField;
       private var _btnExploration:TextField,_btnFollow:TextField,_btnTeleport:TextField;
       private var _btnPauseMenus:TextField,_btnPauseSats:TextField,_pauseBanner:TextField;
@@ -168,11 +170,17 @@ package rconnect.ui {
          chatHint=field("rconnect-chat-hint","chat",8,129,264,20);
          action(_btnSend,function():void {sendChat();});
 
-         policyLabel=field("rconnect-policy-owner","settings",8,8,264,24);
-         _btnPauseMenus=field("rconnect-pause-menus","settings",8,36,264,30,true);
-         _btnPauseSats=field("rconnect-pause-sats","settings",8,72,264,30,true);
-         policyHint=field("rconnect-policy-hint","settings",8,110,264,40);
-         versionLabel=field("rconnect-version","settings",8,154,264,38);
+         opacityLabel=field("rconnect-opacity-label","settings",8,8,144,28);
+         opacityLess=field("rconnect-opacity-less","settings",154,8,28,28,true);opacityLess.text="−";
+         opacityValue=field("rconnect-opacity-value","settings",185,10,54,26);opacityValue.text="100%";
+         opacityMore=field("rconnect-opacity-more","settings",244,8,28,28,true);opacityMore.text="+";
+         action(opacityLess,function():void {setOpacity(opacityPercent-10);});
+         action(opacityMore,function():void {setOpacity(opacityPercent+10);});
+         policyLabel=field("rconnect-policy-owner","settings",8,48,264,24);
+         _btnPauseMenus=field("rconnect-pause-menus","settings",8,76,264,30,true);
+         _btnPauseSats=field("rconnect-pause-sats","settings",8,112,264,30,true);
+         policyHint=field("rconnect-policy-hint","settings",8,150,264,40);
+         versionLabel=field("rconnect-version","settings",8,194,264,38);
          action(_btnPauseMenus,function():void {
             if(mod.session.pause!=null)mod.session.pause.setPolicy(!mod.session.pause.policyMenus,mod.session.pause.policySats);
          });
@@ -186,6 +194,12 @@ package rconnect.ui {
       public function get unreadCount():int {return unread;}
       public function get panelWidth():Number {return box.w;}
       public function get panelHeight():Number {return box.h;}
+      public function get windowOpacity():int {return opacityPercent;}
+      public function setOpacity(percent:Number):void {
+         if(!isFinite(percent))return;
+         opacityPercent=Math.max(30,Math.min(100,Math.round(percent)));
+         alpha=opacityPercent/100;refresh();savePreferences();
+      }
       public function openPage(id:String,focusChat:Boolean=false):void {
          if(["connect","peer","chat","settings"].indexOf(id)<0)return;
          releaseFocus();page=id;folded=false;help=false;visible=true;scroll=0;
@@ -210,12 +224,15 @@ package rconnect.ui {
             if(d.x!=null && isFinite(Number(d.x)))preferredX=Number(d.x);
             if(d.y!=null && isFinite(Number(d.y)))preferredY=Number(d.y);
             if(d.collapsed is Boolean)folded=d.collapsed;
+            if(d.opacity!=null && isFinite(Number(d.opacity)))
+               opacityPercent=Math.max(30,Math.min(100,Math.round(Number(d.opacity))));
+            alpha=opacityPercent/100;
          } catch(e:*) {}
       }
       private function savePreferences():void {
          if(prefs==null)return;
          try {prefs.data.dock=dock;prefs.data.x=preferredX;prefs.data.y=preferredY;
-            prefs.data.collapsed=folded;prefs.flush();} catch(e:*) {}
+            prefs.data.collapsed=folded;prefs.data.opacity=opacityPercent;prefs.flush();} catch(e:*) {}
       }
       private function enabled(t:TextField,on:Boolean):void {
          t.mouseEnabled=on;t.tabEnabled=on;t.alpha=on?1:.55;
@@ -286,6 +303,9 @@ package rconnect.ui {
          _btnSend.text=tr("发送","Send","Отпр.");enabled(_btnSend,connected);enabled(tfChat,connected);
          chatHint.text=connected?tr("Enter 发送 · Esc 收起","Enter: send · Esc: close","Enter: отправить · Esc: свернуть"):
             tr("连接后可聊天，已有记录保留。","Connect to chat; history is retained.","Войдите для чата. История сохранена.");
+         opacityLabel.text=tr("窗口不透明度","Window opacity","Непрозрачность");
+         opacityValue.text=opacityPercent+"%";
+         enabled(opacityLess,opacityPercent>30);enabled(opacityMore,opacityPercent<100);
          policyLabel.text=pause==null || pause.canChangePolicy?
             mode==Session.OFFLINE?tr("离线预设","Offline presets","Настройки офлайн"):tr("由你设置","Host settings","Настройки ведущего"):
             tr("宿主设置 · 只读","Host settings · read only","Настройки ведущего · только чтение");
@@ -345,9 +365,9 @@ package rconnect.ui {
             if(f==statusTf)item.renderH=noteHeight;
             if(f==_btnHost || f==_btnJoin || f==_btnLeave)item.renderY=85+noteHeight+4;
             if(f==policyLabel)item.renderH=24+ownerExtra;
-            if(item.page=="settings" && f!=policyLabel)item.renderY+=ownerExtra;
+            if(item.page=="settings" && item.y>48)item.renderY+=ownerExtra;
             if(f==policyHint)item.renderH=policyHeight;
-            if(f==versionLabel)item.renderY=Math.max(154,110+policyHeight+4)+ownerExtra;
+            if(f==versionLabel)item.renderY=Math.max(194,150+policyHeight+4)+ownerExtra;
             if(f==peerHint || f==helpText)item.renderH=Math.max(item.h,f.textHeight+6);
             if(help?item.page=="help":item.page==page || item.page=="live" && page=="connect" && active)
                pageHeight=Math.max(pageHeight,item.renderY+item.renderH+8);
@@ -453,6 +473,14 @@ package rconnect.ui {
                else collapse();
             }
             e.stopImmediatePropagation();return;
+         }
+         if(visible && !folded && !help && page=="settings" && surface!=null &&
+            (surface.focus===opacityLess || surface.focus===opacityMore) &&
+            [37,39,36,35,13,32].indexOf(e.keyCode)>=0) {
+            clearControls();
+            setOpacity(e.keyCode==36?30:e.keyCode==35?100:opacityPercent+
+               (e.keyCode==37 || (e.keyCode==13 || e.keyCode==32) && surface.focus===opacityLess?-10:10));
+            blockedKeys[e.keyCode]=true;e.stopImmediatePropagation();return;
          }
          // A fresh native key-down supersedes an older swallowed UI key-down.
          // Its later key-up must reach Ctr and clear that new native state.

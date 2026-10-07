@@ -29,6 +29,8 @@ package {
       private var nativeMass:Number,nativeLimit:Number,observedRelease:Boolean=false;
       private var pauseRef:Object,pausedSamples:int=0,pauseStill:int=0,menuClosed:Boolean=false;
       private var releaseBefore:Object,releaseCount:int=0;
+      private var aimSamples:int=0,aimMatched:int=0;
+      private var arenaObjects:Array=[];
       public function EnemyGrabTestDoc() {
          var id:String=NativeApplication.nativeApplication.applicationID;
          if(id.indexOf("rconnect-coop-")<0)return;
@@ -70,6 +72,40 @@ package {
          if(target==null || target.vis==null)return false;
          for each(var f:Object in target.vis.filters)if(f is GlowFilter)return true;return false;
       }
+      private function arena():Object {
+         var l:Object=mod.game.loc,best:Object=null;
+         // Native floor/air tiles stay intact. Scene fixtures must not block
+         // upward movement or supply an unrelated moving platform.
+         for(var y:int=200;y<Number(l.limY)-40;y+=40)for(var x:int=80;x<Number(l.limX)-300;x+=40) {
+            var clear:Boolean=true;
+            for(var ix:int=-20;ix<=280 && clear;ix+=20) {
+               if(l.getAbsTile(x+ix,y+1).phis!=1){clear=false;break;}
+               for(var iy:int=20;iy<=200;iy+=20)if(l.getAbsTile(x+ix,y-iy).phis!=0){clear=false;break;}
+            }
+            if(clear) {
+               var remove:Array=[];
+               for each(var o:Object in l.objs)
+                  if(o.X2>x-40 && o.X1<x+300 && o.Y2>y-220 && o.Y1<y+40)
+                     remove.push({id:GameBridge.probe(o,"id"),bx:GameBridge.probe(o,"begX"),by:GameBridge.probe(o,"begY")});
+               if(best==null || remove.length<best.remove.length)best={x:x,y:y,remove:remove};
+               if(remove.length==0)return best;
+            }
+         }
+         if(best!=null)return best;
+         throw new Error("No native clear/floored enemy-grab arena");
+      }
+      private function clearArena():void {
+         var l:Object=mod.game.loc;
+         for each(var s:Object in arenaObjects)for each(var o:Object in l.objs.concat()) {
+            if(GameBridge.probe(o,"id")!=s.id || GameBridge.probe(o,"begX")==null
+               || Math.abs(Number(GameBridge.probe(o,"begX"))-Number(s.bx))>1
+               || Math.abs(Number(GameBridge.probe(o,"begY"))-Number(s.by))>1)continue;
+            l.remObj(o);l.objs.splice(l.objs.indexOf(o),1);
+            var u:Object=GameBridge.probe(o,"un"),i:int=l.units.indexOf(u);
+            if(i>=0)l.units.splice(i,1);
+         }
+         Log.d("ENEMY GRAB ARENA "+JSON.stringify({role:host?"host":"join",x:baseX,y:baseY,tiles:"native unchanged"}));
+      }
       private function player():void {
          var g:Object=mod.game.gg;
          if(!((round==11 || round==12) && acted && !menuClosed))mod.game.forceCloseOverlays();
@@ -82,6 +118,7 @@ package {
          localDone=peerDone=acted=opposed=observedRelease=false;lastHold=lastRelease=null;
          pauseRef=null;pausedSamples=pauseStill=0;menuClosed=false;
          releaseBefore=null;releaseCount=0;
+         aimSamples=aimMatched=0;
          if(host && round>=11)mod.session.pause.setPolicy(round==11,false);
          var g:Object=mod.game.gg;
          if(g.teleObj!=null)g.dropTeleObj();
@@ -92,6 +129,7 @@ package {
          g.pers.throwForce=12;g.pers.throwDmagic=2;g.pers.throwDmanaMult=0;g.pers.spellsPoss=1;
          if(host){target.levit=0;target.dx=target.dy=0;target.levit_r=0;target.t_throw=0;
             target.massa=round==6?1100:nativeMass;target.levit_max=round==3?18:nativeLimit;
+            target.walk=0;target.isFly=false;target.isLaz=0;
             target.levitPoss=round!=7;target.setPos(baseX+110,baseY);target.disabled=false;}
          Log.d("ENEMY GRAB CASE "+CASES[round]+" "+(host?"host":"join"));
       }
@@ -109,7 +147,9 @@ package {
       private function drive(e:Event):void {
          if(phase=="done" || phase=="disconnected" || mod.game.gg==null)return;
          var b:Object=mod.game,g:Object=b.gg;player();
-         g.celX=baseX+110;g.celY=baseY-160;b.loc.celDist=0;
+         // Native actions reads World.cel again. Setting only the caster's
+         // fields sends it toward the ambient mouse instead of this lift input.
+         g.celX=b.world.celX=baseX+110;g.celY=b.world.celY=baseY-160;b.loc.celDist=0;
          if(phase=="holding") {
             var elapsed:int=getTimer()-at;
             if(round==2 && !host && !acted && elapsed>1200) {
@@ -125,7 +165,10 @@ package {
             if((round==9 && !host || round==10 && host) && !opposed && elapsed>800){opposed=true;grab();}
             // Player is disabled solely to pin the caster. Exercise native mana,
             // acceleration and release once, not a replica of their calculations.
-            if(g.teleObj!=null && b.world.allStat==1 && !b.world.onPause && !mod.session.pause.paused)g.actions();
+            if(g.teleObj!=null && b.world.allStat==1 && !b.world.onPause && !mod.session.pause.paused) {
+               g.actions();++aimSamples;
+               if(Math.abs(g.celX-baseX-110)<.001 && Math.abs(g.celY-baseY+160)<.001)++aimMatched;
+            }
          }
          mod.stage.invalidate();
       }
@@ -135,16 +178,19 @@ package {
          if(p.type!="enemy-grab-test")return;
          try {
             if(host && phase=="boot" && p.stage=="ready") {
-               baseX=mod.game.gg.X;baseY=mod.game.gg.Y;player();
+               var a:Object=arena();baseX=a.x;baseY=a.y;arenaObjects=a.remove;clearArena();player();
                var c:Class=mod.main.loaderInfo.applicationDomain.getDefinition("fe.unit.UnitRaider") as Class;
                target=new c("1",10,<unit weap="lmg"/>,null);target.id="rconnect_grab_fixture";
                target.putLoc(mod.game.loc,baseX+110,baseY);mod.game.loc.addObj(target);mod.game.loc.units.push(target);
                target.invulner=true;target.doop=true;target.xp=0;nativeMass=target.massa;nativeLimit=target.levit_max;
+               // Native UnitRaider.controlOn skips autonomous AI while its
+               // inherited step still runs forces/run/actions and resistance.
+               target.controlOn=false;
                mod.stage.addEventListener(Event.ENTER_FRAME,drive,false,-6000);
                mod.stage.addEventListener(Event.ENTER_FRAME,observe,false,98000);
-               phase="prepared";at=getTimer();send("setup",{x:baseX,y:baseY});
+               phase="prepared";at=getTimer();send("setup",{x:baseX,y:baseY,remove:arenaObjects});
             } else if(!host && p.stage=="setup") {
-               baseX=p.x;baseY=p.y;player();phase="find";at=getTimer();
+               baseX=p.x;baseY=p.y;arenaObjects=p.remove;clearArena();player();phase="find";at=getTimer();
                mod.stage.addEventListener(Event.ENTER_FRAME,drive,false,-6000);
                mod.stage.addEventListener(Event.ENTER_FRAME,observe,false,98000);
             } else if(host && p.stage=="prepared") {start(0);send("round",{round:0});}
@@ -173,6 +219,8 @@ package {
             if(phase=="boot" && !host && getTimer()-readyAt>500){readyAt=getTimer();send("ready");}
             if(phase=="find") {target=find();if(target!=null){phase="prepared";send("prepared");}}
             if(phase=="settle" && getTimer()-at>1400) {
+               check(Math.abs(target.X-baseX-110)<1 && Math.abs(target.Y-baseY)<1,
+                  "fixture settled on native floor before grab x="+target.X+" y="+target.Y);
                if(holder())grab(round<6 || round>8);
                phase="holding";at=getTimer();initialY=target.Y;minY=initialY;
             }
@@ -195,6 +243,7 @@ package {
                   if(!negative)check(minY<initialY-(transient?1:35),"enemy actually lifts rise="+(initialY-minY));
                   if(!negative && !transient)check(glowing>samples/2,"native glow remains during hold");
                   if(negative)check(mod.game.gg.teleObj==null,"native restriction never creates a hold");
+                  if(negative)check(minY>=initialY-.01,"ineligible control has no unrelated upward movement");
                   if(round==2 && host)check(thrown>0 && lastRelease!=null && lastRelease.kick!=null,"native throw reaches authority");
                   if(round==3 || round==5)check(observedRelease && target.levit==0,"native resistance/mana ends hold");
                   if(round==9 || round==10)check((mod.game.gg.teleObj===target)==holder(),"first accepted caster retains ownership");
@@ -206,6 +255,7 @@ package {
                   }
                   if(round==12)check(target.levit==0 && mod.game.gg.teleObj==null,"local-only menu releases remote grip");
                   if(holder() && !negative && !transient)check(mod.game.gg.mana<initialMana,"native sustained mana consumed");
+                  if(holder() && !negative)check(aimSamples>0 && aimMatched==aimSamples,"native actions retains intended lift input");
                   Log.d("ENEMY GRAB SAMPLE role="+(host?"host":"join")+" case="+CASES[round]+" levit="+lifted+" samples="+samples+" held="+held+" rise="+(initialY-minY));
                   phase="sampled";localDone=true;send("sampled");if(host && peerDone)releaseRound();
                }

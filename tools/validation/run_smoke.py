@@ -7,7 +7,7 @@ def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
 def read(p):return json.loads(p.read_text(encoding='utf-8-sig'))
 ap=argparse.ArgumentParser();ap.add_argument('--snapshot',type=Path);args=ap.parse_args()
 if args.snapshot:
-    OUT=args.snapshot.resolve();assert OUT.parent==ROOT/'build/m46' and OUT.name.startswith('final')
+    OUT=args.snapshot.resolve();assert OUT.parent in (ROOT/'build/m46',ROOT/'build/m47') and OUT.name.startswith('final')
     receipt=OUT/'deployment.json'
 else:receipt=ROOT/'build/m46/deployment.json'
 d=read(receipt);OUT=ROOT/d['snapshot'];target=ROOT/'release/RConnectMod.swf'
@@ -38,7 +38,8 @@ try:
             assert bad not in s,(role,bad)
         if role=='join':assert 'welcome id=' in s and 'unitsync matched' in s
         record['log_sha256'][role]=sha(p)
-    evidence=read(ROOT/'knowledge/experiments/m46-validation-evidence.json')
+    milestone='m47' if d['version']=='0.2.19-dev' else 'm46'
+    evidence=read(ROOT/('knowledge/experiments/'+milestone+'-validation-evidence.json'))
     for name,digest in evidence['protected']['hashes'].items():assert sha(GAME/name)==digest,name
     assert sha(target)==d['sha256']
     verify_protected(read(OUT/'source-input.json'),own_release=d['sha256'])

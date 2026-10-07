@@ -580,8 +580,9 @@ package rconnect.game
          var cw:Object = probe(gg, "currentWeapon");
          s.wi = cw != null ? String(probe(cw, "id")) : "";
          s.wv = cw != null ? int(numOr(probe(cw, "variant"), 0)) : 0;
-         s.weapons=_presentation.capture(gg);
+         s.weapons=_presentation.capture(gg,true);
          s.tele=readHeldVisual();
+         s.heldMotion=readHeldMotion();
          // M16：本机当前姿态标签（vis.osn.currentLabel）——让远端幽灵直接
          // 播放对方真实姿态（站/走/跑/蹲/趴都由对方游戏决定，不再本地猜测）
          s.pose = localPoseLabel();
@@ -644,6 +645,7 @@ package rconnect.game
             return;
          }
          var ghost:Object = rec.ghost;
+         receiveHeldMotion(snap.heldMotion, snap.sampleTime);
          if(ghost != null)
          {
             // 化身被游戏移除（坠出地图/焚毁等）→ 重建
@@ -743,6 +745,63 @@ package rconnect.game
             _telekinesis.hold(id,o,held==null?null:held.style);
          }
          _telekinesis.tick(loc,probe(gg,"teleObj"),!_mirroring,remotelyHeldObject);
+      }
+
+      private var _heldSender:Object;
+      private var _heldFast:Dictionary=new Dictionary();
+
+      /** Only the active object enters the 20 Hz player channel. Full scene,
+       * loot arbitration and enemy grip remain on their established paths. */
+      private function readHeldMotion():Object {
+         var o:Object=probe(gg,"teleObj"),now:int=getTimer(),kind:String="box",key:String="";
+         if(o!=null && probe(o,"loc")===loc && grabBody(o)==null && boxHeldLocally(o)) {
+            _objects.enter(loc);key=_objects.known(o);
+            if(key=="") {
+               kind="loot";
+               var keys:Dictionary=_mirroring?_lootKeyOfJ:_lootIdOf;
+               if(keys!=null && keys[o]!=null)key=String(keys[o]);
+            }
+            if(key!="")_heldSender={o:o,k:key,kind:kind,until:now+500};
+         }
+         if(_heldSender==null)return null;
+         o=_heldSender.o;
+         if(probe(o,"loc")!==loc || probe(o,"in_chain")!=true || now>int(_heldSender.until)) {
+            _heldSender=null;return null;
+         }
+         return {kind:_heldSender.kind,k:_heldSender.k,q:boxHeldLocally(o),
+            x:numOr(probe(o,"X"),0),y:numOr(probe(o,"Y"),0),
+            dx:numOr(probe(o,"dx"),0),dy:numOr(probe(o,"dy"),0),f:numOr(probe(o,"fracLevit"),0)};
+      }
+
+      private function receiveHeldMotion(s:Object,stamp:*):void {
+         if(s==null || !isFinite(Number(stamp)))return;
+         var o:Object=s.kind=="box"?_objects.lookup(String(s.k)):
+            s.kind=="loot"?_lootObjOf[String(s.k)]:null;
+         if(o==null || probe(o,"loc")!==loc || probe(o,"in_chain")!=true || boxHeldLocally(o))return;
+         var previous:Object=_heldFast[o];
+         if(previous!=null && getTimer()<int(previous.until) && Number(stamp)<Number(previous.stamp))return;
+         _heldFast[o]={stamp:Number(stamp),until:getTimer()+1500,q:s.q===true};
+         if(s.kind=="box") {
+            trackBoxPos(o,Number(s.x),Number(s.y),s.q===true,true,numOr(s.dx,0),numOr(s.dy,0),int(numOr(s.f,0)),stamp,50);
+         } else if(s.q===true) {
+            var key:String=String(s.k),rec:Object=_lootMotion[key];
+            if(rec==null || rec.fast!==true)rec=_lootMotion[key]={o:o,motion:new RemoteMotion(50),fast:true};
+            rec.remoteHeld=true;rec.until=presentationTime()+1500;
+            o.levit=0;o.osnova=null;o.stay=true;o.dx=o.dy=0;
+            (rec.motion as RemoteMotion).push({x:Number(s.x),y:Number(s.y),sampleTime:stamp},getTimer());
+         } else {
+            endRemoteLootMotion(String(s.k));placeMovable(o,Number(s.x),Number(s.y));
+            o.dx=numOr(s.dx,0);o.dy=numOr(s.dy,0);o.stay=false;
+            _lootPos[String(s.k)]={x:Number(o.X),y:Number(o.Y)};
+         }
+      }
+
+      private function heldSlowBlocked(o:Object,stamp:*,held:Boolean):Boolean {
+         var r:Object=_heldFast[o];
+         if(r==null || getTimer()>int(r.until))return false;
+         // The slower full-scene echo cannot reset the faster playback clock,
+         // rewind position, or resurrect a hold preceding its release edge.
+         return r.q===true || held && Number(stamp)<=Number(r.stamp);
       }
 
       private function remotelyHeldObject(o:Object):Boolean
@@ -890,13 +949,14 @@ package rconnect.game
       private function syncRemoteWeapon(ghost:Object, snap:Object, id:int):void
       {
          var wi:String = snap.wi != null ? String(snap.wi) : "";
-         if(_weaponId[id] != null && _weaponId[id] == wi)
+         var token:String=wi+":"+int(numOr(snap.wv,0));
+         if(_weaponId[id] != null && _weaponId[id] == token)
          {
             return;
          }
          // 移除旧武器
          removeWeaponVis(id);
-         _weaponId[id] = wi;
+         _weaponId[id] = token;
          if(wi == "")
          {
             return;
@@ -910,7 +970,8 @@ package rconnect.game
             var ad:Object = main["loaderInfo"]["applicationDomain"];
             var wcl:Object = ad["getDefinition"]("fe.weapon.Weapon");
             var wv:int = int(numOr(snap.wv, 0));
-            var w:Object = new (wcl as Class)(ghost, wi, wv);
+            var w:Object = wcl.create(ghost, wi, wv);
+            if(w==null)return;
             ghost["currentWeapon"] = w;
             var wvis:Object = probe(w, "vis");
             if(wvis != null)
@@ -942,6 +1003,12 @@ package rconnect.game
          }
          try
          {
+            for each(var nativeState:Object in snap.weapons as Array)
+               if(nativeState.main===true && nativeState.display!=null) {
+                  var nativeWeapon:Object=probe(ghost,"currentWeapon");
+                  _playerWeaponDisplay.apply(ghost,nativeWeapon,nativeState,presentationTime());
+                  _telekinesis.weapon(nativeWeapon,nativeState.aura);return;
+               }
             var storona:Number = numOr(snap.storona, 1) >= 0 ? 1 : -1;
             var scX:Number = numOr(probe(ghost, "scX"), 30);
             var scY:Number = numOr(probe(ghost, "scY"), 60);
@@ -964,6 +1031,7 @@ package rconnect.game
 
       private function removeWeaponVis(id:int):void
       {
+         _playerWeaponDisplay.forget(probe(probe(_remotes[id],"ghost"),"currentWeapon"));
          _telekinesis.forgetWeapon(probe(probe(_remotes[id],"ghost"),"currentWeapon"));
          var wvis:Object = _weaponVis[id];
          if(wvis != null)
@@ -984,6 +1052,7 @@ package rconnect.game
       }
 
       private var _weaponVis:Object = {};
+      private var _playerWeaponDisplay:WeaponDisplay=new WeaponDisplay();
       private var _weaponId:Object = {};
       private var _weaponSkip:Object = {};
 
@@ -3572,6 +3641,7 @@ package rconnect.game
                   if(lo is RemoteLoot && (lo as RemoteLoot).requested)continue;
                   if(probe(lo,"vsos")==true)continue;
                   if(boxHeldLocally(lo)){delete _lootMotion[k];continue;}
+                  if(heldSlowBlocked(lo,s.sampleTime,true))continue;
                   // Keep explicit local pushes until the owner acknowledges.
                   // Ordinary host movement is buffered and presented each frame.
                   var baseP:Object = _lootPos[k];
@@ -3815,6 +3885,7 @@ package rconnect.game
          for each(var m:Object in o.moved) {
             var moved:Object=_lootObjOf[String(m.k)];
             if(moved==null || boxHeldLocally(moved))continue;
+            if(heldSlowBlocked(moved,m.sampleTime,m.q===true))continue;
             key=String(m.k);
             if(m.q===true) {
                var rec:Object=_lootMotion[key];
@@ -4072,6 +4143,7 @@ package rconnect.game
          _boxPresentAt=0;
          _boxTrack = new Dictionary();
          _boxRemoteQ = new Dictionary();
+         _heldFast=new Dictionary();_heldSender=null;
       }
 
       private function endBoxTween(b:Object):void
@@ -4342,10 +4414,11 @@ package rconnect.game
        *  （本地念力/推挤进行中）时不覆写也不刷新基线——否则宿主旧快照
        *  会把本地移动拽回、上报通道永远发不出。force=true 强制收目标。 */
       private function trackBoxPos(b:Object, x:Number, y:Number,
-         held:Boolean, force:Boolean = false,vx:Number=0,vy:Number=0,fraction:int=0,stamp:*=null):void
+         held:Boolean, force:Boolean = false,vx:Number=0,vy:Number=0,fraction:int=0,stamp:*=null,intervalMs:int=200):void
       {
          try
          {
+            if(intervalMs!=50 && heldSlowBlocked(b,stamp,held))return;
             // q=true renews an existing grab as well as starting a new one.
             // Remember only received player intent: an old renewal cannot
             // evict a newer native caster. A release followed by a new grab can.
@@ -4380,7 +4453,8 @@ package rconnect.game
                // Native enemy findBox excludes levitating boxes. A live remote
                // grip owns this physics flag, independently of the local caster.
                b["levit"]=1;
-               if(tween==null || tween.q!=true)tween=_boxTween[b]={q:true,motion:new RemoteMotion(200)};
+               if(tween==null || tween.q!=true || intervalMs==50 && tween.fast!==true)
+                  tween=_boxTween[b]={q:true,motion:new RemoteMotion(intervalMs),fast:intervalMs==50};
                tween.until=presentationTime()+1500;
                (tween.motion as RemoteMotion).push({x:x,y:y,sampleTime:stamp},getTimer());
                b["fracLevit"]=fraction;

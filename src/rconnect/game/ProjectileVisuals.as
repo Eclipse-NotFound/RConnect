@@ -78,10 +78,8 @@ package rconnect.game {
                   if(!rec.beam)createVisual(rec);
                   active.push(rec);
                   if(active.length>160)remove(0);
-                  if(player) {
-                     var w:Object=GameBridge.probe(owner,"currentWeapon"),v:MovieClip=GameBridge.probe(w,"vis") as MovieClip;
-                     if(v!=null)for each(var label:Object in v.currentLabels)if(label.name=="shoot"){v.gotoAndPlay("shoot");break;}
-                  }
+                  // Player muzzle animation is consumed by WeaponDisplay on
+                  // the same buffered sample as gun identity, flip and aim.
                } catch(e:*) {if(!errors[String(s.cls)]){errors[String(s.cls)]=true;Log.d("RConnectGame: projectile visual "+s.cls+" failed: "+e);}}
             }
             channel.last=last;

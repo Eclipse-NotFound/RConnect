@@ -26,7 +26,7 @@ package
    public class RConnectMod
    {
       // Working M46 core after the separate 0.2.17 compact HUD release.
-      public static const VERSION:String = "0.2.18-dev";
+      public static const VERSION:String = "0.2.19-dev";
 
       public static var instance:RConnectMod;
 

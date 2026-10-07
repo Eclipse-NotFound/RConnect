@@ -94,6 +94,7 @@ package {
          var h:NetHud=mod.hud,w:Object=mod.game.world,ctr:Object=w.ctr,t:TextField;
          if(n==0) {
             check(h.collapsed && h.panelHeight==36,"fresh preferences default to 36-unit strip");
+            check(h.windowOpacity==100 && h.alpha==1,"fresh opacity defaults to 100 percent");
             check(h.tfChat.defaultTextFormat.size==12,"primary input keeps 12-unit font");
             picture("hud-collapsed");
          } else if(n==1) {
@@ -137,8 +138,20 @@ package {
             key(121);check(!h.visible && mod.stage.focus!==h.tfChat,"F10 hides and releases owned input");
             key(121);check(h.visible && !h.collapsed,"F10 restores prior expanded state");
             h.openPage("settings");
+            click("rconnect-opacity-less");
+            check(h.windowOpacity==90 && Math.abs(h.alpha-.9)<1/256+.00001,"visible opacity control applies immediately within native alpha precision");
+            for(var decrease:int=0;decrease<6;decrease++)click("rconnect-opacity-less");
+            check(h.windowOpacity==30 && !TextField(h.getChildByName("rconnect-opacity-less")).mouseEnabled,"opacity stops at visible 30 percent minimum");
+            click("rconnect-opacity-more");key(39);
+            check(h.windowOpacity==50 && !ctr.keyRight,"focused opacity arrow adjusts without native movement");
+            h.setOpacity(NaN);check(h.windowOpacity==50,"invalid opacity is ignored");
+            key(35);check(h.windowOpacity==100 && !TextField(h.getChildByName("rconnect-opacity-more")).mouseEnabled,"End restores full opacity");
+            h.setOpacity(host?70:40);
+            check(SharedObject.getLocal("RConnectHud","/").data.opacity==(host?70:40),"each role persists its own local opacity");
+            picture("hud-opacity");
          } else if(n>=6 && n<=8) {
             w.lang=["en","ru","tw"][n-6];h.refresh();
+            check(h.windowOpacity==(host?70:40) && h.panelHeight<=240,"opacity remains local without increasing panel height");
             for each(var id:String in ["rconnect-pause-menus","rconnect-pause-sats"]) {
                t=h.getChildByName(id) as TextField;
                check(t.parent===h && t.textWidth<t.width-4,"real native label fits "+w.lang+" "+id);
@@ -153,6 +166,7 @@ package {
             check(saved.dock=="br" && saved.collapsed===false,"UI anchor and expansion persist separately");
             var restored:NetHud=new NetHud(mod.stage,mod);
             check(!restored.collapsed && Math.abs(restored.x-h.x)<1 && Math.abs(restored.y-h.y)<1,"new production HUD restores saved bottom anchor and expansion");
+            check(restored.windowOpacity==(host?70:40) && restored.alpha==h.alpha,"new production HUD restores this player's opacity");
             restored.dispose();
             picture("hud-bottom-expanded");
          } else if(n==10) {
@@ -249,6 +263,7 @@ package {
                if(mod.hud.visible)key(121);
                var b:TextField=mod.stage.getChildByName("rconnect-pause-banner") as TextField;
                check(!mod.hud.visible && b!=null && b.visible && b.text.length>0,"real co-op pause notice survives F10 hiding");
+               check(b!=null && b.alpha==1,"co-op pause notice remains fully opaque independently of HUD opacity");
                picture("hud-pause-hidden");send("pause-ack");change(host?"pause-ack":"wait-resume");
             }
             if(phase=="pause-ack" && pauseAck && shotDone) {

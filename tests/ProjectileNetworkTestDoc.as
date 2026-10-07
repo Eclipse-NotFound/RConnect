@@ -23,6 +23,7 @@ package {
       private var phase:String="boot",at:int=0,ali:Object,oldGun:Object,oldChildren:Object,gun:Object;
       private var nativeClass:String="",visibleFrames:int=0,shotFrames:int=0,shieldFrames:int=0,peak:int=0;
       private var playerChecked:Boolean=false,peerPlayerResult:Object;
+      private var sourceFrames:int=0,sourceShots:int=0;
       public function ProjectileNetworkTestDoc(){var app:String=NativeApplication.nativeApplication.applicationID;if(app.indexOf("rconnect-coop-")<0)return;
          host=app.indexOf("-host-")>=0;t.addEventListener(TimerEvent.TIMER,tick);t.start();addEventListener(Event.ENTER_FRAME,frame);}
       private function check(b:Boolean,s:String):void{Log.d("COOP "+(b?"PASS ":"FAIL ")+"projectile-network "+s);}
@@ -45,7 +46,23 @@ package {
          ali.putLoc(mod.game.loc,mod.game.gg.X+160,mod.game.gg.Y);mod.game.loc.addObj(ali);mod.game.loc.units.push(ali);ali.disabled=true;ali.shithp=300;ali.xp=0;
          gun=ali.currentWeapon;
          check(gun!=null && gun.id=="alilight","fixture uses alicorn's native lightning weapon");mod.game.readUnitsSnapshot();}
-      private function setupPlayer():void{oldGun=mod.game.gg.currentWeapon;oldChildren=mod.game.gg.childObjs;gun=new NativeTestGun(mod.game.gg as Unit);var w:Object=gun;w.setPers(mod.game.gg,mod.game.gg.pers);mod.game.gg.currentWeapon=gun;mod.game.gg.childObjs=[gun];mod.game.readSnapshot();}
+      private function setupPlayer():void {
+         var g:Object=mod.game.gg,c:Object=mod.main.loaderInfo.applicationDomain.getDefinition("fe.weapon.Weapon");
+         oldGun=g.currentWeapon;oldChildren=g.childObjs;gun=c.create(g,"lmg",0);
+         gun.setPers(g,g.pers);gun.addVisual();g.currentWeapon=gun;g.childObjs=[gun];
+         gun.hold=999;gun.precision=0;gun.lvl=0;gun.perslvl=0;gun.recoilUp=0;
+         check(gun.vis!=null && gun.vis.stage!=null,"source gun is staged before native capture");
+         mod.stage.addEventListener(Event.ENTER_FRAME,playerBefore,false,100000);
+         mod.stage.addEventListener(Event.ENTER_FRAME,playerAfter,false,-6000);mod.game.readSnapshot();
+      }
+      private function playerBefore(e:Event):void {
+         if(phase!="players" || gun==null)return;
+         var g:Object=mod.game.gg,w:Object=mod.game.world;
+         g.celX=w.celX=g.X+90;g.celY=w.celY=g.Y-g.scY/2;
+         var cam:Object=w.cam;cam.celX=int(g.celX*cam.scaleV+cam.vx);cam.celY=int(g.celY*cam.scaleV+cam.vy);
+         gun.hold=999;gun.t_reload=0;gun.attack();
+      }
+      private function playerAfter(e:Event):void {if(phase=="players" && gun!=null)gun.step();}
       private function tick(e:TimerEvent):void {
          mod=RConnectMod.instance;if(mod==null || mod.game.gg==null || !mod.session.rooms.ready || mod.session.rooms.busy)return;
          if(host){for each(var l:TcpLink in mod.session.server.clients)watch(l);}else watch(mod.session.link);
@@ -63,8 +80,8 @@ package {
             if(phase=="enemy"&&!host&&getTimer()-at>5500){send("enemy-result",{visible:visibleFrames,peak:peak,shield:shieldFrames});setPhase("wait");}
             if(phase=="shield-off"&&!host&&getTimer()-at>1000){ali=findAli();check(ali!=null&&!CombatStateProbe.shield(ali as Unit).visible,"depleted alicorn shield disappears");send("players");setPhase("wait");}
             if(phase=="players") {
-               gun.fireAt({loc:mod.game.loc,X:mod.game.gg.X+90,Y:mod.game.gg.Y,scY:mod.game.gg.scY},true);
                if(getTimer()-at>5500&&!playerChecked){
+                  check(sourceFrames>0 && sourceShots>0,"source gun plays native shoot frames and fires bullets");
                   check(visibleFrames>0 && peak>0,(host?"join":"host")+" player's cosmetic projectile has visible pixels frames="+visibleFrames);
                   check(shotFrames>0,"remote player's gun plays shoot animation frames="+shotFrames);
                   playerChecked=true;
@@ -91,6 +108,10 @@ package {
       }
       private function frame(e:Event):void {
          if(mod==null || (phase!="players" && !(phase=="enemy"&&!host)))return;
+         if(phase=="players" && gun!=null) {
+            sourceShots=Math.max(sourceShots,int(gun.kol_shoot));
+            if(gun.vis!=null && gun.vis.stage!=null && gun.vis.currentLabel=="shoot")sourceFrames++;
+         }
          peak=Math.max(peak,mod.game.projectileVisualCount);
          if(mod.game.projectileVisualCount>0){var layer:DisplayObjectContainer=mod.game.world.grafon.visObjs[2];
             for(var i:int=0;i<layer.numChildren;i++){var v:DisplayObject=layer.getChildAt(i);var cls:String=getQualifiedClassName(v);
@@ -99,6 +120,8 @@ package {
          if(phase=="enemy"){ali=findAli();if(ali!=null&&CombatStateProbe.shield(ali as Unit).visible)shieldFrames++;}
          else {var ghost:Object=mod.game.getRemoteGhost(host?1:0);if(ghost!=null&&ghost.currentWeapon!=null&&ghost.currentWeapon.vis!=null&&ghost.currentWeapon.vis.currentLabel=="shoot")shotFrames++;}
       }
-      private function finish():void{if(phase=="done")return;if(oldGun!=null){mod.game.gg.currentWeapon=oldGun;mod.game.gg.childObjs=oldChildren;}if(host&&ali!=null){mod.game.loc.remObj(ali);var i:int=mod.game.loc.units.indexOf(ali);if(i>=0)mod.game.loc.units.splice(i,1);}setPhase("done");t.stop();Log.d("COOP EFFECTS DONE projectile-network "+(host?"host":"join"));}
+      private function finish():void{if(phase=="done")return;
+         if(mod!=null){mod.stage.removeEventListener(Event.ENTER_FRAME,playerBefore);mod.stage.removeEventListener(Event.ENTER_FRAME,playerAfter);}
+         if(oldGun!=null){gun.remVisual();mod.game.gg.currentWeapon=oldGun;mod.game.gg.childObjs=oldChildren;}if(host&&ali!=null){mod.game.loc.remObj(ali);var i:int=mod.game.loc.units.indexOf(ali);if(i>=0)mod.game.loc.units.splice(i,1);}setPhase("done");t.stop();Log.d("COOP EFFECTS DONE projectile-network "+(host?"host":"join"));}
    }
 }

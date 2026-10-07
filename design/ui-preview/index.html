@@ -51,7 +51,7 @@
      </div>
      <div class="pane" id="pane-coop" role="tabpanel" aria-labelledby="tab-coop"><div class="peer"><span class="peer-name" id="peer-name">浮光 · 不同房间</span><span class="peer-health" id="peer-health">生命 78</span></div><div class="coop-toggles"><button class="switch-small" id="exploration-toggle" aria-pressed="true">共享探索<span class="value on">开</span></button><button class="switch-small" id="follow-toggle" aria-pressed="false">跟随队友<span class="value">关</span></button></div><button class="teleport" id="teleport">传送到队友身边</button><p class="context-hint" id="coop-hint" role="status">同一地图内普通房可跟随或传送。</p></div>
      <div class="pane chat-pane" id="pane-chat" role="tabpanel" aria-labelledby="tab-chat" hidden><div class="chat-history" id="chat-history" role="log" aria-label="聊天记录"><div class="chat-empty">暂无消息。<br>聊天记录只在这一页展开。</div></div><div class="chat-compose"><input id="chat-input" aria-label="聊天内容" placeholder="发给队友…" autocomplete="off" maxlength="300"><button id="send">发送</button></div><div class="chat-help" id="chat-help">Enter 发送 · Esc 收起</div></div>
-     <div class="pane" id="pane-settings" role="tabpanel" aria-labelledby="tab-settings" hidden><div class="settings-head"><span>同步暂停</span><span class="host-label" id="policy-owner">由宿主设置</span></div><div class="setting-row"><span>打开菜单时全队暂停</span><button id="pause-menus-toggle" aria-pressed="false">关</button></div><div class="setting-row"><span>使用 SATS 时全队暂停</span><button id="pause-sats-toggle" aria-pressed="false">关</button></div><p class="context-hint" id="pause-policy-hint">双方都关闭相关界面后，游戏继续。</p><div class="version-line">RConnect 0.2.18-dev · 游戏 1.02</div></div>
+     <div class="pane" id="pane-settings" role="tabpanel" aria-labelledby="tab-settings" hidden><div class="setting-row"><span>窗口不透明度</span><span><button id="opacity-less" aria-label="降低窗口不透明度">−</button> <output id="opacity-value">100%</output> <button id="opacity-more" aria-label="提高窗口不透明度">+</button></span></div><div class="settings-head"><span>同步暂停</span><span class="host-label" id="policy-owner">由宿主设置</span></div><div class="setting-row"><span>打开菜单时全队暂停</span><button id="pause-menus-toggle" aria-pressed="false">关</button></div><div class="setting-row"><span>使用 SATS 时全队暂停</span><button id="pause-sats-toggle" aria-pressed="false">关</button></div><p class="context-hint" id="pause-policy-hint">双方都关闭相关界面后，游戏继续。</p><div class="version-line">RConnect 0.2.19-dev · 游戏 1.02</div></div>
      <div class="hud-footer"><span>拖动标题移位 · F10 隐藏</span><button id="help-trigger" aria-expanded="false" aria-controls="hud-help">说明</button></div>
      <div class="hud-help" id="hud-help" hidden><button id="help-close" aria-label="关闭说明">关闭</button><p>共享探索：关闭后保留已收到的区域。</p><p>跟随队友：队友换普通房时自动跟上。</p><p>暂停开关：离线预设；联机后由宿主设置。</p><p>网页仅演示界面，不会建立真实连接。</p></div>
     </section>
@@ -75,12 +75,12 @@
  'use strict';
  const $ = id => document.getElementById(id), hud=$('hud'), world=$('world'), viewport=$('viewport');
  const storageKey='rconnect-hud-design-preview-v1';
- const state={role:'host',tab:'coop',collapsed:true,hidden:false,exploration:true,follow:false,pauseMenus:false,pauseSats:false,paused:false,unread:0,longName:false,messages:[],dock:'tl',x:8,y:80,w:960,h:600,scale:1,drag:null,travelling:false};
+ const state={role:'host',tab:'coop',collapsed:true,hidden:false,exploration:true,follow:false,pauseMenus:false,pauseSats:false,paused:false,unread:0,longName:false,messages:[],dock:'tl',x:8,y:80,w:960,h:600,scale:1,drag:null,travelling:false,opacity:100};
  let travelTimer=null;
- try{const saved=JSON.parse(localStorage.getItem(storageKey)||'null');if(saved){for(const key of ['exploration','follow','pauseMenus','pauseSats'])if(typeof saved[key]==='boolean')state[key]=saved[key];if(['tl','tr','bl','br','free'].includes(saved.dock))state.dock=saved.dock;if(Number.isFinite(saved.x))state.x=saved.x;if(Number.isFinite(saved.y))state.y=saved.y;}}catch{}
+ try{const saved=JSON.parse(localStorage.getItem(storageKey)||'null');if(saved){for(const key of ['exploration','follow','pauseMenus','pauseSats'])if(typeof saved[key]==='boolean')state[key]=saved[key];if(['tl','tr','bl','br','free'].includes(saved.dock))state.dock=saved.dock;if(Number.isFinite(saved.opacity))state.opacity=Math.max(30,Math.min(100,saved.opacity));if(Number.isFinite(saved.x))state.x=saved.x;if(Number.isFinite(saved.y))state.y=saved.y;}}catch{}
  const connected=()=>state.role==='host'||state.role==='join';
  const activeSession=()=>connected()||state.role==='waiting';
- function save(){try{localStorage.setItem(storageKey,JSON.stringify({exploration:state.exploration,follow:state.follow,pauseMenus:state.pauseMenus,pauseSats:state.pauseSats,dock:state.dock,x:state.x,y:state.y}));}catch{}}
+ function save(){try{localStorage.setItem(storageKey,JSON.stringify({exploration:state.exploration,follow:state.follow,pauseMenus:state.pauseMenus,pauseSats:state.pauseSats,dock:state.dock,x:state.x,y:state.y,opacity:state.opacity}));}catch{}}
  function feedback(text){$('feedback').textContent=text;}
  function hideHelp(){const help=$('hud-help');help.hidden=true;$('help-trigger').setAttribute('aria-expanded','false');}
  function setFeedbackForPreset(){feedback('预览数据；不会创建真实网络连接。');}
@@ -88,6 +88,7 @@
  function setTab(tab,focus=false){state.tab=tab;state.hidden=false;state.collapsed=false;if(tab==='chat')state.unread=0;hideHelp();render();if(focus)requestAnimationFrame(()=>$(tab==='chat'?'chat-input':'tab-'+tab).focus({preventScroll:true}));}
  function toggleValue(id,value){const el=$(id);el.setAttribute('aria-pressed',String(value));if(el.querySelector('.value')){el.querySelector('.value').textContent=value?'开':'关';el.querySelector('.value').classList.toggle('on',value);}else el.textContent=value?'开':'关';}
  function render(){
+  hud.style.opacity=state.opacity/100;$("opacity-value").textContent=state.opacity+"%";$("opacity-less").disabled=state.opacity<=30;$("opacity-more").disabled=state.opacity>=100;
   hud.hidden=state.hidden;hud.classList.toggle('collapsed',state.collapsed);$('expand').textContent=state.collapsed?'展开':'收起';$('expand').setAttribute('aria-expanded',String(!state.collapsed));
   const status={offline:'离线',waiting:'等待队友',host:'宿主 2/2',join:'已加入 2/2',joining:'连接中',error:'连接失败'}[state.role];$('hud-state-text').textContent=state.paused?'已暂停':status;$('dot').className='dot '+(state.paused||state.role==='joining'?'warn':state.role==='error'?'error':connected()?'online':'');
   for(const button of document.querySelectorAll('[data-tab]')){const active=button.dataset.tab===state.tab;button.setAttribute('aria-selected',String(active));button.tabIndex=active?0:-1;$('pane-'+button.dataset.tab).hidden=!active;}
@@ -137,6 +138,7 @@
  $('message-demo').addEventListener('click',()=>{if(state.role==='waiting'){setRole('host');feedback('演示：队友已加入，状态条更新为宿主 2/2。');return;}if(!connected()){feedback('先选择宿主或加入侧状态，再演示收到消息。');return;}addMessage('浮光','我在隔壁房间，等你。');feedback('新消息用角标提示，不会自动展开面板。');});
  $('pause-demo').addEventListener('click',()=>{state.paused=!state.paused;render();feedback(state.paused?'模拟全队暂停。按 F10 隐藏浮窗，暂停原因仍可见。':'模拟恢复游玩。');});
  $('long-name-demo').addEventListener('click',()=>{state.longName=!state.longName;setTab('coop');render();});
+ for(const [id,delta] of [['opacity-less',-10],['opacity-more',10]])$(id).addEventListener('click',()=>{state.opacity=Math.max(30,Math.min(100,state.opacity+delta));render();save();});
  $('dock').addEventListener('change',e=>{state.dock=e.target.value;layout();save();});
  $('restore-hud').addEventListener('click',()=>{state.hidden=false;render();});
  $('help-trigger').addEventListener('click',()=>{const help=$('hud-help');help.hidden=!help.hidden;$('help-trigger').setAttribute('aria-expanded',String(!help.hidden));});$('help-close').addEventListener('click',()=>{hideHelp();$('help-trigger').setAttribute('aria-expanded','false');$('help-trigger').focus({preventScroll:true});});
