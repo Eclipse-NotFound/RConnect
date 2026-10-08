@@ -1,77 +1,72 @@
-# RConnect
+# RConnect — two-player co-op
 
-Two-player online co-op for **Fallout Equestria: REMAINS** — see each other, chat, and fight through the wasteland together, including splitting up across separate rooms of the same map.
+**English** · [简体中文](README.zh-CN.md)
 
-English (this page) · [简体中文](README.zh-CN.md)
+Explore the wasteland with a friend: see each other, chat, fight together, or split up across ordinary rooms on the same map.
 
-> Current local candidate: **0.2.20-dev**, deployed 2026-10-08. Telekinetic movement now changes speed more smoothly, active container drops update faster, and shared SATS pause settles enemy positions and targeting overlays before resuming. Per-player window opacity and native weapon flips remain. Seventeen checks passed **1880 assertions** on the same candidate, followed by normal-loader smoke; see the [release record](state/deployment-m48-2026-10-08.md). Real mouse/Chinese IME use, hidden-room control loss/enemy respawn and dense-combat stutter remain open. Validated on game 1.02 with two local players.
->
-> For local co-op, save and close both games, then use **[Start-Coop.bat](Start-Coop.bat)**. It keeps only the processes it starts responsive in the background and preserves each character's saves. This may use more power. Large encounters can still stutter. The current validation does not establish a general frame-rate improvement.
->
-> Launcher fix (2026-10-04): the second window now uses a manual profile that avoids unintended automatic test gameplay. Its first launch copies the old second character's saves and settings, retaining the originals; later launches preserve its own progress. The native save list opens automatically; choose the character to continue. Both windows load the current mods from the same game directory. [Local co-op details](docs/local-coop.md)
+**[Download v0.2.8 — RConnect_v0.2.8.zip](https://github.com/Eclipse-NotFound/RConnect/releases/download/v0.2.8/RConnect_v0.2.8.zip)** · [Release notes / other versions](https://github.com/Eclipse-NotFound/RConnect/releases)
 
-## Features
+Use the download link above, or open the release page, expand **Assets**, and select that filename. **Source code** and the green **Code → Download ZIP** button are development files, not the installable package.
 
-- Native enemy levitation and throwing from either player, with native eligibility, mana and resistance; room handoffs and disconnects release remote holds.
-- Optional **shared menu pause** and **shared SATS pause** in the Settings tab. Both default off and are set by the host. Either player pauses both rooms; combat resumes after both close the relevant interfaces. Menus, chat and SATS targeting remain usable. The pause notice stays visible when F10 hides the panel.
+> **The download and development versions differ.** The public package is **0.2.8**, and the instructions below match it. Newer source records do not imply a newer download. The compact tabbed panel, Ctrl+Enter chat and shared menu/SATS pause are later features, not part of this package.
 
-- One player **hosts**, the other **joins** (3+ untested). The joining side needs no matching save: the host's world is mirrored to them (world injection — missing enemies spawn, extras are removed, state synced at 5 Hz).
-- Players see each other as translucent ghost ponies with floating name tags, walk/run/jump pose animations and **held-weapon display**; remote health shows in the co-op panel.
-- Enemy and teammate movement plays continuously between updates. Native zebra/alicorn camouflage keeps its faint outline and its original targeting restrictions.
-- In-panel **chat** between both sides.
-- Shared ground items: one copy, first collector owns it; container drops can be collected on either side.
-- Shared XP-point rewards and checkpoint unlocks; each player saves their own character.
-- Optional **Follow teammate** switch in the Teammate tab, off by default; follows departures from a shared ordinary room.
-- The native local map shows your teammate as a cyan marker with their name, including other rooms on the same map. **Teleport to teammate** in F10 places you on a clear, supported spot nearby after room handoff; story/challenge areas and different maps still require host-led travel.
-- Player firing/projectile visuals, alicorn lightning and shield state; native turret, mine and griffon perception of the joining player.
-- **Shared exploration** (M31): two-way fog-of-war sharing with an independent toggle on each side; whatever you already received stays when you turn it off.
-- **Separate rooms** (M36): each player advances combat in the room they occupy; when you meet up, the host settles the fight with the joining side's reported damage. Empty rooms pause and keep their progress (enemy damage, deaths, broken walls, doors/containers, drops) until someone returns.
-- **SATS crash fix** (M37): mirrored enemies provide valid targeting visuals and respect invisibility and targeting restrictions. Native target selection and firing remain available; retired room targets are invalidated.
-- **Combat and animation fixes** (M38): restored ghoul collision bounds and resistance data, native player damage calculation for incoming hits, bloodwing flight/rest poses, and immediate door/container updates with confirmation. Weapon aim advances between snapshots.
-- Enemy state broadcast by the host every 200 ms with client-side smoothing; story and challenge areas are entered together, host leads map transitions.
-- Optional auto-reconnect (test configuration).
-- Works alongside RealisticVision (remote vision respects your local vision settings; shared exploration integrates with it).
+## Before you start
 
-## Requirements
-
-- Fallout Equestria: REMAINS (1.02) on **both** machines.
-- The one-time **ModLoader** game patch on **both** machines — see
-  [ModLoader Releases](https://github.com/Eclipse-NotFound/ModLoader/releases) → `Remains-GamePatch`.
+- Each player needs **Windows / Remains 1.02** and the **same RConnect version**.
+- Start with two computers on the same local network. Internet play, reliable reconnection and three or more players are not guaranteed.
+- One player hosts, the other joins. Each saves their own character; you do not need identical save files.
 
 ## Install
 
-1. Download a published RConnect package from [Releases](../../releases). The local candidate noted above has not been published by this update.
-2. Copy the zip's `mods` folder into your game root (next to `pfe.swf`).
-3. Fully restart the game — a short RConnect status strip appears, initially below the top-left game information. Click ▼ to expand it.
+For **Windows / Remains 1.02**.
 
-## Connecting
+1. Save and close the game. In your Steam Library, right-click Remains → **Manage → Browse local files**. The game folder contains `pfe.swf` and `application.xml`.
+2. If this is your first mod from this collection, complete the [ModLoader first-time setup](https://github.com/Eclipse-NotFound/ModLoader/blob/master/docs/INSTALL.md#first-install), including the game patch and scanner. Skip this if already installed.
+3. Extract the ZIP and **merge its `mods` folder into the game folder**. Avoid a nested `mods/mods` folder.
+4. Double-click **`mods/ModLoader/RemainsModScanner.exe`** inside the game folder. Wait for it to finish, close its message, then launch the game normally.
 
-| Side | `mods/RConnect/release/config.txt` |
-|---|---|
-| Host | keep defaults (`hostIp` = `127.0.0.1`) |
-| Join | set `hostIp` to the host's LAN IP (e.g. `192.168.1.10`) |
+Check that this file exists: `mods/RConnect/release/RConnectMod.swf`. After loading a character, look for the panel with Host / Join buttons; F10 shows or hides it.
 
-Both players then start the game. The host opens the room from the panel; the joiner connects. Port `23456` (configurable) must be allowed through the host's firewall.
+[Folder diagram, updating and recovery](https://github.com/Eclipse-NotFound/ModLoader/blob/master/docs/INSTALL.md)
 
-Click ▼ and open **Connect** to enter your name, address and port, then Host or Join. A successful connection collapses the panel. **Teammate** contains exploration, follow and teleport; **Settings** contains pause policies and the running version. Use the wheel to scroll long text in small windows. **F10** hides/restores the current panel state; **Ctrl+Enter** opens chat during ordinary play, **Enter** sends from its input and **Esc** collapses it. Native menus keep their keyboard priority and Enter keeps its native full-screen function outside chat. Real Chinese IME and hardware mouse use still need player testing.
+**Both players must complete the installation steps.**
 
-> Both sides must update the mod and fully restart the game when versions change. In-game shield damage shows as a blue `S -number`, regular numbers are HP damage.
+## Connect for the first time
 
-## Disable / uninstall
+1. Both players launch the game and load their own characters. Press **F10** if the panel is hidden.
+2. The host enters a nickname, keeps **127.0.0.1** and port **23456**, then clicks **Host**.
+3. The host finds their **IPv4 address** in Windows Settings → Network & Internet → properties for the connected network, and shares it with the other player (for example 192.168.1.10).
+4. The joining player enters a nickname, the **host’s IPv4 address**, and the same port **23456**, then clicks **Join**. 127.0.0.1 means your own computer; it cannot reach another computer.
+5. After connecting, look for your partner’s translucent character and name. Click the chat input, type, and press **Enter** to send.
 
-Set the mod's switches to `0` in `mods/loader-manifest.txt`, or delete `mods/RConnect`. Closing the game keeps vanilla saves — co-op room progress is per-session.
+If Windows Firewall asks, allow the game on your trusted local network; the host must allow the selected port. You do not need to disable the firewall.
 
-## Development notes
+## Playing together
 
-Sources in `src/`, build/tooling in `tools/`; milestone records (`knowledge/experiments/m*.md`, Chinese) document each feature's verification. The old per-mod patch flow described in the Chinese README is superseded by the shared ModLoader game patch.
+- Split up in ordinary rooms; let the host lead map changes, and enter story/challenge areas together.
+- Ground items have one owner: the first player to collect them. XP-point rewards and checkpoint unlocks can be shared.
+- Empty rooms pause and retain progress during the session. This does not add a persistent save of every random-room battle; save characters normally before quitting.
+- Optional shared exploration can also work with RealisticVision’s local view.
 
-## Related mods
+## Connection problems, updates and removal
 
-[ModLoader](https://github.com/Eclipse-NotFound/ModLoader) ·
-[Sandevistan](https://github.com/Eclipse-NotFound/Sandevistan) ·
-[MoreSkillsAndWeapons](https://github.com/Eclipse-NotFound/MoreSkillsAndWeapons) ·
-[TDFC](https://github.com/Eclipse-NotFound/TDFC) ·
-[RealisticVision](https://github.com/Eclipse-NotFound/RealisticVision) ·
-[RandomRooms](https://github.com/Eclipse-NotFound/RandomRooms)
+Check in this order: matching versions and a full restart → host clicked Host first → joiner entered the host’s LAN address → matching ports → host firewall permits the connection. Test on the same LAN first; a failed connection does not mean you need to reinstall the game.
 
-> Fan mod project; not affiliated with the game's authors.
+For updates, both players save and exit, back up `mods/RConnect`, install the same new version, scan and restart. Keep each player’s `release/config.txt`; the old ZIP includes one, so avoid overwriting nicknames, addresses and ports. To disable, move the RConnect folder outside `mods` as a backup, scan and restart.
+
+## Need help?
+
+Check the folder location, run the scanner, and fully restart the game. See the [installation troubleshooting guide](https://github.com/Eclipse-NotFound/ModLoader/blob/master/docs/INSTALL.md#troubleshooting) for common problems.
+
+If it still fails, [report an issue](https://github.com/Eclipse-NotFound/RConnect/issues) with your game version, mod version, other installed mods, steps to reproduce, and what you expected versus what happened. Include a screenshot or exact error if available; a personal save is not needed for an initial report.
+
+<details>
+<summary>Development resources and version differences</summary>
+
+The controls above are based on the [v0.2.8 source](https://github.com/Eclipse-NotFound/RConnect/tree/v0.2.8). Current repository source may contain fixes not yet packaged; see [src/](src/) and [state/](state/).
+
+</details>
+
+[Browse the mod collection](https://github.com/Eclipse-NotFound/ModLoader#choose-mods) · [First-time installation guide](https://github.com/Eclipse-NotFound/ModLoader/blob/master/docs/INSTALL.md)
+
+An unofficial fan project. You need your own copy of the game.
