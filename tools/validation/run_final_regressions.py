@@ -33,15 +33,20 @@ CHECKS = {
     "FastHeldTestDoc": (360, "random_mane", True),
     "WeaponAngleTestDoc": (180, "rbl", False),
     "PresentationContinuityTestDoc": (180, "random_mane", False),
+    "TargetLifecycleTestDoc": (180, "random_mane", False),
+    "RespawnRoomTestDoc": (240, "random_mane", False),
+    "PeerGripTestDoc": (360, "random_mane", False),
 }
 REQUIRED = list(CHECKS)[:13]
 
 def required_entries(manifest):
     expected = REQUIRED + (["HudTestDoc"] if manifest.get("baseline_path") else [])
-    if manifest.get('version') in ('0.2.19-dev', '0.2.20-dev'):
+    if manifest.get('version') in ('0.2.19-dev', '0.2.20-dev', '0.2.21-dev'):
         expected += ['FastHeldTestDoc', 'WeaponAngleTestDoc']
-    if manifest.get('version') == '0.2.20-dev':
+    if manifest.get('version') in ('0.2.20-dev', '0.2.21-dev'):
         expected += ['PresentationContinuityTestDoc']
+    if manifest.get('baseline_path','').startswith('build/m49/'):
+        expected += ['TargetLifecycleTestDoc','RespawnRoomTestDoc','PeerGripTestDoc']
     assert manifest.get("required_entries", expected) == expected, "Incomplete required check list"
     return expected
 
@@ -64,7 +69,7 @@ def main():
     parser.add_argument("--join-save-template", type=Path)
     args = parser.parse_args()
     OUT=args.snapshot.resolve()
-    assert OUT.parent in (ROOT/'build/m46', ROOT/'build/m47', ROOT/'build/m48') and OUT.name.startswith(('final','red-')),OUT
+    assert OUT.parent in (ROOT/'build/m46', ROOT/'build/m47', ROOT/'build/m48', ROOT/'build/m49') and OUT.name.startswith(('final','red-')),OUT
     if args.list:
         manifest = read(OUT / "source-input.json") if (OUT / "source-input.json").exists() else {}
         print(json.dumps({"status": "serial-joint-candidate-validation", "required": required_entries(manifest),
@@ -140,6 +145,11 @@ def main():
             record["white_blocks"] = [item for item in images if item["white_block"] is not None]
             if record["white_blocks"]:
                 record["exit"] = 1
+        if entry == "TargetLifecycleTestDoc" and record["run"]:
+            storage = Path(os.environ['APPDATA']) / ('pfe-modsettings-rconnect-coop-join-' + record["run"]) / 'Local Store'
+            picture = storage / 'target-sats.png'
+            if picture.exists():
+                shutil.copy2(picture, ROOT / 'build/cooperation' / record['run'] / 'join-target-sats.png')
         (OUT / (entry + "-result.json")).write_text(json.dumps(record, indent=2), encoding="utf-8")
         print(json.dumps(record), flush=True)
         if record["exit"]:

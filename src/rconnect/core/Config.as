@@ -19,6 +19,8 @@ package rconnect.core
          tickMs: 50,
          sharedExploration: "1",
          followTeammate: "0",
+         allowPeerGrip: "0",
+         peerGripStruggle: "1",
          pauseMenus: "0",
          pauseSats: "0",
          autoRole: "",

@@ -31,6 +31,7 @@ package {
       private var releaseBefore:Object,releaseCount:int=0;
       private var aimSamples:int=0,aimMatched:int=0;
       private var arenaObjects:Array=[];
+      private var localSettled:Boolean=false,peerSettled:Boolean=false;
       public function EnemyGrabTestDoc() {
          var id:String=NativeApplication.nativeApplication.applicationID;
          if(id.indexOf("rconnect-coop-")<0)return;
@@ -116,6 +117,7 @@ package {
       private function start(n:int):void {
          round=n;phase="settle";at=getTimer();samples=lifted=held=glowing=thrown=0;
          localDone=peerDone=acted=opposed=observedRelease=false;lastHold=lastRelease=null;
+         localSettled=peerSettled=false;
          pauseRef=null;pausedSamples=pauseStill=0;menuClosed=false;
          releaseBefore=null;releaseCount=0;
          aimSamples=aimMatched=0;
@@ -143,6 +145,11 @@ package {
          initialMana=g.mana;
       }
       private function holder():Boolean {return round==0 || round==9 ? host : !host;}
+      private function beginHold():void {
+         if(holder())grab(round<6 || round>8);
+         phase="holding";at=getTimer();
+      }
+      private function beginRound():void {beginHold();send("begin",{round:round});}
       private function observe(e:Event):void {if(phase=="holding" && target!=null && target.t_throw>0)++thrown;}
       private function drive(e:Event):void {
          if(phase=="done" || phase=="disconnected" || mod.game.gg==null)return;
@@ -195,6 +202,8 @@ package {
                mod.stage.addEventListener(Event.ENTER_FRAME,observe,false,98000);
             } else if(host && p.stage=="prepared") {start(0);send("round",{round:0});}
             else if(!host && p.stage=="round")start(int(p.round));
+            else if(p.stage=="settled" && int(p.round)==round) {peerSettled=true;if(host && localSettled && phase=="settled")beginRound();}
+            else if(!host && p.stage=="begin" && int(p.round)==round && phase=="settled")beginHold();
             else if(p.stage=="sampled"){peerDone=true;if(host && localDone)releaseRound();}
             else if(!host && p.stage=="release")releaseRound();
             else if(p.stage=="released"){peerDone=true;if(host && localDone)advance();}
@@ -221,8 +230,10 @@ package {
             if(phase=="settle" && getTimer()-at>1400) {
                check(Math.abs(target.X-baseX-110)<1 && Math.abs(target.Y-baseY)<1,
                   "fixture settled on native floor before grab x="+target.X+" y="+target.Y);
-               if(holder())grab(round<6 || round>8);
-               phase="holding";at=getTimer();initialY=target.Y;minY=initialY;
+               // Both sides must inspect the floor before either starts Q;
+               // otherwise the first native lift invalidates the peer's check.
+               initialY=target.Y;minY=initialY;localSettled=true;phase="settled";
+               send("settled",{round:round});if(host && peerSettled)beginRound();
             }
             if(phase=="holding") {
                ++samples;if(target.levit>0)++lifted;if(mod.game.gg.teleObj===target)++held;

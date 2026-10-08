@@ -28,4 +28,5 @@ internal var visBmp:Bitmap;
 public function Unit(id:String=null,difficulty:Number=100,map:XML=null,data:Object=null) {}
 public function damage(amount:Number,type:int,bullet:Bullet=null,periodic:Boolean=false):Number {return 0;}
 public function die(type:int=0):* {}
+public function step():* {}
 } }

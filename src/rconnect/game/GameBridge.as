@@ -74,6 +74,7 @@ package rconnect.game
       public var freezeAI:Boolean = false;
       public var mapProgress:WorldProgress;
       public var enemyGrip:rconnect.core.EnemyGrip;
+      public var peerGrip:rconnect.core.PeerGrip;
       /** M9：宿主侧客户端幽灵作为可攻击化身（可被打、可被敌人瞄准）。 */
       public var ghostCombat:Boolean = true;
       public function get mirrorsRoom():Boolean {return _mirroring;}
@@ -129,6 +130,7 @@ package rconnect.game
       private var _spawnedPuppets:Dictionary = new Dictionary();
       private var _hitUnits:Dictionary = new Dictionary();
       private var _unitMotion:Dictionary = new Dictionary();
+      private var _satsRasterDirty:Boolean=false;
       private var _pendingHits:Dictionary = new Dictionary();
       private var _forcingVisibility:Boolean = false;
       private var _animatingMirrors:Boolean = false;
@@ -263,6 +265,7 @@ package rconnect.game
          }
          finally {
             _forcingVisibility = false;
+            if(_satsRasterDirty)refreshPausedSatsRaster();
             if(presentationTiming!=null){presentationTiming.viewMs+=getTimer()-measureAt;presentationTiming.viewCalls++;}
          }
       }
@@ -280,7 +283,7 @@ package rconnect.game
          {
             var rec:Object=_remotes[id];
             if(rec.ghost!=null && rec.motion!=null && probe(rec.ghost,"loc")===loc)
-               driveGhost(rec.ghost,rec.motion.sample(presentationTime()),int(id));
+               driveGhost(rec.ghost,coopPaused?rec.motion.settle(presentationTime()):rec.motion.sample(presentationTime()),int(id));
          }
          presentHeldVisuals();
          if(!_mirroring) return;
@@ -582,6 +585,7 @@ package rconnect.game
          s.wv = cw != null ? int(numOr(probe(cw, "variant"), 0)) : 0;
          s.weapons=_presentation.capture(gg,true);
          s.tele=readHeldVisual();
+         if(peerGrip!=null)s.peerGrip=peerGrip.policy();
          s.heldMotion=readHeldMotion();
          // M16：本机当前姿态标签（vis.osn.currentLabel）——让远端幽灵直接
          // 播放对方真实姿态（站/走/跑/蹲/趴都由对方游戏决定，不再本地猜测）
@@ -691,8 +695,10 @@ package rconnect.game
          if(ghost != null)
          {
             if(rec.motion == null) rec.motion = new RemoteMotion();
+            // Consent is current policy, never a delayed animation sample.
+            if(peerGrip!=null)peerGrip.prepareGhost(ghost,snap.peerGrip);
             rec.motion.push(snap,getTimer());
-            driveGhost(ghost, rec.motion.sample(presentationTime()), id);
+            driveGhost(ghost, coopPaused?rec.motion.settle(presentationTime()):rec.motion.sample(presentationTime()), id);
             _projectiles.receive(ghost,snap.weapons as Array,main,true);
             // M20：外观热更——对方换装/换护甲后按 apKey 变化重装视觉
             var ak:String = apKeyOf(snap.ap);
@@ -1503,6 +1509,7 @@ package rconnect.game
             }
             if(snap.x != undefined && snap.y != undefined)
             {
+               if(coopPaused && (Number(ghost.X)!=Number(snap.x) || Number(ghost.Y)!=Number(snap.y)))_satsRasterDirty=true;
                ghost["setPos"](Number(snap.x), Number(snap.y));
             }
             if(snap.dx != undefined)
@@ -1523,11 +1530,10 @@ package rconnect.game
             try
             {
                ghost["sost"] = 1;
-               // M18b/M23：强制不悬浮——幽灵垂直位置只由快照 setPos 决定，
-               // isFly 与 levit 都压掉，防止游戏自身飞行/悬浮物理把幽灵
-               // 带起来（“飞行药水效果”）
+               // The owner still simulates position. Preserve the native
+               // caster's grip marker while its teammate accepts the hold.
                ghost["isFly"] = false;
-               ghost["levit"] = false;
+               ghost["levit"] = peerGrip!=null && peerGrip.locallyHeld(ghost)?1:0;
             }
             catch(err:*)
             {
@@ -6068,12 +6074,14 @@ package rconnect.game
                if(motion != null)
                {
                   var sample:Object=coopPaused?motion.settle(presentationTime()):motion.sample(presentationTime());
+                  if(coopPaused && (u.X!=sample.x || u.Y!=sample.y))_satsRasterDirty=true;
                   u["setPos"](sample.x,sample.y);
                   u["setVisPos"]();
                }
                if(!coopPaused){_presentation.animateBody(u);_presentation.tick(u);}
                var hit:MirrorHitUnit = _hitUnits[u];
                if(hit != null) {_mirrorMasks.prepare(u);hit.syncMotion();if(!coopPaused)hit.tickFeedback();}
+               if(!coopPaused)refreshMirrorCursor(u,hit);
             }
             catch(err:*)
             {
@@ -6082,6 +6090,17 @@ package rconnect.game
          if(coopPaused)syncPausedSatsPositions();
          _animatingMirrors = false;
          if(presentationTiming!=null){presentationTiming.motionMs+=getTimer()-measureAt;presentationTiming.motionCalls++;}
+      }
+
+      /** Frozen bodies skip Unit.step's cursor update. Keep its hit rectangle
+       * current so native Q cannot reuse a released enemy forever. */
+      private function refreshMirrorCursor(u:Object,hit:MirrorHitUnit):void {
+         var inside:Boolean=probe(u,"isVis")==true && probe(u,"trigDis")!=true && Number(u.sost)<3
+            && Number(u.X1)<Number(world.celX) && Number(u.X2)>Number(world.celX)
+            && Number(u.Y1)<Number(world.celY) && Number(u.Y2)>Number(world.celY);
+         u.onCursor=inside?Number(u.prior):0;
+         if(hit!=null)Object(hit).onCursor=u.onCursor;
+         if(!inside && (loc.celObj===u || hit!=null && loc.celObj===hit))loc.celObj=null;
       }
 
       /** SATS copies the target visual on entry. Move that native overlay with
@@ -6094,9 +6113,25 @@ package rconnect.game
             var body:Object=receiver==null?null:receiver.body;
             var vis:Object=probe(body,"vis");
             if(vis!=null && probe(body,"loc")===loc && entry.v!=null) {
+               if(entry.v.x!=vis.x || entry.v.y!=vis.y)_satsRasterDirty=true;
                entry.v.x=vis.x;entry.v.y=vis.y;
             }
          }
+      }
+
+      /** Native SATS also freezes a raster of the room. Refresh after the final
+       * visibility pass when a late stop sample moved the enemy. Hide the old
+       * raster and target overlay while drawing, preserving selections/queues. */
+      private function refreshPausedSatsRaster():void {
+         _satsRasterDirty=false;
+         var sats:Object=probe(world,"sats"),graph:Object=probe(world,"grafon");
+         if(!coopPaused || probe(sats,"active")!=true || graph==null)return;
+         var layer:Object=graph.visObjs[2],raster:Object=graph.visSats,targets:Object=sats.vis;
+         if(layer==null || raster==null || targets==null)return;
+         var lv:Boolean=layer.visible,rv:Boolean=raster.visible,tv:Boolean=targets.visible;
+         try {layer.visible=true;raster.visible=false;targets.visible=false;graph.drawSats();}
+         catch(error:*) {logViewError("sats-raster",error);}
+         finally {layer.visible=lv;raster.visible=rv;targets.visible=tv;}
       }
 
       private var _frozen:Dictionary = new Dictionary();

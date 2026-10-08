@@ -7,7 +7,7 @@ def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
 def read(p):return json.loads(p.read_text(encoding='utf-8-sig'))
 ap=argparse.ArgumentParser();ap.add_argument('--snapshot',type=Path);args=ap.parse_args()
 if args.snapshot:
-    OUT=args.snapshot.resolve();assert OUT.parent in (ROOT/'build/m46',ROOT/'build/m47',ROOT/'build/m48') and OUT.name.startswith('final')
+    OUT=args.snapshot.resolve();assert OUT.parent in (ROOT/'build/m46',ROOT/'build/m47',ROOT/'build/m48',ROOT/'build/m49') and OUT.name.startswith('final')
     receipt=OUT/'deployment.json'
 else:receipt=ROOT/'build/m46/deployment.json'
 d=read(receipt);OUT=ROOT/d['snapshot'];target=ROOT/'release/RConnectMod.swf'
@@ -34,11 +34,11 @@ try:
         for name,digest in r['configuration_files'][role].items():assert sha(folder/'configuration'/role/name)==digest,name
         p=folder/(role+'.log');s=p.read_text(encoding='utf-8-sig')
         assert ('v'+d['version']+' initialized') in s and 'tick 200' in s
-        for bad in ('COOP FAIL','game error dialog','RConnectRoom: ERROR','handoff timed out','RConnectPause: failed','RConnectGrip: failed','Error #1009'):
+        for bad in ('COOP FAIL','game error dialog','RConnectRoom: ERROR','handoff timed out','RConnectPause: failed','RConnectGrip: failed','RConnectPeerGrip: failed','Error #1009'):
             assert bad not in s,(role,bad)
         if role=='join':assert 'welcome id=' in s and 'unitsync matched' in s
         record['log_sha256'][role]=sha(p)
-    milestone={'0.2.18-dev':'m46','0.2.19-dev':'m47','0.2.20-dev':'m48'}[d['version']]
+    milestone={'0.2.18-dev':'m46','0.2.19-dev':'m47','0.2.20-dev':'m48','0.2.21-dev':'m49'}[d['version']]
     evidence=read(ROOT/('knowledge/experiments/'+milestone+'-validation-evidence.json'))
     for name,digest in evidence['protected']['hashes'].items():assert sha(GAME/name)==digest,name
     assert sha(target)==d['sha256']

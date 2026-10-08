@@ -26,6 +26,7 @@ package {
       private var gun:Object,oldGun:Object,oldChildren:Object,baseX:Number,baseY:Number;
       private var expected:Object,samples:int=0,wrong:int=0,flashes:int=0,localDone:Boolean=false,peerDone:Boolean=false;
       private var sourceFlashes:int=0,lastShoot:int=0,sourceShots:int=0,peerSourceShots:int=0;
+      private var previousAxes:Object;
       public function WeaponAngleTestDoc() {
          var app:String=NativeApplication.nativeApplication.applicationID;
          if(app.indexOf("rconnect-coop-")<0)return;host=app.indexOf("-host-")>=0;
@@ -58,9 +59,12 @@ package {
       private function start(n:int):void {
          round=n;phase="show";at=getTimer();expected=null;samples=wrong=flashes=sourceFlashes=sourceShots=peerSourceShots=0;
          localDone=peerDone=false;lastShoot=0;
+         previousAxes=null;
       }
       private function before(e:Event):void {
-         if(phase!="show" || gun==null)return;
+         // The peer can still be sampling after our local timer finishes.
+         // Keep the native input pose until both sides complete this round.
+         if((phase!="show" && phase!="sampled") || gun==null)return;
          var g:Object=mod.game.gg,a:Number=CASES[round].deg*Math.PI/180;
          g.setPos(baseX,baseY);g.dx=g.dy=0;g.storona=CASES[round].body;g.disabled=true;g.invulner=true;
          g.celX=baseX+Math.cos(a)*450;g.celY=baseY-g.scY*.7+Math.sin(a)*450;
@@ -70,14 +74,18 @@ package {
          gun.attack();
       }
       private function after(e:Event):void {
-         if(phase!="show" || gun==null)return;
+         if((phase!="show" && phase!="sampled") || gun==null)return;
          gun.step();mod.game.world.testDam=true;
          mod.stage.invalidate();
       }
       private function render(e:Event):void {
-         if(phase!="show" || gun==null)return;
+         if((phase!="show" && phase!="sampled") || gun==null)return;
          var actual:Object=axes(gun.vis as DisplayObject);
+         if(actual!=null && (previousAxes==null || Math.abs(actual.xx-previousAxes.xx)+Math.abs(actual.xy-previousAxes.xy)+Math.abs(actual.yx-previousAxes.yx)+Math.abs(actual.yy-previousAxes.yy)>.01)) {
+            Log.d("WEAPON ANGLE NATIVE CHANGE "+JSON.stringify({role:host?"host":"join",round:round,phase:phase,elapsed:getTimer()-at,axes:actual}));previousAxes=actual;
+         }
          if(actual!=null)send("native",{round:round,axes:actual});
+         if(phase!="show")return;
          if(String(GameBridge.probe(gun.vis,"currentLabel"))=="shoot")sourceFlashes++;
          sourceShots=Math.max(sourceShots,int(gun.kol_shoot));
          if(getTimer()-at<700 || expected==null)return;
@@ -88,7 +96,7 @@ package {
          samples++;
          var error:Number=Math.max(Math.abs(remote.xx-expected.xx),Math.abs(remote.xy-expected.xy),
             Math.abs(remote.yx-expected.yx),Math.abs(remote.yy-expected.yy));
-         if(error>.08)wrong++;
+         if(error>.08) {wrong++;if(wrong<=8)Log.d("WEAPON ANGLE MISMATCH "+JSON.stringify({role:host?"host":"join",round:round,elapsed:getTimer()-at,error:error,expected:expected,remote:remote}));}
          if(String(GameBridge.probe(v,"currentLabel"))=="shoot")flashes++;
       }
       private function receive(e:NetMessageEvent):void {

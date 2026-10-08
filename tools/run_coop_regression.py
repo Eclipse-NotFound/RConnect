@@ -245,7 +245,7 @@ def main():
         content=path.read_text(encoding='utf-8',errors='replace') if path.exists() else ''
         bad=list(dict.fromkeys(s for s in content.splitlines() if 'COOP FAIL' in s or 'game error dialog' in s or 'RConnectRoom: ERROR' in s or 'handoff timed out' in s
             or 'RConnectNavigation: failed' in s or 'RConnectMap: failed' in s or 'RConnectRoomTrace: failed' in s
-            or 'RConnectPause: failed' in s or 'RConnectGrip: failed' in s
+            or 'RConnectPause: failed' in s or 'RConnectGrip: failed' in s or 'RConnectPeerGrip: failed' in s
             or (' failed:' in s and ('RConnectGame: unit effects ' in s or 'RConnectGame: presentation ' in s or 'RConnectGame: projectile visual ' in s))))
         if args.presentation or args.effects:
             ok=ok and not bad and ('COOP EFFECTS DONE' if args.effects else 'COOP PRESENTATION DONE') in content

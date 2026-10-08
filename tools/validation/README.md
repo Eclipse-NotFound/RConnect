@@ -1,6 +1,6 @@
 # RConnect候选门禁入口
 
-当前安装 **0.2.20-dev / 77e3886f…**。最终17组1880/0、各DONE，正常无驱动150秒752a939f9e通过；见state/deployment-m48-2026-10-08.md。36个最终专项/冒烟自有游戏PID退出，其他56项保护未变。新版本建立新的安装基线，不重跑旧部署或覆盖原始失败。
+当前安装 **0.2.21-dev / 5c372cf5…**。最终20组2095/0、各DONE；正常无驱动加载3611e15340通过（150秒上限）。42个最终专项/启动实例PID退出，其他56保护未变。见state/deployment-m49-2026-10-08.md。新版本另建安装基线，不重跑旧部署或覆盖失败。
 
 下述脚本固定本次UI17→18验证链，现在直接重跑prepare/deploy会被安装基线守卫拒绝。后续发行建立新的安装基线、版本和冻结目录，不覆盖本轮基线或结果；已完成本轮无需重复运行。
 
@@ -44,3 +44,12 @@ prepare_m47.py建立18安装基线并冻结新目录；53生产源/151验证输�
 prepare_m48.py建立19安装基线，baseline/freeze/built各阶段采用全新目录。原生容器/SATS与实际RemoteMotion负控为red-continuity-04/bd9ceaf401；暂停、曲线、掉落三个逐项候选保留未修部分的红。最终01实际编译77e3886f并跑17组；02只修正审计字段语义和新增carry_m48_checks，保留实际同字节运行，53源/156验证/52类。audit_m48检查正确稳定暂停差abs(pausedX-endpoint)，并核对旧负控、驱动类表/实际输入、全部17组、PNG及保护文件。原initialGap是收包瞬间差值，不是稳定暂停断言。
 
 顺序：prepare_m48 baseline/freeze → 显式候选编译/类表/built → 原16组加PresentationContinuityTestDoc → audit_m48 → deploy_verified → run_smoke（失败先回滚）。所有Python包括子进程显式-X utf8；AIR后台策略的自有PID查询需要实际权限，受限启动失败不算功能负控。19→20已经部署，此链不可再当新发行重跑；下一轮新建安装基线。
+
+
+## M49 生命周期与个人念力发行（已完成）
+
+prepare_m49建立20安装基线；最终build/m49/final-lifecycle-16为54源/163验证/53类。生产实际编译10，5c372cf5/131147B；20组2095/0。原10四专项、14两念力组、15十二组由carry_m49_checks按实际driver类表与完整依赖保留，16新跑WeaponAngle/PresentationContinuity。该工具只允许列明的独立测试/审计变化，受影响driver不得保留；保留MirrorMask时同时核对原runner_exit、空白块列表与14张图的审计记录。
+
+旧20负控red-target-06/9beba4f621与red-native-death-08/950b33f377不变，Target/Respawn原测试指纹一致。个人原生E的85c5a17770、暂停端点60b7441492及逐项候选均留存。测试时序/起点竞争修正不修改生产；12长帧、13未复现的单次通道超时及15两帧武器错误也保留，最终绿不反推所有旧红已解释。
+
+顺序：prepare_m49 baseline/freeze → 显式编译/类表/built → 20组 → audit_m49 → deploy_verified → run_smoke（失败自动先回滚）→ 保护/自有PID收尾 → 记录及本地提交。正常启动3611e15340无驱动、全已安装模组通过；20→21已完成，禁止把旧基线再用于新发行。当前版本变化仅本机，公开8包与玩家README保持对应关系。

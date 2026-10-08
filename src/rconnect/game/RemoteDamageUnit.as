@@ -6,7 +6,12 @@ package rconnect.game {
     * armor wear, elemental effects and death. Never turn a hit into NPC HP loss. */
    public class RemoteDamageUnit extends UnitPonPon {
       private var hits:Array=[];
+      public var beforeNativeStep:Function;
       public function RemoteDamageUnit(variant:int) {super("stab",100,null,{tr:variant});}
+      override public function step():* {
+         if(beforeNativeStep!=null)beforeNativeStep(this);
+         super.step();
+      }
       override public function damage(amount:Number,type:int,bullet:Bullet=null,periodic:Boolean=false):Number {
          var self:Object=this;
          if(self.invulner || self.disabled || !isFinite(amount) || amount==0)return 0;

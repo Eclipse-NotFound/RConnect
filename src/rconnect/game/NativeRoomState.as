@@ -10,7 +10,7 @@ package rconnect.game
    public class NativeRoomState
    {
       private static var schemas:Object={};
-      private static const OMIT:Object={visible:1,alpha:1,visFrame:1,visDamDY:1,n:1};
+      private static const OMIT:Object={visible:1,alpha:1,visFrame:1,visDamDY:1,n:1,in_chain:1};
       public static function scalars(o:Object):Object
       {
          var s:Object={}; if(o==null)return s;
@@ -51,7 +51,9 @@ package rconnect.game
       public static function restore(o:Object,s:Object):void
       {
          if(o==null || s==null)return;
-         for(var n:String in s) try {o[n]=s[n] is Array?JSON.parse(JSON.stringify(s[n])):s[n];}catch(e:*){}
+         // Native linked-list membership belongs to addObj/remObj. In
+         // particular a dead source's false cannot overwrite a new true link.
+         for(var n:String in s)if(!OMIT[n])try {o[n]=s[n] is Array?JSON.parse(JSON.stringify(s[n])):s[n];}catch(e:*){}
       }
       public static function unit(u:Object):Object
       {
@@ -85,7 +87,7 @@ package rconnect.game
             restore(w,gun.p);if(gun.main)u.currentWeapon=w;
          }
          u.childObjs=children;u.setVisPos();
-         if(int(u.sost)>=4)u.remVisual();
+         if(int(u.sost)>=4){if(u.loc!=null)u.loc.remObj(u);u.remVisual();}
       }
       public static function constructorId(s:Object):String
       {

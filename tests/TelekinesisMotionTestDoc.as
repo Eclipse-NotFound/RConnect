@@ -33,9 +33,13 @@ package {
       private var arenaObjects:Array=[];
       private var boxKey:String="",nativeLimit:Number=0,releaseWireAt:int=-1;
       private var nativeReleaseAt:int=0,nativeReceiptAt:int=0,releaseReceiptAt:int=0;
+      private var releaseArmed:Boolean=false;
       private var aiSamples:int=0,aiTicks:int=0,aiReclaims:int=0,lastAiClock:int=0;
       private var localDone:Boolean=false,peerDone:Boolean=false,inputAt:int=0,releaseAt:int=0;
       private var keyCode:int=0,keyUntil:int=0,frame:int=0,lastRender:int=-1;
+      private var inputFrame:int=0;
+      private var priorFrameAt:int=0,maxFrameGap:int=0,priorRenderAt:int=0,maxRenderGap:int=0;
+      private var diagnosticAt:int=0,received:int=0,lastReceivedAt:int=0,lastReceivedType:String="";
       private var frames:int=0,stalls:int=0,maxJump:Number=0,lastX:Number=NaN,lastY:Number=NaN;
       private var minX:Number,maxX:Number,minY:Number,startY:Number,dropY:Number,held:int=0,throws:int=0;
       private var wire:Array=[],trace:Array=[],capturedStart:Boolean=false;
@@ -56,6 +60,7 @@ package {
       private function check(ok:Boolean,label:String):void {Log.d("COOP "+(ok?"PASS ":"FAIL ")+"tele-motion "+label+" case="+CASES[round]);}
       private function send(stage:String,p:Object=null):void {
          p=p||{};p.type="tele-motion-test";p.stage=stage;
+         Log.d("TELE MOTION CONTROL TX "+JSON.stringify({t:getTimer(),phase:phase,packet:p}));
          if(host){if(mod.session.server!=null)mod.session.server.broadcast(p);}
          else if(mod.session.link!=null && mod.session.link.isOpen)mod.session.link.send(p);
       }
@@ -160,6 +165,10 @@ package {
       private function holder():Boolean {return String(CASES[round]).indexOf("-host")>=0 ? host : !host;}
       private function kind():String {return String(CASES[round]).split("-")[0];}
       private function throwing():Boolean {return CASES[round]=="merc-throw";}
+      // Box springs advance once per native game frame. Replay the existing
+      // 30 Hz cursor trajectory in those frames, not in wall time: a slow
+      // isolated window must not skip the movement the display is testing.
+      private function motionAge():Number {return kind()=="box"?(frame-inputFrame)*1000/30:getTimer()-inputAt;}
       private function nativeFloor():Boolean {
          if(target==null || target.stay!==true || Math.abs(Number(target.dy))>.001 || Math.abs(baseY-Number(target.Y))>=8)return false;
          var tile:Object=mod.game.loc.getAbsTile(Number(target.X),baseY+1);
@@ -194,8 +203,9 @@ package {
             }
          }
          frames=stalls=held=throws=0;maxJump=0;lastX=lastY=NaN;wire=[];trace=[];
+         priorFrameAt=priorRenderAt=maxFrameGap=maxRenderGap=0;
          minX=Infinity;maxX=-Infinity;minY=Infinity;startY=Number(target.Y);capturedStart=false;
-         inputAt=releaseAt=0;releaseWireAt=-1;nativeReleaseAt=nativeReceiptAt=releaseReceiptAt=0;
+         inputAt=releaseAt=0;releaseWireAt=-1;nativeReleaseAt=nativeReceiptAt=releaseReceiptAt=0;releaseArmed=false;
          aiSamples=aiTicks=aiReclaims=0;lastAiClock=0;
          beforeNative=null;heldOnce=earlyCleared=false;
          if(kind()=="merc")check(Number(target.levit_max)==nativeLimit,"native resistance limit is retained on the real enemy");
@@ -215,6 +225,9 @@ package {
       }
       private function before(e:Event):void {
          if(phase=="done" || mod.game.gg==null)return;++frame;
+         var frameAt:int=getTimer();
+         if(phase=="holding" && priorFrameAt>0)maxFrameGap=Math.max(maxFrameGap,frameAt-priorFrameAt);
+         priorFrameAt=frameAt;
          var b:Object=mod.game,g:Object=b.gg;g.disabled=false;g.invulner=true;g.hp=g.maxhp;
          // UnitPlayer.damage accumulates knockdown before Unit's invulnerability
          // guard. Skip incidental bullets at the native udarBullet boundary;
@@ -229,7 +242,7 @@ package {
             target.setPos(baseX+130,baseY);target.dx=target.dy=0;target.stay=false;
          }
          if(target!=null) {
-            var age:int=inputAt==0?0:getTimer()-inputAt;
+            var age:Number=inputAt==0?0:motionAge();
             var x:Number=target.X,y:Number=target.Y-target.scY/2;
             if(inputAt>0 && releaseAt==0 && g.teleObj===target){x=baseX+130+Math.min(2200,Math.max(0,age-600))*.045;y=baseY-120;}
             if(savedProfile && g.teleObj===target) {
@@ -270,7 +283,7 @@ package {
          // KEY_UP. Releasing in `before` could cancel a Q/E pulse entirely.
          if(keyCode>0 && now>keyUntil)releaseKey();
          if(phase=="settle" && now-at>1600) {
-            phase="holding";at=now;inputAt=now;startY=target.Y;
+            phase="holding";at=now;inputAt=now;inputFrame=frame;startY=target.Y;
             if(holder())press(81); // native Q -> Ctr -> control -> actTele
          }
          if(phase=="holding" && !capturedStart && now-at>450) {
@@ -290,9 +303,17 @@ package {
          }
          // Wait for native velocity to settle in the air before releasing.
          // Movement-only reports must also relay a stationary release edge.
-         if(phase=="holding" && now-at>(throwing()?1000:5100)) {
+         var releaseReady:Boolean=kind()=="box"
+            ? (holder()?(motionAge()>5100 && Math.abs(target.dx)+Math.abs(target.dy)<.5) || now-at>18000:nativeReceiptAt>0)
+            : now-at>(throwing()?1000:5100);
+         if(phase=="holding" && releaseReady) {
             releaseAt=now;dropY=target.Y;
-            if(throwing())check(holder()?g.teleObj===target:target.levit>0,"throw is attempted during a real active native grab");
+            if(throwing()) {
+               if(holder())check(g.teleObj===target,"throw is attempted during a real active native grab");
+               // The receiver's wall clock can reach this point after the
+               // caster's E and its native impulse have already arrived.
+               else check(held>0 && (target.levit>0 || target.t_throw>0 || throws>0),"receiver observed native grab or its resulting throw");
+            }
             else {
                check((!holder() || held>3) && minY<startY-30,"real lift observed samples="+held+" rise="+(startY-minY));
                check(frames>12 && maxX-minX>40,"source/display actually moved frames="+frames+" span="+(maxX-minX));
@@ -306,9 +327,10 @@ package {
             }
             Log.d("TELE MOTION RELEASE "+JSON.stringify({role:host?"host":"join",round:round,holding:g.teleObj===target,
                levit:target.levit,resistance:GameBridge.probe(target,"levit_r"),dx:target.dx,dy:target.dy,at:now-inputAt}));
+            Log.d("TELE MOTION FRAME GAPS "+JSON.stringify({role:host?"host":"join",round:round,enterFrameMs:maxFrameGap,renderMs:maxRenderGap}));
             // Natural resistance may already have released the enemy. Another
             // Q at that point is a fresh grab, not a release operation.
-            if(holder() && g.teleObj===target)press(throwing()?69:81);
+            if(holder() && g.teleObj===target) {send("release-requested",{round:round});press(throwing()?69:81);}
             phase="released";at=now;
          }
          if(phase=="released" && holder() && nativeReleaseAt==0 && g.teleObj!==target) {
@@ -335,7 +357,8 @@ package {
       private function render(e:Event):void {
          if(target==null || lastRender==frame)return;lastRender=frame;
          if(Number(GameBridge.probe(target,"t_throw"))>0)++throws;
-         if(phase!="holding" || getTimer()-inputAt<500 || getTimer()-inputAt>3100)return;
+         if(phase!="holding" || motionAge()<500 || motionAge()>3100)return;
+         var renderAt:int=getTimer();if(priorRenderAt>0)maxRenderGap=Math.max(maxRenderGap,renderAt-priorRenderAt);priorRenderAt=renderAt;
          if(target.levit>0)++held;minY=Math.min(minY,Number(target.Y));
          var v:Object=GameBridge.probe(target,"vis");if(v==null || v.parent==null)return;
          var x:Number=v.x,y:Number=v.y;
@@ -362,8 +385,11 @@ package {
       }
       private function receive(e:NetMessageEvent):void {
          var p:Object=e.data;
+         ++received;lastReceivedAt=getTimer();lastReceivedType=String(p.type);
          if(p.type=="unit-grip" && p.op!="hold" && wire.length<8)wire.push({op:p.op,accept:p.accept,reason:p.reason,k:p.k});
-         if(kind()=="box" && !holder() && phase=="released" && releaseReceiptAt==0) {
+         // Observe the actual q=true -> false edge even when its packet arrives
+         // immediately before the caster's diagnostic native-release message.
+         if(kind()=="box" && !holder() && (phase=="holding" || phase=="released") && releaseArmed && releaseReceiptAt==0) {
             var positions:Array=host?(p.moved as Array):(p.objs as Array);
             if(positions!=null)for each(var position:Object in positions)
                if(String(position.k)==boxKey && position.q===false) {
@@ -372,6 +398,7 @@ package {
                }
          }
          if(p.type!="tele-motion-test")return;
+         Log.d("TELE MOTION CONTROL RX "+JSON.stringify({t:getTimer(),phase:phase,packet:p}));
          try {
             if(host && phase=="boot" && p.stage=="ready" && nativeReady()) {
                var a:Object=arena();baseX=a.x;baseY=a.y;arenaObjects=a.remove;setup();phase="prepared";at=getTimer();send("setup",{x:baseX,y:baseY,remove:arenaObjects,boxKey:boxKey,limit:nativeLimit});
@@ -383,6 +410,7 @@ package {
             }
             else if(host && p.stage=="round-ready" && int(p.round)==round && phase=="await-round") {phase="settle";at=getTimer();}
             else if(host && p.stage=="sampled" && p.round==round){peerDone=true;if(localDone)advance();}
+            else if(p.stage=="release-requested" && p.round==round)releaseArmed=true;
             else if(p.stage=="native-release" && p.round==round) {
                nativeReceiptAt=getTimer();
                if(releaseReceiptAt>0)releaseWireAt=Math.max(0,releaseReceiptAt-nativeReceiptAt);
@@ -398,6 +426,12 @@ package {
       private function tick(e:TimerEvent):void {
          mod=RConnectMod.instance;if(mod==null || mod.game==null || mod.session==null)return;
          if(phase=="lifecycle")return;
+         if((phase=="holding" || phase=="released" || phase=="sampled") && getTimer()-diagnosticAt>2000) {
+            diagnosticAt=getTimer();Log.d("TELE MOTION CHANNEL "+JSON.stringify({t:diagnosticAt,role:host?"host":"join",phase:phase,round:round,
+               received:received,lastReceived:lastReceivedType,sinceReceived:diagnosticAt-lastReceivedAt,
+               mode:mod.session.mode,clients:host?mod.session.server.clients.length:-1,
+               nativeReceiptAt:nativeReceiptAt,releaseReceiptAt:releaseReceiptAt,frames:frames,maxFrameGap:maxFrameGap}));
+         }
          if(phase=="boot") {
             mod.game.refreshWorld();
             var bootWorld:Object=mod.game.world,bootPlayer:Object=mod.game.gg;

@@ -26,7 +26,7 @@ package
    public class RConnectMod
    {
       // Working M46 core after the separate 0.2.17 compact HUD release.
-      public static const VERSION:String = "0.2.20-dev";
+      public static const VERSION:String = "0.2.21-dev";
 
       public static var instance:RConnectMod;
 
@@ -51,6 +51,7 @@ package
       public var exploration:ExplorationSync;
       public var session:Session;
       public var enemyGrip:rconnect.core.EnemyGrip;
+      public var peerGrip:rconnect.core.PeerGrip;
       public var hud:NetHud;
       public var navigation:TeammateNavigation;
       public var teammateMap:TeammateMap;
@@ -83,6 +84,8 @@ package
          this.session = new Session(this);
          this.enemyGrip = new rconnect.core.EnemyGrip(this);
          game.enemyGrip = this.enemyGrip;
+         this.peerGrip = new rconnect.core.PeerGrip(this);
+         game.peerGrip = this.peerGrip;
          this.navigation = new TeammateNavigation(this);
          this.teammateMap = new TeammateMap(this);
          this.roomDiagnostics = new RoomDiagnostics(this);

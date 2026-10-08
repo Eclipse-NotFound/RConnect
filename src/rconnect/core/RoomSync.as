@@ -48,6 +48,7 @@ package rconnect.core
       }
       public function reset():void
       {
+         if(mod.peerGrip!=null)mod.peerGrip.reset();
          release();records={};nativeRoom=null;nativeLand=null;settledRoom=null;settledKey="";
          ready=false;authority=true;initial=true;epoch=0;term=0;pending=0;hostInfo=null;
          game.independentRooms=false;game.roomEpoch=0;status="";blocked=false;
@@ -67,6 +68,7 @@ package rconnect.core
       {
          // A room checkpoint must never preserve levitation without its caster.
          if(mod.enemyGrip!=null)mod.enemyGrip.releaseForHandoff();
+         if(mod.peerGrip!=null)mod.peerGrip.reset();
          game.releaseMovablesForHandoff();
          if(!busy)
          {

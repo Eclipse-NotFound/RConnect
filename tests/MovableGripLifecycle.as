@@ -29,6 +29,7 @@ package {
       private var previousLocal:Boolean=false;
       private var heldStyle:String;
       private var beforeNative:Object;
+      private var floorWaitAt:int=0;
 
       public function MovableGripLifecycle(m:RConnectMod,h:Boolean,px:Number,py:Number,callback:Function) {
          mod=m;host=h;x=px;y=py;done=callback;homeRoom=mod.game.loc;home=info(homeRoom);
@@ -186,10 +187,15 @@ package {
                var end:int=round==0?6000:round==1?8500:round==2?8000:0;
                if(end>0 && age>end) {
                   check(a.levit==0,"remote box lease/release clears physics flag");
-                  check(a.Y>y-50 && floor(a),"box returns to supported native floor");
-                  check(loot.Y>y-50 && floor(loot),"loot returns to supported native floor");
-                  check(g.teleObj==null,"caster pointer is clear after release");sampleDone();
+                  check(g.teleObj==null,"caster pointer is clear after release");
+                  // Keep the original release deadline. Native gravity and
+                  // remote display settling require actual frames afterwards.
+                  state("release-deadline");floorWaitAt=now;phase="floor-wait";
                }
+            } else if(phase=="floor-wait" && ((floor(a) && floor(loot)) || now-floorWaitAt>8000)) {
+               check(a.Y>y-50 && floor(a),"box returns to supported native floor");
+               check(loot.Y>y-50 && floor(loot),"loot returns to supported native floor");
+               Log.d("MOVABLE LIFECYCLE FLOOR WAIT "+JSON.stringify({round:round,ms:now-floorWaitAt}));sampleDone();
             } else if(phase=="away" && stable() && age>2000) {
                check(mod.game.roomKey()==other.key,"join enters ordinary second room");
                check(g.teleObj==null && b.levit==0,"native room handoff releases local box pointer and flag");

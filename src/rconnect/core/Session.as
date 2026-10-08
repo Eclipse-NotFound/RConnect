@@ -265,6 +265,7 @@ package rconnect.core
       private function stop():void
       {
          if(mod.enemyGrip!=null)mod.enemyGrip.reset();
+         if(mod.peerGrip!=null)mod.peerGrip.reset();
          _nextWorldSnapshot=_nextSceneReport=0;
          if(pause!=null)pause.reset();
          if(progress!=null)progress.reset();

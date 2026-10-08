@@ -138,6 +138,10 @@ package {
             key(121);check(!h.visible && mod.stage.focus!==h.tfChat,"F10 hides and releases owned input");
             key(121);check(h.visible && !h.collapsed,"F10 restores prior expanded state");
             h.openPage("settings");
+            check(!mod.peerGrip.allowed && mod.peerGrip.struggle,"personal grip defaults protect this player");
+            click("rconnect-allow-grip");click("rconnect-struggle-grip");
+            check(mod.peerGrip.allowed && !mod.peerGrip.struggle,"both roles can change own grip preferences through UI");
+            click("rconnect-allow-grip");click("rconnect-struggle-grip");
             click("rconnect-opacity-less");
             check(h.windowOpacity==90 && Math.abs(h.alpha-.9)<1/256+.00001,"visible opacity control applies immediately within native alpha precision");
             for(var decrease:int=0;decrease<6;decrease++)click("rconnect-opacity-less");
@@ -158,6 +162,10 @@ package {
                check(t.mouseEnabled==host,"pause policy permission matches real role "+id);
             }
             picture("hud-settings-"+w.lang);
+            for each(id in ["rconnect-allow-grip","rconnect-struggle-grip"]) {
+               t=h.getChildByName(id) as TextField;
+               check(t.mouseEnabled && t.textWidth<t.width-4,"personal grip control usable and fits "+w.lang+" "+id);
+            }
          } else if(n==9) {
             w.lang=oldLang;h.setDock("br");h.collapse(false);
             check(h.x+h.panelWidth*h.scaleX<=mod.stage.stageWidth-7 && h.y+h.panelHeight*h.scaleY<=mod.stage.stageHeight-7,"bottom-right expansion remains in stage");

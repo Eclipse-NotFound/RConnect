@@ -33,6 +33,7 @@ package rconnect.ui {
       private var policyLabel:TextField,policyHint:TextField,versionLabel:TextField;
       private var opacityLabel:TextField,opacityValue:TextField,opacityLess:TextField,opacityMore:TextField;
       private var opacityPercent:int=100;
+      private var allowGrip:TextField,struggleGrip:TextField,gripHint:TextField;
       private var _btnHost:TextField,_btnJoin:TextField,_btnLeave:TextField,_btnSend:TextField;
       private var _btnExploration:TextField,_btnFollow:TextField,_btnTeleport:TextField;
       private var _btnPauseMenus:TextField,_btnPauseSats:TextField,_pauseBanner:TextField;
@@ -176,11 +177,16 @@ package rconnect.ui {
          opacityMore=field("rconnect-opacity-more","settings",244,8,28,28,true);opacityMore.text="+";
          action(opacityLess,function():void {setOpacity(opacityPercent-10);});
          action(opacityMore,function():void {setOpacity(opacityPercent+10);});
-         policyLabel=field("rconnect-policy-owner","settings",8,48,264,24);
-         _btnPauseMenus=field("rconnect-pause-menus","settings",8,76,264,30,true);
-         _btnPauseSats=field("rconnect-pause-sats","settings",8,112,264,30,true);
-         policyHint=field("rconnect-policy-hint","settings",8,150,264,40);
-         versionLabel=field("rconnect-version","settings",8,194,264,38);
+         allowGrip=field("rconnect-allow-grip","settings",8,48,264,30,true);
+         struggleGrip=field("rconnect-struggle-grip","settings",8,84,264,30,true);
+         gripHint=field("rconnect-grip-hint","settings",8,122,264,40);
+         action(allowGrip,function():void {if(mod.peerGrip!=null)mod.peerGrip.setPreferences(!mod.peerGrip.allowed,mod.peerGrip.struggle);});
+         action(struggleGrip,function():void {if(mod.peerGrip!=null)mod.peerGrip.setPreferences(mod.peerGrip.allowed,!mod.peerGrip.struggle);});
+         policyLabel=field("rconnect-policy-owner","settings",8,170,264,24);
+         _btnPauseMenus=field("rconnect-pause-menus","settings",8,198,264,30,true);
+         _btnPauseSats=field("rconnect-pause-sats","settings",8,234,264,30,true);
+         policyHint=field("rconnect-policy-hint","settings",8,272,264,40);
+         versionLabel=field("rconnect-version","settings",8,316,264,38);
          action(_btnPauseMenus,function():void {
             if(mod.session.pause!=null)mod.session.pause.setPolicy(!mod.session.pause.policyMenus,mod.session.pause.policySats);
          });
@@ -306,6 +312,12 @@ package rconnect.ui {
          opacityLabel.text=tr("窗口不透明度","Window opacity","Непрозрачность");
          opacityValue.text=opacityPercent+"%";
          enabled(opacityLess,opacityPercent>30);enabled(opacityMore,opacityPercent<100);
+         allowGrip.text=tr("允许队友念力抓起我","Allow teammate to lift me","Разрешить поднять меня")+": "+RCLocale.text(mod.peerGrip!=null && mod.peerGrip.allowed?"开":"关");
+         struggleGrip.text=tr("被抓时 WASD 挣脱","WASD escapes teammate grip","WASD: освободиться")+": "+RCLocale.text(mod.peerGrip==null || mod.peerGrip.struggle?"开":"关");
+         enabled(allowGrip,mod.peerGrip!=null);enabled(struggleGrip,mod.peerGrip!=null);
+         gripHint.text=tr("只影响自己；关闭允许会立即松开。\n关闭挣脱时，WASD 不会打断抓取。",
+            "Your choice only. Disallow to release now.\nEscape off: WASD does not end the hold.",
+            "Только для вас. Запрет сразу отпускает.\nПобег выкл.: WASD не прерывает захват.");
          policyLabel.text=pause==null || pause.canChangePolicy?
             mode==Session.OFFLINE?tr("离线预设","Offline presets","Настройки офлайн"):tr("由你设置","Host settings","Настройки ведущего"):
             tr("宿主设置 · 只读","Host settings · read only","Настройки ведущего · только чтение");
@@ -358,6 +370,7 @@ package rconnect.ui {
          var noteHeight:Number=Math.max(34,statusTf.textHeight+6);
          var ownerExtra:Number=Math.max(0,policyLabel.textHeight+6-24);
          var policyHeight:Number=Math.max(40,policyHint.textHeight+6);
+         var gripExtra:Number=Math.max(0,gripHint.textHeight+6-40);
          var pageHeight:Number=156;
          for each(var item:Object in entries) {
             item.renderY=item.y;item.renderH=item.h;
@@ -365,9 +378,11 @@ package rconnect.ui {
             if(f==statusTf)item.renderH=noteHeight;
             if(f==_btnHost || f==_btnJoin || f==_btnLeave)item.renderY=85+noteHeight+4;
             if(f==policyLabel)item.renderH=24+ownerExtra;
-            if(item.page=="settings" && item.y>48)item.renderY+=ownerExtra;
+            if(f==gripHint)item.renderH=40+gripExtra;
+            if(item.page=="settings" && item.y>=170)item.renderY+=gripExtra;
+            if(item.page=="settings" && item.y>170)item.renderY+=ownerExtra;
             if(f==policyHint)item.renderH=policyHeight;
-            if(f==versionLabel)item.renderY=Math.max(194,150+policyHeight+4)+ownerExtra;
+            if(f==versionLabel)item.renderY=Math.max(316,272+policyHeight+4)+ownerExtra+gripExtra;
             if(f==peerHint || f==helpText)item.renderH=Math.max(item.h,f.textHeight+6);
             if(help?item.page=="help":item.page==page || item.page=="live" && page=="connect" && active)
                pageHeight=Math.max(pageHeight,item.renderY+item.renderH+8);

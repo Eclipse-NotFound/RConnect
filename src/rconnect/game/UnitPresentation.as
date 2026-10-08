@@ -248,7 +248,12 @@ package rconnect.game
 
       private function enforceDeath(u:Object,sost:int):void
       {
-         if(sost>=4) u.remVisual();
+         if(sost>=4) {
+            // A destroyed machine must leave Location.firstObj as well as the
+            // display tree, or drawAllObjs revives its picture after respawn.
+            var room:Object=get(u,"loc");if(room!=null)room.remObj(u);
+            u.remVisual();
+         }
          else
          {
             var children:Array=get(u,"childObjs") as Array;
