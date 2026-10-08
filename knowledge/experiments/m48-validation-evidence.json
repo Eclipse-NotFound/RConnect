@@ -1,0 +1,3101 @@
+{
+  "at": "2026-10-08T16:42:16.424731+08:00",
+  "required_entries": [
+    "TelekinesisMotionTestDoc",
+    "TelekinesisTestDoc",
+    "EnemyGrabTestDoc",
+    "LightningSmartTestDoc",
+    "BeamTerrainTestDoc",
+    "SatsTestDoc",
+    "CoopPauseTestDoc",
+    "RoomCooperationTestDoc",
+    "ProjectileNetworkTestDoc",
+    "CombatNetworkTestDoc",
+    "AnimationGapsTestDoc",
+    "GameplayNetworkTestDoc",
+    "MirrorMaskRestoreTestDoc",
+    "HudTestDoc",
+    "FastHeldTestDoc",
+    "WeaponAngleTestDoc",
+    "PresentationContinuityTestDoc"
+  ],
+  "candidate": {
+    "version": "0.2.20-dev",
+    "sha256": "77e3886f7f76885db35558ba7da4a591ec486ab65faab37f95c14116d67bb3ee",
+    "size": 126293,
+    "classes": 52,
+    "snapshot": "build/m48/final-continuity-02",
+    "source_manifest_sha256": "c258124b784a1375bf4763b45cca69b367f0aaf2855dbd64f991d6126517e427",
+    "verification_manifest_sha256": "24660231efba4a8c943b921153d32b3fc14dce6c4080f1f0a92a7ddf6ec0a526"
+  },
+  "runs": [
+    {
+      "entry": "TelekinesisMotionTestDoc",
+      "run": "4f1a2ef2a6",
+      "exit": 0,
+      "roles": {
+        "host": {
+          "pass_count": 110,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "b53a972f6f56f0ad9066b5bae8425c5da333a8fce9f2a288c5ff90cdd0c39410"
+        },
+        "join": {
+          "pass_count": 88,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "1175dd8b4e17374b57439cf94ae68b6d84e1b9239bebfbc6e808c5d75b5d7b6c"
+        }
+      },
+      "pass_count": 198,
+      "fail": 0,
+      "result_sha256": "871ecbd3a5eea9cde4b32dd2c31391964d3b48a66aa245c1cb692cf4fc0cbcd1",
+      "input_sha256": "076a42efd55781fc5abe4d3b09664c9250d3182709f5c8ef23ae3118ee6738ea",
+      "driver_sha256": "e50d04566ccd260280489c575c278bda6e7fb6dcfe83dcd4b0be5f4f1c7aae64",
+      "harness_sha256": "ba7df035cbc977898db17c201efaa95a144b3f38f564ccfd88865d688cda9e81",
+      "driver_classes": [
+        "MovableGripLifecycle",
+        "RemoteMotionPauseRegression",
+        "TelekinesisMotionTestDoc",
+        "fe.unit.TelekinesisProbe"
+      ],
+      "run_manifest_sha256": "203036e35256d3b41905079da81f861c3ea65e01b6428c3b908d490a423e2bea"
+    },
+    {
+      "entry": "TelekinesisTestDoc",
+      "run": "0842df6149",
+      "exit": 0,
+      "roles": {
+        "host": {
+          "pass_count": 53,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "969ad5aa2478d9b8ca857b347c159cecaf82255fb5c99f5d9c36b43630dc1f99"
+        },
+        "join": {
+          "pass_count": 55,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "f50045f279ebfdeb6bbb1429601132a5c8c6b98a98bd9ba77090c8a0a17c0f26"
+        }
+      },
+      "pass_count": 108,
+      "fail": 0,
+      "result_sha256": "cea9eb5db6beeebe7458c5d6bea3054486a5e8b2c5c384f15e7b158ef51cf62a",
+      "input_sha256": "a347fa7239b33129680dff9607d567d1eb9ef7c3b83a88bd3ce36172a5a910c7",
+      "driver_sha256": "85b6778ec241e1818352b370a1da53c5296501cfb1affd3dd98432d7ecda2a3e",
+      "harness_sha256": "58d5a8c24ce0fd0bf5e01767870e8cdc3611ec4e87db10191fd8ba5ffdbe2ed0",
+      "driver_classes": [
+        "AuraMaskProbe",
+        "TelekinesisTestDoc",
+        "fe.unit.TelekinesisProbe"
+      ],
+      "run_manifest_sha256": "e20e68a911943097b453c1636ffc18d1bcb515463fe20955572367e034aad5b6"
+    },
+    {
+      "entry": "EnemyGrabTestDoc",
+      "run": "b383c86c67",
+      "exit": 0,
+      "roles": {
+        "host": {
+          "pass_count": 115,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "65bf32332cae48ec845280c3ec3fdbf62857e3800e9ce8ffe33c0bb4d1e5a745"
+        },
+        "join": {
+          "pass_count": 141,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "abade7b62c5f2533504a479b399083a5700a4aa91f53ed06a731f8c2cd5016c2"
+        }
+      },
+      "pass_count": 256,
+      "fail": 0,
+      "result_sha256": "8e4bed64ac5edc1e4de01f76f54ac9bbc2b128f2befb8fce9428db02c57a828a",
+      "input_sha256": "13429fcbf875617d7e737f744d092d1a7bf9c14e4035dfe5154a30bc5855535b",
+      "driver_sha256": "687dc808d4f7870d3a137773f14277eeabb4b5801157d26d6cc02758999c5d55",
+      "harness_sha256": "a80d1df7fea6d41c88fe9cc474c08f0e62da3e56cf5798eef952a6ab97d57dc5",
+      "driver_classes": [
+        "EnemyGrabTestDoc",
+        "fe.unit.EnemyGrabProbe"
+      ],
+      "run_manifest_sha256": "d02178f1a79b231a8dc2e05082b1633cd40f8a2c732ab38bcdf058298f5147fa"
+    },
+    {
+      "entry": "LightningSmartTestDoc",
+      "run": "1b078625c7",
+      "exit": 0,
+      "roles": {
+        "host": {
+          "pass_count": 10,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "820c8d9c814d2de94f06e09a4ce432a778a5584a50402fe6396f731bbf7dec93"
+        },
+        "join": {
+          "pass_count": 17,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "5efb38e71cb4f4855a3f95ed5991d071c46750cf12ba5b6dd0a9ff0b5e600534"
+        }
+      },
+      "pass_count": 27,
+      "fail": 0,
+      "result_sha256": "beb97c712b4c770f95a50f55c69c3e52bc2cb3303ffe0083d22fb3cfc7b5179c",
+      "input_sha256": "64d80a84ccb9762e4e4531ee4f9b9c83938a252a4d14a7ea15387f91049b598b",
+      "driver_sha256": "87dd4277c3c87a794d10ab7215a85ea83ac32b2a403207bfd23a56934504f7b4",
+      "harness_sha256": "be8ac39ca7d6336bc6a20af8f764f9622d744781942a9b5bcf02d4210be5a512",
+      "driver_classes": [
+        "LightningModAccess",
+        "LightningSmartStep",
+        "LightningSmartTestDoc"
+      ],
+      "run_manifest_sha256": "a6964ce3c7c89b4164fa573f4c1664147a3120b681ee0ed1a87b4c92f788739c"
+    },
+    {
+      "entry": "BeamTerrainTestDoc",
+      "run": "68e5e5fff0",
+      "exit": 0,
+      "roles": {
+        "host": {
+          "pass_count": 17,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "8f1679ee63af6268d35eae490e7693ad13ff3b4f99c5a60cf530b7a9cb662a5d"
+        },
+        "join": {
+          "pass_count": 9,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "c5b0a0cb90059c6c6b910e9bdd0e3450b11f1796b30e1d933d88ae87edd47719"
+        }
+      },
+      "pass_count": 26,
+      "fail": 0,
+      "result_sha256": "5c1ba94da1da3b7d989aabf1d7b6e92c48329a2910b788ae7b80a81ef13253b0",
+      "input_sha256": "98699f408c635f52d995b5243ea1659c6ea50918046bd92235b037c3bf3a2a67",
+      "driver_sha256": "f436ae19a46d2fec108758b12e96e5af72818873d471150658ab215d3d74c69c",
+      "harness_sha256": "31bd27277e439dd93113230d7bc53debb009b6f9618fb5f050d2875fb1a97b60",
+      "driver_classes": [
+        "BeamTerrainTestDoc",
+        "NativeBeamGun"
+      ],
+      "run_manifest_sha256": "cb4414d21636eaee2d97d42ebb44a42f7e1a870d82e4753d23871a37c91e368a"
+    },
+    {
+      "entry": "SatsTestDoc",
+      "run": "5f6ce0104c",
+      "exit": 0,
+      "roles": {
+        "host": {
+          "pass_count": 3,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "49b9c81b96df2bd1c8aa8ab29001e75c1590e197d62e16d7bebf9993333888ff"
+        },
+        "join": {
+          "pass_count": 23,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "978e2a9b078da8f9eccea1b353740e6f53eb09832976fe58dfebb728b58026ba"
+        }
+      },
+      "pass_count": 26,
+      "fail": 0,
+      "result_sha256": "7d8bdd37766ca1b7ff0643d0fb58dfeab58a21af1a7dfac1e140bfb64c8a3a1d",
+      "input_sha256": "1d5ab3f3a4f8b63c7d3be5cfe564a2216588f92c59554c0f678f3c81d5fdd224",
+      "driver_sha256": "8bef109ef150f9b7da7ef25a6884c0fdab06feda16984f4bdb3b2c48471548c0",
+      "harness_sha256": "99503d0e740b4c96e693169bc6cc792992dbb7e57b9f44e0d7d7675a50c0a93e",
+      "driver_classes": [
+        "NativeTestGun",
+        "SatsTestDoc"
+      ],
+      "run_manifest_sha256": "0f461f4e1a33327554aeae6a0175e09d29e0dd6f874201390e994c70db6a000e"
+    },
+    {
+      "entry": "CoopPauseTestDoc",
+      "run": "3143828fd6",
+      "exit": 0,
+      "roles": {
+        "host": {
+          "pass_count": 217,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "be2c1a2d1874c2c454c1e26b869e4e223f3a94b410b48efb43980668236d16cb"
+        },
+        "join": {
+          "pass_count": 221,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "462eaf12948f9e1a3a14aa206bcac5c8628ac3c40092bcc1fdc94dd84eb9ed82"
+        }
+      },
+      "pass_count": 438,
+      "fail": 0,
+      "result_sha256": "11577834166730d93db67faa2909b859438d739b48ecb8167eb69f7963e85816",
+      "input_sha256": "102f413aa582799d3338684320d8850a6f250d533cff21e4be19e845b41457e4",
+      "driver_sha256": "d24a7c4485358be65e47ce9a8c04793716054102b9ba45c5f3cfa5c7b0334f41",
+      "harness_sha256": "c3834bd8f54a6fdaa0b558161ffaae5d11f9ab3e365af0599f71e0041fa0a138",
+      "driver_classes": [
+        "CoopPauseTestDoc",
+        "NativePauseClock",
+        "NativeTestGun"
+      ],
+      "run_manifest_sha256": "2fa1514c0a128e80869aff0360ae768e3b9fe263faedcc036887284016c0f8ab"
+    },
+    {
+      "entry": "RoomCooperationTestDoc",
+      "run": "5abf71a389",
+      "exit": 0,
+      "roles": {
+        "host": {
+          "pass_count": 22,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "c492e449303007215923173090ee531eb2543a12e963146b2536f9a2dd4eb8dd"
+        },
+        "join": {
+          "pass_count": 52,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "d913e2575bc2791b815e024a538e91a0abd2d49f1e7b5a034d4bbad9c61115f3"
+        }
+      },
+      "pass_count": 74,
+      "fail": 0,
+      "result_sha256": "249881f6fe8a1da90339fd1959720af566a7b034bff8fd239b0fb32816790a12",
+      "input_sha256": "7d2f60aca018cc7dc507660d54889a0164f55ba2b5451a30870bff50d75e2912",
+      "driver_sha256": "1e0e70d49c86ec092a54f0f4bfdf3d0faac3387dacc3e1952fd3cbe3acd085c0",
+      "harness_sha256": "9bb04b3b0da1aa8c6bb438e66bb87e426c7019651a48f7b296ead49ac8c77edf",
+      "driver_classes": [
+        "RoomCooperationTestDoc",
+        "fe.inter.RoomTravelUiProbe",
+        "fe.unit.EnemyGrabProbe"
+      ],
+      "run_manifest_sha256": "d23367a90255823d0f5bbb640d78f85b882cee0557ee11f660a17a10b1a247da"
+    },
+    {
+      "entry": "ProjectileNetworkTestDoc",
+      "run": "982a0fd0ed",
+      "exit": 0,
+      "roles": {
+        "host": {
+          "pass_count": 9,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "86b7c9e5b56bc7b8db6bebcccbd8e74b4eca484049b950e6ddda2b80946803d2"
+        },
+        "join": {
+          "pass_count": 5,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "8d7d45f9f488cdea52bcf31bbe19b7e118f421a33d5d98a86d9cebcc9905eaca"
+        }
+      },
+      "pass_count": 14,
+      "fail": 0,
+      "result_sha256": "c943dce7e40124418eedcaf6b949ce55e3ae6dd93f04a2a7b6bc18ed6709380f",
+      "input_sha256": "590603b591ae31eeba651f4040fe071b40c52ed0a0bd051e4a6abca303b793c9",
+      "driver_sha256": "856c5556867d620f278b3621e967b165164da96a3598b18d60462c79755a1f2a",
+      "harness_sha256": "8926b61dc96561439e4e035c88fe9906c77bb522b8e186b194a4fbab01253719",
+      "driver_classes": [
+        "ProjectileNetworkTestDoc",
+        "fe.unit.CombatStateProbe"
+      ],
+      "run_manifest_sha256": "e36d671d2a2c345535c414cd9a47700f8d6c765f9198d3119c1dc67bfbb36465"
+    },
+    {
+      "entry": "CombatNetworkTestDoc",
+      "run": "1c36e12776",
+      "exit": 0,
+      "roles": {
+        "host": {
+          "pass_count": 22,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "5910137861aa6a8bea5691d9f0a8b81a926dd1ad9a9b713b6f7de0332182fd5f"
+        },
+        "join": {
+          "pass_count": 11,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "0742f437369cbbde8014a14f5f668a53afc4ba35531daeeaf337f5502110c61f"
+        }
+      },
+      "pass_count": 33,
+      "fail": 0,
+      "result_sha256": "f3a09f107cc5850ae8defed888120f9dfd888f52a6dbe93c0b2d14da7365692c",
+      "input_sha256": "43d6bdf76e8ae553d3c4bbea1fac63ba0eee467acd307e6ae5ace9087fbdde08",
+      "driver_sha256": "a7ca08d35fb632c33db004cddd33becf40f66ef981a12e1e5751fd5716ce283b",
+      "harness_sha256": "346e3eb785c6da58bec4fe4dbc7414d7acdf8ce7779b8bb9149aa8e232ec2219",
+      "driver_classes": [
+        "CombatNetworkTestDoc",
+        "NativeTestGun",
+        "fe.unit.CombatStateProbe"
+      ],
+      "run_manifest_sha256": "01480dad35c68e9ad726321bca9629488031ae7ece3b27c1d4665a67b9e9cf65"
+    },
+    {
+      "entry": "AnimationGapsTestDoc",
+      "run": "a5a0b7d33e",
+      "exit": 0,
+      "roles": {
+        "host": {
+          "pass_count": 17,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "7febcebc552d8f61cda23ef94ab9e8e8db06401191943c3435dbed976eea50a3"
+        },
+        "join": {
+          "pass_count": 9,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "d05092492799eeae814b9012c5e7745c15439b2d354f5cb691f06d4400293b2a"
+        }
+      },
+      "pass_count": 26,
+      "fail": 0,
+      "result_sha256": "3a7373bba9797842eb6a273bde72b7108f2e69270b9d7f7e984491e25b5243d1",
+      "input_sha256": "9af5cb350403811174294798531b2dc34c860de3d192284cb4391d12d49c2a12",
+      "driver_sha256": "2a25e84d24cbbf0807e1c2debb2a89f3725201952f1ab95d8a4ad2e940aec8fd",
+      "harness_sha256": "6ac7d7db749123473b264bb7cdcd555352ffb762d3f0c16380eac2647ffbd96e",
+      "driver_classes": [
+        "AnimationGapsTestDoc"
+      ],
+      "run_manifest_sha256": "7f84a53dd481d79c58aa66120f0b6446b5021e32463f3c6a5309dcd535194ef0"
+    },
+    {
+      "entry": "GameplayNetworkTestDoc",
+      "run": "91ebce7651",
+      "exit": 0,
+      "roles": {
+        "host": {
+          "pass_count": 27,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "64bf9b8dbc76193012c1a41301368884c3c51165fe5f99827d6339266e5a15fb"
+        },
+        "join": {
+          "pass_count": 4,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "d344d0998402d451096ed1fefab27fec593977508d28000a77465046af7d6c2e"
+        }
+      },
+      "pass_count": 31,
+      "fail": 0,
+      "result_sha256": "eb38807e7dee40f9b8c6a3619709a971a3c5339b81915245718f59f557545f2b",
+      "input_sha256": "f7772551ab946d935fc0b050c21b9043a5581923afd0cdda1bb8cf2e3b940a47",
+      "driver_sha256": "71bb90cf86cca68e4d188b98c8a015837f2753d491df676c23358cd7f7748f8e",
+      "harness_sha256": "8a2ffd810a7aaf4020392f8f128d497568961a96db871f14259345310602e7b0",
+      "driver_classes": [
+        "GameplayNetworkTestDoc",
+        "fe.unit.CombatStateProbe"
+      ],
+      "run_manifest_sha256": "31480be1e6c64103c4f8de5bf9fab16305dce602da5c00ac5cc99768f72f30b1"
+    },
+    {
+      "entry": "MirrorMaskRestoreTestDoc",
+      "run": "9dae1733da",
+      "exit": 0,
+      "roles": {
+        "host": {
+          "pass_count": 163,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "6f79286fdbb2cd669f0b3d1c33ead0e810644a8933b3d90da6c6a595e97c647f"
+        },
+        "join": {
+          "pass_count": 164,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "af33bbe425a1ed84cba2a60137b24080ced15537cb91f1cca008d2c94bfcf006"
+        }
+      },
+      "pass_count": 327,
+      "fail": 0,
+      "result_sha256": "301d33b3e49b80b3dad40b8cd44949dc868533ea82455c2f028abe6c0a43d705",
+      "input_sha256": "7069df2f5cb6295397eb0283025ab25d98fec891696d8dcf7533cfb74c51abd2",
+      "driver_sha256": "de7af3230d57ae17413717dae08f2a8f37ded1231f81e61de2401da468ab9598",
+      "harness_sha256": "3157f966cfcb8d3665041ba2cd6c55225c87df0eaf0d6eba1acb8c79ff7fcc3f",
+      "driver_classes": [
+        "MirrorMaskRestoreTestDoc"
+      ],
+      "run_manifest_sha256": "e6b9b5d82cf1c0ad6db4d8ebca5bb25189c5f94bac061929bba90b771113e10f"
+    },
+    {
+      "entry": "HudTestDoc",
+      "run": "5e5e2bc327",
+      "exit": 0,
+      "roles": {
+        "host": {
+          "pass_count": 69,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "958007ef6543022346898affe9532c76d87ee34808eabab98b3bc583fbc7d162"
+        },
+        "join": {
+          "pass_count": 69,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "2c1bd7db4b5ddc2467c75c755b0aa0722d047a5d5261f9cbbbcf2359e85a36c1"
+        }
+      },
+      "pass_count": 138,
+      "fail": 0,
+      "result_sha256": "4a579f724868be129a01a88b1e0bd4ec84ea7b2b86f1c821be96d6ad8f66830b",
+      "input_sha256": "e0cf3a8dbe1baf599c2fdfecc038c1cd4c705156cf1055b6943b55b238562124",
+      "driver_sha256": "2161aeaa8d05673e80646b946d7b90fa4d3b2424ad7f2dc320b2887c5fa5f65a",
+      "harness_sha256": "d5321031b33906af5bcadaab7220cf8c8413b341a7f7a85533c0b95e68f3f0f3",
+      "driver_classes": [
+        "HudTestDoc"
+      ],
+      "run_manifest_sha256": "53a896889642729f1b437a32f9e86307c72f0d8f35445d6c007153d02287a324"
+    },
+    {
+      "entry": "FastHeldTestDoc",
+      "run": "23d4d17633",
+      "exit": 0,
+      "roles": {
+        "host": {
+          "pass_count": 37,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "2d3975cd94f18f4806292d49a72790fd0794b576a14d1d03793c183fd4db21f0"
+        },
+        "join": {
+          "pass_count": 36,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "801ae383a28e81258f9bb1680e1a8d6faa30a0dd8bc299d14f766f1a407b3b12"
+        }
+      },
+      "pass_count": 73,
+      "fail": 0,
+      "result_sha256": "6ebdc677e945a023a9a1e0b08498f328647f9112c972a1a9c0bd8cea0e96691d",
+      "input_sha256": "1c9348335dacb7e4cdef09b38ee9389c4e428832d3c500aaa63efa064c66ab18",
+      "driver_sha256": "0283fd487fc5da1ba89ba2481f3aab422297e280f9673044317ad0c63456e8be",
+      "harness_sha256": "ef7e79c1593241e1d5dfe9895603235544f7b036ec61d82755a781afb0cb02cd",
+      "driver_classes": [
+        "FastHeldTestDoc",
+        "MovableGripLifecycle",
+        "RemoteMotionPauseRegression",
+        "fe.unit.TelekinesisProbe"
+      ],
+      "run_manifest_sha256": "1c3a18d62ab08b9f61641d49b997e0325b0726fccac1d706e15811c352ec1298"
+    },
+    {
+      "entry": "WeaponAngleTestDoc",
+      "run": "4074a94c30",
+      "exit": 0,
+      "roles": {
+        "host": {
+          "pass_count": 36,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "fa43c6ff0d3f8a83c25471f401cb8c4fe63d01f49447120cf9708d2086fc8cc8"
+        },
+        "join": {
+          "pass_count": 29,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "46acc4530cc8373802d92a74f0196dba5c3b92efdd0da904368e7a86867ce93f"
+        }
+      },
+      "pass_count": 65,
+      "fail": 0,
+      "result_sha256": "a470ee4114570795e3975fb8f78ffe3159a49785ff0118a37cc8f05dd91ded7c",
+      "input_sha256": "594a83bd73c2b718290fbb134c7eed2abeb2d8a11b9e6a365ece08347b7fb4d9",
+      "driver_sha256": "6edc5d2e112e3db59e8310026161421452868beb59c826ceacfc0dc4b7ed1192",
+      "harness_sha256": "df11b8cb51e51d14d457e0f614a0537d9b39cf47cc6c6273b711156899375107",
+      "driver_classes": [
+        "WeaponAngleTestDoc"
+      ],
+      "run_manifest_sha256": "de663dd37504d04320b0eaa839e47d8951e2855cde2831553e0ee4b38f51189f"
+    },
+    {
+      "entry": "PresentationContinuityTestDoc",
+      "run": "8358dbf884",
+      "exit": 0,
+      "roles": {
+        "host": {
+          "pass_count": 5,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "60f0f5cf8e1ddc64717374fdfadb3e0af8dc1d5e14634829ce8a54f0a7858d25"
+        },
+        "join": {
+          "pass_count": 15,
+          "fail": 0,
+          "done": true,
+          "log_sha256": "89ab13d779ba0a4e11ec5c3c294642c679035954cc6b941709c393452b472a8c"
+        }
+      },
+      "pass_count": 20,
+      "fail": 0,
+      "result_sha256": "6aa24f4c967f6299b4c53f38c4b2d30a15687b12bdcdd06d225490de35e8d016",
+      "input_sha256": "44706392a0e17c2c09db9841105c3cb337e1065af8cb9afc8e2ac68d12b86980",
+      "driver_sha256": "4ae2599246a383fd148ddab79749db567851d7da087411ff7c33197982c97ef4",
+      "harness_sha256": "2046503f9da8177525d3dac3f57df0dfff4978827a2bef3ada55638507244cab",
+      "driver_classes": [
+        "MotionCadenceRegression",
+        "NativeTestGun",
+        "PresentationContinuityTestDoc"
+      ],
+      "run_manifest_sha256": "054c3b317486673c5bc9dbc48ba8da604c1672398562a78c6a0d8ca2819d7c3e"
+    }
+  ],
+  "pass_count": 1880,
+  "fail": 0,
+  "pids": [
+    5052,
+    43592,
+    24692,
+    45492,
+    12984,
+    55812,
+    62508,
+    66924,
+    65864,
+    37648,
+    23700,
+    44024,
+    7328,
+    51780,
+    71224,
+    9040,
+    20568,
+    51592,
+    69376,
+    39008,
+    14468,
+    10060,
+    8800,
+    63404,
+    64408,
+    3652,
+    52456,
+    9768,
+    68360,
+    71320,
+    16376,
+    46440,
+    37520,
+    47836
+  ],
+  "pids_exited": true,
+  "protected": {
+    "count": 56,
+    "hashes": {
+      "pfe.swf": "c631cbf3511b6ee303f533d08d51511fe0eb702f43e5db17f5241d8576c64867",
+      "DLC/pfe.swf": "90dec445e60e352dcad06b3171a3ae7b588dbf1fe6c8fb452fceec392aa9db02",
+      "DLC/pfeUI.swf": "0bd5d24381b5aaea50e40b2f95a9e54dfe4a7911aafba27aff06961c82f350c7",
+      "application.xml": "70dd3b085e5f6c66c03693cf68ce5e93a4e4136dd745d40d1a5b2a49863ba236",
+      "mods/loader-manifest.txt": "2d4a64a608a6482168fbfe9e8cd7bb53f006ab1f8993fcc737cf9d32f2293592",
+      "mods/ModLoader/release/ModLoaderMod.swf": "2d01241a89fb25d608ac5138254e14dc3e5fb46e7120319a0d5922e4cf9816fd",
+      "mods/ModSettings/release/ModSettingsMod.swf": "c2bc2cce45a9b7125d8cf048b352e059ec6ddf466f8625ca77bcc4b3e6a4b451",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-laser-eyes-20260923.swf": "909cef05d810a8f0c0093b34dd0999dc0ce6847e24e0402c1818bfcf435c3744",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-laser-reload-debug-20260923.swf": "f02ff3dbc917f557c59adef2ebc9605163e132fac964952a1b437b8bf1bb5e97",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.10.0-body-assist-20260923.swf": "a56e3b46d22cbc5ceccc086aa86c5e58917ec0fa5fff4d3178daabf02a49f659",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.11.0-adaptive-radius-20260923.swf": "132bc390598296bd6237b3991d762f587cf66466ebb907334ea7cf972277f3ce",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.11.1-turret-blind-20260924.swf": "f8dd73dd47e2e14a90097698317884e42eb3a0ebc163b91ada12b6f8a1700f10",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.12.0-nonfront-laser-20260924.swf": "c233d67ea0c5fc74bd0499adfb1ad1c45823caeeda7145806d84be101abf0827",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.12.0-nonfront-laser-final-20260924.swf": "c233d67ea0c5fc74bd0499adfb1ad1c45823caeeda7145806d84be101abf0827",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.13.0-laser-pointer-20260924.swf": "b8eb77d2005b427fa06f40d8fc2a9a5aa68c3e5a5e4df282cc43fc2629b2684f",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.13.2-laser-response-20260924-083702.swf": "e1ea2ac2acaa1f9f7d91dc9efe72f07e782609eb1c8b4e5ed42072fb1c53fe28",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.14.0-laser-contact-20260924.swf": "620a5bb9459e7e50f74644a3fcc24c548c5c15ba225d5335a204d3448c715b91",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.14.1-sats-20260924.swf": "7ae25c6babef61dbb3a158ad9e20fd8dbb3b473e4e66e34d2226cf2da4f73acf",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.14.2-smart-near-20260924-135857.swf": "17bdf40ad86c66a7f6c95c27abb86d397a17e450d11b22d32ceba7fa7eb857c5",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.14.3-laser-props-20260924.swf": "c01f426a358bb995829a200854039a2e836b285b59183364b43256f104f48f81",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.15.0-smart-focus-20260927-210640.swf": "3ecfa98b9e8a58e14314f1295b994f54bf5605bccec2f82d796ca2faf03745f9",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.15.1-eye-alignment-20260927-214032.swf": "49944ba875ecfe2aac847cd30c5b23a41d8367dac0a8708d74cfdc02de2682e0",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.15.2-native-tracer-20260928-082342.swf": "8817748176e17d3c32b286eb5780a818c580818393562973da36ea3799f4425f",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.15.3-visible-lock-20260928-212428.swf": "36b9c19193d231c99db02bbf9ccf9f801eca81c5347ad01e9fd961ed4e67b474",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.4.0-20260919.swf": "bef4d857b6b78d6ccb1f9e012b8bf33cd1e9892b7347892da984176789de648f",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.4.1-20260920.swf": "d87b233391e87ae6be4bb224055d5f2615b2dc3e1dff0ef6929391508d3cf1ec",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.5.0-20260920.swf": "f9dcd668b57b3ee9b44a52649d55432276afade9def0ef9e46ba5ab9b9adcdb3",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.5.2-20260920.swf": "4783cc1943cb8cc58db4610144fb959e37e3a41c652e82bfe714c74e3a30a8a1",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.5.3-20260920.swf": "695109fdcd702cefbcbb554748695f87740da93f7654187807a1735d5d4961e9",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.5.3-final-20260920.swf": "695109fdcd702cefbcbb554748695f87740da93f7654187807a1735d5d4961e9",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.6.0-20260920.swf": "671fd977eca722b9272ff916426e64e5df8c8c4defda1ecadacdf1778c5eb72a",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.6.1-20260923.swf": "ef5fba0f8407e25432f38cf9a9342d8d802b1f80243011c43a8693cef92a713e",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.6.1-laser-fix-20260923.swf": "439a477f9487deb2465db180aa5360971be5c59f1261b203a795901d6a4d3b62",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.6.2-keep-lock-20260923.swf": "573709f879ed6a538d49110a73836053123dc859f47376d2c63d221090e5b089",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.7.0-multi-lock-20260923.swf": "d16523c35be414fb200d5ffdd31b1453b85f1af3802a91180805d8fdd0f21bbd",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.8.0-smooth-mode-20260923.swf": "04a7e69f62044840f9bca112e235632546096fb9c360c6f5869446daf4e1e0b9",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.9.0-lock-exemption-20260923.swf": "f18097a6681993e1b894b2b25b31781dbd2b9407fed8f6f6f45cfdb9a7ab7c05",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.before-v1.9.1-exemption-menu-20260923.swf": "15d7e3a56393d252656add2b1631f780cda4ee6eb752a9ad3d12f286f5b48707",
+      "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.swf": "f9cecf74823d6dca7009e04f01b83f49788fb5f2e874bc529c5f6124a9986362",
+      "mods/RandomRooms/release/RandomRoomsEditor.swf": "fb1537f54b2c32af02aca771cb09366441fb74ca01ee3a6099e35c4d3a35dfd8",
+      "mods/RandomRooms/release/RandomRoomsMod.swf": "f21d7c04ff1ccf59779f0b8d9f52d982585145447c47727c660e9ecc7d62c0df",
+      "mods/RandomRooms/release/RandomRoomsMod_v53_backup.swf": "7feb9157e7cd21785eb24077187ce84342c1102f3e6758163401c490a25085c9",
+      "mods/RealisticVision/release/RealisticVisionMod.swf": "72d2f75ba89e7b40cc78c5a5e48e1c61af297753cbe2dca929e0f1ad5ba6a303",
+      "mods/RModifier/release/LootEditorMod.swf": "4f1d6cf19979f4ea4960f8ccd8377c1d3cac490bed9949866885357d073c8625",
+      "mods/Sandevistan/release/SandevistanMod.before-v1.141-20260923.swf": "0506615963176d937c596f43b8ff6d865b3bac5d2dece8490a47629d65a9a0ba",
+      "mods/Sandevistan/release/SandevistanMod.before-v1.142-20260923.swf": "f556c0728da406a4a6a05399df93e9a0349c4225107547f1e12fe88a2aee3e48",
+      "mods/Sandevistan/release/SandevistanMod.before-v1.143-20260923.swf": "28449b2646223a8eee20eb4bb361dda2d5dc0572c6aaa9cd5fcb5d072a374c44",
+      "mods/Sandevistan/release/SandevistanMod.before-v1.144-20260923.swf": "b8805dbacc9a1313fd96bb68889911195ac6eafcbb526e50c313b86ad1e9c748",
+      "mods/Sandevistan/release/SandevistanMod.before-v1.145-20260927.swf": "2c26eadcfe760ec3bd998ddbedf0fad333151e203b0688af268bdf0612ba0263",
+      "mods/Sandevistan/release/SandevistanMod.swf": "a6e706f0af8cc912a600d3b2262d3aae1ccffb7a9dd18b6b45f354fa860272e4",
+      "mods/TDFC/release/TDFCMod.swf": "99bfbaa68229635fbaa496ef9287a94bb9ea7c65d71339cef3fde65f47e30275",
+      "mods/RConnect/release/config.txt": "5ca72017f1f811b5f8a2b1f18f6cb8b2c24239e2240716c4059cbc073913fc0a",
+      "mods/RealisticVision/release/config.txt": "5136ee1923a77f5f10eab1b3994b64cbd67b09d687a7e829fb1e81d2e79a3c7f",
+      "mods/Sandevistan/release/config.txt": "d91c4c2889aba19b1bcfb356885921b0605a50188b270a9e7619d2116e7ebdc3",
+      "mods/Sandevistan/release/说明.txt": "59965b2909eb9c3af4150633b63b193f37ad96679db6ca23f42d75e143877b9e",
+      "mods/Sandevistan/release/音乐配置.txt": "bdd3005239cfedc9c6005ca03161982d5b0cb205f0d6210047b425490463ab00"
+    }
+  },
+  "continuity_comparison": {
+    "old_run": "bd9ceaf401",
+    "new_run": "8358dbf884",
+    "old_roles": {
+      "host": {
+        "pass_count": 4,
+        "fail": 1,
+        "done": true,
+        "log_sha256": "2512831bfe4f29328c4470df05de1d007446f058a9b0fa431554f26be016862b"
+      },
+      "join": {
+        "pass_count": 9,
+        "fail": 6,
+        "done": true,
+        "log_sha256": "745e1a1ec7d9937dd28292ece5ac685c8f8a93410e53511aeb2f3fff9611328b"
+      }
+    },
+    "metrics": {
+      "cadence": {
+        "old": [
+          {
+            "maxVelocityEdge": 0.08809827066875187,
+            "bounded": true,
+            "edges": 57
+          },
+          {
+            "maxVelocityEdge": 0.08809827066875187,
+            "edges": 57,
+            "bounded": true
+          }
+        ],
+        "new": [
+          {
+            "maxVelocityEdge": 0.002646986472853996,
+            "edges": 57,
+            "bounded": true
+          },
+          {
+            "bounded": true,
+            "edges": 57,
+            "maxVelocityEdge": 0.002646986472853996
+          }
+        ]
+      },
+      "drop": {
+        "old": [
+          {
+            "airFrames": 14,
+            "round": 0,
+            "span": 29,
+            "longestStillMs": 273,
+            "sourceSpan": 29.899999999999977
+          },
+          {
+            "airFrames": 20,
+            "round": 1,
+            "span": 30.850000000000023,
+            "longestStillMs": 220,
+            "sourceSpan": 32.25
+          }
+        ],
+        "new": [
+          {
+            "span": 40,
+            "airFrames": 15,
+            "sourceSpan": 40.10000000000002,
+            "longestStillMs": 0,
+            "round": 0
+          },
+          {
+            "span": 40.849999999999966,
+            "airFrames": 18,
+            "sourceSpan": 40.89999999999998,
+            "longestStillMs": 53,
+            "round": 1
+          }
+        ]
+      },
+      "pause": {
+        "old": [
+          {
+            "resumeJump": 29.94999999999999,
+            "initialGap": 36.69094488188978,
+            "pausedX": 272.08858267716533,
+            "endpoint": 302
+          }
+        ],
+        "new": [
+          {
+            "resumeJump": 0,
+            "initialGap": 6,
+            "pausedX": 308,
+            "endpoint": 308
+          }
+        ]
+      }
+    },
+    "old_source_manifest_sha256": "bff2c1bdc9801ca14197151e1e2d8a5924d6530e9a819149081bcef551c35e9a",
+    "old_run_manifest_sha256": "7a342e36393e52caa7878924eeb7e79fda5e9f5a085f16eb967ce067abefc4c7"
+  },
+  "fast_metrics": [
+    {
+      "rmsPixels": 1.14055961690436,
+      "render": [
+        {
+          "at": 69296,
+          "x": 1588
+        },
+        {
+          "at": 69339,
+          "x": 1590
+        },
+        {
+          "at": 69379,
+          "x": 1590.6
+        },
+        {
+          "at": 69456,
+          "x": 1591.5
+        },
+        {
+          "at": 69500,
+          "x": 1592.7
+        },
+        {
+          "at": 69535,
+          "x": 1593
+        },
+        {
+          "at": 69590,
+          "x": 1594.85
+        },
+        {
+          "at": 69661,
+          "x": 1598.45
+        },
+        {
+          "at": 69717,
+          "x": 1605.25
+        },
+        {
+          "at": 69758,
+          "x": 1610.7
+        },
+        {
+          "at": 69797,
+          "x": 1613.65
+        },
+        {
+          "at": 69845,
+          "x": 1618.4
+        },
+        {
+          "at": 69880,
+          "x": 1625.75
+        },
+        {
+          "at": 69926,
+          "x": 1630.15
+        },
+        {
+          "at": 69987,
+          "x": 1634.5
+        },
+        {
+          "at": 70056,
+          "x": 1637.85
+        },
+        {
+          "at": 70118,
+          "x": 1637.45
+        },
+        {
+          "at": 70193,
+          "x": 1634.6
+        },
+        {
+          "at": 70249,
+          "x": 1630.25
+        },
+        {
+          "at": 70293,
+          "x": 1624
+        },
+        {
+          "at": 70359,
+          "x": 1620.05
+        },
+        {
+          "at": 70432,
+          "x": 1611
+        },
+        {
+          "at": 70489,
+          "x": 1600.8
+        },
+        {
+          "at": 70541,
+          "x": 1592.2
+        },
+        {
+          "at": 70581,
+          "x": 1587.35
+        },
+        {
+          "at": 70649,
+          "x": 1584.75
+        },
+        {
+          "at": 70690,
+          "x": 1583.1
+        },
+        {
+          "at": 70723,
+          "x": 1583.6
+        },
+        {
+          "at": 70773,
+          "x": 1584.9
+        },
+        {
+          "at": 70813,
+          "x": 1588.85
+        },
+        {
+          "at": 70847,
+          "x": 1591.45
+        },
+        {
+          "at": 70916,
+          "x": 1594.9
+        },
+        {
+          "at": 70943,
+          "x": 1601.15
+        },
+        {
+          "at": 70973,
+          "x": 1604.65
+        },
+        {
+          "at": 71019,
+          "x": 1607.9
+        },
+        {
+          "at": 71067,
+          "x": 1612.95
+        },
+        {
+          "at": 71105,
+          "x": 1616.75
+        },
+        {
+          "at": 71173,
+          "x": 1618.2
+        },
+        {
+          "at": 71219,
+          "x": 1619.15
+        },
+        {
+          "at": 71261,
+          "x": 1618.45
+        },
+        {
+          "at": 71316,
+          "x": 1617.65
+        },
+        {
+          "at": 71369,
+          "x": 1616.25
+        },
+        {
+          "at": 71472,
+          "x": 1610
+        },
+        {
+          "at": 71505,
+          "x": 1607.3
+        },
+        {
+          "at": 71539,
+          "x": 1605.6
+        },
+        {
+          "at": 71571,
+          "x": 1602.2
+        },
+        {
+          "at": 71636,
+          "x": 1598.1
+        },
+        {
+          "at": 71669,
+          "x": 1593.15
+        },
+        {
+          "at": 71703,
+          "x": 1591
+        },
+        {
+          "at": 71749,
+          "x": 1588.05
+        },
+        {
+          "at": 71779,
+          "x": 1585.95
+        },
+        {
+          "at": 71831,
+          "x": 1584.5
+        },
+        {
+          "at": 71857,
+          "x": 1582.8
+        }
+      ],
+      "round": 1,
+      "sourceOffset": 16525,
+      "lagMs": 110,
+      "samples": 36,
+      "reference": [
+        {
+          "at": 52797,
+          "x": 1591.6
+        },
+        {
+          "at": 52859,
+          "x": 1592.4
+        },
+        {
+          "at": 52908,
+          "x": 1593.05
+        },
+        {
+          "at": 52944,
+          "x": 1594.85
+        },
+        {
+          "at": 52993,
+          "x": 1597.55
+        },
+        {
+          "at": 53031,
+          "x": 1601
+        },
+        {
+          "at": 53070,
+          "x": 1605
+        },
+        {
+          "at": 53128,
+          "x": 1609.55
+        },
+        {
+          "at": 53170,
+          "x": 1614.4
+        },
+        {
+          "at": 53204,
+          "x": 1619.6
+        },
+        {
+          "at": 53257,
+          "x": 1625.05
+        },
+        {
+          "at": 53301,
+          "x": 1630.65
+        },
+        {
+          "at": 53338,
+          "x": 1635.15
+        },
+        {
+          "at": 53391,
+          "x": 1637.5
+        },
+        {
+          "at": 53448,
+          "x": 1638.05
+        },
+        {
+          "at": 53481,
+          "x": 1637.25
+        },
+        {
+          "at": 53530,
+          "x": 1635.3
+        },
+        {
+          "at": 53571,
+          "x": 1632.5
+        },
+        {
+          "at": 53604,
+          "x": 1628.95
+        },
+        {
+          "at": 53663,
+          "x": 1624.85
+        },
+        {
+          "at": 53712,
+          "x": 1620.25
+        },
+        {
+          "at": 53746,
+          "x": 1615.3
+        },
+        {
+          "at": 53790,
+          "x": 1610.1
+        },
+        {
+          "at": 53817,
+          "x": 1604.65
+        },
+        {
+          "at": 53857,
+          "x": 1599
+        },
+        {
+          "at": 53888,
+          "x": 1593.2
+        },
+        {
+          "at": 53950,
+          "x": 1588.55
+        },
+        {
+          "at": 53990,
+          "x": 1584.8
+        },
+        {
+          "at": 54025,
+          "x": 1583.15
+        },
+        {
+          "at": 54079,
+          "x": 1583.05
+        },
+        {
+          "at": 54115,
+          "x": 1584.3
+        },
+        {
+          "at": 54155,
+          "x": 1586.55
+        },
+        {
+          "at": 54207,
+          "x": 1589.65
+        },
+        {
+          "at": 54244,
+          "x": 1593.4
+        },
+        {
+          "at": 54280,
+          "x": 1597.65
+        },
+        {
+          "at": 54338,
+          "x": 1602.35
+        },
+        {
+          "at": 54376,
+          "x": 1607.4
+        },
+        {
+          "at": 54444,
+          "x": 1612.7
+        },
+        {
+          "at": 54484,
+          "x": 1616.95
+        },
+        {
+          "at": 54516,
+          "x": 1619.1
+        },
+        {
+          "at": 54579,
+          "x": 1619.5
+        },
+        {
+          "at": 54641,
+          "x": 1618.55
+        },
+        {
+          "at": 54732,
+          "x": 1616.5
+        },
+        {
+          "at": 54784,
+          "x": 1613.6
+        },
+        {
+          "at": 54841,
+          "x": 1610
+        },
+        {
+          "at": 54907,
+          "x": 1605.85
+        },
+        {
+          "at": 54940,
+          "x": 1601.25
+        },
+        {
+          "at": 55008,
+          "x": 1596.25
+        },
+        {
+          "at": 55042,
+          "x": 1592.3
+        },
+        {
+          "at": 55081,
+          "x": 1589.1
+        },
+        {
+          "at": 55139,
+          "x": 1586.55
+        },
+        {
+          "at": 55179,
+          "x": 1584.5
+        },
+        {
+          "at": 55215,
+          "x": 1582.9
+        },
+        {
+          "at": 55275,
+          "x": 1581.6
+        },
+        {
+          "at": 55320,
+          "x": 1580.55
+        },
+        {
+          "at": 55361,
+          "x": 1579.7
+        }
+      ],
+      "role": "host"
+    },
+    {
+      "rmsPixels": 1.957075424188554,
+      "render": [
+        {
+          "at": 87688,
+          "x": 1583.05
+        },
+        {
+          "at": 87759,
+          "x": 1584.85
+        },
+        {
+          "at": 87804,
+          "x": 1588.25
+        },
+        {
+          "at": 87836,
+          "x": 1590
+        },
+        {
+          "at": 87880,
+          "x": 1590.65
+        },
+        {
+          "at": 87921,
+          "x": 1591.55
+        },
+        {
+          "at": 88035,
+          "x": 1594.2
+        },
+        {
+          "at": 88072,
+          "x": 1599
+        },
+        {
+          "at": 88104,
+          "x": 1602.9
+        },
+        {
+          "at": 88151,
+          "x": 1607
+        },
+        {
+          "at": 88181,
+          "x": 1613.7
+        },
+        {
+          "at": 88233,
+          "x": 1617.15
+        },
+        {
+          "at": 88260,
+          "x": 1623.15
+        },
+        {
+          "at": 88305,
+          "x": 1628.05
+        },
+        {
+          "at": 88335,
+          "x": 1637.15
+        },
+        {
+          "at": 88368,
+          "x": 1641.2
+        },
+        {
+          "at": 88394,
+          "x": 1642.7
+        },
+        {
+          "at": 88451,
+          "x": 1642.9
+        },
+        {
+          "at": 88488,
+          "x": 1642.5
+        },
+        {
+          "at": 88516,
+          "x": 1640.9
+        },
+        {
+          "at": 88565,
+          "x": 1637.95
+        },
+        {
+          "at": 88594,
+          "x": 1632.65
+        },
+        {
+          "at": 88627,
+          "x": 1629.2
+        },
+        {
+          "at": 88659,
+          "x": 1623.8
+        },
+        {
+          "at": 88721,
+          "x": 1616.95
+        },
+        {
+          "at": 88759,
+          "x": 1610.95
+        },
+        {
+          "at": 88792,
+          "x": 1607.2
+        },
+        {
+          "at": 88840,
+          "x": 1602.9
+        },
+        {
+          "at": 88873,
+          "x": 1596.25
+        },
+        {
+          "at": 88921,
+          "x": 1590.35
+        },
+        {
+          "at": 88974,
+          "x": 1582.95
+        },
+        {
+          "at": 89023,
+          "x": 1577.65
+        },
+        {
+          "at": 89059,
+          "x": 1576.4
+        },
+        {
+          "at": 89107,
+          "x": 1576
+        },
+        {
+          "at": 89163,
+          "x": 1577.9
+        },
+        {
+          "at": 89193,
+          "x": 1580.55
+        },
+        {
+          "at": 89241,
+          "x": 1582.7
+        },
+        {
+          "at": 89285,
+          "x": 1588.95
+        },
+        {
+          "at": 89313,
+          "x": 1592.05
+        },
+        {
+          "at": 89377,
+          "x": 1594.8
+        },
+        {
+          "at": 89416,
+          "x": 1603.8
+        },
+        {
+          "at": 89452,
+          "x": 1608.35
+        },
+        {
+          "at": 89501,
+          "x": 1611.4
+        },
+        {
+          "at": 89532,
+          "x": 1615.45
+        },
+        {
+          "at": 89587,
+          "x": 1617.2
+        },
+        {
+          "at": 89643,
+          "x": 1617.05
+        },
+        {
+          "at": 89682,
+          "x": 1615.5
+        },
+        {
+          "at": 89719,
+          "x": 1613.55
+        },
+        {
+          "at": 89773,
+          "x": 1611.35
+        },
+        {
+          "at": 89832,
+          "x": 1607.65
+        },
+        {
+          "at": 89885,
+          "x": 1601.5
+        },
+        {
+          "at": 89916,
+          "x": 1597.1
+        },
+        {
+          "at": 89954,
+          "x": 1594.1
+        },
+        {
+          "at": 89991,
+          "x": 1590
+        },
+        {
+          "at": 90052,
+          "x": 1586.45
+        },
+        {
+          "at": 90090,
+          "x": 1580.05
+        },
+        {
+          "at": 90131,
+          "x": 1576.4
+        },
+        {
+          "at": 90182,
+          "x": 1575.05
+        },
+        {
+          "at": 90257,
+          "x": 1574.35
+        }
+      ],
+      "round": 3,
+      "sourceOffset": 16523,
+      "lagMs": 110,
+      "samples": 40,
+      "reference": [
+        {
+          "at": 71179,
+          "x": 1590.6
+        },
+        {
+          "at": 71211,
+          "x": 1591.6
+        },
+        {
+          "at": 71250,
+          "x": 1592.4
+        },
+        {
+          "at": 71293,
+          "x": 1593.05
+        },
+        {
+          "at": 71324,
+          "x": 1594.85
+        },
+        {
+          "at": 71363,
+          "x": 1597.55
+        },
+        {
+          "at": 71400,
+          "x": 1601
+        },
+        {
+          "at": 71445,
+          "x": 1605
+        },
+        {
+          "at": 71475,
+          "x": 1609.55
+        },
+        {
+          "at": 71512,
+          "x": 1614.4
+        },
+        {
+          "at": 71578,
+          "x": 1619.6
+        },
+        {
+          "at": 71606,
+          "x": 1625.05
+        },
+        {
+          "at": 71640,
+          "x": 1630.65
+        },
+        {
+          "at": 71667,
+          "x": 1636.45
+        },
+        {
+          "at": 71711,
+          "x": 1641.1
+        },
+        {
+          "at": 71756,
+          "x": 1643.5
+        },
+        {
+          "at": 71788,
+          "x": 1644.15
+        },
+        {
+          "at": 71837,
+          "x": 1643.4
+        },
+        {
+          "at": 71869,
+          "x": 1641.5
+        },
+        {
+          "at": 71901,
+          "x": 1638.7
+        },
+        {
+          "at": 71952,
+          "x": 1635.2
+        },
+        {
+          "at": 71983,
+          "x": 1631.15
+        },
+        {
+          "at": 72014,
+          "x": 1626.6
+        },
+        {
+          "at": 72043,
+          "x": 1621.65
+        },
+        {
+          "at": 72094,
+          "x": 1616.45
+        },
+        {
+          "at": 72128,
+          "x": 1611
+        },
+        {
+          "at": 72169,
+          "x": 1605.35
+        },
+        {
+          "at": 72227,
+          "x": 1599.55
+        },
+        {
+          "at": 72259,
+          "x": 1593.65
+        },
+        {
+          "at": 72294,
+          "x": 1587.6
+        },
+        {
+          "at": 72321,
+          "x": 1582.8
+        },
+        {
+          "at": 72367,
+          "x": 1578.95
+        },
+        {
+          "at": 72399,
+          "x": 1577.15
+        },
+        {
+          "at": 72451,
+          "x": 1577
+        },
+        {
+          "at": 72482,
+          "x": 1578.15
+        },
+        {
+          "at": 72541,
+          "x": 1580.35
+        },
+        {
+          "at": 72580,
+          "x": 1583.4
+        },
+        {
+          "at": 72613,
+          "x": 1587.1
+        },
+        {
+          "at": 72656,
+          "x": 1591.35
+        },
+        {
+          "at": 72703,
+          "x": 1596.05
+        },
+        {
+          "at": 72735,
+          "x": 1601.1
+        },
+        {
+          "at": 72795,
+          "x": 1606.4
+        },
+        {
+          "at": 72833,
+          "x": 1611.9
+        },
+        {
+          "at": 72903,
+          "x": 1616.3
+        },
+        {
+          "at": 72946,
+          "x": 1618.55
+        },
+        {
+          "at": 72973,
+          "x": 1619.1
+        },
+        {
+          "at": 73025,
+          "x": 1618.2
+        },
+        {
+          "at": 73065,
+          "x": 1616.25
+        },
+        {
+          "at": 73126,
+          "x": 1613.4
+        },
+        {
+          "at": 73173,
+          "x": 1609.85
+        },
+        {
+          "at": 73217,
+          "x": 1605.7
+        },
+        {
+          "at": 73273,
+          "x": 1601.1
+        },
+        {
+          "at": 73307,
+          "x": 1596.15
+        },
+        {
+          "at": 73380,
+          "x": 1590.95
+        },
+        {
+          "at": 73423,
+          "x": 1585.45
+        },
+        {
+          "at": 73461,
+          "x": 1581.1
+        },
+        {
+          "at": 73535,
+          "x": 1577.6
+        },
+        {
+          "at": 73587,
+          "x": 1576.05
+        },
+        {
+          "at": 73648,
+          "x": 1576.1
+        },
+        {
+          "at": 73700,
+          "x": 1577.45
+        },
+        {
+          "at": 73743,
+          "x": 1579.8
+        }
+      ],
+      "role": "host"
+    },
+    {
+      "samples": 28,
+      "render": [
+        {
+          "at": 43583,
+          "x": 1577.2
+        },
+        {
+          "at": 43648,
+          "x": 1580.35
+        },
+        {
+          "at": 43712,
+          "x": 1583.55
+        },
+        {
+          "at": 43761,
+          "x": 1585.65
+        },
+        {
+          "at": 43801,
+          "x": 1588.1
+        },
+        {
+          "at": 43861,
+          "x": 1590.05
+        },
+        {
+          "at": 43908,
+          "x": 1594.85
+        },
+        {
+          "at": 44009,
+          "x": 1600.05
+        },
+        {
+          "at": 44073,
+          "x": 1609.8
+        },
+        {
+          "at": 44153,
+          "x": 1617.65
+        },
+        {
+          "at": 44219,
+          "x": 1627.3
+        },
+        {
+          "at": 44288,
+          "x": 1629.85
+        },
+        {
+          "at": 44365,
+          "x": 1631.45
+        },
+        {
+          "at": 44468,
+          "x": 1628.9
+        },
+        {
+          "at": 44532,
+          "x": 1626.65
+        },
+        {
+          "at": 44628,
+          "x": 1622.1
+        },
+        {
+          "at": 44736,
+          "x": 1617.1
+        },
+        {
+          "at": 44804,
+          "x": 1613.15
+        },
+        {
+          "at": 44875,
+          "x": 1608.8
+        },
+        {
+          "at": 44919,
+          "x": 1605.4
+        },
+        {
+          "at": 44961,
+          "x": 1604.1
+        },
+        {
+          "at": 45022,
+          "x": 1603.1
+        },
+        {
+          "at": 45075,
+          "x": 1602.85
+        },
+        {
+          "at": 45139,
+          "x": 1603.7
+        },
+        {
+          "at": 45200,
+          "x": 1605.1
+        },
+        {
+          "at": 45243,
+          "x": 1606.4
+        },
+        {
+          "at": 45325,
+          "x": 1609.6
+        },
+        {
+          "at": 45365,
+          "x": 1611.65
+        },
+        {
+          "at": 45400,
+          "x": 1612.15
+        },
+        {
+          "at": 45455,
+          "x": 1612.05
+        },
+        {
+          "at": 45497,
+          "x": 1610.9
+        },
+        {
+          "at": 45567,
+          "x": 1607.55
+        },
+        {
+          "at": 45605,
+          "x": 1603.35
+        },
+        {
+          "at": 45639,
+          "x": 1600.35
+        },
+        {
+          "at": 45689,
+          "x": 1597.35
+        },
+        {
+          "at": 45731,
+          "x": 1592.1
+        },
+        {
+          "at": 45811,
+          "x": 1584.75
+        },
+        {
+          "at": 45869,
+          "x": 1578.45
+        },
+        {
+          "at": 45909,
+          "x": 1574.85
+        },
+        {
+          "at": 45962,
+          "x": 1573.35
+        },
+        {
+          "at": 46011,
+          "x": 1572.5
+        }
+      ],
+      "round": 0,
+      "reference": [
+        {
+          "at": 60073,
+          "x": 1583.5
+        },
+        {
+          "at": 60150,
+          "x": 1585.9
+        },
+        {
+          "at": 60194,
+          "x": 1589.1
+        },
+        {
+          "at": 60257,
+          "x": 1592.95
+        },
+        {
+          "at": 60317,
+          "x": 1597.35
+        },
+        {
+          "at": 60359,
+          "x": 1602.1
+        },
+        {
+          "at": 60432,
+          "x": 1607.2
+        },
+        {
+          "at": 60478,
+          "x": 1612.55
+        },
+        {
+          "at": 60517,
+          "x": 1618.1
+        },
+        {
+          "at": 60582,
+          "x": 1623.85
+        },
+        {
+          "at": 60655,
+          "x": 1628.45
+        },
+        {
+          "at": 60724,
+          "x": 1630.8
+        },
+        {
+          "at": 60770,
+          "x": 1631.45
+        },
+        {
+          "at": 60810,
+          "x": 1630.7
+        },
+        {
+          "at": 60891,
+          "x": 1628.8
+        },
+        {
+          "at": 60945,
+          "x": 1626
+        },
+        {
+          "at": 61024,
+          "x": 1622.45
+        },
+        {
+          "at": 61126,
+          "x": 1618.35
+        },
+        {
+          "at": 61206,
+          "x": 1613.8
+        },
+        {
+          "at": 61283,
+          "x": 1608.9
+        },
+        {
+          "at": 61360,
+          "x": 1604.95
+        },
+        {
+          "at": 61431,
+          "x": 1603.05
+        },
+        {
+          "at": 61483,
+          "x": 1602.85
+        },
+        {
+          "at": 61583,
+          "x": 1603.95
+        },
+        {
+          "at": 61637,
+          "x": 1606.1
+        },
+        {
+          "at": 61708,
+          "x": 1609.15
+        },
+        {
+          "at": 61763,
+          "x": 1611.55
+        },
+        {
+          "at": 61828,
+          "x": 1612.2
+        },
+        {
+          "at": 61869,
+          "x": 1611.4
+        },
+        {
+          "at": 61908,
+          "x": 1609.55
+        },
+        {
+          "at": 61961,
+          "x": 1606.75
+        },
+        {
+          "at": 62015,
+          "x": 1603.25
+        },
+        {
+          "at": 62075,
+          "x": 1599.15
+        },
+        {
+          "at": 62114,
+          "x": 1594.6
+        },
+        {
+          "at": 62155,
+          "x": 1589.65
+        },
+        {
+          "at": 62214,
+          "x": 1584.45
+        },
+        {
+          "at": 62281,
+          "x": 1579
+        },
+        {
+          "at": 62338,
+          "x": 1574.65
+        },
+        {
+          "at": 62380,
+          "x": 1572.4
+        },
+        {
+          "at": 62419,
+          "x": 1571.95
+        },
+        {
+          "at": 62469,
+          "x": 1572.8
+        },
+        {
+          "at": 62531,
+          "x": 1574.8
+        },
+        {
+          "at": 62593,
+          "x": 1577.7
+        }
+      ],
+      "lagMs": 120,
+      "sourceOffset": -16522,
+      "role": "join",
+      "rmsPixels": 0.7174138183172265
+    },
+    {
+      "samples": 41,
+      "render": [
+        {
+          "at": 62000,
+          "x": 1584.65
+        },
+        {
+          "at": 62042,
+          "x": 1585.4
+        },
+        {
+          "at": 62068,
+          "x": 1586.3
+        },
+        {
+          "at": 62119,
+          "x": 1587.15
+        },
+        {
+          "at": 62164,
+          "x": 1588.85
+        },
+        {
+          "at": 62222,
+          "x": 1590.05
+        },
+        {
+          "at": 62253,
+          "x": 1592.25
+        },
+        {
+          "at": 62283,
+          "x": 1593.5
+        },
+        {
+          "at": 62317,
+          "x": 1595.75
+        },
+        {
+          "at": 62363,
+          "x": 1599.25
+        },
+        {
+          "at": 62409,
+          "x": 1606.55
+        },
+        {
+          "at": 62441,
+          "x": 1612.7
+        },
+        {
+          "at": 62484,
+          "x": 1617.1
+        },
+        {
+          "at": 62555,
+          "x": 1621.95
+        },
+        {
+          "at": 62593,
+          "x": 1630.6
+        },
+        {
+          "at": 62675,
+          "x": 1637.4
+        },
+        {
+          "at": 62724,
+          "x": 1639.4
+        },
+        {
+          "at": 62802,
+          "x": 1638.95
+        },
+        {
+          "at": 62874,
+          "x": 1634.85
+        },
+        {
+          "at": 62912,
+          "x": 1631.85
+        },
+        {
+          "at": 62959,
+          "x": 1629.95
+        },
+        {
+          "at": 62992,
+          "x": 1625.9
+        },
+        {
+          "at": 63027,
+          "x": 1621.75
+        },
+        {
+          "at": 63060,
+          "x": 1617.35
+        },
+        {
+          "at": 63129,
+          "x": 1612.2
+        },
+        {
+          "at": 63169,
+          "x": 1603.6
+        },
+        {
+          "at": 63200,
+          "x": 1600.35
+        },
+        {
+          "at": 63251,
+          "x": 1597.8
+        },
+        {
+          "at": 63287,
+          "x": 1593.6
+        },
+        {
+          "at": 63337,
+          "x": 1591.45
+        },
+        {
+          "at": 63369,
+          "x": 1590.45
+        },
+        {
+          "at": 63420,
+          "x": 1590.7
+        },
+        {
+          "at": 63460,
+          "x": 1591.9
+        },
+        {
+          "at": 63496,
+          "x": 1594.35
+        },
+        {
+          "at": 63548,
+          "x": 1596.7
+        },
+        {
+          "at": 63609,
+          "x": 1601.8
+        },
+        {
+          "at": 63644,
+          "x": 1607.45
+        },
+        {
+          "at": 63695,
+          "x": 1610.5
+        },
+        {
+          "at": 63741,
+          "x": 1614.1
+        },
+        {
+          "at": 63844,
+          "x": 1618.25
+        },
+        {
+          "at": 63897,
+          "x": 1618.75
+        },
+        {
+          "at": 63927,
+          "x": 1618.55
+        },
+        {
+          "at": 63975,
+          "x": 1618.05
+        },
+        {
+          "at": 64013,
+          "x": 1617
+        },
+        {
+          "at": 64046,
+          "x": 1615.1
+        },
+        {
+          "at": 64100,
+          "x": 1612.95
+        },
+        {
+          "at": 64132,
+          "x": 1610.6
+        },
+        {
+          "at": 64170,
+          "x": 1608.9
+        },
+        {
+          "at": 64201,
+          "x": 1606.6
+        },
+        {
+          "at": 64249,
+          "x": 1604.5
+        },
+        {
+          "at": 64282,
+          "x": 1600.6
+        },
+        {
+          "at": 64313,
+          "x": 1597.65
+        },
+        {
+          "at": 64355,
+          "x": 1591.7
+        },
+        {
+          "at": 64404,
+          "x": 1589.65
+        },
+        {
+          "at": 64433,
+          "x": 1587.45
+        },
+        {
+          "at": 64466,
+          "x": 1586.1
+        },
+        {
+          "at": 64493,
+          "x": 1584.45
+        },
+        {
+          "at": 64545,
+          "x": 1583.1
+        }
+      ],
+      "round": 2,
+      "reference": [
+        {
+          "at": 78513,
+          "x": 1587.85
+        },
+        {
+          "at": 78549,
+          "x": 1589.4
+        },
+        {
+          "at": 78598,
+          "x": 1590.6
+        },
+        {
+          "at": 78659,
+          "x": 1592.9
+        },
+        {
+          "at": 78688,
+          "x": 1596
+        },
+        {
+          "at": 78734,
+          "x": 1599.75
+        },
+        {
+          "at": 78763,
+          "x": 1604.05
+        },
+        {
+          "at": 78801,
+          "x": 1608.75
+        },
+        {
+          "at": 78836,
+          "x": 1613.8
+        },
+        {
+          "at": 78903,
+          "x": 1619.1
+        },
+        {
+          "at": 78947,
+          "x": 1624.65
+        },
+        {
+          "at": 78980,
+          "x": 1630.35
+        },
+        {
+          "at": 79025,
+          "x": 1634.9
+        },
+        {
+          "at": 79060,
+          "x": 1638.55
+        },
+        {
+          "at": 79110,
+          "x": 1640.2
+        },
+        {
+          "at": 79169,
+          "x": 1640.25
+        },
+        {
+          "at": 79219,
+          "x": 1639
+        },
+        {
+          "at": 79260,
+          "x": 1636.7
+        },
+        {
+          "at": 79324,
+          "x": 1633.6
+        },
+        {
+          "at": 79363,
+          "x": 1629.85
+        },
+        {
+          "at": 79399,
+          "x": 1625.55
+        },
+        {
+          "at": 79451,
+          "x": 1620.85
+        },
+        {
+          "at": 79491,
+          "x": 1615.8
+        },
+        {
+          "at": 79525,
+          "x": 1610.45
+        },
+        {
+          "at": 79589,
+          "x": 1604.9
+        },
+        {
+          "at": 79646,
+          "x": 1599.2
+        },
+        {
+          "at": 79710,
+          "x": 1594.65
+        },
+        {
+          "at": 79745,
+          "x": 1592.25
+        },
+        {
+          "at": 79815,
+          "x": 1591.65
+        },
+        {
+          "at": 79849,
+          "x": 1592.45
+        },
+        {
+          "at": 79890,
+          "x": 1594.35
+        },
+        {
+          "at": 79944,
+          "x": 1597.15
+        },
+        {
+          "at": 79984,
+          "x": 1600.7
+        },
+        {
+          "at": 80024,
+          "x": 1604.8
+        },
+        {
+          "at": 80091,
+          "x": 1609.35
+        },
+        {
+          "at": 80131,
+          "x": 1614.25
+        },
+        {
+          "at": 80195,
+          "x": 1618.2
+        },
+        {
+          "at": 80264,
+          "x": 1620.1
+        },
+        {
+          "at": 80351,
+          "x": 1620.3
+        },
+        {
+          "at": 80401,
+          "x": 1619.2
+        },
+        {
+          "at": 80444,
+          "x": 1617.05
+        },
+        {
+          "at": 80513,
+          "x": 1614
+        },
+        {
+          "at": 80590,
+          "x": 1610.35
+        },
+        {
+          "at": 80646,
+          "x": 1606.1
+        },
+        {
+          "at": 80691,
+          "x": 1601.45
+        },
+        {
+          "at": 80731,
+          "x": 1596.4
+        },
+        {
+          "at": 80778,
+          "x": 1592.4
+        },
+        {
+          "at": 80841,
+          "x": 1589.2
+        },
+        {
+          "at": 80897,
+          "x": 1586.65
+        },
+        {
+          "at": 80939,
+          "x": 1584.6
+        },
+        {
+          "at": 80970,
+          "x": 1582.95
+        },
+        {
+          "at": 81020,
+          "x": 1581.65
+        },
+        {
+          "at": 81056,
+          "x": 1580.6
+        }
+      ],
+      "lagMs": 110,
+      "sourceOffset": -16521,
+      "role": "join",
+      "rmsPixels": 1.4665803773073816
+    }
+  ],
+  "angle_metrics": [
+    {
+      "degree": 0,
+      "facing": 1,
+      "wrong": 0,
+      "role": "host",
+      "sourceFlashes": 156,
+      "flashes": 112,
+      "round": 0,
+      "samples": 122
+    },
+    {
+      "degree": 160,
+      "facing": 1,
+      "wrong": 0,
+      "role": "host",
+      "sourceFlashes": 162,
+      "flashes": 110,
+      "round": 1,
+      "samples": 124
+    },
+    {
+      "degree": -160,
+      "facing": -1,
+      "wrong": 0,
+      "role": "host",
+      "sourceFlashes": 168,
+      "flashes": 100,
+      "round": 2,
+      "samples": 126
+    },
+    {
+      "degree": 85,
+      "facing": -1,
+      "wrong": 0,
+      "role": "host",
+      "sourceFlashes": 160,
+      "flashes": 98,
+      "round": 3,
+      "samples": 116
+    },
+    {
+      "degree": 95,
+      "facing": 1,
+      "wrong": 0,
+      "role": "host",
+      "sourceFlashes": 174,
+      "flashes": 108,
+      "round": 4,
+      "samples": 132
+    },
+    {
+      "degree": -95,
+      "facing": 1,
+      "wrong": 0,
+      "role": "host",
+      "sourceFlashes": 162,
+      "flashes": 106,
+      "round": 5,
+      "samples": 122
+    },
+    {
+      "degree": 180,
+      "facing": -1,
+      "wrong": 0,
+      "role": "host",
+      "sourceFlashes": 160,
+      "flashes": 106,
+      "round": 6,
+      "samples": 120
+    },
+    {
+      "facing": 1,
+      "role": "join",
+      "round": 0,
+      "wrong": 0,
+      "degree": 0,
+      "sourceFlashes": 166,
+      "flashes": 108,
+      "samples": 124
+    },
+    {
+      "facing": 1,
+      "role": "join",
+      "round": 1,
+      "wrong": 0,
+      "degree": 160,
+      "sourceFlashes": 152,
+      "flashes": 104,
+      "samples": 112
+    },
+    {
+      "facing": -1,
+      "role": "join",
+      "round": 2,
+      "wrong": 0,
+      "degree": -160,
+      "sourceFlashes": 168,
+      "flashes": 108,
+      "samples": 128
+    },
+    {
+      "facing": -1,
+      "role": "join",
+      "round": 3,
+      "wrong": 0,
+      "degree": 85,
+      "sourceFlashes": 162,
+      "flashes": 100,
+      "samples": 120
+    },
+    {
+      "facing": 1,
+      "role": "join",
+      "round": 4,
+      "wrong": 0,
+      "degree": 95,
+      "sourceFlashes": 170,
+      "flashes": 110,
+      "samples": 128
+    },
+    {
+      "facing": 1,
+      "role": "join",
+      "round": 5,
+      "wrong": 0,
+      "degree": -95,
+      "sourceFlashes": 160,
+      "flashes": 108,
+      "samples": 124
+    },
+    {
+      "facing": -1,
+      "role": "join",
+      "round": 6,
+      "wrong": 0,
+      "degree": 180,
+      "sourceFlashes": 164,
+      "flashes": 104,
+      "samples": 124
+    }
+  ],
+  "mask_png": [
+    {
+      "file": "host-presentation-mask-restore-0-leave.png",
+      "sha256": "cd839b7e93deb30f0dddca65e4ff47ab475d18b8675faa0afee94539b667c6ff",
+      "size": [
+        1280,
+        800
+      ],
+      "white_block": null,
+      "pillow": "12.3.0",
+      "criterion": "32x24 opaque contiguous pixels, each RGB channel >=248 and alpha >=240"
+    },
+    {
+      "file": "host-presentation-mask-restore-1-leave.png",
+      "sha256": "ea413bf8b0523ba48a4e6f0a8d5126492938a7d8bd05e5fd33623cdf6ff87a1d",
+      "size": [
+        1280,
+        800
+      ],
+      "white_block": null,
+      "pillow": "12.3.0",
+      "criterion": "32x24 opaque contiguous pixels, each RGB channel >=248 and alpha >=240"
+    },
+    {
+      "file": "host-presentation-mask-restore-2-leave.png",
+      "sha256": "56d7c2ad58b18e74a748ee7e8579b25c94f968fb674b9cafea4e99c2f66aea9d",
+      "size": [
+        1280,
+        800
+      ],
+      "white_block": null,
+      "pillow": "12.3.0",
+      "criterion": "32x24 opaque contiguous pixels, each RGB channel >=248 and alpha >=240"
+    },
+    {
+      "file": "host-presentation-mask-restore-3-leave.png",
+      "sha256": "5f9c5154e8d271b3069a930dab29490c9a56e9f944825443a7ee4353aeb668ff",
+      "size": [
+        1280,
+        800
+      ],
+      "white_block": null,
+      "pillow": "12.3.0",
+      "criterion": "32x24 opaque contiguous pixels, each RGB channel >=248 and alpha >=240"
+    },
+    {
+      "file": "host-presentation-mask-restore-4-leave.png",
+      "sha256": "a480ff457ad888f8912f297bba4174ce315aaa294d977be7f933b3fd51127298",
+      "size": [
+        1280,
+        800
+      ],
+      "white_block": null,
+      "pillow": "12.3.0",
+      "criterion": "32x24 opaque contiguous pixels, each RGB channel >=248 and alpha >=240"
+    },
+    {
+      "file": "host-presentation-mask-restore-5-leave.png",
+      "sha256": "5d7b2d754a802475d1008856d23767d325da63d8d9223ed8d52a772efb0b34f4",
+      "size": [
+        1280,
+        800
+      ],
+      "white_block": null,
+      "pillow": "12.3.0",
+      "criterion": "32x24 opaque contiguous pixels, each RGB channel >=248 and alpha >=240"
+    },
+    {
+      "file": "host-presentation-mask-restore-6-leave.png",
+      "sha256": "5d7b2d754a802475d1008856d23767d325da63d8d9223ed8d52a772efb0b34f4",
+      "size": [
+        1280,
+        800
+      ],
+      "white_block": null,
+      "pillow": "12.3.0",
+      "criterion": "32x24 opaque contiguous pixels, each RGB channel >=248 and alpha >=240"
+    },
+    {
+      "file": "join-presentation-mask-restore-0-leave.png",
+      "sha256": "1b7d4440109931d916b74bb1384b3a6fd48a87f421a2b7d12d01e10df668fbe6",
+      "size": [
+        1280,
+        800
+      ],
+      "white_block": null,
+      "pillow": "12.3.0",
+      "criterion": "32x24 opaque contiguous pixels, each RGB channel >=248 and alpha >=240"
+    },
+    {
+      "file": "join-presentation-mask-restore-1-leave.png",
+      "sha256": "390c8199c85bdb8bc511f8b96e6381cbefd034952cc691df390688f5eff58017",
+      "size": [
+        1280,
+        800
+      ],
+      "white_block": null,
+      "pillow": "12.3.0",
+      "criterion": "32x24 opaque contiguous pixels, each RGB channel >=248 and alpha >=240"
+    },
+    {
+      "file": "join-presentation-mask-restore-2-leave.png",
+      "sha256": "29fd453ceb72ae8908eaca43e9f4fb69ca0be1ca0209939c6a4518a3d990e0c9",
+      "size": [
+        1280,
+        800
+      ],
+      "white_block": null,
+      "pillow": "12.3.0",
+      "criterion": "32x24 opaque contiguous pixels, each RGB channel >=248 and alpha >=240"
+    },
+    {
+      "file": "join-presentation-mask-restore-3-leave.png",
+      "sha256": "4545a82d52727670c54bc4e9a35e112d1407ad5ff936c1ee8f74c653faacdf59",
+      "size": [
+        1280,
+        800
+      ],
+      "white_block": null,
+      "pillow": "12.3.0",
+      "criterion": "32x24 opaque contiguous pixels, each RGB channel >=248 and alpha >=240"
+    },
+    {
+      "file": "join-presentation-mask-restore-4-leave.png",
+      "sha256": "2b354e52d034d4110b15adf22c52b8a4fa76410518789522cfc1bb19d864524d",
+      "size": [
+        1280,
+        800
+      ],
+      "white_block": null,
+      "pillow": "12.3.0",
+      "criterion": "32x24 opaque contiguous pixels, each RGB channel >=248 and alpha >=240"
+    },
+    {
+      "file": "join-presentation-mask-restore-5-leave.png",
+      "sha256": "4545a82d52727670c54bc4e9a35e112d1407ad5ff936c1ee8f74c653faacdf59",
+      "size": [
+        1280,
+        800
+      ],
+      "white_block": null,
+      "pillow": "12.3.0",
+      "criterion": "32x24 opaque contiguous pixels, each RGB channel >=248 and alpha >=240"
+    },
+    {
+      "file": "join-presentation-mask-restore-6-leave.png",
+      "sha256": "bcfdf5ebb5dc8f26754d3ac84f53432da4cc721397f324ab2aa77d44ba3c0f34",
+      "size": [
+        1280,
+        800
+      ],
+      "white_block": null,
+      "pillow": "12.3.0",
+      "criterion": "32x24 opaque contiguous pixels, each RGB channel >=248 and alpha >=240"
+    }
+  ],
+  "carried_checks": {
+    "kind": "retained exact-byte checks, not new runs",
+    "entries": [
+      {
+        "entry": "TelekinesisMotionTestDoc",
+        "run": "4f1a2ef2a6",
+        "origin": "build/m48/final-continuity-01",
+        "unchanged_test_sha256": "570868ccec43503f3d4b136880ca911e8afa12abbabf970ca3b6012825bfecc1",
+        "driver_classes_sha256": "d2e1fc1b3be923ecb1df99c67ae440e62559f6ab894d27aa1e4894b81c3c83bc",
+        "result_sha256": "871ecbd3a5eea9cde4b32dd2c31391964d3b48a66aa245c1cb692cf4fc0cbcd1",
+        "input_sha256": "076a42efd55781fc5abe4d3b09664c9250d3182709f5c8ef23ae3118ee6738ea"
+      },
+      {
+        "entry": "TelekinesisTestDoc",
+        "run": "0842df6149",
+        "origin": "build/m48/final-continuity-01",
+        "unchanged_test_sha256": "b3765dd9e8ccd734a9556f685c2955e55215f205b47c3d5c2e40e2034ab3f810",
+        "driver_classes_sha256": "6826246b86ba642dc19f7510911aaf46c2405d3a8a52958ca5e4b5fca550405b",
+        "result_sha256": "cea9eb5db6beeebe7458c5d6bea3054486a5e8b2c5c384f15e7b158ef51cf62a",
+        "input_sha256": "a347fa7239b33129680dff9607d567d1eb9ef7c3b83a88bd3ce36172a5a910c7"
+      },
+      {
+        "entry": "EnemyGrabTestDoc",
+        "run": "b383c86c67",
+        "origin": "build/m48/final-continuity-01",
+        "unchanged_test_sha256": "97a3a36503bd9853683f9ae4f7277ea0d874c1525e00e035c97253ee5e884aa0",
+        "driver_classes_sha256": "98e9bd0f8c6df999131da1e5b283e03e9572c0d0ddfe9ebef03e0581305ca7b9",
+        "result_sha256": "8e4bed64ac5edc1e4de01f76f54ac9bbc2b128f2befb8fce9428db02c57a828a",
+        "input_sha256": "13429fcbf875617d7e737f744d092d1a7bf9c14e4035dfe5154a30bc5855535b"
+      },
+      {
+        "entry": "LightningSmartTestDoc",
+        "run": "1b078625c7",
+        "origin": "build/m48/final-continuity-01",
+        "unchanged_test_sha256": "a12cc623a4ffeb86bc3b0713a4af102e2a90d1c6b2daa01562a082c37f5550a3",
+        "driver_classes_sha256": "8b28d4fd77b256dd44e35ba7ef889dbd385cb0bc4291adcfe06501e0345095bd",
+        "result_sha256": "beb97c712b4c770f95a50f55c69c3e52bc2cb3303ffe0083d22fb3cfc7b5179c",
+        "input_sha256": "64d80a84ccb9762e4e4531ee4f9b9c83938a252a4d14a7ea15387f91049b598b"
+      },
+      {
+        "entry": "BeamTerrainTestDoc",
+        "run": "68e5e5fff0",
+        "origin": "build/m48/final-continuity-01",
+        "unchanged_test_sha256": "0a2db0f2a9b1bdf122b1b6674f31dea2a930e61e1ad4c19eba0a4666bcdce264",
+        "driver_classes_sha256": "3cff555e4cbeb8f231646f3a800295030ba562f0c8894c9e8a9a519c64988b33",
+        "result_sha256": "5c1ba94da1da3b7d989aabf1d7b6e92c48329a2910b788ae7b80a81ef13253b0",
+        "input_sha256": "98699f408c635f52d995b5243ea1659c6ea50918046bd92235b037c3bf3a2a67"
+      },
+      {
+        "entry": "SatsTestDoc",
+        "run": "5f6ce0104c",
+        "origin": "build/m48/final-continuity-01",
+        "unchanged_test_sha256": "3ad0f79cb9416baad87d3eb369958c530992d1f41a17db26313c546986daef14",
+        "driver_classes_sha256": "d61835173714ac01c88ec35f70c44688c51889962e68ef26a6263c659c23945e",
+        "result_sha256": "7d8bdd37766ca1b7ff0643d0fb58dfeab58a21af1a7dfac1e140bfb64c8a3a1d",
+        "input_sha256": "1d5ab3f3a4f8b63c7d3be5cfe564a2216588f92c59554c0f678f3c81d5fdd224"
+      },
+      {
+        "entry": "CoopPauseTestDoc",
+        "run": "3143828fd6",
+        "origin": "build/m48/final-continuity-01",
+        "unchanged_test_sha256": "b94cbbfbc4d86ad3855a215c69338d83c0455b8039d855986c15b7b24b07b2d2",
+        "driver_classes_sha256": "19220b3df05255013f5b24e95b528d2db6a0d6a2b35ef488efdbbddc3cf12d23",
+        "result_sha256": "11577834166730d93db67faa2909b859438d739b48ecb8167eb69f7963e85816",
+        "input_sha256": "102f413aa582799d3338684320d8850a6f250d533cff21e4be19e845b41457e4"
+      },
+      {
+        "entry": "RoomCooperationTestDoc",
+        "run": "5abf71a389",
+        "origin": "build/m48/final-continuity-01",
+        "unchanged_test_sha256": "85b7d5fe4ef499ae187c80eb6d589f8a04b90616a61149063e9cd19fa63d1157",
+        "driver_classes_sha256": "784d19de20ecaa082fd456534a6d1e729e1eebf7eba4c182938824c18927ac5f",
+        "result_sha256": "249881f6fe8a1da90339fd1959720af566a7b034bff8fd239b0fb32816790a12",
+        "input_sha256": "7d2f60aca018cc7dc507660d54889a0164f55ba2b5451a30870bff50d75e2912"
+      },
+      {
+        "entry": "ProjectileNetworkTestDoc",
+        "run": "982a0fd0ed",
+        "origin": "build/m48/final-continuity-01",
+        "unchanged_test_sha256": "b39c7a23d2ed4eae586cda882d606786cacbb8f96d6b58ce237a8c9b15d38224",
+        "driver_classes_sha256": "5c3042100b4f660640da659f3081c53e5f6f5203f46b949af302e09e1057bca5",
+        "result_sha256": "c943dce7e40124418eedcaf6b949ce55e3ae6dd93f04a2a7b6bc18ed6709380f",
+        "input_sha256": "590603b591ae31eeba651f4040fe071b40c52ed0a0bd051e4a6abca303b793c9"
+      },
+      {
+        "entry": "CombatNetworkTestDoc",
+        "run": "1c36e12776",
+        "origin": "build/m48/final-continuity-01",
+        "unchanged_test_sha256": "c3c295742ce23c925db75eab7c2bbccdceb08d70a7037967311ca26c18e6fb6a",
+        "driver_classes_sha256": "3f4900212876b203e8ff4bccebe4933b997b40b86cba8d2cedfc0ecd53cf1e2f",
+        "result_sha256": "f3a09f107cc5850ae8defed888120f9dfd888f52a6dbe93c0b2d14da7365692c",
+        "input_sha256": "43d6bdf76e8ae553d3c4bbea1fac63ba0eee467acd307e6ae5ace9087fbdde08"
+      },
+      {
+        "entry": "AnimationGapsTestDoc",
+        "run": "a5a0b7d33e",
+        "origin": "build/m48/final-continuity-01",
+        "unchanged_test_sha256": "32f1de198fd9f38b90b1e22a5ab44ad308994ee6585eb7e43ce1387e65522490",
+        "driver_classes_sha256": "2d9280aafe34e90625868f2493ebe7d45a33f3f065fe8387b98e0df6b38466e2",
+        "result_sha256": "3a7373bba9797842eb6a273bde72b7108f2e69270b9d7f7e984491e25b5243d1",
+        "input_sha256": "9af5cb350403811174294798531b2dc34c860de3d192284cb4391d12d49c2a12"
+      },
+      {
+        "entry": "GameplayNetworkTestDoc",
+        "run": "91ebce7651",
+        "origin": "build/m48/final-continuity-01",
+        "unchanged_test_sha256": "91e817887d6e783c3462b9cf5617ba2bb413a71970aad7799413718872eebbbf",
+        "driver_classes_sha256": "42c96a23a878341aeb15ba8fa7a78e99d573ef3844a1d1f2305243d1d6423726",
+        "result_sha256": "eb38807e7dee40f9b8c6a3619709a971a3c5339b81915245718f59f557545f2b",
+        "input_sha256": "f7772551ab946d935fc0b050c21b9043a5581923afd0cdda1bb8cf2e3b940a47"
+      },
+      {
+        "entry": "MirrorMaskRestoreTestDoc",
+        "run": "9dae1733da",
+        "origin": "build/m48/final-continuity-01",
+        "unchanged_test_sha256": "27acb940be0bd81ff5ef7de58f972909de42d3ae77077531b68cb638cd0e8357",
+        "driver_classes_sha256": "69be53311d63555da611850e41178ec46002f0b998d86e83febe0fe85893704b",
+        "result_sha256": "301d33b3e49b80b3dad40b8cd44949dc868533ea82455c2f028abe6c0a43d705",
+        "input_sha256": "7069df2f5cb6295397eb0283025ab25d98fec891696d8dcf7533cfb74c51abd2"
+      },
+      {
+        "entry": "HudTestDoc",
+        "run": "5e5e2bc327",
+        "origin": "build/m48/final-continuity-01",
+        "unchanged_test_sha256": "e9127157922cbbba29dfaeba516e48d58e4694548a549fb13d6f0f40196fbbfc",
+        "driver_classes_sha256": "314604b324b1e1997c96e787999a34222921110b10fd37ec25e45c5ffc2cfd42",
+        "result_sha256": "4a579f724868be129a01a88b1e0bd4ec84ea7b2b86f1c821be96d6ad8f66830b",
+        "input_sha256": "e0cf3a8dbe1baf599c2fdfecc038c1cd4c705156cf1055b6943b55b238562124"
+      },
+      {
+        "entry": "FastHeldTestDoc",
+        "run": "23d4d17633",
+        "origin": "build/m48/final-continuity-01",
+        "unchanged_test_sha256": "6e30a64c0781a73908cbd309be478ce80e085505f9785914f85af7dd20968e03",
+        "driver_classes_sha256": "4d49c6d8f16f35859e86e8951b69ad0987cac0691c7f11423deabd011c0c187f",
+        "result_sha256": "6ebdc677e945a023a9a1e0b08498f328647f9112c972a1a9c0bd8cea0e96691d",
+        "input_sha256": "1c9348335dacb7e4cdef09b38ee9389c4e428832d3c500aaa63efa064c66ab18"
+      },
+      {
+        "entry": "WeaponAngleTestDoc",
+        "run": "4074a94c30",
+        "origin": "build/m48/final-continuity-01",
+        "unchanged_test_sha256": "39d92e6255cd347bfe26bb38464c74f783e6a625c3f0078e2739f6054dc0b147",
+        "driver_classes_sha256": "e5b5e97091e1ebe159d838ecb4be5e14d537b023bb9c7e642c6a91aa6b367435",
+        "result_sha256": "a470ee4114570795e3975fb8f78ffe3159a49785ff0118a37cc8f05dd91ded7c",
+        "input_sha256": "594a83bd73c2b718290fbb134c7eed2abeb2d8a11b9e6a365ece08347b7fb4d9"
+      },
+      {
+        "entry": "PresentationContinuityTestDoc",
+        "run": "8358dbf884",
+        "origin": "build/m48/final-continuity-01",
+        "unchanged_test_sha256": "87e3e6efd02b4d064d45f56b59a3f168084d69e21de32af79ae901cd7f0ad2fa",
+        "driver_classes_sha256": "bbd055e59291b09ee088e913037d238dbb043ea0ef1e2591a81e06eddd29286f",
+        "result_sha256": "6aa24f4c967f6299b4c53f38c4b2d30a15687b12bdcdd06d225490de35e8d016",
+        "input_sha256": "44706392a0e17c2c09db9841105c3cb337e1065af8cb9afc8e2ac68d12b86980"
+      }
+    ],
+    "changed_input": [
+      "tools/validation/audit_m48.py",
+      "tools/validation/carry_m48_checks.py"
+    ],
+    "old_source_manifest_sha256": "37e12d77bd68f7b8724a20abdc0532f75d2dd3544f15a27ba014c892f7b24a48",
+    "new_source_manifest_sha256": "c258124b784a1375bf4763b45cca69b367f0aaf2855dbd64f991d6126517e427",
+    "old_verification_manifest_sha256": "e71b0a0f2dd68e27e24a63227c91c9b02ca6ec8eb0e8af874735498cc60eac8f",
+    "new_verification_manifest_sha256": "24660231efba4a8c943b921153d32b3fc14dce6c4080f1f0a92a7ddf6ec0a526",
+    "controller_sha256": "d16eba9a9eea45a9102dccf94a9db82601c5c97b47e4fe7c46aea273a56612af"
+  },
+  "deployment": {
+    "receipt": "build/m48/final-continuity-02/deployment.json",
+    "receipt_sha256": "04e5aea4683fa974425f0cc4c4f2534b26bd158f9b662bb83c96986204000ec4",
+    "smoke_run": "752a939f9e",
+    "smoke": {
+      "run": "752a939f9e",
+      "exit": 0,
+      "pids": [
+        65068,
+        71160
+      ],
+      "inputs": {
+        "host": {
+          "game": "c631cbf3511b6ee303f533d08d51511fe0eb702f43e5db17f5241d8576c64867",
+          "process_policy": {
+            "RConnect.Process.ps1": "b3fe91f9544a3a57f45b6f1c3a47fcde207f62524cedea846f45d3d4599be88d",
+            "keep_test_responsive.ps1": "ce125a1d3904fe5b0f29c3ca8df306fb848148057cff8a0bc5f44a33e71b97a3"
+          },
+          "modules": {
+            "mods\\ModLoader\\release\\ModLoaderMod.swf": "2d01241a89fb25d608ac5138254e14dc3e5fb46e7120319a0d5922e4cf9816fd",
+            "mods\\ModSettings\\release\\ModSettingsMod.swf": "c2bc2cce45a9b7125d8cf048b352e059ec6ddf466f8625ca77bcc4b3e6a4b451",
+            "mods\\MoreSkills&Weapons\\release\\MoreSkillsWeaponsMod.swf": "f9cecf74823d6dca7009e04f01b83f49788fb5f2e874bc529c5f6124a9986362",
+            "mods\\RandomRooms\\release\\RandomRoomsMod.swf": "f21d7c04ff1ccf59779f0b8d9f52d982585145447c47727c660e9ecc7d62c0df",
+            "mods\\Rconnect\\release\\RConnectMod.swf": "77e3886f7f76885db35558ba7da4a591ec486ab65faab37f95c14116d67bb3ee",
+            "mods\\RealisticVision\\release\\RealisticVisionMod.swf": "72d2f75ba89e7b40cc78c5a5e48e1c61af297753cbe2dca929e0f1ad5ba6a303",
+            "mods\\RModifier\\release\\LootEditorMod.swf": "4f1d6cf19979f4ea4960f8ccd8377c1d3cac490bed9949866885357d073c8625",
+            "mods\\Sandevistan\\release\\SandevistanMod.swf": "a6e706f0af8cc912a600d3b2262d3aae1ccffb7a9dd18b6b45f354fa860272e4",
+            "mods\\TDFC\\release\\TDFCMod.swf": "99bfbaa68229635fbaa496ef9287a94bb9ea7c65d71339cef3fde65f47e30275"
+          }
+        },
+        "join": {
+          "game": "c631cbf3511b6ee303f533d08d51511fe0eb702f43e5db17f5241d8576c64867",
+          "process_policy": {
+            "RConnect.Process.ps1": "b3fe91f9544a3a57f45b6f1c3a47fcde207f62524cedea846f45d3d4599be88d",
+            "keep_test_responsive.ps1": "ce125a1d3904fe5b0f29c3ca8df306fb848148057cff8a0bc5f44a33e71b97a3"
+          },
+          "modules": {
+            "mods\\ModLoader\\release\\ModLoaderMod.swf": "2d01241a89fb25d608ac5138254e14dc3e5fb46e7120319a0d5922e4cf9816fd",
+            "mods\\ModSettings\\release\\ModSettingsMod.swf": "c2bc2cce45a9b7125d8cf048b352e059ec6ddf466f8625ca77bcc4b3e6a4b451",
+            "mods\\MoreSkills&Weapons\\release\\MoreSkillsWeaponsMod.swf": "f9cecf74823d6dca7009e04f01b83f49788fb5f2e874bc529c5f6124a9986362",
+            "mods\\RandomRooms\\release\\RandomRoomsMod.swf": "f21d7c04ff1ccf59779f0b8d9f52d982585145447c47727c660e9ecc7d62c0df",
+            "mods\\Rconnect\\release\\RConnectMod.swf": "77e3886f7f76885db35558ba7da4a591ec486ab65faab37f95c14116d67bb3ee",
+            "mods\\RealisticVision\\release\\RealisticVisionMod.swf": "72d2f75ba89e7b40cc78c5a5e48e1c61af297753cbe2dca929e0f1ad5ba6a303",
+            "mods\\RModifier\\release\\LootEditorMod.swf": "4f1d6cf19979f4ea4960f8ccd8377c1d3cac490bed9949866885357d073c8625",
+            "mods\\Sandevistan\\release\\SandevistanMod.swf": "a6e706f0af8cc912a600d3b2262d3aae1ccffb7a9dd18b6b45f354fa860272e4",
+            "mods\\TDFC\\release\\TDFCMod.swf": "99bfbaa68229635fbaa496ef9287a94bb9ea7c65d71339cef3fde65f47e30275"
+          }
+        }
+      },
+      "configuration_files": {
+        "host": {
+          "mods/Rconnect/release/config.txt": "fbcc0c2c675d3022a44bb1d8755f087c2ca172b033ab2fae096f4a737d73042d",
+          "mods/RealisticVision/release/config.txt": "5136ee1923a77f5f10eab1b3994b64cbd67b09d687a7e829fb1e81d2e79a3c7f",
+          "mods/Sandevistan/release/config.txt": "d91c4c2889aba19b1bcfb356885921b0605a50188b270a9e7619d2116e7ebdc3"
+        },
+        "join": {
+          "mods/Rconnect/release/config.txt": "1b49a046271304d1661354f2df2d8d0d7839e0b7e239066742aa4a9afc02927f",
+          "mods/RealisticVision/release/config.txt": "5136ee1923a77f5f10eab1b3994b64cbd67b09d687a7e829fb1e81d2e79a3c7f",
+          "mods/Sandevistan/release/config.txt": "d91c4c2889aba19b1bcfb356885921b0605a50188b270a9e7619d2116e7ebdc3"
+        }
+      },
+      "log_sha256": {
+        "host": "493a4e82020df1b86381282eaff50df23116608a8dbc74429f87fe26c977d6df",
+        "join": "6633ac716ba9ca9ecf61e60097230eab40debab91ccb1c46ced5b68fa55d7635"
+      }
+    },
+    "all_pids": [
+      5052,
+      43592,
+      24692,
+      45492,
+      12984,
+      55812,
+      62508,
+      66924,
+      65864,
+      37648,
+      23700,
+      44024,
+      7328,
+      51780,
+      71224,
+      9040,
+      20568,
+      51592,
+      69376,
+      39008,
+      14468,
+      10060,
+      8800,
+      63404,
+      64408,
+      3652,
+      52456,
+      9768,
+      68360,
+      71320,
+      16376,
+      46440,
+      37520,
+      47836,
+      65068,
+      71160
+    ],
+    "all_pids_exited": true
+  },
+  "hud_visual_review": {
+    "run": "5e5e2bc327",
+    "images": {
+      "host-hud-bottom-expanded.png": "8be553f6ced417f79ab2fd4fc38f384908528f433d798024f39ada28fa3067eb",
+      "host-hud-chat.png": "f48900690bbfaf8507496a4430688199a1e310c3535a21dc9097cc23c6266243",
+      "host-hud-collapsed.png": "7602e4961c6b636f4f814e1c291cd30b0e2b230930d3de8cef67290ed54c0f90",
+      "host-hud-connect.png": "a795f5fd7c50f06b7306eb4509352682d218b1bf542ffbc80dcb3dc5624d2768",
+      "host-hud-long-error.png": "ea9bc92e00ca4f525116f01407028a3f6b9ea08cabb2cacb33d3d0be6805b015",
+      "host-hud-opacity.png": "846097e788501525d1e01ff66426c1418de98f5f16d77a0263a0615d63cdaa45",
+      "host-hud-pause-hidden.png": "435176fd3e20563fe433b26c2d067e6b26f0b17ba8343c9cb3eee44b562bab24",
+      "host-hud-peer.png": "f8dbbff4a9669e6d7fa0dbd4f71d1b464489c5bbcf0d71749f8c2cf24df4ace8",
+      "host-hud-settings-en.png": "851105cb226d3cc8199848c5073f151a91cb5eef9fe494610966e92639a131ad",
+      "host-hud-settings-ru.png": "110ee13203a1f0570026665102444e0d47244b4ee851605f5f56badd2194e2e6",
+      "host-hud-settings-tw.png": "96da16e6fe3533e535e20ee5ccc208313527f88001e08f7a750a3776e9d3e9bf",
+      "host-hud-small-scrolled.png": "420df6ee2eb908a81a5f03c3f17b2f87f624a3af1660a19b010581f6ae51bd7f",
+      "join-hud-bottom-expanded.png": "1a00d51c826c38268ff035bab40cd119e590413ddc608a6da3461185493d71d1",
+      "join-hud-chat.png": "fbd58a048bd4896d82cf68f67ca199a129b1458fae5a80decd05a3332adcd022",
+      "join-hud-collapsed.png": "9dcf93f793a46aebdca797c51da0037858b5a8e6d89bdacbb0fdad52129b364c",
+      "join-hud-connect.png": "9ca40ea720f495e7cd3b704779da4adc4138b964ff7a5176075088f4cf84c30b",
+      "join-hud-long-error.png": "401ba5c218f4e11903d0674856a67e7f857ef8081a6766296cc56bd063745351",
+      "join-hud-opacity.png": "70adda8f369de32cd29820c698c8887f7f8be731d34a76366fb44154b35bd67c",
+      "join-hud-pause-hidden.png": "3ac4301718ad68ab858e23945b33d93d51b687dcb8dfca0bcf1f255bf7e932b4",
+      "join-hud-peer.png": "0cee44482fcbd45fbb9fff989babdb664b8cf18e169ccd81e8e605cc724a4ffc",
+      "join-hud-settings-en.png": "117f7ad9885cbfb5ea0e4e6be98cb47a9300deb35e3aa78a5f5038d442f6aefd",
+      "join-hud-settings-ru.png": "66251362f4eb07c57feddad5339315eef3dca5b2a3830ae2dc46746aaf9ff13a",
+      "join-hud-settings-tw.png": "6e9b244fc870fd99c7a2f40b3ccaba5df908490e877de3db9ee2fea76688e157",
+      "join-hud-small-scrolled.png": "17c7c702eafa0cdbae8ec867477c88f8aa5022d0ab9e58ed8f474353d686d85c"
+    },
+    "inspected": [
+      "host-hud-opacity.png",
+      "join-hud-opacity.png",
+      "join-hud-small-scrolled.png"
+    ],
+    "scope": "实际原生截图；70%/40%及小窗200%，不是实体鼠标或真人IME测试"
+  }
+}

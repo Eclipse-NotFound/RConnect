@@ -1,6 +1,6 @@
 # RConnect候选门禁入口
 
-当前安装 **0.2.19-dev / 4008999b…**。最终16组1860/0、各DONE，正常无驱动150秒ca43e3b445通过；见state/deployment-m47-2026-10-07.md。34个最终专项/冒烟自有游戏PID退出，其他56项保护未变。新版本建立新的安装基线，不重跑旧部署或覆盖原始失败。
+当前安装 **0.2.20-dev / 77e3886f…**。最终17组1880/0、各DONE，正常无驱动150秒752a939f9e通过；见state/deployment-m48-2026-10-08.md。36个最终专项/冒烟自有游戏PID退出，其他56项保护未变。新版本建立新的安装基线，不重跑旧部署或覆盖原始失败。
 
 下述脚本固定本次UI17→18验证链，现在直接重跑prepare/deploy会被安装基线守卫拒绝。后续发行建立新的安装基线、版本和冻结目录，不覆盖本轮基线或结果；已完成本轮无需重复运行。
 
@@ -38,3 +38,9 @@ Java/AIR路径与业务边界见MEMORY；只有当前源/测试/字节闭包及�
 ## M47 显示发行（已完成）
 
 prepare_m47.py建立18安装基线并冻结新目录；53生产源/151验证输入/52类，生产实际编译于final-presentation-01。最终build/m47/final-presentation-07保留十五组相同输入真实运行（五组02/六组05/四组06），恢复组07执行，carry_m47_checks.py核对实际driver类表及依赖闭包。run_final_regressions.py要求原13组、HUD、高速搬运和武器角度，共16组；audit_m47.py核对源/实际生产与外部驱动字节/类、配置、旧新原生负控、PNG和保护文件。部署及正常加载只走deploy_verified.py/run_smoke.py；smoke失败先回滚。当前基线绑定18→19，已经部署后不再重跑此链。
+
+## M48 显示衔接发行（已完成）
+
+prepare_m48.py建立19安装基线，baseline/freeze/built各阶段采用全新目录。原生容器/SATS与实际RemoteMotion负控为red-continuity-04/bd9ceaf401；暂停、曲线、掉落三个逐项候选保留未修部分的红。最终01实际编译77e3886f并跑17组；02只修正审计字段语义和新增carry_m48_checks，保留实际同字节运行，53源/156验证/52类。audit_m48检查正确稳定暂停差abs(pausedX-endpoint)，并核对旧负控、驱动类表/实际输入、全部17组、PNG及保护文件。原initialGap是收包瞬间差值，不是稳定暂停断言。
+
+顺序：prepare_m48 baseline/freeze → 显式候选编译/类表/built → 原16组加PresentationContinuityTestDoc → audit_m48 → deploy_verified → run_smoke（失败先回滚）。所有Python包括子进程显式-X utf8；AIR后台策略的自有PID查询需要实际权限，受限启动失败不算功能负控。19→20已经部署，此链不可再当新发行重跑；下一轮新建安装基线。

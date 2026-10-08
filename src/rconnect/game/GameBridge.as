@@ -283,8 +283,8 @@ package rconnect.game
                driveGhost(rec.ghost,rec.motion.sample(presentationTime()),int(id));
          }
          presentHeldVisuals();
-         if(!_mirroring || coopPaused) return;
-         mirrorContainerActions();
+         if(!_mirroring) return;
+         if(!coopPaused)mirrorContainerActions();
          tickFrozenAnims();
       }
 
@@ -3431,6 +3431,7 @@ package rconnect.game
       private var _lootLoc:Object = null;  // 房间守卫（换房清空身份表）
       private var _lootMotion:Object = {};
       private var _lootLocalHeld:Object = {};
+      private var _lootFlight:Dictionary = new Dictionary(true);
 
       /** RemoteLoot keeps native interaction, but a network trajectory must not
        * compete with a second gravity simulation. Local grabs/suction take over. */
@@ -3515,6 +3516,7 @@ package rconnect.game
          _lootDecisions={};
          _lootMotion = {};
          _lootLocalHeld = {};
+         _lootFlight = new Dictionary(true);
       }
 
       /** 沿 Pt 链枚举本房间全部 Loot。@return [obj, base] 数组 */
@@ -3542,7 +3544,7 @@ package rconnect.game
       }
 
       /** M24：宿主扫描本房间 Loot（稳定键 = 首见顺序，随 unitsync 广播）。 */
-      public function readLootSync():Array
+      public function readLootSync(activeOnly:Boolean=false):Array
       {
          if(loc == null)
          {
@@ -3573,6 +3575,17 @@ package rconnect.game
                   _lootIdOf[o] = k;
                   _lootObjOf[k] = o;
                }
+               if(activeOnly) {
+                  // Held objects have their own player-owned fast stream.
+                  if(boxHeldLocally(o) || remotelyHeldObject(o))continue;
+                  var now:int=getTimer(),flight:Object=_lootFlight[o];
+                  if(flight==null)flight=_lootFlight[o]={x:o.X,y:o.Y,until:now+500};
+                  if(probe(o,"stay")!=true || probe(o,"vsos")==true
+                     || Math.abs(Number(o.X)-Number(flight.x))+Math.abs(Number(o.Y)-Number(flight.y))>.01)
+                     flight.until=now+500;
+                  flight.x=o.X;flight.y=o.Y;
+                  if(now>int(flight.until))continue;
+               }
                var itemData:Object = GroundItemState.capture(probe(o, "item"));
                out.push({k: k, x: numOr(probe(o, "X"), 0),
                   y: numOr(probe(o, "Y"), 0), sampleTime: _sampleAt>0?_sampleAt:getTimer(), b: String(e[1]), item: itemData,
@@ -3594,7 +3607,7 @@ package rconnect.game
       private var _lootScanErrLogged:Boolean = false;
 
       /** M24：joiner 应用宿主 Loot 快照（认领/生成/移动/移除）。 */
-      public function applyLootSync(list:Array):void
+      public function applyLootSync(list:Array,motionOnly:Boolean=false):void
       {
          if(loc == null || list == null)
          {
@@ -3642,6 +3655,11 @@ package rconnect.game
                   if(probe(lo,"vsos")==true)continue;
                   if(boxHeldLocally(lo)){delete _lootMotion[k];continue;}
                   if(heldSlowBlocked(lo,s.sampleTime,true))continue;
+                  var existingTrack:Object=_lootMotion[k];
+                  // A full scene packet still owns existence, but its slower
+                  // motion sample must not reset a live 20 Hz drop trajectory.
+                  if(!motionOnly && existingTrack!=null && existingTrack.flow===true
+                     && getTimer()<int(existingTrack.flowUntil))continue;
                   // Keep explicit local pushes until the owner acknowledges.
                   // Ordinary host movement is buffered and presented each frame.
                   var baseP:Object = _lootPos[k];
@@ -3665,7 +3683,9 @@ package rconnect.game
                            + Math.round(Number(s.y)));
                      }
                      var track:Object=_lootMotion[k];
-                     if(track==null)track=_lootMotion[k]={o:lo,motion:new RemoteMotion(200)};
+                     if(track==null || motionOnly && track.flow!==true)
+                        track=_lootMotion[k]={o:lo,motion:new RemoteMotion(motionOnly?50:200,motionOnly),flow:motionOnly};
+                     if(motionOnly)track.flowUntil=getTimer()+500;
                      (track.motion as RemoteMotion).push({x:Number(s.x),y:Number(s.y),stay:s.stay,sampleTime:s.sampleTime},getTimer());
                      if(baseP==null)_lootPos[k]={x:Number(lo.X),y:Number(lo.Y)};
                   }
@@ -3686,7 +3706,7 @@ package rconnect.game
             }
             // 移除：宿主广播里已消失的键 = 宿主侧被拾取/清除
             // （TCP 可靠有序，缺席即真移除，无丢包抖动）
-            for(var pk:String in _lootObjOf)
+            if(!motionOnly)for(var pk:String in _lootObjOf)
             {
                if(seen[pk] !== true)
                {
@@ -5604,7 +5624,7 @@ package rconnect.game
          var motion:RemoteMotion=_unitMotion[u] as RemoteMotion;
          if(motion==null || !freezeAI)motion=_unitMotion[u]=new RemoteMotion(200);
          motion.push({x:x,y:y,sampleTime:stamp},now);
-         var sample:Object=motion.sample(presentationTime());
+         var sample:Object=coopPaused?motion.settle(presentationTime()):motion.sample(presentationTime());
          u["setPos"](sample.x,sample.y);
       }
 
@@ -6043,25 +6063,40 @@ package rconnect.game
             try
             {
                if(probe(u,"loc") !== loc) continue;
-               captureUnitDamage(u);
+               if(!coopPaused)captureUnitDamage(u);
                var motion:RemoteMotion = _unitMotion[u] as RemoteMotion;
                if(motion != null)
                {
-                  var sample:Object=motion.sample(presentationTime());
+                  var sample:Object=coopPaused?motion.settle(presentationTime()):motion.sample(presentationTime());
                   u["setPos"](sample.x,sample.y);
                   u["setVisPos"]();
                }
-               _presentation.animateBody(u);
-               _presentation.tick(u);
+               if(!coopPaused){_presentation.animateBody(u);_presentation.tick(u);}
                var hit:MirrorHitUnit = _hitUnits[u];
-               if(hit != null) {_mirrorMasks.prepare(u);hit.syncMotion();hit.tickFeedback();}
+               if(hit != null) {_mirrorMasks.prepare(u);hit.syncMotion();if(!coopPaused)hit.tickFeedback();}
             }
             catch(err:*)
             {
             }
          }
+         if(coopPaused)syncPausedSatsPositions();
          _animatingMirrors = false;
          if(presentationTiming!=null){presentationTiming.motionMs+=getTimer()-measureAt;presentationTiming.motionCalls++;}
+      }
+
+      /** SATS copies the target visual on entry. Move that native overlay with
+       * the received stop position without rebuilding selections or its queue. */
+      private function syncPausedSatsPositions():void {
+         var sats:Object=probe(world,"sats");
+         if(probe(sats,"active")!=true)return;
+         for each(var entry:Object in probe(sats,"units") as Array) {
+            var receiver:MirrorHitUnit=entry.u as MirrorHitUnit;
+            var body:Object=receiver==null?null:receiver.body;
+            var vis:Object=probe(body,"vis");
+            if(vis!=null && probe(body,"loc")===loc && entry.v!=null) {
+               entry.v.x=vis.x;entry.v.y=vis.y;
+            }
+         }
       }
 
       private var _frozen:Dictionary = new Dictionary();

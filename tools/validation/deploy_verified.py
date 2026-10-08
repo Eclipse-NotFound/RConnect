@@ -7,8 +7,8 @@ ROOT=Path(__file__).resolve().parents[2];GAME=ROOT.parents[1]
 def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
 def read(p):return json.loads(p.read_text(encoding='utf-8-sig'))
 ap=argparse.ArgumentParser();ap.add_argument('--snapshot',type=Path,required=True);args=ap.parse_args()
-out=args.snapshot.resolve();assert out.parent in (ROOT/'build/m46',ROOT/'build/m47') and out.name.startswith('final')
-m=read(out/'source-input.json');milestone='m47' if m['version']=='0.2.19-dev' else 'm46'
+out=args.snapshot.resolve();assert out.parent in (ROOT/'build/m46',ROOT/'build/m47',ROOT/'build/m48') and out.name.startswith('final')
+m=read(out/'source-input.json');milestone={'0.2.18-dev':'m46','0.2.19-dev':'m47','0.2.20-dev':'m48'}[m['version']]
 e=read(ROOT/('knowledge/experiments/'+milestone+'-validation-evidence.json'))
 REQUIRED=required_entries(m);baseline=verify_protected(m)
 assert e['required_entries']==REQUIRED and len(e['runs'])==len(REQUIRED) and e['fail']==0

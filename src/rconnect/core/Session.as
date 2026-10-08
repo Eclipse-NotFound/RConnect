@@ -497,6 +497,7 @@ package rconnect.core
 
             case Protocol.MSG_WORLDSTATE:
                applyWorldState(msg.players as Array);
+               if(msg.lootMotion is Array && sameHostRoom(msg))mod.game.applyLootSync(msg.lootMotion as Array,true);
                break;
 
             case "map-progress":
@@ -1197,7 +1198,11 @@ package rconnect.core
          }
          var ws:Object = Protocol.make(Protocol.MSG_WORLDSTATE,
             {tick: _tickCount, players: players});
-         server.broadcast(ws);
+         if(mod.game!=null && rooms.ready && !rooms.busy && rooms.authority && !mod.game.isTransitioning()) {
+            var movingLoot:Array=mod.game.readLootSync(true);
+            if(movingLoot!=null)ws.lootMotion=movingLoot;
+         }
+         server.broadcast(rooms.stamp(ws));
       }
 
       private function applyWorldState(players:Array):void

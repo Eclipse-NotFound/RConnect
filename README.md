@@ -4,7 +4,7 @@ Two-player online co-op for **Fallout Equestria: REMAINS** — see each other, c
 
 English (this page) · [简体中文](README.zh-CN.md)
 
-> Current local candidate: **0.2.19-dev**, deployed 2026-10-07. Settings now offers per-player window opacity from 30–100%. Active telekinetic items update faster in either direction; teammate weapons use native flips and buffered firing visuals. The compact four-tab HUD remains. Sixteen checks passed **1860 assertions** on the same candidate, followed by normal-loader smoke; see the [release record](state/deployment-m47-2026-10-07.md). Real mouse/Chinese IME use, hidden-room control loss/enemy respawn and dense-combat stutter remain open. Validated on game 1.02 with two local players.
+> Current local candidate: **0.2.20-dev**, deployed 2026-10-08. Telekinetic movement now changes speed more smoothly, active container drops update faster, and shared SATS pause settles enemy positions and targeting overlays before resuming. Per-player window opacity and native weapon flips remain. Seventeen checks passed **1880 assertions** on the same candidate, followed by normal-loader smoke; see the [release record](state/deployment-m48-2026-10-08.md). Real mouse/Chinese IME use, hidden-room control loss/enemy respawn and dense-combat stutter remain open. Validated on game 1.02 with two local players.
 >
 > For local co-op, save and close both games, then use **[Start-Coop.bat](Start-Coop.bat)**. It keeps only the processes it starts responsive in the background and preserves each character's saves. This may use more power. Large encounters can still stutter. The current validation does not establish a general frame-rate improvement.
 >

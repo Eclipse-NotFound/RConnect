@@ -11,6 +11,7 @@ package rconnect.game
       private var at:int;
       private var duration:int=50;
       private var interval:int;
+      private var immediateStart:Boolean;
       private var frames:Array=[];
       private var gaps:Array=[];
       private var offset:Number=0;
@@ -18,9 +19,12 @@ package rconnect.game
       private var sampledAt:int=0;
       private var arrivedAt:int=0;
       private var selected:Object;
+      private var preceding:Object;
       private static const FIELDS:Array=["x","y","aimX","aimY"];
 
-      public function RemoteMotion(intervalMs:int=50) {interval=intervalMs;}
+      public function RemoteMotion(intervalMs:int=50,startImmediately:Boolean=false) {
+         interval=intervalMs;immediateStart=startImmediately;
+      }
 
       public function push(snap:Object, now:int):void
       {
@@ -29,6 +33,7 @@ package rconnect.game
          }
          var previous:Object=sample(now);
          frames=[];
+         preceding=null;
          var jump:Boolean=previous==null || now-at>1000;
          if(previous!=null)
          {
@@ -78,8 +83,8 @@ package rconnect.game
          var dy:Number=last==null?0:Number(snap.y)-Number(last.snap.y);
          if(last==null || now-arrivedAt>1000 || stamp-Number(last.at)>1000
             || clockOffset<offset-Math.max(250,interval*2) || dx*dx+dy*dy>600*600) {
-            frames=[];gaps=[];selected=null;state=null;
-            offset=clockOffset;cursor=stamp-delay();sampledAt=now;
+            frames=[];gaps=[];selected=null;state=null;preceding=null;
+            offset=clockOffset;cursor=stamp-(immediateStart?0:delay());sampledAt=now;
          } else {
             // Host world broadcasts can repeat an unchanged peer snapshot.
             // They must not restart either movement or the animation clock.
@@ -93,7 +98,7 @@ package rconnect.game
             gaps.push(stamp-Number(last.at));if(gaps.length>8)gaps.shift();
          }
          arrivedAt=now;frames.push({at:stamp,snap:snap});
-         if(frames.length>32)frames.shift();
+         if(frames.length>32)preceding=frames.shift();
       }
 
       private function delay():Number {
@@ -110,7 +115,7 @@ package rconnect.game
          cursor=next+Math.max(-elapsed*.1,Math.min(elapsed*.1,wanted-next));
          var latest:Object=frames[frames.length-1];
          cursor=Math.min(cursor,Number(latest.at));
-         while(frames.length>2 && Number(frames[1].at)<=cursor)frames.shift();
+         while(frames.length>2 && Number(frames[1].at)<=cursor)preceding=frames.shift();
          var a:Object=frames[0],b:Object=frames.length>1?frames[1]:a;
          if(cursor>=Number(b.at))a=b;
          if(selected!==a.snap) {
@@ -120,11 +125,38 @@ package rconnect.game
          var t:Number=span>0?Math.max(0,Math.min(1,(cursor-Number(a.at))/span)):0;
          for each(key in FIELDS) {
             var first:Number=Number(a.snap[key]),last:Number=Number(b.snap[key]);
-            if(isFinite(first) && isFinite(last))state[key]=first+(last-first)*t;
+            if(isFinite(first) && isFinite(last))state[key]=interval<=50 && span>0
+               ? curve(key,a,b,t,span) : first+(last-first)*t;
          }
          if(a.snap.weapons is Array && b.snap.weapons is Array)
             state.weapons=WeaponDisplay.interpolate(a.snap.weapons as Array,b.snap.weapons as Array,t);
          return state;
+      }
+
+      /** Shape-preserving cubic interpolation makes velocity continuous across
+       * high-rate samples. It stays within the two received endpoints, stops
+       * at real direction changes, and adds no prediction or display delay. */
+      private function curve(key:String,a:Object,b:Object,t:Number,h:Number):Number {
+         var first:Number=Number(a.snap[key]),last:Number=Number(b.snap[key]);
+         var slope:Number=(last-first)/h,left:Number=slope,right:Number=slope;
+         if(preceding!=null && Number(preceding.at)<Number(a.at) && isFinite(Number(preceding.snap[key]))) {
+            var hp:Number=Number(a.at)-Number(preceding.at);
+            left=tangent((first-Number(preceding.snap[key]))/hp,slope,hp,h);
+         }
+         var following:Object=frames.length>2?frames[2]:null;
+         if(following!=null && Number(following.at)>Number(b.at) && isFinite(Number(following.snap[key]))) {
+            var hn:Number=Number(following.at)-Number(b.at);
+            right=tangent(slope,(Number(following.snap[key])-last)/hn,h,hn);
+         }
+         var square:Number=t*t,cube:Number=square*t;
+         var value:Number=(2*cube-3*square+1)*first+(cube-2*square+t)*h*left
+            +(-2*cube+3*square)*last+(cube-square)*h*right;
+         return Math.max(Math.min(first,last),Math.min(Math.max(first,last),value));
+      }
+      private static function tangent(a:Number,b:Number,ha:Number,hb:Number):Number {
+         if(a*b<=0)return 0;
+         var wa:Number=2*hb+ha,wb:Number=hb+2*ha;
+         return (wa+wb)/(wa/a+wb/b);
       }
    }
 }

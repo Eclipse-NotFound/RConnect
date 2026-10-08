@@ -7,7 +7,7 @@ def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
 def read(p):return json.loads(p.read_text(encoding='utf-8-sig'))
 ap=argparse.ArgumentParser();ap.add_argument('--snapshot',type=Path);args=ap.parse_args()
 if args.snapshot:
-    OUT=args.snapshot.resolve();assert OUT.parent in (ROOT/'build/m46',ROOT/'build/m47') and OUT.name.startswith('final')
+    OUT=args.snapshot.resolve();assert OUT.parent in (ROOT/'build/m46',ROOT/'build/m47',ROOT/'build/m48') and OUT.name.startswith('final')
     receipt=OUT/'deployment.json'
 else:receipt=ROOT/'build/m46/deployment.json'
 d=read(receipt);OUT=ROOT/d['snapshot'];target=ROOT/'release/RConnectMod.swf'
@@ -15,7 +15,7 @@ assert d['status']=='deployed-awaiting-smoke' and sha(target)==d['sha256']
 record={'run':None,'exit':None};runner_output=''
 try:
     verify_protected(read(OUT/'source-input.json'),own_release=d['sha256'])
-    command=[sys.executable,str(ROOT/'tools/run_coop_regression.py'),'--candidate',str(target),'--smoke','--all-mods',
+    command=[sys.executable,'-X','utf8',str(ROOT/'tools/run_coop_regression.py'),'--candidate',str(target),'--smoke','--all-mods',
         '--responsive','--seconds','150','--expected-version',d['version']]
     result=subprocess.run(command,cwd=ROOT,capture_output=True,text=True,encoding='utf-8',errors='replace')
     runner_output=result.stdout+'\n'+result.stderr
@@ -38,7 +38,7 @@ try:
             assert bad not in s,(role,bad)
         if role=='join':assert 'welcome id=' in s and 'unitsync matched' in s
         record['log_sha256'][role]=sha(p)
-    milestone='m47' if d['version']=='0.2.19-dev' else 'm46'
+    milestone={'0.2.18-dev':'m46','0.2.19-dev':'m47','0.2.20-dev':'m48'}[d['version']]
     evidence=read(ROOT/('knowledge/experiments/'+milestone+'-validation-evidence.json'))
     for name,digest in evidence['protected']['hashes'].items():assert sha(GAME/name)==digest,name
     assert sha(target)==d['sha256']

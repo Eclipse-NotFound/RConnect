@@ -32,13 +32,16 @@ CHECKS = {
     "HudTestDoc": (180, "rbl", False),
     "FastHeldTestDoc": (360, "random_mane", True),
     "WeaponAngleTestDoc": (180, "rbl", False),
+    "PresentationContinuityTestDoc": (180, "random_mane", False),
 }
 REQUIRED = list(CHECKS)[:13]
 
 def required_entries(manifest):
     expected = REQUIRED + (["HudTestDoc"] if manifest.get("baseline_path") else [])
-    if manifest.get('version') == '0.2.19-dev':
+    if manifest.get('version') in ('0.2.19-dev', '0.2.20-dev'):
         expected += ['FastHeldTestDoc', 'WeaponAngleTestDoc']
+    if manifest.get('version') == '0.2.20-dev':
+        expected += ['PresentationContinuityTestDoc']
     assert manifest.get("required_entries", expected) == expected, "Incomplete required check list"
     return expected
 
@@ -61,7 +64,7 @@ def main():
     parser.add_argument("--join-save-template", type=Path)
     args = parser.parse_args()
     OUT=args.snapshot.resolve()
-    assert OUT.parent in (ROOT/'build/m46', ROOT/'build/m47') and OUT.name.startswith(('final','red-')),OUT
+    assert OUT.parent in (ROOT/'build/m46', ROOT/'build/m47', ROOT/'build/m48') and OUT.name.startswith(('final','red-')),OUT
     if args.list:
         manifest = read(OUT / "source-input.json") if (OUT / "source-input.json").exists() else {}
         print(json.dumps({"status": "serial-joint-candidate-validation", "required": required_entries(manifest),
@@ -104,13 +107,13 @@ def main():
             profile_args.append("--connect-after-load")
         driver = OUT / (entry + "-driver")
         assert not driver.exists(), "Do not overwrite a previous driver or failed attempt"
-        command = [sys.executable, str(ROOT / "tools/build_effects_driver.py"), "--candidate", str(candidate),
+        command = [sys.executable, "-X", "utf8", str(ROOT / "tools/build_effects_driver.py"), "--candidate", str(candidate),
                    "--source-root", str(OUT / "src"), "--java", JAVA, "--output", str(driver), "--entry", entry]
         print("BUILD " + entry, flush=True)
         with (OUT / (entry + "-build.log")).open("w", encoding="utf-8") as log:
             subprocess.run(command, cwd=ROOT, stdout=log, stderr=subprocess.STDOUT, check=True)
         verify()
-        command = [sys.executable, str(ROOT / "tools/run_coop_regression.py"), "--candidate", str(candidate),
+        command = [sys.executable, "-X", "utf8", str(ROOT / "tools/run_coop_regression.py"), "--candidate", str(candidate),
                    "--effects-driver", str(driver), "--effects", "--all-mods", "--responsive",
                    "--seconds", str(seconds), "--expected-version", manifest["version"]] + profile_args
         if land:
