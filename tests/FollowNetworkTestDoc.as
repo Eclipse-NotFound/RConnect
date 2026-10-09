@@ -13,6 +13,7 @@ package {
       public static const MOD_CLASS:Class=RConnectMod;
       private var mod:RConnectMod,host:Boolean,t:Timer=new Timer(150),links:Dictionary=new Dictionary();
       private var phase:String="boot",at:int=0,a:Object,b:Object,xpStart:Number,checkpoint:Object;
+      private var peerReady:Boolean=false,lastReady:int=-600;
       public function FollowNetworkTestDoc(){var app:String=NativeApplication.nativeApplication.applicationID;if(app.indexOf("rconnect-coop-")<0)return;
          host=app.indexOf("-host-")>=0;t.addEventListener(TimerEvent.TIMER,tick);t.start();}
       private function check(b:Boolean,s:String):void{Log.d("COOP "+(b?"PASS ":"FAIL ")+"follow-network "+s);}
@@ -26,7 +27,7 @@ package {
          try {
             if(p.phase=="done"){finish();return;}
             if(host) {
-               if(p.phase=="ready")setPhase("select");
+               if(p.phase=="ready")peerReady=true;
                else if(p.phase=="aligned"){send("split");setPhase("split");}
                else if(p.phase=="split-ready") {
                   check(mod.game.roomKey()==a.key,"follow disabled leaves host in original room");
@@ -53,12 +54,18 @@ package {
          }catch(err:Error){check(false,err.getStackTrace());send("done");finish();}
       }
       private function tick(e:TimerEvent):void {
-         mod=RConnectMod.instance;if(mod==null || mod.game.gg==null || !mod.session.rooms.ready || mod.session.rooms.busy || mod.game.isTransitioning())return;
+         mod=RConnectMod.instance;if(mod==null || mod.session==null)return;
+         // Listen before room readiness; a peer may finish loading first.
          if(host){for each(var l:TcpLink in mod.session.server.clients)watch(l);}else watch(mod.session.link);
+         if(mod.game.gg==null || !mod.session.rooms.ready || mod.session.rooms.busy || mod.game.isTransitioning())return;
          if(t.currentCount<30 || mod.game.readWorldInfo().curLandId!="random_mane")return;
          try {
             mod.game.gg.invulner=true;mod.game.gg.disabled=true;mod.game.gg.dx=mod.game.gg.dy=0;
-            if(phase=="boot"){check(mod.config.getValue("followTeammate")=="0","follow is opt-in by default");mod.config.setValue("followTeammate","0");if(!host)send("ready");setPhase("wait");}
+            if(phase=="boot"){check(mod.config.getValue("followTeammate")=="0","follow is opt-in by default");mod.config.setValue("followTeammate","0");setPhase("wait");}
+            // Retry only the fixture handshake until align acknowledges it.
+            // Repeated ready messages never reset a running scenario.
+            if(!host && phase=="wait" && a==null && getTimer()-lastReady>=600){send("ready");lastReady=getTimer();}
+            if(host && phase=="wait" && peerReady && a==null)setPhase("select");
             if(host && phase=="select") {
                var rooms:Array=[];for each(var col:Array in mod.game.world.land.locs)if(col!=null)for each(var row:Array in col)if(row!=null)for each(var r:Object in row)if(r!=null&&!TravelGuard.restricted(r))rooms.push(r);
                check(rooms.length>=2,"two ordinary rooms available");a=info(rooms[0]);b=info(rooms[1]);go(a);send("align",{a:a,b:b});setPhase("align");
