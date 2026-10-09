@@ -26,6 +26,7 @@ def main():
     ap.add_argument('--with-vision', action='store_true', help='Load the installed RealisticVision SWF in isolated copies')
     ap.add_argument('--vision-candidate',type=Path,help='Load this optional RV candidate instead of the installed SWF')
     ap.add_argument('--smoke', action='store_true', help='Validate a production candidate without test classes')
+    ap.add_argument('--vision-smoke-version',help='Additionally require this RV startup version and its tick-181 heartbeat')
     ap.add_argument('--presentation', action='store_true', help='Validate the dedicated dark-room rendering test document')
     ap.add_argument('--effects', action='store_true', help='Validate native weapon/death and terrain changes over TCP')
     ap.add_argument('--effects-driver',type=Path,help='Directory containing an external EffectsDriver and EffectsHarness for exact production-byte tests')
@@ -42,6 +43,7 @@ def main():
                     (ROOT/'src'/'RConnectMod.as').read_text(encoding='utf-8')).group(1))
     args=ap.parse_args()
     if args.all_mods and not (args.presentation or args.effects or args.smoke): ap.error('--all-mods requires --presentation, --effects or --smoke')
+    if args.vision_smoke_version and not (args.smoke and args.all_mods): ap.error('--vision-smoke-version requires normal all-mod smoke')
     if args.connect_after_load and (not args.effects_driver or not args.host_save_template or not args.join_save_template):
         ap.error('--connect-after-load requires an external driver and both isolated save templates')
     if args.presentation and not args.land: args.land='random_mane'
@@ -195,7 +197,7 @@ def main():
         # instance starts. Keep configuration evidence after runtime cleanup.
         (output/'input.json').write_text(json.dumps(dict(candidate_sha256=candidate_hash,inputs=inputs,
             configuration_files=configuration_files,descriptors=descriptors,visible_windows=args.visible_windows,
-            save_templates=save_inputs,vision_config_templates=vision_inputs),indent=2))
+            save_templates=save_inputs,vision_config_templates=vision_inputs,vision_smoke_version=args.vision_smoke_version),indent=2))
         for role,folder,desc,storage,appid in launches:
             stdout=(output/(role+'.stdout.log')).open('w',encoding='utf-8')
             proc=subprocess.Popen([str(game/'adl64.exe'),'-runtime',str(game/'runtimes/air/win64'),str(desc)],
@@ -213,6 +215,7 @@ def main():
             candidate=str(args.candidate.resolve()),sha256=candidate_hash,inputs=inputs,save_templates=save_inputs,
             vision_config_templates=vision_inputs,configuration_files=configuration_files,descriptors=descriptors,
             visible_windows=args.visible_windows,
+            vision_smoke_version=args.vision_smoke_version,
             input_manifest_sha256=hashlib.sha256((output/'input.json').read_bytes()).hexdigest()),indent=2))
         print('OUTPUT '+str(output),flush=True)
         deadline=time.monotonic()+args.seconds
@@ -224,6 +227,10 @@ def main():
                 elif args.presentation: complete=complete and 'COOP PRESENTATION DONE' in content
                 elif args.smoke: complete=complete and ('v'+args.expected_version+' initialized') in content and 'tick 200' in content
                 else: complete=complete and 'COOP NETWORK DONE' in content and 'COOP LMG NETWORK DONE' in content and (role!='host' or ('COOP COMBAT DONE' in content and 'COOP APPEARANCE DAMAGE DONE' in content))
+                if args.vision_smoke_version:
+                    vision_log=path.parent/'RVision.log'
+                    vision_text=vision_log.read_text(encoding='utf-8',errors='replace') if vision_log.exists() else ''
+                    complete=complete and ('init ok '+args.vision_smoke_version) in vision_text and 'tick 181' in vision_text
             if complete: break
             time.sleep(2)
     finally:
@@ -253,6 +260,12 @@ def main():
     for role,_ in artifacts:
         path=output/(role+'.log')
         content=path.read_text(encoding='utf-8',errors='replace') if path.exists() else ''
+        if args.vision_smoke_version:
+            vision_log=output/(role+'-vision.log')
+            vision_text=vision_log.read_text(encoding='utf-8',errors='replace') if vision_log.exists() else ''
+            vision_ok=('init ok '+args.vision_smoke_version) in vision_text and 'tick 181' in vision_text and 'ERROR' not in vision_text and 'error:' not in vision_text
+            ok=ok and vision_ok
+            print(role+' RV smoke '+('PASS' if vision_ok else 'FAIL'),flush=True)
         bad=list(dict.fromkeys(s for s in content.splitlines() if 'COOP FAIL' in s or 'game error dialog' in s or 'RConnectRoom: ERROR' in s or 'handoff timed out' in s
             or 'RConnectNavigation: failed' in s or 'RConnectMap: failed' in s or 'RConnectRoomTrace: failed' in s
             or 'RConnectPause: failed' in s or 'RConnectGrip: failed' in s or 'RConnectPeerGrip: failed' in s

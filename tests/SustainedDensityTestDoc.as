@@ -6,11 +6,14 @@ package {
    import flash.events.TimerEvent;
    import flash.events.UncaughtErrorEvent;
    import flash.utils.Dictionary;
+   import flash.utils.ByteArray;
    import flash.utils.Timer;
    import flash.utils.getTimer;
+   import flash.sampler.*;
    import fe.unit.Unit;
    import fe.unit.CombatStateProbe;
    import flash.system.System;
+   import flash.system.ApplicationDomain;
    import rconnect.game.GameBridge;
    import rconnect.game.MirrorHitUnit;
    import rconnect.core.Log;
@@ -28,7 +31,67 @@ package {
       private var baselineIntervals:Array=[];
       private var densityProbe:int=0;
       private var frameAt:int=0,cpuMs:int=0,cpuMax:int=0,netAt:int=0,netMs:int=0,netMax:int=0;
-      public function SustainedDensityTestDoc() {
+      private var projectileLoad:Boolean=false,loadGuns:Array=[],projectileEvents:int=0,projectileSamples:int=0;
+      private var endedSamples:int=0;
+      private var diagEnabled:Boolean=false,diagSampling:Boolean=false,diagNumber:int=0,diagAt:int=0,diagAfter:int=0;
+      private var diagRows:Array=[];
+      private var diagPacket:Object;
+      private function encodingProbe():void {
+         var packet:Object=host?{type:"unitsync",units:mod.game.readUnitsSnapshot(),snap:mod.game.readSnapshot()}:diagPacket;
+         if(packet==null)return;
+         var encoded:String=JSON.stringify(packet),plain:Object=JSON.parse(encoded);
+         var rows:Array=[];
+         // The exact installed-version control predates this optional codec.
+         // Resolve it only for this post-scenario diagnostic, never require it
+         // merely to compile or run the shared native projectile scenario.
+         var checkedCodec:Object=null;
+         if(ApplicationDomain.currentDomain.hasDefinition("rconnect.net.BinaryMessageCodec"))
+            checkedCodec=ApplicationDomain.currentDomain.getDefinition("rconnect.net.BinaryMessageCodec");
+         // A post-scenario microbenchmark, not part of any measured frame window.
+         // Normalize once to the existing JSON data model, then compare codecs
+         // on the same native snapshot. Production negotiates the checked codec.
+         for(var pass:int=0;pass<4;pass++) {
+            var start:int=getTimer(),body:ByteArray,decoded:Object,i:int;
+            for(i=0;i<30;i++){body=new ByteArray();body.writeUTFBytes(JSON.stringify(plain));body.position=0;decoded=JSON.parse(body.readUTFBytes(body.length));}
+            var jsonMs:int=getTimer()-start,jsonBytes:int=body.length;
+            start=getTimer();
+            for(i=0;i<30;i++){body=new ByteArray();body.writeObject(plain);body.position=0;decoded=body.readObject();}
+            var binaryMs:int=getTimer()-start,binaryBytes:int=body.length;
+            start=getTimer();
+            if(checkedCodec!=null)
+               for(i=0;i<30;i++){body=checkedCodec.pack(plain);decoded=checkedCodec.unpack(body);}
+            rows.push({jsonMs:jsonMs,binaryMs:binaryMs,jsonBytes:jsonBytes,binaryBytes:binaryBytes,
+               checkedMs:checkedCodec==null?-1:getTimer()-start,checkedBytes:checkedCodec==null?0:body.length,decoded:decoded!=null});
+         }
+         Log.d("PACKET CODEC PROBE "+JSON.stringify({role:host?"host":"join",rows:rows}));
+      }
+      private function diagBegin(e:Event):void {
+         if(phase!="load")return;diagAt=getTimer();diagAfter=0;diagNumber++;
+         if((densityProbe<=1 || densityProbe>=5) && diagNumber%5==1 && diagNumber<30) {
+            clearSamples();sampleInternalAllocs(false);startSampling();diagSampling=true;
+         }
+      }
+      private function diagAfterFrame(e:Event):void {if(diagAt>0)diagAfter=getTimer();}
+      private function diagEnd(e:Event):void {
+         if(diagAt==0)return;
+         var end:int=getTimer(),total:int=0,cpu:int=0,stacks:Object={};
+         if(diagSampling) {
+            pauseSampling();total=getSampleCount();
+            for each(var sample:Sample in getSamples()) {
+               if(sample is NewObjectSample || sample is DeleteObjectSample)continue;
+               cpu++;var names:Array=[];
+               if(sample.stack!=null)for each(var frame:StackFrame in sample.stack)
+                  names.push(frame.name+"@"+frame.file+":"+frame.line);
+               var key:String=names.join(" <- ");stacks[key]=int(stacks[key])+1;
+            }
+            stopSampling();diagSampling=false;
+         }
+         diagRows.push({phase:densityProbe,at:diagAt,after:diagAfter,end:end,samples:total,cpu:cpu,stacks:stacks});
+         diagAt=0;
+      }
+      public function SustainedDensityTestDoc(withProjectiles:Boolean=false,profile:Boolean=false) {
+         projectileLoad=withProjectiles;
+         diagEnabled=profile;
          var id:String=NativeApplication.nativeApplication.applicationID;
          if(id.indexOf("pfe-rconnect-coop-")!=0 && id.indexOf("pfe-modsettings-rconnect-coop-")!=0)return;
          host=id.indexOf("-host-")>=0;
@@ -43,7 +106,11 @@ package {
          l.addEventListener(TcpLink.MESSAGE,function(e:NetMessageEvent):void{if(phase=="load")netAt=getTimer();},false,100000);
          l.addEventListener(TcpLink.MESSAGE,function(e:NetMessageEvent):void{if(phase=="load"){var n:int=getTimer()-netAt;netMs+=n;netMax=Math.max(netMax,n);}},false,-100000);
       }}
-      private function finish():void {if(phase=="done")return;phase="done";timer.stop();Log.d("COOP EFFECTS DONE network-state "+(host?"host":"join"));}
+      private function finish():void {
+         if(phase=="done")return;
+         if(diagEnabled){diagEnd(null);encodingProbe();Log.d("PROJECTILE PROFILE "+JSON.stringify({role:host?"host":"join",frames:diagRows}));}
+         phase="done";timer.stop();Log.d("COOP EFFECTS DONE network-state "+(host?"host":"join"));
+      }
       private function find(id:String):Object {for each(var u:Object in mod.game.loc.units)if(!(u is MirrorHitUnit) && u.id==id)return u;return null;}
       private function spawn(name:String,id:String,map:XML,x:Number):Object {
          var c:Class=mod.main.loaderInfo.applicationDomain.getDefinition("fe.unit."+name) as Class;
@@ -58,7 +125,16 @@ package {
             frames=prevFrame=0;nextPhase();setPhase("load");return;
          }
          if(!host && p.type=="unitsync" && phase=="load"){
+            if(diagEnabled)diagPacket=p;
             var now:int=getTimer();if(lastPacket>0)maxPacket=Math.max(maxPacket,now-lastPacket);lastPacket=now;packets++;
+            if(projectileLoad && p.units is Array)for each(var unit:Object in p.units)
+               if(unit.weapons is Array)for each(var weapon:Object in unit.weapons)
+                  if(weapon.events is Array)for each(var event:Object in weapon.events) {
+                     projectileEvents++;if(event.flight!=null && event.flight.frames is Array)projectileSamples+=event.flight.frames.length;
+                     if(event.flight!=null && Number(event.flight.end)>0 && event.flight.frames is Array)
+                        for each(var point:Object in event.flight.frames)
+                           if(Number(point.at)>Number(event.flight.end))endedSamples++;
+                  }
          }
          if(p.type!="combat-network-test")return;
          if(p.stage=="done"){finish();return;}
@@ -114,6 +190,13 @@ package {
             for(var i:int=0;i<78;i++){
                var u:Object=spawn(i%2==0?"UnitBat":"UnitSlaver",i%2==0?"1":"slaver2",<unit tr="2"/>,mod.game.gg.X+160);
                CombatStateProbe.ai(u as Unit,3);u.dx=3;u.stay=true;u.animate();
+               if(projectileLoad && i%2==1 && loadGuns.length<12) {
+                  if(u.currentWeapon!=null)u.currentWeapon.remVisual();
+                  var factory:Object=mod.main.loaderInfo.applicationDomain.getDefinition("fe.weapon.Weapon");
+                  var gun:Object=factory.create(u,"lmg",0);u.currentWeapon=gun;u.childObjs=[gun];gun.addVisual();
+                  gun.hold=10000;gun.damage=1;gun.destroy=0;gun.damageExpl=0;gun.precision=0;gun.deviation=0;gun.critCh=0;
+                  loadGuns.push(gun);
+               }
             }
             send("load");setPhase("wait-load");return;
          }
@@ -151,6 +234,11 @@ package {
          if(timer.currentCount<250)return;
          try {
             if(phase=="boot"){
+               if(diagEnabled) {
+                  mod.stage.addEventListener(Event.ENTER_FRAME,diagBegin,false,1000000);
+                  mod.stage.addEventListener(Event.ENTER_FRAME,diagAfterFrame,false,-1000000);
+                  mod.stage.addEventListener(Event.RENDER,diagEnd,false,-1000000);
+               }
                if(!host){
                   mod.stage.addEventListener(Event.ENTER_FRAME,function(e:Event):void{frameAt=getTimer();},false,200000);
                   mod.stage.addEventListener(Event.ENTER_FRAME,function(e:Event):void{if(phase=="load"){var n:int=getTimer()-frameAt;cpuMs+=n;cpuMax=Math.max(cpuMax,n);}},false,-200000);
@@ -196,6 +284,10 @@ package {
                check(frames>=80&&p95<200,"80 enemies keep stage frames progressing");
                check(packets>=20&&maxPacket<900,"80 enemies keep current world snapshots arriving");
                check(count>packets,"weapon aim advances between snapshots");
+               if(projectileLoad && densityProbe>0) {
+                  check(projectileEvents>0 && projectileSamples>0,"dense firing transports actual native projectile frames events="+projectileEvents+" samples="+projectileSamples);
+                  check(endedSamples==0,"ended projectiles stop adding hidden poses samples="+endedSamples);
+               }
                Log.d("COOP PROBE steady phase="+densityProbe+" utcMs="+(new Date()).time+" memory="+System.totalMemory);
                if(densityProbe<6) {
                   nextPhase();send("next-phase");
@@ -206,13 +298,26 @@ package {
       }
       private function nextPhase():void {
          densityProbe++;
+         diagNumber=0;
+         projectileEvents=projectileSamples=endedSamples=0;
          var weapons:Object={};
          for each(var u:Object in mod.game.loc.units)if(u.currentWeapon!=null)weapons[u.currentWeapon.id]=int(weapons[u.currentWeapon.id])+1;
          Log.d("COOP PROBE steady-start phase="+densityProbe+" utcMs="+(new Date()).time+" weapons="+JSON.stringify(weapons));
       }
       private function frame(e:Event):void {
          if(mod==null)return;
-         if(host){if(phase=="load")frames++;return;}
+         if(host){
+            if(phase=="load") {
+               frames++;
+               if(projectileLoad && densityProbe>0)for(var i:int=0;i<loadGuns.length;i++) {
+                  var gun:Object=loadGuns[i],owner:Object=gun.owner;
+                  gun.X=owner.X;gun.Y=owner.Y-owner.scY/2;
+                  gun.rot=gun.forceRot=-Math.PI/3+Math.sin(getTimer()/400)*.2;
+                  if(frames%12==i%12)gun.attack();gun.step();
+               }
+            }
+            return;
+         }
          if(baselineActive){
             var sampleAt:int=getTimer();baselineFrames++;
             if(baselinePrev>0)baselineIntervals.push(sampleAt-baselinePrev);baselinePrev=sampleAt;

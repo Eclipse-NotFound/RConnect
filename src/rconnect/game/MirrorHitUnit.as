@@ -13,6 +13,7 @@ package rconnect.game
          "dodge","invulner","transp","opt","mech","blood","mat","maxShok","showNumbs"];
       private static const MOTION:Array = ["loc","id","X","Y","X1","X2","Y1","Y2","scX","scY","storona","fraction","hp","sost","trigDis","nazv","level","invis","isVis","npc","noAgro"];
       private var target:Object;
+      private var nativeTarget:Boolean;
       public static const GRIP:Array=["massa","massaMove","levitPoss","levit_max","levit_r","fracLevit","t_throw"];
       public function get body():Object {return disposed?null:target;}
       private var inDamage:Boolean=false;
@@ -21,7 +22,7 @@ package rconnect.game
 
       public function MirrorHitUnit(target:Object)
       {
-         super(); this.target=target;
+         super(); this.target=target;nativeTarget=target is Unit;
          var self:Object=this;
          // Native target selectors and MSW's exclusions must see the enemy's
          // real identity/eligibility. Being outside firstObj stops this receiver's
@@ -57,7 +58,11 @@ package rconnect.game
          var self:Object=this;
          for each(var name:String in MOTION)
          {
-            var value:*=GameBridge.probe(target,name);
+            // These are native Unit/Obj/Pt public storage fields, not getters.
+            // The general probe's catch scope allocates on every read in AIR;
+            // 80 mirrors used it for every slot on every rendered frame.
+            // Keep the guarded path for non-native diagnostic objects.
+            var value:*=nativeTarget ? ((name in target)?target[name]:null) : GameBridge.probe(target,name);
             if(value!=null) self[name]=value;
          }
          self.disabled=self.sost>=3;
@@ -65,9 +70,9 @@ package rconnect.game
          // eligible unit's vis without a null check. Borrow the mirrored body's
          // visual, never add another display object or enable its native AI.
          // Assign null too: a rebuilt/removed body must not keep a stale image.
-         self.vis=GameBridge.probe(target,"vis");
-         self.hpbar=GameBridge.probe(target,"hpbar");
-         self.isSats=GameBridge.probe(target,"isSats")==true && !self.disabled
+         self.vis=nativeTarget?target.vis:GameBridge.probe(target,"vis");
+         self.hpbar=nativeTarget?target.hpbar:GameBridge.probe(target,"hpbar");
+         self.isSats=(nativeTarget?target.isSats:GameBridge.probe(target,"isSats"))==true && !self.disabled
             && self.vis!=null && self.vis.width>0 && self.vis.height>0;
       }
 

@@ -25,8 +25,8 @@ package
     */
    public class RConnectMod
    {
-      // Working M46 core after the separate 0.2.17 compact HUD release.
-      public static const VERSION:String = "0.2.22-dev";
+      // M51: native weapon effects, door presentation and teammate body style.
+      public static const VERSION:String = "0.2.23-dev";
 
       public static var instance:RConnectMod;
 

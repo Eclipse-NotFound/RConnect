@@ -8,7 +8,7 @@ def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
 def read(p):return json.loads(p.read_text(encoding='utf-8-sig'))
 ap=argparse.ArgumentParser();ap.add_argument('--snapshot',type=Path);args=ap.parse_args()
 if args.snapshot:
-    OUT=args.snapshot.resolve();assert OUT.parent in (ROOT/'build/m46',ROOT/'build/m47',ROOT/'build/m48',ROOT/'build/m49',ROOT/'build/m50') and OUT.name.startswith('final')
+    OUT=args.snapshot.resolve();assert OUT.parent in (ROOT/'build/m46',ROOT/'build/m47',ROOT/'build/m48',ROOT/'build/m49',ROOT/'build/m50',ROOT/'build/m51') and OUT.name.startswith('final')
     receipt=OUT/'deployment.json'
 else:receipt=ROOT/'build/m46/deployment.json'
 d=read(receipt);OUT=ROOT/d['snapshot'];target=ROOT/'release/RConnectMod.swf'
@@ -49,7 +49,7 @@ try:
             assert bad not in s,(role,bad)
         if role=='join':assert 'welcome id=' in s and 'unitsync matched' in s
         record['log_sha256'][role]=sha(p)
-    milestone={'0.2.18-dev':'m46','0.2.19-dev':'m47','0.2.20-dev':'m48','0.2.21-dev':'m49','0.2.22-dev':'m50'}[d['version']]
+    milestone={'0.2.18-dev':'m46','0.2.19-dev':'m47','0.2.20-dev':'m48','0.2.21-dev':'m49','0.2.22-dev':'m50','0.2.23-dev':'m51'}[d['version']]
     evidence=read(ROOT/('knowledge/experiments/'+milestone+'-validation-evidence.json'))
     for name,digest in evidence['protected']['hashes'].items():assert sha(GAME/name)==digest,name
     assert sha(target)==d['sha256']

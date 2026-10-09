@@ -1,5 +1,13 @@
 # RConnect候选门禁入口
 
+## M51 进行中
+
+仍安装0.2.22-dev，23尚未部署。当前调查：门误播碎屑、弹道/命中特效、特殊投掷物和魔法、原生护盾、抓队友光晕及友伤入口。[验证记录](../../state/validation-m51-2026-10-09.md)保存最新停点。用户无需退出正常游戏；运行器使用独立副本、AppID和存档，只管理自身PID。
+
+使用 `python -X utf8 tools/validation/prepare_m51.py freeze <全新build/m51/probe-或final-目录>` 冻结，`build` 显式编译该目录，`run_m51.py <目录> <Entry>` 单组执行。场景/时限读取冻结的planner。`control`复制准确安装22字节与当前独立测试，不把源重编译当成旧安装对照。不得覆盖旧输入、结果或失败。
+
+最终候选需同字节47组（含PacketCodec与VisionApi），`audit_m51.py <final目录>`核对全部实际游戏/外部驱动/配置/资源/日志/类清单，之后才走 `deploy_verified.py --snapshot <final目录>` 与 `run_smoke.py --snapshot <final目录>`。审计与RConnect23部署尚未执行。用户另授权的RealisticVision探索缓存已经独立验证部署，当前基线为integration-baseline-0.2.22-vision-cache；保留external1及其前WallBlend外部变更记录，不能用诊断RV覆盖选项冒充正式基线。准确旧22的三个功能负控已在red-vision-cache-02复现：身体透明度双56项、弹道命中双14项、门加入15项；审计按真实缺陷标签核对，不能以任意失败放行。新部署必须唯一备份准确22，不能使用M50的21备份代替。
+
 当前安装 **0.2.22-dev / 32602e77…**。正式30同字节38组4760/0、全双端DONE；旧21负控051e28e849与正常无驱动加载7ec5eb4ec4通过。80个最终实例描述符退出，155项外部保护未变。见state/deployment-m50-2026-10-09.md。21→22链已完成，下次新建22安装基线，禁止直接重跑旧deploy。
 
 ## M50 已完成

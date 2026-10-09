@@ -174,6 +174,7 @@ package {
          var peer:Object=mod.navigation.teammate(),oldName:String=peer.name;peer.name="Звёздная 小马";mod.teammateMap.update();
          var label:TextField=(marker as DisplayObjectContainer).getChildAt(0) as TextField;
          check(label.text==peer.name && label.textWidth>20,"player-authored Russian and Chinese name stays intact");peer.name=oldName;
+         mod.hud.openPage("peer");
          for each(var lang:String in ["en","ru","tw"]) {
             mod.game.world.lang=lang;mod.hud.refresh();var button:TextField=mod.hud.getChildByName("rconnect-teleport") as TextField;
             check(button.textWidth<button.width-4,"teleport label fits native language "+lang);
@@ -205,9 +206,9 @@ package {
          } finally {source.snap=original;mod.game.gg.sost=oldSost;mod.session.rooms.busy=oldBusy;mod.navigation.refresh();}
       }
       private function clickTeleport():void {
-         mod.hud.visible=true;mod.game.world.pip.onoff(3,1);mod.navigation.refresh();mod.hud.refresh();saveImage("navigation-panel.png");
+         mod.hud.openPage("peer");mod.game.world.pip.onoff(3,1);mod.navigation.refresh();mod.hud.refresh();saveImage("navigation-panel.png");
          var button:TextField=mod.hud.getChildByName("rconnect-teleport") as TextField;
-         check(button!=null && mod.navigation.unavailable()=="","teleport is available through the F10 button");
+         check(button!=null && button.visible && button.mouseEnabled && mod.navigation.unavailable()=="","teleport is available through the visible F10 button");
          if(button!=null)button.dispatchEvent(new MouseEvent(MouseEvent.CLICK,true));
       }
       private function finish():void {if(phase=="done")return;setPhase("done");timer.stop();Log.d("COOP EFFECTS DONE navigation "+(host?"host":"join"));}

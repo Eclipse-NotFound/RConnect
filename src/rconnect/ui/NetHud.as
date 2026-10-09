@@ -154,7 +154,7 @@ package rconnect.ui {
          _btnExploration=field("rconnect-exploration","peer",8,45,128,32,true);
          _btnFollow=field("rconnect-follow","peer",144,45,128,32,true);
          _btnTeleport=field("rconnect-teleport","peer",8,83,264,28,true);
-         peerHint=field("rconnect-peer-hint","peer",8,115,264,72);
+         peerHint=field("rconnect-peer-hint","peer",8,203,264,72);
          action(_btnExploration,function():void {
             mod.exploration.setEnabled(!mod.exploration.enabled);
          });
@@ -189,9 +189,9 @@ package rconnect.ui {
          _btnPauseMenus=field("rconnect-pause-menus","settings",8,234,264,30,true);
          _btnPauseSats=field("rconnect-pause-sats","settings",8,270,264,30,true);
          policyHint=field("rconnect-policy-hint","settings",8,308,264,40);
-         friendlyFire=field("rconnect-friendly-fire","settings",8,352,264,30,true);
-         friendlyHint=field("rconnect-friendly-hint","settings",8,388,264,42);
-         versionLabel=field("rconnect-version","settings",8,436,264,38);
+         friendlyFire=field("rconnect-friendly-fire","peer",8,119,264,30,true);
+         friendlyHint=field("rconnect-friendly-hint","peer",8,155,264,42);
+         versionLabel=field("rconnect-version","settings",8,352,264,38);
          action(friendlyFire,function():void {
             if(mod.friendlyFire!=null)mod.friendlyFire.setEnabled(!mod.friendlyFire.enabled);
          });
@@ -276,6 +276,10 @@ package rconnect.ui {
          if(visible && !folded && page=="chat" && !help)unread=0;
          chatButton.text=tr("聊","Chat","Чат")+(unread>0?" "+Math.min(9,unread):"");
          expandButton.text=folded?"▼":"▲";
+         // Collapsed play keeps only the header and the independent pause
+         // notice visible. Populate page text when it is actually opened,
+         // instead of invalidating dozens of hidden TextFields every 50 ms.
+         if(!visible || folded) {refreshPauseBanner(pause);layout();return;}
          for(var i:int=0;i<tabs.length;i++) {
             var t:TextField=tabs[i];t.text=i==0?tr("连接","Connect","Связь"):
                i==1?tr("队友","Teammate","Напарник"):i==2?tr("聊天","Chat","Чат"):tr("设置","Settings","Настройки");
@@ -307,7 +311,11 @@ package rconnect.ui {
          _btnFollow.text=tr("跟随队友","Follow","Следовать")+": "+
             RCLocale.text(mod.config.getValue("followTeammate")=="1"?"开":"关");
          RCLocale.bind(_btnTeleport,mod.navigation!=null && mod.navigation.travelling?"正在传送…":"传送到队友身边",false);
-         var teleportReason:String=mod.navigation==null?"请等待房间准备完成":mod.navigation.unavailable();
+         // This check walks room scripts/units. A hidden page has no usable
+         // button; opening it refreshes immediately, and request() validates
+         // again at the actual click. Do not rescan 80 enemies at every tick.
+         var teleportReason:String=visible && !folded && !help && page=="peer"
+            ? (mod.navigation==null?"请等待房间准备完成":mod.navigation.unavailable()) : "";
          enabled(_btnTeleport,teleportReason=="");
          peerHint.text=RCLocale.text("关闭后保留已收到的区域");
          if(!connected)peerHint.text=tr("先在“连接”中开始联机。","Start a session in Connect.","Начните игру на вкладке «Связь».");
@@ -348,13 +356,17 @@ package rconnect.ui {
          helpText.text=tr("拖动标题可移动浮窗；“停靠”依次切换四角。\n\nCtrl+Enter 打开聊天；Enter 发送；Esc 收起。\nF10 隐藏或恢复，开合状态保留。\n\n共享探索只影响本端接收；关闭后保留已收到区域。\n\n全队暂停由宿主设置；双方都关闭相关界面后继续。\n\n滚轮可滚动当前页。原版菜单优先使用自己的快捷键。",
             "Drag the title to move. Dock cycles through four corners.\n\nCtrl+Enter opens chat; Enter sends; Esc collapses.\nF10 hides or restores the panel.\n\nExploration controls receiving locally; received areas remain.\n\nThe host sets co-op pause. Both players must close the relevant menus to resume.\n\nScroll the current tab with the wheel. Native menus keep their shortcuts.",
             "Перетащите заголовок. Кнопка «Край» меняет угол.\n\nCtrl+Enter открывает чат; Enter отправляет; Esc сворачивает.\nF10 скрывает и возвращает панель.\n\nРазведка влияет только на приём; полученные области сохраняются.\n\nПаузу настраивает ведущий. Для продолжения оба игрока закрывают соответствующие окна.\n\nПрокручивайте вкладку колёсиком. Игровые меню сохраняют свои клавиши.");
-         if(_pauseBanner!=null) {
+         refreshPauseBanner(pause);
+         layout();
+      }
+
+      private function refreshPauseBanner(pause:Object):void {
+         if(_pauseBanner!=null && surface!=null) {
             _pauseBanner.visible=pause!=null && pause.paused;
             _pauseBanner.width=Math.min(500,Math.max(1,surface.stageWidth-16));
             _pauseBanner.height=40;_pauseBanner.x=(surface.stageWidth-_pauseBanner.width)/2;_pauseBanner.y=8;
             if(_pauseBanner.visible)_pauseBanner.text=pause.description();
          }
-         layout();
       }
 
       private function nativeObstacles():Array {
@@ -398,13 +410,11 @@ package rconnect.ui {
             if(item.page=="settings" && item.y>=206)item.renderY+=gripExtra;
             if(item.page=="settings" && item.y>206)item.renderY+=ownerExtra;
             if(f==policyHint)item.renderH=policyHeight;
-            if(f==friendlyFire)item.renderY=Math.max(352,308+policyHeight+4)+ownerExtra+gripExtra;
             if(f==friendlyHint) {
-               item.renderY=Math.max(352,308+policyHeight+4)+36+ownerExtra+gripExtra;
                item.renderH=Math.max(42,f.textHeight+6);
             }
-            if(f==versionLabel)item.renderY=Math.max(352,308+policyHeight+4)+36+
-               Math.max(42,friendlyHint.textHeight+6)+6+ownerExtra+gripExtra;
+            if(f==peerHint)item.renderY=155+Math.max(42,friendlyHint.textHeight+6)+6;
+            if(f==versionLabel)item.renderY=Math.max(352,308+policyHeight+4)+ownerExtra+gripExtra;
             if(f==peerHint || f==helpText)item.renderH=Math.max(item.h,f.textHeight+6);
             if(help?item.page=="help":item.page==page || item.page=="live" && page=="connect" && active)
                pageHeight=Math.max(pageHeight,item.renderY+item.renderH+8);

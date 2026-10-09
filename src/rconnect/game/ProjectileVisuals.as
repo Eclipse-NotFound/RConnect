@@ -46,11 +46,14 @@ package rconnect.game {
        * not enough to reconstruct its visible lifetime, path or muzzle. */
       public static function beamFrame(b:Object,stamp:int):Object {
          var v:DisplayObject=GameBridge.probe(b,"vis") as DisplayObject;
-         if(v==null || !v.visible || v.stage==null)return null;
+         if(v==null)return null;
          var laser:Object=GameBridge.probe(v,"laser");
          return {at:stamp,x:v.x,y:v.y,rot:v.rotation,sx:v.scaleX,sy:v.scaleY,a:v.alpha,
-            f:v is MovieClip?MovieClip(v).currentFrame:1,
+            f:v is MovieClip?MovieClip(v).currentFrame:1,v:v.visible && v.stage!=null,
             ls:laser==null?1:Number(laser.scaleX),lf:laser is MovieClip?MovieClip(laser).currentFrame:1};
+      }
+      public function receiveSpells(owner:Object,events:Array,main:Object,motion:RemoteMotion):void {
+         energyImpacts.receive(owner,events,GameBridge.probe(owner,"loc"),main,0,100,motion);
       }
       public function receive(owner:Object,guns:Array,main:Object,player:Boolean=false,motion:RemoteMotion=null):void {
          if(owner==null || guns==null)return;
@@ -79,8 +82,11 @@ package rconnect.game {
                   var grafon:Object=main.loaderInfo.applicationDomain.getDefinition("fe.World").w.grafon;
                   var layer:DisplayObjectContainer=grafon.visObjs[2] as DisplayObjectContainer;
                   if(layer==null)continue;
-                  var rec:Object={vis:null,cls:cls,s:s,at:now,loc:world,grafon:grafon,main:main,exploded:false,last:0,
-                     beam:s.frames is Array,offset:channel.offset,delay:player?100:300,channel:channel,seq:event.seq,motion:motion,updated:now};
+                  var initialTime:Number=motion!=null?motion.sourceTime:NaN;
+                  if(!isFinite(initialTime))initialTime=now-Number(channel.offset)-(player?100:300);
+                  var rec:Object={vis:null,cls:cls,s:s,at:now,loc:world,grafon:grafon,main:main,exploded:false,explosions:0,impacted:false,last:0,
+                     beam:s.frames is Array,offset:channel.offset,delay:player?100:300,channel:channel,seq:event.seq,motion:motion,updated:now,
+                     previousTime:initialTime,renderedBeam:false,recoveryPoint:null,recoveryAt:0,recoveryRenderedAt:-1};
                   channel.records[String(event.seq)]=rec;
                   if(!rec.beam)createVisual(rec);
                   active.push(rec);
@@ -103,15 +109,15 @@ package rconnect.game {
          v.x=Number(a.s.x);v.y=Number(a.s.y);v.visible=true;
          a.grafon.visObjs[2].addChild(v);a.vis=v;return v;
       }
-      public function tick(loc:Object,now:int=-1):void {
+      public function tick(loc:Object,now:int=-1,finalFrame:Boolean=false):void {
          if(now<0)now=getTimer();
          if(pauseAt>=0)now=Math.min(now,pauseAt);
-         energyImpacts.tick(loc,now);
+         energyImpacts.tick(loc,now,finalFrame);
          for(var i:int=active.length-1;i>=0;i--) {
             var a:Object=active[i],s:Object=a.s,v:DisplayObject=a.vis;
             var age:Number=Math.max(0,now-int(a.at))/1000,frames:Number=age*30;
             if(a.loc!==loc){remove(i);continue;}
-            if(a.beam) {if(!tickBeam(a,now))remove(i);continue;}
+            if(a.beam) {if(!tickBeam(a,now,finalFrame))remove(i);continue;}
             if(age>(s.ended?0.16:2.5) || v==null){remove(i);continue;}
             if(v.parent!==a.grafon.visObjs[2])a.grafon.visObjs[2].addChild(v);
             var x:Number=Number(s.x)+Number(s.dx)*frames;
@@ -129,25 +135,66 @@ package rconnect.game {
             v.alpha=s.ended?Math.max(0,1-age/0.16):1;
          }
       }
-      private function tickBeam(a:Object,now:int):Boolean {
+      private function tickBeam(a:Object,now:int,finalFrame:Boolean):Boolean {
          var s:Object=a.s,list:Array=s.frames as Array,time:Number=a.motion!=null?a.motion.sourceTime:NaN;
          if(!isFinite(time))time=now-Number(a.offset)-Number(a.delay);
-         if(!a.exploded&&s.explosion!=null&&time>=Number(s.explosion.at)) {
+         var previousTime:Number=Number(a.previousTime);a.previousTime=time;
+         if(!a.impacted && s.impact!=null && time>=Number(s.impact.at)) {
+            a.impacted=true;BallisticImpactVisuals.play(a.main,a.loc,s.impact);
+         }
+         if(s.explosions is Array) {
+            while(int(a.explosions)<s.explosions.length && time>=Number(s.explosions[int(a.explosions)].at)) {
+               ProjectileExplosionVisuals.play(a.main,a.loc,s.explosions[int(a.explosions)]);a.explosions++;
+            }
+         } else if(!a.exploded&&s.explosion!=null&&time>=Number(s.explosion.at)) {
             a.exploded=true;ProjectileExplosionVisuals.play(a.main,a.loc,s.explosion);
          }
-         if(int(s.end)>0 && time>=Number(s.end))return false;
          if(now-int(a.updated)>15000)return false;
-         if(list==null || list.length==0 || time<Number(list[0].at))return true;
-         var point:Object=list[0];
-         for each(var p:Object in list){if(Number(p.at)>time)break;point=p;}
+         var point:Object,next:Object=null,p:Object;
+         if(int(s.end)>0 && time>=Number(s.end)) {
+            // One slow display frame can cross a whole already-queued laser
+            // pulse. Preserve one real native frame instead of silently losing
+            // the shot. Never resurrect received history, an already rendered
+            // pulse, a paused-world ending, or an old (>600ms) effect.
+            if(a.recoveryPoint==null && !a.renderedBeam && int(s.spring)>=2 && pauseAt<0
+               && isFinite(previousTime) && previousTime<Number(s.end) && time-Number(s.end)<=600) {
+               for each(p in list)
+                  if(Number(p.at)<Number(s.end) && p.v!==false && Number(p.a)>.05 && Number(p.ls)>0)
+                     a.recoveryPoint=p;
+               if(a.recoveryPoint!=null)a.recoveryAt=now;
+            }
+            if(a.recoveryPoint==null || pauseAt>=0 || now-int(a.recoveryAt)>250
+               || int(a.recoveryRenderedAt)>=0 && now>int(a.recoveryRenderedAt))return false;
+            point=a.recoveryPoint;
+         } else {
+            if(list==null || list.length==0 || time<Number(list[0].at))return true;
+            point=list[0];
+            for each(p in list){if(Number(p.at)>time){next=p;break;}point=p;}
+         }
          var v:DisplayObject=a.vis as DisplayObject;if(v==null)v=createVisual(a);
          if(v==null)return false;
          if(v.parent!==a.grafon.visObjs[2])a.grafon.visObjs[2].addChild(v);
          if(v is MovieClip && MovieClip(v).currentFrame!=int(point.f))MovieClip(v).gotoAndStop(int(point.f));
          v.x=Number(point.x);v.y=Number(point.y);v.rotation=Number(point.rot);
-         v.scaleX=Number(point.sx);v.scaleY=Number(point.sy);v.alpha=Number(point.a);v.visible=true;
+         v.scaleX=Number(point.sx);v.scaleY=Number(point.sy);v.alpha=Number(point.a);v.visible=point.v!==false;
+         // Interpolate only the received flight segment, never across an impact
+         // pose, teleport or beam/flame's authored geometry. This removes a
+         // repeated-frame/large-step cadence when display and source clocks differ.
+         if(next!=null && point.v!==false && next.v!==false && int(s.spring)<2 && s.cls!="visbullightning" && s.cls!="visbullightning2"
+            && s.cls!="visbulflame" && s.cls!="visbulflame2" && s.cls!="visbuldflame"
+            && int(point.f)==int(next.f) && Number(point.sx)==Number(next.sx) && Number(point.sy)==Number(next.sy)) {
+            var span:Number=Number(next.at)-Number(point.at);
+            var t:Number=span>0?Math.max(0,Math.min(1,(time-Number(point.at))/span)):0;
+            v.x+= (Number(next.x)-Number(point.x))*t;v.y+=(Number(next.y)-Number(point.y))*t;
+            var angle:Number=(Number(next.rot)-Number(point.rot)+540)%360-180;
+            v.rotation=Number(point.rot)+angle*t;
+         }
          var laser:Object=GameBridge.probe(v,"laser");
          if(laser!=null){laser.scaleX=Number(point.ls);if(laser is MovieClip && MovieClip(laser).currentFrame!=int(point.lf))MovieClip(laser).gotoAndStop(int(point.lf));}
+         if(finalFrame && v.visible && v.alpha>.05 && (laser==null || Number(point.ls)>0)) {
+            a.renderedBeam=true;
+            if(a.recoveryPoint!=null)a.recoveryRenderedAt=now;
+         }
          return true;
       }
       private function remove(i:int):void {var a:Object=active[i],v:DisplayObject=a.vis;if(a.rateHeld && a.motion!=null)a.motion.releaseRate(a);if(v!=null && v.parent!=null)v.parent.removeChild(v);delete a.channel.records[String(a.seq)];active.splice(i,1);}

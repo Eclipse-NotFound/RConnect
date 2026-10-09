@@ -18,6 +18,9 @@ M50_ORIGINAL_BASELINE = 'build/m50/integration-baseline-0.2.21'
 M50_WALL_BASELINE = 'build/m50/integration-baseline-0.2.21-wallblend-0.2.0'
 M50_BASELINE = 'build/m50/integration-baseline-0.2.21-native-assets'
 M50_SHA = '5c372cf5d970212f0fd4e95bea5c0acfaabfe321c3ca531c80ed7e299c2914bd'
+M51_PRE_VISION_BASELINE = 'build/m51/integration-baseline-0.2.22-external1'
+M51_BASELINE = 'build/m51/integration-baseline-0.2.22-vision-cache'
+M51_SHA = '32602e77a21b206d1f7ff0e927b953878c28254e7201529455818923a3539732'
 
 def sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
@@ -29,11 +32,12 @@ def read_baseline(manifest):
     name = manifest.get('baseline_path', LEGACY)
     folder = (ROOT / name).resolve()
     assert ((folder.parent == ROOT / 'build/m46' and folder.name.startswith('integration-baseline'))
-            or name in (M47_BASELINE, M48_BASELINE, M49_BASELINE, M50_ORIGINAL_BASELINE, M50_WALL_BASELINE, M50_BASELINE)), name
+            or name in (M47_BASELINE, M48_BASELINE, M49_BASELINE, M50_ORIGINAL_BASELINE, M50_WALL_BASELINE, M50_BASELINE, M51_PRE_VISION_BASELINE, M51_BASELINE)), name
     path = folder / 'inputs.json'
     if name != LEGACY:
         assert manifest['baseline_inputs_sha256'] == sha(path), 'baseline manifest changed'
         expected = ('0.2.21-dev', '0.2.22-dev') if name in (M50_ORIGINAL_BASELINE, M50_WALL_BASELINE, M50_BASELINE) else ('0.2.20-dev', '0.2.21-dev') if name == M49_BASELINE else ('0.2.19-dev', '0.2.20-dev') if name == M48_BASELINE else ('0.2.18-dev', '0.2.19-dev') if name == M47_BASELINE else ('0.2.18-dev',)
+        if name in (M51_PRE_VISION_BASELINE,M51_BASELINE): expected = ('0.2.22-dev', '0.2.23-dev')
         assert manifest['version'] in expected, 'candidate version does not match baseline'
     baseline = read(path)
     if name == AFTER_UI:
@@ -46,6 +50,8 @@ def read_baseline(manifest):
         assert baseline['release_sha256'] == M49_SHA and baseline['version'] == '0.2.20-dev'
     if name in (M50_ORIGINAL_BASELINE, M50_WALL_BASELINE, M50_BASELINE):
         assert baseline['release_sha256'] == M50_SHA and baseline['version'] == '0.2.21-dev'
+    if name in (M51_PRE_VISION_BASELINE,M51_BASELINE):
+        assert baseline['release_sha256'] == M51_SHA and baseline['version'] == '0.2.22-dev'
     return baseline
 
 

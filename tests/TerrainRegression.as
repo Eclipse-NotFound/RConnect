@@ -94,6 +94,21 @@ package
          check(sender.hostPatch(host).length==1 && sender.hostPatch(host).length==1,"NaN preserves strict native field comparison");
          delete host.space[1][2].vid;host.space[1][2]=null;
          check(sender.hostPatch(host)==null,"a missing tile is skipped without inventing a destruction request");
+
+         // Opening a Box-owned tile is collision/opacity, not tile destruction.
+         local=room(2,3);local.active=true;var fragments:int=0;
+         local.grafon={tileDie:function(t:Object,kind:int):void {fragments++;}};
+         local.space[1][1].door={id:"door1a"};client=new terrainClass();client.report(local);
+         client.apply(local,[{x:1,y:1,p:0,o:0,h:60}],true);
+         check(fragments==0 && client.dirty==false,"opening a native door tile emits no wall fragments or full-room redraw");
+         client.apply(local,[{x:1,y:1,p:1,o:.8,h:60}],true);
+         check(fragments==0 && client.dirty==false,"closing a native door tile keeps its own Box animation");
+         local.space[1][1].phis=0;local.space[1][1].opac=0;
+         client.apply(local,[{x:1,y:1,p:1,o:.8,h:10}],true);
+         check(local.space[1][1].phis==0 && local.space[1][1].opac==0 && local.space[1][1].hp==60,
+            "delayed terrain echo cannot overwrite native open-door collision or health");
+         client.apply(local,[{x:0,y:1,p:0,o:0,h:0}],true);
+         check(fragments==1,"ordinary destroyed terrain still emits exactly one native fragment animation");
       }
 
       /** Fixed damage / receipt / visual history, independent of frame timing. */

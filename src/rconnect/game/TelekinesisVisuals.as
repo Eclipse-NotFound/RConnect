@@ -28,6 +28,24 @@ package rconnect.game {
          var v:DisplayObject=get(o,"vis") as DisplayObject,list:Array=glows(v);
          return v==null || list.length==0?null:{glow:list,ct:colors(v.transform.colorTransform)};
       }
+      /** A peer grip can decorate the real local player, so accept only the
+       * finite native glow/color channels, never arbitrary filters or objects. */
+      public static function validated(s:Object):Object {
+         if(s==null || !(s.glow is Array) || !(s.ct is Array) || s.ct.length!=8 || s.glow.length>4)return null;
+         var list:Array=[],ct:Array=[],i:int;
+         for each(var a:* in s.glow) {
+            if(!(a is Array) || a.length!=8)return null;
+            for(i=0;i<6;i++)if(!isFinite(Number(a[i])))return null;
+            list.push([uint(a[0])&0xffffff,Math.max(0,Math.min(1,Number(a[1]))),
+               Math.max(0,Math.min(64,Number(a[2]))),Math.max(0,Math.min(64,Number(a[3]))),
+               Math.max(0,Math.min(16,Number(a[4]))),Math.max(1,Math.min(3,int(a[5]))),a[6]===true,a[7]===true]);
+         }
+         for(i=0;i<8;i++) {
+            if(!isFinite(Number(s.ct[i])))return null;
+            ct.push(i<4?Math.max(0,Math.min(4,Number(s.ct[i]))):Math.max(-255,Math.min(255,Number(s.ct[i]))));
+         }
+         return {glow:list,ct:ct};
+      }
       private static function colors(c:ColorTransform):Array {
          return [c.redMultiplier,c.greenMultiplier,c.blueMultiplier,c.alphaMultiplier,
             c.redOffset,c.greenOffset,c.blueOffset,c.alphaOffset];
@@ -83,7 +101,10 @@ package rconnect.game {
             else if(desired[o]==null)release(o);
          }
          for(o in desired) {
-            if(get(o,"loc")!==loc || get(o,"in_chain")!=true || get(o,"dead")==true || Number(get(o,"sost"))>=3) {
+            // The actual UnitPlayer is stepped through Location.gg and is not
+            // in Location.firstObj. A consenting grabbed player is still live.
+            var localPlayer:Boolean=get(loc,"gg")===o && get(o,"player")===true;
+            if(get(o,"loc")!==loc || (!localPlayer && get(o,"in_chain")!=true) || get(o,"dead")==true || Number(get(o,"sost"))>=3) {
                release(o);delete objects[o];continue;
             }
             if(nativeOwns(o,localHeld,authority,remoteOwner)) {

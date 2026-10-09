@@ -1,6 +1,9 @@
 package {
    import flash.desktop.NativeApplication;
    import flash.display.Sprite;
+   import flash.display.DisplayObject;
+   import flash.filters.GlowFilter;
+   import flash.geom.ColorTransform;
    import flash.events.Event;
    import flash.events.TimerEvent;
    import flash.events.UncaughtErrorEvent;
@@ -23,6 +26,7 @@ package {
       private var lifted:Boolean=false,peerLifted:Boolean=false,actionAt:int=0,peerPauseAt:int=0,peerPauseY:Number=NaN,pauseChecks:int=0;
       private var thrown:int=0;
       private var heldManaMin:Number=NaN;
+      private var nativeAura:Object,auraSamples:int=0,auraWrong:int=0;
       private static const CASES:Array=["denied","no-struggle","struggle","revoke","throw","pause"];
       public function PeerGripTestDoc() {
          var app:String=NativeApplication.nativeApplication.applicationID;if(app.indexOf("rconnect-coop-")<0)return;
@@ -52,11 +56,13 @@ package {
          check(mod.config.getValue("allowPeerGrip")=="0"&&mod.config.getValue("peerGripStruggle")=="1","safe personal defaults");
          mod.config.setValue("followTeammate","0");mod.game.forceCloseOverlays();
          var l:Object=mod.game.loc;
+         check(l.gg===mod.game.gg && !mod.game.gg.in_chain,"native local player lives outside the ordinary object chain");
          for each(var o:Object in l.objs.concat())if(o.X2>baseX-20&&o.X1<baseX+300&&o.Y2>baseY-210&&o.Y1<baseY+20) {
             l.remObj(o);l.objs.splice(l.objs.indexOf(o),1);if(l.celObj===o)l.celObj=null;
          }
          mod.stage.addEventListener(Event.ENTER_FRAME,before,false,99000);
          mod.stage.addEventListener(Event.ENTER_FRAME,after,false,-9500);
+         mod.stage.addEventListener(Event.RENDER,renderAura,false,-30000);
       }
       private function start(n:int):void {
          round=n;mod.peerGrip.reset();mod.game.forceCloseOverlays();
@@ -69,6 +75,7 @@ package {
             &&saved.getValue("peerGripStruggle")==mod.config.getValue("peerGripStruggle"),"personal choices persist in own storage");
          if(host)mod.session.pause.setPolicy(kind()=="pause",false);
          held=samples=0;acted=false;escapeAt=pauseAt=0;pausePos=NaN;localDone=peerDone=false;
+         nativeAura=null;auraSamples=auraWrong=0;
          lifted=peerLifted=false;actionAt=peerPauseAt=pauseChecks=0;peerPauseY=NaN;
          startY=minY=baseY;change("settle");
       }
@@ -82,6 +89,7 @@ package {
             else if(p.op=="lifted"){peerLifted=true;if(host&&lifted)beginAction();}
             else if(!host&&p.op=="action")actionAt=getTimer();
             else if(p.op=="paused-body"){peerPauseAt=getTimer();peerPauseY=p.y;}
+            else if(p.op=="native-aura" && int(p.round)==round)nativeAura=p.value;
             else if(p.op=="sampled"){peerDone=true;if(host&&localDone)releaseRound();}
             else if(!host&&p.op=="release")releaseRound();
             else if(p.op=="released"){peerDone=true;if(host&&localDone)advance();}
@@ -113,6 +121,26 @@ package {
             else if(peerPauseAt>0&&getTimer()-peerPauseAt>500) {pauseChecks++;if(Math.abs(target.Y-peerPauseY)>1)check(false,"remote hold settles at actual paused owner endpoint");}
          }
       }
+      private function style(v:DisplayObject):Object {
+         var glows:Array=[];
+         if(v==null)return null;
+         for each(var f:Object in v.filters)if(f is GlowFilter)
+            glows.push([f.color,f.alpha,f.blurX,f.blurY,f.strength,f.quality,f.inner,f.knockout]);
+         var c:ColorTransform=v.transform.colorTransform;
+         return {glow:glows,rgb:[c.redMultiplier,c.greenMultiplier,c.blueMultiplier,c.redOffset,c.greenOffset,c.blueOffset]};
+      }
+      private function renderAura(e:Event):void {
+         if(phase!="holding" || nativeAura==null || getTimer()-at<600)return;
+         var u:Object=caster()?ghost():mod.game.gg;
+         if(u==null || !(caster()?mod.game.gg.teleObj===u:mod.peerGrip.heldByTeammate))return;
+         auraSamples++;
+         if(JSON.stringify(style(u.vis as DisplayObject))!=JSON.stringify(nativeAura)) {
+            if(auraWrong==0)Log.d("PEER GRIP AURA MISMATCH "+JSON.stringify({round:round,caster:caster(),
+               expected:nativeAura,actual:style(u.vis as DisplayObject),chain:u.in_chain,player:u.player,
+               sameRoom:u.loc===mod.game.loc,localIdentity:mod.game.loc.gg===u}));
+            auraWrong++;
+         }
+      }
       private function tick(e:TimerEvent):void {
          mod=RConnectMod.instance;if(mod==null||mod.session==null||mod.game.gg==null||mod.game.loc==null)return;
          if(host&&mod.session.server!=null)for each(var l:TcpLink in mod.session.server.clients)watch(l);else if(!host)watch(mod.session.link);
@@ -127,6 +155,8 @@ package {
                if(caster()) {
                   target.onCursor=1;mod.game.loc.celObj=target;mod.game.loc.celDist=0;
                   EnemyGrabProbe.grab(g);check((g.teleObj===target)==(kind()!="denied"),"native grab respects target permission");initialMana=g.mana;heldManaMin=initialMana;
+                  if(g.teleObj===target){nativeAura=style(target.vis as DisplayObject);send("native-aura",{round:round,value:nativeAura});
+                     check(nativeAura.glow.length>0,"native grab creates source glow before synchronization");}
                }change("holding");
             } else if(phase=="holding") {
                if(kind()!="denied"&&!lifted&&held>=3&&minY<baseY-20){lifted=true;send("lifted");if(host&&peerLifted)beginAction();}
@@ -140,7 +170,8 @@ package {
                if(kind()=="pause"&&caster()&&actionElapsed>3100)mod.game.world.pip.onoff(-1);
                if(kind()=="denied"?elapsed>3200:actionElapsed>4300) {
                   if(kind()=="denied")check(held==0&&minY>=baseY-1,"disabled target is never moved or held");
-                  else {check(held>=3,"real player actually held");check(minY<baseY-20,"native player actually lifted rise="+(baseY-minY));}
+                  else {check(held>=3,"real player actually held");check(minY<baseY-20,"native player actually lifted rise="+(baseY-minY));
+                     check(auraSamples>0 && auraWrong==0,"caster glow/color survives final rendering on grabbed body samples="+auraSamples+" wrong="+auraWrong);}
                   if(kind()=="struggle"||kind()=="revoke"||kind()=="throw")check(caster()?g.teleObj==null:g.levit!=2,"escape/revocation/throw releases both ends");
                   if(kind()=="throw"&&!caster())check(thrown>0,"native E throw reaches actual grabbed player");
                   if(kind()=="no-struggle")check(caster()?g.teleObj===ghost():g.levit==2,"WASD with struggle disabled keeps hold");
@@ -155,6 +186,7 @@ package {
                }
             } else if(phase=="released"&&elapsed>1200) {
                check(g.teleObj==null&&g.levit!=2,"native release leaves no player grip");
+               check(style(g.vis as DisplayObject).glow.length==0,"released local body retains no peer grip glow");
                mod.game.world.ctr.keyLeft=false;localDone=true;send("released");change("release-sampled");if(host&&peerDone)advance();
             }
          }catch(err:Error){check(false,err.getStackTrace());send("done");finish();}
@@ -162,6 +194,6 @@ package {
       private function beginAction():void {actionAt=getTimer();send("action");}
       private function releaseRound():void {if(host)send("release");if(mod.game.gg.teleObj!=null)mod.game.gg.dropTeleObj();mod.game.world.ctr.keyLeft=false;localDone=peerDone=false;change("released");}
       private function advance():void {if(round<CASES.length*2-1){start(round+1);send("round",{round:round});}else{send("done");finish();}}
-      private function finish():void {if(phase=="done")return;change("done");timer.stop();if(mod!=null){mod.stage.removeEventListener(Event.ENTER_FRAME,before);mod.stage.removeEventListener(Event.ENTER_FRAME,after);mod.peerGrip.reset();}Log.d("COOP EFFECTS DONE peer-grip");}
+      private function finish():void {if(phase=="done")return;change("done");timer.stop();if(mod!=null){mod.stage.removeEventListener(Event.ENTER_FRAME,before);mod.stage.removeEventListener(Event.ENTER_FRAME,after);mod.stage.removeEventListener(Event.RENDER,renderAura);mod.peerGrip.reset();}Log.d("COOP EFFECTS DONE peer-grip");}
    }
 }

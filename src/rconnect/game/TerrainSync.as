@@ -1,5 +1,6 @@
 package rconnect.game
 {
+   import fe.loc.Tile;
    /** Native tile damage, prediction receipts, and persistent host state.
     * The game's grid is space[x][y]. Never infer orientation from a square room. */
    public class TerrainSync
@@ -71,6 +72,17 @@ package rconnect.game
       private function matchesTile(t:Object,s:Object):Boolean
       {
          if(t==null || s==null) return false;
+         var native:Tile=t as Tile;
+         if(native!=null)return s.p===native.phis && s.f===native.front && s.b===native.back
+            && s.z===native.zad && s.zf===native.zForm && s.w===native.water && s.st===native.stair
+            && s.h===native.hp && s.o===native.opac && s.v===native.vid && s.v2===native.vid2
+            && s.d===native.diagon && s.sh===native.shelf;
+         return matchesDynamicTile(t,s);
+      }
+      // Keep the generic object's missing/getter semantics in a separate
+      // catch scope, so unchanged native tiles allocate no catch activation.
+      private function matchesDynamicTile(t:Object,s:Object):Boolean
+      {
          for(var f:String in FIELDS)
          {
             var value:*;
@@ -180,26 +192,32 @@ package rconnect.game
             if(s==null || !isFinite(Number(s.x)) || !isFinite(Number(s.y))) continue;
             var x:int=int(s.x),y:int=int(s.y),k:String=key(x,y),t:Object=tile(x,y);
             if(t==null || (predict && predicted(k))) continue;
-            var before:Object=state(t,x,y);
+            var before:Object=state(t,x,y),doorTile:Boolean=t.door!=null;
             for(var f:String in FIELDS)
             {
                if(s[f]===undefined) continue;
+               // Scene/Box owns door collision, opacity and health. A delayed
+               // tile echo must not close an already-open native door while
+               // its Interact.open flag stays true. Checkpoint restore remains
+               // complete and is followed by the room's native object restore.
+               if(predict && doorTile && (f=="p" || f=="o" || f=="h"))continue;
                // Recompute native collision bounds when a partial tile changes shape.
                if(f=="zf" && t["setZForm"] is Function) t.setZForm(int(s.zf));
                else t[FIELDS[f]]=s[f];
             }
             // setZForm also changes opacity; the host's final opacity wins.
-            if(s.o!==undefined) t.opac=s.o;
+            if(s.o!==undefined && !(predict && doorTile)) t.opac=s.o;
             observed[k]=state(t,x,y);
             if(!equal(before,observed[k]))
             {
                // A destroyed native tile changes the foreground bitmap in place.
                // Rebuilding drawLoc for each enemy hit resets all display layers
                // and the camera, and omits the actual fragment animation.
-               var painted:Boolean=predict && paintDestruction(t,before,observed[k]);
+               var painted:Boolean=predict && !doorTile && paintDestruction(t,before,observed[k]);
                // HP-only corrections do not change the room image or camera.
                for(var visual:String in FIELDS)
-                  if(visual!="h" && before[visual]!==observed[k][visual] && !painted) dirty=true;
+                  if(visual!="h" && before[visual]!==observed[k][visual] && !painted
+                     && !(doorTile && (visual=="p" || visual=="o"))) dirty=true;
                if(Number(before.p)!=Number(observed[k].p))
                   try
                   {
@@ -215,6 +233,9 @@ package rconnect.game
        * Checkpoints and unrelated structural changes retain the full redraw. */
       private function paintDestruction(t:Object,before:Object,after:Object):Boolean
       {
+         // Box.setDoor opens collision tiles too. Its native timeline owns
+         // both opening and destruction; tileDie would invent wooden debris.
+         if(t.door!=null)return false;
          if(Number(before.p)<1 || Number(after.p)!=0)return false;
          for each(var field:String in ["b","z","zf","w","st","d","sh"])
             if(before[field]!==after[field])return false;

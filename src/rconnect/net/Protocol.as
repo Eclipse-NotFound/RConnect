@@ -1,10 +1,10 @@
 package rconnect.net
 {
    /**
-    * 线协议（MVP：TCP + 长度前缀 JSON）。
+    * 消息结构与 JSON 后备编码。TcpLink 负责长度前缀和编码协商。
     *
-    * 帧格式：uint32 大端字节序长度 + UTF-8 JSON。
-    * 字段缺失时各端按默认值兜底，保证小版本兼容。
+    * 正长度：UTF-8 JSON；双方问候确认后，负长度：受限的 AMF3 纯数据。
+    * 业务对象结构不变。未协商时始终保留 JSON，不假定其它版本能力。
     */
    public class Protocol
    {

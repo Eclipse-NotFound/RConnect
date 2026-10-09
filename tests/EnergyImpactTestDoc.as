@@ -27,15 +27,17 @@ package {
     */
    public class EnergyImpactTestDoc extends Sprite {
       public static const MOD_CLASS:Class=RConnectMod;
-      private static const CASES:Array=[
+      private static const DEFAULT_CASES:Array=[
          {id:"nova",actor:"host",target:"wall"},{id:"nova",actor:"join",target:"wall"},
          {id:"plam",actor:"host",target:"wall"},{id:"plam",actor:"join",target:"wall"},
          {id:"blaster",actor:"host",target:"unit"},{id:"blaster",actor:"join",target:"unit"},
          {id:"prism",actor:"host",target:"wall"},{id:"prism",actor:"join",target:"wall"},
          {id:"alilight",actor:"enemy",target:"wall"},
          {id:"plamg",actor:"host",target:"expiry"},{id:"plamg",actor:"join",target:"expiry"}];
+      private var cases:Array=DEFAULT_CASES,ballistic:Boolean=false;
       private static const CLIPS:Object={flPlasma:true,flPlasma2:true,flLaser:true,flLaser2:true,
-         flSpark:true,flSparkl:true,flDray:true,visualTeleFlare:true,visualIceFlare:true};
+         flSpark:true,flSparkl:true,flDray:true,visualTeleFlare:true,visualIceFlare:true,
+         flPlevok:true,flPinkPlevok:true,visualBum:true,visualBumNecro:true,visualBlast:true,visualGwall:true};
       private var mod:RConnectMod,host:Boolean,timer:Timer=new Timer(100),links:Dictionary=new Dictionary();
       private var phase:String="boot",at:int=getTimer(),readyAt:int=0,round:int=0;
       private var baseX:Number,baseY:Number,wallX:int,gun:Object,actor:Object,target:Object;
@@ -44,8 +46,12 @@ package {
       private var source:Array=[],remote:Array=[],sourcePixels:int=0,remotePixels:int=0,nativeShots:int=0;
       private var localResult:Object,peerResult:Object,compared:Boolean=false,peerDone:Boolean=false;
       private var localPrepared:Boolean=false,peerPrepared:Boolean=false,targetHp:Number=0,frames:int=0;
+      private var nativeSpell:Object;
+      private var wireSeen:Object={};
+      private var pixelMs:int=0,pixelMax:int=0,pixelCalls:int=0,renderGap:int=0,previousRender:int=0;
 
-      public function EnergyImpactTestDoc() {
+      public function EnergyImpactTestDoc(scenarios:Array=null,hardImpact:Boolean=false) {
+         if(scenarios!=null)cases=scenarios;ballistic=hardImpact;
          var id:String=NativeApplication.nativeApplication.applicationID;
          if(id.indexOf("rconnect-coop-")<0)return;host=id.indexOf("-host-")>=0;
          loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR,function(e:UncaughtErrorEvent):void {
@@ -62,6 +68,8 @@ package {
       private function setup(x:Number,y:Number):void {
          baseX=x;baseY=y;wallX=int((baseX+280)/40);
          var g:Object=mod.game.gg;oldGun=g.currentWeapon;oldChildren=g.childObjs;
+         if(ballistic)ProjectileCadenceRegression.run(mod.main,check);
+         mod.game.gg.anim();
          mod.game.loc.black=false;mod.game.world.black=false;mod.game.loc.tileSpawn=0;
          mod.stage.addEventListener(Event.ENTER_FRAME,before,false,100000);
          mod.stage.addEventListener(Event.ENTER_FRAME,after,false,-6000);
@@ -71,15 +79,17 @@ package {
          round=n;phase="prepare";at=getTimer();shot=false;compared=peerDone=localPrepared=peerPrepared=false;
          source=[];remote=[];nativeObjects=new Dictionary(true);copies=new Dictionary(true);shots=new Dictionary(true);
          sourcePixels=remotePixels=nativeShots=frames=0;localResult=peerResult=null;
+         pixelMs=pixelMax=pixelCalls=renderGap=previousRender=0;
+         wireSeen={};
          cleanupGun();
-         localSource=CASES[n].actor==(host?"host":"join") || (host && CASES[n].actor=="enemy");
+         localSource=cases[n].actor==(host?"host":"join") || (host && cases[n].actor=="enemy");
          target=null;
          var loc:Object=mod.game.loc;
          if(host) {
             var layout:Array=[];
             for(var x:int=Math.max(1,int(baseX/40)-2);x<=Math.min(loc.spaceX-2,wallX+2);x++)
                for(var y:int=Math.max(1,int(baseY/40)-6);y<=Math.min(loc.spaceY-2,int(baseY/40));y++) {
-                  var wall:Boolean=x==wallX && CASES[n].target!="expiry";
+                  var wall:Boolean=x==wallX && cases[n].target!="expiry";
                   layout.push({x:x,y:y,p:wall?1:0,f:wall?"A":"",h:300,o:wall?1:0});
                }
             mod.game.applyTilePatch(layout);
@@ -88,21 +98,27 @@ package {
             for(y=Math.max(1,int(baseY/40)-6);y<=Math.min(loc.spaceY-2,int(baseY/40));y++) {
                loc.space[wallX][y].mat=2;loc.space[wallX][y].indestruct=true;loc.space[wallX][y].water=0;
             }
-            if(CASES[n].target=="unit")target=spawn("UnitZombie","1",<unit tr="1" dig="0"/>,baseX+180);
-            if(CASES[n].actor=="enemy")enemyActor=spawn("UnitAlicorn","1",<unit tr="1"/>,baseX);
+            if(cases[n].target=="unit")target=spawn(cases[n].metal===true?"UnitRobobrain":"UnitZombie","1",<unit tr="1" dig="0"/>,baseX+targetOffset());
+            if(cases[n].actor=="enemy")enemyActor=spawn("UnitAlicorn","1",<unit tr="1"/>,baseX);
             mod.game.readUnitsSnapshot();mod.game.readTilePatch();
             send("case",{layout:layout});
          }
          if(localSource) {
-            actor=CASES[n].actor=="enemy"?enemyActor:mod.game.gg;
+            actor=cases[n].actor=="enemy"?enemyActor:mod.game.gg;
+            if(actor===mod.game.gg){actor.mana=10000;actor.pers.manaHP=10000;actor.pers.spellsPoss=1;}
+            if(cases[n].spell===true) {
+               var spellClass:Class=mod.main.loaderInfo.applicationDomain.getDefinition("fe.unit.Spell") as Class;
+               nativeSpell=new spellClass(actor,String(cases[n].id));
+               check(nativeSpell!=null,"real Spell constructed "+cases[n].id);return;
+            }
             var factory:Object=mod.main.loaderInfo.applicationDomain.getDefinition("fe.weapon.Weapon");
-            gun=factory.create(actor,String(CASES[n].id),0);
+            gun=factory.create(actor,String(cases[n].id),0);
             if(actor===mod.game.gg)gun.setPers(actor,actor.pers);
             actor.currentWeapon=gun;actor.childObjs=[gun];gun.addVisual();
             gun.hold=10000;gun.t_reload=0;gun.precision=0;gun.deviation=0;gun.recoil=0;gun.recoilUp=0;
             gun.lvl=0;gun.perslvl=0;
             gun.skillConf=1;gun.damage=10;gun.destroy=0;gun.damageExpl=0;gun.critCh=0;gun.dopCh=0;
-            check(gun.vis!=null && gun.vis.stage!=null,"real "+CASES[n].id+" weapon staged with "+gun.kol+" native projectiles");
+            check(gun.vis!=null && gun.vis.stage!=null,"real "+cases[n].id+" weapon staged with "+gun.kol+" native projectiles");
          }
       }
       private function spawn(name:String,id:String,xml:XML,x:Number):Object {
@@ -116,10 +132,11 @@ package {
       }
       private function findTarget():Object {
          for each(var u:Object in mod.game.loc.units)
-            if(!(u is MirrorHitUnit) && getQualifiedClassName(u)=="fe.unit::UnitZombie" && Number(u.maxhp)==54321+round)return u;
+            if(!(u is MirrorHitUnit) && getQualifiedClassName(u)==(cases[round].metal===true?"fe.unit::UnitRobobrain":"fe.unit::UnitZombie") && Number(u.maxhp)==54321+round)return u;
          return null;
       }
       private function begin():void {phase="run";at=getTimer();targetHp=target==null?0:Number(target.hp);}
+      private function targetOffset():Number {return cases[round].melee===true?60:180;}
       private function before(e:Event):void {
          if(phase=="done" || phase=="boot")return;
          var g:Object=mod.game.gg,w:Object=mod.game.world;
@@ -133,9 +150,15 @@ package {
             // lets their authoritative positions arrive before the test shot.
             if(host) {u.setPos(baseX-60,baseY);u.dx=u.dy=0;u.setVisPos();}
          }
-         if(target!=null && host) {target.disabled=false;target.dx=target.dy=0;target.setPos(baseX+180,baseY);target.setVisPos();}
+         if(target!=null && host) {target.disabled=false;target.dx=target.dy=0;target.setPos(baseX+targetOffset(),baseY);target.setVisPos();}
+         if(nativeSpell!=null && phase=="run" && !shot && getTimer()-at>1000) {
+            shot=true;
+            var castOK:Boolean=nativeSpell.cast(baseX+160,baseY-80);
+            check(castOK,"native Spell.cast succeeds with native mana and line checks");
+            if(castOK)nativeShots++;
+         }
          if(gun==null)return;
-         actor.celX=baseX+500;actor.celY=baseY-40;
+         actor.celX=baseX+(cases[round].melee===true?targetOffset():500);actor.celY=baseY-40;
          if(actor===g) {
             w.celX=actor.celX;w.celY=actor.celY;
             w.cam.celX=int(w.celX*w.cam.scaleV+w.cam.vx);w.cam.celY=int(w.celY*w.cam.scaleV+w.cam.vy);
@@ -148,10 +171,11 @@ package {
          if(phase=="done" || phase=="boot")return;
          if(gun!=null) {
             gun.step();
+            if(cases[round].melee===true && !shot && Number(gun.t_attack)>0) {nativeShots=1;shot=true;}
             for(var b:Object=mod.game.loc.firstObj;b!=null;b=b.nobj) {
                if(GameBridge.probe(b,"weap")!==gun || GameBridge.probe(b,"begx")==null || shots[b])continue;
                shots[b]=true;nativeShots++;b.miss=0;b.critCh=0;b.critInvis=0;b.desintegr=0;b.probiv=0;b.precision=0;
-               if(CASES[round].target=="expiry")b.liv=1;
+               if(cases[round].target=="expiry")b.liv=1;
             }
             if(nativeShots>0)shot=true;
          }
@@ -164,6 +188,14 @@ package {
          var s:Object=map[key];
          if(s==null) {s=map[key]={cls:getQualifiedClassName(v),first:getTimer()-at,last:0,frames:[]};list.push(s);}
          s.last=getTimer()-at;s.frames.push(point(v));
+         // Prove the native and remote effect artwork in the final game once
+         // per case, then keep observing every distinct particle and pose.
+         // CPU BitmapData draws per particle distort short animation timing.
+         if((list===source && sourcePixels==0) || (list===remote && remotePixels==0)) {
+            var began:int=getTimer(),count:int=pixels(v),cost:int=getTimer()-began;
+            pixelCalls++;pixelMs+=cost;pixelMax=Math.max(pixelMax,cost);
+            if(count>0) {if(list===source)sourcePixels=1;else remotePixels=1;}
+         }
       }
       private function pixels(v:DisplayObject):int {
          if(v==null || !v.visible || v.stage==null || v.alpha<=0)return 0;
@@ -178,28 +210,43 @@ package {
       }
       private function render(e:Event):void {
          if(phase!="run")return;frames++;
+         var now:int=getTimer();if(previousRender>0)renderGap=Math.max(renderGap,now-previousRender);previousRender=now;
          var nativeVis:Dictionary=new Dictionary(true);
          for(var o:Object=mod.game.loc.firstObj;o!=null;o=o.nobj) {
             if(getQualifiedClassName(o)!="fe.graph::Part")continue;
             var v:DisplayObject=o.vis as DisplayObject;
-            if(v==null || CLIPS[getQualifiedClassName(v)]!==true)continue;
+            if(v==null)continue;
+            if(ballistic) {
+               var atlas:String=cases[round].target=="unit"
+                  ?["","sprBlood","sprGBlood","sprPBlood"][int(GameBridge.probe(target,"blood"))]:"sprIskr";
+               if(atlas=="")continue;
+               if(o.blitData!==mod.game.world.grafon.getSpriteList(atlas,1))continue;
+               if(v.visible && v.stage!=null) {
+                  if(localSource)record(nativeObjects,source,o,v);
+                  else record(copies,remote,o,v);
+               }
+               continue;
+            }
+            if(CLIPS[getQualifiedClassName(v)]!==true)continue;
             nativeVis[v]=true;
-            if(v.visible && v.stage!=null) {record(nativeObjects,source,o,v);if(pixels(v)>0)sourcePixels++;}
+            if(v.visible && v.stage!=null)record(nativeObjects,source,o,v);
          }
+         if(ballistic)return;
          for(var layerIndex:int=0;layerIndex<5;layerIndex++) {
             var layer:DisplayObjectContainer=mod.game.world.grafon.visObjs[layerIndex] as DisplayObjectContainer;
             if(layer==null)continue;
             for(var i:int=0;i<layer.numChildren;i++) {
                v=layer.getChildAt(i);
                if(nativeVis[v] || !v.visible || v.stage==null || CLIPS[getQualifiedClassName(v)]!==true)continue;
-               record(copies,remote,v,v);if(pixels(v)>0)remotePixels++;
+               record(copies,remote,v,v);
             }
          }
       }
       private function collect():void {
          phase="sampled";
          localResult={source:source,remote:remote,sourcePixels:sourcePixels,remotePixels:remotePixels,
-            shots:nativeShots,frames:frames,kol:gun==null?0:int(gun.kol),loss:target==null?0:targetHp-Number(target.hp)};
+            measurement:{pixelMs:pixelMs,pixelMax:pixelMax,pixelCalls:pixelCalls,renderGap:renderGap},
+            shots:nativeShots,frames:frames,kol:nativeSpell!=null?1:gun==null?0:int(gun.kol),loss:target==null?0:targetHp-Number(target.hp)};
          send("result",{result:localResult});compare();
       }
       private function distance(a:Object,b:Object):Number {
@@ -212,18 +259,46 @@ package {
          var copyResult:Object=localSource?peerResult:localResult;
          var expected:Array=nativeResult.source as Array,actual:Array=copyResult.remote as Array;
          check(nativeResult.shots==nativeResult.kol && nativeResult.shots>0,"native attack creates all projectiles count="+nativeResult.shots+" expected="+nativeResult.kol);
+         if(ballistic) {
+            check(copyResult.shots==0,"impact display creates no damaging receiver Bullet");
+            if(cases[round].target=="expiry")check(expected.length==0 && actual.length==0,"unhit ballistic expiry has no sparks");
+            else {
+               check(expected.length>0 && nativeResult.sourcePixels>0,"native impact actually emits rendered particles");
+               check(actual.length>0 && copyResult.remotePixels>0,"remote impact renders native particle artwork");
+               check(Math.abs(actual.length-expected.length)<=4,"one native randomized spark burst source="+expected.length+" remote="+actual.length);
+               var nearby:Boolean=actual.length>0;
+               var impactX:Number=cases[round].target=="unit"?baseX+180:wallX*40;
+               for each(var impact:Object in actual)nearby=nearby && Math.abs(Number(impact.frames[0].x)-impactX)<=65;
+               check(nearby,"particles originate at the native hit target");
+               if(cases[round].target=="unit") {
+                  check(nativeResult.loss>0,"native flesh hit damages target loss="+nativeResult.loss);
+                  check(Math.abs(localResult.loss-peerResult.loss)<.01,"blood display adds no damage local="+localResult.loss+" peer="+peerResult.loss);
+               }
+            }
+            Log.d("BALLISTIC IMPACT METRIC "+JSON.stringify({round:round,source:expected.length,remote:actual.length,
+               nativePixels:nativeResult.sourcePixels,remotePixels:copyResult.remotePixels}));
+            send("compared");advance();return;
+         }
          check(copyResult.source.length==0,"receiver never creates a native energy Part");
-         if(CASES[round].target=="expiry") {
+         if(cases[round].target=="expiry") {
             check(expected.length==0 && actual.length==0,"unhit native expiry produces no invented flash");
+         } else if(cases[round].noFlare===true) {
+            // Bullet.popadalo with tipDecal 1..6 emits its flare only on hard
+            // material. These real flesh hits deliberately produce no flare.
+            check(nativeResult.loss>0,"native flesh strike really hits loss="+nativeResult.loss);
+            check(expected.length==0 && actual.length==0,"native flesh hit produces no invented hard-material flare");
+            check(Math.abs(localResult.loss-peerResult.loss)<.01,"native flesh strike settles exactly once");
          } else {
-            check(expected.length==nativeResult.shots && nativeResult.sourcePixels>0,"real native impacts render pixels count="+expected.length+" pixels="+nativeResult.sourcePixels);
+            var partCount:int=cases[round].id=="sp_gwall"?3:cases[round].melee===true?expected.length:int(nativeResult.shots);
+            check(expected.length==partCount && nativeResult.sourcePixels>0,"real native impacts render pixels count="+expected.length+" pixels="+nativeResult.sourcePixels);
             var intended:Boolean=expected.length>0;
             for each(var hit:Object in expected) {
                var hitX:Number=Number(hit.frames[0].x);
-               if(CASES[round].target=="wall")intended=intended && hitX>=wallX*40 && hitX<=(wallX+1)*40;
-               else intended=intended && hitX>=baseX+160 && hitX<=baseX+200;
+               if(cases[round].target=="wall")intended=intended && hitX>=wallX*40 && hitX<=(wallX+1)*40;
+               else if(cases[round].spell===true)intended=intended && Math.abs(hitX-(cases[round].id=="sp_blast"?baseX:(Math.floor((baseX+160)/40)+.5)*40))<.05;
+               else intended=intended && hitX>=baseX+targetOffset()-20 && hitX<=baseX+targetOffset()+20;
             }
-            check(intended,"native effects originate at the intended "+CASES[round].target+" collision");
+            check(intended,"native effects originate at the intended "+cases[round].target+" collision");
             check(actual.length==expected.length && actual.length>0,"every impact appears exactly once across TCP actual="+actual.length+" expected="+expected.length);
             check(copyResult.remotePixels>0,"remote impact contributes actual final game pixels="+copyResult.remotePixels);
             var wrong:int=0,progressed:int=0,maxError:Number=0;
@@ -236,26 +311,42 @@ package {
                   maxError=Math.max(maxError,best);if(best>.05)wrong++;
                }
                if(changed)progressed++;
-               check(a.last<2600,"effect expires without a frozen clip last="+a.last);
+               // Gwall is a 12-tick spell, not a 3/4-tick bullet flare. Its
+               // lifetime is measured from its actual first display, since
+               // receipt and first rendering can lag under parallel load.
+               // Still require a clear interval before collection.
+               var expiryLimit:Number=2600;
+               if(cases[round].id=="sp_gwall") {
+                  var nativeLife:Number=0;
+                  for each(var nativeEnd:Object in expected)nativeLife=Math.max(nativeLife,Number(nativeEnd.last)-Number(nativeEnd.first));
+                  expiryLimit=Math.min(3400,Number(a.first)+nativeLife+150);
+               }
+               check(a.last<expiryLimit,"effect expires without a frozen clip last="+a.last+" limit="+expiryLimit);
             }
             check(actual.length>0 && wrong==0,"native impact position/scale/frame retained wrong="+wrong+" maxError="+maxError);
             var nativeProgress:int=0;
             for each(b in expected) {first=int(b.frames[0].f);for each(pb in b.frames)if(int(pb.f)!=first) {nativeProgress++;break;}}
             check(progressed>=nativeProgress,"short impact animation advances source="+nativeProgress+" remote="+progressed);
-            if(CASES[round].target=="unit") {
+            if(cases[round].target=="unit") {
                check(nativeResult.loss>0,"real source projectile damages the fixture enemy loss="+nativeResult.loss);
                check(Math.abs(localResult.loss-peerResult.loss)<.01,"display replay adds no second damage local="+localResult.loss+" peer="+peerResult.loss);
             }
          }
-         Log.d("ENERGY IMPACT METRIC "+JSON.stringify({role:host?"host":"join",round:round,scenario:CASES[round],local:localResult,peer:peerResult}));
+         Log.d("ENERGY IMPACT METRIC "+JSON.stringify({role:host?"host":"join",round:round,scenario:cases[round],local:localResult,peer:peerResult}));
          send("compared");advance();
       }
       private function advance():void {
          if(!host || !compared || !peerDone)return;
-         if(round+1<CASES.length)prepare(round+1);else {send("done");finish();}
+         if(round+1<cases.length)prepare(round+1);else {send("done");finish();}
       }
       private function receive(e:NetMessageEvent):void {
-         var p:Object=e.data;if(p.type!="energy-impact-test")return;
+         var p:Object=e.data;
+         if(phase=="run" && !localSource && !ballistic) {
+            if(p.snap!=null)wire(p.snap);
+            if(p.players is Array)for each(var player:Object in p.players)
+               if(int(player.id)==0)wire(player.snap);
+         }
+         if(p.type!="energy-impact-test")return;
          try {
             if(p.stage=="ready" && host && phase=="boot") {
                setup(Math.max(120,Math.min(mod.game.gg.X,mod.game.loc.spaceX*40-600)),mod.game.gg.Y);
@@ -273,6 +364,19 @@ package {
             else if(p.stage=="done")finish();
          } catch(error:Error) {check(false,error.getStackTrace());send("done");finish();}
       }
+      private function wire(snap:Object):void {
+         if(snap==null)return;
+         var list:Array=snap.spellVisuals is Array?snap.spellVisuals.concat():[];
+         if(snap.weapons is Array)for each(var w:Object in snap.weapons)
+            if(w.impacts is Array)list=list.concat(w.impacts);
+         for each(var impact:Object in list) {
+            var signature:String=impact.cls+":"+impact.id+":"+impact.end+":"+JSON.stringify(impact.frames);
+            if(wireSeen[signature])continue;wireSeen[signature]=true;
+            var points:Array=[];for each(var frame:Object in impact.frames)points.push([frame.at,frame.f]);
+            Log.d("ENERGY IMPACT WIRE "+JSON.stringify({round:round,received:getTimer()-at,
+               stamp:snap.sampleTime,id:impact.id,cls:impact.cls,end:impact.end,frames:points}));
+         }
+      }
       private function tick(e:TimerEvent):void {
          mod=RConnectMod.instance;if(mod==null || mod.game==null || mod.game.gg==null || mod.session==null)return;
          if(host)for each(var p:Object in mod.session.peers)watch(p.link as TcpLink);else watch(mod.session.link);
@@ -281,8 +385,8 @@ package {
          if(!mod.session.rooms.ready || mod.session.rooms.busy || mod.game.isTransitioning())return;
          if(phase=="boot" && !host && timer.currentCount>160 && getTimer()-readyAt>500) {readyAt=getTimer();send("ready");}
          if(phase=="prepare") {
-            if(CASES[round].target=="unit" && target==null)target=findTarget();
-            if(!localPrepared && getTimer()-at>700 && (CASES[round].target!="unit" || target!=null)) {
+            if(cases[round].target=="unit" && target==null)target=findTarget();
+            if(!localPrepared && getTimer()-at>700 && (cases[round].target!="unit" || target!=null)) {
                localPrepared=true;if(!host)send("prepared");
             }
             if(host && localPrepared && peerPrepared) {begin();send("go");}
@@ -290,6 +394,7 @@ package {
          if(phase=="run" && getTimer()-at>3600)collect();
       }
       private function cleanupGun():void {
+         nativeSpell=null;
          if(gun!=null) {gun.remVisual();gun=null;}
          if(mod!=null && oldGun!=null) {mod.game.gg.currentWeapon=oldGun;mod.game.gg.childObjs=oldChildren;}
          if(host && target!=null) {mod.game.loc.remObj(target);target.remVisual();var i:int=mod.game.loc.units.indexOf(target);if(i>=0)mod.game.loc.units.splice(i,1);}

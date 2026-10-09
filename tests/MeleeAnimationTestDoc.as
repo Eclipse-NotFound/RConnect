@@ -227,10 +227,10 @@ package {
             for(var n:int=0;n<=20;n++) {
                var t:Number=n/20,p:Object={weapon:interpolate(b.weapon,next.weapon,t),trail:interpolate(b.trail,next.trail,t)};
                var e:Number=error(a.weapon,p.weapon);
-               if(CASES[round].stealth===true)e=Math.max(e,Math.abs(Number(a.weapon.a)/.75-Number(p.weapon.a))*20);
+               if(CASES[round].stealth===true)e=Math.max(e,Math.abs(Number(a.weapon.a)-Number(p.weapon.a))*20);
                if(a.trail!=null && a.trail.visible)e=Math.max(e,error(a.trail,p.trail));
                if(CASES[round].stealth===true && a.trail!=null && a.trail.visible && p.trail!=null)
-                  e=Math.max(e,Math.abs(Number(a.trail.a)/.75-Number(p.trail.a))*20);
+                  e=Math.max(e,Math.abs(Number(a.trail.a)-Number(p.trail.a))*20);
                best=Math.min(best,e);
             }
          }
@@ -259,8 +259,8 @@ package {
          }
          if(c.stealth===true) {
             check(Math.abs(sourceBodyAlpha-.5)<.002 && Math.abs(Number(peerMetrics.bodyAlpha)-.5)<.002,"both native stealth bodies really use alpha=.5");
-            check(Math.abs(remoteBodyAlpha-Number(peerMetrics.bodyAlpha)*.75)<.002,"remote body retains native stealth and the teammate marker alpha="+remoteBodyAlpha);
-            check(remoteEnd!=null && Math.abs(Number(remoteEnd.weapon.a)-Number(peerTrace[peerTrace.length-1].weapon.a)*.75)<.002,
+            check(Math.abs(remoteBodyAlpha-Number(peerMetrics.bodyAlpha))<.002,"remote body retains exact native stealth alpha="+remoteBodyAlpha);
+            check(remoteEnd!=null && Math.abs(Number(remoteEnd.weapon.a)-Number(peerTrace[peerTrace.length-1].weapon.a))<.002,
                "world-layer weapon alpha is independent of native stealth body alpha="+(remoteEnd==null?-1:remoteEnd.weapon.a));
          }
          // Bound comparison work, with uniform coverage across the full run.

@@ -33,14 +33,16 @@ package {
          {id:"grenade",quick:true,water:true,part:"explw"},
          {id:"grenade",quick:true,water:false,part:"expl",swap:true}
       ];
+      private var cases:Array=CASES;
       private var mod:RConnectMod,host:Boolean,source:Boolean,t:Timer=new Timer(100);
       private var links:Dictionary=new Dictionary(),phase:String="boot",at:int=getTimer(),readyAt:int=0;
       private var round:int=-1,spec:Object,baseX:Number,baseY:Number,wallX:int,floorY:int;
-      private var oldGun:Object,oldChildren:Object,oldThrow:Object,standby:Object,gun:Object;
+      private var oldGun:Object,oldChildren:Object,oldThrow:Object,oldMagic:Object,standby:Object,gun:Object;
       private var oldAmmo:Number=0,ammo:String="",oldGrenader:*,oldSky:Boolean,oldLevels:Boolean;
       private var saved:Boolean=false,tiles:Array=[],nativeBullet:Object,nativeClass:String="";
       private var nativeBirth:int=0,nativeEnd:int=0,nativeExplosion:Object,peerExplosion:Object;
       private var peerEnd:int=0,sourceShots:int=0,lastFrame:int=0,flightFrames:int=0,flightMs:Number=0;
+      private var flightPixelSeen:Dictionary=new Dictionary(true);
       private var flightLate:int=0,flightPeak:int=0,flightClear:int=0,bounces:int=0,lastDY:Number=0;
       private var rotations:int=0,lastRotation:Number=NaN,flightPositions:Array=[];
       private var explosionParts:int=0,explosionPixels:int=0,explosionPositions:Array=[];
@@ -49,8 +51,11 @@ package {
       private var effectClass:Class,effectBitmap:BitmapData,localResult:Object,peerResult:Object;
       private var swapInventory:Object,swapRequested:int=0,swapDetached:int=0,swapPeerAt:int=0;
       private var swapLive:Boolean=false,swapFlightFrames:int=0,swapLmgFrames:int=0;
+      private var groundCount:int=0,sprayCount:int=0,groundPixels:int=0,aux:Dictionary=new Dictionary();
+      private var diagnosticAt:int=0,observedFrames:int=0;
 
-      public function ExplosiveVisualTestDoc() {
+      public function ExplosiveVisualTestDoc(scenarios:Array=null) {
+         if(scenarios!=null)cases=scenarios;
          var app:String=NativeApplication.nativeApplication.applicationID;
          if(app.indexOf("rconnect-coop-")<0)return;host=app.indexOf("-host-")>=0;
          loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR,onError);
@@ -69,7 +74,8 @@ package {
       private function setPhase(s:String):void {phase=s;at=getTimer();}
       private function setup():void {
          var g:Object=mod.game.gg,w:Object=mod.game.world;
-         oldGun=g.currentWeapon;oldChildren=g.childObjs;oldThrow=g.throwWeapon;
+         g.anim();
+         oldGun=g.currentWeapon;oldChildren=g.childObjs;oldThrow=g.throwWeapon;oldMagic=g.magicWeapon;
          oldGrenader=g.pers.grenader;oldSky=mod.game.loc.sky;oldLevels=w.weaponsLevelsOff;saved=true;
          var wc:Object=mod.main.loaderInfo.applicationDomain.getDefinition("fe.weapon.Weapon");
          standby=wc.create(g,"lmg",0);standby.setPers(g,g.pers);standby.addVisual();
@@ -95,13 +101,15 @@ package {
          }
       }
       private function prepare(n:int):void {
-         restoreWeapon();round=n;spec=CASES[int(n/2)];source=host==(n%2==0);
+         restoreWeapon();round=n;spec=cases[int(n/2)];source=host==(n%2==0);
          nativeBullet=null;nativeClass="";nativeBirth=nativeEnd=peerEnd=sourceShots=0;
          nativeExplosion=peerExplosion=localResult=peerResult=null;
          flightFrames=flightLate=flightPeak=flightClear=bounces=rotations=explosionParts=explosionPixels=0;
          flightMs=0;lastFrame=0;lastDY=0;lastRotation=NaN;unexpectedBullets=0;
+         flightPixelSeen=new Dictionary(true);
          swapRequested=swapDetached=swapPeerAt=swapFlightFrames=swapLmgFrames=0;swapLive=false;
          flightPositions=[];explosionPositions=[];parts=new Dictionary();nativeShots=new Dictionary();unexpected=new Dictionary();
+         groundCount=sprayCount=groundPixels=observedFrames=0;aux=new Dictionary();
          for each(var r:Object in tiles) {
             var tile:Object=r.tile,solid:Boolean=r.y==floorY || r.x==wallX || r.x==int(baseX/40)-2;
             tile.phis=solid?1:0;tile.opac=solid?1:0;tile.front="";tile.indestruct=true;
@@ -115,7 +123,11 @@ package {
          if(source) {
             var g:Object=mod.game.gg,wc:Object=mod.main.loaderInfo.applicationDomain.getDefinition("fe.weapon.Weapon");
             gun=wc.create(g,spec.id,0);gun.setPers(g,g.pers);gun.lvl=0;gun.perslvl=0;
-            ammo=String(gun.ammo);oldAmmo=Number(g.invent.items[ammo].kol);g.invent.items[ammo].kol=Math.max(oldAmmo,50);
+            if(spec.magic===true) {
+               g.mana=10000;g.pers.manaHP=10000;g.pers.spellsPoss=1;
+            } else {
+               ammo=String(gun.ammo);oldAmmo=Number(g.invent.items[ammo].kol);g.invent.items[ammo].kol=Math.max(oldAmmo,50);
+            }
             if(spec.swap) {
                // Equip the grenade through the native inventory, then throw
                // with G. Both sources use temporary inventory arrays; leave
@@ -127,6 +139,9 @@ package {
                g.changeWeapon(spec.id,true);
                check(g.currentWeapon===gun && g.childObjs.indexOf(gun)>=0 && g.throwWeapon===gun,
                   "swap fixture equips native grenade and its quick-throw slot before real G input");
+            } else if(spec.magic===true) {
+               g.magicWeapon=gun;gun.loc=mod.game.loc;gun.setNull();gun.addVisual2();
+               check(g.currentWeapon!==gun && g.childObjs.indexOf(gun)<0,"quick magic uses native magicWeapon outside equipment id="+spec.id);
             } else if(spec.quick) {
                g.throwWeapon=gun;gun.loc=mod.game.loc;gun.setNull();
                check(g.currentWeapon!==gun && g.childObjs.indexOf(gun)<0,"quick throw uses native throwWeapon outside currentWeapon/childObjs id="+spec.id);
@@ -149,7 +164,7 @@ package {
          g.celX=w.celX=baseX+210;g.celY=w.celY=baseY-45;
          w.cam.celX=w.celX*w.cam.scaleV+w.cam.vx;w.cam.celY=w.celY*w.cam.scaleV+w.cam.vy;
          if(phase=="run" && source && gun!=null && gun.b==null) {
-            if(spec.quick)ctr.keyGrenad=true;else ctr.keyAttack=true;
+            if(spec.magic===true)ctr.keyMagic=true;else if(spec.quick)ctr.keyGrenad=true;else ctr.keyAttack=true;
          }
          mod.stage.invalidate();
       }
@@ -166,6 +181,13 @@ package {
                readyAt=getTimer();send("ready");
             }
             if(phase=="run") {
+               if(source && nativeBullet!=null && getTimer()-diagnosticAt>1000) {
+                  diagnosticAt=getTimer();
+                  Log.d("EXPLOSIVE PROGRESS "+JSON.stringify({round:round,elapsed:getTimer()-at,liv:nativeBullet.liv,
+                     chain:nativeBullet.in_chain,expl:nativeBullet.isExpl,x:nativeBullet.X,y:nativeBullet.Y,
+                     phase:phase,pause:w.onPause,black:w.vblack.visible,allStat:w.allStat,animOff:mod.game.gg.animOff,
+                     effects:explosionParts,ground:groundCount,frames:flightFrames,worldFrames:observedFrames}));
+               }
                if(source && nativeEnd>0 && getTimer()-nativeEnd>=2100)complete();
                else if(!source && peerEnd>0 && getTimer()-peerEnd>=2100)complete();
             }
@@ -196,13 +218,13 @@ package {
          } catch(err:Error){fail(err.getStackTrace());}
       }
       private function nextRound():void {
-         if(round+1>=CASES.length*2){send("done");finish();return;}
+         if(round+1>=cases.length*2){send("done");finish();return;}
          prepare(round+1);send("prepare");
       }
       private function render(e:Event):void {
          if(phase!="run")return;
          try {
-            var now:int=getTimer(),dt:int=lastFrame==0?0:now-lastFrame;lastFrame=now;
+            var now:int=getTimer(),dt:int=lastFrame==0?0:now-lastFrame;lastFrame=now;observedFrames++;
             if(source && gun!=null && gun.b!=null && !nativeShots[gun.b]) {
                nativeShots[gun.b]=true;sourceShots++;
                if(nativeBullet==null) {
@@ -270,8 +292,27 @@ package {
             for(var o:Object=mod.game.loc.firstObj;o!=null && guard++<10000;o=o.nobj) {
                var cname:String=getQualifiedClassName(o);
                if(cname=="fe.graph::Part" && ((effectClass!=null && o.vClass===effectClass) || (effectBitmap!=null && o.blitData===effectBitmap))) {
-                  if(!parts[o]){parts[o]=true;explosionParts++;explosionPositions.push({x:o.X,y:o.Y,at:now});}
-                  if(pixels(o.vis as DisplayObject)>0)explosionPixels++;
+                  if(!parts[o]){
+                     parts[o]=true;explosionParts++;explosionPositions.push({x:o.X,y:o.Y,at:now});
+                     // Impact bottles emit before PhisBullet clamps its body
+                     // outside the tile. The actual native Part is the oracle.
+                     if(source && spec.impact && nativeExplosion!=null && explosionParts==1) {
+                        nativeExplosion.x=o.X;nativeExplosion.y=o.Y;send("native-explosion",{value:nativeExplosion});
+                     }
+                  }
+                  if(explosionPixels==0 && pixels(o.vis as DisplayObject)>0)explosionPixels++;
+               }
+               if(cname=="fe.graph::Part" && spec.ground!=null) {
+                  var emitters:Object=mod.main.loaderInfo.applicationDomain.getDefinition("fe.graph.Emitter").arr;
+                  if(o.vClass===emitters[String(spec.ground)].visClass) {
+                     if(!aux[o]){aux[o]=true;groundCount++;}
+                     // Prove actual stage pixels once. Drawing the whole game
+                     // twice for every puddle on every frame stalls the very
+                     // native fuse being measured. Identity/count stays live.
+                     if(groundPixels==0 && pixels(o.vis as DisplayObject)>0)groundPixels++;
+                  } else if(spec.ground=="acid" && o.blitData===mod.game.world.grafon.getSpriteList("sprGBlood",1) && !aux[o]) {
+                     aux[o]=true;sprayCount++;
+                  }
                }
                if(!source && (cname=="fe.weapon::Bullet" || cname=="fe.weapon::PhisBullet") && o.weap!=null && String(o.weap.id)==spec.id && !unexpected[o]) {
                   unexpected[o]=true;unexpectedBullets++;
@@ -280,7 +321,16 @@ package {
          } catch(err:Error){fail(err.getStackTrace());}
       }
       private function sampleFlight(v:DisplayObject,now:int,dt:int):Boolean {
-         if(v==null || pixels(v)==0)return false;
+         if(v==null || !v.visible || v.stage==null || v.alpha<=0)return false;
+         var bounds:Rectangle=v.getBounds(mod.main as DisplayObject).intersection(new Rectangle(0,0,mod.stage.stageWidth,mod.stage.stageHeight));
+         if(bounds.width<1 || bounds.height<1)return false;
+         // Establish native artwork in the final game once per projectile.
+         // Re-drawing a whole room twice on every post-impact frame amplified
+         // fireball's many flame Parts and distorted the source flight clock.
+         // Presence, visibility, bounds, pose and end remain sampled each frame.
+         if(flightPixelSeen[v]!==true) {
+            if(pixels(v)==0)return false;flightPixelSeen[v]=true;
+         }
          if(!isNaN(lastRotation) && Math.abs(v.rotation-lastRotation)>.1)rotations++;
          lastRotation=v.rotation;
          if(flightPositions.length<300)flightPositions.push({at:now,x:v.x,y:v.y,r:v.rotation});
@@ -304,23 +354,30 @@ package {
          var endpoint:Object=source?nativeExplosion:peerExplosion;
          localResult={source:source,id:spec.id,water:spec.water,shots:sourceShots,flight:flightFrames,ms:flightMs,late:flightLate,
             peak:flightPeak,clear:flightClear,bounces:bounces,rotations:rotations,parts:explosionParts,pixels:explosionPixels,
-            unexpected:unexpectedBullets,explosion:endpoint,positions:explosionPositions,
+            unexpected:unexpectedBullets,explosion:endpoint,positions:explosionPositions,ground:groundCount,spray:sprayCount,
             swap:spec.swap===true,swapRequested:swapRequested,swapDetached:swapDetached,swapLive:swapLive,
             swapFlight:swapFlightFrames,swapLmg:swapLmgFrames};
          Log.d("EXPLOSIVE RESULT "+JSON.stringify(localResult));
          Log.d("EXPLOSIVE FLIGHT "+JSON.stringify({round:round,role:source?"native":"remote",points:flightPositions}));
          check(flightFrames>0,"actual "+(source?"native":"remote")+" flight pixels id="+spec.id+" frames="+flightFrames);
          check(endpoint!=null,"source reached native isExpl before removal id="+spec.id);
-         check(explosionParts==1 && explosionPixels>0,"one native explosion effect has actual pixels id="+spec.id+" effects="+explosionParts+" frames="+explosionPixels);
+         check((spec.pulses?explosionParts>1:explosionParts==1) && explosionPixels>0,"native explosion effect has actual pixels id="+spec.id+" effects="+explosionParts+" frames="+explosionPixels);
+         if(spec.ground!=null)check(groundCount>0 && groundPixels>0,"native ground residue has pixels kind="+spec.ground+" parts="+groundCount);
+         if(spec.ground=="acid")check(sprayCount>=30,"acid splash particles visible count="+sprayCount);
          if(endpoint!=null) {
             check(Boolean(endpoint.water)==Boolean(spec.water),"native detonation uses requested water branch");
-            var positionOK:Boolean=explosionPositions.length==1;
-            if(positionOK)positionOK=Math.abs(explosionPositions[0].x-endpoint.x)<=1 && Math.abs(explosionPositions[0].y-endpoint.y)<=1;
+            var positionOK:Boolean=explosionPositions.length==(spec.pulses?explosionParts:1);
+            // The native gas emitter deliberately scatters clouds within rx/ry;
+            // compare its declared spread, not an explosion's zero-radius rule.
+            var spread:Object=mod.main.loaderInfo.applicationDomain.getDefinition("fe.graph.Emitter").arr[spec.part];
+            for each(var ep:Object in explosionPositions)positionOK=positionOK
+               && Math.abs(ep.x-endpoint.x)<=Math.abs(Number(spread.rx))/2+1
+               && Math.abs(ep.y-endpoint.y)<=Math.abs(Number(spread.ry))/2+1;
             check(positionOK,"effect uses actual native detonation position");
          }
          if(source) {
             check(sourceShots==1,"one real source shot, no direct bullet simulation");
-            if(spec.quick && !spec.water)check(bounces>0 && rotations>0,"native thrown explosive really bounces and rotates");
+            if(spec.quick && !spec.water && !spec.impact)check(bounces>0 && rotations>0,"native thrown explosive really bounces and rotates");
          } else {
             check(flightPeak<=1 && flightClear==0,"repeated snapshots neither duplicate nor strand the projectile peak="+flightPeak+" afterEnd="+flightClear);
             check(unexpectedBullets==0,"receiver produces no native damaging projectile for the cosmetic replay");
@@ -341,6 +398,8 @@ package {
          var origin:Object=localResult.source?localResult:peerResult,remote:Object=localResult.source?peerResult:localResult;
          check(origin.ms>0 && remote.ms>=origin.ms*.75-100 && remote.ms<=origin.ms*1.35+200,
             "remote preserves native visible flight duration native="+origin.ms+" remote="+remote.ms+" id="+spec.id);
+         if(spec.pulses)check(origin.parts==remote.parts,"every actual native pulse plays once source="+origin.parts+" remote="+remote.parts);
+         if(spec.ground!=null)check(origin.ground==remote.ground,"ground footprint preserves native tile count source="+origin.ground+" remote="+remote.ground);
          nextRound();
       }
       private function restoreWeapon():void {
@@ -352,7 +411,7 @@ package {
             g.invent.weapons=swapInventory.weapons;g.invent.fav=swapInventory.fav;g.invent.favIds=swapInventory.favIds;
             swapInventory=null;
          }
-         g.currentWeapon=standby;g.childObjs=[standby,g.punchWeapon];g.throwWeapon=null;
+         g.currentWeapon=standby;g.childObjs=[standby,g.punchWeapon];g.throwWeapon=null;g.magicWeapon=null;
          if(standby!=null)standby.addVisual();
       }
       private function copyArray(value:Array):Array {
@@ -370,7 +429,7 @@ package {
             if(saved && mod.game.gg!=null) {
                restoreWeapon();var g:Object=mod.game.gg,w:Object=mod.game.world;
                if(standby!=null)standby.remVisual();
-               g.currentWeapon=oldGun;g.childObjs=oldChildren;g.throwWeapon=oldThrow;g.pers.grenader=oldGrenader;
+               g.currentWeapon=oldGun;g.childObjs=oldChildren;g.throwWeapon=oldThrow;g.magicWeapon=oldMagic;g.pers.grenader=oldGrenader;
                mod.game.loc.sky=oldSky;w.weaponsLevelsOff=oldLevels;
                w.ctr.keyAttack=w.ctr.keyGrenad=w.ctr.keyMagic=false;
                if(oldGun!=null)oldGun.addVisual();

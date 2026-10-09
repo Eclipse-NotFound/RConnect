@@ -53,6 +53,19 @@ CHECKS = {
     "FollowRecoveryTestDoc": (360, "random_mane", False),
     "FollowNetworkTestDoc": (300, "random_mane", False),
     "HiddenRoomFollowTestDoc": (300, "random_mane", False),
+    "SpecialWeaponTestDoc": (300, "rbl", False),
+    "DoorVisualTestDoc": (240, "rbl", False),
+    "BallisticVisualTestDoc": (180, "rbl", False),
+    "MagicImpactTestDoc": (300, "rbl", False),
+    "MagicExplosionTestDoc": (200, "rbl", False),
+    "EffectsTerrainTestDoc": (200, "random_mane", False),
+    # Extend the original combat density fixture in its known open begin room.
+    # A random mission can put its turret behind a wall before measurement.
+    "ProjectileLoadTestDoc": (300, "", False),
+    "ProjectileProfileTestDoc": (300, "", False),
+    "PacketCodecTestDoc": (180, "rbl", False),
+    "VisionApiTestDoc": (180, "random_mane", False),
+    "BeamProfileTestDoc": (180, "random_mane", False),
 }
 REQUIRED = list(CHECKS)[:13]
 M50_REQUIRED = REQUIRED + ['HudTestDoc','FastHeldTestDoc','WeaponAngleTestDoc','PresentationContinuityTestDoc',
@@ -61,8 +74,13 @@ M50_REQUIRED = REQUIRED + ['HudTestDoc','FastHeldTestDoc','WeaponAngleTestDoc','
     'FlameVisualTestDoc','MineSyncTestDoc','MineRoomTestDoc','BurnVisualTestDoc','WallImpactTestDoc',
     'TeleportVisualTestDoc','PeerThrowDamageTestDoc','BodyEffectsTestDoc','FollowRecoveryTestDoc',
     'FollowNetworkTestDoc','TeammateNavigationTestDoc','HiddenRoomFollowTestDoc']
+M51_REQUIRED=M50_REQUIRED+['SpecialWeaponTestDoc','DoorVisualTestDoc','BallisticVisualTestDoc',
+    'MagicImpactTestDoc','MagicExplosionTestDoc','EffectsTerrainTestDoc','ProjectileLoadTestDoc','PacketCodecTestDoc','VisionApiTestDoc']
 
 def required_entries(manifest):
+    if manifest.get('baseline_path','').startswith('build/m51/'):
+        assert manifest['required_entries']==M51_REQUIRED
+        return M51_REQUIRED
     if manifest.get('baseline_path','').startswith('build/m50/'):
         expected = M50_REQUIRED
         assert manifest.get('required_entries',expected)==expected

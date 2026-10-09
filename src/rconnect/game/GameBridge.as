@@ -13,10 +13,12 @@ package rconnect.game
    import fe.unit.Unit;
    import fe.loc.Location;
    import fe.serv.Item;
+   import fe.serv.Interact;
    import fe.unit.RConnectAnimationAccess;
    import fe.unit.RConnectPerceptionAccess;
    import fe.unit.RConnectTelekinesisAccess;
    import fe.Obj;
+   import fe.Pt;
    import flash.utils.getTimer;
    import flash.utils.getQualifiedClassName;
    import rconnect.core.Log;
@@ -27,7 +29,7 @@ package rconnect.game
     * 约束（shared-knowledge/knowledge-validation/facts/modding-interop.md）：
     * - 只能访问 public 成员 + 反射；internal/private 不可访问。
     * - 密封类对不存在成员做 bracket 访问会抛 ReferenceError #1069 且吞掉外层
-    *   try —— 所以每个字段访问都必须独立 try 探测，不用大 try 包一坨。
+    *   try —— 未确认字段独立安全探测；原生Unit已核对的public var可直接读取。
     *
     * 入口链路（反编译 1.02/1.03/1.04 确认）：
     *   fe.World.w  (public static)  →  World 实例
@@ -219,19 +221,24 @@ package rconnect.game
                {
                   if(rec.ghost != null && rec.snap != null)
                   {
-                     if(rec.snap.bodyPlaying === false && rec.motion != null)
-                        driveVisAnim(rec.ghost,rec.motion.sample(presentationTime()),int(remoteId));
-                     if(rec.motion!=null)_peerAppearance.apply(rec.ghost,rec.motion.sample(presentationTime()).wings,coopPaused);
+                     // All three parts of this render use one sampled pose.
+                     // Re-sampling at this same frame time allocates identical
+                     // interpolated weapon data without advancing the pose.
+                     var remoteSample:Object=rec.motion==null?null:rec.motion.sample(presentationTime());
+                     if(rec.snap.bodyPlaying === false && remoteSample != null)
+                        driveVisAnim(rec.ghost,remoteSample,int(remoteId));
+                     if(remoteSample!=null)_peerAppearance.apply(rec.ghost,remoteSample.wings,coopPaused);
                      if(rec.snap.ap != null)
                         RemoteArmor.apply(probe(rec.ghost,"vis") as DisplayObjectContainer,String(rec.snap.ap.armor || ""));
-                     if(rec.motion!=null)_bodyEffects.apply(rec.ghost,rec.motion.sample(presentationTime()).bodyEffects,coopPaused);
+                     if(remoteSample!=null)_bodyEffects.apply(rec.ghost,remoteSample.bodyEffects,coopPaused,
+                        peerGrip!=null && peerGrip.locallyHeld(rec.ghost));
                   }
                }
                catch(armorError:*) {logViewError("remote-"+remoteId,armorError);}
             }
             // Native redraws may replace the object layer after ENTER_FRAME.
             // The same frame clock reattaches a beam without advancing it twice.
-            _projectiles.tick(loc,presentationTime());
+            _projectiles.tick(loc,presentationTime(),true);
             _ports.tick(loc,presentationTime(),roomKey(),roomEpoch);
             tickBoxTweens();
             tickLootMotion();
@@ -542,13 +549,41 @@ package rconnect.game
          }
       }
 
+      // Only inherited public variables from native Pt/Obj/Unit 1.02. They
+      // cannot run a subclass getter. Keep the catch activation out of this
+      // frequent path; unknown names/objects still use the original probe.
+      private static const NATIVE_UNIT_FIELDS:Object={X:true,Y:true,X1:true,X2:true,Y1:true,Y2:true,
+         loc:true,nobj:true,pobj:true,in_chain:true,stay:true,sloy:true,dx:true,dy:true,vis:true,
+         id:true,animState:true,blitData:true,disabled:true,sost:true,hp:true,maxhp:true,shithp:true,
+         hpbar:true,doop:true,unres:true,invulner:true,isVis:true,isSats:true,invis:true,
+         levit:true,levitPoss:true,fracLevit:true,fraction:true,scX:true,scY:true,storona:true,
+         currentWeapon:true,prior:true,priorUnit:true,onCursor:true,celX:true,celY:true,celUnit:true,
+         inter:true,trigDis:true,armor_hp:true,demask:true,isSit:true,noise:true,overLook:true,
+         stealthMult:true,visibility:true,scrDie:true,scrAlarm:true,questId:true};
+      private static const NATIVE_POINT_FIELDS:Object={loc:true,nobj:true,pobj:true,in_chain:true,
+         stay:true,X:true,Y:true,sloy:true,dx:true,dy:true,vis:true};
+      private static const NATIVE_INTERACT_FIELDS:Object={owner:true,action:true,prob:true,allact:true,
+         userAction:true,scrAct:true,scrOpen:true,scrClose:true,scrTouch:true};
+
       /** 安全探测成员；成员不存在/不可访问时返回 null。 */
       public static function probe(o:Object, name:String):*
       {
-         if(o == null)
-         {
-            return null;
+         if(o==null)return null;
+         if(o is Unit && NATIVE_UNIT_FIELDS[name]===true
+            || o is Pt && NATIVE_POINT_FIELDS[name]===true
+            || o is Interact && NATIVE_INTERACT_FIELDS[name]===true) {
+            var value:*=o[name];return value===undefined?null:value;
          }
+         // These native hierarchies cannot also be flash.utils.Proxy. A missing
+         // timeline child/public name can be rejected without a catch scope;
+         // existing getters still take the protected read below. Even native
+         // DisplayObject getters such as width may be overridden by a subclass.
+         if((o is Pt || o is DisplayObject || o is Interact) && !(name in o))return null;
+         return probeOptional(o,name);
+      }
+
+      private static function probeOptional(o:Object,name:String):*
+      {
          try
          {
             if(!(name in o))return null;
@@ -606,6 +641,7 @@ package rconnect.game
          s.wi = cw != null ? String(probe(cw, "id")) : "";
          s.wv = cw != null ? int(numOr(probe(cw, "variant"), 0)) : 0;
          s.weapons=_presentation.capture(gg,true);
+         s.spellVisuals=_presentation.captureSpells(gg);
          s.tele=readHeldVisual();
          if(peerGrip!=null)s.peerGrip=peerGrip.policy();
          s.heldMotion=readHeldMotion();
@@ -727,6 +763,7 @@ package rconnect.game
             rec.motion.push(snap,getTimer());
             driveGhost(ghost, coopPaused?rec.motion.settle(presentationTime()):rec.motion.sample(presentationTime()), id);
             _projectiles.receive(ghost,snap.weapons as Array,main,true,rec.motion);
+            _projectiles.receiveSpells(ghost,snap.spellVisuals as Array,main,rec.motion);
             _ports.receive(id,snap.port,loc,main,rec.motion,roomKey(),roomEpoch);
             // M20：外观热更——对方换装/换护甲后按 apKey 变化重装视觉
             var ak:String = apKeyOf(snap.ap);
@@ -905,7 +942,7 @@ package rconnect.game
             ghost["setVisPos"]();
             driveVisAnim(ghost, snap, id);
             _peerAppearance.apply(ghost,snap.wings,coopPaused);
-            _bodyEffects.apply(ghost,snap.bodyEffects,coopPaused);
+            _bodyEffects.apply(ghost,snap.bodyEffects,coopPaused,peerGrip!=null && peerGrip.locallyHeld(ghost));
             if(wvis != null)
             {
                _weaponVis[id] = wvis;
@@ -1436,7 +1473,7 @@ package rconnect.game
          }
          try
          {
-            vis["alpha"] = 0.75;
+            vis["alpha"] = 1;
             var tf:TextField = new TextField();
             var fmt:TextFormat = new TextFormat("_sans",
                12, 0xFFE066, true);
@@ -1585,7 +1622,7 @@ package rconnect.game
             }
             driveVisAnim(ghost, snap, id);
             _peerAppearance.apply(ghost,snap.wings,coopPaused);
-            _bodyEffects.apply(ghost,snap.bodyEffects,coopPaused);
+            _bodyEffects.apply(ghost,snap.bodyEffects,coopPaused,peerGrip!=null && peerGrip.locallyHeld(ghost));
             if(snap.wi != undefined)
             {
                // Weapon identity and aura belong to the same presentation
@@ -3361,6 +3398,11 @@ package rconnect.game
       private var _wallLand:Object;
       private var _projectiles:ProjectileVisuals=new ProjectileVisuals();
       public function get projectileVisualCount():int {return _projectiles.count;}
+      /** Read the existing enemy display cursor without advancing it. */
+      public function unitPresentationTime(u:Object):Number {
+         var motion:RemoteMotion=_unitMotion[u] as RemoteMotion;
+         return motion==null?NaN:motion.sourceTime;
+      }
       private var _presentation:UnitPresentation = new UnitPresentation();
 
       public function readTilePatch():Array {var list:Array=_terrain.hostPatch(loc);_wall.observe(loc,list);return list;}
@@ -5661,9 +5703,13 @@ package rconnect.game
       private static function unitFields(u:Object,names:Array):Object
       {
          var out:Object = {};
+         // Callers supply fixed lists of native public storage fields. Avoid
+         // a per-field catch activation on this snapshot hot path; optional
+         // fields are still checked and arbitrary objects retain safe probing.
+         var native:Boolean=u is Unit;
          for each(var name:String in names)
          {
-            var value:* = probe(u,name);
+            var value:* = native ? ((name in u)?u[name]:null) : probe(u,name);
             // Unit loads this untyped limit directly from an XML attribute.
             // JSON.stringify(XMLList) produces "XMLList", not its numeric value.
             if(name=="levit_max" && value!=null)value=Number(value);

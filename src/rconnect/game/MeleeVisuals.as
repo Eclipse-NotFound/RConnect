@@ -117,9 +117,8 @@ package rconnect.game {
          // fades the pony but does not fade its weapon (UnitPlayer.setFilters).
          // A body child cannot represent that with alpha limited to [0,1].
          if(v.parent!==layer)layer.addChild(v);
-         var marker:Number=s.player===true && String(get(u,"id")).indexOf("rconnect_ghost_")==0?.75:1;
-         var factor:Number=marker;
-         if(marker==1 && isFinite(Number(pose.bodyAlpha)) && Number(pose.bodyAlpha)>0)
+         var factor:Number=1;
+         if(isFinite(Number(pose.bodyAlpha)) && Number(pose.bodyAlpha)>0)
             factor=Math.max(0,Math.min(1,body.alpha/Number(pose.bodyAlpha)));
          paint(u,v,pose.weapon,body,layer,factor);
          if(trail!=null) {

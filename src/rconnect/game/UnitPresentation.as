@@ -6,6 +6,7 @@ package rconnect.game
    import rconnect.core.Log;
    import fe.unit.Unit;
    import fe.weapon.Bullet;
+   import fe.weapon.RConnectProjectileAccess;
    import fe.unit.RConnectAnimationAccess;
 
    /** Plays native display objects without Weapon.step/actions or Unit.die.
@@ -14,6 +15,7 @@ package rconnect.game
    {
       private var states:Dictionary = new Dictionary();
       private var hostShots:Dictionary = new Dictionary(true);
+      private var weaponsByOwner:Dictionary=new Dictionary(true),ownerIndexAt:int=-1;
       private var errors:Object = {};
       private var shotStream:int=0;
       private var frameTime:int=0;
@@ -38,9 +40,20 @@ package rconnect.game
          if(magic!=null && list.indexOf(magic)<0)list.push(magic);
          // Changing guns must not orphan the previous gun's flying grenade,
          // missile or final impact. These entries carry effects only.
-         for(var previous:Object in hostShots)
+         // Index once per source frame. Looking through every known gun for
+         // each enemy made the ordinary 80-unit path quadratic even at rest.
+         if(ownerIndexAt!=frameTime) {
+            weaponsByOwner=new Dictionary(true);ownerIndexAt=frameTime;
+            for(var known:Object in hostShots) {
+               var owner:Object=get(known,"owner");if(owner==null)continue;
+               if(weaponsByOwner[owner]==null)weaponsByOwner[owner]=[];
+               weaponsByOwner[owner].push(known);
+            }
+         }
+         var retained:Array=weaponsByOwner[u] as Array;
+         if(retained!=null)for each(var previous:Object in retained)
             if(get(previous,"owner")===u && get(previous,"loc")===get(u,"loc")
-               && hostShots[previous].events.length>0 && list.indexOf(previous)<0)list.push(previous);
+               && (hostShots[previous].events.length>0 || energyImpacts.retains(previous)) && list.indexOf(previous)<0)list.push(previous);
          return list;
       }
 
@@ -75,7 +88,12 @@ package rconnect.game
          }
       }
 
-      public function observePlayer(u:Object,stamp:int=0):void {frameTime=stamp>0?stamp:getTimer();scanBullets(get(u,"loc"),frameTime);for each(var w:Object in weaponList(u))if(get(w,"kol_shoot")!=null)observeWeapon(w,frameTime,true);}
+      public function observePlayer(u:Object,stamp:int=0):void {
+         frameTime=stamp>0?stamp:getTimer();scanBullets(get(u,"loc"),frameTime);
+         for each(var w:Object in weaponList(u))if(get(w,"kol_shoot")!=null)observeWeapon(w,frameTime,true);
+         energyImpacts.observeSpells(u,frameTime);
+      }
+      public function captureSpells(u:Object):Array {return energyImpacts.capture(u);}
 
       /** Refresh already-observed NPC clips after Flash advances frame scripts.
        * Reuse the chain index; no second unit/weapon discovery or AI step. */
@@ -95,6 +113,7 @@ package rconnect.game
          var r:Object=hostShots[w];
          if(r==null){
             r=hostShots[w]={stream:++shotStream,n:n,bullet:bullet,ammo:ammo,total:0,serial:0,events:[],seen:new Dictionary(true)};
+            ownerIndexAt=-1;
             if(bullet!=null && get(bullet,"in_chain")!=true && n==0)r.seen[bullet]=true;
          }
          else
@@ -105,17 +124,36 @@ package rconnect.game
                delta=Math.max(delta,Math.ceil((Number(r.ammo)-ammo)/Math.max(1,Number(get(w,"rashod")))));
             r.total+=delta;r.n=n;r.bullet=bullet;r.ammo=ammo;
          }
+         var owner:Object=get(w,"owner");
+         if(r.owner!==owner){r.owner=owner;ownerIndexAt=-1;}
          var bullets:Array=frameBullets[w]==null?[]:frameBullets[w].concat();
          if(bullet!=null && bullets.indexOf(bullet)<0)bullets.push(bullet);
          for each(var native:Object in bullets)if(!r.seen[native] && get(native,"loc")===get(w,"loc")) {
             r.seen[native]=true;
             r.events.push({seq:++r.serial,at:frameTime>0?frameTime:getTimer(),bullet:native,
-               recorded:player||ProjectileVisuals.usesNativeFrames(native),frames:[],sampled:0,end:0,endSentAt:0,explosion:null});
+               recorded:true,frames:[],sampled:0,end:0,endSentAt:0,explosion:null,explosions:[],impact:null,impactChecked:false,pulse:-1});
          }
          if(stamp>0)for each(var shot:Object in r.events) {
+            // Retention exists to deliver the immutable final state. Sampling
+            // a detached Bullet for another 700 ms only resends hidden poses,
+            // inflates every burst, and can evict real flight from the buffer.
+            if(int(shot.end)>0)continue;
+            if(!shot.impactChecked && get(shot.bullet,"babah")===true) {
+               shot.impactChecked=true;
+               shot.impact=BallisticImpactVisuals.capture(shot.bullet,stamp);
+               if(shot.impact!=null)shot.impact.at=stamp;
+            }
             if(shot.explosion==null && get(shot.bullet,"isExpl")===true){
                shot.explosion=ProjectileExplosionVisuals.capture(shot.bullet);
-               if(shot.explosion!=null)shot.explosion.at=stamp;
+               if(shot.explosion!=null){shot.explosion.at=stamp;shot.explosions.push(shot.explosion);}
+            } else if(shot.explosion!=null) {
+               var pulse:int=RConnectProjectileAccess.remaining(shot.bullet as Bullet);
+               var period:int=int(get(shot.bullet,"explPeriod"));
+               if(pulse>0 && period>0 && pulse%period==1 && pulse!=int(shot.pulse)) {
+                  var effect:Object=ProjectileExplosionVisuals.capture(shot.bullet,true);
+                  if(effect!=null){effect.at=stamp;shot.explosions.push(effect);}
+               }
+               shot.pulse=pulse;
             }
             if(!shot.recorded)continue;
             var point:Object=ProjectileVisuals.beamFrame(shot.bullet,stamp);
@@ -152,6 +190,7 @@ package rconnect.game
                var flight:Object=ProjectileVisuals.capture(shot.bullet);
                if(flight!=null && shot.recorded){
                   flight.frames=shot.frames;flight.end=shot.end;flight.explosion=shot.explosion;
+                  flight.explosions=shot.explosions;flight.impact=shot.impact;
                   // Rendering can block the network timer for longer than the
                   // retention window. An unsent ending must never be pruned.
                   if(int(shot.end)>0 && int(shot.endSentAt)==0)shot.endSentAt=getTimer();
@@ -341,7 +380,7 @@ package rconnect.game
       public function reset():void
       {
          telekinesis.reset();
-         energyImpacts.reset();melee.reset();MeleeVisuals.resetObserved();
+         energyImpacts.reset();BallisticImpactVisuals.reset();melee.reset();MeleeVisuals.resetObserved();
          burning.reset();
          for(var u:Object in states)
          {
@@ -360,6 +399,7 @@ package rconnect.game
          RConnectAnimationAccess.reset();
          states=new Dictionary();
          hostShots=new Dictionary(true);
+         weaponsByOwner=new Dictionary(true);ownerIndexAt=-1;
          frameBullets=new Dictionary(true);scannedAt=-1;scannedLoc=null;
          frameTime=0;
       }

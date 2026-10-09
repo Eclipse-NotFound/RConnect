@@ -95,11 +95,19 @@ package {
          g.healhp=0;g.rad=0;g.invulner=false;g.dexter=g.dexterPlus=g.dodge=0;g.neujaz=0;
          g.vulner[0]=1;g.vulner[1]=1;g.vulner[2]=1;g.vulner[5]=0.5;
          if(host) {
-            if(kind()=="revoked")mod.friendlyFire.setEnabled(true);
-            mod.friendlyFire.setEnabled(enabledCase());
+            if(kind()=="revoked")toggleFromHud(true);
+            toggleFromHud(enabledCase());
             check(new Config().getValue("friendlyFire")== (enabledCase()?"1":"0"),"host preference persists");
          }
          change("settle");
+      }
+      private function toggleFromHud(wanted:Boolean):void {
+         var h:Object=mod.hud;h.visible=true;h.openPage("peer");h.refresh();
+         var control:TextField=h.getChildByName("rconnect-friendly-fire") as TextField;
+         check(control!=null && control.visible && control.mouseEnabled,"host can reach friendly fire without scrolling");
+         if(mod.friendlyFire.enabled!=wanted)control.dispatchEvent(new MouseEvent(MouseEvent.CLICK,true));
+         check(mod.friendlyFire.enabled==wanted,"real HUD click applies requested policy="+wanted);
+         h.collapse();
       }
       private function oracle(p:Object):void {
          if(shooter()||phase!="firing"||!enabledCase()||p.op!="hit"||seen[p.seq])return;
@@ -166,10 +174,9 @@ package {
          }
       }
       private function picture():void {
-         var h:Object=mod.hud;h.visible=true;h.openPage("settings");
-         h.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_WHEEL,true,false,0,0,null,false,false,false,false,-100));h.refresh();
+         var h:Object=mod.hud;h.visible=true;h.openPage("peer");h.refresh();
          var t:TextField=h.getChildByName("rconnect-friendly-fire") as TextField;
-         check(t!=null&&t.visible&&t.mouseEnabled==host,"visible settings control follows host permission");
+         check(t!=null&&t.visible&&t.mouseEnabled==host,"teammate page control visible without scrolling and follows host permission");
          for each(var lang:String in ["en","ru","tw"]) {
             mod.game.world.lang=lang;h.refresh();check(t.textWidth<t.width-4,"friendly fire label fits "+lang);
          }

@@ -46,10 +46,15 @@ def main():
     release_before = sha(ROOT / "release/RConnectMod.swf")
     out.mkdir(parents=True)
     src = out / "src"
+    tile_stub=ROOT/'tools/stubs/fe/loc/Tile.as'
+    if tile_stub.exists():
+        (src/'fe/loc').mkdir(parents=True,exist_ok=True)
+        shutil.copy2(tile_stub,src/'fe/loc/Tile.as')
     current = (ROOT / name).read_text(encoding="utf-8-sig")
     previous = (baseline / name).read_text(encoding="utf-8-sig")
     inputs = {name: sha(ROOT / name), str(baseline.relative_to(ROOT) / name): sha(baseline / name),
               "src/rconnect/game/RemoteMotion.as": sha(ROOT / "src/rconnect/game/RemoteMotion.as")}
+    if tile_stub.exists():inputs['tools/stubs/fe/loc/Tile.as']=sha(tile_stub)
 
     def terrain(text, package, class_name, counted=False):
         assert text.count("package rconnect.game") == 1

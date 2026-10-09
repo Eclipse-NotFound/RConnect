@@ -49,15 +49,17 @@ package rconnect.game {
        * Location and sends coordinates, so a receiver with a delayed terrain
        * patch still gets the correct fire positions. Native fire Part has no
        * damage or terrain behavior (fe.graph.Part.step). */
-      public static function captureGround(b:Object):Array {
+      public static function captureGround(b:Object,originX:Number=NaN,originY:Number=NaN):Array {
          var out:Array=[];
-         if(b==null || int(GameBridge.probe(b,"tipDamage"))!=3
-            || Number(GameBridge.probe(b,"inWater"))>0)return out;
+         var type:int=int(GameBridge.probe(b,"tipDamage"));
+         if(b==null || (type!=3 && type!=10)
+            || (type==3 && Number(GameBridge.probe(b,"inWater"))>0))return out;
          var weapon:Object=GameBridge.probe(b,"weap");
          var custom:*=GameBridge.probe(weapon,"visexpl");
          if(custom!=null && String(custom)!="")return out;
          var room:Object=GameBridge.probe(b,"loc");
          var x:Number=Number(GameBridge.probe(b,"X")),y:Number=Number(GameBridge.probe(b,"Y"));
+         if(isFinite(originX))x=originX;if(isFinite(originY))y=originY;
          var radius:Number=Number(GameBridge.probe(b,"explRadius"));
          if(room==null || !isFinite(x) || !isFinite(y) || !isFinite(radius)
             || radius<=0 || radius>800)return out;
@@ -74,7 +76,7 @@ package rconnect.game {
             if(tile==null || above==null)continue;
             if(!(int(GameBridge.probe(tile,"phis"))>0 || GameBridge.probe(tile,"shelf")===true))continue;
             if(int(GameBridge.probe(tile,"zForm"))==0 && int(GameBridge.probe(above,"phis"))!=0)continue;
-            var fireY:Number=Number(GameBridge.probe(tile,"phY1"))-33;
+            var fireY:Number=Number(GameBridge.probe(tile,"phY1"))+(type==3?-33:0);
             if(!isFinite(fireY))continue;
             out.push({x:(tx+.5)*40,y:fireY});
             if(out.length>=256)return out;
@@ -84,8 +86,9 @@ package rconnect.game {
 
       /** A native Emitter creates Part objects with the game's own lifespan.
        * Never call Bullet.explosion/explLiquid on a remote world. */
-      public static function playGround(main:Object,room:Object,points:Array):void {
+      public static function playGround(main:Object,room:Object,points:Array,kind:String="fire"):void {
          if(main==null || room==null || points==null || GameBridge.probe(room,"active")!==true)return;
+         if(kind!="fire" && kind!="acid")return;
          var emitter:Object=main.loaderInfo.applicationDomain.getDefinition("fe.graph.Emitter");
          var n:int=Math.min(points.length,256);
          var maxX:Number=Number(GameBridge.probe(room,"spaceX"))*40;
@@ -95,7 +98,7 @@ package rconnect.game {
             if(point==null)continue;
             var x:Number=Number(point.x),y:Number=Number(point.y);
             if(isFinite(x)&&isFinite(y)&&x>=0&&y>=0&&x<=maxX&&y<=maxY)
-               emitter.emit("fire",room,x,y);
+               emitter.emit(kind,room,x,y);
          }
       }
    }

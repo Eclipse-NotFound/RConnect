@@ -13,6 +13,7 @@ package {
    import flash.utils.Dictionary;
    import flash.utils.getTimer;
    import flash.utils.getQualifiedClassName;
+   import flash.sampler.*;
    import fe.unit.Unit;
    import rconnect.core.Log;
    import rconnect.game.GameBridge;
@@ -30,13 +31,17 @@ package {
       private var frames:int=0,shown:int=0,gap:int=0,maxGap:int=0,visTrace:Array=[];
       private var periodMs:Number=333,nativeResult:Object,peerResult:Object;
       private var visibleMs:Number=0,darkMs:Number=0,maxDarkMs:Number=0,previousFrame:int=0;
+      private var previousVisible:Boolean=false;
       private var wallX:int,wallY:int,wall:Object,wallBroken:Boolean=false,wallParticles:Dictionary=new Dictionary();
       private var pieceFrames:int=0,pieceChanges:int=0,pieceCount:int=0,knownPiece:Object,wallBefore:int=0;
       private var frontBefore:Object,frontReplaced:Boolean=false;
       private var deathFired:Boolean=false,deathEnded:Boolean=false;
       private var timeTrace:Array=[],shotTrace:Array=[],packetTrace:Array=[],packetSeen:Object={};
       private var packetOffset:Number=Infinity;
-      public function BeamTerrainTestDoc() {
+      private var driveAt:int=0,pixelMs:int=0;
+      private var profileEnabled:Boolean=false,profiling:Boolean=false,profileRows:Array=[];
+      public function BeamTerrainTestDoc(profile:Boolean=false) {
+         profileEnabled=profile;
          var id:String=NativeApplication.nativeApplication.applicationID;if(id.indexOf("rconnect-coop-")<0)return;
          host=id.indexOf("-host-")>=0;
          loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR,function(e:UncaughtErrorEvent):void {
@@ -47,7 +52,7 @@ package {
       private function check(ok:Boolean,s:String):void {Log.d("COOP "+(ok?"PASS ":"FAIL ")+"beam-terrain "+s);}
       private function send(s:String,p:Object=null):void {p=p||{};p.type="beam-terrain-test";p.stage=s;if(host)mod.session.server.broadcast(p);else mod.session.link.send(p);}
       private function watch(l:TcpLink):void {if(l!=null && !links[l]){links[l]=true;l.addEventListener(TcpLink.MESSAGE,receive);}}
-      private function setPhase(s:String):void {phase=s;at=getTimer();frames=shown=gap=maxGap=0;visTrace=[];lastShot=0;shots=0;visibleMs=darkMs=maxDarkMs=0;previousFrame=0;timeTrace=[];shotTrace=[];packetTrace=[];packetSeen={};packetOffset=Infinity;}
+      private function setPhase(s:String):void {phase=s;at=getTimer();frames=shown=gap=maxGap=0;visTrace=[];lastShot=0;shots=0;visibleMs=darkMs=maxDarkMs=0;previousFrame=0;previousVisible=false;timeTrace=[];shotTrace=[];packetTrace=[];packetSeen={};packetOffset=Infinity;}
       /** Arrival diagnostics only; actual native pixels remain the oracle. */
       private function observePacket(message:Object):void {
          if(host || phase!="beam" || message.type!="unitsync")return;
@@ -68,12 +73,19 @@ package {
          if(host && p.stage=="ready" && phase=="boot") {setup();send("setup",{x:baseX,y:baseY,wx:wallX,wy:wallY,layout:layout()});setPhase("ready");}
          else if(!host && p.stage=="setup" && phase=="boot") {
             baseX=p.x;baseY=p.y;wallX=p.wx;wallY=p.wy;
+            var initial:Object=mod.game.loc.space[wallX][wallY];
+            Log.d("BEAM FIXTURE before "+JSON.stringify({host:host,p:initial.phis,h:initial.hp,door:initial.door!=null,trap:initial.trap!=null}));
+            // The host replaces this fixture cell with an ordinary stone wall.
+            // Match its object references before routing the layout through
+            // terrain sync; a real door correctly keeps its own collision/HP.
+            initial.door=null;initial.trap=null;
             // Keep the reduced 300 -> 60 fixture case deterministic. A direct
             // local HP assignment would be a real client terrain-damage report.
             mod.game.applyTilePatch([{x:wallX,y:wallY,p:1,f:"A",h:300,o:1}]);
             check(mod.game.loc.space[wallX][wallY].hp==300,"fixture starts from a real 300 HP baseline");
             mod.game.applyTilePatch(p.layout as Array);
             check(mod.game.loc.space[wallX][wallY].hp==60,"host fixture layout establishes the 60 HP baseline");
+            Log.d("BEAM FIXTURE after-layout "+JSON.stringify({host:host,p:initial.phis,h:initial.hp,door:initial.door!=null}));
             setup();setPhase("ready");send("prepared");
          }
          else if(host && p.stage=="prepared" && phase=="ready")startBeam(0);
@@ -118,6 +130,7 @@ package {
       }
       private function setup():void {
          var b:Object=mod.game;quietArena();clearIncidentalBullets();
+         BeamPulseRegression.run(mod.main,check);
          if(host){baseX=b.gg.X;baseY=b.gg.Y;wallX=int(baseX/40)+4;wallY=int(baseY/40)-2;}
          b.gg.invulner=true;b.gg.disabled=true;b.gg.isTake=0;b.gg.dx=b.gg.dy=0;b.gg.anim("stay",true);
          b.loc.base=false;b.loc.black=false;b.world.black=false;b.loc.destroyOn=true;b.loc.tileSpawn=0;
@@ -125,6 +138,7 @@ package {
          for(var x:int=Math.max(1,int(baseX/40)-1);x<=Math.min(b.loc.spaceX-2,wallX+5);x++)
             for(var y:int=Math.max(1,wallY-3);y<=wallY+2;y++){var t:Object=b.loc.space[x][y];t.phis=0;t.opac=0;t.front="";}
          wall=b.loc.space[wallX][wallY];wall.mainFrame("A");wall.indestruct=false;wall.hp=60;wall.thre=0;wall.mat=2;wall.fake=false;wall.door=null;wall.trap=null;
+         check(wall.door==null,"fixture is an ordinary tile rather than a scene-owned door");
          b.world.redrawLoc();
          var emitter:Object=mod.main.loaderInfo.applicationDomain.getDefinition("fe.graph.Emitter");
          var piece:Object=emitter.arr["kusok"].cast(b.loc,baseX,baseY-100);
@@ -165,7 +179,28 @@ package {
          }
          shotTrace.push({at:getTimer(),x:b.begx,y:b.begy});nativeBullets.push(b);return b;
       }
-      private function beginFrame(e:Event):void {serial++;clock=getTimer();quietArena();}
+      private function beginFrame(e:Event):void {
+         serial++;clock=getTimer();quietArena();
+         if(profileEnabled && phase=="beam" && gunIndex==0 && clock-at>1000 && clock-at<6500) {
+            clearSamples();sampleInternalAllocs(false);startSampling();profiling=true;
+         }
+      }
+      private function finishProfile():void {
+         if(!profiling)return;
+         pauseSampling();profiling=false;
+         var elapsed:int=getTimer()-clock;
+         if(elapsed>80) {
+            var stacks:Object={},cpu:int=0;
+            for each(var sample:Sample in getSamples()) {
+               if(sample is NewObjectSample || sample is DeleteObjectSample)continue;
+               cpu++;var names:Array=[];
+               if(sample.stack!=null)for each(var frame:StackFrame in sample.stack)names.push(frame.name);
+               var key:String=names.join(" <- ");stacks[key]=int(stacks[key])+1;
+            }
+            profileRows.push({at:clock,ms:elapsed,cpu:cpu,stacks:stacks});
+         }
+         stopSampling();
+      }
       /** Publish the host's constructed corridor through the actual terrain
        * receiver before the join fixture touches native tile fields. */
       private function layout():Array {
@@ -189,6 +224,7 @@ package {
          for each(o in list)mod.game.loc.remObj(o);
       }
       private function drive(e:Event):void {
+         driveAt=getTimer();
          if(phase=="done")return;
          mod.game.forceCloseOverlays();mod.game.gg.disabled=true;mod.game.gg.invulner=true;
          for each(var u:Object in owners){u.disabled=true;u.dx=u.dy=0;}
@@ -204,13 +240,14 @@ package {
          return false;
       }
       private function pixels(v:DisplayObject):int {
+         var started:int=getTimer();
          var root:DisplayObject=mod.main as DisplayObject,r:Rectangle=v.getBounds(root).intersection(new Rectangle(0,0,mod.stage.stageWidth,mod.stage.stageHeight));
          if(r.width<2 || r.height<1 || r.width*r.height>100000)return 0;
          var a:BitmapData=new BitmapData(Math.ceil(r.width),Math.ceil(r.height),false,0),b:BitmapData=a.clone(),m:Matrix=new Matrix(1,0,0,1,-r.x,-r.y);
          a.draw(root,m);v.visible=false;b.draw(root,m);v.visible=true;
          var av:Vector.<uint>=a.getVector(a.rect),bv:Vector.<uint>=b.getVector(b.rect),n:int=0;
          for(var i:int=0;i<av.length;i++)if(av[i]!=bv[i])n++;
-         a.dispose();b.dispose();return n;
+         a.dispose();b.dispose();pixelMs+=getTimer()-started;return n;
       }
       private function collectPieces():void {
          var any:Boolean=false,changed:Boolean=false;
@@ -235,19 +272,19 @@ package {
          var event:Object={seq:1,at:stamp,flight:flight};
          var gun:Object={slot:0,id:"boundary",variant:0,stream:1,sampleTime:stamp,events:[event]};
          player.receive(owner,[gun],mod.main);
-         player.tick(mod.game.loc,stamp+400);
+         player.tick(mod.game.loc,stamp+400,true);
          check(player.count==1 && beamVisible(),"queued source frame produces real beam pixels");
          player.receive(owner,[gun],mod.main);
          check(player.count==1,"duplicate event keeps one visual");
          var previous:Object=mod.game.world.grafon.visObjs[2];
-         mod.game.world.redrawLoc();player.tick(mod.game.loc,stamp+400);
+         mod.game.world.redrawLoc();player.tick(mod.game.loc,stamp+400,true);
          check(previous!==mod.game.world.grafon.visObjs[2] && beamVisible(),"native room redraw reattaches the live beam");
-         player.tick(mod.game.loc,stamp+800);
-         player.receive(owner,[gun],mod.main);player.tick(mod.game.loc,stamp+900);
+         player.tick(mod.game.loc,stamp+800,true);
+         player.receive(owner,[gun],mod.main);player.tick(mod.game.loc,stamp+900,true);
          check(player.count==0 && !beamVisible(),"ended duplicate event cannot restart a beam");
          event.seq=2;player.receive(owner,[gun],mod.main);player.reset();
          check(player.count==0,"session reset clears queued beams");
-         event.seq=3;player.receive(owner,[gun],mod.main);player.tick({},stamp+400);
+         event.seq=3;player.receive(owner,[gun],mod.main);player.tick({},stamp+400,true);
          check(player.count==0,"room change clears queued beams");
          var after:Array=[];for(o=mod.game.loc.firstObj;o!=null;o=o.nobj)after.push(o);
          var same:Boolean=objects.length==after.length;
@@ -257,13 +294,32 @@ package {
       }
       private function sample(e:Event):void {
          if(phase=="done" || serial==sampled)return;sampled=serial;
+         finishProfile();
          try {
             if(phase=="beam" && clock-at>1000 && clock-at<6500) {
-               var visible:Boolean=beamVisible(),dt:int=previousFrame>0?clock-previousFrame:0;previousFrame=clock;
-               frames++;if(visible){shown++;gap=0;visibleMs+=dt;darkMs=0;}else{gap++;maxGap=Math.max(maxGap,gap);darkMs+=dt;maxDarkMs=Math.max(maxDarkMs,darkMs);}
-               visTrace.push(visible?1:0);timeTrace.push({at:clock,t:clock-at,shown:visible});
+               var renderAt:int=getTimer();pixelMs=0;
+               var visible:Boolean=beamVisible(),dt:int=previousFrame>0?clock-previousFrame:0;
+               // The preceding image remained on screen until this frame.
+               // Assigning its elapsed time to the new image reverses stalls
+               // at a beam's rising/falling edge and mismeasures exposure.
+               if(previousFrame>0) {
+                  if(previousVisible){visibleMs+=dt;darkMs=0;}
+                  else {darkMs+=dt;maxDarkMs=Math.max(maxDarkMs,darkMs);}
+               }
+               previousFrame=clock;previousVisible=visible;
+               frames++;if(visible){shown++;gap=0;darkMs=0;}else{gap++;maxGap=Math.max(maxGap,gap);}
+               var sourceClock:Number=NaN;
+               if(!host && "unitPresentationTime" in Object(mod.game))
+                  for each(var candidate:Object in mod.game.loc.units)
+                     if(String(candidate.id)==(gunIndex==0?"beam_fixture_land":"beam_fixture_1")) {
+                        var candidateTime:Number=Object(mod.game).unitPresentationTime(candidate);
+                        if(isFinite(candidateTime)){sourceClock=candidateTime;break;}
+                     }
+               visTrace.push(visible?1:0);timeTrace.push({at:clock,t:clock-at,shown:visible,sourceClock:sourceClock,
+                  driveAt:driveAt,renderAt:renderAt,pixelMs:pixelMs,completeAt:getTimer()});
             }
             if(phase=="beam" && clock-at>=6500){
+               if(profileEnabled && gunIndex==0)Log.d("BEAM PROFILE "+JSON.stringify(profileRows));
                Log.d("BEAM TRACE "+kinds[gunIndex]+" "+visTrace.join(""));
                var result:Object={frames:frames,shown:shown,maxGap:maxGap,visibleMs:visibleMs,maxDarkMs:maxDarkMs,timeTrace:timeTrace,shotTrace:shotTrace,packetTrace:packetTrace,packetOffset:packetOffset};
                if(!host){send("beam-result",result);setPhase("wait");}
@@ -289,6 +345,7 @@ package {
          }catch(err:Error){check(false,err.getStackTrace());send("done");finish();}
       }
       private function breakWall():void {
+         Log.d("BEAM FIXTURE before-hit "+JSON.stringify({host:host,p:wall.phis,h:wall.hp,door:wall.door!=null}));
          check(wall.phis==1 && wall.hp==60,"fixture survives until the deliberate enemy wall hit");
          var c:Class=mod.main.loaderInfo.applicationDomain.getDefinition("fe.weapon.Bullet") as Class;
          var b:Object=new c(owners[1],wallX*40+20,wallY*40+20,null,false);

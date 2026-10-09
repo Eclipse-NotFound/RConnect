@@ -19,6 +19,7 @@ package {
    import flash.utils.Dictionary;
    import flash.utils.Timer;
    import flash.utils.getTimer;
+   import flash.utils.getQualifiedClassName;
    import rconnect.game.MirrorHitUnit;
    import rconnect.core.Log;
    import rconnect.game.GameBridge;
@@ -209,7 +210,7 @@ package {
             var v:DisplayObject=node(root,path) as DisplayObject;
             if(v==null)continue;
             var clip:MovieClip=v as MovieClip;
-            s.parts[path]={v:v.visible,a:v.alpha,r:v.rotation,sx:v.scaleX,sy:v.scaleY,
+            s.parts[path]={v:v.visible,a:v.alpha,x:v.x,y:v.y,r:v.rotation,sx:v.scaleX,sy:v.scaleY,c:color(v),cls:getQualifiedClassName(v),
                frame:clip==null?0:clip.currentFrame,play:clip!=null&&clip.isPlaying};
          }
          return s;
@@ -244,9 +245,8 @@ package {
       }
       private function mismatch(remote:Object,expected:Object):String {
          if(remote==null)return "missing ghost body";
-         if(Math.abs(Number(remote.a)-Number(expected.a)*.75)>.02)return "root alpha";
-         var marked:Array=expected.c.concat();marked[3]=Number(expected.a)*.75;marked[7]=Number(marked[7])*.75;
-         if(!same(remote.c,marked))return "root tint/alpha composition";
+         if(Math.abs(Number(remote.a)-Number(expected.a))>.02)return "native root alpha";
+         if(!same(remote.c,expected.c))return "native root tint/alpha composition";
          if(remote.v!==expected.v || Math.abs(Number(remote.oa)-Number(expected.oa))>.02)return "pony visibility/alpha";
          if(!same(remote.oc,expected.oc))return "body tint";
          if(!same(remote.f,expected.f))return "body filters";
@@ -270,6 +270,9 @@ package {
             if(Math.abs(Number(a.a)-Number(b.a))>.055)return path+" alpha";
             if(path=="fetter"&&(Math.abs(a.r-b.r)>1||Math.abs(a.sx-b.sx)>.02))return "fetter geometry";
             if(path=="shit"&&b.frame==20&&a.frame!=20)return "shield held frame";
+            if(path=="shit" && (Math.abs(a.x-b.x)>.02 || Math.abs(a.y-b.y)>.02
+               || Math.abs(a.r-b.r)>.02 || Math.abs(a.sx-b.sx)>.02 || Math.abs(a.sy-b.sy)>.02))return "native shield geometry";
+            if(path=="shit" && (a.cls!==b.cls || !same(a.c,b.c)))return "native shield symbol/color";
          }
          return "";
       }

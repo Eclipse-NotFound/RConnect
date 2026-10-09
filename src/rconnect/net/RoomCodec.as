@@ -5,16 +5,26 @@ package rconnect.net
    public class RoomCodec
    {
       private static const DIGITS:String="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+      private static const PAIRS:Array=makePairs();
+      private static function makePairs():Array {
+         var out:Array=[];
+         for(var i:int=0;i<4096;i++)out.push(DIGITS.charAt(i>>6)+DIGITS.charAt(i&63));
+         return out;
+      }
       public static function pack(o:Object):String
       {
          var b:ByteArray=new ByteArray();b.writeUTFBytes(JSON.stringify(o));b.compress();b.position=0;
          var out:Array=[];
-         while(b.bytesAvailable)
+         var a:int,c:int,d:int;
+         // Two immutable table entries replace three temporary concatenations
+         // for each compressed triplet. The JSON/zlib/base64 bytes stay exact.
+         while(b.bytesAvailable>=3)
          {
-            var left:int=b.bytesAvailable,a:int=b.readUnsignedByte(),c:int=left>1?b.readUnsignedByte():0,d:int=left>2?b.readUnsignedByte():0;
-            out.push(DIGITS.charAt(a>>2)+DIGITS.charAt(((a&3)<<4)|(c>>4))+
-               (left>1?DIGITS.charAt(((c&15)<<2)|(d>>6)):"=")+(left>2?DIGITS.charAt(d&63):"="));
+            a=b.readUnsignedByte();c=b.readUnsignedByte();d=b.readUnsignedByte();
+            out.push(PAIRS[(a<<4)|(c>>4)],PAIRS[((c&15)<<8)|d]);
          }
+         if(b.bytesAvailable==1) {a=b.readUnsignedByte();out.push(PAIRS[a<<4],"==");}
+         else if(b.bytesAvailable==2) {a=b.readUnsignedByte();c=b.readUnsignedByte();out.push(PAIRS[(a<<4)|(c>>4)],DIGITS.charAt((c&15)<<2),"=");}
          return out.join("");
       }
       public static function unpack(s:String):Object

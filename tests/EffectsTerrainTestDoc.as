@@ -18,6 +18,7 @@ package {
    import flash.utils.getTimer;
    import rconnect.core.Log;
    import rconnect.game.GameBridge;
+   import rconnect.game.TerrainSync;
    import rconnect.net.NetMessageEvent;
    import rconnect.net.TcpLink;
 
@@ -106,6 +107,9 @@ package {
          if(timer.currentCount<50)return;
          try {
             if(phase=="boot") {
+               NativeTileFieldsRegression.run(check,mod.main);
+               NativeProbeRegression.run(check,mod.game.gg,mod.main);
+               BodyTintRegression.run(check);
                var b:GameBridge=mod.game;b.gg.disabled=true;b.gg.dx=b.gg.dy=0;
                b.loc.base=false;b.loc.black=true;b.world.black=true;
                wallX=Math.min(int(b.loc.spaceX)-4,int(b.gg.X/40)+3);wallY=int(b.gg.Y/40)-1;
@@ -158,6 +162,13 @@ package {
          }catch(err:Error){check(false,err.getStackTrace());finish();}
       }
       private function prepareWall():void {
+         // The random mission may already contain solid scenery in this span.
+         // Build the fixture explicitly on both independent copies before the
+         // native shot, keeping the wall itself intact until that real shot.
+         for(var openX:int=wallX-3;openX<=wallX+3;openX++) if(openX!=wallX) {
+            var open:Object=mod.game.loc.space[openX][wallY];
+            open.phis=0;open.opac=0;open.front="";open.vid=open.vid2=0;
+         }
          var clear:Boolean=true;
          for(var x:int=wallX-3;x<=wallX+3;x++) if(x!=wallX && mod.game.loc.space[x][wallY].phis>0)clear=false;
          check(clear,"wall fixture has an open corridor on both sides");
@@ -209,13 +220,13 @@ package {
          a.dispose();z.dispose();return count;
       }
       private function rectangleTiles():void {
-         var b:GameBridge=new GameBridge({}),space:Array=[];
+         var terrain:TerrainSync=new TerrainSync(),space:Array=[];
          for(var x:int=0;x<5;x++){space[x]=[];for(var y:int=0;y<2;y++)space[x][y]={X:x,Y:y,phis:1,front:"A",back:"",zad:"",zForm:0,water:0,stair:0,hp:60,opac:1};}
-         b.loc={space:space,spaceX:5,spaceY:2};b.readTilePatch();
+         var room:Object={space:space,spaceX:5,spaceY:2};terrain.hostPatch(room);
          space[4][1].hp=0;space[4][1].phis=0;space[4][1].front="";space[4][1].opac=0;
-         var patch:Array=b.readTilePatch();
+         var patch:Array=terrain.hostPatch(room);
          check(patch!=null && patch.length==1 && patch[0].x==4 && patch[0].y==1,"rectangular room includes far-column tile destruction");
-         b.applyTilePatch([{x:3,y:1,p:0,f:"",h:0,o:0}]);
+         terrain.apply(room,[{x:3,y:1,p:0,f:"",h:0,o:0}],true);
          check(space[3][1].phis==0 && space[3][1].opac==0,"tile state applies at x-y coordinates including light opacity");
       }
       private function finish():void {phase="done";timer.stop();removeEventListener(Event.ENTER_FRAME,frame);Log.d("COOP EFFECTS DONE "+(host?"host":"join"));}

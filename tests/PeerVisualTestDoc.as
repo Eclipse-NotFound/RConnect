@@ -135,6 +135,20 @@ package {
                best=Math.min(best,Math.max(Math.abs(a.x-b.x),Math.abs(a.y-b.y),angle,
                   Math.abs(a.sx-b.sx)*100,Math.abs(a.sy-b.sy)*100,Math.abs(a.f-b.f)*100));
             }
+            // Continuous display may lie between two actual native samples.
+            // Keep the original .05 geometry/pose tolerance, and only accept
+            // a segment when both endpoints have the same authored pose.
+            for(var j:int=1;j<peerNative.length;j++) {
+               var p0:Object=peerNative[j-1],p1:Object=peerNative[j];
+               if(p0.f!=p1.f || p0.sx!=p1.sx || p0.sy!=p1.sy)continue;
+               var dx:Number=p1.x-p0.x,dy:Number=p1.y-p0.y,len:Number=dx*dx+dy*dy;
+               if(len<=0)continue;
+               var t:Number=Math.max(0,Math.min(1,((a.x-p0.x)*dx+(a.y-p0.y)*dy)/len));
+               var r:Number=p0.r+((p1.r-p0.r+540)%360-180)*t;
+               angle=Math.abs((a.r-r+540)%360-180);
+               best=Math.min(best,Math.max(Math.abs(a.x-p0.x-dx*t),Math.abs(a.y-p0.y-dy*t),angle,
+                  Math.abs(a.sx-p0.sx)*100,Math.abs(a.sy-p0.sy)*100,Math.abs(a.f-p0.f)*100));
+            }
             maxError=Math.max(maxError,best);if(best>.05)wrong++;
          }
          check(remote.length>0,"remote tracer actually visible frames="+remote.length);
