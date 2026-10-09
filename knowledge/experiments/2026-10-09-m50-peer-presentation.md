@@ -8,14 +8,14 @@ discovered-by: RConnect
 date-updated: 2026-10-09
 evidence:
   - kind: runtime-experiment
-    summary: "已安装21双向假翅膀/弹道负控；同一原生游戏与独立TCP驱动的候选对照；完整发行验证尚在进行"
+    summary: "已安装21双向假翅膀/弹道负控；同一原生游戏与独立TCP驱动的候选对照；正式30全部38组4760/0，正常加载通过后部署22；长期边界保留"
   - kind: decompiled-game-code
     symbol: "fe.unit::UnitPlayer.animate; fe.weapon::Weapon; fe.graph::Grafon.drawAllObjs; fe.loc::Location.remObj"
 ---
 
 # M50 队友外观与原生武器呈现
 
-> 最新接续：用户已要求恢复实机验证和部署。正式26六绿一红后暂停，火焰时钟修正的隔离九组双向通过、固定回放66/0；正式27已编译并重新完整回归，仍未部署。最新依据见[播放速率实验](2026-10-09-native-effect-clock-rate.md)，当前停点以state/MEMORY.md为准。以下保留历史实验过程，旧“正在运行/暂缓”不代表现状。
+> 完成状态：2026-10-09正式30全部38组4760/0、原21对照051e28e849与正常无驱动7ec5eb4ec4通过，已部署0.2.22-dev。155外部保护项不变，80个最终实例描述符已退出。[部署依据与回滚](../../state/deployment-m50-2026-10-09.md)。以下旧“正在运行/未部署”是历史过程，不能据此覆盖当前状态；原失败和未验证边界继续保留。
 
 被测技能：diagnosing-bugs 2026-10-08.1（C:/Users/hello/.agents/skills/diagnosing-bugs/SKILL.md，SHA256 755c267af6dcb82d4749429476ed8b56cafc5f2e92d58f168e57b340f18c5a1d）；remains-runtime-debug、remains-auto-testing、remains-mod-build、remains-mod-memory；test-report 2026-09-16.1。
 技能归属：用户级及 Remains 工作区级；diagnosing-bugs 维护驻地 D:/活/总控。
