@@ -56,6 +56,7 @@ package {
       public function FlameVisualTestDoc() {
          var app:String=NativeApplication.nativeApplication.applicationID;
          if(app.indexOf("rconnect-coop-")<0)return;host=app.indexOf("-host-")>=0;
+         NativeEffectRateRegression.run(check);
          loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR,onError);
          timer.addEventListener(TimerEvent.TIMER,tick);timer.start();
       }

@@ -84,6 +84,9 @@ package rconnect.game {
                   channel.records[String(event.seq)]=rec;
                   if(!rec.beam)createVisual(rec);
                   active.push(rec);
+                  if(rec.beam && motion!=null && (s.cls=="visbulflame" || s.cls=="visbulflame2" || s.cls=="visbuldflame")) {
+                     rec.rateHeld=true;motion.retainRate(rec);
+                  }
                   if(active.length>160)remove(0);
                   // Player muzzle animation is consumed by WeaponDisplay on
                   // the same buffered sample as gun identity, flip and aim.
@@ -147,7 +150,7 @@ package rconnect.game {
          if(laser!=null){laser.scaleX=Number(point.ls);if(laser is MovieClip && MovieClip(laser).currentFrame!=int(point.lf))MovieClip(laser).gotoAndStop(int(point.lf));}
          return true;
       }
-      private function remove(i:int):void {var a:Object=active[i],v:DisplayObject=a.vis;if(v!=null && v.parent!=null)v.parent.removeChild(v);delete a.channel.records[String(a.seq)];active.splice(i,1);}
+      private function remove(i:int):void {var a:Object=active[i],v:DisplayObject=a.vis;if(a.rateHeld && a.motion!=null)a.motion.releaseRate(a);if(v!=null && v.parent!=null)v.parent.removeChild(v);delete a.channel.records[String(a.seq)];active.splice(i,1);}
       public function forget(owner:Object):void {
          var slots:Object=seen[owner];if(slots==null)return;
          for(var i:int=active.length-1;i>=0;i--)

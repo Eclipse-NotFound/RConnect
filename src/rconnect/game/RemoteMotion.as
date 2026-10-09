@@ -1,10 +1,17 @@
 package rconnect.game
 {
+   import flash.utils.Dictionary;
    /** A short source-time buffer absorbs packet jitter without restarting a tween.
     *  Never extrapolate beyond received positions; teleports settle at once.
     *  Unstamped room checkpoints/legacy callers retain endpoint interpolation. */
    public class RemoteMotion
    {
+      private var rateOwners:Dictionary=new Dictionary();
+      /** A finite native effect must retain its playback duration while using
+       * the same pose clock as the actor and muzzle. Releases are idempotent. */
+      public function retainRate(owner:Object):void {if(owner!=null)rateOwners[owner]=true;}
+      public function releaseRate(owner:Object):void {delete rateOwners[owner];}
+      private function rateHeld():Boolean {for(var owner:Object in rateOwners)return true;return false;}
       private var state:Object;
       private var origin:Object;
       private var target:Object;
@@ -141,7 +148,7 @@ package rconnect.game
          var wanted:Number=now-offset-delay(),next:Number=cursor+elapsed;
          // Adjust buffer depth by slightly changing playback speed, never by
          // rewinding the avatar when a slower packet interval is observed.
-         cursor=next+Math.max(-elapsed*.1,Math.min(elapsed*.1,wanted-next));
+         cursor=rateHeld()?next:next+Math.max(-elapsed*.1,Math.min(elapsed*.1,wanted-next));
          var latest:Object=frames[frames.length-1];
          cursor=Math.min(cursor,Number(latest.at));
          while(frames.length>2 && Number(frames[1].at)<=cursor)preceding=frames.shift();

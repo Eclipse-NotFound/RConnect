@@ -89,7 +89,7 @@ def main():
         "package rconnect.game { public class WeaponDisplay {"
         'public static function interpolate(a:Array,b:Array,t:Number):Array {throw new Error("Weapon outside fixed replay");}'
         "}}", encoding="utf-8")
-    for test in ("TerrainRegression", "TerrainFixedReplayDoc", "HeldMotionBufferRegression", "DropMotionBurstRegression"):
+    for test in ("TerrainRegression", "TerrainFixedReplayDoc", "HeldMotionBufferRegression", "DropMotionBurstRegression", "NativeEffectRateRegression"):
         path = ROOT / "tests" / (test + ".as")
         inputs[str(path.relative_to(ROOT))] = sha(path)
         shutil.copy2(path, src / path.name)

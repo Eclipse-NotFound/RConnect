@@ -31,6 +31,7 @@ package {
 
             group="held motion";HeldMotionBufferRegression.run(check);
             group="recorded container drops";DropMotionBurstRegression.run(check);
+            group="native effect clock rate";NativeEffectRateRegression.run(check);
             group="snapshot allocations";
             var oldCounts:Object=allocations(CountedTerrainBefore);
             var newCounts:Object=allocations(CountedTerrainAfter);

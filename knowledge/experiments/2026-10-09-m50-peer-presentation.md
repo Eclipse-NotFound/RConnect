@@ -15,7 +15,7 @@ evidence:
 
 # M50 队友外观与原生武器呈现
 
-> 最新接续：用户选择保留其它程序、先做代码与固定回放。final24仅编译及60项固定检查通过，38组游戏验收待续；安装仍21、未部署。地形分配优化和其验证边界见[独立实验](2026-10-09-terrain-scan-allocation.md)，当前停点以state/MEMORY.md为准。以下保留历史实验过程，旧“正在运行”不代表现状。
+> 最新接续：用户已要求恢复实机验证和部署。正式26六绿一红后暂停，火焰时钟修正的隔离九组双向通过、固定回放66/0；正式27已编译并重新完整回归，仍未部署。最新依据见[播放速率实验](2026-10-09-native-effect-clock-rate.md)，当前停点以state/MEMORY.md为准。以下保留历史实验过程，旧“正在运行/暂缓”不代表现状。
 
 被测技能：diagnosing-bugs 2026-10-08.1（C:/Users/hello/.agents/skills/diagnosing-bugs/SKILL.md，SHA256 755c267af6dcb82d4749429476ed8b56cafc5f2e92d58f168e57b340f18c5a1d）；remains-runtime-debug、remains-auto-testing、remains-mod-build、remains-mod-memory；test-report 2026-09-16.1。
 技能归属：用户级及 Remains 工作区级；diagnosing-bugs 维护驻地 D:/活/总控。
