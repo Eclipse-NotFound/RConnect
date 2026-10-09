@@ -8,7 +8,7 @@ package rconnect.game
          zf:"zForm",w:"water",st:"stair",h:"hp",o:"opac",v:"vid",v2:"vid2",
          d:"diagon",sh:"shelf"};
       private var room:Object;
-      private var base:Object = {};
+      private var base:Array = [];
       private var observed:Object = {};
       private var queued:Object = {};
       private var pending:Object;
@@ -18,7 +18,7 @@ package rconnect.game
       private var cursor:int = 0;
       public var dirty:Boolean = false;
 
-      public function reset():void { room=null; base={}; observed={}; queued={}; pending=null; receipts={}; dirty=false; }
+      public function reset():void { room=null; base=[]; observed={}; queued={}; pending=null; receipts={}; dirty=false; }
 
       public function checkpoint(loc:Object):Array
       {
@@ -43,12 +43,15 @@ package rconnect.game
          reset(); room=loc; epoch++; cursor=0;
          if(room==null) return;
          for(var x:int=0;x<int(room.spaceX);x++)
+         {
+            var column:Array=base[x]=[];
             for(var y:int=0;y<int(room.spaceY);y++)
             {
                var t:Object=tile(x,y);
                if(t==null) continue;
-               base[key(x,y)]=observed[key(x,y)]=state(t,x,y);
+               column[y]=observed[key(x,y)]=state(t,x,y);
             }
+         }
       }
 
       private function key(x:int,y:int):String {return x+","+y;}
@@ -62,6 +65,19 @@ package rconnect.game
          var s:Object={x:x,y:y};
          for(var f:String in FIELDS) try {s[f]=t[FIELDS[f]];} catch(e:*) {}
          return s;
+      }
+      /** Most tiles do not change between packets. Compare their native fields
+       * before allocating a snapshot; cached baselines must remain immutable. */
+      private function matchesTile(t:Object,s:Object):Boolean
+      {
+         if(t==null || s==null) return false;
+         for(var f:String in FIELDS)
+         {
+            var value:*;
+            try {value=t[FIELDS[f]];} catch(error:*) {value=undefined;}
+            if(s[f]!==value) return false;
+         }
+         return true;
       }
       private function equal(a:Object,b:Object):Boolean
       {
@@ -80,8 +96,9 @@ package rconnect.game
             var index:int=cursor; cursor=(cursor+1)%total;
             var x:int=int(index/height),y:int=index%height,t:Object=tile(x,y);
             if(t==null) continue;
-            var s:Object=state(t,x,y);
-            if(!equal(s,base[key(x,y)])) out.push(s);
+            // Column coordinates stay valid if this room changes dimensions.
+            var column:Array=base[x] as Array;
+            if(!matchesTile(t,column==null?null:column[y])) out.push(state(t,x,y));
          }
          return out.length?out:null;
       }
@@ -92,7 +109,7 @@ package rconnect.game
          for(var k:String in observed)
          {
             var old:Object=observed[k],t:Object=tile(old.x,old.y);
-            if(t==null) continue;
+            if(t==null || matchesTile(t,old)) continue;
             var now:Object=state(t,old.x,old.y);
             // Door objects have their own authoritative protocol. Only damage
             // that the native tile accepted may become a terrain request.

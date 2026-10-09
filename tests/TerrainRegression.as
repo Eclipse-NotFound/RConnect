@@ -4,9 +4,10 @@ package
    /** Receipt ordering and authority tests; native bullet/graphics run separately. */
    public class TerrainRegression
    {
-      public static function run(check:Function):void
+      public static function run(check:Function,terrainClass:Class=null):void
       {
-         var host:Object=room(20,16),sender:TerrainSync=new TerrainSync();
+         if(terrainClass==null) terrainClass=TerrainSync;
+         var host:Object=room(20,16),sender:Object=new terrainClass();
          sender.hostPatch(host);
          for each(var column:Array in host.space) for each(var t:Object in column) {t.hp=0;t.phis=0;t.front="";t.opac=0;}
          var seen:Object={},count:int=0,bounded:Boolean=true;
@@ -17,7 +18,7 @@ package
             }
          check(count==320,"terrain patch rotation covers all 320 changed tiles");
 
-         host=room(3,2);var local:Object=room(3,2),client:TerrainSync=new TerrainSync();sender=new TerrainSync();
+         host=room(3,2);var local:Object=room(3,2),client:Object=new terrainClass();sender=new terrainClass();
          sender.hostPatch(host);client.report(local);
          local.space[1][1].hp=40;
          client.apply(local,[{x:1,y:1,p:1,h:60,o:1}],true);
@@ -43,7 +44,7 @@ package
          client.apply(next,[{x:2,y:1,zf:2,o:0.4}],true);
          check(shaped.phY1==60 && shaped.opac==0.4,"terrain shape recomputes collision bounds and final opacity");
 
-         host=room(20,16);local=room(20,16);sender=new TerrainSync();client=new TerrainSync();
+         host=room(20,16);local=room(20,16);sender=new terrainClass();client=new terrainClass();
          sender.hostPatch(host);client.report(local);
          local.space[0][0].hp=50;first=client.report(local);
          receipt=sender.settle(host,"peer",first); // Receipt still in flight.
@@ -55,6 +56,75 @@ package
          client.acknowledge(local,receipt);
          check(client.finishReports(local).length==0 && client.report(local)==null,
             "late receipt after room closing cannot replay or lose wall damage");
+
+         host=room(3,4);sender=new terrainClass();client=new terrainClass();
+         check(sender.hostPatch(host)==null && client.report(host)==null,"initial rectangular terrain has no changes");
+         var quiet:Boolean=true;
+         for(round=0;round<40;round++) quiet=quiet && sender.hostPatch(host)==null && client.report(host)==null;
+         check(quiet,"repeated unchanged terrain scans do not send changes");
+         host.space[2][3].front="B";
+         var patch:Array=sender.hostPatch(host);
+         check(patch.length==1 && patch[0].x==2 && patch[0].y==3 && patch[0].f=="B" && client.report(host)==null,
+            "visual-only change is broadcast without a damage report");
+         host.space[2][3].front="A";
+         check(sender.hostPatch(host)==null && client.report(host)==null,"returning to baseline removes the terrain patch");
+
+         // A flat x * currentHeight + y cache aliases other cells after resize.
+         host=room(3,4);sender=new terrainClass();
+         for(var x:int=0;x<3;x++)for(var y:int=0;y<4;y++)host.space[x][y].hp=60+x*10+y;
+         sender.hostPatch(host);host.spaceY=2;
+         check(sender.hostPatch(host)==null,"shrinking a rectangular room keeps each existing cell's baseline");
+         host.spaceX=1;
+         check(sender.hostPatch(host)==null,"shrinking room width does not invent tile changes");
+         host.spaceY=4;host.spaceX=3;
+         check(sender.hostPatch(host)==null,"restoring room dimensions keeps the original coordinate baseline");
+         host.spaceY=5;
+         for(x=0;x<3;x++)host.space[x][4]=room(1,1).space[0][0];
+         patch=sender.hostPatch(host);
+         var addedOnly:Boolean=patch!=null && patch.length==3;
+         for each(p in patch)addedOnly=addedOnly && p.y==4;
+         check(addedOnly,"room extension emits only newly added coordinates");
+
+         host=room(2,3);sender=new terrainClass();sender.hostPatch(host);
+         host.space[1][2].vid=null;patch=sender.hostPatch(host);
+         check(patch!=null && patch.length==1 && patch[0].v===null,"null differs from a previously missing tile field");
+         delete host.space[1][2].vid;
+         check(sender.hostPatch(host)==null,"removing an optional field returns to the missing-field baseline");
+         host.space[1][2].vid=NaN;
+         check(sender.hostPatch(host).length==1 && sender.hostPatch(host).length==1,"NaN preserves strict native field comparison");
+         delete host.space[1][2].vid;host.space[1][2]=null;
+         check(sender.hostPatch(host)==null,"a missing tile is skipped without inventing a destruction request");
+      }
+
+      /** Fixed damage / receipt / visual history, independent of frame timing. */
+      public static function replay(terrainClass:Class):Array
+      {
+         var host:Object=room(7,5),local:Object=room(7,5),out:Array=[];
+         var sender:Object=new terrainClass(),client:Object=new terrainClass(),waiting:Array=[];
+         sender.hostPatch(host);client.report(local);
+         for(var tick:int=0;tick<180;tick++)
+         {
+            var x:int=(tick*3)%7,y:int=(tick*7)%5,t:Object=local.space[x][y];
+            if(tick%2==0 && t.phis>0) {t.hp-=7;if(t.hp<=0){t.phis=0;t.opac=0;t.front="";}}
+            if(tick%11==0)host.space[(x+1)%7][y].back="background-"+int(tick/11);
+            var patch:Array=sender.hostPatch(host);client.apply(local,patch,true);
+            var request:Object=client.report(local);
+            if(request!=null)
+            {
+               var receipt:Object=sender.settle(host,"peer",request);
+               out.push({tick:tick,request:request,receipt:receipt,
+                  duplicate:sender.settle(host,"peer",request)});
+               waiting.push(receipt);
+            }
+            if(tick%4==3 && waiting.length)client.acknowledge(local,waiting.shift());
+            out.push({tick:tick,patch:patch,calls:host.calls});
+         }
+         for each(var batch:Object in client.finishReports(local))out.push({closing:sender.settle(host,"peer",batch)});
+         // Flush host state after ordered room close; late receipts are harmless.
+         for each(receipt in waiting)client.acknowledge(local,receipt);
+         client.apply(local,sender.hostPatch(host),false);
+         out.push({host:host.space,local:local.space,calls:host.calls,late:client.report(local)});
+         return out;
       }
 
       private static function room(width:int,height:int):Object
