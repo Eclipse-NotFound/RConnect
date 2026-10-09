@@ -10,6 +10,7 @@ package {
    import flash.utils.Dictionary;
    import flash.utils.Timer;
    import flash.utils.getTimer;
+   import flash.utils.getQualifiedClassName;
    import rconnect.core.Log;
    import rconnect.game.GameBridge;
    import rconnect.net.TcpLink;
@@ -27,6 +28,7 @@ package {
       private var expected:Object,samples:int=0,wrong:int=0,flashes:int=0,localDone:Boolean=false,peerDone:Boolean=false;
       private var sourceFlashes:int=0,lastShoot:int=0,sourceShots:int=0,peerSourceShots:int=0;
       private var previousAxes:Object;
+      private var nativeSamples:int=0,invalidNativeAxes:int=0,diagnosticRound:int=-1;
       private var warmFrames:int=0,prepared:Boolean=false,peerPrepared:Boolean=false;
       public function WeaponAngleTestDoc() {
          var app:String=NativeApplication.nativeApplication.applicationID;
@@ -62,6 +64,7 @@ package {
          warmFrames=0;prepared=peerPrepared=false;
          localDone=peerDone=false;lastShoot=0;
          previousAxes=null;
+         nativeSamples=invalidNativeAxes=0;
       }
       private function before(e:Event):void {
          // The peer can still be sampling after our local timer finishes.
@@ -84,11 +87,32 @@ package {
       private function render(e:Event):void {
          if((phase!="warm" && phase!="show" && phase!="sampled") || gun==null)return;
          var actual:Object=axes(gun.vis as DisplayObject);
+         // A vanished global basis cannot be a reference for either player's
+         // weapon. Keep the original peer comparisons and assert this native
+         // precondition separately, with enough context to diagnose a failure.
+         if(diagnosticRound!=round) {
+            diagnosticRound=round;
+            var chain:Array=[],node:DisplayObject=gun.vis as DisplayObject;
+            while(node!=null) {
+               var basis:Object=node.transform.matrix;
+               chain.push({type:getQualifiedClassName(node),name:node.name,
+                  a:basis.a,b:basis.b,c:basis.c,d:basis.d,tx:basis.tx,ty:basis.ty});
+               node=node.parent;
+            }
+            var cam:Object=mod.game.world.cam;
+            Log.d("WEAPON COORDINATE CONTEXT "+JSON.stringify({role:host?"host":"join",round:round,
+               stageWidth:mod.stage.stageWidth,stageHeight:mod.stage.stageHeight,
+               cameraScale:cam.scaleV,screenX:cam.screenX,screenY:cam.screenY,chain:chain}));
+         }
          if(actual!=null && (previousAxes==null || Math.abs(actual.xx-previousAxes.xx)+Math.abs(actual.xy-previousAxes.xy)+Math.abs(actual.yx-previousAxes.yx)+Math.abs(actual.yy-previousAxes.yy)>.01)) {
             Log.d("WEAPON ANGLE NATIVE CHANGE "+JSON.stringify({role:host?"host":"join",round:round,phase:phase,elapsed:getTimer()-at,axes:actual}));previousAxes=actual;
          }
          if(actual!=null)send("native",{round:round,axes:actual});
          if(phase!="show")return;
+         nativeSamples++;
+         if(actual==null || !isFinite(actual.xx) || !isFinite(actual.xy) || !isFinite(actual.yx) || !isFinite(actual.yy)
+            || Math.abs(actual.xx*actual.xx+actual.xy*actual.xy-1)>.01
+            || Math.abs(actual.yx*actual.yx+actual.yy*actual.yy-1)>.01)invalidNativeAxes++;
          if(String(GameBridge.probe(gun.vis,"currentLabel"))=="shoot")sourceFlashes++;
          sourceShots=Math.max(sourceShots,int(gun.kol_shoot));
          if(getTimer()-at<700 || expected==null)return;
@@ -132,6 +156,7 @@ package {
          if(phase=="warm" && warmFrames>=40 && !prepared){prepared=true;send("prepared",{round:round});}
          if(host && phase=="warm" && prepared && peerPrepared){phase="show";at=getTimer();send("go",{round:round});}
          if(phase=="show" && getTimer()-at>2800) {
+            check(nativeSamples>=12 && invalidNativeAxes==0,"native global coordinates remain valid invalid="+invalidNativeAxes+"/"+nativeSamples);
             check(samples>=12,"final display sampled after buffering frames="+samples);
             check(samples>=12 && wrong==0,"remote gun matches native aim and flip wrong="+wrong+"/"+samples+" degree="+CASES[round].deg+" facing="+CASES[round].body);
             check(sourceFlashes>0 && sourceShots>0,"source native shoot animation and bullets observed");

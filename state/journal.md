@@ -1,3 +1,15 @@
+## 2026-10-09 — 增加原生坐标前提，正式28继续验证
+
+- 正式27五绿一红后暂停，55029结束。WeaponAngle db93f16896失败时宿主本地/远端全局轴同时为零，加入端正常；同候选三次有界诊断均65/0，未复现原因，不能声称已修复低频问题。
+- 逐项排查启动标记，去掉CREATE_NO_WINDOW或显式SW_SHOWNORMAL没有改变AIR可见属性，均未采用。独立无游戏探针验证AIR初始visible=false但Win32同PID窗口实际可见；推翻了凭该属性断言隐藏的判断。[完整证据](../knowledge/experiments/2026-10-09-native-coordinate-precondition.md)。
+- 仅WeaponAngle驱动增加原生单位轴有效性断言和每轮祖先矩阵记录；原比较/开火断言与误差门槛保持。正式28精确复用32602e77，69源/197验证输入；严格承接27五组相同输入成功，剩余33组及旧21负控继续。
+- 队列87982于16:54启动；首项243bb969d2武器角度与新前提通过，已进入PresentationContinuity。安装仍21，无M50审计或部署收据，不联系WallBlend、不干预其它程序。
+
+## 2026-10-09 — 正式27实机回归失败：WeaponAngleTestDoc
+
+- 运行 db93f16896，退出码 1，原始输入/日志保留。
+- 不降低门槛；继续独立检查以确定影响范围。安装未变。
+
 ## 2026-10-09 — 火焰共用时钟修正，正式27重新回归
 
 - 正式26完成7组：Combat、FastHeld、PeerVisual、WeaponAngle、Projectile、Continuity通过；Flame 5c7ce8fea8仍短192/195/212ms，剩余31组/旧21未跑，90181已结束并保留暂停标记。
