@@ -1,66 +1,63 @@
 # RConnect —— 开发记忆入口
 
-> 2026-10-08 当前已部署 **0.2.21-dev**：131147字节、53生产类，SHA256 `5c372cf5d970212f0fd4e95bea5c0acfaabfe321c3ca531c80ed7e299c2914bd`。M49四项交付完成；20组2095/0/双端DONE，正常无驱动加载3611e15340通过。42个最终自有PID退出、其余56保护未变。[部署与回滚](deployment-m49-2026-10-08.md)。
->
-> 本会话统一验证/部署，RConnect (2)/(3)保持只读。无待运行测试或待部署候选；用户保存并重启两端后实测21。未推送、未改公开安装包。公开玩家README继续对应0.2.8，文档发布记录见[玩家指引](github-player-guides-2026-10-08.md)；公开文档b586376/本地接入fb8a6b9保留。
+> 2026-10-09：**安装仍为0.2.21-dev；M50/0.2.22-dev只完成代码检查点，未部署。** 用户最新选择“保留运行，先做代码和固定回放检查”，保留《群星》等程序，暂缓新的游戏双实例和时序测试。不要恢复旧队列。
 
-## 1. 工作边界与机制
+## 1. 模组与当前职责
 
-只写RConnect；游戏本体/描述符、game-reference只读，其他模组只作必要最小只读。共享知识按贡献规则。入口RConnectMod.init(main)，AIR/amxmlc，swf-version=38。loader硬编码app:/mods/Rconnect/release/RConnectMod.swf，小写c保持；实际目录RConnect。根application.xml指向pfe.swf 1.02，勿混淆app.xml。World.constructor.boxDamage=0.2，反编译首选game-reference/decompiled/1.02/src102/scripts。
+RConnect是Remains 1.02的双人合作模组，支持同地图普通房分头探索、战斗、场景交互和共享奖励。本轮原始问题是远程玩家假飞行翅膀及枪口/弹道错位，随后统一接入各协作会话的相关修复。
 
-双人各自原生角色；同房宿主结算，普通房分头时各端运行自己的房间战斗，由RoomSync交接。玩家/活跃念力箱和掉落/新生及飞行普通掉落约20Hz，敌人及完整场景约5Hz，显示逐帧推进。测试只开自有隔离AIR标识/PID，不动用户游戏或存档；构建/AIR串行，不允许其他会话覆盖release。
+唯一统一合并、构建、游戏测试及部署者：原「RConnect」会话01a086bb-378c-7f60-b8e1-50d90ffa0996。用户授权当前及后续所有RConnect开发会话互通；R2–R14已交接停写，分叉继承记忆不等于获得部署权。[协调记录](m50-coordination.md)。
 
-## 2. 用户决定与授权
+## 2. 用户决定与保护边界
 
-- 已授权已有合作功能修复、大幅重构、候选部署及与RConnect (2)/(3)直接协调，由本会话统一部署；不重复确认。稳定重连、三人以上、公网和版本兼容排除；不新增任务/背包/交易规则。
-- grilling Q1–Q5已确认：同地图普通房自由分头；空房暂停保留进度；宿主发起全队换图；剧情/挑战共同进入；退出游戏沿用原版存档，不新增随机房完整战斗保存。
-- 地面物品一份，先拾取者入包；经验点双方奖励；存档点同步解锁，各自保存角色。跟随默认关，地图标记/传送沿用共同旅程限制。
-- 任一端菜单/SATS可触发全队暂停，包括分房；全部关闭才恢复。两全局开关默认关、宿主设置；网络、聊天和SATS排队继续。
-- 紧凑浮窗已实装：常驻280×36、展开通常280×240，四页/滚动、标题拖动、四角停靠。各自保存位置/开合/30–100%不透明度。主字号12，暂停提示独立不透明；Ctrl+Enter开聊、聊天框Enter发送、Esc收起、F10显示，原生Enter全屏保留。
-- 本轮新增个人“允许队友念力抓起我”和“被抓时 WASD 挣脱”。用户要求双方独立设置；默认取值未收到额外回复，已明示按允许关/挣脱开实现，并非用户另行拍板。两端分别保存，关闭允许立即释放；挣脱关时WASD不打断抓取。浮窗外框未增高。
-- 同机第二角色保留独立身份/保存；Start-Coop.bat只管理自己启动的进程；迁移保留原件，不反复覆盖角色。
+- 最新决定：保留其它程序运行，先做代码和固定数据检查。不得擅自结束用户程序、改变优先级/亲和性或再启动游戏压力测试。独立AS3计算回放已执行，不加载游戏或用户存档。
+- 已授权现有合作功能修复、大幅重构及本机候选部署；稳定重连、公网、三人以上、版本兼容、新的任务/背包/交易系统排除。
+- 普通房可分头；无人房暂停并保留本次联机进度；宿主发起整图旅行，剧情/挑战共同进入。退出游戏沿用原版存档，不新增随机房战斗存档。
+- 地上物品仅一份、先拾取者获得；经验点双方奖励；存档点共同解锁、各自保存角色。跟随默认关。
+- 菜单/SATS任一端可全队暂停，全部关闭才恢复；两开关默认关、宿主管理，暂停保留网络、聊天和SATS队列。
+- 仅写本模组；游戏本体、描述符和game-reference只读，其他模组必要最小只读。独立AppID/数据/自有PID，未改玩家存档；失败输入与日志保留。
 
-## 3. 当前安装与回滚
+## 3. 版本与实际验证状态
 
-- 当前21/5c372cf5/131147B/53类，最终冻结build/m49/final-lifecycle-16，54源文件/163验证输入。实际生产编译10；后续只修改独立测试和审计编排，源/实际字节不变。
-- 20组2095 PASS / 0 FAIL / 双端DONE。18组原运行保留（10四专项、14两念力组、15十二组），16新跑WeaponAngle aa7eb649b6、PresentationContinuity 6347112b03。carry逐项核对实际driver类表、完整编译/运行依赖、配置与真实角色模板，不冒充重跑。
-- audit_m49全部通过；正常无驱动/全已安装模组加载3611e15340通过（150秒上限，非150秒满时浸泡）。最终40个专项+2个启动实例PID均退出，其他56项保护一致。
-- 上一20唯一备份：build/backup/m49-release-20261008-232026-727eb9/RConnectMod.before.swf，SHA `77e3886f7f76885db35558ba7da4a591ec486ab65faab37f95c14116d67bb3ee`。回滚：双方保存退出，复制回release/RConnectMod.swf后重启，不回退角色存档。
-- 证据：knowledge/experiments/m49-validation-evidence.json；冻结目录内deployment.json、normal-smoke-result.json、closeout.json；本机发布记录state/deployment-m49-2026-10-08.md。
+- **已安装21**：131147B、53类，SHA256 5c372cf5d970212f0fd4e95bea5c0acfaabfe321c3ca531c80ed7e299c2914bd。M49的20组2095/0、正常无驱动全模组冒烟3611e15340通过。[部署记录](deployment-m49-2026-10-08.md)。
+- **最新构建24**：build/m50/final-presentation-24，69源/196验证输入/68类/163276B；SHA256 d62c0bd218995256fe4a26583b8a684df4a35b850f83c514459318c6ac1bb3f9。编译及完整类表核对通过，其38组游戏验证未运行。FFDec沙箱日志锁警告保留，类表正常生成并核对成功。
+- **固定回放03：60/0**，build/m50/terrain-fixed-replay-03。180固定步/227条结果新旧地形一致，覆盖重复伤害、在途确认、离房清队列、尺寸变化、可选字段及已有持物/掉落回放。原生存档、碰撞、渲染、武器、传送、网络时序不在范围内。
+- 分配计数：320格，双方各扫描100次，未变格快照64000→0，每次一格变化64000→200。计数只加在独立副本，不进入生产；不能换算成真实FPS保证。
+- 11项Python资产/输入门禁测试通过，差异空白检查通过。最新纯回放已退出，游戏诊断均结束，未恢复23队列。
+- M50保存为本地代码检查点，提交见git log；没有发行审计、21部署备份、部署/正常冒烟收据或推送。公开安装包及玩家README仍对应0.2.8。
 
-## 4. M49实现与实际证据
+## 4. 最新代码判断与保留的失败
 
-- SATS位图：GameBridge在停止末帧改变镜像/覆盖位置后置dirty，最终RENDER可见性处理后隐藏旧位图/目标覆盖，调用原生drawSats，再恢复图层开关。保留选中项及攻击队列，不运行暂停AI。旧20/9beba4f621原位图差24.5px；最终1f5ba08739差0px、2808/2808标记像素，选择/队列不变。
-- 旧念力目标：冻结本体跳过Unit.step导致onCursor残留。按原生矩形、isVis、trigDis、sost、prior逐帧更新本体和命中代理，离开鼠标范围只清对应旧celObj。原生actTele/dropTeleObj仍作决定。旧20同一负控松手后仍抓54321；最终可换54322。
-- 死机器：UnitPresentation彻底移除状态同时loc.remObj/remVisual；NativeRoomState不捕获或恢复in_chain，死亡恢复清链，不重复die/奖励。原生配对炮塔land/tr3及UnitMsp，真实角色两轮死亡/检查点复活/离房重返；旧20/950b33f377六红，最终3376200cb2七次绘制链检查均无残留。
-- PeerGrip：由被抓玩家掌握许可与真实物理，施法者仍走原生Q/魔力/E。验证连接、房间epoch/term、距离/视线/质量/魔力、旧token失效；levit=2避免被当作玩家自身悬浮。挣脱关时暂存/抑制本帧移动键并恢复；切房、死亡、离线清理；共享暂停保留握持和租期。
-- 队友暂停：60b7441492证明被抓宿主本体停在223.96905、加入画面235.93955，500ms后仍差11.97px。远端玩家收包和逐帧显示也调用既有motion.settle，位置改变一并重拍SATS。最终双向稳定误差≤1px。
-- 原生E：85c5a17770确认仅松手、玩家t_throw未激活。Location.step先gg.step再化身step，45在帧末已经变44。RemoteDamageUnit新增step前回调，PeerGrip在化身模拟前转交原生冲量并清临时化身速度/t_throw，只玩家所有者模拟投掷。最终3d74518763为真实E两方向，12案例162/0。
-- HUD 9dba6ccf2d为154/0、24原生PNG，个人开关/保存及语言宽度/240高均通过；不等于真人IME验证。14恢复PNG无已定义白块，抽看0/2离线图正常。
+- 原生采样27741832f6指向TerrainSync扫描及GC。24先直接比较13字段、变化后创建快照，基线按x/y两层存储，避免平面索引随房高变化串格；协议、频率、伤害与预测确认顺序未改。[地形实验](../knowledge/experiments/2026-10-09-terrain-scan-allocation.md)。
+- **正式23已暂停：5组3绿/2红/33未跑，负控未跑**。Continuity49c49eaffb（74/0ms、SATS通过）、Animation3c6c4a4530、Combate6a777e74f（83帧）通过；Flameb0bd357966一发显示短194ms、FastHeldaa21ab823f箱170ms失败。PAUSE.request保留，不覆盖旧红。
+- 23及此前d55字节的结果不能承接到24。旧SHA d55c2922f9a2bedd50e9baf2080e0305d71c92cbd479cd93e9c33e7199f24836。
+- 85ms持物缓冲b173fa4d4a四项170/210/140/200ms；5%角色追赶c32f83ed18仍197ms红，**均未采用**。held04固定回放10–20ms收益不覆盖实战失败；生产仍持物100ms、角色10%渐进调整。
+- 取消截图a4684717e6仍5项真实时长红，截图不是完整解释。采样本身改变时序，诊断不计发行。
+- 最后地形诊断74ae636f61宿主启动超时，没有有效性能对照，不重跑游戏。期间整机CPU单次采样100%且《群星》运行；不是所有历史红项的因果证明。
+- 固定回放01因CRLF归一化触发源指纹拦截，02缺运动边界依赖编译失败；均未启动AIR，原目录保留。03逐字节复制生产源，并对未测接口显式拒绝调用，60项通过。
+- 旧13为38组36绿/2红，22为8组4绿/4红。04采样曾捕获Sound.play内485ms，测试副本遗漏Music已修复；不能由此解释全部旧长帧。[验证记录](validation-m50-2026-10-09.md)。
 
-## 5. 回归失败与证据边界
+## 5. 集成内容与已知边界
 
-旧红、单变量候选、完整冻结和日志均保留，详见knowledge/experiments/2026-10-08-m49-target-lifecycle.md与journal。
+- PeerAppearance同步真实翅膀；WeaponDisplay保留原生翻转、后坐/世界姿态；UnitPresentation/ProjectileVisuals重放真实Bullet帧、保留换枪在途弹，事件首次发送后留700ms，不重复攻击。原21双向7角度负控14假翼/14弹道失败；旧候选专项通过不替代24验证。
+- R2友伤默认关、宿主管理；R12个人投掷伤害默认关；R8地雷唯一宿主权威，重返核对当前显示层。近战、爆炸、重型弹、能量命中、火焰/燃烧、墙痕、传送、本体效果和跟随恢复均已接线，见各state handoff。
+- 已安装21个人允许被抓默认关、WASD挣脱默认开。浮窗常驻280×36、分页/滚动/拖动/停靠，各自30–100%不透明度；Ctrl+Enter聊天、F10显隐、原生Enter全屏不变。
+- M43背景门后宿主消失/失控未可靠复现；旧Area/Trap #1063、全部#1009和密集长期卡顿不能宣称已解决。镜像地雷拾取/拆除/枪击/念力仍有边界。
+- 真人鼠标/输入法、长期运行、全部NPC/武器和第三方组合未穷举；固定回放不是公网、全FPS或整体性能保证。
 
-- 10接收端到自己的1000ms时已收到真实投掷，错误要求仍抓着；仅修接收前提。11箱体速度/落地未完成时被墙钟提前检查，箱轨迹改按原生帧推进、等速度<0.5再释放；保持40px/停顿<50%/跳变<25px/释放350ms。生命周期原时刻严格验解除，再有界等原精度落地。
-- 12 / 5d1790d925有1131ms没有RENDER后26.1px跳变；13 / 7c584c5fb3首箱单次通道等待超时，未再现且根因未确认。14只加帧/控制消息诊断，d90b29e5e2完整198/0，绘制间隔最大123/133ms、跳变11.9/9px。没有排除长帧或提高阈值，不能声称全局卡顿修复。
-- 14 EnemyGrab最后场景加入先抓起、宿主后查地面（317.76对320）；15改双方检查起点后才开始，48fc004aea全绿，原1px/升高/抗性/时窗保持。
-- 15 WeaponAngle宿主160度两帧错。原夹具一端结束就停止维持输入，对端可能仍采样；16保持输入到双方完成并记录实际轴，aa7eb649b6双向14角度零错，700ms后源轴无变化。原红缺轴记录，不能断言已完全解释。所有旧红不改写为绿。
-- 最终四场景快速搬运100–140ms；容器空中停顿0/45ms；稳定暂停差及恢复跳0px。这是受控路径，不是所有FPS/网络/长期稳定性保证。
+## 6. 下一步
 
-## 6. 既有实现与未覆盖项
+1. 按用户决定停在代码和固定回放检查点；不自行恢复游戏验证、不部署24。
+2. 用户继续允许实机验证后先核对24源/验证输入；若输入改变就新冻结，不改旧清单。当前完整资产基线下验全部38组及旧21原7角度负控，保持原时间/图像门槛。
+3. 查清剩余真实时序问题；全过后实际宿主audit_m50→新建唯一21备份→部署自身SWF→无驱动全模组冒烟（失败先回滚）→保护文件/PID/记忆收尾。机器负载解释不能代替验收。
 
-- M48：RemoteMotion保形三次插值；新生/运动普通掉落随20Hz快包传播，落地500ms尾段、epoch/term及快游标阻旧慢包；暂停收齐物体/敌人停止点。M47：原生武器世界矩阵、短角度插值和离散反射；50ms高频持物、约100ms显示缓冲，释放重复500ms。
-- M46：抓物残留NPC指针、光晕/原生mask恢复、原生闪电与可见性/抗性代理等专项均有历史证据；不能把匿名Timer或全部1009均认作已修。见对应deployment-m46/m47/m48和实验。
-- M43背景嵌门原反馈是宿主角色消失/控制丢失、返前景死敌重现，开/关跟随五轮均未可靠重现。本次死亡清链不证明该控制问题已解决，后续需实际复现/RoomTrace。
-- 密集战斗仍可能卡顿；M46的80敌人与基础负载数据不是版本配对，不宣称性能提升。真人鼠标/中文IME、长期运行、所有NPC/第三方特殊状态和全部换房竞争未穷举。
-- 房间只保留本次同地图联机，不新增随机房跨游戏完整战斗保存。公网、稳定重连、三人以上和其他版本未验证。既有Area/Trap #1063构造诊断是历史路径，未据总门禁绿宣布消失。
+## 7. 接续入口与工具
 
-## 7. 接续工具
-
-- 本轮已收尾，不重新部署16，不用旧20基线作新版本；下一轮另立当前21安装基线与全新冻结目录。所有失败目录、备份、原日志保留。
-- 源/测试/工具冻结后运行期间不得修改。流程见tools/validation/README.md；M49为prepare_m49 baseline/freeze→显式构建/类表/built→20组→audit_m49→deploy_verified→run_smoke（失败先自动回滚）→closeout/记忆/本地提交。
-- 构建tools/build_mod.py必须显式--output build/<新目录>/RConnectMod.swf，默认会写release。外部driver与生产SWF分离，不编入第二份生产/native实现。
-- Python及子进程均-X utf8。Python：C:/Users/hello/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe；Java：C:/Users/hello/Documents/_sandevistan_dev/jdk-11.0.32.1+1-jre/bin/java.exe；SDK：D:/RemainsMod/mods/Sandevistan/build/tools/flexsdk；FFDec同tools/ffdec/ffdec-cli.jar。
-- AIR后台策略查询仅自有PID，需要时走工具审核；不关闭用户原有实例。Tool会话中断时先查保存的run/receipt和准确PID，不覆盖旧结果或把启动未完成算功能红/绿。
-- git用core.excludesFile=本模组build/m43/empty.gitignore避免失效全局排除路径；core.safecrlf=false。不推送。
+- [开发日志](journal.md)、[M50呈现实验](../knowledge/experiments/2026-10-09-m50-peer-presentation.md)、[验证工具](../tools/validation/README.md)；历史原始证据保留。
+- 当前基线build/m50/integration-baseline-0.2.21-native-assets：157保护条目/98原生资产；已补Music/JSON配置，9外部SWF/3配置按实际输入绑定。旧60/61项基线不覆盖、不跨基线继承；未改外部模组。
+- M49的build/backup/m49-release-20261008-232026-727eb9/RConnectMod.before.swf是旧20备份（77e3886f），**不是21备份**，不得用于M50回滚。
+- AIR/amxmlc、SWF38，入口RConnectMod.init(main)；loader路径app:/mods/Rconnect/release/RConnectMod.swf勿改。根application.xml→pfe.swf 1.02；勿误用app.xml。反编译首选game-reference/decompiled/1.02/src102/scripts。
+- Python及子进程显式-X utf8：C:/Users/hello/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe。Java：C:/Users/hello/Documents/_sandevistan_dev/jdk-11.0.32.1+1-jre/bin/java.exe。SDK：D:/RemainsMod/mods/Sandevistan/build/tools/flexsdk，FFDec同tools/ffdec；日志可能GB18030。
+- build_mod务必显式--output build/<新目录>/RConnectMod.swf，默认会写release。固定回放：tools/validation/run_fixed_terrain.py --baseline build/m50/final-presentation-23 --output build/m50/<新目录>，不复用目录。
+- 沙箱空进程列表不代表整机；AIR启动或最终确认用已授权实际宿主执行器，只管理自有PID，查询失败不可声称清理完成。
+- git用本模组build/m43/empty.gitignore及core.safecrlf=false；按区级eclipse身份本地提交，不推送、不覆写历史。

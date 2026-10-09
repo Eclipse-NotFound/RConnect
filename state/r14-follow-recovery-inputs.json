@@ -1,0 +1,13 @@
+{
+  "role": "R14",
+  "status": "source-and-driver-authored-not-compiled-or-run",
+  "runtime_owner": "01a086bb-378c-7f60-b8e1-50d90ffa0996",
+  "files": {
+    "src/rconnect/core/RoomSync.as": "ed1183aab7e96c2990eb0ff1c544125d41a8faff2e3a1f497c485305342575f9",
+    "src/rconnect/core/TravelGuard.as": "76fb5ff44149e8f2d8ae677d16ec0799f4cb75b4a743f235b93176805259a31d",
+    "src/rconnect/core/TeammateNavigation.as": "4697dc1eb4634e6062a78e54ab889819edb25c080098a01a83f27232f69e74dd",
+    "src/rconnect/core/TravelPlacement.as": "4b9a37772e2a71305e56ecec7158de7f3549df6bf17341c60e9df7c6d0835e52",
+    "tests/FollowRecoveryTestDoc.as": "e7e74e4c48a1a26e561a10b4005c0d7d5a4601af479dac515bdb0d26ee2538c2"
+  },
+  "installed_sha256": "5c372cf5d970212f0fd4e95bea5c0acfaabfe321c3ca531c80ed7e299c2914bd"
+}

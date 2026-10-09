@@ -1,0 +1,25 @@
+{
+  "status": "static-only-uncompiled-unrun-undeployed",
+  "files": {
+    "src/rconnect/game/PlayerBodyEffects.as": {
+      "bytes": 12515,
+      "sha256": "e58645ec2ab1c102df47957d73104430dc2ed903f43a6ed2475c3c06728f1898"
+    },
+    "tests/BodyEffectsTestDoc.as": {
+      "bytes": 20759,
+      "sha256": "861b5a8d259041ff76ae39f4b41b8ae9bd80b7d225704bc78f4e3bd75d0a3a9d"
+    },
+    "tests/PlayerBodyEffectsTestDoc.as": {
+      "bytes": 228,
+      "sha256": "a116e4c9d7f1f78c063d622173f4d86a9a5aba046c42c7908ac40682ec0c7e06"
+    }
+  },
+  "static_checks": [
+    "balanced delimiters",
+    "no trailing whitespace"
+  ],
+  "entry": "PlayerBodyEffectsTestDoc (alias of BodyEffectsTestDoc)",
+  "cases": 56,
+  "owner": "R13 01a11c5b-7a4d-79f0-96d4-1f99e7333e85",
+  "integrator": "01a086bb-378c-7f60-b8e1-50d90ffa0996"
+}
