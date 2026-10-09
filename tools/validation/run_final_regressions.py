@@ -36,10 +36,37 @@ CHECKS = {
     "TargetLifecycleTestDoc": (180, "random_mane", False),
     "RespawnRoomTestDoc": (240, "random_mane", False),
     "PeerGripTestDoc": (360, "random_mane", False),
+    "PeerVisualTestDoc": (180, "rbl", False),
+    "FriendlyFireTestDoc": (360, "random_mane", False),
+    "ExplosiveVisualTestDoc": (300, "rbl", False),
+    "HeavyProjectileTestDoc": (240, "rbl", False),
+    "MeleeAnimationTestDoc": (240, "rbl", False),
+    "EnergyImpactTestDoc": (240, "random_mane", False),
+    "FlameVisualTestDoc": (240, "rbl", False),
+    "MineSyncTestDoc": (240, "random_mane", False),
+    "MineRoomTestDoc": (300, "random_mane", False),
+    "BurnVisualTestDoc": (300, "random_mane", False),
+    "WallImpactTestDoc": (300, "random_mane", False),
+    "TeleportVisualTestDoc": (300, "random_mane", False),
+    "PeerThrowDamageTestDoc": (360, "random_mane", False),
+    "BodyEffectsTestDoc": (360, "random_mane", False),
+    "FollowRecoveryTestDoc": (360, "random_mane", False),
+    "FollowNetworkTestDoc": (300, "random_mane", False),
+    "HiddenRoomFollowTestDoc": (300, "random_mane", False),
 }
 REQUIRED = list(CHECKS)[:13]
+M50_REQUIRED = REQUIRED + ['HudTestDoc','FastHeldTestDoc','WeaponAngleTestDoc','PresentationContinuityTestDoc',
+    'TargetLifecycleTestDoc','RespawnRoomTestDoc','PeerGripTestDoc','PeerVisualTestDoc','FriendlyFireTestDoc',
+    'ExplosiveVisualTestDoc','HeavyProjectileTestDoc','MeleeAnimationTestDoc','EnergyImpactTestDoc',
+    'FlameVisualTestDoc','MineSyncTestDoc','MineRoomTestDoc','BurnVisualTestDoc','WallImpactTestDoc',
+    'TeleportVisualTestDoc','PeerThrowDamageTestDoc','BodyEffectsTestDoc','FollowRecoveryTestDoc',
+    'FollowNetworkTestDoc','TeammateNavigationTestDoc','HiddenRoomFollowTestDoc']
 
 def required_entries(manifest):
+    if manifest.get('baseline_path','').startswith('build/m50/'):
+        expected = M50_REQUIRED
+        assert manifest.get('required_entries',expected)==expected
+        return expected
     expected = REQUIRED + (["HudTestDoc"] if manifest.get("baseline_path") else [])
     if manifest.get('version') in ('0.2.19-dev', '0.2.20-dev', '0.2.21-dev'):
         expected += ['FastHeldTestDoc', 'WeaponAngleTestDoc']
@@ -69,7 +96,7 @@ def main():
     parser.add_argument("--join-save-template", type=Path)
     args = parser.parse_args()
     OUT=args.snapshot.resolve()
-    assert OUT.parent in (ROOT/'build/m46', ROOT/'build/m47', ROOT/'build/m48', ROOT/'build/m49') and OUT.name.startswith(('final','red-')),OUT
+    assert OUT.parent in (ROOT/'build/m46', ROOT/'build/m47', ROOT/'build/m48', ROOT/'build/m49', ROOT/'build/m50') and OUT.name.startswith(('final','red-')),OUT
     if args.list:
         manifest = read(OUT / "source-input.json") if (OUT / "source-input.json").exists() else {}
         print(json.dumps({"status": "serial-joint-candidate-validation", "required": required_entries(manifest),
@@ -85,7 +112,8 @@ def main():
     def verify():
         assert sha(candidate) == manifest["candidate_sha256"]
         for name, digest in manifest["source"].items():
-            assert sha(ROOT / name) == digest, name
+            if not (OUT.parent==ROOT/"build/m50" and OUT.name.startswith("red-")):
+                assert sha(ROOT / name) == digest, name
             assert sha(OUT / name) == digest, name
         for name, digest in verification.items():
             assert sha(ROOT / name) == digest, name
@@ -128,6 +156,13 @@ def main():
         (OUT / (entry + "-runner.log")).write_text(result.stdout + "\n" + result.stderr, encoding="utf-8")
         found = re.search(r"OUTPUT .*?([0-9a-f]{10})\s*$", result.stdout, re.M)
         record = {"entry": entry, "run": found.group(1) if found else None, "exit": result.returncode}
+        if record['run']:
+            folder=ROOT/'build/cooperation'/record['run']
+            for role in ('host','join'):
+                storage=Path(os.environ['APPDATA'])/('pfe-modsettings-rconnect-coop-'+role+'-'+record['run'])/'Local Store'
+                for picture in storage.glob('*.png'):
+                    target=folder/(role+'-'+picture.name)
+                    if not target.exists():shutil.copy2(picture,target)
         if entry == "HudTestDoc" and record["run"]:
             folder = ROOT / "build/cooperation" / record["run"]
             for role in ("host", "join"):

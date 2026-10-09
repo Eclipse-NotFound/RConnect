@@ -14,6 +14,10 @@ M48_BASELINE = 'build/m48/integration-baseline-0.2.19'
 M48_SHA = '4008999be4c15a84ae6975115886fe481983c5b1c4151197c5795b57c2a2de6a'
 M49_BASELINE = 'build/m49/integration-baseline-0.2.20'
 M49_SHA = '77e3886f7f76885db35558ba7da4a591ec486ab65faab37f95c14116d67bb3ee'
+M50_ORIGINAL_BASELINE = 'build/m50/integration-baseline-0.2.21'
+M50_WALL_BASELINE = 'build/m50/integration-baseline-0.2.21-wallblend-0.2.0'
+M50_BASELINE = 'build/m50/integration-baseline-0.2.21-native-assets'
+M50_SHA = '5c372cf5d970212f0fd4e95bea5c0acfaabfe321c3ca531c80ed7e299c2914bd'
 
 def sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
@@ -25,11 +29,11 @@ def read_baseline(manifest):
     name = manifest.get('baseline_path', LEGACY)
     folder = (ROOT / name).resolve()
     assert ((folder.parent == ROOT / 'build/m46' and folder.name.startswith('integration-baseline'))
-            or name in (M47_BASELINE, M48_BASELINE, M49_BASELINE)), name
+            or name in (M47_BASELINE, M48_BASELINE, M49_BASELINE, M50_ORIGINAL_BASELINE, M50_WALL_BASELINE, M50_BASELINE)), name
     path = folder / 'inputs.json'
     if name != LEGACY:
         assert manifest['baseline_inputs_sha256'] == sha(path), 'baseline manifest changed'
-        expected = ('0.2.20-dev', '0.2.21-dev') if name == M49_BASELINE else ('0.2.19-dev', '0.2.20-dev') if name == M48_BASELINE else ('0.2.18-dev', '0.2.19-dev') if name == M47_BASELINE else ('0.2.18-dev',)
+        expected = ('0.2.21-dev', '0.2.22-dev') if name in (M50_ORIGINAL_BASELINE, M50_WALL_BASELINE, M50_BASELINE) else ('0.2.20-dev', '0.2.21-dev') if name == M49_BASELINE else ('0.2.19-dev', '0.2.20-dev') if name == M48_BASELINE else ('0.2.18-dev', '0.2.19-dev') if name == M47_BASELINE else ('0.2.18-dev',)
         assert manifest['version'] in expected, 'candidate version does not match baseline'
     baseline = read(path)
     if name == AFTER_UI:
@@ -40,7 +44,24 @@ def read_baseline(manifest):
         assert baseline['release_sha256'] == M48_SHA and baseline['version'] == '0.2.19-dev'
     if name == M49_BASELINE:
         assert baseline['release_sha256'] == M49_SHA and baseline['version'] == '0.2.20-dev'
+    if name in (M50_ORIGINAL_BASELINE, M50_WALL_BASELINE, M50_BASELINE):
+        assert baseline['release_sha256'] == M50_SHA and baseline['version'] == '0.2.21-dev'
     return baseline
+
+
+def verify_runtime_inputs(baseline, run):
+    """A passing run must use the same external modules/config as deployment."""
+    if 'runtime_modules' not in baseline:
+        return  # Historical baselines retain their original evidence boundary.
+    def external(values):
+        return {n.replace('\\', '/').lower(): h for n, h in values.items()
+                if not n.replace('\\', '/').lower().startswith('mods/rconnect/')}
+    for role in ('host', 'join'):
+        assert run['inputs'][role]['game'] == baseline['protected']['pfe.swf'], 'game input changed'
+        if 'runtime_assets' in baseline:
+            assert run['inputs'][role].get('assets') == baseline['runtime_assets'], 'native runtime assets changed or omitted'
+        assert external(run['inputs'][role]['modules']) == external(baseline['runtime_modules']), 'external module input changed'
+        assert external(run['configuration_files'][role]) == external(baseline['runtime_config']), 'external config input changed or omitted'
 
 def verify_protected(manifest, own_release=None):
     baseline = read_baseline(manifest)

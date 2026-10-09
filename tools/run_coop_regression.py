@@ -13,6 +13,7 @@ import socket
 import subprocess
 import time
 import uuid
+from validation.native_runtime_assets import native_runtime_files, asset_hashes
 ROOT = Path(__file__).resolve().parents[1]
 GAME = ROOT.parents[1]
 
@@ -74,10 +75,10 @@ def main():
     procs=[]; artifacts=[]; inputs={}
     # Snapshot all shared inputs once before either process starts. Other mod
     # tasks may deploy while this pair is running.
-    runtime_swfs={'pfe.swf','sound.swf','sound_unit.swf','sound_weapon.swf',
-                  'sprite.swf','sprite1.swf','texture.swf','texture1.swf'}
-    assets=[p for p in game.iterdir() if p.is_file() and
-            (p.suffix in ('.xml','.cfg') or p.name in runtime_swfs)]
+    # Preserve native music playback too. A missing-Music diagnostic captured
+    # a 485 ms Sound.play stall; the isolated copy must include real assets.
+    assets=native_runtime_files(game)
+    asset_names=[p.relative_to(game).as_posix() for p in assets]
     required_bytes=sum(p.stat().st_size for p in assets)*3+32*1024*1024
     if shutil.disk_usage(output).free < required_bytes:
         raise SystemExit('Insufficient space for isolated test copies; no AIR instance started')
@@ -87,8 +88,9 @@ def main():
         for name in ('RConnect.Process.ps1','keep_test_responsive.ps1'):
             shutil.copy2(ROOT/'tools'/name,frozen/'tools'/name)
     for source in assets:
-        shutil.copy2(source,frozen/source.name)
-    shutil.copytree(game/'Rooms',frozen/'Rooms')
+        destination=frozen/source.relative_to(game)
+        destination.parent.mkdir(parents=True,exist_ok=True)
+        shutil.copy2(source,destination)
     release=frozen/'mods'/'Rconnect'/'release'; release.mkdir(parents=True)
     shutil.copy2(candidate,release/'RConnectMod.swf')
     if args.effects_driver:
@@ -109,7 +111,7 @@ def main():
             if name.lower()=='rconnect': continue
             destination=frozen/'mods'/name/'release';destination.mkdir(parents=True,exist_ok=True)
             source=game/'mods'/name/'release'
-            for filename in (entry+'.swf','config.txt'):
+            for filename in (entry+'.swf','config.txt','config.json'):
                 path=source/filename
                 if name.lower()=='realisticvision' and filename==entry+'.swf' and args.vision_candidate:
                     path=args.vision_candidate.resolve()
@@ -127,6 +129,7 @@ def main():
             folder=output/role; shutil.copytree(frozen,folder)
             release=folder/'mods'/'Rconnect'/'release'
             inputs[role]={'game':hashlib.sha256((folder/'pfe.swf').read_bytes()).hexdigest()}
+            inputs[role]['assets']=asset_hashes(folder,asset_names)
             if args.responsive:
                 inputs[role]['process_policy']={name:hashlib.sha256((folder/'tools'/name).read_bytes()).hexdigest()
                     for name in ('RConnect.Process.ps1','keep_test_responsive.ps1')}
@@ -173,7 +176,9 @@ def main():
                 assert not template.exists(), 'Unique test storage must not overwrite an existing save'
                 template.write_bytes(save_templates[role])
             configuration_files[role]={}
-            for config_path in sorted((folder/'mods').glob('*/release/*.txt')):
+            config_paths = sorted(p for p in (folder/'mods').glob('*/release/*')
+                                  if p.is_file() and p.suffix.lower() in ('.txt','.json'))
+            for config_path in config_paths:
                 relative=config_path.relative_to(folder).as_posix()
                 payload=config_path.read_bytes()
                 preserved=output/'configuration'/role/relative

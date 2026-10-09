@@ -2,19 +2,19 @@
 import argparse,datetime,hashlib,json,os,re,shutil,subprocess,sys,uuid
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2];GAME=ROOT.parents[1]
-from validation_baseline import verify_protected
+from validation_baseline import verify_protected,verify_runtime_inputs
 def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
 def read(p):return json.loads(p.read_text(encoding='utf-8-sig'))
 ap=argparse.ArgumentParser();ap.add_argument('--snapshot',type=Path);args=ap.parse_args()
 if args.snapshot:
-    OUT=args.snapshot.resolve();assert OUT.parent in (ROOT/'build/m46',ROOT/'build/m47',ROOT/'build/m48',ROOT/'build/m49') and OUT.name.startswith('final')
+    OUT=args.snapshot.resolve();assert OUT.parent in (ROOT/'build/m46',ROOT/'build/m47',ROOT/'build/m48',ROOT/'build/m49',ROOT/'build/m50') and OUT.name.startswith('final')
     receipt=OUT/'deployment.json'
 else:receipt=ROOT/'build/m46/deployment.json'
 d=read(receipt);OUT=ROOT/d['snapshot'];target=ROOT/'release/RConnectMod.swf'
 assert d['status']=='deployed-awaiting-smoke' and sha(target)==d['sha256']
 record={'run':None,'exit':None};runner_output=''
 try:
-    verify_protected(read(OUT/'source-input.json'),own_release=d['sha256'])
+    baseline=verify_protected(read(OUT/'source-input.json'),own_release=d['sha256'])
     command=[sys.executable,'-X','utf8',str(ROOT/'tools/run_coop_regression.py'),'--candidate',str(target),'--smoke','--all-mods',
         '--responsive','--seconds','150','--expected-version',d['version']]
     result=subprocess.run(command,cwd=ROOT,capture_output=True,text=True,encoding='utf-8',errors='replace')
@@ -27,6 +27,7 @@ try:
     assert r['sha256']==d['sha256']==sha(folder/'candidate.swf') and r['inputs']==inp['inputs']
     assert r['inputs']['host']==r['inputs']['join'] and sha(folder/'input.json')==r['input_manifest_sha256']
     assert r['configuration_files']==inp['configuration_files']
+    verify_runtime_inputs(baseline,r)
     record.update(pids=r['pids'],inputs=r['inputs'],configuration_files=r['configuration_files'],log_sha256={})
     for role in ('host','join'):
         assert 'production' not in r['inputs'][role]
@@ -38,7 +39,7 @@ try:
             assert bad not in s,(role,bad)
         if role=='join':assert 'welcome id=' in s and 'unitsync matched' in s
         record['log_sha256'][role]=sha(p)
-    milestone={'0.2.18-dev':'m46','0.2.19-dev':'m47','0.2.20-dev':'m48','0.2.21-dev':'m49'}[d['version']]
+    milestone={'0.2.18-dev':'m46','0.2.19-dev':'m47','0.2.20-dev':'m48','0.2.21-dev':'m49','0.2.22-dev':'m50'}[d['version']]
     evidence=read(ROOT/('knowledge/experiments/'+milestone+'-validation-evidence.json'))
     for name,digest in evidence['protected']['hashes'].items():assert sha(GAME/name)==digest,name
     assert sha(target)==d['sha256']
