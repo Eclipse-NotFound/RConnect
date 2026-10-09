@@ -12,6 +12,7 @@ assert read(driver/'driver-input.json')==dict(candidate_sha256=M50_SHA,entry='Pe
 assert not (out/'installed-control-runner.log').exists()
 cmd=[sys.executable,'-X','utf8',str(ROOT/'tools/run_coop_regression.py'),'--candidate',str(old/'RConnectMod.swf'),
      '--effects-driver',str(driver),'--effects','--all-mods','--responsive','--seconds','180','--expected-version','0.2.21-dev','--land','rbl']
+if m.get('visible_windows') is True:cmd.append('--visible-windows')
 r=subprocess.run(cmd,cwd=ROOT,capture_output=True,text=True,encoding='utf-8',errors='replace')
 (out/'installed-control-runner.log').write_text(r.stdout+'\n'+r.stderr,encoding='utf-8')
 found=re.search(r'OUTPUT .*?([0-9a-f]{10})\s*$',r.stdout,re.M)

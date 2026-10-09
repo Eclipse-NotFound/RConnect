@@ -5,6 +5,7 @@ have run the exact final production SWF with a separate native-game driver.
 """
 import argparse, datetime, json, re, subprocess
 from pathlib import Path
+import xml.etree.ElementTree as ET
 from validation_baseline import ROOT, GAME, M50_SHA, sha, read, verify_protected, verify_runtime_inputs
 from run_final_regressions import required_entries, JAVA
 
@@ -46,6 +47,15 @@ def inputs(run,driver,digest):
     assert sha(folder/'input.json')==data['input_manifest_sha256']
     assert data['inputs']==inp['inputs'] and data['inputs']['host']==data['inputs']['join']
     assert data['configuration_files']==inp['configuration_files']
+    if m.get('visible_windows') is True:
+        assert data['visible_windows'] is True and inp['visible_windows'] is True
+        assert data['descriptors']==inp['descriptors']
+        for role in ('host','join'):
+            descriptor=folder/'descriptors'/(role+'.xml')
+            assert sha(descriptor)==data['descriptors'][role]
+            xml=ET.parse(descriptor)
+            assert xml.findtext('.//{*}visible')=='true'
+            assert xml.findtext('.//{*}content')=='pfe.swf'
     verify_runtime_inputs(baseline,data)
     for role in ('host','join'):
         assert data['inputs'][role]['production']==digest

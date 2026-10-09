@@ -32,6 +32,7 @@ def main():
     ap.add_argument('--land', default='', help='Host travels to this real mission before a scenario starts')
     ap.add_argument('--all-mods', action='store_true', help='Load all installed manifest modules in the isolated scenario')
     ap.add_argument('--responsive', action='store_true', help='Use the same process-local HighQoS policy as Start-Coop.bat')
+    ap.add_argument('--visible-windows', action='store_true', help='Render visible native game windows, as in normal play')
     ap.add_argument('--host-save-template',type=Path,help='Copy this slot-zero SOL into isolated slot nine; never modify the source')
     ap.add_argument('--join-save-template',type=Path,help='Copy this slot-zero SOL into isolated slot nine; never modify the source')
     ap.add_argument('--connect-after-load',action='store_true',help='External scenario driver loads isolated saves before starting TCP')
@@ -162,7 +163,7 @@ def main():
             desc.write_text('''<?xml version="1.0" encoding="utf-8"?>
 <application xmlns="http://ns.adobe.com/air/application/30.0">
 <id>'''+appid+'''</id><versionNumber>1.0</versionNumber><filename>RConnectTest</filename>
-<initialWindow><content>pfe.swf</content><visible>false</visible><renderMode>direct</renderMode></initialWindow>
+<initialWindow><content>pfe.swf</content><visible>'''+str(args.visible_windows).lower()+'''</visible><renderMode>direct</renderMode></initialWindow>
 </application>''',encoding='utf-8')
             storage=Path(os.environ['APPDATA'])/appid/'Local Store'
             if role in vision_templates:
@@ -185,12 +186,15 @@ def main():
                 preserved.parent.mkdir(parents=True,exist_ok=True);preserved.write_bytes(payload)
                 configuration_files[role][relative]=hashlib.sha256(payload).hexdigest()
             descriptors[role]=hashlib.sha256(desc.read_bytes()).hexdigest()
+            preserved_descriptor=output/'descriptors'/(role+'.xml')
+            preserved_descriptor.parent.mkdir(parents=True,exist_ok=True)
+            preserved_descriptor.write_bytes(desc.read_bytes())
             artifacts.append((role,storage/'RConnect.log'))
             launches.append((role,folder,desc,storage,appid))
         # Both role inputs and configuration bytes exist before either AIR
         # instance starts. Keep configuration evidence after runtime cleanup.
         (output/'input.json').write_text(json.dumps(dict(candidate_sha256=candidate_hash,inputs=inputs,
-            configuration_files=configuration_files,descriptors=descriptors,
+            configuration_files=configuration_files,descriptors=descriptors,visible_windows=args.visible_windows,
             save_templates=save_inputs,vision_config_templates=vision_inputs),indent=2))
         for role,folder,desc,storage,appid in launches:
             stdout=(output/(role+'.stdout.log')).open('w',encoding='utf-8')
@@ -208,6 +212,7 @@ def main():
         (output/'run.json').write_text(json.dumps(dict(port=port,pids=[p.pid for p in procs],
             candidate=str(args.candidate.resolve()),sha256=candidate_hash,inputs=inputs,save_templates=save_inputs,
             vision_config_templates=vision_inputs,configuration_files=configuration_files,descriptors=descriptors,
+            visible_windows=args.visible_windows,
             input_manifest_sha256=hashlib.sha256((output/'input.json').read_bytes()).hexdigest()),indent=2))
         print('OUTPUT '+str(output),flush=True)
         deadline=time.monotonic()+args.seconds

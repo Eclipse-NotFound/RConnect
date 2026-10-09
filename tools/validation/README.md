@@ -73,3 +73,11 @@ M50接续更新：当前final20为19实际编译d55c2922/163081B/68类（69源/1
 `run_fixed_terrain.py --baseline build/m50/final-presentation-23 --output build/m50/<新目录>`执行独立AS3计算，不加载游戏/角色存档。生产源逐字节复制，旧类只重命名；额外计数类只测快照分配。原生checkpoint、武器、传送事件调用明确失败，不替代这些功能的测试。03为60/0，Python自测11/0；原失败01/02保留，禁止复用输出目录。
 
 固定回放不生成发行许可，不等于FPS/延迟达标。用户继续允许游戏验证后核对24输入与157保护条目，完整38组和旧21负控再审计部署。当前状态见state/MEMORY.md。
+
+## M50正式26：正常可见窗口
+
+用户要求WallBlend结束后续测。25隐藏窗口出现5组失败；独立可见窗口对照的原场景PeerVisual、Flame、FastHeld通过，Combat仍有一次69帧失败，旧结果完整保留。一次漏传rbl的诊断明确作废，不用来放行。
+
+新freeze明确记录visible_windows=true；run_final_regressions、旧21负控和正常冒烟向runner传--visible-windows。runner保存两端实际描述符，审计核对描述符哈希和XML中的visible=true/pfe.swf，避免只凭命令行声明窗口条件。其它runner调用保持原默认隐藏，历史输入不改。没有修改生产SWF、各项测试断言或系统性能配置。
+
+正式26仍为d62c0bd2/163276B/68类、69源/196验证输入。完整38组及旧21对照重新执行，不承接诊断通过；首组Combat a597b8a85f通过（密集114帧/p95 98ms）。结果以MEMORY与对应result.json为准，未全过不得部署。

@@ -149,6 +149,8 @@ def main():
         command = [sys.executable, "-X", "utf8", str(ROOT / "tools/run_coop_regression.py"), "--candidate", str(candidate),
                    "--effects-driver", str(driver), "--effects", "--all-mods", "--responsive",
                    "--seconds", str(seconds), "--expected-version", manifest["version"]] + profile_args
+        if manifest.get('visible_windows') is True:
+            command.append('--visible-windows')
         if land:
             command += ["--land", land]
         print("RUN " + entry, flush=True)

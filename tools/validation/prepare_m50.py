@@ -89,7 +89,8 @@ else:
         assert version==('0.2.21-dev' if out.name.startswith('red-') else '0.2.22-dev')
         entries=list(M50_REQUIRED)
         for entry in entries:assert (ROOT/'tests'/(entry+'.as')).is_file(),entry
-        m=dict(version=version,baseline_path=M50_BASELINE,baseline_inputs_sha256=sha(ROOT/M50_BASELINE/'inputs.json'),required_entries=entries)
+        m=dict(version=version,baseline_path=M50_BASELINE,baseline_inputs_sha256=sha(ROOT/M50_BASELINE/'inputs.json'),required_entries=entries,
+               visible_windows=True)
         verify_protected(m);out.mkdir(parents=True,exist_ok=False);m['source']={}
         source_origin=previous if out.name.startswith('red-') else ROOT
         for p in sorted((source_origin/'src').rglob('*')):
