@@ -22,6 +22,7 @@ package {
       private var held:int=0,samples:int=0,acted:Boolean=false,escapeAt:int=0,pauseAt:int=0,pausePos:Number=NaN;
       private var lifted:Boolean=false,peerLifted:Boolean=false,actionAt:int=0,peerPauseAt:int=0,peerPauseY:Number=NaN,pauseChecks:int=0;
       private var thrown:int=0;
+      private var heldManaMin:Number=NaN;
       private static const CASES:Array=["denied","no-struggle","struggle","revoke","throw","pause"];
       public function PeerGripTestDoc() {
          var app:String=NativeApplication.nativeApplication.applicationID;if(app.indexOf("rconnect-coop-")<0)return;
@@ -103,6 +104,7 @@ package {
          if(phase!="holding")return;target=caster()?ghost():mod.game.gg;if(target==null)return;
          minY=Math.min(minY,target.Y);samples++;
          if(caster()?mod.game.gg.teleObj===target:target.levit==2)held++;
+         if(caster() && mod.game.gg.teleObj===target)heldManaMin=Math.min(heldManaMin,Number(mod.game.gg.mana));
          if(!caster()&&target.t_throw>0)thrown++;
          if(kind()=="pause"&&mod.session.pause.paused) {
             if(isNaN(pausePos)){pausePos=target.Y;if(!caster())send("paused-body",{y:target.Y});}
@@ -124,7 +126,7 @@ package {
                target=ghost();check(target.levitPoss==(caster()&&kind()!="denied"),"remote grab permission follows teammate choice");
                if(caster()) {
                   target.onCursor=1;mod.game.loc.celObj=target;mod.game.loc.celDist=0;
-                  EnemyGrabProbe.grab(g);check((g.teleObj===target)==(kind()!="denied"),"native grab respects target permission");initialMana=g.mana;
+                  EnemyGrabProbe.grab(g);check((g.teleObj===target)==(kind()!="denied"),"native grab respects target permission");initialMana=g.mana;heldManaMin=initialMana;
                }change("holding");
             } else if(phase=="holding") {
                if(kind()!="denied"&&!lifted&&held>=3&&minY<baseY-20){lifted=true;send("lifted");if(host&&peerLifted)beginAction();}
@@ -143,8 +145,12 @@ package {
                   if(kind()=="throw"&&!caster())check(thrown>0,"native E throw reaches actual grabbed player");
                   if(kind()=="no-struggle")check(caster()?g.teleObj===ghost():g.levit==2,"WASD with struggle disabled keeps hold");
                   if(kind()=="pause")check(pauseChecks>0&&!isNaN(pausePos)&&!mod.session.pause.paused&&(caster()?g.teleObj===ghost():g.levit==2),"hold survives verified shared pause and resumes");
-                  if(caster()&&kind()!="denied")check(g.mana<initialMana,"native caster mana charged");
-                  Log.d("PEER GRIP SAMPLE "+JSON.stringify({round:round,caster:caster(),held:held,samples:samples,rise:baseY-minY}));
+                  // Revocation/struggle releases about three seconds before
+                  // this summary. Native regeneration may refill that debit;
+                  // observe the charge while the actual target is still held.
+                  if(caster()&&kind()!="denied")check(heldManaMin<initialMana,"native caster mana charged during actual hold");
+                  Log.d("PEER GRIP SAMPLE "+JSON.stringify({round:round,caster:caster(),held:held,samples:samples,rise:baseY-minY,
+                     initialMana:initialMana,heldManaMin:heldManaMin,finalMana:g.mana}));
                   localDone=true;send("sampled");change("sampled");if(host&&peerDone)releaseRound();
                }
             } else if(phase=="released"&&elapsed>1200) {
