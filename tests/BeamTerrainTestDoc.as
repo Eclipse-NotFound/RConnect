@@ -34,6 +34,8 @@ package {
       private var pieceFrames:int=0,pieceChanges:int=0,pieceCount:int=0,knownPiece:Object,wallBefore:int=0;
       private var frontBefore:Object,frontReplaced:Boolean=false;
       private var deathFired:Boolean=false,deathEnded:Boolean=false;
+      private var timeTrace:Array=[],shotTrace:Array=[],packetTrace:Array=[],packetSeen:Object={};
+      private var packetOffset:Number=Infinity;
       public function BeamTerrainTestDoc() {
          var id:String=NativeApplication.nativeApplication.applicationID;if(id.indexOf("rconnect-coop-")<0)return;
          host=id.indexOf("-host-")>=0;
@@ -45,9 +47,24 @@ package {
       private function check(ok:Boolean,s:String):void {Log.d("COOP "+(ok?"PASS ":"FAIL ")+"beam-terrain "+s);}
       private function send(s:String,p:Object=null):void {p=p||{};p.type="beam-terrain-test";p.stage=s;if(host)mod.session.server.broadcast(p);else mod.session.link.send(p);}
       private function watch(l:TcpLink):void {if(l!=null && !links[l]){links[l]=true;l.addEventListener(TcpLink.MESSAGE,receive);}}
-      private function setPhase(s:String):void {phase=s;at=getTimer();frames=shown=gap=maxGap=0;visTrace=[];lastShot=0;shots=0;visibleMs=darkMs=maxDarkMs=0;previousFrame=0;}
+      private function setPhase(s:String):void {phase=s;at=getTimer();frames=shown=gap=maxGap=0;visTrace=[];lastShot=0;shots=0;visibleMs=darkMs=maxDarkMs=0;previousFrame=0;timeTrace=[];shotTrace=[];packetTrace=[];packetSeen={};packetOffset=Infinity;}
+      /** Arrival diagnostics only; actual native pixels remain the oracle. */
+      private function observePacket(message:Object):void {
+         if(host || phase!="beam" || message.type!="unitsync")return;
+         var now:int=getTimer();
+         for each(var unit:Object in message.units) {
+            if(String(unit.id).indexOf("beam_fixture_")!=0)continue;
+            packetOffset=Math.min(packetOffset,now-Number(unit.sampleTime));
+            for each(var weapon:Object in unit.weapons)for each(var event:Object in weapon.events) {
+               var key:String=weapon.stream+":"+event.seq,flight:Object=event.flight;
+               if(packetSeen[key] || flight==null || String(flight.cls)!=beamClass || !(flight.frames is Array) || flight.frames.length==0)continue;
+               packetSeen[key]=true;packetTrace.push({key:key,received:now,sample:unit.sampleTime,
+                  first:flight.frames[0].at,last:flight.frames[flight.frames.length-1].at,count:flight.frames.length,end:flight.end});
+            }
+         }
+      }
       private function receive(e:NetMessageEvent):void {
-         var p:Object=e.data;if(p.type!="beam-terrain-test")return;
+         var p:Object=e.data;observePacket(p);if(p.type!="beam-terrain-test")return;
          if(host && p.stage=="ready" && phase=="boot") {setup();send("setup",{x:baseX,y:baseY,wx:wallX,wy:wallY,layout:layout()});setPhase("ready");}
          else if(!host && p.stage=="setup" && phase=="boot") {
             baseX=p.x;baseY=p.y;wallX=p.wx;wallY=p.wy;
@@ -114,8 +131,10 @@ package {
          knownPiece={cls:piece.vClass,blit:piece.blitData};b.loc.remObj(piece);
          if(host){
             var u:Object=spawn("UnitTurret","land",2,-20);
-            var gun:NativeBeamGun=new NativeBeamGun(u as Unit,kinds[0]);u.currentWeapon=gun;u.childObjs=[gun];guns.push(gun);
-            u=spawn("UnitSpriteBot","1",1,20);gun=new NativeBeamGun(u as Unit,kinds[1]);u.currentWeapon=gun;u.childObjs=[gun];guns.push(gun);
+            var gun:NativeBeamGun=new NativeBeamGun(u as Unit,kinds[0]);u.currentWeapon=gun;u.childObjs=[gun];Object(gun).addVisual();
+            check(Object(gun).loc===u.loc,"native beam weapon is equipped in its owner room");guns.push(gun);
+            u=spawn("UnitSpriteBot","1",1,20);gun=new NativeBeamGun(u as Unit,kinds[1]);u.currentWeapon=gun;u.childObjs=[gun];Object(gun).addVisual();
+            check(Object(gun).loc===u.loc,"native beam weapon is equipped in its owner room");guns.push(gun);
             b.readUnitsSnapshot();b.readTilePatch();
          }
          mod.stage.addEventListener(Event.ENTER_FRAME,beginFrame,false,100001);
@@ -139,7 +158,12 @@ package {
       }
       private function fire():Object {
          lastShot=clock;shots++;var b:Object=NativeBeamGun(guns[gunIndex]).fire(baseX+20,baseY-140,0);
-         nativeBullets.push(b);return b;
+         if(shots==1) {
+            check(b.loc.getAbsTile(b.begx,b.begy).phis==0,"native beam muzzle is inside the open fixture corridor");
+            Log.d("BEAM ORIGIN "+JSON.stringify({id:kinds[gunIndex],requestedX:baseX+20,requestedY:baseY-140,
+               actualX:b.begx,actualY:b.begy,gunX:Object(guns[gunIndex]).vis.x,gunY:Object(guns[gunIndex]).vis.y}));
+         }
+         shotTrace.push({at:getTimer(),x:b.begx,y:b.begy});nativeBullets.push(b);return b;
       }
       private function beginFrame(e:Event):void {serial++;clock=getTimer();quietArena();}
       /** Publish the host's constructed corridor through the actual terrain
@@ -237,11 +261,11 @@ package {
             if(phase=="beam" && clock-at>1000 && clock-at<6500) {
                var visible:Boolean=beamVisible(),dt:int=previousFrame>0?clock-previousFrame:0;previousFrame=clock;
                frames++;if(visible){shown++;gap=0;visibleMs+=dt;darkMs=0;}else{gap++;maxGap=Math.max(maxGap,gap);darkMs+=dt;maxDarkMs=Math.max(maxDarkMs,darkMs);}
-               visTrace.push(visible?1:0);
+               visTrace.push(visible?1:0);timeTrace.push({at:clock,t:clock-at,shown:visible});
             }
             if(phase=="beam" && clock-at>=6500){
                Log.d("BEAM TRACE "+kinds[gunIndex]+" "+visTrace.join(""));
-               var result:Object={frames:frames,shown:shown,maxGap:maxGap,visibleMs:visibleMs,maxDarkMs:maxDarkMs};
+               var result:Object={frames:frames,shown:shown,maxGap:maxGap,visibleMs:visibleMs,maxDarkMs:maxDarkMs,timeTrace:timeTrace,shotTrace:shotTrace,packetTrace:packetTrace,packetOffset:packetOffset};
                if(!host){send("beam-result",result);setPhase("wait");}
                else {check(frames>50 && shown>10,"host native "+kinds[gunIndex]+" beam visible "+shown+"/"+frames);nativeResult=result;setPhase("wait");finishBeam();}
             }

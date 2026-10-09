@@ -24,6 +24,7 @@ package {
       private var timer:Timer=new Timer(100),mod:RConnectMod,host:Boolean,links:Dictionary=new Dictionary();
       private var phase:String="boot",at:int=0,baseX:Number,baseY:Number,units:Array=[],drop:Object,weaponDrop:Object;
       private var trace:Array=[],clipTrace:Array=[],serial:int=0,sampled:int=-1,frameTime:int=0,previous:int=0,px:Number,py:Number;
+      private var incomingLoot:Array=[];
       private var clips:Object={},parts:Dictionary=new Dictionary(),effects:Object={},knownEffects:Object={};
       private var ready:Boolean=false,localDone:Boolean=false,peerDone:Boolean=false,deathAt:int=0;
       private var paused:Boolean=false,resumed:Boolean=false,pauseFrames:Object={},pauseSamples:int=0,weaponFrames:int=0,weaponMotion:int=0,weaponPrevious:Number=NaN,weaponOffset:Boolean=false;
@@ -42,6 +43,8 @@ package {
       private function send(s:String,p:Object=null):void {p=p||{};p.type="animation-gaps-test";p.stage=s;if(host)mod.session.server.broadcast(p);else mod.session.link.send(p);}
       private function receive(e:NetMessageEvent):void {
          var p:Object=e.data;
+         if(!host && p.lootMotion is Array)for each(var received:Object in p.lootMotion)
+            if(received.b=="kofe")incomingLoot.push({received:getTimer(),sample:received.sampleTime,x:received.x,y:received.y});
          if(p.type!="animation-gaps-test")return;
          if(host && p.stage=="ready"){baseX=mod.game.gg.X;baseY=mod.game.gg.Y;setup();send("begin",{x:baseX,y:baseY});}
          else if(!host && p.stage=="begin"){baseX=p.x;baseY=p.y;setup();}
@@ -147,7 +150,7 @@ package {
                if(elapsed>4500)weaponOffset=Math.abs(weaponDrop.Y-weaponDrop.vis.y-10)<.05;
             }
             if(elapsed>1500 && drop!=null) {
-               if(previous>0)trace.push({dt:frameTime-previous,dx:drop.vis.x-px,dy:drop.vis.y-py});
+               if(previous>0)trace.push({at:frameTime,x:drop.vis.x,y:drop.vis.y,dt:frameTime-previous,dx:drop.vis.x-px,dy:drop.vis.y-py});
                previous=frameTime;px=drop.vis.x;py=drop.vis.y;
                for each(var id:String in ["bloat1","bloat8"]) {
                   var u:Object=find(id);if(u==null)continue;
@@ -167,6 +170,17 @@ package {
             if(elapsed>9000) {
                Log.d("ANIMATION CLIPS "+JSON.stringify(clips));Log.d("ANIMATION LOOT "+JSON.stringify(trace));Log.d("ANIMATION EFFECTS "+JSON.stringify(effects));
                Log.d("ANIMATION PAUSE TRACE "+JSON.stringify(clipTrace));
+               Log.d("ANIMATION LOOT ARRIVALS "+JSON.stringify(incomingLoot));
+               // This fixture drives steady motion from the native frame. A
+               // half-second source stall supplies no new positions; a bounded
+               // receiver must then hold its last point. Record that prerequisite
+               // separately instead of attributing every hold to interpolation.
+               // Keep the original remote stall and speed-error limits below.
+               if(host) {
+                  var maxSourceGap:int=0;
+                  for each(var sourceFrame:Object in trace)maxSourceGap=Math.max(maxSourceGap,int(sourceFrame.dt));
+                  check(maxSourceGap<=200,"steady-motion source frames remain within 200ms actual="+maxSourceGap);
+               }
                var stalls:int=0,errors:Array=[];
                for each(var t:Object in trace){if(Math.abs(t.dx)<.01)stalls++;errors.push(Math.abs(t.dx/t.dt-.015));}
                errors.sort(Array.NUMERIC);

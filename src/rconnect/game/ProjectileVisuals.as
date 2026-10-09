@@ -10,7 +10,9 @@ package rconnect.game {
    public class ProjectileVisuals {
       private var seen:Dictionary=new Dictionary(true),active:Array=[],errors:Object={};
       private var pauseAt:int=-1;
+      private var energyImpacts:EnergyImpactVisuals=new EnergyImpactVisuals();
       public function setPaused(value:Boolean):void {
+         energyImpacts.setPaused(value);
          if(value==(pauseAt>=0))return;
          var now:int=getTimer();
          if(value)pauseAt=now;
@@ -31,11 +33,13 @@ package rconnect.game {
        * display trajectory/lifetime instead of the short endpoint approximation.
        * Keep ordinary bullet packets small; only these native effects need this. */
       public static function usesNativeFrames(b:Object):Boolean {
+         if(Number(GameBridge.probe(b,"explRadius"))>0 || getQualifiedClassName(b)=="fe.weapon::PhisBullet")return true;
          if(int(GameBridge.probe(b,"spring"))>=2)return true;
          var v:Object=GameBridge.probe(b,"vis");
          if(v==null)return false;
          var cls:String=getQualifiedClassName(v);
-         return cls=="visbullightning" || cls=="visbullightning2";
+         return cls=="visbullightning" || cls=="visbullightning2" || Number(GameBridge.probe(b,"flame"))>0
+            || cls=="visbulflame" || cls=="visbulflame2" || cls=="visbuldflame";
       }
       /** Sample the native display after its real simulation frame. An effect
        * can finish before the next world packet; its final endpoint alone is
@@ -48,21 +52,24 @@ package rconnect.game {
             f:v is MovieClip?MovieClip(v).currentFrame:1,
             ls:laser==null?1:Number(laser.scaleX),lf:laser is MovieClip?MovieClip(laser).currentFrame:1};
       }
-      public function receive(owner:Object,guns:Array,main:Object,player:Boolean=false):void {
+      public function receive(owner:Object,guns:Array,main:Object,player:Boolean=false,motion:RemoteMotion=null):void {
          if(owner==null || guns==null)return;
          var slots:Object=seen[owner];if(slots==null)slots=seen[owner]={};
          for each(var gun:Object in guns) {
-            var key:String=String(gun.slot)+":"+String(gun.id)+":"+String(gun.variant)+":"+String(gun.stream);
+            // A switched-away weapon moves to an effects-only list slot.
+            // Its source stream still owns the same in-flight projectiles.
+            var key:String=String(gun.id)+":"+String(gun.variant)+":"+String(gun.stream);
             var channel:Object=slots[key];
             var now:int=getTimer(),source:Number=Number(gun.sampleTime);
             if(!isFinite(source))source=now;
             if(channel==null)channel=slots[key]={last:0,records:{},offset:now-source};
             channel.offset=Math.min(Number(channel.offset),now-source);
+            energyImpacts.receive(channel,gun.impacts as Array,GameBridge.probe(owner,"loc"),main,channel.offset,player?100:300,motion);
             var last:int=int(channel.last);
             for each(var event:Object in gun.events) {
                var existing:Object=channel.records[String(event.seq)];
                if(int(event.seq)<=last) {
-                  if(existing!=null && existing.beam && event.flight!=null)existing.s=event.flight;
+                  if(existing!=null && existing.beam && event.flight!=null){existing.s=event.flight;existing.updated=now;}
                   continue;
                }
                last=int(event.seq);var s:Object=event.flight;if(s==null)continue;
@@ -72,8 +79,8 @@ package rconnect.game {
                   var grafon:Object=main.loaderInfo.applicationDomain.getDefinition("fe.World").w.grafon;
                   var layer:DisplayObjectContainer=grafon.visObjs[2] as DisplayObjectContainer;
                   if(layer==null)continue;
-                  var rec:Object={vis:null,cls:cls,s:s,at:now,loc:world,grafon:grafon,last:0,
-                     beam:s.frames is Array,offset:channel.offset,delay:player?100:300,channel:channel,seq:event.seq};
+                  var rec:Object={vis:null,cls:cls,s:s,at:now,loc:world,grafon:grafon,main:main,exploded:false,last:0,
+                     beam:s.frames is Array,offset:channel.offset,delay:player?100:300,channel:channel,seq:event.seq,motion:motion,updated:now};
                   channel.records[String(event.seq)]=rec;
                   if(!rec.beam)createVisual(rec);
                   active.push(rec);
@@ -96,6 +103,7 @@ package rconnect.game {
       public function tick(loc:Object,now:int=-1):void {
          if(now<0)now=getTimer();
          if(pauseAt>=0)now=Math.min(now,pauseAt);
+         energyImpacts.tick(loc,now);
          for(var i:int=active.length-1;i>=0;i--) {
             var a:Object=active[i],s:Object=a.s,v:DisplayObject=a.vis;
             var age:Number=Math.max(0,now-int(a.at))/1000,frames:Number=age*30;
@@ -119,9 +127,13 @@ package rconnect.game {
          }
       }
       private function tickBeam(a:Object,now:int):Boolean {
-         var s:Object=a.s,list:Array=s.frames as Array,time:Number=now-Number(a.offset)-Number(a.delay);
+         var s:Object=a.s,list:Array=s.frames as Array,time:Number=a.motion!=null?a.motion.sourceTime:NaN;
+         if(!isFinite(time))time=now-Number(a.offset)-Number(a.delay);
+         if(!a.exploded&&s.explosion!=null&&time>=Number(s.explosion.at)) {
+            a.exploded=true;ProjectileExplosionVisuals.play(a.main,a.loc,s.explosion);
+         }
          if(int(s.end)>0 && time>=Number(s.end))return false;
-         if(now-int(a.at)>15000)return false;
+         if(now-int(a.updated)>15000)return false;
          if(list==null || list.length==0 || time<Number(list[0].at))return true;
          var point:Object=list[0];
          for each(var p:Object in list){if(Number(p.at)>time)break;point=p;}
@@ -136,7 +148,13 @@ package rconnect.game {
          return true;
       }
       private function remove(i:int):void {var a:Object=active[i],v:DisplayObject=a.vis;if(v!=null && v.parent!=null)v.parent.removeChild(v);delete a.channel.records[String(a.seq)];active.splice(i,1);}
-      public function reset():void {while(active.length)remove(active.length-1);seen=new Dictionary(true);}
+      public function forget(owner:Object):void {
+         var slots:Object=seen[owner];if(slots==null)return;
+         for(var i:int=active.length-1;i>=0;i--)
+            for each(var channel:Object in slots)if(active[i].channel===channel){remove(i);break;}
+         delete seen[owner];
+      }
+      public function reset():void {while(active.length)remove(active.length-1);seen=new Dictionary(true);energyImpacts.reset();}
       public function get count():int {return active.length;}
    }
 }

@@ -130,7 +130,9 @@ package rconnect.core
       }
       public static function returnTo(game:GameBridge,room:Object):void
       {follow(game,{landX:room.landX,landY:room.landY,landZ:room.landZ,landProb:room.landProb});}
-      public static function follow(game:GameBridge,info:Object,mirror:Boolean=false):void
+      /** False means the native destination is not ready and no room changed.
+       * Exceptions after a partial native transition still stop the barrier. */
+      public static function follow(game:GameBridge,info:Object,mirror:Boolean=false):Boolean
       {
          var land:Object=game.world.land,prob:String=String(info.landProb || "");
          if(prob!="" || String(land.prob)!="")
@@ -156,13 +158,23 @@ package rconnect.core
          {
             var target:Object;
             try {target=land.locs[int(info.landX)][int(info.landY)][int(info.landZ)];}catch(e:*){}
-            if(target==null)throw new Error("Missing destination room");
+            if(target==null)return false;
             if(mirror)mirrorStory(target);
+            var oldX:int=land.locX,oldY:int=land.locY,oldZ:int=land.locZ,oldRoom:Object=land.loc;
             land.locX=int(info.landX);land.locY=int(info.landY);land.locZ=int(info.landZ);
-            land.ativateLoc();land.setGGToSpawnPoint();
+            if(target!==oldRoom) {
+               if(!land.ativateLoc()) {
+                  if(land.loc!==oldRoom)throw new Error("Native room activation partially changed destination");
+                  land.locX=oldX;land.locY=oldY;land.locZ=oldZ;return false;
+               }
+               if(land.loc!==target || game.world.loc!==target || game.gg.loc!==target)
+                  throw new Error("Native room activation did not reach destination");
+               land.setGGToSpawnPoint();
+            }
          }
          game.refreshWorld();
-         if(info.x!=null && info.y!=null){game.gg.setPos(Number(info.x),Number(info.y));game.gg.setVisPos();}
+         TravelPlacement.place(game.gg,info.x==null?Number(game.gg.X):Number(info.x),info.y==null?Number(game.gg.Y):Number(info.y));
+         return true;
       }
    }
 }

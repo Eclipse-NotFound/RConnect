@@ -35,14 +35,14 @@ package {
       private var nativeReleaseAt:int=0,nativeReceiptAt:int=0,releaseReceiptAt:int=0;
       private var aiSamples:int=0,aiTicks:int=0,aiReclaims:int=0,lastAiClock:int=0;
       private var localDone:Boolean=false,peerDone:Boolean=false,inputAt:int=0,releaseAt:int=0;
-      private var keyCode:int=0,keyUntil:int=0,frame:int=0,lastRender:int=-1;
+      private var keyCode:int=0,keyUntil:int=0,frame:int=0,lastRender:int=-1,inputFrame:int=0;
       private var frames:int=0,stalls:int=0,maxJump:Number=0,lastX:Number=NaN,lastY:Number=NaN;
       private var minX:Number,maxX:Number,minY:Number,startY:Number,dropY:Number,held:int=0,throws:int=0;
       private var wire:Array=[],trace:Array=[],capturedStart:Boolean=false;
       private var reference:Array=[],renderTrace:Array=[],sourceOffset:Number=Infinity;
       private var mercId:String="rconnect_tele_merc_4";
       private var lifecycle:MovableGripLifecycle;
-      private var beforeNative:Object,heldOnce:Boolean=false,earlyCleared:Boolean=false;
+      private var beforeNative:Object,heldOnce:Boolean=false,earlyCleared:Boolean=false,releaseArmed:Boolean=false;
 
       public function FastHeldTestDoc() {
          var app:String=NativeApplication.nativeApplication.applicationID;
@@ -52,6 +52,7 @@ package {
             check(false,"uncaught "+(e.error is Error?Error(e.error).getStackTrace():e.error));e.preventDefault();finish();
          });
          RemoteMotionPauseRegression.run(check);
+         HeldMotionBufferRegression.run(check);
          timer.addEventListener(TimerEvent.TIMER,tick);timer.start();
       }
       private function check(ok:Boolean,label:String):void {Log.d("COOP "+(ok?"PASS ":"FAIL ")+"tele-motion "+label+" case="+CASES[round]);}
@@ -158,6 +159,10 @@ package {
          mod.game.loc.addObj(merc);mod.game.loc.units.push(merc);merc.invulner=true;merc.xp=0;
          nativeLimit=Number(merc.levit_max);
       }
+      // Native telekinesis accelerates once per game step. Advance the fixed
+      // two-cycle pointer path with those steps so a slow render cannot skip
+      // its physical sweep. Lag is still measured in real milliseconds below.
+      private function motionAge():Number {return (frame-inputFrame)*1000/30;}
       private function holder():Boolean {return String(CASES[round]).indexOf("-host")>=0 ? host : !host;}
       private function kind():String {return String(CASES[round]).split("-")[0];}
       private function throwing():Boolean {return CASES[round]=="merc-throw";}
@@ -199,7 +204,7 @@ package {
          minX=Infinity;maxX=-Infinity;minY=Infinity;startY=Number(target.Y);capturedStart=false;
          inputAt=releaseAt=0;releaseWireAt=-1;nativeReleaseAt=nativeReceiptAt=releaseReceiptAt=0;
          aiSamples=aiTicks=aiReclaims=0;lastAiClock=0;
-         beforeNative=null;heldOnce=earlyCleared=false;
+         beforeNative=null;heldOnce=earlyCleared=releaseArmed=false;
          if(kind()=="merc")check(Number(target.levit_max)==nativeLimit,"native resistance limit is retained on the real enemy");
          Log.d("TELE MOTION START "+JSON.stringify({role:host?"host":"join",round:round,kind:kind(),cls:getQualifiedClassName(target),mass:target.massa,eligible:target.levitPoss,x:target.X,y:target.Y,
             saved:savedProfile,mana:g.mana,maxmana:g.maxmana,maxMass:g.pers.maxTeleMassa,range:g.pers.teleDist,
@@ -231,7 +236,7 @@ package {
             target.setPos(baseX+130,baseY);target.dx=target.dy=0;target.stay=false;
          }
          if(target!=null) {
-            var age:int=inputAt==0?0:getTimer()-inputAt;
+            var age:Number=inputAt==0?0:motionAge();
             var x:Number=target.X,y:Number=target.Y-target.scY/2;
             if(inputAt>0 && releaseAt==0 && g.teleObj===target){x=baseX+155+65*Math.sin(Math.min(2200,Math.max(0,age-600))*Math.PI*2/1100);y=baseY-120;}
             if(savedProfile && g.teleObj===target) {
@@ -272,7 +277,7 @@ package {
          // KEY_UP. Releasing in `before` could cancel a Q/E pulse entirely.
          if(keyCode>0 && now>keyUntil)releaseKey();
          if(phase=="settle" && now-at>1600) {
-            phase="holding";at=now;inputAt=now;startY=target.Y;
+            phase="holding";at=now;inputAt=now;inputFrame=frame;startY=target.Y;
             if(holder())press(81); // native Q -> Ctr -> control -> actTele
          }
          if(phase=="holding" && !capturedStart && now-at>450) {
@@ -292,7 +297,8 @@ package {
          }
          // Wait for native velocity to settle in the air before releasing.
          // Movement-only reports must also relay a stationary release edge.
-         if(phase=="holding" && now-at>(throwing()?1000:5100)) {
+         var releaseReady:Boolean=holder()?(motionAge()>5100 && Math.abs(target.dx)+Math.abs(target.dy)<.5):nativeReceiptAt>0;
+         if(phase=="holding" && releaseReady) {
             releaseAt=now;dropY=target.Y;
             if(throwing())check(holder()?g.teleObj===target:target.levit>0,"throw is attempted during a real active native grab");
             else {
@@ -308,7 +314,7 @@ package {
                check(aiTicks>=5 && aiReclaims==0,"active native AI advances without reclaiming the box ticks="+aiTicks+" reclaims="+aiReclaims);
             }
             Log.d("TELE MOTION RELEASE "+JSON.stringify({role:host?"host":"join",round:round,holding:g.teleObj===target,
-               levit:target.levit,resistance:GameBridge.probe(target,"levit_r"),dx:target.dx,dy:target.dy,at:now-inputAt}));
+               levit:target.levit,resistance:GameBridge.probe(target,"levit_r"),dx:target.dx,dy:target.dy,at:now-inputAt,nativeInputFrames:frame-inputFrame,motionAge:motionAge()}));
             // Natural resistance may already have released the enemy. Another
             // Q at that point is a fresh grab, not a release operation.
             if(holder() && g.teleObj===target)press(throwing()?69:81);
@@ -338,7 +344,7 @@ package {
       private function render(e:Event):void {
          if(target==null || lastRender==frame)return;lastRender=frame;
          if(Number(GameBridge.probe(target,"t_throw"))>0)++throws;
-         if(phase!="holding" || getTimer()-inputAt<500 || getTimer()-inputAt>3100)return;
+         if(phase!="holding" || motionAge()<500 || motionAge()>3100)return;
          if(target.levit>0)++held;minY=Math.min(minY,Number(target.Y));
          var v:Object=GameBridge.probe(target,"vis");if(v==null || v.parent==null)return;
          var x:Number=v.x,y:Number=v.y;
@@ -387,12 +393,15 @@ package {
       private function receive(e:NetMessageEvent):void {
          var p:Object=e.data;
          if(p.type=="unit-grip" && p.op!="hold" && wire.length<8)wire.push({op:p.op,accept:p.accept,reason:p.reason,k:p.k});
-         if(kind()=="box" && !holder() && phase=="released" && releaseReceiptAt==0) {
+         if(kind()=="box" && !holder() && (phase=="holding" || phase=="released") && releaseReceiptAt==0) {
             var positions:Array=host?(p.moved as Array):(p.objs as Array);
             if(positions!=null)for each(var position:Object in positions)
-               if(String(position.k)==boxKey && position.q===false) {
-                  releaseReceiptAt=getTimer();
-                  if(nativeReceiptAt>0)releaseWireAt=Math.max(0,releaseReceiptAt-nativeReceiptAt);
+               if(String(position.k)==boxKey) {
+                  if(position.q===true)releaseArmed=true;
+                  else if(position.q===false && releaseArmed) {
+                     releaseReceiptAt=getTimer();
+                     if(nativeReceiptAt>0)releaseWireAt=Math.max(0,releaseReceiptAt-nativeReceiptAt);
+                  }
                }
          }
          if(p.type!="tele-motion-test")return;

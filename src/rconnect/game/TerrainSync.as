@@ -228,8 +228,17 @@ package rconnect.game
             var damage:Number=Number(p.damage);
             if(t.indestruct!=true && t.door==null && Number(t.phis)>0)
             {
-               if(isFinite(damage) && damage>0 && damage<=1000000)
-                  room.hitTile(t,int(Math.ceil(damage)),x*40+20,y*40+20);
+               if(isFinite(damage) && damage>0 && damage<=1000000) {
+                  var amount:int=int(Math.ceil(damage));
+                  var lethal:Boolean=Number(t.thre)<=amount && Number(t.hp)<=amount
+                     && (room.destroyOn===true || Number(t.hp)<=500);
+                  var wasActive:Boolean=room.active;
+                  // Damage still uses native Tile.udar. A surviving wall's
+                  // real impact pixels arrive separately; do not add another
+                  // random decal at the tile centre during settlement.
+                  try {if(!lethal)room.active=false;room.hitTile(t,amount,x*40+20,y*40+20);}
+                  finally {room.active=wasActive;}
+               }
                else if(p.destroy===true) room.dieTile(t);
             }
             out.push(state(t,x,y));

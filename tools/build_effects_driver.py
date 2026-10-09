@@ -25,7 +25,8 @@ def main():
         'AnimationGapsTestDoc','RoomCooperationTestDoc','CoopTestDoc','SatsTestDoc','CombatStateTestDoc',
         'CombatNetworkTestDoc','GameplayGapTestDoc','GameplayNetworkTestDoc','ProjectileNetworkTestDoc',
         'FollowNetworkTestDoc','SustainedDensityTestDoc','BeamTerrainTestDoc','LightningSmartTestDoc','TeammateNavigationTestDoc','TelekinesisTestDoc','TelekinesisMotionTestDoc','EnemyGrabTestDoc','CoopPauseTestDoc','SlowTravelTestDoc',
-        'HiddenRoomTestDoc','HiddenRoomFollowTestDoc','HiddenRoomCorpseTestDoc','HiddenRoomOverlayTestDoc','HiddenRoomProbeTestDoc','MirrorMaskRestoreTestDoc','HudTestDoc','FastHeldTestDoc','WeaponAngleTestDoc','PresentationContinuityTestDoc','TargetLifecycleTestDoc','RespawnRoomTestDoc','PeerGripTestDoc'])
+        'HiddenRoomTestDoc','HiddenRoomFollowTestDoc','HiddenRoomCorpseTestDoc','HiddenRoomOverlayTestDoc','HiddenRoomProbeTestDoc','MirrorMaskRestoreTestDoc','HudTestDoc','FastHeldTestDoc','WeaponAngleTestDoc','PresentationContinuityTestDoc','TargetLifecycleTestDoc','RespawnRoomTestDoc','PeerGripTestDoc','PeerVisualTestDoc','FriendlyFireTestDoc','ExplosiveVisualTestDoc',
+        'HeavyProjectileTestDoc','MeleeAnimationTestDoc','EnergyImpactTestDoc','FlameVisualTestDoc','MineSyncTestDoc','MineRoomTestDoc','BurnVisualTestDoc','WallImpactTestDoc','TeleportVisualTestDoc','PeerThrowDamageTestDoc','BodyEffectsTestDoc','FollowRecoveryTestDoc'])
     args=ap.parse_args()
     out=args.output.resolve()
     if not out.is_relative_to(ROOT/'build'): ap.error('Output must be inside this mod build directory')

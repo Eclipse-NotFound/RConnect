@@ -41,7 +41,7 @@ package {
       private var priorFrameAt:int=0,maxFrameGap:int=0,priorRenderAt:int=0,maxRenderGap:int=0;
       private var diagnosticAt:int=0,received:int=0,lastReceivedAt:int=0,lastReceivedType:String="";
       private var frames:int=0,stalls:int=0,maxJump:Number=0,lastX:Number=NaN,lastY:Number=NaN;
-      private var minX:Number,maxX:Number,minY:Number,startY:Number,dropY:Number,held:int=0,throws:int=0;
+      private var minX:Number,maxX:Number,minY:Number,minViewY:Number,maxViewY:Number,startY:Number,dropY:Number,held:int=0,throws:int=0;
       private var wire:Array=[],trace:Array=[],capturedStart:Boolean=false;
       private var mercId:String="rconnect_tele_merc_4";
       private var lifecycle:MovableGripLifecycle;
@@ -204,7 +204,7 @@ package {
          }
          frames=stalls=held=throws=0;maxJump=0;lastX=lastY=NaN;wire=[];trace=[];
          priorFrameAt=priorRenderAt=maxFrameGap=maxRenderGap=0;
-         minX=Infinity;maxX=-Infinity;minY=Infinity;startY=Number(target.Y);capturedStart=false;
+         minX=Infinity;maxX=-Infinity;minY=Infinity;minViewY=Infinity;maxViewY=-Infinity;startY=Number(target.Y);capturedStart=false;
          inputAt=releaseAt=0;releaseWireAt=-1;nativeReleaseAt=nativeReceiptAt=releaseReceiptAt=0;releaseArmed=false;
          aiSamples=aiTicks=aiReclaims=0;lastAiClock=0;
          beforeNative=null;heldOnce=earlyCleared=false;
@@ -316,7 +316,12 @@ package {
             }
             else {
                check((!holder() || held>3) && minY<startY-30,"real lift observed samples="+held+" rise="+(startY-minY));
-               check(frames>12 && maxX-minX>40,"source/display actually moved frames="+frames+" span="+(maxX-minX));
+               // A resisting native flyer may move mainly vertically. Require
+               // the same 40 px excursion on at least one displayed axis;
+               // ordinary boxes and loot retain their original X sweep.
+               var spanX:Number=maxX-minX,spanY:Number=maxViewY-minViewY;
+               var motionSpan:Number=kind()=="merc"?Math.max(spanX,spanY):spanX;
+               check(frames>12 && motionSpan>40,"source/display actually moved frames="+frames+" span="+motionSpan+" x="+spanX+" y="+spanY);
                if(!holder())check(frames>12 && stalls/Math.max(1,frames)<.5 && maxJump<25,
                   "remote display advances between packets stalls="+stalls+"/"+frames+" maxJump="+maxJump);
             }
@@ -361,7 +366,7 @@ package {
          var renderAt:int=getTimer();if(priorRenderAt>0)maxRenderGap=Math.max(maxRenderGap,renderAt-priorRenderAt);priorRenderAt=renderAt;
          if(target.levit>0)++held;minY=Math.min(minY,Number(target.Y));
          var v:Object=GameBridge.probe(target,"vis");if(v==null || v.parent==null)return;
-         var x:Number=v.x,y:Number=v.y;
+         var x:Number=v.x,y:Number=v.y;minViewY=Math.min(minViewY,y);maxViewY=Math.max(maxViewY,y);
          if(trace.length<160)trace.push({t:getTimer()-inputAt,x:x,y:y,levit:target.levit,local:mod.game.gg.teleObj===target,
             dx:target.dx,dy:target.dy,resistance:GameBridge.probe(target,"levit_r"),cx:mod.game.gg.celX,cy:mod.game.gg.celY});
          if(isFinite(lastX)) {var d:Number=Math.sqrt(Math.pow(x-lastX,2)+Math.pow(y-lastY,2));if(d<.01)++stalls;maxJump=Math.max(maxJump,d);}

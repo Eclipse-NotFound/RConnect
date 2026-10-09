@@ -21,6 +21,8 @@ package rconnect.core
          followTeammate: "0",
          allowPeerGrip: "0",
          peerGripStruggle: "1",
+         peerThrowDamage: "0",
+         friendlyFire: "0",
          pauseMenus: "0",
          pauseSats: "0",
          autoRole: "",

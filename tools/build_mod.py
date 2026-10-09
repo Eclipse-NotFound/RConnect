@@ -81,7 +81,7 @@ def main():
         stub_compiler = [args.java,"-Xmx384m","-jar",os.path.join(sdk,"lib","compc.jar"),
                          "+configname=air","+flexlib="+os.path.join(sdk,"frameworks")]
     stub_cmd = stub_compiler + ["-source-path="+os.path.join(HERE,"stubs"),
-                               "-include-classes=" + ",".join("fe.unit."+p[:-3] for p in os.listdir(os.path.join(HERE,"stubs","fe","unit")) if p.endswith(".as")) + ",fe.weapon.Bullet,fe.inter.PipPage,fe.inter.PipPageInfo,fe.inter.PipPageInv,fe.serv.Interact" + ",fe.weapon.Weapon,fe.loc.Location,fe.loc.Loot,fe.loc.Bonus,fe.serv.Item",
+                               "-include-classes=" + ",".join("fe.unit."+p[:-3] for p in os.listdir(os.path.join(HERE,"stubs","fe","unit")) if p.endswith(".as")) + ",fe.weapon.Bullet,fe.inter.PipPage,fe.inter.PipPageInfo,fe.inter.PipPageInv,fe.serv.Interact" + ",fe.weapon.Weapon,fe.weapon.WClub,fe.loc.Location,fe.loc.Loot,fe.loc.Bonus,fe.serv.Item",
                                "-output="+stub_swc,"-swf-version=38"]
     subprocess.run(stub_cmd, env=env, check=True)
     cmd.insert(1 if not args.java else len(compiler), "-external-library-path+="+stub_swc)

@@ -69,12 +69,14 @@ package rconnect.game
          }
          _coopPauseAt=value?getTimer():-1;
          _projectiles.setPaused(value);
+         _ports.setPaused(value);
       }
       /** M5a：客户端冻结被同步单位 AI（由 Session 按配置注入）。 */
       public var freezeAI:Boolean = false;
       public var mapProgress:WorldProgress;
       public var enemyGrip:rconnect.core.EnemyGrip;
       public var peerGrip:rconnect.core.PeerGrip;
+      public var playerMines:rconnect.core.PlayerMines;
       /** M9：宿主侧客户端幽灵作为可攻击化身（可被打、可被敌人瞄准）。 */
       public var ghostCombat:Boolean = true;
       public function get mirrorsRoom():Boolean {return _mirroring;}
@@ -91,6 +93,7 @@ package rconnect.game
       public function GameBridge(main:Object)
       {
          this.main = main;
+         _wall=new WallImpactVisuals(main);
          // M12：拦截 Stage DEACTIVATE——游戏在 World 构造时用默认优先级注册
          // onDeactivate（失焦 → pip.onoff(11) 打开 PipBuck 且永不自动关闭，
          // 导致 allStat=2、旅行/场景冻结、"两侧房间不同"）。用更高优先级
@@ -142,11 +145,13 @@ package rconnect.game
 
       public function endSession():void
       {
+         _ports.reset();
          setCoopPaused(false);
          restoreContainerActions();
          _mirroring = false;
          _terrain.reset();
-         _presentation.reset();_projectiles.reset();_telekinesis.reset();
+         _wall.reset();_wallLand=null;
+         _presentation.reset();_projectiles.reset();_telekinesis.reset();_burnVisuals.reset();_bodyEffects.reset();
          _shieldFeedback = new Dictionary(true);
          clearHitUnits();
          _unitMotion = new Dictionary();
@@ -203,6 +208,10 @@ package rconnect.game
          _forcingVisibility = true;
          try
          {
+            // Read actual final player clip frames after native frame scripts.
+            if(gg!=null)_presentation.observePlayer(gg,_sampleAt);
+            if(gg!=null)_bodyEffects.observe(gg,_sampleAt);
+            if(!_mirroring)_presentation.observeFinal(loc,_sampleAt);
             for(var remoteId:String in _remotes)
             {
                var rec:Object=_remotes[remoteId];
@@ -212,8 +221,10 @@ package rconnect.game
                   {
                      if(rec.snap.bodyPlaying === false && rec.motion != null)
                         driveVisAnim(rec.ghost,rec.motion.sample(presentationTime()),int(remoteId));
+                     if(rec.motion!=null)_peerAppearance.apply(rec.ghost,rec.motion.sample(presentationTime()).wings,coopPaused);
                      if(rec.snap.ap != null)
                         RemoteArmor.apply(probe(rec.ghost,"vis") as DisplayObjectContainer,String(rec.snap.ap.armor || ""));
+                     if(rec.motion!=null)_bodyEffects.apply(rec.ghost,rec.motion.sample(presentationTime()).bodyEffects,coopPaused);
                   }
                }
                catch(armorError:*) {logViewError("remote-"+remoteId,armorError);}
@@ -221,6 +232,7 @@ package rconnect.game
             // Native redraws may replace the object layer after ENTER_FRAME.
             // The same frame clock reattaches a beam without advancing it twice.
             _projectiles.tick(loc,presentationTime());
+            _ports.tick(loc,presentationTime(),roomKey(),roomEpoch);
             tickBoxTweens();
             tickLootMotion();
             presentHeldVisuals();
@@ -228,7 +240,9 @@ package rconnect.game
             _mirrorMasks.capture(loc,world,main as DisplayObject);
             for(var viewed:Object in _unitView)
                if(probe(viewed,"loc")===loc)
-                  try {applyUnitView(viewed,_unitView[viewed].host);_presentation.enforce(viewed);}
+                  try {applyUnitView(viewed,_unitView[viewed].host);_presentation.enforce(viewed);
+                     var viewMotion:RemoteMotion=_unitMotion[viewed] as RemoteMotion;
+                     if(viewMotion!=null)_bodyEffects.apply(viewed,viewMotion.sample(presentationTime()).bodyEffects,coopPaused);}
                   catch(viewError:*) {logViewError(String(probe(viewed,"id")),viewError);}
             for(var u:Object in _hostAlive)
             {
@@ -274,9 +288,11 @@ package rconnect.game
       {
          _mirrorMasks.clean(loc,world,main as DisplayObject);
          if(roomHold)return;
+         _wall.observe(loc);
+         if(gg!=null)_ports.observe(gg,_sampleAt,roomKey(),roomEpoch);
          if(!_mirroring) _presentation.observe(loc,_sampleAt);
          if(gg!=null)_presentation.observePlayer(gg,_sampleAt);
-         _projectiles.tick(loc,presentationTime());
+         if(gg!=null)_bodyEffects.observe(gg,_sampleAt);
          try {main.stage.invalidate();} catch(stageError:*) {}
          // Native ghost physics and packet arrivals must not dictate display cadence.
          for(var id:String in _remotes)
@@ -285,6 +301,8 @@ package rconnect.game
             if(rec.ghost!=null && rec.motion!=null && probe(rec.ghost,"loc")===loc)
                driveGhost(rec.ghost,coopPaused?rec.motion.settle(presentationTime()):rec.motion.sample(presentationTime()),int(id));
          }
+         _projectiles.tick(loc,presentationTime());
+         _ports.tick(loc,presentationTime(),roomKey(),roomEpoch);
          presentHeldVisuals();
          if(!_mirroring) return;
          if(!coopPaused)mirrorContainerActions();
@@ -301,6 +319,10 @@ package rconnect.game
          // Timestamp the simulation frame before its variable rendering work.
          // Timers may send it more than once, but it is still the same sample.
          _sampleAt=getTimer();
+         var currentLand:Object=probe(world,"land");
+         if(currentLand!==_wallLand){_wall.reset();_wallLand=currentLand;}
+         if(!roomHold)_wall.before(loc);
+         if(!roomHold)_ports.beforeNativeStep(gg,world,_sampleAt,roomKey(),roomEpoch);
          // Native findCel only offers the local player. Supply visible teammate
          // candidates before control can patrol/turn away in the same frame.
          if(!roomHold && !coopPaused && !_mirroring)redirectNearbyAggro();
@@ -595,6 +617,10 @@ package rconnect.game
          s.poseFrame = numOr(probe(osn, "currentFrame"), 1);
          s.bodyFrame = numOr(probe(probe(osn, "body"), "currentFrame"), 1);
          s.bodyPlaying = probe(probe(osn, "body"), "isPlaying") == true;
+         s.wings = PeerAppearance.capture(gg);
+         s.burning = BurnVisuals.capture(gg);
+         s.bodyEffects = _bodyEffects.capture(gg);
+         s.port = _ports.capture(gg);
          s.isSit = probe(gg, "isSit") == true;
          // M18：外观镜像——远端据此给幽灵穿上对方的外观（护甲/毛色/眼/魔法）
          s.ap = readAppearance();
@@ -640,6 +666,7 @@ package rconnect.game
             || (myLand != "" && snapLand != "" && myLand != snapLand)
             || (snapRoom != "" && snapRoom != String(probe(loc, "id"))))
          {
+            _ports.discard(id,snap.port);
             if(rec.ghost != null)
             {
                despawnGhost(rec.ghost, id);
@@ -699,7 +726,8 @@ package rconnect.game
             if(peerGrip!=null)peerGrip.prepareGhost(ghost,snap.peerGrip);
             rec.motion.push(snap,getTimer());
             driveGhost(ghost, coopPaused?rec.motion.settle(presentationTime()):rec.motion.sample(presentationTime()), id);
-            _projectiles.receive(ghost,snap.weapons as Array,main,true);
+            _projectiles.receive(ghost,snap.weapons as Array,main,true,rec.motion);
+            _ports.receive(id,snap.port,loc,main,rec.motion,roomKey(),roomEpoch);
             // M20：外观热更——对方换装/换护甲后按 apKey 变化重装视觉
             var ak:String = apKeyOf(snap.ap);
             if(_apKey[id] != ak && snap.ap != null
@@ -791,7 +819,7 @@ package rconnect.game
             trackBoxPos(o,Number(s.x),Number(s.y),s.q===true,true,numOr(s.dx,0),numOr(s.dy,0),int(numOr(s.f,0)),stamp,50);
          } else if(s.q===true) {
             var key:String=String(s.k),rec:Object=_lootMotion[key];
-            if(rec==null || rec.fast!==true)rec=_lootMotion[key]={o:o,motion:new RemoteMotion(50),fast:true};
+            if(rec==null || rec.fast!==true)rec=_lootMotion[key]={o:o,motion:RemoteMotion.held(),fast:true};
             rec.remoteHeld=true;rec.until=presentationTime()+1500;
             o.levit=0;o.osnova=null;o.stay=true;o.dx=o.dy=0;
             (rec.motion as RemoteMotion).push({x:Number(s.x),y:Number(s.y),sampleTime:stamp},getTimer());
@@ -876,6 +904,8 @@ package rconnect.game
             ghost["vis"] = newVis;
             ghost["setVisPos"]();
             driveVisAnim(ghost, snap, id);
+            _peerAppearance.apply(ghost,snap.wings,coopPaused);
+            _bodyEffects.apply(ghost,snap.bodyEffects,coopPaused);
             if(wvis != null)
             {
                _weaponVis[id] = wvis;
@@ -906,6 +936,7 @@ package rconnect.game
                var body:Object = probe(osn, "body");
                if(body != null)
                {
+                  hideChild(body,"lwing");hideChild(body,"rwing");
                   var pip2:Object = probe(body, "pip2");
                   if(pip2 != null)
                   {
@@ -1012,7 +1043,7 @@ package rconnect.game
             for each(var nativeState:Object in snap.weapons as Array)
                if(nativeState.main===true && nativeState.display!=null) {
                   var nativeWeapon:Object=probe(ghost,"currentWeapon");
-                  _playerWeaponDisplay.apply(ghost,nativeWeapon,nativeState,presentationTime());
+                  _playerWeaponDisplay.apply(ghost,nativeWeapon,nativeState,presentationTime(),_remotes[id].motion.sourceTime);
                   _telekinesis.weapon(nativeWeapon,nativeState.aura);return;
                }
             var storona:Number = numOr(snap.storona, 1) >= 0 ? 1 : -1;
@@ -1313,9 +1344,10 @@ package rconnect.game
          {
             despawnGhost(rec.ghost, id);
          }
+         removeWeaponVis(id);
+         _ports.removePeer(id);
          delete _remotes[id];
          delete _animState[id];
-         removeWeaponVis(id);
          delete _weaponId[id];
          delete _ghostHp[id];
          delete _ghostPassive[id];
@@ -1479,6 +1511,7 @@ package rconnect.game
             hideChild(vis, "svet");
          }
          ghost["vis"] = vis;
+         _peerAppearance.apply(ghost,null);
       }
 
       private function hideChild(mc:Object, name:String):void
@@ -1551,6 +1584,8 @@ package rconnect.game
                }
             }
             driveVisAnim(ghost, snap, id);
+            _peerAppearance.apply(ghost,snap.wings,coopPaused);
+            _bodyEffects.apply(ghost,snap.bodyEffects,coopPaused);
             if(snap.wi != undefined)
             {
                // Weapon identity and aura belong to the same presentation
@@ -1558,6 +1593,7 @@ package rconnect.game
                syncRemoteWeapon(ghost, snap, id);
                driveWeaponVis(ghost, snap, id);
             }
+            _burnVisuals.present(main,ghost,snap.burning===true,coopPaused);
          }
          catch(err:*)
          {
@@ -1571,6 +1607,10 @@ package rconnect.game
       }
 
       private var _driveErrLogged:Object = {};
+      private var _peerAppearance:PeerAppearance=new PeerAppearance();
+      private var _burnVisuals:BurnVisuals=new BurnVisuals();
+      private var _bodyEffects:PlayerBodyEffects=new PlayerBodyEffects();
+      private var _ports:TeleportVisuals=new TeleportVisuals();
 
       /**
        * 驱动幽灵姿态动画（与 UnitPlayer.control 同款模式）：
@@ -1694,6 +1734,10 @@ package rconnect.game
 
       private function despawnGhost(ghost:Object, id:int):void
       {
+         removeWeaponVis(id);delete _weaponId[id];
+         _projectiles.forget(ghost);
+         _bodyEffects.forget(ghost);
+         _ports.removePeer(id);
          _telekinesis.hold(String(id),null,null);
          try
          {
@@ -1918,8 +1962,7 @@ package rconnect.game
                   _alignedKey = akey;
                   try
                   {
-                     gg["setPos"](Number(info.x), Number(info.y));
-                     gg["setVisPos"]();
+                     rconnect.core.TravelPlacement.place(gg,Number(info.x),Number(info.y));
                      Log.d("RConnectWorld: aligned to host in " + mine.locId);
                   }
                   catch(err:*)
@@ -1950,8 +1993,7 @@ package rconnect.game
             }
             _lastFollowT = now;
             land["gotoXY"](int(info.landX), int(info.landY));
-            gg["setPos"](Number(info.x), Number(info.y));
-            gg["setVisPos"]();
+            rconnect.core.TravelPlacement.place(gg,Number(info.x),Number(info.y));
             Log.d("RConnectWorld: followed host to loc " + info.locId
                + " (gotoXY " + info.landX + "," + info.landY + ")"
                + " pos " + Math.round(Number(info.x)) + ","
@@ -3315,22 +3357,50 @@ package rconnect.game
       }
 
       private var _terrain:TerrainSync = new TerrainSync();
+      private var _wall:WallImpactVisuals;
+      private var _wallLand:Object;
       private var _projectiles:ProjectileVisuals=new ProjectileVisuals();
       public function get projectileVisualCount():int {return _projectiles.count;}
       private var _presentation:UnitPresentation = new UnitPresentation();
 
-      public function readTilePatch():Array {return _terrain.hostPatch(loc);}
+      public function readTilePatch():Array {var list:Array=_terrain.hostPatch(loc);_wall.observe(loc,list);return list;}
       public function applyTilePatch(list:Array):void {_terrain.apply(loc,list,freezeAI);}
-      public function scanTileReports():Object {return _terrain.report(loc);}
-      public function finishTileReports():Array {return _terrain.finishReports(loc);}
-      public function applyTileReport(peer:String,request:Object):Object {return _terrain.settle(loc,peer,request);}
-      public function acknowledgeTiles(receipt:Object):void {_terrain.acknowledge(loc,receipt);}
+      public function scanTileReports():Object {
+         var report:Object=_terrain.report(loc);_wall.observe(loc,report==null?null:report.tiles as Array);
+         var paint:Object=_wall.report(loc);
+         if(paint!=null){if(report==null)report={tiles:[]};report.wall=paint;}
+         return report;
+      }
+      public function finishTileReports():Array {
+         var reports:Array=_terrain.finishReports(loc);
+         for each(var report:Object in reports)_wall.observe(loc,report.tiles as Array);
+         for each(var paint:Object in _wall.finishReports(loc))reports.push({tiles:[],wall:paint});
+         return reports;
+      }
+      public function applyTileReport(peer:String,request:Object):Object {
+         if(request==null)return null;
+         var receipt:Object=request.epoch!=null&&request.seq!=null?_terrain.settle(loc,peer,request):null;
+         var paint:Object=_wall.settle(loc,peer,request.wall);
+         if(paint!=null){if(receipt==null)receipt={tiles:[]};receipt.wallReceipt=paint;}
+         return receipt;
+      }
+      public function acknowledgeTiles(receipt:Object):void {
+         if(receipt==null)return;
+         if(receipt.seq!=null)_terrain.acknowledge(loc,receipt);
+         if(receipt.wallReceipt!=null)_wall.acknowledge(loc,receipt.wallReceipt);
+      }
+      public function readWallPaint():Array {return _wall.snapshot(loc);}
+      public function applyWallPaint(list:Array):void {
+         tileRedrawIfDirty();_wall.receive(loc,list,true);tileRedrawIfDirty();
+      }
 
       public function tileRedrawIfDirty():void
       {
-         if(!_terrain.dirty || world==null) return;
-         try {world["redrawLoc"]();_terrain.dirty=false;}
-         catch(err:*) {logViewError("terrain-redraw",err);}
+         if(_terrain.dirty && world!=null) {
+            try {world["redrawLoc"]();_terrain.dirty=false;_wall.redraw(loc);_satsRasterDirty=true;}
+            catch(err:*) {logViewError("terrain-redraw",err);}
+         }
+         if(_wall.dirty){_satsRasterDirty=true;_wall.dirty=false;}
       }
 
       /** M17：宿主检测"非模板"物品（现场生成/掉落）→ 持续广播给加入方。
@@ -4480,7 +4550,7 @@ package rconnect.game
                // grip owns this physics flag, independently of the local caster.
                b["levit"]=1;
                if(tween==null || tween.q!=true || intervalMs==50 && tween.fast!==true)
-                  tween=_boxTween[b]={q:true,motion:new RemoteMotion(intervalMs),fast:intervalMs==50};
+                  tween=_boxTween[b]={q:true,motion:intervalMs==50?RemoteMotion.held():new RemoteMotion(intervalMs),fast:intervalMs==50};
                tween.until=presentationTime()+1500;
                (tween.motion as RemoteMotion).push({x:x,y:y,sampleTime:stamp},getTimer());
                b["fracLevit"]=fraction;
@@ -5326,6 +5396,8 @@ package rconnect.game
                   // Mechanical visibility, never the local RV/FOV visible flag.
                   view: unitView(u),
                   body: TurretDisplay.capture(u),
+                  burning: BurnVisuals.capture(u),
+                  bodyEffects: _bodyEffects.capture(u),
                   weapons: _presentation.capture(u),
                   aura: TelekinesisVisuals.captureObject(u),
                   defense: unitFields(u, MirrorHitUnit.DEFENSE),
@@ -5406,7 +5478,7 @@ package rconnect.game
                else
                {
                   var safe:Object = validLandPos(Number(e.x), Number(e.y));
-                  queueUnitMotion(target, Number(safe.x), Number(safe.y),e.sampleTime);
+                  queueUnitMotion(target, Number(safe.x), Number(safe.y),e.sampleTime,e.bodyEffects);
                }
                if(e.sost != undefined && Number(e.sost) != -1)
                {
@@ -5492,8 +5564,8 @@ package rconnect.game
                   _hostAlive[target] = true;
                }
                if(freezeAI) {
-                  _presentation.apply(target,e,main);
-                  _projectiles.receive(target,e.weapons as Array,main);
+                  _presentation.apply(target,e,main,_unitMotion[target] as RemoteMotion);
+                  _projectiles.receive(target,e.weapons as Array,main,false,_unitMotion[target] as RemoteMotion);
                }
                var hit:MirrorHitUnit = _hitUnits[target];
                if(freezeAI && numOr(e.fraction,0)>0 && numOr(e.fraction,0)<100
@@ -5624,12 +5696,12 @@ package rconnect.game
       }
 
       // The same source-time buffer drives enemies and remote players.
-      private function queueUnitMotion(u:Object,x:Number,y:Number,stamp:*=null):void
+      private function queueUnitMotion(u:Object,x:Number,y:Number,stamp:*=null,bodyEffects:Object=null):void
       {
          var now:int = getTimer();
          var motion:RemoteMotion=_unitMotion[u] as RemoteMotion;
          if(motion==null || !freezeAI)motion=_unitMotion[u]=new RemoteMotion(200);
-         motion.push({x:x,y:y,sampleTime:stamp},now);
+         motion.push({x:x,y:y,sampleTime:stamp,bodyEffects:bodyEffects},now);
          var sample:Object=coopPaused?motion.settle(presentationTime()):motion.sample(presentationTime());
          u["setPos"](sample.x,sample.y);
       }
@@ -5906,14 +5978,16 @@ package rconnect.game
             if(b!=null) {s.runtime=NativeRoomState.scalars(b);s.inter=NativeRoomState.scalars(probe(b,"inter"));s.interNative=RConnectInteractionAccess.capture(probe(b,"inter"));}
          }
          return {key:roomKey(),width:loc.spaceX,height:loc.spaceY,roomId:String(probe(loc.room,"id")),
-            units:list,objs:objects,loots:readLootSync() || [],tiles:_terrain.checkpoint(loc),
-            points:mapProgress==null?null:mapProgress.capture(loc)};
+            units:list,objs:objects,loots:readLootSync() || [],tiles:_terrain.checkpoint(loc),wallPaint:_wall.checkpoint(loc),
+            points:mapProgress==null?null:mapProgress.capture(loc),
+            mines:playerMines==null?[]:playerMines.checkpoint()};
       }
 
       public function roomRole(authority:Boolean):void
       {
          restoreContainerActions();
-         _presentation.reset();_projectiles.reset();_telekinesis.reset();clearHitUnits();restoreMirrorMasks();restoreUnitViews();
+         _wall.roleChanged(loc);
+         _presentation.reset();_projectiles.reset();_telekinesis.reset();_burnVisuals.reset();_bodyEffects.reset();clearHitUnits();restoreMirrorMasks();restoreUnitViews();
          for(var u:Object in _freezeOriginal) try {u.disabled=_freezeOriginal[u];}catch(e:*){}
          _freezeOriginal=new Dictionary();_frozen=new Dictionary();_hostAlive=new Dictionary();
          _pendingHits=new Dictionary();_baseHp=new Dictionary();_baseDefense=new Dictionary();
@@ -5987,7 +6061,9 @@ package rconnect.game
             _lootIdSeq=Math.max(_lootIdSeq,int(lootKey.substr(2)));
          }
          if(!authority)applyUnitsSync(s.units as Array);
+         if(playerMines!=null)playerMines.restore(s.mines as Array,authority,foreign);
          tileRedrawIfDirty();
+         _wall.restore(loc,s.wallPaint as Array);_satsRasterDirty=true;
       }
 
       /** 从游戏全量数据 AllData.d 中取单位 XML（blit 动画定义的数据源）。 */
@@ -6026,7 +6102,7 @@ package rconnect.game
          if(_lastLocRef != loc)
          {
             _lastLocRef = loc;
-            _presentation.reset();_projectiles.reset();_telekinesis.reset();
+            _presentation.reset();_projectiles.reset();_telekinesis.reset();_burnVisuals.reset();_bodyEffects.reset();
             _objects.enter(loc);
             _units.enter(loc);
             restoreMirrorMasks();

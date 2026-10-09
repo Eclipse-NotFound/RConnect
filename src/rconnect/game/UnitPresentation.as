@@ -5,6 +5,7 @@ package rconnect.game
    import flash.utils.getTimer;
    import rconnect.core.Log;
    import fe.unit.Unit;
+   import fe.weapon.Bullet;
    import fe.unit.RConnectAnimationAccess;
 
    /** Plays native display objects without Weapon.step/actions or Unit.die.
@@ -16,7 +17,12 @@ package rconnect.game
       private var errors:Object = {};
       private var shotStream:int=0;
       private var frameTime:int=0;
+      private var scannedAt:int=-1,scannedLoc:Object;
+      private var frameBullets:Dictionary=new Dictionary(true);
       private var telekinesis:TelekinesisVisuals=new TelekinesisVisuals();
+      private var energyImpacts:EnergyImpactVisuals=new EnergyImpactVisuals();
+      private var melee:MeleeVisuals=new MeleeVisuals();
+      private var burning:BurnVisuals=new BurnVisuals();
 
       private static function get(o:Object,k:String):* {return GameBridge.probe(o,k);}
 
@@ -26,7 +32,30 @@ package rconnect.game
          var list:Array=children==null?[]:children.concat();
          var current:Object=get(u,"currentWeapon");
          if(current!=null && list.indexOf(current)<0) list.push(current);
+         var thrown:Object=get(u,"throwWeapon");
+         if(thrown!=null && list.indexOf(thrown)<0)list.push(thrown);
+         var magic:Object=get(u,"magicWeapon");
+         if(magic!=null && list.indexOf(magic)<0)list.push(magic);
+         // Changing guns must not orphan the previous gun's flying grenade,
+         // missile or final impact. These entries carry effects only.
+         for(var previous:Object in hostShots)
+            if(get(previous,"owner")===u && get(previous,"loc")===get(u,"loc")
+               && hostShots[previous].events.length>0 && list.indexOf(previous)<0)list.push(previous);
          return list;
+      }
+
+      /** A shotgun/burst leaves only its final bullet in Weapon.b. Index the
+       * native chain once per frame, rather than scanning it once per gun. */
+      private function scanBullets(loc:Object,stamp:int):void {
+         if(loc===scannedLoc&&stamp==scannedAt)return;
+         scannedLoc=loc;scannedAt=stamp;frameBullets=new Dictionary(true);
+         var o:Object=get(loc,"firstObj");
+         for(var guard:int=0;o!=null&&guard++<16384;o=get(o,"nobj")) {
+            if(!(o is Bullet))continue;
+            var w:Object=get(o,"weap");if(w==null)continue;
+            if(frameBullets[w]==null)frameBullets[w]=[];
+            frameBullets[w].push(o);
+         }
       }
 
       /** kol_shoot resets when a burst ends. Observe every game frame and
@@ -34,6 +63,7 @@ package rconnect.game
       public function observe(loc:Object,stamp:int=0):void
       {
          frameTime=stamp>0?stamp:getTimer();
+         scanBullets(loc,frameTime);
          var units:Array=get(loc,"units") as Array;if(units==null) return;
          for each(var u:Object in units)
          {
@@ -45,13 +75,28 @@ package rconnect.game
          }
       }
 
-      public function observePlayer(u:Object,stamp:int=0):void {frameTime=stamp>0?stamp:getTimer();for each(var w:Object in weaponList(u))if(get(w,"kol_shoot")!=null)observeWeapon(w,frameTime);}
+      public function observePlayer(u:Object,stamp:int=0):void {frameTime=stamp>0?stamp:getTimer();scanBullets(get(u,"loc"),frameTime);for each(var w:Object in weaponList(u))if(get(w,"kol_shoot")!=null)observeWeapon(w,frameTime,true);}
 
-      private function observeWeapon(w:Object,stamp:int=0):int
+      /** Refresh already-observed NPC clips after Flash advances frame scripts.
+       * Reuse the chain index; no second unit/weapon discovery or AI step. */
+      public function observeFinal(loc:Object,stamp:int):void {
+         if(loc==null || stamp<=0)return;
+         frameTime=stamp;
+         for(var w:Object in hostShots) {
+            var owner:Object=get(w,"owner");
+            if(get(owner,"loc")===loc && int(get(owner,"fraction"))<100)observeWeapon(w,stamp);
+         }
+      }
+
+      private function observeWeapon(w:Object,stamp:int=0,player:Boolean=false):int
       {
+         if(stamp>0){MeleeVisuals.observe(get(w,"owner"),w,stamp);energyImpacts.observeWeapon(w,stamp);}
          var n:int=int(get(w,"kol_shoot")),bullet:Object=get(w,"b"),ammo:Number=Number(get(w,"hold"));
          var r:Object=hostShots[w];
-         if(r==null) r=hostShots[w]={stream:++shotStream,n:n,bullet:bullet,ammo:ammo,total:0,events:[]};
+         if(r==null){
+            r=hostShots[w]={stream:++shotStream,n:n,bullet:bullet,ammo:ammo,total:0,serial:0,events:[],seen:new Dictionary(true)};
+            if(bullet!=null && get(bullet,"in_chain")!=true && n==0)r.seen[bullet]=true;
+         }
          else
          {
             var delta:int=n>=int(r.n)?n-int(r.n):n;
@@ -59,21 +104,39 @@ package rconnect.game
             if(isFinite(ammo) && ammo<Number(r.ammo))
                delta=Math.max(delta,Math.ceil((Number(r.ammo)-ammo)/Math.max(1,Number(get(w,"rashod")))));
             r.total+=delta;r.n=n;r.bullet=bullet;r.ammo=ammo;
-            if(delta>0 && bullet!=null)r.events.push({seq:r.total,at:frameTime>0?frameTime:getTimer(),bullet:bullet,
-               recorded:ProjectileVisuals.usesNativeFrames(bullet),frames:[],sampled:0,end:0});
+         }
+         var bullets:Array=frameBullets[w]==null?[]:frameBullets[w].concat();
+         if(bullet!=null && bullets.indexOf(bullet)<0)bullets.push(bullet);
+         for each(var native:Object in bullets)if(!r.seen[native] && get(native,"loc")===get(w,"loc")) {
+            r.seen[native]=true;
+            r.events.push({seq:++r.serial,at:frameTime>0?frameTime:getTimer(),bullet:native,
+               recorded:player||ProjectileVisuals.usesNativeFrames(native),frames:[],sampled:0,end:0,endSentAt:0,explosion:null});
          }
          if(stamp>0)for each(var shot:Object in r.events) {
-            if(!shot.recorded || int(shot.sampled)==stamp)continue;
-            shot.sampled=stamp;
+            if(shot.explosion==null && get(shot.bullet,"isExpl")===true){
+               shot.explosion=ProjectileExplosionVisuals.capture(shot.bullet);
+               if(shot.explosion!=null)shot.explosion.at=stamp;
+            }
+            if(!shot.recorded)continue;
             var point:Object=ProjectileVisuals.beamFrame(shot.bullet,stamp);
-            if(point!=null){shot.frames.push(point);if(shot.frames.length>64)shot.frames.shift();}
+            if(point!=null){
+               if(int(shot.sampled)==stamp&&shot.frames.length>0)shot.frames[shot.frames.length-1]=point;
+               else shot.frames.push(point);
+               if(shot.frames.length>64)shot.frames.shift();
+            }
+            shot.sampled=stamp;
             if(get(shot.bullet,"in_chain")!=true && int(shot.end)==0)shot.end=stamp;
          }
          // Retain the final state for a full send window after native removal.
          // Measuring only from birth can discard end before a delayed world
          // snapshot sends it, leaving the last visible frame on the joiner.
-         while(r.events.length>0 && (r.events.length>24 || (getTimer()-Math.max(int(r.events[0].at),int(r.events[0].end))>700
-            && (!r.events[0].recorded || int(r.events[0].end)>0))))r.events.shift();
+         // A live grenade can outlast the send window by seconds. Retire only
+         // ended records, without letting a long-lived first shot pin the rest.
+         for(var i:int=r.events.length-1;i>=0;i--){
+            var event:Object=r.events[i];
+            if((int(event.end)>0&&int(event.endSentAt)>0&&getTimer()-int(event.endSentAt)>700)
+               ||(!event.recorded&&getTimer()-int(event.at)>700))r.events.splice(i,1);
+         }
          return int(r.total);
       }
 
@@ -87,12 +150,20 @@ package rconnect.game
             var count:int=observeWeapon(w),events:Array=[];
             for each(var shot:Object in hostShots[w].events) {
                var flight:Object=ProjectileVisuals.capture(shot.bullet);
-               if(flight!=null && shot.recorded){flight.frames=shot.frames;flight.end=shot.end;}
+               if(flight!=null && shot.recorded){
+                  flight.frames=shot.frames;flight.end=shot.end;flight.explosion=shot.explosion;
+                  // Rendering can block the network timer for longer than the
+                  // retention window. An unsent ending must never be pruned.
+                  if(int(shot.end)>0 && int(shot.endSentAt)==0)shot.endSentAt=getTimer();
+               }
                events.push({seq:shot.seq,at:shot.at,flight:flight});
             }
-            result.push({stream:hostShots[w].stream,slot:i,id:String(get(w,"id")),variant:int(get(w,"variant")),main:w===current,events:events,
+            var children:Array=get(u,"childObjs") as Array;
+            var effectsOnly:Boolean=w!==current && w!==get(u,"throwWeapon") && w!==get(u,"magicWeapon") && (children==null || children.indexOf(w)<0);
+            result.push({stream:hostShots[w].stream,slot:i,id:String(get(w,"id")),variant:int(get(w,"variant")),main:w===current,events:events,effectsOnly:effectsOnly,
                sampleTime:frameTime>0?frameTime:getTimer(),aura:TelekinesisVisuals.captureWeapon(w),
                display:playerDisplay?WeaponDisplay.capture(u,w):null,
+               melee:MeleeVisuals.capture(u,w),impacts:energyImpacts.capture(w),
                shots:count,ox:Number(get(w,"X"))-Number(get(u,"X")),
                oy:Number(get(w,"Y"))-Number(get(u,"Y")),rot:Number(get(w,"rot")),
                prep:int(get(w,"t_prep")),reload:int(get(w,"t_reload")),
@@ -101,7 +172,7 @@ package rconnect.game
          return result;
       }
 
-      public function apply(u:Object,snapshot:Object,main:Object):void
+      public function apply(u:Object,snapshot:Object,main:Object,motion:RemoteMotion=null):void
       {
          try
          {
@@ -113,6 +184,8 @@ package rconnect.game
                   originalCurrent:get(u,"currentWeapon"),created:[],styles:new Dictionary()};
             }
             var old:int=rec.sost;rec.sost=int(snapshot.sost);
+            rec.clock=motion;
+            rec.burning=snapshot.burning===true;rec.main=main;
             RConnectAnimationAccess.receive(u as Unit,snapshot.pose,String(snapshot.anim),rec.pose);
             rec.pose=snapshot.pose;
             rec.body=snapshot.body;
@@ -142,10 +215,11 @@ package rconnect.game
             if(!(snapshot.weapons is Array)) return;
             for each(var s:Object in snapshot.weapons)
             {
+               if(s.effectsOnly===true)continue;
                var gun:Object=rec.guns[String(s.slot)];
                if(gun==null || gun.id!=s.id || gun.variant!=s.variant)
                {
-                  if(gun!=null) {telekinesis.forgetWeapon(gun.weapon);gun.weapon.remVisual();}
+                  if(gun!=null) {melee.forget(gun.weapon);telekinesis.forgetWeapon(gun.weapon);gun.weapon.remVisual();}
                   var local:Array=get(u,"childObjs") as Array;
                   var weapon:Object=s.main===true?get(u,"currentWeapon"):(local==null?null:local[int(s.slot)]);
                   if(weapon==null || String(get(weapon,"id"))!=s.id || int(get(weapon,"variant"))!=int(s.variant))
@@ -196,6 +270,7 @@ package rconnect.game
          {
             RConnectAnimationAccess.effects(u as Unit);
             if(rec.sost>=3) {enforceDeath(u,rec.sost);return;}
+            burning.present(rec.main,u,rec.burning===true);
             for each(var gun:Object in rec.guns)
             {
                var w:Object=gun.weapon,s:Object=gun.snapshot;
@@ -227,6 +302,7 @@ package rconnect.game
                {
                   v.visible=u.vis.visible;v.alpha=u.vis.alpha;
                }
+               melee.apply(u,w,s.melee,rec.clock==null?NaN:rec.clock.sourceTime);
             }
             if(rec.body!=null)TurretDisplay.present(u,rec.body);
          }
@@ -265,6 +341,8 @@ package rconnect.game
       public function reset():void
       {
          telekinesis.reset();
+         energyImpacts.reset();melee.reset();MeleeVisuals.resetObserved();
+         burning.reset();
          for(var u:Object in states)
          {
             var rec:Object=states[u];
@@ -282,6 +360,7 @@ package rconnect.game
          RConnectAnimationAccess.reset();
          states=new Dictionary();
          hostShots=new Dictionary(true);
+         frameBullets=new Dictionary(true);scannedAt=-1;scannedLoc=null;
          frameTime=0;
       }
 

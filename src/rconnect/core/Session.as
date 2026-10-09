@@ -266,6 +266,7 @@ package rconnect.core
       {
          if(mod.enemyGrip!=null)mod.enemyGrip.reset();
          if(mod.peerGrip!=null)mod.peerGrip.reset();
+         if(mod.playerMines!=null)mod.playerMines.reset();
          _nextWorldSnapshot=_nextSceneReport=0;
          if(pause!=null)pause.reset();
          if(progress!=null)progress.reset();
@@ -437,6 +438,7 @@ package rconnect.core
                         {
                            mod.game.applyTilePatch(msg.tilePatch as Array);
                         }
+                        if(msg.wallPaint!=null)mod.game.applyWallPaint(msg.wallPaint as Array);
                         if(msg.objSpawn != null)
                         {
                            if(!_spawnRxLog)
@@ -1070,6 +1072,7 @@ package rconnect.core
                {
                   usMsg.tilePatch = tpatch;
                }
+               usMsg.wallPaint=mod.game.readWallPaint();
                var nspawn:Array = mod.game.readNewObjs();
                if(nspawn != null)
                {
@@ -1153,6 +1156,7 @@ package rconnect.core
 
       public function flushRoomReports(scene:Boolean=true,closing:Boolean=false):void
       {
+         if(mod.playerMines!=null)mod.playerMines.flush();
          if(link==null || !link.isOpen)return;
          var hits:Array=mod.game.scanAndReportDamage();
          if(hits!=null && hits.length)link.send(rooms.stamp(Protocol.make(Protocol.MSG_DAMAGE,{hits:hits,worldInfo:mod.game.readWorldInfo()})));

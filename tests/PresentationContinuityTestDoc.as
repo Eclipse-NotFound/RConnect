@@ -16,13 +16,14 @@ package {
 
    /** Actual container interaction, native Loot physics and native SATS over TCP.
     * A controlled moving native enemy isolates presentation from autonomous AI.
-    * The driver never moves the receiving enemy or drop. */
+    * Ambient foes are removed from this isolated fixture before spawning its
+    * controlled enemy. Density is checked separately; receiving objects never move by driver. */
    public class PresentationContinuityTestDoc extends Sprite {
       public static const MOD_CLASS:Class=RConnectMod;
       private var mod:RConnectMod,host:Boolean,timer:Timer=new Timer(50),links:Dictionary=new Dictionary();
       private var phase:String="boot",at:int=getTimer(),ready:Boolean=false,round:int=0;
       private var baseX:Number,baseY:Number,box:Object,enemy:Object,gun:Object;
-      private var renderFrame:int=0,lastRender:int=-1,trace:Array=[],peerTrace:Array=[];
+      private var renderFrame:int=0,lastRender:int=-1,trace:Array=[],peerTrace:Array=[],lootArrivals:Array=[];
       private var moving:Boolean=false,walkAt:int=0,walkX:Number=0;
       private var endpoint:Number=NaN,pausedX:Number=NaN,resumeJump:Number=0;
       private var stablePauseAt:int=0,initialGap:Number=NaN,worldFrames:int=0;
@@ -33,6 +34,7 @@ package {
          if(app.indexOf("rconnect-coop-")<0)return;
          host=app.indexOf("-host-")>=0;
          MotionCadenceRegression.run(check);
+         DropMotionBurstRegression.run(check);
          loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR,function(e:UncaughtErrorEvent):void {
             check(false,"uncaught "+(e.error is Error?Error(e.error).getStackTrace():e.error));e.preventDefault();finish();
          });
@@ -66,6 +68,15 @@ package {
          mod.config.setValue("followTeammate","0");
          // Clear only scene objects intersecting the original tile corridor.
          var l:Object=mod.game.loc;
+         if(l.base)throw new Error("continuity needs native combat-room containers and SATS");
+         if(host) {
+            var removed:int=0;
+            for each(var u:Object in l.units.concat())
+               if(u!==g && Number(u.fraction)>0 && Number(u.fraction)<100) {
+                  l.remObj(u);l.units.splice(l.units.indexOf(u),1);++removed;
+               }
+            Log.d("CONTINUITY FIXTURE ambient foes removed="+removed);
+         }
          for each(var o:Object in l.objs.concat())if(o.X2>baseX-20&&o.X1<baseX+320&&o.Y2>baseY-190&&o.Y1<baseY+20) {
             l.remObj(o);l.objs.splice(l.objs.indexOf(o),1);
          }
@@ -117,12 +128,17 @@ package {
          w.ctr.keySats=true;change("opening");
       }
       private function receive(e:NetMessageEvent):void {
-         var p:Object=e.data;if(p.type!="continuity-test")return;
+         var p:Object=e.data;
+         if(!host && p.lootMotion is Array && (phase=="falling" || phase=="drop-wait"))
+            for each(var received:Object in p.lootMotion)
+               if(received.item!=null && received.item.id=="kofe" && int(received.item.kol)==37+round)
+                  lootArrivals.push({received:getTimer(),sample:received.sampleTime,x:received.x,y:received.y,stay:received.stay});
+         if(p.type!="continuity-test")return;
          try {
             if(p.op=="ready"&&host)ready=true;
             else if(p.op=="setup"&&!host){baseX=p.x;baseY=p.y;install();send("installed");change("waiting");}
             else if(p.op=="installed"&&host)makeBox();
-            else if(p.op=="box"&&!host){round=p.round;trace=[];change("find-box");}
+            else if(p.op=="box"&&!host){round=p.round;trace=[];lootArrivals=[];change("find-box");}
             else if(p.op=="box-ready"&&host){send("open");if(round==1)box.inter.actOsn();change("falling");}
             else if(p.op=="open"&&!host){if(round==0)box.inter.actOsn();change("falling");}
             else if(p.op=="drop-trace"&&!host){peerTrace=p.trace;analyseDrop();send("drop-result");change("waiting");}
@@ -179,7 +195,7 @@ package {
             }else stillAt=0;
             last=s;
          }
-         Log.d("CONTINUITY DROP "+JSON.stringify({round:round,airFrames:airFrames,longestStillMs:longest,span:maxY-minY,sourceSpan:sourceMax-sourceMin,source:peerTrace,display:trace}));
+         Log.d("CONTINUITY DROP "+JSON.stringify({round:round,airFrames:airFrames,longestStillMs:longest,span:maxY-minY,sourceSpan:sourceMax-sourceMin,source:peerTrace,display:trace,arrivals:lootArrivals}));
          check(peerTrace.length>10&&sourceMax-sourceMin>20,"native container loot completes a visible falling arc round="+round);
          check(airFrames>=8&&maxY-minY>20,"receiver renders the drop arc round="+round+" frames="+airFrames);
          check(longest<=85,"falling loot has no stationary display gap above 85ms round="+round+" actual="+longest);

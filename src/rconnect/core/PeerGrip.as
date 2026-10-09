@@ -13,10 +13,11 @@ package rconnect.core {
    public class PeerGrip {
       private var mod:RConnectMod,timer:Timer=new Timer(50),links:Dictionary=new Dictionary(),retired:Dictionary=new Dictionary();
       private var outgoing:Object,incoming:Object,keys:Object,beforeMotion:Object;
+      private var throwDamage:PeerThrowDamage;
       private var serial:int=0,errors:int=0,lastFrame:int=getTimer(),wasPaused:Boolean=false,manaBefore:Number=0;
       private static const MOVEMENT:Array=["keyLeft","keyRight","keyBeUp","keySit","keyJump","keyDash","keyDubLeft","keyDubRight"];
       public function PeerGrip(m:RConnectMod) {
-         mod=m;m.stage.addEventListener(Event.ENTER_FRAME,before,false,98000);
+         mod=m;throwDamage=new PeerThrowDamage(m);m.stage.addEventListener(Event.ENTER_FRAME,before,false,98000);
          m.stage.addEventListener(Event.ENTER_FRAME,after,false,-8500);
          timer.addEventListener(TimerEvent.TIMER,sendHeld);timer.start();
       }
@@ -26,6 +27,9 @@ package rconnect.core {
       public function get allowed():Boolean {return mod.config.getValue("allowPeerGrip")=="1";}
       public function get struggle():Boolean {return mod.config.getValue("peerGripStruggle")!="0";}
       public function get heldByTeammate():Boolean {return incoming!=null;}
+      public function get throwDamageAllowed():Boolean {return throwDamage.allowed;}
+      public function get throwDamageActive():Boolean {return throwDamage.active;}
+      public function setThrowDamageAllowed(value:Boolean):void {throwDamage.setAllowed(value);}
       public function setPreferences(allow:Boolean,escape:Boolean):void {
          mod.config.setValue("allowPeerGrip",allow?"1":"0");mod.config.setValue("peerGripStruggle",escape?"1":"0");mod.config.save();
          if(!allow)endIncoming("consent");
@@ -89,6 +93,7 @@ package rconnect.core {
             if(incoming!=null&&(pause||wasPaused))incoming.until+=Math.max(0,now-lastFrame);
             lastFrame=now;wasPaused=pause;
             if(!ready()){reset();return;}
+            throwDamage.beforeStep();
             var g:Object=game.gg;manaBefore=g.mana;
             if(outgoing!=null&&(game.isPlayerDead()||!outgoing.link.isOpen||peerFor(outgoing.raw)!==outgoing.link
                ||outgoing.raw.loc!==game.loc||!outgoing.raw.in_chain||!outgoing.raw.levitPoss||(!outgoing.accepted&&now>outgoing.until)
@@ -111,13 +116,13 @@ package rconnect.core {
       }
       private function after(e:Event):void {
          try {
-            restoreKeys();if(!ready()){reset();return;}
+            restoreKeys();throwDamage.afterStep();if(!ready()){reset();return;}
             var g:Object=game.gg,raw:Object=g.teleObj,link:TcpLink=peerFor(raw);
             if(outgoing!=null&&raw!==outgoing.raw)endOutgoing(true,true);
             if(link==null||raw==null)return;
             if(!raw.levitPoss||incoming!=null||game.isPlayerDead()){g.dropTeleObj();return;}
             if(outgoing==null){outgoing={raw:raw,link:link,token:++serial,startMana:manaBefore,accepted:false,until:getTimer()+2000};sendHeld();}
-         }catch(err:Error){fault(err);}
+         }catch(err:Error){throwDamage.reset();fault(err);}
       }
       private function safe(p:Object):Boolean {
          if(p==null)return false;for each(var k:String in ["cx","cy","speed","accel","mana","startMana","mass","range","master"])
@@ -137,7 +142,9 @@ package rconnect.core {
             if(p.op=="release") {
                if(incoming==null||incoming.link!==l||incoming.token!=p.token)return;
                var g:Object=incoming.player,kick:Object=p.kick;endIncoming("released");
-               if(kick!=null&&isFinite(Number(kick.x))&&isFinite(Number(kick.y))&&Math.abs(kick.x)<=1000&&Math.abs(kick.y)<=1000){g.dx+=Number(kick.x);g.dy+=Number(kick.y);g.t_throw=45;}
+               if(kick!=null&&isFinite(Number(kick.x))&&isFinite(Number(kick.y))&&Math.abs(kick.x)<=1000&&Math.abs(kick.y)<=1000){
+                  g.dx+=Number(kick.x);g.dy+=Number(kick.y);g.t_throw=45;throwDamage.arm(g,l,p);
+               }
                return;
             }
             if(p.op!="hold"||!safe(p.input)||int(p.token)<=0||Number(p.token)!=int(p.token))return;
@@ -152,7 +159,7 @@ package rconnect.core {
                   &&(incoming!=null||input.master!=0&&game.loc.portOn||game.loc.isLine(source.X,source.Y-source.scY*.75,g.X,g.Y-g.scY/2));
             }
             if(!eligible){retire(l,p);reply(l,p,false,"ineligible");if(incoming!=null&&incoming.token==p.token)endIncoming("ineligible");return;}
-            if(incoming==null){incoming={player:g,link:l,token:p.token,stamp:p};g.levit=2;g.stay=false;reply(l,p,true);}
+            if(incoming==null){throwDamage.reset();incoming={player:g,link:l,token:p.token,stamp:p};g.levit=2;g.stay=false;reply(l,p,true);}
             incoming.input=input;incoming.until=getTimer()+1500;
          }catch(err:Error){fault(err);}
       }
@@ -175,7 +182,7 @@ package rconnect.core {
          reply(rec.link,rec,false,reason);
       }
       private function restoreKeys():void {if(keys==null)return;var saved:Object=keys;keys=null;for(var k:String in saved.values)saved.ctr[k]=saved.values[k];}
-      public function reset():void {endIncoming("reset");endOutgoing(true);restoreKeys();beforeMotion=null;
+      public function reset():void {throwDamage.reset();endIncoming("reset");endOutgoing(true);restoreKeys();beforeMotion=null;
          if(game.gg!=null&&peerFor(game.gg.teleObj)!=null)game.gg.dropTeleObj();}
       private function fault(e:Error):void {if(errors++<4)Log.d("RConnectPeerGrip: failed "+e.getStackTrace());}
    }

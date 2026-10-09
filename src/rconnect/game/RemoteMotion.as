@@ -12,6 +12,11 @@ package rconnect.game
       private var duration:int=50;
       private var interval:int;
       private var immediateStart:Boolean;
+      private var bufferLimit:int=0;
+      // Only immediately visible drops use packet-burst buffering. A grab
+      // has a separate low-latency policy, and avatar clocks stay unchanged.
+      private var firstSample:Boolean=true;
+      private var dropDelay:Number=0;
       private var frames:Array=[];
       private var gaps:Array=[];
       private var offset:Number=0;
@@ -24,6 +29,14 @@ package rconnect.game
 
       public function RemoteMotion(intervalMs:int=50,startImmediately:Boolean=false) {
          interval=intervalMs;immediateStart=startImmediately;
+      }
+
+      /** High-rate held objects have their own presentation clock. A single
+       * slow native frame must not leave a quarter-second delay on the drag.
+       * This policy still interpolates only received positions, with the same
+       * continuous clock and pause/release behavior as ordinary streams. */
+      public static function held():RemoteMotion {
+         var motion:RemoteMotion=new RemoteMotion(50);motion.bufferLimit=100;return motion;
       }
 
       public function push(snap:Object, now:int):void
@@ -62,6 +75,9 @@ package rconnect.game
          return state;
       }
 
+      /** Shared display cursor for this avatar's weapon and projectile frames. */
+      public function get sourceTime():Number {return frames.length>0?cursor:NaN;}
+
       /** A paused world may still receive its last in-flight snapshots. Close
        * the display buffer at the received endpoint, without extrapolation.
        * Retain that cursor so resume cannot replay the pre-pause position. */
@@ -81,9 +97,11 @@ package rconnect.game
          var clockOffset:Number=now-stamp;
          var dx:Number=last==null?0:Number(snap.x)-Number(last.snap.x);
          var dy:Number=last==null?0:Number(snap.y)-Number(last.snap.y);
+         var port:Boolean=last!=null && last.snap.roomKey==snap.roomKey && last.snap.roomEpoch==snap.roomEpoch
+            && TeleportVisuals.split(last.snap,snap,stamp)!=null;
          if(last==null || now-arrivedAt>1000 || stamp-Number(last.at)>1000
-            || clockOffset<offset-Math.max(250,interval*2) || dx*dx+dy*dy>600*600) {
-            frames=[];gaps=[];selected=null;state=null;preceding=null;
+            || clockOffset<offset-Math.max(250,interval*2) || (!port && dx*dx+dy*dy>600*600)) {
+            frames=[];gaps=[];selected=null;state=null;preceding=null;firstSample=true;dropDelay=0;
             offset=clockOffset;cursor=stamp-(immediateStart?0:delay());sampledAt=now;
          } else {
             // Host world broadcasts can repeat an unchanged peer snapshot.
@@ -94,7 +112,11 @@ package rconnect.game
             // from fresher arrivals instead of retaining that startup delay.
             var previousOffset:Number=offset;
             offset=Math.min(offset,clockOffset);
-            cursor+=previousOffset-offset;
+            // A newborn drop may receive several native positions in one
+            // socket callback. Seeking its cursor here discards the entire
+            // short arc and leaves it motionless until the next packet batch.
+            if(!immediateStart)cursor+=previousOffset-offset;
+            if(immediateStart)dropDelay=Math.min(500,Math.max(dropDelay,(now-arrivedAt)*1.25));
             gaps.push(stamp-Number(last.at));if(gaps.length>8)gaps.shift();
          }
          arrivedAt=now;frames.push({at:stamp,snap:snap});
@@ -102,12 +124,19 @@ package rconnect.game
       }
 
       private function delay():Number {
-         var value:Number=Math.max(100,interval*1.5);
+         var value:Number=bufferLimit>0?interval*1.5:Math.max(100,interval*1.5);
          for each(var gap:Number in gaps)value=Math.max(value,gap*1.25);
-         return Math.min(Math.max(250,interval*3),value);
+         // Automatic falling arcs can absorb a slow delivery burst. The
+         // delay follows observed traffic, capped at half a second; regular
+         // 20 Hz drops retain their usual 100 ms target and never extrapolate.
+         if(immediateStart)return Math.min(500,Math.max(value,dropDelay));
+         return Math.min(bufferLimit>0?bufferLimit:Math.max(250,interval*3),value);
       }
 
       private function sampleTimed(now:int):Object {
+         // Retain the first received arc instead of consuming a coalesced batch.
+         if(firstSample && immediateStart)dropDelay=Math.min(500,Math.max(dropDelay,Number(frames[frames.length-1].at)-Number(frames[0].at)));
+         firstSample=false;
          var elapsed:Number=Math.max(0,now-sampledAt);sampledAt=Math.max(sampledAt,now);
          var wanted:Number=now-offset-delay(),next:Number=cursor+elapsed;
          // Adjust buffer depth by slightly changing playback speed, never by
@@ -118,8 +147,17 @@ package rconnect.game
          while(frames.length>2 && Number(frames[1].at)<=cursor)preceding=frames.shift();
          var a:Object=frames[0],b:Object=frames.length>1?frames[1]:a;
          if(cursor>=Number(b.at))a=b;
-         if(selected!==a.snap) {
-            selected=a.snap;state={};for(var key:String in selected)state[key]=selected[key];
+         var crossing:Object=TeleportVisuals.split(a.snap,b.snap,cursor);
+         var chosen:Object=crossing==null?a.snap:crossing.snapshot;
+         if(selected!==chosen) {
+            selected=chosen;state={};for(var key:String in selected)state[key]=selected[key];
+         }
+         if(crossing!=null) {
+            state.x=crossing.x;state.y=crossing.y;
+            // Native teleport changes world position immediately. Weapon and
+            // body poses come from the matching side of that discontinuity.
+            state.weapons=chosen.weapons;
+            return state;
          }
          var span:Number=Number(b.at)-Number(a.at);
          var t:Number=span>0?Math.max(0,Math.min(1,(cursor-Number(a.at))/span)):0;

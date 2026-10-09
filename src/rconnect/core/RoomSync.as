@@ -33,6 +33,8 @@ package rconnect.core
       private var blocked:Boolean=false;
       private var requested:Boolean=false;
       private var teammate:Object,followPending:Object;
+      private var followSeenAt:int=0,followAttemptAfter:int=0,followFailures:int=0;
+      private var followStarted:Boolean=false;
       public var busy:Boolean=false;
       public var ready:Boolean=false;
       public var authority:Boolean=true;
@@ -53,7 +55,7 @@ package rconnect.core
          ready=false;authority=true;initial=true;epoch=0;term=0;pending=0;hostInfo=null;
          game.independentRooms=false;game.roomEpoch=0;status="";blocked=false;
          requested=false;
-         teammate=null;followPending=null;
+         teammate=null;cancelFollow();
          TravelGuard.reset();
       }
       private function connected():Boolean
@@ -183,27 +185,63 @@ package rconnect.core
       /** Follow departures from a shared room. This prevents two followers
        * exchanging rooms when their two position packets cross in flight. */
       public function observeTeammate(info:Object):void {
-         if(info==null)return;
-         if(teammate!=null && String(teammate.roomKey)!=String(info.roomKey)
+         if(info==null){teammate=null;cancelFollow();return;}
+         if(mod.config.getValue("followTeammate")!="1")cancelFollow();
+         else if(followPending!=null) {
+            // A new destination replaces the old request, including its retry
+            // timer. A map/epoch change belongs to the normal map barrier.
+            if(!sameFollowMap(followPending,info))cancelFollow();
+            else {
+               if(String(followPending.roomKey)!=String(info.roomKey)) {
+                  followAttemptAfter=0;followFailures=0;followStarted=false;
+               }
+               followPending=info;followSeenAt=getTimer();
+            }
+         }
+         else if(teammate!=null && sameFollowMap(teammate,info)
+            && String(teammate.roomKey)!=String(info.roomKey)
             && String(teammate.roomKey)==game.roomKey()
-            && mod.config.getValue("followTeammate")=="1")followPending=info;
-         if(followPending!=null)followPending=info;
+            && mod.config.getValue("followTeammate")=="1") {
+            followPending=info;followSeenAt=getTimer();followAttemptAfter=0;followFailures=0;
+         }
          teammate=info;
       }
+      private function sameFollowMap(a:Object,b:Object):Boolean {
+         return a!=null && b!=null && String(a.curLandId)==String(b.curLandId)
+            && String(a.curCoord)==String(b.curCoord) && int(a.roomEpoch)==int(b.roomEpoch)
+            && Number(a.landStage)==Number(b.landStage);
+      }
+      private function cancelFollow():void {
+         followPending=null;followSeenAt=0;followAttemptAfter=0;followFailures=0;followStarted=false;
+      }
       private function followTeammate():void {
-         if(followPending==null || (session.pause!=null && session.pause.paused))return;
-         if(mod.config.getValue("followTeammate")!="1"){followPending=null;return;}
+         if(followPending==null)return;
+         var now:int=getTimer();
+         if(mod.config.getValue("followTeammate")!="1" || now-followSeenAt>3000){cancelFollow();return;}
+         if(session.pause!=null && session.pause.paused)return;
          if(!ready || busy || pending!=0 || game.isTransitioning() || game.isPlayerDead())return;
          var info:Object=followPending,mine:Object=game.readWorldInfo();
          if(mine==null)return;
-         followPending=null;
-         if(String(info.curLandId)!=String(mine.curLandId) || int(info.roomEpoch)!=epoch
-            || String(info.roomKey)==game.roomKey() || String(info.landProb || "")!="" || TravelGuard.restricted(game.loc))return;
+         if(!sameFollowMap(info,mine) || int(info.roomEpoch)!=epoch
+            || String(info.landProb || "")!="" || TravelGuard.restricted(game.loc)){cancelFollow();return;}
+         if(String(info.roomKey)==game.roomKey()) {
+            // Reaching a native room is not completion until its ownership
+            // handoff has finished. The ready/busy gates above enforce that.
+            var arrived:Boolean=followStarted;cancelFollow();
+            if(arrived)notice("已跟随队友进入房间");return;
+         }
+         if(now<followAttemptAfter)return;
          var target:Object;
          try {target=game.world.land.locs[int(info.landX)][int(info.landY)][int(info.landZ)];}catch(e:*){}
-         if(target==null || TravelGuard.restricted(target))return;
-         TravelGuard.follow(game,info,!host());check();
-         notice("已跟随队友进入房间");
+         if(target!=null && (String(info.roomKey)!=game.roomKey(target) || TravelGuard.restricted(target))){cancelFollow();return;}
+         // Temporary unavailability is not success. Keep the latest intent
+         // without reactivating a room every frame or waiting for a new door.
+         followAttemptAfter=now+Math.min(2000,500*(1+followFailures));
+         if(target==null || !TravelGuard.follow(game,info,!host())) {
+            if(followFailures++<3)Log.d("RConnectRoom: follow deferred room="+info.roomKey+" attempt="+followFailures);
+            return;
+         }
+         followStarted=true;check();
       }
       public function accepts(msg:Object):Boolean
       {return !busy && acceptsReceipt(msg);}
@@ -216,10 +254,10 @@ package rconnect.core
             || String(info.landProb || "")!="" || TravelGuard.restricted(game.loc))return false;
          try {target=game.world.land.locs[int(info.landX)][int(info.landY)][int(info.landZ)];}catch(e:*){}
          if(target==null || String(info.roomKey)!=game.roomKey(target) || TravelGuard.restricted(target))return false;
-         followPending=null;
+         cancelFollow();
          if(target!==game.loc)
          {
-            TravelGuard.follow(game,{landX:info.landX,landY:info.landY,landZ:info.landZ,landProb:""},!host());
+            if(!TravelGuard.follow(game,{landX:info.landX,landY:info.landY,landZ:info.landZ,landProb:""},!host()))return false;
             check();
          }
          return true;

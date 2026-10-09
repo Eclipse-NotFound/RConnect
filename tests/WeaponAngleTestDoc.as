@@ -27,6 +27,7 @@ package {
       private var expected:Object,samples:int=0,wrong:int=0,flashes:int=0,localDone:Boolean=false,peerDone:Boolean=false;
       private var sourceFlashes:int=0,lastShoot:int=0,sourceShots:int=0,peerSourceShots:int=0;
       private var previousAxes:Object;
+      private var warmFrames:int=0,prepared:Boolean=false,peerPrepared:Boolean=false;
       public function WeaponAngleTestDoc() {
          var app:String=NativeApplication.nativeApplication.applicationID;
          if(app.indexOf("rconnect-coop-")<0)return;host=app.indexOf("-host-")>=0;
@@ -41,7 +42,7 @@ package {
       private function watch(l:TcpLink):void {if(l!=null && !links[l]){links[l]=true;l.addEventListener(TcpLink.MESSAGE,receive);}}
       private function axes(v:DisplayObject):Object {
          if(v==null || v.stage==null)return null;
-         var p:Point=v.localToGlobal(new Point()),x:Point=v.localToGlobal(new Point(1,0)),y:Point=v.localToGlobal(new Point(0,1));
+         var p:Point=v.localToGlobal(new Point()),x:Point=v.localToGlobal(new Point(1000,0)),y:Point=v.localToGlobal(new Point(0,1000));
          x=x.subtract(p);y=y.subtract(p);x.normalize(1);y.normalize(1);
          return {xx:x.x,xy:x.y,yx:y.x,yy:y.y};
       }
@@ -57,29 +58,31 @@ package {
          mod.stage.addEventListener(Event.RENDER,render,false,-30000);
       }
       private function start(n:int):void {
-         round=n;phase="show";at=getTimer();expected=null;samples=wrong=flashes=sourceFlashes=sourceShots=peerSourceShots=0;
+         round=n;phase="warm";at=getTimer();expected=null;samples=wrong=flashes=sourceFlashes=sourceShots=peerSourceShots=0;
+         warmFrames=0;prepared=peerPrepared=false;
          localDone=peerDone=false;lastShoot=0;
          previousAxes=null;
       }
       private function before(e:Event):void {
          // The peer can still be sampling after our local timer finishes.
          // Keep the native input pose until both sides complete this round.
-         if((phase!="show" && phase!="sampled") || gun==null)return;
+         if((phase!="warm" && phase!="show" && phase!="sampled") || gun==null)return;
          var g:Object=mod.game.gg,a:Number=CASES[round].deg*Math.PI/180;
          g.setPos(baseX,baseY);g.dx=g.dy=0;g.storona=CASES[round].body;g.disabled=true;g.invulner=true;
          g.celX=baseX+Math.cos(a)*450;g.celY=baseY-g.scY*.7+Math.sin(a)*450;
          mod.game.world.celX=g.celX;mod.game.world.celY=g.celY;
          gun.hold=999;gun.t_reload=0;
          var cam:Object=mod.game.world.cam;cam.celX=int(g.celX*cam.scaleV+cam.vx);cam.celY=int(g.celY*cam.scaleV+cam.vy);
-         gun.attack();
+         if(phase!="warm")gun.attack();
       }
       private function after(e:Event):void {
-         if((phase!="show" && phase!="sampled") || gun==null)return;
+         if((phase!="warm" && phase!="show" && phase!="sampled") || gun==null)return;
          gun.step();mod.game.world.testDam=true;
+         if(phase=="warm")warmFrames++;
          mod.stage.invalidate();
       }
       private function render(e:Event):void {
-         if((phase!="show" && phase!="sampled") || gun==null)return;
+         if((phase!="warm" && phase!="show" && phase!="sampled") || gun==null)return;
          var actual:Object=axes(gun.vis as DisplayObject);
          if(actual!=null && (previousAxes==null || Math.abs(actual.xx-previousAxes.xx)+Math.abs(actual.xy-previousAxes.xy)+Math.abs(actual.yx-previousAxes.yx)+Math.abs(actual.yy-previousAxes.yy)>.01)) {
             Log.d("WEAPON ANGLE NATIVE CHANGE "+JSON.stringify({role:host?"host":"join",round:round,phase:phase,elapsed:getTimer()-at,axes:actual}));previousAxes=actual;
@@ -105,6 +108,8 @@ package {
          else if(!host && p.stage=="setup" && phase=="boot"){setup();start(0);}
          else if(p.stage=="native" && int(p.round)==round)expected=p.axes;
          else if(p.stage=="round" && !host)start(int(p.round));
+         else if(p.stage=="prepared" && int(p.round)==round)peerPrepared=true;
+         else if(p.stage=="go" && !host && int(p.round)==round){phase="show";at=getTimer();}
          else if(p.stage=="result" && host && int(p.round)==round){peerDone=true;peerSourceShots=int(p.shots);advance();}
          else if(p.stage=="done")finish();
       }
@@ -122,6 +127,10 @@ package {
          if(phase!="done" && getTimer()-at>60000){check(false,"timeout "+phase);send("done");finish();return;}
          if(!mod.session.rooms.ready || mod.session.rooms.busy || mod.game.isTransitioning())return;
          if(phase=="boot" && !host && t.currentCount>160 && getTimer()-readyAt>500){readyAt=getTimer();send("ready");}
+         // This suite checks held aim at each angle. The native gun needs up
+         // to 16 simulation steps to turn; let both real guns finish first.
+         if(phase=="warm" && warmFrames>=40 && !prepared){prepared=true;send("prepared",{round:round});}
+         if(host && phase=="warm" && prepared && peerPrepared){phase="show";at=getTimer();send("go",{round:round});}
          if(phase=="show" && getTimer()-at>2800) {
             check(samples>=12,"final display sampled after buffering frames="+samples);
             check(samples>=12 && wrong==0,"remote gun matches native aim and flip wrong="+wrong+"/"+samples+" degree="+CASES[round].deg+" facing="+CASES[round].body);

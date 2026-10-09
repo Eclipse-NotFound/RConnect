@@ -116,7 +116,7 @@ package rconnect.core
          pending=null;
          if(spot==null) {mod.session.rooms.notice("队友附近没有可站立的落点");return;}
          var gg:Object=game.gg;
-         gg.setPos(spot.x,spot.y);gg.dx=0;gg.dy=0;gg.isLaz=0;gg.setVisPos();
+         TravelPlacement.place(gg,spot.x,spot.y);
          mod.session.rooms.notice("已传送到队友身边");
          Log.d("RConnectNavigation: arrived room="+game.roomKey()+" x="+spot.x+" y="+spot.y);
       }

@@ -29,4 +29,6 @@ public function Unit(id:String=null,difficulty:Number=100,map:XML=null,data:Obje
 public function damage(amount:Number,type:int,bullet:Bullet=null,periodic:Boolean=false):Number {return 0;}
 public function die(type:int=0):* {}
 public function step():* {}
+public function dopTest(b:Bullet):Boolean {return true;}
+public function udarBullet(b:Bullet,mode:int=0):int {return 0;}
 } }

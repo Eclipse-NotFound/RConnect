@@ -33,10 +33,11 @@ package rconnect.ui {
       private var policyLabel:TextField,policyHint:TextField,versionLabel:TextField;
       private var opacityLabel:TextField,opacityValue:TextField,opacityLess:TextField,opacityMore:TextField;
       private var opacityPercent:int=100;
-      private var allowGrip:TextField,struggleGrip:TextField,gripHint:TextField;
+      private var allowGrip:TextField,struggleGrip:TextField,throwGrip:TextField,gripHint:TextField;
       private var _btnHost:TextField,_btnJoin:TextField,_btnLeave:TextField,_btnSend:TextField;
       private var _btnExploration:TextField,_btnFollow:TextField,_btnTeleport:TextField;
       private var _btnPauseMenus:TextField,_btnPauseSats:TextField,_pauseBanner:TextField;
+      private var friendlyFire:TextField,friendlyHint:TextField;
       private var page:String="connect",folded:Boolean=true,help:Boolean=false,unread:int=0;
       private var lines:Array=[],scroll:Number=0,dock:String="tl",preferredX:Number=8,preferredY:Number=8;
       private var box:Object={w:280,h:36,body:156},prefs:SharedObject,lastMode:String="",localError:String="";
@@ -179,14 +180,21 @@ package rconnect.ui {
          action(opacityMore,function():void {setOpacity(opacityPercent+10);});
          allowGrip=field("rconnect-allow-grip","settings",8,48,264,30,true);
          struggleGrip=field("rconnect-struggle-grip","settings",8,84,264,30,true);
-         gripHint=field("rconnect-grip-hint","settings",8,122,264,40);
+         throwGrip=field("rconnect-throw-damage","settings",8,120,264,30,true);
+         gripHint=field("rconnect-grip-hint","settings",8,158,264,40);
          action(allowGrip,function():void {if(mod.peerGrip!=null)mod.peerGrip.setPreferences(!mod.peerGrip.allowed,mod.peerGrip.struggle);});
          action(struggleGrip,function():void {if(mod.peerGrip!=null)mod.peerGrip.setPreferences(mod.peerGrip.allowed,!mod.peerGrip.struggle);});
-         policyLabel=field("rconnect-policy-owner","settings",8,170,264,24);
-         _btnPauseMenus=field("rconnect-pause-menus","settings",8,198,264,30,true);
-         _btnPauseSats=field("rconnect-pause-sats","settings",8,234,264,30,true);
-         policyHint=field("rconnect-policy-hint","settings",8,272,264,40);
-         versionLabel=field("rconnect-version","settings",8,316,264,38);
+         action(throwGrip,function():void {if(mod.peerGrip!=null)mod.peerGrip.setThrowDamageAllowed(!mod.peerGrip.throwDamageAllowed);});
+         policyLabel=field("rconnect-policy-owner","settings",8,206,264,24);
+         _btnPauseMenus=field("rconnect-pause-menus","settings",8,234,264,30,true);
+         _btnPauseSats=field("rconnect-pause-sats","settings",8,270,264,30,true);
+         policyHint=field("rconnect-policy-hint","settings",8,308,264,40);
+         friendlyFire=field("rconnect-friendly-fire","settings",8,352,264,30,true);
+         friendlyHint=field("rconnect-friendly-hint","settings",8,388,264,42);
+         versionLabel=field("rconnect-version","settings",8,436,264,38);
+         action(friendlyFire,function():void {
+            if(mod.friendlyFire!=null)mod.friendlyFire.setEnabled(!mod.friendlyFire.enabled);
+         });
          action(_btnPauseMenus,function():void {
             if(mod.session.pause!=null)mod.session.pause.setPolicy(!mod.session.pause.policyMenus,mod.session.pause.policySats);
          });
@@ -315,9 +323,11 @@ package rconnect.ui {
          allowGrip.text=tr("允许队友念力抓起我","Allow teammate to lift me","Разрешить поднять меня")+": "+RCLocale.text(mod.peerGrip!=null && mod.peerGrip.allowed?"开":"关");
          struggleGrip.text=tr("被抓时 WASD 挣脱","WASD escapes teammate grip","WASD: освободиться")+": "+RCLocale.text(mod.peerGrip==null || mod.peerGrip.struggle?"开":"关");
          enabled(allowGrip,mod.peerGrip!=null);enabled(struggleGrip,mod.peerGrip!=null);
-         gripHint.text=tr("只影响自己；关闭允许会立即松开。\n关闭挣脱时，WASD 不会打断抓取。",
-            "Your choice only. Disallow to release now.\nEscape off: WASD does not end the hold.",
-            "Только для вас. Запрет сразу отпускает.\nПобег выкл.: WASD не прерывает захват.");
+         throwGrip.text=tr("允许队友抛掷伤害我","Teammate throw can hurt me","Урон от броска союзником")+": "+RCLocale.text(mod.peerGrip!=null && mod.peerGrip.throwDamageAllowed?"开":"关");
+         enabled(throwGrip,mod.peerGrip!=null);
+         gripHint.text=tr("各自设置；关闭允许会立即松开。\n抛掷伤害只控制被队友抛出后的撞击。",
+            "Personal settings. Disallow to release now.\nThrow damage controls your impact after a teammate throws you.",
+            "Личный выбор. Запрет сразу отпускает.\nУрон от броска касается вашего удара после броска союзником.");
          policyLabel.text=pause==null || pause.canChangePolicy?
             mode==Session.OFFLINE?tr("离线预设","Offline presets","Настройки офлайн"):tr("由你设置","Host settings","Настройки ведущего"):
             tr("宿主设置 · 只读","Host settings · read only","Настройки ведущего · только чтение");
@@ -325,6 +335,12 @@ package rconnect.ui {
          RCLocale.bind(_btnPauseSats,"SATS同步暂停："+(pause!=null && pause.policySats?"开":"关"),false);
          enabled(_btnPauseMenus,pause!=null && pause.canChangePolicy);enabled(_btnPauseSats,pause!=null && pause.canChangePolicy);
          policyHint.text=RCLocale.text("由宿主设置；任意一方打开后全队暂停");
+         friendlyFire.text=tr("允许队友伤害","Allow friendly fire","Огонь по своим")+": "+
+            RCLocale.text(mod.friendlyFire!=null && mod.friendlyFire.enabled?"开":"关");
+         enabled(friendlyFire,mod.friendlyFire!=null && mod.friendlyFire.canChangePolicy);
+         friendlyHint.text=tr("由宿主设置；开启后双方攻击可伤害队友。",
+            "Host setting. Attacks can hurt teammates when enabled.",
+            "Настройка ведущего. Атаки могут ранить напарника.");
          versionLabel.text="RConnect v"+RConnectMod.VERSION+" · "+(mod.versionInfo==null?"":mod.versionInfo.version);
          footer.text=tr("Ctrl+Enter 聊天 · F10","Ctrl+Enter: chat · F10","Ctrl+Enter: чат · F10");
          dockButton.text=tr("停靠","Dock","Край")+" "+(dock=="tl"?"↖":dock=="tr"?"↗":dock=="br"?"↘":dock=="bl"?"↙":"◇");
@@ -379,10 +395,16 @@ package rconnect.ui {
             if(f==_btnHost || f==_btnJoin || f==_btnLeave)item.renderY=85+noteHeight+4;
             if(f==policyLabel)item.renderH=24+ownerExtra;
             if(f==gripHint)item.renderH=40+gripExtra;
-            if(item.page=="settings" && item.y>=170)item.renderY+=gripExtra;
-            if(item.page=="settings" && item.y>170)item.renderY+=ownerExtra;
+            if(item.page=="settings" && item.y>=206)item.renderY+=gripExtra;
+            if(item.page=="settings" && item.y>206)item.renderY+=ownerExtra;
             if(f==policyHint)item.renderH=policyHeight;
-            if(f==versionLabel)item.renderY=Math.max(316,272+policyHeight+4)+ownerExtra+gripExtra;
+            if(f==friendlyFire)item.renderY=Math.max(352,308+policyHeight+4)+ownerExtra+gripExtra;
+            if(f==friendlyHint) {
+               item.renderY=Math.max(352,308+policyHeight+4)+36+ownerExtra+gripExtra;
+               item.renderH=Math.max(42,f.textHeight+6);
+            }
+            if(f==versionLabel)item.renderY=Math.max(352,308+policyHeight+4)+36+
+               Math.max(42,friendlyHint.textHeight+6)+6+ownerExtra+gripExtra;
             if(f==peerHint || f==helpText)item.renderH=Math.max(item.h,f.textHeight+6);
             if(help?item.page=="help":item.page==page || item.page=="live" && page=="connect" && active)
                pageHeight=Math.max(pageHeight,item.renderY+item.renderH+8);
