@@ -90,7 +90,11 @@ package rconnect.core
       }
       private function before(e:Event):void
       {
-         if(!connected()) {if(ready || busy)reset();return;}
+         var active:Boolean=connected();
+         // Only the host has a periodic enemy consumer. The independent
+         // joiner's recorder keeps a bounded recent window for checkpoints.
+         game.setPresentationRecording(active,active && host());
+         if(!active) {if(ready || busy)reset();return;}
          try
          {
             game.refreshWorld();

@@ -20,7 +20,7 @@ def main():
     ap.add_argument('--output',type=Path,required=True)
     ap.add_argument('--source-root',type=Path,help='Optional frozen production source directory for external declarations')
     ap.add_argument('--entry',default='EffectsTerrainTestDoc',choices=[
-        'EffectsTerrainTestDoc','TurretTestDoc','PresentationTestDoc','SmoothPresentationTestDoc',
+        'ArchitectureTestDoc','EffectsTerrainTestDoc','TurretTestDoc','PresentationTestDoc','SmoothPresentationTestDoc',
         'SmoothNetworkTestDoc','AppearanceTestDoc','CombatFeedbackTestDoc','CombatFeedbackNetworkTestDoc',
         'AnimationGapsTestDoc','RoomCooperationTestDoc','CoopTestDoc','SatsTestDoc','CombatStateTestDoc',
         'CombatNetworkTestDoc','GameplayGapTestDoc','GameplayNetworkTestDoc','ProjectileNetworkTestDoc',

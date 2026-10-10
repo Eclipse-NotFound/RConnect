@@ -50,7 +50,7 @@ package {
          timer.addEventListener(TimerEvent.TIMER,tick);timer.start();
       }
       private function check(ok:Boolean,s:String):void {Log.d("COOP "+(ok?"PASS ":"FAIL ")+"beam-terrain "+s);}
-      private function send(s:String,p:Object=null):void {p=p||{};p.type="beam-terrain-test";p.stage=s;if(host)mod.session.server.broadcast(p);else mod.session.link.send(p);}
+      private function send(s:String,p:Object=null):void {p=p||{};p.type="beam-terrain-test";p.stage=s;p.roomKey=mod.game.roomKey();p.epoch=mod.session.rooms.epoch;if(host)mod.session.server.broadcast(p);else mod.session.link.send(p);}
       private function watch(l:TcpLink):void {if(l!=null && !links[l]){links[l]=true;l.addEventListener(TcpLink.MESSAGE,receive);}}
       private function setPhase(s:String):void {phase=s;at=getTimer();frames=shown=gap=maxGap=0;visTrace=[];lastShot=0;shots=0;visibleMs=darkMs=maxDarkMs=0;previousFrame=0;previousVisible=false;timeTrace=[];shotTrace=[];packetTrace=[];packetSeen={};packetOffset=Infinity;}
       /** Arrival diagnostics only; actual native pixels remain the oracle. */
@@ -70,6 +70,8 @@ package {
       }
       private function receive(e:NetMessageEvent):void {
          var p:Object=e.data;observePacket(p);if(p.type!="beam-terrain-test")return;
+         if(phase=="boot" && (String(p.roomKey)!=mod.game.roomKey() || int(p.epoch)!=mod.session.rooms.epoch
+            || !TestRoomReadiness.ready(mod,host)))return;
          if(host && p.stage=="ready" && phase=="boot") {setup();send("setup",{x:baseX,y:baseY,wx:wallX,wy:wallY,layout:layout()});setPhase("ready");}
          else if(!host && p.stage=="setup" && phase=="boot") {
             baseX=p.x;baseY=p.y;wallX=p.wx;wallY=p.wy;
@@ -119,7 +121,7 @@ package {
          mod=RConnectMod.instance;if(mod==null || mod.game==null || mod.session==null)return;
          if(host)for each(var p:Object in mod.session.peers)watch(p.link as TcpLink);else watch(mod.session.link);
          if(mod.game.gg==null || !mod.session.rooms.ready || mod.session.rooms.busy || mod.game.isTransitioning())return;
-         if(phase=="boot" && !host && getTimer()-readyAt>500){readyAt=getTimer();send("ready");}
+         if(phase=="boot" && !host && TestRoomReadiness.ready(mod,host) && getTimer()-readyAt>500){readyAt=getTimer();send("ready");}
          if(phase!="done" && at>0 && getTimer()-at>25000){check(false,"timeout "+phase);send("done");finish();}
       }
       private function spawn(cls:String,id:String,tr:int,dx:Number):Object {

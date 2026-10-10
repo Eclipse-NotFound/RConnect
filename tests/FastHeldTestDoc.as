@@ -475,6 +475,18 @@ package {
                return;
             }
             mod.game.refreshWorld();
+            // A native resize/load can leave Pip open after the saved player
+            // is installed. allStat=2 then stops UnitPlayer's change action,
+            // so waiting for t_work before closing Pip deadlocks this fixture.
+            // Close the actual menu, then let native frames finish the action;
+            // never zero t_work or bypass the normal-control readiness check.
+            if(mod.game.gg!=null && mod.game.gg!==loadCaster && !mod.game.isTransitioning()) {
+               var loadedWorld:Object=mod.game.world,loadedPip:Object=GameBridge.probe(loadedWorld,"pip");
+               if(loadedWorld.allStat==2 && GameBridge.probe(loadedPip,"active")===true) {
+                  loadedPip.onoff(0);
+                  Log.d("TELE MOTION BOOT closed native load menu before waiting for control");
+               }
+            }
             if(mod.game.gg==null || mod.game.gg===loadCaster || mod.game.isTransitioning() || !nativeReady()) {nativeSince=0;return;}
             if(nativeSince==0)nativeSince=getTimer();
             if(getTimer()-nativeSince<4000)return;

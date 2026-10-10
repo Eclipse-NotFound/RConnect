@@ -147,20 +147,16 @@ package rconnect.game
 
       public function endSession():void
       {
+         _weaponCapture.recording(false,false);
          _ports.reset();
          setCoopPaused(false);
          restoreContainerActions();
          _mirroring = false;
          _terrain.reset();
          _wall.reset();_wallLand=null;
-         _presentation.reset();_projectiles.reset();_telekinesis.reset();_burnVisuals.reset();_bodyEffects.reset();
+         resetRoomPresentation();
          _shieldFeedback = new Dictionary(true);
-         clearHitUnits();
-         _unitMotion = new Dictionary();
-         _pendingHits = new Dictionary();
-         restoreMirrorMasks();
-         restoreUnitViews();
-         _hostAlive = new Dictionary();
+
          for(var id:String in _remotes) removeRemote(int(id));
          for(var unit:Object in _freezeOriginal)
          {
@@ -180,15 +176,10 @@ package rconnect.game
             catch(removeError:*) {}
          }
          _spawnedPuppets = new Dictionary();
-         _frozen = new Dictionary();
-         _baseHp = new Dictionary();
+
          _objects.reset();
          _units.reset();
-         _sceneExpected = new Dictionary();
-         _scenePending = new Dictionary();
-         boxTrackReset();
-         _istExpectO = new Dictionary();
-         _istPending = new Dictionary();
+         resetSceneBaselines();
          _istSeen = new Dictionary();
          _istLast = new Dictionary();
          _istSeenLoc = null;
@@ -211,9 +202,9 @@ package rconnect.game
          try
          {
             // Read actual final player clip frames after native frame scripts.
-            if(gg!=null)_presentation.observePlayer(gg,_sampleAt);
+            if(gg!=null)_weaponCapture.observePlayer(gg,_sampleAt);
             if(gg!=null)_bodyEffects.observe(gg,_sampleAt);
-            if(!_mirroring)_presentation.observeFinal(loc,_sampleAt);
+            if(!_mirroring)_weaponCapture.observeFinal(loc,_sampleAt);
             for(var remoteId:String in _remotes)
             {
                var rec:Object=_remotes[remoteId];
@@ -297,8 +288,8 @@ package rconnect.game
          if(roomHold)return;
          _wall.observe(loc);
          if(gg!=null)_ports.observe(gg,_sampleAt,roomKey(),roomEpoch);
-         if(!_mirroring) _presentation.observe(loc,_sampleAt);
-         if(gg!=null)_presentation.observePlayer(gg,_sampleAt);
+         if(!_mirroring) _weaponCapture.observe(loc,_sampleAt);
+         if(gg!=null)_weaponCapture.observePlayer(gg,_sampleAt);
          if(gg!=null)_bodyEffects.observe(gg,_sampleAt);
          try {main.stage.invalidate();} catch(stageError:*) {}
          // Native ghost physics and packet arrivals must not dictate display cadence.
@@ -640,8 +631,8 @@ package rconnect.game
          var cw:Object = probe(gg, "currentWeapon");
          s.wi = cw != null ? String(probe(cw, "id")) : "";
          s.wv = cw != null ? int(numOr(probe(cw, "variant"), 0)) : 0;
-         s.weapons=_presentation.capture(gg,true);
-         s.spellVisuals=_presentation.captureSpells(gg);
+         s.weapons=_weaponCapture.capture(gg,true);
+         s.spellVisuals=_weaponCapture.captureSpells(gg);
          s.tele=readHeldVisual();
          if(peerGrip!=null)s.peerGrip=peerGrip.policy();
          s.heldMotion=readHeldMotion();
@@ -3404,6 +3395,7 @@ package rconnect.game
          return motion==null?NaN:motion.sourceTime;
       }
       private var _presentation:UnitPresentation = new UnitPresentation();
+      private var _weaponCapture:WeaponCapture = new WeaponCapture();
 
       public function readTilePatch():Array {var list:Array=_terrain.hostPatch(loc);_wall.observe(loc,list);return list;}
       public function applyTilePatch(list:Array):void {_terrain.apply(loc,list,freezeAI);}
@@ -5440,7 +5432,7 @@ package rconnect.game
                   body: TurretDisplay.capture(u),
                   burning: BurnVisuals.capture(u),
                   bodyEffects: _bodyEffects.capture(u),
-                  weapons: _presentation.capture(u),
+                  weapons: _weaponCapture.capture(u),
                   aura: TelekinesisVisuals.captureObject(u),
                   defense: unitFields(u, MirrorHitUnit.DEFENSE),
                   // M19：外观帧（小马类 osn.pon 帧=配色/皮肤）与瞄准点
@@ -6029,16 +6021,20 @@ package rconnect.game
             mines:playerMines==null?[]:playerMines.checkpoint()};
       }
 
+      public function setPresentationRecording(player:Boolean,enemies:Boolean):void {
+         _weaponCapture.recording(player,enemies);
+      }
+
       public function roomRole(authority:Boolean):void
       {
          restoreContainerActions();
          _wall.roleChanged(loc);
-         _presentation.reset();_projectiles.reset();_telekinesis.reset();_burnVisuals.reset();_bodyEffects.reset();clearHitUnits();restoreMirrorMasks();restoreUnitViews();
+         // This also releases the previous room's borrowed display objects.
+         resetRoomPresentation();
          for(var u:Object in _freezeOriginal) try {u.disabled=_freezeOriginal[u];}catch(e:*){}
-         _freezeOriginal=new Dictionary();_frozen=new Dictionary();_hostAlive=new Dictionary();
-         _pendingHits=new Dictionary();_baseHp=new Dictionary();_baseDefense=new Dictionary();
-         _unitMotion=new Dictionary();_mirroring=!authority;freezeAI=!authority;
-         _lastLocRef=null;resetBaselinesIfWorldChanged();
+         _freezeOriginal=new Dictionary();
+         _mirroring=!authority;freezeAI=!authority;
+         enterRoomBaselines();
          mirrorContainerActions();
       }
 
@@ -6145,37 +6141,34 @@ package rconnect.game
        *  防止旧世界血量基线对新世界单位产生幻影伤害上报。 */
       private function resetBaselinesIfWorldChanged():void
       {
-         if(_lastLocRef != loc)
-         {
-            _lastLocRef = loc;
-            _presentation.reset();_projectiles.reset();_telekinesis.reset();_burnVisuals.reset();_bodyEffects.reset();
-            _objects.enter(loc);
-            _units.enter(loc);
-            restoreMirrorMasks();
-            restoreUnitViews();
-            _sceneExpected = new Dictionary();
-            _scenePending = new Dictionary();
-            boxTrackReset();
-            _istExpectO = new Dictionary();
-            _istPending = new Dictionary();
-            // Original AI flags belong to the whole session, including rooms
-            // already visited. endSession must restore those units as well.
-            clearHitUnits();
-            _unitMotion = new Dictionary();
-            _pendingHits = new Dictionary();
-            _baseHp = new Dictionary();
-            _frozen = new Dictionary();
-            _animLogged = {};
-            // M21：换房后清空注入失败黑名单——同一 id 在新房间可能可注入
-            // （旧失败多为瞬时状态；防"永久空敌"）
-            _injectFailed = {};
-            // M27：换房清强制显示集（旧单位引用失效，等下轮重建）
-            _hostAlive = new Dictionary();
-            if(loc != null)
-            {
-               Log.d("RConnectGame: world loc changed, baselines reset");
-            }
-         }
+         if(_lastLocRef===loc)return;
+         resetRoomPresentation();
+         enterRoomBaselines();
+      }
+
+      /** Room-local rendering and hit aliases have one retirement order.
+       * _freezeOriginal and spawned native bodies are session-owned: they must
+       * remain available when another room becomes current. */
+      private function resetRoomPresentation():void {
+         _weaponCapture.reset();_presentation.reset();_projectiles.reset();
+         _telekinesis.reset();_burnVisuals.reset();_bodyEffects.reset();
+         clearHitUnits();restoreMirrorMasks();restoreUnitViews();
+         _unitMotion=new Dictionary();_pendingHits=new Dictionary();
+         _baseHp=new Dictionary();_frozen=new Dictionary();_hostAlive=new Dictionary();
+      }
+
+      private function resetSceneBaselines():void {
+         _sceneExpected=new Dictionary();_scenePending=new Dictionary();
+         boxTrackReset();
+         _istExpectO=new Dictionary();_istPending=new Dictionary();
+      }
+
+      private function enterRoomBaselines():void {
+         _lastLocRef=loc;
+         _objects.enter(loc);_units.enter(loc);
+         resetSceneBaselines();
+         _animLogged={};_injectFailed={};
+         if(loc!=null)Log.d("RConnectGame: world loc changed, baselines reset");
       }
 
       /** 逐帧推进冻结单位的原生显示状态，不运行镜像AI或攻击。 */

@@ -66,6 +66,7 @@ CHECKS = {
     "PacketCodecTestDoc": (180, "rbl", False),
     "VisionApiTestDoc": (180, "random_mane", False),
     "BeamProfileTestDoc": (180, "random_mane", False),
+    "ArchitectureTestDoc": (180, "rbl", False),
 }
 REQUIRED = list(CHECKS)[:13]
 M50_REQUIRED = REQUIRED + ['HudTestDoc','FastHeldTestDoc','WeaponAngleTestDoc','PresentationContinuityTestDoc',
@@ -75,7 +76,7 @@ M50_REQUIRED = REQUIRED + ['HudTestDoc','FastHeldTestDoc','WeaponAngleTestDoc','
     'TeleportVisualTestDoc','PeerThrowDamageTestDoc','BodyEffectsTestDoc','FollowRecoveryTestDoc',
     'FollowNetworkTestDoc','TeammateNavigationTestDoc','HiddenRoomFollowTestDoc']
 M51_REQUIRED=M50_REQUIRED+['SpecialWeaponTestDoc','DoorVisualTestDoc','BallisticVisualTestDoc',
-    'MagicImpactTestDoc','MagicExplosionTestDoc','EffectsTerrainTestDoc','ProjectileLoadTestDoc','PacketCodecTestDoc','VisionApiTestDoc']
+    'MagicImpactTestDoc','MagicExplosionTestDoc','EffectsTerrainTestDoc','ProjectileLoadTestDoc','PacketCodecTestDoc','VisionApiTestDoc','ArchitectureTestDoc']
 
 def required_entries(manifest):
     if manifest.get('baseline_path','').startswith('build/m51/'):
