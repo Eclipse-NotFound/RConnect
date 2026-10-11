@@ -96,6 +96,7 @@ package authority {
          capture(room);
       }
       private function stepLand(land:Object):void {
+         var began:int=Timing.start();
          try {
             if(travel!=null && land!==actors[0].context.land)travel.rebind(land);
             ++tick;
@@ -113,6 +114,7 @@ package authority {
             for each(var actor:PlayerActor in actors)actor.finishWorldServices();
             transfers.commit();if(lives!=null)lives.step();rooms.occupied();rooms.showHost();
             if(access.scope.depth!=0)throw new Error("Native context leaked across a world step");
+            Timing.end("host.simulate",began);
             if(afterStep!=null)afterStep();
          }catch(error:*) {
             Log.error(error);

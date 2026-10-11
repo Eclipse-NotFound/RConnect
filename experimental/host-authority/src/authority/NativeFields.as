@@ -5,7 +5,7 @@ package authority {
    public final class NativeFields {
       private static var schemas:Object={};
       private static const EXCLUDE:Object={in_chain:1,n:1};
-      private static const ROOM:Object={active:1,visited:1,isRebuild:1,isRecalc:1,isRelight:1};
+      private static const ROOM:Object={active:1,visited:1,isRebuild:1,isRecalc:1,isRelight:1,relight_t:1};
       public static function capture(value:Object):Object {
          var out:Object={};if(value==null)return out;
          var key:String=getQualifiedClassName(value),names:Array=schemas[key];

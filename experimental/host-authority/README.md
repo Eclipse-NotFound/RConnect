@@ -40,7 +40,7 @@
 
 ## TDFC 配套与当前冻结组
 
-当前工作使用 `b3-build-052` + `native-hooks-013` + `tdfc-build-004`，原生能力 `b3-v6`。051扩展原生菜单、052原生对话已通过，仍缺探索、武器与压力等完整门禁。历史B1/B2及每次B3冻结均保留，不能混用能力或合并旧绿灯。具体绿/红结果以实施记录为准。
+当前工作使用 `b3-build-059` + `native-hooks-013` + `tdfc-build-004`，原生能力 `b3-v6`。051扩展菜单、052对话、054探索、058动态绘图通过。059密集战斗采样通过活性检查并降低差分开销，仍缺完整武器、预测与压力等门禁。历史B1/B2及每次B3冻结均保留，不能混用能力或合并旧绿灯。具体绿/红结果以实施记录为准。
 
 - `build_tdfc.py --output build/ab/<新TDFC构建>`复制 TDFC 完整 src/tests 后编译，始终不写安装目录。
 - `run_tdfc_logic.py --baseline build/ab/baseline-001 --candidate build/ab/<TDFC构建> --output build/ab/<新逻辑运行>`执行真实 AIR 逻辑检查。

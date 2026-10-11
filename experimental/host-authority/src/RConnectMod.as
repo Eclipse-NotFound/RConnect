@@ -48,7 +48,9 @@ package {
          if(access.definition("fe.World")["rconnectChangeWorld"]!=null)throw new Error("Native lifecycle seam occupied");
          access.definition("fe.World")["rconnectChangeWorld"]=function():void {if(network)leaveSession(false);vision.resetJourney();};
          MapState.install(access);
-         if(config.probe===true)probe=config.scenario=="dialogue"?new DialogueProbe(access,role=="host"):
+         if(config.probe===true)probe=config.scenario=="stress"?new StressProbe(access,role=="host"):
+            config.scenario=="vision"?new VisionProbe(access,role=="host"):
+            config.scenario=="dialogue"?new DialogueProbe(access,role=="host"):
             config.scenario=="menus"?new MenuProbe(access,role=="host"):
             config.scenario=="hud"?new HudProbe(access,role=="host"):
             config.scenario=="party"?new PartyProbe(access,role=="host"):
@@ -139,7 +141,7 @@ package {
             Log.write("listening",{port:config.port});
          } else {
             mode=HudModel.JOINING;
-            replica=new ClientReplica(access);
+            replica=new ClientReplica(access,vision);
             intents=new NativeIntents(access,input);
             nativeMenus=new NativeMenus(access,input);
             saves=new PersonalSaves(access,null,input);

@@ -24,27 +24,33 @@ package authority {
       private var uiSerial:uint=0;
       private var menuSerial:uint=0,menuRevision:uint=0,standSerial:uint=0;
       public var satsRefreshes:uint=0;
-      public function ClientReplica(access:NativeAccess) {
+      public function ClientReplica(access:NativeAccess,vision:SharedVision=null) {
          this.access=access;originalPause=access.world.onPause;
          var data:Object={};access.world.saveToObj(data);entrySave=PlainData.nativeCopy(data);
          VisualPose.resolve=access.visualClass;
          access.world.onPause=true;
-         scene=new ReplicaScene(access);
+         scene=new ReplicaScene(access,vision);
       }
       public function apply(frame:Object):void {
+         var began:int=Timing.start();
          frame=decoder.decode(frame);
+         Timing.end("client.decode",began);
          if(frame.tick<lastTick)return;
          lastTick=frame.tick;lastFrame=frame;++frames;
          if(clock.push(frame,getTimer()))present(true);
       }
       public function present(flush:Boolean=false):void {
+         var began:int=Timing.start();
          var ready:Array=clock.take(getTimer(),flush);
          // Every discrete scene delta is consumed, even if several confirmations
          // arrive during one screen frame. No broken wall or removed unit is lost.
          for each(var confirmed:Object in ready)render(confirmed);
          if(clock.current!=null && clock.fraction>0)render(PoseTween.frame(clock.current,clock.next,clock.fraction));
+         if(displayFrame!=null)scene.light(displayFrame.paused===true);
+         Timing.end("client.present",began);
       }
       private function render(frame:Object):void {
+         var began:int=Timing.start(),part:int=began;
          displayFrame=frame;
          MapState.apply(access,frame.map);
          if(frame.scene!=null && scene.apply(frame.scene)) {
@@ -53,8 +59,10 @@ package authority {
                if(old.weapon!=null)old.weapon.loc=access.world.loc;
             }
          }
+         Timing.end("client.sceneAndMap",part);part=Timing.start();
          var present:Boolean=frame.room===access.roomKey();access.world.visual.visible=present;
          CharacterState.apply(access,frame.character);
+         Timing.end("client.character",part);
          if(frame.character!=null)AuthorityGUI.applyModal(access.world.gui,frame.character.modal);
          if(frame.character!=null && frame.character.menu!=null) {
             var menu:Object=frame.character.menu;
@@ -100,6 +108,7 @@ package authority {
             sats.getUnits();satsEpoch=frame.pauseEpoch;++satsRefreshes;
          }
          if(!access.world.sats.active)satsEpoch=-1;
+         Timing.end("client.render",began);
       }
       private function applyPlayer(state:Object):void {
          var local:Boolean=state.id==1,rec:Object=peers[state.id];

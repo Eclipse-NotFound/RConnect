@@ -11,15 +11,18 @@ package authority {
       public var applications:uint=0,terrainApplications:uint=0;
       public var effects:SceneEffects;
       private var access:NativeAccess;
+      private var vision:SharedVision,lightDirty:Boolean=true,lightX:Number=NaN,lightY:Number=NaN;
       private var players:Dictionary=new Dictionary(true);
-      public function ReplicaScene(access:NativeAccess){this.access=access;effects=new SceneEffects(access);}
+      public function ReplicaScene(access:NativeAccess,vision:SharedVision=null){this.access=access;this.vision=vision;effects=new SceneEffects(access);}
       public function keyFor(unit:Object):uint {if(players[unit])return players[unit];for(var id:String in units)if(units[id].unit===unit)return uint(id);return 0;}
       public function registerPlayer(unit:Object,key:uint):void {players[unit]=key;}
       public function petFor(player:int):Object {for each(var rec:Object in units)if(rec.petOwner===player)return rec.unit;return null;}
       public function apply(s:Object):Boolean {
+         var began:int=Timing.start();
          var changed:Boolean=key!==s.key,w:Object=access.world;
          if(changed) {
             if(!s.full || s.fields==null)throw new Error("Room transition requires a complete authoritative scene");
+            if(room!=null && vision!=null)vision.remember(room);
             dispose();
             var Location:Class=access.definition("fe.loc.Location");
             var definition:XML=<room/>;
@@ -39,27 +42,43 @@ package authority {
             var t:Object=room.space[int(tile.x)][int(tile.y)];
             for(var i:int=0;i<SceneSnapshot.TILE.length;i++) {
                var field:String=SceneSnapshot.TILE[i];
-               if(field!="visi" && field!="t_visi" && t[field]!==tile.v[i])geometry=true;
+               if(t[field]!==tile.v[i])geometry=true;
                t[field]=tile.v[i];
             }
             ++terrainApplications;
          }
-         if(changed)w.grafon.drawFon(w.vfon,s.fon);
+         if(changed) {
+            if(vision!=null)vision.restore(room);
+            if(!room.black)for(var x:int=0;x<room.spaceX;x++)for(var y:int=0;y<room.spaceY;y++)room.space[x][y].visi=room.space[x][y].t_visi=1;
+            w.grafon.drawFon(w.vfon,s.fon);
+         }
          if(geometry) {
+            lightDirty=true;
             w.grafon.drawLoc(room);w.cam.setLoc(room);
             for each(var rec:Object in units)attach(rec.unit,rec.layer);
             for each(rec in objects)attach(rec.object,rec.layer);
          }
          var live:Object={};
+         Timing.end("replica.terrain",began);began=Timing.start();
          for each(var state:Object in s.units) {applyUnit(state);live[state.key]=true;}
          for(var id:String in units)if(!live[id])removeUnit(id);
+         Timing.end("replica.units",began);began=Timing.start();
          live={};
          for each(state in s.objects){applyObject(state);live[state.key]=true;}
          for(id in objects)if(!live[id]) {
             objects[id].object.remVisual();delete objects[id];
          }
          effects.apply(s.effects);
+         Timing.end("replica.objectsAndEffects",began);
          ++applications;return changed;
+      }
+      /** Native lighting is a local view calculation, not a second battle step. */
+      public function light(paused:Boolean):void {
+         if(room==null || !room.black || paused)return;
+         var g:Object=access.world.gg;
+         if(lightDirty || Math.abs(g.X-lightX)>.5 || Math.abs(g.Y-lightY)>.5) {
+            room.lighting();lightX=g.X;lightY=g.Y;lightDirty=false;
+         }else if(room.relight_t>0)room.lighting2();
       }
       private function applyUnit(s:Object):void {
          var rec:Object=units[s.key],u:Object;
@@ -126,6 +145,7 @@ package authority {
          for(var id:String in units)removeUnit(id);
          for each(var rec:Object in objects)rec.object.remVisual();
          units={};objects={};room=null;key="";
+         lightDirty=true;lightX=lightY=NaN;
          effects.dispose();
       }
    }

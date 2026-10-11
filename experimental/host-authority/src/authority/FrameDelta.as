@@ -42,8 +42,13 @@ package authority {
          if(simple(a) || simple(b) || (a is Array)!=(b is Array)) {out.push([path,1,b]);return;}
          if(a is Array && a.length!=b.length) {out.push([path,1,b]);return;}
          for(var key:String in b) {
+            var before:*=a[key],after:*=b[key];
+            // Most native storage and authored symbol properties did not
+            // change. Do not allocate a path or recurse for every such scalar.
+            if(before===after)continue;
             var next:Array=path.concat([key]);
-            if(!(key in a))out.push([next,1,b[key]]);else diff(a[key],b[key],next,out);
+            if(!(key in a) || simple(before) || simple(after) || (before is Array)!=(after is Array))out.push([next,1,after]);
+            else diff(before,after,next,out);
          }
          for(key in a)if(!(key in b))out.push([path.concat([key]),0]);
       }

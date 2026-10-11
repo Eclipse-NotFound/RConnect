@@ -94,6 +94,7 @@ package authority {
             "failed multi-player perception restores native target fields and nested player scopes");
       }
       private static function presentation(check:Function):void {
+         deltaSequence(check);
          var enc:FrameDelta=new FrameDelta(),dec:FrameDelta=new FrameDelta();
          var one:Object={players:[{x:1,native:{hp:10}}],scene:{tiles:[{x:1,v:[2,3]}]}};
          var first:Object=dec.decode(enc.encode(one));
@@ -117,6 +118,31 @@ package authority {
             "motion crosses animation frames while poses stay discrete and angles take the short arc");
          q.sx=-1;v=PoseTween.pose(p,q,.5);
          check(v.sx==1 && v.r==179 && v.x==15,"weapon reflection is a discrete native flip, never a shrinking interpolated sprite");
+      }
+      private static function same(a:*,b:*):Boolean {
+         if(a===b)return true;
+         if(a==null || b==null || typeof a!="object" || typeof b!="object" || (a is Array)!=(b is Array))return false;
+         if(a is Array && a.length!=b.length)return false;
+         var count:int=0;
+         for(var key:String in a){++count;if(!b.hasOwnProperty(key) || !same(a[key],b[key]))return false;}
+         for(key in b)--count;return count==0;
+      }
+      private static function deltaSequence(check:Function):void {
+         var enc:FrameDelta=new FrameDelta(),dec:FrameDelta=new FrameDelta(),history:Array=[],expected:Array=[],valid:Boolean=true,stable:Boolean=true;
+         for(var tick:int=0;tick<32;tick++) {
+            var source:Object={players:[],named:{},units:[],time:tick*25};
+            for(var i:int=0;i<40+tick%3;i++) {
+               var u:Object={id:i,x:i*20+(tick%2==0?tick:0),hp:100-int(tick/3),visible:tick%4!=0,
+                  visual:{frame:tick%6,color:[1,1,1,1,0,0,0,0]},weapons:tick%5==0?[]:[{id:"lmg",hold:100-tick}]};
+               if(tick%3==0)u.optional={value:tick};source.units.push(u);
+            }
+            source.named["room-"+(tick%4)]={tiles:tick%2==0?[[1,2,3],null]:{x:1,y:tick}};
+            var actual:Object=dec.decode(JSON.parse(JSON.stringify(enc.encode(source))));
+            valid=valid && same(source,actual);history.push(actual);expected.push(JSON.parse(JSON.stringify(source)));
+            for(i=0;i<history.length;i++)stable=stable && same(history[i],expected[i]);
+         }
+         check(valid && stable,"ordered deltas survive wire serialization, additions, removals and type changes without changing buffered frames",
+            {frames:history.length,current:valid,history:stable});
       }
    }
 }

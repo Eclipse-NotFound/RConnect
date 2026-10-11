@@ -89,6 +89,7 @@ package authority {
       }
       public function publish():void {
          if(!active)return;
+         var began:int=Timing.start(),part:int=began;
          grips.present();
          combat.update();
          var frame:Object=runtime.snapshot();frame.type="frame";frame.session=session;frame.room=inputs[1].room;
@@ -103,11 +104,15 @@ package authority {
          }
          frame.friendlyFire=combat.enabled;
          frame.scene=scene.capture(actors[1].unit.loc,actors,runtime.tick);
+         Timing.end("host.sceneAndPlayers",part);part=Timing.start();
          frame.character=CharacterState.capture(actors[1]);
+         Timing.end("host.character",part);part=Timing.start();
          frame.resources={hold:actors[1].unit.currentWeapon==null?0:actors[1].unit.currentWeapon.hold,
             hp:actors[1].unit.hp,mana:actors[1].unit.mana};
          lastFrame=frame;
-         if(!link.send(encoder.encode(frame)))fail("Cannot publish confirmation");
+         var packet:Object=encoder.encode(frame);Timing.end("host.delta",part);part=Timing.start();
+         if(!link.send(packet))fail("Cannot publish confirmation");
+         Timing.end("host.send",part);Timing.end("host.publish",began);
       }
       public function fail(reason:String):void {
          if(!active)return;

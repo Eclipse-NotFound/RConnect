@@ -12,6 +12,7 @@ package authority {
       private static function nativeMatrix(v:Array):Matrix {return v==null?null:new Matrix(v[0],v[1],v[2],v[3],v[4],v[5]);}
       private static function array(v:Object):Array {if(v==null)return null;var a:Array=[];for each(var n:* in v)a.push(n);return a;}
       public static function capture(g:Graphics):Array {
+         var began:int=Timing.start();
          var result:Array=[],lossy:Boolean=false;
          for each(var data:IGraphicsData in g.readGraphicsData(false)) {
             // AIR exports premultiplied translucent colors with rounding and
@@ -22,7 +23,10 @@ package authority {
          }
          var shape:Shape=new Shape();shape.graphics.copyFrom(g);
          var bounds:Rectangle=shape.getBounds(shape);
-         if(bounds.width>0 && bounds.height>0 && (lossy || result.length==0))return surface(shape,bounds);
+         if(bounds.width>0 && bounds.height>0 && (lossy || result.length==0)) {
+            var rendered:Array=surface(shape,bounds);Timing.end("vector.captureSurface",began);return rendered;
+         }
+         Timing.end("vector.captureCommands",began);
          return result;
       }
       private static function surface(shape:Shape,bounds:Rectangle):Array {
@@ -59,8 +63,9 @@ package authority {
          throw new Error("Unsupported runtime drawing command "+data);
       }
       public static function apply(display:DisplayObject,g:Graphics,recipe:Array):void {
+         var began:int=Timing.start();
          var key:String=JSON.stringify(recipe),rec:Object=applied[display];
-         if(rec!=null && rec.key===key)return;
+         if(rec!=null && rec.key===key){Timing.end("vector.applyCached",began);return;}
          dispose(display);rec={key:key,bitmaps:[]};applied[display]=rec;
          if(recipe.length==1 && recipe[0].k=="surface") {
             var s:Object=recipe[0],bytes:ByteArray=new ByteArray();
@@ -81,11 +86,12 @@ package authority {
             }
             restored.position=0;
             var bitmap:BitmapData=new BitmapData(s.w,s.h,true,0);bitmap.setPixels(bitmap.rect,restored);rec.bitmaps.push(bitmap);
-            g.clear();g.beginBitmapFill(bitmap,new Matrix(1,0,0,1,s.x,s.y),false,true);g.drawRect(s.x,s.y,s.w,s.h);g.endFill();return;
+            g.clear();g.beginBitmapFill(bitmap,new Matrix(1,0,0,1,s.x,s.y),false,true);g.drawRect(s.x,s.y,s.w,s.h);g.endFill();Timing.end("vector.applySurface",began);return;
          }
          var commands:Vector.<IGraphicsData>=new Vector.<IGraphicsData>();
          for each(s in recipe)commands.push(decode(s,rec));
          g.clear();g.drawGraphicsData(commands);
+         Timing.end("vector.applyCommands",began);
       }
       private static function channelTable(alpha:uint):Array {
          if(channelTables[alpha]!=null)return channelTables[alpha];

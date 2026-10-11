@@ -23,6 +23,7 @@ package authority {
          for each(var name:String in PENDING)context[name]=world[name];
       }
       public function run(context:Object,operation:Function):* {
+         var began:int=Timing.start();
          var previous:Object={},name:String,room:Object=context.loc,roomPlayer:Object=room==null?null:room.gg;
          var returning:Object=owners[world.gg];
          // Capture the active owner before suspending it, including a nested
@@ -57,6 +58,7 @@ package authority {
             // lose that work by restoring the older primitive flag snapshot.
             if(returning!=null)for each(name in PENDING)world[name]=returning[name];
             --depth;
+            Timing.end("native.scope",began);
          }
       }
    }

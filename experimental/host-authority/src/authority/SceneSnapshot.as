@@ -13,7 +13,7 @@ package authority {
    public final class SceneSnapshot {
       public static const TILE:Array=["phis","shelf","hp","thre","zForm","diagon","stair","water","fake","vid","vid2",
          "front","back","zad","fRear","vRear","v2Rear","opac","mat","grav","lurk","kontur","konturRot","floor","place",
-         "kont1","kont2","kont3","kont4","pont1","pont2","pont3","pont4","indestruct","visi","t_visi"];
+         "kont1","kont2","kont3","kont4","pont1","pont2","pont3","pont4","indestruct"];
       private var access:NativeAccess,ids:Dictionary=new Dictionary(true),nextId:uint=0;
       private var previousRoom:Object,tiles:Array=[];
       private var targets:Object={};
@@ -29,6 +29,7 @@ package authority {
       public function target(id:uint):Object{return targets[id];}
       public function reset():void {ids=new Dictionary(true);targets={};previousRoom=null;tiles=[];}
       public function capture(room:Object,actors:Array,tick:uint):Object {
+         var began:int=Timing.start();
          var full:Boolean=previousRoom!==room;
          if(full){previousRoom=room;tiles=[];}
          var result:Object={key:access.keyFor(room),full:full,tiles:[],units:[],objects:[],effects:[]};
@@ -66,6 +67,7 @@ package authority {
             if(u.vis!=null)rendered[u.vis]=true;
             for each(child in u.childObjs)if(child!=null && child.vis!=null)rendered[child.vis]=true;
          }
+         Timing.end("capture.unitsAndTiles",began);began=Timing.start();
          var seen:Dictionary=new Dictionary(true);
          for each(var list:Array in [room.objs,room.acts,room.bonuses])for each(var o:Object in list)if(o!=null && !seen[o]) {
             seen[o]=true;result.objects.push({key:id(o),cls:getQualifiedClassName(o),fields:NativeFields.capture(o),
@@ -85,9 +87,18 @@ package authority {
             }
             o=o.nobj;
          }
+         Timing.end("capture.objectsAndParticles",began);began=Timing.start();
          if(count>10000)throw new Error("Visual object chain exceeds bound");
          // Some public mod effects are attached directly to a world layer and
          // have no native Pt/object-chain entry. Transport their drawing recipe.
+         // Mask shapes belong to their local view. Serializing them as ordinary
+         // effects both exposes opaque mask pixels and rasterizes every RV
+         // enemy visibility mask on every network frame.
+         for each(var maskLayer:DisplayObjectContainer in room.grafon.visObjs)
+            for(var mi:int=0;mi<maskLayer.numChildren;mi++) {
+               var mask:DisplayObject=maskLayer.getChildAt(mi).mask;
+               if(mask!=null)rendered[mask]=true;
+            }
          for(var layer:int=0;layer<room.grafon.visObjs.length;layer++) {
             var container:DisplayObjectContainer=room.grafon.visObjs[layer];
             for(var ci:int=0;ci<container.numChildren;ci++) {
@@ -101,6 +112,7 @@ package authority {
             var target:Object=targets[targetKey];
             if(target.loc==null || target.sost>=3 || target.loc.units.indexOf(target)<0)delete targets[targetKey];
          }
+         Timing.end("capture.untrackedEffects",began);
          return result;
       }
       private function color(c:Object):Array {return c==null?null:[c.redMultiplier,c.greenMultiplier,c.blueMultiplier,c.alphaMultiplier,c.redOffset,c.greenOffset,c.blueOffset,c.alphaOffset];}
