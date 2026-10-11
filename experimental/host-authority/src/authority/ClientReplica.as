@@ -16,6 +16,8 @@ package authority {
       private var originalPause:Boolean;
       private var decoder:FrameDelta=new FrameDelta();
       private var satsEpoch:int=-1;
+      public var uiMessages:uint=0;
+      private var uiSerial:uint=0;
       public var satsRefreshes:uint=0;
       public function ClientReplica(access:NativeAccess) {
          this.access=access;originalPause=access.world.onPause;
@@ -47,6 +49,10 @@ package authority {
          }
          var present:Boolean=frame.room===access.roomKey();access.world.visual.visible=present;
          CharacterState.apply(access,frame.character);
+         if(frame.character!=null)for each(var message:Object in frame.character.messages)if(message.id>uiSerial) {
+            if(["infoText","infoEffText","messText"].indexOf(message.key)<0)throw new Error("Unknown native UI feedback");
+            access.world.gui[message.key].apply(access.world.gui,message.args);uiSerial=message.id;++uiMessages;
+         }
          for each(var state:Object in frame.players) {
             if(state.room===frame.room && present)applyPlayer(state);
             else if(peers[state.id]!=null) {
@@ -92,6 +98,7 @@ package authority {
          }
          g=rec.body;if(g.vis.parent==null)g.addVisual();
          NativeFields.apply(g,state.native);
+         if(local)g.visSel=access.world.gui.vis.selector.visible;
          scene.registerPlayer(g,state.key);
          if(rec.weapon!=null && rec.weapon.vis.parent==null)rec.weapon.addVisual();
          g.setPos(state.x,state.y);g.dx=state.dx;g.dy=state.dy;g.storona=state.direction;

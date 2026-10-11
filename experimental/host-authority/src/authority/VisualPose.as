@@ -2,6 +2,8 @@ package authority {
    import flash.display.DisplayObject;
    import flash.display.DisplayObjectContainer;
    import flash.display.MovieClip;
+   import flash.display.Sprite;
+   import flash.display.Shape;
    import flash.geom.ColorTransform;
    import flash.text.TextField;
    import flash.filters.GlowFilter;
@@ -33,18 +35,27 @@ package authority {
          if(display is TextField){s.text=TextField(display).htmlText;s.textColor=TextField(display).textColor;}
          var clip:MovieClip=display as MovieClip;
          if(clip!=null)s.f=clip.currentFrame;
+         // Authored MovieClip geometry is already in the native assets. Runtime
+         // Sprite/Shape drawings (laser pointers and curved trails) have no frames.
+         if(display is Sprite && (clip==null || getQualifiedClassName(display)=="flash.display::MovieClip"))s.vector=VectorDraw.capture(Sprite(display).graphics);
+         else if(display is Shape)s.vector=VectorDraw.capture(Shape(display).graphics);
          var parent:DisplayObjectContainer=display as DisplayObjectContainer;
          if(parent!=null && depth<6) {
             s.children=[];
             for(var i:int=0;i<parent.numChildren;i++) {
                var child:DisplayObject=parent.getChildAt(i);
-               if(child is MovieClip || child is TextField) s.children.push({n:child.name,i:i,cls:getQualifiedClassName(child),s:capture(child,depth+1)});
+               if(child is MovieClip || child is TextField || child is Sprite || clip==null && child is Shape)
+                  s.children.push({n:child.name,i:i,cls:getQualifiedClassName(child),s:capture(child,depth+1)});
             }
          }
          return s;
       }
       public static function apply(display:DisplayObject,s:Object):void {
          if(display==null || s==null)return;
+         if(s.vector!=null) {
+            if(display is Sprite)VectorDraw.apply(display,Sprite(display).graphics,s.vector);
+            else if(display is Shape)VectorDraw.apply(display,Shape(display).graphics,s.vector);
+         }
          var clip:MovieClip=display as MovieClip;
          if(clip!=null && s.f!=null){if(clip.currentFrame!=int(s.f))clip.gotoAndStop(int(s.f));else clip.stop();}
          display.x=s.x;display.y=s.y;display.scaleX=s.sx;display.scaleY=s.sy;
@@ -81,20 +92,27 @@ package authority {
          var live:Dictionary=new Dictionary(true);
          for each(var child:Object in s.children) {
             var target:DisplayObject=parent.getChildByName(child.n);
-            if(target!=null && getQualifiedClassName(target)!=child.cls)target=null;
+            if(target!=null && getQualifiedClassName(target)!=child.cls && managed[target]!==child.cls)target=null;
             // Unnamed authored children have different generated instance names.
             if(target==null && int(child.i)<parent.numChildren && getQualifiedClassName(parent.getChildAt(int(child.i)))==child.cls)target=parent.getChildAt(int(child.i));
             if(target==null && resolve!=null) {
-               if(child.cls=="flash.text::TextField")target=new TextField();
+               if(child.s.vector!=null)target=child.cls=="flash.display::Shape"?new Shape():new Sprite();
+               else if(child.cls=="flash.text::TextField")target=new TextField();
                else {var Type:Class=resolve(child.cls);target=new Type() as DisplayObject;}
-               if(target!=null){target.name=child.n;parent.addChildAt(target,Math.min(child.i,parent.numChildren));managed[target]=true;}
+               if(target!=null){target.name=child.n;parent.addChildAt(target,Math.min(child.i,parent.numChildren));managed[target]=child.cls;}
             }
             if(target!=null){live[target]=true;apply(target,child.s);}
          }
          for(var owned:Object in managed)if(!live[owned]) {
-            if(owned.parent===parent)parent.removeChild(owned as DisplayObject);delete managed[owned];
+            if(owned.parent===parent)parent.removeChild(owned as DisplayObject);dispose(owned as DisplayObject);delete managed[owned];
          }
          }
+      }
+      public static function dispose(display:DisplayObject):void {
+         if(display==null)return;
+         VectorDraw.dispose(display);delete applied[display];delete added[display];
+         var parent:DisplayObjectContainer=display as DisplayObjectContainer;
+         if(parent!=null)for(var i:int=0;i<parent.numChildren;i++)dispose(parent.getChildAt(i));
       }
    }
 }

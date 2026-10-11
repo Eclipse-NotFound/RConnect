@@ -3,6 +3,7 @@ package authority {
    /** Native telekinesis moves the real player; personal consent stays independent. */
    public final class PeerGrabs {
       private var actors:Array,grips:Dictionary=new Dictionary(true);
+      public var flights:PeerFlights=new PeerFlights();
       public function PeerGrabs(actors:Array){this.actors=actors;}
       public function prepare(actor:PlayerActor,input:Object):void {
          var g:Object=actor.unit,holder:PlayerActor=null;
@@ -30,7 +31,11 @@ package authority {
          }
          for(var key:Object in grips)if(!live[key])delete grips[key];
       }
-      public function afterStep(holder:PlayerActor):void {
+      public function afterStep(holder:PlayerActor,heldBefore:Object=null,throwRequested:Boolean=false):void {
+         if(throwRequested && heldBefore!=null && holder.unit.teleObj!==heldBefore) {
+            var victim:PlayerActor=actorFor(heldBefore);
+            if(victim!=null && victim!==holder && victim.unit.t_throw==45)flights.arm(victim);
+         }
          var target:PlayerActor=actorFor(holder.unit.teleObj);
          if(target!=null && target!==holder && grips[target.unit]==null)
             grips[target.unit]={holder:holder,filters:target.unit.vis.filters,color:target.unit.vis.transform.colorTransform};

@@ -29,6 +29,13 @@ package authority {
                   "join native checkpoint autosave uses its own character");
                check(w.pers.currentCPCode=="b-personal-fixture" && w.gg.currentWeapon.id=="r32" && w.invent.fav[1]=="r32",
                   "join menus and HUD show confirmed checkpoint, weapon and favorite");
+               check(replica.uiMessages>0,"joining GUI receives native action feedback from its own host actor");
+               w.ctr.keyScrDown=true;
+            }
+            if(phase==5 && tick>347) {phase=6;check(w.gui.vis.selector.visible && w.gg.visSel,"joining native weapon selector stays visible across confirmations");w.ctr.keyScrDown=true;}
+            if(phase==6 && tick>354) {phase=7;w.ctr.keyAttack=true;}
+            if(phase==7 && tick>402) {
+               check(!w.gui.vis.selector.visible && w.gg.currentWeapon.id=="lmg","joining selector confirms equipment through one native intent");
                SceneChecks.picture(access,"personal-confirmed.png");finish();
             }
             return;
@@ -63,6 +70,9 @@ package authority {
                "native join skill purchase executes once in its own host context");
             check(a.unit.pers.skills.tele==initialHost.skill && a.unit.pers.skillPoint==initialHost.points,
                "join skill purchase leaves host progression unchanged");
+            var originalLog:String=w.log;
+            access.scope.run(b.context,function():void {b.context.gui.infoText("noVisible",null,null,true);});
+            check(w.log===originalLog,"remote native feedback does not append to the host's personal log");
          }
          if(phase==1 && tick>220) {
             phase=2;
@@ -82,7 +92,9 @@ package authority {
                "shared checkpoint stores the host's own character in its native slot");
             check(access.scope.depth==0 && w.gg===a.unit,"personal UI and save operations restore host ownership");
          }
-         if(tick>365)finish();
+         if(tick>415) {
+            check(b.unit.currentWeapon.id=="lmg","joining mouse-wheel selection reaches the authoritative native weapon");finish();
+         }
       }
    }
 }

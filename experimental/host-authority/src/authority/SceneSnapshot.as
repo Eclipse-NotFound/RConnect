@@ -1,5 +1,8 @@
 package authority {
    import flash.display.DisplayObject;
+   import flash.display.DisplayObjectContainer;
+   import flash.display.Sprite;
+   import flash.display.MovieClip;
    import flash.utils.Dictionary;
    import flash.utils.getQualifiedClassName;
    import fe.unit.AuthorityAnimation;
@@ -52,7 +55,7 @@ package authority {
             }
          }
          for each(var u:Object in room.units)if(u!=null && !u.player) {
-            var us:Object={key:id(u),cls:getQualifiedClassName(u),fields:NativeFields.capture(u),pose:VisualPose.capture(u.vis),
+            var us:Object={key:id(u),cls:getQualifiedClassName(u),fields:NativeFields.capture(u),inter:NativeFields.capture(u.inter),pose:VisualPose.capture(u.vis),
                blit:AuthorityAnimation.capture(u as Unit),weapons:[],layer:u.sloy,attached:u.vis!=null && u.vis.parent!=null};
             if(us.cls.indexOf("UnitTurret")>=0)us.mount=int(getQualifiedClassName(u.vis).replace(/^.*visualTurret/,""));
             for each(var weapon:Object in u.childObjs)if(weapon!=null && NativeAccess.get(weapon,"kol_shoot")!=null)
@@ -81,6 +84,16 @@ package authority {
             o=o.nobj;
          }
          if(count>10000)throw new Error("Visual object chain exceeds bound");
+         // Some public mod effects are attached directly to a world layer and
+         // have no native Pt/object-chain entry. Transport their drawing recipe.
+         for(var layer:int=0;layer<room.grafon.visObjs.length;layer++) {
+            var container:DisplayObjectContainer=room.grafon.visObjs[layer];
+            for(var ci:int=0;ci<container.numChildren;ci++) {
+               var drawn:DisplayObject=container.getChildAt(ci);
+               if(drawn is Sprite && !(drawn is MovieClip) && !rendered[drawn])
+                  result.effects.push({key:id(drawn),name:drawn.name,clip:getQualifiedClassName(drawn),layer:layer,pose:VisualPose.capture(drawn),atlas:null});
+            }
+         }
          for(var targetKey:String in targets) {
             var target:Object=targets[targetKey];
             if(target.loc==null || target.sost>=3 || target.loc.units.indexOf(target)<0)delete targets[targetKey];

@@ -48,8 +48,11 @@ package authority {
             }
             unit.celX=input.aimX;unit.celY=input.aimY;
             if(!context.sats.active) {
-               PlayerPointer.run(actor,input,function():void {unit.step();});
-               if(grips!=null)grips.afterStep(actor);
+               var heldBefore:Object=unit.teleObj,throwRequested:Boolean=ctr.keyAction;
+               if(grips!=null)grips.flights.before(actor);
+               try {PlayerPointer.run(actor,input,function():void {unit.step();});}
+               finally {if(grips!=null)grips.flights.after(actor);}
+               if(grips!=null)grips.afterStep(actor,heldBefore,throwRequested);
                for(i=0;i<Commands.HELD.length;i++)if((input.buttons&(1<<i))!=0 && !ctr[Commands.HELD[i]])consumedButtons|=1<<i;
             }
             ++steps;

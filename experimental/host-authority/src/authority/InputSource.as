@@ -11,6 +11,7 @@ package authority {
       public function enqueue(value:Object):void {if(pending.length>=48)throw new Error("Too many pending UI actions");pending.push(value);}
       public function frame(world:Object,session:String,player:int,room:String):Object {
          var c:Object=world.ctr,b:int=0,a:Array=[];
+         if(player==1)localSelector(world);
          for(var i:int=0;i<Commands.HELD.length;i++)if(c[Commands.HELD[i]])b|=1<<i;
          if(c.keyReload){a.push({id:++action,type:"reload"});c.keyReload=false;}
          for each(var key:String in Commands.ONCE)if(c[key]){a.push({id:++action,type:"control",key:key});c[key]=false;}
@@ -24,6 +25,17 @@ package authority {
          if(SharedPause.requested(world))b=0;
          return {type:"input",session:session,player:player,room:room,roomEpoch:1,epoch:1,weaponEpoch:1,
             seq:++seq,buttons:b,aimX:Number(world.celX),aimY:Number(world.celY),actions:a,settings:settings,pause:SharedPause.requested(world)};
+      }
+      public function localSelector(world:Object):void {
+         var g:Object=world.gg,c:Object=world.ctr,gui:Object=world.gui;
+         if(!SharedPause.requested(world) && g.ggControl && !g.autoAttack && g.t_work<=0) {
+            if(c.keyScrDown || c.keyScrUp)gui.showSelector(c.keyScrDown?1:-1,c.keyRun?1:0);
+            c.keyScrDown=c.keyScrUp=false;
+         }
+         if(!gui.vis.selector.visible)return;
+         if(c.keyTele){gui.unshowSelector(0);c.keyTele=false;}
+         else if(c.keyAttack){gui.unshowSelector(1);c.keyAttack=false;}
+         for(var i:int=1;i<=12;i++)if(c["keyWeapon"+i])gui.unshowSelector(0);
       }
    }
 }

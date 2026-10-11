@@ -75,6 +75,7 @@ package authority {
          }
          u=rec.unit;
          NativeFields.apply(u,s.fields);u.loc=room;
+         NativeFields.apply(u.inter,s.inter);
          if(s.attached)attach(u,s.layer);else u.remVisual();u.setVisPos();
          VisualPose.apply(u.vis,s.pose);AuthorityAnimation.apply(u as Unit,s.blit);
          // Health bars are native render-only methods; no damage/AI is replayed.

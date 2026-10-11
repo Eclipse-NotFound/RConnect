@@ -6,7 +6,8 @@ package authority {
       public static function capture(actor:PlayerActor):Object {
          var g:Object=actor.unit,result:Object={body:{},pers:NativeFields.capture(g.pers),maps:{},
             inventory:PlainData.copy(g.invent.save()),inventoryFields:NativeFields.capture(g.invent),spells:{},effects:[],
-            equipment:{},armors:{},saveSerial:actor.saveSerial,saveRequests:actor.saveRequests.concat(),sats:{od:actor.context.sats.od,limOd:actor.context.sats.limOd}};
+            equipment:{},armors:{},messages:actor.id==1?actor.context.gui.rconnectMessages():[],
+            saveSerial:actor.saveSerial,saveRequests:actor.saveRequests.concat(),sats:{od:actor.context.sats.od,limOd:actor.context.sats.limOd}};
          for each(var key:String in BODY)if(key in g)result.body[key]=g[key];
          for each(key in MAPS)result.maps[key]=PlainData.copy(g.pers[key]);
          for(key in g.invent.spells)if(g.invent.spells[key]!=null)result.spells[key]=NativeFields.capture(g.invent.spells[key]);

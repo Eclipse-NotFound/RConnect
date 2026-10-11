@@ -1,6 +1,7 @@
 package authority {
    import flash.display.MovieClip;
    import flash.system.ApplicationDomain;
+   import fe.inter.AuthorityGUI;
    public class NativeAccess {
       public var domain:ApplicationDomain,world:Object,scope:NativeScope;
       public function NativeAccess(main:Object) {
@@ -20,7 +21,8 @@ package authority {
       }
       public function ready():Boolean{return world!=null && world.gg!=null && world.loc!=null && world.land!=null && world.ng_wait==0;}
       public function checkHooks():void {
-         for each(var name:String in ["fe.inter.Ctr","fe.loc.Location","fe.loc.Land","fe.unit.Unit","fe.unit.UnitPlayer","fe.graph.Grafon"])
+         for each(var name:String in ["fe.inter.Ctr","fe.loc.Location","fe.loc.Land","fe.unit.Unit","fe.unit.UnitPlayer","fe.graph.Grafon",
+            "fe.unit.Invent","fe.unit.Pers","fe.weapon.Weapon","fe.loc.Game","fe.World","fe.weapon.Bullet","fe.unit.Mine","fe.weapon.WThrow","fe.weapon.PhisBullet"])
             if(definition(name)["RCONNECT_AUTHORITY_HOOKS"]!==BuildInfo.NATIVE)throw new Error("Native hooks unavailable: "+name);
       }
       public function profile():Object {
@@ -44,7 +46,7 @@ package authority {
             world.ctr=ctx.ctr=new Ctr(null,false);
             world.sats=ctx.sats=new Sats(new MovieClip());
             var visualClass:Class=world.vgui.constructor as Class;
-            world.gui=ctx.gui=new GUI(new visualClass());
+            world.gui=ctx.gui=new AuthorityGUI(new visualClass());
             ctx.gui.gg=unit;ctx.sats.gg=unit;
             world.invent=ctx.invent=new Invent(unit,profile.inventory,null);
             var g:Object=unit;g.ctr=ctx.ctr;g.sats=ctx.sats;

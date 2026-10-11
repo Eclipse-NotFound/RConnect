@@ -35,7 +35,11 @@ package {
          if(config.experimental!==true || config.session==null || (config.role!="host" && config.role!="join"))throw new Error("Missing explicit B configuration");
          role=config.role;session=config.session;access=new NativeAccess(main);access.checkHooks();
          MapState.install(access);
-         if(config.probe===true)probe=config.scenario=="personal"?new PersonalProbe(access,role=="host"):
+         if(config.probe===true)probe=config.scenario=="areas"?new AreasProbe(access,role=="host"):
+            config.scenario=="mines"?new MinesProbe(access,role=="host"):
+            config.scenario=="vectors"?new VectorProbe(access,role=="host"):
+            config.scenario=="throw"?new ThrowProbe(access,role=="host"):
+            config.scenario=="personal"?new PersonalProbe(access,role=="host"):
             config.scenario=="grabs"?new GrabsProbe(access,role=="host"):
             config.scenario=="friendly"?new FriendlyProbe(access,role=="host"):
             config.scenario=="travel"?new TravelProbe(access,role=="host"):
@@ -46,7 +50,7 @@ package {
             config.scenario=="ownership"?new OwnershipProbe(access,role=="host",config.swap===true,config.enemy):new Probe(access,role=="host");
          label.defaultTextFormat=new TextFormat("Arial",13,0xFFDB58);label.width=440;label.height=22;
          label.mouseEnabled=false;label.background=true;label.backgroundColor=0x161B20;label.alpha=.85;label.x=8;label.y=8;
-         stage.addChild(label);label.text="RConnect B2 · 实验原型 · "+role;
+         stage.addChild(label);label.text="RConnect B · 开发测试 · "+role;
          stage.addEventListener(Event.DEACTIVATE,deactivate,false,100000);
          stage.addEventListener(Event.ENTER_FRAME,before,false,100000);
          main.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR,onUncaught);
@@ -159,7 +163,7 @@ package {
       }
       private function fail(reason:String):void {
          if(failed)return;
-         failed=true;label.text="RConnect B2 · 已停止："+reason;
+         failed=true;label.text="RConnect B · 已停止："+reason;
          if(access!=null && access.world!=null)access.world.onPause=true;
          if(host!=null)host.fail(reason);
          Log.write("FATAL",{reason:reason});

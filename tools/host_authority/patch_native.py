@@ -165,6 +165,9 @@ def modify(name, source):
             'Boolean(this.weap.owner.fraction == Unit.F_PLAYER) && _loc1_.player && (Unit.rconnectHitPolicy == null || this.weap.owner == _loc1_)')
         source=once(source,'if(Boolean(this.weap) && this.weap.owner.fraction == Unit.F_PLAYER)',
             'if(Boolean(this.weap) && this.weap.owner.fraction == Unit.F_PLAYER && (Unit.rconnectHitPolicy == null || this.weap.owner == _loc3_))')
+    if name=='fe.weapon.PhisBullet':
+        source=once(source,'_loc1_.fraction != owner.fraction',
+            'Unit.rconnectAllowed(owner,_loc1_,_loc1_.fraction != owner.fraction,"sensor")')
     if name=='fe.unit.Mine':
         source=once(source,'      public var explRadius:Number = 0;',
             '      public var rconnectOwner:Unit = null;\n      public static var rconnectMineSight:Function = null;\n\n'
@@ -196,7 +199,7 @@ def modify(name, source):
             '         for each(var node:XML in nodes)\n         {\n'
             '            if(node.attribute(key) == expected) result += node;\n'
             '         }\n         return result;\n      }\n\n'+constructor)
-    return source.replace('"b1-v3"','"b3-v1"').replace('"b2-v1"','"b3-v1"')
+    return source.replace('"b1-v3"','"b3-v2"').replace('"b2-v1"','"b3-v2"').replace('"b3-v1"','"b3-v2"')
 
 
 def swf_tags(path):
@@ -237,7 +240,7 @@ def main():
     out.mkdir(parents=True)
     original = baseline/'game/pfe.swf'
     classes = ['fe.inter.Ctr', 'fe.loc.Location', 'fe.loc.Land', 'fe.unit.Unit', 'fe.unit.UnitPlayer', 'fe.graph.Grafon',
-        'fe.unit.Invent','fe.unit.Pers','fe.weapon.Weapon','fe.loc.Game','fe.World','fe.weapon.Bullet','fe.unit.Mine','fe.weapon.WThrow']
+        'fe.unit.Invent','fe.unit.Pers','fe.weapon.Weapon','fe.loc.Game','fe.World','fe.weapon.Bullet','fe.unit.Mine','fe.weapon.WThrow','fe.weapon.PhisBullet']
     ff = [str(JAVA), '-Xmx768m', '-jar', str(FFDEC)]
     with (out/'patch.log').open('w', encoding='utf-8') as log:
         def run(args):
@@ -276,7 +279,7 @@ def main():
             subprocess.run(ff+['-dumpAS3', str(path)], stdout=log, check=True)
     if (out/'before-classes.txt').read_bytes() != (out/'after-classes.txt').read_bytes():
         raise RuntimeError('Native class list changed')
-    save(out/'native-input.json', dict(experimental_only=True, capability='b3-v1',
+    save(out/'native-input.json', dict(experimental_only=True, capability='b3-v2',
         baseline=str(baseline.relative_to(ROOT)), baseline_manifest_sha256=sha(baseline/'baseline.json'),
         original_sha256=sha(original), candidate_sha256=sha(out/'pfe.swf'),
         sources={p.relative_to(out).as_posix():sha(p) for p in sorted((out/'import').rglob('*.as'))},
