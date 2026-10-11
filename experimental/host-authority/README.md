@@ -1,0 +1,47 @@
+# RConnect B — 主侧统一执行实验
+
+实现依据：[A/B计划](../../design/host-authority-parallel-plan-2026-10-11.md)。结果与停点：[实施记录](../../state/host-authority-2026-10-11.md)。
+
+本目录独立于现有`src`。入口仍编译成`RConnectMod.swf`以适配原loader，但只允许`pfe-modsettings-rconnect-b-*`隔离AppID与显式实验配置；**不可复制到安装版release**。该前缀排除其他已安装模组的自动测试。A/B不互相连接，不热切换存档或正在运行的房间。
+
+## 目前代码的职责
+
+| 部分 | 负责什么 |
+|---|---|
+| `Commands` / `Link` | 身份与顺序核验、有界传输、短按保留、一次动作去重、失去输入后释放控制 |
+| `NativeAccess` / `AuthorityPlayer` / `NativeScope` | 创建真的第二名玩家，使用自己的属性、背包、控制器和界面服务；每次调用恢复原引用 |
+| `HostSession` / `RoomRuntime` | 接收输入、每房间步推进两个玩家一次、原生弹丸按所属玩家执行、受击按受击者执行、返回确认 |
+| `ClientReplica` | 当前仅按主侧确认显示玩家与弹丸，不在加入侧执行第二遍伤害 |
+| `TacticsBridge` / `NativePerception` | 可选 TDFC 房间调度接口与两名玩家的原生索敌/暴露计算 |
+| `Probe` / `ContractChecks` | 仅测试配置启用，真实AIR中的协议、资源隔离与原生开火检查 |
+
+当前仍是B1同房原型。分房、转场、死亡复活、SATS、念力、预测、完整敌人/特效/交互呈现和长期性能验证尚未完成。远端转房请求会被拦截、远端死亡会停止实验；宿主的完整生命周期保护仍未覆盖，不能据此作为日常候选。
+
+## 复现步骤
+
+工具位于`tools/host_authority`，所有参数从RConnect目录解析。输出必须是`build/ab`下的新目录，已有结果不会覆盖。
+
+1. `freeze.py --runtime build/m51/map-runtime-63 --output build/ab/<新基线>`固定完整实物。已有`baseline-001`可核验后继续使用。
+2. `patch_native.py --baseline build/ab/baseline-001 --output build/ab/<新原生副本>`仅修改复制品。五个类提供默认空的入口；回读核对loader、类表和资源，运行等价另验。
+3. `build.py --output build/ab/<新构建>`冻结源码与外链存根、编译并记录工具及产物SHA。存根不包含进SWF。
+4. 与其他RConnect测试会话错开AIR时段后，`run_probe.py --baseline build/ab/baseline-001 --candidate build/ab/<新构建> --native build/ab/<匹配的原生副本> --output build/ab/<新运行>`。
+5. 核对`run.json`和双方日志中的PASS/FAIL/FATAL/DONE，之后在实际宿主核对自有PID已退出。编译、断言通过或双端DONE均不单独等于完整功能通过。
+
+测试使用新的AIR存储名，不读用户角色。B1开枪夹具生成各自弹药不同的测试角色与固定原生受击单位；不模拟假HP变化。所有失败、原始日志和实际运行副本保留。
+
+## 原生改动为什么存在
+
+原游戏默认只有一名玩家，因此控制器会自动听本机键盘，伤害和武器也会读取全局当前玩家。B提供可关闭键盘监听的构造参数，以及房间、物体步和玩家受击的可选入口。未启用B时入口为空，代码继续原生分支；运行等价必须通过独立检查，不能只凭这段设计说明认定。
+
+独立属性还不等于全部隔离完成。跨帧回调、显示与音效、其他模组的全局状态、完整死亡保存流程需要后续逐项验证。B1只证明狭窄路径，结果不能推广到所有武器和地图。
+
+## TDFC 配套与当前冻结组
+
+当前检查点使用 `b1-build-027` + `native-hooks-003` + `tdfc-build-004`，原生能力 `b1-v3`。具体绿/红结果以实施记录为准。
+
+- `build_tdfc.py --output build/ab/<新TDFC构建>`复制 TDFC 完整 src/tests 后编译，始终不写安装目录。
+- `run_tdfc_logic.py --baseline build/ab/baseline-001 --candidate build/ab/<TDFC构建> --output build/ab/<新逻辑运行>`执行真实 AIR 逻辑检查。
+- 双人运行增加 `--tdfc build/ab/<TDFC构建> --scenario ownership --enemy tdfc`；增加 `--swap` 交换两人的资料。`--enemy native` 改用原生炮塔。
+- `check_native_default.py --baseline build/ab/baseline-001 --tdfc build/ab/<TDFC构建> --output build/ab/<默认检查>`仅单人原生路径，完全不接入 B；可再传 `--native build/ab/native-hooks-003` 检查空回调。它是独立验证驱动，不是第三套生产架构。
+
+双玩家上下文还保存各自的负重重算等待处理标记，避免嵌套受击把另一名玩家的任务丢失或再次执行。TDFC 默认决策正文与新入口共用，玩家记忆/噪声和房间计时分开持有。B 分房调度尚未落地，不能从 TDFC 容器测试推断双房已经可玩。

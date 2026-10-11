@@ -1,0 +1,112 @@
+{
+  "date": "2026-10-11",
+  "scope": "B0/B1 single-room technical prototype only",
+  "b": "65437943407560ecd14464e539c893fec7f8ea55db3d1ba0478236b294d24a57",
+  "tdfc": "79201b172b4ac7e19b6c0bdc1425e6ef2c61f0e471e2549341bbf106a349dc09",
+  "native": "d2460c828b16ded9f4d1c8c2a62a59c78bdda5430d4da0e02c1fd59fd8251fbc",
+  "runs": [
+    {
+      "path": "build/ab/b1-native-movement-001",
+      "run": "4da286ac9aed",
+      "roles": {
+        "host": {
+          "passed": 43,
+          "failed": 0,
+          "done": true
+        },
+        "join": {
+          "passed": 25,
+          "failed": 0,
+          "done": true
+        }
+      },
+      "enemy_projectiles": [
+        9,
+        9
+      ],
+      "player_minimum_hp": [
+        9435.495268584695,
+        9324.36076930724
+      ]
+    },
+    {
+      "path": "build/ab/b1-tdfc-movement-001",
+      "run": "ef01f4ab363c",
+      "roles": {
+        "host": {
+          "passed": 43,
+          "failed": 0,
+          "done": true
+        },
+        "join": {
+          "passed": 25,
+          "failed": 0,
+          "done": true
+        }
+      },
+      "enemy_projectiles": [
+        11,
+        12
+      ],
+      "player_minimum_hp": [
+        9979.6946267955,
+        9933.532707181294
+      ]
+    },
+    {
+      "path": "build/ab/b1-tdfc-movement-swapped-001",
+      "run": "6760ace55bbf",
+      "roles": {
+        "host": {
+          "passed": 43,
+          "failed": 0,
+          "done": true
+        },
+        "join": {
+          "passed": 25,
+          "failed": 0,
+          "done": true
+        }
+      },
+      "enemy_projectiles": [
+        13,
+        11
+      ],
+      "player_minimum_hp": [
+        9929.484193882896,
+        9992.775490347314
+      ]
+    }
+  ],
+  "logic": {
+    "path": "build/ab/tdfc-logic-002",
+    "passed": 74,
+    "failed": 0
+  },
+  "installed_unchanged": true,
+  "defaults": [
+    {
+      "path": "build/ab/default-original-003",
+      "passed": 7,
+      "receipt_sha256": "7e5ea2cdd2e0f4a1f4d4f9cdd141dabec38df0653410f4d5d1bb1055df9ac441",
+      "scope": "Native single-player functional smoke only; not complete numerical equivalence"
+    },
+    {
+      "path": "build/ab/default-hooks-002",
+      "passed": 7,
+      "receipt_sha256": "512921b83248ba5d0799372398abee9bf38afc3bad58069d218ca616f5a5a084",
+      "scope": "Native single-player functional smoke only; not complete numerical equivalence"
+    }
+  ],
+  "audit": {
+    "path": "build/ab/checkpoint-001/audit.json",
+    "sha256": "38f1a403b54208418b3aa0c7f76b55b87e6fc61b5a8d2785082a7625856dce45",
+    "current_sources_match": true
+  },
+  "host_process_check": {
+    "remaining_user_air_pid": 43448,
+    "owned_test_air_remaining": 0,
+    "source": "actual host CIM after all test drivers exited"
+  },
+  "tdfc_code_commit": "eabd1da"
+}

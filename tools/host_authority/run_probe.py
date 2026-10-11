@@ -1,0 +1,194 @@
+"""Launch only uniquely owned B test processes against pinned physical inputs.
+
+Uses fresh AIR stores, no user save reads/writes, no live release replacement.
+Retains all inputs and failed runs. No native-game result is inherited.
+"""
+import argparse
+import json
+import os
+import shutil
+import socket
+import subprocess
+import time
+import uuid
+from pathlib import Path
+from common import ROOT, inside_build, read, save, sha, verify_baseline, verify_files
+
+
+def records(path):
+    if not path.is_file():
+        return []
+    result = []
+    for line in path.read_text(encoding='utf-8-sig', errors='replace').splitlines():
+        try:
+            result.append(json.loads(line))
+        except json.JSONDecodeError:
+            continue  # A currently open append may end in a partial final line.
+    return result
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument('--baseline', required=True)
+    ap.add_argument('--candidate', required=True)
+    ap.add_argument('--native', required=True)
+    ap.add_argument('--output', required=True)
+    ap.add_argument('--seconds', type=int, default=140)
+    ap.add_argument('--scenario', choices=('native-gun','ownership'), default='native-gun')
+    ap.add_argument('--swap', action='store_true')
+    ap.add_argument('--enemy', choices=('native','tdfc'), default='native')
+    ap.add_argument('--tdfc', help='Optional frozen TDFC authority-v1 build directory')
+    args = ap.parse_args()
+    baseline, candidate, native, out = [inside_build(ROOT/p) for p in (args.baseline, args.candidate, args.native, args.output)]
+    b = verify_baseline(baseline)
+    build, patch = read(candidate/'build-input.json'), read(native/'native-input.json')
+    if not build.get('native_capability') or build['native_capability'] != patch['capability']:
+        raise ValueError('Mod and native game capabilities differ')
+    verify_files(candidate, build['sources'])
+    verify_files(native, patch['sources'])
+    if patch['baseline_manifest_sha256'] != sha(baseline/'baseline.json'):
+        raise ValueError('Native patch uses a different baseline')
+    if sha(native/'pfe.swf') != patch['candidate_sha256'] or sha(candidate/'RConnectMod.swf') != build['candidate_sha256']:
+        raise ValueError('Candidate bytes changed')
+    tactics, tactics_build = None, None
+    if args.tdfc:
+        tactics = inside_build(ROOT/args.tdfc)
+        tactics_build = read(tactics/'build-input.json')
+        if tactics_build.get('family') != 'tdfc-authority-v1' or not tactics_build.get('experimental_only'):
+            raise ValueError('Not an isolated TDFC authority candidate')
+        verify_files(tactics, tactics_build['sources'])
+        if sha(tactics/'TDFCMod.swf') != tactics_build['candidate_sha256']:
+            raise ValueError('TDFC candidate bytes changed')
+    if out.exists():
+        raise FileExistsError('Every attempt needs a new run directory')
+    game = baseline/'game'
+    if shutil.disk_usage(ROOT).free < sum((game/n).stat().st_size for n in b['files'])*3:
+        raise RuntimeError('Insufficient space for independent runtime copies')
+    out.mkdir(parents=True)
+    (out/'tools').mkdir()
+    for name in ('run_probe.py','common.py'):
+        shutil.copy2(Path(__file__).parent/name,out/'tools'/name)
+    run_id = uuid.uuid4().hex[:12]
+    with socket.socket() as reservation:
+        reservation.bind(('127.0.0.1', 0))
+        port = reservation.getsockname()[1]
+    launches, processes, streams = [], [], []
+    installed = ROOT.parents[1]
+    protected = {n:sha(installed/n) for n in ('pfe.swf','mods/Rconnect/release/RConnectMod.swf','mods/TDFC/release/TDFCMod.swf')}
+    receipt = dict(experimental_only=True, phase='B1-native-probe', run=run_id, baseline_manifest_sha256=sha(baseline/'baseline.json'),
+        build_manifest_sha256=sha(candidate/'build-input.json'), native_manifest_sha256=sha(native/'native-input.json'),
+        candidate_sha256=build['candidate_sha256'], native_sha256=patch['candidate_sha256'],
+        protected_before=protected, script_sha256=sha(__file__), roles={}, complete=False)
+    if tactics:
+        receipt['tdfc_manifest_sha256'] = sha(tactics/'build-input.json')
+        receipt['tdfc_sha256'] = tactics_build['candidate_sha256']
+    for role in ('host','join'):
+        directory = out/role
+        shutil.copytree(game, directory)
+        shutil.copy2(native/'pfe.swf', directory/'pfe.swf')
+        shutil.copy2(candidate/'RConnectMod.swf', directory/'mods/Rconnect/release/RConnectMod.swf')
+        configuration = dict(experimental=True, role=role, session=run_id, port=port, autoGame=True, land='random_mane', probe=True, scenario=args.scenario, swap=args.swap, enemy=args.enemy)
+        if tactics:
+            shutil.copy2(tactics/'TDFCMod.swf',directory/'mods/TDFC/release/TDFCMod.swf')
+            configuration['tdfc'] = tactics_build['candidate_sha256']
+        cfg = directory/'mods/Rconnect/release/config.txt'
+        save(cfg, configuration)
+        # Installed MSW excludes this prefix; TDFC tests require their exact ID.
+        appid = 'pfe-modsettings-rconnect-b-'+role+'-'+run_id
+        storage = Path(os.environ['APPDATA'])/appid/'Local Store'
+        if storage.exists():
+            raise FileExistsError('Refuse to reuse AIR data')
+        desc = directory/'authority-test.xml'
+        desc.write_text('<?xml version="1.0" encoding="utf-8"?>\n'
+            '<application xmlns="http://ns.adobe.com/air/application/30.0">'
+            '<id>'+appid+'</id><versionNumber>1.0</versionNumber><filename>RConnect B1 '+role+'</filename>'
+            '<initialWindow><content>pfe.swf</content><visible>true</visible><width>1000</width><height>650</height></initialWindow>'
+            '</application>', encoding='utf-8')
+        expected = dict(b['files'])
+        for key in expected:
+            if key.lower() == 'pfe.swf':
+                expected[key] = patch['candidate_sha256']
+            elif key.lower() == 'mods/rconnect/release/rconnectmod.swf':
+                expected[key] = build['candidate_sha256']
+            elif key.lower() == 'mods/rconnect/release/config.txt':
+                expected[key] = sha(cfg)
+            elif tactics and key.lower() == 'mods/tdfc/release/tdfcmod.swf':
+                expected[key] = tactics_build['candidate_sha256']
+        verify_files(directory, expected)
+        receipt['roles'][role] = dict(appid=appid, descriptor_sha256=sha(desc), config=configuration, config_sha256=sha(cfg), files=expected)
+        launches.append((role,directory,desc,storage/'RConnect-B.log'))
+    save(out/'run.json', receipt)
+    try:
+        for role,directory,desc,log in launches:
+            if role=='join':
+                host_log = launches[0][3]
+                until = time.monotonic()+args.seconds
+                while time.monotonic()<until:
+                    events = records(host_log)
+                    if any(x['kind']=='FATAL' for x in events):
+                        raise RuntimeError('Host failed before listening')
+                    if any(x['kind']=='listening' for x in events):
+                        break
+                    if processes[0].poll() is not None:
+                        raise RuntimeError('Host exited before listening')
+                    time.sleep(1)
+                else:
+                    raise TimeoutError('Host boot/listen timeout')
+            stream=(out/(role+'.stdout.log')).open('w', encoding='utf-8');streams.append(stream)
+            command=[str(directory/'adl64.exe'),'-runtime',str(directory/'runtimes/air/win64'),str(desc)]
+            process=subprocess.Popen(command,cwd=directory,stdout=stream,stderr=subprocess.STDOUT,creationflags=subprocess.CREATE_NO_WINDOW)
+            processes.append(process)
+            receipt['roles'][role].update(pid=process.pid,command=command)
+            save(out/'run.json',receipt)
+            print(json.dumps(dict(role=role,pid=process.pid,appid=receipt['roles'][role]['appid'])),flush=True)
+        deadline=time.monotonic()+args.seconds
+        while time.monotonic()<deadline:
+            ends=[any(x['kind']=='DONE' for x in records(log)) for _,_,_,log in launches]
+            if all(ends):
+                receipt['complete']=True
+                break
+            if any(p.poll() is not None for p in processes):
+                raise RuntimeError('AIR exited before probe completed')
+            time.sleep(1)
+    except Exception as error:
+        receipt['error']=str(error)
+    finally:
+        for process in processes:
+            if process.poll() is None:
+                process.terminate()
+                try:process.wait(timeout=10)
+                except subprocess.TimeoutExpired:process.kill();process.wait(timeout=10)
+        for stream in streams:stream.close()
+        for role,directory,desc,log in launches:
+            if log.is_file():shutil.copy2(log,out/(role+'.log'))
+            auxiliary={}
+            for name in ('tdfc.log','RVision.log','ModSettings.log','WallBlend.log','LootEditor.receipt.json'):
+                source=log.parent/name
+                if source.is_file():
+                    target=out/(role+'.'+name)
+                    shutil.copy2(source,target)
+                    auxiliary[name]=sha(target)
+            events=records(log)
+            receipt['roles'][role].update(passed=sum(x['kind']=='PASS' for x in events),failed=sum(x['kind']=='FAIL' for x in events),
+                fatal=[x for x in events if x['kind']=='FATAL'],done=any(x['kind']=='DONE' for x in events),auxiliary_logs=auxiliary)
+            try:
+                verify_files(directory,receipt['roles'][role]['files'])
+                if sha(desc)!=receipt['roles'][role]['descriptor_sha256'] or sha(directory/'mods/Rconnect/release/config.txt')!=receipt['roles'][role]['config_sha256']:
+                    raise ValueError('Generated configuration or descriptor changed')
+                receipt['roles'][role]['runtime_unchanged']=True
+            except Exception as error:
+                receipt['roles'][role].update(runtime_unchanged=False,runtime_error=str(error))
+        receipt['protected_after']={n:sha(installed/n) for n in protected}
+        receipt['installation_unchanged']=receipt['protected_after']==protected
+        receipt['owned_processes_exited']=all(p.poll() is not None for p in processes)
+        receipt['process_exit_codes']=[dict(pid=p.pid,code=p.poll()) for p in processes]
+        save(out/'run.json',receipt)
+    verify_baseline(baseline)
+    ok=receipt['complete'] and receipt['installation_unchanged'] and receipt['owned_processes_exited']
+    ok=ok and all(r['done'] and r['failed']==0 and not r['fatal'] and r['passed']>0 and r['runtime_unchanged'] for r in receipt['roles'].values())
+    print(json.dumps(dict(path=str(out),ok=ok,error=receipt.get('error'),roles={role:{k:v for k,v in r.items() if k in ('passed','failed','done','fatal')} for role,r in receipt['roles'].items()}),ensure_ascii=False),flush=True)
+    raise SystemExit(0 if ok else 1)
+
+
+if __name__=='__main__':
+    main()
