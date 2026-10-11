@@ -1,4 +1,6 @@
 package authority {
+   import fe.inter.AuthorityMenus;
+   import fe.inter.AuthorityPip;
    /** Native menus submit named, bounded requests; only the host mutates resources. */
    public final class NativeIntents {
       public static var replaying:int=0;
@@ -24,6 +26,23 @@ package authority {
       }
       public static function valid(key:String,args:*):Boolean {
          if(!(args is Array) || args.length>3)return false;
+         if(key=="menuClose" || key=="menuStandClose")return args.length==0;
+         if(key=="advanceDialog")return args.length==1 && args[0] is Boolean;
+         if(key=="menuAppearance")return args.length==1 && AuthorityMenus.validAppearance(args[0]);
+         if(key=="menuWork")return args.length==3 && integer(args[0],1,12) && nullableId(args[1]) && nullableId(args[2]);
+         if(key=="menuVault")return args.length==3 && integer(args[0],1,3) && nullableId(args[1]) && integer(args[2],0,int.MAX_VALUE);
+         if(key=="menuVaultAll")return args.length==1 && integer(args[0],1,3);
+         if(key=="menuMedical")return args.length==2 && integer(args[0],1,2) && nullableId(args[1]);
+         if(key=="menuRepair" || key=="menuAmmo")return args.length==2 && integer(args[0],1,5) && nullableId(args[1]);
+         if(key=="menuVendor") {
+            if(args.length!=2 || !integer(args[0],1,2) || !(args[1] is Array) || args[1].length>128)return false;
+            var seen:Object={};
+            for each(var line:Object in args[1]) {
+               if(line==null || !(line.id is String) || !nullableId(line.id) || seen[line.id] || !integer(line.count,1,999999))return false;
+               seen[line.id]=true;
+            }
+            return true;
+         }
          if(["changeWeapon","changeArmor","changeSpell","callPet","usePotion"].indexOf(key)>=0)
             return args.length==2 && nullableId(args[0]) && (key=="usePotion"?integer(args[1],0,3):args[1] is Boolean);
          if(["useItem","respectWeapon","initReload"].indexOf(key)>=0)return args.length==1 && nullableId(args[0]);
@@ -41,6 +60,13 @@ package authority {
       private static function integer(value:*,lo:int,hi:int):Boolean{return value is Number && value==int(value) && value>=lo && value<=hi;}
       public static function execute(actor:PlayerActor,key:String,args:Array):Boolean {
          if(!valid(key,args))return false;
+         if(key=="advanceDialog") {
+            actor.context.ctr.keyPressed=true;actor.context.ctr.keyPressed2=args[0];actor.context.ctr.active=true;return true;
+         }
+         if(key.indexOf("menu")==0) {
+            try {return AuthorityMenus.execute(actor,key,args);}
+            finally {if(actor.context.pip is AuthorityPip)++AuthorityPip(actor.context.pip).revision;}
+         }
          var g:Object=actor.unit,inv:Object=g.invent,p:Object=g.pers,id:String=args.length>0?args[0]:null;
          if(key=="save"){actor.requestSave(args[0]);return true;}
          if(key=="meetPeer"){if(actor.requestMeet==null)return false;actor.requestMeet(actor);return true;}
@@ -63,6 +89,7 @@ package authority {
          }
          else if(key=="addPerk") {if(p.perkPoint<=0 || p.perkPoss(id)!=1)return false;p.addPerk(id,true);}
          else return false;
+         if(actor.context.pip is AuthorityPip)++AuthorityPip(actor.context.pip).revision;
          return true;
       }
       public function dispose():void {for(var i:int=0;i<CLASSES.length;i++)access.definition(CLASSES[i])["rconnectIntent"]=previous[i];}

@@ -8,6 +8,7 @@ package authority {
    public final class HudProbe extends Probe {
       private var begin:int=-1,tick:int=0,phase:int=0,oldPlayer:Object,exitAt:int=-1;
       private var seenMessage:Boolean=false,settingsSeen:Boolean=false;
+      private var dialogAt:int=0,dialogs:int=0;
       public function HudProbe(a:NativeAccess,h:Boolean){super(a,h);}
       override public function message(value:Object):void {
          if(host && begin<0 && value.type=="input" && value.player==1 && value.probeStart is Number)begin=int(value.probeStart);
@@ -29,6 +30,14 @@ package authority {
          if(oldPlayer!=null && m.mode==HudModel.OFFLINE) {
             if(exitAt<0)exitAt=getTimer();
             if(getTimer()-exitAt<1000 || !access.ready())return;
+            // Native loading returns random expeditions to the home base.
+            // A fresh test character has not read its introductory dialogues;
+            // acknowledge those through the native Script input, never force
+            // the new actor's control flag or skip a production cutscene.
+            if(!w.gg.ggControl && (w.gui.vis.dial.visible || w.gui.vis.inform.visible) && getTimer()-dialogAt>300) {
+               dialogAt=getTimer();++dialogs;w.ctr.keyPressed=true;
+               Log.write("return-native-dialogue",{advance:dialogs,dialog:w.gui.vis.dial.visible,inform:w.gui.vis.inform.visible});
+            }
             if(!w.gg.ggControl && getTimer()-exitAt<15000)return;
             check(m.host==null && m.replica==null && access.definition("fe.loc.Location")["rconnectPlayerStep"]==null,
                "leaving removes the authority session and native scheduling hooks");
@@ -37,7 +46,8 @@ package authority {
             check(host?w.gg===oldPlayer:w.gg!==oldPlayer,
                host?"host keeps its own native journey after teammate leaves":"join rebuilds its own journey instead of simulating the host replica");
             check(w.gg.hp>0 && w.gg.ggControl,"returned native character remains alive and controllable",
-               {hp:w.gg.hp,control:w.gg.ggControl,work:w.gg.work,exit:w.t_exit,die:w.t_die,wait:getTimer()-exitAt});
+               {hp:w.gg.hp,control:w.gg.ggControl,work:w.gg.work,exit:w.t_exit,die:w.t_die,wait:getTimer()-exitAt,
+                dead:w.pers.dead,cat:w.catPause,paused:w.onPause,stat:w.allStat,menu:w.mm.active,pip:w.pip.active,dialogs:dialogs});
             finish();return;
          }
          var f:Object=host?(session==null?null:session.lastFrame):(replica==null?null:replica.lastFrame);

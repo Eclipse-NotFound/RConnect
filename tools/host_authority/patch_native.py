@@ -99,8 +99,23 @@ INTENTS = {
     'fe.unit.Invent': ('useItem', 'usePotion', 'favItem', 'respectWeapon', 'drop', 'nextItem'),
     'fe.unit.Pers': ('addSkill', 'addPerk'),
     'fe.weapon.Weapon': ('initReload',),
-    'fe.loc.Game': ('gotoLand', 'beginMission'),
+    'fe.loc.Game': ('gotoLand', 'beginMission', 'gotoNextLevel'),
 }
+
+MENU_CLASSES = ['fe.inter.PipBuck','fe.inter.PipPageWork','fe.inter.PipPageVault','fe.inter.PipPageMed',
+    'fe.inter.PipPageVend','fe.inter.PipPageInv','fe.inter.PipPageApp','fe.inter.Stand']
+
+
+def menu_hook(source, method, key, args, condition='true'):
+    pattern = r'      (?:override )?(?:public|internal) function '+method+r'\([^\n]*\) : [^\n]+\n      \{'
+    matches = list(re.finditer(pattern, source))
+    if len(matches) != 1:
+        raise ValueError('Menu anchor absent or ambiguous: '+method)
+    end = matches[0].end()
+    hook = ('\n         if('+condition+' && PipBuck.rconnectMenu != null && '
+        'Boolean(PipBuck.rconnectMenu(this,"'+key+'",['+args+'])))\n'
+        '         {\n            return;\n         }')
+    return source[:end]+hook+source[end:]
 
 
 def modify(name, source):
@@ -201,13 +216,41 @@ def modify(name, source):
     if name=='fe.weapon.WThrow':
         source=once(source,'            _loc5_.fraction = owner.fraction;',
             '            _loc5_.rconnectOwner = owner;\n            _loc5_.fraction = owner.fraction;')
+    if name=='fe.inter.PipBuck':
+        source=once(source,'      public function PipBuck(',
+            '      public static var rconnectMenu:Function = null;\n\n      public function PipBuck(')
+        source=once(source,'         World.w.ctr.keyPressed = false;\n      }\n      \n      public function resizeScreen',
+            '         World.w.ctr.keyPressed = false;\n'
+            '         if(!this.active && rconnectMenu != null) rconnectMenu(this,"menuClose",[]);\n'
+            '      }\n      \n      public function resizeScreen')
+    if name=='fe.inter.PipPageWork':
+        source=menu_hook(source,'itemClick','menuWork','page2,String(param1.currentTarget.id.text),pip.workTip')
+    if name=='fe.inter.PipPageVault':
+        source=menu_hook(source,'chKol','menuVault','page2,String(param1.id.text),param2')
+        source=menu_hook(source,'sbrosHlam','menuVaultAll','page2')
+    if name=='fe.inter.PipPageMed':
+        source=menu_hook(source,'itemClick','menuMedical','page2,String(param1.currentTarget.id.text)')
+    if name=='fe.inter.PipPageVend':
+        source=menu_hook(source,'itemClick','menuRepair','page2,String(param1.currentTarget.id.text)','page2 == 3')
+        source=menu_hook(source,'itemClick','menuQuest','page2,String(param1.currentTarget.id.text)','page2 == 4')
+        source=menu_hook(source,'trade','menuVendor','1')
+        source=menu_hook(source,'sell','menuVendor','2')
+    if name=='fe.inter.PipPageInv':
+        source=menu_hook(source,'itemClick','menuAmmo','page2,String(param1.currentTarget.id.text)','page2 == 5')
+    if name=='fe.inter.PipPageApp':
+        source=menu_hook(source,'funVidOk','menuAppearance','')
+    if name=='fe.inter.Stand':
+        source=once(source,'         }\n      }\n      \n      public function resizeScreen',
+            '         }\n         if(!this.active && PipBuck.rconnectMenu != null) PipBuck.rconnectMenu(this,"menuStandClose",[]);\n'
+            '      }\n      \n      public function resizeScreen')
     if source==original:
         raise ValueError('No native change: '+name)
     # FFDec's importer loses @ in E4X filters when an attribute and a
     # lexical variable share a name: (@id == id) becomes (id == id).
     # Preserve the query with an explicit attribute read outside `with`.
     # This applies to every recompiled class, including unrelated methods.
-    pattern = r'([A-Za-z_][\w.]*)\.\(@([A-Za-z_]\w*)\s*==\s*([A-Za-z_][\w.]*|"[^"\n]*")\)'
+    term = r'(?:[A-Za-z_][\w.]*|"[^"\n]*")'
+    pattern = r'([A-Za-z_][\w.]*)\.\(@([A-Za-z_]\w*)\s*==\s*('+term+r'(?:\s*\+\s*'+term+r')*)\)'
     source, queries = re.subn(pattern,
         lambda m: 'rconnectXmlFind('+m[1]+',"'+m[2]+'",'+m[3]+')', source)
     if queries:
@@ -218,7 +261,7 @@ def modify(name, source):
             '         for each(var node:XML in nodes)\n         {\n'
             '            if(node.attribute(key) == expected) result += node;\n'
             '         }\n         return result;\n      }\n\n'+constructor)
-    return source.replace('"b1-v3"','"b3-v4"').replace('"b2-v1"','"b3-v4"').replace('"b3-v1"','"b3-v4"')
+    return source.replace('"b1-v3"','"b3-v6"').replace('"b2-v1"','"b3-v6"').replace('"b3-v1"','"b3-v6"')
 
 
 def swf_tags(path):
@@ -259,7 +302,7 @@ def main():
     out.mkdir(parents=True)
     original = baseline/'game/pfe.swf'
     classes = ['fe.inter.Ctr', 'fe.loc.Location', 'fe.loc.Land', 'fe.unit.Unit', 'fe.unit.UnitPlayer', 'fe.graph.Grafon',
-        'fe.unit.Invent','fe.unit.Pers','fe.weapon.Weapon','fe.loc.Game','fe.World','fe.weapon.Bullet','fe.unit.Mine','fe.weapon.WThrow','fe.weapon.PhisBullet']
+        'fe.unit.Invent','fe.unit.Pers','fe.weapon.Weapon','fe.loc.Game','fe.World','fe.weapon.Bullet','fe.unit.Mine','fe.weapon.WThrow','fe.weapon.PhisBullet']+MENU_CLASSES
     ff = [str(JAVA), '-Xmx768m', '-jar', str(FFDEC)]
     with (out/'patch.log').open('w', encoding='utf-8') as log:
         def run(args):
@@ -298,7 +341,7 @@ def main():
             subprocess.run(ff+['-dumpAS3', str(path)], stdout=log, check=True)
     if (out/'before-classes.txt').read_bytes() != (out/'after-classes.txt').read_bytes():
         raise RuntimeError('Native class list changed')
-    save(out/'native-input.json', dict(experimental_only=True, capability='b3-v4',
+    save(out/'native-input.json', dict(experimental_only=True, capability='b3-v6',
         baseline=str(baseline.relative_to(ROOT)), baseline_manifest_sha256=sha(baseline/'baseline.json'),
         original_sha256=sha(original), candidate_sha256=sha(out/'pfe.swf'),
         sources={p.relative_to(out).as_posix():sha(p) for p in sorted((out/'import').rglob('*.as'))},

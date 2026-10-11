@@ -20,7 +20,7 @@ package authority {
          var a:PlayerActor=new PlayerActor(access,0),w:Object=access.world;
          a.unit=w.gg;
          a.originalLevitPoss=a.unit.levitPoss;
-         for each(var name:String in ["gg","pers","invent","ctr","sats","gui","loc","land","app","alicorn","hardInv","calcMass","calcMassW","checkLoot","t_battle"])
+         for each(var name:String in ["gg","pers","invent","ctr","sats","gui","pip","vpip","stand","vstand","loc","land","app","alicorn","hardInv","calcMass","calcMassW","checkLoot","t_battle"])
             a.context[name]=w[name];
          a.context.appearance=AppearanceState.capture(access.definition("fe.inter.Appear"));
          access.scope.register(a.context);

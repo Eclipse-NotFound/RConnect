@@ -9,6 +9,7 @@ package authority {
       public var grips:PeerGrabs;
       public var travel:PartyTravel;
       public var combat:FriendlyCombat;
+      private var nativeMenus:NativeMenus;
       private var expectedRoom:String;
       private var scene:SceneSnapshot;
       private var encoder:FrameDelta=new FrameDelta();
@@ -23,6 +24,7 @@ package authority {
          // horizontal offset can spawn the second player in a shaft.
          var remote:PlayerActor=access.createPlayer(hello.profile,access.world.loc,local.unit.X,local.unit.Y);
          actors=[local,remote];this.link=link;
+         nativeMenus=new NativeMenus(access,null,this);
          local.observeWeapon();remote.observeWeapon();
          local.unit.isSats=remote.unit.isSats=false;
          combat=new FriendlyCombat(this);
@@ -78,6 +80,11 @@ package authority {
             });
             actor.observeWeapon();inputs[actor.id].weaponEpoch=actor.weaponEpoch;
          }
+         // Native World services only its local GUI. The second GUI owns
+         // original dialogue/information scripts and must advance even while
+         // the combat world is paused, using that player's acknowledgement.
+         var remote:PlayerActor=actors[1];
+         access.scope.run(remote.context,function():void {remote.context.gui.step();});
          if(changed && pause.paused)publish();
       }
       public function publish():void {
@@ -117,6 +124,7 @@ package authority {
          if(travel!=null)travel.dispose();
          if(combat!=null)combat.dispose();
          if(lives!=null)lives.dispose();if(saves!=null)saves.dispose();
+         if(nativeMenus!=null)nativeMenus.dispose();
          if(runtime!=null)runtime.dispose();
          for each(var actor:PlayerActor in actors)actor.destroy();
          actors=[];inputs=[];

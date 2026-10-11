@@ -1,10 +1,16 @@
 package authority {
+   import fe.inter.AuthorityMenus;
+   import fe.inter.AuthorityPip;
+   import fe.inter.AuthorityStand;
    /** Confirmed personal resources. Shared world ownership does not merge bags. */
    public final class CharacterState {
       private static const MAPS:Array=["skills","perks","addictions"];
       private static const BODY:Array=["hp","maxhp","mana","stam","rad","poison","cut","shithp","maxshithp","obs","maxObs","rat","h2o","sost","ggControl","currentPet"];
       public static function capture(actor:PlayerActor):Object {
          var g:Object=actor.unit,result:Object={body:{},pers:NativeFields.capture(g.pers),maps:{},
+            menu:AuthorityMenus.capture(actor.context.pip as AuthorityPip),
+            stand:actor.context.stand is AuthorityStand?AuthorityStand(actor.context.stand).snapshot():null,
+            modal:actor.id==1?actor.context.gui.modalState():null,
             inventory:PlainData.copy(g.invent.save()),inventoryFields:NativeFields.capture(g.invent),spells:{},effects:[],
             equipment:{},armors:{},messages:actor.id==1?actor.context.gui.rconnectMessages():[],
             saveSerial:actor.saveSerial,saveRequests:actor.saveRequests.concat(),sats:{od:actor.context.sats.od,limOd:actor.context.sats.limOd}};

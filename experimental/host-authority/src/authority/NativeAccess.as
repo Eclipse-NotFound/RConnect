@@ -2,6 +2,8 @@ package authority {
    import flash.display.MovieClip;
    import flash.system.ApplicationDomain;
    import fe.inter.AuthorityGUI;
+   import fe.inter.AuthorityPip;
+   import fe.inter.AuthorityStand;
    public class NativeAccess {
       public var domain:ApplicationDomain,world:Object,scope:NativeScope;
       public function NativeAccess(main:Object) {
@@ -22,7 +24,8 @@ package authority {
       public function ready():Boolean{return world!=null && world.gg!=null && world.loc!=null && world.land!=null && world.ng_wait==0;}
       public function checkHooks():void {
          for each(var name:String in ["fe.inter.Ctr","fe.loc.Location","fe.loc.Land","fe.unit.Unit","fe.unit.UnitPlayer","fe.graph.Grafon",
-            "fe.unit.Invent","fe.unit.Pers","fe.weapon.Weapon","fe.loc.Game","fe.World","fe.weapon.Bullet","fe.unit.Mine","fe.weapon.WThrow","fe.weapon.PhisBullet"])
+            "fe.unit.Invent","fe.unit.Pers","fe.weapon.Weapon","fe.loc.Game","fe.World","fe.weapon.Bullet","fe.unit.Mine","fe.weapon.WThrow","fe.weapon.PhisBullet",
+            "fe.inter.PipBuck","fe.inter.PipPageWork","fe.inter.PipPageVault","fe.inter.PipPageMed","fe.inter.PipPageVend","fe.inter.PipPageInv","fe.inter.PipPageApp","fe.inter.Stand"])
             if(definition(name)["RCONNECT_AUTHORITY_HOOKS"]!==BuildInfo.NATIVE)throw new Error("Native hooks unavailable: "+name);
       }
       public function profile():Object {
@@ -49,6 +52,10 @@ package authority {
             world.gui=ctx.gui=new AuthorityGUI(new visualClass());
             ctx.gui.gg=unit;ctx.sats.gg=unit;
             world.invent=ctx.invent=new Invent(unit,profile.inventory,null);
+            var PipVisual:Class=world.vpip.constructor as Class,StandVisual:Class=world.vstand.constructor as Class;
+            world.vpip=ctx.vpip=new PipVisual();world.vstand=ctx.vstand=new StandVisual();
+            world.stand=ctx.stand=new AuthorityStand(ctx.vstand,ctx.invent);
+            world.pip=ctx.pip=new AuthorityPip(ctx.vpip);
             var g:Object=unit;g.ctr=ctx.ctr;g.sats=ctx.sats;
             g.attach();g.putLoc(room,x,y);g.setNull();
             // attach() schedules an equip animation. Complete that native equip

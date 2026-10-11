@@ -2,6 +2,9 @@ package authority {
    import flash.display.MovieClip;
    import flash.display.DisplayObject;
    import flash.utils.getTimer;
+   import fe.inter.AuthorityMenus;
+   import fe.inter.Stand;
+   import fe.inter.AuthorityGUI;
    /** Confirmation-only B1 presentation. No attack(), damage() or object step. */
    public class ClientReplica {
       public var tactics:TacticsBridge;
@@ -19,6 +22,7 @@ package authority {
       private var satsEpoch:int=-1;
       public var uiMessages:uint=0;
       private var uiSerial:uint=0;
+      private var menuSerial:uint=0,menuRevision:uint=0,standSerial:uint=0;
       public var satsRefreshes:uint=0;
       public function ClientReplica(access:NativeAccess) {
          this.access=access;originalPause=access.world.onPause;
@@ -51,6 +55,17 @@ package authority {
          }
          var present:Boolean=frame.room===access.roomKey();access.world.visual.visible=present;
          CharacterState.apply(access,frame.character);
+         if(frame.character!=null)AuthorityGUI.applyModal(access.world.gui,frame.character.modal);
+         if(frame.character!=null && frame.character.menu!=null) {
+            var menu:Object=frame.character.menu;
+            if(menu.revision>menuRevision)AuthorityMenus.refreshStand(access.world.stand as Stand);
+            AuthorityMenus.apply(access,menu,menu.serial>menuSerial,menu.revision>menuRevision);
+            menuSerial=menu.serial;menuRevision=menu.revision;
+         }
+         if(frame.character!=null && frame.character.stand!=null && frame.character.stand.serial>standSerial) {
+            standSerial=frame.character.stand.serial;
+            access.world.stand.onoff(frame.character.stand.active?1:-1);
+         }
          if(frame.character!=null)for each(var message:Object in frame.character.messages)if(message.id>uiSerial) {
             if(["infoText","infoEffText","messText"].indexOf(message.key)<0)throw new Error("Unknown native UI feedback");
             access.world.gui[message.key].apply(access.world.gui,message.args);uiSerial=message.id;++uiMessages;
@@ -167,6 +182,8 @@ package authority {
          entrySave.pers=PlainData.nativeCopy(w.pers.save());entrySave.invent=PlainData.nativeCopy(w.invent.save());
          entrySave.app=PlainData.nativeCopy(w.app.save());entrySave.hardInv=w.hardInv;
          w.loaddata=entrySave;w.loadGame(99);
+         Log.write("return-own-game",{control:w.gg.ggControl,hp:w.gg.hp,dead:w.pers.dead,work:w.gg.work,
+            room:access.keyFor(w.loc),exit:w.t_exit,die:w.t_die,paused:w.onPause,stat:w.allStat,cat:w.catPause});
       }
    }
 }

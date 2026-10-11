@@ -6,8 +6,14 @@ package authority {
    /** Exploration is local display knowledge, separate from authoritative combat. */
    public final class SharedVision {
       private var owner:RConnectMod,api:Object,memories:Object={},sent:Object={},lastAt:int=0,lastDiscovery:int=-10000;
+      private var sharing:Boolean=true,apiErrorAt:int=-10000;
       private static const HEX:String="0123456789abcdef";
-      public var enabled:Boolean=true,received:uint=0;
+      public var received:uint=0;
+      public function get enabled():Boolean{return sharing;}
+      public function set enabled(value:Boolean):void {
+         if(value==sharing)return;sharing=value;
+         if(value && owner.welcomed && owner.link!=null)owner.link.send({type:"exploration-request",session:owner.sessionId});
+      }
       public function SharedVision(owner:RConnectMod) {
          this.owner=owner;
          owner.stage.addEventListener(Event.ENTER_FRAME,requestRender,false,-20000,true);
@@ -23,7 +29,7 @@ package authority {
          if(!owner.welcomed || getTimer()-lastAt<100 || !owner.access.ready())return;
          lastAt=getTimer();discover();
          var room:Object=owner.access.world.loc,key:String=owner.access.keyFor(room),rows:Array;
-         if(api!=null)rows=api.capture(room) as Array;
+         if(api!=null)try{rows=api.capture(room) as Array;}catch(error:*){apiFailure(error);}
          if(!valid(rows,room.spaceX,room.spaceY)) {
             rows=[];
             for(var y:int=0;y<room.spaceY;y++) {
@@ -35,9 +41,11 @@ package authority {
                rows.push(row.join(""));
             }
          }
-         var fingerprint:String=rows.join("|");
-         if(sent[key]===fingerprint)return;sent[key]=fingerprint;
-         owner.link.send({type:"exploration",room:key,cols:room.spaceX,height:room.spaceY,rows:rows});
+         var previous:Array=sent[key] as Array,changed:Array=[],indices:Array=[];
+         for(y=0;y<rows.length;y++)if(previous==null || rows[y]!==previous[y]){indices.push(y);changed.push(rows[y]);}
+         if(changed.length==0)return;
+         if(owner.link.send({type:"exploration",session:owner.sessionId,room:key,cols:room.spaceX,height:room.spaceY,
+            full:previous==null,indices:indices,rows:changed}))sent[key]=rows.concat();
       }
       private function valid(rows:Array,cols:int,height:int):Boolean {
          if(cols<1 || cols>400 || height<1 || height>400 || rows==null || rows.length!=height)return false;
@@ -45,18 +53,30 @@ package authority {
          return true;
       }
       public function receive(packet:Object):void {
-         if(!enabled || !(packet.room is String) || packet.room.length>180 || !valid(packet.rows as Array,int(packet.cols),int(packet.height)))return;
+         if(!enabled || !(packet.room is String) || packet.room.length>180 || !(packet.cols is Number) || !(packet.height is Number) ||
+            packet.cols!=int(packet.cols) || packet.height!=int(packet.height) || packet.cols<1 || packet.cols>400 || packet.height<1 || packet.height>400 ||
+            !(packet.rows is Array) || !(packet.indices is Array) || packet.rows.length!=packet.indices.length || packet.rows.length>packet.height)return;
+         if(!valid(packet.rows as Array,int(packet.cols),packet.rows.length))return;
          var old:Object=memories[packet.room],incoming:Array=packet.rows,rows:Array=[];
          if(old!=null && (old.cols!=packet.cols || old.height!=packet.height))return;
+         if(old==null && (packet.full!==true || packet.rows.length!=packet.height)) {
+            owner.link.send({type:"exploration-request",session:owner.sessionId});return;
+         }
+         var visited:Object={};
+         for each(var index:* in packet.indices) {
+            if(!(index is Number) || index!=int(index) || index<0 || index>=packet.height || visited[index])return;
+            visited[index]=true;
+         }
+         rows=old==null?new Array(packet.height):old.rows.concat();
          for(var y:int=0;y<incoming.length;y++) {
-            var a:String=old==null?null:old.rows[y],b:String=incoming[y];
-            if(a==null || a==b){rows.push(b);continue;}
+            var target:int=packet.indices[y],a:String=old==null?null:old.rows[target],b:String=incoming[y];
+            if(a==null || a==b){rows[target]=b;continue;}
             var chars:Array=[];
             for(var i:int=0;i<b.length;i++) {
                var av:int=HEX.indexOf(a.charAt(i)),bv:int=HEX.indexOf(b.charAt(i));
                chars.push(HEX.charAt(i%17==0?Math.max(av,bv):av|bv));
             }
-            rows.push(chars.join(""));
+            rows[target]=chars.join("");
          }
          memories[packet.room]={cols:packet.cols,height:packet.height,rows:rows,applied:null};++received;
       }
@@ -66,8 +86,10 @@ package authority {
          var room:Object=owner.access.world.loc,entry:Object=memories[owner.access.keyFor(room)];
          if(entry==null || room.spaceX!=entry.cols || room.spaceY!=entry.height)return;
          if(api!=null) {
-            if(entry.applied!==room && api.merge(room,entry.rows)===true)entry.applied=room;
-            if(entry.applied===room && api.active(room)===true)return;
+            try {
+               if(entry.applied!==room && api.merge(room,entry.rows)===true)entry.applied=room;
+               if(entry.applied===room && api.active(room)===true)return;
+            }catch(error:*){apiFailure(error);}
          }
          if(room.retDark)return;
          var bitmap:BitmapData=room.grafon.lightBmp as BitmapData;if(bitmap==null)return;
@@ -78,5 +100,9 @@ package authority {
       }
       public function resetLink():void {sent={};lastAt=0;}
       public function resetJourney():void {memories={};resetLink();}
+      private function apiFailure(error:*):void {
+         api=null;
+         if(getTimer()-apiErrorAt>10000){apiErrorAt=getTimer();Log.write("exploration-api-fallback",{reason:String(error)});}
+      }
    }
 }

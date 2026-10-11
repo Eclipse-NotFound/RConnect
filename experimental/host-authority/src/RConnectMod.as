@@ -1,4 +1,5 @@
 package {
+   import fe.inter.MenuProbe;
    import authority.*;
    import authority.ui.*;
    import flash.desktop.NativeApplication;
@@ -23,7 +24,9 @@ package {
       public var mode:String=HudModel.OFFLINE,peerName:String="队友",welcomed:Boolean=false;
       public var role:String="";
       public var tactics:TacticsBridge;
+      public function get sessionId():String{return session;}
       private var intents:NativeIntents;
+      private var nativeMenus:NativeMenus;
       private var saves:PersonalSaves;
       private var server:ServerSocket,input:InputSource=new InputSource(),label:TextField=new TextField();
       private var started:Boolean=false,travelled:Boolean=false,network:Boolean=false,stopping:Boolean=false;
@@ -45,7 +48,9 @@ package {
          if(access.definition("fe.World")["rconnectChangeWorld"]!=null)throw new Error("Native lifecycle seam occupied");
          access.definition("fe.World")["rconnectChangeWorld"]=function():void {if(network)leaveSession(false);vision.resetJourney();};
          MapState.install(access);
-         if(config.probe===true)probe=config.scenario=="hud"?new HudProbe(access,role=="host"):
+         if(config.probe===true)probe=config.scenario=="dialogue"?new DialogueProbe(access,role=="host"):
+            config.scenario=="menus"?new MenuProbe(access,role=="host"):
+            config.scenario=="hud"?new HudProbe(access,role=="host"):
             config.scenario=="party"?new PartyProbe(access,role=="host"):
             config.scenario=="areas"?new AreasProbe(access,role=="host"):
             config.scenario=="mines"?new MinesProbe(access,role=="host"):
@@ -136,6 +141,7 @@ package {
             mode=HudModel.JOINING;
             replica=new ClientReplica(access);
             intents=new NativeIntents(access,input);
+            nativeMenus=new NativeMenus(access,input);
             saves=new PersonalSaves(access,null,input);
             input.scene=replica.scene;
             replica.tactics=tactics;
@@ -161,7 +167,8 @@ package {
          if(failed)return;
          try {
             if(probe!=null)probe.message(value);
-            if(value.type=="exploration" && welcomed){vision.receive(value);return;}
+            if(value.type=="exploration" && welcomed && value.session===session){vision.receive(value);return;}
+            if(value.type=="exploration-request" && welcomed && value.session===session){vision.resetLink();return;}
             if(value.type=="chat" && welcomed && value.session===session) {
                if(value.text is String && value.text.length<=512)hud.addChatLine(peerName,value.text);return;
             }
@@ -225,6 +232,7 @@ package {
             if(link!=null){link.finish({type:"leave",session:session},"left session");link=null;}
             if(server!=null){try{server.close();}catch(ignored:*){}server=null;}
             if(intents!=null){intents.dispose();intents=null;}
+            if(nativeMenus!=null){nativeMenus.dispose();nativeMenus=null;}
             if(saves!=null){saves.dispose();saves=null;}
             if(host!=null){host.dispose();host=null;tactics=null;}
             if(replica!=null){replica.dispose();replica=null;if(tactics!=null){tactics.dispose();tactics=null;}}

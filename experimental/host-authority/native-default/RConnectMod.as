@@ -1,5 +1,9 @@
 package {
  import flash.display.Sprite;
+ import flash.display.DisplayObject;
+ import flash.display.DisplayObjectContainer;
+ import flash.events.MouseEvent;
+ import flash.text.TextField;
  import flash.desktop.NativeApplication;
  import flash.events.Event;
  import flash.filesystem.File;
@@ -31,8 +35,13 @@ package {
   private function finish():void {finished=true;log("DONE",{passed:passed,failed:failed});}
   private function emptyHook(name:String,key:String):Boolean {try{return type(name)[key]==null;}catch(e:Error){}return true;}
   private function hooksEmpty():Boolean {
-   return emptyHook("fe.loc.Land","rconnectRoomStep") && emptyHook("fe.loc.Location","rconnectPlayerStep") &&
-    emptyHook("fe.loc.Location","rconnectObjectStep") && emptyHook("fe.unit.UnitPlayer","rconnectDamage") && emptyHook("fe.unit.Unit","rconnectFindTarget");
+   for each(var pair:Array in [["fe.loc.Land","rconnectRoomStep"],["fe.loc.Land","rconnectGotoRoom"],["fe.loc.Land","rconnectGotoChallenge"],
+    ["fe.loc.Location","rconnectPlayerStep"],["fe.loc.Location","rconnectObjectStep"],["fe.unit.UnitPlayer","rconnectDamage"],
+    ["fe.unit.UnitPlayer","rconnectDeath"],["fe.unit.Unit","rconnectFindTarget"],["fe.unit.Unit","rconnectHitPolicy"],
+    ["fe.unit.Mine","rconnectMineSight"],["fe.World","rconnectSave"],["fe.World","rconnectChangeWorld"],["fe.inter.PipBuck","rconnectMenu"],
+    ["fe.loc.Game","rconnectIntent"],["fe.unit.UnitPlayer","rconnectIntent"],["fe.unit.Invent","rconnectIntent"],
+    ["fe.unit.Pers","rconnectIntent"],["fe.weapon.Weapon","rconnectIntent"]])if(!emptyHook(pair[0],pair[1]))return false;
+   return true;
   }
   private function step(e:Event):void {
    if(finished)return;
@@ -55,7 +64,8 @@ package {
      check(shots>0,"single-player enemy fires real native projectiles",{shots:shots});
      check(minimumHP<initialHP,"single-player enemy attacks damage the native player",{before:initialHP,minimum:minimumHP});
      check(w.gg===w.pers.gg && w.invent===w.gg.invent && w.loc.gg===w.gg,"native player ownership remains intact");
-     check(main.getChildByName("TDFCAuthorityCarrier")!=null,"new TDFC loads without attaching its authority API");finish();
+     check(main.getChildByName("TDFCAuthorityCarrier")!=null,"new TDFC loads without attaching its authority API");
+     nativeMenus();check(hooksEmpty(),"all combat, inventory, menu, travel and lifecycle seams remain unclaimed");finish();
     }
    }catch(error:Error){log("FATAL",{message:error.message,stack:error.getStackTrace()});check(false,"default native runtime completed");finish();}
   }
@@ -74,6 +84,64 @@ package {
    foe.putLoc(room,850,y);room.units.push(foe);room.addObj(foe);foe.addVisual();
    foe.disabled=false;foe.oduplenie=0;foe.overLook=true;foe.vision=5;foe.storona=-1;foe.hp=foe.maxhp=10000;
    foe.currentWeapon.damage=75;foe.currentWeapon.damageExpl=0;
+  }
+  private function find(root:DisplayObjectContainer,id:String,byName:Boolean=false):DisplayObject {
+   if(!root.visible)return null;
+   if(byName && root.name==id)return root;
+   var text:TextField=root.getChildByName("id") as TextField;
+   if(!byName && text!=null && text.text==id)return root;
+   for(var i:int=0;i<root.numChildren;i++) {
+    var child:DisplayObject=root.getChildAt(i),result:DisplayObject;
+    if(!child.visible)continue;
+    if(byName && child.name==id)return child;
+    if(child is DisplayObjectContainer) {result=find(child as DisplayObjectContainer,id,byName);if(result!=null)return result;}
+   }
+   return null;
+  }
+  private function click(id:String,byName:Boolean=false):void {
+   var row:DisplayObject=find(w.vpip,id,byName);
+   if(row==null)throw new Error("Original native UI row/control unavailable: "+id);
+   row.dispatchEvent(new MouseEvent(MouseEvent.CLICK));
+  }
+  private function nativeMenus():void {
+   var inv:Object=w.invent,g:Object=w.gg,p:Object=w.pip,Vendor:Class=type("fe.serv.Vendor"),Item:Class=type("fe.serv.Item");
+   inv.money.kol=100000;inv.items.pot0.kol=5;inv.items.kofe.kol=9;inv.items.kofe.vault=0;
+   var v:Object=new Vendor(0,<vendor id="random"/>,[],"vendor"),stock:Object=new Item(null,"pot0",5);
+   v.buys=[stock];v.buys2=[];v.buys2.pot0=stock;v.money=100000;p.vendor=v;p.npcInter="vr";
+   p.onoff(4,1);click("pot0");click("pot0");click("butOk",true);
+   var bought:int=inv.money.kol;
+   check(inv.items.pot0.kol==7 && stock.kol==3 && bought<100000,"unclaimed original buy handler transfers stock and payment");
+   p.onoff(4,2);click("pot0");click("pot0");click("butOk",true);
+   var sold:int=inv.money.kol;
+   check(inv.items.pot0.kol==5 && stock.kol==5 && sold>bought,"unclaimed original sell handler transfers stock and payment");
+   p.onoff(9,inv.items.kofe.invCat);
+   var row:Object=find(w.vpip,"kofe");
+   if(row==null)throw new Error("Native warehouse row missing");
+   row.ns.value=4;row.ns.dispatchEvent(new Event(Event.CHANGE));
+   check(inv.items.kofe.kol==5 && inv.items.kofe.vault==4,"unclaimed native warehouse deposits exactly four items");
+   row.ns.value=0;row.ns.dispatchEvent(new Event(Event.CHANGE));
+   check(inv.items.kofe.kol==9 && inv.items.kofe.vault==0,"unclaimed native warehouse returns the same items");
+   var recipe:XML,product:String;
+   for each(var scheme:XML in type("fe.AllData")["d"].item) {
+    var id:String=String(scheme.@id),candidate:String=id.substr(2);
+    if(id.indexOf("s_")!=0 || scheme.craft.length()==0 || inv.items[candidate]==null || inv.weapons[candidate]!=null || inv.armors[candidate]!=null)continue;
+    if(inv.items[candidate].xml.@one=="1" || String(inv.items[candidate].xml.@tip)=="impl")continue;
+    recipe=scheme;product=candidate;break;
+   }
+   if(recipe==null)throw new Error("Native consumable recipe unavailable");
+   inv.items[String(recipe.@id)].kol=1;inv.items[product].kol=0;
+   for each(var comp:XML in recipe.craft)inv.items[String(comp.@id)].kol=100;
+   if(recipe.@skill.length())g.pers.skills[String(recipe.@skill)]=100;
+   g.pers.setParameters();w.helpMess=false;p.workTip=recipe.@work.length()?String(recipe.@work):"work";p.onoff(7,1);
+   click(product);var amount:int=recipe.@kol.length()?int(recipe.@kol):1;
+   check(inv.items[product].kol==amount,"unclaimed native recipe query produces the expected consumable",{product:product,expected:amount,actual:inv.items[product].kol});
+   var costs:Object={};
+   for each(comp in recipe.craft) {id=String(comp.@id);costs[id]=inv.items[id].kol;check(inv.items[id].kol==100-int(comp.@kol),"unclaimed native crafting deducts one recipe component",{id:id});}
+   g.hp=g.maxhp-100;g.rad=0;p.npcInter="doc";p.onoff(6,1);var paid:int=inv.money.kol;
+   click("hp");paid-=inv.money.kol;
+   check(g.hp==g.maxhp && paid==Math.round(100*g.pers.priceHP),"unclaimed native doctor uses original healing and price");
+   p.onoff(-1);
+   log("default-menu-result",{bought:bought,sold:sold,kofe:inv.items.kofe.kol,vault:inv.items.kofe.vault,product:product,amount:inv.items[product].kol,costs:costs,medicalPayment:paid});
   }
  }
 }

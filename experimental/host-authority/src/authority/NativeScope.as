@@ -3,7 +3,7 @@ package authority {
    /** B1's bounded native invocation scope. No permanent World.gg replacement.
     * These are synchronous calls only; objects retain their own owner/context. */
    public class NativeScope {
-      private static const FIELDS:Array=["gg","pers","invent","ctr","sats","gui","loc","land","app","alicorn","hardInv","celX","celY","calcMass","calcMassW","checkLoot","t_battle","grafon","cam","visual","vfon","vscene"];
+      private static const FIELDS:Array=["gg","pers","invent","ctr","sats","gui","pip","vpip","stand","vstand","loc","land","app","alicorn","hardInv","celX","celY","calcMass","calcMassW","checkLoot","t_battle","grafon","cam","visual","vfon","vscene"];
       private static const PENDING:Array=["calcMass","calcMassW","checkLoot","t_battle"];
       private static const LAND:Array=["loc","gg","locX","locY","locZ","prob","loc_t"];
       private var owners:Dictionary=new Dictionary(true);

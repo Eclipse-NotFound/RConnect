@@ -3,6 +3,7 @@ package authority {
    import flash.display.DisplayObjectContainer;
    import flash.display.Sprite;
    import flash.display.MovieClip;
+   import flash.display.Shape;
    import flash.utils.Dictionary;
    import flash.utils.getQualifiedClassName;
    import fe.unit.AuthorityAnimation;
@@ -91,7 +92,8 @@ package authority {
             var container:DisplayObjectContainer=room.grafon.visObjs[layer];
             for(var ci:int=0;ci<container.numChildren;ci++) {
                var drawn:DisplayObject=container.getChildAt(ci);
-               if(drawn is Sprite && !(drawn is MovieClip) && !rendered[drawn])
+               var kind:String=getQualifiedClassName(drawn);
+               if((drawn is Shape || drawn is Sprite && (!(drawn is MovieClip) || kind=="flash.display::MovieClip")) && !rendered[drawn])
                   result.effects.push({key:id(drawn),name:drawn.name,clip:getQualifiedClassName(drawn),layer:layer,pose:VisualPose.capture(drawn),atlas:null});
             }
          }

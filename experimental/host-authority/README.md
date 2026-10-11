@@ -18,19 +18,19 @@
 | `TacticsBridge` / `NativePerception` | 可选 TDFC 房间调度接口与两名玩家的原生索敌/暴露计算 |
 | `Probe` / `ContractChecks` | 仅测试配置启用，真实AIR中的协议、资源隔离与原生开火检查 |
 
-当前B3已接入原生场景、统一显示时钟、原生菜单和各自保存；门箱/拾取/XP、念力、复活/旅行、SATS、跟随/宠物/共同挑战已有分项实测。紧凑UI/聊天/设置已实测，正常退出继续修复验证。MSW、完整武器效果、本机预测、探索/汇合专项、无驱动游玩及长局压力未完成，仍不能作为日常候选。
+当前B3已接入原生场景、统一显示时钟、原生菜单和各自保存；门箱/拾取/XP、念力、复活/旅行、SATS、跟随/宠物/共同挑战已有分项实测。紧凑UI/聊天/设置已实测，退出返回单人已通过专项。MSW、完整武器效果、本机预测、探索/汇合专项、无驱动游玩及长局压力未完成，仍不能作为日常候选。
 
 ## 复现步骤
 
 工具位于`tools/host_authority`，所有参数从RConnect目录解析。输出必须是`build/ab`下的新目录，已有结果不会覆盖。
 
 1. `freeze.py --runtime build/m51/map-runtime-63 --output build/ab/<新基线>`固定完整实物。已有`baseline-001`可核验后继续使用。
-2. `patch_native.py --baseline build/ab/baseline-001 --output build/ab/<新原生副本>`仅修改复制品。B3当前15个类提供可选接口；回读核对loader、类表、资源与XML查询，运行等价另验。
+2. `patch_native.py --baseline build/ab/baseline-001 --output build/ab/<新原生副本>`仅修改复制品。B3当前23个类提供可选接口；回读核对loader、类表、资源与XML查询，运行等价另验。
 3. `build.py --output build/ab/<新构建>`冻结源码与外链存根、编译并记录工具及产物SHA。存根不包含进SWF。
 4. 与其他RConnect测试会话错开AIR时段后，`run_probe.py --baseline build/ab/baseline-001 --candidate build/ab/<新构建> --native build/ab/<匹配的原生副本> --output build/ab/<新运行>`。
 5. 核对`run.json`和双方日志中的PASS/FAIL/FATAL/DONE，之后在实际宿主核对自有PID已退出。编译、断言通过或双端DONE均不单独等于完整功能通过。
 
-测试使用新的AIR存储名，不读用户角色。B1开枪夹具生成各自弹药不同的测试角色与固定原生受击单位；不模拟假HP变化。所有失败、原始日志和实际运行副本保留。
+测试使用新的AIR存储名，不读用户角色。B1开枪夹具生成各自弹药不同的测试角色与固定原生受击单位；不模拟假HP变化。所有失败和原始日志保留。已结束运行的重复实物可按runtime-archive.json无损归档；archive_evidence.py可恢复新物理副本，审计仍校验原字节。
 
 ## 原生改动为什么存在
 
@@ -40,7 +40,7 @@
 
 ## TDFC 配套与当前冻结组
 
-当前工作使用 `b3-build-042` + `native-hooks-011` + `tdfc-build-004`，原生能力 `b3-v4`。历史B1/B2及每次B3冻结均保留，不能混用能力或合并旧绿灯。具体绿/红结果以实施记录为准。
+当前工作使用 `b3-build-052` + `native-hooks-013` + `tdfc-build-004`，原生能力 `b3-v6`。051扩展原生菜单、052原生对话已通过，仍缺探索、武器与压力等完整门禁。历史B1/B2及每次B3冻结均保留，不能混用能力或合并旧绿灯。具体绿/红结果以实施记录为准。
 
 - `build_tdfc.py --output build/ab/<新TDFC构建>`复制 TDFC 完整 src/tests 后编译，始终不写安装目录。
 - `run_tdfc_logic.py --baseline build/ab/baseline-001 --candidate build/ab/<TDFC构建> --output build/ab/<新逻辑运行>`执行真实 AIR 逻辑检查。

@@ -11,6 +11,11 @@ package authority {
       public function enqueue(value:Object):void {if(pending.length>=48)throw new Error("Too many pending UI actions");pending.push(value);}
       public function frame(world:Object,session:String,player:int,room:String):Object {
          var c:Object=world.ctr,b:int=0,a:Array=[];
+         if(player==1 && (world.gui.vis.dial.visible || world.gui.vis.inform.visible || world.gui.vis.imp.visible) &&
+            (c.keyPressed || c.keyPressed2)) {
+            enqueue({type:"native",key:"advanceDialog",args:[Boolean(c.keyPressed2)]});
+            c.keyPressed=c.keyPressed2=false;
+         }
          if(player==1)localSelector(world);
          for(var i:int=0;i<Commands.HELD.length;i++)if(c[Commands.HELD[i]])b|=1<<i;
          if(c.keyReload){a.push({id:++action,type:"reload"});c.keyReload=false;}
