@@ -8,19 +8,19 @@ package rconnect.game
    {
       private var channels:Object = {};
 
-      public function show(target:Object, hpLoss:Number, shieldLoss:Number):void
+      public function show(target:Object, hpLoss:Number, shieldLoss:Number,style:Object=null,force:Boolean=false):void
       {
          try
          {
             var w:Object = getDefinitionByName("fe.World")["w"];
-            if(w.showHit < 1 || GameBridge.probe(target,"showNumbs") == false) return;
-            if(hpLoss > 0.5) emit(target,hpLoss,"hp",w.showHit);
-            if(shieldLoss > 0.5) emit(target,shieldLoss,"shield",w.showHit);
+            if(w.showHit < 1 || !force && GameBridge.probe(target,"showNumbs") == false) return;
+            if(hpLoss > 0.5) emit(target,hpLoss,"hp",w.showHit,style);
+            if(shieldLoss > 0.5) emit(target,shieldLoss,"shield",w.showHit,style);
          }
          catch(err:*) {} // Feedback must never interrupt damage settlement.
       }
 
-      private function emit(target:Object, loss:Number, channel:String, mode:int):void
+      private function emit(target:Object, loss:Number, channel:String, mode:int,style:Object):void
       {
          var now:int = getTimer();
          var rec:Object = channels[channel];
@@ -37,8 +37,10 @@ package rconnect.game
          else
          {
             var emitter:Object = getDefinitionByName("fe.graph.Emitter")["arr"]["numb"];
-            part = emitter.cast(target.loc,target.X,target.Y-target.scY/2-(channel=="shield"?20:0),
-               {txt:txt,frame:1,rx:20});
+            var x:Number=style==null?target.X:GameBridge.probeNum(style,"x",target.X);
+            var y:Number=style==null?target.Y-target.scY/2:GameBridge.probeNum(style,"y",target.Y-target.scY/2);
+            part = emitter.cast(target.loc,x,y-(channel=="shield"?20:0),
+               {txt:txt,frame:style==null?1:int(style.frame),scale:style==null?1:Number(style.scale),rx:20});
             if(part != null && channel == "shield") part.vis.numb.textColor = 0x66CCFF;
          }
          channels[channel] = {part:part,total:total,at:now};

@@ -7,12 +7,13 @@ package rconnect.game {
    public class PeerHitUnit extends Unit {
       private var target:Object;
       private var emit:Function,allowed:Function;
+      private var origin:Function;
       private var disposed:Boolean=false;
       private static const SHAPE:Array=["loc","X","Y","X1","X2","Y1","Y2","scX","scY",
          "storona","hp","maxhp","sost","trigDis","dexter","dexterPlus","dodge","transp","invulner","stay","mat"];
 
-      public function PeerHitUnit(body:Object,accept:Function,send:Function) {
-         super();target=body;allowed=accept;emit=send;
+      public function PeerHitUnit(body:Object,accept:Function,send:Function,filter:Function=null) {
+         super();target=body;allowed=accept;emit=send;origin=filter;
          var self:Object=this;
          self.id="rconnect_peer_hit";self.fraction=101;
          self.doop=true;self.unres=true;self.npc=true;self.noAgro=true;
@@ -37,7 +38,7 @@ package rconnect.game {
          self.disabled=target==null || target.disabled || self.sost>=3;
       }
       override public function dopTest(bullet:Bullet):Boolean {
-         return !disposed && allowed!=null && allowed() && localAttack(bullet,Object(this).loc);
+         return !disposed && allowed!=null && allowed() && (origin==null?localAttack(bullet,Object(this).loc):origin(bullet));
       }
       override public function udarBullet(bullet:Bullet,mode:int=0):int {
          if(!dopTest(bullet))return -1;
@@ -56,7 +57,7 @@ package rconnect.game {
             var i:int=room.units.indexOf(this);if(i>=0)room.units.splice(i,1);
          }
          self.disabled=true;self.sost=4;self.vis=null;self.hpbar=null;
-         target=null;emit=null;allowed=null;
+         target=null;emit=null;allowed=null;origin=null;
       }
    }
 }

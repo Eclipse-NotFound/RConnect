@@ -79,6 +79,7 @@ package rconnect.game
       public var enemyGrip:rconnect.core.EnemyGrip;
       public var peerGrip:rconnect.core.PeerGrip;
       public var playerMines:rconnect.core.PlayerMines;
+      private var _mineSight:MineSight=new MineSight();
       /** M9：宿主侧客户端幽灵作为可攻击化身（可被打、可被敌人瞄准）。 */
       public var ghostCombat:Boolean = true;
       public function get mirrorsRoom():Boolean {return _mirroring;}
@@ -621,6 +622,7 @@ package rconnect.game
          s.stealthMult = numOr(probe(gg,"stealthMult"),1);
          s.demask = numOr(probe(gg,"demask"),0);
          s.noise = numOr(probe(gg,"noise"),0);
+         s.trapSight=MineSight.capture(gg);
          // M10b：带土地/房间身份，宿主据此隐藏"在别的土地"的客户端化身
          var g0:Object = probe(world, "game");
          s.landId = g0 != null ? String(probe(g0, "curLandId")) : "";
@@ -5395,6 +5397,11 @@ package rconnect.game
             return null;
          }
          _units.enter(loc);
+         if(!_mirroring)for each(var remote:Object in _remotes) {
+            var observer:Object=remote.snap;
+            if(observer!=null&&String(observer.roomKey)==roomKey()&&int(observer.roomEpoch)==roomEpoch
+               &&Number(observer.sost)<3&&Number(observer.hp)>0)_mineSight.reveal(loc,observer.trapSight);
+         }
          var out:Array = [];
          try
          {

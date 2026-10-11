@@ -1,4 +1,5 @@
 package {
+   import fe.unit.Mine;
    import flash.desktop.NativeApplication;
    import flash.display.Sprite;
    import flash.events.TimerEvent;
@@ -32,7 +33,7 @@ package {
       private function watch(l:TcpLink):void {if(l!=null&&!links[l]){links[l]=true;l.addEventListener(TcpLink.MESSAGE,receive);}}
       private function info(room:Object):Object {return {landX:room.landX,landY:room.landY,landZ:room.landZ,landProb:room.landProb,key:mod.game.roomKey(room)};}
       private function go(where:Object):void {TravelGuard.follow(mod.game,where);}
-      private function live():Array {var a:Array=[];for each(var u:Object in mod.game.loc.units)if(getQualifiedClassName(u)=="fe.unit::Mine"&&u.fraction==100&&u.id=="x37"&&u.sost<4)a.push(u);return a;}
+      private function live():Array {var a:Array=[];for each(var u:Object in mod.game.loc.units)if(u is Mine&&u.fraction==100&&u.id=="x37"&&u.sost<4)a.push(u);return a;}
       private function inspect(nativeOwner:Boolean,label:String):void {
          var a:Array=live();check(a.length==1,label+" exactly one planted mine count="+a.length);
          if(a.length!=1)return;mine=a[0];

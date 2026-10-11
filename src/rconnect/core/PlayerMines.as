@@ -7,6 +7,10 @@ package rconnect.core {
    import flash.utils.getQualifiedClassName;
    import fe.unit.Unit;
    import fe.unit.RConnectUnitAccess;
+   import fe.unit.Mine;
+   import fe.unit.RConnectPlayerMine;
+   import fe.unit.RConnectMineAccess;
+   import rconnect.game.PeerHitUnit;
    import rconnect.game.GameBridge;
    import rconnect.game.NativeRoomState;
    import rconnect.game.PlayerMineGate;
@@ -27,6 +31,7 @@ package rconnect.core {
       private var data:Dictionary=new Dictionary(),known:Dictionary=new Dictionary();
       private var serial:int=0,errors:int=0,context:Object,land:Object,lastRoom:Object;
       private var active:Boolean=false,gate:PlayerMineGate;
+      private var blastReceivers:Array=[];
 
       public function PlayerMines(m:RConnectMod) {
          mod=m;
@@ -47,7 +52,7 @@ package rconnect.core {
       }
       private function ai(u:Object):int {return int(RConnectUnitAccess.capture(u as Unit).ai);}
       private function setAi(u:Object,n:int):void {RConnectUnitAccess.restore(u as Unit,{groups:{Unit:{aiState:n}}});}
-      public static function isPlayerMine(u:Object):Boolean {return u!=null&&getQualifiedClassName(u)=="fe.unit::Mine"&&GameBridge.probe(u,"fraction")==100;}
+      public static function isPlayerMine(u:Object):Boolean {return u is Mine&&GameBridge.probe(u,"fraction")==100;}
       /** Provenance is separate from faction: retain it for future policies. */
       public function ownerOf(u:Object):int {return known[u]==null?-1:int(known[u].owner);}
       private function nativeState(u:Object):Object {return {runtime:NativeRoomState.unit(u),inter:NativeRoomState.scalars(u.inter)};}
@@ -55,7 +60,7 @@ package rconnect.core {
          var v:Object=u.vis;
          return {id:String(u.id),x:Number(u.X),y:Number(u.Y),dx:Number(u.dx),dy:Number(u.dy),
             frame:v==null?1:int(v.currentFrame),alpha:v==null?1:Number(v.alpha),visible:u.isVis===true,
-            sost:int(u.sost),exploded:u.lootIsDrop===true,damageType:int(u.tipDamage),ai:ai(u),sampleTime:getTimer()};
+            sost:int(u.sost),exploded:u.lootIsDrop===true,damageType:int(u.tipDamage),ai:ai(u),mine:int(u.inter.mine),sampleTime:getTimer()};
       }
       private function newKey():String {return "M"+int(rooms.epoch)+":"+int(session.myId)+":"+(++serial);}
       private function ensureLand():void {
@@ -109,7 +114,10 @@ package rconnect.core {
          room.firstObj=g;
       }
       private function collectAtNativeBoundary(room:Object):void {
-         try {if(context!=null&&room===context.room&&connected())discover(room,Boolean(context.authority));}
+         try {if(context!=null&&room===context.room&&connected()) {
+            discover(room,Boolean(context.authority));
+            if(context.authority&&mod.friendlyFire.enabled)detectFriendly(room);
+         }}
          catch(error:Error){fault(error);}
       }
       /** Called before Session.flushRoomReports in the room seal barrier. */
@@ -121,6 +129,7 @@ package rconnect.core {
          var d:Object=entry(room);
          for each(var u:Object in room.units as Array) {
             if(!isPlayerMine(u)||known[u]!=null||int(u.sost)>=4)continue;
+            if(!(u is RConnectPlayerMine))u=replaceNative(u,room);
             var rec:Object={key:newKey(),owner:int(session.myId),raw:u,role:authority?"native":"pending",state:view(u),played:false};
             rec.state.key=rec.key;rec.state.owner=rec.owner;rec.nativeData=nativeState(u);
             known[u]=rec;d.records[rec.key]=rec;
@@ -137,9 +146,15 @@ package rconnect.core {
          }
       }
       private function commands():void {
-         if(rooms.authority)return;
          var d:Object=entry(game.loc);
+         for(var i:int=blastReceivers.length-1;i>=0;i--) {
+            var receiver:Object=blastReceivers[i];
+            if(receiver.room!==game.loc||getTimer()-int(receiver.at)>5000) {receiver.unit.dispose();blastReceivers.splice(i,1);}
+            else receiver.unit.sync();
+         }
          for each(var rec:Object in d.records) {
+            interaction(rec);
+            if(rooms.authority)continue;
             if(rec.role=="pending"&&getTimer()-int(rec.requestAt)>15000) {
                // An unknown outcome cannot safely refund ammo or create a
                // local live mine. Remove the preview; a later valid authority
@@ -153,8 +168,59 @@ package rconnect.core {
             if(String(u.id)=="x37"&&ai(u)==2&&int(rec.state.ai)!=2&&!rec.commanded) {
                var p:Object=packet("detonate");p.key=rec.key;rec.commanded=true;session.link.send(p);
             }
-            setAi(u,int(rec.state.ai));u.disabled=true;u.inter.active=false;
+            setAi(u,int(rec.state.ai));u.disabled=true;
          }
+      }
+      private function replaceNative(old:Object,room:Object):Object {
+         var state:Object=nativeState(old),v:Object=view(old),u:Object=construct(String(old.id),room,old.X,old.Y);
+         NativeRoomState.restoreUnit(u,state.runtime,mod.main);NativeRoomState.restore(u.inter,state.inter);
+         var index:int=room.units.indexOf(old);room.remObj(old);old.remVisual();old.disabled=true;old.inter.active=false;
+         room.units[index]=u;room.addObj(u);u.setVisPos();u.vis.gotoAndStop(Math.max(1,int(v.frame)));return u;
+      }
+      private function detectFriendly(room:Object):void {
+         for each(var rec:Object in entry(room).records)if(rec.role=="native"&&rec.raw!=null&&rec.raw.sost<3)
+            for each(var body:Object in room.units) {
+               var id:int=mod.friendlyFire.playerId(body);
+               if(id>=0&&id!=int(rec.owner))RConnectMineAccess.detect(rec.raw as Mine,body as Unit);
+            }
+      }
+      private function blastTargets(mine:Object,original:Array):Array {
+         if(!connected())return original;
+         var rec:Object=known[mine],out:Array=[];
+         for each(var body:Object in original) {
+            if(body is PeerHitUnit)continue;
+            var id:int=mod.friendlyFire.playerId(body);
+            if(id<0){out.push(body);continue;}
+            if(rec==null||id==int(rec.owner)){out.push(body);continue;}
+            var proxy:PeerHitUnit=mod.friendlyFire.mineReceiver(body,int(rec.owner),String(rec.key),mine);
+            if(proxy!=null){out.push(proxy);blastReceivers.push({unit:proxy,at:getTimer(),room:mine.loc});}
+         }
+         return out;
+      }
+      private function interaction(rec:Object):void {
+         var u:Object=rec.raw;if(u==null||u.sost>=4)return;
+         if(rec.role=="native") {u.inter.active=ai(u)!=2&&(int(rec.owner)==int(session.myId)||mod.friendlyFire.enabled);return;}
+         if(rec.role!="mirror")return;
+         if(!rec.intercepted) {
+            rec.intercepted=true;
+            u.inter.successRemine=function():void {requestInteraction(rec,"disarm");};
+            u.inter.fiascoRemine=function():void {requestInteraction(rec,"trigger");};
+         }
+         u.inter.active=int(rec.owner)!=int(session.myId)&&mod.friendlyFire.enabled&&!rec.commanded&&int(rec.state.ai)!=2;
+      }
+      private function requestInteraction(rec:Object,op:String):void {
+         if(!ready()||rooms.authority||!mod.friendlyFire.enabled||int(rec.owner)==int(session.myId)||rec.commanded)return;
+         var p:Object=packet(op);p.key=rec.key;rec.commanded=true;rec.raw.inter.active=false;session.link.send(p);
+      }
+      private function canInteract(rec:Object,l:TcpLink):Boolean {
+         var body:Object=game.getRemoteGhost(l.id),u:Object=rec==null?null:rec.raw;
+         return mod.friendlyFire.enabled&&rec!=null&&int(rec.owner)!=l.id&&rec.role=="native"&&u!=null&&u.sost<4
+            &&body!=null&&body.loc===u.loc&&!body.disabled&&body.sost<3
+            &&Math.abs(body.X-u.X)<=250&&Math.abs(body.Y-u.Y)<=200;
+      }
+      public function ownsKey(key:String):Boolean {
+         var d:Object=data[game.loc],rec:Object=d==null?null:d.records[key];
+         return rec!=null&&int(rec.owner)==int(session.myId);
       }
       private function safePlacement(p:Object,room:Object):Boolean {
          if(p==null||IDS.indexOf(String(p.id))<0||p.values==null||!/^M\d+:\d+:\d+$/.test(String(p.key)))return false;
@@ -169,8 +235,7 @@ package rconnect.core {
             &&isFinite(Number(v.v4))&&isFinite(Number(v.v6))&&v.v4>=0&&v.v6>=0;
       }
       private function construct(id:String,room:Object,x:Number,y:Number):Object {
-         var c:Class=mod.main.loaderInfo.applicationDomain.getDefinition("fe.unit.Mine") as Class;
-         var u:Object=new c(id);u.putLoc(room,x,y);u.fraction=100;u.setVis(true);return u;
+         var u:Object=new RConnectPlayerMine(id,blastTargets);u.putLoc(room,x,y);u.fraction=100;u.setVis(true);return u;
       }
       private function accept(p:Object,l:TcpLink,room:Object):void {
          var d:Object=entry(room),key:String=String(p.key),rec:Object=d.records[key];
@@ -199,7 +264,12 @@ package rconnect.core {
             if(context.authority) {
                if(session.mode!=Session.HOSTING)return;
                if(p.op=="place")game.inRoom(room,function():void {accept(p,l,room);});
+               else if((p.op=="disarm"||p.op=="trigger")&&canInteract(rec,l)&&!rec.interacted) {
+                  rec.interacted=true;game.inRoom(room,function():void {if(p.op=="disarm")rec.raw.remine();else rec.raw.activate();});
+               }
+               else if(p.op=="disarm"||p.op=="trigger") {var denied:Object=packet("reject");denied.key=p.key;l.send(denied);}
                else if(p.op=="detonate"&&rec!=null&&rec.role=="native"&&rec.raw!=null&&rec.raw.id=="x37"&&rec.raw.sost<4&&!rec.detonated) {
+                  if(int(rec.owner)!=l.id&&!mod.friendlyFire.enabled)return;
                   rec.detonated=true;game.inRoom(room,function():void {rec.raw.activate();});
                }
                return;
@@ -209,6 +279,7 @@ package rconnect.core {
                // do not turn a rejected/outdated input into a local explosion.
                remove(rec.raw);delete d.records[rec.key];return;
             }
+            if(p.op=="reject"&&rec!=null&&rec.role=="mirror"){rec.commanded=false;return;}
             if(p.op!="state"||!(p.list is Array)||int(p.serial)<=int(d.received))return;
             d.received=int(p.serial);
             commands(); // Preserve a native radio input received before this snapshot.
@@ -245,6 +316,8 @@ package rconnect.core {
             d.room.units.push(rec.raw);rec.motion=new RemoteMotion(100);
          }
          rec.raw.disabled=true;setAi(rec.raw,int(s.ai));
+         if(s.mine!==undefined)rec.raw.inter.mine=int(s.mine);
+         interaction(rec);
          rec.motion.push(s,getTimer());draw(rec,d.room);
       }
       private function draw(rec:Object,room:Object):void {
@@ -314,6 +387,7 @@ package rconnect.core {
       /** Disconnect cleans display receivers and unaccepted previews only;
        * already-authoritative native mines continue ordinary offline play. */
       public function reset():void {clearViews();for(var l:Object in links)l.removeEventListener(TcpLink.MESSAGE,receive);links=new Dictionary();
+         for each(var receiver:Object in blastReceivers)receiver.unit.dispose();blastReceivers=[];
          data=new Dictionary();known=new Dictionary();context=null;land=null;lastRoom=null;active=false;}
       private function fault(e:Error):void {if(errors++<8)Log.d("RConnectMine: "+e.message+" | "+e.getStackTrace());}
    }

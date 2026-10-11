@@ -67,6 +67,9 @@ CHECKS = {
     "VisionApiTestDoc": (180, "random_mane", False),
     "BeamProfileTestDoc": (180, "random_mane", False),
     "ArchitectureTestDoc": (180, "rbl", False),
+    "MineSightTestDoc": (200, "random_mane", False),
+    "FriendlyHazardsTestDoc": (700, "random_mane", False),
+    "MapGenerationTestDoc": (500, "rbl", False),
 }
 REQUIRED = list(CHECKS)[:13]
 M50_REQUIRED = REQUIRED + ['HudTestDoc','FastHeldTestDoc','WeaponAngleTestDoc','PresentationContinuityTestDoc',
@@ -76,7 +79,7 @@ M50_REQUIRED = REQUIRED + ['HudTestDoc','FastHeldTestDoc','WeaponAngleTestDoc','
     'TeleportVisualTestDoc','PeerThrowDamageTestDoc','BodyEffectsTestDoc','FollowRecoveryTestDoc',
     'FollowNetworkTestDoc','TeammateNavigationTestDoc','HiddenRoomFollowTestDoc']
 M51_REQUIRED=M50_REQUIRED+['SpecialWeaponTestDoc','DoorVisualTestDoc','BallisticVisualTestDoc',
-    'MagicImpactTestDoc','MagicExplosionTestDoc','EffectsTerrainTestDoc','ProjectileLoadTestDoc','PacketCodecTestDoc','VisionApiTestDoc','ArchitectureTestDoc']
+    'MagicImpactTestDoc','MagicExplosionTestDoc','EffectsTerrainTestDoc','ProjectileLoadTestDoc','PacketCodecTestDoc','VisionApiTestDoc','ArchitectureTestDoc','MineSightTestDoc','FriendlyHazardsTestDoc','MapGenerationTestDoc']
 
 def required_entries(manifest):
     if manifest.get('baseline_path','').startswith('build/m51/'):

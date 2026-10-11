@@ -1,4 +1,5 @@
 package {
+   import fe.unit.Mine;
    import flash.desktop.NativeApplication;
    import flash.display.Sprite;
    import flash.display.DisplayObject;
@@ -43,7 +44,7 @@ package {
       private function send(s:String,p:Object=null):void {p=p||{};p.type="mine-sync-test";p.stage=s;p.round=round;
          if(host)mod.session.server.broadcast(p);else if(mod.session.link!=null)mod.session.link.send(p);}
       private function watch(l:TcpLink):void {if(l!=null&&!links[l]){links[l]=true;l.addEventListener(TcpLink.MESSAGE,receive);}}
-      private function isMine(u:Object):Boolean {return u!=null&&getQualifiedClassName(u)=="fe.unit::Mine"&&u.fraction==100;}
+      private function isMine(u:Object):Boolean {return u is Mine&&u.fraction==100;}
       private function liveMines():Array {var a:Array=[];for each(var u:Object in mod.game.loc.units)if(isMine(u)&&u.sost<4&&u.id==CASES[round].id)a.push(u);return a;}
       private function prepare():void {
          var g:Object=mod.game.gg;g.disabled=true;g.invulner=true;g.dx=g.dy=0;

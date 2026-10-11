@@ -32,6 +32,7 @@ package {
       private var baseX:Number,baseY:Number,startHp:Number=0,expected:Number=0,received:int=0;
       private var seen:Object={},lastHit:Object,lastAttack:Object,retired:Array=[],oldRoom:Object;
       private var remoteRoom:String="",remoteEpoch:int=-1;
+      private var oldNumbers:Dictionary=new Dictionary(true),numbers:Array=[];
       public function FriendlyFireTestDoc() {
          var id:String=NativeApplication.nativeApplication.applicationID;if(id.indexOf("rconnect-coop-")<0)return;
          host=id.indexOf("-host-")>=0;
@@ -74,7 +75,7 @@ package {
       private function install():void {
          installed=true;mod.game.forceCloseOverlays();mod.config.setValue("followTeammate","0");
          check(!mod.friendlyFire.enabled&&mod.config.getValue("friendlyFire")=="0","safe default is off");
-         mod.game.world.godMode=false;mod.game.world.testDam=true;mod.game.world.showHit=0;
+         mod.game.world.godMode=false;mod.game.world.testDam=true;mod.game.world.showHit=1;
          var l:Object=mod.game.loc;
          for each(var o:Object in l.objs.concat())if(o.X2>baseX-20&&o.X1<baseX+360&&o.Y2>baseY-190&&o.Y1<baseY+20) {
             l.remObj(o);l.objs.splice(l.objs.indexOf(o),1);if(l.celObj===o)l.celObj=null;
@@ -86,6 +87,15 @@ package {
          var g:Object=mod.game.gg;
          g.setPos(baseX+(host?60:260),baseY);g.dx=g.dy=0;g.stay=true;g.levit=0;
          for each(var u:Object in mod.game.loc.units)if(u!==g&&Number(u.fraction)<100)u.disabled=true;
+         if(shooter()&&(phase=="firing"||phase=="sampled"||phase=="replay"))scanNumbers(false);
+      }
+      private function scanNumbers(baseline:Boolean):void {
+         var obj:Object=mod.game.loc.firstObj;
+         for(var guard:int=0;obj!=null&&guard++<4096;obj=obj.nobj) {
+            var vis:Object=obj.vis;if(vis==null||!("numb" in vis)||vis.numb==null||oldNumbers[obj])continue;
+            oldNumbers[obj]=true;
+            if(!baseline&&/^\d+$/.test(String(vis.numb.text)))numbers.push({value:Number(vis.numb.text),frame:vis.currentFrame,x:obj.X,y:obj.Y});
+         }
       }
       private function start(n:int):void {
          round=n;begun=localReady=remoteReady=localDone=remoteDone=false;expected=0;received=0;seen={};lastHit=null;
@@ -140,7 +150,17 @@ package {
                // nor a new sequence with the wrong room is a new native attack.
                raw(p.packet);var stale:Object=JSON.parse(JSON.stringify(p.packet));stale.seq+=100000;stale.roomKey+="/old";raw(stale);
             }
-            else if(p.op=="sampled"){remoteDone=true;if(host&&localDone)advance();}
+            else if(p.op=="sampled") {
+               if(shooter()) {
+                  if(enabledCase()) {
+                     var number:Object=numbers.length==0?null:numbers[0],target:Object=ghost();
+                     check(number!=null&&number.value==Math.round(Number(p.loss)),"attacker sees victim's settled damage number");
+                     check(number!=null&&number.frame==2&&Math.abs(number.x-target.X)<80&&Math.abs(number.y-target.Y)<140,
+                        "friendly damage uses native player colour and impact position");
+                  }else check(numbers.length==0,"disabled friendly fire shows no damage number");
+               }
+               remoteDone=true;if(host&&localDone)advance();
+            }
             else if(!host&&p.op=="disconnect"){prepareDisconnect();send("disconnect-ready");}
             else if(host&&p.op=="disconnect-ready"){send("stop");change("disconnect");}
             else if(!host&&p.op=="stop")change("disconnect");
@@ -151,6 +171,7 @@ package {
       }
       private function fire():void {
          startHp=mod.game.gg.hp;change("firing");
+         oldNumbers=new Dictionary(true);numbers=[];scanNumbers(true);
          if(!shooter())return;
          var g:Object=mod.game.gg,target:Object=ghost(),ad:Object=mod.main.loaderInfo.applicationDomain;
          check(target!=null,"native teammate target exists");
@@ -225,7 +246,7 @@ package {
             }
          }catch(err:Error){check(false,err.getStackTrace());finish();}
       }
-      private function complete():void {localDone=true;send("sampled");change("sampled");if(host&&remoteDone)advance();}
+      private function complete():void {localDone=true;send("sampled",{loss:startHp-mod.game.gg.hp});change("sampled");if(host&&remoteDone)advance();}
       private function finish():void {
          if(phase=="done")return;change("done");timer.stop();
          if(mod!=null){mod.stage.removeEventListener(Event.ENTER_FRAME,before);if(mod.game!=null&&mod.game.world!=null)mod.game.world.testDam=false;}
