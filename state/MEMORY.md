@@ -10,6 +10,8 @@ RConnect是Remains 1.02双人合作模组，覆盖同地图普通房分头探索
 
 ## 2. 用户决定与保护边界
 
+- 讲解偏好（10-11）：用户完全不懂编程，要求通俗语言、多图辅助，同时保持专业准确；机制主图与可展开的技术依据分层。已制作 [技术图解](../design/implementation-explainer/index.html)，示例与实测、安装版与候选明确区分。
+
 - 已授权现有合作功能修复、大幅重构、实机测试与本机候选部署。稳定重连、公网、三人以上、其它版本、新任务/背包/交易同步排除。
 - 保留其它程序，不擅自结束或改优先级/亲和性。只用独立AppID/数据测试，不碰玩家存档；仅管理自有PID。WallBlend不发送消息，测试冲突时等待其结束。
 - 普通房可分头，无人房暂停并保留本次联机进度；宿主发起整图旅行，剧情/挑战共同进入。退出沿用原版保存，不新增随机房完整战斗存档。
@@ -63,6 +65,8 @@ RConnect是Remains 1.02双人合作模组，覆盖同地图普通房分头探索
 回滚必须双方保存退出后，把 `build/backup/m50-release-20261009-182002-d83866/RConnectMod.before.swf` 复制回release/RConnectMod.swf，再重启；备份SHA `5c372cf5d970212f0fd4e95bea5c0acfaabfe321c3ca531c80ed7e299c2914bd`。M49备份是旧20，不能混用。
 
 ## 7. 接续入口与工具
+
+- [零基础专业图解](../design/implementation-explainer/index.html)：8节机制、4组交互；核心基于f81c4d9，补录0927470暂停状态。已做桌面/手机页面检查，[记录](../knowledge/experiments/2026-10-11-eli5-rconnect-explainer.md)。这是讲解产物，没有恢复开发、游戏测试或部署。
 
 - [journal](journal.md)、[呈现实验](../knowledge/experiments/2026-10-09-m50-peer-presentation.md)、[验证工具](../tools/validation/README.md)。M50原安装基线integration-baseline-0.2.21-native-assets有157条（自身SWF大小写双记录），发行外部保护155条/98原生资产；保持历史原样。
 - AIR/amxmlc、SWF38；build_mod默认写release，开发构建务必显式--output到新build目录。loader硬编码app:/mods/Rconnect/release/RConnectMod.swf，大小写怪癖勿改。

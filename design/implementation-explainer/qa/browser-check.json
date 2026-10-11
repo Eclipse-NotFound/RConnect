@@ -1,0 +1,77 @@
+{
+  "date": "2026-10-11",
+  "tool": "Codex in-app browser via cua_repl",
+  "viewports": [
+    {
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "width": 390,
+      "height": 844
+    }
+  ],
+  "observations": [
+    {
+      "caption": "加入侧先移动自己的角色；主侧此刻仍保留上次收到的位置。",
+      "case": "local movement",
+      "local": "translate(253 143)",
+      "remote": "translate(191 143)"
+    },
+    "示例状态已发出J：x = 253，向右移动",
+    {
+      "case": "remote presentation",
+      "local": "translate(253 143)",
+      "remote": "translate(253 143)"
+    },
+    {
+      "a": "主侧计算",
+      "b": "加入侧计算",
+      "caption": "分头后：H 在 A 房、J 在 B 房，各自运行所在普通房的原生敌人和场景；主侧协调房间归属记录。",
+      "case": "room ownership"
+    },
+    {
+      "a": "暂停 · 保存已消灭／已破墙",
+      "b": "主侧计算",
+      "caption": "双方都离开 A 房：A 房暂停，保留敌人已消灭、墙壁已破坏的结果。双方在 B 房汇合，由主侧计算 B 房。",
+      "case": "room ownership"
+    },
+    {
+      "a": "加入侧计算 · 恢复记录",
+      "b": "主侧计算",
+      "caption": "J 重访 A 房：先恢复已保存的结果，再继续模拟。已消灭的敌人和打破的墙不应因为重新进房而恢复。",
+      "case": "room ownership"
+    },
+    {
+      "case": "motion default",
+      "text": "650 ms：已收到位置 40；缓冲显示位置 35，只在已经收到的记录之间补画。"
+    },
+    {
+      "case": "buffer disabled",
+      "text": "650 ms：已收到位置 40；直接显示位置 40，直到下一个包到来。"
+    },
+    {
+      "case": "motion completed",
+      "text": "1400 ms：已收到位置 100；缓冲显示位置 100，只在已经收到的记录之间补画。"
+    },
+    {
+      "case": "mobile slider end",
+      "text": "1400 ms：已收到位置 100；缓冲显示位置 100，只在已经收到的记录之间补画。"
+    },
+    {
+      "case": "mobile slider start",
+      "text": "0 ms：已收到位置 0；缓冲显示位置 0，只在已经收到的记录之间补画。"
+    },
+    {
+      "case": "mobile glossary wrapping",
+      "overflow": {
+        "right": 357,
+        "viewport": 390,
+        "width": 339
+      }
+    }
+  ],
+  "console_errors_observed": [],
+  "visual_review": "Agent inspected desktop first screen, rooms and damage; mobile first screen, table and motion. Mobile labels enlarged; table nowrap removed. No reader-comprehension evaluation.",
+  "preview": "http://127.0.0.1:8770/design/implementation-explainer/index.html"
+}

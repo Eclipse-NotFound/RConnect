@@ -1,0 +1,14 @@
+{
+  "duplicate_ids": [],
+  "broken_local_links": [],
+  "replacement_characters": 0,
+  "external_dependencies": [],
+  "source_files": 22,
+  "interactive_groups": [
+    "stepwise player update",
+    "room ownership",
+    "damage direction",
+    "motion playback and buffer"
+  ],
+  "synthetic_data_labelled": true
+}

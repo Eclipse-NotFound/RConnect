@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>RConnect 技术图解 · 两场单机，怎样成为一场合作冒险</title>
+<style>
+:root{--paper:#f4f3ed;--ink:#172f32;--muted:#5b7072;--line:#cbd6d1;--host:#a45b12;--host-bg:#fff0d9;--join:#08798c;--join-bg:#dcf4f6;--enemy:#766095;--good:#237759;--good-bg:#e0f2e8;--warn:#a44235;--warn-bg:#fae7e1;--mono:ui-monospace,Consolas,monospace}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:68px}body{margin:0;background:var(--paper);color:var(--ink);font-family:"Microsoft YaHei","PingFang SC",system-ui,sans-serif;line-height:1.65}a{color:var(--join);text-underline-offset:3px}button,input{font:inherit}button{cursor:pointer;color:var(--ink);background:#fff;border:1px solid #afc1ba;border-radius:8px;padding:8px 14px;font-weight:650}button:hover{background:#edf5f0}button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{outline:3px solid #08798c;outline-offset:4px}button[aria-pressed=true],button.primary{background:var(--ink);color:white;border-color:var(--ink)}button:disabled{opacity:.55;cursor:default}.topbar{position:sticky;top:0;z-index:10;background:#f4f3edf5;border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}.topinner{max-width:1190px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:20px;padding:12px 28px}.brand{font-weight:850;letter-spacing:.02em}.brand span{font-size:13px;color:var(--muted);font-weight:500;margin-left:12px}nav{display:flex;gap:20px;font-size:13px}nav a{text-decoration:none;color:var(--muted)}main{max-width:1160px;margin:auto;padding:0 28px}section{padding:52px 0 50px;border-bottom:1px solid var(--line);scroll-margin-top:10px}.hero{padding-top:32px}.eyebrow{font-size:12px;font-weight:750;letter-spacing:.12em;color:var(--good);margin:0 0 8px}h1{font-size:clamp(25px,3.4vw,39px);line-height:1.35;letter-spacing:-.035em;margin:0 0 12px}h2{font-size:clamp(22px,2.7vw,31px);line-height:1.4;margin:0 0 12px;letter-spacing:-.02em}h3{font-size:18px;margin:0 0 12px}p{margin:8px 0 14px}.lead{font-size:17px;color:var(--muted);max-width:850px}.takeaway{font-size:18px;font-weight:650;margin:18px 0 10px}.small,.note{font-size:13px;color:var(--muted)}.note{margin:10px 0 0}.scope{font-size:12px;color:var(--muted);margin-top:18px}.badge{display:inline-block;border-radius:5px;background:#e6ebe6;padding:2px 8px;font-size:12px;font-weight:650}.badge.host{color:var(--host);background:var(--host-bg)}.badge.join{color:var(--join);background:var(--join-bg)}.badge.candidate{color:var(--warn);background:var(--warn-bg)}.figure{background:#fffdf8;border:1px solid var(--line);border-radius:16px;padding:24px;margin:24px 0 10px;overflow:hidden}.fighead{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px}.fighead p{margin:0}.legend{display:flex;flex-wrap:wrap;gap:15px;font-size:13px;color:var(--muted)}.legend b{font-weight:600}.host-text{color:var(--host)}.join-text{color:var(--join)}.controls{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:16px}.controls .small{margin-left:8px}.caption{font-size:14px;margin-top:12px;color:var(--muted)}.callout{border-left:3px solid var(--good);padding:6px 15px;margin-top:18px;background:#eaf3ed}.callout.warn{border-color:var(--warn);background:#f9eee8}.callout p{margin:4px 0;font-size:14px}details{margin-top:18px;border-top:1px dashed #b9c9c2;padding-top:12px}summary{cursor:pointer;color:#385e59;font-weight:650;font-size:14px}details p,details li{font-size:14px;color:#3b5557}details p:first-of-type{margin-top:14px}details code,code{font-family:var(--mono);font-size:.88em;overflow-wrap:anywhere}.evidence{font-size:12px;color:var(--muted);border-top:1px solid #e1e7e1;margin-top:15px;padding-top:9px}.evidence a{margin-right:12px}svg{display:block;width:100%;height:auto;font-family:inherit}svg text{fill:var(--ink);font-family:inherit}svg .soft{fill:var(--muted)}svg .host-fill{fill:var(--host)}svg .join-fill{fill:var(--join)}.worlds{display:grid;grid-template-columns:minmax(0,1fr) 160px minmax(0,1fr);gap:15px;align-items:center}.game{min-width:0;background:#edf1ec;border:1px solid #bbc9c0;border-radius:12px;overflow:hidden}.game-top{display:flex;justify-content:space-between;padding:10px 13px;font-size:14px;background:#e2e9e0}.game svg{background:linear-gradient(#e8ede5,#f5f5ec)}.traffic{text-align:center;font-size:13px}.traffic .packet{padding:10px 6px;border:1px dashed #a8bdb4;border-radius:8px;background:#f3f8f1;min-height:80px}.traffic .flow{font-size:30px;color:var(--join);line-height:1.3;margin:5px}.hero-message{font-size:14px;min-height:24px;color:#385c57}.hero .figure{margin-top:20px}.split{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}.native{background:#ecf0e6;border:2px solid #a6b89c;border-radius:14px;padding:20px}.native-row{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.native-row span{background:#fafcf5;padding:12px 5px;text-align:center;border:1px solid #cbd4c5;border-radius:8px;font-size:14px}.adapter{border:2px solid var(--join);border-radius:12px;background:var(--join-bg);padding:15px;text-align:center}.bridge-arrows{display:flex;justify-content:space-around;padding:9px;font-size:13px;color:var(--join)}.phase-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:24px}.phase{position:relative;border-top:4px solid #799f94;padding:14px 12px 10px;background:#f0f4ee;border-radius:0 0 8px 8px}.phase strong{display:block;font-size:15px}.phase span{font-size:13px;color:var(--muted)}.mini-chain{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;font-size:13px;margin:16px 0}.mini-chain b{background:#eaf0ea;border:1px solid #cbd5ce;padding:5px 12px;border-radius:7px}.arrow{color:#72958a}.room-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.room{border:2px solid #bdcbbf;background:#f5f6ee;border-radius:12px;padding:16px;min-width:0;transition:background .2s}.room.active-host{border-color:#c79754;background:#fff7e8}.room.active-join{border-color:#73b7bd;background:#edf9f9}.room h3{display:flex;justify-content:space-between;align-items:center;font-size:17px;margin:0}.room .owner{font-size:12px;display:block;margin:7px 0;color:var(--muted)}.room svg{margin:10px 0}.room .state{border-top:1px solid #d8ded2;padding-top:10px;font-size:13px}.room .state strong{color:var(--good)}.authority-copy{min-height:47px;font-size:15px}.handoff{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:20px 0 0}.handoff span{position:relative;padding:10px 5px;background:#edf3ee;border:1px solid #cbdbd1;border-radius:8px;text-align:center;font-size:13px}.handoff span:not(:last-child):after{content:"→";position:absolute;right:-10px;top:10px;color:#658879;z-index:1}.envelope{display:grid;grid-template-columns:1fr 40px 1fr;gap:10px;align-items:center;margin-top:20px}.envelope .stamp{border:1px solid var(--line);padding:12px;border-radius:10px;font-size:13px;background:white}.envelope .decision{font-size:25px;text-align:center;color:var(--warn)}.combat-grid{display:grid;grid-template-columns:1fr 70px 1fr;align-items:stretch;gap:14px;margin-top:24px}.combat-side{background:#eef8f7;border:1px solid #bad7d5;border-radius:12px;padding:18px;min-width:0}.combat-side.host{background:#fff4e4;border-color:#ddc9ab}.combat-transfer{display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:12px;text-align:center;color:var(--join)}.combat-transfer b{font-size:32px}.combat-numbers{display:flex;align-items:center;justify-content:space-around;gap:10px;margin:26px 0}.combat-numbers strong{font-size:38px;font-family:var(--mono);line-height:1}.combat-numbers small{display:block;font-size:12px;font-weight:500;margin-top:10px}.combat-side .label{font-size:14px}.meter{height:11px;border-radius:8px;background:#d3ded5;overflow:hidden;margin:14px 0 8px}.meter div{height:100%;width:80%;background:var(--good)}.proxy{display:grid;grid-template-columns:220px 1fr;gap:20px;align-items:center;border-top:1px solid #d5ded5;margin-top:24px;padding-top:24px}.proxy p{font-size:14px}.pipeline{display:grid;grid-template-columns:1fr 42px 1fr 42px 1fr;gap:8px;align-items:center}.pipe{padding:18px;border:1px solid #bccdc3;border-radius:12px;background:#f1f6ee;text-align:center;min-width:0}.pipe h3{font-size:16px}.pipe .small{font-size:13px}.pipe-arrow{font-size:27px;text-align:center;color:#639383}.film{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:24px}.film-cell{border:1px solid #c7d6cc;border-radius:9px;overflow:hidden;background:#f0f6ec}.film-cell .label{padding:8px;text-align:center;border-top:1px solid #c7d6cc;font-size:12px}.data-table{width:100%;border-collapse:collapse;font-size:14px;margin:16px 0}.data-table th,.data-table td{text-align:left;padding:12px 10px;border-bottom:1px solid #d9e1d8;vertical-align:top}.data-table th{color:var(--muted);font-size:12px}.data-table td:nth-child(2){white-space:normal}.motion-row{display:grid;grid-template-columns:148px 1fr 70px;gap:16px;align-items:center;margin:24px 0}.motion-name strong{display:block;font-size:14px}.motion-name span{font-size:12px;color:var(--muted)}.track{height:48px;position:relative;border-bottom:2px solid #bdcbc0;background:repeating-linear-gradient(90deg,transparent 0,transparent calc(20% - 1px),#d8e1d7 calc(20% - 1px),#d8e1d7 20%)}.dot{position:absolute;top:8px;left:0;width:27px;height:27px;border-radius:50%;background:var(--join);transform:translateX(-50%);display:grid;place-items:center;color:#fff;font-size:11px;font-weight:750}.dot.source{border-radius:4px;background:var(--host)}.dot.raw{background:#8a8194}.motion-value{font-family:var(--mono);font-size:13px;text-align:right}.ruler{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;padding:0 86px 0 164px}.time-input{display:grid;grid-template-columns:120px 1fr 85px;align-items:center;gap:15px;margin:22px 0 0;font-size:13px}input[type=range]{width:100%;accent-color:var(--join);min-width:0}input[type=checkbox]{accent-color:var(--join);width:17px;height:17px;vertical-align:middle}.packet-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:20px}.packet-chip{border:1px dashed #b3c4ba;padding:3px 8px;border-radius:5px;font:12px var(--mono);color:#768a81}.packet-chip.arrived{background:var(--join-bg);border-style:solid;border-color:#8abfc4;color:var(--join)}.pause-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:24px}.pause-phase{padding:16px;background:#f0f5ee;border:1px solid #c5d6c8;border-radius:10px}.pause-phase h3{font-size:15px}.pause-line{display:flex;justify-content:space-between;font-size:13px;margin:8px 0}.pause-line b{font-family:var(--mono)}.pause-line.late{color:var(--warn)}.clock-warning{font-size:14px;background:#faf0e8;border-left:3px solid #b66542;padding:12px 15px;margin-top:16px}.module-map{display:grid;grid-template-columns:1fr 42px 1fr 42px 1.25fr;gap:10px;align-items:center}.module-box{border:1px solid #b8cec1;border-radius:10px;padding:16px;background:#eff5ed;margin:8px 0}.module-box strong{font-size:16px;display:block}.module-box code{font-size:11px;color:var(--muted);display:block;margin-top:5px}.module-box small{display:block;font-size:12px;margin-top:8px}.module-box.logic{background:#fff1e0;border-color:#d7bd9c}.module-box.visual{background:#e3f3f4;border-color:#9ecacf}.module-arrow{font-size:25px;text-align:center;color:#629087}.refactor{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:24px}.refactor .before,.refactor .after{border-radius:10px;padding:18px;border:1px solid #d3dcd1}.refactor .before{background:#f3eee7}.refactor .after{background:#e9f3e9}.refactor .before div,.refactor .after div{display:flex;flex-wrap:wrap;gap:7px;font-size:13px;align-items:center;margin:10px 0}.refactor b{display:inline-block;padding:5px 9px;background:#fffaf2;border:1px solid #d4d8c9;border-radius:6px}.refactor p{font-size:13px;margin-bottom:0}.milestones{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:22px 0}.milestone{position:relative;border-left:2px solid #82a694;padding:3px 14px 10px}.milestone .num{font:700 13px var(--mono);color:#638575}.milestone h3{font-size:16px;margin:8px 0}.milestone p{font-size:13px;margin:0;color:var(--muted)}.gates{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}.gate{border:1px solid #a4c3b0;background:#e9f4e8;padding:18px;border-radius:10px}.gate strong{font-size:17px;display:block}.gate span{font-size:13px;display:block;margin-top:8px}.gate.stop{border-color:#d6a596;background:var(--warn-bg);color:var(--warn)}.gate.wait{background:#efefe8;border-style:dashed;color:#73827b}.versions{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:24px}.version{border:2px solid #c1cfc2;background:#fffdf6;padding:20px;border-radius:12px}.version strong{font-size:27px;display:block;margin:8px 0}.version p{font-size:14px}.version.installed{border-color:#81ae91}.version.candidate{border-color:#d7ac92}.footer{padding:32px 0 45px;font-size:13px;color:var(--muted)}.sources{display:grid;grid-template-columns:1fr 1fr;gap:8px 24px;font-size:13px;margin-top:20px}.sources a{overflow-wrap:anywhere}.source-item{border-bottom:1px solid #d8e0d6;padding:9px 0}.source-item span{display:block;font-size:12px;color:var(--muted)}.print-only{display:none}
+@media(max-width:760px){.topinner{padding:10px 18px}.brand span{display:none}nav{gap:13px;font-size:12px}main{padding:0 18px}section{padding:34px 0}.hero{padding-top:24px}.figure{padding:17px;margin-top:20px;border-radius:12px}.fighead{align-items:start;flex-direction:column;gap:6px}.worlds{grid-template-columns:1fr;gap:10px}.game svg{max-height:220px}.traffic{display:flex;align-items:center;justify-content:center;gap:12px}.traffic .packet{min-height:0;max-width:260px;padding:7px 14px}.traffic .flow{transform:rotate(90deg);margin:0}.split,.refactor,.versions,.sources{grid-template-columns:1fr;gap:16px}.native-row{grid-template-columns:repeat(2,1fr)}.phase-row{gap:7px}.phase{padding:10px 8px}.phase strong{font-size:13px}.phase span{font-size:12px}.room-grid{grid-template-columns:1fr}.room{display:grid;grid-template-columns:1fr 135px;gap:5px 10px;padding:14px}.room h3{grid-column:1}.room .owner{grid-column:1;margin:0}.room svg{grid-column:2;grid-row:1/4;margin:0;align-self:center}.room .state{grid-column:1;border:0;padding:0}.handoff{grid-template-columns:1fr;gap:10px}.handoff span:not(:last-child):after{content:"↓";right:50%;top:auto;bottom:-14px}.envelope{grid-template-columns:1fr 24px 1fr;gap:5px}.envelope .stamp{padding:10px;font-size:12px}.combat-grid{grid-template-columns:1fr;gap:10px}.combat-transfer{flex-direction:row;gap:12px}.combat-transfer b{transform:rotate(90deg)}.combat-numbers{margin:20px 0}.proxy{grid-template-columns:1fr;gap:8px}.proxy svg{max-width:240px;margin:auto}.pipeline{grid-template-columns:1fr}.pipe-arrow{transform:rotate(90deg)}.film{grid-template-columns:repeat(2,1fr);gap:10px}.film-cell svg{min-height:100px}.data-table{font-size:12px}.data-table th,.data-table td{padding:10px 6px}.motion-row{grid-template-columns:1fr 58px;gap:6px 13px;margin:18px 0}.motion-name{grid-column:1/3;display:flex;gap:10px;align-items:center}.motion-name strong{font-size:14px}.track{margin:0 12px}.ruler{padding:0 72px 0 12px}.time-input{grid-template-columns:1fr 75px;gap:8px}.time-input label{grid-column:1/3}.pause-grid{grid-template-columns:1fr}.pause-phase{padding:13px 16px}.module-map{grid-template-columns:1fr;gap:2px}.module-arrow{transform:rotate(90deg)}.milestones{grid-template-columns:1fr;gap:15px}.milestone{display:grid;grid-template-columns:26px 1fr;gap:3px 8px}.milestone .num{grid-row:1/3;margin-top:5px}.milestone h3{margin:0}.milestone p{grid-column:2}.gates{grid-template-columns:1fr 1fr;gap:10px}.gate{padding:14px}.gate strong{font-size:15px}.controls .small{margin-left:0}.takeaway{font-size:16px}.scope{font-size:11px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+@media print{.topbar,.controls,.time-input{display:none}body{background:white;color:black}main{max-width:none;padding:0}section{padding:24px 0;break-inside:avoid}.figure{break-inside:avoid}.print-only{display:block}details{display:block}.scope{font-size:10px}}
+@media(max-width:760px){.game svg text:not([style]){font-size:16px}.room svg text{font-size:24px}}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="topinner"><div class="brand">RConnect <span>技术图解 / 零基础也能读</span></div><nav aria-label="章节导航"><a href="#rooms">谁来计算</a><a href="#combat">怎样战斗</a><a href="#motion">为何卡顿</a><a href="#status">开发现状</a></nav></div></header>
+<main>
+<section class="hero" id="overview">
+<p class="eyebrow">01 / 两场游戏，交换同一场冒险的状态</p>
+<h1>你的电脑运行你的游戏，<br>我的电脑运行我的游戏。</h1>
+<p class="lead">RConnect 在中间传递坐标、动作和结果，让两边各自画出同一场合作冒险。</p>
+<div class="figure">
+<div class="worlds">
+<div class="game"><div class="game-top"><strong class="host-text">主侧的游戏</strong><span class="badge host">自己控制 H</span></div>
+<svg viewBox="0 0 380 218" role="img" aria-label="主侧房间：主侧角色 H、加入侧化身 J、敌人 E7">
+<path d="M0 173H380M12 173V94H74V173M282 173V108H338V173" stroke="#c3cfc1" stroke-width="3" fill="none"/>
+<rect x="0" y="174" width="380" height="44" fill="#d4dfce"/><text x="15" y="201" font-size="13">同一个房间 A</text>
+<g transform="translate(79 143)"><rect x="-17" y="-20" width="34" height="34" rx="5" fill="#a45b12"/><text x="0" y="4" text-anchor="middle" style="fill:white" font-size="18">H</text><text x="0" y="-32" text-anchor="middle" font-size="13">本机角色</text></g>
+<g id="hero-host-j" transform="translate(191 143)"><circle cy="-3" r="18" fill="#08798c"/><text x="0" y="4" text-anchor="middle" style="fill:white" font-size="18">J</text><text x="0" y="-32" text-anchor="middle" font-size="13">队友化身</text></g>
+<g transform="translate(307 73)"><path d="M0 -20L20 17H-20Z" fill="#766095"/><text y="-51" text-anchor="middle" font-size="13">敌人 E7</text><rect x="-28" y="-37" width="56" height="5" rx="2" fill="#4a8e60"/></g>
+</svg></div>
+<div class="traffic"><div class="flow">←</div><div class="packet" id="hero-packet">小份状态资料<br><b>谁 · 在哪 · 正在做什么</b></div></div>
+<div class="game"><div class="game-top"><strong class="join-text">加入侧的游戏</strong><span class="badge join">自己控制 J</span></div>
+<svg viewBox="0 0 380 218" role="img" aria-label="加入侧房间：加入侧自己操作 J，主侧角色 H 是队友化身">
+<path d="M0 173H380M12 173V94H74V173M282 173V108H338V173" stroke="#c3cfc1" stroke-width="3" fill="none"/>
+<rect x="0" y="174" width="380" height="44" fill="#d4dfce"/><text x="15" y="201" font-size="13">同一个房间 A</text>
+<g transform="translate(79 143)"><rect x="-17" y="-20" width="34" height="34" rx="5" fill="#a45b12"/><text x="0" y="4" text-anchor="middle" style="fill:white" font-size="18">H</text><text x="0" y="-32" text-anchor="middle" font-size="13">队友化身</text></g>
+<g id="hero-join-j" transform="translate(191 143)"><circle cy="-3" r="18" fill="#08798c"/><text x="0" y="4" text-anchor="middle" style="fill:white" font-size="18">J</text><text x="0" y="-32" text-anchor="middle" font-size="13">本机角色</text></g>
+<g transform="translate(307 73)"><path d="M0 -20L20 17H-20Z" fill="#766095"/><text y="-51" text-anchor="middle" font-size="13">敌人 E7</text><rect x="-28" y="-37" width="56" height="5" rx="2" fill="#4a8e60"/></g>
+</svg></div>
+</div>
+<div class="controls"><button class="primary" id="hero-next">① 让加入侧向右走</button><button id="hero-reset">重置示意</button><span class="small">按三步观察信息怎样传过去</span></div>
+<p class="hero-message" id="hero-message" aria-live="polite">两边都有房间、人物和敌人。自己的键盘、鼠标先作用于本机角色。</p>
+<p class="note">以上是机制示意，不是游戏录像；H＝主侧玩家，J＝加入侧玩家，E7＝同一名敌人的示例编号。</p>
+</div>
+<p class="takeaway">“同步”就是持续交换并对齐状态。对方的画面由本机重建，因此位置、动作、开火和血量都要分别处理。</p>
+<details><summary>专业说明：这属于什么联机方式？</summary><p>它是给原单机游戏增加的<strong>状态同步与事件同步</strong>方案：每端运行原版程序，交换玩家快照、房间快照、命中报告、交互请求及确认。“快照”是一份某时刻的状态资料，不是截图。它没有把整台游戏的画面当视频传输，也不要求两端仅凭相同按键就算出完全相同的世界。</p><p>当前传输使用 TCP（一条按顺序交付数据的连接）。<code>TcpLink</code> 用长度前缀拆分消息；握手协商二进制编码，未协商成功时保留 JSON 文本编码。TCP 的有序传输不保证及时呈现：发送方卡帧、积压和接收方绘制仍可导致延迟。</p><div class="evidence">依据：<a href="#sources">S1 · 入口与通信</a> / 下文模块名称以已保存候选 f81c4d9 为准。</div></details>
+<p class="scope">讲解基准：2026-10-10 已保存源码 f81c4d9；安装文件于 2026-10-11 只读核对。正在并行修改、尚未保存到此版本的代码不作为本页结论。</p>
+</section>
+
+<section id="engine">
+<p class="eyebrow">02 / 接入原版，而后补上联机</p>
+<h2>先让模组“够得着”游戏里的东西。</h2>
+<div class="figure">
+<div class="native"><h3>原版 Remains 正在运行</h3><div class="native-row"><span>角色移动</span><span>敌人思考</span><span>伤害与物理</span><span>房间与绘制</span></div></div>
+<div class="bridge-arrows"><span>↓ 读取坐标、血量、实际动画</span><span>↑ 应用远端结果、控制是否运行</span></div>
+<div class="adapter"><strong>RConnect 的游戏接入层</strong><br><span class="small">取得原版对象的引用，读写需要同步的部分 · GameBridge</span></div>
+<div class="phase-row"><div class="phase"><strong>一帧开始前</strong><span>检查换房与暂停<br>准备念力、索敌等控制</span></div><div class="phase"><strong>原版计算之后</strong><span>采样真实结果<br>更新远端显示位置</span></div><div class="phase"><strong>最后画出来时</strong><span>校正枪口、衣服、遮罩<br>把特效挂回正确图层</span></div></div>
+</div>
+<p class="takeaway">一“帧”就是游戏的一次更新。接入时机也属于实现的一部分：原版重画后，模组还要确认显示没有被覆盖。</p>
+<details><summary>专业说明：源代码、SWF、加载入口分别是什么？</summary><div class="mini-chain"><b>.as 源码：人写的规则</b><span class="arrow">编译 →</span><b>.swf：可加载产物</b><span class="arrow">加载 →</span><b>init(main)：拿到游戏入口</b></div><p>Remains 运行在 AIR 环境中，游戏及模组使用 ActionScript 3。修改游戏 SWF 中的加载入口，使其加载 <code>mods/Rconnect/release/RConnectMod.swf</code>，再调用 <code>RConnectMod.init(main)</code>。这里的 <code>main</code> 是正在运行的原版主对象，接入层经它找到世界、房间和玩家；原版规则与资源可继续复用。</p><p>帧处理利用 <code>ENTER_FRAME</code> 的先后优先级及 <code>RENDER</code> 阶段。它们不能随意合成一个回调：原版动画会重建显示对象，视觉模组还可能改变可见区域的遮罩。显示阶段的修正有实际作用。</p><div class="evidence">依据：<a href="#sources">S1 · RConnectMod</a><a href="#sources">S2 · GameBridge 帧阶段</a></div></details>
+</section>
+
+<section id="rooms">
+<p class="eyebrow">03 / 谁计算这个房间，谁保管最后结果</p>
+<h2>同房由主侧计算；分房时，各管自己所在的普通房间。</h2>
+<div class="figure">
+<div class="fighead"><div class="legend"><b class="host-text">■ H 主侧</b><b class="join-text">● J 加入侧</b><span>同一张地图 · 普通房示意</span></div><span class="badge">无人房：暂停 + 留档</span></div>
+<div class="controls" style="margin:0 0 20px" aria-label="切换房间情境"><button data-room="together" aria-pressed="true">① 同房</button><button data-room="split" aria-pressed="false">② 分头</button><button data-room="empty" aria-pressed="false">③ A 房无人</button><button data-room="return" aria-pressed="false">④ 重访 A</button></div>
+<div class="room-grid">
+<article class="room active-host" id="room-a"><h3>A 房</h3><span class="owner" id="owner-a">主侧计算</span><svg viewBox="0 0 250 95" role="img" aria-label="A 房已破坏的墙、被消灭的敌人和玩家位置"><path d="M5 79H245" stroke="#b4c2af" stroke-width="3"/><path d="M153 78V23H171V40L183 30L193 48V78M204 78V66L215 55V29H233V78" fill="#b8c3ac"/><path d="M88 51l17 18m-17 0l17-18" stroke="#92899c" stroke-width="4"/><g id="room-a-h" transform="translate(28 62)"><rect x="-11" y="-13" width="24" height="24" rx="4" fill="#a45b12"/><text text-anchor="middle" x="1" y="5" font-size="15" style="fill:white">H</text></g><g id="room-a-j" transform="translate(61 62)"><circle r="13" fill="#08798c"/><text text-anchor="middle" y="5" font-size="15" style="fill:white">J</text></g></svg><div class="state">敌人 <strong>已消灭</strong><br>墙壁 <strong>已打破</strong></div></article>
+<article class="room" id="room-b"><h3>B 房</h3><span class="owner" id="owner-b">暂停 · 无人</span><svg viewBox="0 0 250 95" role="img" aria-label="B 房敌人及玩家位置"><path d="M5 79H245" stroke="#b4c2af" stroke-width="3"/><path d="M155 45l15 30h-30z" fill="#766095"/><rect x="136" y="30" width="40" height="4" fill="#cdd6c7"/><rect x="136" y="30" width="16" height="4" fill="#44875b"/><g id="room-b-h" transform="translate(28 62)" visibility="hidden"><rect x="-11" y="-13" width="24" height="24" rx="4" fill="#a45b12"/><text text-anchor="middle" x="1" y="5" font-size="15" style="fill:white">H</text></g><g id="room-b-j" transform="translate(61 62)" visibility="hidden"><circle r="13" fill="#08798c"/><text text-anchor="middle" y="5" font-size="15" style="fill:white">J</text></g></svg><div class="state">敌人 <strong>剩余 40 血</strong><br>血量为说明用示例</div></article>
+<article class="room" id="room-c"><h3>C 房</h3><span class="owner">暂停 · 无人</span><svg viewBox="0 0 250 95" role="img" aria-label="无人房保留关闭的容器"><path d="M5 79H245" stroke="#b4c2af" stroke-width="3"/><rect x="90" y="42" width="58" height="35" rx="3" fill="#baae93"/><path d="M90 52H148M119 42V77" stroke="#807966" stroke-width="2"/><rect x="115" y="53" width="9" height="11" fill="#eed995"/></svg><div class="state">容器 <strong>仍关闭</strong><br>等待下一次进入</div></article>
+</div>
+<p class="authority-copy" id="room-copy" aria-live="polite">双方在 A 房：主侧运行敌人和场景逻辑，加入侧接收结果；双方仍各自控制自己的角色。</p>
+<div class="handoff" aria-label="换房交接步骤"><span>短暂停住交接</span><span>结清旧房请求</span><span>保存当前结果</span><span>分配计算责任</span><span>双方确认后继续</span></div>
+<p class="note">房间状态保留范围：本次联机内。关闭游戏后的保存沿用原版；没有新增整张随机地图的完整战斗存档。</p>
+</div>
+<p class="takeaway">“房间负责人”决定敌人和场景怎样继续，不接管另一位玩家的身体与镜头。</p>
+<details><summary>专业说明：怎样防止回房后敌人复活，或旧消息改错房间？</summary><p><code>RoomSync</code> 由主侧协调房间归属，保存各房间的检查点，即敌人、门箱、破坏和奖励等状态记录。进入、离开及归属转移时，先结清旧房间报告，再提交并恢复对应检查点。加入侧单独所在的普通房由加入侧运行原生模拟；双方汇合后共同房间归主侧。</p><div class="envelope"><div class="stamp">迟到的报告<br>地图实例 M4<br>房间 A<br><b>第 7 次归属</b></div><div class="decision">≠</div><div class="stamp">当前有效身份<br>地图实例 M4<br>房间 A<br><b>第 8 次归属</b></div></div><p>每份相关消息带 <code>roomEpoch</code>（地图实例）、<code>roomKey</code>（房间）和 <code>roomTerm</code>（本次归属）。旧归属的报告在交接时处理，交接后不再被当成新的伤害或拾取。图中 M4、7、8 是示例。</p><p>支持范围仍是同地图普通房分头行动；剧情／挑战共同进入，整张地图由主侧发起共同切换。TCP 的“按顺序到达”不能代替房间身份检查，因为游戏世界可能已换到下一间房。</p><div class="evidence">依据：<a href="#sources">S3 · RoomSync.sendReady / commit / report</a></div></details>
+</section>
+
+<section id="combat">
+<p class="eyebrow">04 / 命中、减伤、最终结果，分别在哪里发生</p>
+<h2>伤害只该按正确的防御规则结算一次。</h2>
+<div class="figure">
+<div class="fighead"><span class="badge">双方在同房时</span><span class="small">数字只用于说明，不代表武器实测数值</span></div>
+<div class="controls" style="margin:0" aria-label="选择伤害方向"><button data-combat="outgoing" aria-pressed="true">加入侧打敌人</button><button data-combat="incoming" aria-pressed="false">敌人打加入侧</button></div>
+<div class="combat-grid">
+<div class="combat-side" id="combat-left"><h3 id="combat-left-title">① 加入侧：确认命中并减伤</h3><div class="combat-numbers"><div><strong id="combat-a">30</strong><small id="combat-a-label">原始伤害</small></div><span id="combat-op">→</span><div><strong id="combat-b">20</strong><small id="combat-b-label">本次实际损失</small></div></div><p class="label" id="combat-left-copy">使用敌人的防御资料，调用原版受伤规则；得到生命、护甲、护盾各自的损失。</p></div>
+<div class="combat-transfer"><b>→</b><span id="combat-packet">发送<br>净损失</span></div>
+<div class="combat-side host" id="combat-right"><h3 id="combat-right-title">② 主侧：应用损失并定结果</h3><div class="combat-numbers"><div><strong id="combat-c">100</strong><small id="combat-c-label">原生命值</small></div><span>→</span><div><strong id="combat-d">80</strong><small id="combat-d-label">更新后</small></div></div><div class="meter"><div></div></div><p class="label" id="combat-right-copy">不再次计算护甲；由主侧处理敌人死亡、掉落等结果，并同步回加入侧。</p></div>
+</div>
+<p class="caption" id="combat-conclusion" aria-live="polite">如果把“已经减过伤的 20”再当成原始伤害减一次，加入侧就会打得异常弱。</p>
+<div class="proxy">
+<svg viewBox="0 0 230 165" role="img" aria-label="一个敌人的显示本体，外面同位置包围着用于命中检测的代理边界"><rect x="64" y="36" width="97" height="90" rx="5" fill="none" stroke="#08798c" stroke-width="2" stroke-dasharray="6 4"/><path d="M112 52l35 60H77z" fill="#766095"/><rect x="77" y="20" width="70" height="6" fill="#4e9166"/><path d="M10 90H54" stroke="#bb7c2a" stroke-width="4"/><path d="M47 84l10 6-10 6" fill="none" stroke="#bb7c2a" stroke-width="3"/><text x="115" y="148" text-anchor="middle" font-size="13">同一位置 · 同一个敌人</text></svg>
+<div><h3>画面里的敌人，还需要一个“能被打中的接收器”。</h3><p>加入侧停止镜像敌人的自主思考后，原版子弹会跳过被停用的本体。模组补一个同位置的<strong>受击代理</strong>，让子弹和 SATS 能认出目标；它自己不再跑一遍敌人 AI，也不再生成一份掉落。</p><p class="small">蓝色虚线是说明用边界。代理借用本体的图像引用，不额外画一只敌人。</p></div>
+</div>
+</div>
+<details><summary>专业说明：为什么两种伤害方向使用不同的数据？</summary><p><strong>加入侧 → 同房敌人：</strong><code>MirrorHitUnit.damage</code> 调用原生 <code>Unit.damage</code>，把算出的净生命损失和护甲／护盾变化写回镜像；接入层从基线提取差额上报。<code>RoomSync.report</code> 校验房间后，主侧 <code>GameBridge.applyDamage</code> 以原生 <code>D_INSIDE</code>（代码值 100）应用净生命损失，避免再次减伤。最终死亡和奖励在房间负责端发生。</p><p><strong>敌人 → 远端玩家：</strong>负责模拟的那一端用远端玩家的原生化身参与索敌与碰撞。<code>RemoteDamageUnit</code> 记录命中输入，<code>NativeHit</code> 传递并恢复伤害类型、穿甲、暴击等必要字段，再在受害玩家所在端调用自己的原生 <code>player.damage</code>。自己的装备与角色规则由自己的端结算。</p><p>30 → 20 只是一次假设的结算结果。实际原版计算包括伤害类型、护甲、护盾、抗性与暴击等，并不是固定减 10。现有方案也不是所有伤害都由主侧重新验证的竞技反作弊架构；它有对加入侧报告的信任。</p><p>受击代理与本体共享图像，使原版 SATS 可以访问目标外观；也使遮罩、血条和清理更容易相互影响。这解释了为何“只删掉多余对象”可能重新引入打不中、双影或空引用问题。</p><div class="evidence">依据：<a href="#sources">S4 · MirrorHitUnit / NativeHit / applyDamage</a><a href="#sources">S8 · 同步审查中的伤害归属</a></div></details>
+</section>
+
+<section id="visuals">
+<p class="eyebrow">05 / 同步“发生了什么”，还要同步“看起来怎样”</p>
+<h2>让另一侧看到真实的动作轨迹。</h2>
+<div class="figure">
+<div class="pipeline">
+<div class="pipe"><h3>原版真的开火</h3><svg viewBox="0 0 220 88" role="img" aria-label="原生枪口发出有轨迹的子弹"><rect x="16" y="40" width="47" height="10" rx="2" fill="#4e625a"/><path d="M64 45C107 9 145 22 179 57" stroke="#b68026" stroke-width="3" fill="none"/><circle cx="180" cy="57" r="5" fill="#b68026"/><path d="M187 54l9-5m-8 12l9 5m-14 1l3 9" stroke="#c36b3f" stroke-width="2"/></svg><span class="small">碰撞、伤害、爆炸在这里发生</span></div>
+<div class="pipe-arrow">→</div>
+<div class="pipe"><h3>记录发生过的帧</h3><svg viewBox="0 0 220 88" role="img" aria-label="在真实轨迹上记录多个离散位置"><path d="M30 57C78 5 130 7 187 65" stroke="#bac9b8" stroke-width="2" fill="none"/><circle cx="30" cy="57" r="6" fill="#08798c"/><circle cx="75" cy="26" r="6" fill="#08798c"/><circle cx="125" cy="25" r="6" fill="#08798c"/><circle cx="187" cy="65" r="6" fill="#08798c"/><text x="28" y="80" font-size="11">起点</text><text x="167" y="85" font-size="11">结束</text></svg><span class="small">坐标、角度、翻转、特效与结束</span></div>
+<div class="pipe-arrow">→</div>
+<div class="pipe"><h3>对方播放显示效果</h3><svg viewBox="0 0 220 88" role="img" aria-label="接收端重建相同的曲线和末端火花"><rect x="16" y="40" width="47" height="10" rx="2" fill="#4e625a"/><path d="M64 45C107 9 145 22 179 57" stroke="#08798c" stroke-width="3" fill="none"/><circle cx="180" cy="57" r="5" fill="#08798c"/><path d="M187 54l9-5m-8 12l9 5m-14 1l3 9" stroke="#c36b3f" stroke-width="2"/></svg><span class="small">绘出同一发；不再制造一次伤害</span></div>
+</div>
+<div class="film" aria-label="动作记录的四项信息"><div class="film-cell"><svg viewBox="0 0 210 100" role="img" aria-label="枪口位置及瞄准角度"><circle cx="55" cy="65" r="18" fill="#08798c"/><path d="M57 62L119 28" stroke="#3c524b" stroke-width="9"/><path d="M121 25l9-9m-6 12l13-2" stroke="#be862a" stroke-width="3"/><path d="M82 62A28 28 0 0 0 77 47" stroke="#a5bdae" fill="none"/></svg><div class="label">枪口位置 + 角度</div></div><div class="film-cell"><svg viewBox="0 0 210 100" role="img" aria-label="武器旋转时的原生翻转状态"><path d="M43 55L100 24M90 36L95 48" stroke="#3b5c54" stroke-width="9" fill="none"/><path d="M166 55L109 24M119 36L114 48" stroke="#08798c" stroke-width="9" fill="none"/><path d="M104 12V83" stroke="#b2c5b8" stroke-dasharray="4 4"/></svg><div class="label">左右翻转 / 缩放</div></div><div class="film-cell"><svg viewBox="0 0 210 100" role="img" aria-label="光束和抛物线各有自己的路径"><path d="M27 72Q94 -12 176 68" stroke="#b08a43" stroke-width="3" fill="none"/><path d="M28 28L60 44L79 30L117 65L137 51L176 71" stroke="#27949e" stroke-width="5" fill="none"/></svg><div class="label">投掷弧线 / 光束形状</div></div><div class="film-cell"><svg viewBox="0 0 210 100" role="img" aria-label="命中和消失也要被记录"><circle cx="105" cy="49" r="21" stroke="#b66745" stroke-width="3" fill="none"/><path d="M105 10V23m0 52v14M67 49H79m53 0h14M78 22l10 10m32 32l10 10M78 77l10-10m33-35l10-10" stroke="#bd835c" stroke-width="3"/></svg><div class="label">命中火花 + 结束时刻</div></div></div>
+<p class="caption">示意图只说明要记录的内容；不同原生武器和魔法仍需要各自的显示处理。</p>
+<table class="data-table"><thead><tr><th>交换的资料</th><th>代码中的目标间隔</th><th>用途</th></tr></thead><tbody><tr><td>玩家、搬运中物品</td><td>约 50 毫秒</td><td>较快更新位置与姿态</td></tr><tr><td>敌人、门箱、场景</td><td>约 200 毫秒</td><td>对齐房间状态</td></tr><tr><td>探索视野资料</td><td>约 100 毫秒</td><td>更新队友探索信息</td></tr><tr><td>命中、拾取、换房等</td><td>各自报告与确认流程</td><td>及时结算一次性的变化</td></tr></tbody></table>
+<p class="note"><strong>发送间隔 ≠ 游戏帧率。</strong>一个消息可以带多帧轨迹；忙碌时定时器也可能迟到。50 毫秒是默认约 20 次／秒的发送机会，不承诺每秒只画或一定画 20 帧。</p>
+</div>
+<p class="takeaway">只有一个“开火了”的信号还不够：曲线、翻转、命中和消失的时刻，都影响你看到的效果。</p>
+<details><summary>专业说明：状态、事件、确认各解决什么？</summary><p><strong>状态</strong>回答“现在是什么”：坐标、血量、门的开合；<strong>事件</strong>回答“发生过什么”：某一发子弹、某次命中；<strong>确认</strong>回答“这个请求是否已经生效”。这些语义有区别，但不表示每种都占一个独立网络包：轨迹与事件历史也会附在快照中。</p><p>候选中的 <code>WeaponCapture</code> 观察原生子弹和效果；<code>UnitPresentation</code>、<code>ProjectileVisuals</code> 在远端播放。接收端不再运行一次真正的开火、死亡或掉落脚本。原生特效可能持续多帧，即使换枪也要保留尚未结束的旧弹；结束记录要发送后再退役，防止最后一帧丢失或历史越积越多。</p><p>门的动作状态、墙的破坏、物品领取有各自的规则。比如门同时占用地图格子，单纯把格子状态覆盖回去可能触发错误的破坏动画；领取物品则需要唯一物品标识和确认，避免同一份掉落两边各捡一次。</p><div class="evidence">依据：<a href="#sources">S5 · WeaponCapture / ProjectileVisuals</a><a href="#sources">S6 · SnapshotPublisher / ExplorationSync</a><a href="#sources">S8 · 地形与对象归属审查</a></div></details>
+</section>
+
+<section id="motion">
+<p class="eyebrow">06 / 用已经收到的位置，补出中间的移动</p>
+<h2>画面平滑，需要留出一点“可播放的余量”。</h2>
+<div class="figure">
+<div class="fighead"><h3 style="margin:0">拖动时间，看两种显示方式</h3><span class="badge">教学模型 · 非性能测试</span></div>
+<div class="motion-row"><div class="motion-name"><strong>源端实际位置</strong><span>原版正在计算</span></div><div class="track"><span class="dot source" id="motion-source">源</span></div><div class="motion-value" id="source-value">65</div></div>
+<div class="motion-row"><div class="motion-name"><strong>到包就换位置</strong><span>没新包时停住</span></div><div class="track"><span class="dot raw" id="motion-raw">包</span></div><div class="motion-value" id="raw-value">40</div></div>
+<div class="motion-row"><div class="motion-name"><strong>缓冲后的显示</strong><span id="motion-policy">在已知位置间补画</span></div><div class="track"><span class="dot" id="motion-smooth">显</span></div><div class="motion-value" id="smooth-value">35</div></div>
+<div class="ruler"><span>位置 0</span><span>位置 100</span></div>
+<div class="time-input"><label for="motion-time">示例经过时间</label><input id="motion-time" type="range" min="0" max="1400" step="1" value="650"><output id="motion-time-label" for="motion-time">650 ms</output></div>
+<div class="controls"><button id="motion-play">播放对比</button><button id="motion-reset">回到起点</button><label class="small"><input type="checkbox" id="motion-buffer" checked> 使用显示缓冲</label></div>
+<div class="packet-row" id="motion-packets" aria-label="已经收到的源端位置"></div>
+<p class="caption" id="motion-explain">650 ms：已收到位置 40；缓冲显示位置 35，在先前收到的两个位置之间移动。</p>
+<p class="note">模型设定：源端匀速移动，每 200 ms 一条记录；到达时间人为加入波动；显示退后 300 ms。数值为教学设定，不是实际延迟、速度或优化成绩。</p>
+</div>
+<p class="takeaway">补中间位置叫“插值”。它让远端更连贯，也带来显示滞后；玩家自己的操作仍在本机立即执行。</p>
+<div class="figure">
+<h3>共享 SATS 暂停，还要收好最后几帧。</h3>
+<div class="pause-grid"><div class="pause-phase"><h3>① 原版计算停下</h3><div class="pause-line"><span>主侧敌人</span><b>位置 50</b></div><div class="pause-line late"><span>加入侧还在缓冲</span><b>位置 35</b></div><p class="small">网络中还有最后的状态</p></div><div class="pause-phase"><h3>② 接收最后状态</h3><div class="pause-line"><span>网络与界面</span><b>继续</b></div><div class="pause-line"><span>显示指针</span><b>35 → 50</b></div><p class="small">收敛到已收到的暂停终点</p></div><div class="pause-phase"><h3>③ 从同一终点继续</h3><div class="pause-line"><span>双方显示</span><b>位置 50</b></div><div class="pause-line"><span>两边都关闭暂停</span><b>恢复</b></div><p class="small">保留终点，避免重放旧位置</p></div></div>
+<p class="note">位置数字为示例；此流程适用于开启共享暂停的情形。</p>
+<div class="clock-warning"><strong>仍未完全解决：</strong>敌人的位置与部分身体／武器动画还存在播放时刻不一致的路径。暂停专项通过，不等于所有敌人的所有动作都已在同一时刻显示。</div>
+</div>
+<details><summary>专业说明：真实代码怎样缓冲？为什么敌人多时仍会卡？</summary><p><code>RemoteMotion</code> 按源端 <code>sampleTime</code> 排列位置，估计时间偏移，用连续的显示指针取样。重复时间戳不会重启动画；指针不越过最后一个已收到的位置。玩家与高速搬运使用较高频轨迹，在适用路径上做保持端点范围的平滑插值；普通敌人使用较低频的位置流。上面的线性教学模型只展示共同原理，并非该算法的逐行移植。</p><p>真实缓冲深度会参考收到的时间间隔并设置上限；快速抓取、掉落弧线和普通单位有不同策略。暂时没有新位置时，它不猜测未收到的未来运动。<code>settle</code> 在暂停时把显示指针收至最新已收终点；传送等不连续移动另行处理。</p><p>密集战斗的成本至少经过：<strong>原版模拟 → 扫描采样 → 编码／收发 → 更新对象 → 绘制</strong>。任何一步吃满时间，都可能使记录稀疏或成批到达。只提高发送频率还会增加扫描和数据处理负担；缓冲也不能补回没有采到的真实动作。</p><p>已有审查发现敌人位置／弹道采用缓冲源时间，而部分姿态、开火动画从本机收包时刻开始推进。这是明确的结构问题，但不能据此把用户所有卡顿都归因于同一原因。当前密集开火和火焰时序测试仍未达标。</p><div class="evidence">依据：<a href="#sources">S7 · RemoteMotion</a><a href="#sources">S8 · 混合播放时钟分析</a><a href="#sources">S9 · 实测与限制</a></div></details>
+</section>
+
+<section id="architecture">
+<p class="eyebrow">07 / 把职责分开，同时保留必要的顺序</p>
+<h2>架构优化，是让每件事有一个清楚的负责人。</h2>
+<div class="figure">
+<div class="fighead"><span class="badge candidate">以下模块划分包含 0.2.23 候选改动</span><span class="small">职责图：不是所有消息都逐一经过每个框</span></div>
+<div class="module-map">
+<div><div class="module-box"><strong>接入原版对象</strong><code>GameBridge</code><small>读状态、代理、应用结果</small></div><div class="module-box"><strong>记录真实武器表现</strong><code>WeaponCapture</code><small>采样轨迹；管理结束记录</small></div></div>
+<div class="module-arrow">→</div>
+<div><div class="module-box"><strong>整理并发送当前状态</strong><code>SnapshotPublisher</code><small>沿既有时钟发送，避免重复采样</small></div><div class="module-box"><strong>连接与分发消息</strong><code>Session / TcpLink</code><small>识别对方、传输和路由</small></div></div>
+<div class="module-arrow">→</div>
+<div><div class="module-box logic"><strong>结果通路：校验并应用</strong><code>RoomSync / GameBridge / 专项同步</code><small>房间身份、伤害、拾取、破坏</small></div><div class="module-box visual"><strong>显示通路：按时间播放</strong><code>RemoteMotion / UnitPresentation<br>ProjectileVisuals</code><small>位置、姿态、弹道与特效</small></div></div>
+</div>
+<div class="refactor"><div class="before"><h3>整理前：两件事都能触发发送</h3><div><b>定时器到点</b><span>→</span><b>制作快照</b></div><div><b>收到队友位置</b><span>→</span><b>又制作快照</b></div><p>采样和打包可能重复；收到消息与发送自己状态纠缠。</p></div><div class="after"><h3>已整理：周期发送只有一个入口</h3><div><b>既有定时器</b><span>→</span><b>统一制作快照</b></div><div><b>收到队友位置</b><span>→</span><b>更新队友状态</b></div><p>加入、离开等必要即时通知仍保留。</p></div></div>
+</div>
+<p class="takeaway">结果要及时结算，画面可以缓冲播放。整理代码时，必须保留这两条通路的区别。</p>
+<details><summary>专业说明：哪些复杂度已收口，哪些还不能删？</summary><p>本轮已提取周期发送器和源端武器采样器；<code>damage / loot / objs / terrain</code> 统一交给 <code>RoomSync.report</code> 接纳或拒绝；房间显示资源从统一入口清理。离线停止记录武器事件；有订阅者的结束记录须先发送，再保留短窗退役。加入侧独房保留活动弹道和最近结束记录，以供房间交接。</p><p>换房时的冻结、结清报告、归属标记和确认，有防止回滚及重复结算的作用；原生受击代理、显示遮罩恢复和最后绘制阶段也有兼容用途。优化要消除重复责任，不能只按代码长度删除保护步骤。</p><p><code>GameBridge</code> 仍承担较多职责，敌人播放时钟和高速持物／常规场景字段归属仍有进一步整理空间。模块拆分不直接等于帧率提高；需要同条件下运行验证。</p><div class="evidence">依据：<a href="#sources">S8 · 审查发现</a><a href="#sources">S9 · 架构整理及验证记录</a></div></details>
+</section>
+
+<section id="status">
+<p class="eyebrow">08 / 从读懂原版，到允许替换安装版</p>
+<h2>这条开发路线，最后必须经过真实双侧验证。</h2>
+<div class="figure">
+<div class="milestones"><div class="milestone"><span class="num">01</span><h3>读懂原版</h3><p>敌人怎样索敌<br>子弹怎样命中<br>房间怎样保存</p></div><div class="milestone"><span class="num">02</span><h3>接入与连接</h3><p>加载模组<br>获得游戏对象<br>交换玩家状态</p></div><div class="milestone"><span class="num">03</span><h3>建立共同结果</h3><p>敌人、伤害、掉落<br>门箱、破墙<br>分房与交接</p></div><div class="milestone"><span class="num">04</span><h3>补齐可见细节</h3><p>身体与武器<br>念力、护盾、弹道<br>视野与暂停</p></div><div class="milestone"><span class="num">05</span><h3>回归与整理</h3><p>覆盖旧故障<br>查密集战斗时序<br>收拢重复职责</p></div></div>
+<p class="note">这是能力建立的主线；实际开发会在这些环节间反复验证和修正。</p>
+</div>
+<div class="figure">
+<h3>10 月 10 日的架构整理，停在性能与时序检查。</h3>
+<div class="gates"><div class="gate"><strong>✓ 编译</strong><span>产物与类清单核对</span></div><div class="gate"><strong>✓ 定向功能</strong><span>11 类取得双侧成功</span></div><div class="gate stop"><strong>! 压力与时序</strong><span>密集开火、火焰时长<br>尚未通过</span></div><div class="gate wait"><strong>待部署</strong><span>候选未替换安装版</span></div></div>
+<div class="versions"><div class="version installed"><span class="badge">已安装文件</span><strong>0.2.22-dev</strong><p>仍是游戏加载的版本。2026-10-11 核对文件指纹，与此前部署记录一致。</p></div><div class="version candidate"><span class="badge candidate">本文架构整理基准</span><strong>0.2.23-dev</strong><p>已保存候选 f81c4d9。编译和定向功能有通过证据；尚不能排除性能回退，未部署。</p></div></div>
+<p class="note">已通过的类别包括分房、隐藏房、复活状态、暂停、遮罩恢复、普通弹道、友伤、念力、枪口角度、光束破墙和架构专项。类别通过不代表所有武器、存档与负载组合都已覆盖。</p>
+</div>
+<div class="callout warn"><p><strong>10 月 11 日状态补充：</strong>后续地雷与友伤候选已保存，但拆雷、双端地图整体比较仍有失败；开发现已暂停，安装版仍为 22。专用远端玩家实体正在讨论，尚未成为已实施方案。<a href="#source-latest">查看依据</a></p></div>
+<div class="callout"><p><strong>当前边界：</strong>面向 Remains 1.02 的双人合作。稳定重连、公网使用准备、更多玩家、其他游戏版本、新任务进度与交易同步，没有因这轮架构优化自动成为已完成功能。</p></div>
+<details><summary>专业说明：怎样判断“没有损害实际运行效果”？</summary><p>先冻结源码、实际编译产物、测试驱动、游戏与其他模组输入，再用隔离 AppID 和存档运行主侧、加入侧两份真实游戏。检查两端的日志、对象状态及需要验证的最终画面；不能只看编译成功或一侧没有报错。</p><p>既有记录保存了成功和失败。旧候选在当前环境也出现低帧，但顺序对照的装备与负载并非完全一致，而且新候选部分火焰时间偏差更大，所以不能说已经排除回退。未通过的门槛不能用其他通过项抵消。</p><p>本页仅核对既有代码和验证证据，没有重新执行游戏测试。显示演示使用合成数据；它用于解释机制，不用于证明候选性能。用户在真实游玩中报告的新场景，仍需单独复现。</p><div class="evidence">依据：<a href="#sources">S9 · 架构整理记录</a><a href="#sources">S10 · 安装版与范围</a></div></details>
+</section>
+
+<section id="sources">
+<p class="eyebrow">专业依据 / 按需展开与核对</p>
+<h2>图中结论从哪里来</h2>
+<p class="small">正文以直观模型解释真实机制；以下入口保留实现名称与验证边界。源码核对固定于 f81c4d9，当前工作目录后续可能继续变化。文件指纹与本页使用的代码位置见 <a href="evidence.json">依据清单</a>。</p>
+<div class="sources">
+<div class="source-item"><strong>S1 · 模组加载与传输</strong><span>RConnectMod.as；net/TcpLink.as：init、握手、分帧与编码</span></div>
+<div class="source-item"><strong>S2 · 游戏接入与帧时机</strong><span>game/GameBridge.as：帧回调、镜像显示、最终绘制</span></div>
+<div class="source-item"><strong>S3 · 分房与交接</strong><span>core/RoomSync.as：sendReady、commit、report、room 身份</span></div>
+<div class="source-item"><strong>S4 · 双向伤害</strong><span>MirrorHitUnit、RemoteDamageUnit、NativeHit；GameBridge.applyDamage</span></div>
+<div class="source-item"><strong>S5 · 原生武器表现</strong><span>WeaponCapture、UnitPresentation、ProjectileVisuals</span></div>
+<div class="source-item"><strong>S6 · 发送节奏</strong><span>SnapshotPublisher、Session、Config、ExplorationSync</span></div>
+<div class="source-item"><strong>S7 · 显示缓冲</strong><span>RemoteMotion：pushTimed、sampleTimed、delay、settle</span></div>
+<div class="source-item"><a href="../sync-audit-2026-10-10.md">S8 · 同步机制审查</a><span>结果归属、代理必要性、敌人混合时钟、结构成本</span></div>
+<div class="source-item"><a href="../../state/architecture-2026-10-10.md">S9 · 架构整理与验证</a><span>保存的候选、11 类定向成功、失败、对照限制及未部署</span></div>
+<div class="source-item"><a href="../../state/MEMORY.md">S10 · 模组状态入口</a><span>安装 22、候选 23、已定玩法与当前边界；以本页记录时点为准</span></div>
+<div class="source-item" id="source-latest"><a href="../../state/cooperative-hazards-2026-10-11.md">S11 · 10 月 11 日暂停登记</a><span>0927470 已保存的后续候选、拆雷与地图比较失败；没有部署</span></div>
+<div class="source-item"><a href="../remote-player-entity-2026-10-11.md">S12 · 远端实体评估</a><span>当前已使用原生派生实体；专用实体重构仍是建议</span></div>
+</div>
+<details><summary>四个容易混淆的词</summary><table class="data-table"><thead><tr><th>词</th><th>这里的准确意思</th></tr></thead><tbody><tr><td>权威／负责人</td><td>某项结果由谁最终维护。房间、自己的角色、伤害减免并不全归同一端。</td></tr><tr><td>快照</td><td>某时刻的数字、标识与动作资料；不是屏幕截图。</td></tr><tr><td>代理／化身</td><td>让原版机制能识别远端对象的本机替身；不代表另一个自主玩家或敌人。</td></tr><tr><td>插值</td><td>根据已经知道的两个位置，补出中间的位置；预测尚未收到的未来运动是另一件事。</td></tr></tbody></table></details>
+</section>
+<footer class="footer">RConnect 技术实现图解 · 2026-10-11<br>先读主图，技术名词与条件放在展开说明中。页面可离线使用；不连接游戏，不修改配置或存档。<p><a href="#overview">回到第一张图 ↑</a></p></footer>
+</main>
+<script>
+(()=>{"use strict";
+const $=id=>document.getElementById(id);
+let heroStep=0;
+function heroDraw(){
+ const local=heroStep>=1?253:191,remote=heroStep>=3?253:191;
+ $("hero-join-j").setAttribute("transform","translate("+local+" 143)");
+ $("hero-host-j").setAttribute("transform","translate("+remote+" 143)");
+ const packets=["小份状态资料<br><b>谁 · 在哪 · 正在做什么</b>","本机已经移动<br><b>等待发送新状态</b>","示例状态已发出<br><b>J：x = 253，向右移动</b>","主侧收到后更新<br><b>队友化身的显示</b>"];
+ const captions=["两边都有房间、人物和敌人。自己的键盘、鼠标先作用于本机角色。","加入侧先移动自己的角色；主侧此刻仍保留上次收到的位置。","RConnect 采集位置和动作，通过连接发给主侧。这里发送的是数据。","主侧按收到的资料播放队友移动。实际游戏会用后文的缓冲来平滑这段过程。"];
+ const buttons=["① 让加入侧向右走","② 发送位置和动作","③ 在主侧显示队友","再演示一次"];
+ $("hero-packet").innerHTML=packets[heroStep];$("hero-message").textContent=captions[heroStep];$("hero-next").textContent=buttons[heroStep];
+}
+ $("hero-next").addEventListener("click",()=>{heroStep=(heroStep+1)%4;heroDraw();});
+ $("hero-reset").addEventListener("click",()=>{heroStep=0;heroDraw();});
+const roomCases={
+ together:{ah:true,aj:true,bh:false,bj:false,ao:"主侧计算",bo:"暂停 · 无人",ac:"active-host",bc:"",text:"双方在 A 房：主侧运行敌人和场景逻辑，加入侧接收结果；双方仍各自控制自己的角色。"},
+ split:{ah:true,aj:false,bh:false,bj:true,ao:"主侧计算",bo:"加入侧计算",ac:"active-host",bc:"active-join",text:"分头后：H 在 A 房、J 在 B 房，各自运行所在普通房的原生敌人和场景；主侧协调房间归属记录。"},
+ empty:{ah:false,aj:false,bh:true,bj:true,ao:"暂停 · 保存已消灭／已破墙",bo:"主侧计算",ac:"",bc:"active-host",text:"双方都离开 A 房：A 房暂停，保留敌人已消灭、墙壁已破坏的结果。双方在 B 房汇合，由主侧计算 B 房。"},
+ return:{ah:false,aj:true,bh:true,bj:false,ao:"加入侧计算 · 恢复记录",bo:"主侧计算",ac:"active-join",bc:"active-host",text:"J 重访 A 房：先恢复已保存的结果，再继续模拟。已消灭的敌人和打破的墙不应因为重新进房而恢复。"}
+};
+document.querySelectorAll("[data-room]").forEach(b=>b.addEventListener("click",()=>{
+ const s=roomCases[b.dataset.room];document.querySelectorAll("[data-room]").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
+ [["a","h",s.ah],["a","j",s.aj],["b","h",s.bh],["b","j",s.bj]].forEach(([r,p,v])=>$("room-"+r+"-"+p).setAttribute("visibility",v?"visible":"hidden"));
+ $("owner-a").textContent=s.ao;$("owner-b").textContent=s.bo;$("room-a").className="room "+s.ac;$("room-b").className="room "+s.bc;$("room-copy").textContent=s.text;
+}));
+const combatCases={
+ outgoing:{lt:"① 加入侧：确认命中并减伤",rt:"② 主侧：应用损失并定结果",a:"30",op:"→",al:"原始伤害",b:"20",bl:"本次实际损失",c:"100",cl:"原生命值",d:"80",dl:"更新后",lc:"使用敌人的防御资料，调用原版受伤规则；得到生命、护甲、护盾各自的损失。",rc:"不再次计算护甲；由主侧处理敌人死亡、掉落等结果，并同步回加入侧。",packet:"发送<br>净损失",conclusion:"如果把“已经减过伤的 20”再当成原始伤害减一次，加入侧就会打得异常弱。"},
+ incoming:{lt:"① 主侧：敌人命中远端化身",rt:"② 加入侧：自己的角色结算",a:"30",op:"＋",al:"命中输入",b:"资料",bl:"伤害类型、穿甲等",c:"100",cl:"自己的生命值",d:"80",dl:"示例：最终损失 20",lc:"原版敌人能瞄准并命中 J 的化身。记录这次攻击，把必要的命中资料交给受害玩家。",rc:"调用自己角色的原版受伤规则，使用自己的装备、护盾和抗性；再更新自己的生命状态。",packet:"发送<br>命中资料",conclusion:"这里传的是结算所需的命中输入。自己的角色在自己这一侧，用自己的防御规则计算损失。"}
+};
+document.querySelectorAll("[data-combat]").forEach(b=>b.addEventListener("click",()=>{
+ const incoming=b.dataset.combat==="incoming",s=combatCases[b.dataset.combat];
+ document.querySelectorAll("[data-combat]").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
+ const map={"combat-left-title":"lt","combat-right-title":"rt","combat-a":"a","combat-op":"op","combat-a-label":"al","combat-b":"b","combat-b-label":"bl","combat-c":"c","combat-c-label":"cl","combat-d":"d","combat-d-label":"dl","combat-left-copy":"lc","combat-right-copy":"rc","combat-conclusion":"conclusion"};
+ Object.entries(map).forEach(([id,key])=>$(id).textContent=s[key]);$("combat-packet").innerHTML=s.packet;
+ $("combat-left").className="combat-side"+(incoming?" host":"");$("combat-right").className="combat-side"+(incoming?"":" host");
+}));
+// Synthetic teaching data. This is not a performance measurement or a port of RemoteMotion.
+const samples=[{t:0,x:0,arrive:0},{t:200,x:20,arrive:240},{t:400,x:40,arrive:460},{t:600,x:60,arrive:660},{t:800,x:80,arrive:840},{t:1000,x:100,arrive:1110}];
+samples.forEach((s,i)=>{const el=document.createElement("span");el.className="packet-chip";el.id="packet-"+i;el.textContent="位置 "+s.x;el.title="源时刻 "+s.t+" ms；到达 "+s.arrive+" ms";$("motion-packets").appendChild(el);});
+let playing=false,raf=0,startAt=0,startValue=0;
+function drawMotion(){
+ const now=Number($("motion-time").value),source=Math.min(100,now/10),received=samples.filter(s=>s.arrive<=now),last=received[received.length-1],raw=last.x;
+ const cursor=Math.max(0,Math.min(now-300,last.t));let smooth=raw;
+ if($("motion-buffer").checked){
+  let a=received[0],b=received[0];for(const s of received){if(s.t<=cursor)a=s;if(s.t>=cursor){b=s;break;}b=s;}
+  const ratio=b.t>a.t?(cursor-a.t)/(b.t-a.t):0;smooth=a.x+(b.x-a.x)*ratio;
+ }
+ [["source",source],["raw",raw],["smooth",smooth]].forEach(([key,value])=>{$("motion-"+key).style.left=value+"%";$(key+"-value").textContent=Number(value.toFixed(1));});
+ $("motion-time-label").textContent=now+" ms";$("motion-policy").textContent=$("motion-buffer").checked?"在已知位置间补画":"已关闭：跟随最新到包位置";
+ samples.forEach((s,i)=>$("packet-"+i).classList.toggle("arrived",s.arrive<=now));
+ $("motion-explain").textContent=now+" ms：已收到位置 "+raw+"；"+($("motion-buffer").checked?"缓冲显示位置 "+Number(smooth.toFixed(1))+"，只在已经收到的记录之间补画。":"直接显示位置 "+raw+"，直到下一个包到来。");
+}
+function stopMotion(){playing=false;cancelAnimationFrame(raf);$("motion-play").textContent="播放对比";}
+function frame(ts){if(!playing)return;const n=Math.min(1400,Math.round(startValue+(ts-startAt)*.36));$("motion-time").value=n;drawMotion();if(n>=1400){stopMotion();return;}raf=requestAnimationFrame(frame);}
+ $("motion-play").addEventListener("click",()=>{if(playing){stopMotion();return;}if(Number($("motion-time").value)>=1400)$("motion-time").value=0;playing=true;startAt=performance.now();startValue=Number($("motion-time").value);$("motion-play").textContent="暂停演示";raf=requestAnimationFrame(frame);});
+ $("motion-reset").addEventListener("click",()=>{stopMotion();$("motion-time").value=0;drawMotion();});
+ $("motion-time").addEventListener("input",()=>{stopMotion();drawMotion();});$("motion-buffer").addEventListener("change",drawMotion);
+document.addEventListener("visibilitychange",()=>{if(document.hidden)stopMotion();});
+drawMotion();
+})();
+</script>
+</body>
+</html>

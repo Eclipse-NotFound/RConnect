@@ -1,0 +1,305 @@
+{
+  "as_of": "2026-10-11 Asia/Shanghai",
+  "baseline_commit": "f81c4d9250feaf6d10db98aa94c08af2dbce2cfa",
+  "purpose": "Beginner-friendly explanation with technical details; no game changes or new gameplay tests.",
+  "sources": [
+    {
+      "group": "S1",
+      "path": "src/RConnectMod.as",
+      "revision": "f81c4d9",
+      "sha256": "6ae0755d7854a02aa62429e7454eb21bbaf7809dad6ee570aba139eb285db115",
+      "lines": 106,
+      "entry_points": [
+        {
+          "line": 34,
+          "text": "public static function init(main:Object):void"
+        }
+      ]
+    },
+    {
+      "group": "S1",
+      "path": "src/rconnect/net/TcpLink.as",
+      "revision": "f81c4d9",
+      "sha256": "93aafc0aad7a410107f2eea2cee288d9366c6cacce289c5b2552dc95140e350c",
+      "lines": 212,
+      "entry_points": [
+        {
+          "line": 65,
+          "text": "public function send(msg:Object):void"
+        },
+        {
+          "line": 161,
+          "text": "private function onData(e:ProgressEvent):void"
+        }
+      ]
+    },
+    {
+      "group": "S2",
+      "path": "src/rconnect/game/GameBridge.as",
+      "revision": "f81c4d9",
+      "sha256": "0665874610282a9262894897d44d92a66733adbb57320f36575b25879a1b95cc",
+      "lines": 6432,
+      "entry_points": [
+        {
+          "line": 195,
+          "text": "private function onVisForceFrame(e:Event):void"
+        },
+        {
+          "line": 285,
+          "text": "private function onMirrorFrame(e:Event):void"
+        },
+        {
+          "line": 315,
+          "text": "private function onPerceptionFrame(e:Event):void"
+        },
+        {
+          "line": 5749,
+          "text": "public function applyDamage(id:String, dmg:Number, attacker:Object = null, key:String = \"\", hit:Object = null):Boolean"
+        },
+        {
+          "line": 6152,
+          "text": "private function resetRoomPresentation():void {"
+        }
+      ]
+    },
+    {
+      "group": "S3",
+      "path": "src/rconnect/core/RoomSync.as",
+      "revision": "f81c4d9",
+      "sha256": "fde53cfb9b55ffeea5b595d3bd13c1109e99cfc2aeab18688273fc9ddc3c36ff",
+      "lines": 384,
+      "entry_points": [
+        {
+          "line": 64,
+          "text": "private function send(o:Object):void"
+        },
+        {
+          "line": 307,
+          "text": "private function sendReady():void"
+        },
+        {
+          "line": 318,
+          "text": "private function commit(msg:Object):void"
+        },
+        {
+          "line": 355,
+          "text": "public function report(msg:Object,link:TcpLink):Boolean"
+        }
+      ]
+    },
+    {
+      "group": "S4",
+      "path": "src/rconnect/game/MirrorHitUnit.as",
+      "revision": "f81c4d9",
+      "sha256": "d8ce6503a7f321aca3768af3b5bd47bc47760d4fe8a35da6290bd98b1968ff32",
+      "lines": 137,
+      "entry_points": [
+        {
+          "line": 79,
+          "text": "override public function damage(amount:Number,type:int,bullet:Bullet=null,periodic:Boolean=false):Number"
+        }
+      ]
+    },
+    {
+      "group": "S4",
+      "path": "src/rconnect/game/RemoteDamageUnit.as",
+      "revision": "f81c4d9",
+      "sha256": "c9b22eb3bd0c3cc8abec7c93c1117c2b230a2f7256bd4ddd56f894bd02a44792",
+      "lines": 34,
+      "entry_points": [
+        {
+          "line": 25,
+          "text": "override public function damage(amount:Number,type:int,bullet:Bullet=null,periodic:Boolean=false):Number {"
+        }
+      ]
+    },
+    {
+      "group": "S4",
+      "path": "src/rconnect/game/NativeHit.as",
+      "revision": "f81c4d9",
+      "sha256": "04a3f3f1cc2c2f9331ce2095c04d1bd6cdd2d7f44249fae17b189bf558046f41",
+      "lines": 53,
+      "entry_points": [
+        {
+          "line": 18,
+          "text": "public static function capture(amount:Number,type:int,bullet:Bullet,periodic:Boolean):Object {"
+        },
+        {
+          "line": 27,
+          "text": "public function apply(player:Object,hit:Object,main:Object):Number {"
+        }
+      ]
+    },
+    {
+      "group": "S5",
+      "path": "src/rconnect/game/WeaponCapture.as",
+      "revision": "f81c4d9",
+      "sha256": "edaab9a7a728944e5c9851b72f27bbc7ff3fef95793c17a5800e1d9ca4494574",
+      "lines": 225,
+      "entry_points": [
+        {
+          "line": 184,
+          "text": "public function capture(u:Object,playerDisplay:Boolean=false):Array"
+        }
+      ]
+    },
+    {
+      "group": "S5",
+      "path": "src/rconnect/game/UnitPresentation.as",
+      "revision": "f81c4d9",
+      "sha256": "bf9c6b8434b1c94fb3c0ee42ce099010a2e8a13a90484c38d42c5628762e1e53",
+      "lines": 219,
+      "entry_points": [
+        {
+          "line": 22,
+          "text": "public function apply(u:Object,snapshot:Object,main:Object,motion:RemoteMotion=null):void"
+        },
+        {
+          "line": 113,
+          "text": "public function tick(u:Object):void"
+        }
+      ]
+    },
+    {
+      "group": "S5",
+      "path": "src/rconnect/game/ProjectileVisuals.as",
+      "revision": "f81c4d9",
+      "sha256": "7198f02dc8ddb2c323a7788c3ffd81b14bc92cbd640c4d5ec84ed0f037794b34",
+      "lines": 210,
+      "entry_points": [
+        {
+          "line": 26,
+          "text": "public static function capture(b:Object):Object {"
+        },
+        {
+          "line": 112,
+          "text": "public function tick(loc:Object,now:int=-1,finalFrame:Boolean=false):void {"
+        }
+      ]
+    },
+    {
+      "group": "S6",
+      "path": "src/rconnect/core/SnapshotPublisher.as",
+      "revision": "f81c4d9",
+      "sha256": "f1f578ae11a90281cee1046c86b6d4f4310bc12d0d8d1f7d917c0155fc901ec7",
+      "lines": 97,
+      "entry_points": [
+        {
+          "line": 18,
+          "text": "public function tick(tick:int):void {"
+        },
+        {
+          "line": 74,
+          "text": "public function roster(tick:int):void"
+        }
+      ]
+    },
+    {
+      "group": "S6",
+      "path": "src/rconnect/core/Session.as",
+      "revision": "f81c4d9",
+      "sha256": "16fd1cb75e1324cd4fa39d1da423bf4f939e78db9c01b79aace172b4372ac34d",
+      "lines": 1206,
+      "entry_points": []
+    },
+    {
+      "group": "S6",
+      "path": "src/rconnect/core/Config.as",
+      "revision": "f81c4d9",
+      "sha256": "6f531c4ae92774618f71dcccefa215cd837abd2e646ecc12e272d71024f5c74a",
+      "lines": 223,
+      "entry_points": []
+    },
+    {
+      "group": "S6",
+      "path": "src/rconnect/game/ExplorationSync.as",
+      "revision": "f81c4d9",
+      "sha256": "1a216868d899a78b9c46125e1d036c76cfe577277eb682ae0ccb68365e0ac757",
+      "lines": 305,
+      "entry_points": []
+    },
+    {
+      "group": "S7",
+      "path": "src/rconnect/game/RemoteMotion.as",
+      "revision": "f81c4d9",
+      "sha256": "7bc7ebfa88da71ceead2a1986d9b83b1f78875a31b608d078a3752bf0266c2ef",
+      "lines": 207,
+      "entry_points": [
+        {
+          "line": 91,
+          "text": "public function settle(now:int):Object {"
+        },
+        {
+          "line": 101,
+          "text": "private function pushTimed(snap:Object,now:int):void {"
+        },
+        {
+          "line": 133,
+          "text": "private function delay():Number {"
+        },
+        {
+          "line": 143,
+          "text": "private function sampleTimed(now:int):Object {"
+        }
+      ]
+    },
+    {
+      "group": "S8",
+      "path": "design/sync-audit-2026-10-10.md",
+      "revision": "f81c4d9",
+      "sha256": "943de19fa60eb003565a7090ef14a10c65499c05d26e8836de6d5ecfab0304cf",
+      "lines": 149,
+      "entry_points": []
+    },
+    {
+      "group": "S9",
+      "path": "state/architecture-2026-10-10.md",
+      "revision": "f81c4d9",
+      "sha256": "df93abc96d6b47f923dfa57bfb1b1c7ef4039b2b99d58c8c08b1dd674d310da9",
+      "lines": 104,
+      "entry_points": []
+    },
+    {
+      "group": "S9",
+      "path": "design/architecture.md",
+      "revision": "f81c4d9",
+      "sha256": "370e7c16e96085875b541b084f0321ffba8d95680972af9dcb4828ff0f0f0098",
+      "lines": 67,
+      "entry_points": []
+    },
+    {
+      "group": "S10",
+      "path": "state/MEMORY.md",
+      "revision": "f81c4d9",
+      "sha256": "ad7bbc2c86da15a103f4ebcd939c3c67a0fdb26846f23da2d295d62b8ccd4a83",
+      "lines": 67,
+      "entry_points": []
+    },
+    {
+      "group": "S11",
+      "path": "state/cooperative-hazards-2026-10-11.md",
+      "revision": "0927470",
+      "sha256": "cc6e943bc13fdd4fd5bf1d94f7d33c677e81614c7d679000472857b981a13d08"
+    },
+    {
+      "group": "S12",
+      "path": "design/remote-player-entity-2026-10-11.md",
+      "revision": "0927470",
+      "sha256": "d498dc9e333ef9c60cb1bad22c5d2aa439b40077935400dd590a30aa27439e90"
+    },
+    {
+      "group": "S11",
+      "path": "state/MEMORY.md",
+      "revision": "0927470",
+      "sha256": "61ce5979588dcc5a6720b85049669a1b81cced976e03522c585d1f2a0220ff1f"
+    }
+  ],
+  "simulation_notice": "All interactive scenes and motion samples are synthetic illustrations, not measurements.",
+  "later_status_note_revision": "0927470",
+  "installed_file": {
+    "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\release\\RConnectMod.swf",
+    "sha256": "32602e77a21b206d1f7ff0e927b953878c28254e7201529455818923a3539732",
+    "recorded_version": "0.2.22-dev"
+  },
+  "html_sha256": "0b3e5e9bb77acc30a6b2b9cfafcd823d3108af02fa48d8e43d2dd6a8cd7a85cb"
+}
