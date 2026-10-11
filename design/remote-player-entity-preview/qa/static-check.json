@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-11",
+  "scope": "source checks only; no browser rendering or actual clicks",
+  "html_sha256": "2db0daea1d7e2d95add91fcb3cc083603098ac59ae2c97413ab5df9fdb4f5646",
+  "plan_sha256": "eb61f4cb22c85916e739907fc4808e4490cbfe88bbed6b789ec745ee0a99d977",
+  "svg_count": 16,
+  "buttons": 21,
+  "duplicate_ids": [],
+  "broken_links": [],
+  "unbalanced_tags": [],
+  "unclosed_tags": [],
+  "missing_literal_script_ids": [],
+  "javascript_syntax_exit": 0,
+  "javascript_syntax_stderr": "",
+  "browser_check": {
+    "result": "blocked",
+    "reason": "CUA URL policy rejects file protocol; did not retry through an alternative browser, server, or raw commands",
+    "desktop_visual": "not_verified",
+    "narrow_visual": "not_verified",
+    "actual_interactions": "not_verified"
+  },
+  "game_implementation": "paused; no source edit/build/game test/deployment"
+}
