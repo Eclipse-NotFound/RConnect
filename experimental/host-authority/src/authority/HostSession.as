@@ -135,6 +135,7 @@ package authority {
          actors=[];inputs=[];
       }
       public function resetScene():void {scene.reset();}
+      public function sceneId(object:Object):uint {return scene.id(object);}
       public function notice(text:String):void {link.send({type:"notice",text:text});Log.write("notice",{text:text});}
    }
 }

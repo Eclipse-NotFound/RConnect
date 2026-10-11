@@ -16,7 +16,8 @@ package authority {
       }
       public static function snapshot():Object {
          var result:Object={};for(var key:String in samples) {
-            var r:Object=samples[key];result[key]={n:r.n,totalMs:r.sum,meanMs:r.sum/r.n,p50Ms:percentile(r,.5),p95Ms:percentile(r,.95),maxMs:r.max};
+            var r:Object=samples[key];result[key]={n:r.n,totalMs:r.sum,meanMs:r.sum/r.n,p50Ms:percentile(r,.5),p95Ms:percentile(r,.95),maxMs:r.max,
+               histogramCapMs:2000,cappedSamples:r.bins[2000]};
          }return result;
       }
       public static function reset():void {samples={};}

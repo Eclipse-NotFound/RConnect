@@ -48,7 +48,9 @@ package {
          if(access.definition("fe.World")["rconnectChangeWorld"]!=null)throw new Error("Native lifecycle seam occupied");
          access.definition("fe.World")["rconnectChangeWorld"]=function():void {if(network)leaveSession(false);vision.resetJourney();};
          MapState.install(access);
-         if(config.probe===true)probe=config.scenario=="stress"?new StressProbe(access,role=="host"):
+         if(config.probe===true)probe=["explosives","magic","angles"].indexOf(config.scenario)>=0?new WeaponProbe(access,role=="host",config.scenario):
+            config.scenario=="enemies"?new EnemyVisualProbe(access,role=="host"):
+            config.scenario=="stress"?new StressProbe(access,role=="host"):
             config.scenario=="vision"?new VisionProbe(access,role=="host"):
             config.scenario=="dialogue"?new DialogueProbe(access,role=="host"):
             config.scenario=="menus"?new MenuProbe(access,role=="host"):

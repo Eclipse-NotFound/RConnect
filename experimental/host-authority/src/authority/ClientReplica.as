@@ -24,6 +24,10 @@ package authority {
       private var uiSerial:uint=0;
       private var menuSerial:uint=0,menuRevision:uint=0,standSerial:uint=0;
       public var satsRefreshes:uint=0;
+      // Optional diagnostic observer; receives the actual applied discrete
+      // confirmation before any display interpolation. Unset during play.
+      public var confirmed:Function;
+      public function projectileDisplay(id:uint):DisplayObject {return projectiles[id] as DisplayObject;}
       public function ClientReplica(access:NativeAccess,vision:SharedVision=null) {
          this.access=access;originalPause=access.world.onPause;
          var data:Object={};access.world.saveToObj(data);entrySave=PlainData.nativeCopy(data);
@@ -44,16 +48,17 @@ package authority {
          var ready:Array=clock.take(getTimer(),flush);
          // Every discrete scene delta is consumed, even if several confirmations
          // arrive during one screen frame. No broken wall or removed unit is lost.
-         for each(var confirmed:Object in ready)render(confirmed);
-         if(clock.current!=null && clock.fraction>0)render(PoseTween.frame(clock.current,clock.next,clock.fraction));
+         for each(var state:Object in ready){render(state);if(confirmed!=null)confirmed(state);}
+         if(clock.current!=null && clock.fraction>0)render(PoseTween.frame(clock.current,clock.next,clock.fraction),true);
          if(displayFrame!=null)scene.light(displayFrame.paused===true);
          Timing.end("client.present",began);
       }
-      private function render(frame:Object):void {
+      private function render(frame:Object,interpolated:Boolean=false):void {
          var began:int=Timing.start(),part:int=began;
          displayFrame=frame;
-         MapState.apply(access,frame.map);
-         if(frame.scene!=null && scene.apply(frame.scene)) {
+         if(!interpolated)MapState.apply(access,frame.map);
+         if(interpolated && frame.scene!=null)scene.interpolate(frame.scene);
+         if(!interpolated && frame.scene!=null && scene.apply(frame.scene)) {
             for each(var old:Object in peers) {
                old.body.loc=access.world.loc;
                if(old.weapon!=null)old.weapon.loc=access.world.loc;
@@ -61,6 +66,7 @@ package authority {
          }
          Timing.end("client.sceneAndMap",part);part=Timing.start();
          var present:Boolean=frame.room===access.roomKey();access.world.visual.visible=present;
+         if(!interpolated) {
          CharacterState.apply(access,frame.character);
          Timing.end("client.character",part);
          if(frame.character!=null)AuthorityGUI.applyModal(access.world.gui,frame.character.modal);
@@ -78,8 +84,9 @@ package authority {
             if(["infoText","infoEffText","messText"].indexOf(message.key)<0)throw new Error("Unknown native UI feedback");
             access.world.gui[message.key].apply(access.world.gui,message.args);uiSerial=message.id;++uiMessages;
          }
+         }
          for each(var state:Object in frame.players) {
-            if(state.room===frame.room && present)applyPlayer(state);
+            if(state.room===frame.room && present)applyPlayer(state,interpolated);
             else if(peers[state.id]!=null) {
                peers[state.id].body.remVisual();
                if(peers[state.id].weapon!=null)peers[state.id].weapon.remVisual();
@@ -96,9 +103,10 @@ package authority {
          }
          for(var endKey:String in endedProjectiles)if(frame.tick-endedProjectiles[endKey].tick>240)delete endedProjectiles[endKey];
          for(var key:String in projectiles)if(!active[key]){
-            var clip:DisplayObject=projectiles[key];if(clip.parent!=null)clip.parent.removeChild(clip);delete projectiles[key];
+            var clip:DisplayObject=projectiles[key];if(clip.parent!=null)clip.parent.removeChild(clip);
+            VisualPose.dispose(clip);delete projectiles[key];
          }
-         access.world.gui.setHp();access.world.gui.setMana();access.world.gui.setWeapon();access.world.gui.setPet();
+         if(!interpolated){access.world.gui.setHp();access.world.gui.setMana();access.world.gui.setWeapon();access.world.gui.setPet();}
          if(frame.paused && access.world.sats.active && satsEpoch!=frame.pauseEpoch) {
             var sats:Object=access.world.sats,grafon:Object=access.world.grafon;
             // Never photograph the previous SATS screenshot. Temporarily put
@@ -110,7 +118,7 @@ package authority {
          if(!access.world.sats.active)satsEpoch=-1;
          Timing.end("client.render",began);
       }
-      private function applyPlayer(state:Object):void {
+      private function applyPlayer(state:Object,interpolated:Boolean=false):void {
          var local:Boolean=state.id==1,rec:Object=peers[state.id];
          if(rec==null) {
             var g:Object;
@@ -123,7 +131,8 @@ package authority {
             rec={body:g,actor:local?null:actor,weaponId:"",weapon:null,weaponEpoch:0};peers[state.id]=rec;
          }
          g=rec.body;if(g.vis.parent==null)g.addVisual();
-         NativeFields.apply(g,state.native);
+         if(interpolated)NativeFields.motion(g,state.native);else NativeFields.apply(g,state.native);
+         if(g.vis.parent!==access.world.grafon.visObjs[int(g.sloy)])access.world.grafon.visObjs[int(g.sloy)].addChild(g.vis);
          var pet:Object=scene.petFor(state.id);
          if(g.pet!==pet && g.pet!=null)g.pet.remVisual();
          g.pet=pet;g.childObjs[2]=pet;
@@ -150,7 +159,11 @@ package authority {
                if(local)g.currentWeapon=rec.weapon;
             }
             var v:Object=rec.weapon.vis;
-            NativeFields.apply(rec.weapon,w.native);
+            if(!interpolated)NativeFields.apply(rec.weapon,w.native);
+            // Layer can change when the owner ducks behind/comes out of cover.
+            // Creation used the local constructor's layer, before confirmation.
+            if(w.attached) {if(v.parent!==access.world.grafon.visObjs[int(w.layer)])access.world.grafon.visObjs[int(w.layer)].addChild(v as DisplayObject);}
+            else if(v.parent!=null)v.parent.removeChild(v);
             rec.weapon.hold=w.hold;
             v.x=w.x;v.y=w.y;v.rotation=w.rotation;v.scaleX=w.sx;v.scaleY=w.sy;
             VisualPose.apply(v as DisplayObject,w.visual);
@@ -166,8 +179,12 @@ package authority {
             var ClassRef:Class=access.visualClass(state.clip);
             clip=new ClassRef() as MovieClip;
             if(clip==null)throw new Error("Unsupported projectile display "+state.clip);
-            access.world.grafon.visObjs[int(state.layer)].addChild(clip);projectiles[state.id]=clip;
+            projectiles[state.id]=clip;
          }
+         // Native drawLoc replaces the display layers after terrain damage.
+         // A live bullet can still be attached to a detached old layer; test
+         // the actual current parent, not merely whether parent is non-null.
+         if(clip.parent!==access.world.grafon.visObjs[int(state.layer)])access.world.grafon.visObjs[int(state.layer)].addChild(clip);
          clip.x=state.x;clip.y=state.y;clip.rotation=state.rotation;
          clip.scaleX=state.sx;clip.scaleY=state.sy;
          if(state.visual!=null)VisualPose.apply(clip,state.visual);
@@ -180,7 +197,7 @@ package authority {
             if(rec.body!==access.world.gg)rec.body.remVisual();
             if(rec.actor!=null)rec.actor.destroy();
          }
-         for each(var clip:DisplayObject in projectiles)if(clip.parent!=null)clip.parent.removeChild(clip);
+         for each(var clip:DisplayObject in projectiles){if(clip.parent!=null)clip.parent.removeChild(clip);VisualPose.dispose(clip);}
          scene.dispose();peers={};projectiles={};endedProjectiles={};access.world.onPause=originalPause;
       }
       public function returnToOwnGame():void {

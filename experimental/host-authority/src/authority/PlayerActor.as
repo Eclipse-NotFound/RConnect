@@ -87,7 +87,7 @@ package authority {
          var g:Object=unit,v:Object=g.vis,w:Object=g.currentWeapon,weapon:Object=null;
          if(w!=null && w.vis!=null) {
             var p:DisplayObject=w.vis as DisplayObject;
-            weapon={id:w.id,x:p.x,y:p.y,rotation:p.rotation,sx:p.scaleX,sy:p.scaleY,
+            weapon={id:w.id,x:p.x,y:p.y,rotation:p.rotation,sx:p.scaleX,sy:p.scaleY,layer:w.sloy,attached:p.parent!=null,
                variant:w.variant,visual:VisualPose.capture(w.vis),
                native:NativeFields.capture(w),
                frame:NativeAccess.get(w.vis,"currentFrame",1),hold:w.hold,ammo:w.ammo,reserve:g.invent.items[w.ammo]==null?0:g.invent.items[w.ammo].kol,

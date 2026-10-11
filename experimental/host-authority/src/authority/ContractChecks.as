@@ -1,5 +1,7 @@
 package authority {
    import flash.geom.ColorTransform;
+   import flash.geom.Matrix;
+   import flash.display.Sprite;
    /** Executed in the native AIR probe, with controlled inputs and explicit failures. */
    public class ContractChecks {
       private static function input(seq:int,buttons:int=0,actions:Array=null):Object {
@@ -118,6 +120,24 @@ package authority {
             "motion crosses animation frames while poses stay discrete and angles take the short arc");
          q.sx=-1;v=PoseTween.pose(p,q,.5);
          check(v.sx==1 && v.r==179 && v.x==15,"weapon reflection is a discrete native flip, never a shrinking interpolated sprite");
+         var source:Sprite=new Sprite(),replica:Sprite=new Sprite();
+         source.transform.matrix=new Matrix(.992919921875,-.1126861572265625,.1496124267578125,.9264678955078125,10,-20);
+         var captured:Object=VisualPose.capture(source);VisualPose.apply(replica,captured);
+         var original:Matrix=source.transform.matrix,restored:Matrix=replica.transform.matrix;
+         check(Math.abs(original.a-restored.a)<.00002 && Math.abs(original.b-restored.b)<.00002 &&
+            Math.abs(original.c-restored.c)<.00002 && Math.abs(original.d-restored.d)<.00002,
+            "authored skew and affine precision survive actual native display reconstruction");
+         p=JSON.parse(JSON.stringify(captured));q=JSON.parse(JSON.stringify(captured));q.x+=20;q.y+=10;q.m[4]+=20;q.m[5]+=10;
+         v=PoseTween.pose(p,q,.5);
+         check(Math.abs(v.m[0]-p.m[0])<.000001 && Math.abs(v.m[2]-p.m[2])<.000001 &&
+            v.m[4]==p.m[4]+10 && v.m[5]==p.m[5]+5 && p.m[4]==10,
+            "display interpolation preserves skew and leaves confirmed transforms immutable");
+         var child:Sprite=new Sprite();source.addChild(child);
+         var before:Object=VisualPose.capture(source),unchanged:Object=VisualPose.capture(source);
+         child.x=17;var changed:Object=VisualPose.capture(source);
+         check(before===unchanged && before!==changed && before.children[0].s.x==0 && changed.children[0].s.x==17 &&
+            before.m===changed.m && before.c===changed.c,
+            "native pose capture reuses unchanged branches without mutating earlier child or parent confirmations");
       }
       private static function same(a:*,b:*):Boolean {
          if(a===b)return true;

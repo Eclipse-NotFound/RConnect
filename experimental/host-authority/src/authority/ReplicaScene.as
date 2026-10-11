@@ -80,6 +80,23 @@ package authority {
             room.lighting();lightX=g.X;lightY=g.Y;lightDirty=false;
          }else if(room.relight_t>0)room.lighting2();
       }
+      /** The confirmed state has already been consumed. Between its timestamps
+       * update only motion/display: no inventory, terrain, constructors or UI. */
+      public function interpolate(s:Object):void {
+         if(s.key!==key)throw new Error("Interpolation crossed a room boundary");
+         for each(var state:Object in s.units) {
+            var rec:Object=units[state.key];if(rec==null)throw new Error("Interpolation lacks a confirmed unit");
+            var u:Object=rec.unit;NativeFields.motion(u,state.fields);VisualPose.apply(u.vis,state.pose);
+            if(state.attached && u.hpbar!=null)u.setHpbarPos();
+            healthBar(u,state);
+            for(var i:int=0;i<state.weapons.length;i++)VisualPose.apply(rec.weapons[i].vis,state.weapons[i].pose);
+         }
+         for each(state in s.objects) {
+            rec=objects[state.key];if(rec==null)throw new Error("Interpolation lacks a confirmed object");
+            NativeFields.motion(rec.object,state.fields);VisualPose.apply(rec.object.vis,state.pose);
+         }
+         effects.apply(s.effects);
+      }
       private function applyUnit(s:Object):void {
          var rec:Object=units[s.key],u:Object;
          if(rec==null) {
@@ -87,6 +104,10 @@ package authority {
             var placement:XML=<unit/>;
             if(int(s.fields.tr)>0)placement.@tr=int(s.fields.tr);
             if(s.cls.indexOf("UnitAlicorn")>=0)cid=String(s.fields.tr);
+            // UnitBat.tr is package-internal; its public id still identifies
+            // the authored variant. Passing "bloodwing2" as a numeric cid
+            // silently constructs the first variant instead.
+            if(s.cls=="fe.unit::UnitBat")cid=s.fields.id=="bloodwing"?"1":String(s.fields.id).replace(/^bloodwing/,"");
             if(s.cls.indexOf("UnitTurret")>=0)cid=["","land","wall","arm","combat","boss"][int(s.mount)];
             if(s.cls=="fe.unit::UnitTrap")cid=null;
             u=new ClassRef(cid,Number(room.locDifLevel),placement,null);
@@ -98,11 +119,13 @@ package authority {
          NativeFields.apply(u,s.fields);u.loc=room;
          NativeFields.apply(u.inter,s.inter);
          if(s.attached)attach(u,s.layer);else u.remVisual();u.setVisPos();
-         VisualPose.apply(u.vis,s.pose);AuthorityAnimation.apply(u as Unit,s.blit);
+         AuthorityAnimation.apply(u as Unit,s.blit);
          // Health bars are native render-only methods; no damage/AI is replayed.
          if(s.attached && !u.player && u.vis!=null && !u.disabled && u.sost<3) {
-            u.addVisual();u.visDetails();u.setHpbarPos();VisualPose.apply(u.vis,s.pose);
+            u.addVisual();u.visDetails();u.setHpbarPos();
          }
+         VisualPose.apply(u.vis,s.pose);
+         healthBar(u,s);
          for(var i:int=0;i<s.weapons.length;i++) {
             var gs:Object=s.weapons[i],gun:Object=rec.weapons[i];
             if(gun==null || gun.id!=gs.id || gun.variant!=gs.variant) {
@@ -129,6 +152,15 @@ package authority {
          }
          o=rec.object;NativeFields.apply(o,s.fields);rec.inter=s.inter;
          if(s.attached)attach(o,rec.layer);else o.remVisual();VisualPose.apply(o.vis,s.pose);
+      }
+      private function healthBar(u:Object,s:Object):void {
+         if(u.hpbar==null || s.healthBar==null)return;
+         // The native bar can depend on private per-enemy armor/shield maxima.
+         // Its confirmed pose preserves the real calculation and cloak alpha.
+         if(s.healthBar.attached) {
+            if(u.hpbar.parent!==access.world.grafon.visObjs[3])access.world.grafon.visObjs[3].addChild(u.hpbar);
+         }else if(u.hpbar.parent!=null)u.hpbar.parent.removeChild(u.hpbar);
+         VisualPose.apply(u.hpbar,s.healthBar.pose);
       }
       private function attach(o:Object,layer:int):void {
          if(o.vis!=null && int(NativeAccess.get(o,"sost",1))<4)

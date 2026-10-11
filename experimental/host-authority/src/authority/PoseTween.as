@@ -9,6 +9,18 @@ package authority {
          var out:Object=copy(a);
          for each(var k:String in ["x","y","a"])out[k]=lerp(a[k],b[k],t);
          if(a.sx*b.sx>=0 && a.sy*b.sy>=0){out.sx=lerp(a.sx,b.sx,t);out.sy=lerp(a.sy,b.sy,t);out.r=angle(a.r,b.r,t);}
+         if(a.m!=null && b.m!=null) {
+            out.m=a.m.concat();out.m[4]=out.x;out.m[5]=out.y;
+            // Blend each affine basis independently, preserving authored skew.
+            // Native reflection/frame switches remain discrete, never collapse
+            // a weapon through zero size to turn it to the opposite direction.
+            if(a.sx*b.sx>=0 && a.sy*b.sy>=0)for(var axis:int=0;axis<4;axis+=2) {
+               var ar:Number=Math.sqrt(a.m[axis]*a.m[axis]+a.m[axis+1]*a.m[axis+1]);
+               var br:Number=Math.sqrt(b.m[axis]*b.m[axis]+b.m[axis+1]*b.m[axis+1]);
+               var rotation:Number=angle(Math.atan2(a.m[axis+1],a.m[axis])*180/Math.PI,Math.atan2(b.m[axis+1],b.m[axis])*180/Math.PI,t)*Math.PI/180;
+               var radius:Number=lerp(ar,br,t);out.m[axis]=Math.cos(rotation)*radius;out.m[axis+1]=Math.sin(rotation)*radius;
+            }
+         }
          if(a.f===b.f && a.children!=null && b.children!=null) {
             out.children=[];
             for(var i:int=0;i<a.children.length;i++) {
@@ -25,7 +37,7 @@ package authority {
       }
       private static function fields(a:Object,b:Object,t:Number):Object {
          var out:Object=copy(a);
-         for each(var k:String in ["X","Y","X1","X2","Y1","Y2","eyeX","eyeY","celX","celY"])
+         for each(var k:String in NativeFields.MOTION)
             if(a[k] is Number && b[k] is Number)out[k]=lerp(a[k],b[k],t);
          return out;
       }
@@ -61,6 +73,7 @@ package authority {
                   q=targets[p.key];r=p;
                   if(q!=null && p.pose!=null && q.pose!=null && close(p.pose,q.pose,"x","y")) {
                      r=copy(p);r.pose=pose(p.pose,q.pose,t);
+                     if(p.healthBar!=null && q.healthBar!=null) {r.healthBar=copy(p.healthBar);r.healthBar.pose=pose(p.healthBar.pose,q.healthBar.pose,t);}
                      if(p.fields!=null && q.fields!=null && close(p.fields,q.fields,"X","Y"))r.fields=fields(p.fields,q.fields,t);
                      if(p.weapons!=null) {
                         r.weapons=[];

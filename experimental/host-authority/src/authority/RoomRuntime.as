@@ -160,6 +160,7 @@ package authority {
          return {tick:tick,roomSteps:roomSteps,rooms:rooms.summary(),spawns:spawns,spawnsByPlayer:spawnsByPlayer.concat(),projectiles:objects,projectileEvents:events};
       }
       public function spawnsFor(owner:Object):uint {return uint(ownerSpawns[owner]);}
+      public function projectileId(object:Object):uint {return uint(projectileIds[object]);}
       public function dispose():void {
          var Location:Class=access.definition("fe.loc.Location"),Land:Class=access.definition("fe.loc.Land"),Player:Class=access.definition("fe.unit.UnitPlayer");
          Location["rconnectPlayerStep"]=oldPlayerHook;Land["rconnectRoomStep"]=oldRoomHook;

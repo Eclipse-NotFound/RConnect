@@ -1,4 +1,5 @@
 package authority {
+   import flash.utils.getQualifiedClassName;
    /** Geometry of an isolated test lane. Never called outside an explicit probe. */
    public final class ProbeArena {
       public static function floor(room:Object,wallX:int=-1):Number {
@@ -6,7 +7,14 @@ package authority {
          // Random maps may leave a box or a disabled enemy in the test lane.
          // Native door closing and mine sight correctly still see that obstacle.
          var old:Object=room.firstObj,next:Object;
-         while(old!=null){next=old.nobj;old.remVisual();room.remObj(old);old=next;}
+         while(old!=null){
+            next=old.nobj;
+            // Native particles own bitmap surfaces and per-emitter quotas.
+            // Their own teardown must run when resetting an isolated fixture.
+            old.remVisual();
+            if(getQualifiedClassName(old)=="fe.graph::Part")old.setNull();else room.remObj(old);
+            old=next;
+         }
          var players:Array=[];
          for each(old in room.units)if(old!=null){if(old.player)players.push(old);else {old.disabled=true;old.remVisual();}}
          room.units=players;room.objs=[];room.acts=[];room.bonuses=[];

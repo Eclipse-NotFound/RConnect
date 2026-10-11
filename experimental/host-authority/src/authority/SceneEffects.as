@@ -30,8 +30,11 @@ package authority {
                if(clip==null)throw new Error("Unsupported native visual effect: "+s.clip);
                records[s.key]=rec;
             }
-            if(s.atlas!=null)rec.data.copyPixels(access.world.grafon.getSpriteList(s.atlas.atlas,1),
-               new Rectangle(s.atlas.x,s.atlas.y,s.atlas.w,s.atlas.h),new Point());
+            if(s.atlas!=null && rec.atlas!==s.atlas) {
+               if(s.atlas.blank)rec.data.fillRect(rec.data.rect,0);
+               else rec.data.copyPixels(access.world.grafon.getSpriteList(s.atlas.atlas,1),new Rectangle(s.atlas.x,s.atlas.y,s.atlas.w,s.atlas.h),new Point());
+               rec.atlas=s.atlas;
+            }
             if(s.name!=null)rec.clip.name=s.name;
             access.world.grafon.visObjs[int(s.layer)].addChild(rec.clip);VisualPose.apply(rec.clip,s.pose);++applications;
          }

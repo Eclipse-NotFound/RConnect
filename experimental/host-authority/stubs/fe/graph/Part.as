@@ -4,5 +4,6 @@ package fe.graph {
    public class Part {
       public var blitData:BitmapData;
       internal var blitRect:Rectangle;
+      internal var visData:BitmapData;
    }
 }
