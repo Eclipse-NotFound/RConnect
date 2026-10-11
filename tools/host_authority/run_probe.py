@@ -13,6 +13,7 @@ import time
 import uuid
 from pathlib import Path
 from common import ROOT, inside_build, read, save, sha, verify_baseline, verify_files
+from jitter_proxy import JitterProxy
 
 
 def records(path):
@@ -21,7 +22,8 @@ def records(path):
     result = []
     for line in path.read_text(encoding='utf-8-sig', errors='replace').splitlines():
         try:
-            result.append(json.loads(line))
+            value=json.loads(line)
+            if isinstance(value,dict) and isinstance(value.get('kind'),str):result.append(value)
         except json.JSONDecodeError:
             continue  # A currently open append may end in a partial final line.
     return result
@@ -34,10 +36,11 @@ def main():
     ap.add_argument('--native', required=True)
     ap.add_argument('--output', required=True)
     ap.add_argument('--seconds', type=int, default=140)
-    ap.add_argument('--scenario', choices=('native-gun','ownership','split-rooms','cooperation','lifecycle','sats','travel','friendly','grabs','personal','throw','vectors','mines','areas','party','hud','menus','dialogue','vision','stress','explosives','magic','angles','enemies','sound','movement','guns','melee'), default='native-gun')
+    ap.add_argument('--scenario', choices=('native-gun','ownership','split-rooms','cooperation','lifecycle','sats','pause-cycles','travel','friendly','grabs','enemy-grabs','personal','throw','vectors','mines','areas','party','hud','menus','dialogue','vision','stress','explosives','magic','angles','enemies','sound','music','movement','motion','guns','melee','terrain'), default='native-gun')
     ap.add_argument('--swap', action='store_true')
     ap.add_argument('--enemy', choices=('native','tdfc'), default='native')
     ap.add_argument('--tdfc', help='Optional frozen TDFC authority-v1 build directory')
+    ap.add_argument('--jitter-ms', help='Isolated loopback relay delay schedule, comma-separated milliseconds in 0..450')
     args = ap.parse_args()
     baseline, candidate, native, out = [inside_build(ROOT/p) for p in (args.baseline, args.candidate, args.native, args.output)]
     b = verify_baseline(baseline)
@@ -66,12 +69,13 @@ def main():
         raise RuntimeError('Insufficient space for independent runtime copies')
     out.mkdir(parents=True)
     (out/'tools').mkdir()
-    for name in ('run_probe.py','common.py'):
+    for name in ('run_probe.py','common.py','jitter_proxy.py'):
         shutil.copy2(Path(__file__).parent/name,out/'tools'/name)
     run_id = uuid.uuid4().hex[:12]
     with socket.socket() as reservation:
         reservation.bind(('127.0.0.1', 0))
         port = reservation.getsockname()[1]
+    relay = JitterProxy(port, [int(x) for x in args.jitter_ms.split(',')]) if args.jitter_ms else None
     launches, processes, streams = [], [], []
     installed = ROOT.parents[1]
     protected = {n:sha(installed/n) for n in ('pfe.swf','mods/Rconnect/release/RConnectMod.swf','mods/TDFC/release/TDFCMod.swf')}
@@ -82,13 +86,18 @@ def main():
     if tactics:
         receipt['tdfc_manifest_sha256'] = sha(tactics/'build-input.json')
         receipt['tdfc_sha256'] = tactics_build['candidate_sha256']
+    if relay:
+        receipt['network_fixture'] = dict(host_port=port, join_port=relay.port, delays_ms=relay.delays,
+                                         script_sha256=sha(Path(__file__).parent/'jitter_proxy.py'))
     for role in ('host','join'):
         directory = out/role
         shutil.copytree(game, directory)
         shutil.copy2(native/'pfe.swf', directory/'pfe.swf')
         shutil.copy2(candidate/'RConnectMod.swf', directory/'mods/Rconnect/release/RConnectMod.swf')
         configuration = dict(experimental=True, role=role, session=run_id, port=port, autoGame=True, land='random_mane', probe=True, scenario=args.scenario, swap=args.swap, enemy=args.enemy)
-        configuration['sharedPause'] = args.scenario=='sats'
+        if relay and role == 'join':
+            configuration['port'] = relay.port
+        configuration['sharedPause'] = args.scenario in ('sats','pause-cycles')
         if tactics:
             shutil.copy2(tactics/'TDFCMod.swf',directory/'mods/TDFC/release/TDFCMod.swf')
             configuration['tdfc'] = tactics_build['candidate_sha256']
@@ -120,6 +129,8 @@ def main():
         launches.append((role,directory,desc,storage/'RConnect-B.log'))
     save(out/'run.json', receipt)
     try:
+        if relay:
+            relay.start()
         for role,directory,desc,log in launches:
             if role=='join':
                 host_log = launches[0][3]
@@ -159,6 +170,8 @@ def main():
                 process.terminate()
                 try:process.wait(timeout=10)
                 except subprocess.TimeoutExpired:process.kill();process.wait(timeout=10)
+        if relay:
+            receipt['network_fixture']['result'] = relay.stop()
         for stream in streams:stream.close()
         for role,directory,desc,log in launches:
             if log.is_file():shutil.copy2(log,out/(role+'.log'))

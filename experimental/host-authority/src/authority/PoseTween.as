@@ -50,6 +50,9 @@ package authority {
             if(q!=null && p.epoch==q.epoch && p.roomEpoch==q.roomEpoch && close(p,q,"x","y")) {
                r=copy(p);r.x=lerp(p.x,q.x,t);r.y=lerp(p.y,q.y,t);r.native=fields(p.native,q.native,t);
                r.visual=pose(p.visual,q.visual,t);
+               if(p.held!=null && q.held!=null && p.held.key==q.held.key && close(p.held,q.held,"X","Y")) {
+                  r.held=copy(p.held);r.held.X=lerp(p.held.X,q.held.X,t);r.held.Y=lerp(p.held.Y,q.held.Y,t);
+               }
                if(p.weapon!=null && q.weapon!=null && p.weaponEpoch==q.weaponEpoch && p.weapon.id==q.weapon.id) {
                   r.weapon=copy(p.weapon);r.weapon.visual=pose(p.weapon.visual,q.weapon.visual,t);
                }

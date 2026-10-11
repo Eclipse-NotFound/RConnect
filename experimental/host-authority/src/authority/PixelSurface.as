@@ -2,7 +2,8 @@ package authority {
    import flash.display.BitmapData;
    import flash.utils.ByteArray;
    /** Exact native bitmap surfaces for authored effects that modify pixels.
-    * This is not used for ordinary actors, weapons, terrain or the screen. */
+    * Used for modified effect pixels and small changed terrain blocks;
+    * ordinary actors/weapons and the screen keep their native display tree. */
    public final class PixelSurface {
       private static var channelTables:Object={};
       public static function capture(bitmap:BitmapData):Object {

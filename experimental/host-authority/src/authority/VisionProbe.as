@@ -35,6 +35,8 @@ package authority {
       }
       private function stage(session:HostSession,next:int):void {
          phase=next;stageAt=getTimer();setting(phase==1);
+         session.actors[0].unit.pers.infravis=phase==1;
+         session.actors[1].unit.pers.infravis=phase==0;
          session.link.send({type:"vision-stage",phase:phase,home:access.keyFor(home),back:access.keyFor(back),mid:mid,cy:cy});
       }
       private function mergedOther():Boolean {
@@ -45,6 +47,11 @@ package authority {
       private function nativeLight(x:int):Number{return Number(access.world.loc.space[x][cy].visi);}
       private function observations(index:int):void {
          var m:RConnectMod=RConnectMod.instance,w:Object=access.world;
+         if(index>=0 && index<=2) {
+            var infrared:Boolean=index==0?!host:index==1?host:false;
+            check(Boolean(w.pers.infravis)==infrared && w.grafon.visLight.blendMode==(infrared?"multiply":"normal"),
+               "native infrared tint belongs to the local character, including removal",{phase:index,infrared:infrared,blend:w.grafon.visLight.blendMode});
+         }
          if(index==0) {
             check(original.active(w.loc)===true && captures>0,"RV computes actual local exploration in the authority scene");
             check(nativeLight(host?mid-4:mid+4)>.5 && nativeLight(host?mid+4:mid-4)==0,

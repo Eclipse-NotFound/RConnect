@@ -12,6 +12,7 @@ package authority {
       public var tactics:TacticsBridge;
       public var lives:PlayerLives;
       public var travel:PartyTravel;
+      public var music:SessionMusic;
       public var rooms:OccupiedRooms,transfers:RoomTransfers;
       private var oldPlayerHook:Function,oldRoomHook:Function,oldObjectHook:Function,oldDamageHook:Function;
       private var oldFindHook:Function,perception:NativePerception;
@@ -106,6 +107,7 @@ package authority {
                for each(var a:PlayerActor in actors)if(a.unit.loc===room){representative=a;break;}
                if(representative==null)throw new Error("Room lost its occupant during a simulation step");
                access.scope.run(representative.context,function():void {
+                  if(music!=null)music.step(room);
                   room.step();++roomSteps;++rooms.services(room).steps;
                   if(tactics!=null)tactics.step(room,tick);
                   capture(room);

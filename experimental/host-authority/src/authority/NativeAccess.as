@@ -6,6 +6,7 @@ package authority {
    import fe.inter.AuthorityStand;
    public class NativeAccess {
       public var domain:ApplicationDomain,world:Object,scope:NativeScope;
+      public var ink:TerrainInk;
       public function NativeAccess(main:Object) {
          domain=main.loaderInfo.applicationDomain;
          world=definition("fe.World")["w"];

@@ -83,6 +83,7 @@ package authority {
          var present:Boolean=frame.room===access.roomKey();access.world.visual.visible=present;
          if(!interpolated) {
          CharacterState.apply(access,frame.character);
+         access.world.grafon.warShadow();
          Timing.end("client.character",part);
          if(frame.character!=null)AuthorityGUI.applyModal(access.world.gui,frame.character.modal);
          if(frame.character!=null && frame.character.menu!=null) {
@@ -103,6 +104,7 @@ package authority {
          for each(var state:Object in frame.players) {
             if(state.room===frame.room && present)applyPlayer(state,interpolated);
             else if(peers[state.id]!=null) {
+               peers[state.id].body.teleObj=null;
                peers[state.id].body.remVisual();
                if(peers[state.id].weapon!=null)peers[state.id].weapon.remVisual();
             }
@@ -148,9 +150,17 @@ package authority {
                g=actor.unit;
                for each(var item:Object in g.childObjs)if(item!=null)item.remVisual();
             }
-            rec={body:g,actor:local?null:actor,weaponId:"",weapon:null,weaponEpoch:0};peers[state.id]=rec;
+            rec={body:g,actor:local?null:actor,weaponId:"",weapon:null,weaponEpoch:0,held:null};peers[state.id]=rec;
          }
          g=rec.body;if(g.vis.parent==null)g.addVisual();
+         if(state.held==null)g.teleObj=null;
+         else {
+            // Native GUI reads teleObj for the label, held mass and throw arrow.
+            // This detached native Obj is a read-only UI reference: no display,
+            // collision, chain membership or second telekinesis simulation.
+            if(rec.held==null){var Held:Class=access.definition("fe.Obj");rec.held=new Held();}
+            NativeFields.apply(rec.held,state.held);rec.held.loc=access.world.loc;g.teleObj=rec.held;
+         }
          if(interpolated)NativeFields.motion(g,state.native);else NativeFields.apply(g,state.native);
          if(g.vis.parent!==access.world.grafon.visObjs[int(g.sloy)])access.world.grafon.visObjs[int(g.sloy)].addChild(g.vis);
          var pet:Object=scene.petFor(state.id);
@@ -214,6 +224,7 @@ package authority {
       public function dispose():void {
          sound.dispose();
          for each(var rec:Object in peers) {
+            rec.body.teleObj=null;
             if(rec.weapon!=null)rec.weapon.remVisual();
             if(rec.body!==access.world.gg)rec.body.remVisual();
             if(rec.actor!=null)rec.actor.destroy();

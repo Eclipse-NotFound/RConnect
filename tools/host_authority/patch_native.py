@@ -127,6 +127,25 @@ def modify(name, source):
         constructor = '      public function '+name.split('.')[-1]+'('
         source = once(source, constructor,
             '      public static const RCONNECT_AUTHORITY_HOOKS:String = "b3-v1";\n\n'+constructor)
+    if name=='fe.graph.Grafon':
+        source=once(source,'      public function Grafon(param1:Sprite, sharedResources:Grafon = null)',
+            '      public static var rconnectInk:Function = null;\n\n'
+            '      public function rconnectSurface(layer:String):BitmapData\n      {\n'
+            '         return layer == "front" ? this.frontBmp : layer == "back" ? this.backBmp : null;\n      }\n\n'
+            '      public function Grafon(param1:Sprite, sharedResources:Grafon = null)')
+        source=once(source,'         this.drawAllObjs();\n         World.w.gr_stage = 0;',
+            '         this.drawAllObjs();\n         World.w.gr_stage = 0;\n'
+            '         if(rconnectInk != null) rconnectInk(this,"reset",null);')
+        anchor='            this.frontBmp.copyChannel(_loc12_,_loc15_,_loc16_,BitmapDataChannel.GREEN,BitmapDataChannel.ALPHA);\n         }'
+        source=once(source,anchor,anchor+'\n         if(rconnectInk != null)\n         {\n'
+            '            rconnectInk(this,"front",this.frontBmp,null,_loc8_,this.m);\n'
+            '            rconnectInk(this,"front",this.frontBmp,null,_loc9_,this.m);\n         }')
+        source=once(source,'         this.frontBmp.draw(_loc4_,_loc3_);',
+            '         this.frontBmp.draw(_loc4_,_loc3_);\n'
+            '         if(rconnectInk != null) rconnectInk(this,"front",this.frontBmp,null,_loc4_,_loc3_);')
+        anchor='         this.backBmp.copyChannel(this.brData,this.brRect,this.brPoint,BitmapDataChannel.GREEN,BitmapDataChannel.ALPHA);'
+        source=once(source,anchor,anchor+'\n'
+            '         if(rconnectInk != null) rconnectInk(this,"back",this.backBmp,new Rectangle(_loc11_,_loc13_,_loc12_-_loc11_,_loc14_-_loc13_));')
     if name in INTENTS:
         constructor = '      public function '+name.split('.')[-1]+'('
         source = once(source, constructor, '      public static var rconnectIntent:Function = null;\n\n'+constructor)
@@ -244,6 +263,20 @@ def modify(name, source):
             '         }\n         if(!this.active && PipBuck.rconnectMenu != null) PipBuck.rconnectMenu(this,"menuStandClose",[]);\n'
             '      }\n      \n      public function resizeScreen')
     if name == 'fe.Snd':
+        source = once(source, '      public static function combatMusic(param1:String, param2:int = 0, param3:int = 150) : *',
+            '      public static var rconnectCombatMusic:Function = null;\n'
+            '      public static var rconnectPlayMusic:Function = null;\n'
+            '      public static function combatMusic(id:String, priority:int = 0, duration:int = 150) : *\n'
+            '      {\n         if(rconnectCombatMusic != null) return rconnectCombatMusic(id,priority,duration);\n'
+            '         return rconnectNativeCombatMusic(id,priority,duration);\n      }\n'
+            '      public static function rconnectNativeCombatMusic(param1:String, param2:int = 0, param3:int = 150) : *')
+        source = once(source, '      public static function playMusic(param1:String = null, param2:int = 10000) : *',
+            '      public static function playMusic(id:String = null, repeats:int = 10000) : *\n'
+            '      {\n         if(rconnectPlayMusic != null) return rconnectPlayMusic(id,repeats);\n'
+            '         return rconnectNativeMusic(id,repeats);\n      }\n'
+            '      public static function rconnectNativeMusic(param1:String = null, param2:int = 10000) : *')
+        source = once(source, '         if(t_combat > 0)\n         {\n            if(t_combat == 1)',
+            '         if(t_combat > 0 && rconnectCombatMusic == null)\n         {\n            if(t_combat == 1)')
         source = once(source, '      public static function ps(param1:String, param2:Number = -1000, param3:Number = -1000, param4:Number = 0, param5:Number = 1) : SoundChannel',
             '      public static var rconnectPlaySound:Function = null;\n'
             '      public static var rconnectHumSound:Function = null;\n'
@@ -283,7 +316,7 @@ def modify(name, source):
             '         for each(var node:XML in nodes)\n         {\n'
             '            if(node.attribute(key) == expected) result += node;\n'
             '         }\n         return result;\n      }\n\n'+constructor)
-    return source.replace('"b1-v3"','"b3-v7"').replace('"b2-v1"','"b3-v7"').replace('"b3-v1"','"b3-v7"')
+    return source.replace('"b1-v3"','"b3-v9"').replace('"b2-v1"','"b3-v9"').replace('"b3-v1"','"b3-v9"')
 
 
 def swf_tags(path):
@@ -364,7 +397,7 @@ def main():
             subprocess.run(ff+['-dumpAS3', str(path)], stdout=log, check=True)
     if (out/'before-classes.txt').read_bytes() != (out/'after-classes.txt').read_bytes():
         raise RuntimeError('Native class list changed')
-    save(out/'native-input.json', dict(experimental_only=True, capability='b3-v7',
+    save(out/'native-input.json', dict(experimental_only=True, capability='b3-v9',
         baseline=str(baseline.relative_to(ROOT)), baseline_manifest_sha256=sha(baseline/'baseline.json'),
         original_sha256=sha(original), candidate_sha256=sha(out/'pfe.swf'),
         sources={p.relative_to(out).as_posix():sha(p) for p in sorted((out/'import').rglob('*.as'))},

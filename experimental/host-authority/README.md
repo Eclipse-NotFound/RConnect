@@ -9,6 +9,7 @@
 | 部分 | 负责什么 |
 |---|---|
 | `Commands` / `Link` | 身份与顺序核验、有界传输、短按保留、一次动作去重、失去输入后释放控制 |
+| `WireCodec` / `FrameDelta` | AMF3编码与可靠差分；共享的不可变动画分支可分开更新，旧确认保留 |
 | `NativeAccess` / `AuthorityPlayer` / `NativeScope` | 创建真的第二名玩家，使用自己的属性、背包、控制器和界面服务；每次调用恢复原引用 |
 | `HostSession` / `RoomRuntime` | 接收输入、每房间步推进两个玩家一次、原生弹丸按所属玩家执行、受击按受击者执行、返回确认 |
 | `OccupiedRooms` / `RoomTransfers` | 保留原生房间、按实际占用推进；原生出口请求在房间步之间提交，独立维护宿主显示 |
@@ -18,9 +19,13 @@
 | `TacticsBridge` / `NativePerception` | 可选 TDFC 房间调度接口与两名玩家的原生索敌/暴露计算 |
 | `GroundMotion` / `MovementPrediction` | 仅自己的平地移动作有界预演，按主侧确认重放未处理输入；战斗/地形变化撤销 |
 | `SessionSound` / `SoundPlayback` | 主侧记录原生声效/停止/持续音效，按房间和个人界面归属播放，各自保留音量设置 |
+| `SessionMusic` / `RoomMusic` | 每个占用房间推进原生战斗配乐，听者分别使用自己的音量 |
+| `TerrainInk` | 记录原生弹孔、焦痕、魔法墙和血迹实际改动的64px小块；地形重画后恢复当前印记 |
 | `Probe` / `ContractChecks` | 仅测试配置启用，真实AIR中的协议、资源隔离与原生开火检查 |
 
 当前B3已接入原生场景、统一显示时钟、原生菜单和各自保存；门箱/拾取/XP、念力、复活/旅行、SATS、跟随/宠物/共同挑战已有分项实测。紧凑UI/聊天/设置已实测，退出返回单人已通过专项。MSW、完整武器效果、本机预测、敌人状态专项、无驱动游玩及长局压力未完成，仍不能作为日常候选。
+
+2026-10-12接续：097已编译、原生016为b3-v9，含红外归属回归。087起新增改动尚未实机，当前AIR启动被用户游戏持有的全局锁阻塞；不干预用户实例。旧版51项对应表见[验收映射](../../design/host-authority-regression-map.json)，`check_regression_map.py`只检查条目没有遗漏，不能给出游玩通过结论。延迟工具`run_probe.py --jitter-ms 0,20,80,10,40`仅用于隔离回环测试，保持真实字节与顺序。
 
 ## 复现步骤
 

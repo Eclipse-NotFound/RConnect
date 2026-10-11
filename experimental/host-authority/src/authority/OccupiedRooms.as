@@ -91,6 +91,9 @@ package authority {
          room.land.loc=room;room.land.gg=actors[0].unit;
          room.land.locX=room.landX;room.land.locY=room.landY;room.land.locZ=room.landZ;room.land.prob=room.landProb;
          room.land.loc_t=0;
+         // Native infrared effects call Grafon.warShadow during either actor's
+         // step. The actual host view must end with its own Pers setting.
+         w.grafon.warShadow();
       }
       public function summary():Array {
          var result:Array=[];

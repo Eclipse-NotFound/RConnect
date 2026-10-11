@@ -16,15 +16,18 @@ package authority {
             if(prior==null || !(packet.changes is Array))throw new Error("Confirmation delta has no baseline");
             // A render buffer retains older confirmations. Clone only branches
             // changed by this packet; never mutate a previously returned frame.
-            var clones:Dictionary=new Dictionary(true),root:Object=prior;
-            prior=branch(root);clones[root]=prior;
+            var writable:Dictionary=new Dictionary(true);
+            prior=branch(prior);writable[prior]=true;
             for each(var op:Array in packet.changes) {
                var target:Object=prior,path:Array=op[0];
                if(path.length==0){prior=op[2];continue;}
                for(var i:int=0;i<path.length-1;i++) {
-                  var child:Object=target[path[i]],copy:Object=clones[child];
-                  if(copy==null){copy=branch(child);clones[child]=copy;clones[copy]=copy;}
-                  target[path[i]]=copy;target=copy;
+                  var child:Object=target[path[i]];
+                  // AMF can retain two references to one immutable branch.
+                  // Clone at this parent/path, not once per old object identity:
+                  // two entities may now acquire different animation states.
+                  if(!writable[child]){child=branch(child);writable[child]=true;target[path[i]]=child;}
+                  target=child;
                }
                if(op[1]==0)delete target[path[path.length-1]];else target[path[path.length-1]]=op[2];
             }

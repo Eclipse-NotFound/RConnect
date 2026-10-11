@@ -21,19 +21,23 @@ package authority {
       private var nativeSamples:int=0,nativeQuick:int=0,sourcePixels:int=0,readySent:int=-1;
       private var samplePictures:Object={};
       private var target:Object,targetHP:Number=0;
+      private var observedMasks:Dictionary=new Dictionary(true);
+      private var inkArea:Rectangle,inkBefore:Vector.<uint>,inkChanges:int=0,inkHoles:int=0;
+      private var inkRebuild:Boolean=false,inkRedraw:Boolean=false;
       public function WeaponProbe(a:NativeAccess,h:Boolean,kind:String) {
          super(a,h);this.kind=kind;
          cases=kind=="explosives"?["acidgr","plagr","impgr","cryogr","gasgr","molotov"]:
             kind=="magic"?["telebul","ice","lightning","mray","fireball","eclipse"]:
             kind=="guns"?["shotgun","lasr","plar","bfg","flamer","cflamer","gatl","sawgun"]:
             kind=="melee"?["bat","spear","ripper","lsword","bsaw"]:[0,85,95,160,180,-95,-160];
+         if(kind=="terrain")cases=["lmg","plam","prism"];
       }
       override public function message(value:Object):void {
          if(host && value.type=="weapon-ready")peerReady=value.phase;
          if(host && value.type=="weapon-report")report=value;
          if(!host && value.type=="weapon-phase") {
             phase=value.phase;begin=-1;ending=-1;aimX=value.x;aimY=value.y;
-            counts={samples:0,missing:0,pose:0,pixels:0,quick:0,projectile:0,effect:0,body:0,weapon:0,first:[]};
+            counts={samples:0,missing:0,pose:0,pixels:0,quick:0,projectile:0,effect:0,body:0,weapon:0,inkSamples:0,inkWrong:0,first:[]};
          }
          if(!host && value.type=="weapon-go")begin=value.tick;
          if(!host && value.type=="weapon-reference")references[value.tick]=value;
@@ -49,6 +53,7 @@ package authority {
       }
       private function start(session:HostSession,index:int):void {
          phase=index;begin=-1;peerReady=-1;waiting=false;report=null;nativeEffects={};nativeSamples=nativeQuick=sourcePixels=0;
+         inkBefore=null;inkChanges=inkHoles=0;inkRebuild=inkRedraw=false;
          fy=ProbeArena.floor(access.world.loc,25);shooter=session.actors[phase%2];
          for each(var actor:PlayerActor in session.actors)access.scope.run(actor.context,function():void {
             var g:Object=actor.unit;
@@ -79,6 +84,16 @@ package authority {
          });
          var angle:Number=kind=="angles"?Number(cases[int(phase/2)])*Math.PI/180:0;
          aimX=shooter.unit.X+Math.cos(angle)*300;aimY=fy-45+Math.sin(angle)*300;
+         if(kind=="terrain") {
+            var room:Object=shooter.unit.loc,row:int=int((fy+1)/40);
+            room.destroyOn=true;room.tileSpawn=0;
+            for(var wy:int=row-5;wy<row;wy++) {
+               var tile:Object=room.space[25][wy];tile.front="A";tile.opac=1;tile.hp=20000;
+               tile.mat=gun.id=="lmg"?3:2;tile.indestruct=gun.id!="plam";tile.thre=0;tile.fake=false;
+            }
+            gun.destroy=30;gun.damageExpl=0;gun.critCh=0;gun.dopCh=0;gun.precision=gun.deviation=gun.recoil=gun.recoilUp=0;
+            aimX=1080;inkArea=new Rectangle(960,Math.floor(fy-120),128,128);
+         }
          if(kind=="melee" || kind=="guns") {
             var Enemy:Class=access.definition("fe.unit.UnitZombie");target=new Enemy("1",10,<unit tr="1" dig="0"/>,null);
             target.putLoc(access.world.loc,shooter.unit.X+(kind=="melee"?95:280),fy);access.world.loc.units.push(target);
@@ -170,20 +185,42 @@ package authority {
          for each(var list:Array in [shooter.unit.loc.objs,shooter.unit.loc.acts,shooter.unit.loc.bonuses])
             for each(o in list)if(o.vis!=null)seen[o.vis]=true;
          for each(var layer:DisplayObjectContainer in access.world.grafon.visObjs)
-            for(var mi:int=0;mi<layer.numChildren;mi++)if(layer.getChildAt(mi).mask!=null)seen[layer.getChildAt(mi).mask]=true;
+            for(var mi:int=0;mi<layer.numChildren;mi++)if(layer.getChildAt(mi).mask!=null)observedMasks[layer.getChildAt(mi).mask]=true;
+         // Native RV can leave a mask attached while its actual owner is
+         // temporarily outside the display tree; it is not a weapon effect.
+         for(var owner:Object in seen)if(owner is DisplayObject && DisplayObject(owner).mask!=null)
+            observedMasks[DisplayObject(owner).mask]=true;
          for(var li:int=0;li<access.world.grafon.visObjs.length;li++) {
             layer=access.world.grafon.visObjs[li];
             for(var ci:int=0;ci<layer.numChildren;ci++) {
-               var extra:DisplayObject=layer.getChildAt(ci);if(seen[extra])continue;
+               var extra:DisplayObject=layer.getChildAt(ci);if(seen[extra] || observedMasks[extra])continue;
                s=sample(extra,"effect",li);if(s!=null){s.id=session.sceneId(extra);samples.push(s);nativeEffects[s.clip]=true;}
             }
          }
          nativeSamples+=samples.length;
-         session.link.send({type:"weapon-reference",phase:phase,tick:session.runtime.tick,samples:samples});
+         var reference:Object={type:"weapon-reference",phase:phase,tick:session.runtime.tick,samples:samples};
+         if(kind=="terrain") {
+            var pixels:Vector.<uint>=access.world.grafon.frontBmp.getVector(inkArea);
+            if(inkBefore==null)inkBefore=pixels;
+            var changed:int=0,holes:int=0;
+            for(var pi:int=0;pi<pixels.length;pi++)if(pixels[pi]!=inkBefore[pi]) {
+               ++changed;if((pixels[pi]>>>24)<(inkBefore[pi]>>>24))++holes;
+            }
+            inkChanges=Math.max(inkChanges,changed);inkHoles=Math.max(inkHoles,holes);
+            reference.ink={rect:[inkArea.x,inkArea.y,inkArea.width,inkArea.height],hash:inkHash(pixels)};
+         }
+         session.link.send(reference);
+      }
+      private function inkHash(pixels:Vector.<uint>):uint {
+         var digest:uint=2166136261;for each(var pixel:uint in pixels){digest^=pixel;digest*=16777619;}return digest;
       }
       private function applied(frame:Object):void {
          var ref:Object=references[frame.tick];if(ref==null || ref.phase!=phase)return;
          delete references[frame.tick];
+         if(ref.ink!=null) {
+            var area:Array=ref.ink.rect;++counts.inkSamples;
+            if(inkHash(access.world.grafon.frontBmp.getVector(new Rectangle(area[0],area[1],area[2],area[3])))!=uint(ref.ink.hash))++counts.inkWrong;
+         }
          for each(var s:Object in ref.samples) {
             ++counts.samples;counts[s.kind]=int(counts[s.kind])+1;
             var container:DisplayObjectContainer=access.world.grafon.visObjs[s.layer],found:DisplayObject=null;
@@ -245,6 +282,8 @@ package authority {
                check(counts.pixels==0 && counts.samples>counts.missing,"transported authored visuals match independent native pixels phase "+phase,counts);
                if(kind=="explosives" || ["fireball","eclipse"].indexOf(cases[int(phase/2)])>=0)
                   check(counts.effect>0,"native impact or sustained particles reach display phase "+phase,counts);
+               if(kind=="terrain")check(counts.inkSamples>40 && counts.inkWrong==0,
+                  "native bullet holes and scorch pixels remain exact across local and authoritative redraws phase "+phase,counts);
                RConnectMod.instance.link.send({type:"weapon-report",phase:phase,counts:counts});ending=-1;
             }
             return;
@@ -255,6 +294,17 @@ package authority {
             session.runtime.afterStep=function():void {source(session);publish();};start(session,0);return;
          }
          if(begin<0 && peerReady==phase){begin=session.runtime.tick;session.link.send({type:"weapon-go",tick:begin});}
+         if(kind=="terrain" && begin>=0) {
+            if(!inkRebuild && session.runtime.tick-begin>=90) {
+               inkRebuild=true;
+               // A nonvisual tile-state update makes the replica redraw; the
+               // unchanged native source must retain all existing ink pixels.
+               shooter.unit.loc.space[25][int((fy+1)/40)-2].hp-=1;
+            }
+            if(!inkRedraw && session.runtime.tick-begin>=125) {
+               inkRedraw=true;access.world.grafon.drawLoc(shooter.unit.loc);
+            }
+         }
          if(begin>=0 && !waiting && session.runtime.tick-begin>=180) {
             waiting=true;
             if(kind!="melee")check(session.runtime.spawnsByPlayer[shooter.id]>initialShots,"real input creates native projectile "+gun.id+" owner "+shooter.id,
@@ -262,6 +312,11 @@ package authority {
             if(kind=="explosives")check(shooter.unit.invent.items[gun.ammo].kol==19,"one native quick throw consumes one item "+gun.id+" owner "+shooter.id);
             if(kind=="melee" || kind=="guns")check(target.hp<targetHP,"native equipped weapon damages a real target "+gun.id+" owner "+shooter.id,{before:targetHP,after:target.hp});
             if(kind=="melee" && ["bat","spear"].indexOf(gun.id)>=0)check(nativeEffects["visVzz"]===true,"native melee swing arc is included "+gun.id+" owner "+shooter.id);
+            if(kind=="terrain") {
+               check(inkChanges>10 && (gun.id=="prism" || inkHoles>0),"native wall hit produces real marks and expected alpha holes "+gun.id,
+                  {changed:inkChanges,holes:inkHoles});
+               check(shooter.unit.loc.space[25][int((fy+1)/40)-2].phis==1,"small cosmetic holes do not open wall collision");
+            }
             var clips:Array=[];for(var key:String in nativeEffects)clips.push(key);
             Log.write("weapon-native-summary",{phase:phase,id:gun.id,owner:shooter.id,samples:nativeSamples,quick:nativeQuick,effects:clips});
             session.link.send({type:"weapon-phase-end",phase:phase,tick:session.runtime.tick});

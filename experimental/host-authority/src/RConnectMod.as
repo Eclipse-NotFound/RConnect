@@ -43,14 +43,17 @@ package {
          stream.open(file,FileMode.READ);config=JSON.parse(stream.readUTFBytes(stream.bytesAvailable));stream.close();
          if(config.experimental!==true || config.session==null || (config.role!=null && config.role!="" && config.role!="host" && config.role!="join"))throw new Error("Missing explicit B configuration");
          role=config.role==null?"":config.role;session=config.session;access=new NativeAccess(main);access.checkHooks();
+         access.ink=new TerrainInk(access);
          preferences=new Preferences(config);ui=new HudModel(this);hud=new NetHud(stage,ui);
          vision=new SharedVision(this);
          if(access.definition("fe.World")["rconnectChangeWorld"]!=null)throw new Error("Native lifecycle seam occupied");
-         access.definition("fe.World")["rconnectChangeWorld"]=function():void {if(network)leaveSession(false);vision.resetJourney();};
+         access.definition("fe.World")["rconnectChangeWorld"]=function():void {if(network)leaveSession(false);vision.resetJourney();access.ink.reset();};
          MapState.install(access);
-         if(config.probe===true)probe=["explosives","magic","angles","guns","melee"].indexOf(config.scenario)>=0?new WeaponProbe(access,role=="host",config.scenario):
+         if(config.probe===true)probe=["explosives","magic","angles","guns","melee","terrain"].indexOf(config.scenario)>=0?new WeaponProbe(access,role=="host",config.scenario):
             config.scenario=="movement"?new MovementProbe(access,role=="host"):
+            config.scenario=="motion"?new MotionProbe(access,role=="host"):
             config.scenario=="sound"?new SoundProbe(access,role=="host"):
+            config.scenario=="music"?new MusicProbe(access,role=="host"):
             config.scenario=="enemies"?new EnemyVisualProbe(access,role=="host"):
             config.scenario=="stress"?new StressProbe(access,role=="host"):
             config.scenario=="vision"?new VisionProbe(access,role=="host"):
@@ -64,9 +67,11 @@ package {
             config.scenario=="throw"?new ThrowProbe(access,role=="host"):
             config.scenario=="personal"?new PersonalProbe(access,role=="host"):
             config.scenario=="grabs"?new GrabsProbe(access,role=="host"):
+            config.scenario=="enemy-grabs"?new EnemyGrabsProbe(access,role=="host"):
             config.scenario=="friendly"?new FriendlyProbe(access,role=="host"):
             config.scenario=="travel"?new TravelProbe(access,role=="host"):
             config.scenario=="sats"?new SatsProbe(access,role=="host"):
+            config.scenario=="pause-cycles"?new SatsProbe(access,role=="host",4):
             config.scenario=="lifecycle"?new LifecycleProbe(access,role=="host"):
             config.scenario=="cooperation"?new CooperationProbe(access,role=="host"):
             config.scenario=="split-rooms"?new SplitRoomProbe(access,role=="host",config.enemy):

@@ -44,6 +44,7 @@ package authority {
          travel=new PartyTravel(this);runtime.travel=travel;
          scene=new SceneSnapshot(access);
          sound=new SessionSound(access,actors);
+         runtime.music=sound.music;
          for each(var actor:PlayerActor in actors)actor.resolveTarget=scene.target;
          var welcome:Object=Commands.greeting("welcome",session);welcome.player=1;welcome.room=expectedRoom;welcome.epoch=1;welcome.weaponEpoch=1;
          welcome.profile=access.profile();
@@ -102,6 +103,7 @@ package authority {
          frame.players=[actors[0].snapshot(inputs[0].consumed),actors[1].snapshot(inputs[1].consumed)];
          for each(var actor:PlayerActor in actors) {
             frame.players[actor.id].key=scene.id(actor.unit);
+            if(frame.players[actor.id].held!=null)frame.players[actor.id].held.key=scene.id(actor.unit.teleObj);
             frame.players[actor.id].actionAck=inputs[actor.id].receivedAction;
          }
          frame.friendlyFire=combat.enabled;

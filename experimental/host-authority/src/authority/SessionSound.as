@@ -8,12 +8,14 @@ package authority {
       private var nextId:uint=0,events:Array=[],channels:Dictionary=new Dictionary(true),hums:Object={};
       private var lastTick:int=-1,room:String="",oldHum:Array;
       public var output:SoundPlayback;
+      public var music:SessionMusic;
       public var captured:uint=0,capturedStops:uint=0,capturedHums:uint=0;
       public function SessionSound(access:NativeAccess,actors:Array=null) {
          this.access=access;this.actors=actors;snd=access.definition("fe.Snd");output=new SoundPlayback(access);
          if(snd["rconnectPlaySound"]!=null || snd["rconnectHumSound"]!=null || snd["rconnectStopSound"]!=null)
             throw new Error("Native sound seam occupied");
          oldHum=snd["shumArr"];
+         music=new SessionMusic(access,actors);
          for each(var entry:Object in oldHum){if(entry.ch!=null)entry.ch.stop();entry.pl=false;entry.curVol=entry.maxVol=0;}
          snd["shumArr"]=[];
          snd["rconnectPlaySound"]=play;snd["rconnectHumSound"]=hum;snd["rconnectStopSound"]=stop;
@@ -55,7 +57,8 @@ package authority {
          if(tick!=lastTick && tick%5==0)for each(current in hums)for(name in current) {
             current[name]=Math.max(0,Number(current[name])-.2);if(current[name]==0)delete current[name];
          }
-         lastTick=tick;return {events:remote,hum:copy};
+         music.apply(music.forPlayer(0));
+         lastTick=tick;return {events:remote,hum:copy,music:music.forPlayer(1)};
       }
       private function listener():void {
          var key:String=access.keyFor(actors[0].unit.loc);
@@ -63,11 +66,11 @@ package authority {
       }
       public function apply(frame:Object):void {
          if(room!==frame.room){output.dispose();room=frame.room;}
-         if(frame.audio!=null)output.apply(frame.audio.events,frame.audio.hum);
+         if(frame.audio!=null){output.apply(frame.audio.events,frame.audio.hum);music.apply(frame.audio.music);}
       }
       public function dispose():void {
          snd["rconnectPlaySound"]=snd["rconnectHumSound"]=snd["rconnectStopSound"]=null;
-         output.dispose();snd["shumArr"]=oldHum;events=[];hums={};channels=new Dictionary(true);
+         music.dispose();output.dispose();snd["shumArr"]=oldHum;events=[];hums={};channels=new Dictionary(true);
       }
    }
 }

@@ -27,7 +27,7 @@ package authority {
       private function compare(session:HostSession):void {
          var g:Object=session.actors[1].unit,current:Object=GroundMotion.capture(g);
          if(begin>=0 && current!=null)++groundSamples;
-         if(previous!=null && current!=null && session.runtime.tick-begin<155) {
+         if(begin>=0 && previous!=null && current!=null && session.runtime.tick-begin<155) {
             var expected:Object=GroundMotion.advance(previous,g.walk<0?Commands.LEFT:g.walk>0?Commands.RIGHT:0);
             if(expected!=null) {
                ++samples;var error:Number=Math.max(Math.abs(expected.x-g.X),Math.abs(expected.dx-g.dx));

@@ -6,7 +6,13 @@ package authority {
       private var ready:Boolean=false,phase:int=0,at:int=0,freezeTick:uint=0,resumeTick:uint=0;
       private var target:Object,startHp:Number,initialOd:Number,initialAmmo:int;
       private var frozen:Boolean=true,queued:Boolean=false,refreshes:uint=0;
-      public function SatsProbe(a:NativeAccess,h:Boolean){super(a,h);}
+      private var repetitions:int=1,cycle:int=0;
+      private var nextCycle:int=-1,allCyclesFinished:Boolean=false;
+      public function SatsProbe(a:NativeAccess,h:Boolean,repetitions:int=1){super(a,h);this.repetitions=repetitions;}
+      override public function message(value:Object):void {
+         if(!host && value.type=="sats-next-cycle")nextCycle=value.cycle;
+         if(!host && value.type=="sats-all-cycles-finished")allCyclesFinished=true;
+      }
       override public function input(frame:Object,session:HostSession):Object {
          frame.buttons=0;
          // Preserve InputSource's native SATS plan and release request.
@@ -51,12 +57,20 @@ package authority {
             if(phase==2 && session.lastFrame.projectileEvents.length>0)Log.write("sats-shot-evidence",{
                target:NativeFields.capture(target),aim:[b.unit.celX,b.unit.celY],shots:session.lastFrame.projectileEvents});
             if(phase==2 && tick>resumeTick+100) {
-               check(session.pause.epoch==2 && !session.pause.paused,"one shared pause and one resume boundary");
+               check(session.pause.epoch==2*(cycle+1) && !session.pause.paused,"one shared pause and one resume boundary per cycle "+cycle);
                check(queued && b.context.sats.od<initialOd,"client's native SATS plan consumes the owning host actor's action points once",{before:initialOd,after:b.context.sats.od});
                check(b.unit.currentWeapon.hold+b.unit.invent.items[b.unit.currentWeapon.ammo].kol<initialAmmo && target.hp<startHp,
                   "SATS resumes with native host bullets and native enemy damage",{before:startHp,after:target.hp});
                check(w.gg===session.actors[0].unit && w.sats===session.actors[0].context.sats,"remote SATS does not replace host controls");
-               finish();
+               if(cycle+1>=repetitions) {
+                  if(repetitions>1)session.link.send({type:"sats-all-cycles-finished"});finish();
+               }else {
+                  ++cycle;phase=0;frozen=true;queued=false;
+                  b.context.sats.od=b.unit.pers.maxOd;b.context.sats.odd=0;
+                  initialOd=b.context.sats.od;startHp=target.hp;
+                  initialAmmo=b.unit.currentWeapon.hold+b.unit.invent.items[b.unit.currentWeapon.ammo].kol;
+                  session.link.send({type:"sats-next-cycle",cycle:cycle});
+               }
             }
             return;
          }
@@ -80,7 +94,7 @@ package authority {
                   meet:w.gg.isMeet(candidate),look:w.gg.look(candidate),tile:candidate.getTileVisi(),x:candidate.X,y:candidate.Y});
             Log.write("sats-target-evidence",{targets:evidence,eye:[w.gg.eyeX,w.gg.eyeY],position:[w.gg.X,w.gg.Y]});
             if(chosen!=null){for each(u in w.sats.units)u.du.filters=[];chosen.du.filters=[new GlowFilter()];w.sats.setCel();queued=true;}
-            SceneChecks.picture(access,"sats-confirmed.png");
+            SceneChecks.picture(access,"sats-confirmed-"+cycle+".png");
          }
          if(phase==2) {
             frozen=frozen && f.tick==freezeTick;
@@ -91,9 +105,16 @@ package authority {
             }
          }
          if(phase==3 && !f.paused && f.tick>freezeTick+80) {
-            check(f.pauseEpoch==2 && !w.sats.active,"join leaves SATS at the same authoritative resume boundary");
+            check(f.pauseEpoch==2*(cycle+1) && !w.sats.active,"join leaves SATS at the same authoritative resume boundary cycle "+cycle);
             check(w.onPause && f.spawnsByPlayer[1]>0,"join replays confirmed SATS bullets without simulating another battle");
-            SceneChecks.picture(access,"sats-resumed.png");finish();
+            SceneChecks.picture(access,"sats-resumed-"+cycle+".png");
+            if(repetitions==1)finish();else phase=4;
+         }
+         // A burst of delayed confirmations can deliver the next-cycle notice
+         // before observe() has checked the previous cycle's displayed resume.
+         if(phase==4 && nextCycle>=0){cycle=nextCycle;nextCycle=-1;phase=0;frozen=true;queued=false;}
+         if(phase==4 && allCyclesFinished) {
+            check(cycle+1==repetitions,"every repeated SATS pause and resume was checked on the displayed timeline");finish();
          }
       }
    }

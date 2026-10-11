@@ -5,6 +5,10 @@ package authority {
       private var actors:Array,grips:Dictionary=new Dictionary(true);
       public var flights:PeerFlights=new PeerFlights();
       public function PeerGrabs(actors:Array){this.actors=actors;}
+      public function heldByOther(actor:PlayerActor,target:Object):Boolean {
+         for each(var other:PlayerActor in actors)if(other!==actor && other.unit.teleObj===target)return true;
+         return false;
+      }
       public function prepare(actor:PlayerActor,input:Object):void {
          var g:Object=actor.unit,holder:PlayerActor=null;
          g.levitPoss=actor.personal.allowGrab;

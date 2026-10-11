@@ -56,7 +56,7 @@ package authority {
             w.land.prob=room.landProb;w.gg.loc=room;room.units.push(w.gg);
          }
          NativeFields.apply(room,s.fields);
-         var geometry:Boolean=changed;
+         var geometry:Boolean=changed || access.ink.needsRedraw(w.grafon,s.ink);
          for each(var tile:Object in s.tiles) {
             var t:Object=room.space[int(tile.x)][int(tile.y)];
             for(var i:int=0;i<SceneSnapshot.TILE.length;i++) {
@@ -77,6 +77,7 @@ package authority {
             for each(var rec:Object in units)attach(rec.unit,rec.layer);
             for each(rec in objects)attach(rec.object,rec.layer);
          }
+         access.ink.apply(w.grafon,s.ink,geometry);
          var live:Object={};
          Timing.end("replica.terrain",began);began=Timing.start();
          for each(var state:Object in s.units) {applyUnit(state);live[state.key]=true;}

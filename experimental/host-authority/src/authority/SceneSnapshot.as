@@ -17,6 +17,7 @@ package authority {
       private var access:NativeAccess,ids:Dictionary=new Dictionary(true),nextId:uint=0;
       private var previousRoom:Object,tiles:Array=[];
       private var targets:Object={};
+      private var masks:DisplayMasks=new DisplayMasks();
       private var terrainRevision:uint=0;
       public function SceneSnapshot(access:NativeAccess){this.access=access;}
       public function id(object:Object):uint {
@@ -28,16 +29,18 @@ package authority {
          return ids[object];
       }
       public function target(id:uint):Object{return targets[id];}
-      public function reset():void {ids=new Dictionary(true);targets={};previousRoom=null;tiles=[];}
+      public function reset():void {ids=new Dictionary(true);targets={};previousRoom=null;tiles=[];masks.reset();}
       public function capture(room:Object,actors:Array,tick:uint):Object {
          var began:int=Timing.start();
          var full:Boolean=previousRoom!==room;
          if(full){previousRoom=room;tiles=[];}
          var result:Object={key:access.keyFor(room),full:full,tiles:[],units:[],objects:[],effects:[]};
          result.fields=NativeFields.capture(room);
+         result.ink=access.ink.snapshot(room.grafon);
          var rendered:Dictionary=new Dictionary(true);
          for each(var actor:PlayerActor in actors) {
             rendered[actor.unit.vis]=true;
+            if(actor.unit.hpbar!=null)rendered[actor.unit.hpbar]=true;
             // Quick magic/throw slots are stepped by UnitPlayer even when they
             // are outside childObjs. Capture every attached auxiliary weapon
             // once, through the same native pose/effect lifetime path.
@@ -107,17 +110,18 @@ package authority {
          // Mask shapes belong to their local view. Serializing them as ordinary
          // effects both exposes opaque mask pixels and rasterizes every RV
          // enemy visibility mask on every network frame.
+         // An invisible/detached body or health bar can still own a mask
+         // attached to the layer. Inspect native owners too, then remember
+         // their mask identities across the native cleanup frame.
+         for(var owner:Object in rendered)masks.remember(owner as DisplayObject);
          for each(var maskLayer:DisplayObjectContainer in room.grafon.visObjs)
-            for(var mi:int=0;mi<maskLayer.numChildren;mi++) {
-               var mask:DisplayObject=maskLayer.getChildAt(mi).mask;
-               if(mask!=null)rendered[mask]=true;
-            }
+            for(var mi:int=0;mi<maskLayer.numChildren;mi++)masks.remember(maskLayer.getChildAt(mi));
          for(var layer:int=0;layer<room.grafon.visObjs.length;layer++) {
             var container:DisplayObjectContainer=room.grafon.visObjs[layer];
             for(var ci:int=0;ci<container.numChildren;ci++) {
                var drawn:DisplayObject=container.getChildAt(ci);
                var kind:String=getQualifiedClassName(drawn);
-               if(!rendered[drawn])
+               if(!rendered[drawn] && !masks.contains(drawn))
                   result.effects.push({key:id(drawn),name:drawn.name,clip:getQualifiedClassName(drawn),layer:layer,pose:VisualPose.capture(drawn,0,true),atlas:null});
             }
          }

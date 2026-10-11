@@ -2,6 +2,7 @@ package authority {
    import flash.geom.ColorTransform;
    import flash.geom.Matrix;
    import flash.display.Sprite;
+   import flash.display.Shape;
    import flash.display.Bitmap;
    import flash.display.BitmapData;
    /** Executed in the native AIR probe, with controlled inputs and explicit failures. */
@@ -12,6 +13,7 @@ package authority {
       }
       public static function run(check:Function):void {
          presentation(check);
+         grabOwnership(check);
          var named:Array=[];named["lmg"]={hold:11};named[3]="numeric";
          var copied:Object=JSON.parse(JSON.stringify(PlainData.copy({weapons:named})));
          check(copied.weapons.lmg.hold==11 && copied.weapons["3"]=="numeric","named native save entries survive JSON");
@@ -97,9 +99,47 @@ package authority {
          check(threw && enemy.celUnit===left.unit && enemy.celX==oldX && world.gg===owner && scope.depth==0,
             "failed multi-player perception restores native target fields and nested player scopes");
       }
+      private static function grabOwnership(check:Function):void {
+         var a:PlayerActor=new PlayerActor(null,0),b:PlayerActor=new PlayerActor(null,1);
+         var target:Object={X:120,Y:80,X1:110,X2:130,Y1:40,Y2:80,scX:20,scY:40,prior:2,onCursor:3,
+            levitPoss:true,levit:1,nobj:null},original:Object={name:"original-pointer"};
+         var room:Object={units:[target],firstObj:target,celObj:original,celDist:99};
+         a.unit={loc:room,X:0,Y:80,teleObj:target};b.unit={loc:room,X:40,Y:80,teleObj:null};
+         a.grips=b.grips=new PeerGrabs([a,b]);
+         var aim:Object={aimX:120,aimY:60,buttons:0},guarded:Boolean=false,threw:Boolean=false;
+         try {PlayerPointer.run(b,aim,function():void {
+            guarded=room.celObj==null && !target.levitPoss && target.onCursor==0;
+            throw new Error("selection exception");
+         });}catch(error:Error){threw=error.message=="selection exception";}
+         check(guarded && threw && target.levitPoss && target.onCursor==3 && a.unit.teleObj===target &&
+            room.celObj===original && room.celDist==99,
+            "a second caster cannot select a held object through hover or native fallback; exception restores native eligibility");
+         var ownerAllowed:Boolean=false;
+         PlayerPointer.run(a,aim,function():void {ownerAllowed=room.celObj===target && target.levitPoss;});
+         check(ownerAllowed,"the current caster retains the native release and throw target");
+         a.unit.teleObj=null;
+         PlayerPointer.run(b,aim,function():void {ownerAllowed=room.celObj===target && target.levitPoss;});
+         check(ownerAllowed && target.levitPoss && target.onCursor==3,"released object is immediately eligible for the other caster");
+      }
       private static function presentation(check:Function):void {
+         var masks:DisplayMasks=new DisplayMasks(),detachedOwner:Sprite=new Sprite(),viewMask:Shape=new Shape(),ordinaryShape:Shape=new Shape();
+         detachedOwner.mask=viewMask;masks.remember(detachedOwner);detachedOwner.mask=null;
+         check(masks.contains(viewMask) && !masks.contains(ordinaryShape),
+            "detached mask owners retain local mask identity without excluding ordinary runtime Shapes");
+         masks.reset();check(!masks.contains(viewMask),"world reset releases remembered local mask identities");
+         var music:RoomMusic=new RoomMusic("ambient"),other:RoomMusic=new RoomMusic("quiet");
+         music.combat("combat",2,4);music.step();music.combat("combat",2,4);
+         check(music.track=="combat" && music.priority==2 && music.remaining==4 && other.track=="quiet",
+            "combat music keeps native priority semantics and belongs only to its room");
+         music.request("combat",1);music.combat("lower",1,3);
+         check(music.track=="combat" && music.loops==10000 && music.remaining==3,
+            "same-track request does not restart repeats and a lower-priority enemy only refreshes the timer");
+         for(var musicTick:int=0;musicTick<3;musicTick++)music.step();
+         check(music.track=="ambient" && music.remaining==0 && other.track=="quiet" && other.remaining==0,
+            "occupied-room music returns to its ambient track while an unstepped room stays unchanged");
          deltaSequence(check);
          movement(check);
+         wire(check);
          var enc:FrameDelta=new FrameDelta(),dec:FrameDelta=new FrameDelta();
          var one:Object={players:[{x:1,native:{hp:10}}],scene:{tiles:[{x:1,v:[2,3]}]}};
          var first:Object=dec.decode(enc.encode(one));
@@ -175,6 +215,28 @@ package authority {
          check(p.sample(1122,frame,1,false)==null,"a new combat intent removes prediction before the host acknowledges it");
          input=PoseTween.copy(input);input.seq=51;input.buttons=Commands.RIGHT;input.epoch=2;p.record(input,1123);
          check(p.sample(1124,frame,1,false)==null,"new incarnation rejects previous life's movement anchor");
+      }
+      private static function wire(check:Function):void {
+         var enc:FrameDelta=new FrameDelta(),dec:FrameDelta=new FrameDelta(),history:Array=[],truth:Array=[],ok:Boolean=true;
+         for(var frame:int=0;frame<12;frame++) {
+            var source:Object={type:"frame",session:"边界",tick:frame,units:[],text:frame%2?"念力🙂":"",optional:null};
+            for(var i:int=0;i<80;i++)source.units.push({id:i,x:i*.125+frame,hp:100-frame%7,
+               pose:{c:[1,1,1,1,0,0,0,0],f:frame%3},names:["visVzz","闪电"],enabled:frame%2==0});
+            if(frame%2)delete source.optional;
+            var restored:Object=dec.decode(WireCodec.decode(WireCodec.encode(enc.encode(source))));
+            history.push(restored);truth.push(JSON.parse(JSON.stringify(source)));
+            for(i=0;i<history.length;i++)ok=ok && same(history[i],truth[i]);
+         }
+         check(ok,"binary transport and ordered deltas preserve dense native data and every older confirmation");
+         enc=new FrameDelta();dec=new FrameDelta();
+         var shared:Object={f:1,child:{a:1}},aliased:Object={type:"frame",session:"shared",units:[{pose:shared},{pose:shared}]};
+         var old:Object=dec.decode(WireCodec.decode(WireCodec.encode(enc.encode(aliased))));
+         var split:Object={type:"frame",session:"shared",units:[{pose:{f:2,child:{a:.4}}},{pose:{f:3,child:{a:.7}}}]};
+         var next:Object=dec.decode(WireCodec.decode(WireCodec.encode(enc.encode(split))));
+         check(same(next,split) && same(old,aliased) && next.units[0].pose!==next.units[1].pose,
+            "shared immutable wire branches can diverge per entity without cross-changing poses or older frames");
+         var greeting:Object=Commands.greeting("hello","test"),copy:Object=WireCodec.decode(WireCodec.encode(greeting));
+         check(Commands.greetingMatches(copy,"test"),"uncompressed binary greeting retains the exact build contract");
       }
       private static function same(a:*,b:*):Boolean {
          if(a===b)return true;

@@ -43,7 +43,8 @@ package {
     ["fe.unit.Mine","rconnectMineSight"],["fe.World","rconnectSave"],["fe.World","rconnectChangeWorld"],["fe.inter.PipBuck","rconnectMenu"],
     ["fe.loc.Game","rconnectIntent"],["fe.unit.UnitPlayer","rconnectIntent"],["fe.unit.Invent","rconnectIntent"],
     ["fe.unit.Pers","rconnectIntent"],["fe.weapon.Weapon","rconnectIntent"],["fe.Snd","rconnectPlaySound"],
-    ["fe.Snd","rconnectHumSound"],["fe.Snd","rconnectStopSound"]])if(!emptyHook(pair[0],pair[1]))return false;
+    ["fe.Snd","rconnectHumSound"],["fe.Snd","rconnectStopSound"],
+    ["fe.Snd","rconnectPlayMusic"],["fe.Snd","rconnectCombatMusic"],["fe.graph.Grafon","rconnectInk"]])if(!emptyHook(pair[0],pair[1]))return false;
    return true;
   }
   private function step(e:Event):void {
@@ -68,7 +69,7 @@ package {
      check(minimumHP<initialHP,"single-player enemy attacks damage the native player",{before:initialHP,minimum:minimumHP});
      check(w.gg===w.pers.gg && w.invent===w.gg.invent && w.loc.gg===w.gg,"native player ownership remains intact");
      check(main.getChildByName("TDFCAuthorityCarrier")!=null,"new TDFC loads without attaching its authority API");
-     nativeMenus();nativeSound();check(hooksEmpty(),"all combat, inventory, menu, travel, sound and lifecycle seams remain unclaimed");finish();
+     nativeMenus();nativeSound();nativeMusic();check(hooksEmpty(),"all combat, inventory, menu, travel, sound and lifecycle seams remain unclaimed");finish();
     }
    }catch(error:Error){log("FATAL",{message:error.message,stack:error.getStackTrace()});check(false,"default native runtime completed");finish();}
   }
@@ -164,6 +165,35 @@ package {
     snd["onSnd"]=true;snd["off"]=true;check(snd["ps"]("lmg_s")==null,"original world sound suppression remains effective");
    }finally {snd["onSnd"]=enabled;snd["off"]=off;}
    log("default-sound-resources",resources);
+  }
+  private function nativeMusic():void {
+   var snd:Class=type("fe.Snd"),oldOn:Boolean=snd["onMusic"],oldVol:Number=Number(snd["musicVol"]);
+   var oldTrack:String=snd["musicName"],oldAmbient:String=w.currentMusic,trace:Array=[];
+   try {
+    snd["onMusic"]=true;snd["musicVol"]=0;w.currentMusic="music_mane_1";
+    snd["t_combat"]=0;snd["currentMusicPrior"]=0;snd["playMusic"](w.currentMusic);
+    var channel:SoundChannel=snd["musicCh"] as SoundChannel;
+    check(channel!=null,"unclaimed native ambient music creates a real resource channel");
+    snd["playMusic"](w.currentMusic,1);
+    check(snd["musicCh"]===channel,"unclaimed native same-track request keeps its channel and repeats");
+    snd["combatMusic"]("combat_1",2,4);
+    trace.push({track:snd["musicName"],priority:snd["currentMusicPrior"],remaining:snd["t_combat"]});
+    snd["step"]();snd["combatMusic"]("combat_1",2,4);
+    trace.push({track:snd["musicName"],priority:snd["currentMusicPrior"],remaining:snd["t_combat"]});
+    snd["combatMusic"]("boss_1",1,3);
+    trace.push({track:snd["musicName"],priority:snd["currentMusicPrior"],remaining:snd["t_combat"]});
+    for(var i:int=0;i<3;i++) {
+     snd["step"]();trace.push({track:snd["musicName"],priority:snd["currentMusicPrior"],remaining:snd["t_combat"]});
+    }
+    check(trace[0].track=="combat_1" && trace[0].priority==0 && trace[1].priority==2 && trace[2].track=="combat_1",
+     "unclaimed native combat refresh and priority ordering remain original");
+    check(snd["musicName"]==w.currentMusic && snd["t_combat"]==0,
+     "unclaimed native music countdown returns to ambient after three original steps");
+    log("default-music-trace",trace);
+   }finally {
+    w.currentMusic=oldAmbient;snd["musicVol"]=oldVol;snd["onMusic"]=oldOn;
+    snd["playMusic"](oldTrack);snd["updateMusicVol"]();
+   }
   }
  }
 }
