@@ -128,12 +128,31 @@ def modify(name, source):
                 '         {\n            return'+(' '+return_value if return_value else '')+';\n         }')
             source = source[:match.end()]+statement+source[match.end():]
     if name=='fe.unit.UnitPlayer':
+        # UnitPet.call hard-codes the single-player roster's slot 1. Preserve
+        # every real combatant when this native player is under B scheduling.
+        if source.count('               this.pet.call();') != 1 or source.count('            this.pet.call();') != 2:
+            raise ValueError('Native pet call anchors changed')
+        source = source.replace('this.pet.call();', 'this.rconnectCallPet();')
+        source = once(source, '      public function callPet(param1:String, param2:Boolean = false) : *',
+            '      private function rconnectCallPet() : void\n      {\n'
+            '         var roster:Array = Location.rconnectPlayerStep == null || loc == null ? null : loc.units.concat();\n'
+            '         this.pet.call();\n'
+            '         if(roster != null)\n         {\n'
+            '            if(roster.indexOf(this.pet) < 0) roster.push(this.pet);\n'
+            '            loc.units = roster;\n         }\n      }\n\n'
+            '      public function callPet(param1:String, param2:Boolean = false) : *')
         anchor='         if(this.pers.hardcore && param1 >= 0)'
         source=once(source,anchor,'         if(rconnectDeath != null && Boolean(rconnectDeath(this,param1)))\n'
             '         {\n            return;\n         }\n'+anchor)
         source=once(source,'      public static var rconnectDamage:Function = null;',
             '      public static var rconnectDamage:Function = null;\n      public static var rconnectDeath:Function = null;')
     if name=='fe.World':
+        source=once(source,'      public function newGame(param1:int = -1, param2:String = "LP", param3:Object = null) : *\n      {',
+            '      public static var rconnectChangeWorld:Function = null;\n\n'
+            '      public function newGame(param1:int = -1, param2:String = "LP", param3:Object = null) : *\n      {\n'
+            '         if(rconnectChangeWorld != null) rconnectChangeWorld();')
+        anchor='      public function loadGame(param1:int = 0) : *\n      {'
+        source=once(source,anchor,anchor+'\n         if(rconnectChangeWorld != null) rconnectChangeWorld();')
         anchor='      public function saveGame(param1:int = -1) : *\n      {'
         source=once(source,anchor,'      public static var rconnectSave:Function = null;\n\n'+anchor+'\n'
             '         if(rconnectSave != null && Boolean(rconnectSave(this,param1)))\n         {\n            return;\n         }')
@@ -199,7 +218,7 @@ def modify(name, source):
             '         for each(var node:XML in nodes)\n         {\n'
             '            if(node.attribute(key) == expected) result += node;\n'
             '         }\n         return result;\n      }\n\n'+constructor)
-    return source.replace('"b1-v3"','"b3-v2"').replace('"b2-v1"','"b3-v2"').replace('"b3-v1"','"b3-v2"')
+    return source.replace('"b1-v3"','"b3-v4"').replace('"b2-v1"','"b3-v4"').replace('"b3-v1"','"b3-v4"')
 
 
 def swf_tags(path):
@@ -279,7 +298,7 @@ def main():
             subprocess.run(ff+['-dumpAS3', str(path)], stdout=log, check=True)
     if (out/'before-classes.txt').read_bytes() != (out/'after-classes.txt').read_bytes():
         raise RuntimeError('Native class list changed')
-    save(out/'native-input.json', dict(experimental_only=True, capability='b3-v2',
+    save(out/'native-input.json', dict(experimental_only=True, capability='b3-v4',
         baseline=str(baseline.relative_to(ROOT)), baseline_manifest_sha256=sha(baseline/'baseline.json'),
         original_sha256=sha(original), candidate_sha256=sha(out/'pfe.swf'),
         sources={p.relative_to(out).as_posix():sha(p) for p in sorted((out/'import').rglob('*.as'))},

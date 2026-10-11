@@ -2,13 +2,17 @@ package authority {
    import flash.display.Sprite;
    import flash.display.Shape;
    import flash.display.DisplayObject;
+   import flash.display.DisplayObjectContainer;
+   import flash.display.Graphics;
    import flash.display.BitmapData;
    import flash.display.GradientType;
    import flash.geom.Matrix;
+   import flash.geom.Rectangle;
    /** Actual AIR raster comparison after transport through the scene stream. */
    public final class VectorProbe extends Probe {
       private var begin:int=-1,tick:int=0,phase:int=-1,drawn:Sprite,texture:BitmapData;
       private var expected:Object={},matched:Object={},received:int=0;
+      private var controlBitmaps:Array=[];
       public function VectorProbe(a:NativeAccess,h:Boolean){super(a,h);}
       override public function message(value:Object):void {
          if(host && begin<0 && value.type=="input" && value.player==1 && value.probeStart is Number)begin=int(value.probeStart);
@@ -51,6 +55,23 @@ package authority {
          }
          a.dispose();b.dispose();return {mismatches:mismatches,maxChannelDelta:maximum,first:first};
       }
+      // Independent, in-process AIR bitmap rendering control: no VectorDraw,
+      // bytes, channel conversion, transport, or VisualPose reconstruction.
+      private function rasterControl(original:DisplayObject):Sprite {
+         var result:Sprite=new Sprite(),g:Graphics=original is Shape?Shape(original).graphics:Sprite(original).graphics;
+         var geometry:Shape=new Shape();geometry.graphics.copyFrom(g);
+         var bounds:Rectangle=geometry.getBounds(geometry);
+         if(bounds.width>0 && bounds.height>0) {
+            var x:int=Math.floor(bounds.x),y:int=Math.floor(bounds.y);
+            var bitmap:BitmapData=new BitmapData(Math.ceil(bounds.right)-x,Math.ceil(bounds.bottom)-y,true,0);
+            bitmap.draw(geometry,new Matrix(1,0,0,1,-x,-y));controlBitmaps.push(bitmap);
+            result.graphics.beginBitmapFill(bitmap,new Matrix(1,0,0,1,x,y),false,true);
+            result.graphics.drawRect(x,y,bitmap.width,bitmap.height);result.graphics.endFill();
+         }
+         var parent:DisplayObjectContainer=original as DisplayObjectContainer;
+         if(parent!=null)for(var i:int=0;i<parent.numChildren;i++)result.addChild(rasterControl(parent.getChildAt(i)));
+         result.transform.matrix=original.transform.matrix;return result;
+      }
       override public function observe(session:HostSession,replica:ClientReplica):void {
          if(finished)return;
          if(!host) {
@@ -79,10 +100,12 @@ package authority {
             phase=next;
             if(phase<4) {
                paint(phase);var copy:Sprite=new Sprite();VisualPose.apply(copy,VisualPose.capture(drawn));
-               check(hash(drawn)==hash(copy),"drawing-command round trip matches source pixels phase "+phase,{source:hash(drawn),replica:hash(copy)});
-               Log.write("vector-diagnostic",{phase:phase,difference:difference(drawn,copy),sourceBounds:String(drawn.getBounds(drawn)),replicaBounds:String(copy.getBounds(copy))});
+               var control:Sprite=rasterControl(drawn);
+               check(hash(control)==hash(copy),"runtime drawing transport matches an independent native raster control phase "+phase,{source:hash(drawn),control:hash(control),replica:hash(copy)});
+               Log.write("vector-diagnostic",{phase:phase,transport:difference(control,copy),nativeRasterization:difference(drawn,control),sourceBounds:String(drawn.getBounds(drawn)),replicaBounds:String(copy.getBounds(copy))});
                VisualPose.dispose(copy);
-               session.link.send({type:"vector-reference",phase:phase,hash:hash(drawn)});
+               session.link.send({type:"vector-reference",phase:phase,hash:hash(control)});
+               for each(var bitmap:BitmapData in controlBitmaps)bitmap.dispose();controlBitmaps=[];
             }else {drawn.parent.removeChild(drawn);if(texture!=null)texture.dispose();}
          }
          if(tick>240)finish();

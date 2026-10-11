@@ -57,9 +57,17 @@ package authority {
             if(plan.actor.unit.loc!==plan.from)throw new Error("Room changed before exit committed");
             relocate(plan.actor,plan.to,plan.result.x,plan.result.y);
             for each(var follower:PlayerActor in actors)if(follower!==plan.actor && follower.personal.follow &&
-               follower.unit.loc===plan.from && follower.unit.hp>0 && batch[follower.id]==null)
+               follower.unit.loc.land===plan.to.land && follower.unit.hp>0 && batch[follower.id]==null)
                relocate(follower,plan.to,plan.result.x,plan.result.y);
          }
+      }
+      public function meet(actor:PlayerActor):void {
+         var peer:PlayerActor=actors[1-actor.id],from:Object=actor.unit.loc,to:Object=peer.unit.loc;
+         if(actor.unit.hp<=0 || peer.unit.hp<=0 || from.land!==to.land || from.prob!=null || to.prob!=null ||
+            from.landProb!="" || to.landProb!="" || from.sky || to.sky) {
+            if(notice!=null)notice("只能传送到同一地图的普通房间；双方需存活。");return;
+         }
+         pending[actor.id]={actor:actor,from:from,to:to,result:{x:peer.unit.X,y:peer.unit.Y}};
       }
       public function relocate(actor:PlayerActor,to:Object,x:Number,y:Number):void {
          var from:Object=actor.unit.loc;
@@ -77,9 +85,11 @@ package authority {
             actor.unit.inLoc(to);to.units=roster;
             actor.unit.setLocPos(x,y);
             if(pet!=null) {
-               pet.loc=to;pet.gg=actor.unit;
+               pet.loc=to;pet.setPos(x,y-20);
                if(to.units.indexOf(pet)<0)to.units.push(pet);
-               if(to.petOn && pet.sost<3){to.addObj(pet);pet.addVisual();}
+               // Native Unit.childObjs already steps its pet. Adding it to the
+               // room's object chain would advance its AI and weapon twice.
+               if(to.petOn && pet.sost<3)pet.addVisual();
             }
          });
          rooms.repairRoster(from);rooms.prepare(actor);

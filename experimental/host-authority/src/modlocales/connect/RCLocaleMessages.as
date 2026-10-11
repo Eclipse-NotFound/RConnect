@@ -1,0 +1,230 @@
+package modlocales.connect {
+   public class RCLocaleMessages {
+      public static const DATA:Object = {
+  "Host": {
+    "en": "Host",
+    "ru": "Создать"
+  },
+  "Join": {
+    "en": "Join",
+    "ru": "Войти"
+  },
+  "Leave": {
+    "en": "Leave",
+    "ru": "Выйти"
+  },
+  "Send": {
+    "en": "Send",
+    "ru": "Послать"
+  },
+  "F10 hide/show / chat: Enter": {
+    "en": "F10: panel / Enter: chat",
+    "ru": "F10: панель / Enter: чат"
+  },
+  "接收队友探索：开": {
+    "en": "Receive explored areas: On",
+    "ru": "Принимать разведку: Вкл."
+  },
+  "接收队友探索：": {
+    "en": "Receive explored areas: ",
+    "ru": "Принимать разведку: "
+  },
+  "跟随队友：关": {
+    "en": "Follow teammate: Off",
+    "ru": "Следовать за напарником: Выкл."
+  },
+  "跟随队友：": {
+    "en": "Follow teammate: ",
+    "ru": "Следовать за напарником: "
+  },
+  "开": {
+    "en": "On",
+    "ru": "Вкл."
+  },
+  "关": {
+    "en": "Off",
+    "ru": "Выкл."
+  },
+  "关闭后保留已收到的区域": {
+    "en": "Received areas remain when disabled.",
+    "ru": "Принятые области сохраняются."
+  },
+  "房间交接中…": {
+    "en": "Handing over room…",
+    "ru": "Передача комнаты…"
+  },
+  "房间交接未完成，请断开后重连": {
+    "en": "Room handover incomplete. Disconnect and rejoin.",
+    "ru": "Передача комнаты не завершена. Отключитесь и войдите снова."
+  },
+  "房间同步失败，请断开连接后重试": {
+    "en": "Room sync failed. Disconnect and try again.",
+    "ru": "Ошибка синхронизации комнаты. Отключитесь и повторите попытку."
+  },
+  "分房探索": {
+    "en": "Exploring separately",
+    "ru": "Раздельное исследование"
+  },
+  "共同探索": {
+    "en": "Exploring together",
+    "ru": "Совместное исследование"
+  },
+  "剧情和挑战区域需要跟随宿主共同进入": {
+    "en": "Enter story and challenge areas together with the host.",
+    "ru": "В сюжетные зоны и испытания нужно входить вместе с ведущим."
+  },
+  "已跟随队友进入房间": {
+    "en": "Followed teammate into the room.",
+    "ru": "Вы вошли в комнату вслед за напарником."
+  },
+  "请由宿主发起全队换图": {
+    "en": "The host must start travel for the team.",
+    "ru": "Переход команды должен начать ведущий."
+  },
+  "请由宿主带队进入": {
+    "en": "The host must lead the group inside.",
+    "ru": "Войти во главе группы должен ведущий."
+  },
+  "RConnect 联机": {
+    "en": "RConnect co-op",
+    "ru": "RConnect: кооператив"
+  },
+  "接收队友探索": {
+    "en": "Receive explored areas",
+    "ru": "Принимать разведку"
+  },
+  "只控制本端接收；关闭后保留已收到的区域": {
+    "en": "Controls receiving on this device only. Previously received areas remain.",
+    "ru": "Управляет только приёмом на этом устройстве. Уже полученные области сохраняются."
+  },
+  "双向共享探索，各端独立开关": {
+    "en": "Share exploration both ways, with independent switches on each device.",
+    "ru": "Обмен разведкой в обе стороны с отдельным переключателем на каждом устройстве."
+  },
+  "offline": {
+    "en": "Offline",
+    "ru": "Не в сети"
+  },
+  "hosting": {
+    "en": "Hosting",
+    "ru": "Ведущий"
+  },
+  "joining": {
+    "en": "Connecting",
+    "ru": "Подключение"
+  },
+  "connected": {
+    "en": "Connected",
+    "ru": "Подключено"
+  },
+  "mode: ": {
+    "en": "Mode: ",
+    "ru": "Режим: "
+  },
+  " (port ": {
+    "en": " (port ",
+    "ru": " (порт "
+  },
+  ", peers ": {
+    "en": ", peers ",
+    "ru": ", игроков "
+  },
+  " (id ": {
+    "en": " (ID ",
+    "ru": " (ID "
+  },
+  " of ": {
+    "en": " with ",
+    "ru": " у "
+  },
+  ", remotes ": {
+    "en": ", teammates ",
+    "ru": ", напарников "
+  },
+  "error: ": {
+    "en": "Error: ",
+    "ru": "Ошибка: "
+  },
+  "host failed (port busy?)": {
+    "en": "Could not host. Is the port in use?",
+    "ru": "Не удалось создать игру. Порт занят?"
+  },
+  "connect failed (check ip/port)": {
+    "en": "Connection failed. Check the IP address and port.",
+    "ru": "Не удалось подключиться. Проверьте IP-адрес и порт."
+  },
+  "传送到队友身边": {
+    "en": "Teleport to teammate",
+    "ru": "К напарнику"
+  },
+  "正在传送…": {
+    "en": "Teleporting…",
+    "ru": "Телепортация…"
+  },
+  "队友尚未连接或位置已失效": {
+    "en": "No teammate with a current position.",
+    "ru": "Нет актуальной позиции напарника."
+  },
+  "请等待房间准备完成": {
+    "en": "Please wait for the room to be ready.",
+    "ru": "Подождите, пока комната будет готова."
+  },
+  "角色倒地或复活中，暂不能传送": {
+    "en": "Cannot teleport while either player is down or respawning.",
+    "ru": "Телепортация недоступна: игрок погиб или возрождается."
+  },
+  "传送仅支持同一地图": {
+    "en": "Teleporting requires the same map.",
+    "ru": "Телепортация доступна только на одной карте."
+  },
+  "请先结束当前操作": {
+    "en": "Finish the current action first.",
+    "ru": "Сначала завершите текущее действие."
+  },
+  "传送已取消：队友状态发生变化": {
+    "en": "Teleport cancelled: teammate state changed.",
+    "ru": "Телепортация отменена: состояние напарника изменилось."
+  },
+  "队友附近没有可站立的落点": {
+    "en": "No clear standing spot near your teammate.",
+    "ru": "Рядом с напарником нет свободного места с опорой."
+  },
+  "已传送到队友身边": {
+    "en": "Teleported to teammate.",
+    "ru": "Вы переместились к напарнику."
+  },
+  "暂时无法传送，请稍后再试": {
+    "en": "Unable to teleport now. Try again shortly.",
+    "ru": "Сейчас телепортация недоступна. Попробуйте позже."
+  },
+  "菜单同步暂停：": {
+    "en": "Pause together in menus: ",
+    "ru": "Пауза команды в меню: "
+  },
+  "SATS同步暂停：": {
+    "en": "Pause together in SATS: ",
+    "ru": "Пауза команды в SATS: "
+  },
+  "由宿主设置；任意一方打开后全队暂停": {
+    "en": "Host sets options; either player can pause both.",
+    "ru": "Настройки хозяина. Пауза действует на обоих."
+  },
+  "联机暂停开关由宿主设置": {
+    "en": "Only the host can change shared pause options.",
+    "ru": "Общую паузу настраивает хозяин."
+  },
+  "请先结束联机暂停": {
+    "en": "Resume the shared game before teleporting.",
+    "ru": "Для телепортации завершите общую паузу."
+  },
+  "联机已暂停：{0}": {
+    "en": "Co-op paused: {0}",
+    "ru": "Общая пауза: {0}"
+  },
+  "菜单": {
+    "en": "Menu",
+    "ru": "Меню"
+  }
+};
+   }
+}

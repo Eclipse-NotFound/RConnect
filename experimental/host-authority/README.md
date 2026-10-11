@@ -12,18 +12,20 @@
 | `NativeAccess` / `AuthorityPlayer` / `NativeScope` | 创建真的第二名玩家，使用自己的属性、背包、控制器和界面服务；每次调用恢复原引用 |
 | `HostSession` / `RoomRuntime` | 接收输入、每房间步推进两个玩家一次、原生弹丸按所属玩家执行、受击按受击者执行、返回确认 |
 | `OccupiedRooms` / `RoomTransfers` | 保留原生房间、按实际占用推进；原生出口请求在房间步之间提交，独立维护宿主显示 |
-| `ClientReplica` | 当前仅按主侧确认显示玩家与弹丸，不在加入侧执行第二遍伤害 |
+| `ClientReplica` / `ReplicaScene` / `PlaybackClock` | 在同一源时间显示确认的原生房间、玩家、敌人、物品和效果；不执行第二遍AI或伤害 |
+| `NativeIntents` / `CharacterState` / `PersonalSaves` | 原生菜单动作可靠执行，各自资源和反馈、个人保存 |
+| `HudModel` / `NetHud` / `SharedVision` | 紧凑连接界面、聊天/设置、透明度、可选探索共享 |
 | `TacticsBridge` / `NativePerception` | 可选 TDFC 房间调度接口与两名玩家的原生索敌/暴露计算 |
 | `Probe` / `ContractChecks` | 仅测试配置启用，真实AIR中的协议、资源隔离与原生开火检查 |
 
-当前B3已接入加入侧的原生地形、敌人、炮塔、血条、武器姿态、粒子和确认资源；门/容器/拾取/XP、独立复活、共同换图与SATS已有分项实测。新种子、多轮交互仍在回归，详见实况表。统一显示时钟/预测、完整特殊武器、MSW、紧凑UI、个人保存与长局压力尚未验收，仍不能作为日常候选。
+当前B3已接入原生场景、统一显示时钟、原生菜单和各自保存；门箱/拾取/XP、念力、复活/旅行、SATS、跟随/宠物/共同挑战已有分项实测。紧凑UI/聊天/设置已实测，正常退出继续修复验证。MSW、完整武器效果、本机预测、探索/汇合专项、无驱动游玩及长局压力未完成，仍不能作为日常候选。
 
 ## 复现步骤
 
 工具位于`tools/host_authority`，所有参数从RConnect目录解析。输出必须是`build/ab`下的新目录，已有结果不会覆盖。
 
 1. `freeze.py --runtime build/m51/map-runtime-63 --output build/ab/<新基线>`固定完整实物。已有`baseline-001`可核验后继续使用。
-2. `patch_native.py --baseline build/ab/baseline-001 --output build/ab/<新原生副本>`仅修改复制品。B3当前14个类提供可选接口；回读核对loader、类表、资源与XML查询，运行等价另验。
+2. `patch_native.py --baseline build/ab/baseline-001 --output build/ab/<新原生副本>`仅修改复制品。B3当前15个类提供可选接口；回读核对loader、类表、资源与XML查询，运行等价另验。
 3. `build.py --output build/ab/<新构建>`冻结源码与外链存根、编译并记录工具及产物SHA。存根不包含进SWF。
 4. 与其他RConnect测试会话错开AIR时段后，`run_probe.py --baseline build/ab/baseline-001 --candidate build/ab/<新构建> --native build/ab/<匹配的原生副本> --output build/ab/<新运行>`。
 5. 核对`run.json`和双方日志中的PASS/FAIL/FATAL/DONE，之后在实际宿主核对自有PID已退出。编译、断言通过或双端DONE均不单独等于完整功能通过。
@@ -38,7 +40,7 @@
 
 ## TDFC 配套与当前冻结组
 
-当前双房冻结使用 `b2-build-006` + `native-hooks-004` + `tdfc-build-004`，原生能力 `b2-v1`。B1 历史组仍是 `b1-build-027` + `native-hooks-003` + `tdfc-build-004`，不覆盖、不混用。具体绿/红结果以实施记录为准。
+当前工作使用 `b3-build-042` + `native-hooks-011` + `tdfc-build-004`，原生能力 `b3-v4`。历史B1/B2及每次B3冻结均保留，不能混用能力或合并旧绿灯。具体绿/红结果以实施记录为准。
 
 - `build_tdfc.py --output build/ab/<新TDFC构建>`复制 TDFC 完整 src/tests 后编译，始终不写安装目录。
 - `run_tdfc_logic.py --baseline build/ab/baseline-001 --candidate build/ab/<TDFC构建> --output build/ab/<新逻辑运行>`执行真实 AIR 逻辑检查。

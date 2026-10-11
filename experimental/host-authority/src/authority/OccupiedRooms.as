@@ -12,7 +12,7 @@ package authority {
          this.access=access;this.actors=actors;
          var w:Object=access.world;
          sharedGrafon=w.grafon;
-         shown={room:w.loc,grafon:w.grafon,cam:w.cam,visual:w.visual,vfon:w.vfon,vscene:w.vscene,steps:0,drawn:true};
+         shown={room:w.loc,grafon:w.grafon,cam:w.cam,visual:w.visual,vfon:w.vfon,vscene:w.vscene,steps:0,drawn:true,occupied:true};
          rooms[w.loc]=shown;records.push(shown);
          access.scope.roomServices=services;
          // Native map construction inserts the one original player in every
@@ -31,7 +31,7 @@ package authority {
          var Grafon:Class=access.definition("fe.graph.Grafon"),Camera:Class=access.definition("fe.inter.Camera");
          var visual:Sprite=new Sprite(),grafon:Object=new Grafon(visual,sharedGrafon);
          var record:Object={room:room,grafon:grafon,cam:new Camera(access.world),visual:visual,
-            vfon:new MovieClip(),vscene:new MovieClip(),steps:0,drawn:false};
+            vfon:new MovieClip(),vscene:new MovieClip(),steps:0,drawn:false,occupied:false};
          rooms[room]=record;records.push(record);room.grafon=grafon;
          return record;
       }
@@ -59,7 +59,19 @@ package authority {
       public function occupied():Array {
          var result:Array=[];
          for each(var actor:PlayerActor in actors)if(result.indexOf(actor.unit.loc)<0)result.push(actor.unit.loc);
-         for each(var record:Object in records)record.room.active=result.indexOf(record.room)>=0;
+         for each(var record:Object in records) {
+            var active:Boolean=result.indexOf(record.room)>=0;
+            record.room.active=active;
+            if(record.occupied!==active && record.room.prob!=null) {
+               // Challenge entry/exit scripts are a single party event. Avoid
+               // Location.reactivate, which would resurrect retained enemies.
+               var room:Object=record.room;
+               access.scope.runRoom(actors[0].context,room,function():void {
+                  if(active)room.prob.over();else room.prob.out();
+               });
+            }
+            record.occupied=active;
+         }
          return result;
       }
       public function showHost():void {

@@ -36,6 +36,7 @@ package authority {
          runtime.tactics=tactics;
          runtime.install();active=true;
          runtime.transfers.notice=notice;
+         for each(var member:PlayerActor in actors)member.requestMeet=function(requester:PlayerActor):void{runtime.transfers.meet(requester);};
          lives=new PlayerLives(this);runtime.lives=lives;saves=new PersonalSaves(access,this);
          travel=new PartyTravel(this);runtime.travel=travel;
          scene=new SceneSnapshot(access);
@@ -49,7 +50,7 @@ package authority {
       public function receive(value:Object):void {
          if(!active || value.type!=="input" || value.player!==1)return;
          var reason:String=inputs[1].accept(value,getTimer());
-         if(reason=="")pause.remote=value.pause===true;
+         if(reason==""){pause.remote=value.pause===true;pause.remoteMenus=value.pauseMenus===true;pause.remoteSats=value.pauseSats===true;}
          if(reason=="")personal(actors[1],value.settings);
          if(reason!="" && reason!="sequence")link.send({type:"rejected",seq:value.seq,reason:reason});
       }
@@ -86,6 +87,7 @@ package authority {
          var frame:Object=runtime.snapshot();frame.type="frame";frame.session=session;frame.room=inputs[1].room;
          frame.time=getTimer();
          frame.paused=pause.paused;frame.pauseEpoch=pause.epoch;
+         frame.pausePolicies={menus:pause.enabled || pause.policyMenus,sats:pause.enabled || pause.policySats};
          frame.map=MapState.capture(actors[1].unit.loc.land);
          frame.players=[actors[0].snapshot(inputs[0].consumed),actors[1].snapshot(inputs[1].consumed)];
          for each(var actor:PlayerActor in actors) {
@@ -110,6 +112,8 @@ package authority {
       }
       public function dispose():void {
          active=false;
+         pause.dispose();
+         for each(var owner:PlayerActor in actors)access.scope.run(owner.context,function():void {owner.unit.dropTeleObj();owner.context.sats.clearAll();});
          if(travel!=null)travel.dispose();
          if(combat!=null)combat.dispose();
          if(lives!=null)lives.dispose();if(saves!=null)saves.dispose();

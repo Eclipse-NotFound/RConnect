@@ -37,7 +37,7 @@ package authority {
             rendered[actor.unit.vis]=true;
             for each(var child:Object in actor.unit.childObjs)if(child!=null && child.vis!=null) {
                rendered[child.vis]=true;
-               if(actor.unit.loc===room && child!==actor.unit.currentWeapon && child.vis.parent!=null)
+               if(actor.unit.loc===room && child!==actor.unit.currentWeapon && !(child is Unit) && child.vis.parent!=null)
                   result.effects.push({key:id(child),clip:getQualifiedClassName(child.vis),layer:child.sloy,pose:VisualPose.capture(child.vis),atlas:null});
             }
          }
@@ -56,7 +56,8 @@ package authority {
          }
          for each(var u:Object in room.units)if(u!=null && !u.player) {
             var us:Object={key:id(u),cls:getQualifiedClassName(u),fields:NativeFields.capture(u),inter:NativeFields.capture(u.inter),pose:VisualPose.capture(u.vis),
-               blit:AuthorityAnimation.capture(u as Unit),weapons:[],layer:u.sloy,attached:u.vis!=null && u.vis.parent!=null};
+               blit:AuthorityAnimation.capture(u as Unit),weapons:[],petOwner:-1,layer:u.sloy,attached:u.vis!=null && u.vis.parent!=null};
+            for each(actor in actors)if(actor.unit.pet===u)us.petOwner=actor.id;
             if(us.cls.indexOf("UnitTurret")>=0)us.mount=int(getQualifiedClassName(u.vis).replace(/^.*visualTurret/,""));
             for each(var weapon:Object in u.childObjs)if(weapon!=null && NativeAccess.get(weapon,"kol_shoot")!=null)
                us.weapons.push({id:weapon.id,variant:weapon.variant,pose:VisualPose.capture(weapon.vis),fields:NativeFields.capture(weapon),attached:weapon.vis!=null && weapon.vis.parent!=null});

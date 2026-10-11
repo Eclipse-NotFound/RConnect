@@ -49,7 +49,9 @@ package authority {
             phase=1;
             var hostSees:Boolean=Boolean(access.scope.run(a.context,function():Boolean{return a.unit.lookInvis(hidden);}));
             var joinSees:Boolean=Boolean(access.scope.run(b.context,function():Boolean{return b.unit.lookInvis(hidden);}));
-            check(!hostSees && joinSees && hidden.isVis,"native mine detection uses the joining occupant beyond a blocking wall",{host:hostSees,join:joinSees,revealed:hidden.isVis});
+            check(!hostSees && joinSees && hidden.isVis,"native mine detection uses the joining occupant beyond a blocking wall",
+               {host:hostSees,join:joinSees,revealed:hidden.isVis,player:[b.unit.X,b.unit.Y,b.unit.eyeX,b.unit.eyeY,b.unit.storona],
+               mine:[hidden.X,hidden.Y,hidden.visibility,hidden.stealthMult],range:b.unit.pers.visiTrap,light:room.visMult});
             hidden.disabled=true;hidden.remVisual();
             access.scope.run(a.context,function():void {
                var Weapon:Class=access.definition("fe.weapon.Weapon"),weapon:Object=Weapon["create"](a.unit,"mine",0);

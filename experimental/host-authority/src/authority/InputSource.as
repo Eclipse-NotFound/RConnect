@@ -24,7 +24,7 @@ package authority {
          flight=flight.concat(a);a=flight.slice(0,16);
          if(SharedPause.requested(world))b=0;
          return {type:"input",session:session,player:player,room:room,roomEpoch:1,epoch:1,weaponEpoch:1,
-            seq:++seq,buttons:b,aimX:Number(world.celX),aimY:Number(world.celY),actions:a,settings:settings,pause:SharedPause.requested(world)};
+            seq:++seq,buttons:b,aimX:Number(world.celX),aimY:Number(world.celY),actions:a,settings:settings,pause:SharedPause.requested(world),pauseMenus:SharedPause.menus(world),pauseSats:world.sats.active};
       }
       public function localSelector(world:Object):void {
          var g:Object=world.gg,c:Object=world.ctr,gui:Object=world.gui;

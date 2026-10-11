@@ -15,6 +15,7 @@ package authority {
       public function ReplicaScene(access:NativeAccess){this.access=access;effects=new SceneEffects(access);}
       public function keyFor(unit:Object):uint {if(players[unit])return players[unit];for(var id:String in units)if(units[id].unit===unit)return uint(id);return 0;}
       public function registerPlayer(unit:Object,key:uint):void {players[unit]=key;}
+      public function petFor(player:int):Object {for each(var rec:Object in units)if(rec.petOwner===player)return rec.unit;return null;}
       public function apply(s:Object):Boolean {
          var changed:Boolean=key!==s.key,w:Object=access.world;
          if(changed) {
@@ -74,6 +75,7 @@ package authority {
             room.units.push(u);rec=units[s.key]={unit:u,weapons:[],layer:s.layer};
          }
          u=rec.unit;
+         rec.petOwner=s.petOwner;
          NativeFields.apply(u,s.fields);u.loc=room;
          NativeFields.apply(u.inter,s.inter);
          if(s.attached)attach(u,s.layer);else u.remVisual();u.setVisPos();

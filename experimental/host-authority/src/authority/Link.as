@@ -5,6 +5,7 @@ package authority {
    import flash.events.ProgressEvent;
    import flash.net.Socket;
    import flash.utils.ByteArray;
+   import flash.utils.setTimeout;
    /** B has a distinct greeting. A packets never enable a legacy fallback. */
    public class Link {
       public static const LIMIT:int=1024*1024;
@@ -40,6 +41,21 @@ package authority {
          try{socket.close();}catch(ignored:*){}
          buffer.clear();
          if(closed!=null)closed(reason);
+      }
+      public function finish(finalMessage:Object,reason:String):void {
+         // Socket.flush queues the bytes; closing in the same callback can
+         // discard the leave packet. Detach the session immediately but let
+         // AIR drain this one final message before releasing its socket.
+         if(ended)return;
+         message=null;connected=null;closed=null;
+         if(!send(finalMessage)){close(reason);return;}
+         var attempts:int=0,self:Link=this;
+         var drain:Function=function():void {
+            if(ended)return;
+            if(!socket.connected || socket.bytesPending==0 || ++attempts>=20)self.close(reason);
+            else setTimeout(drain,25);
+         };
+         setTimeout(drain,25);
       }
       private function onConnect(e:Event):void {if(connected!=null)connected();}
       private function onClose(e:Event):void {close("peer closed");}

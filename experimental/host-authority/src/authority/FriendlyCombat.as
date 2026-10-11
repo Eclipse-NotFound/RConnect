@@ -31,6 +31,7 @@ package authority {
       }
       public function update():void {for each(var a:PlayerActor in session.actors)a.unit.isSats=enabled;}
       public function dispose():void {
+         for each(var a:PlayerActor in session.actors)a.unit.isSats=false;
          session.access.definition("fe.unit.Unit")["rconnectHitPolicy"]=oldHit;
          session.access.definition("fe.unit.Mine")["rconnectMineSight"]=oldSight;
       }

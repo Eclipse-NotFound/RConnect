@@ -14,6 +14,7 @@ package authority {
       private var endedProjectiles:Object={};
       public var shortProjectileApplications:uint=0;
       private var originalPause:Boolean;
+      private var entrySave:Object;
       private var decoder:FrameDelta=new FrameDelta();
       private var satsEpoch:int=-1;
       public var uiMessages:uint=0;
@@ -21,6 +22,7 @@ package authority {
       public var satsRefreshes:uint=0;
       public function ClientReplica(access:NativeAccess) {
          this.access=access;originalPause=access.world.onPause;
+         var data:Object={};access.world.saveToObj(data);entrySave=PlainData.nativeCopy(data);
          VisualPose.resolve=access.visualClass;
          access.world.onPause=true;
          scene=new ReplicaScene(access);
@@ -73,7 +75,7 @@ package authority {
          for(var key:String in projectiles)if(!active[key]){
             var clip:DisplayObject=projectiles[key];if(clip.parent!=null)clip.parent.removeChild(clip);delete projectiles[key];
          }
-         access.world.gui.setHp();access.world.gui.setMana();access.world.gui.setWeapon();
+         access.world.gui.setHp();access.world.gui.setMana();access.world.gui.setWeapon();access.world.gui.setPet();
          if(frame.paused && access.world.sats.active && satsEpoch!=frame.pauseEpoch) {
             var sats:Object=access.world.sats,grafon:Object=access.world.grafon;
             // Never photograph the previous SATS screenshot. Temporarily put
@@ -98,6 +100,10 @@ package authority {
          }
          g=rec.body;if(g.vis.parent==null)g.addVisual();
          NativeFields.apply(g,state.native);
+         var pet:Object=scene.petFor(state.id);
+         if(g.pet!==pet && g.pet!=null)g.pet.remVisual();
+         g.pet=pet;g.childObjs[2]=pet;
+         if(pet!=null)g.pets[pet.id]=pet;
          if(local)g.visSel=access.world.gui.vis.selector.visible;
          scene.registerPlayer(g,state.key);
          if(rec.weapon!=null && rec.weapon.vis.parent==null)rec.weapon.addVisual();
@@ -152,6 +158,15 @@ package authority {
          }
          for each(var clip:DisplayObject in projectiles)if(clip.parent!=null)clip.parent.removeChild(clip);
          scene.dispose();peers={};projectiles={};endedProjectiles={};access.world.onPause=originalPause;
+      }
+      public function returnToOwnGame():void {
+         // Leaving does not turn a confirmation-only replica into a second
+         // simulation of the host's world. Rebuild the player's own native
+         // journey, carrying only that player's confirmed character/resources.
+         var w:Object=access.world;
+         entrySave.pers=PlainData.nativeCopy(w.pers.save());entrySave.invent=PlainData.nativeCopy(w.invent.save());
+         entrySave.app=PlainData.nativeCopy(w.app.save());entrySave.hardInv=w.hardInv;
+         w.loaddata=entrySave;w.loadGame(99);
       }
    }
 }

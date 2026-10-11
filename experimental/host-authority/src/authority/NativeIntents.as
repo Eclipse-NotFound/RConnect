@@ -28,7 +28,7 @@ package authority {
             return args.length==2 && nullableId(args[0]) && (key=="usePotion"?integer(args[1],0,3):args[1] is Boolean);
          if(["useItem","respectWeapon","initReload"].indexOf(key)>=0)return args.length==1 && nullableId(args[0]);
          if(key=="uncallPet")return args.length==1 && args[0] is Boolean;
-         if(key=="armorAbil")return args.length==0;
+         if(key=="armorAbil" || key=="meetPeer")return args.length==0;
          if(key=="nextItem")return args.length==1 && integer(args[0],-1,1);
          if(key=="save")return args.length==1 && integer(args[0],-2,100);
          if(key=="favItem")return args.length==2 && nullableId(args[0]) && integer(args[1],0,40);
@@ -43,6 +43,7 @@ package authority {
          if(!valid(key,args))return false;
          var g:Object=actor.unit,inv:Object=g.invent,p:Object=g.pers,id:String=args.length>0?args[0]:null;
          if(key=="save"){actor.requestSave(args[0]);return true;}
+         if(key=="meetPeer"){if(actor.requestMeet==null)return false;actor.requestMeet(actor);return true;}
          if(key=="changeWeapon") {if(id!="not" && inv.weapons[id]==null)return false;g.changeWeapon(id);}
          else if(key=="changeArmor") {if(id!="" && inv.armors[id]==null)return false;g.changeArmor(id,args[1]);}
          else if(key=="changeSpell") {if(id!="" && inv.spells[id]==null)return false;g.changeSpell(id,args[1]);}

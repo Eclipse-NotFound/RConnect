@@ -58,6 +58,7 @@ package authority {
             }
             g.hp=Math.min(g.maxhp,Math.max(1,Number(profile.hp)));g.mana=Number(profile.mana);
             g.id="authority-player-"+id;g.disabled=false;g.invulner=false;
+            actor.originalLevitPoss=g.levitPoss;
             unit.scope=scope;unit.context=ctx;
             if(room.units.indexOf(unit)<0)room.units.push(unit);
             // Players are advanced explicitly. Do not also insert in firstObj.

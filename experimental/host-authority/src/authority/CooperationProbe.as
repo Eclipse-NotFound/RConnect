@@ -50,17 +50,7 @@ package authority {
          tick=session.runtime.tick;
          var a:PlayerActor=session.actors[0],b:PlayerActor=session.actors[1],room:Object=b.unit.loc;
          if(!ready) {
-            ready=true;floorY=Math.floor((room.limY-120)/40)*40-1;
-            for each(var u:Object in room.units)if(u!=null && !u.player){u.disabled=true;u.remVisual();}
-            for each(var oldBonus:Object in room.bonuses){room.remObj(oldBonus);oldBonus.remVisual();}
-            room.bonuses=[];
-            for(var x:int=1;x<room.spaceX-1;x++)for(var y:int=1;y<=int((floorY+1)/40);y++) {
-               var tile:Object=room.space[x][y];tile.phis=y==int((floorY+1)/40)?1:0;tile.water=0;tile.shelf=false;tile.diagon=0;tile.trap=tile.door=null;
-               tile.phX1=x*40;tile.phX2=(x+1)*40;tile.phY1=y*40;tile.phY2=(y+1)*40;tile.stair=0;
-               if(tile.phis==0){tile.front=tile.back=tile.zad="";tile.vid=tile.vid2=tile.zForm=0;}
-               tile.visi=tile.t_visi=1;
-            }
-            room.black=false;room.isRebuild=true;
+            ready=true;floorY=ProbeArena.floor(room);
             access.scope.run(a.context,function():void {a.unit.setLocPos(200,floorY);});
             access.scope.run(b.context,function():void {b.unit.setLocPos(500,floorY);});
             var Box:Class=access.definition("fe.loc.Box"),Bonus:Class=access.definition("fe.loc.Bonus");

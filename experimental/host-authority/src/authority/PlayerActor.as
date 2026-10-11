@@ -4,6 +4,7 @@ package authority {
       public var access:NativeAccess,id:int,unit:Object,context:Object={},steps:uint=0;
       public var failed:Function;
       public var interacting:Object;
+      public var requestMeet:Function;
       public var resolveTarget:Function,owned:Boolean=false;
       public var weaponEpoch:int=1;
       public var roomEpoch:int=1,lastStep:uint=0;
@@ -11,12 +12,14 @@ package authority {
       public var saveRequests:Array=[];
       public var personal:Object={allowGrab:false,struggle:true,thrownDamage:false,follow:false};
       public var grips:PeerGrabs;
+      public var originalLevitPoss:Boolean=false;
       private var consumedButtons:int=0;
       private var observedWeapon:Object,weaponKnown:Boolean=false,observedVariant:int=0;
       public function PlayerActor(access:NativeAccess,id:int){this.access=access;this.id=id;}
       public static function local(access:NativeAccess):PlayerActor {
          var a:PlayerActor=new PlayerActor(access,0),w:Object=access.world;
          a.unit=w.gg;
+         a.originalLevitPoss=a.unit.levitPoss;
          for each(var name:String in ["gg","pers","invent","ctr","sats","gui","loc","land","app","alicorn","hardInv","calcMass","calcMassW","checkLoot","t_battle"])
             a.context[name]=w[name];
          a.context.appearance=AppearanceState.capture(access.definition("fe.inter.Appear"));
@@ -97,11 +100,16 @@ package authority {
       public function destroy():void {
          context.ctr.clearAll();
          access.scope.unregister(context);
+         if(unit!=null)unit.levitPoss=originalLevitPoss;
          if(owned && unit!=null) {
             unit.remVisual();
             var list:Array=unit.loc.units,index:int=list.indexOf(unit);
             if(index>=0)list.splice(index,1);
-            unit.disabled=true;
+            if(unit.pet!=null) {
+               var pet:Object=unit.pet;pet.remVisual();pet.disabled=true;pet.sost=4;
+               if(pet.loc!=null){pet.loc.remObj(pet);index=pet.loc.units.indexOf(pet);if(index>=0)pet.loc.units.splice(index,1);}
+            }
+            unit.disabled=true;unit.sost=4;unit.hp=0;
             unit.onDeath=null;unit.context=null;unit.scope=null;
          }
       }
