@@ -34,7 +34,7 @@ def main():
     ap.add_argument('--native', required=True)
     ap.add_argument('--output', required=True)
     ap.add_argument('--seconds', type=int, default=140)
-    ap.add_argument('--scenario', choices=('native-gun','ownership','split-rooms','cooperation','lifecycle','sats','travel','friendly','grabs','personal','throw','vectors','mines','areas','party','hud','menus','dialogue','vision','stress','explosives','magic','angles','enemies'), default='native-gun')
+    ap.add_argument('--scenario', choices=('native-gun','ownership','split-rooms','cooperation','lifecycle','sats','travel','friendly','grabs','personal','throw','vectors','mines','areas','party','hud','menus','dialogue','vision','stress','explosives','magic','angles','enemies','sound','movement','guns','melee'), default='native-gun')
     ap.add_argument('--swap', action='store_true')
     ap.add_argument('--enemy', choices=('native','tdfc'), default='native')
     ap.add_argument('--tdfc', help='Optional frozen TDFC authority-v1 build directory')

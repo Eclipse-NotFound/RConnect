@@ -12,6 +12,7 @@ from common import ROOT, EXPERIMENT, JAVA, SDK, FFDEC, inside_build, sha, save
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--output', required=True)
+    ap.add_argument('--optimized', action='store_true', help='Use production compiler settings; preserve the exact commands in the build manifest')
     args = ap.parse_args()
     out = inside_build(ROOT/args.output)
     if out.exists():
@@ -45,7 +46,8 @@ def main():
         '-include-classes='+','.join(externs), '-output='+str(out/'NativeExterns.swc'), '-swf-version=38'],
         compiler('mxmlc.jar')+['-source-path='+str(out/'src'),
         '-external-library-path+='+str(out/'NativeExterns.swc'), '-output='+str(out/'RConnectMod.swf'),
-        '-swf-version=38', '-debug=true', '-optimize=false', '-warnings=true', str(out/'src/RConnectDoc.as')]]
+        '-swf-version=38', '-debug='+str(not args.optimized).lower(), '-optimize='+str(args.optimized).lower(),
+        '-warnings=true', str(out/'src/RConnectDoc.as')]]
     with (out/'build.log').open('w', encoding='utf-8') as log:
         for cmd in commands:
             subprocess.run(cmd, cwd=out, env=env, stdout=log, stderr=subprocess.STDOUT, check=True)
@@ -55,7 +57,7 @@ def main():
     embedded = {line.split()[0] for line in classes.splitlines() if line.strip()}
     if 'RConnectMod' not in embedded or embedded.intersection(externs):
         raise RuntimeError('Entry missing or native extern classes embedded')
-    save(out/'build-input.json', dict(experimental_only=True, family='host-authority-b', source_id=source_id, native_capability=native_capability, sources=sources,
+    save(out/'build-input.json', dict(experimental_only=True, family='host-authority-b', optimized=args.optimized, source_id=source_id, native_capability=native_capability, sources=sources,
         candidate_sha256=sha(out/'RConnectMod.swf'), extern_sha256=sha(out/'NativeExterns.swc'),
         compiler={str(p):sha(p) for p in (JAVA, SDK/'lib/mxmlc.jar', SDK/'lib/compc.jar', SDK/'frameworks/libs/air/airglobal.swc')},
         commands=commands, script_sha256=sha(__file__), classes_sha256=sha(out/'classes.txt')))

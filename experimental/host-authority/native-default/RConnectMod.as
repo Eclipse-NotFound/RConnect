@@ -10,6 +10,8 @@ package {
  import flash.filesystem.FileMode;
  import flash.filesystem.FileStream;
  import flash.utils.Dictionary;
+ import flash.media.Sound;
+ import flash.media.SoundChannel;
  /** Single-player validation driver. Never installs B hooks or attaches the TDFC API. */
  public class RConnectMod extends Sprite {
   private static var self:RConnectMod;
@@ -40,7 +42,8 @@ package {
     ["fe.unit.UnitPlayer","rconnectDeath"],["fe.unit.Unit","rconnectFindTarget"],["fe.unit.Unit","rconnectHitPolicy"],
     ["fe.unit.Mine","rconnectMineSight"],["fe.World","rconnectSave"],["fe.World","rconnectChangeWorld"],["fe.inter.PipBuck","rconnectMenu"],
     ["fe.loc.Game","rconnectIntent"],["fe.unit.UnitPlayer","rconnectIntent"],["fe.unit.Invent","rconnectIntent"],
-    ["fe.unit.Pers","rconnectIntent"],["fe.weapon.Weapon","rconnectIntent"]])if(!emptyHook(pair[0],pair[1]))return false;
+    ["fe.unit.Pers","rconnectIntent"],["fe.weapon.Weapon","rconnectIntent"],["fe.Snd","rconnectPlaySound"],
+    ["fe.Snd","rconnectHumSound"],["fe.Snd","rconnectStopSound"]])if(!emptyHook(pair[0],pair[1]))return false;
    return true;
   }
   private function step(e:Event):void {
@@ -65,7 +68,7 @@ package {
      check(minimumHP<initialHP,"single-player enemy attacks damage the native player",{before:initialHP,minimum:minimumHP});
      check(w.gg===w.pers.gg && w.invent===w.gg.invent && w.loc.gg===w.gg,"native player ownership remains intact");
      check(main.getChildByName("TDFCAuthorityCarrier")!=null,"new TDFC loads without attaching its authority API");
-     nativeMenus();check(hooksEmpty(),"all combat, inventory, menu, travel and lifecycle seams remain unclaimed");finish();
+     nativeMenus();nativeSound();check(hooksEmpty(),"all combat, inventory, menu, travel, sound and lifecycle seams remain unclaimed");finish();
     }
    }catch(error:Error){log("FATAL",{message:error.message,stack:error.getStackTrace()});check(false,"default native runtime completed");finish();}
   }
@@ -142,6 +145,25 @@ package {
    check(g.hp==g.maxhp && paid==Math.round(100*g.pers.priceHP),"unclaimed native doctor uses original healing and price");
    p.onoff(-1);
    log("default-menu-result",{bought:bought,sold:sold,kofe:inv.items.kofe.kol,vault:inv.items.kofe.vault,product:product,amount:inv.items[product].kol,costs:costs,medicalPayment:paid});
+  }
+  private function nativeSound():void {
+   var snd:Class=type("fe.Snd"),enabled:Boolean=snd["onSnd"],off:Boolean=snd["off"],resources:Object={};
+   for(var name:String in snd["snd"]) {
+    var group:Object=snd["snd"][name],sizes:Array=[];
+    if(group is Array){for each(var item:Sound in group)sizes.push(item.bytesTotal);}else if(group is Sound)sizes.push(Sound(group).bytesTotal);
+    resources[name]=sizes;
+   }
+   check(resources.lmg_s!=null && resources.bfg_p!=null && resources.vortex!=null && resources.ali.length==3,
+    "default sound resource XML preserves named sounds and native variant groups");
+   try {
+    snd["off"]=false;snd["onSnd"]=true;
+    var channel:SoundChannel=snd["ps"]("bfg_p",w.gg.X,w.gg.Y,100,0.5) as SoundChannel;
+    check(channel!=null,"unclaimed sound handler returns a real native playback channel");
+    if(channel!=null){if(field(snd,"rconnectStopChannel")!=null)snd["rconnectStopChannel"](channel);else channel.stop();}
+    snd["onSnd"]=false;check(snd["ps"]("lmg_s")==null,"original per-user sound disable remains effective");
+    snd["onSnd"]=true;snd["off"]=true;check(snd["ps"]("lmg_s")==null,"original world sound suppression remains effective");
+   }finally {snd["onSnd"]=enabled;snd["off"]=off;}
+   log("default-sound-resources",resources);
   }
  }
 }

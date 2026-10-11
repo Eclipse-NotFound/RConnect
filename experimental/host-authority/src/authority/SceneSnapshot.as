@@ -17,6 +17,7 @@ package authority {
       private var access:NativeAccess,ids:Dictionary=new Dictionary(true),nextId:uint=0;
       private var previousRoom:Object,tiles:Array=[];
       private var targets:Object={};
+      private var terrainRevision:uint=0;
       public function SceneSnapshot(access:NativeAccess){this.access=access;}
       public function id(object:Object):uint {
          if(object==null)return 0;
@@ -61,8 +62,10 @@ package authority {
             }
          }
          for each(var u:Object in room.units)if(u!=null && !u.player) {
-            var us:Object={key:id(u),cls:getQualifiedClassName(u),fields:NativeFields.capture(u),inter:NativeFields.capture(u.inter),pose:VisualPose.capture(u.vis),
-               blit:AuthorityAnimation.capture(u as Unit),weapons:[],petOwner:-1,layer:u.sloy,attached:u.vis!=null && u.vis.parent!=null};
+            var burning:Boolean=AuthorityAnimation.burning(u as Unit);
+            var us:Object={key:id(u),cls:getQualifiedClassName(u),fields:NativeFields.capture(u),inter:NativeFields.capture(u.inter),pose:VisualPose.capture(u.vis,0,burning),
+               clip:u.vis==null?null:getQualifiedClassName(u.vis),burning:burning,
+               blit:burning?null:AuthorityAnimation.capture(u as Unit),weapons:[],petOwner:-1,layer:u.sloy,attached:u.vis!=null && u.vis.parent!=null};
             us.healthBar=u.hpbar==null?null:{pose:VisualPose.capture(u.hpbar),attached:u.hpbar.parent!=null};
             for each(actor in actors)if(actor.unit.pet===u)us.petOwner=actor.id;
             if(us.cls.indexOf("UnitTurret")>=0)us.mount=int(getQualifiedClassName(u.vis).replace(/^.*visualTurret/,""));
@@ -70,6 +73,7 @@ package authority {
                us.weapons.push({id:weapon.id,variant:weapon.variant,pose:VisualPose.capture(weapon.vis),fields:NativeFields.capture(weapon),attached:weapon.vis!=null && weapon.vis.parent!=null});
             result.units.push(us);
             if(u.vis!=null)rendered[u.vis]=true;
+            if(u.hpbar!=null)rendered[u.hpbar]=true;
             for each(child in u.childObjs)if(child!=null && child.vis!=null)rendered[child.vis]=true;
          }
          Timing.end("capture.unitsAndTiles",began);began=Timing.start();
@@ -90,12 +94,16 @@ package authority {
                result.effects.push(effect);
                rendered[o.vis]=true;
             }
+            // Projectiles have their own lifetime stream. Still reserve their
+            // native display identity so the loose-display pass cannot clone it.
+            if(o.vis!=null && NativeAccess.get(o,"begx")!=null)rendered[o.vis]=true;
             o=o.nobj;
          }
          Timing.end("capture.objectsAndParticles",began);began=Timing.start();
          if(count>10000)throw new Error("Visual object chain exceeds bound");
-         // Some public mod effects are attached directly to a world layer and
-         // have no native Pt/object-chain entry. Transport their drawing recipe.
+         // Native melee arcs, griffon arms and public mod effects can attach
+         // directly to a layer without a Pt/object-chain entry. Keep all remaining
+         // native symbols once, rather than guessing a class-name allowlist.
          // Mask shapes belong to their local view. Serializing them as ordinary
          // effects both exposes opaque mask pixels and rasterizes every RV
          // enemy visibility mask on every network frame.
@@ -109,8 +117,8 @@ package authority {
             for(var ci:int=0;ci<container.numChildren;ci++) {
                var drawn:DisplayObject=container.getChildAt(ci);
                var kind:String=getQualifiedClassName(drawn);
-               if((drawn is Shape || drawn is Sprite && (!(drawn is MovieClip) || kind=="flash.display::MovieClip")) && !rendered[drawn])
-                  result.effects.push({key:id(drawn),name:drawn.name,clip:getQualifiedClassName(drawn),layer:layer,pose:VisualPose.capture(drawn),atlas:null});
+               if(!rendered[drawn])
+                  result.effects.push({key:id(drawn),name:drawn.name,clip:getQualifiedClassName(drawn),layer:layer,pose:VisualPose.capture(drawn,0,true),atlas:null});
             }
          }
          for(var targetKey:String in targets) {
@@ -118,6 +126,8 @@ package authority {
             if(target.loc==null || target.sost>=3 || target.loc.units.indexOf(target)<0)delete targets[targetKey];
          }
          Timing.end("capture.untrackedEffects",began);
+         if(full || result.tiles.length>0)++terrainRevision;
+         result.terrainRevision=terrainRevision;
          return result;
       }
       private function color(c:Object):Array {return c==null?null:[c.redMultiplier,c.greenMultiplier,c.blueMultiplier,c.alphaMultiplier,c.redOffset,c.greenOffset,c.blueOffset,c.alphaOffset];}

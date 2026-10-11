@@ -5,12 +5,15 @@ package authority {
    import fe.inter.AuthorityMenus;
    import fe.inter.Stand;
    import fe.inter.AuthorityGUI;
-   /** Confirmation-only B1 presentation. No attack(), damage() or object step. */
+   /** Confirmed world playback with bounded own movement prediction. No local
+    * attack(), damage() or object step. */
    public class ClientReplica {
       public var tactics:TacticsBridge;
       public var access:NativeAccess,frames:uint=0,lastTick:uint=0,lastFrame:Object;
       public var displayFrame:Object,clock:PlaybackClock=new PlaybackClock();
       public var scene:ReplicaScene;
+      public var prediction:MovementPrediction=new MovementPrediction();
+      public var sound:SessionSound;
       public var peerProfile:Object;
       public var playerApplications:Array=[0,0],projectileApplications:uint=0;
       private var peers:Object={},projectiles:Object={};
@@ -23,6 +26,7 @@ package authority {
       public var uiMessages:uint=0;
       private var uiSerial:uint=0;
       private var menuSerial:uint=0,menuRevision:uint=0,standSerial:uint=0;
+      private var predicted:Boolean=false;
       public var satsRefreshes:uint=0;
       // Optional diagnostic observer; receives the actual applied discrete
       // confirmation before any display interpolation. Unset during play.
@@ -34,6 +38,7 @@ package authority {
          VisualPose.resolve=access.visualClass;
          access.world.onPause=true;
          scene=new ReplicaScene(access,vision);
+         sound=new SessionSound(access);
       }
       public function apply(frame:Object):void {
          var began:int=Timing.start();
@@ -41,6 +46,7 @@ package authority {
          Timing.end("client.decode",began);
          if(frame.tick<lastTick)return;
          lastTick=frame.tick;lastFrame=frame;++frames;
+         prediction.confirm(frame,getTimer());
          if(clock.push(frame,getTimer()))present(true);
       }
       public function present(flush:Boolean=false):void {
@@ -50,8 +56,17 @@ package authority {
          // arrive during one screen frame. No broken wall or removed unit is lost.
          for each(var state:Object in ready){render(state);if(confirmed!=null)confirmed(state);}
          if(clock.current!=null && clock.fraction>0)render(PoseTween.frame(clock.current,clock.next,clock.fraction),true);
+         predict();
          if(displayFrame!=null)scene.light(displayFrame.paused===true);
          Timing.end("client.present",began);
+      }
+      public function submitted(input:Object):void {prediction.record(input,getTimer());predict();}
+      private function predict():void {
+         var state:Object=prediction.sample(getTimer(),displayFrame,scene.terrainRevision,SharedPause.requested(access.world));
+         if(state!=null){applyPlayer(state,true);predicted=true;}
+         // A new combat/pause request must remove the previous visual lead even
+         // when no new confirmed frame arrived in this screen frame.
+         else if(predicted && displayFrame!=null && displayFrame.players[1].room===displayFrame.room){applyPlayer(displayFrame.players[1],true);predicted=false;}
       }
       private function render(frame:Object,interpolated:Boolean=false):void {
          var began:int=Timing.start(),part:int=began;
@@ -106,7 +121,12 @@ package authority {
             var clip:DisplayObject=projectiles[key];if(clip.parent!=null)clip.parent.removeChild(clip);
             VisualPose.dispose(clip);delete projectiles[key];
          }
+         var managed:Array=[];
+         for each(var peer:Object in peers){managed.push(peer.body.vis);if(peer.weapon!=null)managed.push(peer.weapon.vis);}
+         for each(var projectile:DisplayObject in projectiles)managed.push(projectile);
+         scene.prune(managed);
          if(!interpolated){access.world.gui.setHp();access.world.gui.setMana();access.world.gui.setWeapon();access.world.gui.setPet();}
+         if(!interpolated)sound.apply(frame);
          if(frame.paused && access.world.sats.active && satsEpoch!=frame.pauseEpoch) {
             var sats:Object=access.world.sats,grafon:Object=access.world.grafon;
             // Never photograph the previous SATS screenshot. Temporarily put
@@ -192,6 +212,7 @@ package authority {
          ++projectileApplications;
       }
       public function dispose():void {
+         sound.dispose();
          for each(var rec:Object in peers) {
             if(rec.weapon!=null)rec.weapon.remVisual();
             if(rec.body!==access.world.gg)rec.body.remVisual();

@@ -243,6 +243,28 @@ def modify(name, source):
         source=once(source,'         }\n      }\n      \n      public function resizeScreen',
             '         }\n         if(!this.active && PipBuck.rconnectMenu != null) PipBuck.rconnectMenu(this,"menuStandClose",[]);\n'
             '      }\n      \n      public function resizeScreen')
+    if name == 'fe.Snd':
+        source = once(source, '      public static function ps(param1:String, param2:Number = -1000, param3:Number = -1000, param4:Number = 0, param5:Number = 1) : SoundChannel',
+            '      public static var rconnectPlaySound:Function = null;\n'
+            '      public static var rconnectHumSound:Function = null;\n'
+            '      public static var rconnectStopSound:Function = null;\n'
+            '      public static function ps(id:String, x:Number = -1000, y:Number = -1000, start:Number = 0, volume:Number = 1) : SoundChannel\n'
+            '      {\n         if(rconnectPlaySound != null) return rconnectPlaySound(id,x,y,start,volume) as SoundChannel;\n'
+            '         return rconnectNativeSound(id,x,y,start,volume);\n      }\n'
+            '      public static function rconnectStopChannel(channel:SoundChannel) : void\n'
+            '      {\n         if(rconnectStopSound != null) rconnectStopSound(channel);\n         channel.stop();\n      }\n'
+            '      public static function rconnectNativeSound(param1:String, param2:Number = -1000, param3:Number = -1000, param4:Number = 0, param5:Number = 1) : SoundChannel')
+        source = once(source, '      public static function pshum(param1:String, param2:Number = 1) : *',
+            '      public static function pshum(id:String, volume:Number = 1) : *\n'
+            '      {\n         if(rconnectHumSound != null) return rconnectHumSound(id,volume);\n'
+            '         return rconnectNativeHum(id,volume);\n      }\n'
+            '      public static function rconnectNativeHum(param1:String, param2:Number = 1) : *')
+    if name in ('fe.weapon.Weapon', 'fe.weapon.WClub', 'fe.serv.Interact'):
+        channel = {'fe.weapon.Weapon':'this.sndCh','fe.weapon.WClub':'sndCh','fe.serv.Interact':'this.moveCh'}[name]
+        expected = 1 if name == 'fe.serv.Interact' else 2
+        if source.count(channel+'.stop();') != expected:
+            raise ValueError('Native sound stop anchors changed: '+name)
+        source = source.replace(channel+'.stop();','Snd.rconnectStopChannel('+channel+');')
     if source==original:
         raise ValueError('No native change: '+name)
     # FFDec's importer loses @ in E4X filters when an attribute and a
@@ -261,7 +283,7 @@ def modify(name, source):
             '         for each(var node:XML in nodes)\n         {\n'
             '            if(node.attribute(key) == expected) result += node;\n'
             '         }\n         return result;\n      }\n\n'+constructor)
-    return source.replace('"b1-v3"','"b3-v6"').replace('"b2-v1"','"b3-v6"').replace('"b3-v1"','"b3-v6"')
+    return source.replace('"b1-v3"','"b3-v7"').replace('"b2-v1"','"b3-v7"').replace('"b3-v1"','"b3-v7"')
 
 
 def swf_tags(path):
@@ -302,7 +324,8 @@ def main():
     out.mkdir(parents=True)
     original = baseline/'game/pfe.swf'
     classes = ['fe.inter.Ctr', 'fe.loc.Location', 'fe.loc.Land', 'fe.unit.Unit', 'fe.unit.UnitPlayer', 'fe.graph.Grafon',
-        'fe.unit.Invent','fe.unit.Pers','fe.weapon.Weapon','fe.loc.Game','fe.World','fe.weapon.Bullet','fe.unit.Mine','fe.weapon.WThrow','fe.weapon.PhisBullet']+MENU_CLASSES
+        'fe.unit.Invent','fe.unit.Pers','fe.weapon.Weapon','fe.loc.Game','fe.World','fe.weapon.Bullet','fe.unit.Mine','fe.weapon.WThrow','fe.weapon.PhisBullet',
+        'fe.Snd','fe.weapon.WClub','fe.serv.Interact']+MENU_CLASSES
     ff = [str(JAVA), '-Xmx768m', '-jar', str(FFDEC)]
     with (out/'patch.log').open('w', encoding='utf-8') as log:
         def run(args):
@@ -341,7 +364,7 @@ def main():
             subprocess.run(ff+['-dumpAS3', str(path)], stdout=log, check=True)
     if (out/'before-classes.txt').read_bytes() != (out/'after-classes.txt').read_bytes():
         raise RuntimeError('Native class list changed')
-    save(out/'native-input.json', dict(experimental_only=True, capability='b3-v6',
+    save(out/'native-input.json', dict(experimental_only=True, capability='b3-v7',
         baseline=str(baseline.relative_to(ROOT)), baseline_manifest_sha256=sha(baseline/'baseline.json'),
         original_sha256=sha(original), candidate_sha256=sha(out/'pfe.swf'),
         sources={p.relative_to(out).as_posix():sha(p) for p in sorted((out/'import').rglob('*.as'))},

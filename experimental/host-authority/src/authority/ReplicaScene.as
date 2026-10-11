@@ -3,12 +3,14 @@ package authority {
    import flash.display.MovieClip;
    import flash.geom.ColorTransform;
    import flash.utils.Dictionary;
+   import flash.utils.getQualifiedClassName;
    import fe.unit.AuthorityAnimation;
    import fe.unit.Unit;
    /** Native geometry and target entities with no client-side combat execution. */
    public final class ReplicaScene {
       public var key:String="",room:Object,units:Object={},objects:Object={};
       public var applications:uint=0,terrainApplications:uint=0;
+      public var terrainRevision:uint=0;
       public var effects:SceneEffects;
       private var access:NativeAccess;
       private var vision:SharedVision,lightDirty:Boolean=true,lightX:Number=NaN,lightY:Number=NaN;
@@ -16,6 +18,23 @@ package authority {
       public function ReplicaScene(access:NativeAccess,vision:SharedVision=null){this.access=access;this.vision=vision;effects=new SceneEffects(access);}
       public function keyFor(unit:Object):uint {if(players[unit])return players[unit];for(var id:String in units)if(units[id].unit===unit)return uint(id);return 0;}
       public function registerPlayer(unit:Object,key:uint):void {players[unit]=key;}
+      /** Constructors may attach extra limbs/arcs of their own. The host's
+       * display manifest owns those parts too; discard only unconfirmed roots
+       * in world layers, retaining local masks used by confirmed displays. */
+      public function prune(extra:Array):void {
+         var keep:Dictionary=new Dictionary(true),rec:Object,gun:Object,d:DisplayObject;
+         for each(d in extra)if(d!=null)keep[d]=true;
+         for each(rec in units) {
+            if(rec.unit.vis!=null)keep[rec.unit.vis]=true;
+            if(rec.unit.hpbar!=null)keep[rec.unit.hpbar]=true;
+            for each(gun in rec.weapons)if(gun.vis!=null)keep[gun.vis]=true;
+         }
+         for each(rec in objects)if(rec.object.vis!=null)keep[rec.object.vis]=true;
+         for each(rec in effects.records)keep[rec.clip]=true;
+         for(var value:Object in keep){d=value as DisplayObject;if(d!=null && d.mask!=null)keep[d.mask]=true;}
+         for each(var layer:Object in access.world.grafon.visObjs)
+            for(var i:int=layer.numChildren-1;i>=0;i--)if(!keep[layer.getChildAt(i)])layer.removeChildAt(i);
+      }
       public function petFor(player:int):Object {for each(var rec:Object in units)if(rec.petOwner===player)return rec.unit;return null;}
       public function apply(s:Object):Boolean {
          var began:int=Timing.start();
@@ -70,6 +89,7 @@ package authority {
          }
          effects.apply(s.effects);
          Timing.end("replica.objectsAndEffects",began);
+         terrainRevision=s.terrainRevision;
          ++applications;return changed;
       }
       /** Native lighting is a local view calculation, not a second battle step. */
@@ -99,6 +119,7 @@ package authority {
       }
       private function applyUnit(s:Object):void {
          var rec:Object=units[s.key],u:Object;
+         if(rec!=null && rec.burning && !s.burning){removeUnit(String(s.key));rec=null;}
          if(rec==null) {
             var ClassRef:Class=access.definition(String(s.cls).replace("::",".")),cid:String=s.fields.id;
             var placement:XML=<unit/>;
@@ -115,6 +136,11 @@ package authority {
             room.units.push(u);rec=units[s.key]={unit:u,weapons:[],layer:s.layer};
          }
          u=rec.unit;
+         if(s.clip!=null && (getQualifiedClassName(u.vis)!==s.clip || s.burning && !rec.burning)) {
+            u.remVisual();VisualPose.dispose(u.vis);
+            var Body:Class=access.visualClass(s.clip);u.vis=new Body();
+         }
+         rec.burning=s.burning;
          rec.petOwner=s.petOwner;
          NativeFields.apply(u,s.fields);u.loc=room;
          NativeFields.apply(u.inter,s.inter);
@@ -169,7 +195,7 @@ package authority {
       }
       private function color(a:Array):ColorTransform{return a==null?null:new ColorTransform(a[0],a[1],a[2],a[3],a[4],a[5],a[6],a[7]);}
       private function removeUnit(id:String):void {
-         var rec:Object=units[id];rec.unit.remVisual();
+         var rec:Object=units[id];rec.unit.remVisual();VisualPose.dispose(rec.unit.vis);
          for each(var gun:Object in rec.weapons)gun.remVisual();
          var at:int=room.units.indexOf(rec.unit);if(at>=0)room.units.splice(at,1);delete units[id];
       }

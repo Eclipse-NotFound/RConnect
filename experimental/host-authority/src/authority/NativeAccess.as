@@ -25,7 +25,8 @@ package authority {
       public function checkHooks():void {
          for each(var name:String in ["fe.inter.Ctr","fe.loc.Location","fe.loc.Land","fe.unit.Unit","fe.unit.UnitPlayer","fe.graph.Grafon",
             "fe.unit.Invent","fe.unit.Pers","fe.weapon.Weapon","fe.loc.Game","fe.World","fe.weapon.Bullet","fe.unit.Mine","fe.weapon.WThrow","fe.weapon.PhisBullet",
-            "fe.inter.PipBuck","fe.inter.PipPageWork","fe.inter.PipPageVault","fe.inter.PipPageMed","fe.inter.PipPageVend","fe.inter.PipPageInv","fe.inter.PipPageApp","fe.inter.Stand"])
+            "fe.inter.PipBuck","fe.inter.PipPageWork","fe.inter.PipPageVault","fe.inter.PipPageMed","fe.inter.PipPageVend","fe.inter.PipPageInv","fe.inter.PipPageApp","fe.inter.Stand",
+            "fe.Snd","fe.weapon.WClub","fe.serv.Interact"])
             if(definition(name)["RCONNECT_AUTHORITY_HOOKS"]!==BuildInfo.NATIVE)throw new Error("Native hooks unavailable: "+name);
       }
       public function profile():Object {

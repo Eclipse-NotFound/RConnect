@@ -48,7 +48,9 @@ package {
          if(access.definition("fe.World")["rconnectChangeWorld"]!=null)throw new Error("Native lifecycle seam occupied");
          access.definition("fe.World")["rconnectChangeWorld"]=function():void {if(network)leaveSession(false);vision.resetJourney();};
          MapState.install(access);
-         if(config.probe===true)probe=["explosives","magic","angles"].indexOf(config.scenario)>=0?new WeaponProbe(access,role=="host",config.scenario):
+         if(config.probe===true)probe=["explosives","magic","angles","guns","melee"].indexOf(config.scenario)>=0?new WeaponProbe(access,role=="host",config.scenario):
+            config.scenario=="movement"?new MovementProbe(access,role=="host"):
+            config.scenario=="sound"?new SoundProbe(access,role=="host"):
             config.scenario=="enemies"?new EnemyVisualProbe(access,role=="host"):
             config.scenario=="stress"?new StressProbe(access,role=="host"):
             config.scenario=="vision"?new VisionProbe(access,role=="host"):
@@ -123,7 +125,7 @@ package {
                frame.weaponEpoch=role=="host"?host.inputs[0].weaponEpoch:
                   (replica.lastFrame==null?1:replica.lastFrame.players[1].weaponEpoch);
                if(probe!=null)frame=probe.input(frame,host);
-               if(role=="host")host.localInput(frame);else link.send(frame);
+               if(role=="host")host.localInput(frame);else if(link.send(frame))replica.submitted(frame);
             }
             if(vision!=null)vision.step();
             if(probe!=null)probe.observe(host,replica);

@@ -1,11 +1,13 @@
 package authority {
    import fe.unit.UnitPlayer;
+   import fe.unit.AuthorityAnimation;
    import fe.weapon.Bullet;
    /** Real UnitPlayer type for native weapon casts; never a UnitPonPon puppet. */
    public class AuthorityPlayer extends UnitPlayer {
       public var scope:NativeScope,context:Object;
       public var onDeath:Function;
       public function AuthorityPlayer(){super();}
+      public function get predictionBlocked():Boolean {return diagon!=0 || AuthorityAnimation.inCover(this);}
       override public function damage(amount:Number,type:int,bullet:Bullet=null,periodic:Boolean=false):Number {
          if(scope==null)return super.damage(amount,type,bullet,periodic);
          var call:Function=function():Number {return nativeDamage(amount,type,bullet,periodic);};

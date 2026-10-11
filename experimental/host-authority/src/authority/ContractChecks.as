@@ -2,6 +2,8 @@ package authority {
    import flash.geom.ColorTransform;
    import flash.geom.Matrix;
    import flash.display.Sprite;
+   import flash.display.Bitmap;
+   import flash.display.BitmapData;
    /** Executed in the native AIR probe, with controlled inputs and explicit failures. */
    public class ContractChecks {
       private static function input(seq:int,buttons:int=0,actions:Array=null):Object {
@@ -97,6 +99,7 @@ package authority {
       }
       private static function presentation(check:Function):void {
          deltaSequence(check);
+         movement(check);
          var enc:FrameDelta=new FrameDelta(),dec:FrameDelta=new FrameDelta();
          var one:Object={players:[{x:1,native:{hp:10}}],scene:{tiles:[{x:1,v:[2,3]}]}};
          var first:Object=dec.decode(enc.encode(one));
@@ -138,6 +141,40 @@ package authority {
          check(before===unchanged && before!==changed && before.children[0].s.x==0 && changed.children[0].s.x==17 &&
             before.m===changed.m && before.c===changed.c,
             "native pose capture reuses unchanged branches without mutating earlier child or parent confirmations");
+         source.visible=false;var hidden:Object=VisualPose.capture(source);child.x=31;
+         source.visible=true;var shown:Object=VisualPose.capture(source);
+         check(hidden.children==null && !hidden.v && shown.children[0].s.x==31 && before.children[0].s.x==0,
+            "hidden subtrees resume from current native state while retained confirmations stay unchanged");
+         var image:BitmapData=new BitmapData(256,256,true,0);
+         for(var alpha:int=0;alpha<256;alpha++)for(var channel:int=0;channel<256;channel++)
+            image.setPixel32(channel,alpha,(alpha<<24)|(channel<<16)|((255-channel)<<8)|(channel^85));
+         var recipe:Object=PixelSurface.capture(image),copy:BitmapData=PixelSurface.restore(JSON.parse(JSON.stringify(recipe)));
+         check(image.compare(copy)===0,"native pixel surfaces preserve every alpha and color channel through the wire");
+         var body:Sprite=new Sprite(),mirror:Sprite=new Sprite();body.addChild(new Bitmap(image));
+         before=VisualPose.capture(body,0,true);VisualPose.apply(mirror,JSON.parse(JSON.stringify(before)));
+         image.fillRect(image.rect,0x800020ff);changed=VisualPose.capture(body,0,true);VisualPose.apply(mirror,JSON.parse(JSON.stringify(changed)));
+         var oldImage:BitmapData=PixelSurface.restore(before.children[0].s.pixels);
+         check(Bitmap(mirror.getChildAt(0)).bitmapData.compare(image)===0 && oldImage.compare(copy)===0,
+            "changing a native corpse surface updates its replica without mutating the prior confirmation");
+         VisualPose.dispose(mirror);image.dispose();copy.dispose();oldImage.dispose();
+      }
+      private static function movement(check:Function):void {
+         var p:MovementPrediction=new MovementPrediction(),input:Object={seq:1,room:"floor",roomEpoch:1,epoch:1,weaponEpoch:1,buttons:Commands.RIGHT,actions:[]};
+         p.record(input,1000);
+         var state:Object={id:1,ack:1,room:"floor",roomEpoch:1,epoch:1,weaponEpoch:1,x:100,y:400,native:{X:100,X1:90,X2:110,eyeX:100},
+            motion:{x:100,dx:0,walk:0,max:5,speed:5,accel:1,brake:1,friction:.9,left:76,right:124},visual:{x:100,y:400,m:[1,0,0,1,100,400]},weapon:null};
+         var frame:Object={tick:1,time:100,paused:false,pauseEpoch:0,room:"floor",scene:{terrainRevision:1},players:[null,state]};
+         p.confirm(frame,1040);
+         for(var i:int=2;i<50;i++){input=PoseTween.copy(input);input.seq=i;p.record(input,1040+i);}
+         var sample:Object=p.sample(1120,frame,1,false);
+         check(sample!=null && sample.x>100 && sample.x<=115 && state.x==100 && state.visual.m[4]==100,
+            "many unacknowledged input packets cannot become extra physics steps or mutate confirmation");
+         check(p.sample(1120,frame,2,false)==null && p.sample(1120,frame,1,true)==null && p.sample(1300,frame,1,false)==null,
+            "changed terrain, local pause and stale confirmation cancel movement prediction");
+         input=PoseTween.copy(input);input.seq=50;input.buttons=Commands.FIRE;p.record(input,1121);
+         check(p.sample(1122,frame,1,false)==null,"a new combat intent removes prediction before the host acknowledges it");
+         input=PoseTween.copy(input);input.seq=51;input.buttons=Commands.RIGHT;input.epoch=2;p.record(input,1123);
+         check(p.sample(1124,frame,1,false)==null,"new incarnation rejects previous life's movement anchor");
       }
       private static function same(a:*,b:*):Boolean {
          if(a===b)return true;

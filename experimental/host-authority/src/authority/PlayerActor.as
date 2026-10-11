@@ -95,7 +95,7 @@ package authority {
          }
          return {id:id,epoch:epoch,native:NativeFields.capture(g),personal:PlainData.copy(personal),room:access.keyFor(g.loc),roomEpoch:roomEpoch,weaponEpoch:weaponEpoch,ack:ack,x:g.X,y:g.Y,dx:g.dx,dy:g.dy,hp:g.hp,maxhp:g.maxhp,mana:g.mana,
             direction:g.storona,sx:v.scaleX,sy:v.scaleY,pose:v.osn.currentFrame,
-            body:v.osn.body.currentFrame,visual:VisualPose.capture(v as DisplayObject),weapon:weapon,steps:steps};
+            body:v.osn.body.currentFrame,visual:VisualPose.capture(v as DisplayObject),weapon:weapon,steps:steps,motion:id==1?GroundMotion.capture(g):null};
       }
       public function destroy():void {
          context.ctr.clearAll();

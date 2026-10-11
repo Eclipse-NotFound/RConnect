@@ -20,10 +20,13 @@ package authority {
       private var nativeEffects:Object={},references:Object={},counts:Object={},report:Object;
       private var nativeSamples:int=0,nativeQuick:int=0,sourcePixels:int=0,readySent:int=-1;
       private var samplePictures:Object={};
+      private var target:Object,targetHP:Number=0;
       public function WeaponProbe(a:NativeAccess,h:Boolean,kind:String) {
          super(a,h);this.kind=kind;
          cases=kind=="explosives"?["acidgr","plagr","impgr","cryogr","gasgr","molotov"]:
-            kind=="magic"?["telebul","ice","lightning","mray","fireball","eclipse"]:[0,85,95,160,180,-95,-160];
+            kind=="magic"?["telebul","ice","lightning","mray","fireball","eclipse"]:
+            kind=="guns"?["shotgun","lasr","plar","bfg","flamer","cflamer","gatl","sawgun"]:
+            kind=="melee"?["bat","spear","ripper","lsword","bsaw"]:[0,85,95,160,180,-95,-160];
       }
       override public function message(value:Object):void {
          if(host && value.type=="weapon-ready")peerReady=value.phase;
@@ -64,14 +67,26 @@ package authority {
                gun.hp=gun.maxhp;gun.respect=0;gun.loc=g.loc;gun.setNull();gun.addVisual2();
                g.invent.weapons[id]=gun;
                if(kind=="explosives"){g.throwWeapon=gun;g.invent.items[gun.ammo].kol=20;g.invent.fav[29]=id;}
-               else {g.magicWeapon=gun;g.invent.fav[30]=id;}
-               check(g.currentWeapon!==gun && g.childObjs.indexOf(gun)<0,"native quick slot remains outside equipped weapon "+id+" owner "+shooter.id);
+               else if(kind=="magic"){g.magicWeapon=gun;g.invent.fav[30]=id;}
+               else {
+                  g.currentWeapon.remVisual();g.currentWeapon=gun;g.childObjs[0]=gun;g.invent.cWeaponId=id;gun.addVisual();
+                  gun.hold=gun.holder;if(gun.ammo!="")g.invent.items[gun.ammo].kol=1000;
+               }
+               if(kind=="explosives" || kind=="magic")check(g.currentWeapon!==gun && g.childObjs.indexOf(gun)<0,"native quick slot remains outside equipped weapon "+id+" owner "+shooter.id);
             }
             initialAmmo=gun.ammo==""?0:g.invent.items[gun.ammo].kol+gun.hold;
             initialMana=g.mana;initialShots=session.runtime.spawnsByPlayer[shooter.id];
          });
          var angle:Number=kind=="angles"?Number(cases[int(phase/2)])*Math.PI/180:0;
          aimX=shooter.unit.X+Math.cos(angle)*300;aimY=fy-45+Math.sin(angle)*300;
+         if(kind=="melee" || kind=="guns") {
+            var Enemy:Class=access.definition("fe.unit.UnitZombie");target=new Enemy("1",10,<unit tr="1" dig="0"/>,null);
+            target.putLoc(access.world.loc,shooter.unit.X+(kind=="melee"?95:280),fy);access.world.loc.units.push(target);
+            // Native target/collision/damage, held still by omitting its AI step.
+            target.hp=target.maxhp=100000;target.skin=target.armor=target.dexter=target.dodge=0;
+            target.invulner=target.disabled=false;target.doop=true;target.lootIsDrop=true;target.xp=0;
+            target.addVisual();target.setVisPos();target.animate();targetHP=target.hp;aimX=target.X;aimY=target.Y-target.scY*.5;
+         }
          session.link.send({type:"weapon-phase",phase:phase,x:aimX,y:aimY});
          Log.write("weapon-phase",{phase:phase,id:gun.id,owner:shooter.id,kind:kind});
       }
@@ -116,6 +131,7 @@ package authority {
          if(begin<0 || waiting || (session.runtime.tick-begin)%3!=0)return;
          var samples:Array=[],seen:Dictionary=new Dictionary(true),s:Object;
          for each(var actor:PlayerActor in session.actors) {
+            seen[actor.unit.vis]=true;
             // Compare the character artwork, separately from local selection,
             // reload UI and the recipient's independently calculated RV mask.
             s=sample(actor.unit.vis.osn,"body",actor.unit.sloy);
@@ -128,12 +144,13 @@ package authority {
                samples.push(s);
             }
             for each(var weapon:Object in [actor.unit.currentWeapon,actor.unit.throwWeapon,actor.unit.magicWeapon])if(weapon!=null && !seen[weapon]) {
-               seen[weapon]=true;s=sample(weapon.vis,weapon===actor.unit.currentWeapon?"weapon":"quick",weapon.sloy);
+               seen[weapon]=true;if(weapon.vis!=null)seen[weapon.vis]=true;s=sample(weapon.vis,weapon===actor.unit.currentWeapon?"weapon":"quick",weapon.sloy);
                if(s!=null){samples.push(s);if(s.kind=="quick")++nativeQuick;}
             }
          }
          var perClip:Object={},o:Object=shooter.unit.loc.firstObj;
          while(o!=null) {
+            if(o.vis!=null)seen[o.vis]=true;
             var projectile:Boolean=NativeAccess.get(o,"begx")!=null;
             s=sample(o.vis,projectile?"projectile":"effect",o.sloy);
             if(s!=null) {
@@ -143,6 +160,23 @@ package authority {
                if(uint(perClip[s.clip])<2){samples.push(s);perClip[s.clip]=uint(perClip[s.clip])+1;}
             }
             o=o.nobj;
+         }
+         // Independently inspect native parts outside the object chain, the
+         // historical missing path for melee arcs and other loose symbols.
+         for each(var unit:Object in shooter.unit.loc.units) {
+            if(unit.vis!=null)seen[unit.vis]=true;if(unit.hpbar!=null)seen[unit.hpbar]=true;
+            for each(weapon in unit.childObjs)if(weapon!=null && weapon.vis!=null)seen[weapon.vis]=true;
+         }
+         for each(var list:Array in [shooter.unit.loc.objs,shooter.unit.loc.acts,shooter.unit.loc.bonuses])
+            for each(o in list)if(o.vis!=null)seen[o.vis]=true;
+         for each(var layer:DisplayObjectContainer in access.world.grafon.visObjs)
+            for(var mi:int=0;mi<layer.numChildren;mi++)if(layer.getChildAt(mi).mask!=null)seen[layer.getChildAt(mi).mask]=true;
+         for(var li:int=0;li<access.world.grafon.visObjs.length;li++) {
+            layer=access.world.grafon.visObjs[li];
+            for(var ci:int=0;ci<layer.numChildren;ci++) {
+               var extra:DisplayObject=layer.getChildAt(ci);if(seen[extra])continue;
+               s=sample(extra,"effect",li);if(s!=null){s.id=session.sceneId(extra);samples.push(s);nativeEffects[s.clip]=true;}
+            }
          }
          nativeSamples+=samples.length;
          session.link.send({type:"weapon-reference",phase:phase,tick:session.runtime.tick,samples:samples});
@@ -205,7 +239,7 @@ package authority {
                readySent=phase;RConnectMod.instance.link.send({type:"weapon-ready",phase:phase});
             }
             if(ending>=0 && replica.displayFrame.tick>=ending) {
-               check(counts.samples>20 && counts.body>0 && (counts.projectile>0 || kind=="magic" && cases[int(phase/2)]=="mray" && counts.quick>0),
+               check(counts.samples>20 && counts.body>0 && (counts.projectile>0 || kind=="melee" && counts.weapon>0 || kind=="magic" && cases[int(phase/2)]=="mray" && counts.quick>0),
                   "actual native projectile or continuous beam and player displays observed phase "+phase,counts);
                check(counts.missing==0 && counts.pose==0,"native visual attachments, flips and timeline match phase "+phase,counts);
                check(counts.pixels==0 && counts.samples>counts.missing,"transported authored visuals match independent native pixels phase "+phase,counts);
@@ -223,9 +257,11 @@ package authority {
          if(begin<0 && peerReady==phase){begin=session.runtime.tick;session.link.send({type:"weapon-go",tick:begin});}
          if(begin>=0 && !waiting && session.runtime.tick-begin>=180) {
             waiting=true;
-            check(session.runtime.spawnsByPlayer[shooter.id]>initialShots,"real input creates native projectile "+gun.id+" owner "+shooter.id,
+            if(kind!="melee")check(session.runtime.spawnsByPlayer[shooter.id]>initialShots,"real input creates native projectile "+gun.id+" owner "+shooter.id,
                {shots:session.runtime.spawnsByPlayer[shooter.id]-initialShots,ammoBefore:initialAmmo,manaBefore:initialMana,manaAfter:shooter.unit.mana});
             if(kind=="explosives")check(shooter.unit.invent.items[gun.ammo].kol==19,"one native quick throw consumes one item "+gun.id+" owner "+shooter.id);
+            if(kind=="melee" || kind=="guns")check(target.hp<targetHP,"native equipped weapon damages a real target "+gun.id+" owner "+shooter.id,{before:targetHP,after:target.hp});
+            if(kind=="melee" && ["bat","spear"].indexOf(gun.id)>=0)check(nativeEffects["visVzz"]===true,"native melee swing arc is included "+gun.id+" owner "+shooter.id);
             var clips:Array=[];for(var key:String in nativeEffects)clips.push(key);
             Log.write("weapon-native-summary",{phase:phase,id:gun.id,owner:shooter.id,samples:nativeSamples,quick:nativeQuick,effects:clips});
             session.link.send({type:"weapon-phase-end",phase:phase,tick:session.runtime.tick});

@@ -2,12 +2,10 @@ package authority {
    import flash.display.*;
    import flash.geom.Matrix;
    import flash.geom.Rectangle;
-   import flash.utils.ByteArray;
    import flash.utils.Dictionary;
    /** Serialize drawing commands for runtime beams/trails, without running their logic. */
    public final class VectorDraw {
       private static var applied:Dictionary=new Dictionary(true);
-      private static var channelTables:Object={};
       private static function matrix(m:Matrix):Array {return m==null?null:[m.a,m.b,m.c,m.d,m.tx,m.ty];}
       private static function nativeMatrix(v:Array):Matrix {return v==null?null:new Matrix(v[0],v[1],v[2],v[3],v[4],v[5]);}
       private static function array(v:Object):Array {if(v==null)return null;var a:Array=[];for each(var n:* in v)a.push(n);return a;}
@@ -33,10 +31,8 @@ package authority {
          var x:int=Math.floor(bounds.x),y:int=Math.floor(bounds.y),w:int=Math.ceil(bounds.right)-x,h:int=Math.ceil(bounds.bottom)-y;
          var bitmap:BitmapData=new BitmapData(w,h,true,0);
          bitmap.draw(shape,new Matrix(1,0,0,1,-x,-y));
-         var bytes:ByteArray=bitmap.getPixels(bitmap.rect);bitmap.dispose();bytes.compress();bytes.position=0;
-         var encoded:Array=[],digits:String="0123456789abcdef";
-         while(bytes.bytesAvailable>0){var b:uint=bytes.readUnsignedByte();encoded.push(digits.charAt(b>>>4)+digits.charAt(b&15));}
-         return [{k:"surface",x:x,y:y,w:w,h:h,bytes:encoded.join("")}];
+         var recipe:Object=PixelSurface.capture(bitmap);bitmap.dispose();
+         recipe.k="surface";recipe.x=x;recipe.y=y;return [recipe];
       }
       private static function encode(data:IGraphicsData):Object {
          var s:Object;
@@ -68,42 +64,13 @@ package authority {
          if(rec!=null && rec.key===key){Timing.end("vector.applyCached",began);return;}
          dispose(display);rec={key:key,bitmaps:[]};applied[display]=rec;
          if(recipe.length==1 && recipe[0].k=="surface") {
-            var s:Object=recipe[0],bytes:ByteArray=new ByteArray();
-            for(var i:int=0;i<s.bytes.length;i+=2)bytes.writeByte(parseInt(s.bytes.substr(i,2),16));
-            bytes.uncompress();bytes.position=0;
-            // Derive AIR's inverse channel conversion from its actual setter
-            // and getter. A blanket +/-1 corrupts exact values such as black.
-            var restored:ByteArray=new ByteArray();
-            while(bytes.bytesAvailable>=4) {
-               var pixel:uint=bytes.readUnsignedInt(),alpha:uint=pixel>>>24;
-               if(alpha>0 && alpha<255) {
-                  var table:Array=channelTable(alpha);
-                  if(table[(pixel>>>16)&255]==null || table[(pixel>>>8)&255]==null || table[pixel&255]==null)
-                     throw new Error("AIR drawing channel is not representable at alpha "+alpha+": "+pixel.toString(16));
-                  pixel=(alpha<<24)|(table[(pixel>>>16)&255]<<16)|(table[(pixel>>>8)&255]<<8)|table[pixel&255];
-               }
-               restored.writeUnsignedInt(pixel);
-            }
-            restored.position=0;
-            var bitmap:BitmapData=new BitmapData(s.w,s.h,true,0);bitmap.setPixels(bitmap.rect,restored);rec.bitmaps.push(bitmap);
+            var s:Object=recipe[0],bitmap:BitmapData=PixelSurface.restore(s);rec.bitmaps.push(bitmap);
             g.clear();g.beginBitmapFill(bitmap,new Matrix(1,0,0,1,s.x,s.y),false,true);g.drawRect(s.x,s.y,s.w,s.h);g.endFill();Timing.end("vector.applySurface",began);return;
          }
          var commands:Vector.<IGraphicsData>=new Vector.<IGraphicsData>();
          for each(s in recipe)commands.push(decode(s,rec));
          g.clear();g.drawGraphicsData(commands);
          Timing.end("vector.applyCommands",began);
-      }
-      private static function channelTable(alpha:uint):Array {
-         if(channelTables[alpha]!=null)return channelTables[alpha];
-         var table:Array=[],probe:BitmapData=new BitmapData(1,1,true,0);
-         for(var value:int=0;value<256;value++) {
-            probe.setPixel32(0,0,(alpha<<24)|(value<<16)|(value<<8)|value);
-            var actual:int=probe.getPixel32(0,0)&255;if(table[actual]==null)table[actual]=value;
-         }
-         probe.dispose();
-         // Only values produced by AIR's unpremultiplication are present in
-         // captured pixels; reject an impossible color rather than guess it.
-         channelTables[alpha]=table;return table;
       }
       private static function decode(s:Object,rec:Object):IGraphicsData {
          if(s.k=="path")return new GraphicsPath(Vector.<int>(s.commands),Vector.<Number>(s.data),s.winding);

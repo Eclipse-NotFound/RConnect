@@ -9,6 +9,7 @@ package authority {
       public var grips:PeerGrabs;
       public var travel:PartyTravel;
       public var combat:FriendlyCombat;
+      public var sound:SessionSound;
       private var nativeMenus:NativeMenus;
       private var expectedRoom:String;
       private var scene:SceneSnapshot;
@@ -42,6 +43,7 @@ package authority {
          lives=new PlayerLives(this);runtime.lives=lives;saves=new PersonalSaves(access,this);
          travel=new PartyTravel(this);runtime.travel=travel;
          scene=new SceneSnapshot(access);
+         sound=new SessionSound(access,actors);
          for each(var actor:PlayerActor in actors)actor.resolveTarget=scene.target;
          var welcome:Object=Commands.greeting("welcome",session);welcome.player=1;welcome.room=expectedRoom;welcome.epoch=1;welcome.weaponEpoch=1;
          welcome.profile=access.profile();
@@ -103,6 +105,7 @@ package authority {
             frame.players[actor.id].actionAck=inputs[actor.id].receivedAction;
          }
          frame.friendlyFire=combat.enabled;
+         frame.audio=sound.snapshot(frame.room,runtime.tick,frame.paused);
          frame.scene=scene.capture(actors[1].unit.loc,actors,runtime.tick);
          Timing.end("host.sceneAndPlayers",part);part=Timing.start();
          frame.character=CharacterState.capture(actors[1]);
@@ -130,6 +133,7 @@ package authority {
          if(combat!=null)combat.dispose();
          if(lives!=null)lives.dispose();if(saves!=null)saves.dispose();
          if(nativeMenus!=null)nativeMenus.dispose();
+         if(sound!=null)sound.dispose();
          if(runtime!=null)runtime.dispose();
          for each(var actor:PlayerActor in actors)actor.destroy();
          actors=[];inputs=[];

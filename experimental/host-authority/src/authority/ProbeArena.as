@@ -3,6 +3,9 @@ package authority {
    /** Geometry of an isolated test lane. Never called outside an explicit probe. */
    public final class ProbeArena {
       public static function floor(room:Object,wallX:int=-1):Number {
+         // putLoc() mirrors authored placements in mirrored generated rooms.
+         // This explicit physical test lane uses absolute coordinates.
+         room.mirror=false;
          var fy:Number=Math.floor((room.limY-120)/40)*40-1,row:int=int((fy+1)/40);
          // Random maps may leave a box or a disabled enemy in the test lane.
          // Native door closing and mine sight correctly still see that obstacle.

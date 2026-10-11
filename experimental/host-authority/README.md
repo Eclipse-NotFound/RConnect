@@ -16,6 +16,8 @@
 | `NativeIntents` / `CharacterState` / `PersonalSaves` | 原生菜单动作可靠执行，各自资源和反馈、个人保存 |
 | `HudModel` / `NetHud` / `SharedVision` | 紧凑连接界面、聊天/设置、透明度、可选探索共享 |
 | `TacticsBridge` / `NativePerception` | 可选 TDFC 房间调度接口与两名玩家的原生索敌/暴露计算 |
+| `GroundMotion` / `MovementPrediction` | 仅自己的平地移动作有界预演，按主侧确认重放未处理输入；战斗/地形变化撤销 |
+| `SessionSound` / `SoundPlayback` | 主侧记录原生声效/停止/持续音效，按房间和个人界面归属播放，各自保留音量设置 |
 | `Probe` / `ContractChecks` | 仅测试配置启用，真实AIR中的协议、资源隔离与原生开火检查 |
 
 当前B3已接入原生场景、统一显示时钟、原生菜单和各自保存；门箱/拾取/XP、念力、复活/旅行、SATS、跟随/宠物/共同挑战已有分项实测。紧凑UI/聊天/设置已实测，退出返回单人已通过专项。MSW、完整武器效果、本机预测、敌人状态专项、无驱动游玩及长局压力未完成，仍不能作为日常候选。
@@ -25,8 +27,8 @@
 工具位于`tools/host_authority`，所有参数从RConnect目录解析。输出必须是`build/ab`下的新目录，已有结果不会覆盖。
 
 1. `freeze.py --runtime build/m51/map-runtime-63 --output build/ab/<新基线>`固定完整实物。已有`baseline-001`可核验后继续使用。
-2. `patch_native.py --baseline build/ab/baseline-001 --output build/ab/<新原生副本>`仅修改复制品。B3当前23个类提供可选接口；回读核对loader、类表、资源与XML查询，运行等价另验。
-3. `build.py --output build/ab/<新构建>`冻结源码与外链存根、编译并记录工具及产物SHA。存根不包含进SWF。
+2. `patch_native.py --baseline build/ab/baseline-001 --output build/ab/<新原生副本>`仅修改复制品。B3当前26个类提供可选接口；回读核对loader、类表、资源与XML查询，运行等价另验。
+3. `build.py --output build/ab/<新构建> --optimized`冻结源码与外链存根、编译并记录工具及产物SHA。存根不包含进SWF。
 4. 与其他RConnect测试会话错开AIR时段后，`run_probe.py --baseline build/ab/baseline-001 --candidate build/ab/<新构建> --native build/ab/<匹配的原生副本> --output build/ab/<新运行>`。
 5. 核对`run.json`和双方日志中的PASS/FAIL/FATAL/DONE，之后在实际宿主核对自有PID已退出。编译、断言通过或双端DONE均不单独等于完整功能通过。
 
@@ -40,7 +42,7 @@
 
 ## TDFC 配套与当前冻结组
 
-当前工作使用 `b3-build-075` + `native-hooks-013` + `tdfc-build-004`，原生能力 `b3-v6`。051扩展菜单、052对话、054探索、058动态绘图通过。059密集战斗采样通过活性检查并降低差分开销，070六类投掷物双向专项通过；071魔法/角度仍有失败，075定向修复后正在重测。敌人专项正在运行，仍缺完整武器、预测与长期压力等门禁。历史B1/B2及每次B3冻结均保留，不能混用能力或合并旧绿灯。具体绿/红结果以实施记录为准。
+当前工作使用 `b3-build-086` + `native-hooks-014` + `tdfc-build-004`，原生能力 `b3-v7`。051扩展菜单、052对话、054探索、058动态绘图通过。059密集战斗采样通过活性检查并降低差分开销，070六类投掷物双向专项通过；071魔法/角度仍有失败，075定向修复后正在重测。083敌人专项仍红，085有限平地移动预测通过；086特殊枪械/近战正在实测，声音及默认分支已有专项；仍缺完整武器、RV/MSW接口与长期压力等门禁。历史B1/B2及每次B3冻结均保留，不能混用能力或合并旧绿灯。具体绿/红结果以实施记录为准。
 
 - `build_tdfc.py --output build/ab/<新TDFC构建>`复制 TDFC 完整 src/tests 后编译，始终不写安装目录。
 - `run_tdfc_logic.py --baseline build/ab/baseline-001 --candidate build/ab/<TDFC构建> --output build/ab/<新逻辑运行>`执行真实 AIR 逻辑检查。

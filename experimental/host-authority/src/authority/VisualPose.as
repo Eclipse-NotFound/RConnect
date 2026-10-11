@@ -14,19 +14,21 @@ package authority {
    import flash.filters.ColorMatrixFilter;
    import flash.utils.getQualifiedClassName;
    import flash.utils.Dictionary;
-   /** Native symbol state, not pixels or a second animation/weapon simulation. */
+   /** Native symbol state, with local pixel surfaces only for mutated bitmaps.
+    * Never runs a second animation, AI or weapon simulation. */
    public final class VisualPose {
       public static var resolve:Function;
       private static var applied:Dictionary=new Dictionary(true),added:Dictionary=new Dictionary(true);
       private static var captured:Dictionary=new Dictionary(true);
       private static var scriptless:Dictionary=new Dictionary(true);
+      private static var pixels:Dictionary=new Dictionary(true);
       private static var immutableKeys:Dictionary=new Dictionary(true);
       private static function recipeKey(value:Object):String {
          if(value==null)return "null";
          var key:String=immutableKeys[value];
          if(key==null){key=JSON.stringify(value);immutableKeys[value]=key;}return key;
       }
-      public static function capture(display:DisplayObject,depth:int=0):Object {
+      public static function capture(display:DisplayObject,depth:int=0,includePixels:Boolean=false):Object {
          if(display==null)return null;
          var color:ColorTransform=display.transform.colorTransform;
          var matrix:Matrix=display.transform.matrix;
@@ -36,6 +38,7 @@ package authority {
                color.redOffset,color.greenOffset,color.blueOffset,color.alphaOffset]};
          s.blend=display.blendMode;s.cache=display.cacheAsBitmap;s.filters=[];
          if(display is Bitmap){s.smoothing=Bitmap(display).smoothing;s.pixelSnapping=Bitmap(display).pixelSnapping;}
+         if(includePixels && display is Bitmap && Bitmap(display).bitmapData!=null)s.pixels=PixelSurface.capture(Bitmap(display).bitmapData);
          for each(var filter:Object in display.filters) {
             var fs:Object={kind:getQualifiedClassName(filter)};
             if(filter is ColorMatrixFilter)fs.matrix=filter.matrix;
@@ -53,12 +56,15 @@ package authority {
          if(display is Sprite && (clip==null || getQualifiedClassName(display)=="flash.display::MovieClip"))s.vector=VectorDraw.capture(Sprite(display).graphics);
          else if(display is Shape)s.vector=VectorDraw.capture(Shape(display).graphics);
          var parent:DisplayObjectContainer=display as DisplayObjectContainer;
-         if(parent!=null && depth<12) {
+         // An invisible parent suppresses its entire subtree. Keep the root
+         // state and capture the current children when it becomes visible;
+         // hidden health bars otherwise multiply dense-room capture work.
+         if(parent!=null && display.visible && display.alpha>0 && depth<12) {
             s.children=[];
             for(var i:int=0;i<parent.numChildren;i++) {
                var child:DisplayObject=parent.getChildAt(i);
                if(child is MovieClip || child is TextField || child is Sprite || child is Bitmap || clip==null && child is Shape)
-                  s.children.push({n:child.name,i:i,cls:getQualifiedClassName(child),s:capture(child,depth+1)});
+                  s.children.push({n:child.name,i:i,cls:getQualifiedClassName(child),s:capture(child,depth+1,includePixels)});
             }
          }
          // Native authored trees have many unchanged limbs, colors and empty
@@ -77,7 +83,7 @@ package authority {
                      if(ca.n!==cb.n || ca.i!==cb.i || ca.cls!==cb.cls || ca.s!==cb.s){equal=false;break;}
                   }
                   if(equal)s[field]=old;else same=false;
-               }else if(value is Array && recipeEqual(old,value))s[field]=old;
+               }else if((value is Array || field=="pixels") && recipeEqual(old,value))s[field]=old;
                else same=false;
             }
             for(field in previous)if(!s.hasOwnProperty(field)){same=false;break;}
@@ -94,6 +100,14 @@ package authority {
       }
       public static function apply(display:DisplayObject,s:Object):void {
          if(display==null || s==null)return;
+         if(display is Bitmap && s.pixels!=null) {
+            var nativePixels:Object=pixels[display];
+            if(nativePixels==null || nativePixels.recipe!==s.pixels) {
+               if(nativePixels==null)nativePixels=pixels[display]={data:null,recipe:null};
+               nativePixels.data=PixelSurface.restore(s.pixels,nativePixels.data);
+               Bitmap(display).bitmapData=nativePixels.data;nativePixels.recipe=s.pixels;
+            }
+         }
          if(s.vector!=null) {
             if(display is Sprite)VectorDraw.apply(display,Sprite(display).graphics,s.vector);
             else if(display is Shape)VectorDraw.apply(display,Shape(display).graphics,s.vector);
@@ -143,7 +157,7 @@ package authority {
          }
          if(s.c!=null)display.transform.colorTransform=previous.nativeColor;
          var parent:DisplayObjectContainer=display as DisplayObjectContainer;
-         if(parent!=null) {
+         if(parent!=null && s.children!=null) {
          var managed:Dictionary=added[parent];if(managed==null)managed=added[parent]=new Dictionary(true);
          var live:Dictionary=new Dictionary(true);
          for each(var child:Object in s.children) {
@@ -151,10 +165,11 @@ package authority {
             if(target!=null && getQualifiedClassName(target)!=child.cls && managed[target]!==child.cls)target=null;
             // Unnamed authored children have different generated instance names.
             if(target==null && int(child.i)<parent.numChildren && getQualifiedClassName(parent.getChildAt(int(child.i)))==child.cls)target=parent.getChildAt(int(child.i));
-            if(target==null && resolve!=null) {
+            if(target==null) {
                if(child.s.vector!=null)target=child.cls=="flash.display::Shape"?new Shape():new Sprite();
+               else if(child.cls=="flash.display::Bitmap")target=new Bitmap();
                else if(child.cls=="flash.text::TextField")target=new TextField();
-               else {var Type:Class=resolve(child.cls);target=new Type() as DisplayObject;}
+               else if(resolve!=null){var Type:Class=resolve(child.cls);target=new Type() as DisplayObject;}
                if(target!=null){target.name=child.n;parent.addChildAt(target,Math.min(child.i,parent.numChildren));managed[target]=child.cls;}
             }
             if(target!=null){live[target]=true;apply(target,child.s);}
@@ -166,6 +181,7 @@ package authority {
       }
       public static function dispose(display:DisplayObject):void {
          if(display==null)return;
+         var surface:Object=pixels[display];if(surface!=null){surface.data.dispose();delete pixels[display];}
          VectorDraw.dispose(display);delete applied[display];delete added[display];delete captured[display];delete scriptless[display];
          var parent:DisplayObjectContainer=display as DisplayObjectContainer;
          if(parent!=null)for(var i:int=0;i<parent.numChildren;i++)dispose(parent.getChildAt(i));
