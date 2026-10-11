@@ -1,14 +1,18 @@
 package authority {
    import flash.display.MovieClip;
    import flash.display.DisplayObject;
+   import flash.utils.getTimer;
    /** Confirmation-only B1 presentation. No attack(), damage() or object step. */
    public class ClientReplica {
       public var tactics:TacticsBridge;
       public var access:NativeAccess,frames:uint=0,lastTick:uint=0,lastFrame:Object;
+      public var displayFrame:Object,clock:PlaybackClock=new PlaybackClock();
       public var scene:ReplicaScene;
       public var peerProfile:Object;
       public var playerApplications:Array=[0,0],projectileApplications:uint=0;
       private var peers:Object={},projectiles:Object={};
+      private var endedProjectiles:Object={};
+      public var shortProjectileApplications:uint=0;
       private var originalPause:Boolean;
       private var decoder:FrameDelta=new FrameDelta();
       private var satsEpoch:int=-1;
@@ -23,6 +27,17 @@ package authority {
          frame=decoder.decode(frame);
          if(frame.tick<lastTick)return;
          lastTick=frame.tick;lastFrame=frame;++frames;
+         if(clock.push(frame,getTimer()))present(true);
+      }
+      public function present(flush:Boolean=false):void {
+         var ready:Array=clock.take(getTimer(),flush);
+         // Every discrete scene delta is consumed, even if several confirmations
+         // arrive during one screen frame. No broken wall or removed unit is lost.
+         for each(var confirmed:Object in ready)render(confirmed);
+         if(clock.current!=null && clock.fraction>0)render(PoseTween.frame(clock.current,clock.next,clock.fraction));
+      }
+      private function render(frame:Object):void {
+         displayFrame=frame;
          MapState.apply(access,frame.map);
          if(frame.scene!=null && scene.apply(frame.scene)) {
             for each(var old:Object in peers) {
@@ -41,6 +56,14 @@ package authority {
          }
          var active:Object={};
          for each(var p:Object in frame.projectiles)if(p.room===frame.room && present){applyProjectile(p);active[String(p.id)]=true;}
+         for each(p in frame.projectileEvents)if(p.ended && p.room===frame.room && present && !active[String(p.id)]) {
+            // A fast bullet can be born and hit in one host step. Its final
+            // native symbol still gets one source frame, once per lifetime.
+            var last:Object=endedProjectiles[p.id];
+            if(last==null){endedProjectiles[p.id]={tick:frame.tick};last=endedProjectiles[p.id];++shortProjectileApplications;}
+            if(last.tick==frame.tick){applyProjectile(p);active[String(p.id)]=true;}
+         }
+         for(var endKey:String in endedProjectiles)if(frame.tick-endedProjectiles[endKey].tick>240)delete endedProjectiles[endKey];
          for(var key:String in projectiles)if(!active[key]){
             var clip:DisplayObject=projectiles[key];if(clip.parent!=null)clip.parent.removeChild(clip);delete projectiles[key];
          }
@@ -106,10 +129,12 @@ package authority {
             var ClassRef:Class=access.visualClass(state.clip);
             clip=new ClassRef() as MovieClip;
             if(clip==null)throw new Error("Unsupported projectile display "+state.clip);
-            access.world.grafon.visObjs[1].addChild(clip);projectiles[state.id]=clip;
+            access.world.grafon.visObjs[int(state.layer)].addChild(clip);projectiles[state.id]=clip;
          }
          clip.x=state.x;clip.y=state.y;clip.rotation=state.rotation;
-         clip.scaleX=state.sx;clip.scaleY=state.sy;clip.gotoAndStop(state.frame);
+         clip.scaleX=state.sx;clip.scaleY=state.sy;
+         if(state.visual!=null)VisualPose.apply(clip,state.visual);
+         else if(clip.currentFrame!=state.frame)clip.gotoAndStop(state.frame);else clip.stop();
          ++projectileApplications;
       }
       public function dispose():void {
@@ -119,7 +144,7 @@ package authority {
             if(rec.actor!=null)rec.actor.destroy();
          }
          for each(var clip:DisplayObject in projectiles)if(clip.parent!=null)clip.parent.removeChild(clip);
-         scene.dispose();peers={};projectiles={};access.world.onPause=originalPause;
+         scene.dispose();peers={};projectiles={};endedProjectiles={};access.world.onPause=originalPause;
       }
    }
 }

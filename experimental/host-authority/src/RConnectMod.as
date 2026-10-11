@@ -13,7 +13,7 @@ package {
    import flash.text.TextFormat;
    import flash.utils.getTimer;
    public class RConnectMod {
-      public static const VERSION:String="B2-0.1-experimental";
+      public static const VERSION:String="B3-0.1-experimental";
       public static var instance:RConnectMod;
       public var main:Object,stage:Stage,access:NativeAccess,host:HostSession,replica:ClientReplica;
       public var config:Object,link:Link,probe:Probe;
@@ -35,7 +35,9 @@ package {
          if(config.experimental!==true || config.session==null || (config.role!="host" && config.role!="join"))throw new Error("Missing explicit B configuration");
          role=config.role;session=config.session;access=new NativeAccess(main);access.checkHooks();
          MapState.install(access);
-         if(config.probe===true)probe=config.scenario=="friendly"?new FriendlyProbe(access,role=="host"):
+         if(config.probe===true)probe=config.scenario=="personal"?new PersonalProbe(access,role=="host"):
+            config.scenario=="grabs"?new GrabsProbe(access,role=="host"):
+            config.scenario=="friendly"?new FriendlyProbe(access,role=="host"):
             config.scenario=="travel"?new TravelProbe(access,role=="host"):
             config.scenario=="sats"?new SatsProbe(access,role=="host"):
             config.scenario=="lifecycle"?new LifecycleProbe(access,role=="host"):
@@ -78,8 +80,15 @@ package {
                network=true;startNetwork();
             }
             if(role=="join")w.onPause=true;
+            if(replica!=null && welcomed) {
+               ++NativeIntents.replaying;
+               try{replica.present();}finally{--NativeIntents.replaying;}
+               if(replica.displayFrame!=null && replica.displayFrame.character!=null)saves.confirm(replica.displayFrame.character.saveRequests);
+            }
             if(host!=null && host.active){host.menus();host.pause.update(host);}
             if((role=="host" && host!=null && host.active) || (role=="join" && welcomed)) {
+               input.acknowledge(role=="host"?host.inputs[0].receivedAction:
+                  (replica.lastFrame==null?0:int(replica.lastFrame.players[1].actionAck)));
                var frame:Object=input.frame(w,session,role=="host"?0:1,room);
                var identity:Object=role=="host"?host.inputs[0]:(replica.lastFrame==null?null:replica.lastFrame.players[1]);
                if(identity!=null){frame.room=identity.room;frame.roomEpoch=identity.roomEpoch;frame.epoch=identity.epoch;}
@@ -140,7 +149,6 @@ package {
             } else if(value.type=="frame" && welcomed && value.session===session) {
                ++NativeIntents.replaying;
                try{replica.apply(value);}finally{--NativeIntents.replaying;}
-               if(replica.lastFrame.character!=null)saves.confirm(replica.lastFrame.character.saveSerial);
                label.text="RConnect B · 开发测试 · "+role;
             }
             else if(value.type=="stopped")fail(value.reason);

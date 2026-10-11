@@ -14,7 +14,7 @@ package authority {
          if(!ok && mismatch==null){mismatch={reason:reason,details:details};Log.write("scene-mismatch",mismatch);}matches=matches && ok;
       }
       public function observe(replica:ClientReplica):void {
-         var frame:Object=replica.lastFrame,scene:ReplicaScene=replica.scene;
+         var frame:Object=replica.displayFrame,scene:ReplicaScene=replica.scene;
          if(scene==null || frame.scene==null)return;
          ++frames;if(previous!==scene.key){++roomChanges;previous=scene.key;}
          eq(scene.key===frame.room && replica.access.world.loc===scene.room && replica.access.world.gg.loc===scene.room,"scene ownership");

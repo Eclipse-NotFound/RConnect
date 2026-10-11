@@ -23,6 +23,7 @@ package authority {
             a.context.loc=w.loc;a.context.land=land;a.context.transitionCooldown=0;
          }
          r.rooms.dispose();
+         r.clearDepartedRooms();
          var b:PlayerActor=session.actors[1],i:int=old.units.indexOf(b.unit);
          if(i>=0)old.units.splice(i,1);
          access.scope.run(b.context,function():void {

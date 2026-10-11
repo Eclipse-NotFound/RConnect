@@ -42,8 +42,8 @@ package authority {
       public static function execute(actor:PlayerActor,key:String,args:Array):Boolean {
          if(!valid(key,args))return false;
          var g:Object=actor.unit,inv:Object=g.invent,p:Object=g.pers,id:String=args.length>0?args[0]:null;
-         if(key=="save"){++actor.saveSerial;return true;}
-         if(key=="changeWeapon") {if(inv.weapons[id]==null)return false;inv.weapons[id].respect=2;g.changeWeapon(id);}
+         if(key=="save"){actor.requestSave(args[0]);return true;}
+         if(key=="changeWeapon") {if(id!="not" && inv.weapons[id]==null)return false;g.changeWeapon(id);}
          else if(key=="changeArmor") {if(id!="" && inv.armors[id]==null)return false;g.changeArmor(id,args[1]);}
          else if(key=="changeSpell") {if(id!="" && inv.spells[id]==null)return false;g.changeSpell(id,args[1]);}
          else if(key=="armorAbil")g.armorAbil();

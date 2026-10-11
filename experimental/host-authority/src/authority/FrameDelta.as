@@ -1,4 +1,5 @@
 package authority {
+   import flash.utils.Dictionary;
    /** Ordered reliable deltas keep unchanged native poses out of the wire. */
    public final class FrameDelta {
       private var prior:Object,serial:uint=0;
@@ -13,14 +14,27 @@ package authority {
          if(packet.full!=null)prior=packet.full;
          else {
             if(prior==null || !(packet.changes is Array))throw new Error("Confirmation delta has no baseline");
+            // A render buffer retains older confirmations. Clone only branches
+            // changed by this packet; never mutate a previously returned frame.
+            var clones:Dictionary=new Dictionary(true),root:Object=prior;
+            prior=branch(root);clones[root]=prior;
             for each(var op:Array in packet.changes) {
                var target:Object=prior,path:Array=op[0];
                if(path.length==0){prior=op[2];continue;}
-               for(var i:int=0;i<path.length-1;i++)target=target[path[i]];
+               for(var i:int=0;i<path.length-1;i++) {
+                  var child:Object=target[path[i]],copy:Object=clones[child];
+                  if(copy==null){copy=branch(child);clones[child]=copy;clones[copy]=copy;}
+                  target[path[i]]=copy;target=copy;
+               }
                if(op[1]==0)delete target[path[path.length-1]];else target[path[path.length-1]]=op[2];
             }
          }
          serial=packet.serial;return prior;
+      }
+      private static function branch(value:Object):Object {
+         var result:Object=value is Array?[]:{};
+         for(var key:String in value)result[key]=value[key];
+         return result;
       }
       private static function simple(value:*):Boolean {return value==null || value is String || value is Number || value is Boolean;}
       private static function diff(a:*,b:*,path:Array,out:Array):void {

@@ -6,6 +6,8 @@ package authority {
       public var settings:Object={allowGrab:false,struggle:true,thrownDamage:false,follow:false};
       private var satsActive:Boolean=false;
       private var pending:Array=[];
+      private var flight:Array=[];
+      public function acknowledge(id:int):void {while(flight.length>0 && flight[0].id<=id)flight.shift();}
       public function enqueue(value:Object):void {if(pending.length>=48)throw new Error("Too many pending UI actions");pending.push(value);}
       public function frame(world:Object,session:String,player:int,room:String):Object {
          var c:Object=world.ctr,b:int=0,a:Array=[];
@@ -17,6 +19,8 @@ package authority {
          }
          satsActive=world.sats.active;
          while(pending.length>0 && a.length<16) {var request:Object=pending.shift();request.id=++action;a.push(request);}
+         if(flight.length+a.length>64)throw new Error("Native action confirmation backlog");
+         flight=flight.concat(a);a=flight.slice(0,16);
          if(SharedPause.requested(world))b=0;
          return {type:"input",session:session,player:player,room:room,roomEpoch:1,epoch:1,weaponEpoch:1,
             seq:++seq,buttons:b,aimX:Number(world.celX),aimY:Number(world.celY),actions:a,settings:settings,pause:SharedPause.requested(world)};

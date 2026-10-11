@@ -56,6 +56,7 @@ package authority {
             room.bonuses=[];
             for(var x:int=1;x<room.spaceX-1;x++)for(var y:int=1;y<=int((floorY+1)/40);y++) {
                var tile:Object=room.space[x][y];tile.phis=y==int((floorY+1)/40)?1:0;tile.water=0;tile.shelf=false;tile.diagon=0;tile.trap=tile.door=null;
+               tile.phX1=x*40;tile.phX2=(x+1)*40;tile.phY1=y*40;tile.phY2=(y+1)*40;tile.stair=0;
                if(tile.phis==0){tile.front=tile.back=tile.zad="";tile.vid=tile.vid2=tile.zForm=0;}
                tile.visi=tile.t_visi=1;
             }
@@ -76,7 +77,7 @@ package authority {
          }
          if(begin<0)return;tick-=begin;
          if(tick>52 && phase==0){phase=1;check(door.inter.open && !door.dead,"join action opens actual native reinforced door without destroying it");}
-         if(tick>105 && phase==1){phase=2;check(!door.inter.open && !door.dead,"second join action closes the same intact native door");}
+         if(tick>120 && phase==1){phase=2;check(!door.inter.open && !door.dead,"second join action closes the same intact native door",NativeFields.capture(door.inter));}
          if(tick>155 && phase==2) {
             phase=3;var n:int=0,o2:Object=room.firstObj;
             while(o2!=null){if(getQualifiedClassName(o2)=="fe.loc::Loot" && o2.item.id=="kofe")n+=o2.item.kol;o2=o2.nobj;}

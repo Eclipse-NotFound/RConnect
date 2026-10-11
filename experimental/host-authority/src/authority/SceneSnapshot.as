@@ -32,7 +32,11 @@ package authority {
          var rendered:Dictionary=new Dictionary(true);
          for each(var actor:PlayerActor in actors) {
             rendered[actor.unit.vis]=true;
-            for each(var child:Object in actor.unit.childObjs)if(child!=null && child.vis!=null)rendered[child.vis]=true;
+            for each(var child:Object in actor.unit.childObjs)if(child!=null && child.vis!=null) {
+               rendered[child.vis]=true;
+               if(actor.unit.loc===room && child!==actor.unit.currentWeapon && child.vis.parent!=null)
+                  result.effects.push({key:id(child),clip:getQualifiedClassName(child.vis),layer:child.sloy,pose:VisualPose.capture(child.vis),atlas:null});
+            }
          }
          if(full) {
             result.fields=NativeFields.capture(room);result.fon=room.land.act.fon;

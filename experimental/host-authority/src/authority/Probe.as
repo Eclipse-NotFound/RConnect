@@ -6,12 +6,17 @@ package authority {
       public var host:Boolean,access:NativeAccess,finished:Boolean=false,passed:int=0,failed:int=0;
       private var prepared:Boolean=false,start:int=-1,damageChecked:Boolean=false,initial:Object;
       private var target:Object,targetHP:Number=0;
+      private var peerReady:Boolean=false;
       public function Probe(access:NativeAccess,host:Boolean){this.access=access;this.host=host;}
       public function check(ok:Boolean,name:String,details:Object=null):void {
          if(ok)++passed;else ++failed;
          Log.write(ok?"PASS":"FAIL",{name:name,details:details});
       }
-      public function message(value:Object):void {}
+      public function message(value:Object):void {
+         if(host && !peerReady && value.type=="input" && value.player==1 && value.probeReady===true) {
+            peerReady=true;start=getTimer();
+         }
+      }
       public function prepare():void {
          if(prepared)return;prepared=true;
          ContractChecks.run(check);
@@ -34,7 +39,8 @@ package authority {
          frame.buttons=0;frame.actions=[];
          var elapsed:int=start<0?0:getTimer()-start;
          if(!host) {
-            if(start<0)start=getTimer();
+            if(start<0)return frame;
+            frame.probeReady=true;
             if(elapsed>800 && elapsed<2000)frame.buttons=Commands.FIRE;
             // Aim horizontally; the host probes a real native target separately.
             frame.aimX=access.world.gg.X+350;frame.aimY=access.world.gg.Y-access.world.gg.scY*.65;
@@ -46,7 +52,7 @@ package authority {
          if(host) {
             if(session==null || !session.active)return;
             var a:Object=session.actors[0].unit,b:Object=session.actors[1].unit;
-            if(start<0) {
+            if(initial==null) {
                if(a.currentWeapon==null || b.currentWeapon==null)throw new Error("Probe requires both native magazines after player assembly");
                start=getTimer();initial={hostHP:a.hp,hostHold:a.currentWeapon.hold,remoteHold:b.currentWeapon.hold,
                   hostReserve:a.invent.items[a.currentWeapon.ammo].kol,remoteReserve:b.invent.items[b.currentWeapon.ammo].kol};
@@ -58,6 +64,7 @@ package authority {
                check(!b.ctr.keyLeft,"remote controller has no local keyboard listener");
                access.world.swfStage.dispatchEvent(new KeyboardEvent(KeyboardEvent.KEY_UP,true,false,0,65));
             }
+            if(!peerReady)return;
             if(getTimer()-start>3000 && !damageChecked) {
                damageChecked=true;
                var before:Number=b.hp,other:Number=a.hp;
@@ -79,22 +86,29 @@ package authority {
                check(access.world.gg===a && access.world.pers===a.pers && access.world.invent===a.invent && access.world.gui.gg===a && access.scope.depth==0,"host world and UI restored after native invocation");
                session.link.send({type:"probe-result",passed:passed,failed:failed});finish();
             }
-         } else if(replica!=null && replica.lastFrame!=null && getTimer()-start>5500) {
+         } else if(replica!=null && replica.lastFrame!=null) {
+            if(start<0)start=getTimer();
+            if(getTimer()-start<=5500)return;
             check(replica.frames>20,"client receives host confirmation stream",{frames:replica.frames});
             check(access.world.onPause,"client native world is not simulating a second battle");
             check(replica.lastFrame.players[1].ack>0,"host acknowledges consumed join input");
             check(replica.lastFrame.spawns>0,"client receives authoritative projectile identities");
+            check(replica.shortProjectileApplications>0,"client renders terminal native bullet symbols that disappear within a host step",{applied:replica.shortProjectileApplications});
             finish();
          }
       }
       private function prepareTarget(remote:Object):void {
-         var room:Object=remote.loc,x:Number=remote.X+170,y:Number=remote.Y;
+         var room:Object=remote.loc,y:Number=Math.floor((room.limY-120)/40)*40-1,x:Number=770,row:int=int((y+1)/40);
          // Controlled shooting lane in this test copy only. Native collision and
          // damage remain enabled; only unrelated terrain and AI are excluded.
-         for(var tx:int=Math.max(1,int(remote.X/40));tx<=Math.min(room.spaceX-2,int((x+80)/40));tx++)
-            for(var ty:int=Math.max(1,int((y-120)/40));ty<int(y/40);ty++) {
-               var tile:Object=room.space[tx][ty];tile.phis=0;
+         for(var tx:int=1;tx<room.spaceX-1;tx++)
+            for(var ty:int=1;ty<=row;ty++) {
+               var tile:Object=room.space[tx][ty];tile.phis=ty==row?1:0;
+               tile.phX1=tx*40;tile.phX2=(tx+1)*40;tile.phY1=ty*40;tile.phY2=(ty+1)*40;
+               tile.water=0;tile.shelf=false;tile.diagon=tile.stair=0;tile.trap=tile.door=null;tile.visi=tile.t_visi=1;
+               if(tile.phis==0){tile.front=tile.back=tile.zad="";tile.vid=tile.vid2=tile.zForm=0;}
             }
+         room.black=false;access.world.gg.setLocPos(400,y);remote.setLocPos(600,y);
          var Type:Class=access.definition("fe.unit.UnitZombie");
          target=new Type("1",100,<unit tr="1" dig="0"/>,null);
          target.putLoc(room,x,y);room.units.push(target);

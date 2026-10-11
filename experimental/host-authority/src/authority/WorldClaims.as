@@ -24,6 +24,7 @@ package authority {
          if(cp && before!=2 && object.active==2)for each(other in actors) {
             other.unit.pers.currentCP=object;other.unit.pers.currentCPCode=object.code;
             if(object.code)other.unit.pers.prevCPCode=object.code;
+            if(other!==actor)actor.access.scope.run(other.context,function():void {actor.access.world.saveGame();});
          }
       }
    }

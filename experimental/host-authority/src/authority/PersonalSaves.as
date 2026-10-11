@@ -13,21 +13,25 @@ package authority {
          if(applying)return false;
          if(host!=null) {
             if(!host.active)return false;
-            if(w.gg===host.actors[1].unit){++host.actors[1].saveSerial;return true;}
+            if(w.gg===host.actors[1].unit){host.actors[1].requestSave(slot);return true;}
             return false;
          }
          if(NativeIntents.replaying==0)input.enqueue({type:"native",key:"save",args:[slot]});
          return true;
       }
-      public function confirm(serial:uint):void {
-         if(serial<=lastSaved)return;
-         applying=true;
-         try {
+      public function confirm(requests:Array):void {
+         for each(var request:Object in requests) {
+            if(request.serial<=lastSaved)continue;
+            var slot:int=request.slot<0?access.world.autoSaveN:int(request.slot);
+            if(slot<0 || access.world.getSave(slot)==null)throw new Error("Requested character save slot is unavailable");
+            applying=true;
+            try {
             // Explicit slot bypasses only the vanilla autosave tick cooldown;
             // the joining world's simulation clock intentionally does not run.
-            access.world.saveGame(access.world.autoSaveN);
-            lastSaved=serial;Log.write("personal-save",{serial:serial,slot:access.world.autoSaveN});
-         }finally {applying=false;}
+               access.world.saveGame(slot);
+               lastSaved=request.serial;Log.write("personal-save",{serial:lastSaved,slot:slot});
+            }finally {applying=false;}
+         }
       }
       public function dispose():void {access.definition("fe.World")["rconnectSave"]=previous;}
    }

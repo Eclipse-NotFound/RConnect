@@ -5,9 +5,14 @@ package authority {
       private static const BODY:Array=["hp","maxhp","mana","stam","rad","poison","cut","shithp","maxshithp","obs","maxObs","rat","h2o","sost","ggControl","currentPet"];
       public static function capture(actor:PlayerActor):Object {
          var g:Object=actor.unit,result:Object={body:{},pers:NativeFields.capture(g.pers),maps:{},
-            inventory:PlainData.copy(g.invent.save()),saveSerial:actor.saveSerial,sats:{od:actor.context.sats.od,limOd:actor.context.sats.limOd}};
+            inventory:PlainData.copy(g.invent.save()),inventoryFields:NativeFields.capture(g.invent),spells:{},effects:[],
+            equipment:{},armors:{},saveSerial:actor.saveSerial,saveRequests:actor.saveRequests.concat(),sats:{od:actor.context.sats.od,limOd:actor.context.sats.limOd}};
          for each(var key:String in BODY)if(key in g)result.body[key]=g[key];
          for each(key in MAPS)result.maps[key]=PlainData.copy(g.pers[key]);
+         for(key in g.invent.spells)if(g.invent.spells[key]!=null)result.spells[key]=NativeFields.capture(g.invent.spells[key]);
+         for(key in g.invent.armors)if(g.invent.armors[key]!=null)result.armors[key]=NativeFields.capture(g.invent.armors[key]);
+         for each(var effect:Object in g.effects)if(effect!=null && !effect.vse)result.effects.push(NativeFields.capture(effect));
+         for each(key in ["currentSpell","throwWeapon","magicWeapon"])result.equipment[key]=g[key]==null?null:g[key].id;
          return result;
       }
       private static function map(target:Object,source:Object):void {
@@ -43,6 +48,18 @@ package authority {
          for each(field in ["cWeaponId","cArmorId","cAmulId","cSpellId","prevArmor"])inv[field]=data[field];
          g.currentArmor=data.cArmorId==null?null:inv.armors[data.cArmorId];
          g.currentAmul=data.cAmulId==null?null:inv.armors[data.cAmulId];
+         NativeFields.apply(inv,s.inventoryFields);
+         for(key in s.spells) {if(inv.spells[key]==null)inv.addSpell(key);NativeFields.apply(inv.spells[key],s.spells[key]);}
+         for(key in s.armors)if(inv.armors[key]!=null)NativeFields.apply(inv.armors[key],s.armors[key]);
+         for each(key in ["currentSpell","throwWeapon","magicWeapon"])g[key]=s.equipment[key]==null?null:(key=="currentSpell"?inv.spells:inv.weapons)[s.equipment[key]];
+         var effects:Array=[],old:Object={};
+         for each(var effect:Object in g.effects)if(effect!=null)old[effect.id]=effect;
+         for each(record in s.effects) {
+            effect=old[record.id];
+            if(effect==null){var Effect:Class=access.definition("fe.unit.Effect");effect=new Effect(record.id,g,record.val);}
+            NativeFields.apply(effect,record);effects.push(effect);
+         }
+         g.effects=effects;
          w.sats.od=s.sats.od;w.sats.limOd=s.sats.limOd;
          if(!w.sats.active)w.sats.odv=w.sats.od;
       }

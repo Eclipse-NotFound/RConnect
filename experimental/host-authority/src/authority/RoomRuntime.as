@@ -1,4 +1,5 @@
 package authority {
+   import flash.display.DisplayObject;
    import flash.utils.Dictionary;
    import flash.utils.getQualifiedClassName;
    import flash.utils.getTimer;
@@ -40,6 +41,17 @@ package authority {
          Land["rconnectRoomStep"]=stepLand;Player["rconnectDamage"]=damagePlayer;
       }
       private function stepObject(room:Object,object:Object):void {
+         var bullet:Boolean=NativeAccess.get(object,"owner")!=null && NativeAccess.get(object,"weap")!=null && NativeAccess.get(object,"begx")!=null;
+         if(bullet)projectile(room,object);
+         stepOwnedObject(room,object);
+         if(bullet) {
+            var finalState:Object=projectile(room,object);
+            if(!object.in_chain) {
+               finalState.ended=true;recent.push(finalState);
+            }
+         }
+      }
+      private function stepOwnedObject(room:Object,object:Object):void {
          var inter:Object=NativeAccess.get(object,"inter"),operator:PlayerActor=interactionOwners[object];
          if(operator!=null && inter!=null) {
             WorldClaims.step(object,room,operator,actors);
@@ -113,28 +125,33 @@ package authority {
          while(object!=null && ++count<=10000) {
             var owner:Object=NativeAccess.get(object,"owner"),weapon:Object=NativeAccess.get(object,"weap");
             if(owner!=null && weapon!=null && NativeAccess.get(object,"begx")!=null) {
-               var id:uint=projectileIds[object];
-               if(id==0){id=++nextProjectile;projectileIds[object]=id;++spawns;
-                  ownerSpawns[owner]=uint(ownerSpawns[owner])+1;
-                  if(owner===actors[0].unit)++spawnsByPlayer[0];else if(owner===actors[1].unit)++spawnsByPlayer[1];}
-               var clip:Object=object.vis;
-               var state:Object={id:id,room:access.keyFor(room),x:object.X,y:object.Y,dx:object.dx,dy:object.dy,
-                  bx:object.begx,by:object.begy,tick:tick,owner:owner===actors[0].unit?0:owner===actors[1].unit?1:-1,
-                  clip:clip==null?"":getQualifiedClassName(clip),rotation:clip==null?0:clip.rotation,
-                  sx:clip==null?1:clip.scaleX,sy:clip==null?1:clip.scaleY,frame:clip==null?1:clip.currentFrame,
-                  born:latestProjectiles[String(id)]==null};
-               seen[String(id)]=state;
-               if(state.born)recent.push(state);
+               var state:Object=projectile(room,object);seen[String(state.id)]=state;
             }
             object=object.nobj;
          }
          if(count>10000)throw new Error("Native object chain exceeds bound");
-         for(var key:String in latestProjectiles)if(seen[key]==null) {
-            var end:Object=latestProjectiles[key];end.ended=true;end.tick=tick;recent.push(end);
+         for(var key:String in latestProjectiles)if(seen[key]==null && !latestProjectiles[key].ended) {
+            var end:Object=PoseTween.copy(latestProjectiles[key]);end.ended=true;end.tick=tick;recent.push(end);
          }
          latestByRoom[room]=seen;
          if(recent.length>1024)throw new Error("Projectile event queue overflow");
       }
+      private function projectile(room:Object,object:Object):Object {
+         var owner:Object=object.owner,id:uint=projectileIds[object],born:Boolean=id==0;
+         if(born) {
+            id=++nextProjectile;projectileIds[object]=id;++spawns;ownerSpawns[owner]=uint(ownerSpawns[owner])+1;
+            if(owner===actors[0].unit)++spawnsByPlayer[0];else if(owner===actors[1].unit)++spawnsByPlayer[1];
+         }
+         var clip:DisplayObject=object.vis as DisplayObject;
+         var state:Object={id:id,room:access.keyFor(room),x:object.X,y:object.Y,dx:object.dx,dy:object.dy,
+            bx:object.begx,by:object.begy,tick:tick,owner:owner===actors[0].unit?0:owner===actors[1].unit?1:-1,
+            clip:clip==null?"":getQualifiedClassName(clip),rotation:clip==null?0:clip.rotation,visual:VisualPose.capture(clip),
+            sx:clip==null?1:clip.scaleX,sy:clip==null?1:clip.scaleY,frame:NativeAccess.get(clip,"currentFrame",1),layer:object.sloy,born:born};
+         if(latestByRoom[room]==null)latestByRoom[room]={};latestByRoom[room][String(id)]=state;
+         if(born)recent.push(state);
+         return state;
+      }
+      public function clearDepartedRooms():void {latestByRoom=new Dictionary(true);recent=[];interactionOwners=new Dictionary(true);}
       public function snapshot():Object {
          var objects:Array=[],events:Array=recent;recent=[];
          for each(var latest:Object in latestByRoom)for each(var value:Object in latest)objects.push(value);

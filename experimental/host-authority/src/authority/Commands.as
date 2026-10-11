@@ -44,6 +44,7 @@ package authority {
          consumed=accepted;actions=[];pressed=0;return result;
       }
       public function clear():void {buttons=0;pressed=0;actions=[];lastAt=-1;}
+      public function get receivedAction():int{return lastAction;}
       public function takeMenus():Array {
          var taken:Array=[],rest:Array=[];
          for each(var a:Object in actions)if(a.type=="native")taken.push(a);else rest.push(a);

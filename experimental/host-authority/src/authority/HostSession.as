@@ -23,6 +23,7 @@ package authority {
          // horizontal offset can spawn the second player in a shaft.
          var remote:PlayerActor=access.createPlayer(hello.profile,access.world.loc,local.unit.X,local.unit.Y);
          actors=[local,remote];this.link=link;
+         local.observeWeapon();remote.observeWeapon();
          local.unit.isSats=remote.unit.isSats=false;
          combat=new FriendlyCombat(this);
          grips=new PeerGrabs(actors);local.grips=remote.grips=grips;
@@ -74,6 +75,7 @@ package authority {
                   Log.write("native-menu-action",{player:actor.id,key:action.key,accepted:ok});
                }
             });
+            actor.observeWeapon();inputs[actor.id].weaponEpoch=actor.weaponEpoch;
          }
          if(changed && pause.paused)publish();
       }
@@ -82,10 +84,14 @@ package authority {
          grips.present();
          combat.update();
          var frame:Object=runtime.snapshot();frame.type="frame";frame.session=session;frame.room=inputs[1].room;
+         frame.time=getTimer();
          frame.paused=pause.paused;frame.pauseEpoch=pause.epoch;
          frame.map=MapState.capture(actors[1].unit.loc.land);
          frame.players=[actors[0].snapshot(inputs[0].consumed),actors[1].snapshot(inputs[1].consumed)];
-         for each(var actor:PlayerActor in actors)frame.players[actor.id].key=scene.id(actor.unit);
+         for each(var actor:PlayerActor in actors) {
+            frame.players[actor.id].key=scene.id(actor.unit);
+            frame.players[actor.id].actionAck=inputs[actor.id].receivedAction;
+         }
          frame.friendlyFire=combat.enabled;
          frame.scene=scene.capture(actors[1].unit.loc,actors,runtime.tick);
          frame.character=CharacterState.capture(actors[1]);

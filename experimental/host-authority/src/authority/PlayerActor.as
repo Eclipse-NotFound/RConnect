@@ -8,9 +8,11 @@ package authority {
       public var weaponEpoch:int=1;
       public var roomEpoch:int=1,lastStep:uint=0;
       public var epoch:int=1,deathTicks:int=0,spawn:Object,saveSerial:uint=0;
+      public var saveRequests:Array=[];
       public var personal:Object={allowGrab:false,struggle:true,thrownDamage:false,follow:false};
       public var grips:PeerGrabs;
       private var consumedButtons:int=0;
+      private var observedWeapon:Object,weaponKnown:Boolean=false,observedVariant:int=0;
       public function PlayerActor(access:NativeAccess,id:int){this.access=access;this.id=id;}
       public static function local(access:NativeAccess):PlayerActor {
          var a:PlayerActor=new PlayerActor(access,0),w:Object=access.world;
@@ -41,7 +43,7 @@ package authority {
                else if(action.type=="native")NativeIntents.execute(actor,action.key,action.args);
                else if(action.type=="equip" && unit.invent.weapons[action.weapon]!=null &&
                   (unit.currentWeapon==null || unit.currentWeapon.id!=action.weapon)) {
-                  ++weaponEpoch;unit.changeWeapon(action.weapon);
+                  unit.changeWeapon(action.weapon);
                }
             }
             unit.celX=input.aimX;unit.celY=input.aimY;
@@ -53,6 +55,16 @@ package authority {
             ++steps;
             if(context.transitionCooldown>0)--context.transitionCooldown;
          });
+         observeWeapon();
+      }
+      public function observeWeapon():void {
+         var current:Object=unit.currentWeapon,variant:int=current==null?0:current.variant;
+         if(weaponKnown && (current!==observedWeapon || variant!=observedVariant))++weaponEpoch;
+         observedWeapon=current;observedVariant=variant;weaponKnown=true;
+      }
+      public function requestSave(slot:int=-1):void {
+         saveRequests.push({serial:++saveSerial,slot:slot});
+         if(saveRequests.length>64)saveRequests.shift();
       }
       public function finishWorldServices():void {
          // The native World loop handles the local actor after Land.step.

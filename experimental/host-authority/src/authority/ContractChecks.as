@@ -7,6 +7,7 @@ package authority {
             buttons:buttons,aimX:100,aimY:80,actions:actions==null?[]:actions};
       }
       public static function run(check:Function):void {
+         presentation(check);
          var named:Array=[];named["lmg"]={hold:11};named[3]="numeric";
          var copied:Object=JSON.parse(JSON.stringify(PlainData.copy({weapons:named})));
          check(copied.weapons.lmg.hold==11 && copied.weapons["3"]=="numeric","named native save entries survive JSON");
@@ -91,6 +92,31 @@ package authority {
          try{perception.find(enemy,false);}catch(perceptionError:Error){threw=perceptionError.message=="perception exception";}
          check(threw && enemy.celUnit===left.unit && enemy.celX==oldX && world.gg===owner && scope.depth==0,
             "failed multi-player perception restores native target fields and nested player scopes");
+      }
+      private static function presentation(check:Function):void {
+         var enc:FrameDelta=new FrameDelta(),dec:FrameDelta=new FrameDelta();
+         var one:Object={players:[{x:1,native:{hp:10}}],scene:{tiles:[{x:1,v:[2,3]}]}};
+         var first:Object=dec.decode(enc.encode(one));
+         var two:Object={players:[{x:5,native:{hp:9}}],scene:{tiles:[{x:2,v:[4,3]}]}};
+         var second:Object=dec.decode(enc.encode(two));
+         check(first.players[0].x==1 && first.players[0].native.hp==10 && first.scene.tiles[0].v[0]==2 &&
+            second.players[0].x==5 && second.scene.tiles[0].v[0]==4,"delta decoding preserves every buffered older confirmation");
+         var timeline:PlaybackClock=new PlaybackClock();
+         var a:Object={time:100,room:"one",pauseEpoch:0,players:[]},b:Object={time:150,room:"one",pauseEpoch:0,players:[]};
+         timeline.push(a,1100);timeline.take(1100,true);timeline.push(b,1157);timeline.take(1190);
+         check(timeline.current===a && timeline.next===b && Math.abs(timeline.fraction-.5)<.001,
+            "one render timeline interpolates confirmed source time despite uneven arrivals");
+         var frozen:Object={time:155,room:"one",pauseEpoch:1,paused:true,players:[]};
+         var boundary:Boolean=timeline.push(frozen,1200),ready:Array=timeline.take(1200,boundary);
+         check(boundary && ready.length==2 && timeline.current===frozen && timeline.fraction==0,
+            "pause flush consumes pending deltas and stops exactly at the host boundary");
+         var p:Object={x:10,y:20,sx:1,sy:1,r:179,a:1,v:true,f:1,children:[]};
+         var q:Object={x:20,y:40,sx:1,sy:1,r:-179,a:1,v:true,f:2,children:[]};
+         var v:Object=PoseTween.pose(p,q,.5);
+         check(v.x==15 && v.y==30 && Math.abs(v.r-180)<.001 && v.f==1 && p.x==10,
+            "motion crosses animation frames while poses stay discrete and angles take the short arc");
+         q.sx=-1;v=PoseTween.pose(p,q,.5);
+         check(v.sx==1 && v.r==179 && v.x==15,"weapon reflection is a discrete native flip, never a shrinking interpolated sprite");
       }
    }
 }
