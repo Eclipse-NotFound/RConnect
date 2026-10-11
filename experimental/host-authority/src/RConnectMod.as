@@ -18,6 +18,8 @@ package {
       public var main:Object,stage:Stage,access:NativeAccess,host:HostSession,replica:ClientReplica;
       public var config:Object,link:Link,probe:Probe;
       public var tactics:TacticsBridge;
+      private var intents:NativeIntents;
+      private var saves:PersonalSaves;
       private var server:ServerSocket,input:InputSource=new InputSource(),label:TextField=new TextField();
       private var started:Boolean=false,travelled:Boolean=false,network:Boolean=false,welcomed:Boolean=false;
       private var role:String,room:String,session:String,bootAt:int=getTimer(),readyFrames:int=0,failed:Boolean=false;
@@ -32,7 +34,13 @@ package {
          stream.open(file,FileMode.READ);config=JSON.parse(stream.readUTFBytes(stream.bytesAvailable));stream.close();
          if(config.experimental!==true || config.session==null || (config.role!="host" && config.role!="join"))throw new Error("Missing explicit B configuration");
          role=config.role;session=config.session;access=new NativeAccess(main);access.checkHooks();
-         if(config.probe===true)probe=config.scenario=="split-rooms"?new SplitRoomProbe(access,role=="host",config.enemy):
+         MapState.install(access);
+         if(config.probe===true)probe=config.scenario=="friendly"?new FriendlyProbe(access,role=="host"):
+            config.scenario=="travel"?new TravelProbe(access,role=="host"):
+            config.scenario=="sats"?new SatsProbe(access,role=="host"):
+            config.scenario=="lifecycle"?new LifecycleProbe(access,role=="host"):
+            config.scenario=="cooperation"?new CooperationProbe(access,role=="host"):
+            config.scenario=="split-rooms"?new SplitRoomProbe(access,role=="host",config.enemy):
             config.scenario=="ownership"?new OwnershipProbe(access,role=="host",config.swap===true,config.enemy):new Probe(access,role=="host");
          label.defaultTextFormat=new TextFormat("Arial",13,0xFFDB58);label.width=440;label.height=22;
          label.mouseEnabled=false;label.background=true;label.backgroundColor=0x161B20;label.alpha=.85;label.x=8;label.y=8;
@@ -61,8 +69,8 @@ package {
                travelled=true;
                if(w.land.act.id!==config.land){w.pip.onoff(-1);w.game.beginMission(config.land);return;}
             }
-            if(config.land!=null && config.land!="" && (w.land.act.id!==config.land || w.game.curLandId!==config.land))return;
-            if(w.t_exit>0 || w.t_die>0 || !w.gg.ggControl || w.gg.work=="res" || w.gg.work=="change")return;
+            if(!network && config.land!=null && config.land!="" && (w.land.act.id!==config.land || w.game.curLandId!==config.land))return;
+            if(!network && (w.t_exit>0 || w.t_die>0 || !w.gg.ggControl || w.gg.work=="res" || w.gg.work=="change"))return;
             if(++readyFrames<5)return;
             if(!network) {
                w.pip.onoff(-1);
@@ -70,10 +78,11 @@ package {
                network=true;startNetwork();
             }
             if(role=="join")w.onPause=true;
+            if(host!=null && host.active){host.menus();host.pause.update(host);}
             if((role=="host" && host!=null && host.active) || (role=="join" && welcomed)) {
                var frame:Object=input.frame(w,session,role=="host"?0:1,room);
                var identity:Object=role=="host"?host.inputs[0]:(replica.lastFrame==null?null:replica.lastFrame.players[1]);
-               if(identity!=null){frame.room=identity.room;frame.roomEpoch=identity.roomEpoch;}
+               if(identity!=null){frame.room=identity.room;frame.roomEpoch=identity.roomEpoch;frame.epoch=identity.epoch;}
                frame.weaponEpoch=role=="host"?host.inputs[0].weaponEpoch:
                   (replica.lastFrame==null?1:replica.lastFrame.players[1].weaponEpoch);
                if(probe!=null)frame=probe.input(frame,host);
@@ -87,12 +96,16 @@ package {
          if(config.tdfc!=null)tactics=new TacticsBridge(main,access,session,role);
          if(role=="host") {
             host=new HostSession(access,session);host.failed=fail;
+            host.pause.enabled=config.sharedPause===true;
             host.tactics=tactics;
             server=new ServerSocket();server.bind(int(config.port),"127.0.0.1");server.listen();
             server.addEventListener(ServerSocketConnectEvent.CONNECT,onAccept);
             Log.write("listening",{port:config.port});
          } else {
             replica=new ClientReplica(access);
+            intents=new NativeIntents(access,input);
+            saves=new PersonalSaves(access,null,input);
+            input.scene=replica.scene;
             replica.tactics=tactics;
             link=new Link();wire(link);
             link.connected=function():void {var hello:Object=Commands.greeting("hello",session);hello.tdfc=config.tdfc;hello.profile=access.profile();link.send(hello);};
@@ -112,7 +125,9 @@ package {
          };
       }
       private function receive(value:Object):void {
+         if(failed)return;
          try {
+            if(probe!=null)probe.message(value);
             if(role=="host") {
                if(value.type=="hello") {
                   if(value.tdfc!==config.tdfc)throw new Error("TDFC candidate mismatch");
@@ -120,14 +135,17 @@ package {
                }else host.receive(value);
             } else if(value.type=="welcome") {
                if(!Commands.greetingMatches(value,session))throw new Error("Welcome architecture/build mismatch");
-               if(value.room!==access.roomKey())throw new Error("B1 requires matching native room before activation");
+               replica.peerProfile=value.profile;
                room=value.room;welcomed=true;Log.write("joined",{room:room});
             } else if(value.type=="frame" && welcomed && value.session===session) {
-               replica.apply(value);
-               label.text=value.room===access.roomKey()?"RConnect B2 · 实验原型 · "+role:"RConnect B2 · 实验版：当前房间画面尚未支持";
+               ++NativeIntents.replaying;
+               try{replica.apply(value);}finally{--NativeIntents.replaying;}
+               if(replica.lastFrame.character!=null)saves.confirm(replica.lastFrame.character.saveSerial);
+               label.text="RConnect B · 开发测试 · "+role;
             }
             else if(value.type=="stopped")fail(value.reason);
             else if(value.type=="rejected")Log.write("input-rejected",value);
+            else if(value.type=="notice"){label.text=String(value.text);Log.write("notice",{text:value.text});}
             else if(value.type=="probe-result")Log.write("peer-probe-result",value);
          }catch(error:*){Log.error(error);fail(String(error));}
       }

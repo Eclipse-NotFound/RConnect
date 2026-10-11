@@ -9,12 +9,16 @@ package authority {
       public var spawnsByPlayer:Array=[0,0];
       public var afterStep:Function,failed:Function;
       public var tactics:TacticsBridge;
+      public var lives:PlayerLives;
+      public var travel:PartyTravel;
       public var rooms:OccupiedRooms,transfers:RoomTransfers;
       private var oldPlayerHook:Function,oldRoomHook:Function,oldObjectHook:Function,oldDamageHook:Function;
       private var oldFindHook:Function,perception:NativePerception;
       private var oldGotoHook:Function;
+      private var oldChallengeHook:Function;
       private var projectileIds:Dictionary=new Dictionary(true),nextProjectile:uint=0;
       private var ownerSpawns:Dictionary=new Dictionary(true);
+      private var interactionOwners:Dictionary=new Dictionary(true);
       private var latestByRoom:Dictionary=new Dictionary(true),recent:Array=[];
       public function RoomRuntime(access:NativeAccess,actors:Array,inputs:Array) {
          this.access=access;this.actors=actors;this.inputs=inputs;
@@ -25,19 +29,29 @@ package authority {
          oldPlayerHook=Location["rconnectPlayerStep"];oldRoomHook=Land["rconnectRoomStep"];
          oldObjectHook=Location["rconnectObjectStep"];oldDamageHook=Player["rconnectDamage"];
          oldGotoHook=Land["rconnectGotoRoom"];
+         oldChallengeHook=Land["rconnectGotoChallenge"];
          var Unit:Class=access.definition("fe.unit.Unit");oldFindHook=Unit["rconnectFindTarget"];
          if(oldPlayerHook!=null || oldRoomHook!=null || oldObjectHook!=null || oldDamageHook!=null || oldFindHook!=null || oldGotoHook!=null)throw new Error("Native scheduling seam already occupied");
          rooms=new OccupiedRooms(access,actors);transfers=new RoomTransfers(access,actors,inputs,rooms);
          Land["rconnectGotoRoom"]=transfers.request;
+         Land["rconnectGotoChallenge"]=transfers.challenge;
          perception=new NativePerception(access.scope,actors);Unit["rconnectFindTarget"]=perception.find;
          Location["rconnectPlayerStep"]=stepPlayers;Location["rconnectObjectStep"]=stepObject;
          Land["rconnectRoomStep"]=stepLand;Player["rconnectDamage"]=damagePlayer;
       }
       private function stepObject(room:Object,object:Object):void {
+         var inter:Object=NativeAccess.get(object,"inter"),operator:PlayerActor=interactionOwners[object];
+         if(operator!=null && inter!=null) {
+            WorldClaims.step(object,room,operator,actors);
+            if(!inter.is_act && operator.interacting!==object)delete interactionOwners[object];
+            return;
+         }
+         var claimant:PlayerActor=WorldClaims.choose(object,room,actors);
+         if(claimant!=null){WorldClaims.step(object,room,claimant,actors);return;}
          var owner:Object=NativeAccess.get(object,"owner");
          for each(var actor:PlayerActor in actors) {
             if(object===actor.unit)throw new Error("Player was also inserted into native object chain");
-            if(owner===actor.unit) {
+            if(owner===actor.unit || object===actor.unit.pet) {
                if(actor.id==1)++remoteObjectSteps;
                access.scope.runRoom(actor.context,room,function():void {object.step();});return;
             }
@@ -65,11 +79,13 @@ package authority {
             if(actors[i].lastStep==tick)throw new Error("Player stepped twice in one world tick");
             actors[i].lastStep=tick;
             actors[i].step(inputs[i].consume(getTimer()));inputs[i].weaponEpoch=actors[i].weaponEpoch;
+            if(actors[i].interacting!=null)interactionOwners[actors[i].interacting]=actors[i];
          }
          capture(room);
       }
       private function stepLand(land:Object):void {
          try {
+            if(travel!=null && land!==actors[0].context.land)travel.rebind(land);
             ++tick;
             var occupied:Array=rooms.occupied();
             for each(var room:Object in occupied) {
@@ -83,7 +99,7 @@ package authority {
                });
             }
             for each(var actor:PlayerActor in actors)actor.finishWorldServices();
-            transfers.commit();rooms.occupied();rooms.showHost();
+            transfers.commit();if(lives!=null)lives.step();rooms.occupied();rooms.showHost();
             if(access.scope.depth!=0)throw new Error("Native context leaked across a world step");
             if(afterStep!=null)afterStep();
          }catch(error:*) {
@@ -130,6 +146,7 @@ package authority {
          Location["rconnectPlayerStep"]=oldPlayerHook;Land["rconnectRoomStep"]=oldRoomHook;
          Location["rconnectObjectStep"]=oldObjectHook;Player["rconnectDamage"]=oldDamageHook;
          Land["rconnectGotoRoom"]=oldGotoHook;
+         Land["rconnectGotoChallenge"]=oldChallengeHook;
          access.definition("fe.unit.Unit")["rconnectFindTarget"]=oldFindHook;perception=null;
          if(tactics!=null){tactics.dispose();tactics=null;}
          if(rooms!=null)rooms.dispose();

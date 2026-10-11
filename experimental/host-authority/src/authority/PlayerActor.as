@@ -3,8 +3,14 @@ package authority {
    public class PlayerActor {
       public var access:NativeAccess,id:int,unit:Object,context:Object={},steps:uint=0;
       public var failed:Function;
+      public var interacting:Object;
+      public var resolveTarget:Function,owned:Boolean=false;
       public var weaponEpoch:int=1;
       public var roomEpoch:int=1,lastStep:uint=0;
+      public var epoch:int=1,deathTicks:int=0,spawn:Object,saveSerial:uint=0;
+      public var personal:Object={allowGrab:false,struggle:true,thrownDamage:false,follow:false};
+      public var grips:PeerGrabs;
+      private var consumedButtons:int=0;
       public function PlayerActor(access:NativeAccess,id:int){this.access=access;this.id=id;}
       public static function local(access:NativeAccess):PlayerActor {
          var a:PlayerActor=new PlayerActor(access,0),w:Object=access.world;
@@ -16,23 +22,35 @@ package authority {
          return a;
       }
       public function step(input:Object):void {
+         var actor:PlayerActor=this;
          context.loc=unit.loc;context.land=unit.loc.land;
          context.celX=input.aimX;context.celY=input.aimY;
          access.scope.run(context,function():void {
+            if(grips!=null)grips.prepare(actor,input);
             var ctr:Object=context.ctr;
-            ctr.clearAll();ctr.keyAction=ctr.keyCrack=ctr.keyFly=ctr.keyTest1=false;
-            ctr.keyLeft=(input.buttons&Commands.LEFT)!=0;ctr.keyRight=(input.buttons&Commands.RIGHT)!=0;
-            ctr.keyJump=(input.buttons&Commands.JUMP)!=0;ctr.keyAttack=(input.buttons&Commands.FIRE)!=0;
-            ctr.keySit=(input.buttons&Commands.SIT)!=0;ctr.keyRun=(input.buttons&Commands.RUN)!=0;
+            // Native actions can consume a held key (throw, grab, single shot).
+            // Do not resurrect it every network tick before a release/new press.
+            consumedButtons&=int(input.buttons)&~int(input.pressed);
+            ctr.keyReload=ctr.keyFly=ctr.keyTest1=false;
+            for(var i:int=0;i<Commands.HELD.length;i++)ctr[Commands.HELD[i]]=(input.buttons&~consumedButtons&(1<<i))!=0;
+            for each(var key:String in Commands.ONCE)ctr[key]=false;
             for each(var action:Object in input.actions) {
                if(action.type=="reload")ctr.keyReload=true;
+               else if(action.type=="control")ctr[action.key]=true;
+               else if(action.type=="sats")SatsActions.execute(actor,action.plan);
+               else if(action.type=="native")NativeIntents.execute(actor,action.key,action.args);
                else if(action.type=="equip" && unit.invent.weapons[action.weapon]!=null &&
                   (unit.currentWeapon==null || unit.currentWeapon.id!=action.weapon)) {
                   ++weaponEpoch;unit.changeWeapon(action.weapon);
                }
             }
             unit.celX=input.aimX;unit.celY=input.aimY;
-            unit.step();++steps;
+            if(!context.sats.active) {
+               PlayerPointer.run(actor,input,function():void {unit.step();});
+               if(grips!=null)grips.afterStep(actor);
+               for(i=0;i<Commands.HELD.length;i++)if((input.buttons&(1<<i))!=0 && !ctr[Commands.HELD[i]])consumedButtons|=1<<i;
+            }
+            ++steps;
             if(context.transitionCooldown>0)--context.transitionCooldown;
          });
       }
@@ -47,26 +65,24 @@ package authority {
             if(w.calcMassW){context.invent.calcWeaponMass();w.calcMassW=false;}
          });
       }
-      public function onDeath(type:int):void {
-         if(failed!=null)failed("B1 death lifecycle has not passed validation");
-         else throw new Error("B1 death lifecycle has not passed validation");
-      }
       public function snapshot(ack:int):Object {
          var g:Object=unit,v:Object=g.vis,w:Object=g.currentWeapon,weapon:Object=null;
          if(w!=null && w.vis!=null) {
             var p:DisplayObject=w.vis as DisplayObject;
             weapon={id:w.id,x:p.x,y:p.y,rotation:p.rotation,sx:p.scaleX,sy:p.scaleY,
-               frame:NativeAccess.get(w.vis,"currentFrame",1),hold:w.hold,ammo:w.ammo,reserve:g.invent.items[w.ammo].kol,
+               variant:w.variant,visual:VisualPose.capture(w.vis),
+               native:NativeFields.capture(w),
+               frame:NativeAccess.get(w.vis,"currentFrame",1),hold:w.hold,ammo:w.ammo,reserve:g.invent.items[w.ammo]==null?0:g.invent.items[w.ammo].kol,
                reload:NativeAccess.get(w,"t_reload",0),attack:NativeAccess.get(w,"t_attack",0)};
          }
-         return {id:id,epoch:1,room:access.keyFor(g.loc),roomEpoch:roomEpoch,weaponEpoch:weaponEpoch,ack:ack,x:g.X,y:g.Y,dx:g.dx,dy:g.dy,hp:g.hp,maxhp:g.maxhp,mana:g.mana,
+         return {id:id,epoch:epoch,native:NativeFields.capture(g),personal:PlainData.copy(personal),room:access.keyFor(g.loc),roomEpoch:roomEpoch,weaponEpoch:weaponEpoch,ack:ack,x:g.X,y:g.Y,dx:g.dx,dy:g.dy,hp:g.hp,maxhp:g.maxhp,mana:g.mana,
             direction:g.storona,sx:v.scaleX,sy:v.scaleY,pose:v.osn.currentFrame,
-            body:v.osn.body.currentFrame,weapon:weapon,steps:steps};
+            body:v.osn.body.currentFrame,visual:VisualPose.capture(v as DisplayObject),weapon:weapon,steps:steps};
       }
       public function destroy():void {
          context.ctr.clearAll();
          access.scope.unregister(context);
-         if(id!=0 && unit!=null) {
+         if(owned && unit!=null) {
             unit.remVisual();
             var list:Array=unit.loc.units,index:int=list.indexOf(unit);
             if(index>=0)list.splice(index,1);

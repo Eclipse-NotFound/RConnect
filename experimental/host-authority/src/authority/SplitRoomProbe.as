@@ -1,5 +1,5 @@
 package authority {
-   /** Native dual-room checkpoint. It deliberately does not claim client scene rendering. */
+   /** Native dual-room execution plus confirmation-only scene assertions. */
    public class SplitRoomProbe extends Probe {
       private var tick:uint=0,ready:Boolean=false,home:Object,back:Object,targets:Array=[],foes:Array=[];
       private var phase:int=0,base:Array=[],empty:Object,dead:Object,wall:Object,hostRoom:Object,hostVisual:Object,hostCamera:Object;
@@ -7,11 +7,17 @@ package authority {
       private var minimum:Array=[10000,10000],acquired:Array=[false,false],shotBase:Array=[0,0];
       private var confirmedAimY:Number=700;
       private var enemyKind:String,initialArt:int;
+      private var sceneChecks:SceneChecks=new SceneChecks();
+      private var begin:int=-1;
+      override public function message(value:Object):void {
+         if(host && begin<0 && value.type=="input" && value.player==1 && value.probeStart is Number)begin=int(value.probeStart);
+      }
       private function get extra():int {return enemyKind=="tdfc"?325:0;}
       public function SplitRoomProbe(a:NativeAccess,h:Boolean,enemyKind:String="native"){super(a,h);this.enemyKind=enemyKind;}
       override public function input(frame:Object,session:HostSession):Object {
-         if(host && session!=null && session.active)tick=session.runtime.tick;
-         frame.buttons=tick>=30 && tick<48?Commands.FIRE:0;frame.actions=[];
+         if(host && session!=null && session.active && begin>=0)tick=session.runtime.tick-begin;
+         if(!host && begin>=0)frame.probeStart=begin;
+         frame.buttons=begin>=0 && tick>=30 && tick<48?Commands.FIRE:0;frame.actions=[];
          frame.aimX=750;frame.aimY=host && session!=null && session.active?session.actors[0].unit.Y-55:confirmedAimY;
          return frame;
       }
@@ -19,7 +25,9 @@ package authority {
          if(finished)return;
          if(!host) {
             if(replica==null || replica.lastFrame==null)return;
-            tick=replica.lastTick;
+            if(begin<0)begin=replica.lastTick;
+            tick=replica.lastTick-begin;
+            sceneChecks.observe(replica);
             confirmedAimY=replica.lastFrame.players[1].y-55;
             if(tick>=320+extra) {
                var f:Object=replica.lastFrame;
@@ -28,6 +36,7 @@ package authority {
                check(f.players[0].steps==f.tick && f.players[1].steps==f.tick,"join confirms each native actor advances once per world tick");
                check(f.spawnsByPlayer[0]>0 && f.spawnsByPlayer[1]>0,"both separated players fired native projectiles");
                check(access.world.onPause,"join remains a confirmation consumer during host dual-room combat");
+               sceneChecks.finish(check,enemyKind);
                finish();
             }
             return;
@@ -42,9 +51,10 @@ package authority {
             access.world.land.art_t=10000;initialArt=10000+int(tick);
             return;
          }
-         if(tick>previousTick) {
-            stepChecks=stepChecks && a.steps-previousSteps[0]==tick-previousTick && b.steps-previousSteps[1]==tick-previousTick;
-            previousSteps=[a.steps,b.steps];previousTick=tick;
+         if(begin<0)return;tick=runtime.tick-begin;
+         if(runtime.tick>previousTick) {
+            stepChecks=stepChecks && a.steps-previousSteps[0]==runtime.tick-previousTick && b.steps-previousSteps[1]==runtime.tick-previousTick;
+            previousSteps=[a.steps,b.steps];previousTick=runtime.tick;
          }
          restored=restored && access.world.gg===a.unit && access.world.loc===a.unit.loc && a.unit.loc.gg===a.unit && access.world.land.loc===a.unit.loc && access.world.land.gg===a.unit && access.world.grafon===a.unit.loc.grafon && access.world.visual===a.unit.loc.grafon.visual && access.world.cam===runtime.rooms.services(a.unit.loc).cam && access.world.ctr===a.context.ctr && access.world.sats.gg===a.unit && access.world.gui.gg===a.unit && access.scope.depth==0;
          if(phase==0 && tick>=70) {
@@ -121,8 +131,8 @@ package authority {
             phase=8;RoomWeaponChecks.run(session,check);
          }
          if(tick>=330+extra) {
-            check(initialArt-access.world.land.art_t==tick,"native map-wide artillery clock advances once regardless of occupied room count");
-            check(stepChecks && a.steps==tick && b.steps==tick,"split, reunion and exits never double-step or omit a native player");
+            check(initialArt-access.world.land.art_t==runtime.tick,"native map-wide artillery clock advances once regardless of occupied room count");
+            check(stepChecks && a.steps==runtime.tick && b.steps==runtime.tick,"split, reunion and exits never double-step or omit a native player");
             check(restored && access.world.loc===home,"all world and camera ownership references return to the host after every world step");
             if(session.tactics!=null) {
                var rs:Array=runtime.rooms.summary(),sum:int=0;
@@ -131,7 +141,9 @@ package authority {
                check(session.tactics.inspect(home).tick==runtime.rooms.services(home).steps && session.tactics.inspect(back).tick==runtime.rooms.services(back).steps,
                   "each TDFC room clock matches its retained native room");
             }
-            Log.write("split-room-evidence",{tick:tick,rooms:runtime.rooms.summary(),players:[a.snapshot(0),b.snapshot(0)],minimum:minimum,acquired:acquired});
+            var sa:Object=a.snapshot(0),sb:Object=b.snapshot(0);delete sa.visual;delete sb.visual;
+            if(sa.weapon!=null)delete sa.weapon.visual;if(sb.weapon!=null)delete sb.weapon.visual;
+            Log.write("split-room-evidence",{tick:tick,rooms:runtime.rooms.summary(),players:[sa,sb],minimum:minimum,acquired:acquired});
             finish();
          }
       }
@@ -169,6 +181,9 @@ package authority {
             var tile:Object=room.space[x][z];tile.phis=z==row || x==0 || x==room.space.length-1?1:0;
             tile.phX1=x*40;tile.phX2=(x+1)*40;tile.phY1=z*40;tile.phY2=(z+1)*40;
             tile.water=0;tile.visi=tile.t_visi=1;tile.shelf=false;tile.diagon=tile.stair=0;tile.door=tile.trap=null;
+            // The fixture changes collision and artwork together; retaining an
+            // old wall's front texture would cover actors in the cleared lane.
+            if(tile.phis==0){tile.front=tile.back=tile.zad="";tile.vid=tile.vid2=tile.zForm=0;}
          }
          room.black=room.mirror=false;return y;
       }

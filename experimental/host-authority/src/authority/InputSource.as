@@ -1,13 +1,25 @@
 package authority {
+   import fe.inter.AuthoritySats;
    public class InputSource {
       public var seq:int=0,action:int=0;
+      public var scene:ReplicaScene;
+      public var settings:Object={allowGrab:false,struggle:true,thrownDamage:false,follow:false};
+      private var satsActive:Boolean=false;
+      private var pending:Array=[];
+      public function enqueue(value:Object):void {if(pending.length>=48)throw new Error("Too many pending UI actions");pending.push(value);}
       public function frame(world:Object,session:String,player:int,room:String):Object {
          var c:Object=world.ctr,b:int=0,a:Array=[];
-         if(c.keyLeft)b|=Commands.LEFT;if(c.keyRight)b|=Commands.RIGHT;if(c.keyJump)b|=Commands.JUMP;
-         if(c.keyAttack)b|=Commands.FIRE;if(c.keySit)b|=Commands.SIT;if(c.keyRun)b|=Commands.RUN;
+         for(var i:int=0;i<Commands.HELD.length;i++)if(c[Commands.HELD[i]])b|=1<<i;
          if(c.keyReload){a.push({id:++action,type:"reload"});c.keyReload=false;}
+         for each(var key:String in Commands.ONCE)if(c[key]){a.push({id:++action,type:"control",key:key});c[key]=false;}
+         if(player==1 && satsActive && !world.sats.active && scene!=null) {
+            a.push({id:++action,type:"sats",plan:AuthoritySats.plan(world.sats.que,scene.keyFor)});world.sats.clearAll();
+         }
+         satsActive=world.sats.active;
+         while(pending.length>0 && a.length<16) {var request:Object=pending.shift();request.id=++action;a.push(request);}
+         if(SharedPause.requested(world))b=0;
          return {type:"input",session:session,player:player,room:room,roomEpoch:1,epoch:1,weaponEpoch:1,
-            seq:++seq,buttons:b,aimX:Number(world.celX),aimY:Number(world.celY),actions:a};
+            seq:++seq,buttons:b,aimX:Number(world.celX),aimY:Number(world.celY),actions:a,settings:settings,pause:SharedPause.requested(world)};
       }
    }
 }

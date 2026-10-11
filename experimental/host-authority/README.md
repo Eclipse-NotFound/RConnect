@@ -1,6 +1,6 @@
 # RConnect B — 主侧统一执行实验
 
-实现依据：[A/B计划](../../design/host-authority-parallel-plan-2026-10-11.md)。当前：[双房执行检查点](../../state/host-authority-rooms-2026-10-11.md)。历史：[B1检查点](../../state/host-authority-2026-10-11.md)。
+实现依据：[A/B计划](../../design/host-authority-parallel-plan-2026-10-11.md)。当前：[完整游玩实施与验证](../../state/host-authority-playable-2026-10-11.md)。历史：[双房检查点](../../state/host-authority-rooms-2026-10-11.md)、[B1检查点](../../state/host-authority-2026-10-11.md)。
 
 本目录独立于现有`src`。入口仍编译成`RConnectMod.swf`以适配原loader，但只允许`pfe-modsettings-rconnect-b-*`隔离AppID与显式实验配置；**不可复制到安装版release**。该前缀排除其他已安装模组的自动测试。A/B不互相连接，不热切换存档或正在运行的房间。
 
@@ -16,14 +16,14 @@
 | `TacticsBridge` / `NativePerception` | 可选 TDFC 房间调度接口与两名玩家的原生索敌/暴露计算 |
 | `Probe` / `ContractChecks` | 仅测试配置启用，真实AIR中的协议、资源隔离与原生开火检查 |
 
-当前已实现B2的主侧双房执行与受控前后景往返。**加入侧的新房间场景重现尚未接入**：收到异房确认时隐藏原房间画面并明确标注，避免画成错误房间。真实门的鼠标交互、共同旅行、死亡复活、SATS、念力、预测、完整敌人/特效和长期性能仍未完成，不能作为日常候选。
+当前B3已接入加入侧的原生地形、敌人、炮塔、血条、武器姿态、粒子和确认资源；门/容器/拾取/XP、独立复活、共同换图与SATS已有分项实测。新种子、多轮交互仍在回归，详见实况表。统一显示时钟/预测、完整特殊武器、MSW、紧凑UI、个人保存与长局压力尚未验收，仍不能作为日常候选。
 
 ## 复现步骤
 
 工具位于`tools/host_authority`，所有参数从RConnect目录解析。输出必须是`build/ab`下的新目录，已有结果不会覆盖。
 
 1. `freeze.py --runtime build/m51/map-runtime-63 --output build/ab/<新基线>`固定完整实物。已有`baseline-001`可核验后继续使用。
-2. `patch_native.py --baseline build/ab/baseline-001 --output build/ab/<新原生副本>`仅修改复制品。六个类提供默认空的入口或可选构造参数；回读核对loader、类表和资源，运行等价另验。
+2. `patch_native.py --baseline build/ab/baseline-001 --output build/ab/<新原生副本>`仅修改复制品。B3当前14个类提供可选接口；回读核对loader、类表、资源与XML查询，运行等价另验。
 3. `build.py --output build/ab/<新构建>`冻结源码与外链存根、编译并记录工具及产物SHA。存根不包含进SWF。
 4. 与其他RConnect测试会话错开AIR时段后，`run_probe.py --baseline build/ab/baseline-001 --candidate build/ab/<新构建> --native build/ab/<匹配的原生副本> --output build/ab/<新运行>`。
 5. 核对`run.json`和双方日志中的PASS/FAIL/FATAL/DONE，之后在实际宿主核对自有PID已退出。编译、断言通过或双端DONE均不单独等于完整功能通过。

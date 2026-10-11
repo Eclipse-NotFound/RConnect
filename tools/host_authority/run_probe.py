@@ -34,7 +34,7 @@ def main():
     ap.add_argument('--native', required=True)
     ap.add_argument('--output', required=True)
     ap.add_argument('--seconds', type=int, default=140)
-    ap.add_argument('--scenario', choices=('native-gun','ownership','split-rooms'), default='native-gun')
+    ap.add_argument('--scenario', choices=('native-gun','ownership','split-rooms','cooperation','lifecycle','sats','travel','friendly'), default='native-gun')
     ap.add_argument('--swap', action='store_true')
     ap.add_argument('--enemy', choices=('native','tdfc'), default='native')
     ap.add_argument('--tdfc', help='Optional frozen TDFC authority-v1 build directory')
@@ -88,6 +88,7 @@ def main():
         shutil.copy2(native/'pfe.swf', directory/'pfe.swf')
         shutil.copy2(candidate/'RConnectMod.swf', directory/'mods/Rconnect/release/RConnectMod.swf')
         configuration = dict(experimental=True, role=role, session=run_id, port=port, autoGame=True, land='random_mane', probe=True, scenario=args.scenario, swap=args.swap, enemy=args.enemy)
+        configuration['sharedPause'] = args.scenario=='sats'
         if tactics:
             shutil.copy2(tactics/'TDFCMod.swf',directory/'mods/TDFC/release/TDFCMod.swf')
             configuration['tdfc'] = tactics_build['candidate_sha256']

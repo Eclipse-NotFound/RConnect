@@ -20,7 +20,7 @@ package authority {
   }
   public function step(room:Object,tick:uint):void {
    var roster:Array=[];
-   for each(var actor:PlayerActor in actors)if(actor.unit.loc===room)roster.push({key:String(actor.id),epoch:1,unit:actor.unit});
+   for each(var actor:PlayerActor in actors)if(actor.unit.loc===room)roster.push({key:String(actor.id),epoch:actor.epoch,unit:actor.unit});
    if(!api.stepRoom(room,roster,tick))throw new Error("Occupied B room was not advanced by TDFC");
   }
   public function inspect(room:Object):Object {return api.inspect(room);}

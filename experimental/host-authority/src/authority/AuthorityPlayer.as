@@ -18,8 +18,9 @@ package authority {
          return super.outLoc(direction,x,y);
       }
       override public function die(type:int=0):* {
-         if(onDeath!=null)onDeath(type);
-         else throw new Error("B1 death lifecycle is not enabled");
+         if(scope==null)return super.die(type);
+         scope.run(context,function():void {nativeDeath(type);});
       }
+      private function nativeDeath(type:int):void {super.die(type);}
    }
 }

@@ -5,6 +5,7 @@ does not change the installation, loader, map generator, assets or class list.
 """
 import argparse
 import difflib
+import re
 import struct
 import subprocess
 import zlib
@@ -17,7 +18,7 @@ def once(source, before, after):
     return source.replace(before, after, 1)
 
 
-def modify(name, source):
+def modify_base(name, source):
     if 'RCONNECT_AUTHORITY_HOOKS' in source:
         raise ValueError('Refuse to patch an already patched native class')
     if name == 'fe.graph.Grafon':
@@ -93,6 +94,111 @@ def modify(name, source):
     raise ValueError(name)
 
 
+INTENTS = {
+    'fe.unit.UnitPlayer': ('changeWeapon', 'changeArmor', 'changeSpell', 'armorAbil', 'callPet', 'uncallPet'),
+    'fe.unit.Invent': ('useItem', 'usePotion', 'favItem', 'respectWeapon', 'drop', 'nextItem'),
+    'fe.unit.Pers': ('addSkill', 'addPerk'),
+    'fe.weapon.Weapon': ('initReload',),
+    'fe.loc.Game': ('gotoLand', 'beginMission'),
+}
+
+
+def modify(name, source):
+    original = source
+    core = ('fe.inter.Ctr','fe.loc.Location','fe.loc.Land','fe.unit.Unit','fe.unit.UnitPlayer','fe.graph.Grafon')
+    if name in core:
+        source = modify_base(name, source)
+    else:
+        constructor = '      public function '+name.split('.')[-1]+'('
+        source = once(source, constructor,
+            '      public static const RCONNECT_AUTHORITY_HOOKS:String = "b3-v1";\n\n'+constructor)
+    if name in INTENTS:
+        constructor = '      public function '+name.split('.')[-1]+'('
+        source = once(source, constructor, '      public static var rconnectIntent:Function = null;\n\n'+constructor)
+        for method in INTENTS[name]:
+            pattern = r'      public function '+method+r'\(([^\n]*)\) : ([^\n]+)\n      \{'
+            matches = list(re.finditer(pattern,source))
+            if len(matches)!=1:
+                raise ValueError('Intent anchor absent or ambiguous: '+name+'.'+method)
+            match=matches[0]
+            args = re.findall(r'(param\d+)\s*:',match.group(1))
+            result = match.group(2).strip()
+            return_value = 'false' if result=='Boolean' else '0' if result in ('int','uint','Number') else ''
+            statement = ('\n         if(rconnectIntent != null && Boolean(rconnectIntent(this,"'+method+'",['+','.join(args)+'])))\n'
+                '         {\n            return'+(' '+return_value if return_value else '')+';\n         }')
+            source = source[:match.end()]+statement+source[match.end():]
+    if name=='fe.unit.UnitPlayer':
+        anchor='         if(this.pers.hardcore && param1 >= 0)'
+        source=once(source,anchor,'         if(rconnectDeath != null && Boolean(rconnectDeath(this,param1)))\n'
+            '         {\n            return;\n         }\n'+anchor)
+        source=once(source,'      public static var rconnectDamage:Function = null;',
+            '      public static var rconnectDamage:Function = null;\n      public static var rconnectDeath:Function = null;')
+    if name=='fe.World':
+        anchor='      public function saveGame(param1:int = -1) : *\n      {'
+        source=once(source,anchor,'      public static var rconnectSave:Function = null;\n\n'+anchor+'\n'
+            '         if(rconnectSave != null && Boolean(rconnectSave(this,param1)))\n         {\n            return;\n         }')
+    if name=='fe.loc.Land':
+        source=once(source,'      public var act:LandAct;',
+            '      public static var rconnectSeedSource:Function = null;\n'
+            '      public var rconnectLayoutSeed:uint = 0;\n'
+            '      public static var rconnectGotoChallenge:Function = null;\n\n      public var act:LandAct;')
+        source=once(source,'            rndDeterm(rndSeedFor(this.act.id));',
+            '            this.rconnectLayoutSeed = rconnectSeedSource == null ? rndSeedFor(this.act.id) : uint(rconnectSeedSource(this));\n'
+            '            rndDeterm(this.rconnectLayoutSeed);\n'
+            '            this.rconnectLayoutSeed = _rndSeed;')
+        anchor='      public function gotoProb(param1:String = "", param2:Number = -1, param3:Number = -1) : *\n      {'
+        source=once(source,anchor,anchor+'\n'
+            '         if(rconnectGotoChallenge != null && Boolean(rconnectGotoChallenge(this,param1,param2,param3)))\n'
+            '         {\n            return;\n         }')
+    if name=='fe.unit.Unit':
+        anchor='      public static var rconnectFindTarget:Function = null;'
+        source=once(source,anchor,anchor+'\n      public static var rconnectHitPolicy:Function = null;\n'
+            '      public static function rconnectAllowed(source:Unit, target:Unit, nativeAllowed:Boolean, kind:String = "impact"):Boolean\n'
+            '      {\n         return rconnectHitPolicy == null ? nativeAllowed : Boolean(rconnectHitPolicy(source,target,nativeAllowed,kind));\n      }')
+    if name=='fe.weapon.Bullet':
+        source=once(source,'(this.targetObj || _loc2_.fraction != this.owner.fraction)',
+            '(Unit.rconnectAllowed(this.owner,_loc2_,Boolean(this.targetObj || _loc2_.fraction != this.owner.fraction)))')
+        for local in ('_loc1_','_loc3_'):
+            anchor='         for each('+local+' in loc.units)\n         {'
+            source=once(source,anchor,anchor+'\n            if(!Unit.rconnectAllowed(this.owner,'+local+',true,"explosion")) continue;')
+        source=once(source,'Boolean(this.weap.owner.fraction == Unit.F_PLAYER) && _loc1_.player',
+            'Boolean(this.weap.owner.fraction == Unit.F_PLAYER) && _loc1_.player && (Unit.rconnectHitPolicy == null || this.weap.owner == _loc1_)')
+        source=once(source,'if(Boolean(this.weap) && this.weap.owner.fraction == Unit.F_PLAYER)',
+            'if(Boolean(this.weap) && this.weap.owner.fraction == Unit.F_PLAYER && (Unit.rconnectHitPolicy == null || this.weap.owner == _loc3_))')
+    if name=='fe.unit.Mine':
+        source=once(source,'      public var explRadius:Number = 0;',
+            '      public var rconnectOwner:Unit = null;\n      public static var rconnectMineSight:Function = null;\n\n'
+            '      public var explRadius:Number = 0;')
+        source=once(source,'|| _loc1_.fraction == fraction || _loc1_.fraction == 0',
+            '|| !Unit.rconnectAllowed(this,_loc1_,_loc1_.fraction != fraction && _loc1_.fraction != 0,"mine")')
+        source=once(source,'isVis = World.w.gg.lookInvis(this);',
+            'isVis = rconnectMineSight == null ? World.w.gg.lookInvis(this) : Boolean(rconnectMineSight(this));')
+        source=once(source,'                              World.w.gg.bindChain(X,Y);',
+            '                              if(Unit.rconnectHitPolicy == null) World.w.gg.bindChain(X,Y);\n'
+            '                              else (_loc1_ as UnitPlayer).bindChain(X,Y);')
+    if name=='fe.weapon.WThrow':
+        source=once(source,'            _loc5_.fraction = owner.fraction;',
+            '            _loc5_.rconnectOwner = owner;\n            _loc5_.fraction = owner.fraction;')
+    if source==original:
+        raise ValueError('No native change: '+name)
+    # FFDec's importer loses @ in E4X filters when an attribute and a
+    # lexical variable share a name: (@id == id) becomes (id == id).
+    # Preserve the query with an explicit attribute read outside `with`.
+    # This applies to every recompiled class, including unrelated methods.
+    pattern = r'([A-Za-z_][\w.]*)\.\(@([A-Za-z_]\w*)\s*==\s*([A-Za-z_][\w.]*|"[^"\n]*")\)'
+    source, queries = re.subn(pattern,
+        lambda m: 'rconnectXmlFind('+m[1]+',"'+m[2]+'",'+m[3]+')', source)
+    if queries:
+        constructor = '      public function '+name.split('.')[-1]+'('
+        source = once(source, constructor,
+            '      private static function rconnectXmlFind(nodes:XMLList, key:String, expected:*):XMLList\n'
+            '      {\n         var result:XMLList = new XMLList();\n'
+            '         for each(var node:XML in nodes)\n         {\n'
+            '            if(node.attribute(key) == expected) result += node;\n'
+            '         }\n         return result;\n      }\n\n'+constructor)
+    return source.replace('"b1-v3"','"b3-v1"').replace('"b2-v1"','"b3-v1"')
+
+
 def swf_tags(path):
     raw = path.read_bytes()
     if raw[:3] == b'CWS':
@@ -130,7 +236,8 @@ def main():
         raise FileExistsError('Native experiments never overwrite an earlier result')
     out.mkdir(parents=True)
     original = baseline/'game/pfe.swf'
-    classes = ['fe.inter.Ctr', 'fe.loc.Location', 'fe.loc.Land', 'fe.unit.Unit', 'fe.unit.UnitPlayer', 'fe.graph.Grafon']
+    classes = ['fe.inter.Ctr', 'fe.loc.Location', 'fe.loc.Land', 'fe.unit.Unit', 'fe.unit.UnitPlayer', 'fe.graph.Grafon',
+        'fe.unit.Invent','fe.unit.Pers','fe.weapon.Weapon','fe.loc.Game','fe.World','fe.weapon.Bullet','fe.unit.Mine','fe.weapon.WThrow']
     ff = [str(JAVA), '-Xmx768m', '-jar', str(FFDEC)]
     with (out/'patch.log').open('w', encoding='utf-8') as log:
         def run(args):
@@ -139,7 +246,7 @@ def main():
         for name in classes:
             rel = name.replace('.', '/')+'.as'
             source = (out/'export/scripts'/rel).read_text(encoding='utf-8-sig')
-            modified = modify(name, source).replace('"b1-v3"', '"b2-v1"')
+            modified = modify(name, source)
             dest = out/'import'/rel
             dest.parent.mkdir(parents=True, exist_ok=True)
             dest.write_text(modified, encoding='utf-8')
@@ -151,6 +258,11 @@ def main():
         source = (out/'verified/scripts'/(name.replace('.', '/')+'.as')).read_text(encoding='utf-8-sig')
         if 'RCONNECT_AUTHORITY_HOOKS' not in source:
             raise RuntimeError('Patch missing after round trip: '+name)
+        imported = (out/'import'/(name.replace('.', '/')+'.as')).read_text(encoding='utf-8')
+        if imported.count('rconnectXmlFind(') != source.count('rconnectXmlFind('):
+            raise RuntimeError('XML query helper changed after round trip: '+name)
+        if re.search(r'\.\((\w+) == \1\)', source):
+            raise RuntimeError('Ambiguous XML query survived import: '+name)
     if (out/'export/scripts/MainFE.as').read_bytes() != (out/'verified/scripts/MainFE.as').read_bytes():
         raise RuntimeError('Loader unexpectedly changed')
     before, after = swf_tags(original), swf_tags(out/'pfe.swf')
@@ -164,7 +276,7 @@ def main():
             subprocess.run(ff+['-dumpAS3', str(path)], stdout=log, check=True)
     if (out/'before-classes.txt').read_bytes() != (out/'after-classes.txt').read_bytes():
         raise RuntimeError('Native class list changed')
-    save(out/'native-input.json', dict(experimental_only=True, capability='b2-v1',
+    save(out/'native-input.json', dict(experimental_only=True, capability='b3-v1',
         baseline=str(baseline.relative_to(ROOT)), baseline_manifest_sha256=sha(baseline/'baseline.json'),
         original_sha256=sha(original), candidate_sha256=sha(out/'pfe.swf'),
         sources={p.relative_to(out).as_posix():sha(p) for p in sorted((out/'import').rglob('*.as'))},

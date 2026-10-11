@@ -9,6 +9,15 @@ package authority {
          scope=new NativeScope(world,definition("fe.inter.Appear"));
       }
       public function definition(name:String):Class{return domain.getDefinition(name) as Class;}
+      public function visualClass(name:String):Class {
+         name=name.replace("::",".");
+         if(domain.hasDefinition(name))return domain.getDefinition(name) as Class;
+         for each(var loader:Object in world.grafon.grLoaders) {
+            var child:ApplicationDomain=loader.loader.contentLoaderInfo.applicationDomain;
+            if(child.hasDefinition(name))return child.getDefinition(name) as Class;
+         }
+         throw new Error("Native visual asset unavailable: "+name);
+      }
       public function ready():Boolean{return world!=null && world.gg!=null && world.loc!=null && world.land!=null && world.ng_wait==0;}
       public function checkHooks():void {
          for each(var name:String in ["fe.inter.Ctr","fe.loc.Location","fe.loc.Land","fe.unit.Unit","fe.unit.UnitPlayer","fe.graph.Grafon"])
@@ -18,9 +27,10 @@ package authority {
          return PlainData.copy({pers:world.pers.save(),inventory:world.invent.save(),
             hp:world.gg.hp,mana:world.gg.mana,appearance:world.app.save(),alicorn:world.alicorn,hardInv:world.hardInv});
       }
-      public function createPlayer(profile:Object,room:Object,x:Number,y:Number):PlayerActor {
+      public function createPlayer(profile:Object,room:Object,x:Number,y:Number,id:int=1):PlayerActor {
          if(profile==null || profile.pers==null || profile.inventory==null)throw new Error("Missing character profile");
-         var actor:PlayerActor=new PlayerActor(this,1),ctx:Object=actor.context;
+         var actor:PlayerActor=new PlayerActor(this,id),ctx:Object=actor.context;
+         actor.owned=true;
          ctx.calcMass=ctx.calcMassW=true;ctx.checkLoot=false;ctx.t_battle=0;
          ctx.appearance=AppearanceState.capture(definition("fe.inter.Appear"),true);
          scope.run(ctx,function():void {
@@ -45,9 +55,8 @@ package authority {
                g.changeWeapon(ctx.invent.cWeaponId,true);g.work="";g.t_work=0;
             }
             g.hp=Math.min(g.maxhp,Math.max(1,Number(profile.hp)));g.mana=Number(profile.mana);
-            g.id="authority-player-1";g.disabled=false;g.invulner=false;
+            g.id="authority-player-"+id;g.disabled=false;g.invulner=false;
             unit.scope=scope;unit.context=ctx;
-            unit.onDeath=actor.onDeath;
             if(room.units.indexOf(unit)<0)room.units.push(unit);
             // Players are advanced explicitly. Do not also insert in firstObj.
             g.addVisual();
@@ -58,7 +67,7 @@ package authority {
       public function roomKey():String {
          return keyFor(world.loc);
       }
-      public function keyFor(l:Object):String {return String(l.land.act.id)+":"+l.landX+":"+l.landY+":"+l.landZ+":"+l.landProb;}
+      public function keyFor(l:Object):String {return String(l.land.act.id)+":"+get(l.land,"rconnectLayoutSeed",0)+":"+l.landX+":"+l.landY+":"+l.landZ+":"+l.landProb;}
       public static function get(object:Object,key:String,fallback:*=null):* {
          try{return object==null?fallback:object[key];}catch(error:*){return fallback;}
       }

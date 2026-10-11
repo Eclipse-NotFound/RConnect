@@ -11,6 +11,7 @@ package authority {
          if(ok)++passed;else ++failed;
          Log.write(ok?"PASS":"FAIL",{name:name,details:details});
       }
+      public function message(value:Object):void {}
       public function prepare():void {
          if(prepared)return;prepared=true;
          ContractChecks.run(check);

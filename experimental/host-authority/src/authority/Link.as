@@ -24,7 +24,9 @@ package authority {
       public function send(value:Object):Boolean {
          if(ended || !socket.connected)return false;
          var bytes:ByteArray=new ByteArray();bytes.writeUTFBytes(JSON.stringify(value));
-         if(bytes.length>LIMIT || socket.bytesPending>2*LIMIT){close("send backlog");return false;}
+         if(bytes.length>8*LIMIT){close("uncompressed message exceeds bound");return false;}
+         bytes.compress();
+         if(bytes.length>LIMIT || socket.bytesPending>2*LIMIT){Log.write("backlog",{bytes:bytes.length,pending:socket.bytesPending,type:value.type});close("send backlog");return false;}
          try {socket.writeUnsignedInt(bytes.length);socket.writeBytes(bytes);socket.flush();}
          catch(e:*){close(String(e));return false;}
          return true;
@@ -50,7 +52,9 @@ package authority {
                var start:int=buffer.position,size:uint=buffer.readUnsignedInt();
                if(size==0 || size>LIMIT)throw new Error("invalid frame size");
                if(buffer.bytesAvailable<size){buffer.position=start;break;}
-               var item:Object=JSON.parse(buffer.readUTFBytes(size));
+               var payload:ByteArray=new ByteArray();buffer.readBytes(payload,0,size);payload.uncompress();
+               if(payload.length>8*LIMIT)throw new Error("uncompressed message exceeds bound");
+               payload.position=0;var item:Object=JSON.parse(payload.readUTFBytes(payload.length));
                if(item==null || item is Array || !(item.type is String))throw new Error("invalid message");
                if(message!=null)message(item);
             }
