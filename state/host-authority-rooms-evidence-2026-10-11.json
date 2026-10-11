@@ -1,0 +1,530 @@
+{
+  "date": "2026-10-11",
+  "scope": "B2 host native room execution; client scene replication incomplete; not release",
+  "b1_parent_commit": "cc49fb9",
+  "tdfc_source_commit": "eabd1da",
+  "candidate": {
+    "path": "build/ab/b2-build-006",
+    "candidate_sha256": "a026d3d641a9e54b3877f4ccb227ef7e32f9b380acf6468b71991f725c487db8",
+    "source_id": "ea43116bb61e6cc45a9b2c16ca3d41508aef6766e5cad5c13641a6f6b4399adc",
+    "native_capability": "b2-v1"
+  },
+  "native": {
+    "path": "build/ab/native-hooks-004",
+    "sha256": "4eca26b93f36c52ca0fa15ac3b2447fd08eccd4dcf7eefefdf01a0c8e4c0860d"
+  },
+  "tdfc": {
+    "path": "build/ab/tdfc-build-004",
+    "sha256": "79201b172b4ac7e19b6c0bdc1425e6ef2c61f0e471e2549341bbf106a349dc09"
+  },
+  "audit": {
+    "path": "build/ab/checkpoint-002/audit.json",
+    "sha256": "447488361adaa01fc69e49e1667a4e1d371f09695f2d389ca7daedc4d546cfd3"
+  },
+  "runs": [
+    {
+      "path": "build/ab/b2-split-tdfc-final-001",
+      "run": "da6af360b80d",
+      "receipt_sha256": "8fa7be3d259ecacc944d4a65914a97e9394aa7890dd632b504288e230308240d",
+      "roles": {
+        "host": {
+          "passed": 58,
+          "failed": 0,
+          "done": true
+        },
+        "join": {
+          "passed": 26,
+          "failed": 0,
+          "done": true
+        }
+      },
+      "scenario": "split-rooms",
+      "enemy": "tdfc",
+      "swap": false,
+      "owned_processes_exited": true,
+      "installation_unchanged": true,
+      "observations": [
+        {
+          "data": {
+            "home": {
+              "tick": 515,
+              "units": 1,
+              "role": "host",
+              "steps": 1030,
+              "brains": [
+                {
+                  "action": "search",
+                  "faults": 0,
+                  "memories": {
+                    "$0:1": {
+                      "knownY": 880,
+                      "visual": 482,
+                      "sensing": {
+                        "front": false,
+                        "heard": false,
+                        "visible": false,
+                        "distance": 14.106393174161719,
+                        "hearing": 0,
+                        "los": true,
+                        "look": 0
+                      },
+                      "confirmed": false,
+                      "observed": false,
+                      "knownX": 384.96497088438133,
+                      "seen": 482
+                    }
+                  },
+                  "rejected": "",
+                  "key": 2,
+                  "id": "raider1",
+                  "target": "$0:1"
+                }
+              ]
+            },
+            "back": {
+              "tick": 515,
+              "units": 1,
+              "role": "host",
+              "steps": 1030,
+              "brains": [
+                {
+                  "action": "search",
+                  "faults": 0,
+                  "memories": {
+                    "$1:1": {
+                      "knownY": 880,
+                      "visual": 515,
+                      "sensing": {
+                        "front": true,
+                        "heard": false,
+                        "visible": true,
+                        "distance": 122.99656025072936,
+                        "hearing": 0,
+                        "los": true,
+                        "look": 4
+                      },
+                      "confirmed": true,
+                      "observed": true,
+                      "knownX": 515.7924305077956,
+                      "seen": 515
+                    }
+                  },
+                  "rejected": "",
+                  "key": 2,
+                  "id": "raider1",
+                  "target": "$1:1"
+                }
+              ]
+            }
+          },
+          "kind": "split-tactics-evidence",
+          "at": 65318
+        },
+        {
+          "data": {
+            "player": 0,
+            "manaHP": 10000,
+            "dmagic": 150,
+            "accepted": false,
+            "room": "random_mane:4:4:0:",
+            "mana": 10000,
+            "dmana": 4,
+            "id": "telebul",
+            "bullets": 0
+          },
+          "kind": "room-weapon-evidence",
+          "at": 71305
+        },
+        {
+          "data": {
+            "player": 1,
+            "manaHP": 9996,
+            "dmagic": 150,
+            "accepted": true,
+            "room": "random_mane:4:4:1:",
+            "mana": 9850,
+            "dmana": 4,
+            "id": "telebul",
+            "bullets": 1
+          },
+          "kind": "room-weapon-evidence",
+          "at": 71310
+        },
+        {
+          "data": {
+            "rooms": [
+              {
+                "steps": 0,
+                "active": false,
+                "room": "random_mane:0:4:0:"
+              },
+              {
+                "steps": 606,
+                "active": true,
+                "room": "random_mane:4:4:0:"
+              },
+              {
+                "steps": 605,
+                "active": true,
+                "room": "random_mane:4:4:1:"
+              }
+            ],
+            "minimum": [
+              9591.292545558792,
+              9717.702771294676
+            ],
+            "tick": 655,
+            "players": [
+              {
+                "weaponEpoch": 1,
+                "mana": 1000,
+                "body": 40,
+                "pose": 14,
+                "id": 0,
+                "steps": 655,
+                "room": "random_mane:4:4:0:",
+                "direction": 1,
+                "dy": 0,
+                "x": 400,
+                "weapon": {
+                  "reload": 0,
+                  "attack": 0,
+                  "rotation": -1.1456418348558264,
+                  "x": 450,
+                  "ammo": "p556",
+                  "sy": 1,
+                  "reserve": 0,
+                  "frame": 1,
+                  "sx": 1,
+                  "y": 830.95,
+                  "hold": 17,
+                  "id": "lmg"
+                },
+                "sy": 1,
+                "hp": 9591.292545558792,
+                "maxhp": 10000,
+                "roomEpoch": 4,
+                "sx": 1,
+                "y": 880,
+                "ack": 0,
+                "epoch": 1,
+                "dx": 0
+              },
+              {
+                "weaponEpoch": 1,
+                "mana": 1000,
+                "body": 14,
+                "pose": 25,
+                "id": 1,
+                "steps": 655,
+                "room": "random_mane:4:4:1:",
+                "direction": -1,
+                "dy": 0,
+                "x": 400,
+                "weapon": {
+                  "reload": 0,
+                  "attack": 0,
+                  "rotation": -0.9821171627390729,
+                  "x": 400,
+                  "ammo": "p556",
+                  "sy": 1,
+                  "reserve": 31,
+                  "frame": 1,
+                  "sx": 1,
+                  "y": 830.95,
+                  "hold": 2,
+                  "id": "lmg"
+                },
+                "sy": 1,
+                "hp": 9717.702771294676,
+                "maxhp": 10000,
+                "roomEpoch": 5,
+                "sx": -1,
+                "y": 880,
+                "ack": 0,
+                "epoch": 1,
+                "dx": 0
+              }
+            ],
+            "acquired": [
+              true,
+              true
+            ]
+          },
+          "kind": "split-room-evidence",
+          "at": 71961
+        }
+      ]
+    },
+    {
+      "path": "build/ab/b2-split-native-final-002",
+      "run": "3c671385c34c",
+      "receipt_sha256": "2068ec150d4f3cd6997556db51cc56ddecf55617962aa9094ee59bfbbbc46ff7",
+      "roles": {
+        "host": {
+          "passed": 57,
+          "failed": 0,
+          "done": true
+        },
+        "join": {
+          "passed": 26,
+          "failed": 0,
+          "done": true
+        }
+      },
+      "scenario": "split-rooms",
+      "enemy": "native",
+      "swap": false,
+      "owned_processes_exited": true,
+      "installation_unchanged": true,
+      "observations": [
+        {
+          "data": {
+            "player": 0,
+            "manaHP": 10000,
+            "dmagic": 150,
+            "accepted": false,
+            "room": "random_mane:4:4:0:",
+            "mana": 10000,
+            "dmana": 4,
+            "id": "telebul",
+            "bullets": 0
+          },
+          "at": 60455,
+          "kind": "room-weapon-evidence"
+        },
+        {
+          "data": {
+            "player": 1,
+            "manaHP": 9996,
+            "dmagic": 150,
+            "accepted": true,
+            "room": "random_mane:4:4:1:",
+            "mana": 9850,
+            "dmana": 4,
+            "id": "telebul",
+            "bullets": 1
+          },
+          "at": 60460,
+          "kind": "room-weapon-evidence"
+        },
+        {
+          "data": {
+            "rooms": [
+              {
+                "steps": 0,
+                "active": false,
+                "room": "random_mane:0:4:0:"
+              },
+              {
+                "steps": 281,
+                "active": true,
+                "room": "random_mane:4:4:0:"
+              },
+              {
+                "steps": 280,
+                "active": true,
+                "room": "random_mane:4:4:1:"
+              }
+            ],
+            "players": [
+              {
+                "pose": 14,
+                "mana": 1000,
+                "steps": 330,
+                "dx": 0,
+                "roomEpoch": 4,
+                "room": "random_mane:4:4:0:",
+                "direction": 1,
+                "body": 40,
+                "x": 400,
+                "weapon": {
+                  "reload": 0,
+                  "attack": 0,
+                  "sy": 1,
+                  "x": 450,
+                  "reserve": 0,
+                  "ammo": "p556",
+                  "y": 830.95,
+                  "rotation": -1.1456418348558264,
+                  "sx": 1,
+                  "frame": 1,
+                  "hold": 17,
+                  "id": "lmg"
+                },
+                "id": 0,
+                "weaponEpoch": 1,
+                "hp": 9357.947158536408,
+                "maxhp": 10000,
+                "sy": 1,
+                "sx": 1,
+                "ack": 0,
+                "epoch": 1,
+                "y": 880,
+                "dy": 0
+              },
+              {
+                "pose": 25,
+                "mana": 1000,
+                "steps": 330,
+                "dx": 0,
+                "roomEpoch": 5,
+                "room": "random_mane:4:4:1:",
+                "direction": -1,
+                "body": 32,
+                "x": 400,
+                "weapon": {
+                  "reload": 0,
+                  "attack": 0,
+                  "sy": 1,
+                  "x": 400,
+                  "reserve": 31,
+                  "ammo": "p556",
+                  "y": 830.95,
+                  "rotation": -0.9821171627390729,
+                  "sx": 1,
+                  "frame": 1,
+                  "hold": 2,
+                  "id": "lmg"
+                },
+                "id": 1,
+                "weaponEpoch": 1,
+                "hp": 9415.547487838194,
+                "maxhp": 10000,
+                "sy": 1,
+                "sx": -1,
+                "ack": 0,
+                "epoch": 1,
+                "y": 880,
+                "dy": 0
+              }
+            ],
+            "acquired": [
+              true,
+              true
+            ],
+            "minimum": [
+              9357.947158536408,
+              9415.547487838194
+            ],
+            "tick": 330
+          },
+          "at": 61103,
+          "kind": "split-room-evidence"
+        }
+      ]
+    },
+    {
+      "path": "build/ab/b2-ownership-final-001",
+      "run": "c93554fc5981",
+      "receipt_sha256": "75af310e4a121b45a2603b9053295de548a06f8f8b0f95adc579aecfc10d479c",
+      "roles": {
+        "host": {
+          "passed": 44,
+          "failed": 0,
+          "done": true
+        },
+        "join": {
+          "passed": 26,
+          "failed": 0,
+          "done": true
+        }
+      },
+      "scenario": "ownership",
+      "enemy": "tdfc",
+      "swap": false,
+      "owned_processes_exited": true,
+      "installation_unchanged": true,
+      "observations": [
+        {
+          "data": {
+            "swap": false,
+            "tick": 760,
+            "shots": [
+              1,
+              11
+            ],
+            "elapsed": 25772
+          },
+          "at": 72282,
+          "kind": "ownership-complete"
+        }
+      ]
+    },
+    {
+      "path": "build/ab/b2-ownership-swapped-final-002",
+      "run": "d2c3a808f9cd",
+      "receipt_sha256": "d451dfda48cb75b065dec0c5633a7b710857cd322ef91a6a68698d97e9844b01",
+      "roles": {
+        "host": {
+          "passed": 44,
+          "failed": 0,
+          "done": true
+        },
+        "join": {
+          "passed": 26,
+          "failed": 0,
+          "done": true
+        }
+      },
+      "scenario": "ownership",
+      "enemy": "tdfc",
+      "swap": true,
+      "owned_processes_exited": true,
+      "installation_unchanged": true,
+      "observations": [
+        {
+          "data": {
+            "elapsed": 25883,
+            "shots": [
+              11,
+              1
+            ],
+            "tick": 760,
+            "swap": true
+          },
+          "kind": "ownership-complete",
+          "at": 72322
+        }
+      ]
+    }
+  ],
+  "defaults": [
+    {
+      "path": "build/ab/default-original-003",
+      "passed": 7,
+      "receipt_sha256": "7e5ea2cdd2e0f4a1f4d4f9cdd141dabec38df0653410f4d5d1bb1055df9ac441",
+      "scope": "Native single-player functional smoke only; not complete numerical equivalence"
+    },
+    {
+      "path": "build/ab/default-b2-hooks-001",
+      "passed": 7,
+      "receipt_sha256": "2458bf9db2b59bd80dd9021bc167c3d17c0f573ef0b39f901538d48860294c3b",
+      "scope": "Native single-player functional smoke only; not complete numerical equivalence"
+    }
+  ],
+  "reused_logic": {
+    "path": "build/ab/tdfc-logic-002",
+    "passed": 74,
+    "fresh_this_b2_phase": false
+  },
+  "reused_default_original": "build/ab/default-original-003",
+  "fresh_default_patched": "build/ab/default-b2-hooks-001",
+  "limitations": [
+    "No client new-room terrain/enemy scene replication",
+    "Native outLoc calls, not complete mouse-door interaction",
+    "No A/B performance conclusion",
+    "No full lifecycle, shared pause, prediction or release gate"
+  ],
+  "passed_assertions": 307,
+  "installed_verified": {
+    "pfe.swf": "c631cbf3511b6ee303f533d08d51511fe0eb702f43e5db17f5241d8576c64867",
+    "mods/Rconnect/release/RConnectMod.swf": "32602e77a21b206d1f7ff0e927b953878c28254e7201529455818923a3539732",
+    "mods/TDFC/release/TDFCMod.swf": "99bfbaa68229635fbaa496ef9287a94bb9ea7c65d71339cef3fde65f47e30275"
+  },
+  "actual_host_process_check": {
+    "only_user_air_pid": 43448,
+    "command_suffix": "application.xml -nodebug",
+    "own_test_air_remaining": 0
+  }
+}

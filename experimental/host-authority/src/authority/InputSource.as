@@ -6,7 +6,7 @@ package authority {
          if(c.keyLeft)b|=Commands.LEFT;if(c.keyRight)b|=Commands.RIGHT;if(c.keyJump)b|=Commands.JUMP;
          if(c.keyAttack)b|=Commands.FIRE;if(c.keySit)b|=Commands.SIT;if(c.keyRun)b|=Commands.RUN;
          if(c.keyReload){a.push({id:++action,type:"reload"});c.keyReload=false;}
-         return {type:"input",session:session,player:player,room:room,epoch:1,weaponEpoch:1,
+         return {type:"input",session:session,player:player,room:room,roomEpoch:1,epoch:1,weaponEpoch:1,
             seq:++seq,buttons:b,aimX:Number(world.celX),aimY:Number(world.celY),actions:a};
       }
    }

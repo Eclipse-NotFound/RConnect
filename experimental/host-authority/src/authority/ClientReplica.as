@@ -15,9 +15,18 @@ package authority {
       public function apply(frame:Object):void {
          if(frame.tick<=lastTick)return;
          lastTick=frame.tick;lastFrame=frame;++frames;
-         for each(var state:Object in frame.players)applyPlayer(state);
+         // Until native scene transfer lands, never overlay a confirmed actor
+         // from another room on this client's unrelated native terrain.
+         var present:Boolean=frame.room===access.roomKey();access.world.visual.visible=present;
+         for each(var state:Object in frame.players) {
+            if(state.room===frame.room && present)applyPlayer(state);
+            else if(peers[state.id]!=null) {
+               peers[state.id].body.remVisual();
+               if(peers[state.id].weapon!=null)peers[state.id].weapon.remVisual();
+            }
+         }
          var active:Object={};
-         for each(var p:Object in frame.projectiles){applyProjectile(p);active[String(p.id)]=true;}
+         for each(var p:Object in frame.projectiles)if(p.room===frame.room && present){applyProjectile(p);active[String(p.id)]=true;}
          for(var key:String in projectiles)if(!active[key]){
             var clip:DisplayObject=projectiles[key];if(clip.parent!=null)clip.parent.removeChild(clip);delete projectiles[key];
          }
@@ -35,7 +44,9 @@ package authority {
             }
             rec={body:g,weaponId:"",weapon:null,weaponEpoch:0};peers[state.id]=rec;
          }
-         g=rec.body;g.setPos(state.x,state.y);g.dx=state.dx;g.dy=state.dy;g.storona=state.direction;
+         g=rec.body;if(g.vis.parent==null)g.addVisual();
+         if(rec.weapon!=null && rec.weapon.vis.parent==null)rec.weapon.addVisual();
+         g.setPos(state.x,state.y);g.dx=state.dx;g.dy=state.dy;g.storona=state.direction;
          g.hp=state.hp;g.maxhp=state.maxhp;
          if(local)g.mana=state.mana;
          g.setVisPos();g.vis.scaleX=state.sx;g.vis.scaleY=state.sy;

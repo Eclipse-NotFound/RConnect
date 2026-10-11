@@ -13,7 +13,7 @@ package {
    import flash.text.TextFormat;
    import flash.utils.getTimer;
    public class RConnectMod {
-      public static const VERSION:String="B1-0.1-experimental";
+      public static const VERSION:String="B2-0.1-experimental";
       public static var instance:RConnectMod;
       public var main:Object,stage:Stage,access:NativeAccess,host:HostSession,replica:ClientReplica;
       public var config:Object,link:Link,probe:Probe;
@@ -27,15 +27,16 @@ package {
       public function RConnectMod(main:Object) {
          this.main=main;stage=main.stage;
          var id:String=NativeApplication.nativeApplication.applicationID;
-         if(id.indexOf("pfe-modsettings-rconnect-b-")!=0)throw new Error("B1 requires its isolated experimental launcher");
+         if(id.indexOf("pfe-modsettings-rconnect-b-")!=0)throw new Error("B requires its isolated experimental launcher");
          var file:File=File.applicationDirectory.resolvePath("mods/Rconnect/release/config.txt"),stream:FileStream=new FileStream();
          stream.open(file,FileMode.READ);config=JSON.parse(stream.readUTFBytes(stream.bytesAvailable));stream.close();
          if(config.experimental!==true || config.session==null || (config.role!="host" && config.role!="join"))throw new Error("Missing explicit B configuration");
          role=config.role;session=config.session;access=new NativeAccess(main);access.checkHooks();
-         if(config.probe===true)probe=config.scenario=="ownership"?new OwnershipProbe(access,role=="host",config.swap===true,config.enemy):new Probe(access,role=="host");
+         if(config.probe===true)probe=config.scenario=="split-rooms"?new SplitRoomProbe(access,role=="host",config.enemy):
+            config.scenario=="ownership"?new OwnershipProbe(access,role=="host",config.swap===true,config.enemy):new Probe(access,role=="host");
          label.defaultTextFormat=new TextFormat("Arial",13,0xFFDB58);label.width=440;label.height=22;
          label.mouseEnabled=false;label.background=true;label.backgroundColor=0x161B20;label.alpha=.85;label.x=8;label.y=8;
-         stage.addChild(label);label.text="RConnect B1 · 实验原型 · "+role;
+         stage.addChild(label);label.text="RConnect B2 · 实验原型 · "+role;
          stage.addEventListener(Event.DEACTIVATE,deactivate,false,100000);
          stage.addEventListener(Event.ENTER_FRAME,before,false,100000);
          main.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR,onUncaught);
@@ -71,6 +72,8 @@ package {
             if(role=="join")w.onPause=true;
             if((role=="host" && host!=null && host.active) || (role=="join" && welcomed)) {
                var frame:Object=input.frame(w,session,role=="host"?0:1,room);
+               var identity:Object=role=="host"?host.inputs[0]:(replica.lastFrame==null?null:replica.lastFrame.players[1]);
+               if(identity!=null){frame.room=identity.room;frame.roomEpoch=identity.roomEpoch;}
                frame.weaponEpoch=role=="host"?host.inputs[0].weaponEpoch:
                   (replica.lastFrame==null?1:replica.lastFrame.players[1].weaponEpoch);
                if(probe!=null)frame=probe.input(frame,host);
@@ -119,7 +122,10 @@ package {
                if(!Commands.greetingMatches(value,session))throw new Error("Welcome architecture/build mismatch");
                if(value.room!==access.roomKey())throw new Error("B1 requires matching native room before activation");
                room=value.room;welcomed=true;Log.write("joined",{room:room});
-            } else if(value.type=="frame" && welcomed && value.session===session && value.room===room)replica.apply(value);
+            } else if(value.type=="frame" && welcomed && value.session===session) {
+               replica.apply(value);
+               label.text=value.room===access.roomKey()?"RConnect B2 · 实验原型 · "+role:"RConnect B2 · 实验版：当前房间画面尚未支持";
+            }
             else if(value.type=="stopped")fail(value.reason);
             else if(value.type=="rejected")Log.write("input-rejected",value);
             else if(value.type=="probe-result")Log.write("peer-probe-result",value);
@@ -127,7 +133,7 @@ package {
       }
       private function fail(reason:String):void {
          if(failed)return;
-         failed=true;label.text="RConnect B1 · 已停止："+reason;
+         failed=true;label.text="RConnect B2 · 已停止："+reason;
          if(access!=null && access.world!=null)access.world.onPause=true;
          if(host!=null)host.fail(reason);
          Log.write("FATAL",{reason:reason});

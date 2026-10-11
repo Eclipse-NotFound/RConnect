@@ -1,6 +1,8 @@
 # RConnect —— 开发记忆入口
 
-> 2026-10-11：**B 主侧统一执行架构已实施到单房双玩家技术原型，A/B 保持独立。** [计划](../design/host-authority-parallel-plan-2026-10-11.md) · [实施实况](host-authority-2026-10-11.md)。B 已执行原生射击、受击、换弹/换装并保持两人资源隔离；用户新授权的 TDFC 可选接口已接入，027/native003/TDFC004 同一候选的移动/双装备/炮塔三轮共204/0，逻辑74/0，默认入口两轮各7/0；源/产物/实物输入核对通过。B2 双房未实现，不能日常游玩。安装仍 22；旧修复缺口保留。[原停点](cooperative-hazards-2026-10-11.md)。地图支线 bbb526b 已完成专项验证并交接，尚未合入 B。
+> 2026-10-11：**B 已实现主侧双房执行内核，A/B 保持独立。** [计划](../design/host-authority-parallel-plan-2026-10-11.md) · [B2实况](host-authority-rooms-2026-10-11.md) · [B1历史](host-authority-2026-10-11.md)。两房真实原生战斗、空房暂停、前后景重访保留和宿主镜头归属已有隔离实测；加入侧新房间场景重现尚未接入，仍不能日常游玩。当前冻结B2-006/native004/TDFC004，详细结果只认B2证据；B1历史204/0不混算。安装仍22；[旧缺口](cooperative-hazards-2026-10-11.md)保留。地图支线bbb526b专项已完成，尚未合入B。
+
+> B2当前四轮同字节307/0，新默认入口7/0；旧TDFC逻辑74/0和原底座默认7/0按相同输入复用。checkpoint-002核对通过，安装指纹未变，自有测试全部退出。数值是断言计数，不是玩法数量或性能结果。
 
 ## 1. 模组与职责
 
@@ -36,8 +38,8 @@ RConnect是Remains 1.02双人合作模组，覆盖同地图普通房分头探索
 
 ## 4. 本轮实现与判断
 
-- B 技术原型：独立 `experimental/host-authority` 与 `tools/host_authority`；主侧持有原生 UnitPlayer + AuthorityPlayer、各自 Pers/Invent/Ctr/Sats/GUI/外观与待处理负重任务。NativeScope 同步切换并恢复全局引用，RoomRuntime 每房间步只更新一次，两玩家各一步，弹丸/伤害按所有者/受击者进入作用域。加入侧只发送动作并显示确认；尚无完整敌人/场景呈现、预测或双房。
-- TDFC 可选接口：未 attach 走旧单人入口，attach 后由 host 按房间调用、join 零战术步。按玩家出生代次分别保存观察/报告/噪声，决策正文共用。原生 Unit.findCel 在原有检查时机分别检查两名玩家，避免仅 loc.gg 增长暴露值。当前冻结与实际绿/红结果以[实施实况](host-authority-2026-10-11.md)为准，不能把早期同房单枪绿色推广到全部玩法。
+- B 技术原型：独立 `experimental/host-authority` 与 `tools/host_authority`；主侧持有原生 UnitPlayer + AuthorityPlayer、各自 Pers/Invent/Ctr/Sats/GUI/外观与待处理负重任务。NativeScope隔离玩家和房间的全局引用；OccupiedRooms按实际占用推进原生房间，同房不双步、空房保留；RoomTransfers在房间步之间提交原生出口请求。主侧显示只跟自己，作用域外World/Location/Land的玩家引用统一恢复为宿主。加入侧只发送动作并显示确认；异房确认尚无完整场景重现，明确提示并隐藏旧房画面。
+- TDFC 可选接口：未attach走旧单人入口，attach后由host按房间调用、join零战术步。按玩家出生代次分别保存观察/报告/噪声，决策正文共用。原生Unit.findCel在原有检查时机分别检查两名玩家。B2已经运行两房真实掠夺者与炮塔；当前绿/红以[B2实况](host-authority-rooms-2026-10-11.md)为准，不能推广到全部敌人或完整多人呈现。
 - 10-11前一呈现方案的[详细规划](../design/remote-player-entity-plan-2026-10-11.md)与[eli5图解](../design/remote-player-entity-preview/index.html)仍保留历史。原建议沿用RemoteDamageUnit集中显示，不包含现在选定的主侧完整执行；其P1–P6不是新B的实施顺序。玩家枪械变换已有源样本，开火队列仍用本机now/cadence。图解静态/链接/JS语法通过，CUA本地文件策略阻断，桌面/窄屏/点击未验；不混用另一图解的浏览器证据或称其对应新架构。
 - 10-11未完成候选：MineSight复用原生感知；友伤回报一次结算的实际数字；PlayerMines增加布设者策略/队友感应/拆雷请求；FriendlyOptics读取MSW公开规则并应用原生blindness。56源与工作树一致，未部署；详细实测与缺口见[暂停登记](cooperative-hazards-2026-10-11.md)。
 - 地图支线已完成 bbb526b：定位旧 M13 每个地图 ID 固定种子，62/64 模组须配套 58 原生地图补丁；准确安装 22 的负控失败保留，新探索/分房/背景门五轮/复活专项共 237/0。没有改 RandomRooms；尚未合入 B 或部署，见 state/map-generation-2026-10-11.md。
@@ -57,7 +59,7 @@ RConnect是Remains 1.02双人合作模组，覆盖同地图普通房分头探索
 
 ## 6. 下一步
 
-**B实施进行中。** B0/B1 单房技术检查点已保存，接续优先 B2：在不切换宿主镜头/不重置离房敌人的条件下，实际运行两个原生房间；随后验证空房保留、隐藏门与共同旅行。当前 TDFC 的分房状态容器逻辑检查不等于原生双房已实现。地图 bbb526b 配套候选须在将来的 A/B 公共基线中同时对齐。旧镜像拆雷、掉落计数、压力/火焰及 51 组完整门禁保留，不因 B 专项通过而结案。
+**B实施进行中。** 接续B2的加入侧场景传递与确认后切换，再用真实普通门/背景门交互验证；目前主侧双房执行、原生outLoc前后景往返和保留已有实测，不等于端到端可玩。随后处理共同旅行、完整生命周期，再进入B3预测/统一时间/共享暂停与B4功能迁移。地图bbb526b须在A/B公共基线同时对齐。旧镜像拆雷、掉落计数、压力/火焰及51组完整门禁保留。
 
 当前冻结56/8f02fef5的FriendlyHazards主34/3、加34/3，MapGeneration主10/3、加3/0，均双端DONE。54/cb5e1bd723地雷显示7/0、d7c8cb92ea普通友伤236/0，不冒充56同字节完整门禁。正式清单为51组（原48加MineSight/FriendlyHazards/MapGeneration），未跑完、未审计、未部署。
 

@@ -16,6 +16,7 @@ def main():
     for name in ('candidate','native','tdfc','logic','output'):ap.add_argument('--'+name,required=True)
     ap.add_argument('--run',action='append',required=True)
     ap.add_argument('--default',action='append',default=[],dest='defaults')
+    ap.add_argument('--scope',choices=('single-room','dual-room'),default='single-room')
     a=ap.parse_args()
     candidate,native,tdfc,logic,out=[inside_build(ROOT/p) for p in (a.candidate,a.native,a.tdfc,a.logic,a.output)]
     require(not out.exists(),'Keep each audit immutable')
@@ -29,7 +30,7 @@ def main():
         if name=='src/authority/BuildInfo.as':data=data.decode('utf-8').replace('\r\n','\n').replace('__SOURCE_HASH__',bm['source_id']).replace('\n',os.linesep).encode('utf-8')
         require(hashlib.sha256(data).hexdigest()==digest,'Uncompiled B source: '+name)
     verify_files(ROOT.parent/'TDFC',tm['sources'])
-    evidence=dict(experimental_only=True,scope='B0/B1 single-room technical checkpoint, not full architecture or release',
+    evidence=dict(experimental_only=True,scope=a.scope+' technical checkpoint, not full architecture or release',
         candidate_sha256=bm['candidate_sha256'],native_sha256=nm['candidate_sha256'],tdfc_sha256=tm['candidate_sha256'],
         source_id=bm['source_id'],current_sources_match=True,runs=[],defaults=[],script_sha256=sha(__file__))
     for path in a.run:
@@ -58,6 +59,11 @@ def main():
         directory=inside_build(ROOT/path);r=read(directory/'run.json')
         require(r['done'] and not r['failed'] and not r['fatal'] and r['default_tdfc_observed'] and r['owned_process_exited'] and r['installation_unchanged'] and r['runtime_unchanged'],'Default smoke failed')
         require(r['tdfc_manifest_sha256']==sha(tdfc/'build-input.json'),'Default TDFC bytes differ')
+        if r['native_manifest_sha256'] is not None:
+            require(r['native_manifest_sha256']==sha(native/'native-input.json'),'Default native patch bytes differ')
+        default_events=records(directory/'RConnect-B.log')
+        require(sum(x['kind']=='PASS' for x in default_events)==r['passed'] and any(x['kind']=='DONE' for x in default_events)
+            and not any(x['kind'] in ('FAIL','FATAL') for x in default_events),'Default raw log differs')
         require(sha(directory/'src/RConnectMod.as')==r['source_sha256'],'Default probe source changed')
         verify_files(directory/'game',r['files'])
         evidence['defaults'].append(dict(path=path,passed=r['passed'],receipt_sha256=sha(directory/'run.json'),

@@ -104,6 +104,6 @@ package authority {
          Log.write("probe-target",{x:x,y:y,hp:targetHP,remoteX:remote.X,remoteY:remote.Y,level:remote.currentWeapon.lvl,
             persLevel:remote.pers.level,required:remote.currentWeapon.perslvl});
       }
-      public function finish():void {finished=true;Log.write("DONE",{passed:passed,failed:failed,scope:"B1 player/native-gun probe only"});}
+      public function finish():void {finished=true;Log.write("DONE",{passed:passed,failed:failed,scope:"Isolated authority technical probe; not release validation"});}
    }
 }

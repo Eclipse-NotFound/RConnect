@@ -34,7 +34,7 @@ def main():
     ap.add_argument('--native', required=True)
     ap.add_argument('--output', required=True)
     ap.add_argument('--seconds', type=int, default=140)
-    ap.add_argument('--scenario', choices=('native-gun','ownership'), default='native-gun')
+    ap.add_argument('--scenario', choices=('native-gun','ownership','split-rooms'), default='native-gun')
     ap.add_argument('--swap', action='store_true')
     ap.add_argument('--enemy', choices=('native','tdfc'), default='native')
     ap.add_argument('--tdfc', help='Optional frozen TDFC authority-v1 build directory')
@@ -75,7 +75,7 @@ def main():
     launches, processes, streams = [], [], []
     installed = ROOT.parents[1]
     protected = {n:sha(installed/n) for n in ('pfe.swf','mods/Rconnect/release/RConnectMod.swf','mods/TDFC/release/TDFCMod.swf')}
-    receipt = dict(experimental_only=True, phase='B1-native-probe', run=run_id, baseline_manifest_sha256=sha(baseline/'baseline.json'),
+    receipt = dict(experimental_only=True, phase='B-native-probe', run=run_id, baseline_manifest_sha256=sha(baseline/'baseline.json'),
         build_manifest_sha256=sha(candidate/'build-input.json'), native_manifest_sha256=sha(native/'native-input.json'),
         candidate_sha256=build['candidate_sha256'], native_sha256=patch['candidate_sha256'],
         protected_before=protected, script_sha256=sha(__file__), roles={}, complete=False)
@@ -101,7 +101,7 @@ def main():
         desc = directory/'authority-test.xml'
         desc.write_text('<?xml version="1.0" encoding="utf-8"?>\n'
             '<application xmlns="http://ns.adobe.com/air/application/30.0">'
-            '<id>'+appid+'</id><versionNumber>1.0</versionNumber><filename>RConnect B1 '+role+'</filename>'
+            '<id>'+appid+'</id><versionNumber>1.0</versionNumber><filename>RConnect B '+role+'</filename>'
             '<initialWindow><content>pfe.swf</content><visible>true</visible><width>1000</width><height>650</height></initialWindow>'
             '</application>', encoding='utf-8')
         expected = dict(b['files'])

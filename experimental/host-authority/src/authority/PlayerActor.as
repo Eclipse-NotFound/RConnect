@@ -4,11 +4,12 @@ package authority {
       public var access:NativeAccess,id:int,unit:Object,context:Object={},steps:uint=0;
       public var failed:Function;
       public var weaponEpoch:int=1;
+      public var roomEpoch:int=1,lastStep:uint=0;
       public function PlayerActor(access:NativeAccess,id:int){this.access=access;this.id=id;}
       public static function local(access:NativeAccess):PlayerActor {
          var a:PlayerActor=new PlayerActor(access,0),w:Object=access.world;
          a.unit=w.gg;
-         for each(var name:String in ["gg","pers","invent","ctr","sats","gui","loc","land","app","alicorn","hardInv","calcMass","calcMassW","checkLoot"])
+         for each(var name:String in ["gg","pers","invent","ctr","sats","gui","loc","land","app","alicorn","hardInv","calcMass","calcMassW","checkLoot","t_battle"])
             a.context[name]=w[name];
          a.context.appearance=AppearanceState.capture(access.definition("fe.inter.Appear"));
          access.scope.register(a.context);
@@ -32,6 +33,7 @@ package authority {
             }
             unit.celX=input.aimX;unit.celY=input.aimY;
             unit.step();++steps;
+            if(context.transitionCooldown>0)--context.transitionCooldown;
          });
       }
       public function finishWorldServices():void {
@@ -40,13 +42,10 @@ package authority {
          access.scope.run(context,function():void {
             var w:Object=access.world;
             context.sats.step2();
+            if(w.t_battle>0)--w.t_battle;
             if(w.calcMass){context.invent.calcMass();w.calcMass=false;}
             if(w.calcMassW){context.invent.calcWeaponMass();w.calcMassW=false;}
          });
-      }
-      public function onExit(direction:int,x:Number,y:Number):Boolean {
-         // The B1 capability is intentionally one room; B2 replaces this seam.
-         Log.write("unsupported",{feature:"room-transition",player:id,direction:direction});return false;
       }
       public function onDeath(type:int):void {
          if(failed!=null)failed("B1 death lifecycle has not passed validation");
@@ -60,7 +59,7 @@ package authority {
                frame:NativeAccess.get(w.vis,"currentFrame",1),hold:w.hold,ammo:w.ammo,reserve:g.invent.items[w.ammo].kol,
                reload:NativeAccess.get(w,"t_reload",0),attack:NativeAccess.get(w,"t_attack",0)};
          }
-         return {id:id,epoch:1,weaponEpoch:weaponEpoch,ack:ack,x:g.X,y:g.Y,dx:g.dx,dy:g.dy,hp:g.hp,maxhp:g.maxhp,mana:g.mana,
+         return {id:id,epoch:1,room:access.keyFor(g.loc),roomEpoch:roomEpoch,weaponEpoch:weaponEpoch,ack:ack,x:g.X,y:g.Y,dx:g.dx,dy:g.dy,hp:g.hp,maxhp:g.maxhp,mana:g.mana,
             direction:g.storona,sx:v.scaleX,sy:v.scaleY,pose:v.osn.currentFrame,
             body:v.osn.body.currentFrame,weapon:weapon,steps:steps};
       }
@@ -72,7 +71,7 @@ package authority {
             var list:Array=unit.loc.units,index:int=list.indexOf(unit);
             if(index>=0)list.splice(index,1);
             unit.disabled=true;
-            unit.onDeath=null;unit.onExit=null;unit.context=null;unit.scope=null;
+            unit.onDeath=null;unit.context=null;unit.scope=null;
          }
       }
    }

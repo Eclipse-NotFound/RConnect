@@ -55,7 +55,7 @@ def main():
     embedded = {line.split()[0] for line in classes.splitlines() if line.strip()}
     if 'RConnectMod' not in embedded or embedded.intersection(externs):
         raise RuntimeError('Entry missing or native extern classes embedded')
-    save(out/'build-input.json', dict(experimental_only=True, family='host-authority-b1', source_id=source_id, native_capability=native_capability, sources=sources,
+    save(out/'build-input.json', dict(experimental_only=True, family='host-authority-b', source_id=source_id, native_capability=native_capability, sources=sources,
         candidate_sha256=sha(out/'RConnectMod.swf'), extern_sha256=sha(out/'NativeExterns.swc'),
         compiler={str(p):sha(p) for p in (JAVA, SDK/'lib/mxmlc.jar', SDK/'lib/compc.jar', SDK/'frameworks/libs/air/airglobal.swc')},
         commands=commands, script_sha256=sha(__file__), classes_sha256=sha(out/'classes.txt')))

@@ -20,6 +20,16 @@ def once(source, before, after):
 def modify(name, source):
     if 'RCONNECT_AUTHORITY_HOOKS' in source:
         raise ValueError('Refuse to patch an already patched native class')
+    if name == 'fe.graph.Grafon':
+        source = once(source, '      public function Grafon(param1:Sprite)',
+            '      public static const RCONNECT_AUTHORITY_HOOKS:String = "b2-v1";\n\n'
+            '      public function Grafon(param1:Sprite, sharedResources:Grafon = null)')
+        return once(source, '         this.grLoaders = new Array();',
+            '         if(sharedResources != null)\n         {\n'
+            '            this.grLoaders = sharedResources.grLoaders;\n'
+            '            this.checkLoaded(0);\n'
+            '            this.resIsLoad = sharedResources.resIsLoad;\n'
+            '            return;\n         }\n         this.grLoaders = new Array();')
     if name == 'fe.unit.Unit':
         anchor = '      public function findCel(param1:Boolean = false) : Boolean\n      {'
         return once(source, anchor,
@@ -54,7 +64,12 @@ def modify(name, source):
     if name == 'fe.loc.Land':
         source = once(source, '      public var loc:Location;',
             '      public static const RCONNECT_AUTHORITY_HOOKS:String = "b1-v3";\n'
-            '      public static var rconnectRoomStep:Function = null;\n\n      public var loc:Location;')
+            '      public static var rconnectRoomStep:Function = null;\n'
+            '      public static var rconnectGotoRoom:Function = null;\n\n      public var loc:Location;')
+        anchor = '      public function gotoLoc(param1:int, param2:Number = -1, param3:Number = -1) : Object\n      {'
+        source = once(source, anchor, anchor+'\n'
+            '         if(rconnectGotoRoom != null)\n         {\n'
+            '            return rconnectGotoRoom(this,param1,param2,param3);\n         }')
         block = '''            this.loc.step();
             if(this.loc_t > 0)
             {
@@ -115,7 +130,7 @@ def main():
         raise FileExistsError('Native experiments never overwrite an earlier result')
     out.mkdir(parents=True)
     original = baseline/'game/pfe.swf'
-    classes = ['fe.inter.Ctr', 'fe.loc.Location', 'fe.loc.Land', 'fe.unit.Unit', 'fe.unit.UnitPlayer']
+    classes = ['fe.inter.Ctr', 'fe.loc.Location', 'fe.loc.Land', 'fe.unit.Unit', 'fe.unit.UnitPlayer', 'fe.graph.Grafon']
     ff = [str(JAVA), '-Xmx768m', '-jar', str(FFDEC)]
     with (out/'patch.log').open('w', encoding='utf-8') as log:
         def run(args):
@@ -124,7 +139,7 @@ def main():
         for name in classes:
             rel = name.replace('.', '/')+'.as'
             source = (out/'export/scripts'/rel).read_text(encoding='utf-8-sig')
-            modified = modify(name, source)
+            modified = modify(name, source).replace('"b1-v3"', '"b2-v1"')
             dest = out/'import'/rel
             dest.parent.mkdir(parents=True, exist_ok=True)
             dest.write_text(modified, encoding='utf-8')
@@ -149,7 +164,7 @@ def main():
             subprocess.run(ff+['-dumpAS3', str(path)], stdout=log, check=True)
     if (out/'before-classes.txt').read_bytes() != (out/'after-classes.txt').read_bytes():
         raise RuntimeError('Native class list changed')
-    save(out/'native-input.json', dict(experimental_only=True, capability='b1-v3',
+    save(out/'native-input.json', dict(experimental_only=True, capability='b2-v1',
         baseline=str(baseline.relative_to(ROOT)), baseline_manifest_sha256=sha(baseline/'baseline.json'),
         original_sha256=sha(original), candidate_sha256=sha(out/'pfe.swf'),
         sources={p.relative_to(out).as_posix():sha(p) for p in sorted((out/'import').rglob('*.as'))},

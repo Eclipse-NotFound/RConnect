@@ -3,7 +3,7 @@ package authority {
    /** Executed in the native AIR probe, with controlled inputs and explicit failures. */
    public class ContractChecks {
       private static function input(seq:int,buttons:int=0,actions:Array=null):Object {
-         return {session:"fixture",player:1,epoch:1,weaponEpoch:1,room:"one",seq:seq,
+         return {session:"fixture",player:1,epoch:1,weaponEpoch:1,room:"one",roomEpoch:1,seq:seq,
             buttons:buttons,aimX:100,aimY:80,actions:actions==null?[]:actions};
       }
       public static function run(check:Function):void {
@@ -28,6 +28,8 @@ package authority {
          var prior:int=c.accepted;
          bad=input(4,Commands.LEFT,[{id:3,type:"reload"},{id:4,type:"invalid"}]);
          check(c.accept(bad,600)=="unsupported-action" && c.accepted==prior && c.consume(600).actions.length==0,"malformed batch cannot partially commit");
+         c.retarget("two",2);c.retarget("one",3);
+         check(c.accept(input(5,Commands.FIRE),610)=="identity" && c.consume(610).buttons==0,"returning to the same room rejects input from its previous visit");
          var owner:Object={name:"owner"},remote:Object={name:"remote"},room:Object={gg:owner};
          var world:Object={gg:owner,pers:owner,invent:owner,loc:room,celX:42};
          var scope:NativeScope=new NativeScope(world),threw:Boolean=false,nested:Boolean=false;

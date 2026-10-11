@@ -39,7 +39,7 @@ package authority {
       }
       private function publish():void {
          if(!active)return;
-         var frame:Object=runtime.snapshot();frame.type="frame";frame.session=session;frame.room=expectedRoom;
+         var frame:Object=runtime.snapshot();frame.type="frame";frame.session=session;frame.room=inputs[1].room;
          frame.players=[actors[0].snapshot(inputs[0].consumed),actors[1].snapshot(inputs[1].consumed)];
          frame.resources={hold:actors[1].unit.currentWeapon==null?0:actors[1].unit.currentWeapon.hold,
             hp:actors[1].unit.hp,mana:actors[1].unit.mana};

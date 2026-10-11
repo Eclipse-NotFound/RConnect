@@ -9,11 +9,13 @@ package authority {
       public var spawnsByPlayer:Array=[0,0];
       public var afterStep:Function,failed:Function;
       public var tactics:TacticsBridge;
+      public var rooms:OccupiedRooms,transfers:RoomTransfers;
       private var oldPlayerHook:Function,oldRoomHook:Function,oldObjectHook:Function,oldDamageHook:Function;
       private var oldFindHook:Function,perception:NativePerception;
+      private var oldGotoHook:Function;
       private var projectileIds:Dictionary=new Dictionary(true),nextProjectile:uint=0;
       private var ownerSpawns:Dictionary=new Dictionary(true);
-      private var latestProjectiles:Object={},recent:Array=[];
+      private var latestByRoom:Dictionary=new Dictionary(true),recent:Array=[];
       public function RoomRuntime(access:NativeAccess,actors:Array,inputs:Array) {
          this.access=access;this.actors=actors;this.inputs=inputs;
       }
@@ -22,8 +24,11 @@ package authority {
          var Location:Class=access.definition("fe.loc.Location"),Land:Class=access.definition("fe.loc.Land"),Player:Class=access.definition("fe.unit.UnitPlayer");
          oldPlayerHook=Location["rconnectPlayerStep"];oldRoomHook=Land["rconnectRoomStep"];
          oldObjectHook=Location["rconnectObjectStep"];oldDamageHook=Player["rconnectDamage"];
+         oldGotoHook=Land["rconnectGotoRoom"];
          var Unit:Class=access.definition("fe.unit.Unit");oldFindHook=Unit["rconnectFindTarget"];
-         if(oldPlayerHook!=null || oldRoomHook!=null || oldObjectHook!=null || oldDamageHook!=null || oldFindHook!=null)throw new Error("Native scheduling seam already occupied");
+         if(oldPlayerHook!=null || oldRoomHook!=null || oldObjectHook!=null || oldDamageHook!=null || oldFindHook!=null || oldGotoHook!=null)throw new Error("Native scheduling seam already occupied");
+         rooms=new OccupiedRooms(access,actors);transfers=new RoomTransfers(access,actors,inputs,rooms);
+         Land["rconnectGotoRoom"]=transfers.request;
          perception=new NativePerception(access.scope,actors);Unit["rconnectFindTarget"]=perception.find;
          Location["rconnectPlayerStep"]=stepPlayers;Location["rconnectObjectStep"]=stepObject;
          Land["rconnectRoomStep"]=stepLand;Player["rconnectDamage"]=damagePlayer;
@@ -34,7 +39,7 @@ package authority {
             if(object===actor.unit)throw new Error("Player was also inserted into native object chain");
             if(owner===actor.unit) {
                if(actor.id==1)++remoteObjectSteps;
-               access.scope.run(actor.context,function():void {object.step();});return;
+               access.scope.runRoom(actor.context,room,function():void {object.step();});return;
             }
          }
          // Native hostile AI falls back to loc.gg. Give it a real player in
@@ -57,6 +62,8 @@ package authority {
       }
       private function stepPlayers(room:Object):void {
          for(var i:int=0;i<actors.length;i++)if(actors[i].unit.loc===room) {
+            if(actors[i].lastStep==tick)throw new Error("Player stepped twice in one world tick");
+            actors[i].lastStep=tick;
             actors[i].step(inputs[i].consume(getTimer()));inputs[i].weaponEpoch=actors[i].weaponEpoch;
          }
          capture(room);
@@ -64,12 +71,19 @@ package authority {
       private function stepLand(land:Object):void {
          try {
             ++tick;
-            // B1: one room. The extension to occupied-room sets stays here,
-            // not in World.step or in a second independent timer.
-            land.loc.step();++roomSteps;
+            var occupied:Array=rooms.occupied();
+            for each(var room:Object in occupied) {
+               var representative:PlayerActor=null;
+               for each(var a:PlayerActor in actors)if(a.unit.loc===room){representative=a;break;}
+               if(representative==null)throw new Error("Room lost its occupant during a simulation step");
+               access.scope.run(representative.context,function():void {
+                  room.step();++roomSteps;++rooms.services(room).steps;
+                  if(tactics!=null)tactics.step(room,tick);
+                  capture(room);
+               });
+            }
             for each(var actor:PlayerActor in actors)actor.finishWorldServices();
-            if(tactics!=null)tactics.step(land.loc,tick);
-            capture(land.loc);
+            transfers.commit();rooms.occupied();rooms.showHost();
             if(access.scope.depth!=0)throw new Error("Native context leaked across a world step");
             if(afterStep!=null)afterStep();
          }catch(error:*) {
@@ -78,6 +92,7 @@ package authority {
          }
       }
       private function capture(room:Object):void {
+         var latestProjectiles:Object=latestByRoom[room];if(latestProjectiles==null)latestProjectiles={};
          var seen:Object={},object:Object=room.firstObj,count:int=0;
          while(object!=null && ++count<=10000) {
             var owner:Object=NativeAccess.get(object,"owner"),weapon:Object=NativeAccess.get(object,"weap");
@@ -87,7 +102,7 @@ package authority {
                   ownerSpawns[owner]=uint(ownerSpawns[owner])+1;
                   if(owner===actors[0].unit)++spawnsByPlayer[0];else if(owner===actors[1].unit)++spawnsByPlayer[1];}
                var clip:Object=object.vis;
-               var state:Object={id:id,x:object.X,y:object.Y,dx:object.dx,dy:object.dy,
+               var state:Object={id:id,room:access.keyFor(room),x:object.X,y:object.Y,dx:object.dx,dy:object.dy,
                   bx:object.begx,by:object.begy,tick:tick,owner:owner===actors[0].unit?0:owner===actors[1].unit?1:-1,
                   clip:clip==null?"":getQualifiedClassName(clip),rotation:clip==null?0:clip.rotation,
                   sx:clip==null?1:clip.scaleX,sy:clip==null?1:clip.scaleY,frame:clip==null?1:clip.currentFrame,
@@ -101,22 +116,24 @@ package authority {
          for(var key:String in latestProjectiles)if(seen[key]==null) {
             var end:Object=latestProjectiles[key];end.ended=true;end.tick=tick;recent.push(end);
          }
-         latestProjectiles=seen;
+         latestByRoom[room]=seen;
          if(recent.length>1024)throw new Error("Projectile event queue overflow");
       }
       public function snapshot():Object {
          var objects:Array=[],events:Array=recent;recent=[];
-         for each(var value:Object in latestProjectiles)objects.push(value);
-         return {tick:tick,roomSteps:roomSteps,spawns:spawns,spawnsByPlayer:spawnsByPlayer.concat(),projectiles:objects,projectileEvents:events};
+         for each(var latest:Object in latestByRoom)for each(var value:Object in latest)objects.push(value);
+         return {tick:tick,roomSteps:roomSteps,rooms:rooms.summary(),spawns:spawns,spawnsByPlayer:spawnsByPlayer.concat(),projectiles:objects,projectileEvents:events};
       }
       public function spawnsFor(owner:Object):uint {return uint(ownerSpawns[owner]);}
       public function dispose():void {
          var Location:Class=access.definition("fe.loc.Location"),Land:Class=access.definition("fe.loc.Land"),Player:Class=access.definition("fe.unit.UnitPlayer");
          Location["rconnectPlayerStep"]=oldPlayerHook;Land["rconnectRoomStep"]=oldRoomHook;
          Location["rconnectObjectStep"]=oldObjectHook;Player["rconnectDamage"]=oldDamageHook;
+         Land["rconnectGotoRoom"]=oldGotoHook;
          access.definition("fe.unit.Unit")["rconnectFindTarget"]=oldFindHook;perception=null;
          if(tactics!=null){tactics.dispose();tactics=null;}
-         recent=[];latestProjectiles={};projectileIds=new Dictionary(true);ownerSpawns=new Dictionary(true);
+         if(rooms!=null)rooms.dispose();
+         recent=[];latestByRoom=new Dictionary(true);projectileIds=new Dictionary(true);ownerSpawns=new Dictionary(true);
       }
    }
 }

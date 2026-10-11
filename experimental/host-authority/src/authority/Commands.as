@@ -4,13 +4,14 @@ package authority {
       public static const LEFT:int=1,RIGHT:int=2,JUMP:int=4,FIRE:int=8,SIT:int=16,RUN:int=32;
       public var session:String,room:String,player:int,epoch:int=1,weaponEpoch:int=1;
       public var accepted:int=0,consumed:int=0,lastAt:int=-1;
+      public var roomEpoch:int=1;
       public var buttons:int=0,aimX:Number=0,aimY:Number=0;
       private var actions:Array=[];
       private var lastAction:int=0;
       private var pressed:int=0;
       public function Commands(session:String,player:int,room:String) {this.session=session;this.player=player;this.room=room;}
       public function accept(value:Object,now:int):String {
-         if(value==null || value.session!==session || value.player!==player || value.epoch!==epoch || value.room!==room || value.weaponEpoch!==weaponEpoch)return "identity";
+         if(value==null || value.session!==session || value.player!==player || value.epoch!==epoch || value.room!==room || value.roomEpoch!==roomEpoch || value.weaponEpoch!==weaponEpoch)return "identity";
          if(!(value.seq is Number) || value.seq<=accepted || value.seq!=int(value.seq))return "sequence";
          if(!(value.buttons is Number) || value.buttons!=int(value.buttons) || value.buttons<0 || value.buttons>63)return "buttons";
          if(!(value.aimX is Number) || !(value.aimY is Number) || !isFinite(value.aimX) || !isFinite(value.aimY)
@@ -35,6 +36,7 @@ package authority {
          consumed=accepted;actions=[];pressed=0;return result;
       }
       public function clear():void {buttons=0;pressed=0;actions=[];lastAt=-1;}
+      public function retarget(room:String,roomEpoch:int):void {clear();this.room=room;this.roomEpoch=roomEpoch;}
       public static function greetingMatches(value:Object,session:String):Boolean {
          return value!=null && value.family===BuildInfo.FAMILY && value.revision===BuildInfo.REVISION
             && value.source===BuildInfo.SOURCE && value.native===BuildInfo.NATIVE && value.session===session;
