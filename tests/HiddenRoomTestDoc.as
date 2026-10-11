@@ -183,7 +183,7 @@ package {
          try {
             if(p.stage=="done"){finish();return;}
             if(host) {
-               if(p.stage=="ready" && !started){started=true;setPhase("select");}
+               if(p.stage=="ready" && phase=="wait-peer" && !started){started=true;setPhase("select");}
                else if(p.stage=="aligned") {
                   var count:int=0;
                   for each(var old:Object in (mod.game.loc.units as Array).concat())if(enemy(old) && old.sost<3) {
@@ -227,7 +227,10 @@ package {
             mod.game.gg.invulner=true;
             mod.config.setValue("followTeammate",host&&followHost?"1":"0");
             if(phase=="done")return;
-            if(at>0 && getTimer()-at>30000){check(false,"timeout "+phase+" "+JSON.stringify(state()));send("done");finish();return;}
+            // The host can finish native travel before the joiner's world is
+            // constructed. Start the 30s action deadline only after both are
+            // ready; the runner's overall deadline still bounds this setup.
+            if(phase!="wait-peer" && at>0 && getTimer()-at>30000){check(false,"timeout "+phase+" "+JSON.stringify(state()));send("done");finish();return;}
             if(!mod.session.rooms.ready || mod.session.rooms.busy || mod.game.isTransitioning())return;
             if(mod.game.readWorldInfo().curLandId!="random_mane") {
                // Native Continue can restore a random-map character at base.
@@ -237,7 +240,7 @@ package {
             }
             if(phase=="boot") {
                mod.game.forceCloseOverlays();mod.stage.addEventListener(Event.RENDER,render,false,-30000);
-               Log.d("HIDDEN TEST profile "+JSON.stringify({level:mod.game.gg.pers.level,world:mod.game.readWorldInfo()}));setPhase("ready");
+               Log.d("HIDDEN TEST profile "+JSON.stringify({level:mod.game.gg.pers.level,world:mod.game.readWorldInfo()}));setPhase(host?"wait-peer":"ready");
             }
             if(!host && phase=="ready")send("ready");
             if(host && phase=="select") {

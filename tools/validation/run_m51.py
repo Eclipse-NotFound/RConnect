@@ -6,6 +6,7 @@ from run_final_regressions import JAVA
 
 ap=argparse.ArgumentParser();ap.add_argument('snapshot');ap.add_argument('entry');ap.add_argument('--seconds',type=int)
 ap.add_argument('--vision-candidate',type=Path,help='Diagnostic probes only: exact RV cache candidate, with its frozen inputs manifest')
+ap.add_argument('--game-candidate',type=Path,help='Diagnostic probes only: isolated native Land patch, with exact inputs manifest')
 a=ap.parse_args();out=(ROOT/a.snapshot).resolve()
 assert out.parent==ROOT/'build/m51'
 m=read(out/'source-input.json');baseline=verify_protected(m)
@@ -28,6 +29,23 @@ if a.vision_candidate:
     matches=[n for n in runtime_baseline['runtime_modules'] if n.replace('\\','/').lower()=='mods/realisticvision/release/realisticvisionmod.swf']
     assert len(matches)==1
     runtime_baseline['runtime_modules'][matches[0]]=sha(dest)
+game_args=[];game_record=None
+if a.game_candidate:
+    assert out.name.startswith('probe-'),'Game overrides cannot qualify as final release evidence'
+    p=a.game_candidate.resolve()
+    assert p.name=='pfe.swf' and p.parent.parent==ROOT/'build/m51' and p.parent.name.startswith('map-seed-game-')
+    v=read(p.parent/'game-input.json');assert v['diagnostic_only'] and sha(p)==v['candidate_sha256']
+    assert v['original_sha256']==baseline['protected']['pfe.swf']
+    for n,h in v['sources'].items():assert sha(p.parent/n)==h,n
+    assert sha(ROOT/v['script'])==v['script_sha256']
+    dest=out/'game-candidate/pfe.swf'
+    if not dest.exists():dest.parent.mkdir(exist_ok=False);shutil.copy2(p,dest)
+    assert sha(dest)==v['candidate_sha256']
+    runtime_baseline=copy.deepcopy(runtime_baseline)
+    runtime_baseline['protected']['pfe.swf']=sha(dest)
+    runtime_baseline['runtime_assets']['pfe.swf']=sha(dest)
+    game_args=['--game-candidate',str(dest)]
+    game_record=dict(path=p.as_posix(),sha256=sha(dest),inputs_sha256=sha(p.parent/'game-input.json'),diagnostic_only=True)
 driver=out/'build'/(a.entry+'-driver');assert not driver.exists()
 with (out/(a.entry+'-build.log')).open('w',encoding='utf-8') as log:
     r=subprocess.run([sys.executable,'-X','utf8',str(out/'tools/build_effects_driver.py'),'--candidate',str(out/'RConnectMod.swf'),
@@ -51,7 +69,7 @@ if a.seconds:seconds=a.seconds
 for n in ('tools/run_coop_regression.py','tools/RConnect.Process.ps1','tools/keep_test_responsive.ps1','tools/validation/native_runtime_assets.py'):
     assert sha(ROOT/n)==m['verification'][n],n
 command=[sys.executable,'-X','utf8',str(ROOT/'tools/run_coop_regression.py'),'--candidate',str(out/'RConnectMod.swf'),
-    '--effects-driver',str(driver),'--effects','--all-mods','--responsive','--visible-windows','--seconds',str(seconds),'--expected-version',m['version']]+profile_args+vision_args
+    '--effects-driver',str(driver),'--effects','--all-mods','--responsive','--visible-windows','--seconds',str(seconds),'--expected-version',m['version']]+profile_args+vision_args+game_args
 if land:command+=['--land',land]
 print('RUN '+a.entry,flush=True)
 r=subprocess.run(command,cwd=ROOT,capture_output=True,text=True,encoding='utf-8',errors='replace')
@@ -59,6 +77,7 @@ r=subprocess.run(command,cwd=ROOT,capture_output=True,text=True,encoding='utf-8'
 found=re.search(r'OUTPUT .*?([0-9a-f]{10})\s*$',r.stdout,re.M)
 record=dict(entry=a.entry,run=found.group(1) if found else None,exit=r.returncode,sha256=m['candidate_sha256'])
 if vision_record:record['vision_override']=vision_record
+if game_record:record['game_override']=game_record
 if record['run']:
     folder=ROOT/'build/cooperation'/record['run'];run=read(folder/'run.json');verify_runtime_inputs(runtime_baseline,run)
     for role in ('host','join'):

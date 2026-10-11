@@ -1,12 +1,13 @@
 """Immutable installed-22 baseline, diagnostic snapshots, and final-23 inputs."""
 import argparse, datetime, json, re, shutil, subprocess, sys
-from validation_baseline import ROOT, GAME, M51_BASELINE, M51_PRE_VISION_BASELINE, M51_SHA, sha, read, verify_protected
+from validation_baseline import ROOT, GAME, M51_BASELINE, M51_MAP_BASELINE, M51_PRE_VISION_BASELINE, M51_SHA, sha, read, verify_protected
 from native_runtime_assets import asset_hashes
 from run_final_regressions import JAVA, M51_REQUIRED
 
 ap=argparse.ArgumentParser()
 ap.add_argument('mode', choices=['baseline','freeze','control','build'])
 ap.add_argument('snapshot', nargs='?')
+ap.add_argument('--baseline', choices=[M51_BASELINE,M51_MAP_BASELINE],default=M51_BASELINE)
 a=ap.parse_args()
 previous=ROOT/'build/m50/final-presentation-30'
 def save(path,value): path.write_text(json.dumps(value,ensure_ascii=False,indent=2),encoding='utf-8')
@@ -48,10 +49,11 @@ if a.mode=='baseline':
 out=(ROOT/a.snapshot).resolve()
 assert out.parent==ROOT/'build/m51' and out.name.startswith(('final-','red-','probe-')),out
 if a.mode in ('freeze','control'):
+    if a.baseline==M51_MAP_BASELINE:assert not out.name.startswith('final-'),'Diagnostic-only map baseline'
     out.mkdir(parents=True,exist_ok=False)
     origin=previous if a.mode=='control' else ROOT
     version=re.search(r'VERSION:String\s*=\s*"([^"]+)"',(origin/'src/RConnectMod.as').read_text(encoding='utf-8-sig')).group(1)
-    m=dict(version=version,baseline_path=M51_BASELINE,baseline_inputs_sha256=sha(ROOT/M51_BASELINE/'inputs.json'),
+    m=dict(version=version,baseline_path=a.baseline,baseline_inputs_sha256=sha(ROOT/a.baseline/'inputs.json'),
         source={},verification={},visible_windows=True,concurrent_user_windows=True)
     verify_protected(m)
     for directory in ('src','tests','tools/stubs'):

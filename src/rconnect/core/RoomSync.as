@@ -45,6 +45,7 @@ package rconnect.core
       public function RoomSync(s:Session)
       {
          session=s;mod=s.mod;game=mod.game;
+         game.mapGeneration=new MapGeneration(s);
          mod.stage.addEventListener(Event.ENTER_FRAME,before,false,100000);
          mod.stage.addEventListener(Event.ENTER_FRAME,after,false,-9000);
       }
@@ -57,6 +58,7 @@ package rconnect.core
          requested=false;
          teammate=null;cancelFollow();
          TravelGuard.reset();
+         game.mapGeneration.reset();
       }
       private function connected():Boolean
       {return session.mode==Session.CONNECTED || (session.mode==Session.HOSTING && session.peers.length>0);}
@@ -163,11 +165,22 @@ package rconnect.core
       /** Called for every host world update, including while maps load. */
       public function observeHost(info:Object):void
       {
-         if(info==null || host())return;
+         if(info==null || host() || info.worldReady===false)return;
+         game.mapGeneration.receive(info);
          hostInfo=info;
          if(game.isPlayerDead() || game.isTransitioning())return;
          game.refreshWorld();var mine:Object=game.readWorldInfo();if(mine==null)return;
          var mapChange:Boolean=String(mine.curLandId)!=String(info.curLandId);
+         if(!mapChange && game.mapGeneration.differs(info,game.world.land)) {
+            // Joining an already-running expedition can have the same map ID
+            // and room coordinates but a completely different native layout.
+            // Rebuild only the joiner, before any room checkpoint is applied.
+            TravelGuard.allowTravel(String(info.curLandId));
+            game.followMapGeneration(info);
+            epoch=int(info.roomEpoch);game.roomEpoch=epoch;
+            settledRoom=null;settledKey="";ready=false;nativeRoom=null;
+            return;
+         }
          if(mapChange || initial)
          {
             TravelGuard.allowTravel(String(info.curLandId));

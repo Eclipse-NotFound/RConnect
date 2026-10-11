@@ -70,6 +70,7 @@ CHECKS = {
     "MineSightTestDoc": (200, "random_mane", False),
     "FriendlyHazardsTestDoc": (700, "random_mane", False),
     "MapGenerationTestDoc": (500, "rbl", False),
+    "NativeMapGenerationTestDoc": (600, "rbl", False),
 }
 REQUIRED = list(CHECKS)[:13]
 M50_REQUIRED = REQUIRED + ['HudTestDoc','FastHeldTestDoc','WeaponAngleTestDoc','PresentationContinuityTestDoc',

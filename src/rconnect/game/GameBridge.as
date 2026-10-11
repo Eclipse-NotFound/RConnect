@@ -59,6 +59,7 @@ package rconnect.game
       public var roomEpoch:int=0;
       public var independentRooms:Boolean=false;
       public var roomHold:Boolean=false;
+      public var mapGeneration:rconnect.core.MapGeneration;
       private var _coopPauseAt:int=-1;
       public function get coopPaused():Boolean {return _coopPauseAt>=0;}
       public function setCoopPaused(value:Boolean):void {
@@ -1877,6 +1878,13 @@ package rconnect.game
          w.landProb=loc==null?"":String(probe(loc,"landProb"));
          w.roomKey=roomKey();w.roomEpoch=roomEpoch;
          var land:Object = probe(world, "land");
+         // curLandId changes before the old native world has finished exiting.
+         // A destination without its completed generation must not start the
+         // joiner's travel with a cached seed from the previous expedition.
+         w.worldReady=land!=null && String(probe(probe(land,"act"),"id"))==String(w.curLandId)
+            && !isTransitioning();
+         w.layoutSeed=land!=null?numOr(probe(land,"rconnectLayoutSeed"),0):0;
+         w.layoutLevel=land!=null?numOr(probe(land,"landDifLevel"),0):0;
          w.landX = land != null ? int(probe(land, "locX")) : 0;
          w.landY = land != null ? int(probe(land, "locY")) : 0;
          w.landZ = land != null ? int(probe(land, "locZ")) : 0;
@@ -2658,6 +2666,7 @@ package rconnect.game
             {
                return;   // 只处理随机土地
             }
+            if(mapGeneration!=null)mapGeneration.adopt(info,la);
             var hs:Number = info.landStage != null
                ? Number(info.landStage) : -1;
             var ls:Number = numOr(probe(la, "landStage"), -1);

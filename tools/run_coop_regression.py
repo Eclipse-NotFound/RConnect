@@ -21,6 +21,7 @@ def main():
     ap=argparse.ArgumentParser()
     ap.add_argument('--candidate',type=Path,required=True)
     ap.add_argument('--game-root',type=Path,default=GAME)
+    ap.add_argument('--game-candidate',type=Path,help='Diagnostic-only game SWF copied into isolated instances; installation stays read-only')
     ap.add_argument('--seconds',type=int,default=115)
     ap.add_argument('--keep-copies', action='store_true')
     ap.add_argument('--with-vision', action='store_true', help='Load the installed RealisticVision SWF in isolated copies')
@@ -94,6 +95,10 @@ def main():
         destination=frozen/source.relative_to(game)
         destination.parent.mkdir(parents=True,exist_ok=True)
         shutil.copy2(source,destination)
+    if args.game_candidate:
+        patch=args.game_candidate.resolve()
+        assert patch.is_relative_to(ROOT/'build') and patch.name=='pfe.swf'
+        shutil.copy2(patch,frozen/'pfe.swf')
     release=frozen/'mods'/'Rconnect'/'release'; release.mkdir(parents=True)
     shutil.copy2(candidate,release/'RConnectMod.swf')
     if args.effects_driver:
