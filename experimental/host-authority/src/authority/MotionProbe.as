@@ -13,6 +13,7 @@ package authority {
       private var readyToEnd:Boolean=false;
       private var pauseStage:int=0,pauseAt:int=0,freezeTick:uint=0,freezeDrops:Array;
       private var pausedDisplay:Object,pausedSamples:int=0,pausedChanged:Boolean=false;
+      private var secondContainer:Object;
       public function MotionProbe(a:NativeAccess,h:Boolean){super(a,h);}
       override public function message(v:Object):void {
          if(host && v.type=="motion-ready")peerReady=v.phase;
@@ -37,6 +38,7 @@ package authority {
             if(tick>=32 && tick<136){frame.aimX=700+75*Math.sin((tick-32)*.18);frame.aimY=fy-115+50*Math.sin((tick-32)*.31);}
          }
          if(phase==4 && !host && tick>=18 && tick<60)frame.buttons=Commands.ACTION;
+         if(phase==4 && !host && tick>=110 && tick<145){frame.aimX=670;frame.buttons=Commands.ACTION;}
          return frame;
       }
       private function glow(clip:DisplayObject):Object {
@@ -149,6 +151,16 @@ package authority {
          if(!ready){ready=true;var publish:Function=session.runtime.afterStep;session.runtime.afterStep=function():void{source(session);publish();};start(session,0);return;}
          if(begin<0 && peerReady==phase){begin=session.runtime.tick;session.link.send({type:"motion-go",tick:begin});}
          if(phase==4 && begin>=0) {
+            if(secondContainer==null && session.runtime.tick-begin>=100 && pauseStage==3) {
+               // A single small native loot arc may offer fewer than eleven
+               // moving screen frames. Add a second real opening rather than
+               // lowering the interpolation checks or moving the loot by hand.
+               var Room:Object=session.actors[1].unit.loc,Box:Class=access.definition("fe.loc.Box");
+               access.scope.run(session.actors[1].context,function():void {
+                  secondContainer=new Box(Room,"case",670,fy,<obj cont="custom" lock="0" mine="0"><item id="kofe" kol="9"/></obj>,null);
+                  Room.addObj(secondContainer);Room.objs.push(secondContainer);secondContainer.addVisual();secondContainer.inter.setAct("lock",0);
+               });
+            }
             if(pauseStage==0) {
                var falling:Boolean=false,o:Object=session.actors[1].unit.loc.firstObj;
                while(o!=null){if("item" in o && o.item.id=="kofe" && o.Y<fy-8 && Math.abs(o.dy)>.1)falling=true;o=o.nobj;}
@@ -175,6 +187,7 @@ package authority {
                   "new native press releases the target and ends its held state phase "+phase);
             }else {
                check(container.inter.cont=="empty" && dropCount>40,"join's actual container action produces native falling drops",{samples:dropCount});
+               check(secondContainer!=null && secondContainer.inter.cont=="empty","joining player opens the second native container for independent falling-loot samples");
                check(pauseStage==3 && !session.pause.paused,"falling-loot SATS round trip completes without trapping the host in pause");
             }
             session.link.send({type:"motion-end",tick:session.runtime.tick});

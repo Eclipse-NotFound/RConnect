@@ -74,6 +74,10 @@ package authority {
             m.hud.collapse();
             m.stage.dispatchEvent(new KeyboardEvent(KeyboardEvent.KEY_DOWN,true,false,0,13,0,true));
             check(m.hud.currentPage=="chat" && m.stage.focus===m.hud.tfChat,"Ctrl+Enter opens local chat without invoking native Enter action");
+            check(!m.requestTimeAction(),"focused chat input cannot activate shared time control");
+            var priorConsole:Boolean=w.onConsol;
+            try {w.onConsol=true;check(!m.requestTimeAction(),"native console blocks shared time-control input");}
+            finally {w.onConsol=priorConsole;}
             m.stage.dispatchEvent(new KeyboardEvent(KeyboardEvent.KEY_DOWN,true,false,119,87));
             check(!w.ctr.keyBeUp && !w.ctr.keyJump,"typing in chat does not move the game character");
             m.stage.dispatchEvent(new KeyboardEvent(KeyboardEvent.KEY_UP,true,false,119,87));

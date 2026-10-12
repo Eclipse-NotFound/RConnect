@@ -326,7 +326,8 @@ package {
          input.enqueue({type:"native",key:"mswFlashGive",args:[]});return true;
       }
       public function requestTimeAction():Boolean {
-         if(!welcomed || SharedPause.requested(access.world))return false;
+         if(!welcomed || access.time==null || access.world.onConsol || access.world.allStat<1 ||
+            stage.focus is TextField && TextField(stage.focus).type=="input" || SharedPause.requested(access.world))return false;
          input.enqueue({type:"native",key:"sandyToggle",args:[]});return true;
       }
    }
