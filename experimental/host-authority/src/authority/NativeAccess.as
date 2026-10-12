@@ -8,6 +8,8 @@ package authority {
    public class NativeAccess {
       public var domain:ApplicationDomain,world:Object,scope:NativeScope;
       public var ink:TerrainInk;
+      public var view:ViewBridge;
+      public var weapons:WeaponBridge;
       private var positions:Dictionary=new Dictionary(true);
       public function bindPositionBoundary():void {
          var Unit:Class=definition("fe.unit.Unit");
@@ -41,7 +43,8 @@ package authority {
       }
       public function profile():Object {
          return PlainData.copy({pers:world.pers.save(),inventory:world.invent.save(),
-            hp:world.gg.hp,mana:world.gg.mana,appearance:world.app.save(),alicorn:world.alicorn,hardInv:world.hardInv});
+            hp:world.gg.hp,mana:world.gg.mana,appearance:world.app.save(),alicorn:world.alicorn,hardInv:world.hardInv,
+            msw:weapons==null?null:weapons.profile()});
       }
       public function createPlayer(profile:Object,room:Object,x:Number,y:Number,id:int=1):PlayerActor {
          if(profile==null || profile.pers==null || profile.inventory==null)throw new Error("Missing character profile");

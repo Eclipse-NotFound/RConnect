@@ -14,6 +14,7 @@ package authority {
          if(host!=null) {
             if(!host.active)return false;
             if(w.gg===host.actors[1].unit){host.actors[1].requestSave(slot);return true;}
+            if(access.weapons!=null)access.weapons.carryState(w.game);
             return false;
          }
          if(NativeIntents.replaying==0)input.enqueue({type:"native",key:"save",args:[slot]});

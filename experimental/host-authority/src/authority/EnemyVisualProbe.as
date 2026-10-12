@@ -112,6 +112,22 @@ package authority {
          return s;
       }
       private function source(session:HostSession):void {
+         var elapsed:int=session.runtime.tick-begin;
+         if(controlled && (elapsed==205 || elapsed==228)) {
+            var bullets:Array=[],bullet:Object=enemy.loc.firstObj;
+            while(bullet!=null) {
+               if(NativeAccess.get(bullet,"owner")===target.unit && NativeAccess.get(bullet,"begx")!=null && bullets.length<12)
+                  bullets.push({id:session.runtime.projectileId(bullet),x:bullet.X,y:bullet.Y,dx:bullet.dx,dy:bullet.dy,
+                     begin:[bullet.begx,bullet.begy],damage:NativeAccess.get(bullet,"damage"),active:bullet.in_chain});
+               bullet=bullet.nobj;
+            }
+            var gun:Object=target.unit.currentWeapon;
+            Log.write("enemy-impact-window",{phase:phase,elapsed:elapsed,player:target.id,
+               aim:[target.unit.celX,target.unit.celY],position:[target.unit.X,target.unit.Y],
+               gun:{x:gun.X,y:gun.Y,rot:gun.rot,muzzle:[gun.bulX,gun.bulY],hold:gun.hold,shoot:gun.is_shoot},
+               enemy:{box:[enemy.X1,enemy.Y1,enemy.X2,enemy.Y2],hp:enemy.hp,shield:enemy.shithp,skin:enemy.skin,
+                  invulner:enemy.invulner,stun:enemy.stun},bullets:bullets});
+         }
          if(begin<0 || waiting || (session.runtime.tick-begin)%3!=0)return;
          var samples:Array=[],key:uint=session.sceneId(enemy),s:Object;
          for each(var kind:String in ["body","hpbar"]) {

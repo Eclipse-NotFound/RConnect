@@ -5,6 +5,7 @@ package {
    import flash.desktop.NativeApplication;
    import flash.display.Stage;
    import flash.events.Event;
+   import flash.events.MouseEvent;
    import flash.events.ServerSocketConnectEvent;
    import flash.events.UncaughtErrorEvent;
    import flash.filesystem.File;
@@ -32,6 +33,7 @@ package {
       private var started:Boolean=false,travelled:Boolean=false,network:Boolean=false,stopping:Boolean=false;
       private var room:String,session:String,bootAt:int=getTimer(),readyFrames:int=0,failed:Boolean=false,lastHud:int=-1000;
       private var lastPolicy:String="";
+      private var bootTrace:int=-5000;
       public static function init(main:Object):void {
          try{instance=new RConnectMod(main);}catch(error:*){Log.error(error);}
       }
@@ -50,6 +52,8 @@ package {
          access.definition("fe.World")["rconnectChangeWorld"]=function():void {if(network)leaveSession(false);vision.resetJourney();access.ink.reset();access.resetPositions();};
          MapState.install(access);
          if(config.probe===true)probe=["explosives","magic","angles","guns","melee","terrain"].indexOf(config.scenario)>=0?new WeaponProbe(access,role=="host",config.scenario):
+            config.scenario=="msw"?new MswProbe(access,role=="host"):
+            config.scenario=="msw-lifecycle"?new MswLifecycleProbe(access,role=="host"):
             config.scenario=="teleport"?new TeleportProbe(access,role=="host"):
             config.scenario=="body-effects"?new BodyEffectsProbe(access,role=="host"):
             config.scenario=="movement"?new MovementProbe(access,role=="host"):
@@ -89,10 +93,17 @@ package {
       private function deactivate(e:Event):void {e.stopImmediatePropagation();}
       private function onUncaught(e:UncaughtErrorEvent):void {Log.error(e.error);fail("Uncaught runtime error");e.preventDefault();}
       private function before(e:Event):void {
-         if(getTimer()-lastHud>=100){lastHud=getTimer();ui.refresh();hud.refresh();}
          if(failed)return;
          try {
             var w:Object=access.world;
+            if(config.probe===true && !network && getTimer()-bootTrace>=5000) {
+               bootTrace=getTimer();var g:Object=NativeAccess.get(w,"gg");
+               Log.write("boot-state",{ready:access.ready(),land:NativeAccess.get(NativeAccess.get(NativeAccess.get(w,"land"),"act"),"id"),
+                  curLand:NativeAccess.get(NativeAccess.get(w,"game"),"curLandId"),wait:w.ng_wait,pause:w.onPause,
+                  exit:w.t_exit,death:w.t_die,hp:NativeAccess.get(g,"hp"),control:NativeAccess.get(g,"ggControl"),work:NativeAccess.get(g,"work"),
+                  menu:NativeAccess.get(w.mm,"active"),pip:NativeAccess.get(w.pip,"active"),loadClick:w.clickReq});
+            }
+            if(getTimer()-lastHud>=100){lastHud=getTimer();ui.refresh();hud.refresh();}
             if(w.verror.visible){fail(String(w.verror.txt.text));return;}
             if(!started && config.autoGame===true && w.landData!=null && w.allLandsLoaded) {
                started=true;Log.write("native-new-game",{landsReady:w.allLandsLoaded});
@@ -108,6 +119,10 @@ package {
                if(w.land.act.id!==config.land){w.pip.onoff(-1);w.game.beginMission(config.land);return;}
             }
             if(!network && config.land!=null && config.land!="" && (w.land.act.id!==config.land || w.game.curLandId!==config.land))return;
+            // Auto-test travel can leave the native Pip page open. It freezes
+            // t_exit, so close it before awaiting the normal transition gate.
+            if(!network && config.autoGame===true && w.pip.active)w.pip.onoff(-1);
+            if(!network && config.autoGame===true && w.clickReq==1)w.ctr.onMouseDown1(new MouseEvent(MouseEvent.MOUSE_DOWN));
             if(!network && (w.t_exit>0 || w.t_die>0 || !w.gg.ggControl || w.gg.work=="res" || w.gg.work=="change"))return;
             if(++readyFrames<5)return;
             if(!network) {
@@ -127,6 +142,7 @@ package {
                input.acknowledge(role=="host"?host.inputs[0].receivedAction:
                   (replica.lastFrame==null?0:int(replica.lastFrame.players[1].actionAck)));
                var frame:Object=input.frame(w,session,role=="host"?0:1,room);
+               if(access.weapons!=null){frame.msw=access.weapons.input();if(frame.msw.overlay)frame.buttons=0;}
                var identity:Object=role=="host"?host.inputs[0]:(replica.lastFrame==null?null:replica.lastFrame.players[1]);
                if(identity!=null){frame.room=identity.room;frame.roomEpoch=identity.roomEpoch;frame.epoch=identity.epoch;}
                frame.weaponEpoch=role=="host"?host.inputs[0].weaponEpoch:
@@ -140,6 +156,8 @@ package {
       }
       private function startNetwork():void {
          room=access.roomKey();
+         if(config.rv!=null)access.view=new ViewBridge(main,session,role);
+         if(config.msw!=null)access.weapons=new WeaponBridge(main,access,session,role);
          if(config.tdfc!=null)tactics=new TacticsBridge(main,access,session,role);
          if(role=="host") {
             host=new HostSession(access,session);host.failed=fail;
@@ -159,7 +177,7 @@ package {
             input.scene=replica.scene;
             replica.tactics=tactics;
             link=new Link();wire(link);
-            link.connected=function():void {var hello:Object=Commands.greeting("hello",session);hello.tdfc=config.tdfc;hello.name=preferences.getValue("nickname");hello.profile=access.profile();link.send(hello);};
+            link.connected=function():void {var hello:Object=Commands.greeting("hello",session);hello.tdfc=config.tdfc;hello.rv=config.rv;hello.msw=config.msw;hello.name=preferences.getValue("nickname");hello.profile=access.profile();link.send(hello);};
             link.connect(String(preferences.getValue("hostIp")),int(config.port));
          }
       }
@@ -189,6 +207,8 @@ package {
             if(role=="host") {
                if(value.type=="hello") {
                   if(value.tdfc!==config.tdfc)throw new Error("TDFC candidate mismatch");
+                  if(value.rv!==config.rv)throw new Error("RV candidate mismatch");
+                  if(value.msw!==config.msw)throw new Error("MSW candidate mismatch");
                   peerName=value.name is String?String(value.name).substr(0,24):"加入侧";
                   host.accept(link,value);room=access.roomKey();welcomed=true;lastPolicy="";applyPreferences();
                   link.send({type:"peer-name",name:preferences.getValue("nickname")});
@@ -242,6 +262,9 @@ package {
          if(stopping)return;stopping=true;
          var oldReplica:ClientReplica=replica;
          try {
+            if(restoreJoin && oldReplica!=null)oldReplica.prepareReturn();
+            if(access.view!=null){access.view.dispose();access.view=null;}
+            if(access.weapons!=null){access.weapons.dispose();access.weapons=null;}
             if(link!=null){link.finish({type:"leave",session:session},"left session");link=null;}
             if(server!=null){try{server.close();}catch(ignored:*){}server=null;}
             if(intents!=null){intents.dispose();intents=null;}
@@ -266,5 +289,9 @@ package {
          return "";
       }
       public function meetPeer():void {var reason:String=meetReason();if(reason!=""){ui.session.rooms.status=reason;return;}input.enqueue({type:"native",key:"meetPeer",args:[]});}
+      public function requestWeaponAction(key:String):Boolean {
+         if(!welcomed || key!="flashGive")return false;
+         input.enqueue({type:"native",key:"mswFlashGive",args:[]});return true;
+      }
    }
 }

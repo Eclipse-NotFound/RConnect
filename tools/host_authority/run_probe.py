@@ -36,10 +36,12 @@ def main():
     ap.add_argument('--native', required=True)
     ap.add_argument('--output', required=True)
     ap.add_argument('--seconds', type=int, default=140)
-    ap.add_argument('--scenario', choices=('native-gun','ownership','split-rooms','cooperation','lifecycle','sats','pause-cycles','travel','friendly','grabs','enemy-grabs','personal','throw','vectors','mines','areas','party','hud','menus','dialogue','vision','stress','explosives','magic','angles','enemies','sound','music','movement','motion','guns','melee','terrain','teleport','body-effects'), default='native-gun')
+    ap.add_argument('--scenario', choices=('native-gun','ownership','split-rooms','cooperation','lifecycle','sats','pause-cycles','travel','friendly','grabs','enemy-grabs','personal','throw','vectors','mines','areas','party','hud','menus','dialogue','vision','stress','explosives','magic','angles','enemies','sound','music','movement','motion','guns','melee','terrain','teleport','body-effects','msw','msw-lifecycle'), default='native-gun')
     ap.add_argument('--swap', action='store_true')
     ap.add_argument('--enemy', choices=('native','tdfc'), default='native')
     ap.add_argument('--tdfc', help='Optional frozen TDFC authority-v1 build directory')
+    ap.add_argument('--rv', help='Optional frozen independent RV authority-v1 build')
+    ap.add_argument('--msw', help='Optional frozen independent MSW authority-v1 build')
     ap.add_argument('--jitter-ms', help='Isolated loopback relay delay schedule, comma-separated milliseconds in 0..450')
     args = ap.parse_args()
     baseline, candidate, native, out = [inside_build(ROOT/p) for p in (args.baseline, args.candidate, args.native, args.output)]
@@ -62,6 +64,24 @@ def main():
         verify_files(tactics, tactics_build['sources'])
         if sha(tactics/'TDFCMod.swf') != tactics_build['candidate_sha256']:
             raise ValueError('TDFC candidate bytes changed')
+    view, view_build = None, None
+    if args.rv:
+        view = inside_build(ROOT/args.rv)
+        view_build = read(view/'build-input.json')
+        if view_build.get('family') != 'rv-authority-v1' or not view_build.get('experimental_only'):
+            raise ValueError('Not an isolated RV authority candidate')
+        verify_files(view, view_build['sources'])
+        if sha(view/'RealisticVisionMod.swf') != view_build['candidate_sha256']:
+            raise ValueError('RV candidate bytes changed')
+    weapons, weapons_build = None, None
+    if args.msw:
+        weapons = inside_build(ROOT/args.msw)
+        weapons_build = read(weapons/'build-input.json')
+        if weapons_build.get('family') != 'msw-authority-v1' or not weapons_build.get('experimental_only'):
+            raise ValueError('Not an isolated MSW authority candidate')
+        verify_files(weapons, weapons_build['sources'])
+        if sha(weapons/'MoreSkillsWeaponsMod.swf') != weapons_build['candidate_sha256']:
+            raise ValueError('MSW candidate bytes changed')
     if out.exists():
         raise FileExistsError('Every attempt needs a new run directory')
     game = baseline/'game'
@@ -78,7 +98,7 @@ def main():
     relay = JitterProxy(port, [int(x) for x in args.jitter_ms.split(',')]) if args.jitter_ms else None
     launches, processes, streams = [], [], []
     installed = ROOT.parents[1]
-    protected = {n:sha(installed/n) for n in ('pfe.swf','mods/Rconnect/release/RConnectMod.swf','mods/TDFC/release/TDFCMod.swf')}
+    protected = {n:sha(installed/n) for n in ('pfe.swf','mods/Rconnect/release/RConnectMod.swf','mods/TDFC/release/TDFCMod.swf','mods/RealisticVision/release/RealisticVisionMod.swf','mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.swf')}
     receipt = dict(experimental_only=True, phase='B-native-probe', run=run_id, baseline_manifest_sha256=sha(baseline/'baseline.json'),
         build_manifest_sha256=sha(candidate/'build-input.json'), native_manifest_sha256=sha(native/'native-input.json'),
         candidate_sha256=build['candidate_sha256'], native_sha256=patch['candidate_sha256'],
@@ -86,6 +106,12 @@ def main():
     if tactics:
         receipt['tdfc_manifest_sha256'] = sha(tactics/'build-input.json')
         receipt['tdfc_sha256'] = tactics_build['candidate_sha256']
+    if view:
+        receipt['rv_manifest_sha256'] = sha(view/'build-input.json')
+        receipt['rv_sha256'] = view_build['candidate_sha256']
+    if weapons:
+        receipt['msw_manifest_sha256'] = sha(weapons/'build-input.json')
+        receipt['msw_sha256'] = weapons_build['candidate_sha256']
     if relay:
         receipt['network_fixture'] = dict(host_port=port, join_port=relay.port, delays_ms=relay.delays,
                                          script_sha256=sha(Path(__file__).parent/'jitter_proxy.py'))
@@ -101,6 +127,12 @@ def main():
         if tactics:
             shutil.copy2(tactics/'TDFCMod.swf',directory/'mods/TDFC/release/TDFCMod.swf')
             configuration['tdfc'] = tactics_build['candidate_sha256']
+        if view:
+            shutil.copy2(view/'RealisticVisionMod.swf',directory/'mods/RealisticVision/release/RealisticVisionMod.swf')
+            configuration['rv'] = view_build['candidate_sha256']
+        if weapons:
+            shutil.copy2(weapons/'MoreSkillsWeaponsMod.swf',directory/'mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.swf')
+            configuration['msw'] = weapons_build['candidate_sha256']
         cfg = directory/'mods/Rconnect/release/config.txt'
         save(cfg, configuration)
         # Installed MSW excludes this prefix; TDFC tests require their exact ID.
@@ -124,6 +156,10 @@ def main():
                 expected[key] = sha(cfg)
             elif tactics and key.lower() == 'mods/tdfc/release/tdfcmod.swf':
                 expected[key] = tactics_build['candidate_sha256']
+            elif view and key.lower() == 'mods/realisticvision/release/realisticvisionmod.swf':
+                expected[key] = view_build['candidate_sha256']
+            elif weapons and key.lower() == 'mods/moreskills&weapons/release/moreskillsweaponsmod.swf':
+                expected[key] = weapons_build['candidate_sha256']
         verify_files(directory, expected)
         receipt['roles'][role] = dict(appid=appid, descriptor_sha256=sha(desc), config=configuration, config_sha256=sha(cfg), files=expected)
         launches.append((role,directory,desc,storage/'RConnect-B.log'))
@@ -155,10 +191,13 @@ def main():
             print(json.dumps(dict(role=role,pid=process.pid,appid=receipt['roles'][role]['appid'])),flush=True)
         deadline=time.monotonic()+args.seconds
         while time.monotonic()<deadline:
-            ends=[any(x['kind']=='DONE' for x in records(log)) for _,_,_,log in launches]
+            samples=[records(log) for _,_,_,log in launches]
+            ends=[any(x['kind']=='DONE' for x in events) for events in samples]
             if all(ends):
                 receipt['complete']=True
                 break
+            if any(any(x['kind']=='FATAL' for x in events) for events in samples):
+                raise RuntimeError('Probe reported a fatal error; preserve evidence and stop owned instances')
             if any(p.poll() is not None for p in processes):
                 raise RuntimeError('AIR exited before probe completed')
             time.sleep(1)

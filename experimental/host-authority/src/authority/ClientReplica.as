@@ -70,6 +70,7 @@ package authority {
       }
       private function render(frame:Object,interpolated:Boolean=false):void {
          var began:int=Timing.start(),part:int=began;
+         if(access.view!=null)access.view.prepare();
          displayFrame=frame;
          if(!interpolated)MapState.apply(access,frame.map);
          if(interpolated && frame.scene!=null)scene.interpolate(frame.scene);
@@ -128,6 +129,7 @@ package authority {
          for each(var projectile:DisplayObject in projectiles)managed.push(projectile);
          scene.prune(managed);
          if(!interpolated){access.world.gui.setHp();access.world.gui.setMana();access.world.gui.setWeapon();access.world.gui.setPet();}
+         if(!interpolated && access.weapons!=null && frame.character!=null)access.weapons.present(frame.character.msw);
          if(!interpolated)sound.apply(frame);
          if(frame.paused && access.world.sats.active && satsEpoch!=frame.pauseEpoch) {
             var sats:Object=access.world.sats,grafon:Object=access.world.grafon;
@@ -232,6 +234,7 @@ package authority {
          for each(var clip:DisplayObject in projectiles){if(clip.parent!=null)clip.parent.removeChild(clip);VisualPose.dispose(clip);}
          scene.dispose();peers={};projectiles={};endedProjectiles={};access.world.onPause=originalPause;
       }
+      public function prepareReturn():void {if(access.weapons!=null)access.weapons.carryState(entrySave.game);}
       public function returnToOwnGame():void {
          // Leaving does not turn a confirmation-only replica into a second
          // simulation of the host's world. Rebuild the player's own native

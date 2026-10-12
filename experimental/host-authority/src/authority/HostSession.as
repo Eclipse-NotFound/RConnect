@@ -29,6 +29,7 @@ package authority {
          local.observeWeapon();remote.observeWeapon();
          local.unit.isSats=remote.unit.isSats=false;
          combat=new FriendlyCombat(this);
+         if(access.weapons!=null)access.weapons.bind(this,hello.profile.msw);
          grips=new PeerGrabs(actors);local.grips=remote.grips=grips;
          if(tactics!=null)tactics.bind(actors);
          for(var i:int=0;i<2;i++) {
@@ -93,6 +94,8 @@ package authority {
       public function publish():void {
          if(!active)return;
          var began:int=Timing.start(),part:int=began;
+         if(access.view!=null)access.view.prepare();
+         if(access.weapons!=null)access.weapons.present(access.weapons.snapshot(0));
          grips.present();
          combat.update();
          var frame:Object=runtime.snapshot();frame.type="frame";frame.session=session;frame.room=inputs[1].room;
@@ -111,6 +114,7 @@ package authority {
          frame.scene=scene.capture(actors[1].unit.loc,actors,runtime.tick);
          Timing.end("host.sceneAndPlayers",part);part=Timing.start();
          frame.character=CharacterState.capture(actors[1]);
+         if(access.weapons!=null)frame.character.msw=access.weapons.snapshot(1);
          Timing.end("host.character",part);part=Timing.start();
          frame.resources={hold:actors[1].unit.currentWeapon==null?0:actors[1].unit.currentWeapon.hold,
             hp:actors[1].unit.hp,mana:actors[1].unit.mana};

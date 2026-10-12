@@ -31,8 +31,10 @@ package authority {
          if(!host && v.type=="teleport-finish")finish();
       }
       override public function input(f:Object,s:HostSession):Object {
-         f.buttons=0;f.actions=[];f.aimX=toX;f.aimY=fy-39;
-         if(begin<0 || phase<0)return f;
+         f.buttons=0;f.actions=[];
+         if(phase<0)return f;
+         f.aimX=toX;f.aimY=fy-39;
+         if(begin<0)return f;
          var elapsed:int=(host?s.runtime.tick:RConnectMod.instance.replica.lastTick)-begin;
          if((host?0:1)==owner && kind()!="relocate" && elapsed>=8 && elapsed<(kind()=="tap"?11:52))f.buttons=Commands.TELE;
          return f;

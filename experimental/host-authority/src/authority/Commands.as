@@ -14,6 +14,7 @@ package authority {
       private var actions:Array=[];
       private var lastAction:int=0;
       private var pressed:int=0;
+      private var msw:Object;
       public function Commands(session:String,player:int,room:String) {this.session=session;this.player=player;this.room=room;}
       public function accept(value:Object,now:int):String {
          if(value==null || value.session!==session || value.player!==player || value.epoch!==epoch || value.room!==room || value.roomEpoch!==roomEpoch || value.weaponEpoch!==weaponEpoch)return "identity";
@@ -22,6 +23,7 @@ package authority {
          if(!(value.aimX is Number) || !(value.aimY is Number) || !isFinite(value.aimX) || !isFinite(value.aimY)
             || Math.abs(value.aimX)>100000 || Math.abs(value.aimY)>100000)return "aim";
          if(!(value.actions is Array) || value.actions.length>16 || actions.length+value.actions.length>64)return "actions";
+         if(!WeaponBridge.validInput(value.msw))return "msw-input";
          var nextAction:int=lastAction, staged:Array=[];
          for each(var action:Object in value.actions) {
             if(action==null || !(action.id is Number) || action.id!=int(action.id) || action.id<=0)return "action-id";
@@ -36,14 +38,15 @@ package authority {
          pressed|=int(value.buttons)&~buttons;
          accepted=int(value.seq);lastAt=now;buttons=int(value.buttons);aimX=value.aimX;aimY=value.aimY;
          lastAction=nextAction;actions=actions.concat(staged);
+         msw=value.msw;
          return "";
       }
       public function consume(now:int):Object {
-         if(lastAt<0 || now-lastAt>500){buttons=0;pressed=0;actions=[];}
-         var result:Object={seq:accepted,buttons:buttons|pressed,pressed:pressed,aimX:aimX,aimY:aimY,actions:actions};
+         if(lastAt<0 || now-lastAt>500){buttons=0;pressed=0;actions=[];msw=null;}
+         var result:Object={seq:accepted,buttons:buttons|pressed,pressed:pressed,aimX:aimX,aimY:aimY,actions:actions,msw:msw};
          consumed=accepted;actions=[];pressed=0;return result;
       }
-      public function clear():void {buttons=0;pressed=0;actions=[];lastAt=-1;}
+      public function clear():void {buttons=0;pressed=0;actions=[];lastAt=-1;msw=null;}
       public function get receivedAction():int{return lastAction;}
       public function takeMenus():Array {
          var taken:Array=[],rest:Array=[];

@@ -94,11 +94,13 @@ package authority {
             actors[i].step(inputs[i].consume(getTimer()));inputs[i].weaponEpoch=actors[i].weaponEpoch;
             if(actors[i].interacting!=null)interactionOwners[actors[i].interacting]=actors[i];
          }
+         if(access.weapons!=null)access.weapons.beforeObjects(room,tick);
          capture(room);
       }
       private function stepLand(land:Object):void {
          var began:int=Timing.start();
          try {
+            if(access.view!=null)access.view.prepare();
             if(travel!=null && land!==actors[0].context.land)travel.rebind(land);
             ++tick;
             var occupied:Array=rooms.occupied();
@@ -109,6 +111,7 @@ package authority {
                access.scope.run(representative.context,function():void {
                   if(music!=null)music.step(room);
                   room.step();++roomSteps;++rooms.services(room).steps;
+                  if(access.weapons!=null)access.weapons.afterRoom(room,tick);
                   if(tactics!=null)tactics.step(room,tick);
                   capture(room);
                });

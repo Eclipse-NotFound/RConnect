@@ -31,6 +31,7 @@ package authority {
             b.context.sats.clearAll();b.unit.dropTeleObj();
             b.unit.inLoc(w.loc);w.loc.units=roster;b.unit.setLocPos(hostX,hostY);b.unit.controlOn();
          });
+         if(access.weapons!=null)access.weapons.enterWorld(land);
          r.rooms=new OccupiedRooms(access,session.actors);
          r.transfers=new RoomTransfers(access,session.actors,session.inputs,r.rooms);
          access.definition("fe.loc.Land")["rconnectGotoRoom"]=r.transfers.request;

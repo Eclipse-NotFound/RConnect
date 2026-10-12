@@ -1,6 +1,6 @@
 # B 架构：RealisticVision 本机显示隔离接口提案
 
-2026-10-12；状态：等待用户授权，未修改 RealisticVision。
+2026-10-12；用户已明确同意“创建独立接口，与原版本接口保持隔离”。独立 `RVAuthorityViewAPI` 已编译和分项实测；原 `RVExplorationAPI` 保持不变。仅隔离候选，未部署。实际结果见 state/host-authority-playable-2026-10-11.md 末节。
 
 ## 已观察到的问题
 

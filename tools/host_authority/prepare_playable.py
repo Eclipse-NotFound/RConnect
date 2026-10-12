@@ -15,6 +15,8 @@ def main():
     ap = argparse.ArgumentParser()
     for name in ('baseline', 'candidate', 'native', 'tdfc', 'output'):
         ap.add_argument('--'+name, required=True)
+    ap.add_argument('--rv', help='Frozen independent RV authority interface')
+    ap.add_argument('--msw', help='Frozen independent MSW authority interface')
     args = ap.parse_args()
     baseline, candidate, native, tactics, out = [inside_build(ROOT/getattr(args, name))
         for name in ('baseline', 'candidate', 'native', 'tdfc', 'output')]
@@ -28,6 +30,20 @@ def main():
         raise ValueError('Mismatched native build or baseline')
     if not tdfc['experimental_only'] or tdfc['family'] != 'tdfc-authority-v1':
         raise ValueError('TDFC is not the isolated authority interface candidate')
+    extensions = {}
+    for key, directory_name, artifact in (('rv', 'RealisticVision', 'RealisticVisionMod.swf'),
+                                          ('msw', 'MoreSkills&Weapons', 'MoreSkillsWeaponsMod.swf')):
+        option = getattr(args, key)
+        if not option:
+            continue
+        directory = inside_build(ROOT/option)
+        manifest = read(directory/'build-input.json')
+        if not manifest.get('experimental_only') or manifest.get('family') != key+'-authority-v1':
+            raise ValueError('Not an independent '+key+' authority candidate')
+        verify_files(directory, manifest['sources'])
+        if sha(directory/artifact) != manifest['candidate_sha256']:
+            raise ValueError('Frozen '+key+' artifact changed')
+        extensions[key] = dict(path=directory, directory=directory_name, artifact=artifact, manifest=manifest)
     if out.exists():
         raise FileExistsError('A manual candidate must use a new directory')
     out.mkdir(parents=True)
@@ -35,10 +51,14 @@ def main():
     shutil.copytree(baseline/'game', game)
     replacements = {'pfe.swf': native/'pfe.swf', 'mods/Rconnect/release/RConnectMod.swf': candidate/'RConnectMod.swf',
                     'mods/TDFC/release/TDFCMod.swf': tactics/'TDFCMod.swf'}
+    for entry in extensions.values():
+        replacements['mods/'+entry['directory']+'/release/'+entry['artifact']] = entry['path']/entry['artifact']
     for target, source in replacements.items():
         shutil.copy2(source, game/target)
     configuration = dict(experimental=True, session=uuid.uuid4().hex, role='', autoGame=False, probe=False,
                          port=23457, hostIp='127.0.0.1', tdfc=tdfc['candidate_sha256'])
+    for key, entry in extensions.items():
+        configuration[key] = entry['manifest']['candidate_sha256']
     save(game/'mods/Rconnect/release/config.txt', configuration)
     expected = dict(b['files'])
     changed = {name.lower() for name in replacements} | {'mods/rconnect/release/config.txt'}
@@ -70,6 +90,7 @@ def main():
     save(out/'manual-input.json', dict(experimental_only=True, launched=False, release_gate_complete=False,
         baseline_manifest_sha256=sha(baseline/'baseline.json'), candidate_manifest_sha256=sha(candidate/'build-input.json'),
         native_manifest_sha256=sha(native/'native-input.json'), tdfc_manifest_sha256=sha(tactics/'build-input.json'),
+        extension_manifests={key:sha(entry['path']/'build-input.json') for key,entry in extensions.items()},
         files=expected, config=configuration, launchers=launchers))
     print(json.dumps(dict(prepared=str(out), launched=False, release_gate_complete=False), ensure_ascii=False))
 

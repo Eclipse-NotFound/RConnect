@@ -1,8 +1,9 @@
-"""Lossless completed-run archive. Keep logs/manifests; deduplicate frozen bytes.
+"""Lossless finalized-run archive. Keep logs/manifests; deduplicate frozen bytes.
 
 Every source file is verified against a separately read, compressed SHA-256 blob
 before its redundant runtime copy is removed. This never touches builds, the
-baseline, installed files, AIR stores, or incomplete/live runs. Restore writes
+baseline, installed files, AIR stores, or still-running runs. A failed/timed-out
+probe is eligible only after the runner verifies inputs and exits owned PIDs. Restore writes
 fresh physical copies, never hardlinks, into a new directory.
 """
 import argparse
@@ -27,11 +28,12 @@ def archive(run, store):
     run = inside_build(run)
     receipt = read(run/'run.json')
     if (receipt.get('phase') != 'B-native-probe' or not receipt.get('experimental_only')
-            or not receipt.get('complete') or not receipt.get('owned_processes_exited')
+            or not receipt.get('owned_processes_exited') or not receipt.get('process_exit_codes')
+            or any(p.get('code') is None for p in receipt['process_exit_codes'])
             or not receipt.get('installation_unchanged')
             or set(receipt['roles']) != {'host', 'join'}
             or not all(r.get('runtime_unchanged') for r in receipt['roles'].values())):
-        raise ValueError('Not a verified, completed, isolated run: '+run.name)
+        raise ValueError('Not a verified, finalized, isolated run: '+run.name)
     manifest_path = run/'runtime-archive.json'
     if manifest_path.exists():
         manifest = read(manifest_path)

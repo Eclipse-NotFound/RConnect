@@ -50,6 +50,7 @@ package authority {
                }
             }
             unit.celX=input.aimX;unit.celY=input.aimY;
+            if(access.weapons!=null)access.weapons.beforePlayer(actor,input);
             if(!context.sats.active) {
                var heldBefore:Object=unit.teleObj,throwRequested:Boolean=ctr.keyAction;
                if(grips!=null)grips.flights.before(actor);
@@ -58,6 +59,7 @@ package authority {
                if(grips!=null)grips.afterStep(actor,heldBefore,throwRequested);
                for(i=0;i<Commands.HELD.length;i++)if((input.buttons&(1<<i))!=0 && !ctr[Commands.HELD[i]])consumedButtons|=1<<i;
             }
+            if(access.weapons!=null)access.weapons.afterPlayer(actor);
             ++steps;
             if(context.transitionCooldown>0)--context.transitionCooldown;
          });
