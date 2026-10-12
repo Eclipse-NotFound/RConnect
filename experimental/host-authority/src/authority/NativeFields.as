@@ -15,7 +15,12 @@ package authority {
       public static function capture(value:Object):Object {
          if(value==null)return {};
          var began:int=Timing.start();
-         var previous:Object=retained[value],out:Object=previous==null?{}:null,updates:Object=null,removed:Array=null;
+         var record:Object=retained[value],previous:Object=record==null?null:record.state;
+         // Moving units normally change every frame. Build their next record
+         // during this one read instead of copying the entire previous record
+         // after its first changed field. Stable objects keep the lazy path.
+         var eager:Boolean=record!=null && record.changed;
+         var out:Object=previous==null || eager?{}:null,updates:Object=null,removed:Array=null,changed:Boolean=false;
          var key:String=getQualifiedClassName(value),names:Array=schemas[key];
          if(names==null) {
             names=[];
@@ -28,16 +33,21 @@ package authority {
             var item:*=value[name];
             var scalar:Boolean=item is Number?isFinite(item):item is String || item is Boolean;
             if(scalar) {
+               if(eager)out[name]=item;
                if(previous!=null && previous[name]===item)continue;
+               changed=true;
                if(out==null)out=copy(previous);
-               out[name]=item;if(updates==null)updates={};updates[name]=item;
+               if(!eager)out[name]=item;
+               if(updates==null)updates={};updates[name]=item;
             }else if(previous!=null && previous.hasOwnProperty(name)) {
+               changed=true;
                if(out==null)out=copy(previous);
                delete out[name];if(removed==null)removed=[];removed.push(name);
             }
          }
-         if(out==null){Timing.end("capture.nativeFields",began);return previous;}
-         retained[value]=out;
+         if(previous!=null && !changed){record.changed=false;Timing.end("capture.nativeFields",began);return previous;}
+         if(record==null)retained[value]={state:out,changed:changed};
+         else {record.state=out;record.changed=changed;}
          if(previous!=null) {
             // Weak provenance prevents a newest record from keeping the
             // entire previous-frame chain alive. The normal encoder retains

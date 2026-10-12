@@ -38,6 +38,7 @@ def main():
     ap.add_argument('--seconds', type=int, default=140)
     ap.add_argument('--scenario', choices=('native-gun','ownership','split-rooms','cooperation','lifecycle','sats','pause-cycles','pause-holders','travel','friendly','friendly-melee','friendly-magic','grabs','enemy-grabs','personal','throw','vectors','mines','areas','party','hud','menus','dialogue','vision','stress','explosives','impulse','magic','angles','enemies','sound','music','movement','motion','guns','melee','terrain','teleport','body-effects','time-control','time-special','time-journey','time-exit-record','time-exit-replay','msw','msw-sweep','msw-lifecycle'), default='native-gun')
     ap.add_argument('--swap', action='store_true')
+    ap.add_argument('--field-profile', action='store_true', help='Paired field-capture timings on real native objects, native-gun only')
     ap.add_argument('--enemy', choices=('native','tdfc'), default='native')
     ap.add_argument('--tdfc', help='Optional frozen TDFC authority-v1 build directory')
     ap.add_argument('--rv', help='Optional frozen independent RV authority-v1 build')
@@ -46,6 +47,8 @@ def main():
     ap.add_argument('--jitter-ms', help='Isolated loopback relay delay schedule, comma-separated milliseconds in 0..450')
     ap.add_argument('--stress-seconds', type=int, default=20, help='Measured dense-scene duration, 20..1800 seconds, stress scenario only')
     args = ap.parse_args()
+    if args.field_profile and args.scenario != 'native-gun':
+        ap.error('--field-profile requires native-gun')
     if not 20 <= args.stress_seconds <= 1800 or args.scenario != 'stress' and args.stress_seconds != 20:
         ap.error('--stress-seconds requires stress and a duration in 20..1800')
     baseline, candidate, native, out = [inside_build(ROOT/p) for p in (args.baseline, args.candidate, args.native, args.output)]
@@ -137,6 +140,8 @@ def main():
         shutil.copy2(native/'pfe.swf', directory/'pfe.swf')
         shutil.copy2(candidate/'RConnectMod.swf', directory/'mods/Rconnect/release/RConnectMod.swf')
         configuration = dict(experimental=True, role=role, session=run_id, port=port, autoGame=True, land='random_mane', probe=True, scenario=args.scenario, swap=args.swap, enemy=args.enemy)
+        if args.field_profile:
+            configuration['fieldProfile'] = True
         if args.scenario == 'stress':
             configuration['stressSeconds'] = args.stress_seconds
         if relay and role == 'join':
