@@ -35,7 +35,7 @@ package {
       private var lastPolicy:String="";
       private var leavingAfterReplay:Boolean=false;
       private var bootTrace:int=-5000;
-      public static function init(main:Object):void {
+      public static function init(main:*):void {
          try{instance=new RConnectMod(main);}catch(error:*){Log.error(error);}
       }
       public function RConnectMod(main:Object) {

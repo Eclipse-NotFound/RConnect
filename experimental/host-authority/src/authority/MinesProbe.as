@@ -12,6 +12,10 @@ package authority {
          if(host && begin>=0 && session!=null)tick=session.runtime.tick-begin;
          if(!host && begin>=0)frame.probeStart=begin;
          frame.actions=[];frame.buttons=!host && tick>=95 && tick<195?Commands.ACTION:0;
+         // Native idle aiming does not necessarily turn the player's body.
+         // Entering a random room can leave this fixture facing away from
+         // the hidden mine; perform a real short movement before discovery.
+         if(!host && tick>=5 && tick<10)frame.buttons=Commands.RIGHT;
          frame.aimX=750;frame.aimY=fy-7;
          if(!host && tick>=225 && tick<325 && loose!=null){frame.buttons=Commands.ACTION;frame.aimX=loose.x;frame.aimY=loose.y-loose.h/2;}
          return frame;

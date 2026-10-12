@@ -9,6 +9,7 @@ package authority {
       private var tick:uint=0,burst:Boolean=false,reloaded:Boolean=false,switched:Boolean=false,aiStarted:Boolean=false;
       private var movementChecked:Boolean=false;
       private var primary:String,secondary:String,hostDamage:Number,remoteDamage:Number,beginAt:int=0;
+      private var switchTrace:Array=[],lastSwitchWeapon:Object;
       // Raiders need a longer natural reaction/evasion window. The turret
       // case keeps its original incoming-fire window; death is a later phase.
       private function get endTick():uint {return enemyKind=="tdfc"?760:440;}
@@ -39,8 +40,12 @@ package authority {
          if(tick>=110 && tick<122)frame.buttons|=host?Commands.LEFT:Commands.RIGHT;
          frame.actions=[];
          frame.aimX=host?210:890;frame.aimY=access.world.gg.Y-55;
-         if(!host && (tick==80 || tick==81 || tick==82))frame.actions=[{id:1,type:"reload"}];
-         if(!host && tick>=240 && tick<246)frame.actions=[{id:2,type:"equip",weapon:secondary}];
+         var acknowledged:int=host?0:RConnectMod.instance.replica==null || RConnectMod.instance.replica.lastFrame==null?0:
+            int(RConnectMod.instance.replica.lastFrame.players[1].actionAck);
+         // These are reliable actions, not brief held switches. Retain their
+         // same IDs until the real host acknowledgement reaches the client.
+         if(!host && tick>=80 && tick<220 && acknowledged<1)frame.actions=[{id:1,type:"reload"}];
+         if(!host && tick>=240 && tick<300 && acknowledged<2)frame.actions=[{id:2,type:"equip",weapon:secondary}];
          return frame;
       }
       private function stock(g:Object,id:String=null):int {
@@ -55,8 +60,10 @@ package authority {
             if(tick>=endTick-10) {
                check(replica.playerApplications[0]>100 && replica.playerApplications[1]>100,"both players are driven by confirmed native samples");
                check(replica.projectileApplications>0,"confirmed native projectiles reach display objects");
-               check(replica.lastFrame.players[1].weapon.id==secondary && replica.lastFrame.players[1].weaponEpoch==2,
-                  "confirmed weapon switch changes the client's current native display");
+               var current:Object=replica.lastFrame.players[1];
+               check(current.weapon!=null && current.weapon.id==secondary && current.weaponEpoch==3,
+                  "confirmed weapon switch preserves both native identity phases on the client's display",
+                  {id:current.weapon==null?null:current.weapon.id,epoch:current.weaponEpoch});
                check(access.world.onPause,"client never advances a second combat simulation");
                if(replica.tactics!=null)check(replica.tactics.inspect(access.world.loc).steps==0,"join-side TDFC never executes a tactical simulation");
                finish();
@@ -106,16 +113,25 @@ package authority {
             check(stock(a)==initial.aAfterShot && stock(a,initial.bWeapon)==initial.aOther,"remote reload leaves both host ammunition families unchanged");
             initial.aBeforeSwitch=a.currentWeapon;initial.bBeforeSwitch=b.currentWeapon;
             initial.bBeforeSwitchStock=stock(b);initial.aBeforeSwitchStock=stock(a);
+            initial.bBeforeSwitchEpoch=session.actors[1].weaponEpoch;lastSwitchWeapon=b.currentWeapon;
          }
          if(tick>=155 && !movementChecked) {
             movementChecked=true;
             check(a.X<395 && b.X>705,"opposite input streams move their own native bodies",{hostX:a.X,joinX:b.X});
             check(session.lastFrame.players[0].x==a.X && session.lastFrame.players[1].x==b.X,"movement confirmations belong to the correct native players");
          }
+         if(reloaded && !switched && b.currentWeapon!==lastSwitchWeapon) {
+            switchTrace.push({tick:tick,id:b.currentWeapon==null?null:b.currentWeapon.id,epoch:session.actors[1].weaponEpoch});
+            lastSwitchWeapon=b.currentWeapon;
+         }
          if(tick>=300 && !switched) {
             switched=true;
-            check(b.currentWeapon!=null && b.currentWeapon.id==initial.aWeapon && session.actors[1].weaponEpoch==2,
-               "remote equip request runs the native weapon change exactly once");
+            check(b.currentWeapon!=null && b.currentWeapon.id==initial.aWeapon && switchTrace.length==2 &&
+               switchTrace[0].id==null && switchTrace[1].id==initial.aWeapon && session.inputs[1].receivedAction==2 &&
+               session.actors[1].weaponEpoch==initial.bBeforeSwitchEpoch+2,
+               "one reliable equip request completes the native unequip and equip identity phases",
+               {id:b.currentWeapon==null?null:b.currentWeapon.id,epoch:session.actors[1].weaponEpoch,
+                before:initial.bBeforeSwitchEpoch,actionAck:session.inputs[1].receivedAction,phases:switchTrace});
             check(a.currentWeapon===initial.aBeforeSwitch && stock(a)==initial.aBeforeSwitchStock,
                "remote equip does not replace or spend the host weapon");
             check(stock(b,initial.bWeapon)==initial.bBeforeSwitchStock,"switching away preserves the previous native magazine and reserve");
