@@ -1,12 +1,21 @@
 package authority {
    import flash.display.MovieClip;
    import flash.system.ApplicationDomain;
+   import flash.utils.Dictionary;
    import fe.inter.AuthorityGUI;
    import fe.inter.AuthorityPip;
    import fe.inter.AuthorityStand;
    public class NativeAccess {
       public var domain:ApplicationDomain,world:Object,scope:NativeScope;
       public var ink:TerrainInk;
+      private var positions:Dictionary=new Dictionary(true);
+      public function bindPositionBoundary():void {
+         var Unit:Class=definition("fe.unit.Unit");
+         if(Unit["rconnectTeleported"]!=null)throw new Error("Native teleport seam occupied");
+         Unit["rconnectTeleported"]=function(unit:Object):void {positions[unit]=uint(positions[unit])+1;};
+      }
+      public function positionEpoch(unit:Object):uint {return uint(positions[unit]);}
+      public function resetPositions():void {positions=new Dictionary(true);}
       public function NativeAccess(main:Object) {
          domain=main.loaderInfo.applicationDomain;
          world=definition("fe.World")["w"];

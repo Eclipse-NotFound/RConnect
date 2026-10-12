@@ -163,6 +163,18 @@ package authority {
             "motion crosses animation frames while poses stay discrete and angles take the short arc");
          q.sx=-1;v=PoseTween.pose(p,q,.5);
          check(v.sx==1 && v.r==179 && v.x==15,"weapon reflection is a discrete native flip, never a shrinking interpolated sprite");
+         var priorBody:Object={epoch:1,roomEpoch:1,positionEpoch:4,x:10,y:20,native:{X:10,Y:20},visual:p,weapon:null};
+         var nextBody:Object={epoch:1,roomEpoch:1,positionEpoch:5,x:90,y:20,native:{X:90,Y:20},visual:q,weapon:null};
+         var priorScene:Object={key:"one",units:[{key:1,positionEpoch:4,pose:p}],objects:[],effects:[]};
+         var nextScene:Object={key:"one",units:[{key:1,positionEpoch:5,pose:q}],objects:[],effects:[]};
+         var earlier:Object={room:"one",pauseEpoch:0,players:[priorBody],projectiles:[],scene:priorScene};
+         var later:Object={room:"one",pauseEpoch:0,players:[nextBody],projectiles:[],scene:nextScene};
+         v=PoseTween.frame(earlier,later,.5);
+         check(v.players[0]===priorBody && v.scene.units[0]===priorScene.units[0],
+            "even a short native teleport preserves the old player/enemy pose until its confirmed boundary");
+         nextBody.positionEpoch=4;nextScene.units[0].positionEpoch=4;v=PoseTween.frame(earlier,later,.5);
+         check(v.players[0].x==50 && v.scene.units[0].pose.x==15 && priorBody.x==10,
+            "ordinary continuous movement still interpolates without mutating the prior confirmation");
          var source:Sprite=new Sprite(),replica:Sprite=new Sprite();
          source.transform.matrix=new Matrix(.992919921875,-.1126861572265625,.1496124267578125,.9264678955078125,10,-20);
          var captured:Object=VisualPose.capture(source);VisualPose.apply(replica,captured);
@@ -211,6 +223,14 @@ package authority {
             "many unacknowledged input packets cannot become extra physics steps or mutate confirmation");
          check(p.sample(1120,frame,2,false)==null && p.sample(1120,frame,1,true)==null && p.sample(1300,frame,1,false)==null,
             "changed terrain, local pause and stale confirmation cancel movement prediction");
+         var moved:Object=PoseTween.copy(state);moved.positionEpoch=1;
+         var discontinuous:Object=PoseTween.copy(frame);discontinuous.players=[null,moved];discontinuous.tick=2;discontinuous.time=133;
+         var crossing:MovementPrediction=new MovementPrediction(),teleportInput:Object=PoseTween.copy(input);teleportInput.seq=1;
+         crossing.record(teleportInput,1000);crossing.confirm(frame,1040);
+         var wasPredicting:Boolean=crossing.sample(1100,frame,1,false)!=null;
+         crossing.confirm(discontinuous,1121);
+         check(wasPredicting && crossing.sample(1122,discontinuous,1,false)==null && crossing.sample(1122,frame,1,false)==null,
+            "native teleport cancels unacknowledged movement and cannot predict across the old display boundary");
          input=PoseTween.copy(input);input.seq=50;input.buttons=Commands.FIRE;p.record(input,1121);
          check(p.sample(1122,frame,1,false)==null,"a new combat intent removes prediction before the host acknowledges it");
          input=PoseTween.copy(input);input.seq=51;input.buttons=Commands.RIGHT;input.epoch=2;p.record(input,1123);

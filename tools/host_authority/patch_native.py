@@ -206,8 +206,11 @@ def modify(name, source):
     if name=='fe.unit.Unit':
         anchor='      public static var rconnectFindTarget:Function = null;'
         source=once(source,anchor,anchor+'\n      public static var rconnectHitPolicy:Function = null;\n'
+            '      public static var rconnectTeleported:Function = null;\n'
             '      public static function rconnectAllowed(source:Unit, target:Unit, nativeAllowed:Boolean, kind:String = "impact"):Boolean\n'
             '      {\n         return rconnectHitPolicy == null ? nativeAllowed : Boolean(rconnectHitPolicy(source,target,nativeAllowed,kind));\n      }')
+        anchor='            Emitter.emit("teleport",loc,X,Y - scY / 2);\n         }'
+        source=once(source,anchor,anchor+'\n         if(rconnectTeleported != null) rconnectTeleported(this);')
     if name=='fe.weapon.Bullet':
         source=once(source,'(this.targetObj || _loc2_.fraction != this.owner.fraction)',
             '(Unit.rconnectAllowed(this.owner,_loc2_,Boolean(this.targetObj || _loc2_.fraction != this.owner.fraction)))')
@@ -316,7 +319,7 @@ def modify(name, source):
             '         for each(var node:XML in nodes)\n         {\n'
             '            if(node.attribute(key) == expected) result += node;\n'
             '         }\n         return result;\n      }\n\n'+constructor)
-    return source.replace('"b1-v3"','"b3-v9"').replace('"b2-v1"','"b3-v9"').replace('"b3-v1"','"b3-v9"')
+    return source.replace('"b1-v3"','"b3-v10"').replace('"b2-v1"','"b3-v10"').replace('"b3-v1"','"b3-v10"')
 
 
 def swf_tags(path):
@@ -397,7 +400,7 @@ def main():
             subprocess.run(ff+['-dumpAS3', str(path)], stdout=log, check=True)
     if (out/'before-classes.txt').read_bytes() != (out/'after-classes.txt').read_bytes():
         raise RuntimeError('Native class list changed')
-    save(out/'native-input.json', dict(experimental_only=True, capability='b3-v9',
+    save(out/'native-input.json', dict(experimental_only=True, capability='b3-v10',
         baseline=str(baseline.relative_to(ROOT)), baseline_manifest_sha256=sha(baseline/'baseline.json'),
         original_sha256=sha(original), candidate_sha256=sha(out/'pfe.swf'),
         sources={p.relative_to(out).as_posix():sha(p) for p in sorted((out/'import').rglob('*.as'))},

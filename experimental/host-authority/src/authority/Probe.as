@@ -8,6 +8,13 @@ package authority {
       private var target:Object,targetHP:Number=0;
       private var peerReady:Boolean=false;
       public function Probe(access:NativeAccess,host:Boolean){this.access=access;this.host=host;}
+      protected function displayedPlayer(id:int):Object {
+         var replica:ClientReplica=RConnectMod.instance.replica;
+         if(replica==null || replica.displayFrame==null)return null;
+         var key:uint=replica.displayFrame.players[id].key;
+         for each(var unit:Object in access.world.loc.units)if(unit!=null && replica.scene.keyFor(unit)==key)return unit;
+         return null;
+      }
       public function check(ok:Boolean,name:String,details:Object=null):void {
          if(ok)++passed;else ++failed;
          Log.write(ok?"PASS":"FAIL",{name:name,details:details});

@@ -39,7 +39,7 @@ package {
   private function hooksEmpty():Boolean {
    for each(var pair:Array in [["fe.loc.Land","rconnectRoomStep"],["fe.loc.Land","rconnectGotoRoom"],["fe.loc.Land","rconnectGotoChallenge"],
     ["fe.loc.Location","rconnectPlayerStep"],["fe.loc.Location","rconnectObjectStep"],["fe.unit.UnitPlayer","rconnectDamage"],
-    ["fe.unit.UnitPlayer","rconnectDeath"],["fe.unit.Unit","rconnectFindTarget"],["fe.unit.Unit","rconnectHitPolicy"],
+    ["fe.unit.UnitPlayer","rconnectDeath"],["fe.unit.Unit","rconnectFindTarget"],["fe.unit.Unit","rconnectHitPolicy"],["fe.unit.Unit","rconnectTeleported"],
     ["fe.unit.Mine","rconnectMineSight"],["fe.World","rconnectSave"],["fe.World","rconnectChangeWorld"],["fe.inter.PipBuck","rconnectMenu"],
     ["fe.loc.Game","rconnectIntent"],["fe.unit.UnitPlayer","rconnectIntent"],["fe.unit.Invent","rconnectIntent"],
     ["fe.unit.Pers","rconnectIntent"],["fe.weapon.Weapon","rconnectIntent"],["fe.Snd","rconnectPlaySound"],

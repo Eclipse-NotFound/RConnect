@@ -47,10 +47,10 @@ package authority {
          var out:Object=copy(a);out.players=[];out.projectiles=[];
          for(var i:int=0;i<a.players.length;i++) {
             var p:Object=a.players[i],q:Object=b.players[i],r:Object=p;
-            if(q!=null && p.epoch==q.epoch && p.roomEpoch==q.roomEpoch && close(p,q,"x","y")) {
+            if(q!=null && p.epoch==q.epoch && p.roomEpoch==q.roomEpoch && p.positionEpoch==q.positionEpoch && close(p,q,"x","y")) {
                r=copy(p);r.x=lerp(p.x,q.x,t);r.y=lerp(p.y,q.y,t);r.native=fields(p.native,q.native,t);
                r.visual=pose(p.visual,q.visual,t);
-               if(p.held!=null && q.held!=null && p.held.key==q.held.key && close(p.held,q.held,"X","Y")) {
+               if(p.held!=null && q.held!=null && p.held.key==q.held.key && p.held.positionEpoch==q.held.positionEpoch && close(p.held,q.held,"X","Y")) {
                   r.held=copy(p.held);r.held.X=lerp(p.held.X,q.held.X,t);r.held.Y=lerp(p.held.Y,q.held.Y,t);
                }
                if(p.weapon!=null && q.weapon!=null && p.weaponEpoch==q.weaponEpoch && p.weapon.id==q.weapon.id) {
@@ -74,7 +74,7 @@ package authority {
                out.scene[list]=[];targets=keyed(b.scene[list],"key");
                for each(p in a.scene[list]) {
                   q=targets[p.key];r=p;
-                  if(q!=null && p.pose!=null && q.pose!=null && close(p.pose,q.pose,"x","y")) {
+                  if(q!=null && p.positionEpoch==q.positionEpoch && p.pose!=null && q.pose!=null && close(p.pose,q.pose,"x","y")) {
                      r=copy(p);r.pose=pose(p.pose,q.pose,t);
                      if(p.healthBar!=null && q.healthBar!=null) {r.healthBar=copy(p.healthBar);r.healthBar.pose=pose(p.healthBar.pose,q.healthBar.pose,t);}
                      if(p.fields!=null && q.fields!=null && close(p.fields,q.fields,"X","Y"))r.fields=fields(p.fields,q.fields,t);

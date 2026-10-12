@@ -43,13 +43,15 @@ package {
          stream.open(file,FileMode.READ);config=JSON.parse(stream.readUTFBytes(stream.bytesAvailable));stream.close();
          if(config.experimental!==true || config.session==null || (config.role!=null && config.role!="" && config.role!="host" && config.role!="join"))throw new Error("Missing explicit B configuration");
          role=config.role==null?"":config.role;session=config.session;access=new NativeAccess(main);access.checkHooks();
-         access.ink=new TerrainInk(access);
+         access.ink=new TerrainInk(access);access.bindPositionBoundary();
          preferences=new Preferences(config);ui=new HudModel(this);hud=new NetHud(stage,ui);
          vision=new SharedVision(this);
          if(access.definition("fe.World")["rconnectChangeWorld"]!=null)throw new Error("Native lifecycle seam occupied");
-         access.definition("fe.World")["rconnectChangeWorld"]=function():void {if(network)leaveSession(false);vision.resetJourney();access.ink.reset();};
+         access.definition("fe.World")["rconnectChangeWorld"]=function():void {if(network)leaveSession(false);vision.resetJourney();access.ink.reset();access.resetPositions();};
          MapState.install(access);
          if(config.probe===true)probe=["explosives","magic","angles","guns","melee","terrain"].indexOf(config.scenario)>=0?new WeaponProbe(access,role=="host",config.scenario):
+            config.scenario=="teleport"?new TeleportProbe(access,role=="host"):
+            config.scenario=="body-effects"?new BodyEffectsProbe(access,role=="host"):
             config.scenario=="movement"?new MovementProbe(access,role=="host"):
             config.scenario=="motion"?new MotionProbe(access,role=="host"):
             config.scenario=="sound"?new SoundProbe(access,role=="host"):

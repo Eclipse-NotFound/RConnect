@@ -17,6 +17,7 @@ package authority {
       public function confirm(value:Object,now:Number):void {
          var state:Object=value.players[1],key:String=keyFor(state);
          if(identity!==key){clear();identity=key;}
+         if(lastFrame!=null && lastFrame.players[1].positionEpoch!=state.positionEpoch)clear();
          if(lastFrame!=null && value.tick>lastFrame.tick && value.time>lastFrame.time && !value.paused && !lastFrame.paused) {
             var sample:Number=(value.time-lastFrame.time)/(value.tick-lastFrame.tick);
             if(sample>=10 && sample<=200)stepMS=stepMS*.8+sample*.2;
@@ -31,6 +32,7 @@ package authority {
          lead=0;
          if(frame==null || anchor==null || !anchor.safe || localPause || frame.paused || display==null ||
             frame.room!==display.room || frame.pauseEpoch!=display.pauseEpoch ||
+            frame.players[1].positionEpoch!=display.players[1].positionEpoch ||
             keyFor(frame.players[1])!==keyFor(display.players[1]) || frame.scene.terrainRevision!=terrainRevision || now-arrival>150)return null;
          var source:Object=frame.players[1],motion:Object=source.motion;
          if(motion==null || keyFor(source)!==identity)return null;

@@ -48,7 +48,7 @@ package authority {
             for each(var child:Object in actorVisuals)if(child!=null && child.vis!=null && !rendered[child.vis]) {
                rendered[child.vis]=true;
                if(actor.unit.loc===room && child!==actor.unit.currentWeapon && !(child is Unit) && child.vis.parent!=null)
-                  result.effects.push({key:id(child),clip:getQualifiedClassName(child.vis),layer:child.sloy,pose:VisualPose.capture(child.vis),atlas:null});
+                  result.effects.push({key:id(child),positionEpoch:access.positionEpoch(actor.unit),clip:getQualifiedClassName(child.vis),layer:child.sloy,pose:VisualPose.capture(child.vis),atlas:null});
             }
          }
          if(full) {
@@ -66,7 +66,7 @@ package authority {
          }
          for each(var u:Object in room.units)if(u!=null && !u.player) {
             var burning:Boolean=AuthorityAnimation.burning(u as Unit);
-            var us:Object={key:id(u),cls:getQualifiedClassName(u),fields:NativeFields.capture(u),inter:NativeFields.capture(u.inter),pose:VisualPose.capture(u.vis,0,burning),
+            var us:Object={key:id(u),positionEpoch:access.positionEpoch(u),cls:getQualifiedClassName(u),fields:NativeFields.capture(u),inter:NativeFields.capture(u.inter),pose:VisualPose.capture(u.vis,0,burning),
                clip:u.vis==null?null:getQualifiedClassName(u.vis),burning:burning,
                blit:burning?null:AuthorityAnimation.capture(u as Unit),weapons:[],petOwner:-1,layer:u.sloy,attached:u.vis!=null && u.vis.parent!=null};
             us.healthBar=u.hpbar==null?null:{pose:VisualPose.capture(u.hpbar),attached:u.hpbar.parent!=null};

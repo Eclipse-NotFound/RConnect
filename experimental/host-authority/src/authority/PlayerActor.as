@@ -93,9 +93,9 @@ package authority {
                frame:NativeAccess.get(w.vis,"currentFrame",1),hold:w.hold,ammo:w.ammo,reserve:g.invent.items[w.ammo]==null?0:g.invent.items[w.ammo].kol,
                reload:NativeAccess.get(w,"t_reload",0),attack:NativeAccess.get(w,"t_attack",0)};
          }
-         var held:Object=g.teleObj==null?null:{X:g.teleObj.X,Y:g.teleObj.Y,scX:g.teleObj.scX,scY:g.teleObj.scY,
+         var held:Object=g.teleObj==null?null:{positionEpoch:access.positionEpoch(g.teleObj),X:g.teleObj.X,Y:g.teleObj.Y,scX:g.teleObj.scX,scY:g.teleObj.scY,
             massa:g.teleObj.massa,nazv:g.teleObj.nazv,warn:g.teleObj.warn};
-         return {id:id,epoch:epoch,native:NativeFields.capture(g),held:held,personal:PlainData.copy(personal),room:access.keyFor(g.loc),roomEpoch:roomEpoch,weaponEpoch:weaponEpoch,ack:ack,x:g.X,y:g.Y,dx:g.dx,dy:g.dy,hp:g.hp,maxhp:g.maxhp,mana:g.mana,
+         return {id:id,epoch:epoch,positionEpoch:access.positionEpoch(g),native:NativeFields.capture(g),held:held,personal:PlainData.copy(personal),room:access.keyFor(g.loc),roomEpoch:roomEpoch,weaponEpoch:weaponEpoch,ack:ack,x:g.X,y:g.Y,dx:g.dx,dy:g.dy,hp:g.hp,maxhp:g.maxhp,mana:g.mana,
             direction:g.storona,sx:v.scaleX,sy:v.scaleY,pose:v.osn.currentFrame,
             body:v.osn.body.currentFrame,visual:VisualPose.capture(v as DisplayObject),weapon:weapon,steps:steps,motion:id==1?GroundMotion.capture(g):null};
       }
