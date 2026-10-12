@@ -19,9 +19,16 @@ package authority {
    throw new Error("TDFC requested an unknown player context");
   }
   public function step(room:Object,tick:uint):void {
-   var roster:Array=[];
-   for each(var actor:PlayerActor in actors)if(actor.unit.loc===room)roster.push({key:String(actor.id),epoch:actor.epoch,unit:actor.unit});
-   if(!api.stepRoom(room,roster,tick))throw new Error("Occupied B room was not advanced by TDFC");
+   var roster:Array=[],live:Boolean=false;
+   for each(var actor:PlayerActor in actors)if(actor.unit.loc===room) {
+    roster.push({key:String(actor.id),epoch:actor.epoch,unit:actor.unit});
+    if(actor.unit.sost==1 && !actor.unit.disabled && !actor.unit.trigDis && !actor.unit.unres)live=true;
+   }
+   // Native death/respawn still occupies a retained room. TDFC deliberately
+   // does not advance its tactical clock when there is no living participant;
+   // the room physics and the player's separate revival countdown continue.
+   // Still submit the roster/tick so its identity checks remain in force.
+   if(!api.stepRoom(room,roster,tick) && live)throw new Error("Occupied B room was not advanced by TDFC");
   }
   public function inspect(room:Object):Object {return api.inspect(room);}
   public function dispose():void {if(api!=null){api.detach();api=null;}actors=null;}

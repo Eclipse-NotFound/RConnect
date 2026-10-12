@@ -60,9 +60,9 @@ package authority {
       }
       public static function apply(display:DisplayObject,g:Graphics,recipe:Array):void {
          var began:int=Timing.start();
-         var key:String=JSON.stringify(recipe),rec:Object=applied[display];
-         if(rec!=null && rec.key===key){Timing.end("vector.applyCached",began);return;}
-         dispose(display);rec={key:key,bitmaps:[]};applied[display]=rec;
+         var rec:Object=applied[display];
+         if(rec!=null && VisualPose.recipeEqual(rec.recipe,recipe)){Timing.end("vector.applyCached",began);return;}
+         dispose(display);rec={recipe:recipe,bitmaps:[]};applied[display]=rec;
          if(recipe.length==1 && recipe[0].k=="surface") {
             var s:Object=recipe[0],bitmap:BitmapData=PixelSurface.restore(s);rec.bitmaps.push(bitmap);
             g.clear();g.beginBitmapFill(bitmap,new Matrix(1,0,0,1,s.x,s.y),false,true);g.drawRect(s.x,s.y,s.w,s.h);g.endFill();Timing.end("vector.applySurface",began);return;

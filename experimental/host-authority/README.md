@@ -21,18 +21,21 @@
 | `SessionSound` / `SoundPlayback` | 主侧记录原生声效/停止/持续音效，按房间和个人界面归属播放，各自保留音量设置 |
 | `SessionMusic` / `RoomMusic` | 每个占用房间推进原生战斗配乐，听者分别使用自己的音量 |
 | `TerrainInk` | 记录原生弹孔、焦痕、魔法墙和血迹实际改动的64px小块；地形重画后恢复当前印记 |
+| `TimeBridge` / `DeferredHits` / `TimeHistory` | 两人统一时停时钟、延后调用原生伤害、借用并恢复历史运动与原生显示，不二次耗弹 |
 | `Probe` / `ContractChecks` | 仅测试配置启用，真实AIR中的协议、资源隔离与原生开火检查 |
 
-当前B3已接入原生场景、统一显示时钟、原生菜单和各自保存；门箱/拾取/XP、念力、复活/旅行、SATS、跟随/宠物/共同挑战已有分项实测。紧凑UI/聊天/设置已实测，退出返回单人已通过专项。MSW、完整武器效果、本机预测、敌人状态专项、无驱动游玩及长局压力未完成，仍不能作为日常候选。
+当前B3已接入原生场景、统一显示时钟、原生菜单和各自保存；门箱/拾取/XP、念力、复活/旅行、SATS、跟随/宠物/共同挑战已有分项实测。MSW独立接口的双向武器、快速扫眼和个人保存已有专项通过。当前继续修复动画采样时机、补充友伤验证及密集场景性能；尚未形成同一冻结版本的完整回归结果，也未生成玩家候选包。
 
-2026-10-12接续：101已编译、原生017为b3-v10，114份源码与冻结输入一致。新增原生传送边界，短传不插值成滑行；`teleport`/`body-effects`覆盖双方传送和状态显示，仍待实机。087起新增改动尚未实机，AIR启动锁待用户保存退出后复测；不干预用户实例。旧版51项对应35个入口，仍有36项覆盖缺口：[验收映射](../../design/host-authority-regression-map.json)。`check_regression_map.py`只核对清单，不给出游玩通过结论。延迟工具`run_probe.py --jitter-ms 0,20,80,10,40`仅用于隔离回环测试，保持真实字节与顺序。
+2026-10-12接续：168使用原生019(b3-v12)、TDFC004、RV003、MSW011、Sandy001。用户确认共享时停及回放时结算伤害，B拥有统一时钟/双房录像/有序原生命中账本，独立Sandy接口处理设置、热键和界面音乐。162时停与分房328/0；166普通枪及激光/等离子/闪电/射线各169/0，真实地雷只在回放扣血且不重复耗物品。回放中途显示回调的发布保护已实测有效，删除了重复套姿态补丁。166新增地雷后换图两红来自同房队友阻挡测试射线；168恢复分房夹具，并增加正常离开先结算再退出，待实测。原始/019未attach各34/0，含原单人时停。完整同字节验收与玩家包仍在完成。
+
+旧版51项的[验收映射](../../design/host-authority-regression-map.json)保留缺口，清单存在不代表通过。`run_probe.py --jitter-ms 0,20,80,10,40`用于隔离回环抖动，保持真实字节与顺序；`--scenario stress --stress-seconds 120`可延长压力记录。串行运行器在执行期间不能改动。
 
 ## 复现步骤
 
 工具位于`tools/host_authority`，所有参数从RConnect目录解析。输出必须是`build/ab`下的新目录，已有结果不会覆盖。
 
 1. `freeze.py --runtime build/m51/map-runtime-63 --output build/ab/<新基线>`固定完整实物。已有`baseline-001`可核验后继续使用。
-2. `patch_native.py --baseline build/ab/baseline-001 --output build/ab/<新原生副本>`仅修改复制品。B3当前26个类提供可选接口；回读核对loader、类表、资源与XML查询，运行等价另验。
+2. `patch_native.py --baseline build/ab/baseline-001 --output build/ab/<新原生副本>`仅修改复制品。可选接口类的精确清单见本次native-input.json；回读核对loader、类表、资源与XML查询，运行等价另验。
 3. `build.py --output build/ab/<新构建> --optimized`冻结源码与外链存根、编译并记录工具及产物SHA。存根不包含进SWF。
 4. 与其他RConnect测试会话错开AIR时段后，`run_probe.py --baseline build/ab/baseline-001 --candidate build/ab/<新构建> --native build/ab/<匹配的原生副本> --output build/ab/<新运行>`。
 5. 核对`run.json`和双方日志中的PASS/FAIL/FATAL/DONE，之后在实际宿主核对自有PID已退出。编译、断言通过或双端DONE均不单独等于完整功能通过。
@@ -47,7 +50,7 @@
 
 ## TDFC 配套与当前冻结组
 
-当前工作使用 `b3-build-086` + `native-hooks-014` + `tdfc-build-004`，原生能力 `b3-v7`。051扩展菜单、052对话、054探索、058动态绘图通过。059密集战斗采样通过活性检查并降低差分开销，070六类投掷物双向专项通过；071魔法/角度仍有失败，075定向修复后正在重测。083敌人专项仍红，085有限平地移动预测通过；086特殊枪械/近战正在实测，声音及默认分支已有专项；仍缺完整武器、RV/MSW接口与长期压力等门禁。历史B1/B2及每次B3冻结均保留，不能混用能力或合并旧绿灯。具体绿/红结果以实施记录为准。
+当前冻结组见上文148；具体运行完成情况以实施记录及各run.json为准。136的14阶段敌人、四轮SATS、投掷与地形通过；143五轮新地图、门箱掉落/共享奖励通过；147分房时钟和隐藏房路线通过。145压力约9.7主模拟步/秒，仍未达到流畅目标。上述都是各自冻结字节的证据，不能合并成148已全部通过。
 
 - `build_tdfc.py --output build/ab/<新TDFC构建>`复制 TDFC 完整 src/tests 后编译，始终不写安装目录。
 - `run_tdfc_logic.py --baseline build/ab/baseline-001 --candidate build/ab/<TDFC构建> --output build/ab/<新逻辑运行>`执行真实 AIR 逻辑检查。

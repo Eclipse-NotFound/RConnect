@@ -6,8 +6,13 @@ package authority {
       private var ready:Boolean=false,begin:int=-1,startTick:uint=0,lastAt:int=0,lastMemory:int=0;
       private var samples:Array=[],frames:uint=0,baselineShots:uint=0;
       private var preparedAt:int=0;
+      private var duration:int=20000;
       public function StressProbe(a:NativeAccess,h:Boolean){super(a,h);}
-      override public function prepare():void {super.prepare();Timing.enabled=true;}
+      override public function prepare():void {
+         super.prepare();Timing.enabled=true;
+         var seconds:Number=Number(RConnectMod.instance.config.stressSeconds);
+         if(isFinite(seconds) && seconds>=20 && seconds<=1800)duration=int(seconds*1000);
+      }
       override public function message(value:Object):void {
          if(host && value.type=="stress-ready" && begin<0){begin=getTimer();startTick=RConnectMod.instance.host.runtime.tick;Timing.reset();}
       }
@@ -47,10 +52,11 @@ package authority {
          if(now-lastMemory>2000) {
             lastMemory=now;samples.push({ms:now-begin,heapBytes:System.totalMemory,
                queued:host?0:replica.clock.queued,steps:host?session.runtime.tick:replica.displayFrame.tick,
+               playbackDelay:host?0:replica.clock.delay,underflows:host?0:replica.clock.underflows,
                effects:host?session.lastFrame.scene.effects.length:replica.displayFrame.scene.effects.length,
                projectiles:host?session.lastFrame.projectiles.length:replica.displayFrame.projectiles.length});
          }
-         if(now-begin<20000)return;
+         if(now-begin<duration)return;
          var f:Object=host?session.lastFrame:replica.displayFrame;
          check(f.scene.units.length==80,"stress run retains 80 real native enemy identities");
          check(f.spawnsByPlayer[0]>0 && f.spawnsByPlayer[1]>0,"both players fire native projectiles throughout the loaded scene",{shots:f.spawnsByPlayer});
@@ -58,9 +64,13 @@ package authority {
          Log.write("stress-measurements",{elapsedMs:now-begin,screenFrames:frames,hostSteps:f.tick-startTick,
             timings:Timing.snapshot(),memory:samples,note:"Profiling baseline, not a performance acceptance gate or long-session proof."});
          var sizes:Array=[];
-         for each(var effect:Object in f.scene.effects)sizes.push({clip:effect.clip,name:effect.name,characters:JSON.stringify(effect).length,vector:effect.pose==null?null:PlainData.copy(effect.pose.vector)});
+         for each(var effect:Object in f.scene.effects) {
+            var vectors:Array=[];
+            if(effect.pose!=null && effect.pose.vector!=null)for each(var recipe:Object in effect.pose.vector)
+               vectors.push({kind:recipe.k,width:recipe.w,height:recipe.h,binaryBytes:recipe.bytes==null?0:recipe.bytes.length});
+            sizes.push({clip:effect.clip,name:effect.name,characters:JSON.stringify(effect).length,vector:vectors});
+         }
          sizes.sortOn("characters",Array.NUMERIC|Array.DESCENDING);
-         for each(var big:Object in sizes)if(big.vector!=null)for each(var recipe:Object in big.vector)if(recipe.bytes!=null)recipe.bytes="length="+recipe.bytes.length;
          Log.write("stress-payload",{sceneCharacters:JSON.stringify(f.scene).length,effects:sizes.slice(0,12),
             firstUnitCharacters:f.scene.units.length==0?0:JSON.stringify(f.scene.units[0]).length});
          SceneChecks.picture(access,"dense-native-enemies.png");finish();Timing.enabled=false;

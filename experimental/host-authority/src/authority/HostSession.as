@@ -4,6 +4,7 @@ package authority {
       public var access:NativeAccess,session:String,link:Link;
       public var actors:Array=[],inputs:Array=[],runtime:RoomRuntime;
       public var active:Boolean=false,failed:Function,lastFrame:Object;
+      public var presentations:uint=0;
       public var tactics:TacticsBridge;
       public var lives:PlayerLives,saves:PersonalSaves;
       public var grips:PeerGrabs;
@@ -36,9 +37,10 @@ package authority {
             inputs.push(new Commands(session,i,expectedRoom));
             actors[i].failed=fail;
          }
-         runtime=new RoomRuntime(access,actors,inputs);runtime.afterStep=publish;runtime.failed=fail;
+         runtime=new RoomRuntime(access,actors,inputs);runtime.afterStep=capturePresentation;runtime.failed=fail;
          runtime.tactics=tactics;
          runtime.install();active=true;
+         if(access.time!=null)access.time.bind(this);
          runtime.transfers.notice=notice;
          for each(var member:PlayerActor in actors)member.requestMeet=function(requester:PlayerActor):void{runtime.transfers.meet(requester);};
          lives=new PlayerLives(this);runtime.lives=lives;saves=new PersonalSaves(access,this);
@@ -52,12 +54,28 @@ package authority {
          link.send(welcome);
          Log.write("host-ready",{room:expectedRoom,localClass:"UnitPlayer",remoteClass:"AuthorityPlayer",independent:
             local.unit.pers!==remote.unit.pers && local.unit.invent!==remote.unit.invent && local.unit.ctr!==remote.unit.ctr});
+         // Send tick zero before advancing either player. The joining machine
+         // must assemble its first confirmed view before combat begins.
+         publish();
       }
       public function receive(value:Object):void {
          if(!active || value.type!=="input" || value.player!==1)return;
          var reason:String=inputs[1].accept(value,getTimer());
          if(reason==""){pause.remote=value.pause===true;pause.remoteMenus=value.pauseMenus===true;pause.remoteSats=value.pauseSats===true;}
+         if(reason=="" && runtime.awaitingFirstView && value.confirmation is Number && value.confirmation>=0 &&
+            value.confirmation==uint(value.confirmation) && value.confirmation<=runtime.tick) {
+            runtime.awaitingFirstView=false;Log.write("peer-view-ready",{tick:runtime.tick,seq:value.seq});
+         }
          if(reason=="")personal(actors[1],value.settings);
+         // A native entry script may transfer/equip the party while the first
+         // view is still being assembled. Keep rejecting stale controls, but
+         // publish the new identity instead of waiting for an identity the
+         // joining side has never received. Simulation remains stopped.
+         if(reason=="identity" && runtime.awaitingFirstView && lastFrame!=null) {
+            var sent:Object=lastFrame.players[1],remote:PlayerActor=actors[1];
+            if(sent.room!==inputs[1].room || sent.roomEpoch!==remote.roomEpoch ||
+               sent.epoch!==remote.epoch || sent.weaponEpoch!==remote.weaponEpoch)publish();
+         }
          if(reason!="" && reason!="sequence")link.send({type:"rejected",seq:value.seq,reason:reason});
       }
       public function localInput(value:Object):void {
@@ -92,15 +110,21 @@ package authority {
          if(changed && pause.paused)publish();
       }
       public function publish():void {
+         if(active)runtime.requestPresentation();
+      }
+      private function capturePresentation():void {
          if(!active)return;
          var began:int=Timing.start(),part:int=began;
-         if(access.view!=null)access.view.prepare();
          if(access.weapons!=null)access.weapons.present(access.weapons.snapshot(0));
-         grips.present();
-         combat.update();
-         var frame:Object=runtime.snapshot();frame.type="frame";frame.session=session;frame.room=inputs[1].room;
+         if(access.time==null || access.time.phase!="replay"){grips.present();combat.update();}
+         var frame:Object=runtime.snapshot();frame.type="frame";frame.session=session;frame.room=access.keyFor(actors[1].unit.loc);
+         frame.presentation=++presentations;
+         // Display may be replaying an older room/weapon. Reliable controls
+         // continue to name the live endpoint, never the historical picture.
+         frame.control={room:inputs[1].room,roomEpoch:inputs[1].roomEpoch,epoch:inputs[1].epoch,weaponEpoch:inputs[1].weaponEpoch};
          frame.time=getTimer();
          frame.paused=pause.paused;frame.pauseEpoch=pause.epoch;
+         if(access.time!=null){frame.timeControl=access.time.snapshot(frame.paused,1);access.time.present(access.time.snapshot(frame.paused,0));}
          frame.pausePolicies={menus:pause.enabled || pause.policyMenus,sats:pause.enabled || pause.policySats};
          frame.map=MapState.capture(actors[1].unit.loc.land);
          frame.players=[actors[0].snapshot(inputs[0].consumed),actors[1].snapshot(inputs[1].consumed)];
@@ -145,6 +169,7 @@ package authority {
          actors=[];inputs=[];
       }
       public function resetScene():void {scene.reset();}
+      public function fullScene():void {scene.fullNext();}
       public function sceneId(object:Object):uint {return scene.id(object);}
       public function notice(text:String):void {link.send({type:"notice",text:text});Log.write("notice",{text:text});}
    }

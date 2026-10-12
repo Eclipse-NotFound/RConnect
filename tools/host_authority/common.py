@@ -1,14 +1,19 @@
 """Tools for the separate host-authority experiment. No release writes."""
 import hashlib
 import json
+import os
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 EXPERIMENT = ROOT / 'experimental/host-authority'
 BUILD = ROOT / 'build/ab'
 JAVA = Path('C:/Users/hello/Documents/_sandevistan_dev/jdk-11.0.32.1+1-jre/bin/java.exe')
-SDK = Path('D:/RemainsMod/mods/Sandevistan/build/tools/flexsdk')
-FFDEC = Path('D:/RemainsMod/mods/Sandevistan/build/tools/ffdec/ffdec-cli.jar')
+_OLD_TOOLS = Path('D:/RemainsMod/mods/Sandevistan/build/tools')
+_LOCAL_TOOLS = ROOT.parent/'Sandevistan/build/tools'
+SDK = Path(os.environ['RCONNECT_B_SDK']) if os.environ.get('RCONNECT_B_SDK') else next(
+    (p/'flexsdk' for p in (_OLD_TOOLS, _LOCAL_TOOLS) if (p/'flexsdk/lib/mxmlc.jar').is_file()), _OLD_TOOLS/'flexsdk')
+FFDEC = Path(os.environ['RCONNECT_B_FFDEC']) if os.environ.get('RCONNECT_B_FFDEC') else next(
+    (p/'ffdec/ffdec-cli.jar' for p in (_OLD_TOOLS, _LOCAL_TOOLS) if (p/'ffdec/ffdec-cli.jar').is_file()), _OLD_TOOLS/'ffdec/ffdec-cli.jar')
 
 
 def sha(path):

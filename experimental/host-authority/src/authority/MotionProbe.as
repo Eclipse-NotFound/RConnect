@@ -1,6 +1,7 @@
 package authority {
    import flash.display.DisplayObject;
    import flash.filters.GlowFilter;
+   import flash.utils.getTimer;
    /** Four real native fast-grab trials, then a real join-opened container.
     * Reference positions are sampled from original display objects before
     * serialization; interpolation is checked independently on screen frames. */
@@ -10,6 +11,8 @@ package authority {
       private var references:Object={},counts:Object={},sourceCount:int=0,heldCount:int=0;
       private var minX:Number,maxX:Number,dropCount:int=0,phaseSent:int=-1;
       private var readyToEnd:Boolean=false;
+      private var pauseStage:int=0,pauseAt:int=0,freezeTick:uint=0,freezeDrops:Array;
+      private var pausedDisplay:Object,pausedSamples:int=0,pausedChanged:Boolean=false;
       public function MotionProbe(a:NativeAccess,h:Boolean){super(a,h);}
       override public function message(v:Object):void {
          if(host && v.type=="motion-ready")peerReady=v.phase;
@@ -21,6 +24,8 @@ package authority {
          if(!host && v.type=="motion-go")begin=v.tick;
          if(!host && v.type=="motion-reference")references[v.tick]=v;
          if(!host && v.type=="motion-end")ending=v.tick;
+         if(!host && v.type=="motion-pause")access.world.sats.onoff(1);
+         if(!host && v.type=="motion-resume")access.world.sats.onoff(-1);
          if(!host && v.type=="motion-finish")finish();
       }
       override public function input(frame:Object,session:HostSession):Object {
@@ -74,6 +79,14 @@ package authority {
          }
       }
       private function presentation(replica:ClientReplica):void {
+         if(phase==4 && replica.displayFrame.paused) {
+            var displayed:Object={},rec:Object;
+            for each(rec in replica.displayFrame.scene.effects)if(rec.loot!=null && rec.loot.id=="kofe")
+               displayed[rec.key]=[rec.pose.x,rec.pose.y];
+            if(pausedDisplay==null)pausedDisplay=displayed;
+            else pausedChanged=pausedChanged || !VisualPose.recipeEqual(pausedDisplay,displayed);
+            ++pausedSamples;
+         }
          var a:Object=replica.clock.current,b:Object=replica.clock.next;
          if(a==null || b==null || replica.clock.fraction<=0)return;
          var first:Object=references[a.tick],next:Object=references[b.tick];
@@ -108,7 +121,7 @@ package authority {
                target=new Loot(room,new Item(null,"kofe",27),700,fy,false,false,false);target.auto=false;target.addVisual();
             }
          });
-         if(index==4)session.actors[1].unit.setLocPos(600,fy);
+         if(index==4){session.actors[1].unit.setLocPos(600,fy);session.pause.policySats=true;}
          session.link.send({type:"motion-phase",phase:phase,floor:fy});
       }
       override public function observe(session:HostSession,replica:ClientReplica):void {
@@ -124,20 +137,46 @@ package authority {
                check(counts.glow==0 && (phase==4 || counts.held>30),"native telekinesis glow belongs to the actual held object phase "+phase,counts);
                check(counts.interpolated>10 && counts.interpolationError==0,
                   "fast movement and drops use one continuous source timeline phase "+phase,counts);
-               if(phase==4)check(counts.drops>40,"join-opened container shows native falling loot throughout its trajectory",counts);
+               if(phase==4) {
+                  check(counts.drops>40,"join-opened container shows native falling loot throughout its trajectory",counts);
+                  check(pausedSamples>3 && !pausedChanged,"falling container loot freezes at one confirmed SATS position and resumes on the same timeline",
+                     {samples:pausedSamples,changed:pausedChanged});
+               }
                RConnectMod.instance.link.send({type:"motion-report",phase:phase,counts:counts});ending=-1;
             }return;
          }
          if(session==null || !session.active)return;
          if(!ready){ready=true;var publish:Function=session.runtime.afterStep;session.runtime.afterStep=function():void{source(session);publish();};start(session,0);return;}
          if(begin<0 && peerReady==phase){begin=session.runtime.tick;session.link.send({type:"motion-go",tick:begin});}
+         if(phase==4 && begin>=0) {
+            if(pauseStage==0) {
+               var falling:Boolean=false,o:Object=session.actors[1].unit.loc.firstObj;
+               while(o!=null){if("item" in o && o.item.id=="kofe" && o.Y<fy-8 && Math.abs(o.dy)>.1)falling=true;o=o.nobj;}
+               if(falling){pauseStage=1;session.link.send({type:"motion-pause"});}
+            }
+            if(pauseStage==1 && session.pause.paused) {
+               pauseStage=2;pauseAt=getTimer();freezeTick=session.runtime.tick;freezeDrops=[];
+               o=session.actors[1].unit.loc.firstObj;
+               while(o!=null){if("item" in o && o.item.id=="kofe")freezeDrops.push({object:o,x:o.X,y:o.Y,dx:o.dx,dy:o.dy});o=o.nobj;}
+            }
+            if(pauseStage==2 && getTimer()-pauseAt>=800) {
+               var stable:Boolean=session.runtime.tick==freezeTick;
+               for each(var drop:Object in freezeDrops)stable=stable && drop.object.X==drop.x && drop.object.Y==drop.y && drop.object.dx==drop.dx && drop.object.dy==drop.dy;
+               check(stable && freezeDrops.length>0,"join SATS freezes the original falling loot, velocity and authoritative clock",
+                  {count:freezeDrops.length,tick:freezeTick,after:session.runtime.tick});
+               pauseStage=3;session.link.send({type:"motion-resume"});
+            }
+         }
          if(begin>=0 && session.runtime.tick-begin>=200 && !readyToEnd) {
             readyToEnd=true;
             if(phase<4) {
                check(heldCount>40 && maxX-minX>40,"real native grab follows a fast changing mouse path phase "+phase,{held:heldCount,range:maxX-minX});
                check(session.actors[phase%2].unit.teleObj==null && target.levit==0,
                   "new native press releases the target and ends its held state phase "+phase);
-            }else check(container.inter.cont=="empty" && dropCount>40,"join's actual container action produces native falling drops",{samples:dropCount});
+            }else {
+               check(container.inter.cont=="empty" && dropCount>40,"join's actual container action produces native falling drops",{samples:dropCount});
+               check(pauseStage==3 && !session.pause.paused,"falling-loot SATS round trip completes without trapping the host in pause");
+            }
             session.link.send({type:"motion-end",tick:session.runtime.tick});
          }
          if(readyToEnd && receivedReport!=null && receivedReport.phase==phase) {

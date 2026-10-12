@@ -8,6 +8,10 @@ package authority {
       }
       public static function capture(land:Object):Object {
          var visits:Array=[];
+         // listLocs contains challenge rooms only. Ordinary foreground and
+         // background rooms live in the three-dimensional locs grid.
+         for each(var column:Array in land.locs)for each(var row:Array in column)for each(var normal:Object in row)
+            if(normal!=null && normal.visited)visits.push([normal.landX,normal.landY,normal.landZ,normal.landProb]);
          for each(var room:Object in land.listLocs)if(room!=null && room.visited)
             visits.push([room.landX,room.landY,room.landZ,room.landProb]);
          return {id:land.act.id,seed:land.rconnectLayoutSeed,level:land.lootLimit-3,

@@ -42,8 +42,12 @@ package authority {
          return "";
       }
       public function consume(now:int):Object {
-         if(lastAt<0 || now-lastAt>500){buttons=0;pressed=0;actions=[];msw=null;}
-         var result:Object={seq:accepted,buttons:buttons|pressed,pressed:pressed,aimX:aimX,aimY:aimY,actions:actions,msw:msw};
+         var stale:Boolean=lastAt<0 || now-lastAt>500;
+         if(stale){pressed=0;actions=[];msw=null;}
+         // Stop acting during a missing-input lease, but retain the last real
+         // switch state. Silence is not a physical release followed by a press.
+         var result:Object={seq:accepted,buttons:stale?0:buttons|pressed,held:buttons,
+            pressed:pressed,aimX:aimX,aimY:aimY,actions:actions,msw:msw};
          consumed=accepted;actions=[];pressed=0;return result;
       }
       public function clear():void {buttons=0;pressed=0;actions=[];lastAt=-1;msw=null;}

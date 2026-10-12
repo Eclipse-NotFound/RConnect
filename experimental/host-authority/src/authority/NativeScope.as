@@ -44,8 +44,10 @@ package authority {
             }
             if(appearance!=null && context.appearance!=null)AppearanceState.apply(appearance,context.appearance);
             if(room!=null && context.gg!=null)room.gg=context.gg;
+            Timing.end("native.scope.prepare",began);
             return operation();
          } finally {
+            var restoreBegan:int=Timing.start();
             if(context.gg!=null)capturePending(context);
             if(room!=null)room.gg=roomPlayer;
             if(oldAppearance!=null) {
@@ -58,6 +60,7 @@ package authority {
             // lose that work by restoring the older primitive flag snapshot.
             if(returning!=null)for each(name in PENDING)world[name]=returning[name];
             --depth;
+            Timing.end("native.scope.restore",restoreBegan);
             Timing.end("native.scope",began);
          }
       }

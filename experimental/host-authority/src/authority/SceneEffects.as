@@ -40,6 +40,13 @@ package authority {
          }
          for(var id:String in records)if(!live[id])remove(id);
       }
+      public function interpolate(states:Array):void {
+         for each(var s:Object in states) {
+            var rec:Object=records[s.key];
+            if(rec==null)throw new Error("Interpolated effect has no confirmed lifetime");
+            VisualPose.motion(rec.clip,s.pose);
+         }
+      }
       private function remove(id:String):void {
          var rec:Object=records[id];if(rec.clip.parent!=null)rec.clip.parent.removeChild(rec.clip);
          VisualPose.dispose(rec.clip);

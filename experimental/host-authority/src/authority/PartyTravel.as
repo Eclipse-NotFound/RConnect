@@ -2,21 +2,34 @@ package authority {
    /** Host native travel, then one transaction rebinds both existing actors. */
    public final class PartyTravel {
       private var session:HostSession,oldIntent:Function;
+      private var pending:Object,committing:Boolean=false;
       public function PartyTravel(session:HostSession) {
          this.session=session;
          var Type:Class=session.access.definition("fe.loc.Game");oldIntent=Type["rconnectIntent"];
          if(oldIntent!=null)throw new Error("Host map intent seam occupied");Type["rconnectIntent"]=request;
       }
       private function request(target:Object,key:String,args:Array):Boolean {
+         if(committing)return false;
          if(session.access.world.gg!==session.actors[0].unit) {
             session.link.send({type:"notice",text:"整张地图旅行由宿主发起。"});return true;
          }
+         if(session.access.time!=null && session.access.time.phase!="idle") {
+            if(pending==null)pending={target:target,key:key,args:args.concat()};
+            session.access.time.requestEnd();return true;
+         }
          return false;
+      }
+      public function flush():void {
+         if(pending==null || session.access.time!=null && session.access.time.phase!="idle")return;
+         var request:Object=pending;pending=null;committing=true;
+         try {request.target[request.key].apply(request.target,request.args);}
+         finally {committing=false;}
       }
       public function rebind(land:Object):void {
          var access:NativeAccess=session.access,w:Object=access.world,r:RoomRuntime=session.runtime;
          var old:Object=session.actors[1].unit.loc,hostX:Number=w.gg.X,hostY:Number=w.gg.Y;
          for each(var a:PlayerActor in session.actors) {
+            a.sight.dispose();
             // The native host has already entered the new map. No call may
             // borrow the old room service while adopting the new references.
             session.inputs[a.id].clear();

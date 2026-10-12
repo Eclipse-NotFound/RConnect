@@ -4,13 +4,14 @@ package authority {
    /** Uses the real client SATS menu and the real host queue/cost execution. */
    public final class SatsProbe extends Probe {
       private var ready:Boolean=false,phase:int=0,at:int=0,freezeTick:uint=0,resumeTick:uint=0;
-      private var target:Object,startHp:Number,initialOd:Number,initialAmmo:int;
+      private var target:Object,targetY:Number,startHp:Number,initialOd:Number,initialAmmo:int;
       private var frozen:Boolean=true,queued:Boolean=false,refreshes:uint=0;
       private var repetitions:int=1,cycle:int=0;
-      private var nextCycle:int=-1,allCyclesFinished:Boolean=false;
+      private var nextCycle:int=-1,nextCycleTick:uint=0,allCyclesFinished:Boolean=false;
+      private var traceAt:int=0;
       public function SatsProbe(a:NativeAccess,h:Boolean,repetitions:int=1){super(a,h);this.repetitions=repetitions;}
       override public function message(value:Object):void {
-         if(!host && value.type=="sats-next-cycle")nextCycle=value.cycle;
+         if(!host && value.type=="sats-next-cycle"){nextCycle=value.cycle;nextCycleTick=value.tick;}
          if(!host && value.type=="sats-all-cycles-finished")allCyclesFinished=true;
       }
       override public function input(frame:Object,session:HostSession):Object {
@@ -21,10 +22,28 @@ package authority {
       override public function observe(session:HostSession,replica:ClientReplica):void {
          if(finished)return;
          var w:Object=access.world;
+         if(getTimer()-traceAt>=3000) {
+            traceAt=getTimer();
+            var state:Object={phase:phase,cycle:cycle,allStat:w.allStat,onPause:w.onPause,
+               sats:w.sats.active,pip:w.pip.active,stand:w.stand.active,gui:w.gui.guiPause,menu:w.mm.active,
+               queue:w.sats.que.length};
+            if(session!=null && session.active) {
+               state.tick=session.runtime.tick;state.paused=session.pause.paused;state.remote=session.pause.remote;
+               state.remoteMenus=session.pause.remoteMenus;state.remoteSats=session.pause.remoteSats;
+               state.seq=session.inputs[1].accepted;state.inputAge=getTimer()-session.inputs[1].lastAt;
+               state.actorQueue=session.actors[1].context.sats.que.length;
+            }
+            if(replica!=null && replica.lastFrame!=null) {
+               state.tick=replica.lastFrame.tick;state.paused=replica.lastFrame.paused;
+               state.frames=replica.frames;state.actionAck=replica.lastFrame.players[1].actionAck;
+            }
+            Log.write("sats-cycle-state",state);
+         }
          if(host) {
             if(session==null || !session.active)return;
             var b:PlayerActor=session.actors[1],tick:uint=session.runtime.tick;
             if(!ready) {
+               SatsActions.observed=function(result:Object):void {Log.write("sats-host-plan",result);};
                ready=true;var room:Object=b.unit.loc,y:Number=Math.floor((room.limY-120)/40)*40-1,row:int=int((y+1)/40);
                for each(var old:Object in room.units)if(old!=null && !old.player){old.disabled=true;old.remVisual();}
                for(var x:int=8;x<28;x++)for(var z:int=row-6;z<=row;z++) {
@@ -34,15 +53,18 @@ package authority {
                   if(t.phis==0){t.front=t.back=t.zad="";t.vid=t.vid2=t.zForm=0;}
                }
                room.black=room.mirror=false;
+               // The fixture changes an existing dark room into a fully lit
+               // arena, so initialize every tile just like a native lit room.
+               for(x=0;x<room.spaceX;x++)for(z=0;z<room.spaceY;z++)room.space[x][z].visi=room.space[x][z].t_visi=1;
                session.actors[0].unit.setPos(400,y);b.unit.setPos(600,y);
                access.scope.run(b.context,function():void {
                   var Type:Class=access.definition("fe.unit.UnitZombie");target=new Type("1",100,<unit tr="1" dig="0"/>,null);
                   target.putLoc(room,800,y);room.units.push(target);room.addObj(target);target.addVisual();target.setVisPos();target.animate();
                   target.hp=target.maxhp=10000;target.skin=target.armor=target.dexter=target.dodge=0;
                   target.invulner=target.disabled=target.trigDis=false;target.doop=true;target.lootIsDrop=true;target.xp=0;
-                  target.vision=0;target.oduplenie=10000;
+                  target.vision=0;target.oduplenie=10000;target.stun=10000;
                });
-               startHp=target.hp;b.context.sats.od=b.unit.pers.maxOd;b.context.sats.odd=0;
+               targetY=y;startHp=target.hp;b.context.sats.od=b.unit.pers.maxOd;b.context.sats.odd=0;
                initialOd=b.context.sats.od;initialAmmo=b.unit.currentWeapon.hold+b.unit.invent.items[b.unit.currentWeapon.ammo].kol;
             }
             if(phase==0 && session.pause.paused) {phase=1;freezeTick=tick;at=getTimer();}
@@ -66,10 +88,15 @@ package authority {
                   if(repetitions>1)session.link.send({type:"sats-all-cycles-finished"});finish();
                }else {
                   ++cycle;phase=0;frozen=true;queued=false;
+                  // Native shots really knock the target off this small arena.
+                  // Reposition only between rounds, after the damage assertion;
+                  // the next round must observe that new confirmed position.
+                  target.setPos(800,targetY);target.dx=target.dy=0;
+                  target.setVisPos();target.stun=10000;
                   b.context.sats.od=b.unit.pers.maxOd;b.context.sats.odd=0;
                   initialOd=b.context.sats.od;startHp=target.hp;
                   initialAmmo=b.unit.currentWeapon.hold+b.unit.invent.items[b.unit.currentWeapon.ammo].kol;
-                  session.link.send({type:"sats-next-cycle",cycle:cycle});
+                  session.link.send({type:"sats-next-cycle",cycle:cycle,tick:tick+1});
                }
             }
             return;
@@ -102,6 +129,8 @@ package authority {
                check(frozen && replica.satsRefreshes==refreshes,"confirmed SATS remains still without repeatedly rebuilding its target list");
                check(queued && w.sats.que.length>0,"join retains its native queued target while paused");
                w.sats.onoff(-1);phase=3;
+               Log.write("sats-local-closed",{active:w.sats.active,queue:w.sats.que.length,
+                  menus:SharedPause.menus(w),requested:SharedPause.requested(w)});
             }
          }
          if(phase==3 && !f.paused && f.tick>freezeTick+80) {
@@ -112,7 +141,7 @@ package authority {
          }
          // A burst of delayed confirmations can deliver the next-cycle notice
          // before observe() has checked the previous cycle's displayed resume.
-         if(phase==4 && nextCycle>=0){cycle=nextCycle;nextCycle=-1;phase=0;frozen=true;queued=false;}
+         if(phase==4 && nextCycle>=0 && f.tick>=nextCycleTick){cycle=nextCycle;nextCycle=-1;phase=0;frozen=true;queued=false;}
          if(phase==4 && allCyclesFinished) {
             check(cycle+1==repetitions,"every repeated SATS pause and resume was checked on the displayed timeline");finish();
          }

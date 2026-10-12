@@ -1,59 +1,561 @@
 {
   "format": "rconnect-b-legacy-regressions-v1",
   "scope": "51 legacy M51 requirements mapped to B behavior; a mapping is not a passing result",
-  "evidence_rule": "All final results must use the same B, native, TDFC and approved MSW/RV bytes. Earlier green results remain historical evidence only.",
+  "evidence_rule": "Final results must share frozen B/native/TDFC/RV/MSW/Sandevistan inputs. Historical evidence is listed explicitly; mappings and old green rows are not final acceptance.",
   "entries": [
-    {"legacy":"TelekinesisMotionTestDoc","behavior":"双方快速搬动物品、念力光晕、放手","probes":["motion"],"gaps":["延迟抖动实测"]},
-    {"legacy":"TelekinesisTestDoc","behavior":"原生念力选择与搬运","probes":["motion","grabs","enemy-grabs"],"gaps":[]},
-    {"legacy":"EnemyGrabTestDoc","behavior":"抓敌人、挣脱、魔力和重量限制、先抓归属","probes":["enemy-grabs"],"gaps":["本地菜单及断开期间的敌人抓取释放"]},
-    {"legacy":"LightningSmartTestDoc","behavior":"闪电及MSW智能武器双玩家归属","probes":["magic","ownership","enemies"],"gaps":["MSW多玩家接口待授权与实现","真实制导、排除目标、锁定提示"]},
-    {"legacy":"BeamTerrainTestDoc","behavior":"光束被墙阻挡且伤害只结算一次","probes":["magic","guns","terrain"],"gaps":["光束连续撞墙与墙后目标专项"]},
-    {"legacy":"SatsTestDoc","behavior":"SATS目标、队列、费用、冻结和恢复","probes":["sats","pause-cycles"],"gaps":[]},
-    {"legacy":"CoopPauseTestDoc","behavior":"菜单与SATS各自持有共享暂停","probes":["pause-cycles","hud","dialogue"],"gaps":["两端同时持有不同暂停原因、依次关闭","与Sandevistan的组合"]},
-    {"legacy":"RoomCooperationTestDoc","behavior":"分房探索战斗交互、空房保留","probes":["split-rooms","cooperation","areas","party"],"gaps":[]},
-    {"legacy":"ProjectileNetworkTestDoc","behavior":"实际弹丸出生、运动和结束","probes":["native-gun","angles","guns","melee","magic","explosives"],"gaps":["普通榴弹、火箭及水中爆炸类型"]},
-    {"legacy":"CombatNetworkTestDoc","behavior":"两人的属性、伤害、费用分别归属","probes":["ownership","friendly","enemies"],"gaps":["083敌人受击和索敌失败尚未闭环"]},
-    {"legacy":"AnimationGapsTestDoc","behavior":"敌人开火、死亡、休眠及护盾","probes":["enemies","guns"],"gaps":["083敌人身体样本不足","RV本机可见性写入隔离待授权"]},
-    {"legacy":"GameplayNetworkTestDoc","behavior":"交互、奖励、地雷、菜单和个人资源","probes":["cooperation","personal","areas","mines","menus"],"gaps":[]},
-    {"legacy":"MirrorMaskRestoreTestDoc","behavior":"本机遮罩不会污染远端或退出后的原生图像","probes":["vision","vectors","enemies"],"gaps":["RV真实遮罩替换、离开和清理专项"]},
-    {"legacy":"HudTestDoc","behavior":"紧凑浮窗、透明度、聊天、设置和退出","probes":["hud"],"gaps":["真人鼠标与中文输入法"]},
-    {"legacy":"FastHeldTestDoc","behavior":"双方高速念力轨迹连续","probes":["motion"],"gaps":["延迟抖动与快轨迹实测"]},
-    {"legacy":"WeaponAngleTestDoc","behavior":"原生枪械翻转、枪口与弹道角度","probes":["angles"],"gaps":[]},
-    {"legacy":"PresentationContinuityTestDoc","behavior":"容器掉落连续，暂停前后不跳帧","probes":["motion","pause-cycles"],"gaps":["掉落中开启SATS的组合"]},
-    {"legacy":"TargetLifecycleTestDoc","behavior":"松手换抓、SATS不重影、旧实体退休","probes":["enemy-grabs","sats","lifecycle"],"gaps":["抓取中目标死亡的清理"]},
-    {"legacy":"RespawnRoomTestDoc","behavior":"复活后蜘蛛地雷和炮塔不重生","probes":["lifecycle","split-rooms","travel"],"gaps":[]},
-    {"legacy":"PeerGripTestDoc","behavior":"被抓许可、WASD挣脱和撤回许可","probes":["grabs","throw"],"gaps":[]},
-    {"legacy":"PeerVisualTestDoc","behavior":"独立外观、护甲、翅膀与开火呈现","probes":["angles","personal"],"gaps":["实际飞行药水与身体状态矩阵"]},
-    {"legacy":"FriendlyFireTestDoc","behavior":"友伤开关与造成伤害者的数字","probes":["friendly"],"gaps":["近战与全部法术友伤","友伤数字位置、数值和颜色专项"]},
-    {"legacy":"ExplosiveVisualTestDoc","behavior":"原生爆炸、延时、弹片和消耗","probes":["explosives"],"gaps":["普通爆炸物、水中、未碰撞到期"]},
-    {"legacy":"HeavyProjectileTestDoc","behavior":"重型实体弹丸与连续武器","probes":["guns"],"gaps":["火箭、榴弹发射器等PhisBullet类型"]},
-    {"legacy":"MeleeAnimationTestDoc","behavior":"近战挥击弧线、工具与实际命中","probes":["melee"],"gaps":[]},
-    {"legacy":"EnergyImpactTestDoc","behavior":"不同材质的能量命中及无命中负例","probes":["guns","magic","terrain"],"gaps":["软目标、硬材质和自然到期的独立期望"]},
-    {"legacy":"FlameVisualTestDoc","behavior":"持续火焰与冰焰的速度、密度、退休","probes":["guns","explosives"],"gaps":["持续时间与暂停组合专项"]},
-    {"legacy":"MineSyncTestDoc","behavior":"布雷归属、触发、拆雷与领取","probes":["friendly","mines"],"gaps":[]},
-    {"legacy":"MineRoomTestDoc","behavior":"分房与重访地雷保留","probes":["split-rooms","mines","lifecycle"],"gaps":[]},
-    {"legacy":"BurnVisualTestDoc","behavior":"身体燃烧、逐格地面火焰及原生寿命","probes":["guns","explosives","enemies"],"gaps":["每格火焰寿命、暂停及结束清理专项"]},
-    {"legacy":"WallImpactTestDoc","behavior":"弹孔、焦痕、透明缺口只绘制一次","probes":["terrain"],"gaps":["真实分房重访的墙面印记","血迹和魔法墙的独立像素对照"]},
-    {"legacy":"TeleportVisualTestDoc","behavior":"原生Q传送、到达效果、失败不造特效","probes":["teleport"],"gaps":["20阶段专项已接，尚未实机；到达火花像素、SATS内冻结和敌人原生传送仍需扩展"]},
-    {"legacy":"PeerThrowDamageTestDoc","behavior":"各自控制被抛掷时的碰撞伤害","probes":["throw"],"gaps":[]},
-    {"legacy":"BodyEffectsTestDoc","behavior":"护盾、隐身、冻结、束缚、变形、冲刺","probes":["body-effects","grabs","enemies","sats"],"gaps":["24阶段双方原生状态及清除矩阵已接，尚未实机；状态自然到期、叠加和敌人完整状态组合仍缺"]},
-    {"legacy":"FollowRecoveryTestDoc","behavior":"死亡和跨房期间跟随可恢复","probes":["party","lifecycle","travel"],"gaps":["跟随途中死亡与切换暂停的组合"]},
-    {"legacy":"FollowNetworkTestDoc","behavior":"跟随开关与双向普通房追随","probes":["party","split-rooms"],"gaps":[]},
-    {"legacy":"TeammateNavigationTestDoc","behavior":"传送到队友、房间和出生代次门控","probes":["party","split-rooms"],"gaps":[]},
-    {"legacy":"HiddenRoomFollowTestDoc","behavior":"背景门不夺相机、不重置房间","probes":["split-rooms","party"],"gaps":["双方开启跟随时多次前后景往返组合"]},
-    {"legacy":"SpecialWeaponTestDoc","behavior":"酸弹、等离子、冲击、冰冻、毒气和燃烧瓶","probes":["explosives"],"gaps":["持续地面效果与伤害寿命专项"]},
-    {"legacy":"DoorVisualTestDoc","behavior":"门开关沿用原生动画且不产生破坏碎屑","probes":["cooperation"],"gaps":["强化门及其它门逐帧像素、进度和非破坏断言"]},
-    {"legacy":"BallisticVisualTestDoc","behavior":"普通枪命中与枪口到弹道的连续性","probes":["native-gun","angles","guns","terrain"],"gaps":["移动与相机变化中密集开火的组合"]},
-    {"legacy":"MagicImpactTestDoc","behavior":"魔法命中、冲击与魔法墙","probes":["magic","terrain"],"gaps":["Spell类技能及自然到期负例"]},
-    {"legacy":"MagicExplosionTestDoc","behavior":"快捷火球和蚀日的爆炸效果","probes":["magic","explosives"],"gaps":["火球地面火焰的原生持续时间"]},
-    {"legacy":"EffectsTerrainTestDoc","behavior":"敌人开火、机械死亡、破墙后可见性","probes":["enemies","cooperation","terrain"],"gaps":["RV本机可见性隔离和墙后实体实际像素"]},
-    {"legacy":"ProjectileLoadTestDoc","behavior":"密集敌人与开火的延迟、积压和长期占用","probes":["stress"],"gaps":["严格同条件A/B比较","长局内存与队列曲线","现有约11步每秒未达流畅要求"]},
-    {"legacy":"PacketCodecTestDoc","behavior":"有界编码、共享引用、旧确认不被新确认改写","probes":["native-gun"],"gaps":["087起AMF3与090共享引用修复的真实AIR回归"]},
-    {"legacy":"VisionApiTestDoc","behavior":"各自视野、探索开关与补齐","probes":["vision"],"gaps":[]},
-    {"legacy":"ArchitectureTestDoc","behavior":"动作去重、作用域归还和房间单次推进","probes":["native-gun","ownership","split-rooms"],"gaps":["原生016默认空接口的运行对照","全部测试同一冻结版本审计"]},
-    {"legacy":"MineSightTestDoc","behavior":"加入侧独自发现地雷及双方呈现","probes":["mines"],"gaps":[]},
-    {"legacy":"FriendlyHazardsTestDoc","behavior":"友伤地雷与MSW非致命视野限制","probes":["friendly","mines"],"gaps":["MSW接口待授权与实现","激光笔和非致命激光的双方消耗、遮挡、恢复"]},
-    {"legacy":"MapGenerationTestDoc","behavior":"新探索重新生成、同一轮重访保留","probes":["travel","split-rooms","lifecycle"],"gaps":["五轮新探索与背景房、死亡组合","A和B公共地图修复基线对齐"]}
+    {
+      "legacy": "TelekinesisMotionTestDoc",
+      "behavior": "双方快速搬动物品、念力光晕、放手",
+      "probes": [
+        "motion"
+      ],
+      "gaps": [
+        "延迟抖动实测"
+      ]
+    },
+    {
+      "legacy": "TelekinesisTestDoc",
+      "behavior": "原生念力选择与搬运",
+      "probes": [
+        "motion",
+        "grabs",
+        "enemy-grabs"
+      ],
+      "gaps": []
+    },
+    {
+      "legacy": "EnemyGrabTestDoc",
+      "behavior": "抓敌人、挣脱、魔力和重量限制、先抓归属",
+      "probes": [
+        "enemy-grabs"
+      ],
+      "gaps": [
+        "本地菜单及断开期间的敌人抓取释放"
+      ]
+    },
+    {
+      "legacy": "LightningSmartTestDoc",
+      "behavior": "闪电及MSW智能武器双玩家归属",
+      "probes": [
+        "magic",
+        "ownership",
+        "enemies",
+        "msw",
+        "msw-lifecycle"
+      ],
+      "gaps": [
+        "MSW独立B接口已授权并实现；113/009、116/010分项通过，最终统一字节仍需回归",
+        "真实锁定提示的最终显示像素"
+      ]
+    },
+    {
+      "legacy": "BeamTerrainTestDoc",
+      "behavior": "光束被墙阻挡且伤害只结算一次",
+      "probes": [
+        "magic",
+        "guns",
+        "terrain"
+      ],
+      "gaps": [
+        "光束连续撞墙与墙后目标专项"
+      ]
+    },
+    {
+      "legacy": "SatsTestDoc",
+      "behavior": "SATS目标、队列、费用、冻结和恢复",
+      "probes": [
+        "sats",
+        "pause-cycles"
+      ],
+      "gaps": [
+        "162与166回放SATS图像/矩阵比对全过，完整原生推进后才发布；最终同字节回归"
+      ]
+    },
+    {
+      "legacy": "CoopPauseTestDoc",
+      "behavior": "菜单与SATS各自持有共享暂停",
+      "probes": [
+        "pause-cycles",
+        "pause-holders",
+        "time-control",
+        "hud",
+        "dialogue"
+      ],
+      "gaps": [
+        "166两轮普通枪和两轮特殊武器共享时停/暂停/原生回放分别169/0；最终同字节回归"
+      ]
+    },
+    {
+      "legacy": "RoomCooperationTestDoc",
+      "behavior": "分房探索战斗交互、空房保留",
+      "probes": [
+        "split-rooms",
+        "cooperation",
+        "areas",
+        "party"
+      ],
+      "gaps": []
+    },
+    {
+      "legacy": "ProjectileNetworkTestDoc",
+      "behavior": "实际弹丸出生、运动和结束",
+      "probes": [
+        "native-gun",
+        "angles",
+        "guns",
+        "melee",
+        "magic",
+        "explosives"
+      ],
+      "gaps": [
+        "普通榴弹、火箭及水中爆炸类型"
+      ]
+    },
+    {
+      "legacy": "CombatNetworkTestDoc",
+      "behavior": "两人的属性、伤害、费用分别归属",
+      "probes": [
+        "ownership",
+        "friendly",
+        "enemies"
+      ],
+      "gaps": [
+        "153十四阶段敌人真实攻击和加入侧LMG命中已通过；最终同字节回归"
+      ]
+    },
+    {
+      "legacy": "AnimationGapsTestDoc",
+      "behavior": "敌人开火、死亡、休眠及护盾",
+      "probes": [
+        "enemies",
+        "guns"
+      ],
+      "gaps": [
+        "122敌人显示分项通过，最终统一字节仍需回归；身体/武器/护盾/隐身/死亡不能替代全部敌人覆盖"
+      ]
+    },
+    {
+      "legacy": "GameplayNetworkTestDoc",
+      "behavior": "交互、奖励、地雷、菜单和个人资源",
+      "probes": [
+        "cooperation",
+        "personal",
+        "areas",
+        "mines",
+        "menus"
+      ],
+      "gaps": []
+    },
+    {
+      "legacy": "MirrorMaskRestoreTestDoc",
+      "behavior": "本机遮罩不会污染远端或退出后的原生图像",
+      "probes": [
+        "vision",
+        "vectors",
+        "enemies"
+      ],
+      "gaps": [
+        "149真实RV原生采样与遮罩恢复通过；最终同字节回归"
+      ]
+    },
+    {
+      "legacy": "HudTestDoc",
+      "behavior": "紧凑浮窗、透明度、聊天、设置和退出",
+      "probes": [
+        "hud"
+      ],
+      "gaps": [
+        "真人鼠标与中文输入法"
+      ]
+    },
+    {
+      "legacy": "FastHeldTestDoc",
+      "behavior": "双方高速念力轨迹连续",
+      "probes": [
+        "motion"
+      ],
+      "gaps": [
+        "122快速念力与容器掉落主64/0、加71/0；延迟抖动与长时间组合仍需实测"
+      ]
+    },
+    {
+      "legacy": "WeaponAngleTestDoc",
+      "behavior": "原生枪械翻转、枪口与弹道角度",
+      "probes": [
+        "angles"
+      ],
+      "gaps": []
+    },
+    {
+      "legacy": "PresentationContinuityTestDoc",
+      "behavior": "容器掉落连续，暂停前后不跳帧",
+      "probes": [
+        "motion",
+        "pause-cycles",
+        "time-control"
+      ],
+      "gaps": [
+        "150/154掉落中SATS通过，162/166时停回放暂停衔接已实测通过；最终同字节回归"
+      ]
+    },
+    {
+      "legacy": "TargetLifecycleTestDoc",
+      "behavior": "松手换抓、SATS不重影、旧实体退休",
+      "probes": [
+        "enemy-grabs",
+        "sats",
+        "lifecycle"
+      ],
+      "gaps": [
+        "抓取中目标死亡的清理"
+      ]
+    },
+    {
+      "legacy": "RespawnRoomTestDoc",
+      "behavior": "复活后蜘蛛地雷和炮塔不重生",
+      "probes": [
+        "lifecycle",
+        "split-rooms",
+        "travel"
+      ],
+      "gaps": []
+    },
+    {
+      "legacy": "PeerGripTestDoc",
+      "behavior": "被抓许可、WASD挣脱和撤回许可",
+      "probes": [
+        "grabs",
+        "throw"
+      ],
+      "gaps": []
+    },
+    {
+      "legacy": "PeerVisualTestDoc",
+      "behavior": "独立外观、护甲、翅膀与开火呈现",
+      "probes": [
+        "angles",
+        "personal",
+        "body-effects"
+      ],
+      "gaps": [
+        "148身体28阶段通过；旧瞬时腿部差异定位为未完成时间轴采样，最终同字节回归"
+      ]
+    },
+    {
+      "legacy": "FriendlyFireTestDoc",
+      "behavior": "友伤开关与造成伤害者的数字",
+      "probes": [
+        "friendly",
+        "friendly-melee",
+        "friendly-magic"
+      ],
+      "gaps": [
+        "149五类近战/六种魔法友伤通过；最终同字节伤害数字与位置/颜色回归"
+      ]
+    },
+    {
+      "legacy": "ExplosiveVisualTestDoc",
+      "behavior": "原生爆炸、延时、弹片和消耗",
+      "probes": [
+        "explosives"
+      ],
+      "gaps": [
+        "普通爆炸物、水中、未碰撞到期"
+      ]
+    },
+    {
+      "legacy": "HeavyProjectileTestDoc",
+      "behavior": "重型实体弹丸与连续武器",
+      "probes": [
+        "guns"
+      ],
+      "gaps": [
+        "火箭、榴弹发射器等PhisBullet类型"
+      ]
+    },
+    {
+      "legacy": "MeleeAnimationTestDoc",
+      "behavior": "近战挥击弧线、工具与实际命中",
+      "probes": [
+        "melee"
+      ],
+      "gaps": []
+    },
+    {
+      "legacy": "EnergyImpactTestDoc",
+      "behavior": "不同材质的能量命中及无命中负例",
+      "probes": [
+        "guns",
+        "magic",
+        "terrain"
+      ],
+      "gaps": [
+        "软目标、硬材质和自然到期的独立期望"
+      ]
+    },
+    {
+      "legacy": "FlameVisualTestDoc",
+      "behavior": "持续火焰与冰焰的速度、密度、退休",
+      "probes": [
+        "guns",
+        "explosives"
+      ],
+      "gaps": [
+        "持续时间与暂停组合专项"
+      ]
+    },
+    {
+      "legacy": "MineSyncTestDoc",
+      "behavior": "布雷归属、触发、拆雷与领取",
+      "probes": [
+        "friendly",
+        "mines"
+      ],
+      "gaps": []
+    },
+    {
+      "legacy": "MineRoomTestDoc",
+      "behavior": "分房与重访地雷保留",
+      "probes": [
+        "split-rooms",
+        "mines",
+        "lifecycle"
+      ],
+      "gaps": []
+    },
+    {
+      "legacy": "BurnVisualTestDoc",
+      "behavior": "身体燃烧、逐格地面火焰及原生寿命",
+      "probes": [
+        "guns",
+        "explosives",
+        "enemies"
+      ],
+      "gaps": [
+        "每格火焰寿命、暂停及结束清理专项"
+      ]
+    },
+    {
+      "legacy": "WallImpactTestDoc",
+      "behavior": "弹孔、焦痕、透明缺口只绘制一次",
+      "probes": [
+        "terrain"
+      ],
+      "gaps": [
+        "128墙面主74/0加80/0；134不再因耐久变化整房重画，需新字节复验",
+        "真实分房重访的墙面印记",
+        "血迹和魔法墙的独立像素对照"
+      ]
+    },
+    {
+      "legacy": "TeleportVisualTestDoc",
+      "behavior": "原生Q传送、到达效果、失败不造特效",
+      "probes": [
+        "teleport"
+      ],
+      "gaps": [
+        "158二十二阶段主136/0加132/0；最终统一字节回归"
+      ]
+    },
+    {
+      "legacy": "PeerThrowDamageTestDoc",
+      "behavior": "各自控制被抛掷时的碰撞伤害",
+      "probes": [
+        "throw"
+      ],
+      "gaps": []
+    },
+    {
+      "legacy": "BodyEffectsTestDoc",
+      "behavior": "护盾、隐身、冻结、束缚、变形、冲刺",
+      "probes": [
+        "body-effects"
+      ],
+      "gaps": [
+        "148身体28阶段通过；敌人完整状态组合与最终同字节回归"
+      ]
+    },
+    {
+      "legacy": "FollowRecoveryTestDoc",
+      "behavior": "死亡和跨房期间跟随可恢复",
+      "probes": [
+        "party"
+      ],
+      "gaps": [
+        "152跟随死亡/暂停/复活组合通过；最终同字节回归"
+      ]
+    },
+    {
+      "legacy": "FollowNetworkTestDoc",
+      "behavior": "跟随开关与双向普通房追随",
+      "probes": [
+        "party",
+        "split-rooms"
+      ],
+      "gaps": []
+    },
+    {
+      "legacy": "TeammateNavigationTestDoc",
+      "behavior": "传送到队友、房间和出生代次门控",
+      "probes": [
+        "party",
+        "split-rooms"
+      ],
+      "gaps": []
+    },
+    {
+      "legacy": "HiddenRoomFollowTestDoc",
+      "behavior": "背景门不夺相机、不重置房间",
+      "probes": [
+        "party",
+        "split-rooms",
+        "time-journey"
+      ],
+      "gaps": [
+        "162时停中的分房击杀、背景门、死亡复活及回放后换图163/0；166新增真实地雷结算通过，但新增矿后换图夹具被队友挡住，168恢复分房射线待复验"
+      ]
+    },
+    {
+      "legacy": "SpecialWeaponTestDoc",
+      "behavior": "酸弹、等离子、冲击、冰冻、毒气和燃烧瓶",
+      "probes": [
+        "explosives"
+      ],
+      "gaps": [
+        "持续地面效果与伤害寿命专项"
+      ]
+    },
+    {
+      "legacy": "DoorVisualTestDoc",
+      "behavior": "门开关沿用原生动画且不产生破坏碎屑",
+      "probes": [
+        "cooperation"
+      ],
+      "gaps": [
+        "143强化门两态及99逐帧样本通过；其它门型及最终同字节回归"
+      ]
+    },
+    {
+      "legacy": "BallisticVisualTestDoc",
+      "behavior": "普通枪命中与枪口到弹道的连续性",
+      "probes": [
+        "native-gun",
+        "angles",
+        "guns",
+        "terrain"
+      ],
+      "gaps": [
+        "移动与相机变化中密集开火的组合"
+      ]
+    },
+    {
+      "legacy": "MagicImpactTestDoc",
+      "behavior": "魔法命中、冲击与魔法墙",
+      "probes": [
+        "magic",
+        "terrain"
+      ],
+      "gaps": [
+        "Spell类技能及自然到期负例"
+      ]
+    },
+    {
+      "legacy": "MagicExplosionTestDoc",
+      "behavior": "快捷火球和蚀日的爆炸效果",
+      "probes": [
+        "magic",
+        "explosives"
+      ],
+      "gaps": [
+        "火球地面火焰的原生持续时间"
+      ]
+    },
+    {
+      "legacy": "EffectsTerrainTestDoc",
+      "behavior": "敌人开火、机械死亡、破墙后可见性",
+      "probes": [
+        "vision",
+        "terrain"
+      ],
+      "gaps": [
+        "149本机RV可见性隔离/墙后目标真实显示通过；最终同字节回归"
+      ]
+    },
+    {
+      "legacy": "ProjectileLoadTestDoc",
+      "behavior": "密集敌人与开火的延迟、积压和长期占用",
+      "probes": [
+        "stress"
+      ],
+      "gaps": [
+        "严格同条件A/B比较",
+        "长局内存与队列曲线",
+        "现有约11步每秒未达流畅要求"
+      ]
+    },
+    {
+      "legacy": "PacketCodecTestDoc",
+      "behavior": "有界编码、共享引用、旧确认不被新确认改写",
+      "probes": [
+        "native-gun"
+      ],
+      "gaps": [
+        "132 AIR契约通过：二进制像素、共享别名、对象分组差分、历史确认不可变；最终统一字节待回归"
+      ]
+    },
+    {
+      "legacy": "VisionApiTestDoc",
+      "behavior": "各自视野、探索开关与补齐",
+      "probes": [
+        "vision"
+      ],
+      "gaps": []
+    },
+    {
+      "legacy": "ArchitectureTestDoc",
+      "behavior": "动作去重、作用域归还和房间单次推进",
+      "probes": [
+        "native-gun",
+        "ownership",
+        "split-rooms"
+      ],
+      "gaps": [
+        "默认原始/019＋TDFC004/RV003/MSW011/Sandy001未attach各34/0；全部测试同一冻结版本审计尚未完成"
+      ]
+    },
+    {
+      "legacy": "MineSightTestDoc",
+      "behavior": "加入侧独自发现地雷及双方呈现",
+      "probes": [
+        "mines"
+      ],
+      "gaps": []
+    },
+    {
+      "legacy": "FriendlyHazardsTestDoc",
+      "behavior": "友伤地雷与MSW非致命视野限制",
+      "probes": [
+        "friendly",
+        "mines",
+        "msw",
+        "msw-sweep",
+        "msw-lifecycle"
+      ],
+      "gaps": [
+        "已授权独立接口，113/009及116/010分项通过；118/MSW010快速扫眼负控失败，118/MSW011双方快扫通过；最终统一字节待回归"
+      ]
+    },
+    {
+      "legacy": "MapGenerationTestDoc",
+      "behavior": "新探索重新生成、同一轮重访保留",
+      "probes": [
+        "travel",
+        "party"
+      ],
+      "gaps": [
+        "143五轮新探索、152背景房/死亡分项通过；A和B公共地图修复基线对齐"
+      ]
+    }
   ],
   "additional_b_requirements": [
     "真实个人存读档、两个原生菜单同时操作、原生对话与角色控制归还",

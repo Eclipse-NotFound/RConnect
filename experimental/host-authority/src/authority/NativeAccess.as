@@ -10,6 +10,7 @@ package authority {
       public var ink:TerrainInk;
       public var view:ViewBridge;
       public var weapons:WeaponBridge;
+      public var time:TimeBridge;
       private var positions:Dictionary=new Dictionary(true);
       public function bindPositionBoundary():void {
          var Unit:Class=definition("fe.unit.Unit");

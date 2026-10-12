@@ -12,7 +12,11 @@ package authority {
       }
       public function actor(source:Object):PlayerActor {
          if(source==null)return null;
-         var owner:Object=NativeAccess.get(source,"rconnectOwner");if(owner!=null)source=owner;
+         // Bullet collision asks this policy for every candidate along its
+         // path. Ordinary sealed Units have no mine-owner field; probing by
+         // throwing #1069 here made dense shooting spend most of its time in
+         // exception construction. Keep the same ownership result without it.
+         var owner:Object="rconnectOwner" in source?source.rconnectOwner:null;if(owner!=null)source=owner;
          for each(var a:PlayerActor in session.actors)if(a.unit===source || a.unit.pet===source)return a;
          return null;
       }

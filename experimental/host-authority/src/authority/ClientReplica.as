@@ -32,6 +32,7 @@ package authority {
       // confirmation before any display interpolation. Unset during play.
       public var confirmed:Function;
       public function projectileDisplay(id:uint):DisplayObject {return projectiles[id] as DisplayObject;}
+      public function weaponDisplay(player:int):DisplayObject {var peer:Object=peers[player];return peer==null || peer.weapon==null?null:peer.weapon.vis as DisplayObject;}
       public function ClientReplica(access:NativeAccess,vision:SharedVision=null) {
          this.access=access;originalPause=access.world.onPause;
          var data:Object={};access.world.saveToObj(data);entrySave=PlainData.nativeCopy(data);
@@ -62,7 +63,8 @@ package authority {
       }
       public function submitted(input:Object):void {prediction.record(input,getTimer());predict();}
       private function predict():void {
-         var state:Object=prediction.sample(getTimer(),displayFrame,scene.terrainRevision,SharedPause.requested(access.world));
+         var replaying:Boolean=displayFrame!=null && displayFrame.timeControl!=null && displayFrame.timeControl.phase=="replay";
+         var state:Object=replaying?null:prediction.sample(getTimer(),displayFrame,scene.terrainRevision,SharedPause.requested(access.world));
          if(state!=null){applyPlayer(state,true);predicted=true;}
          // A new combat/pause request must remove the previous visual lead even
          // when no new confirmed frame arrived in this screen frame.
@@ -73,6 +75,7 @@ package authority {
          if(access.view!=null)access.view.prepare();
          displayFrame=frame;
          if(!interpolated)MapState.apply(access,frame.map);
+         if(!interpolated && access.time!=null)access.time.present(frame.timeControl);
          if(interpolated && frame.scene!=null)scene.interpolate(frame.scene);
          if(!interpolated && frame.scene!=null && scene.apply(frame.scene)) {
             for each(var old:Object in peers) {
@@ -188,7 +191,10 @@ package authority {
                if(local)rec.weapon.setPers(g,g.pers);
                rec.weaponId=w.id;
                rec.weaponEpoch=state.weaponEpoch;
-               if(local)g.currentWeapon=rec.weapon;
+               // Native redraw/UI consumers also inspect the actor's weapon,
+               // including the remote actor. Keep its reference and child slot
+               // on the confirmed object, not the entry profile's old gun.
+               g.currentWeapon=rec.weapon;g.childObjs[0]=rec.weapon;
             }
             var v:Object=rec.weapon.vis;
             if(!interpolated)NativeFields.apply(rec.weapon,w.native);
@@ -201,7 +207,7 @@ package authority {
             VisualPose.apply(v as DisplayObject,w.visual);
          } else if(rec.weapon!=null) {
             rec.weapon.remVisual();rec.weapon=null;rec.weaponId="";
-            if(local)g.currentWeapon=null;
+            g.currentWeapon=null;g.childObjs[0]=null;
          }
       }
       private function applyProjectile(state:Object):void {

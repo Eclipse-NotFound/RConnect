@@ -28,6 +28,7 @@ package authority {
          if(!(args is Array) || args.length>3)return false;
          if(key=="menuClose" || key=="menuStandClose")return args.length==0;
          if(key=="mswFlashGive")return args.length==0;
+         if(key=="sandyToggle")return args.length==0;
          if(key=="advanceDialog")return args.length==1 && args[0] is Boolean;
          if(key=="menuAppearance")return args.length==1 && AuthorityMenus.validAppearance(args[0]);
          if(key=="menuWork")return args.length==3 && integer(args[0],1,12) && nullableId(args[1]) && nullableId(args[2]);
@@ -61,6 +62,8 @@ package authority {
       private static function integer(value:*,lo:int,hi:int):Boolean{return value is Number && value==int(value) && value>=lo && value<=hi;}
       public static function execute(actor:PlayerActor,key:String,args:Array):Boolean {
          if(!valid(key,args))return false;
+         if(key=="sandyToggle")return actor.access.time!=null && actor.access.time.execute(actor);
+         if(actor.access.time!=null && actor.access.time.phase=="replay" && key!="menuClose" && key!="menuStandClose")return false;
          if(key=="mswFlashGive")return actor.access.weapons!=null && actor.access.weapons.execute(actor,"flashGive");
          if(key=="advanceDialog") {
             actor.context.ctr.keyPressed=true;actor.context.ctr.keyPressed2=args[0];actor.context.ctr.active=true;return true;

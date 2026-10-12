@@ -5,13 +5,14 @@ package authority {
     * The fixture never moves a target after its initial placement. */
    public final class EnemyGrabsProbe extends Probe {
       private static const CASES:Array=["host-regrab","join-regrab","throw","resistance","200-mana",
-         "mana-empty","heavy","immune","199-mana","host-first","join-first","paused-hold"];
+         "mana-empty","heavy","immune","199-mana","host-first","join-first","paused-hold","target-dies","local-menu"];
       private var ready:Boolean=false,phase:int=-1,owner:int=1,begin:int=-1,peerReady:int=-1,ending:int=-1;
       private var target:Object,second:Object,fy:Number,targetKey:uint=0,secondKey:uint=0;
       private var sent:int=-1,waiting:Boolean=false,report:Object,refs:Object={},counts:Object;
       private var held:int=0,otherHeld:int=0,secondHeld:int=0,thrown:int=0,minY:Number,manaBefore:Number;
       private var manaChanged:Boolean=false,menuOpened:Boolean=false,menuClosed:Boolean=false,menuAt:int=0;
       private var pauseRef:Object,pausedSamples:int=0,pauseStill:Boolean=true;
+      private var killed:Boolean=false,localMenuFirst:int=-1,localMenuLast:int=-1;
       public function EnemyGrabsProbe(a:NativeAccess,h:Boolean){super(a,h);}
       override public function message(v:Object):void {
          if(host && v.type=="enemy-grab-ready")peerReady=v.phase;
@@ -26,14 +27,16 @@ package authority {
          if(!host && v.type=="enemy-grab-finish")finish();
       }
       override public function input(frame:Object,session:HostSession):Object {
-         frame.buttons=0;frame.actions=[];frame.aimX=700;frame.aimY=fy-35;
+         frame.buttons=0;frame.actions=[];
+         if(phase<0 || !isFinite(fy))return frame;
+         frame.aimX=700;frame.aimY=fy-35;
          if(begin<0)return frame;
          var elapsed:int=(host?session.runtime.tick:RConnectMod.instance.replica.lastTick)-begin,id:int=host?0:1;
          if(id==owner) {
             if(elapsed>=18 && elapsed<23 || (phase<2 || phase==4 || phase>=9) && elapsed>=125 && elapsed<130)frame.buttons=Commands.TELE;
             if(elapsed>=30 && elapsed<125){frame.aimX=720;frame.aimY=fy-150;}
             if(phase==2 && elapsed>=80 && elapsed<85)frame.buttons=Commands.ACTION;
-            if(phase<2 && elapsed>=140) {
+            if((phase<2 || phase==12) && elapsed>=140) {
                frame.aimX=820;frame.aimY=elapsed<160?fy-35:fy-150;
                if(elapsed>=145 && elapsed<150 || elapsed>=195 && elapsed<200)frame.buttons=Commands.TELE;
             }
@@ -80,6 +83,7 @@ package authority {
       private function start(session:HostSession,index:int):void {
          phase=index;owner=index==0 || index==9?0:1;begin=peerReady=-1;waiting=false;report=null;
          held=otherHeld=secondHeld=thrown=pausedSamples=0;manaChanged=false;pauseRef=null;pauseStill=true;
+         killed=false;localMenuFirst=localMenuLast=-1;
          for each(var a:PlayerActor in session.actors)a.unit.dropTeleObj();
          fy=ProbeArena.floor(session.actors[0].unit.loc);minY=fy;
          for each(a in session.actors)access.scope.run(a.context,function():void {
@@ -105,7 +109,7 @@ package authority {
             if(replica==null || replica.displayFrame==null)return;
             if(!ready){ready=true;replica.confirmed=confirmed;}
             if(phase>=0 && sent!=phase){sent=phase;RConnectMod.instance.link.send({type:"enemy-grab-ready",phase:phase});}
-            if(phase==11 && begin>=0 && replica.lastTick-begin>=55 && !menuOpened) {
+            if((phase==11 || phase==13) && begin>=0 && replica.lastTick-begin>=55 && !menuOpened) {
                menuOpened=true;menuAt=getTimer();access.world.pip.onoff(5);
             }
             if(menuOpened && !menuClosed && getTimer()-menuAt>=1200){menuClosed=true;access.world.pip.onoff(-1);}
@@ -126,6 +130,13 @@ package authority {
          if(begin<0)return;
          var elapsed:int=session.runtime.tick-begin,g:Object=session.actors[owner].unit;
          if(phase==5 && elapsed>=70 && !manaChanged){g.mana=0;g.dmana=0;manaChanged=true;}
+         if(phase==12 && elapsed>=75 && !killed) {
+            killed=true;target.invulner=false;
+            access.scope.run(session.actors[owner].context,function():void{target.damage(100000,0,null,true);});
+         }
+         if(phase==13 && session.pause.remoteMenus) {
+            if(localMenuFirst<0)localMenuFirst=session.runtime.tick;localMenuLast=session.runtime.tick;
+         }
          if(phase==11 && session.pause.paused) {
             if(pauseRef==null)pauseRef={tick:session.runtime.tick,y:target.Y,mana:g.mana,resistance:target.levit_r};
             ++pausedSamples;pauseStill=pauseStill && session.runtime.tick==pauseRef.tick && target.Y==pauseRef.y &&
@@ -136,7 +147,11 @@ package authority {
             check(rejected?held==0:held>5,"native grab eligibility: "+CASES[phase],{held:held,mana:manaBefore,mass:target.massa});
             if(!rejected)check(minY<fy-10 && g.mana<manaBefore,"native forces lift the enemy and spend the caster's own mana: "+CASES[phase],{rise:fy-minY,mana:g.mana});
             check(otherHeld==0,"another player never steals an accepted hold: "+CASES[phase],{competingHoldSteps:otherHeld});
-            if(phase<2)check(secondHeld>15,"release permits a fresh grab of a different enemy: "+CASES[phase],{secondHeld:secondHeld});
+            if(phase<2 || phase==12)check(secondHeld>15,"release permits a fresh grab of a different enemy: "+CASES[phase],{secondHeld:secondHeld});
+            if(phase==12)check(killed && target.hp<=0 && target.sost>=3,
+               "native target death during lifting does not prevent a subsequent fresh selection");
+            if(phase==13)check(localMenuFirst>=0 && localMenuLast>localMenuFirst+3 && !session.pause.paused,
+               "a local-only menu leaves the authoritative hold clock running until normal release",{first:localMenuFirst,last:localMenuLast});
             if(phase==2)check(thrown>0,"real action input throws the enemy through native collision lifetime",{throwSteps:thrown});
             if(phase==3)check(held<60,"enemy's native resistance ends the hold before the manual release");
             if(phase==5)check(held<85,"empty mana ends the native hold before the manual release");

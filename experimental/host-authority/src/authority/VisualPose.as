@@ -14,6 +14,7 @@ package authority {
    import flash.filters.ColorMatrixFilter;
    import flash.utils.getQualifiedClassName;
    import flash.utils.Dictionary;
+   import flash.utils.ByteArray;
    /** Native symbol state, with local pixel surfaces only for mutated bitmaps.
     * Never runs a second animation, AI or weapon simulation. */
    public final class VisualPose {
@@ -30,6 +31,7 @@ package authority {
       }
       public static function capture(display:DisplayObject,depth:int=0,includePixels:Boolean=false):Object {
          if(display==null)return null;
+         var began:int=depth==0?Timing.start():0;
          var color:ColorTransform=display.transform.colorTransform;
          var matrix:Matrix=display.transform.matrix;
          var s:Object={x:display.x,y:display.y,sx:display.scaleX,sy:display.scaleY,r:display.rotation,
@@ -48,7 +50,8 @@ package authority {
             }else continue;
             s.filters.push(fs);
          }
-         if(display is TextField){s.text=TextField(display).htmlText;s.textColor=TextField(display).textColor;}
+         if(display is TextField){s.text=TextField(display).htmlText;s.plainText=TextField(display).text;s.textColor=TextField(display).textColor;s.multiline=TextField(display).multiline;
+            s.scrollH=TextField(display).scrollH;s.scrollV=TextField(display).scrollV;}
          var clip:MovieClip=display as MovieClip;
          if(clip!=null)s.f=clip.currentFrame;
          // Authored MovieClip geometry is already in the native assets. Runtime
@@ -63,6 +66,9 @@ package authority {
             s.children=[];
             for(var i:int=0;i<parent.numChildren;i++) {
                var child:DisplayObject=parent.getChildAt(i);
+               // Authority samples at EXIT_FRAME, after native construction.
+               // A null timeline slot is not evidence that a limb is hidden.
+               if(child==null)continue;
                if(child is MovieClip || child is TextField || child is Sprite || child is Bitmap || clip==null && child is Shape)
                   s.children.push({n:child.name,i:i,cls:getQualifiedClassName(child),s:capture(child,depth+1,includePixels)});
             }
@@ -87,16 +93,39 @@ package authority {
                else same=false;
             }
             for(field in previous)if(!s.hasOwnProperty(field)){same=false;break;}
-            if(same)return previous;
+            if(same){if(depth==0)Timing.end("capture.pose",began);return previous;}
          }
-         captured[display]=s;return s;
+         captured[display]=s;if(depth==0)Timing.end("capture.pose",began);return s;
       }
-      private static function recipeEqual(a:*,b:*):Boolean {
+      public static function recipeEqual(a:*,b:*):Boolean {
          if(a===b)return true;
+         if(a is ByteArray || b is ByteArray)return a is ByteArray && b is ByteArray && PixelSurface.sameBytes(a,b);
          if(a==null || b==null || typeof a!="object" || typeof b!="object" || (a is Array)!=(b is Array))return false;
          if(a is Array && a.length!=b.length)return false;
          for(var k:String in b)if(!a.hasOwnProperty(k) || !recipeEqual(a[k],b[k]))return false;
          for(k in a)if(!b.hasOwnProperty(k))return false;return true;
+      }
+      private static function transform(display:DisplayObject,s:Object):void {
+         if(s.m!=null)display.transform.matrix=new Matrix(s.m[0],s.m[1],s.m[2],s.m[3],s.m[4],s.m[5]);
+         else {display.x=s.x;display.y=s.y;display.scaleX=s.sx;display.scaleY=s.sy;display.rotation=s.r;}
+         display.alpha=s.a;display.visible=s.v;
+      }
+      /** Between confirmations the display tree, text, filters and pixel
+       * surfaces already belong to the left frame. Only transforms/alpha can
+       * interpolate; never reconstruct or rerun those discrete properties. */
+      public static function motion(display:DisplayObject,s:Object):void {
+         if(display==null || s==null)return;
+         transform(display,s);
+         var parent:DisplayObjectContainer=display as DisplayObjectContainer;
+         if(parent==null || s.children==null)return;
+         var managed:Dictionary=added[parent];
+         for each(var child:Object in s.children) {
+            var target:DisplayObject=parent.getChildByName(child.n);
+            if(target!=null && getQualifiedClassName(target)!=child.cls && (managed==null || managed[target]!==child.cls))target=null;
+            if(target==null && int(child.i)<parent.numChildren && getQualifiedClassName(parent.getChildAt(int(child.i)))==child.cls)target=parent.getChildAt(int(child.i));
+            if(target==null)throw new Error("Interpolated pose has no confirmed native child");
+            motion(target,child.s);
+         }
       }
       public static function apply(display:DisplayObject,s:Object):void {
          if(display==null || s==null)return;
@@ -123,9 +152,7 @@ package authority {
          if(clip!=null && s.f!=null){if(clip.currentFrame!=int(s.f))clip.gotoAndStop(int(s.f));else clip.stop();}
          // Authored limbs also contain skew and precise fixed-point matrices.
          // Reassigning scale/rotation separately loses both over repeated frames.
-         if(s.m!=null)display.transform.matrix=new Matrix(s.m[0],s.m[1],s.m[2],s.m[3],s.m[4],s.m[5]);
-         else {display.x=s.x;display.y=s.y;display.scaleX=s.sx;display.scaleY=s.sy;display.rotation=s.r;}
-         display.alpha=s.a;display.visible=s.v;
+         transform(display,s);
          if(s.blend!=null)display.blendMode=s.blend;
          var previous:Object=applied[display];if(previous==null)previous=applied[display]={};
          // FrameDelta keeps received branches immutable, and PoseTween retains
@@ -151,11 +178,33 @@ package authority {
          display.filters=previous.nativeFilters;
          if(s.cache!=null)display.cacheAsBitmap=s.cache;
          if(display is Bitmap && s.smoothing!=null){Bitmap(display).smoothing=s.smoothing;Bitmap(display).pixelSnapping=s.pixelSnapping;}
-         if(display is TextField && s.text!=null){if(TextField(display).htmlText!=s.text)TextField(display).htmlText=s.text;TextField(display).textColor=s.textColor;}
+         if(display is TextField && s.text!=null) {
+            var text:TextField=TextField(display);
+            var multiline:Boolean=text.multiline;
+            // With multiline=false AIR's HTML parser drops paragraph breaks
+            // that still exist in native .text. Import with breaks enabled,
+            // then restore the field's real presentation mode.
+            text.multiline=true;
+            if(text.htmlText!=s.text || s.plainText!=null && text.text!==s.plainText)text.htmlText=s.text;
+            // AIR's generated <P> wrapper adds a final carriage return when
+            // read back through htmlText. Remove only parser-added suffixes,
+            // preserving actual native line breaks and all remaining formats.
+            if(s.plainText!=null && text.text!==s.plainText && text.text.indexOf(s.plainText)==0 &&
+               /^\r+$/.test(text.text.substr(s.plainText.length)))text.replaceText(s.plainText.length,text.length,"");
+            text.textColor=s.textColor;
+            text.multiline=s.multiline==null?multiline:Boolean(s.multiline);
+            // replaceText moves AIR's caret and can scroll a wrapped large
+            // damage number to its last line. Restore the native viewport
+            // after importing text and removing the parser-added suffix.
+            if(s.scrollH!=null)text.scrollH=s.scrollH;if(s.scrollV!=null)text.scrollV=s.scrollV;
+         }
          if(s.c!=null && previous.color!==colorKey) {
             previous.nativeColor=new ColorTransform(s.c[0],s.c[1],s.c[2],s.c[3],s.c[4],s.c[5],s.c[6],s.c[7]);previous.color=colorKey;
          }
          if(s.c!=null)display.transform.colorTransform=previous.nativeColor;
+         // alpha is also ColorTransform.alphaMultiplier. Reapplying the left
+         // confirmation's color must not overwrite the interpolated opacity.
+         display.alpha=s.a;
          var parent:DisplayObjectContainer=display as DisplayObjectContainer;
          if(parent!=null && s.children!=null) {
          var managed:Dictionary=added[parent];if(managed==null)managed=added[parent]=new Dictionary(true);

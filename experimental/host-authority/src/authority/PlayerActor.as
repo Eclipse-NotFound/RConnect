@@ -12,10 +12,11 @@ package authority {
       public var saveRequests:Array=[];
       public var personal:Object={allowGrab:false,struggle:true,thrownDamage:false,follow:false};
       public var grips:PeerGrabs;
+      public var sight:ActorSight;
       public var originalLevitPoss:Boolean=false;
       private var consumedButtons:int=0;
       private var observedWeapon:Object,weaponKnown:Boolean=false,observedVariant:int=0;
-      public function PlayerActor(access:NativeAccess,id:int){this.access=access;this.id=id;}
+      public function PlayerActor(access:NativeAccess,id:int){this.access=access;this.id=id;sight=new ActorSight(this);}
       public static function local(access:NativeAccess):PlayerActor {
          var a:PlayerActor=new PlayerActor(access,0),w:Object=access.world;
          a.unit=w.gg;
@@ -35,7 +36,7 @@ package authority {
             var ctr:Object=context.ctr;
             // Native actions can consume a held key (throw, grab, single shot).
             // Do not resurrect it every network tick before a release/new press.
-            consumedButtons&=int(input.buttons)&~int(input.pressed);
+            consumedButtons&=int(input.held)&~int(input.pressed);
             ctr.keyReload=ctr.keyFly=ctr.keyTest1=false;
             for(var i:int=0;i<Commands.HELD.length;i++)ctr[Commands.HELD[i]]=(input.buttons&~consumedButtons&(1<<i))!=0;
             for each(var key:String in Commands.ONCE)ctr[key]=false;
@@ -77,6 +78,7 @@ package authority {
       public function finishWorldServices():void {
          // The native World loop handles the local actor after Land.step.
          if(id==0)return;
+         sight.update();
          access.scope.run(context,function():void {
             var w:Object=access.world;
             context.sats.step2();
@@ -102,6 +104,7 @@ package authority {
             body:v.osn.body.currentFrame,visual:VisualPose.capture(v as DisplayObject),weapon:weapon,steps:steps,motion:id==1?GroundMotion.capture(g):null};
       }
       public function destroy():void {
+         sight.dispose();
          context.ctr.clearAll();
          access.scope.unregister(context);
          if(unit!=null)unit.levitPoss=originalLevitPoss;

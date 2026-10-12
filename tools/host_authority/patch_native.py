@@ -81,7 +81,7 @@ def modify_base(name, source):
                }
             }'''
         return once(source, block,
-            '            if(rconnectRoomStep != null)\n            {\n               rconnectRoomStep(this);\n            }\n'
+            '            if(rconnectRoomStep != null)\n            {\n               if(rconnectRoomStep(this) === false) return;\n            }\n'
             '            else\n            {\n'+block+'\n            }')
     if name == 'fe.unit.UnitPlayer':
         source = once(source, '      override public function damage(param1:Number, param2:int, param3:Bullet = null, param4:Boolean = false) : Number\n      {',
@@ -104,6 +104,12 @@ INTENTS = {
 
 MENU_CLASSES = ['fe.inter.PipBuck','fe.inter.PipPageWork','fe.inter.PipPageVault','fe.inter.PipPageMed',
     'fe.inter.PipPageVend','fe.inter.PipPageInv','fe.inter.PipPageApp','fe.inter.Stand']
+
+# These overrides mutate armor, shields or special boss state before calling
+# Unit.damage. Intercept at the outer entry, before any native side effects.
+DAMAGE_CLASSES = ['fe.unit.UnitAIRobot','fe.unit.UnitAlicorn','fe.unit.UnitBossNecr',
+    'fe.unit.UnitBossRaider','fe.unit.UnitPhoenix','fe.unit.UnitRaider',
+    'fe.unit.UnitTurret','fe.unit.UnitZebra','fe.unit.VirtualUnit']
 
 
 def menu_hook(source, method, key, args, condition='true'):
@@ -205,7 +211,8 @@ def modify(name, source):
             '         {\n            return;\n         }')
     if name=='fe.unit.Unit':
         anchor='      public static var rconnectFindTarget:Function = null;'
-        source=once(source,anchor,anchor+'\n      public static var rconnectHitPolicy:Function = null;\n'
+        source=once(source,anchor,anchor+'\n      public static var rconnectDeferDamage:Function = null;\n'
+            '      public static var rconnectHitPolicy:Function = null;\n'
             '      public static var rconnectTeleported:Function = null;\n'
             '      public static function rconnectAllowed(source:Unit, target:Unit, nativeAllowed:Boolean, kind:String = "impact"):Boolean\n'
             '      {\n         return rconnectHitPolicy == null ? nativeAllowed : Boolean(rconnectHitPolicy(source,target,nativeAllowed,kind));\n      }')
@@ -319,7 +326,13 @@ def modify(name, source):
             '         for each(var node:XML in nodes)\n         {\n'
             '            if(node.attribute(key) == expected) result += node;\n'
             '         }\n         return result;\n      }\n\n'+constructor)
-    return source.replace('"b1-v3"','"b3-v10"').replace('"b2-v1"','"b3-v10"').replace('"b3-v1"','"b3-v10"')
+    if name in DAMAGE_CLASSES or name in ('fe.unit.Unit','fe.unit.UnitPlayer'):
+        prefix = '      ' + ('' if name=='fe.unit.Unit' else 'override ')
+        anchor = prefix+'public function damage(param1:Number, param2:int, param3:Bullet = null, param4:Boolean = false) : Number\n      {'
+        source=once(source,anchor,anchor+'\n'
+            '         if(Unit.rconnectDeferDamage != null && Boolean(Unit.rconnectDeferDamage(this,param1,param2,param3,param4)))\n'
+            '         {\n            return 0;\n         }')
+    return source.replace('"b1-v3"','"b3-v12"').replace('"b2-v1"','"b3-v12"').replace('"b3-v1"','"b3-v12"')
 
 
 def swf_tags(path):
@@ -361,7 +374,7 @@ def main():
     original = baseline/'game/pfe.swf'
     classes = ['fe.inter.Ctr', 'fe.loc.Location', 'fe.loc.Land', 'fe.unit.Unit', 'fe.unit.UnitPlayer', 'fe.graph.Grafon',
         'fe.unit.Invent','fe.unit.Pers','fe.weapon.Weapon','fe.loc.Game','fe.World','fe.weapon.Bullet','fe.unit.Mine','fe.weapon.WThrow','fe.weapon.PhisBullet',
-        'fe.Snd','fe.weapon.WClub','fe.serv.Interact']+MENU_CLASSES
+        'fe.Snd','fe.weapon.WClub','fe.serv.Interact']+MENU_CLASSES+DAMAGE_CLASSES
     ff = [str(JAVA), '-Xmx768m', '-jar', str(FFDEC)]
     with (out/'patch.log').open('w', encoding='utf-8') as log:
         def run(args):
@@ -400,7 +413,7 @@ def main():
             subprocess.run(ff+['-dumpAS3', str(path)], stdout=log, check=True)
     if (out/'before-classes.txt').read_bytes() != (out/'after-classes.txt').read_bytes():
         raise RuntimeError('Native class list changed')
-    save(out/'native-input.json', dict(experimental_only=True, capability='b3-v10',
+    save(out/'native-input.json', dict(experimental_only=True, capability='b3-v12',
         baseline=str(baseline.relative_to(ROOT)), baseline_manifest_sha256=sha(baseline/'baseline.json'),
         original_sha256=sha(original), candidate_sha256=sha(out/'pfe.swf'),
         sources={p.relative_to(out).as_posix():sha(p) for p in sorted((out/'import').rglob('*.as'))},

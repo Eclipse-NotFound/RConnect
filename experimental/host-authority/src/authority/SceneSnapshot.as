@@ -30,6 +30,7 @@ package authority {
       }
       public function target(id:uint):Object{return targets[id];}
       public function reset():void {ids=new Dictionary(true);targets={};previousRoom=null;tiles=[];masks.reset();}
+      public function fullNext():void {previousRoom=null;tiles=[];}
       public function capture(room:Object,actors:Array,tick:uint):Object {
          var began:int=Timing.start();
          var full:Boolean=previousRoom!==room;
@@ -55,6 +56,7 @@ package authority {
             result.fields=NativeFields.capture(room);result.fon=room.land.act.fon;
             result.tint=color(room.cTransform);result.fonTint=color(room.cTransformFon);
          }
+         var tilesStarted:int=Timing.start();
          // Collision and displayed terrain come from the same host tile state.
          for(var x:int=0;x<room.spaceX;x++)for(var y:int=0;y<room.spaceY;y++) {
             var at:int=x*room.spaceY+y,t:Object=room.space[x][y],old:Array=tiles[at],changed:Boolean=full;
@@ -64,21 +66,25 @@ package authority {
                tiles[at]=values;result.tiles.push({x:x,y:y,v:values});
             }
          }
+         Timing.end("capture.tiles",tilesStarted);
+         var unitsStarted:int=Timing.start();
          for each(var u:Object in room.units)if(u!=null && !u.player) {
             var burning:Boolean=AuthorityAnimation.burning(u as Unit);
-            var us:Object={key:id(u),positionEpoch:access.positionEpoch(u),cls:getQualifiedClassName(u),fields:NativeFields.capture(u),inter:NativeFields.capture(u.inter),pose:VisualPose.capture(u.vis,0,burning),
+            var replay:Boolean=access.time!=null && access.time.phase=="replay";
+            var us:Object={key:id(u),positionEpoch:access.positionEpoch(u),cls:getQualifiedClassName(u),fields:NativeFields.capture(u),inter:NativeFields.capture(u.inter),pose:VisualPose.capture(u.vis,0,burning || replay),
                clip:u.vis==null?null:getQualifiedClassName(u.vis),burning:burning,
-               blit:burning?null:AuthorityAnimation.capture(u as Unit),weapons:[],petOwner:-1,layer:u.sloy,attached:u.vis!=null && u.vis.parent!=null};
+               blit:burning || replay?null:AuthorityAnimation.capture(u as Unit),weapons:[],petOwner:-1,layer:u.sloy,attached:u.vis!=null && u.vis.parent!=null};
             us.healthBar=u.hpbar==null?null:{pose:VisualPose.capture(u.hpbar),attached:u.hpbar.parent!=null};
             for each(actor in actors)if(actor.unit.pet===u)us.petOwner=actor.id;
             if(us.cls.indexOf("UnitTurret")>=0)us.mount=int(getQualifiedClassName(u.vis).replace(/^.*visualTurret/,""));
-            for each(var weapon:Object in u.childObjs)if(weapon!=null && NativeAccess.get(weapon,"kol_shoot")!=null)
+            for each(var weapon:Object in u.childObjs)if(weapon!=null && "kol_shoot" in weapon)
                us.weapons.push({id:weapon.id,variant:weapon.variant,pose:VisualPose.capture(weapon.vis),fields:NativeFields.capture(weapon),attached:weapon.vis!=null && weapon.vis.parent!=null});
             result.units.push(us);
             if(u.vis!=null)rendered[u.vis]=true;
             if(u.hpbar!=null)rendered[u.hpbar]=true;
             for each(child in u.childObjs)if(child!=null && child.vis!=null)rendered[child.vis]=true;
          }
+         Timing.end("capture.units",unitsStarted);
          Timing.end("capture.unitsAndTiles",began);began=Timing.start();
          var seen:Dictionary=new Dictionary(true);
          for each(var list:Array in [room.objs,room.acts,room.bonuses])for each(var o:Object in list)if(o!=null && !seen[o]) {
@@ -90,7 +96,8 @@ package authority {
          o=room.firstObj;var count:int=0;
          var atlas:Object=access.definition("fe.graph.Grafon")["spriteLists"];
          while(o!=null && ++count<=10000) {
-            if(o.vis!=null && o.vis.parent!=null && !rendered[o.vis] && NativeAccess.get(o,"begx")==null) {
+            var projectile:Boolean="begx" in o;
+            if(o.vis!=null && o.vis.parent!=null && !rendered[o.vis] && !projectile) {
                var effect:Object={key:id(o),clip:getQualifiedClassName(o.vis),layer:o.sloy,
                   pose:VisualPose.capture(o.vis),atlas:AuthorityParticle.capture(o,atlas)};
                if(getQualifiedClassName(o)=="fe.loc::Loot")effect.loot={id:o.item.id,kol:o.item.kol,x:o.X,y:o.Y,w:o.scX,h:o.scY};
@@ -99,7 +106,7 @@ package authority {
             }
             // Projectiles have their own lifetime stream. Still reserve their
             // native display identity so the loose-display pass cannot clone it.
-            if(o.vis!=null && NativeAccess.get(o,"begx")!=null)rendered[o.vis]=true;
+            if(o.vis!=null && projectile)rendered[o.vis]=true;
             o=o.nobj;
          }
          Timing.end("capture.objectsAndParticles",began);began=Timing.start();

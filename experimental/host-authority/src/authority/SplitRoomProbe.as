@@ -10,6 +10,7 @@ package authority {
       private var sceneChecks:SceneChecks=new SceneChecks();
       private var begin:int=-1;
       override public function message(value:Object):void {
+         if(!host && value.type=="split-route")sceneChecks.expectedRooms=value.rooms;
          if(host && begin<0 && value.type=="input" && value.player==1 && value.probeStart is Number)begin=int(value.probeStart);
       }
       private function get extra():int {return enemyKind=="tdfc"?325:0;}
@@ -32,6 +33,12 @@ package authority {
             if(tick>=320+extra) {
                var f:Object=replica.lastFrame;
                check(f.rooms.length>=2,"join receives retained identities for both host-native rooms");
+               var visited:Object={};
+               for each(var column:Array in access.world.land.locs)for each(var row:Array in column)for each(var place:Object in row)
+                  if(place!=null && place.visited)visited[access.keyFor(place)]=true;
+               var visitsCorrect:Boolean=true;
+               for each(var retained:Object in f.rooms)if(String(retained.room).split(":")[5]=="" && !visited[retained.room])visitsCorrect=false;
+               check(visitsCorrect,"native map retains explored ordinary foreground and background rooms after both players leave");
                check(f.players[0].roomEpoch>=3 && f.players[1].roomEpoch>=4,"join confirms independent room visits");
                check(f.players[0].steps==f.tick && f.players[1].steps==f.tick,"join confirms each native actor advances once per world tick");
                check(f.spawnsByPlayer[0]>0 && f.spawnsByPlayer[1]>0,"both separated players fired native projectiles");
@@ -131,7 +138,8 @@ package authority {
             phase=8;RoomWeaponChecks.run(session,check);
          }
          if(tick>=330+extra) {
-            check(initialArt-access.world.land.art_t==runtime.tick,"native map-wide artillery clock advances once regardless of occupied room count");
+            check(initialArt-access.world.land.art_t==runtime.tick,"native map-wide artillery clock advances once regardless of occupied room count",
+               {initial:initialArt,current:access.world.land.art_t,tick:runtime.tick});
             check(stepChecks && a.steps==runtime.tick && b.steps==runtime.tick,"split, reunion and exits never double-step or omit a native player");
             check(restored && access.world.loc===home,"all world and camera ownership references return to the host after every world step");
             if(session.tactics!=null) {
@@ -161,6 +169,7 @@ package authority {
             home=row[0];back=row[1];break;
          }
          if(home==null)throw new Error("Generated map has no native foreground/background pair");
+         session.link.send({type:"split-route",rooms:[access.keyFor(back),access.keyFor(home),access.keyFor(back)]});
          base=[lane(home),lane(back)];
          var runtime:RoomRuntime=session.runtime;
          runtime.transfers.relocate(session.actors[0],home,400,base[0]);

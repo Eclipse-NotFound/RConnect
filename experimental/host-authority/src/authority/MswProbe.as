@@ -2,7 +2,7 @@ package authority {
    import flash.utils.getQualifiedClassName;
    /** Real special weapons through normal B input, without testInstance. */
    public final class MswProbe extends Probe {
-      private const cases:Array=["pointer-safe","pointer-peer","laser-enemy","laser-peer","flash","smart","launcher"];
+      private var cases:Array=["pointer-safe","pointer-peer","laser-enemy","laser-peer","flash","smart","launcher"];
       private var phase:int=-1,begin:int=-1,peerReady:int=-1,ending:int=-1,sent:int=-1,owner:int;
       private var ready:Boolean=false,waiting:Boolean=false,report:Object;
       private var aimX:Number=0,aimY:Number=0,target:Object,shooter:PlayerActor,initial:Array;
@@ -10,7 +10,8 @@ package authority {
       private var clientSamples:int=0,clientErrors:int=0;
       private var initialSpawns:int=0,initialFlash:int=0;
       private var stagedAt:int=0;
-      public function MswProbe(a:NativeAccess,h:Boolean){super(a,h);}
+      private var directEye:Boolean=false;
+      public function MswProbe(a:NativeAccess,h:Boolean,sweep:Boolean=false){super(a,h);if(sweep)cases=["pointer-sweep-safe","pointer-sweep-peer"];}
       private function kind():String{return phase<0?"":cases[int(phase/2)];}
       override public function message(v:Object):void {
          if(host && v.type=="msw-ready")peerReady=v.phase;
@@ -31,6 +32,7 @@ package authority {
          f.aimX=aimX;f.aimY=aimY;
          var elapsed:int=(host?s.runtime.tick:RConnectMod.instance.replica.lastTick)-begin;
          if((host?0:1)!=owner)return f;
+         if(kind().indexOf("sweep")>=0)f.aimY=aimY+(elapsed<40?-160:235);
          if(kind().indexOf("pointer")==0){if(elapsed>=15 && elapsed<19 || elapsed>=65 && elapsed<69)f.buttons=Commands.FIRE;}
          else if(kind()=="flash"){if(elapsed>=20 && elapsed<30)f.buttons=Commands.GRENADE;}
          else if(elapsed>=25 && elapsed<31)f.buttons=Commands.FIRE;
@@ -44,7 +46,7 @@ package authority {
       private function start(s:HostSession,index:int):void {
          phase=index;owner=phase%2;shooter=s.actors[owner];begin=peerReady=-1;waiting=false;report=null;
          stagedAt=s.runtime.tick;
-         litTicks=parts=0;blinded=locked=flashSeen=false;initial=[];
+         litTicks=parts=0;blinded=locked=flashSeen=directEye=false;initial=[];
          var fy:Number=ProbeArena.floor(shooter.unit.loc,25);
          RConnectMod.instance.preferences.setValue("friendlyFire",kind().indexOf("peer")>=0 || kind()=="flash"?"1":"0");RConnectMod.instance.applyPreferences();
          for each(var a:PlayerActor in s.actors)access.scope.run(a.context,function():void {
@@ -107,6 +109,10 @@ package authority {
             target:NativeFields.capture(target),weapon:NativeFields.capture(shooter.unit.currentWeapon)});
          if(s.runtime.tick!=lastTick){lastTick=s.runtime.tick;if(state.pointer)++litTicks;}
          blinded=blinded || (target.player?blind(target):target.vision==0);
+         if(kind().indexOf("sweep")>=0 && state.pointer) {
+            var lastHit:String=access.weapons.inspect().diagnostics[String(owner)].pointerLastHit;
+            directEye=directEye || lastHit=="blind" || lastHit=="ineligible";
+         }
          if(state.smart!=null)for each(var lock:Object in state.smart.locks)if(lock.target!=null)locked=true;
          for each(var exposure:Object in access.weapons.snapshot(1-owner).flash)if(exposure.id>initialFlash)flashSeen=true;
          for(var o:Object=shooter.unit.loc.firstObj;o!=null;o=o.nobj)if(o.vis!=null && (getQualifiedClassName(o).indexOf("MSW")>=0 || o.vis.name=="MSWLaserBeam"))++parts;
@@ -116,8 +122,9 @@ package authority {
                check(litTicks>20 && Math.abs(delta-litTicks/30*(owner==0?1:3))<.15,"pointer pays its own configured rate and illuminated time",{ticks:litTicks,energy:delta});
                check(Math.abs(initial[1-owner].energy-energy(s,1-owner))<.0001,"peer battery and prepaid remainder are independent");
             }
-            if(kind()=="pointer-safe")check(!blinded,"friendly fire off rejects real pointer eye exposure");
-            if(kind()=="pointer-peer" || kind()=="laser-peer")check(blinded && target.ggControl,"friendly optics restrict sight and retain player control");
+            if(kind().indexOf("safe")>=0)check(!blinded,"friendly fire off rejects real pointer eye exposure");
+            if(kind().indexOf("peer")>=0)check(blinded && target.ggControl,"friendly optics restrict sight and retain player control");
+            if(kind().indexOf("sweep")>=0)check(!directEye,"fast sweep's endpoint rays do not directly hit a visible eye",{directEye:directEye,blinded:blinded});
             if(kind()=="laser-enemy")check(blinded && parts>0,"native dazzler creates beam and enemy blindness");
             if(kind().indexOf("laser")==0)check(initial[owner].ammo-shooter.unit.currentWeapon.hold==(owner==0?1:2),"dazzler spends firing player's configured ammo once");
             if(kind()=="flash")check(flashSeen && parts>0,"native flash throw produces peer exposure and world pulse");

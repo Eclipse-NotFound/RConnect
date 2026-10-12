@@ -8,13 +8,20 @@ package authority {
       private static var channelTables:Object={};
       public static function capture(bitmap:BitmapData):Object {
          var bytes:ByteArray=bitmap.getPixels(bitmap.rect);bytes.compress();bytes.position=0;
-         var encoded:Array=[],digits:String="0123456789abcdef";
-         while(bytes.bytesAvailable>0){var b:uint=bytes.readUnsignedByte();encoded.push(digits.charAt(b>>>4)+digits.charAt(b&15));}
-         return {w:bitmap.width,h:bitmap.height,bytes:encoded.join("")};
+         // AMF3 transports binary data directly. Do not expand every compressed
+         // byte into two text characters and parse them back on every playback.
+         return {w:bitmap.width,h:bitmap.height,bytes:bytes};
+      }
+      public static function sameBytes(a:ByteArray,b:ByteArray):Boolean {
+         if(a===b)return true;if(a==null || b==null || a.length!=b.length)return false;
+         for(var i:int=0;i<a.length;i++)if(a[i]!=b[i])return false;return true;
       }
       public static function restore(s:Object,bitmap:BitmapData=null):BitmapData {
          var bytes:ByteArray=new ByteArray();
-         for(var i:int=0;i<s.bytes.length;i+=2)bytes.writeByte(parseInt(s.bytes.substr(i,2),16));
+         if(!(s.bytes is ByteArray))throw new Error("Native pixel payload must be binary");
+         // A confirmation can be displayed repeatedly and retained by the
+         // interpolation buffer. Decompress a private copy, never its payload.
+         bytes.writeBytes(s.bytes);
          bytes.uncompress();bytes.position=0;
          if(bytes.length!=uint(s.w)*uint(s.h)*4)throw new Error("Native bitmap dimensions do not match its pixels");
          var restored:ByteArray=new ByteArray();

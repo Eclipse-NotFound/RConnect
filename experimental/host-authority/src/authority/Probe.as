@@ -27,6 +27,7 @@ package authority {
       public function prepare():void {
          if(prepared)return;prepared=true;
          ContractChecks.run(check);
+         NativeTextChecks.run(access,check);
          var g:Object=access.world.gg,Weapon:Class=access.definition("fe.weapon.Weapon");
          // Native save/reload must reconstruct a character qualified to use LMG;
          // modifying only one live weapon's requirements would not survive it.

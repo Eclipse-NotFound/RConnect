@@ -1,10 +1,12 @@
 package authority {
    import flash.utils.getQualifiedClassName;
+   import flash.utils.getTimer;
    /** Real pet calls, native background exits and native joint challenge entry. */
    public final class PartyProbe extends Probe {
       private var begin:int=-1,tick:int=0,phase:int=0,home:Object,back:Object,challengeRoom:Object,challengeId:String;
       private var ground:Array=[],pets:Array=[],sentinel:Object,initialOwner:Object,backVisits:int=0;
       private var sawSplit:Boolean=false,sawTogether:Boolean=false,sawChallenge:Boolean=false,sawPet:Boolean=false;
+      private var pauseAt:int=0,deathAt:int=0,deathRemaining:int=0;
       public function PartyProbe(a:NativeAccess,h:Boolean){super(a,h);}
       override public function message(value:Object):void {
          if(host && begin<0 && value.type=="input" && value.player==1 && value.probeStart is Number)begin=int(value.probeStart);
@@ -13,7 +15,7 @@ package authority {
          if(host && begin>=0 && session!=null)tick=session.runtime.tick-begin;
          if(!host && begin>=0)frame.probeStart=begin;
          frame.buttons=0;frame.actions=[];
-         frame.settings.follow=host?tick>=40 && tick<160:tick>=180 && tick<260;
+         frame.settings.follow=tick>=430 || (host?tick>=40 && tick<160:tick>=180 && tick<260);
          return frame;
       }
       private function exit(actor:PlayerActor,y:Number):void {
@@ -34,10 +36,11 @@ package authority {
                sawPet=true;
                if(access.world.gg.pet!==pet)check(false,"join pet HUD points to its confirmed native pet");
             }
-            if(tick>405) {
+            if(tick>980) {
                check(sawSplit && sawTogether && sawChallenge,"join confirms ordinary separation, following and joint challenge travel");
                check(sawPet,"join displays its own confirmed pet and binds its HUD to that entity");
-               check(f.players[0].epoch==1 && f.players[1].epoch==1,"party actions keep both original player incarnations");
+               check(f.players[0].epoch==1 && f.players[1].epoch==2 && f.players[0].room===f.players[1].room,
+                  "following recovers after exactly one teammate revival without replacing the host");
                SceneChecks.picture(access,"party-follow-pets.png");finish();
             }
             return;
@@ -103,8 +106,48 @@ package authority {
             check(pets[0].loc===back && pets[1].loc===back && !pets[0].in_chain && !pets[1].in_chain,
                "both pets survive challenge round trip without duplicate stepping");
             check(home.units.indexOf(sentinel)>=0 && sentinel.hp>0,"party travel never overwrites an unrelated retained enemy");
+            check(a.epoch==1 && b.epoch==1,"ordinary party travel keeps both original player incarnations");
          }
-         if(tick>425)finish();
+         if(phase==9 && tick>440) {
+            phase=10;sentinel.damage(100000,0,null,true);exit(b,ground[0]);
+         }
+         if(phase==10 && tick>475) {
+            phase=11;check(a.unit.loc===home && b.unit.loc===home && access.world.gg===initialOwner && a.unit.ggControl,
+               "both follow switches permit a background return without recursive camera takeover");
+            check(sentinel.sost>=3 && sentinel.hp<=0,"background return retains the defeated native enemy");exit(b,ground[1]);
+         }
+         if(phase==11 && tick>510) {
+            phase=12;check(a.unit.loc===back && b.unit.loc===back,"both-follow background exit moves the party once");
+            b.spawn={room:back,x:500,y:ground[1]};b.unit.pers.currentCP=null;deathAt=tick;
+            access.scope.run(b.context,function():void {b.unit.damage(100000,0,null,true);});
+            check(b.deathTicks==300 && a.unit.ggControl,"following teammate death leaves host control intact");
+         }
+         if(phase==12 && tick>550){phase=13;exit(a,ground[0]);}
+         if(phase==13 && tick>580) {
+            phase=14;check(a.unit.loc===home && b.unit.loc===back && b.unit.hp<=0,
+               "a dead follower is not dragged through a normal exit before native revival");
+            session.pause.policyMenus=true;access.world.pip.onoff(5);
+         }
+         if(phase==14 && session.pause.paused){phase=15;pauseAt=getTimer();deathRemaining=b.deathTicks;deathAt=tick;}
+         if(phase==15 && getTimer()-pauseAt>800) {
+            phase=16;check(b.deathTicks==deathRemaining && tick==deathAt,
+               "shared native menu freezes the dead follower's revival countdown and both rooms");
+            access.world.pip.onoff(-1);
+         }
+         if(phase==16 && tick>850) {
+            phase=17;check(b.epoch==2 && b.deathTicks==0 && b.unit.hp>0 && b.unit.ggControl && b.unit.loc===back && a.unit.loc===home,
+               "follower revives in its retained room after shared pause without losing independent controls");
+            exit(a,ground[1]);
+         }
+         if(phase==17 && tick>890) {
+            phase=18;check(a.unit.loc===back && b.unit.loc===back && b.personal.follow,"revived follower rejoins while keeping its own follow preference");exit(a,ground[0]);
+         }
+         if(phase==18 && tick>930) {
+            phase=19;check(a.unit.loc===home && b.unit.loc===home && a.unit===initialOwner && access.world.gg===initialOwner && a.unit.ggControl && b.unit.ggControl,
+               "next background exit follows normally after death and pause with both controlled players");
+            check(sentinel.sost>=3 && sentinel.hp<=0,"repeated two-way following and revival never resurrect the defeated room enemy");
+         }
+         if(tick>1000)finish();
       }
    }
 }

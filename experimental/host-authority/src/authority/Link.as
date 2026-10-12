@@ -6,6 +6,7 @@ package authority {
    import flash.net.Socket;
    import flash.utils.ByteArray;
    import flash.utils.setTimeout;
+   import flash.utils.getTimer;
    /** B has a distinct greeting. A packets never enable a legacy fallback. */
    public class Link {
       public static const LIMIT:int=1024*1024;
@@ -13,6 +14,8 @@ package authority {
       public var socket:Socket;
       private var buffer:ByteArray=new ByteArray();
       private var ended:Boolean=false;
+      private var scheduled:Boolean=false,draining:Boolean=false;
+      private var peerEnded:Boolean=false;
       public function Link(socket:Socket=null) {
          this.socket=socket || new Socket();
          this.socket.addEventListener(Event.CONNECT,onConnect);
@@ -42,27 +45,53 @@ package authority {
          if(closed!=null)closed(reason);
       }
       public function finish(finalMessage:Object,reason:String):void {
-         // Socket.flush queues the bytes; closing in the same callback can
-         // discard the leave packet. Detach the session immediately but let
-         // AIR drain this one final message before releasing its socket.
+         // Socket.flush/bytesPending only describe the local output buffer.
+         // Wait for the peer application to acknowledge normal Leave, so its
+         // final character confirmation has actually been consumed before EOF.
          if(ended)return;
-         message=null;connected=null;closed=null;
+         var acknowledged:Boolean=false,deadline:int=getTimer()+5000;
+         message=function(value:Object):void {
+            if(value.session!==finalMessage.session)return;
+            if(value.type=="leave-ack")acknowledged=true;
+            else if(value.type=="leave") {
+               acknowledged=true;send({type:"leave-ack",session:finalMessage.session});
+            }
+         };
+         connected=null;closed=null;
          if(!send(finalMessage)){close(reason);return;}
-         var attempts:int=0,self:Link=this;
+         var self:Link=this;
          var drain:Function=function():void {
             if(ended)return;
-            if(!socket.connected || socket.bytesPending==0 || ++attempts>=20)self.close(reason);
+            if(!socket.connected || acknowledged && socket.bytesPending==0 || getTimer()>=deadline)self.close(reason);
             else setTimeout(drain,25);
          };
          setTimeout(drain,25);
       }
       private function onConnect(e:Event):void {if(connected!=null)connected();}
-      private function onClose(e:Event):void {close("peer closed");}
+      private function onClose(e:Event):void {
+         if(ended)return;
+         // CLOSE can arrive while our bounded receive loop has already queued
+         // another batch. Process every complete ordered message already read,
+         // including the final character state and normal Leave notification.
+         peerEnded=true;
+         try {if(socket.bytesAvailable>0)socket.readBytes(buffer,buffer.length);}
+         catch(ignored:*){} // The socket may already have released its input.
+         if(!draining)drain();
+      }
       private function onError(e:Event):void {close(e.toString());}
       private function onData(e:ProgressEvent):void {
          try {
             if(buffer.length+socket.bytesAvailable>2*LIMIT)throw new Error("receive backlog");
-            socket.readBytes(buffer,buffer.length);buffer.position=0;
+            socket.readBytes(buffer,buffer.length);
+            if(!scheduled && !draining)drain();
+         }catch(error:*){Log.error(error);close("invalid packet");}
+      }
+      private function drain():void {
+         scheduled=false;if(ended || draining)return;draining=true;
+         var began:int=Timing.start();
+         var deadline:int=getTimer()+8;
+         try {
+            buffer.position=0;
             while(buffer.bytesAvailable>=4 && !ended) {
                var start:int=buffer.position,size:uint=buffer.readUnsignedInt();
                if(size==0 || size>LIMIT)throw new Error("invalid frame size");
@@ -70,13 +99,26 @@ package authority {
                var payload:ByteArray=new ByteArray();buffer.readBytes(payload,0,size);
                var item:Object=WireCodec.decode(payload);
                if(message!=null)message(item);
+               // Preserve every ordered delta, but yield after bounded work so
+               // ENTER_FRAME can sample current controls and show the result.
+               // A first full room can itself exceed this budget; never drop it.
+               if(getTimer()>=deadline)break;
             }
             if(!ended && buffer.position>0) {
                var rest:ByteArray=new ByteArray();
                if(buffer.bytesAvailable>0)rest.writeBytes(buffer,buffer.position,buffer.bytesAvailable);
                buffer=rest;
             }
+            if(!ended && buffer.length>=4) {
+               buffer.position=0;var nextSize:uint=buffer.readUnsignedInt();buffer.position=0;
+               if(nextSize==0 || nextSize>LIMIT)throw new Error("invalid frame size");
+               if(buffer.length>=nextSize+4){scheduled=true;setTimeout(drain,1);}
+            }
          }catch(error:*){Log.error(error);close("invalid packet");}
+         finally {
+            draining=false;Timing.end("network.receiveBatch",began);
+            if(peerEnded && !ended && !scheduled)close(buffer.length==0?"peer closed":"peer closed with incomplete frame");
+         }
       }
    }
 }

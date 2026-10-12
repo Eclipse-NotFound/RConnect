@@ -10,11 +10,13 @@ package authority {
    public final class ReplicaScene {
       public var key:String="",room:Object,units:Object={},objects:Object={};
       public var applications:uint=0,terrainApplications:uint=0;
+      public var terrainRedraws:uint=0;
       public var terrainRevision:uint=0;
       public var effects:SceneEffects;
       private var access:NativeAccess;
       private var vision:SharedVision,lightDirty:Boolean=true,lightX:Number=NaN,lightY:Number=NaN;
       private var players:Dictionary=new Dictionary(true);
+      private var confirmedTiles:Array=[];
       public function ReplicaScene(access:NativeAccess,vision:SharedVision=null){this.access=access;this.vision=vision;effects=new SceneEffects(access);}
       public function keyFor(unit:Object):uint {if(players[unit])return players[unit];for(var id:String in units)if(units[id].unit===unit)return uint(id);return 0;}
       public function registerPlayer(unit:Object,key:uint):void {players[unit]=key;}
@@ -55,15 +57,35 @@ package authority {
             w.loc=room;w.land.loc=room;w.land.locX=room.landX;w.land.locY=room.landY;w.land.locZ=room.landZ;
             w.land.prob=room.landProb;w.gg.loc=room;room.units.push(w.gg);
          }
+         var wasBlack:Boolean=room.black;
          NativeFields.apply(room,s.fields);
-         var geometry:Boolean=changed || access.ink.needsRedraw(w.grafon,s.ink);
+         if(changed || wasBlack!==room.black) {
+            lightDirty=true;
+            if(!room.black)for(var lx:int=0;lx<room.spaceX;lx++)for(var ly:int=0;ly<room.spaceY;ly++)
+               room.space[lx][ly].visi=room.space[lx][ly].t_visi=1;
+         }
+         var geometry:Boolean=changed || wasBlack!==room.black || access.ink.needsRedraw(w.grafon,s.ink);
+         var redrawReasons:Object=Timing.enabled?{room:changed,dark:wasBlack!==room.black,ink:access.ink.needsRedraw(w.grafon,s.ink),fields:{}}:null;
          for each(var tile:Object in s.tiles) {
             var t:Object=room.space[int(tile.x)][int(tile.y)];
+            var tileIndex:int=int(tile.x)*room.spaceY+int(tile.y),before:Array=confirmedTiles[tileIndex];
             for(var i:int=0;i<SceneSnapshot.TILE.length;i++) {
                var field:String=SceneSnapshot.TILE[i];
-               if(t[field]!==tile.v[i])geometry=true;
+               // Durability changes do not change native tile artwork.
+               // A full drawLoc here costs hundreds of milliseconds under
+               // sustained fire and replaces every object layer. Actual
+               // destruction still changes collision/art fields; native
+               // bullet holes have their independent changed-block stream.
+               // drawLoc recomputes its local corner caches (kont/pont).
+               // Compare consecutive authority states, not that mutated
+               // renderer cache, or each subsequent bullet hit redraws the
+               // entire room even when only durability changed.
+               if((before==null || before[i]!==tile.v[i]) && field!="hp" && field!="thre" && field!="indestruct") {
+                  geometry=true;if(redrawReasons!=null)redrawReasons.fields[field]=uint(redrawReasons.fields[field])+1;
+               }
                t[field]=tile.v[i];
             }
+            confirmedTiles[tileIndex]=tile.v;
             ++terrainApplications;
          }
          if(changed) {
@@ -72,6 +94,8 @@ package authority {
             w.grafon.drawFon(w.vfon,s.fon);
          }
          if(geometry) {
+            if(redrawReasons!=null)Log.write("terrain-redraw",redrawReasons);
+            ++terrainRedraws;
             lightDirty=true;
             w.grafon.drawLoc(room);w.cam.setLoc(room);
             for each(var rec:Object in units)attach(rec.unit,rec.layer);
@@ -107,16 +131,16 @@ package authority {
          if(s.key!==key)throw new Error("Interpolation crossed a room boundary");
          for each(var state:Object in s.units) {
             var rec:Object=units[state.key];if(rec==null)throw new Error("Interpolation lacks a confirmed unit");
-            var u:Object=rec.unit;NativeFields.motion(u,state.fields);VisualPose.apply(u.vis,state.pose);
+            var u:Object=rec.unit;NativeFields.motion(u,state.fields);VisualPose.motion(u.vis,state.pose);
             if(state.attached && u.hpbar!=null)u.setHpbarPos();
-            healthBar(u,state);
-            for(var i:int=0;i<state.weapons.length;i++)VisualPose.apply(rec.weapons[i].vis,state.weapons[i].pose);
+            healthBar(u,state,true);
+            for(var i:int=0;i<state.weapons.length;i++)VisualPose.motion(rec.weapons[i].vis,state.weapons[i].pose);
          }
          for each(state in s.objects) {
             rec=objects[state.key];if(rec==null)throw new Error("Interpolation lacks a confirmed object");
-            NativeFields.motion(rec.object,state.fields);VisualPose.apply(rec.object.vis,state.pose);
+            NativeFields.motion(rec.object,state.fields);VisualPose.motion(rec.object.vis,state.pose);
          }
-         effects.apply(s.effects);
+         effects.interpolate(s.effects);
       }
       private function applyUnit(s:Object):void {
          var rec:Object=units[s.key],u:Object;
@@ -180,14 +204,14 @@ package authority {
          o=rec.object;NativeFields.apply(o,s.fields);rec.inter=s.inter;
          if(s.attached)attach(o,rec.layer);else o.remVisual();VisualPose.apply(o.vis,s.pose);
       }
-      private function healthBar(u:Object,s:Object):void {
+      private function healthBar(u:Object,s:Object,interpolated:Boolean=false):void {
          if(u.hpbar==null || s.healthBar==null)return;
          // The native bar can depend on private per-enemy armor/shield maxima.
          // Its confirmed pose preserves the real calculation and cloak alpha.
          if(s.healthBar.attached) {
             if(u.hpbar.parent!==access.world.grafon.visObjs[3])access.world.grafon.visObjs[3].addChild(u.hpbar);
          }else if(u.hpbar.parent!=null)u.hpbar.parent.removeChild(u.hpbar);
-         VisualPose.apply(u.hpbar,s.healthBar.pose);
+         if(interpolated)VisualPose.motion(u.hpbar,s.healthBar.pose);else VisualPose.apply(u.hpbar,s.healthBar.pose);
       }
       private function attach(o:Object,layer:int):void {
          if(o.vis!=null && int(NativeAccess.get(o,"sost",1))<4)
@@ -203,7 +227,7 @@ package authority {
       public function dispose():void {
          for(var id:String in units)removeUnit(id);
          for each(var rec:Object in objects)rec.object.remVisual();
-         units={};objects={};room=null;key="";
+         units={};objects={};confirmedTiles=[];room=null;key="";
          lightDirty=true;lightX=lightY=NaN;
          effects.dispose();
       }

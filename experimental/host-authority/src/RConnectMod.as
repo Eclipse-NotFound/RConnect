@@ -33,6 +33,7 @@ package {
       private var started:Boolean=false,travelled:Boolean=false,network:Boolean=false,stopping:Boolean=false;
       private var room:String,session:String,bootAt:int=getTimer(),readyFrames:int=0,failed:Boolean=false,lastHud:int=-1000;
       private var lastPolicy:String="";
+      private var leavingAfterReplay:Boolean=false;
       private var bootTrace:int=-5000;
       public static function init(main:Object):void {
          try{instance=new RConnectMod(main);}catch(error:*){Log.error(error);}
@@ -52,10 +53,15 @@ package {
          access.definition("fe.World")["rconnectChangeWorld"]=function():void {if(network)leaveSession(false);vision.resetJourney();access.ink.reset();access.resetPositions();};
          MapState.install(access);
          if(config.probe===true)probe=["explosives","magic","angles","guns","melee","terrain"].indexOf(config.scenario)>=0?new WeaponProbe(access,role=="host",config.scenario):
-            config.scenario=="msw"?new MswProbe(access,role=="host"):
+            config.scenario=="friendly-melee" || config.scenario=="friendly-magic"?new WeaponProbe(access,role=="host",String(config.scenario).substr(9),true):
+            config.scenario=="msw" || config.scenario=="msw-sweep"?new MswProbe(access,role=="host",config.scenario=="msw-sweep"):
             config.scenario=="msw-lifecycle"?new MswLifecycleProbe(access,role=="host"):
             config.scenario=="teleport"?new TeleportProbe(access,role=="host"):
             config.scenario=="body-effects"?new BodyEffectsProbe(access,role=="host"):
+            config.scenario=="time-control"?new TimeControlProbe(access,role=="host"):
+            config.scenario=="time-special"?new TimeControlProbe(access,role=="host",true):
+            config.scenario=="time-journey"?new TimeJourneyProbe(access,role=="host"):
+            config.scenario=="time-exit-record" || config.scenario=="time-exit-replay"?new TimeExitProbe(access,role=="host",config.scenario=="time-exit-replay"):
             config.scenario=="movement"?new MovementProbe(access,role=="host"):
             config.scenario=="motion"?new MotionProbe(access,role=="host"):
             config.scenario=="sound"?new SoundProbe(access,role=="host"):
@@ -78,6 +84,7 @@ package {
             config.scenario=="travel"?new TravelProbe(access,role=="host"):
             config.scenario=="sats"?new SatsProbe(access,role=="host"):
             config.scenario=="pause-cycles"?new SatsProbe(access,role=="host",4):
+            config.scenario=="pause-holders"?new PauseHoldersProbe(access,role=="host"):
             config.scenario=="lifecycle"?new LifecycleProbe(access,role=="host"):
             config.scenario=="cooperation"?new CooperationProbe(access,role=="host"):
             config.scenario=="split-rooms"?new SplitRoomProbe(access,role=="host",config.enemy):
@@ -114,6 +121,11 @@ package {
                return;
             }
             if(role==""){if(probe!=null)probe.observe(host,replica);return;}
+            // Normal leave keeps the last confirmed damage/inventory result.
+            // The preceding EXIT_FRAME has published the completed replay.
+            if(leavingAfterReplay && host!=null && access.time!=null && access.time.phase=="idle") {
+               leaveSession(true,true);return;
+            }
             if(!travelled && config.land!=null && config.land!="") {
                travelled=true;
                if(w.land.act.id!==config.land){w.pip.onoff(-1);w.game.beginMission(config.land);return;}
@@ -142,11 +154,11 @@ package {
                input.acknowledge(role=="host"?host.inputs[0].receivedAction:
                   (replica.lastFrame==null?0:int(replica.lastFrame.players[1].actionAck)));
                var frame:Object=input.frame(w,session,role=="host"?0:1,room);
+               if(role=="join")frame.confirmation=replica.displayFrame==null?-1:replica.displayFrame.tick;
                if(access.weapons!=null){frame.msw=access.weapons.input();if(frame.msw.overlay)frame.buttons=0;}
-               var identity:Object=role=="host"?host.inputs[0]:(replica.lastFrame==null?null:replica.lastFrame.players[1]);
+               var identity:Object=role=="host"?host.inputs[0]:(replica.lastFrame==null?null:replica.lastFrame.control);
                if(identity!=null){frame.room=identity.room;frame.roomEpoch=identity.roomEpoch;frame.epoch=identity.epoch;}
-               frame.weaponEpoch=role=="host"?host.inputs[0].weaponEpoch:
-                  (replica.lastFrame==null?1:replica.lastFrame.players[1].weaponEpoch);
+               frame.weaponEpoch=identity==null?1:identity.weaponEpoch;
                if(probe!=null)frame=probe.input(frame,host);
                if(role=="host")host.localInput(frame);else if(link.send(frame))replica.submitted(frame);
             }
@@ -158,6 +170,7 @@ package {
          room=access.roomKey();
          if(config.rv!=null)access.view=new ViewBridge(main,session,role);
          if(config.msw!=null)access.weapons=new WeaponBridge(main,access,session,role);
+         if(config.sandy!=null)access.time=new TimeBridge(main,access,session,role);
          if(config.tdfc!=null)tactics=new TacticsBridge(main,access,session,role);
          if(role=="host") {
             host=new HostSession(access,session);host.failed=fail;
@@ -177,7 +190,7 @@ package {
             input.scene=replica.scene;
             replica.tactics=tactics;
             link=new Link();wire(link);
-            link.connected=function():void {var hello:Object=Commands.greeting("hello",session);hello.tdfc=config.tdfc;hello.rv=config.rv;hello.msw=config.msw;hello.name=preferences.getValue("nickname");hello.profile=access.profile();link.send(hello);};
+            link.connected=function():void {var hello:Object=Commands.greeting("hello",session);hello.tdfc=config.tdfc;hello.rv=config.rv;hello.msw=config.msw;hello.sandy=config.sandy;hello.name=preferences.getValue("nickname");hello.profile=access.profile();link.send(hello);};
             link.connect(String(preferences.getValue("hostIp")),int(config.port));
          }
       }
@@ -191,7 +204,7 @@ package {
             if(probe!=null && probe.finished && reason=="peer closed") {
                Log.write("probe-cleanup-peer-closed",{reason:reason});return;
             }
-            if(probe==null){leaveSession();ui.session.error=reason;}else fail(reason);
+            if(probe==null){leaveSession(true,true);ui.session.error=reason;}else fail(reason);
          };
       }
       private function receive(value:Object):void {
@@ -203,12 +216,17 @@ package {
             if(value.type=="chat" && welcomed && value.session===session) {
                if(value.text is String && value.text.length<=512)hud.addChatLine(peerName,value.text);return;
             }
-            if(value.type=="leave" && value.session===session){leaveSession();return;}
+            if(value.type=="leave" && value.session===session){
+               if(link!=null)link.send({type:"leave-ack",session:session});
+               leaveSession(true,true);return;
+            }
+            if(value.type=="leave-request" && welcomed && role=="host" && value.session===session){leaveSession();return;}
             if(role=="host") {
                if(value.type=="hello") {
                   if(value.tdfc!==config.tdfc)throw new Error("TDFC candidate mismatch");
                   if(value.rv!==config.rv)throw new Error("RV candidate mismatch");
                   if(value.msw!==config.msw)throw new Error("MSW candidate mismatch");
+                  if(value.sandy!==config.sandy)throw new Error("Sandevistan candidate mismatch");
                   peerName=value.name is String?String(value.name).substr(0,24):"加入侧";
                   host.accept(link,value);room=access.roomKey();welcomed=true;lastPolicy="";applyPreferences();
                   link.send({type:"peer-name",name:preferences.getValue("nickname")});
@@ -258,11 +276,25 @@ package {
          failed=false;role=requestedRole;config.port=int(preferences.getValue("port"));network=true;ui.session.error="";
          try {startNetwork();}catch(error:*){Log.error(error);leaveSession();ui.session.error=String(error);}
       }
-      public function leaveSession(restoreJoin:Boolean=true):void {
+      public function leaveSession(restoreJoin:Boolean=true,force:Boolean=false):void {
+         if(restoreJoin && !force && welcomed && !failed && access.time!=null) {
+            var time:Object=host!=null?access.time.snapshot(false):replica==null || replica.lastFrame==null?null:replica.lastFrame.timeControl;
+            if(time!=null && time.phase!="idle") {
+               if(!leavingAfterReplay) {
+                  leavingAfterReplay=true;
+                  if(host!=null)access.time.requestEnd();
+                  else link.send({type:"leave-request",session:session});
+                  ui.session.rooms.status="回放结束后离开；若全队暂停，请先关闭暂停界面。";
+                  Log.write("leave-after-replay",{phase:time.phase,role:role});
+               }
+               return;
+            }
+         }
          if(stopping)return;stopping=true;
          var oldReplica:ClientReplica=replica;
          try {
             if(restoreJoin && oldReplica!=null)oldReplica.prepareReturn();
+            if(access.time!=null){access.time.dispose();access.time=null;}
             if(access.view!=null){access.view.dispose();access.view=null;}
             if(access.weapons!=null){access.weapons.dispose();access.weapons=null;}
             if(link!=null){link.finish({type:"leave",session:session},"left session");link=null;}
@@ -274,7 +306,7 @@ package {
             if(replica!=null){replica.dispose();replica=null;if(tactics!=null){tactics.dispose();tactics=null;}}
             if(restoreJoin && oldReplica!=null)oldReplica.returnToOwnGame();
             access.world.onPause=false;access.world.ctr.clearAll();input=new InputSource();
-            welcomed=network=failed=false;role="";mode=HudModel.OFFLINE;ui.session.rooms.status="";
+            welcomed=network=failed=leavingAfterReplay=false;role="";mode=HudModel.OFFLINE;ui.session.rooms.status="";
             vision.resetLink();
          }finally{stopping=false;}
       }
@@ -292,6 +324,10 @@ package {
       public function requestWeaponAction(key:String):Boolean {
          if(!welcomed || key!="flashGive")return false;
          input.enqueue({type:"native",key:"mswFlashGive",args:[]});return true;
+      }
+      public function requestTimeAction():Boolean {
+         if(!welcomed || SharedPause.requested(access.world))return false;
+         input.enqueue({type:"native",key:"sandyToggle",args:[]});return true;
       }
    }
 }

@@ -17,6 +17,7 @@ def main():
         ap.add_argument('--'+name, required=True)
     ap.add_argument('--rv', help='Frozen independent RV authority interface')
     ap.add_argument('--msw', help='Frozen independent MSW authority interface')
+    ap.add_argument('--sandy', required=True, help='Frozen independent shared-time interface; required for manual B play')
     args = ap.parse_args()
     baseline, candidate, native, tactics, out = [inside_build(ROOT/getattr(args, name))
         for name in ('baseline', 'candidate', 'native', 'tdfc', 'output')]
@@ -32,7 +33,8 @@ def main():
         raise ValueError('TDFC is not the isolated authority interface candidate')
     extensions = {}
     for key, directory_name, artifact in (('rv', 'RealisticVision', 'RealisticVisionMod.swf'),
-                                          ('msw', 'MoreSkills&Weapons', 'MoreSkillsWeaponsMod.swf')):
+                                          ('msw', 'MoreSkills&Weapons', 'MoreSkillsWeaponsMod.swf'),
+                                          ('sandy', 'Sandevistan', 'SandevistanMod.swf')):
         option = getattr(args, key)
         if not option:
             continue
@@ -85,6 +87,8 @@ def main():
         '3. 展开浮窗的“连接”：一侧创建房间，另一侧加入。地址127.0.0.1，端口23457。\n'
         '4. 设置、跟随、念力许可和队友伤害都在浮窗中；F10显隐，Ctrl+Enter聊天。\n'
         '5. 测试结束请各自保存角色并退出。加入侧离开联机会回到自己的原版旅程。\n\n'
+        '联机时停由任一侧发动，两人正常行动、世界减速；结束回放时结算已记录的主要伤害。\n'
+        '共享暂停会同时冻结回放。宿主在时停中发起换图，要等回放与结算完成。\n\n'
         'A 安装版、原版存档和启动方式保持独立。本目录只用于 B 实验；不能把这里的 SWF 单独复制回安装目录。\n'
         '这份准备脚本不代表完整验收通过，实际门禁以随候选交付的验证记录为准。\n', encoding='utf-8')
     save(out/'manual-input.json', dict(experimental_only=True, launched=False, release_gate_complete=False,

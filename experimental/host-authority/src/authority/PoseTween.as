@@ -5,7 +5,7 @@ package authority {
       private static function lerp(a:Number,b:Number,t:Number):Number{return a+(b-a)*t;}
       private static function angle(a:Number,b:Number,t:Number):Number{return a+(((b-a+540)%360)-180)*t;}
       public static function pose(a:Object,b:Object,t:Number):Object {
-         if(a==null || b==null || a.v!==b.v)return a;
+         if(a===b || a==null || b==null || a.v!==b.v)return a;
          var out:Object=copy(a);
          for each(var k:String in ["x","y","a"])out[k]=lerp(a[k],b[k],t);
          if(a.sx*b.sx>=0 && a.sy*b.sy>=0){out.sx=lerp(a.sx,b.sx,t);out.sy=lerp(a.sy,b.sy,t);out.r=angle(a.r,b.r,t);}
@@ -15,6 +15,7 @@ package authority {
             // Native reflection/frame switches remain discrete, never collapse
             // a weapon through zero size to turn it to the opposite direction.
             if(a.sx*b.sx>=0 && a.sy*b.sy>=0)for(var axis:int=0;axis<4;axis+=2) {
+               if(a.m[axis]===b.m[axis] && a.m[axis+1]===b.m[axis+1])continue;
                var ar:Number=Math.sqrt(a.m[axis]*a.m[axis]+a.m[axis+1]*a.m[axis+1]);
                var br:Number=Math.sqrt(b.m[axis]*b.m[axis]+b.m[axis+1]*b.m[axis+1]);
                var rotation:Number=angle(Math.atan2(a.m[axis+1],a.m[axis])*180/Math.PI,Math.atan2(b.m[axis+1],b.m[axis])*180/Math.PI,t)*Math.PI/180;
@@ -36,6 +37,11 @@ package authority {
             Math.abs(a[x]-b[x])<160 && Math.abs(a[y]-b[y])<160;
       }
       private static function fields(a:Object,b:Object,t:Number):Object {
+         if(a===b)return a;
+         var moving:Boolean=false;
+         for each(var field:String in NativeFields.MOTION)
+            if(a[field] is Number && b[field] is Number && a[field]!==b[field]){moving=true;break;}
+         if(!moving)return a;
          var out:Object=copy(a);
          for each(var k:String in NativeFields.MOTION)
             if(a[k] is Number && b[k] is Number)out[k]=lerp(a[k],b[k],t);
@@ -44,6 +50,8 @@ package authority {
       private static function keyed(list:Array,key:String):Object {var out:Object={};for each(var o:Object in list)out[o[key]]=o;return out;}
       public static function frame(a:Object,b:Object,t:Number):Object {
          if(b==null || t<=0 || a.room!==b.room || a.pauseEpoch!=b.pauseEpoch)return a;
+         if(a.timeControl!=null && b.timeControl!=null &&
+            (a.timeControl.phase!==b.timeControl.phase || a.timeControl.cycle!==b.timeControl.cycle))return a;
          var out:Object=copy(a);out.players=[];out.projectiles=[];
          for(var i:int=0;i<a.players.length;i++) {
             var p:Object=a.players[i],q:Object=b.players[i],r:Object=p;

@@ -5,6 +5,7 @@ package authority {
    import flash.display.DisplayObjectContainer;
    import flash.display.Bitmap;
    import flash.display.PNGEncoderOptions;
+   import flash.text.TextField;
    import flash.filesystem.File;
    import flash.filesystem.FileMode;
    import flash.filesystem.FileStream;
@@ -24,15 +25,19 @@ package authority {
       private var enemy:Object,target:PlayerActor,initialHP:Number,initialShield:Number,lowestHP:Number,lowestShield:Number;
       private var targetHP:Number,lowestTargetHP:Number,acquired:Boolean=false,shots:uint=0,playerShots:uint=0;
       private var refs:Object={},counts:Object={},stances:Object={},alphas:Object={},shields:int=0;
+      private var enemyKey:uint=0,lastAimLog:int=-1;
+      private var nextBurstAt:int=190,burstUntil:int=-1;
       public function EnemyVisualProbe(a:NativeAccess,h:Boolean){super(a,h);}
+      override public function prepare():void{super.prepare();Timing.enabled=true;}
       override public function message(v:Object):void {
          if(host && v.type=="enemy-ready")peerReady=v.phase;
          if(host && v.type=="enemy-report")report=v;
          if(!host && v.type=="enemy-phase") {
-            phase=v.phase;begin=-1;ending=-1;
+            phase=v.phase;enemyKey=v.key;begin=-1;ending=-1;lastAimLog=-1;nextBurstAt=190;burstUntil=-1;
+            Timing.reset();Log.write("enemy-protocol",{phase:phase,event:v.type,tick:RConnectMod.instance.replica.lastTick});
             counts={samples:0,missing:0,pose:0,pixels:0,viewMasks:0,body:0,weapon:0,hpbar:0,projectile:0,effect:0,first:[]};
          }
-         if(!host && v.type=="enemy-go")begin=v.tick;
+         if(!host && v.type=="enemy-go"){begin=v.tick;Log.write("enemy-protocol",{phase:phase,event:v.type,begin:begin,tick:RConnectMod.instance.replica.lastTick});}
          if(!host && v.type=="enemy-ref")refs[v.tick]=v;
          if(!host && v.type=="enemy-end")ending=v.tick;
          if(!host && v.type=="enemy-finish")finish();
@@ -41,23 +46,48 @@ package authority {
          frame.buttons=0;frame.actions=[];
          var tick:int=host?session==null?0:session.runtime.tick:RConnectMod.instance.replica==null?0:RConnectMod.instance.replica.lastTick;
          var elapsed:int=tick-begin;
-         if(phase<0 || begin<0 || (host?0:1)!=phase%2 || !(elapsed>=80 && elapsed<155 || elapsed>=190 && elapsed<245))return frame;
+         if(phase<0 || begin<0 || (host?0:1)!=phase%2 || elapsed<70 || elapsed>=250)return frame;
          var x:Number,y:Number;
          if(host){x=enemy.X;y=enemy.Y-enemy.scY*.6;}
          else {
             var f:Object=RConnectMod.instance.replica.lastFrame;
             if(f==null)return frame;
-            for each(var u:Object in f.scene.units)if(u.fields.id.indexOf("rconnect_")!=0 && !u.fields.player && u.fields.hp>0 && u.fields.sost<3){x=u.fields.X;y=u.fields.Y-u.fields.scY*.6;break;}
+            for each(var u:Object in f.scene.units)if(u.key==enemyKey){x=u.fields.X;y=u.fields.Y-u.fields.scY*.6;break;}
          }
-         if(isFinite(x) && isFinite(y)){frame.aimX=x;frame.aimY=y;frame.buttons=Commands.FIRE;}return frame;
+         if(isFinite(x) && isFinite(y)) {
+            frame.aimX=x;frame.aimY=y;
+            // Native LMG recoil raises sustained fire above a small airborne
+            // target. Keep real full-auto in the AI window; let recoil settle
+            // between aimed bursts in the separate collision/damage check.
+            if(elapsed>=190 && elapsed<245 && elapsed>=nextBurstAt){burstUntil=elapsed+2;nextBurstAt=elapsed+20;}
+            // Generate a real press/release even if multiple confirmations
+            // arrive between local frames. A two-host-tick modulo window
+            // could be skipped completely without ever issuing a shot.
+            if(elapsed>=80 && elapsed<155 || elapsed>=190 && elapsed<245 && elapsed<burstUntil)frame.buttons=Commands.FIRE;
+         }
+         if(elapsed>=180 && elapsed<245 && int(elapsed/10)!=lastAimLog) {
+            lastAimLog=int(elapsed/10);
+            Log.write("enemy-aim-input",{phase:phase,elapsed:elapsed,tick:tick,begin:begin,seq:frame.seq,
+               key:enemyKey,aim:[frame.aimX,frame.aimY],buttons:frame.buttons,
+               selected:host || u==null?null:{key:u.key,id:u.fields.id,x:u.fields.X,y:u.fields.Y,hp:u.fields.hp,sost:u.fields.sost,player:u.fields.player},
+               found:isFinite(x)&&isFinite(y)});
+         }return frame;
       }
       private function start(session:HostSession,index:int):void {
          phase=index;begin=-1;peerReady=-1;waiting=false;killed=false;controlled=false;report=null;acquired=false;stances={};alphas={};shields=0;
-         var fy:Number=ProbeArena.floor(access.world.loc),spec:Object=cases[index];target=session.actors[index%2];
+         nextBurstAt=190;burstUntil=-1;
+         Timing.reset();
+         // A native enemy may legitimately keep its first visible target.
+         // Separate the non-target pony with an opaque wall, so this scenario
+         // tests recognition of the intended player rather than AI preference.
+         var fy:Number=ProbeArena.floor(access.world.loc,10),spec:Object=cases[index];target=session.actors[index%2];
          for each(var actor:PlayerActor in session.actors) {
             actor.unit.setLocPos(actor===target?650:180,fy);actor.unit.dx=actor.unit.dy=0;
             actor.unit.obs=actor.unit.maxObs;
-            actor.unit.invulner=false;actor.unit.hp=actor.unit.maxhp=50000;
+            access.scope.run(actor.context,function():void {
+               actor.unit.pers.healAll();actor.unit.pers.setParameters();
+               actor.unit.invulner=false;actor.unit.hp=actor.unit.maxhp;
+            });
             actor.unit.currentWeapon.hold=300;actor.unit.invent.items[actor.unit.currentWeapon.ammo].kol=1000;
             actor.unit.currentWeapon.hp=actor.unit.currentWeapon.maxhp;
          }
@@ -69,7 +99,29 @@ package authority {
          initialHP=lowestHP=enemy.hp;initialShield=lowestShield=enemy.shithp;targetHP=lowestTargetHP=target.unit.hp;
          shots=session.runtime.spawnsFor(enemy);
          playerShots=session.runtime.spawnsFor(target.unit);
-         session.link.send({type:"enemy-phase",phase:phase});Log.write("enemy-case",{phase:phase,cls:spec.cls,tr:spec.tr,player:target.id});
+         enemyKey=session.sceneId(enemy);
+         if(index==0)nativePerceptionBoundary(session);
+         session.link.send({type:"enemy-phase",phase:phase,key:enemyKey});Log.write("enemy-case",{phase:phase,cls:spec.cls,tr:spec.tr,player:target.id});
+      }
+      private function nativePerceptionBoundary(session:HostSession):void {
+         var Unit:Class=access.definition("fe.unit.Unit"),hook:Function=Unit["rconnectFindTarget"];
+         var fields:Array=["celUnit","priorUnit","celX","celY","celDX","celDY","oduplenie"],saved:Object={},expected:Object={};
+         for each(var key:String in fields)saved[key]=enemy[key];
+         try {
+            enemy.celUnit=enemy.priorUnit=target.unit;enemy.celX=314;enemy.celY=271;enemy.celDX=-586;enemy.celDY=-100;enemy.oduplenie=60;
+            var initial:Object={};for each(key in fields)initial[key]=enemy[key];
+            Unit["rconnectFindTarget"]=null;
+            var nativeResult:Boolean=Boolean(enemy.findCel(true));
+            for each(key in fields)expected[key]=enemy[key];
+            for each(key in fields)enemy[key]=initial[key];
+            Unit["rconnectFindTarget"]=hook;
+            var actualResult:Boolean=Boolean(enemy.findCel(true)),equal:Boolean=nativeResult==actualResult;
+            for each(key in fields)equal=equal && enemy[key]===expected[key];
+            check(equal,"real native stunned enemy retains identical target state with the B perception bridge",{nativeResult:nativeResult,actualResult:actualResult});
+         }finally {
+            Unit["rconnectFindTarget"]=hook;
+            for each(key in fields)enemy[key]=saved[key];
+         }
       }
       private function digest(bmp:BitmapData):uint {
          var h:uint=2166136261;for each(var pixel:uint in bmp.getVector(bmp.rect))h=uint((h^pixel)*16777619);return h;
@@ -93,7 +145,7 @@ package authority {
          if(r.width>256 || r.height>256)r=new Rectangle(r.x+r.width/2-128,r.y+r.height/2-128,256,256);
          var bounds:Array=[Math.floor(r.x),Math.floor(r.y),Math.max(1,Math.ceil(r.right)-Math.floor(r.x)),Math.max(1,Math.ceil(r.bottom)-Math.floor(r.y))];
          var m:Matrix=clip.transform.matrix,s:Object={kind:kind,key:key,slot:slot,clip:getQualifiedClassName(clip),bounds:bounds,hash:hash(clip,bounds),
-            tree:kind=="body" || kind=="hpbar"?structure(clip):null,
+            tree:kind=="body" || kind=="hpbar" || getQualifiedClassName(clip)=="visualNumb"?structure(clip):null,
             m:[m.a,m.b,m.c,m.d,m.tx,m.ty],alpha:clip.alpha,visible:clip.visible,frame:clip is MovieClip?MovieClip(clip).currentFrame:0};
          s.masked=clip.mask!=null;s.artHash=s.masked?hash(clip,bounds,true):s.hash;
          if(kind=="body" && (phase==2 || killed) || kind=="hpbar" && killed) {
@@ -107,6 +159,7 @@ package authority {
          var m:Matrix=clip.transform.matrix,color:Object=clip.transform.colorTransform;
          s.m=[m.a,m.b,m.c,m.d,m.tx,m.ty];s.c=[color.redMultiplier,color.greenMultiplier,color.blueMultiplier,color.alphaMultiplier,color.redOffset,color.greenOffset,color.blueOffset,color.alphaOffset];
          s.filters=clip.filters;s.cache=clip.cacheAsBitmap;
+         if(clip is TextField)s.text=NativeTextChecks.describe(clip as TextField);
          if(clip is Bitmap && Bitmap(clip).bitmapData!=null){s.pixels=digest(Bitmap(clip).bitmapData);s.w=Bitmap(clip).bitmapData.width;s.h=Bitmap(clip).bitmapData.height;}
          if(c!=null && depth<12)for(var i:int=0;i<c.numChildren;i++)s.children.push(structure(c.getChildAt(i),depth+1));
          return s;
@@ -124,6 +177,8 @@ package authority {
             var gun:Object=target.unit.currentWeapon;
             Log.write("enemy-impact-window",{phase:phase,elapsed:elapsed,player:target.id,
                aim:[target.unit.celX,target.unit.celY],position:[target.unit.X,target.unit.Y],
+               input:{aim:[session.inputs[target.id].aimX,session.inputs[target.id].aimY],buttons:session.inputs[target.id].buttons,
+                  seq:session.inputs[target.id].consumed,lastAt:session.inputs[target.id].lastAt},
                gun:{x:gun.X,y:gun.Y,rot:gun.rot,muzzle:[gun.bulX,gun.bulY],hold:gun.hold,shoot:gun.is_shoot},
                enemy:{box:[enemy.X1,enemy.Y1,enemy.X2,enemy.Y2],hp:enemy.hp,shield:enemy.shithp,skin:enemy.skin,
                   invulner:enemy.invulner,stun:enemy.stun},bullets:bullets});
@@ -188,6 +243,7 @@ package authority {
             if(!ready){ready=true;replica.confirmed=applied;}
             if(phase>=0 && readySent!=phase){readySent=phase;RConnectMod.instance.link.send({type:"enemy-ready",phase:phase});}
             if(ending>=0 && replica.displayFrame.tick>=ending) {
+               Log.write("enemy-timings",{phase:phase,timings:Timing.snapshot()});
                check(counts.body>10,"native enemy body visible through state transitions phase "+phase,counts);
                check(counts.missing==0 && counts.pose==0,"enemy attachment, healthbar, cloak and weapon poses match phase "+phase,counts);
                check(counts.pixels==0,"enemy artwork, shields and attack effects match native pixels phase "+phase,counts);
@@ -199,13 +255,16 @@ package authority {
          if(begin<0 && peerReady==phase){begin=session.runtime.tick;enemy.disabled=false;enemy.addVisual();enemy.visDetails();session.link.send({type:"enemy-go",tick:begin});}
          if(begin<0)return;
          if(!killed){lowestHP=Math.min(lowestHP,enemy.hp);lowestShield=Math.min(lowestShield,enemy.shithp);lowestTargetHP=Math.min(lowestTargetHP,target.unit.hp);acquired=acquired || enemy.celUnit===target.unit;}
+         if(!controlled && target.unit.hp>0 && target.unit.hp<target.unit.maxhp*.5)
+            access.scope.run(target.context,function():void {target.unit.heal(target.unit.maxhp-target.unit.hp);});
          stances[enemy.animState]=true;alphas[String(enemy.vis.alpha)]=true;if(enemy.shithp>0)++shields;
          if(!controlled && session.runtime.tick-begin>=180) {
             controlled=true;
             check(acquired,"native enemy detects intended player phase "+phase,{player:target.id,cls:cases[phase].cls});
             Log.write("enemy-native-summary",{phase:phase,targetHP:[targetHP,lowestTargetHP],shots:session.runtime.spawnsFor(enemy)-shots,
                playerShots:session.runtime.spawnsFor(target.unit)-playerShots,gun:NativeFields.capture(target.unit.currentWeapon),
-               enemy:NativeFields.capture(enemy),player:NativeFields.capture(target.unit),stances:stances,alphas:alphas,shieldFrames:shields});
+               enemy:NativeFields.capture(enemy),player:NativeFields.capture(target.unit),stances:stances,alphas:alphas,shieldFrames:shields,
+               tactics:session.tactics==null?null:session.tactics.inspect(enemy.loc)});
             // Natural evasive motion can correctly dodge every shot, and an
             // alicorn may raise a shield after the initial zero-shield sample.
             // Separately prove native impact damage in a controlled firing
@@ -229,7 +288,7 @@ package authority {
                else enemy.die(0);
             });
          }
-         if(!waiting && session.runtime.tick-begin>=320){waiting=true;check(enemy.hp<=0 || enemy.sost>=3,"native enemy death occurs phase "+phase);session.link.send({type:"enemy-end",phase:phase,tick:session.runtime.tick});}
+         if(!waiting && session.runtime.tick-begin>=320){waiting=true;check(enemy.hp<=0 || enemy.sost>=3,"native enemy death occurs phase "+phase);Log.write("enemy-timings",{phase:phase,timings:Timing.snapshot()});session.link.send({type:"enemy-end",phase:phase,tick:session.runtime.tick});}
          if(waiting && report!=null){if(phase+1<cases.length)start(session,phase+1);else {session.link.send({type:"enemy-finish"});finish();}}
       }
    }

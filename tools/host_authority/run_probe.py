@@ -36,14 +36,18 @@ def main():
     ap.add_argument('--native', required=True)
     ap.add_argument('--output', required=True)
     ap.add_argument('--seconds', type=int, default=140)
-    ap.add_argument('--scenario', choices=('native-gun','ownership','split-rooms','cooperation','lifecycle','sats','pause-cycles','travel','friendly','grabs','enemy-grabs','personal','throw','vectors','mines','areas','party','hud','menus','dialogue','vision','stress','explosives','magic','angles','enemies','sound','music','movement','motion','guns','melee','terrain','teleport','body-effects','msw','msw-lifecycle'), default='native-gun')
+    ap.add_argument('--scenario', choices=('native-gun','ownership','split-rooms','cooperation','lifecycle','sats','pause-cycles','pause-holders','travel','friendly','friendly-melee','friendly-magic','grabs','enemy-grabs','personal','throw','vectors','mines','areas','party','hud','menus','dialogue','vision','stress','explosives','magic','angles','enemies','sound','music','movement','motion','guns','melee','terrain','teleport','body-effects','time-control','time-special','time-journey','time-exit-record','time-exit-replay','msw','msw-sweep','msw-lifecycle'), default='native-gun')
     ap.add_argument('--swap', action='store_true')
     ap.add_argument('--enemy', choices=('native','tdfc'), default='native')
     ap.add_argument('--tdfc', help='Optional frozen TDFC authority-v1 build directory')
     ap.add_argument('--rv', help='Optional frozen independent RV authority-v1 build')
     ap.add_argument('--msw', help='Optional frozen independent MSW authority-v1 build')
+    ap.add_argument('--sandy', help='Optional frozen independent Sandevistan authority-v1 build')
     ap.add_argument('--jitter-ms', help='Isolated loopback relay delay schedule, comma-separated milliseconds in 0..450')
+    ap.add_argument('--stress-seconds', type=int, default=20, help='Measured dense-scene duration, 20..1800 seconds, stress scenario only')
     args = ap.parse_args()
+    if not 20 <= args.stress_seconds <= 1800 or args.scenario != 'stress' and args.stress_seconds != 20:
+        ap.error('--stress-seconds requires stress and a duration in 20..1800')
     baseline, candidate, native, out = [inside_build(ROOT/p) for p in (args.baseline, args.candidate, args.native, args.output)]
     b = verify_baseline(baseline)
     build, patch = read(candidate/'build-input.json'), read(native/'native-input.json')
@@ -82,6 +86,15 @@ def main():
         verify_files(weapons, weapons_build['sources'])
         if sha(weapons/'MoreSkillsWeaponsMod.swf') != weapons_build['candidate_sha256']:
             raise ValueError('MSW candidate bytes changed')
+    sandy, sandy_build = None, None
+    if args.sandy:
+        sandy = inside_build(ROOT/args.sandy)
+        sandy_build = read(sandy/'build-input.json')
+        if sandy_build.get('family') != 'sandy-authority-v1' or not sandy_build.get('experimental_only'):
+            raise ValueError('Not an isolated Sandevistan authority candidate')
+        verify_files(sandy, sandy_build['sources'])
+        if sha(sandy/'SandevistanMod.swf') != sandy_build['candidate_sha256']:
+            raise ValueError('Sandevistan candidate bytes changed')
     if out.exists():
         raise FileExistsError('Every attempt needs a new run directory')
     game = baseline/'game'
@@ -98,7 +111,7 @@ def main():
     relay = JitterProxy(port, [int(x) for x in args.jitter_ms.split(',')]) if args.jitter_ms else None
     launches, processes, streams = [], [], []
     installed = ROOT.parents[1]
-    protected = {n:sha(installed/n) for n in ('pfe.swf','mods/Rconnect/release/RConnectMod.swf','mods/TDFC/release/TDFCMod.swf','mods/RealisticVision/release/RealisticVisionMod.swf','mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.swf')}
+    protected = {n:sha(installed/n) for n in ('pfe.swf','mods/Rconnect/release/RConnectMod.swf','mods/TDFC/release/TDFCMod.swf','mods/RealisticVision/release/RealisticVisionMod.swf','mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.swf','mods/Sandevistan/release/SandevistanMod.swf','mods/Sandevistan/release/config.txt')}
     receipt = dict(experimental_only=True, phase='B-native-probe', run=run_id, baseline_manifest_sha256=sha(baseline/'baseline.json'),
         build_manifest_sha256=sha(candidate/'build-input.json'), native_manifest_sha256=sha(native/'native-input.json'),
         candidate_sha256=build['candidate_sha256'], native_sha256=patch['candidate_sha256'],
@@ -112,6 +125,9 @@ def main():
     if weapons:
         receipt['msw_manifest_sha256'] = sha(weapons/'build-input.json')
         receipt['msw_sha256'] = weapons_build['candidate_sha256']
+    if sandy:
+        receipt['sandy_manifest_sha256'] = sha(sandy/'build-input.json')
+        receipt['sandy_sha256'] = sandy_build['candidate_sha256']
     if relay:
         receipt['network_fixture'] = dict(host_port=port, join_port=relay.port, delays_ms=relay.delays,
                                          script_sha256=sha(Path(__file__).parent/'jitter_proxy.py'))
@@ -121,6 +137,8 @@ def main():
         shutil.copy2(native/'pfe.swf', directory/'pfe.swf')
         shutil.copy2(candidate/'RConnectMod.swf', directory/'mods/Rconnect/release/RConnectMod.swf')
         configuration = dict(experimental=True, role=role, session=run_id, port=port, autoGame=True, land='random_mane', probe=True, scenario=args.scenario, swap=args.swap, enemy=args.enemy)
+        if args.scenario == 'stress':
+            configuration['stressSeconds'] = args.stress_seconds
         if relay and role == 'join':
             configuration['port'] = relay.port
         configuration['sharedPause'] = args.scenario in ('sats','pause-cycles')
@@ -133,6 +151,9 @@ def main():
         if weapons:
             shutil.copy2(weapons/'MoreSkillsWeaponsMod.swf',directory/'mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.swf')
             configuration['msw'] = weapons_build['candidate_sha256']
+        if sandy:
+            shutil.copy2(sandy/'SandevistanMod.swf',directory/'mods/Sandevistan/release/SandevistanMod.swf')
+            configuration['sandy'] = sandy_build['candidate_sha256']
         cfg = directory/'mods/Rconnect/release/config.txt'
         save(cfg, configuration)
         # Installed MSW excludes this prefix; TDFC tests require their exact ID.
@@ -160,6 +181,8 @@ def main():
                 expected[key] = view_build['candidate_sha256']
             elif weapons and key.lower() == 'mods/moreskills&weapons/release/moreskillsweaponsmod.swf':
                 expected[key] = weapons_build['candidate_sha256']
+            elif sandy and key.lower() == 'mods/sandevistan/release/sandevistanmod.swf':
+                expected[key] = sandy_build['candidate_sha256']
         verify_files(directory, expected)
         receipt['roles'][role] = dict(appid=appid, descriptor_sha256=sha(desc), config=configuration, config_sha256=sha(cfg), files=expected)
         launches.append((role,directory,desc,storage/'RConnect-B.log'))
@@ -215,15 +238,21 @@ def main():
         for role,directory,desc,log in launches:
             if log.is_file():shutil.copy2(log,out/(role+'.log'))
             auxiliary={}
-            for name in ('tdfc.log','RVision.log','ModSettings.log','WallBlend.log','LootEditor.receipt.json'):
+            for name in ('tdfc.log','RVision.log','ModSettings.log','WallBlend.log','LootEditor.receipt.json','sandy_modlog.txt'):
                 source=log.parent/name
                 if source.is_file():
                     target=out/(role+'.'+name)
                     shutil.copy2(source,target)
                     auxiliary[name]=sha(target)
+            pictures={}
+            for source in sorted(log.parent.glob('*.png')):
+                target=out/'pictures'/role/source.name
+                target.parent.mkdir(parents=True,exist_ok=True)
+                shutil.copy2(source,target)
+                pictures[source.name]=sha(target)
             events=records(log)
             receipt['roles'][role].update(passed=sum(x['kind']=='PASS' for x in events),failed=sum(x['kind']=='FAIL' for x in events),
-                fatal=[x for x in events if x['kind']=='FATAL'],done=any(x['kind']=='DONE' for x in events),auxiliary_logs=auxiliary)
+                fatal=[x for x in events if x['kind']=='FATAL'],done=any(x['kind']=='DONE' for x in events),auxiliary_logs=auxiliary,pictures=pictures)
             try:
                 verify_files(directory,receipt['roles'][role]['files'])
                 if sha(desc)!=receipt['roles'][role]['descriptor_sha256'] or sha(directory/'mods/Rconnect/release/config.txt')!=receipt['roles'][role]['config_sha256']:

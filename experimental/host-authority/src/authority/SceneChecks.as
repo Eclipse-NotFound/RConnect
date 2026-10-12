@@ -10,13 +10,15 @@ package authority {
       public var matches:Boolean=true,frames:uint=0,visibleEnemies:uint=0,turretFrames:uint=0,roomChanges:uint=0;
       private var previous:String="",captured:Boolean=false;
       private var mismatch:Object;
+      public var expectedRooms:Array;
+      private var route:Array=[];
       private function eq(ok:Boolean,reason:String,details:Object=null):void {
          if(!ok && mismatch==null){mismatch={reason:reason,details:details};Log.write("scene-mismatch",mismatch);}matches=matches && ok;
       }
       public function observe(replica:ClientReplica):void {
          var frame:Object=replica.displayFrame,scene:ReplicaScene=replica.scene;
          if(scene==null || frame.scene==null)return;
-         ++frames;if(previous!==scene.key){++roomChanges;previous=scene.key;}
+         ++frames;if(previous!==scene.key){++roomChanges;previous=scene.key;route.push(scene.key);}
          eq(scene.key===frame.room && replica.access.world.loc===scene.room && replica.access.world.gg.loc===scene.room,"scene ownership");
          for each(var s:Object in frame.scene.units) {
             var rec:Object=scene.units[s.key];
@@ -43,7 +45,12 @@ package authority {
          check(frames>50 && matches,"client native terrain, entity health, identity and visibility match confirmed scenes",{frames:frames,matches:matches});
          check(visibleEnemies>0,"client actually attaches living enemy displays",{samples:visibleEnemies});
          if(enemy=="native")check(turretFrames>20,"client actually attaches native turret displays",{samples:turretFrames});
-         check(roomChanges==3,"client presents all three confirmed background/foreground/background visits",{changes:roomChanges});
+         // Tick zero can present the welcome room before the fixture transfers
+         // either player. Check the exact three requested destinations rather
+         // than counting that legitimate initial view as an extra visit.
+         var exact:Boolean=expectedRooms!=null && (route.length==3 || route.length==4);
+         if(exact)for(var i:int=0;i<3;i++)exact=exact && route[route.length-3+i]===expectedRooms[i];
+         check(exact,"client presents the exact confirmed background/foreground/background route",{actual:route,expected:expectedRooms});
       }
       public static function picture(access:NativeAccess,name:String):void {
          var stage:Stage=access.world.swfStage as Stage,data:BitmapData=new BitmapData(stage.stageWidth,stage.stageHeight,false,0);
