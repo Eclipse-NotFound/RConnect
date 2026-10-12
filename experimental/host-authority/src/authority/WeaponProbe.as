@@ -52,13 +52,15 @@ package authority {
             return result;
          };
       }
-      public function WeaponProbe(a:NativeAccess,h:Boolean,kind:String,friendly:Boolean=false) {
+      public function WeaponProbe(a:NativeAccess,h:Boolean,kind:String,friendly:Boolean=false,only:Array=null) {
          super(a,h);this.kind=kind;this.friendly=friendly;
          cases=kind=="explosives"?["acidgr","plagr","impgr","cryogr","gasgr","molotov","hgren","grenade","dinamit","spgren"]:
             kind=="magic"?["telebul","ice","lightning","mray","fireball","eclipse"]:
             kind=="guns"?["shotgun","lasr","plar","bfg","flamer","cflamer","gatl","sawgun","mlau","bel","glau","aglau"]:
             kind=="melee"?["bat","spear","ripper","lsword","bsaw"]:[0,85,95,160,180,-95,-160];
          if(kind=="terrain")cases=["lmg","plam","prism"];
+         if(kind=="explosives")Timing.enabled=true;
+         if(only!=null){cases=only.concat();Timing.enabled=true;}
       }
       override public function message(value:Object):void {
          if(host && value.type=="weapon-ready")peerReady=value.phase;
@@ -184,13 +186,17 @@ package authority {
          }
          session.link.send({type:"weapon-phase",phase:phase,x:aimX,y:aimY});
          Log.write("weapon-phase",{phase:phase,id:gun.id,owner:shooter.id,kind:kind});
+         if(Timing.enabled)Timing.reset();
       }
       private function fingerprint(clip:DisplayObject,bounds:Array):uint {
+         var measured:int=Timing.start();
          var bitmap:BitmapData=new BitmapData(bounds[2],bounds[3],true,0);
          bitmap.draw(clip,new Matrix(1,0,0,1,-bounds[0],-bounds[1]));
          var digest:uint=2166136261;
          for each(var pixel:uint in bitmap.getVector(bitmap.rect))digest=uint((digest^pixel)*16777619);
-         bitmap.dispose();return digest;
+         bitmap.dispose();Timing.end("probe.weaponPixels",measured);
+         if(Timing.enabled && getTimer()-measured>=100)Log.write("slow-weapon-pixels",{clip:getQualifiedClassName(clip),ms:getTimer()-measured,bounds:bounds});
+         return digest;
       }
       private function picture(clip:DisplayObject,bounds:Array,name:String):void {
          var bitmap:BitmapData=new BitmapData(bounds[2],bounds[3],true,0);
@@ -429,6 +435,7 @@ package authority {
             }
             var clips:Array=[];for(var key:String in nativeEffects)clips.push(key);
             Log.write("weapon-native-summary",{phase:phase,id:gun.id,owner:shooter.id,samples:nativeSamples,quick:nativeQuick,effects:clips});
+            if(Timing.enabled)Log.write("weapon-phase-timings",{phase:phase,id:gun.id,owner:shooter.id,timings:Timing.snapshot()});
             session.link.send({type:"weapon-phase-end",phase:phase,tick:session.runtime.tick});
          }
          if(waiting && report!=null && report.phase==phase) {

@@ -53,6 +53,7 @@ package {
          access.definition("fe.World")["rconnectChangeWorld"]=function():void {if(network)leaveSession(false);vision.resetJourney();access.ink.reset();access.resetPositions();};
          MapState.install(access);
          if(config.probe===true)probe=["explosives","magic","angles","guns","melee","terrain"].indexOf(config.scenario)>=0?new WeaponProbe(access,role=="host",config.scenario):
+            config.scenario=="impulse"?new WeaponProbe(access,role=="host","explosives",false,["impgr"]):
             config.scenario=="friendly-melee" || config.scenario=="friendly-magic"?new WeaponProbe(access,role=="host",String(config.scenario).substr(9),true):
             config.scenario=="msw" || config.scenario=="msw-sweep"?new MswProbe(access,role=="host",config.scenario=="msw-sweep"):
             config.scenario=="msw-lifecycle"?new MswLifecycleProbe(access,role=="host"):
@@ -254,6 +255,7 @@ package {
          if(access!=null && access.world!=null)access.world.onPause=true;
          if(host!=null)host.fail(reason);
          Log.write("FATAL",{reason:reason});
+         if(Timing.enabled)Log.write("fatal-timings",{timings:Timing.snapshot()});
          if(probe!=null && !probe.finished){probe.check(false,"runtime completed without fatal error",{reason:reason});probe.finish();}
       }
       public function applyPreferences():void {

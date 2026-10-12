@@ -36,7 +36,7 @@ def main():
     ap.add_argument('--native', required=True)
     ap.add_argument('--output', required=True)
     ap.add_argument('--seconds', type=int, default=140)
-    ap.add_argument('--scenario', choices=('native-gun','ownership','split-rooms','cooperation','lifecycle','sats','pause-cycles','pause-holders','travel','friendly','friendly-melee','friendly-magic','grabs','enemy-grabs','personal','throw','vectors','mines','areas','party','hud','menus','dialogue','vision','stress','explosives','magic','angles','enemies','sound','music','movement','motion','guns','melee','terrain','teleport','body-effects','time-control','time-special','time-journey','time-exit-record','time-exit-replay','msw','msw-sweep','msw-lifecycle'), default='native-gun')
+    ap.add_argument('--scenario', choices=('native-gun','ownership','split-rooms','cooperation','lifecycle','sats','pause-cycles','pause-holders','travel','friendly','friendly-melee','friendly-magic','grabs','enemy-grabs','personal','throw','vectors','mines','areas','party','hud','menus','dialogue','vision','stress','explosives','impulse','magic','angles','enemies','sound','music','movement','motion','guns','melee','terrain','teleport','body-effects','time-control','time-special','time-journey','time-exit-record','time-exit-replay','msw','msw-sweep','msw-lifecycle'), default='native-gun')
     ap.add_argument('--swap', action='store_true')
     ap.add_argument('--enemy', choices=('native','tdfc'), default='native')
     ap.add_argument('--tdfc', help='Optional frozen TDFC authority-v1 build directory')
