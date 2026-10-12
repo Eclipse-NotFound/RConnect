@@ -49,7 +49,7 @@ class RuntimeFiles:
 def main():
     ap=argparse.ArgumentParser()
     for name in ('candidate','native','tdfc','logic','output'):ap.add_argument('--'+name,required=True)
-    for name in ('rv','msw'):ap.add_argument('--'+name)
+    for name in ('rv','msw','sandy'):ap.add_argument('--'+name)
     ap.add_argument('--run',action='append',required=True)
     ap.add_argument('--default',action='append',default=[],dest='defaults')
     ap.add_argument('--scope',choices=('single-room','dual-room'),default='single-room')
@@ -68,7 +68,8 @@ def main():
     verify_files(ROOT.parent/'TDFC',tm['sources'])
     extensions={}
     for key,folder,artifact in [('rv','RealisticVision','RealisticVisionMod.swf'),
-                                ('msw','MoreSkills&Weapons','MoreSkillsWeaponsMod.swf')]:
+                                ('msw','MoreSkills&Weapons','MoreSkillsWeaponsMod.swf'),
+                                ('sandy','Sandevistan','SandevistanMod.swf')]:
         if getattr(a,key) is None:continue
         directory=inside_build(ROOT/getattr(a,key));manifest=read(directory/'build-input.json')
         verify_files(directory,manifest['sources'])
@@ -85,7 +86,7 @@ def main():
         directory=inside_build(ROOT/path);r=read(directory/'run.json')
         for key,target in [('build_manifest_sha256',candidate/'build-input.json'),('native_manifest_sha256',native/'native-input.json'),('tdfc_manifest_sha256',tdfc/'build-input.json')]:
             require(r[key]==sha(target),'Run did not use the selected frozen inputs: '+path)
-        for key in ('rv','msw'):
+        for key in ('rv','msw','sandy'):
             expected=sha(extensions[key][0]/'build-input.json') if key in extensions else None
             require(r.get(key+'_manifest_sha256')==expected,
                     'Run used different or unaudited '+key+' inputs: '+path)
@@ -112,6 +113,9 @@ def main():
         directory=inside_build(ROOT/path);r=read(directory/'run.json')
         require(r['done'] and not r['failed'] and not r['fatal'] and r['default_tdfc_observed'] and r['owned_process_exited'] and r['installation_unchanged'] and r['runtime_unchanged'],'Default smoke failed')
         require(r['tdfc_manifest_sha256']==sha(tdfc/'build-input.json'),'Default TDFC bytes differ')
+        for key in ('rv','msw','sandy'):
+            expected=sha(extensions[key][0]/'build-input.json') if key in extensions else None
+            require(r.get('external_manifests',{}).get(key)==expected,'Default '+key+' inputs differ')
         if r['native_manifest_sha256'] is not None:
             require(r['native_manifest_sha256']==sha(native/'native-input.json'),'Default native patch bytes differ')
         default_events=records(directory/'RConnect-B.log')
