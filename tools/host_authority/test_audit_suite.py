@@ -172,6 +172,30 @@ class EvidenceSelection(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'Unconfirmed input protection'):
             select_runs(original, [], [continuation])
 
+    def test_two_stopped_segments_keep_both_failed_attempts(self):
+        original, first = self.stopped_pair()
+        data=read(first/'suite.json'); plan=data['arguments']['scenarios']; data['results']=data['results'][:3]
+        row=data['results'][-1]; path=first/row['scenario']/'run.json'; receipt=read(path)
+        receipt['complete']=False
+        for role in receipt['roles'].values(): role['done']=False
+        save(path,receipt)
+        row.update(complete=False,runner_exit=1,run_receipt_sha256=sha(path))
+        for role in row['roles'].values(): role['done']=False
+        data.update(complete=False,stopped_after=row['scenario']); save(first/'suite.json',data)
+        second=self.collection('second',plan[2:]); final=read(second/'suite.json')
+        final.update(runner_sha256='driver',arguments={**data['arguments'],'scenarios':plan[2:],'output':str(second)})
+        save(second/'suite.json',final)
+        before={p:sha(p) for directory in (original,first) for p in directory.rglob('*.json')}
+        selected,retained=select_runs(original,[],[first,second])
+        self.assertEqual(len(selected),44);self.assertEqual(len(retained),2)
+        self.assertEqual(before,{p:sha(p) for p in before})
+
+    def test_no_completion_while_continuation_is_running(self):
+        original, continuation = self.stopped_pair()
+        self.edit_collection(continuation,lambda d:d.update(complete=False))
+        with self.assertRaisesRegex(ValueError, 'safely stopped'):
+            select_runs(original,[],[continuation])
+
 
 if __name__ == '__main__':
     unittest.main()

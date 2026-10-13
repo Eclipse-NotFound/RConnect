@@ -1,6 +1,6 @@
 # RConnect —— 开发记忆入口
 
-> **2026-10-13 当前停点**：B190已有35/44类6534项完整通过。原第27组friendly-melee启动遇系统内存耗尽，现场保留；相同输入补测202/0。exec36295正在b3-suite-190-continuation-01接续友伤等余9类，外部只读内存记录位于memory-observation-190；审计新增显式分段收集、17项证据选择检查通过。安装A22不变，B未交付。
+> **2026-10-13 当前停点**：B190累计40/44类7399项完整通过，精确输入/归档审计成功。原第27组启动遇系统内存耗尽，原输入复验通过；接续在terrain因内存余量约0.6GiB主动终止。exec36295/2052均结束，无活动测试。原始失败与中断保留；剩余terrain、travel、ownership、split-rooms，已准备但未启动第二接续（需可用提交≥6GiB）。安装A22不变，B未交付。
 
 ## 1. 模组与职责
 
@@ -25,7 +25,7 @@ RConnect是Remains 1.02双人合作模组。用户要求保留A旧架构，同�
 ## 3. 当前版本与实际证据
 
 - 安装A：0.2.22-dev、SHA256 32602e77a21b206d1f7ff0e927b953878c28254e7201529455818923a3539732，未替换。[原部署](deployment-m50-2026-10-09.md)。准确安装整体基线build/ab/baseline-001。
-- 当前B190：源码12d33b423944b9f9e78df9caf467a232d7364b408b1cd5bde2c6e6f04a17fdec，SWF5c3a57f27c0f4e0293a1b3ed2a6483e7ab724ae5ab91944002f43150d80132ef，源/运行器提交3e697f0；原生019/TDFC004/RV003/MSW011/Sandy001保持。与188仅MswProbe/BuildInfo变化；新run_probe为f86999a4574c6281611bfb60e72743f4c34f17fa0860f8f34e7867dd97dba0a9。原44组前26类4974项全过后因系统内存耗尽停止；本机0/20/180/10/40ms扫光延迟173/0及精确输入审计已通过。旧版本/诊断不能混作190完整验收。
+- 当前B190：源码12d33b423944b9f9e78df9caf467a232d7364b408b1cd5bde2c6e6f04a17fdec，SWF5c3a57f27c0f4e0293a1b3ed2a6483e7ab724ae5ab91944002f43150d80132ef，源/运行器提交3e697f0；原生019/TDFC004/RV003/MSW011/Sandy001保持。与188仅MswProbe/BuildInfo变化；新run_probe为f86999a4574c6281611bfb60e72743f4c34f17fa0860f8f34e7867dd97dba0a9。原44组前26类4974项全过后因系统内存耗尽停止；第一接续再完成14类，累计40类7399项，b3-input-check-190-40categories核对40组/逻辑74/默认各34通过。第一接续terrain主动环境中断，仍缺4类；本机0/20/180/10/40ms扫光延迟173/0及精确输入审计已通过。旧版本/诊断不能混作190完整验收。
 - 完整44组build/ab/b3-suite-179已完成收集，38组/6966项完整通过，6类未通过。后续同179同输入补跑可经审计保留原失败；若改生产源，须新冻结候选回归，不混为同字节。
 - 179真实字段配对164/0：移动对象采样主少19.5%、加少14.4%，静止约同；仅局部成本。180类型缓存让静止慢11–13%，弃用并逐字节还原179，旧实验保留。
 - 179两分钟80原生敌人、双侧持续开火146/0：主均194.42ms/p95 278ms，加均102.26ms/p95 168ms，采样队列最大1；仍慢，不是严格A/B性能证明或长局无泄漏证明。
@@ -51,11 +51,13 @@ RConnect是Remains 1.02双人合作模组。用户要求保留A旧架构，同�
 
 ## 6. 直接接续顺序
 
-1. 原exec78429已停止；exec36295为内存观察脚本，接续b3-suite-190-continuation-01，已完成friendly-melee202、native-gun158、两种退出157/156、普通/特殊时停各169、旅程168、角度196、暂停185，继续friendly起余9类。原26绿与启动失败、同秒2004事件保留。audit_suite新增--continuation-suite严格核对原计划剩余顺序、失败重跑、相同字节/参数和清理，原suite.complete保持false。观察脚本不改测试时序/优先级，源在build/ab/memory-observation-190/observe.py，日志同目录。进度核对每行runner_exit/failed/DONE。
+1. 没有活动测试。原b3-suite-190在friendly-melee因同秒Windows2004内存耗尽停止；b3-suite-190-continuation-01已补过该项且新增13类，在terrain因系统可用提交仅604704KiB时主动停止自有PID87660/74920。join的peer closed为此中断所致，未完成不算通过。所有结束项保护/清理/归档确认。
+   - 待续脚本：build/ab/memory-observation-190-continuation-02/observe.py；固定190/019/004/003/011/001及原运行器，terrain→travel→ownership→split-rooms，启动前可用提交须≥6GiB。尚未启动，不能声称在后台等待或自动恢复。
+   - 已过40类精确输入审计：build/ab/b3-input-check-190-40categories。最终audit_suite显式追加两段--continuation-suite，保留每次中断，原complete不改写；19项选择检查通过。
 2. 181诊断证据保留：movement确证重复RESIZE后Pip打开、预显示unsafe-anchor；hud/pause-holders远端额外Pip持有暂停。personal诊断自身因装备切换时currentWeapon暂空而#1009，不算生产新错误；原179 personal失败已由182完整复验通过。若182失败据真实证据修复；若全过继续下列门禁。
-3. 实跑有序回环抖动（--jitter-ms 0,20,80,10,40），继续内存/流畅度证据。严格对照未有结论则明确保留。
+3. 核心4类完成且资源充足后运行build/ab/b3-additional-190/observe_additional.py：motion、pause-cycles、time-control、native-gun四类0/20/80/10/40ms本机有序延迟，及600秒80敌人双侧开火。启动前逐项要求≥6GiB可用提交；尚未启动。保留严格A/B未完成边界。
 4. 完整audit_suite加逻辑/默认/压力等精确输入审计；audit_checkpoint已拒绝原始error日志。单组输入预检b3-input-check-179已通过：当前源码/完整外部接口匹配、逻辑74/0、默认两组各34/0；不等于整套验收。
-5. 为实际通过回归的候选新建玩家目录（190若最终通过则b3-playable-190），重新prepare_playable；旧b3-playable-179不能交付。再用check_playable_startup.py复制出新AppID验证普通无驱动启动；不启动稳定玩家档，不冒充真人鼠标/IME验证。
+5. D盘本轮收尾可用40.46GiB；接续15个结束运行均已无损归档。为实际通过回归的候选新建玩家目录（190若最终通过则b3-playable-190），重新prepare_playable；旧b3-playable-179不能交付。再用check_playable_startup.py复制出新AppID验证普通无驱动启动；不启动稳定玩家档，不冒充真人鼠标/IME验证。
 6. 核对候选说明、最终记录/版本/提交后才交付独立B测试入口，安装A不动；完整发布门禁尚未完成。不把技术检查点当全部游玩目标结束。
 
 - 容量完整回执：[清理记录](test-storage-2026-10-13.md)，61组旧副本无损归档，原始失败保留。exec28920及183/184诊断已结束，完整性复核通过。
