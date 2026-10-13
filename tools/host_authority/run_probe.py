@@ -232,13 +232,19 @@ def main():
     except Exception as error:
         receipt['error']=str(error)
     finally:
+        # Stop the owned relay before killing its AIR peers. Otherwise our own
+        # cleanup can be recorded as a connection reset in an already completed
+        # delay test. Preserve genuine earlier relay errors in its result.
+        if relay:
+            try:
+                receipt['network_fixture']['result'] = relay.stop()
+            except Exception as error:
+                receipt['network_fixture']['result'] = dict(error=str(error), owned_thread_exited=False)
         for process in processes:
             if process.poll() is None:
                 process.terminate()
                 try:process.wait(timeout=10)
                 except subprocess.TimeoutExpired:process.kill();process.wait(timeout=10)
-        if relay:
-            receipt['network_fixture']['result'] = relay.stop()
         for stream in streams:stream.close()
         for role,directory,desc,log in launches:
             if log.is_file():shutil.copy2(log,out/(role+'.log'))
@@ -273,6 +279,9 @@ def main():
     verify_baseline(baseline)
     ok=receipt['complete'] and receipt['installation_unchanged'] and receipt['owned_processes_exited']
     ok=ok and all(r['done'] and r['failed']==0 and not r['fatal'] and r['passed']>0 and r['runtime_unchanged'] for r in receipt['roles'].values())
+    if relay:
+        relay_result=receipt['network_fixture']['result']
+        ok=ok and relay_result.get('owned_thread_exited') is True and relay_result.get('error') is None
     print(json.dumps(dict(path=str(out),ok=ok,error=receipt.get('error'),roles={role:{k:v for k,v in r.items() if k in ('passed','failed','done','fatal')} for role,r in receipt['roles'].items()}),ensure_ascii=False),flush=True)
     raise SystemExit(0 if ok else 1)
 

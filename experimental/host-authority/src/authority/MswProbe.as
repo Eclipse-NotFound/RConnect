@@ -11,12 +11,13 @@ package authority {
       private var initialSpawns:int=0,initialFlash:int=0;
       private var stagedAt:int=0;
       private var directEye:Boolean=false;
+      private var pointerClick:int=0;
       public function MswProbe(a:NativeAccess,h:Boolean,sweep:Boolean=false){super(a,h);if(sweep)cases=["pointer-sweep-safe","pointer-sweep-peer"];}
       private function kind():String{return phase<0?"":cases[int(phase/2)];}
       override public function message(v:Object):void {
          if(host && v.type=="msw-ready")peerReady=v.phase;
          if(host && v.type=="msw-report")report=v;
-         if(!host && v.type=="msw-phase"){phase=v.phase;owner=v.owner;aimX=v.x;aimY=v.y;begin=ending=-1;clientSamples=clientErrors=0;}
+         if(!host && v.type=="msw-phase"){phase=v.phase;owner=v.owner;aimX=v.x;aimY=v.y;begin=ending=-1;clientSamples=clientErrors=0;pointerClick=0;}
          if(!host && v.type=="msw-go"){begin=v.tick;aimX=v.x;aimY=v.y;}
          if(!host && v.type=="msw-end")ending=v.tick;
          if(!host && v.type=="msw-finish")finish();
@@ -33,7 +34,13 @@ package authority {
          var elapsed:int=(host?s.runtime.tick:RConnectMod.instance.replica.lastTick)-begin;
          if((host?0:1)!=owner)return f;
          if(kind().indexOf("sweep")>=0)f.aimY=aimY+(elapsed<40?-160:235);
-         if(kind().indexOf("pointer")==0){if(elapsed>=15 && elapsed<19 || elapsed>=65 && elapsed<69)f.buttons=Commands.FIRE;}
+         if(kind().indexOf("pointer")==0) {
+            // Confirmations can jump over a short host-tick window. Emit each
+            // real press once after its deadline, with a separate local input
+            // frame for release. Commands preserves the transmitted edge.
+            if(pointerClick==1 || pointerClick==3)++pointerClick;
+            else if(pointerClick==0 && elapsed>=15 || pointerClick==2 && elapsed>=65){f.buttons=Commands.FIRE;++pointerClick;}
+         }
          else if(kind()=="flash"){if(elapsed>=20 && elapsed<30)f.buttons=Commands.GRENADE;}
          else if(elapsed>=25 && elapsed<31)f.buttons=Commands.FIRE;
          return f;
@@ -46,7 +53,7 @@ package authority {
       private function start(s:HostSession,index:int):void {
          phase=index;owner=phase%2;shooter=s.actors[owner];begin=peerReady=-1;waiting=false;report=null;
          stagedAt=s.runtime.tick;
-         litTicks=parts=0;blinded=locked=flashSeen=directEye=false;initial=[];
+         litTicks=parts=pointerClick=0;blinded=locked=flashSeen=directEye=false;initial=[];
          var fy:Number=ProbeArena.floor(shooter.unit.loc,25);
          RConnectMod.instance.preferences.setValue("friendlyFire",kind().indexOf("peer")>=0 || kind()=="flash"?"1":"0");RConnectMod.instance.applyPreferences();
          for each(var a:PlayerActor in s.actors)access.scope.run(a.context,function():void {
@@ -120,7 +127,9 @@ package authority {
             waiting=true;var delta:Number=initial[owner].energy-energy(s,owner);
             if(kind().indexOf("pointer")==0) {
                check(litTicks>20 && Math.abs(delta-litTicks/30*(owner==0?1:3))<.15,"pointer pays its own configured rate and illuminated time",{ticks:litTicks,energy:delta});
-               check(Math.abs(initial[1-owner].energy-energy(s,1-owner))<.0001,"peer battery and prepaid remainder are independent");
+               check(!state.pointer,"two native pointer clicks leave the owned light off",{phase:phase,owner:owner,lit:state.pointer,ticks:litTicks});
+               check(Math.abs(initial[1-owner].energy-energy(s,1-owner))<.0001,"peer battery and prepaid remainder are independent",
+                  {phase:phase,initial:initial[1-owner].energy,actual:energy(s,1-owner),peerPointer:access.weapons.snapshot(1-owner).pointer});
             }
             if(kind().indexOf("safe")>=0)check(!blinded,"friendly fire off rejects real pointer eye exposure");
             if(kind().indexOf("peer")>=0)check(blinded && target.ggControl,"friendly optics restrict sight and retain player control");

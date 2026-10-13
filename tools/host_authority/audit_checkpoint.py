@@ -92,6 +92,15 @@ def main():
                     'Run used different or unaudited '+key+' inputs: '+path)
         require(r['complete'] and r['installation_unchanged'] and r['owned_processes_exited'],'Incomplete or unclean run: '+path)
         require(r['script_sha256']==sha(directory/'tools/run_probe.py'),'Run driver changed: '+path)
+        fixture=r.get('network_fixture')
+        if fixture is not None:
+            result=fixture.get('result',{})
+            require(fixture.get('script_sha256')==sha(directory/'tools/jitter_proxy.py'),'Delay fixture source changed')
+            require(result.get('owned_thread_exited') is True and result.get('error') is None,'Delay fixture failed')
+            require(result.get('schedule_ms')==fixture.get('delays_ms') and bool(result.get('schedule_ms')),
+                    'Delay fixture schedule differs')
+            require(all(result.get('directions',{}).get(direction,{}).get('sent',0)>0
+                        for direction in ('host_to_join','join_to_host')),'Delay fixture did not carry both directions')
         runtime=RuntimeFiles(directory,verified_blobs)
         for role,value in r['roles'].items():
             for name,digest in value['files'].items():runtime.check(role+'/'+name,digest)
