@@ -2,6 +2,8 @@ package authority {
    import authority.ui.HudModel;
    import flash.events.MouseEvent;
    import flash.events.KeyboardEvent;
+   import flash.events.Event;
+   import flash.geom.Rectangle;
    import flash.text.TextField;
    import flash.utils.getTimer;
    /** Exercise the actual compact UI and normal session cleanup in AIR. */
@@ -9,6 +11,8 @@ package authority {
       private var begin:int=-1,tick:int=0,phase:int=0,oldPlayer:Object,exitAt:int=-1;
       private var seenMessage:Boolean=false,settingsSeen:Boolean=false;
       private var dialogAt:int=0,dialogs:int=0;
+      private var windowPhase:int=0,windowAt:int=0,windowWidth:int=0,windowHeight:int=0;
+      private var windowBounds:Rectangle;
       public function HudProbe(a:NativeAccess,h:Boolean){super(a,h);}
       override public function message(value:Object):void {
          if(host && begin<0 && value.type=="input" && value.player==1 && value.probeStart is Number)begin=int(value.probeStart);
@@ -23,6 +27,27 @@ package authority {
          var m:RConnectMod=RConnectMod.instance,t:TextField=m.hud.getChildByName(name) as TextField;
          if(t==null || !t.mouseEnabled)throw new Error("UI control not available: "+name);
          t.dispatchEvent(new MouseEvent(MouseEvent.CLICK,true));
+      }
+      private function windowChecks():Boolean {
+         if(windowPhase==3)return true;
+         var m:RConnectMod=RConnectMod.instance,w:Object=access.world,now:int=getTimer();
+         if(windowPhase==0) {
+            check(!w.pip.active,"network starts without an unsolicited native character menu");
+            for(var i:int=0;i<5;i++)m.stage.dispatchEvent(new Event(Event.RESIZE));
+            check(!w.pip.active,"same-size AIR resize notifications do not become menu input");
+            windowBounds=m.stage.nativeWindow.bounds.clone();windowWidth=m.stage.stageWidth;windowHeight=m.stage.stageHeight;
+            windowPhase=1;windowAt=now;m.stage.nativeWindow.width+=40;return false;
+         }
+         if(now-windowAt<400)return false;
+         if(windowPhase==1) {
+            check(m.stage.stageWidth!=windowWidth && w.pip.active,"actual owned-window resize still reaches the native layout and menu handler",
+               {before:windowWidth,after:m.stage.stageWidth,pip:w.pip.active});
+            w.pip.onoff(-1);windowPhase=2;windowAt=now;m.stage.nativeWindow.bounds=windowBounds;return false;
+         }
+         check(m.stage.stageWidth==windowWidth && m.stage.stageHeight==windowHeight,"owned test window returns to its original viewport");
+         w.pip.onoff(5);m.stage.dispatchEvent(new Event(Event.RESIZE));
+         check(w.pip.active,"duplicate resize preserves an intentionally opened native menu");
+         w.pip.onoff(-1);windowPhase=3;return true;
       }
       override public function observe(session:HostSession,replica:ClientReplica):void {
          if(finished)return;
@@ -48,10 +73,12 @@ package authority {
             check(w.gg.hp>0 && w.gg.ggControl,"returned native character remains alive and controllable",
                {hp:w.gg.hp,control:w.gg.ggControl,work:w.gg.work,exit:w.t_exit,die:w.t_die,wait:getTimer()-exitAt,
                 dead:w.pers.dead,cat:w.catPause,paused:w.onPause,stat:w.allStat,menu:w.mm.active,pip:w.pip.active,dialogs:dialogs});
+            w.pip.onoff(-1);m.stage.dispatchEvent(new Event(Event.RESIZE));
+            check(w.pip.active,"leaving restores the original native resize listener");w.pip.onoff(-1);
             finish();return;
          }
          var f:Object=host?(session==null?null:session.lastFrame):(replica==null?null:replica.lastFrame);
-         if(f==null)return;if(begin<0 && !host)begin=f.tick;if(begin<0)return;tick=f.tick-begin;
+         if(f==null || !windowChecks())return;if(begin<0 && !host)begin=f.tick;if(begin<0)return;tick=f.tick-begin;
          if(oldPlayer==null)oldPlayer=w.gg;
          if(phase==0 && tick>25) {
             phase=1;m.hud.collapse();check(m.hud.panelWidth==280 && m.hud.panelHeight==36,"collapsed native overlay occupies 280 by 36 pixels");

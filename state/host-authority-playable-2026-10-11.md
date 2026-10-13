@@ -458,3 +458,10 @@ TimeHistory借用运动和原生显示副本，不回滚血量/背包/AI；每�
 - 179重叠暂停亦超时：208380e8f50d，主71/0无DONE；加71/1在截止清理时断线。首个持有者关闭后remoteMenu仍true。
 - 传送在relocate owner1后进入暂停组合，日志持续停滞；12:35短暂编译181约9秒，原测试此前已停滞，不取此段性能结论。未同时启动新AIR。
 - 七处仅记录拒绝原因、菜单变化、AuthorityPip调用、窗口RESIZE/DEACTIVATE和暂停持有者，不主动关菜单、不放宽门槛。源d55997a4af408231f9800a4487ff3d45b5b791cc97afff1d31c4082d705c9dc8；SWF3319e7e793ec4a5abb3d1c15d7e65533278d038c8b02584bd52520f95464a967。编译/类检查成功；FFDec写默认日志被沙箱拒绝的警告不影响类转储产物。生产179和运行器未改。
+
+### 2026-10-13 重复窗口事件根因与182前两组实测
+
+- 181被动诊断确认：加入侧相同984×611的RESIZE再次进入原生World.resizeScreen，随后Pip自动打开；不是AuthorityPip回放或DEACTIVATE。该菜单在hud/pause-holders保持remoteMenus=true。personal诊断自身误读切枪途中空currentWeapon而#1009，堆栈指向diagnostic()，不计生产故障。
+- 182 NativeViewport只包装原生MainMenu.resizeDisplay：同尺寸不调用，真实变化照常处理，其它监听器不拦截；连接建立时安装，离开时恢复。新增HUD真实自有窗口扩展/还原及重复事件负例。
+- movement/b414247858a1主73/0加74/0：原生运动152样本零误差，预显示294次、移动102次、最大21px；开火预显示0、停步收敛通过。personal/5cc3c65bec47主80/0加76/0：选择器/LMG/背包/技能/独立保存通过。输入保护与清理均通过。
+- exec58358完整44组继续，首六项后仍需全部冻结回归。不能将179其余38项直接算成182验收；未部署或交付。

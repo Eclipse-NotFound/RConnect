@@ -1,6 +1,6 @@
 # RConnect —— 开发记忆入口
 
-> **2026-10-13 当前停点**：主线B179 / 原生019(b3-v12) / TDFC004 / RV003 / MSW011 / Sandy001。44组套件exec42078（build/ab/b3-suite-179）已回收41组：36组完整通过、5类失败/不完整（近战友伤跨休眠；movement预显示零次；personal滚轮选择失败；hud与pause-holders共同暂停超时，菜单来源待诊断）。剩lifecycle/teleport/vision。隔离诊断源movement-diagnostic-source-179已加七处被动记录，已编译到b3-diagnostic-181，待原套件结束后跑movement/personal/hud/pause-holders。生产源码及运行器不改、不并行AIR；181只在teleport已持续停滞后短暂编译。b3-playable-179只是未验收目录，未交付；安装A22保持。
+> **2026-10-13 当前停点**：已定位179菜单故障：加入侧尺寸仍984×611却收到重复RESIZE，原生World.resizeScreen自动开Pip，阻止移动预显示/滚轮并持有暂停。B182新增NativeViewport仅过滤原生菜单处理器的同尺寸事件，真调整和其它监听器保留，退出恢复；HUD增加真实自有窗口调整/恢复检查。exec58358正跑b3-suite-182完整44组；movement147/0、personal156/0、hud183/0通过，当前pause-holders，后续teleport/friendly-melee及其余38组。失败即保留清理并停止。冻结生产源与两个运行器，不并行AIR/编译。A22未改、B未交付。
 
 ## 1. 模组与职责
 
@@ -24,8 +24,8 @@ RConnect是Remains 1.02双人合作模组。用户要求保留A旧架构，同�
 ## 3. 当前版本与实际证据
 
 - 安装A：0.2.22-dev、SHA256 32602e77a21b206d1f7ff0e927b953878c28254e7201529455818923a3539732，未替换。[原部署](deployment-m50-2026-10-09.md)。准确安装整体基线build/ab/baseline-001。
-- B选择179：源码b70c73031a9ba7db178ba2d3eb59bb6284589dcf1fdaf7d9ab90882a9d7c1373；SWF d085b3f889bf3a49dc37b149b9cfa79d4aa5323c21b167b1e29c3dd54cac2298。源提交a8be492，审计/说明99e011c；当前新增审计/记录尚待提交。
-- 完整44组见build/ab/b3-suite-179/suite.json；当前41组已回收，其中36组完整通过。近战友伤休眠超时、movement/personal完整失败、hud/pause-holders超时均保留原记录，不计通过；保护及自有进程清理均通过。剩三组继续。
+- 当前B182：源码013da99d881b4e521a9cddda162d9d10e69cd745b90ec603cd23fc5c8c28a365；SWF 1f6b5e9efe989504eeed340f9a0d6f4dc6ccdf7bc75dfe07164f0ebc702c45b8。原生019/TDFC004/RV003/MSW011/Sandy001不变。179的38组通过不能当182整套验收。
+- 完整44组build/ab/b3-suite-179已完成收集，38组/6966项完整通过，6类未通过。后续同179同输入补跑可经审计保留原失败；若改生产源，须新冻结候选回归，不混为同字节。
 - 179真实字段配对164/0：移动对象采样主少19.5%、加少14.4%，静止约同；仅局部成本。180类型缓存让静止慢11–13%，弃用并逐字节还原179，旧实验保留。
 - 179两分钟80原生敌人、双侧持续开火146/0：主均194.42ms/p95 278ms，加均102.26ms/p95 168ms，采样队列最大1；仍慢，不是严格A/B性能证明或长局无泄漏证明。
 - 默认未attach对照：原生原始/019配同TDFC004/RV003/MSW011/Sandy001，各34/0；TDFC逻辑74/0。默认清单外部指纹在external_manifests，不是联机的扁平键。
@@ -49,8 +49,8 @@ RConnect是Remains 1.02双人合作模组。用户要求保留A旧架构，同�
 
 ## 6. 直接接续顺序
 
-1. 等exec42078完整收集44组；不改run_probe.py/run_suite.py、不并行AIR/编译。剩余进度从suite.json读，失败原样保留。
-2. 完成后先运行隔离诊断b3-diagnostic-181，分别运行movement/personal/hud/pause-holders，记录预显示拒绝条件、菜单变化与共享暂停持有者；未找到原因不要改生产或降门槛。另同一tuple和运行器新建小套件补跑friendly-melee。audit_suite.py支持显式--rerun-suite，保留原失败并强制同构建/脚本/玩法配置。选择器9项正/负检查通过，非实机结果。
+1. 继续exec58358 / b3-suite-182，失败即停；读取首六组和后续完整44组，不并行AIR/编译、不改源码/运行器。
+2. 181诊断证据保留：movement确证重复RESIZE后Pip打开、预显示unsafe-anchor；hud/pause-holders远端额外Pip持有暂停。personal诊断自身因装备切换时currentWeapon暂空而#1009，不算生产新错误；原179 personal失败仍待182复验。若182失败据真实证据修复；若全过继续下列门禁。
 3. 实跑有序回环抖动（--jitter-ms 0,20,80,10,40），继续内存/流畅度证据。严格对照未有结论则明确保留。
 4. 完整audit_suite加逻辑/默认/压力等精确输入审计；audit_checkpoint已拒绝原始error日志。单组输入预检b3-input-check-179已通过：当前源码/完整外部接口匹配、逻辑74/0、默认两组各34/0；不等于整套验收。
 5. 用check_playable_startup.py对b3-playable-179复制出新AppID测试普通无驱动启动；不启动稳定玩家档。该脚本仅普通菜单/加载/保护清理，不冒充真人操作。

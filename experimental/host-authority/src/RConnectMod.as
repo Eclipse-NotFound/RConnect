@@ -29,6 +29,7 @@ package {
       private var intents:NativeIntents;
       private var nativeMenus:NativeMenus;
       private var saves:PersonalSaves;
+      private var viewport:NativeViewport;
       private var server:ServerSocket,input:InputSource=new InputSource(),label:TextField=new TextField();
       private var started:Boolean=false,travelled:Boolean=false,network:Boolean=false,stopping:Boolean=false;
       private var room:String,session:String,bootAt:int=getTimer(),readyFrames:int=0,failed:Boolean=false,lastHud:int=-1000;
@@ -169,6 +170,7 @@ package {
       }
       private function startNetwork():void {
          room=access.roomKey();
+         viewport=new NativeViewport(stage,access.world);
          if(config.rv!=null)access.view=new ViewBridge(main,session,role);
          if(config.msw!=null)access.weapons=new WeaponBridge(main,access,session,role);
          if(config.sandy!=null)access.time=new TimeBridge(main,access,session,role);
@@ -295,6 +297,7 @@ package {
          if(stopping)return;stopping=true;
          var oldReplica:ClientReplica=replica;
          try {
+            if(viewport!=null){viewport.dispose();viewport=null;}
             if(restoreJoin && oldReplica!=null)oldReplica.prepareReturn();
             if(access.time!=null){access.time.dispose();access.time=null;}
             if(access.view!=null){access.view.dispose();access.view=null;}

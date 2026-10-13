@@ -20,6 +20,8 @@ def main():
     ap.add_argument('--sandy', help='Optional independently attached Sandevistan build')
     ap.add_argument('--seconds', type=int, default=600)
     ap.add_argument('--archive', action='store_true')
+    ap.add_argument('--stop-on-failure', action='store_true',
+                    help='Stop after retaining and cleaning the first failed case; the collection remains incomplete')
     args = ap.parse_args()
     out = inside_build(ROOT / args.output)
     if out.exists():
@@ -68,6 +70,10 @@ def main():
             subprocess.run([sys.executable, '-B', '-X', 'utf8',
                             str(Path(__file__).with_name('archive_evidence.py')),
                             '--runs', str(target.relative_to(ROOT))], cwd=ROOT, check=True)
+        if args.stop_on_failure and child.returncode != 0:
+            report['stopped_after'] = scenario
+            save(out / 'suite.json', report)
+            raise SystemExit(1)
     report['complete'] = True
     report['all_passed'] = all(r['runner_exit'] == 0 for r in report['results'])
     save(out / 'suite.json', report)
