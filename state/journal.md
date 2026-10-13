@@ -1,3 +1,10 @@
+## 2026-10-13 — B188第28组激光笔扫描失败，开始被动输入诊断
+
+- 前27组4895项全过；新增terrain188、travel151、ownership168、split-rooms186、MSW209。第28组msw-sweep主90/1加78/0，双方DONE，回执cf41ce62e9d703ea60db1a8cfc185447f05a9d4ef42e0a86f53a73ca4c12bba6。exec12557停止，输入保护/自有PID退出确认，副本归档。
+- 唯一失败“peer battery and prepaid remainder are independent”在phase2；phase1加入侧pointerLit仍true、113亮步，phase2继续使用自身电量。原断言无具体phase/电量细节，但前后诊断对应明确；不能先说跨玩家扣电或确定漏输入。
+- 原MswProbe以4个主侧步窗口生成开/关点击，确认时钟若跳过65..68可能根本未发关闭；原188没有该段输入轨迹。B189只记录输入seq/buttons/elapsed及主侧接收消费、两侧电量，不改输入/断言行为；exec83950 / b3-msw-pointer-diagnostic-189已启动。
+- 曾在读取收集数量后误将第28组说成通过，完整回执后立即向用户更正。后续进度必须逐项核对runner_exit/failed/DONE，不只看数量。安装A22不变，B未交付。
+
 ## 2026-10-13 — B188完成22/44组，3993项通过
 
 - 新完成普通共享时停169、特殊时停169、时停旅程168、角度196、重复暂停185、枪械友伤151、魔法友伤240、地雷147、队伍176、合作151。双方完整结束，无FAIL/FATAL，安装/运行输入及自有PID退出核对通过，副本逐组归档。
