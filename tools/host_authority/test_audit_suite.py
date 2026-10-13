@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 from audit_suite import REQUIRED, select_runs
-from common import BUILD, save, sha
+from common import BUILD, read, save, sha
 
 
 class EvidenceSelection(unittest.TestCase):
@@ -98,6 +98,79 @@ class EvidenceSelection(unittest.TestCase):
     def test_cannot_replace_a_successful_category(self):
         with self.assertRaisesRegex(ValueError, 'previously failed'):
             select_runs(self.collection('green', sorted(REQUIRED)), [self.collection('repeat', ['friendly-melee'])])
+
+    def stopped_pair(self):
+        plan = sorted(REQUIRED)
+        original = self.collection('stopped', plan[:4], failed=[plan[3]], complete=False)
+        continuation = self.collection('continuation', plan[3:])
+        for path, names in ((original, plan), (continuation, plan[3:])):
+            data = read(path/'suite.json')
+            data.update(runner_sha256='driver', arguments=dict(scenarios=names,
+                candidate='build/candidate', seconds=700, archive=True, stop_on_failure=True, output=str(path)))
+            if path == original:
+                data['stopped_after'] = plan[3]
+            save(path/'suite.json', data)
+        return original, continuation
+
+    def edit_collection(self, directory, change):
+        data = read(directory/'suite.json'); change(data); save(directory/'suite.json', data)
+
+    def test_stopped_continuation_retains_failure_and_complete_coverage(self):
+        original, continuation = self.stopped_pair()
+        before = {p:sha(p) for p in original.rglob('*.json')}
+        selected, retained = select_runs(original, [], [continuation])
+        self.assertEqual(len(selected), 44)
+        self.assertEqual(len(retained), 1)
+        self.assertFalse(retained[0]['original_row']['complete'])
+        self.assertEqual(before, {p:sha(p) for p in before})
+
+    def test_continuation_cannot_skip_failed_category(self):
+        original, continuation = self.stopped_pair()
+        self.edit_collection(continuation, lambda d: d['arguments']['scenarios'].pop(0))
+        with self.assertRaisesRegex(ValueError, 'every remaining category'):
+            select_runs(original, [], [continuation])
+
+    def test_continuation_cannot_claim_partial_collection_complete(self):
+        original, continuation = self.stopped_pair()
+        self.edit_collection(continuation, lambda d: d['results'].pop())
+        with self.assertRaisesRegex(ValueError, 'omits planned'):
+            select_runs(original, [], [continuation])
+
+    def test_continuation_cannot_include_active_original(self):
+        original, continuation = self.stopped_pair()
+        self.edit_collection(original, lambda d: d.pop('stopped_after'))
+        with self.assertRaisesRegex(ValueError, 'safely stopped'):
+            select_runs(original, [], [continuation])
+
+    def test_continuation_requires_same_options(self):
+        original, continuation = self.stopped_pair()
+        self.edit_collection(continuation, lambda d: d['arguments'].update(seconds=701))
+        with self.assertRaisesRegex(ValueError, 'changed frozen options'):
+            select_runs(original, [], [continuation])
+
+    def test_continuation_cannot_be_appended_to_complete_original(self):
+        original, continuation = self.stopped_pair()
+        self.edit_collection(original, lambda d: d.update(complete=True))
+        with self.assertRaisesRegex(ValueError, 'stopped full regression'):
+            select_runs(original, [], [continuation])
+
+    def test_continuation_checks_new_categories_input_tuple(self):
+        original, continuation = self.stopped_pair()
+        data = read(continuation/'suite.json'); row = data['results'][-1]
+        path = continuation/row['scenario']/'run.json'; receipt=read(path)
+        receipt['build_manifest_sha256']='changed'; save(path,receipt)
+        row['run_receipt_sha256']=sha(path); save(continuation/'suite.json',data)
+        with self.assertRaisesRegex(ValueError, 'changed frozen inputs'):
+            select_runs(original, [], [continuation])
+
+    def test_continuation_rejects_cleanup_not_confirmed(self):
+        original, continuation = self.stopped_pair()
+        data=read(original/'suite.json'); row=data['results'][-1]
+        path=original/row['scenario']/'run.json'; receipt=read(path)
+        receipt['owned_processes_exited']=False; save(path,receipt)
+        row.update(run_receipt_sha256=sha(path),safe_cleanup=False); save(original/'suite.json',data)
+        with self.assertRaisesRegex(ValueError, 'Unconfirmed input protection'):
+            select_runs(original, [], [continuation])
 
 
 if __name__ == '__main__':
