@@ -98,7 +98,7 @@ def main():
             events=records(directory/(role+'.log'))
             require(value['done'] and not value['failed'] and not value['fatal'] and value['runtime_unchanged'],'Failed role: '+path+'/'+role)
             require(sum(x['kind']=='PASS' for x in events)==value['passed'] and any(x['kind']=='DONE' for x in events),'Log and receipt differ')
-            require(not any(x['kind'] in ('FAIL','FATAL') for x in events),'Raw log has failures')
+            require(not any(x['kind'] in ('FAIL','FATAL','error') for x in events),'Raw log has failures or runtime exceptions')
             runtime.check(role+'/authority-test.xml',value['descriptor_sha256'])
             runtime.check(role+'/mods/Rconnect/release/config.txt',value['config_sha256'])
             for name,digest in value['auxiliary_logs'].items():require(sha(directory/(role+'.'+name))==digest,'Auxiliary log changed')

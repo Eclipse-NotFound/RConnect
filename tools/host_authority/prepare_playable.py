@@ -15,8 +15,8 @@ def main():
     ap = argparse.ArgumentParser()
     for name in ('baseline', 'candidate', 'native', 'tdfc', 'output'):
         ap.add_argument('--'+name, required=True)
-    ap.add_argument('--rv', help='Frozen independent RV authority interface')
-    ap.add_argument('--msw', help='Frozen independent MSW authority interface')
+    ap.add_argument('--rv', required=True, help='Frozen independent RV authority interface')
+    ap.add_argument('--msw', required=True, help='Frozen independent MSW authority interface')
     ap.add_argument('--sandy', required=True, help='Frozen independent shared-time interface; required for manual B play')
     args = ap.parse_args()
     baseline, candidate, native, tactics, out = [inside_build(ROOT/getattr(args, name))
@@ -81,17 +81,23 @@ def main():
         launcher.write_bytes(('@echo off\r\npushd "%~dp0game"\r\nstart "" "adl64.exe" -runtime "runtimes\\air\\win64" "'+descriptor.name+'" -nodebug\r\npopd\r\n').encode('ascii'))
         launchers.append(dict(appid=appid, descriptor=descriptor.relative_to(out).as_posix(),
                               descriptor_sha256=sha(descriptor), launcher=launcher.name, launcher_sha256=sha(launcher)))
-    (out/'README.txt').write_text('RConnect B 独立实验版\n\n'
+    (out/'README.txt').write_text('RConnect B 独立实验版 · '+candidate.name+'\n'
+        '源码指纹：'+mod['source_id']+'\n\n'
         '1. 打开 Player-1.cmd 和 Player-2.cmd。两者分别保存自己的角色。\n'
         '2. 各自在原版菜单中新建或载入自己的 B 角色，进入游戏。\n'
         '3. 展开浮窗的“连接”：一侧创建房间，另一侧加入。地址127.0.0.1，端口23457。\n'
         '4. 设置、跟随、念力许可和队友伤害都在浮窗中；F10显隐，Ctrl+Enter聊天。\n'
         '5. 测试结束请各自保存角色并退出。加入侧离开联机会回到自己的原版旅程。\n\n'
+        '两个启动器不限定谁当宿主；先进入游戏，再选择创建或加入。\n'
+        '不同 B 候选共用这两份 B 角色。更新候选前请退出两个旧 B 窗口，再启动新目录。\n'
+        'A 的角色与存档独立保留；请不要手动覆盖到 B 的存档目录。\n\n'
         '联机时停由任一侧发动，两人正常行动、世界减速；结束回放时结算已记录的主要伤害。\n'
         '共享暂停会同时冻结回放。宿主在时停中发起换图，要等回放与结算完成。\n\n'
         'A 安装版、原版存档和启动方式保持独立。本目录只用于 B 实验；不能把这里的 SWF 单独复制回安装目录。\n'
         '这份准备脚本不代表完整验收通过，实际门禁以随候选交付的验证记录为准。\n', encoding='utf-8')
     save(out/'manual-input.json', dict(experimental_only=True, launched=False, release_gate_complete=False,
+        script_sha256=sha(__file__), source_id=mod['source_id'], candidate_sha256=mod['candidate_sha256'],
+        readme_sha256=sha(out/'README.txt'),
         baseline_manifest_sha256=sha(baseline/'baseline.json'), candidate_manifest_sha256=sha(candidate/'build-input.json'),
         native_manifest_sha256=sha(native/'native-input.json'), tdfc_manifest_sha256=sha(tactics/'build-input.json'),
         extension_manifests={key:sha(entry['path']/'build-input.json') for key,entry in extensions.items()},
