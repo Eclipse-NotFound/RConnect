@@ -25,7 +25,7 @@ package authority {
       private var enemy:Object,target:PlayerActor,initialHP:Number,initialShield:Number,lowestHP:Number,lowestShield:Number;
       private var targetHP:Number,lowestTargetHP:Number,acquired:Boolean=false,shots:uint=0,playerShots:uint=0;
       private var refs:Object={},counts:Object={},stances:Object={},alphas:Object={},shields:int=0;
-      private var enemyKey:uint=0,lastAimLog:int=-1;
+      private var enemyKey:uint=0,lastAimLog:int=-1,acquiredPlayers:Object={};
       private var nextBurstAt:int=190,burstUntil:int=-1;
       public function EnemyVisualProbe(a:NativeAccess,h:Boolean){super(a,h);}
       override public function prepare():void{super.prepare();Timing.enabled=true;}
@@ -74,12 +74,13 @@ package authority {
          }return frame;
       }
       private function start(session:HostSession,index:int):void {
-         phase=index;begin=-1;peerReady=-1;waiting=false;killed=false;controlled=false;report=null;acquired=false;stances={};alphas={};shields=0;
+         phase=index;begin=-1;peerReady=-1;waiting=false;killed=false;controlled=false;report=null;acquired=false;acquiredPlayers={};stances={};alphas={};shields=0;
          nextBurstAt=190;burstUntil=-1;
          Timing.reset();
          // A native enemy may legitimately keep its first visible target.
-         // Separate the non-target pony with an opaque wall, so this scenario
-         // tests recognition of the intended player rather than AI preference.
+         // The wall separates the initial lanes. Alicorns can teleport across
+         // it: verify each player in a controlled native comparison, then allow
+         // their free AI to choose either actual player.
          var fy:Number=ProbeArena.floor(access.world.loc,10),spec:Object=cases[index];target=session.actors[index%2];
          for each(var actor:PlayerActor in session.actors) {
             actor.unit.setLocPos(actor===target?650:180,fy);actor.unit.dx=actor.unit.dy=0;
@@ -100,8 +101,51 @@ package authority {
          shots=session.runtime.spawnsFor(enemy);
          playerShots=session.runtime.spawnsFor(target.unit);
          enemyKey=session.sceneId(enemy);
+         if(spec.cls=="UnitAlicorn")nativeAlicornRecognition(session);
          if(index==0)nativePerceptionBoundary(session);
          session.link.send({type:"enemy-phase",phase:phase,key:enemyKey});Log.write("enemy-case",{phase:phase,cls:spec.cls,tr:spec.tr,player:target.id});
+      }
+      private function nativeAlicornRecognition(session:HostSession):void {
+         var Unit:Class=access.definition("fe.unit.Unit"),hook:Function=Unit["rconnectFindTarget"];
+         var fields:Array=["celUnit","priorUnit","celX","celY","celDX","celDY","eyeX","eyeY","oduplenie"],saved:Object={},players:Array=[];
+         for each(var key:String in fields)saved[key]=enemy[key];
+         for each(var actor:PlayerActor in session.actors)players.push({x:actor.unit.X,y:actor.unit.Y,dx:actor.unit.dx,dy:actor.unit.dy,
+            obs:actor.unit.obs,noise:actor.unit.noise,invulner:actor.unit.invulner});
+         try {
+            for each(var candidate:PlayerActor in session.actors) {
+               for each(actor in session.actors) {
+                  actor.unit.setLocPos(actor===candidate?650:180,players[actor.id].y);
+                  actor.unit.obs=actor.unit.maxObs;actor.unit.noise=0;actor.unit.invulner=false;
+               }
+               enemy.celUnit=enemy.priorUnit=null;enemy.oduplenie=0;
+               enemy.eyeX=enemy.X+enemy.scX*.25*enemy.storona;enemy.eyeY=enemy.Y-enemy.scY*.75;
+               var initial:Object={},expected:Object={};
+               for each(key in fields)initial[key]=enemy[key];
+               Unit["rconnectFindTarget"]=null;
+               var nativeResult:Boolean=Boolean(access.scope.run(candidate.context,function():Boolean {return Boolean(enemy.findCel(true));}));
+               for each(key in fields)expected[key]=enemy[key];
+               for each(key in fields)enemy[key]=initial[key];
+               for each(actor in session.actors)actor.unit.obs=actor.unit.maxObs;
+               Unit["rconnectFindTarget"]=hook;
+               // Invoke from the host context even when checking player 1.
+               // The bridge must discover that native actor in its own scope.
+               var actualResult:Boolean=Boolean(access.scope.run(session.actors[0].context,function():Boolean {return Boolean(enemy.findCel(true));}));
+               var equal:Boolean=nativeResult==actualResult;
+               for each(key in fields)equal=equal && enemy[key]===expected[key];
+               check(nativeResult && expected.celUnit===candidate.unit && equal,
+                  "alicorn recognition matches original native perception phase "+phase+" player "+candidate.id,
+                  {nativeResult:nativeResult,actualResult:actualResult,nativePlayer:expected.celUnit===candidate.unit,
+                     actualPlayer:enemy.celUnit===candidate.unit});
+            }
+         }finally {
+            Unit["rconnectFindTarget"]=hook;
+            for each(key in fields)enemy[key]=saved[key];
+            for each(actor in session.actors) {
+               var prior:Object=players[actor.id];actor.unit.setLocPos(prior.x,prior.y);
+               actor.unit.dx=prior.dx;actor.unit.dy=prior.dy;actor.unit.obs=prior.obs;
+               actor.unit.noise=prior.noise;actor.unit.invulner=prior.invulner;
+            }
+         }
       }
       private function nativePerceptionBoundary(session:HostSession):void {
          var Unit:Class=access.definition("fe.unit.Unit"),hook:Function=Unit["rconnectFindTarget"];
@@ -255,12 +299,15 @@ package authority {
          if(begin<0 && peerReady==phase){begin=session.runtime.tick;enemy.disabled=false;enemy.addVisual();enemy.visDetails();session.link.send({type:"enemy-go",tick:begin});}
          if(begin<0)return;
          if(!killed){lowestHP=Math.min(lowestHP,enemy.hp);lowestShield=Math.min(lowestShield,enemy.shithp);lowestTargetHP=Math.min(lowestTargetHP,target.unit.hp);acquired=acquired || enemy.celUnit===target.unit;}
+         if(!killed)for each(var seen:PlayerActor in session.actors)if(enemy.celUnit===seen.unit)acquiredPlayers[String(seen.id)]=true;
          if(!controlled && target.unit.hp>0 && target.unit.hp<target.unit.maxhp*.5)
             access.scope.run(target.context,function():void {target.unit.heal(target.unit.maxhp-target.unit.hp);});
          stances[enemy.animState]=true;alphas[String(enemy.vis.alpha)]=true;if(enemy.shithp>0)++shields;
          if(!controlled && session.runtime.tick-begin>=180) {
             controlled=true;
-            check(acquired,"native enemy detects intended player phase "+phase,{player:target.id,cls:cases[phase].cls});
+            if(cases[phase].cls=="UnitAlicorn")check(acquiredPlayers["0"]===true || acquiredPlayers["1"]===true,
+               "native alicorn acquires a real player during free AI phase "+phase,{players:acquiredPlayers,expectedInitially:target.id});
+            else check(acquired,"native enemy detects intended player phase "+phase,{player:target.id,cls:cases[phase].cls});
             Log.write("enemy-native-summary",{phase:phase,targetHP:[targetHP,lowestTargetHP],shots:session.runtime.spawnsFor(enemy)-shots,
                playerShots:session.runtime.spawnsFor(target.unit)-playerShots,gun:NativeFields.capture(target.unit.currentWeapon),
                enemy:NativeFields.capture(enemy),player:NativeFields.capture(target.unit),stances:stances,alphas:alphas,shieldFrames:shields,
