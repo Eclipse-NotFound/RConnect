@@ -30,7 +30,7 @@
         "enemy-grabs"
       ],
       "gaps": [
-        "本地菜单及断开期间的敌人抓取释放"
+        "断开期间的敌人抓取释放"
       ]
     },
     {
@@ -108,7 +108,7 @@
         "explosives"
       ],
       "gaps": [
-        "普通榴弹、火箭及水中爆炸类型"
+        "水中爆炸类型及未碰撞自然到期"
       ]
     },
     {
@@ -206,9 +206,7 @@
         "sats",
         "lifecycle"
       ],
-      "gaps": [
-        "抓取中目标死亡的清理"
-      ]
+      "gaps": []
     },
     {
       "legacy": "RespawnRoomTestDoc",
@@ -269,9 +267,7 @@
       "probes": [
         "guns"
       ],
-      "gaps": [
-        "火箭、榴弹发射器等PhisBullet类型"
-      ]
+      "gaps": []
     },
     {
       "legacy": "MeleeAnimationTestDoc",
@@ -564,5 +560,14 @@
     "正常无测试驱动的双端启动、鼠标键盘、中文输入法",
     "同版本延迟抖动、连续长局与资源清理",
     "隔离玩家候选与A并列启动；全部最终证据通过后再走部署门禁"
-  ]
+  ],
+  "evidence_review": {
+    "date": "2026-10-13",
+    "basis": "B179 archived runtime and exact probe source; B182 full frozen suite is still running",
+    "clarifications": [
+      "EnemyGrabsProbe covers local menu, shared pause, target death and re-grab; disconnect remains distinct",
+      "WeaponProbe guns covers mlau/bel/glau/aglau native heavy projectiles; water/expiry combinations remain separate",
+      "Removing an obsolete coverage gap does not certify B182; final candidate receipts and audit are still required"
+    ]
+  }
 }

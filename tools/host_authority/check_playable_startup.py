@@ -115,6 +115,7 @@ def main():
         receipt['protected_after'] = {name:sha(installed/name) for name in protected_names}
         receipt['installation_unchanged'] = receipt['protected_after'] == protected
         receipt['owned_processes_exited'] = all(process.poll() is not None for process in processes)
+        receipt['process_exit_codes'] = [dict(pid=process.pid, code=process.poll()) for process in processes]
         save(out/'run.json', receipt)
     ok = receipt['complete'] and receipt['installation_unchanged'] and receipt['owned_processes_exited']
     ok = ok and all(r['failed'] == 0 and r['runtime_unchanged'] for r in receipt['roles'].values())
