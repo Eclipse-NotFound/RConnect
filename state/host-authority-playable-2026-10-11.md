@@ -445,3 +445,16 @@ TimeHistory借用运动和原生显示副本，不回滚血量/背包/AI；每�
 - b3-suite-179/personal/dae2fb8d1f42完整主79/1加74/2：滚轮选择面板未保持可见、装备未回到LMG；保存/独立背包/技能/检查点其他项通过。personal-confirmed.png显示加入侧角色面板仍打开；原生InputSource.localSelector本就要求菜单关闭，暂未确定面板由何路径打开，不能先认定生产缺陷或夹具原因。
 - 隔离诊断源增加PersonalProbe菜单状态、滚轮/确认时的玩家控制状态，以及B入口的窗口RESIZE日志；不主动关菜单、不改变断言或179生产源码。原生World.resizeScreen与onDeactivate会调用pip.onoff(11)，只是待核对线索，不当此次实际原因。
 - 后续grabs、enemy-grabs（14阶段244项）、throw、vectors完整通过；完整套件继续guns。仍需定位movement/personal，补测休眠friendly-melee，不可交付为全绿。
+
+
+### 179 HUD共同暂停后超时（持续）
+
+- hud/3cac9d907161主72/0无DONE，加72/1最后peer closed（主进程在700秒测试截止后由运行器清理）；两侧最后正常记录均为不透明度。源HudProbe在tick>25打开菜单暂停策略、下一阶段要求tick>95；可能有未关闭的原生Pip持有暂停，仍待诊断，不把清理时断开当新网络根因。
+- 诊断副本加入HudProbe每2秒的菜单/共享暂停持有者状态，即使模拟tick冻结也能记录。诊断源build/ab/movement-diagnostic-source-179五处被动记录，未编译/运行；生产179不变。
+- 枪械24阶段260项、近战182、魔法204、爆炸20阶段280、区域148、音效224、配乐162全通过。179尚余pause-holders/lifecycle/teleport/vision，exec42078继续。已完成组中有4个失败/不完整类别，未验收或交付。
+
+### 2026-10-13 被动菜单诊断181（待运行）
+
+- 179重叠暂停亦超时：208380e8f50d，主71/0无DONE；加71/1在截止清理时断线。首个持有者关闭后remoteMenu仍true。
+- 传送在relocate owner1后进入暂停组合，日志持续停滞；12:35短暂编译181约9秒，原测试此前已停滞，不取此段性能结论。未同时启动新AIR。
+- 七处仅记录拒绝原因、菜单变化、AuthorityPip调用、窗口RESIZE/DEACTIVATE和暂停持有者，不主动关菜单、不放宽门槛。源d55997a4af408231f9800a4487ff3d45b5b791cc97afff1d31c4082d705c9dc8；SWF3319e7e793ec4a5abb3d1c15d7e65533278d038c8b02584bd52520f95464a967。编译/类检查成功；FFDec写默认日志被沙箱拒绝的警告不影响类转储产物。生产179和运行器未改。

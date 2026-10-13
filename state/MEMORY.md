@@ -1,6 +1,6 @@
 # RConnect —— 开发记忆入口
 
-> **2026-10-13 当前停点**：主线B179 / 原生019(b3-v12) / TDFC004 / RV003 / MSW011 / Sandy001。完整44组由exec42078串行运行（build/ab/b3-suite-179），当前29组完整通过、5177项断言；另有friendly-melee跨电脑休眠未完成；movement完整主73/0加73/1，加入预显示applications=0，新增真实失败。已准备movement-diagnostic-source-179，等套件结束才编译/运行诊断。personal亦主79/1加74/2，滚轮选择时原生角色面板仍开着；已加被动菜单/RESIZE诊断。三项均未结案。两个运行器和生产源冻结不改，避免同时编译或另开AIR。独立玩家目录b3-playable-179已准备，尚未普通启动/交付。安装A22保持。
+> **2026-10-13 当前停点**：主线B179 / 原生019(b3-v12) / TDFC004 / RV003 / MSW011 / Sandy001。44组套件exec42078（build/ab/b3-suite-179）已回收41组：36组完整通过、5类失败/不完整（近战友伤跨休眠；movement预显示零次；personal滚轮选择失败；hud与pause-holders共同暂停超时，菜单来源待诊断）。剩lifecycle/teleport/vision。隔离诊断源movement-diagnostic-source-179已加七处被动记录，已编译到b3-diagnostic-181，待原套件结束后跑movement/personal/hud/pause-holders。生产源码及运行器不改、不并行AIR；181只在teleport已持续停滞后短暂编译。b3-playable-179只是未验收目录，未交付；安装A22保持。
 
 ## 1. 模组与职责
 
@@ -25,7 +25,7 @@ RConnect是Remains 1.02双人合作模组。用户要求保留A旧架构，同�
 
 - 安装A：0.2.22-dev、SHA256 32602e77a21b206d1f7ff0e927b953878c28254e7201529455818923a3539732，未替换。[原部署](deployment-m50-2026-10-09.md)。准确安装整体基线build/ab/baseline-001。
 - B选择179：源码b70c73031a9ba7db178ba2d3eb59bb6284589dcf1fdaf7d9ab90882a9d7c1373；SWF d085b3f889bf3a49dc37b149b9cfa79d4aa5323c21b167b1e29c3dd54cac2298。源提交a8be492，审计/说明99e011c；当前新增审计/记录尚待提交。
-- 完整44组见build/ab/b3-suite-179/suite.json；当前21组/3783项完整通过。friendly-melee主91/0加88/0无DONE，不计通过：01:10:05电池休眠、11:03:39开盖恢复，运行跨35850秒，回执12fb2ccb3a00保留、保护/清理通过。套件其余组仍在运行。
+- 完整44组见build/ab/b3-suite-179/suite.json；当前41组已回收，其中36组完整通过。近战友伤休眠超时、movement/personal完整失败、hud/pause-holders超时均保留原记录，不计通过；保护及自有进程清理均通过。剩三组继续。
 - 179真实字段配对164/0：移动对象采样主少19.5%、加少14.4%，静止约同；仅局部成本。180类型缓存让静止慢11–13%，弃用并逐字节还原179，旧实验保留。
 - 179两分钟80原生敌人、双侧持续开火146/0：主均194.42ms/p95 278ms，加均102.26ms/p95 168ms，采样队列最大1；仍慢，不是严格A/B性能证明或长局无泄漏证明。
 - 默认未attach对照：原生原始/019配同TDFC004/RV003/MSW011/Sandy001，各34/0；TDFC逻辑74/0。默认清单外部指纹在external_manifests，不是联机的扁平键。
@@ -43,14 +43,14 @@ RConnect是Remains 1.02双人合作模组。用户要求保留A旧架构，同�
 ## 5. 已知问题与结论边界
 
 - 密集场景仍明显慢。现有性能只是实际记录；严格相同公共地图修复的A/B配对未完成，不能把分时后台负载差异算架构收益。
-- 171爆炸序列曾有56秒阻塞/2MB积压，178完整20阶段280/0未复现但根因未知；179完整爆炸序列尚待结果。
+- 171爆炸序列曾有56秒阻塞/2MB积压，178完整20阶段280/0未复现但根因未知；179完整爆炸序列20阶段280/0通过，仍不代表旧阻塞根因已查明。
 - 51项历史目标映射在design/host-authority-regression-map.json，目前37项带旧同字节待验或具体组合缺口；不能只凭映射宣布完成。枪火/特殊效果自然到期、水中、全部第三方组合、真人鼠标/中文输入法等不得过度声称覆盖。
 - 两分钟内存数据不证明长局稳定。早期原生初始化#1009、旧A背景门低频问题等保留历史，受控专项绿不代表所有低频条件已排除。
 
 ## 6. 直接接续顺序
 
 1. 等exec42078完整收集44组；不改run_probe.py/run_suite.py、不并行AIR/编译。剩余进度从suite.json读，失败原样保留。
-2. 完成后先编译/运行隔离movement诊断：build.py --source-root build/ab/movement-diagnostic-source-179 --optimized --output新的诊断目录，记录每个预显示拒绝条件；未找到原因不要改生产或降门槛。另同一tuple和运行器新建小套件补跑friendly-melee。audit_suite.py支持显式--rerun-suite，保留原失败并强制同构建/脚本/玩法配置。选择器9项正/负检查通过，非实机结果。
+2. 完成后先运行隔离诊断b3-diagnostic-181，分别运行movement/personal/hud/pause-holders，记录预显示拒绝条件、菜单变化与共享暂停持有者；未找到原因不要改生产或降门槛。另同一tuple和运行器新建小套件补跑friendly-melee。audit_suite.py支持显式--rerun-suite，保留原失败并强制同构建/脚本/玩法配置。选择器9项正/负检查通过，非实机结果。
 3. 实跑有序回环抖动（--jitter-ms 0,20,80,10,40），继续内存/流畅度证据。严格对照未有结论则明确保留。
 4. 完整audit_suite加逻辑/默认/压力等精确输入审计；audit_checkpoint已拒绝原始error日志。单组输入预检b3-input-check-179已通过：当前源码/完整外部接口匹配、逻辑74/0、默认两组各34/0；不等于整套验收。
 5. 用check_playable_startup.py对b3-playable-179复制出新AppID测试普通无驱动启动；不启动稳定玩家档。该脚本仅普通菜单/加载/保护清理，不冒充真人操作。
