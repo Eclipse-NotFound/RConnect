@@ -1,3 +1,9 @@
+## 2026-10-13 — B190核心44类8092项完整通过
+
+- 第二接续补过ownership168，回执7e8802914d2ec8f5d33802dac34d0e9dd7cea6806e0b07a78bcb37dbc537d2fb；split-rooms186，回执1f4003873c8f951b5f4f2086d6b4635612722bf737c7f3d13da24b650d084eca。双方DONE、无FAIL/FATAL，保护/清理及归档通过，exec64765结束。
+- select_runs对原套件和两段接续选择44类8092项成功记录，保留friendly-melee内存耗尽与terrain主动环境中断，顺序/冻结清单/运行器/选项检查通过。第二接续最低可用系统提交31.38GiB。完整archive/raw-log/current-source字节审计尚待运行，不能将选择检查称最终门禁。
+- 下一步立即执行b3-additional-190预定4种有序延迟与600秒压力，然后完整审计、无驱动启动与验证记录。A22不变，B未交付。
+
 ## 2026-10-13 — 资源恢复，B190接续地形与五轮新探索通过
 
 - 19:34当前可用物理内存约12GiB、可用系统提交约39GiB，无运行游戏实例；exec64765启动原输入第二接续（190/019/004/003/011/001、原run_probe）。terrain188/0，回执daa2a9f60faf00b3fae32aedaa24cfad975a86517fad0e768a8843ef405b8833；travel151/0，回执283a423cb66d172c1eda4be361c134422eaf5b122aa33a74bd7357da29ec90d7，五轮种子/布局各异、双方布局一致及角色/背包保留均过。累计42类7738项，继续ownership、split-rooms；结束即归档。
