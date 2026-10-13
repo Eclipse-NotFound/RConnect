@@ -1,6 +1,6 @@
 # RConnect —— 开发记忆入口
 
-> **2026-10-13 当前停点**：主线B179 / 原生019(b3-v12) / TDFC004 / RV003 / MSW011 / Sandy001。完整44组由exec42078串行运行（build/ab/b3-suite-179），当前21组完整通过、3783项断言；另有friendly-melee跨电脑休眠而未完成，必须同字节补测。两个运行器和生产源冻结不改，避免同时编译或另开AIR。独立玩家目录b3-playable-179已准备，尚未普通启动/交付。安装A22保持。
+> **2026-10-13 当前停点**：主线B179 / 原生019(b3-v12) / TDFC004 / RV003 / MSW011 / Sandy001。完整44组由exec42078串行运行（build/ab/b3-suite-179），当前29组完整通过、5177项断言；另有friendly-melee跨电脑休眠未完成；movement完整主73/0加73/1，加入预显示applications=0，新增真实失败。已准备movement-diagnostic-source-179，等套件结束才编译/运行诊断。personal亦主79/1加74/2，滚轮选择时原生角色面板仍开着；已加被动菜单/RESIZE诊断。三项均未结案。两个运行器和生产源冻结不改，避免同时编译或另开AIR。独立玩家目录b3-playable-179已准备，尚未普通启动/交付。安装A22保持。
 
 ## 1. 模组与职责
 
@@ -50,7 +50,7 @@ RConnect是Remains 1.02双人合作模组。用户要求保留A旧架构，同�
 ## 6. 直接接续顺序
 
 1. 等exec42078完整收集44组；不改run_probe.py/run_suite.py、不并行AIR/编译。剩余进度从suite.json读，失败原样保留。
-2. 完成后用同一tuple和运行器新建小套件补跑friendly-melee；其它失败先定位。audit_suite.py支持显式--rerun-suite，保留原失败并强制同构建/脚本/玩法配置。选择器9项正/负检查通过，非实机结果。
+2. 完成后先编译/运行隔离movement诊断：build.py --source-root build/ab/movement-diagnostic-source-179 --optimized --output新的诊断目录，记录每个预显示拒绝条件；未找到原因不要改生产或降门槛。另同一tuple和运行器新建小套件补跑friendly-melee。audit_suite.py支持显式--rerun-suite，保留原失败并强制同构建/脚本/玩法配置。选择器9项正/负检查通过，非实机结果。
 3. 实跑有序回环抖动（--jitter-ms 0,20,80,10,40），继续内存/流畅度证据。严格对照未有结论则明确保留。
 4. 完整audit_suite加逻辑/默认/压力等精确输入审计；audit_checkpoint已拒绝原始error日志。单组输入预检b3-input-check-179已通过：当前源码/完整外部接口匹配、逻辑74/0、默认两组各34/0；不等于整套验收。
 5. 用check_playable_startup.py对b3-playable-179复制出新AppID测试普通无驱动启动；不启动稳定玩家档。该脚本仅普通菜单/加载/保护清理，不冒充真人操作。

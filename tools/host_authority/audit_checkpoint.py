@@ -120,7 +120,7 @@ def main():
             require(r['native_manifest_sha256']==sha(native/'native-input.json'),'Default native patch bytes differ')
         default_events=records(directory/'RConnect-B.log')
         require(sum(x['kind']=='PASS' for x in default_events)==r['passed'] and any(x['kind']=='DONE' for x in default_events)
-            and not any(x['kind'] in ('FAIL','FATAL') for x in default_events),'Default raw log differs')
+            and not any(x['kind'] in ('FAIL','FATAL','error') for x in default_events),'Default raw log differs')
         require(sha(directory/'src/RConnectMod.as')==r['source_sha256'],'Default probe source changed')
         verify_files(directory/'game',r['files'])
         evidence['defaults'].append(dict(path=path,passed=r['passed'],receipt_sha256=sha(directory/'run.json'),

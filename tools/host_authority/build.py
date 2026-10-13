@@ -12,9 +12,13 @@ from common import ROOT, EXPERIMENT, JAVA, SDK, FFDEC, inside_build, sha, save
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--output', required=True)
+    ap.add_argument('--source-root', help='Explicit isolated diagnostic source copy below build/ab')
     ap.add_argument('--optimized', action='store_true', help='Use production compiler settings; preserve the exact commands in the build manifest')
     args = ap.parse_args()
+    source_root = inside_build(ROOT/args.source_root) if args.source_root else EXPERIMENT
     out = inside_build(ROOT/args.output)
+    if out.is_relative_to(source_root) or not (source_root/'src/RConnectDoc.as').is_file():
+        raise ValueError('Use a complete source root and a separate build output')
     if out.exists():
         raise FileExistsError('Every compilation gets a fresh directory')
     for tool in (JAVA, SDK/'lib/mxmlc.jar', SDK/'lib/compc.jar', FFDEC):
@@ -23,8 +27,8 @@ def main():
     out.mkdir(parents=True)
     sources = {}
     for folder in ('src', 'stubs'):
-        for path in sorted((EXPERIMENT/folder).rglob('*.as')):
-            name = path.relative_to(EXPERIMENT).as_posix()
+        for path in sorted((source_root/folder).rglob('*.as')):
+            name = path.relative_to(source_root).as_posix()
             dest = out/name
             dest.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(path, dest)
@@ -58,6 +62,7 @@ def main():
     if 'RConnectMod' not in embedded or embedded.intersection(externs):
         raise RuntimeError('Entry missing or native extern classes embedded')
     save(out/'build-input.json', dict(experimental_only=True, family='host-authority-b', optimized=args.optimized, source_id=source_id, native_capability=native_capability, sources=sources,
+        source_root=str(source_root.relative_to(ROOT)),
         candidate_sha256=sha(out/'RConnectMod.swf'), extern_sha256=sha(out/'NativeExterns.swc'),
         compiler={str(p):sha(p) for p in (JAVA, SDK/'lib/mxmlc.jar', SDK/'lib/compc.jar', SDK/'frameworks/libs/air/airglobal.swc')},
         commands=commands, script_sha256=sha(__file__), classes_sha256=sha(out/'classes.txt')))

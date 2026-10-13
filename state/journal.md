@@ -1,3 +1,15 @@
+## 2026-10-13 — 个人滚轮换枪三项失败，菜单截图保留
+
+- b3-suite-179/personal/dae2fb8d1f42完整主79/1加74/2：滚轮选择面板未保持可见、装备未回到LMG；保存/独立背包/技能/检查点其他项通过。personal-confirmed.png显示加入侧角色面板仍打开；原生InputSource.localSelector本就要求菜单关闭，暂未确定面板由何路径打开，不能先认定生产缺陷或夹具原因。
+- 隔离诊断源增加PersonalProbe菜单状态、滚轮/确认时的玩家控制状态，以及B入口的窗口RESIZE日志；不主动关菜单、不改变断言或179生产源码。原生World.resizeScreen与onDeactivate会调用pip.onoff(11)，只是待核对线索，不当此次实际原因。
+- 后续grabs、enemy-grabs（14阶段244项）、throw、vectors完整通过；完整套件继续guns。仍需定位movement/personal，补测休眠friendly-melee，不可交付为全绿。
+
+## 2026-10-13 — 179出现真实移动预显示失败，先准备隔离诊断
+
+- b3-suite-179/movement/ed77dbe5a9a7完整结束：主73/0、加73/1。主侧152次加速/反转/刹车与原生计算完全一致、实际开火通过，但加入侧applications=0/moving=0/maxLead=0；预显示从未应用。这不是休眠超时，原因未定，不能交付为通过。
+- 构建工具新增显式build/ab诊断源码入口，已准备movement-diagnostic-source-179，只给MovementPrediction各拒绝条件计数，并在MovementProbe末尾输出；B179生产源码、运行器和旧证据不变。当前完整套件继续；结束后才编译/运行诊断，避免额外负载。门槛未放宽。
+- 完整门禁另仍欠休眠中断的friendly-melee补测、抖动、普通无驱动启动。b3-playable-179只是未验收目录，不交付或覆盖A22。
+
 ## 2026-10-13 — 同输入补测审计与独立启动目录准备
 
 - audit_suite选择器9项正/负检查通过：未完成、不同构建/脚本/配置、错标场景不能放行，原失败回执不被写入。只验证证据工具，不是新增玩法实测。
