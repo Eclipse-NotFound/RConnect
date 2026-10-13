@@ -1,6 +1,6 @@
 # RConnect —— 开发记忆入口
 
-> **2026-10-13 当前停点**：B190已有27/44类5176项完整通过。原第27组friendly-melee启动遇系统内存耗尽，现场保留；相同输入补测202/0。exec36295正在b3-suite-190-continuation-01接续余17类，外部只读内存记录位于memory-observation-190；审计新增显式分段收集、17项证据选择检查通过。安装A22不变，B未交付。
+> **2026-10-13 当前停点**：B190已有35/44类6534项完整通过。原第27组friendly-melee启动遇系统内存耗尽，现场保留；相同输入补测202/0。exec36295正在b3-suite-190-continuation-01接续友伤等余9类，外部只读内存记录位于memory-observation-190；审计新增显式分段收集、17项证据选择检查通过。安装A22不变，B未交付。
 
 ## 1. 模组与职责
 
@@ -51,7 +51,7 @@ RConnect是Remains 1.02双人合作模组。用户要求保留A旧架构，同�
 
 ## 6. 直接接续顺序
 
-1. 原exec78429已停止；exec36295为内存观察脚本，接续b3-suite-190-continuation-01，friendly-melee202/0，继续native-gun起余17类。原26绿与启动失败、同秒2004事件保留。audit_suite新增--continuation-suite严格核对原计划剩余顺序、失败重跑、相同字节/参数和清理，原suite.complete保持false。观察脚本不改测试时序/优先级，源在build/ab/memory-observation-190/observe.py，日志同目录。进度核对每行runner_exit/failed/DONE。
+1. 原exec78429已停止；exec36295为内存观察脚本，接续b3-suite-190-continuation-01，已完成friendly-melee202、native-gun158、两种退出157/156、普通/特殊时停各169、旅程168、角度196、暂停185，继续friendly起余9类。原26绿与启动失败、同秒2004事件保留。audit_suite新增--continuation-suite严格核对原计划剩余顺序、失败重跑、相同字节/参数和清理，原suite.complete保持false。观察脚本不改测试时序/优先级，源在build/ab/memory-observation-190/observe.py，日志同目录。进度核对每行runner_exit/failed/DONE。
 2. 181诊断证据保留：movement确证重复RESIZE后Pip打开、预显示unsafe-anchor；hud/pause-holders远端额外Pip持有暂停。personal诊断自身因装备切换时currentWeapon暂空而#1009，不算生产新错误；原179 personal失败已由182完整复验通过。若182失败据真实证据修复；若全过继续下列门禁。
 3. 实跑有序回环抖动（--jitter-ms 0,20,80,10,40），继续内存/流畅度证据。严格对照未有结论则明确保留。
 4. 完整audit_suite加逻辑/默认/压力等精确输入审计；audit_checkpoint已拒绝原始error日志。单组输入预检b3-input-check-179已通过：当前源码/完整外部接口匹配、逻辑74/0、默认两组各34/0；不等于整套验收。
