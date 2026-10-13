@@ -1,3 +1,8 @@
+## 2026-10-13 — B190三类有序延迟通过，独立玩家目录已准备
+
+- exec8418 / b3-additional-190：motion169/0，回执ef0259f3d85be61524064cc3b0c6227f352353cf7aaac1c8a7d7fde61a36b3b5；pause-cycles185/0，回执8ccf4bcc360e92a502edcbd878e4a39ffe0d3af72bfad5040db4c250927c33c4；time-control169/0，回执6882f514d10eca8e9d03cef758c127717be3172a4b478a2fc54e722b5747ffd1。统一0/20/80/10/40ms本机有序relay，不改包或外网；双侧DONE、保护/清理/归档通过。继续native-gun延迟及600秒80敌人双侧持续开火。
+- 同一冻结六件套已prepare_playable到b3-playable-190，probe=false/autoGame=false，两份稳定B角色独立于A；仅准备、尚未启动，未交付。普通启动待压力后用全新AppID检查。
+
 ## 2026-10-13 — B190核心44类8092项完整通过
 
 - 第二接续补过ownership168，回执7e8802914d2ec8f5d33802dac34d0e9dd7cea6806e0b07a78bcb37dbc537d2fb；split-rooms186，回执1f4003873c8f951b5f4f2086d6b4635612722bf737c7f3d13da24b650d084eca。双方DONE、无FAIL/FATAL，保护/清理及归档通过，exec64765结束。
