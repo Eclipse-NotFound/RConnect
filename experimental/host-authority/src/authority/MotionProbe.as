@@ -14,6 +14,7 @@ package authority {
       private var pauseStage:int=0,pauseAt:int=0,freezeTick:uint=0,freezeDrops:Array;
       private var pausedDisplay:Object,pausedSamples:int=0,pausedChanged:Boolean=false;
       private var secondContainer:Object;
+      private var selectedDrop:Boolean=false,secondCreatedAt:int=-1;
       public function MotionProbe(a:NativeAccess,h:Boolean){super(a,h);}
       override public function message(v:Object):void {
          if(host && v.type=="motion-ready")peerReady=v.phase;
@@ -39,6 +40,10 @@ package authority {
          }
          if(phase==4 && !host && tick>=18 && tick<60)frame.buttons=Commands.ACTION;
          if(phase==4 && !host && tick>=110 && tick<145){frame.aimX=670;frame.buttons=Commands.ACTION;}
+         // Native loot has cursor priority over a container. The first press
+         // may collect a resting drop from the previous opening; holding it
+         // does not become a new container action after the drop moves away.
+         if(phase==4 && !host && tick>=155 && tick<190){frame.aimX=670;frame.buttons=Commands.ACTION;}
          return frame;
       }
       private function glow(clip:DisplayObject):Object {
@@ -57,6 +62,7 @@ package authority {
             if(s!=null)items.push(s);
             if(session.actors[phase%2].unit.teleObj===target){++heldCount;minX=Math.min(minX,target.X);maxX=Math.max(maxX,target.X);}
          }else {
+            if(NativeAccess.get(session.actors[1].interacting,"item")!=null)selectedDrop=true;
             var o:Object=session.actors[1].unit.loc.firstObj;
             while(o!=null){if(NativeAccess.get(o,"item")!=null && o.item.id=="kofe"){s=item(o,session,"drop");if(s!=null){items.push(s);++dropCount;}}o=o.nobj;}
          }
@@ -159,6 +165,7 @@ package authority {
                access.scope.run(session.actors[1].context,function():void {
                   secondContainer=new Box(Room,"case",670,fy,<obj cont="custom" lock="0" mine="0"><item id="kofe" kol="9"/></obj>,null);
                   Room.addObj(secondContainer);Room.objs.push(secondContainer);secondContainer.addVisual();secondContainer.inter.setAct("lock",0);
+                  secondCreatedAt=session.runtime.tick-begin;
                });
             }
             if(pauseStage==0) {
@@ -187,7 +194,9 @@ package authority {
                   "new native press releases the target and ends its held state phase "+phase);
             }else {
                check(container.inter.cont=="empty" && dropCount>40,"join's actual container action produces native falling drops",{samples:dropCount});
-               check(secondContainer!=null && secondContainer.inter.cont=="empty","joining player opens the second native container for independent falling-loot samples");
+               check(secondContainer!=null && secondContainer.inter.cont=="empty","joining player opens the second native container for independent falling-loot samples",
+                  {createdAt:secondCreatedAt,selectedDrop:selectedDrop,container:secondContainer==null?null:secondContainer.inter.cont,
+                     x:secondContainer==null?null:secondContainer.X,y:secondContainer==null?null:secondContainer.Y});
                check(pauseStage==3 && !session.pause.paused,"falling-loot SATS round trip completes without trapping the host in pause");
             }
             session.link.send({type:"motion-end",tick:session.runtime.tick});
