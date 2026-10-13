@@ -9,9 +9,7 @@
       "probes": [
         "motion"
       ],
-      "gaps": [
-        "延迟抖动实测"
-      ]
+      "gaps": []
     },
     {
       "legacy": "TelekinesisTestDoc",
@@ -44,7 +42,6 @@
         "msw-lifecycle"
       ],
       "gaps": [
-        "MSW独立B接口已授权并实现；113/009、116/010分项通过，最终统一字节仍需回归",
         "真实锁定提示的最终显示像素"
       ]
     },
@@ -67,9 +64,7 @@
         "sats",
         "pause-cycles"
       ],
-      "gaps": [
-        "162与166回放SATS图像/矩阵比对全过，完整原生推进后才发布；最终同字节回归"
-      ]
+      "gaps": []
     },
     {
       "legacy": "CoopPauseTestDoc",
@@ -81,9 +76,7 @@
         "hud",
         "dialogue"
       ],
-      "gaps": [
-        "166两轮普通枪和两轮特殊武器共享时停/暂停/原生回放分别169/0；最终同字节回归"
-      ]
+      "gaps": []
     },
     {
       "legacy": "RoomCooperationTestDoc",
@@ -119,9 +112,7 @@
         "friendly",
         "enemies"
       ],
-      "gaps": [
-        "153十四阶段敌人真实攻击和加入侧LMG命中已通过；最终同字节回归"
-      ]
+      "gaps": []
     },
     {
       "legacy": "AnimationGapsTestDoc",
@@ -131,7 +122,7 @@
         "guns"
       ],
       "gaps": [
-        "122敌人显示分项通过，最终统一字节仍需回归；身体/武器/护盾/隐身/死亡不能替代全部敌人覆盖"
+        "全部敌人类型与状态组合"
       ]
     },
     {
@@ -154,9 +145,7 @@
         "vectors",
         "enemies"
       ],
-      "gaps": [
-        "149真实RV原生采样与遮罩恢复通过；最终同字节回归"
-      ]
+      "gaps": []
     },
     {
       "legacy": "HudTestDoc",
@@ -175,7 +164,7 @@
         "motion"
       ],
       "gaps": [
-        "122快速念力与容器掉落主64/0、加71/0；延迟抖动与长时间组合仍需实测"
+        "快速念力与容器掉落的长时间组合"
       ]
     },
     {
@@ -194,9 +183,7 @@
         "pause-cycles",
         "time-control"
       ],
-      "gaps": [
-        "150/154掉落中SATS通过，162/166时停回放暂停衔接已实测通过；最终同字节回归"
-      ]
+      "gaps": []
     },
     {
       "legacy": "TargetLifecycleTestDoc",
@@ -235,9 +222,7 @@
         "personal",
         "body-effects"
       ],
-      "gaps": [
-        "148身体28阶段通过；旧瞬时腿部差异定位为未完成时间轴采样，最终同字节回归"
-      ]
+      "gaps": []
     },
     {
       "legacy": "FriendlyFireTestDoc",
@@ -247,9 +232,7 @@
         "friendly-melee",
         "friendly-magic"
       ],
-      "gaps": [
-        "149五类近战/六种魔法友伤通过；最终同字节伤害数字与位置/颜色回归"
-      ]
+      "gaps": []
     },
     {
       "legacy": "ExplosiveVisualTestDoc",
@@ -338,7 +321,6 @@
         "terrain"
       ],
       "gaps": [
-        "128墙面主74/0加80/0；134不再因耐久变化整房重画，需新字节复验",
         "真实分房重访的墙面印记",
         "血迹和魔法墙的独立像素对照"
       ]
@@ -349,9 +331,7 @@
       "probes": [
         "teleport"
       ],
-      "gaps": [
-        "158二十二阶段主136/0加132/0；最终统一字节回归"
-      ]
+      "gaps": []
     },
     {
       "legacy": "PeerThrowDamageTestDoc",
@@ -368,7 +348,7 @@
         "body-effects"
       ],
       "gaps": [
-        "148身体28阶段通过；敌人完整状态组合与最终同字节回归"
+        "敌人完整状态组合"
       ]
     },
     {
@@ -377,9 +357,7 @@
       "probes": [
         "party"
       ],
-      "gaps": [
-        "152跟随死亡/暂停/复活组合通过；最终同字节回归"
-      ]
+      "gaps": []
     },
     {
       "legacy": "FollowNetworkTestDoc",
@@ -407,9 +385,7 @@
         "split-rooms",
         "time-journey"
       ],
-      "gaps": [
-        "162时停中的分房击杀、背景门、死亡复活及回放后换图163/0；166新增真实地雷结算通过，但新增矿后换图夹具被队友挡住，168恢复分房射线待复验"
-      ]
+      "gaps": []
     },
     {
       "legacy": "SpecialWeaponTestDoc",
@@ -428,7 +404,7 @@
         "cooperation"
       ],
       "gaps": [
-        "143强化门两态及99逐帧样本通过；其它门型及最终同字节回归"
+        "其它门型"
       ]
     },
     {
@@ -473,9 +449,7 @@
         "vision",
         "terrain"
       ],
-      "gaps": [
-        "149本机RV可见性隔离/墙后目标真实显示通过；最终同字节回归"
-      ]
+      "gaps": []
     },
     {
       "legacy": "ProjectileLoadTestDoc",
@@ -485,8 +459,8 @@
       ],
       "gaps": [
         "严格同条件A/B比较",
-        "长局内存与队列曲线",
-        "现有约11步每秒未达流畅要求"
+        "十分钟持续开火已验证；更长会话未验证",
+        "密集场景约11.8/18.0显示帧仍未达流畅要求"
       ]
     },
     {
@@ -495,9 +469,7 @@
       "probes": [
         "native-gun"
       ],
-      "gaps": [
-        "132 AIR契约通过：二进制像素、共享别名、对象分组差分、历史确认不可变；最终统一字节待回归"
-      ]
+      "gaps": []
     },
     {
       "legacy": "VisionApiTestDoc",
@@ -516,7 +488,8 @@
         "split-rooms"
       ],
       "gaps": [
-        "默认原始/019＋TDFC004/RV003/MSW011/Sandy001未attach各34/0；全部测试同一冻结版本审计尚未完成"
+        "严格同条件A/B性能比较",
+        "普通玩家输入完整游玩，真人鼠标与中文输入法"
       ]
     },
     {
@@ -537,9 +510,7 @@
         "msw-sweep",
         "msw-lifecycle"
       ],
-      "gaps": [
-        "已授权独立接口，113/009及116/010分项通过；118/MSW010快速扫眼负控失败，118/MSW011双方快扫通过；最终统一字节待回归"
-      ]
+      "gaps": []
     },
     {
       "legacy": "MapGenerationTestDoc",
@@ -563,11 +534,32 @@
   ],
   "evidence_review": {
     "date": "2026-10-13",
-    "basis": "B179 archived runtime and exact probe source; B182 full frozen suite is still running",
+    "basis": "B190 final exact-byte audit: 44 categories / 8092 checks; 50 of 51 legacy entries map to completed core probes (sats uses the same SatsProbe as pause-cycles). This is coverage of the named fixtures, not every gameplay combination.",
+    "source_id": "12d33b423944b9f9e78df9caf467a232d7364b408b1cd5bde2c6e6f04a17fdec",
+    "audit": "build/ab/b3-suite-audit-190-final/suite-audit.json",
+    "jitter": [
+      "build/ab/b3-msw-pointer-jitter-190",
+      "build/ab/b3-additional-190/motion-jitter",
+      "build/ab/b3-additional-190/pause-jitter",
+      "build/ab/b3-additional-190/time-jitter",
+      "build/ab/b3-additional-190/gun-jitter"
+    ],
     "clarifications": [
-      "EnemyGrabsProbe covers local menu, shared pause, target death and re-grab; disconnect remains distinct",
-      "WeaponProbe guns covers mlau/bel/glau/aglau native heavy projectiles; water/expiry combinations remain separate",
-      "Removing an obsolete coverage gap does not certify B182; final candidate receipts and audit are still required"
-    ]
+      "Original two environment-interrupted attempts remain immutable and selected successful same-input continuations are explicit.",
+      "EnemyGrabsProbe covers local menu, shared pause, target death and re-grab; disconnect remains distinct.",
+      "WeaponProbe guns covers mlau/bel/glau/aglau native heavy projectiles; water and natural-expiry combinations remain distinct.",
+      "The old 600-second stress run stopped shooting after roughly 4.7 minutes. It is mixed enemy load, not proof of sustained fire. A separate explicit driver reuses unchanged B190 bytes.",
+      "Removing final-candidate gaps does not certify all possible combinations, fluid dense scenes, ordinary human input, internet play or reconnect."
+    ],
+    "continuous_stress": {
+      "path": "build/ab/b3-continuous-stress-600s-190/run.json",
+      "checks": 168,
+      "native_enemies": 80,
+      "seconds": 600,
+      "shots_and_rounds": [
+        2658,
+        2610
+      ]
+    }
   }
 }

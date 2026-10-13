@@ -46,14 +46,70 @@ class RuntimeFiles:
         require(self.verified_blobs[cache_key]==entry['size'],'Archive input size differs: '+name)
 
 
+def stress_drivers(paths):
+    """External stimulus is a separate, explicitly selected frozen test input."""
+    result={}
+    for path in paths:
+        directory=inside_build(ROOT/path);manifest=read(directory/'build-input.json')
+        require(manifest.get('experimental_only') is True
+                and manifest.get('family')=='rconnect-external-stress-driver-v1','Invalid external stress driver')
+        verify_files(directory,manifest['sources']);verify_files(directory,manifest['files'])
+        require(sha(directory/'ProbeExterns.swc')==manifest['extern_sha256'],'Stress extern bytes changed')
+        digest=sha(directory/'build-input.json')
+        require(digest not in result,'Duplicate external stress driver')
+        result[digest]=(directory,manifest)
+    return result
+
+
+def check_stress_fixture(receipt,directory,drivers,source_id,capability):
+    fixture=receipt.get('stress_driver')
+    if fixture is None:
+        require(not any(v['config'].get('stressExternal') for v in receipt['roles'].values()),
+                'Unrecorded external stress stimulus')
+        return
+    selected=drivers.get(fixture.get('manifest_sha256'))
+    require(selected is not None,'Run used an unselected external stress driver')
+    driver,manifest=selected
+    require(fixture.get('source_id')==manifest['source_id'] and fixture.get('files')==manifest['files']
+            and fixture.get('loads_original_B') is True,'Stress driver receipt differs from selected input')
+    require(sha(directory/'tools/stress-driver-build-input.json')==sha(driver/'build-input.json'),
+            'Captured stress driver manifest changed')
+    for role,value in receipt['roles'].items():
+        config=value['config']
+        require(config.get('scenario')=='stress' and config.get('stressExternal') is True,
+                'External stress driver used outside its declared fixture')
+        events=records(directory/(role+'.RConnectStressDriver.log'))
+        installed=[x for x in events if x['kind']=='installed']
+        require(len(installed)==1 and not any(x['kind']=='error' for x in events),
+                'External driver did not install exactly once without errors')
+        marker=installed[0]['data']
+        require(marker.get('source')==manifest['source_id'] and marker.get('bSource')==source_id
+                and marker.get('capability')==capability and marker.get('originalBBytes') is True,
+                'External driver attached to different B inputs')
+        logs=records(directory/(role+'.log'))
+        setup=[x['data'] for x in logs if x['kind']=='continuous-stress-fixture']
+        require(len(setup)==1 and setup[0].get('source')==manifest['source_id']
+                and setup[0].get('seconds')==config.get('stressSeconds'),'Continuous fixture declaration differs')
+        samples=[x['data'] for x in logs if x['kind']=='stress-measurements']
+        require(len(samples)==1,'Continuous stress measurements missing')
+        seconds=config['stressSeconds'];windows=samples[0].get('shootingWindows',[])
+        require(samples[0]['elapsedMs']>=seconds*1000 and len(windows)==(seconds+59)//60,
+                'Continuous shooting observations did not cover the declared duration')
+        require(all(v and len(v['first'])==2 and len(v['last'])==2
+                    and all(v['last'][i]>v['first'][i] for i in range(2)) for v in windows),
+                'Either player stopped shooting during a measured minute')
+
+
 def main():
     ap=argparse.ArgumentParser()
     for name in ('candidate','native','tdfc','logic','output'):ap.add_argument('--'+name,required=True)
     for name in ('rv','msw','sandy'):ap.add_argument('--'+name)
     ap.add_argument('--run',action='append',required=True)
     ap.add_argument('--default',action='append',default=[],dest='defaults')
+    ap.add_argument('--stress-driver',action='append',default=[])
     ap.add_argument('--scope',choices=('single-room','dual-room'),default='single-room')
     a=ap.parse_args()
+    drivers=stress_drivers(a.stress_driver)
     candidate,native,tdfc,logic,out=[inside_build(ROOT/p) for p in (a.candidate,a.native,a.tdfc,a.logic,a.output)]
     require(not out.exists(),'Keep each audit immutable')
     bm,nm,tm=read(candidate/'build-input.json'),read(native/'native-input.json'),read(tdfc/'build-input.json')
@@ -81,6 +137,9 @@ def main():
         source_id=bm['source_id'],current_sources_match=True,runs=[],defaults=[],script_sha256=sha(__file__))
     evidence['extensions']={key:dict(candidate_sha256=m['candidate_sha256'],
         manifest_sha256=sha(d/'build-input.json')) for key,(d,m) in extensions.items()}
+    evidence['stress_drivers']=[dict(path=str(d.relative_to(ROOT)),manifest_sha256=digest,
+                                    source_id=m['source_id'],files=m['files'])
+                               for digest,(d,m) in drivers.items()]
     verified_blobs={}
     for path in a.run:
         directory=inside_build(ROOT/path);r=read(directory/'run.json')
@@ -92,6 +151,7 @@ def main():
                     'Run used different or unaudited '+key+' inputs: '+path)
         require(r['complete'] and r['installation_unchanged'] and r['owned_processes_exited'],'Incomplete or unclean run: '+path)
         require(r['script_sha256']==sha(directory/'tools/run_probe.py'),'Run driver changed: '+path)
+        check_stress_fixture(r,directory,drivers,bm['source_id'],nm['capability'])
         fixture=r.get('network_fixture')
         if fixture is not None:
             result=fixture.get('result',{})

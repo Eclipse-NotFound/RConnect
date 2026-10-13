@@ -44,9 +44,17 @@ def main():
     ap.add_argument('--rv', help='Optional frozen independent RV authority-v1 build')
     ap.add_argument('--msw', help='Optional frozen independent MSW authority-v1 build')
     ap.add_argument('--sandy', help='Optional frozen independent Sandevistan authority-v1 build')
+    ap.add_argument('--stress-driver', help='Explicit external continuous-shooting test fixture, stress only')
     ap.add_argument('--jitter-ms', help='Isolated loopback relay delay schedule, comma-separated milliseconds in 0..450')
     ap.add_argument('--stress-seconds', type=int, default=20, help='Measured dense-scene duration, 20..1800 seconds, stress scenario only')
     args = ap.parse_args()
+    driver, driver_build = None, None
+    if args.stress_driver:
+        if args.scenario != 'stress':ap.error('--stress-driver requires stress')
+        driver=inside_build(ROOT/args.stress_driver);driver_build=read(driver/'build-input.json')
+        if driver_build.get('family')!='rconnect-external-stress-driver-v1' or driver_build.get('experimental_only') is not True:
+            raise ValueError('Not an explicit isolated stress driver')
+        verify_files(driver,driver_build['sources']);verify_files(driver,driver_build['files'])
     if args.field_profile and args.scenario != 'native-gun':
         ap.error('--field-profile requires native-gun')
     if not 20 <= args.stress_seconds <= 1800 or args.scenario != 'stress' and args.stress_seconds != 20:
@@ -131,6 +139,10 @@ def main():
     if sandy:
         receipt['sandy_manifest_sha256'] = sha(sandy/'build-input.json')
         receipt['sandy_sha256'] = sandy_build['candidate_sha256']
+    if driver:
+        receipt['stress_driver'] = dict(path=str(driver.relative_to(ROOT)), manifest_sha256=sha(driver/'build-input.json'),
+                                        source_id=driver_build['source_id'], files=driver_build['files'], loads_original_B=True)
+        shutil.copy2(driver/'build-input.json',out/'tools/stress-driver-build-input.json')
     if relay:
         receipt['network_fixture'] = dict(host_port=port, join_port=relay.port, delays_ms=relay.delays,
                                          script_sha256=sha(Path(__file__).parent/'jitter_proxy.py'))
@@ -144,6 +156,19 @@ def main():
             configuration['fieldProfile'] = True
         if args.scenario == 'stress':
             configuration['stressSeconds'] = args.stress_seconds
+        if driver:
+            configuration['stressExternal'] = True
+            dest=directory/'mods/RConnectStressDriver/release';dest.mkdir(parents=True)
+            for name in driver_build['files']:shutil.copy2(driver/name,dest/name)
+            manifest=directory/'mods/loader-manifest.txt'
+            rows=[]
+            for line in manifest.read_text(encoding='utf-8-sig').splitlines():
+                parts=line.split('|')
+                if len(parts)==5 and parts[1]=='RConnectMod':
+                    parts[2]='0'  # The external fixture loads the same B bytes once into its known domain.
+                    line='|'.join(parts)
+                rows.append(line)
+            manifest.write_text('\n'.join(rows).rstrip()+'\nRConnectStressDriver|RConnectStressDriverMod|1|0|0\n',encoding='utf-8')
         if relay and role == 'join':
             configuration['port'] = relay.port
         configuration['sharedPause'] = args.scenario in ('sats','pause-cycles')
@@ -188,6 +213,10 @@ def main():
                 expected[key] = weapons_build['candidate_sha256']
             elif sandy and key.lower() == 'mods/sandevistan/release/sandevistanmod.swf':
                 expected[key] = sandy_build['candidate_sha256']
+            elif driver and key.lower() == 'mods/loader-manifest.txt':
+                expected[key] = sha(directory/key)
+        if driver:
+            for name,digest in driver_build['files'].items():expected['mods/RConnectStressDriver/release/'+name]=digest
         verify_files(directory, expected)
         receipt['roles'][role] = dict(appid=appid, descriptor_sha256=sha(desc), config=configuration, config_sha256=sha(cfg), files=expected)
         launches.append((role,directory,desc,storage/'RConnect-B.log'))
@@ -204,6 +233,11 @@ def main():
                     if any(x['kind']=='FATAL' for x in events):
                         raise RuntimeError('Host failed before listening')
                     if any(x['kind']=='listening' for x in events):
+                        if driver:
+                            installed_driver=records(launches[0][3].parent/'RConnectStressDriver.log')
+                            if not any(x['kind']=='installed' and x['data'].get('source')==driver_build['source_id']
+                                       and x['data'].get('bSource')==build['source_id'] for x in installed_driver):
+                                raise RuntimeError('External fixture did not attach to the pinned B domain before networking')
                         break
                     if processes[0].poll() is not None:
                         raise RuntimeError('Host exited before listening')
@@ -249,7 +283,7 @@ def main():
         for role,directory,desc,log in launches:
             if log.is_file():shutil.copy2(log,out/(role+'.log'))
             auxiliary={}
-            for name in ('tdfc.log','RVision.log','ModSettings.log','WallBlend.log','LootEditor.receipt.json','sandy_modlog.txt'):
+            for name in ('tdfc.log','RVision.log','ModSettings.log','WallBlend.log','LootEditor.receipt.json','sandy_modlog.txt','RConnectStressDriver.log'):
                 source=log.parent/name
                 if source.is_file():
                     target=out/(role+'.'+name)

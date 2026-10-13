@@ -1,0 +1,1 @@
+package authority { public class Timing { public static var enabled:Boolean; public static function reset():void{} public static function record(name:String,ms:Number):void{} public static function snapshot():Object{return {};} } }

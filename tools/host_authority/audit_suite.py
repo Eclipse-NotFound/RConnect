@@ -133,6 +133,8 @@ def main():
     for name in ('candidate', 'native', 'tdfc', 'rv', 'msw', 'sandy', 'logic', 'suite', 'output'):
         ap.add_argument('--'+name, required=True)
     ap.add_argument('--extra-run', action='append', default=[])
+    ap.add_argument('--stress-driver', action='append', default=[],
+                    help='Explicit frozen external continuous-fire fixture; never inferred from a receipt')
     ap.add_argument('--rerun-suite', action='append', default=[],
                     help='Explicit successful same-input reruns; original failures remain recorded')
     ap.add_argument('--continuation-suite', action='append', default=[],
@@ -151,6 +153,8 @@ def main():
                '--scope', 'dual-room', '--output', str((out/'frozen-inputs').relative_to(ROOT))]
     for name in ('candidate', 'native', 'tdfc', 'rv', 'msw', 'sandy', 'logic'):
         command.extend(['--'+name, getattr(args, name)])
+    for driver in args.stress_driver:
+        command.extend(['--stress-driver', driver])
     for entry in selected:
         command.extend(['--run', str(entry['path'].relative_to(ROOT))])
     for run in args.extra_run:
@@ -170,6 +174,7 @@ def main():
         script_sha256=sha(__file__), candidate_sha256=audited['candidate_sha256'], source_id=audited['source_id'],
         core_passed=sum(r['roles'][role]['passed'] for r in rows for role in ('host', 'join')),
         core_failed=0, extra_runs=len(args.extra_run), defaults=len(args.defaults),
+        stress_drivers=audited['stress_drivers'],
         limitations=['No human mouse or IME validation', 'No public internet, reconnect, third player or other game version',
                      'Performance is reported separately; passing functional assertions does not mean a fluid dense scene',
                      'The 51 legacy mapping retains specific untested combinations'])

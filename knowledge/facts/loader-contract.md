@@ -18,7 +18,7 @@ evidence:
     summary: "对游戏目录中三份补丁后 SWF 反编译（ffdec 26.2.1）；补丁管线在副本上实测，
       双标记校验通过，1016 个类无增减"
 
-date-updated: 2026-08-15
+date-updated: 2026-10-13
 ---
 
 # 补丁后游戏 SWF 的模组加载契约
@@ -42,10 +42,12 @@ date-updated: 2026-08-15
 1. 路径硬编码：`app:/mods/Sandevistan/release/SandevistanMod.swf`（app:/ = 
    游戏根目录，即 application.xml 所在目录）。
 2. `new Loader()` + `new LoaderContext(false)` —— **未指定 applicationDomain，
-   模组加载进当前（同一）ApplicationDomain**（本说法经 MoreSkills&Weapons 核实，
-   见 shared-knowledge/knowledge-validation/discoveries/
-   mod-loader-patch-structure.md）。internal/private 可见性按 ABC 块（SWF）
-   强制，同域下模组仍访问不到游戏 internal 成员；public 动态访问与
+   模组进入加载者域下的新子域，各模块为兄弟域，游戏为共同父域**。
+   2026-10-13核对更正此处遗留的“同域”说法：公共库已于2026-08-29由
+   兄弟模块类互查 #1065 的实测推翻旧推断，见
+   shared-knowledge/knowledge-validation/facts/mod-loader-patch-structure.md。
+   B190外置夹具实测再次符合子域限制，不从HUD.loaderInfo猜模块域。
+   internal/private 可见性按 ABC 块（SWF）强制，模组仍访问不到游戏 internal 成员；public 动态访问与
    "不可 hook 游戏原型"等约束不变。
 3. COMPLETE 后：`loaderInfo.applicationDomain.getDefinition("SandevistanMod")`
    → 拿到 Class → `cls.init(this)`。
