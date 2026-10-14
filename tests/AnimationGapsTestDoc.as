@@ -29,7 +29,9 @@ package {
       private var ready:Boolean=false,localDone:Boolean=false,peerDone:Boolean=false,deathAt:int=0;
       private var paused:Boolean=false,resumed:Boolean=false,pauseFrames:Object={},pauseSamples:int=0,weaponFrames:int=0,weaponMotion:int=0,weaponPrevious:Number=NaN,weaponOffset:Boolean=false;
       private var stoppedFixture:Object,fixturePose:Object,fixtureStopped:Boolean=true,fixtureFrames:Object={};
-      public function AnimationGapsTestDoc() {
+      private var waitLand:String;
+      public function AnimationGapsTestDoc(expectedLand:String="") {
+         waitLand=expectedLand;
          var app:String=NativeApplication.nativeApplication.applicationID;
          if(app.indexOf("pfe-rconnect-coop-")!=0 && app.indexOf("pfe-modsettings-rconnect-coop-")!=0)return;
          host=app.indexOf("-host-")>=0;
@@ -55,7 +57,8 @@ package {
          mod=RConnectMod.instance;if(mod==null || mod.game==null || mod.session==null)return;
          if(mod.game.gg!=null){mod.game.gg.invulner=true;mod.game.gg.hp=mod.game.gg.maxhp;}
          if(host)for each(var peer:Object in mod.session.peers)watch(peer.link as TcpLink);else watch(mod.session.link);
-         if(phase=="boot" && mod.game.gg!=null && mod.session.rooms.ready && !mod.session.rooms.busy && !mod.game.isTransitioning() && !host) {
+         if(phase=="boot" && mod.game.gg!=null && mod.session.rooms.ready && !mod.session.rooms.busy && !mod.game.isTransitioning() && !host
+            && (waitLand=="" || String(mod.game.readWorldInfo().curLandId)==waitLand)) {
             send("ready");phase="waiting";at=getTimer();
          }
          if(phase!="done" && at>0 && getTimer()-at>35000){check(false,"timeout "+phase);send("done");finish();}

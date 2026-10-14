@@ -20,7 +20,7 @@ def main():
     ap.add_argument('--output',type=Path,required=True)
     ap.add_argument('--source-root',type=Path,help='Optional frozen production source directory for external declarations')
     ap.add_argument('--entry',default='EffectsTerrainTestDoc',choices=[
-        'NativeMapGenerationTestDoc','MapGenerationTestDoc','FriendlyHazardsTestDoc','MineSightTestDoc','ArchitectureTestDoc','EffectsTerrainTestDoc','TurretTestDoc','PresentationTestDoc','SmoothPresentationTestDoc',
+        'A22SmartPeerTestDoc','A22CadenceTestDoc','A22AnimationTestDoc','A22BehaviorTestDoc','NativeMapGenerationTestDoc','MapGenerationTestDoc','FriendlyHazardsTestDoc','MineSightTestDoc','ArchitectureTestDoc','EffectsTerrainTestDoc','TurretTestDoc','PresentationTestDoc','SmoothPresentationTestDoc',
         'SmoothNetworkTestDoc','AppearanceTestDoc','CombatFeedbackTestDoc','CombatFeedbackNetworkTestDoc',
         'AnimationGapsTestDoc','RoomCooperationTestDoc','CoopTestDoc','SatsTestDoc','CombatStateTestDoc',
         'CombatNetworkTestDoc','GameplayGapTestDoc','GameplayNetworkTestDoc','ProjectileNetworkTestDoc',
@@ -53,7 +53,7 @@ def main():
             '-external-library-path+='+str(ROOT/'build/GameCombatStubs.swc'),
             '-include-classes=fe.Pt','-output='+str(clock_external)],check=True,env=env)
         test_externals=['-external-library-path+='+str(clock_external)]
-    if args.entry=='LightningSmartTestDoc':
+    if args.entry in ('LightningSmartTestDoc','A22SmartPeerTestDoc'):
         # Read the already-loaded sibling MSW domain through MainFE's native
         # loader registry; do not initialize a second copy of that mod.
         loader_external=out/'LoaderDeclarations.swc'

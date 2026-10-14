@@ -31,6 +31,26 @@ package {
          clock.time=1160;visual.tick(loc,12160);
          check(layer.numChildren==0,"native ending removes the projectile once");
          visual.reset();
+         // Rapid plasma changes its artwork while flying. Animation frame
+         // changes must not turn continuous translation back into a stair-step.
+         frames[1].f=2;frames[2].f=3;flight.end=1160;
+         visual.receive(owner,[{id:"quick",variant:0,stream:2,sampleTime:1120,events:[{seq:1,at:1000,flight:flight}]}],fixture,true,clock);
+         clock.time=1020;visual.tick(loc,13000);
+         check(layer.numChildren==1 && Math.abs(layer.getChildAt(0).x-100)<.01,
+            "animated flight frame change still interpolates position");
+         visual.reset();
+         flight.spring=2;
+         visual.receive(owner,[{id:"prism",variant:0,stream:3,sampleTime:1120,events:[{seq:1,at:1000,flight:flight}]}],fixture,true,clock);
+         clock.time=1020;visual.tick(loc,14000);
+         check(layer.numChildren==1 && Math.abs(layer.getChildAt(0).x-80)<.01,
+            "native beam geometry remains on its discrete sample");
+         visual.reset();
+         flight.spring=1;frames[1].sx=2;
+         visual.receive(owner,[{id:"lmg",variant:0,stream:4,sampleTime:1120,events:[{seq:1,at:1000,flight:flight}]}],fixture,true,clock);
+         clock.time=1020;visual.tick(loc,15000);
+         check(layer.numChildren==1 && Math.abs(layer.getChildAt(0).x-80)<.01,
+            "a native geometry change is not interpolated through");
+         visual.reset();
       }
    }
 }

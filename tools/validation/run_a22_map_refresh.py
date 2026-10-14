@@ -25,6 +25,11 @@ def main():
     ap.add_argument('--candidate', required=True)
     ap.add_argument('--entry', default='NativeMapGenerationTestDoc')
     ap.add_argument('--label')
+    ap.add_argument('--land')
+    ap.add_argument('--seconds',type=int,default=600)
+    ap.add_argument('--expected-version')
+    ap.add_argument('--frozen-runtime',action='store_true',help='Test an already frozen combination even when other developers changed the installation; still record and protect the installation observed at this run')
+    ap.add_argument('--msw-candidate',type=Path)
     args = ap.parse_args()
     out, bundle = [(ROOT/p).resolve() for p in (args.candidate,args.bundle)]
     assert out.parent == bundle.parent == ROOT/'build/m52'
@@ -49,9 +54,11 @@ def main():
         save(bundle/'inputs.json',dict(files=hashes,diagnostic_only=True,installation_modified=False))
         print('Frozen runtime files:',len(hashes));return
     frozen=read(bundle/'inputs.json')
+    installation_before={name:sha(GAME/name) if (GAME/name).is_file() else None for name in frozen['files']}
+    runtime_difference={n:dict(runtime=h,installed=installation_before[n]) for n,h in frozen['files'].items() if installation_before[n]!=h}
     for name,digest in frozen['files'].items():
         assert sha(bundle/'game'/name)==digest, name
-        assert sha(GAME/name)==digest, 'Installation changed before run: '+name
+        if not args.frozen_runtime: assert installation_before[name]==digest, 'Installation changed before run: '+name
     for name,digest in {**m['source'],**m['inputs']}.items(): assert sha(out/name)==digest,name
     control=args.mode=='control'
     binary=out/('control.swf' if control else 'RConnectMod.swf')
@@ -71,21 +78,32 @@ def main():
                 '--entry',args.entry,'--output',str(driver)],cwd=ROOT,stdout=stream,stderr=subprocess.STDOUT,check=True)
     command=[sys.executable,'-B','-X','utf8',str(ROOT/'tools/run_coop_regression.py'),
         '--candidate',str(binary),'--game-root',str(bundle/'game'),'--effects-driver',str(driver),
-        '--effects','--all-mods','--visible-windows','--seconds','600',
-        '--land','rbl' if args.entry=='NativeMapGenerationTestDoc' else 'random_mane',
-        '--expected-version','0.2.22-dev' if control else '0.2.22-map1']
+        '--effects','--all-mods','--visible-windows','--seconds',str(args.seconds),
+        '--land',args.land or ('rbl' if args.entry=='NativeMapGenerationTestDoc' else 'random_mane'),
+        '--expected-version',args.expected_version or ('0.2.22-dev' if control else '0.2.22-map1')]
     if not control: command+=['--game-candidate',str(out/'native/pfe.swf')]
+    msw_hash=None
+    if args.msw_candidate:
+        msw=args.msw_candidate.resolve()
+        assert msw.parent.parent==ROOT/'build/m52' and msw.name=='MoreSkillsWeaponsMod.swf'
+        msw_manifest=read(msw.parent/'prepared.json')
+        for name,digest in msw_manifest['source'].items():assert sha(msw.parent/name)==digest,name
+        msw_hash=sha(msw);assert msw_hash==msw_manifest['candidate_sha256']
+        command+=['--msw-candidate',str(msw)]
     inputs=dict(prepared=sha(out/'prepared.json'),runtime=sha(bundle/'inputs.json'),
-        runner=sha(ROOT/'tools/run_coop_regression.py'),script=sha(__file__),
+        runner=sha(ROOT/'tools/run_coop_regression.py'),script=sha(__file__),msw=msw_hash,
         driver={p.name:sha(p) for p in driver.glob('*.swf')})
-    save(out/(label+'-intent.json'),dict(command=command,inputs=inputs))
+    save(out/(label+'-intent.json'),dict(command=command,inputs=inputs,installation_before=installation_before,
+        runtime_matches_installation=not runtime_difference,runtime_difference=runtime_difference))
     print('RUN',label,flush=True)
     with log.open('w',encoding='utf-8') as stream:
         proc=subprocess.run(command,cwd=ROOT,stdout=stream,stderr=subprocess.STDOUT)
     output=log.read_text(encoding='utf-8',errors='replace')
     match=re.search(r'^OUTPUT .*?([0-9a-f]{10})\s*$',output,re.M)
     receipt=dict(entry=args.entry,control=control,exit=proc.returncode,inputs=inputs,run=match[1] if match else None,
-        installation_changes={n:dict(before=h,after=sha(GAME/n)) for n,h in frozen['files'].items() if sha(GAME/n)!=h})
+        runtime_matches_installation=not runtime_difference,runtime_difference=runtime_difference,
+        installation_changes={n:dict(before=h,after=sha(GAME/n) if (GAME/n).is_file() else None) for n,h in installation_before.items()
+            if (sha(GAME/n) if (GAME/n).is_file() else None)!=h})
     if match:
         folder=ROOT/'build/cooperation'/match[1]
         actual=read(folder/'run.json')
@@ -97,6 +115,8 @@ def main():
             for name,digest in actual['inputs'][role]['modules'].items():
                 name=name.replace('\\','/')
                 if name.lower().startswith('mods/rconnect/'):continue
+                if msw_hash and name.lower()=='mods/moreskills&weapons/release/moreskillsweaponsmod.swf':
+                    assert digest==msw_hash;continue
                 assert digest==frozen['files'][name],name
             lines=(folder/(role+'.log')).read_text(encoding='utf-8-sig')
             receipt[role]=dict(passed=len(re.findall(r'^COOP PASS ',lines,re.M)),failed=len(re.findall(r'^COOP FAIL ',lines,re.M)),
