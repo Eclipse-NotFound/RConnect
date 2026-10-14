@@ -4,11 +4,11 @@
 
 Explore the wasteland with a friend: see each other, chat, fight together, or split up across ordinary rooms on the same map.
 
-**[Download v0.2.8 — RConnect_v0.2.8.zip](https://github.com/Eclipse-NotFound/RConnect/releases/download/v0.2.8/RConnect_v0.2.8.zip)** · [Release notes / other versions](https://github.com/Eclipse-NotFound/RConnect/releases)
+**[Download v0.2.22-dev — RConnect_v0.2.22-dev.zip](https://github.com/Eclipse-NotFound/RConnect/releases/download/v0.2.22-dev/RConnect_v0.2.22-dev.zip)** · [Release notes / other versions](https://github.com/Eclipse-NotFound/RConnect/releases)
 
 Use the download link above, or open the release page, expand **Assets**, and select that filename. **Source code** and the green **Code → Download ZIP** button are development files, not the installable package.
 
-> **The download and development versions differ.** The public package is **0.2.8**, and the instructions below match it. Newer source records do not imply a newer download. The compact tabbed panel, Ctrl+Enter chat and shared menu/SATS pause are later features, not part of this package.
+> **A architecture, verified deployed build 0.2.22-dev.** This is the unchanged build deployed locally on 2026-10-09, now available on GitHub. It remains a prerelease: dense-combat performance and some historical edge cases are unresolved. B architecture and unfinished M51 changes are not included.
 
 ## Before you start
 
@@ -37,7 +37,7 @@ Check that this file exists: `mods/RConnect/release/RConnectMod.swf`. After load
 2. The host enters a nickname, keeps **127.0.0.1** and port **23456**, then clicks **Host**.
 3. The host finds their **IPv4 address** in Windows Settings → Network & Internet → properties for the connected network, and shares it with the other player (for example 192.168.1.10).
 4. The joining player enters a nickname, the **host’s IPv4 address**, and the same port **23456**, then clicks **Join**. 127.0.0.1 means your own computer; it cannot reach another computer.
-5. After connecting, look for your partner’s translucent character and name. Click the chat input, type, and press **Enter** to send.
+5. Expand the compact panel with **▼** and select the connection tab. After connecting, look for your partner and name. Press **Ctrl+Enter** to open chat, **Enter** to send, and **Esc** to close it.
 
 If Windows Firewall asks, allow the game on your trusted local network; the host must allow the selected port. You do not need to disable the firewall.
 
@@ -48,11 +48,21 @@ If Windows Firewall asks, allow the game on your trusted local network; the host
 - Empty rooms pause and retain progress during the session. This does not add a persistent save of every random-room battle; save characters normally before quitting.
 - Optional shared exploration can also work with RealisticVision’s local view.
 
+## Compact panel and local co-op
+
+The panel starts as a short status bar. Expand it for connection, chat, teammate and settings tabs. Drag the title to move it; adjust opacity from 30–100% in settings. F10 hides/shows it. The host can enable shared menu/SATS pause and friendly fire; each player controls whether a teammate may grab them and whether WASD resists the grab.
+
+For two windows on one PC, run `mods/RConnect/Start-Coop.bat`; both windows keep separate characters. See [local co-op details](docs/local-coop.md) (Chinese). The launcher keeps its own game processes responsive in the background and may increase power usage.
+
+## Validation and limits
+
+The unchanged SWF passed 38 local two-instance groups (4,760 checks) and normal startup on 2026-10-09. This upload verifies the original artifact and matching source; it is not a new test of every current third-party mod combination. Dense combat can still stutter, and hidden-room control loss and mine interaction edge cases remain under investigation. See [deployment evidence](state/deployment-m50-2026-10-09.md).
+
 ## Connection problems, updates and removal
 
 Check in this order: matching versions and a full restart → host clicked Host first → joiner entered the host’s LAN address → matching ports → host firewall permits the connection. Test on the same LAN first; a failed connection does not mean you need to reinstall the game.
 
-For updates, both players save and exit, back up `mods/RConnect`, install the same new version, scan and restart. Keep each player’s `release/config.txt`; the old ZIP includes one, so avoid overwriting nicknames, addresses and ports. To disable, move the RConnect folder outside `mods` as a backup, scan and restart.
+For updates, both players save and exit, back up `mods/RConnect`, install the same new version, scan and restart. Keep each player’s existing configuration. This ZIP omits `config.txt` to avoid overwriting personal settings; new installations use built-in defaults. To disable, move the RConnect folder outside `mods` as a backup, scan and restart.
 
 ## Need help?
 
@@ -63,7 +73,7 @@ If it still fails, [report an issue](https://github.com/Eclipse-NotFound/RConnec
 <details>
 <summary>Development resources and version differences</summary>
 
-The controls above are based on the [v0.2.8 source](https://github.com/Eclipse-NotFound/RConnect/tree/v0.2.8). Current repository source may contain fixes not yet packaged; see [src/](src/) and [state/](state/).
+The controls above are based on the [v0.2.22-dev source](https://github.com/Eclipse-NotFound/RConnect/tree/v0.2.22-dev). Current repository source may contain fixes not yet packaged; see [src/](src/) and [state/](state/).
 
 </details>
 
