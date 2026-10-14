@@ -8,6 +8,7 @@ package {
   private var intervals:Array=[],rtts:Array=[],samples:Array=[],baseAmmo:Array=[],windows:Object={},inputFrame:int=0;
   private var armed:Boolean=false,finished:Boolean=false,phaseCounts:Array=[8,80],enemyCount:int=0,lastFire:Boolean=false;
   private var anchors:Array=[];
+  public var profileBegin:Function,profileEnd:Function,finishProbe:Function;
   public function ABBench(m:Object,root:Object,c:Object){mod=m;main=root;cfg=c;host=c.role=="host";isB=c.variant=="B";
    main.stage.addEventListener(Event.ENTER_FRAME,step,false,100000);
    log("installed",cfg);
@@ -85,12 +86,12 @@ package {
      send({op:"ready"});return;
     }
     if(host && peerReady && !armed && (phase<0 || started<0)){
-     peerReady=false;phase++;if(phase>=phaseCounts.length){finished=true;log("done");return;}
+     peerReady=false;phase++;if(phase>=phaseCounts.length){done();return;}
      spawn(phaseCounts[phase]);preparedAt=now;started=0;prev=0;send({op:"phase",phase:phase});log("phase-prepared",{phase:phase,count:phaseCounts[phase]});
     }
     if(phase<0)return;
     if(started<0)return;
-    if(started==0 && now-preparedAt>=5000){started=now;armed=true;inputFrame=0;intervals=[];rtts=[];samples=[];windows={};baseAmmo=ammo();prev=0;lastSample=0;log("measure-begin",{phase:phase,ammo:baseAmmo,enemies:countEnemies()});}
+    if(started==0 && now-preparedAt>=5000){started=now;armed=true;inputFrame=0;intervals=[];rtts=[];samples=[];windows={};baseAmmo=ammo();prev=0;lastSample=0;if(profileBegin!=null)profileBegin();log("measure-begin",{phase:phase,ammo:baseAmmo,enemies:countEnemies()});}
     aa=actors();for(j=0;j<aa.length;j++){a=aa[j];a.currentWeapon.hp=a.currentWeapon.maxhp;a.pers.jammedMult=0;
      // setLocPos is a room-entry reset and cancels native reload timers.
      // Anchor with geometry-only setPos so the real gun keeps its lifecycle.
@@ -102,15 +103,17 @@ package {
     if(prev>0)intervals.push(now-prev);prev=now;
     if(now-lastSample>=1000){lastSample=now;var positions:Array=[];for each(a in actors())positions.push({x:a.X,y:a.Y,hp:a.hp,maxhp:a.maxhp});
      var v:Object={ms:now-started,heap:System.totalMemory,ammo:ammo(),enemies:countEnemies(),players:positions};
+     v.weapons=[];for each(a in actors())v.weapons.push({hold:a.currentWeapon.hold,reserve:a.invent.items[a.currentWeapon.ammo].kol,reload:a.currentWeapon.t_reload,attack:a.currentWeapon.t_attack,requestedFire:fire(),nativeFire:a.ctr.keyAttack});
      if(isB){var f:Object=host?mod.host.lastFrame:mod.replica.displayFrame;v.hostTick=f.tick;v.shots=f.spawnsByPlayer;if(!host){v.queued=mod.replica.clock.queued;v.delay=mod.replica.clock.delay;v.underflows=mod.replica.clock.underflows;}}
      samples.push(v);send({op:"ping",time:now});log("sample",v);
     }
     if(now-started<int(cfg.seconds)*1000)return;
     armed=false;intervals.sort(Array.NUMERIC);rtts.sort(Array.NUMERIC);
-    log("result",{phase:phase,expectedEnemies:phaseCounts[phase],elapsed:now-started,frames:intervals.length,intervals:intervals,rtt:rtts,samples:samples,baseAmmo:baseAmmo,finalAmmo:ammo(),enemies:countEnemies()});
+    log("result",{phase:phase,expectedEnemies:phaseCounts[phase],elapsed:now-started,frames:intervals.length,intervals:intervals,rtt:rtts,samples:samples,baseAmmo:baseAmmo,finalAmmo:ammo(),enemies:countEnemies(),timings:profileEnd==null?null:profileEnd()});
     picture();started=-1;
-    if(!host){send({op:"end"});if(phase==phaseCounts.length-1){finished=true;log("done");}}
+    if(!host){send({op:"end"});if(phase==phaseCounts.length-1)done();}
    }catch(error:*){finished=true;log("fatal",{error:String(error),stack:error.getStackTrace()});}
   }
+  private function done():void {finished=true;armed=false;if(finishProbe!=null)finishProbe();log("done");}
  }
 }

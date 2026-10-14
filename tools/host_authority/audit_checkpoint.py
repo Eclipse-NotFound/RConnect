@@ -12,6 +12,18 @@ def require(ok, message):
     if not ok:raise ValueError(message)
 
 
+def current_extension_changes(directory, sources, frozen_only=False):
+    """Frozen evidence is never weakened; optionally report later development drift."""
+    directory=directory.resolve();changes=[]
+    for name,digest in sources.items():
+        path=(directory/name).resolve()
+        require(path.is_relative_to(directory),'Extension source path escaped its root')
+        actual=sha(path) if path.is_file() else None
+        if actual!=digest:changes.append(dict(path=name,frozen_sha256=digest,current_sha256=actual))
+    require(frozen_only or not changes,'Current extension source differs: '+str(directory))
+    return changes
+
+
 class RuntimeFiles:
     """Check original bytes, including losslessly archived copies of a run."""
     def __init__(self, directory, verified_blobs):
@@ -108,6 +120,8 @@ def main():
     ap.add_argument('--default',action='append',default=[],dest='defaults')
     ap.add_argument('--stress-driver',action='append',default=[])
     ap.add_argument('--scope',choices=('single-room','dual-room'),default='single-room')
+    ap.add_argument('--frozen-extensions',action='store_true',
+                    help='Audit historical frozen extension inputs; report current extension source drift without granting release/current-source qualification')
     a=ap.parse_args()
     drivers=stress_drivers(a.stress_driver)
     candidate,native,tdfc,logic,out=[inside_build(ROOT/p) for p in (a.candidate,a.native,a.tdfc,a.logic,a.output)]
@@ -121,7 +135,7 @@ def main():
         data=(EXPERIMENT/name).read_bytes()
         if name=='src/authority/BuildInfo.as':data=data.decode('utf-8').replace('\r\n','\n').replace('__SOURCE_HASH__',bm['source_id']).replace('\n',os.linesep).encode('utf-8')
         require(hashlib.sha256(data).hexdigest()==digest,'Uncompiled B source: '+name)
-    verify_files(ROOT.parent/'TDFC',tm['sources'])
+    source_changes={'tdfc':current_extension_changes(ROOT.parent/'TDFC',tm['sources'],a.frozen_extensions)}
     extensions={}
     for key,folder,artifact in [('rv','RealisticVision','RealisticVisionMod.swf'),
                                 ('msw','MoreSkills&Weapons','MoreSkillsWeaponsMod.swf'),
@@ -129,12 +143,16 @@ def main():
         if getattr(a,key) is None:continue
         directory=inside_build(ROOT/getattr(a,key));manifest=read(directory/'build-input.json')
         verify_files(directory,manifest['sources'])
-        verify_files(ROOT.parent/folder,manifest['sources'])
+        source_changes[key]=current_extension_changes(ROOT.parent/folder,manifest['sources'],a.frozen_extensions)
         require(sha(directory/artifact)==manifest['candidate_sha256'],key+' bytes changed')
         extensions[key]=(directory,manifest)
     evidence=dict(experimental_only=True,scope=a.scope+' technical checkpoint, not full architecture or release',
         candidate_sha256=bm['candidate_sha256'],native_sha256=nm['candidate_sha256'],tdfc_sha256=tm['candidate_sha256'],
         source_id=bm['source_id'],current_sources_match=True,runs=[],defaults=[],script_sha256=sha(__file__))
+    evidence['current_rconnect_sources_match']=True
+    evidence['current_sources_match']=not any(source_changes.values())
+    evidence['extension_source_changes']=source_changes
+    evidence['source_policy']='frozen extensions with explicit development drift' if a.frozen_extensions else 'current sources required'
     evidence['extensions']={key:dict(candidate_sha256=m['candidate_sha256'],
         manifest_sha256=sha(d/'build-input.json')) for key,(d,m) in extensions.items()}
     evidence['stress_drivers']=[dict(path=str(d.relative_to(ROOT)),manifest_sha256=digest,

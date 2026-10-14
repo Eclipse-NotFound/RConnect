@@ -59,10 +59,9 @@ package authority {
          var tilesStarted:int=Timing.start();
          // Collision and displayed terrain come from the same host tile state.
          for(var x:int=0;x<room.spaceX;x++)for(var y:int=0;y<room.spaceY;y++) {
-            var at:int=x*room.spaceY+y,t:Object=room.space[x][y],old:Array=tiles[at],changed:Boolean=full;
-            if(!changed)for(var j:int=0;j<TILE.length;j++)if(t[TILE[j]]!==old[j]){changed=true;break;}
-            if(changed) {
-               var values:Array=[];for each(var field:String in TILE)values.push(t[field]);
+            var at:int=x*room.spaceY+y,t:Object=room.space[x][y],old:Array=full?null:tiles[at];
+            var values:Array=TerrainScan.capture(t,old);
+            if(values!==old) {
                tiles[at]=values;result.tiles.push({x:x,y:y,v:values});
             }
          }

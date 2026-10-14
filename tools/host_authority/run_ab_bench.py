@@ -14,7 +14,12 @@ def machine():
 
 def main():
     ap=argparse.ArgumentParser();ap.add_argument('--variant',choices=['A','B'],required=True);ap.add_argument('--driver',required=True);ap.add_argument('--output',required=True)
-    ap.add_argument('--seconds',type=int,default=45);ap.add_argument('--timeout',type=int,default=420);a=ap.parse_args()
+    ap.add_argument('--seconds',type=int,default=45);ap.add_argument('--timeout',type=int,default=420)
+    ap.add_argument('--candidate',default='b3-build-193',help='Frozen B build directory name below build/ab')
+    ap.add_argument('--profile',action='store_true',help='Collect nested production timings during B phases')
+    a=ap.parse_args()
+    if Path(a.candidate).name!=a.candidate:ap.error('Candidate must be a build directory name')
+    if a.profile and a.variant!='B':ap.error('Production profiling is available only for B')
     if not 10<=a.seconds<=180:ap.error('Bounded per-phase duration required')
     baseline=ROOT/'build/ab/baseline-001';base=verify_baseline(baseline)
     driver=inside_build(ROOT/a.driver);d=read(driver/'build-input.json');verify_files(driver,d['sources']);verify_files(driver,d['files'])
@@ -29,7 +34,7 @@ def main():
     overrides={};manifests={}
     if a.variant=='B':
         for folder,manifest,artifact,target in [
-            ('b3-build-193','build-input.json','RConnectMod.swf','mods/Rconnect/release/RConnectMod.swf'),
+            (a.candidate,'build-input.json','RConnectMod.swf','mods/Rconnect/release/RConnectMod.swf'),
             ('native-hooks-019','native-input.json','pfe.swf','pfe.swf'),
             ('tdfc-build-004','build-input.json','TDFCMod.swf','mods/TDFC/release/TDFCMod.swf'),
             ('rv-build-003','build-input.json','RealisticVisionMod.swf','mods/RealisticVision/release/RealisticVisionMod.swf'),
@@ -50,7 +55,7 @@ def main():
         if a.variant=='B':
             for folder,key in [('tdfc-build-004','tdfc'),('rv-build-003','rv'),('msw-build-011','msw'),('sandy-build-001','sandy')]:config[key]=read(ROOT/'build/ab'/folder/'build-input.json')['candidate_sha256']
         save(directory/'mods/Rconnect/release/config.txt',config)
-        bench=dict(variant=a.variant,role=role,seconds=a.seconds,source=d['source_id']);save(directory/'ab-bench.json',bench)
+        bench=dict(variant=a.variant,role=role,seconds=a.seconds,source=d['source_id'],profile=a.profile);save(directory/'ab-bench.json',bench)
         dest=directory/'mods/ABBench/release';dest.mkdir(parents=True)
         for name in d['files']:shutil.copy2(driver/name,dest/name)
         manifest=directory/'mods/loader-manifest.txt';rows=[]

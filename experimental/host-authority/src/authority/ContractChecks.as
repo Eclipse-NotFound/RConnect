@@ -15,6 +15,7 @@ package authority {
             buttons:buttons,aimX:100,aimY:80,actions:actions==null?[]:actions};
       }
       public static function run(check:Function):void {
+         TerrainChecks.run(check);
          presentation(check);
          motionRendering(check);
          grabOwnership(check);
