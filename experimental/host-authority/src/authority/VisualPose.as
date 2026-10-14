@@ -32,16 +32,27 @@ package authority {
       public static function capture(display:DisplayObject,depth:int=0,includePixels:Boolean=false):Object {
          if(display==null)return null;
          var began:int=depth==0?Timing.start():0;
+         var previous:Object=captured[display];
          var color:ColorTransform=display.transform.colorTransform;
          var matrix:Matrix=display.transform.matrix;
+         // These two dense numeric recipes dominate unchanged limb captures.
+         // Read every native value, but retain the immutable arrays directly
+         // instead of allocating then recursively comparing 14 scalar entries.
+         var m:Array=previous==null?null:previous.m,c:Array=previous==null?null:previous.c;
+         if(m==null || m[0]!==matrix.a || m[1]!==matrix.b || m[2]!==matrix.c || m[3]!==matrix.d || m[4]!==matrix.tx || m[5]!==matrix.ty)
+            m=[matrix.a,matrix.b,matrix.c,matrix.d,matrix.tx,matrix.ty];
+         if(c==null || c[0]!==color.redMultiplier || c[1]!==color.greenMultiplier || c[2]!==color.blueMultiplier || c[3]!==color.alphaMultiplier ||
+            c[4]!==color.redOffset || c[5]!==color.greenOffset || c[6]!==color.blueOffset || c[7]!==color.alphaOffset)
+            c=[color.redMultiplier,color.greenMultiplier,color.blueMultiplier,color.alphaMultiplier,
+               color.redOffset,color.greenOffset,color.blueOffset,color.alphaOffset];
          var s:Object={x:display.x,y:display.y,sx:display.scaleX,sy:display.scaleY,r:display.rotation,
-            m:[matrix.a,matrix.b,matrix.c,matrix.d,matrix.tx,matrix.ty],
-            a:display.alpha,v:display.visible,c:[color.redMultiplier,color.greenMultiplier,color.blueMultiplier,color.alphaMultiplier,
-               color.redOffset,color.greenOffset,color.blueOffset,color.alphaOffset]};
-         s.blend=display.blendMode;s.cache=display.cacheAsBitmap;s.filters=[];
+            m:m,a:display.alpha,v:display.visible,c:c};
+         s.blend=display.blendMode;s.cache=display.cacheAsBitmap;
+         var nativeFilters:Array=display.filters;
+         s.filters=nativeFilters.length==0 && previous!=null && previous.filters.length==0?previous.filters:[];
          if(display is Bitmap){s.smoothing=Bitmap(display).smoothing;s.pixelSnapping=Bitmap(display).pixelSnapping;}
          if(includePixels && display is Bitmap && Bitmap(display).bitmapData!=null)s.pixels=PixelSurface.capture(Bitmap(display).bitmapData);
-         for each(var filter:Object in display.filters) {
+         for each(var filter:Object in nativeFilters) {
             var fs:Object={kind:getQualifiedClassName(filter)};
             if(filter is ColorMatrixFilter)fs.matrix=filter.matrix;
             else if(filter is GlowFilter || filter is BlurFilter || filter is DropShadowFilter) {
@@ -63,20 +74,34 @@ package authority {
          // state and capture the current children when it becomes visible;
          // hidden health bars otherwise multiply dense-room capture work.
          if(parent!=null && display.visible && display.alpha>0 && depth<12) {
-            s.children=[];
+            var priorChildren:Array=previous==null?null:previous.children;
+            var children:Array=priorChildren,used:int=0;
             for(var i:int=0;i<parent.numChildren;i++) {
                var child:DisplayObject=parent.getChildAt(i);
                // Authority samples at EXIT_FRAME, after native construction.
                // A null timeline slot is not evidence that a limb is hidden.
                if(child==null)continue;
-               if(child is MovieClip || child is TextField || child is Sprite || child is Bitmap || clip==null && child is Shape)
-                  s.children.push({n:child.name,i:i,cls:getQualifiedClassName(child),s:capture(child,depth+1,includePixels)});
+               if(child is MovieClip || child is TextField || child is Sprite || child is Bitmap || clip==null && child is Shape) {
+                  var pose:Object=capture(child,depth+1,includePixels),name:String=child.name,cls:String=getQualifiedClassName(child);
+                  var entry:Object=priorChildren!=null && used<priorChildren.length?priorChildren[used]:null;
+                  if(entry==null || entry.n!==name || entry.i!==i || entry.cls!==cls || entry.s!==pose) {
+                     if(children===priorChildren)children=priorChildren==null?[]:priorChildren.slice(0,used);
+                     entry={n:name,i:i,cls:cls,s:pose};
+                  }
+                  if(children!==priorChildren)children.push(entry);
+                  ++used;
+               }
             }
+            // Removing a child is also a new immutable list. Keep its native
+            // index/name/class so timeline replacements are never mistaken for
+            // an unchanged limb, even when the number of children is stable.
+            if(children==null)children=[];
+            else if(children===priorChildren && used!=children.length)children=children.slice(0,used);
+            s.children=children;
          }
          // Native authored trees have many unchanged limbs, colors and empty
          // filter lists. Keep their immutable records instead of walking and
          // diffing fresh copies again at every enclosing entity/world level.
-         var previous:Object=captured[display];
          if(previous!=null) {
             var same:Boolean=true;
             for(var field:String in s) {
@@ -89,7 +114,10 @@ package authority {
                      if(ca.n!==cb.n || ca.i!==cb.i || ca.cls!==cb.cls || ca.s!==cb.s){equal=false;break;}
                   }
                   if(equal)s[field]=old;else same=false;
-               }else if((value is Array || field=="pixels") && recipeEqual(old,value))s[field]=old;
+               // Fixed matrix/color recipes were already compared in full.
+               // Different identities here therefore mean different values.
+               }else if(field=="m" || field=="c")same=false;
+               else if((value is Array || field=="pixels") && recipeEqual(old,value))s[field]=old;
                else same=false;
             }
             for(field in previous)if(!s.hasOwnProperty(field)){same=false;break;}
