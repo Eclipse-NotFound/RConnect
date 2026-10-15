@@ -70,6 +70,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('output', type=Path)
     parser.add_argument('--base', required=True, type=Path)
+    parser.add_argument('--current-native-sha',
+                        help='Pin a separately deployed native game; copy only, never patch or install it')
     args = parser.parse_args()
     base, out = [(ROOT / path).resolve() for path in (args.base, args.output)]
     require(base.parent == BUILD and base.is_dir(), '--base must be a frozen build/m52 child')
@@ -127,6 +129,17 @@ def main():
         data = relative_file(base, name).read_bytes()
         require(digest(data) == parent[field], 'Parent binary changed while copying: ' + name)
         files[name] = data
+    native_update = None
+    if args.current_native_sha:
+        native_path = ROOT.parents[1] / 'pfe.swf'
+        native_data = native_path.read_bytes()
+        require(re.fullmatch('[0-9a-f]{64}', args.current_native_sha) is not None
+                and digest(native_data) == args.current_native_sha,
+                'Installed native game differs from explicit pin')
+        files['native/pfe.swf'] = native_data
+        native_update = dict(previous=parent['candidate_game_sha256'],
+                             current=args.current_native_sha,
+                             operation='read-only copy of separately deployed native game')
 
     current_names = inventory(ROOT, ('tests',)) | set(BUILD_TOOLS)
     current = {name: relative_file(ROOT, name).read_bytes() for name in sorted(current_names)}
@@ -164,6 +177,12 @@ def main():
                    compile_dependencies_origin=('parent-inputs-manifest'
                        if COMPILE_STUB in parent['inputs'] else 'captured-parent-build-output'),
                    source=source, inputs=inputs)
+    if native_update is not None:
+        require(digest(native_path.read_bytes()) == args.current_native_sha,
+                'Installed native game changed during freezing')
+        receipt.update(original_game_sha256=args.current_native_sha,
+                       candidate_game_sha256=args.current_native_sha,
+                       native_unchanged=True, native_baseline_update=native_update)
     with (out / 'prepared.json').open('x', encoding='utf-8') as stream:
         stream.write(json.dumps(receipt, ensure_ascii=False, indent=2))
     print(json.dumps({key: receipt[key] for key in

@@ -23,7 +23,14 @@ def audit(out, bundle, evidence):
     m, runtime = read(out/'prepared.json'), read(bundle/'inputs.json')
     base = ROOT/m['installed_baseline']
     bm = read(base/'prepared.json')
-    require(m['kind'] == 'isolated-a22-followup' and m['native_unchanged'], 'Not a native-preserving candidate')
+    require(m['kind'] in ('isolated-a22-followup', 'isolated-a22-testpack') and m['native_unchanged'], 'Not a native-preserving candidate')
+    if m['kind'] == 'isolated-a22-testpack':
+        parent = ROOT/m['parent_candidate']
+        parent_receipt = read(parent/'prepared.json')
+        require(sha(parent/'prepared.json') == m['parent_prepared_sha256'], 'Testpack parent changed')
+        require(m['production_recompiled'] is False and m['source'] == parent_receipt['source']
+                and m['candidate_sha256'] == m['same_production_sha256'] == parent_receipt['candidate_sha256'],
+                'Testpack changed production')
     require(sha(base/'deployment.json') == m['installed_deployment_sha256'], 'Baseline receipt changed')
     require(read(base/'deployment.json')['status'] == 'deployed-smoke-passed', 'Baseline not deployed')
     merged = m.get('keybind_merge')
@@ -102,7 +109,10 @@ def audit(out, bundle, evidence):
                            'RConnectPause: failed', 'RConnectGrip: failed', 'Error #1009', 'RConnectWall: bitmap copy failed'):
                 require(marker not in text, name+' '+marker)
             stdout = folder/(role+'.stdout.log')
-            require('out of memory' not in stdout.read_text(encoding='utf-8', errors='replace').lower(), name+' AIR memory failure')
+            stdout_text = stdout.read_text(encoding='utf-8', errors='replace')
+            require('out of memory' not in stdout_text.lower(), name+' AIR memory failure')
+            require(re.search(r'Error\s*#\d+|TypeError|ReferenceError|RangeError|VerifyError|uncaught',
+                              stdout_text, re.I) is None, name+' AIR/native exception')
             found = [line for line in text.splitlines() if "obj spawn '" in line and 'failed:' in line]
             require(all(line in known_warnings for line in found), name+' new object-spawn warning')
             if found:
@@ -178,6 +188,9 @@ def main():
                 require(h==overrides.get(n.lower(),runtime['files'].get(n)),'Smoke module '+n)
             log=(folder/(role+'.log')).read_text(encoding='utf-8-sig')
             require('v'+m['version']+' initialized' in log and 'tick 200' in log,'Smoke heartbeat')
+            stdout=(folder/(role+'.stdout.log')).read_text(encoding='utf-8',errors='replace')
+            require(re.search(r'Error\s*#\d+|TypeError|ReferenceError|RangeError|VerifyError|uncaught|out of memory',
+                              stdout,re.I) is None,'Smoke AIR/native exception')
         verify_install(runtime,overrides)
         d.update(status='deployed-smoke-passed',smoke_run=match[1],smoke_run_sha256=sha(folder/'run.json'))
     except BaseException as error:

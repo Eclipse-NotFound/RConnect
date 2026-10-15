@@ -2,6 +2,8 @@ package {
    import flash.desktop.NativeApplication;
 
    import flash.display.Sprite;
+   import flash.display.DisplayObject;
+   import flash.display.DisplayObjectContainer;
    import flash.events.Event;
    import flash.events.TimerEvent;
    import flash.events.UncaughtErrorEvent;
@@ -9,6 +11,7 @@ package {
    import flash.utils.ByteArray;
    import flash.utils.Timer;
    import flash.utils.getTimer;
+   import flash.utils.getQualifiedClassName;
    import flash.sampler.*;
    import fe.unit.Unit;
    import fe.unit.CombatStateProbe;
@@ -34,6 +37,9 @@ package {
       private var projectileLoad:Boolean=false,loadGuns:Array=[],projectileEvents:int=0,projectileSamples:int=0;
       private var loadActors:Array=[];
       private var endedSamples:int=0;
+      private var trajectoryEvents:int=0,renderedProjectiles:int=0,movingProjectiles:int=0;
+      private var projectileClasses:Object={},projectilePositions:Dictionary=new Dictionary(true);
+      private var setupStage:Boolean=false;
       private var diagEnabled:Boolean=false,diagSampling:Boolean=false,diagNumber:int=0,diagAt:int=0,diagAfter:int=0;
       private var diagRows:Array=[];
       private var diagPacket:Object;
@@ -110,7 +116,23 @@ package {
       private function finish():void {
          if(phase=="done")return;
          if(diagEnabled){diagEnd(null);encodingProbe();Log.d("PROJECTILE PROFILE "+JSON.stringify({role:host?"host":"join",frames:diagRows}));}
+         if(setupStage)mod.stage.removeEventListener(Event.RENDER,renderProjectiles);
          phase="done";timer.stop();Log.d("COOP EFFECTS DONE network-state "+(host?"host":"join"));
+      }
+      private function renderProjectiles(e:Event):void {
+         if(host || phase!="load" || !projectileLoad || densityProbe==0)return;
+         var layer:DisplayObjectContainer=mod.game.world.grafon.visObjs[2];
+         for(var i:int=0;i<layer.numChildren;i++) {
+            var v:DisplayObject=layer.getChildAt(i);
+            if(!projectileClasses[getQualifiedClassName(v)] || !v.visible || v.alpha<=0 || v.stage==null)continue;
+            var shown:Boolean=true,parent:DisplayObject=v.parent;
+            while(parent!=null){shown=shown&&parent.visible&&parent.alpha>0;parent=parent.parent;}
+            if(!shown)continue;
+            renderedProjectiles++;
+            var old:Object=projectilePositions[v];
+            if(old!=null && Math.abs(v.x-old.x)+Math.abs(v.y-old.y)>.1)movingProjectiles++;
+            projectilePositions[v]={x:v.x,y:v.y};
+         }
       }
       private function find(id:String):Object {for each(var u:Object in mod.game.loc.units)if(!(u is MirrorHitUnit) && u.id==id)return u;return null;}
       private function spawn(name:String,id:String,map:XML,x:Number):Object {
@@ -133,6 +155,15 @@ package {
                if(unit.weapons is Array)for each(var weapon:Object in unit.weapons)
                   if(weapon.events is Array)for each(var event:Object in weapon.events) {
                      projectileEvents++;if(event.flight!=null && event.flight.frames is Array)projectileSamples+=event.flight.frames.length;
+                     // Installed A also uses native birth/velocity/endpoints for
+                     // ordinary NPC bullets. Require usable trajectory data and
+                     // actual moving display objects, not a newer wire format.
+                     var flight:Object=event.flight;
+                     if(flight!=null && flight.cls!=null && isFinite(Number(flight.x)) && isFinite(Number(flight.y))
+                        && isFinite(Number(flight.dx)) && isFinite(Number(flight.dy))
+                        && Math.abs(Number(flight.dx))+Math.abs(Number(flight.dy))>0) {
+                        trajectoryEvents++;projectileClasses[String(flight.cls)]=true;
+                     }
                      if(event.flight!=null && Number(event.flight.end)>0 && event.flight.frames is Array)
                         for each(var point:Object in event.flight.frames)
                            if(Number(point.at)>Number(event.flight.end))endedSamples++;
@@ -231,11 +262,21 @@ package {
          mod.game.loc.remObj(shot);setPhase("wait-turret");
       }
       private function tick(e:TimerEvent):void {
-         mod=RConnectMod.instance;if(mod==null||mod.game.gg==null||mod.game.loc==null||!mod.session.rooms.ready||mod.session.rooms.busy)return;
+         mod=RConnectMod.instance;if(mod==null)return;
+         // Protect only the isolated fixture's actors during connection/travel.
+         // Waiting 25 seconds before doing so allowed the test player to die.
+         if(phase=="boot" && mod.game.gg!=null)mod.game.gg.invulner=true;
+         if(mod.game.gg==null||mod.game.loc==null||!mod.session.rooms.ready||mod.session.rooms.busy)return;
          if(host){for each(var l:TcpLink in mod.session.server.clients)watch(l);}else watch(mod.session.link);
          if(timer.currentCount<250)return;
          try {
             if(phase=="boot"){
+               check(mod.game.gg.sost==1 && mod.game.gg.hp>0,"fixture enters with a living player");
+               if(mod.game.gg.sost!=1 || mod.game.gg.hp<=0){send("done");finish();return;}
+               mod.stage.nativeWindow.visible=true;
+               check(mod.stage.nativeWindow.visible,"fixture window is visible");
+               mod.stage.addEventListener(Event.RENDER,renderProjectiles,false,-30000);
+               setupStage=true;
                if(diagEnabled) {
                   mod.stage.addEventListener(Event.ENTER_FRAME,diagBegin,false,1000000);
                   mod.stage.addEventListener(Event.ENTER_FRAME,diagAfterFrame,false,-1000000);
@@ -289,7 +330,8 @@ package {
                check(packets>=20&&maxPacket<900,"80 enemies keep current world snapshots arriving");
                check(count>packets,"weapon aim advances between snapshots");
                if(projectileLoad && densityProbe>0) {
-                  check(projectileEvents>0 && projectileSamples>0,"dense firing transports actual native projectile frames events="+projectileEvents+" samples="+projectileSamples);
+                  check(projectileEvents>0 && trajectoryEvents>0,"dense firing transports native trajectories events="+projectileEvents+" trajectories="+trajectoryEvents+" recordedFrames="+projectileSamples);
+                  check(renderedProjectiles>0 && movingProjectiles>0,"dense firing renders moving projectile displays visible="+renderedProjectiles+" moving="+movingProjectiles);
                   check(endedSamples==0,"ended projectiles stop adding hidden poses samples="+endedSamples);
                }
                Log.d("COOP PROBE steady phase="+densityProbe+" utcMs="+(new Date()).time+" memory="+System.totalMemory);
@@ -304,6 +346,7 @@ package {
          densityProbe++;
          diagNumber=0;
          projectileEvents=projectileSamples=endedSamples=0;
+         trajectoryEvents=renderedProjectiles=movingProjectiles=0;projectilePositions=new Dictionary(true);
          var weapons:Object={};
          for each(var u:Object in mod.game.loc.units)if(u.currentWeapon!=null)weapons[u.currentWeapon.id]=int(weapons[u.currentWeapon.id])+1;
          Log.d("COOP PROBE steady-start phase="+densityProbe+" utcMs="+(new Date()).time+" weapons="+JSON.stringify(weapons));

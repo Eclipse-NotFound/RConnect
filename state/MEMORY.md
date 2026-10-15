@@ -13,6 +13,7 @@ Remains 1.02 双人合作模组，入口 `release/RConnectMod.swf`。A 是普通
 - 菜单/SATS可共同暂停，所有暂停原因解除才恢复；策略默认关，由宿主管理。暂停时网络/聊天/选择继续。
 - 个人被抓许可默认关、WASD挣脱默认开、投掷伤害默认关；友伤默认关。MSW非致命照射队友仅短暂限制视野。
 - B由主侧执行两名原生玩家和双方有人房间；共享斯安维斯坦，两人正常行动、世界减慢，主要伤害保留到结束回放结算。独立TDFC/MSW/RV/Sandevistan接口及必要协调已有授权，安装边界以各次授权为准。
+- 2026-10-16用户另授权LightAndDarkness与CS测试/部署时间协调；已留出约8分钟AIR空档至02:19，等其完成回执和指纹后再冻结新组合。
 - 用户授权所有当前/后续RConnect开发会话协调；FA念力兼容、测试、部署与回报已授权，FA源码/部署已交回其会话。WallBlend明确不发消息。无新子代理授权，不自动委托。
 - 保留用户程序，不关闭/调整其他进程优先级或电源；仅管理明确自有的独立AppID测试。绝不回写真实存档，Littlepip29只读复制至隔离槽9。用户已表示会释放内存供继续实测，不重复问。
 - D盘需节约：完成运行及时清理重复副本，保留原始失败、日志、截图、源、基线和恢复索引；不删唯一证据。
@@ -40,9 +41,9 @@ Remains 1.02 双人合作模组，入口 `release/RConnectMod.swf`。A 是普通
 - runtime16为当前130文件组合（新增AddictionSystem、RV BAA48289墙面候选已实际安装）。fix26真实抓投96项、长抓49项、时钟44项通过；435da29a25晚到四轮同帧落位0失败，但首轮行走P90=4.467已收帧，超过4帧，串行因此停止。791bb58aa3原生resizeScreen #1009导致主侧驱动未启动；所有旧红保留。
 - **2026-10-16当前候选fix27-keybinds**：`build/m52/a22-fixes-27`，SHA`b2a9be49fe35da42d9b206e943655c6e99a667d1eefdd175baf005cc1cea8309`，prepared`84b570538f21829b4acecc832d5723c101e30c39b0e90328e112a06335feb5b3`。在fix26上仅改敌人显示缓冲追赶：平缓升至最多1.5倍，固定时长效果仍原速，位置不超已收范围、时钟不倒退。
 - fix27首轮79bc17f6e2主19/0加31/0：固定300ms断流390ms追回；实机P90=1.933已收帧，暂停62ms，25身体帧、0小幅倒放、SATS逐像素一致。日期上下文切换中断99dbf588de，驱动未进入测试场景，不计通过；已保存原始记录/自有日志、核实PID结束并仅删重复运行副本。提交余量恢复19.28GiB。
-- 当前exec66289跑fix27/runtime16的qualify27-rest（晚到、8轮暂停、目标、连续性、动画、行为、换房、复活、暂停策略、密集）；fix27真实抓投/长抓和旧版对照仍待单独补齐。正式安装仍fix15-keybinds，未部署动作版。
+- qualify27-rest已结束：晚到98、8轮暂停155、目标10、连续性51、动画27、行为41、房间64、复活27、暂停策略438项通过；连同首轮时钟共961项。密集980aab6fef主22/0、加28/13：每8秒63–71帧低于80门槛，6窗真实弹体帧计数为0。未部署；需先诊断，不移算旧结果或降低阈值。当前发现该A线NPC普通枪使用端点弹道，测试却要求逐帧数组；另host在启动等待中已死亡、visible_windows真但实测nativeWindow.visible假，均待区分。fix27抓投/长抓及修正夹具旧版对照仍待补齐。
 - `prepare_a22_motion_keybinds.py`已执行成功，逐源核对fix15→快捷键和fix24→动作修改；准备回执SHA`1c7df015dd7eba2fdc64b8efda8bd7642c26f438ef6b748c5e9ef9100a2ef868`。不混入根src其他历史线代码。
-- `release_a22_motion.py`支持两条来源的精确审计，尚未部署过。全部11类通过且核对当时安装后方可安装；普通加载失败必须回退。
+- `release_a22_motion.py`支持两条来源的精确审计，尚未部署过。全部13类通过且核对当时安装后方可安装；普通加载失败必须回退。
 
 ## 5. 已知问题与证据边界
 
@@ -57,14 +58,14 @@ Remains 1.02 双人合作模组，入口 `release/RConnectMod.swf`。A 是普通
 
 1. 核对本轮测试结果、所有安装指纹及快捷键部署完成消息。先让外部统一安装结束，避免反复冻结和重跑。
 2. 在正式快捷键基线上保留两份UI源，叠加已冻结动作修正；新建候选和runtime，不改旧回执。测试所需源码全冻结，禁止拿根src替代准确生产线。
-3. 完成真实抓投、存档边界、时钟/像素、目标生命周期、掉落/动画、行为、房间、复活、暂停、密集开火11类；失败诊断后只补受影响项，旧红不覆盖。未完成不能发布。
+3. 完成真实抓投、存档边界、时钟/像素、目标生命周期、掉落/动画、行为、房间、复活、暂停、密集开火13类；失败诊断后只补受影响项，旧红不覆盖。未完成不能发布。
 4. 审计→备份RConnect→定向替换→普通双侧加载验证；只更新RConnect，原生/B/其他模组与配置不动。更新本记录、journal、部署回退说明并提交自己的文件，再向快捷键及FA回传。
 
 ## 7. 工具与深入入口
 
 - 本轮细节：[动作/SATS](a22-motion-2026-10-15.md)、[前轮进度](a22-followup-2026-10-15.md)、[刺刀报告](../design/a22-throw-attachment-compatibility.md)、[journal](journal.md)。FA任务已交回，不覆盖其新开发。
 - Python `C:/Users/hello/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe`，统一`-B -X utf8`。Java/SDK/FFDec从`tools/host_authority/common.py`定位。
-- A：`prepare_a22_fixes.py`/`prepare_a22_testpack.py`冻结，`run_a22_map_refresh.py`冻结当前安装/执行，`run_a22_motion_checks.py`串行11类，`release_a22_motion.py`审计部署。每次新目录、保留失败。
+- A：`prepare_a22_fixes.py`/`prepare_a22_testpack.py`冻结，`run_a22_map_refresh.py`冻结当前安装/执行，`run_a22_motion_checks.py`串行13类，`release_a22_motion.py`审计部署。每次新目录、保留失败。
 - B：`tools/host_authority/run_suite.py --scenarios ... --archive`，按原始输入审计再归档。入口、独立接口、存档规则见[B并行计划](../design/host-authority-parallel-plan-2026-10-11.md)、[B完整实况](host-authority-playable-2026-10-11.md)。
 - AIR隔离启动需已授权`require_escalated`；普通沙箱的进程/AppData视图可能不完整。只读明确自有PID/AppID日志，禁止广泛输出其他进程命令行。正常启动`application.xml`→根pfe1.02；原生参考`game-reference/decompiled/1.02/src102/scripts`。
 - 本地git身份eclipse/helloimyyt@163.com，不push、不改写历史。公共GitHubA22标签/安装包已有独立发布记录，本轮不更新远端。旧详细快照仍在git历史，不再在入口叠加相互矛盾的“最新”段落。
