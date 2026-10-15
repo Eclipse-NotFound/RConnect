@@ -24,6 +24,7 @@ CASES = [
     ('hud', 'HudTestDoc', 'random_mane', 300, False),
     ('navigation', 'TeammateNavigationTestDoc', 'random_mane', 480, False),
     ('codec', 'PacketCodecTestDoc', 'random_mane', 240, False),
+    ('weapon-batch', 'WeaponBatchTestDoc', 'random_mane', 240, False),
 ]
 
 def main():

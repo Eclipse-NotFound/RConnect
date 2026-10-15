@@ -3,6 +3,12 @@ package {
    import fe.weapon.Weapon;
    public class NativeTestGun extends Weapon {
       public function NativeTestGun(owner:Unit,id:String="lmg") { super(owner,id,0); }
+      public function emitLive():Object {
+         var self:Object=this;
+         self.loc=self.owner.loc;self.X=self.owner.X;self.Y=self.owner.Y-self.owner.scY/2;
+         self.hold=90;self.rot=0;self.deviation=0;self.precision=0;
+         return super.shoot();
+      }
       public function fireAt(target:Object,deterministic:Boolean=false):Object {
          var self:Object=this;
          self.loc=target.loc; self.X=target.X-45; self.Y=target.Y-target.scY/2;

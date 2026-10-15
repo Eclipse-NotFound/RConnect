@@ -14,6 +14,8 @@ package rconnect.game
    {
       private var states:Dictionary = new Dictionary();
       private var hostShots:Dictionary = new Dictionary(true);
+      private var retainedByOwner:Dictionary;
+      private var captureDepth:int=0;
       private var errors:Object = {};
       private var shotStream:int=0;
       private var frameTime:int=0;
@@ -25,6 +27,24 @@ package rconnect.game
       private var burning:BurnVisuals=new BurnVisuals();
 
       private static function get(o:Object,k:String):* {return GameBridge.probe(o,k);}
+
+      /** A synchronous batch preserves the old per-owner discovery order, but
+       * scans historical weapons once instead of once per enemy. The index is
+       * released on return: it never retains actors or weapons between frames. */
+      public function beginCaptureBatch():void {
+         if(captureDepth++>0)return;
+         retainedByOwner=new Dictionary();
+         for(var w:Object in hostShots) {
+            var owner:Object=get(w,"owner");if(owner==null)continue;
+            var weapons:Array=retainedByOwner[owner];
+            if(weapons==null)weapons=retainedByOwner[owner]=[];
+            weapons.push(w);
+         }
+      }
+      public function endCaptureBatch():void {
+         if(captureDepth<=0)return;
+         if(--captureDepth==0)retainedByOwner=null;
+      }
 
       private function weaponList(u:Object):Array
       {
@@ -38,9 +58,15 @@ package rconnect.game
          if(magic!=null && list.indexOf(magic)<0)list.push(magic);
          // Changing guns must not orphan the previous gun's flying grenade,
          // missile or final impact. These entries carry effects only.
-         for(var previous:Object in hostShots)
-            if(get(previous,"owner")===u && get(previous,"loc")===get(u,"loc")
-               && hostShots[previous].events.length>0 && list.indexOf(previous)<0)list.push(previous);
+         if(retainedByOwner!=null) {
+            for each(var previous:Object in retainedByOwner[u])
+               if(get(previous,"owner")===u && get(previous,"loc")===get(u,"loc")
+                  && hostShots[previous].events.length>0 && list.indexOf(previous)<0)list.push(previous);
+         } else {
+            for(previous in hostShots)
+               if(get(previous,"owner")===u && get(previous,"loc")===get(u,"loc")
+                  && hostShots[previous].events.length>0 && list.indexOf(previous)<0)list.push(previous);
+         }
          return list;
       }
 
@@ -65,6 +91,8 @@ package rconnect.game
          frameTime=stamp>0?stamp:getTimer();
          scanBullets(loc,frameTime);
          var units:Array=get(loc,"units") as Array;if(units==null) return;
+         beginCaptureBatch();
+         try {
          for each(var u:Object in units)
          {
             if(int(get(u,"fraction"))>=100) continue;
@@ -73,6 +101,7 @@ package rconnect.game
             // Its final display frames and end must reach the receiver too.
             for each(var w:Object in weaponList(u)) if(get(w,"kol_shoot")!=null) observeWeapon(w,frameTime);
          }
+         } finally {endCaptureBatch();}
       }
 
       public function observePlayer(u:Object,stamp:int=0):void {frameTime=stamp>0?stamp:getTimer();scanBullets(get(u,"loc"),frameTime);for each(var w:Object in weaponList(u))if(get(w,"kol_shoot")!=null)observeWeapon(w,frameTime,true);}
@@ -187,7 +216,7 @@ package rconnect.game
          return result;
       }
 
-      public function apply(u:Object,snapshot:Object,main:Object,motion:RemoteMotion=null,paused:Boolean=false):void
+      public function apply(u:Object,snapshot:Object,main:Object,motion:RemoteMotion=null,paused:Boolean=false,deferTick:Boolean=false):void
       {
          try
          {
@@ -266,7 +295,9 @@ package rconnect.game
                if(int(s.reload)>0 && int(gun.reload)<=0) play(gun.weapon,"reload");
                gun.reload=int(s.reload);
             }
-            tick(u,paused);
+            // The frame-driven caller ticks immediately after applying a new
+            // pose. Do not advance its muzzle/recoil counters twice that frame.
+            if(!deferTick)tick(u,paused);
          }
          catch(e:*) {failed(u,e);}
       }

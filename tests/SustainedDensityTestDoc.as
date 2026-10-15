@@ -36,6 +36,7 @@ package {
       private var frameAt:int=0,cpuMs:int=0,cpuMax:int=0,netAt:int=0,netMs:int=0,netMax:int=0;
       private var projectileLoad:Boolean=false,loadGuns:Array=[],projectileEvents:int=0,projectileSamples:int=0;
       private var loadActors:Array=[];
+      private var enemyKey:String="",batKey:String="",aimKey:String="";
       private var endedSamples:int=0;
       private var trajectoryEvents:int=0,renderedProjectiles:int=0,movingProjectiles:int=0;
       private var projectileClasses:Object={},projectilePositions:Dictionary=new Dictionary(true);
@@ -181,7 +182,9 @@ package {
                enemy.disabled=false;gun.fireAt(enemy,true);expected=2000-enemy.hp;enemy.hp=2000;enemy.disabled=true;
                check(expected>0,"native ghoul damage reference="+expected);
                bat=spawn("UnitBat","1",<unit tr="1"/>,mod.game.gg.X+170);
-               CombatStateProbe.ai(bat as Unit,3);bat.animate();setPhase("ghoul");send("ghoul",{expected:expected});
+               CombatStateProbe.ai(bat as Unit,3);bat.animate();
+               mod.game.readUnitsSnapshot();
+               setPhase("ghoul");send("ghoul",{expected:expected,enemyKey:mod.game.unitKey(enemy),batKey:mod.game.unitKey(bat)});
             } else if(p.stage=="ghoul-shot"){ghoulLoss=Number(p.loss);setPhase("ghoul-settle");}
             else if(p.stage=="turret-ready")fireTurret();
             else if(p.stage=="turret-checked"){index++;prepareTurret();}
@@ -191,7 +194,7 @@ package {
                send("done");finish();
             }
          } else {
-            if(p.stage=="ghoul"){expected=Number(p.expected);setPhase("ghoul");}
+            if(p.stage=="ghoul"){expected=Number(p.expected);enemyKey=String(p.enemyKey);batKey=String(p.batKey);setPhase("ghoul");}
             else if(p.stage=="prepare-turret"){
                index=int(p.index);mod.game.gg.pers.begHP=5000;mod.game.gg.maxhp=5000;mod.game.gg.hp=5000;mod.game.gg.invulner=false;
                if(index==0){baselineActive=true;baselineAt=getTimer();baselineFrames=baselinePrev=0;baselineIntervals=[];}
@@ -212,6 +215,7 @@ package {
                startHp=g.hp;g.damage(b.damage,b.tipDamage,b,false);expected=startHp-g.hp;g.hp=startHp;
                setPhase("turret-settle");
             } else if(p.stage=="load"){
+               aimKey=String(p.aimKey);
                baselineActive=false;baselineIntervals.sort(Array.NUMERIC);
                Log.d("COOP METRIC baseline-state frames="+baselineFrames+" elapsedMs="+(getTimer()-baselineAt)
                   +" p95ms="+(baselineIntervals.length?baselineIntervals[int(baselineIntervals.length*.95)]:-1));
@@ -236,7 +240,9 @@ package {
                   if(firing)loadGuns.push(gun);
                }
             }
-            send("load");setPhase("wait-load");return;
+            mod.game.readUnitsSnapshot();
+            for each(var actor:Object in loadActors)if(actor.id=="slaver2"){aimKey=mod.game.unitKey(actor);break;}
+            send("load",{aimKey:aimKey});setPhase("wait-load");return;
          }
          var xml:XML=<unit vis="right"/>;xml.@tr=turretKinds[index];
          turret=spawn("UnitTurret","land",xml,mod.game.gg.X+230);
@@ -246,6 +252,10 @@ package {
          var ghost:Object=mod.game.getRemoteGhost(2);if(ghost==null)ghost=mod.game.getRemoteGhost(1);
          check(ghost!=null,"turret "+index+" has remote target");
          turret.doop=false;turret.disabled=false;turret.storona=-1;turret.overLook=true;
+         // The two players may enter the same room through different doors.
+         // Test native turret perception near its actual remote target rather
+         // than inadvertently placing it beside the other player's doorway.
+         turret.setPos(ghost.X+45,ghost.Y);
          turret.eyeX=turret.X;turret.eyeY=turret.Y-30;turret.vAngle=Math.PI;
          Log.d("COOP PROBE turret sight="+turret.look(ghost,true)+" meet="+turret.isMeet(ghost)+" visibility="+ghost.visibility+" demask="+ghost.demask);
          mod.game.redirectNearbyAggro();
@@ -305,7 +315,7 @@ package {
                if(!host){send("ready");setPhase("wait");}else setPhase("wait");
             }
             if(!host&&phase=="ghoul"&&getTimer()-at>1200){
-               enemy=find("zombie1");bat=find("bloodwing1");if(bat==null)bat=find("bloodwing");
+               enemy=mod.game.unitForKey(enemyKey);bat=mod.game.unitForKey(batKey);
                check(enemy!=null,"TCP ghoul appears");var hp:Number=enemy.hp;
                var gun:NativeTestGun=new NativeTestGun(mod.game.gg as Unit);var gw:Object=gun;gw.setPers(mod.game.gg,mod.game.gg.pers);gw.damage=60;gw.critCh=0;
                var projectile:Object=gun.fireAt(enemy,true);check(expected>0 && Math.abs(hp-enemy.hp-expected)<0.001,"TCP join LMG matches native ghoul damage expected="+expected+" actual="+(hp-enemy.hp)+" height="+enemy.scY);
@@ -385,7 +395,7 @@ package {
          }
          if(phase!="load")return;
          var now:int=getTimer();frames++;if(prevFrame>0){intervals.push(now-prevFrame);maxFrame=Math.max(maxFrame,now-prevFrame);}prevFrame=now;
-         var u:Object=find("slaver2");if(u!=null&&u.currentWeapon!=null)samples[Number(u.currentWeapon.rot).toFixed(4)]=true;
+         var u:Object=mod.game.unitForKey(aimKey);if(u!=null&&u.currentWeapon!=null)samples[Number(u.currentWeapon.rot).toFixed(4)]=true;
       }
    }
 }

@@ -5437,6 +5437,7 @@ package rconnect.game
          }
          _units.enter(loc);
          var out:Array = [];
+         _presentation.beginCaptureBatch();
          try
          {
             for each(var u:Object in units as Array)
@@ -5495,6 +5496,7 @@ package rconnect.game
          catch(err:*)
          {
          }
+         finally {_presentation.endCaptureBatch();}
          return out;
       }
 
@@ -6240,7 +6242,7 @@ package rconnect.game
                      u.storona=Number(selected.storona)>=0?1:-1;
                      if(_lastUnitVisual[u]!==selected) {
                         _lastUnitVisual[u]=selected;
-                        _presentation.apply(u,selected,main,motion,coopPaused);
+                        _presentation.apply(u,selected,main,motion,coopPaused,true);
                      }
                   }
                }
