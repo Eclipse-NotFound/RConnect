@@ -75,7 +75,9 @@ def main():
                     '--java',str(JAVA),'--amxmlc',str(SDK/'bin/amxmlc.bat'),
                     '--output',str(binary)],check=True)
     receipt = {'version':'0.2.22-fix15-keybinds','production_baseline_sha256':PIN,
-               'baseline_source':sources,'binary':str(binary),'bytes':binary.stat().st_size,
+               'baseline_source':sources,
+               'source':{str(p.relative_to(OUT)).replace('\\','/'):digest(p) for p in (OUT/'src').rglob('*') if p.is_file()},
+               'binary':str(binary),'bytes':binary.stat().st_size,
                'sha256':digest(binary),'experimental_a22_included':False,
                'authority_B_included':False,'release_modified':False}
     (OUT/'candidate.json').write_text(json.dumps(receipt,ensure_ascii=False,indent=2),encoding='utf-8')
