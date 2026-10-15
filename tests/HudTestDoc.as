@@ -96,6 +96,7 @@ package {
             check(h.collapsed && h.panelHeight==36,"fresh preferences default to 36-unit strip");
             check(h.windowOpacity==100 && h.alpha==1,"fresh opacity defaults to 100 percent");
             check(h.tfChat.defaultTextFormat.size==12,"primary input keeps 12-unit font");
+            HiddenHudKeybindRegression.run(mod,check);
             picture("hud-collapsed");
          } else if(n==1) {
             h.openPage("connect");

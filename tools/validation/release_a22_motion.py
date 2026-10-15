@@ -11,7 +11,7 @@ import uuid
 
 from release_a22_map import ROOT, GAME, sha, read, save, require, verify_install, replace
 from run_a22_motion_checks import CASES
-from prepare_a22_motion_keybinds import UI_FILES, UI_SHA, UI_VERSION, verify_ui, verify_ui_deployment
+from prepare_a22_motion_keybinds import UI_FILES, UI_SHA, UI_VERSION, verify_ui, verify_ui_deployment, optimize_hud_refresh
 
 CHANGED = {'src/RConnectMod.as', 'src/fe/unit/RConnectAnimationAccess.as',
            'src/rconnect/core/Session.as', 'src/rconnect/game/GameBridge.as',
@@ -23,6 +23,13 @@ def audit(out, bundle, evidence):
     m, runtime = read(out/'prepared.json'), read(bundle/'inputs.json')
     base = ROOT/m['installed_baseline']
     bm = read(base/'prepared.json')
+    changed = set(CHANGED)
+    if 'src/rconnect/game/ExplorationSync.as' in m['overrides']:
+        changed.add('src/rconnect/game/ExplorationSync.as')
+    codec = {'src/rconnect/net/TcpLink.as', 'src/rconnect/net/BinaryMessageCodec.as'}
+    if codec & m['overrides'].keys():
+        require(codec <= m['overrides'].keys(), 'Incomplete negotiated codec override')
+        changed.update(codec)
     require(m['kind'] in ('isolated-a22-followup', 'isolated-a22-testpack') and m['native_unchanged'], 'Not a native-preserving candidate')
     if m['kind'] == 'isolated-a22-testpack':
         parent = ROOT/m['parent_candidate']
@@ -52,14 +59,20 @@ def audit(out, bundle, evidence):
             if n not in UI_FILES and n != 'src/RConnectMod.as':
                 require(m['source'][n] == h, 'Merge changed motion behavior: '+n)
         for n in UI_FILES:
-            require(m['source'][n] == merged['ui_source'][n], 'Merge changed shortcuts: '+n)
+            if n == 'src/rconnect/ui/NetHud.as' and merged.get('hud_performance'):
+                expected_hud = optimize_hud_refresh((ui/n).read_text(encoding='utf-8-sig'))
+                require((out/n).read_text(encoding='utf-8-sig') == expected_hud, 'HUD changed beyond exact performance transform')
+            else:
+                require(m['source'][n] == merged['ui_source'][n], 'Merge changed shortcuts: '+n)
     else:
         require(m['control_sha256'] == bm['candidate_sha256'], 'Wrong installed control')
     require(m['original_game_sha256'] == m['candidate_game_sha256'] == runtime['files']['pfe.swf'], 'Native game changed')
     added = {'src/rconnect/game/SatsTargetVisuals.as'} | ({'src/rconnect/ui/NetKeybinds.as'} if merged else set())
+    if codec <= m['overrides'].keys():
+        added.add('src/rconnect/net/BinaryMessageCodec.as')
     require(set(m['source']) == set(bm['source']) | added, 'Unexpected source inventory')
     differences = {n for n, h in m['source'].items() if bm['source'].get(n) != h}
-    require(differences == CHANGED | (UI_FILES if merged else set()), 'Unexpected production changes: '+str(differences))
+    require(differences == changed | (UI_FILES if merged else set()), 'Unexpected production changes: '+str(differences))
     for n, h in {**m['source'], **m['inputs']}.items():
         require(sha(out/n) == h, 'Frozen input changed: '+n)
     for n in m['overrides']:

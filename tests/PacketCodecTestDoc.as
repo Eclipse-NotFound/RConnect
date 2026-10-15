@@ -23,6 +23,7 @@ package {
    public class PacketCodecTestDoc extends Sprite {
       public static const MOD_CLASS:Class=RConnectMod;
       private var timer:Timer=new Timer(100),began:int=getTimer(),started:Boolean=false,done:Boolean=false;
+      private var readyAt:int=0;
       private var host:Boolean,listener:ServerSocket,raw:Socket,receiver:TcpLink,received:int=0;
       private var want:Object={type:"codec-data",text:"中文 · русский 🦄",values:[null,true,false,0,-3,2147483648,1.23456789]};
       public function PacketCodecTestDoc() {
@@ -40,14 +41,41 @@ package {
          for(key in a){n++;if(!b.hasOwnProperty(key)||!same(a[key],b[key]))return false;}
          for(key in b)m++;return n==m;
       }
-      private function checks():void {
+      private function differences(a:*,b:*,path:String,out:Array):void {
+         if(a===b || out.length>=16)return;
+         if(a!=null && b!=null && typeof a=="object" && typeof b=="object") {
+            for(var key:String in a)differences(a[key],b[key],path+"."+key,out);
+            for(key in b)if(!a.hasOwnProperty(key))out.push({path:path+"."+key,extra:true});
+         } else out.push({path:path,jsonValue:a,binaryValue:b,jsonType:typeof a,binaryType:typeof b,
+            absolute:(a is Number && b is Number)?Math.abs(Number(a)-Number(b)):null});
+      }
+      private function checks(mod:RConnectMod):void {
          RoomEncodingRegression.run(check);
+         // Compare the actual current native objects too, not only a tree
+         // normalized by JSON before entering the binary encoder.
+         var nativePacket:Object={type:"native-codec-oracle",units:mod.game.readUnitsSnapshot(),player:mod.game.readSnapshot()};
+         var nativeBytes:ByteArray=BinaryMessageCodec.pack(nativePacket);
+         check(nativeBytes!=null,"actual native player and unit snapshots support negotiated encoding");
+         var mismatches:Array=[];differences(JSON.parse(JSON.stringify(nativePacket)),BinaryMessageCodec.unpack(nativeBytes),"native",mismatches);
+         if(mismatches.length)Log.d("CODEC NATIVE DIFFERENCES "+JSON.stringify(mismatches));
+         check(nativeBytes!=null && same(JSON.parse(JSON.stringify(nativePacket)),BinaryMessageCodec.unpack(nativeBytes)),
+            "actual native snapshot decoding preserves the prior JSON data model");
          var shared:Object={n:7,items:["same",2]},input:Object={type:"codec-data",text:want.text,
             numbers:[0,-1,2147483648,1.25,NaN,Infinity,-Infinity,undefined],a:shared,b:shared,
             missing:undefined,callback:function():void {},value:null,yes:true,no:false};
          var packed:ByteArray=BinaryMessageCodec.pack(input),decoded:Object=BinaryMessageCodec.unpack(packed);
          check(packed!=null && decoded!=null,"anonymous native encoding decodes");
          check(same(JSON.parse(JSON.stringify(input)),decoded),"round trip matches existing JSON values and omissions");
+         var numeric:Array=[110.39999999999999,36.449999999999996,.9751859364435429,-0,Number.MIN_VALUE,Number.MAX_VALUE];
+         var bits:ByteArray=new ByteArray(),seed:uint=2718281;
+         for(var j:int=0;j<512;j++) {
+            bits.length=0;seed=uint(seed*1664525+1013904223);bits.writeUnsignedInt(seed);
+            seed=uint(seed*1664525+1013904223);bits.writeUnsignedInt(seed);bits.position=0;
+            numeric.push(bits.readDouble());
+         }
+         var numericInput:Object={type:"numeric-oracle",numbers:numeric};
+         check(same(JSON.parse(JSON.stringify(numericInput)),BinaryMessageCodec.unpack(BinaryMessageCodec.pack(numericInput))),
+            "all 518 double boundary/random patterns exactly preserve JSON numeric results without epsilon");
          check(decoded!=null && decoded.a!==decoded.b && decoded.a.items!==decoded.b.items,"shared input references become independent receiver values");
          var malformed:int=0;
          for(var i:int=0;i<packed.length;i++) {
@@ -71,14 +99,17 @@ package {
       }
       private function tick(e:TimerEvent):void {
          if(done)return;
-         if(getTimer()-began>40000){check(false,"codec scenario completes within deadline");finish();return;}
          var mod:RConnectMod=RConnectMod.instance;
+         if(readyAt==0 && getTimer()-began>120000){check(false,"native connection and room become ready within startup deadline");finish();return;}
+         if(readyAt>0 && getTimer()-readyAt>40000){check(false,"codec scenario completes within 40 seconds after room readiness");finish();return;}
          if(started || mod==null || !mod.session.rooms.ready || mod.session.rooms.busy)return;
          var gameplay:TcpLink=host?(mod.session.peers.length?mod.session.peers[0].link:null):mod.session.link;
+         if(gameplay==null)return;
+         if(readyAt==0){readyAt=getTimer();Log.d("CODEC READY startupMs="+(readyAt-began));}
          if(gameplay==null || gameplay.binarySent==0 || gameplay.binaryReceived==0)return;
          started=true;check(gameplay.binaryEnabled,"real game connection negotiated codec");
          check(gameplay.binarySent>0 && gameplay.binaryReceived>0,"actual gameplay binary messages flow in both directions");
-         try {checks();network();} catch(err:*) {check(false,"exception "+err);finish();}
+         try {checks(mod);network();} catch(err:*) {check(false,"exception "+err);finish();}
       }
       private function network():void {
          listener=new ServerSocket();listener.bind(0,"127.0.0.1");listener.listen();

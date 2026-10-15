@@ -83,7 +83,7 @@ def main():
             '--entry',args.entry,'--output',str(driver)],cwd=ROOT,stdout=stream,stderr=subprocess.STDOUT,check=True)
     command=[sys.executable,'-B','-X','utf8',str(ROOT/'tools/run_coop_regression.py'),
         '--candidate',str(binary),'--game-root',str(bundle/'game'),'--effects-driver',str(driver),
-        '--effects','--all-mods','--visible-windows','--seconds',str(args.seconds),
+        '--effects','--all-mods','--visible-windows','--defer-visible','--seconds',str(args.seconds),
         '--land',args.land or ('rbl' if args.entry=='NativeMapGenerationTestDoc' else 'random_mane'),
         '--expected-version',args.expected_version or ('0.2.22-dev' if control else '0.2.22-map1')]
     if not control: command+=['--game-candidate',str(out/'native/pfe.swf')]
@@ -146,9 +146,11 @@ def main():
                 if fa_hash and name.lower()=='mods/firearmattachments/release/firearmattachmentsmod.swf':
                     assert digest==fa_hash;continue
                 assert digest==frozen['files'][name],name
-            lines=(folder/(role+'.log')).read_text(encoding='utf-8-sig')
+            role_log=folder/(role+'.log')
+            lines=role_log.read_text(encoding='utf-8-sig') if role_log.is_file() else ''
             receipt[role]=dict(passed=len(re.findall(r'^COOP PASS ',lines,re.M)),failed=len(re.findall(r'^COOP FAIL ',lines,re.M)),
-                done='COOP EFFECTS DONE' in lines,log_sha256=sha(folder/(role+'.log')))
+                done='COOP EFFECTS DONE' in lines,log_sha256=sha(role_log) if role_log.is_file() else None,
+                missing_log=not role_log.is_file())
     save(result,receipt)
     print(json.dumps(receipt,ensure_ascii=False))
     print('\n'.join(s for s in output.splitlines() if 'COOP FAIL ' in s or 'RESULT ' in s)[-5000:])

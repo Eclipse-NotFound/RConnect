@@ -17,6 +17,29 @@ UI_SHA = 'b2ed7f3a9b1d176dffb2b912d69da8084982906ff71d6fba8367bd36514e84f8'
 UI_FILES = {'src/rconnect/ui/NetHud.as', 'src/rconnect/ui/NetKeybinds.as'}
 
 
+def optimize_hud_refresh(source):
+    """Exact performance-only transform; preserve all key handling and layouts."""
+    changes = [
+        ('         expandButton.text=folded?"▼":"▲";',
+         '         expandButton.text=folded?"▼":"▲";\n'
+         '         // Hidden pages have no usable controls. Opening refreshes immediately.\n'
+         '         if(!visible || folded) {refreshPauseBanner(pause);layout();return;}'),
+        ('         var teleportReason:String=mod.navigation==null?"请等待房间准备完成":mod.navigation.unavailable();',
+         '         var teleportReason:String=visible && !folded && !help && page=="peer"\n'
+         '            ? (mod.navigation==null?"请等待房间准备完成":mod.navigation.unavailable()) : "";'),
+        ('         if(_pauseBanner!=null) {\n            _pauseBanner.visible=pause!=null && pause.paused;',
+         '         refreshPauseBanner(pause);\n         layout();\n      }\n\n'
+         '      private function refreshPauseBanner(pause:Object):void {\n'
+         '         if(_pauseBanner!=null && surface!=null) {\n            _pauseBanner.visible=pause!=null && pause.paused;'),
+        ('            if(_pauseBanner.visible)_pauseBanner.text=pause.description();\n         }\n         layout();',
+         '            if(_pauseBanner.visible)_pauseBanner.text=pause.description();\n         }'),
+    ]
+    for before, after in changes:
+        assert source.count(before) == 1, 'HUD performance anchor changed'
+        source = source.replace(before, after)
+    return source
+
+
 def read(path):
     return json.loads(path.read_text(encoding='utf-8-sig'))
 
@@ -59,6 +82,7 @@ def main():
     ap.add_argument('--ui-deployment', required=True, type=Path)
     ap.add_argument('--motion', default='build/m52/a22-fixes-24')
     ap.add_argument('--version', default='0.2.22-fix25-keybinds')
+    ap.add_argument('--hud-performance', action='store_true')
     args = ap.parse_args()
     out = (ROOT/args.output).resolve()
     assert out.parent == ROOT/'build/m52' and not out.exists()
@@ -75,11 +99,17 @@ def main():
     for name, digest in {**m['source'], **m['inputs']}.items():
         assert sha(motion/name) == digest, 'Motion input changed: '+name
     assert sha(motion/'RConnectMod.swf') == m['candidate_sha256']
-    assert m['control_sha256'] == bm['candidate_sha256']
+    assert m['control_sha256'] in (bm['candidate_sha256'], UI_SHA)
     for name in m['source']:
         put(out/name, (motion/name).read_bytes())
     for name in UI_FILES:
         put(out/name, (ui/name).read_bytes())
+    if args.hud_performance:
+        hud = 'src/rconnect/ui/NetHud.as'
+        optimized = optimize_hud_refresh((ui/hud).read_text(encoding='utf-8-sig'))
+        current_hud = ROOT/'experimental/a22-fixes'/hud
+        assert current_hud.read_text(encoding='utf-8-sig') == optimized
+        put(out/hud, current_hud.read_bytes())
     entry = out/'src/RConnectMod.as'
     text = entry.read_text(encoding='utf-8-sig')
     version = args.version
@@ -112,6 +142,7 @@ def main():
              inputs={p.relative_to(out).as_posix():sha(p) for d in ('tools','tests') for p in (out/d).rglob('*') if p.is_file()},
              keybind_merge=dict(motion_base=motion.relative_to(ROOT).as_posix(), motion_prepared_sha256=sha(motion/'prepared.json'),
                                 ui_source=ui_sources, ui_candidate_sha256=sha(out/'evidence/keybind-candidate.json'),
+                                hud_performance=args.hud_performance,
                                 deployment_path=str(deployment), deployment_sha256=sha(out/'evidence/keybind-deployment.json'),
                                 recipe_sha256=sha(ROOT/'tools/validation/build_keybinds.py')))
     (out/'prepared.json').write_text(json.dumps(m, ensure_ascii=False, indent=2), encoding='utf-8')

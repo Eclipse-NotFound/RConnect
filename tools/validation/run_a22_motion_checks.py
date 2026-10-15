@@ -20,6 +20,10 @@ CASES = [
     ('respawn', 'RespawnRoomTestDoc', 'random_mane', 600, False),
     ('pause', 'CoopPauseTestDoc', 'random_mane', 420, False),
     ('density', 'ProjectileLoadTestDoc', 'random_mane', 420, False),
+    ('vision-api', 'VisionApiTestDoc', 'random_mane', 240, False),
+    ('hud', 'HudTestDoc', 'random_mane', 300, False),
+    ('navigation', 'TeammateNavigationTestDoc', 'random_mane', 480, False),
+    ('codec', 'PacketCodecTestDoc', 'random_mane', 240, False),
 ]
 
 def main():

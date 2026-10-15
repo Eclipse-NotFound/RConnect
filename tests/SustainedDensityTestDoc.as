@@ -40,6 +40,7 @@ package {
       private var trajectoryEvents:int=0,renderedProjectiles:int=0,movingProjectiles:int=0;
       private var projectileClasses:Object={},projectilePositions:Dictionary=new Dictionary(true);
       private var setupStage:Boolean=false;
+      private var seedClass:Object,originalSeed:Function;
       private var diagEnabled:Boolean=false,diagSampling:Boolean=false,diagNumber:int=0,diagAt:int=0,diagAfter:int=0;
       private var diagRows:Array=[];
       private var diagPacket:Object;
@@ -117,6 +118,7 @@ package {
          if(phase=="done")return;
          if(diagEnabled){diagEnd(null);encodingProbe();Log.d("PROJECTILE PROFILE "+JSON.stringify({role:host?"host":"join",frames:diagRows}));}
          if(setupStage)mod.stage.removeEventListener(Event.RENDER,renderProjectiles);
+         if(seedClass!=null)seedClass.rconnectSeedSource=originalSeed;
          phase="done";timer.stop();Log.d("COOP EFFECTS DONE network-state "+(host?"host":"join"));
       }
       private function renderProjectiles(e:Event):void {
@@ -223,12 +225,15 @@ package {
             for(var i:int=0;i<78;i++){
                var u:Object=spawn(i%2==0?"UnitBat":"UnitSlaver",i%2==0?"1":"slaver2",<unit tr="2"/>,mod.game.gg.X+160);
                CombatStateProbe.ai(u as Unit,3);u.dx=3;u.stay=true;u.animate();
-               if(projectileLoad && i%2==1 && loadGuns.length<12) {
+               if(projectileLoad && i%2==1) {
                   if(u.currentWeapon!=null)u.currentWeapon.remVisual();
                   var factory:Object=mod.main.loaderInfo.applicationDomain.getDefinition("fe.weapon.Weapon");
-                  var gun:Object=factory.create(u,"lmg",0);u.currentWeapon=gun;u.childObjs=[gun];gun.addVisual();
+                  var firing:Boolean=loadGuns.length<12;
+                  // Match the workload across builds instead of comparing two
+                  // randomly armed crowds. Twelve LMGs fire; the rest only aim.
+                  var gun:Object=factory.create(u,firing?"lmg":"p308c",0);u.currentWeapon=gun;u.childObjs=[gun];gun.addVisual();
                   gun.hold=10000;gun.damage=1;gun.destroy=0;gun.damageExpl=0;gun.precision=0;gun.deviation=0;gun.critCh=0;
-                  loadGuns.push(gun);
+                  if(firing)loadGuns.push(gun);
                }
             }
             send("load");setPhase("wait-load");return;
@@ -263,6 +268,14 @@ package {
       }
       private function tick(e:TimerEvent):void {
          mod=RConnectMod.instance;if(mod==null)return;
+         if(seedClass==null) {
+            seedClass=mod.main.loaderInfo.applicationDomain.getDefinition("fe.loc.Land");
+            originalSeed=seedClass.rconnectSeedSource;
+            var fallback:Function=originalSeed;
+            seedClass.rconnectSeedSource=function(land:Object):uint {
+               return String(land.act.id)=="random_mane"?uint(719355926):uint(fallback(land));
+            };
+         }
          // Protect only the isolated fixture's actors during connection/travel.
          // Waiting 25 seconds before doing so allowed the test player to die.
          if(phase=="boot" && mod.game.gg!=null)mod.game.gg.invulner=true;
@@ -271,6 +284,7 @@ package {
          if(timer.currentCount<250)return;
          try {
             if(phase=="boot"){
+               check(Number(GameBridge.probe(mod.game.world.land,"rconnectLayoutSeed"))==719355926,"fixture uses recorded native map seed");
                check(mod.game.gg.sost==1 && mod.game.gg.hp>0,"fixture enters with a living player");
                if(mod.game.gg.sost!=1 || mod.game.gg.hp<=0){send("done");finish();return;}
                mod.stage.nativeWindow.visible=true;

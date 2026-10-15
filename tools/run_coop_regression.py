@@ -38,6 +38,7 @@ def main():
     ap.add_argument('--all-mods', action='store_true', help='Load all installed manifest modules in the isolated scenario')
     ap.add_argument('--responsive', action='store_true', help='Use the same process-local HighQoS policy as Start-Coop.bat')
     ap.add_argument('--visible-windows', action='store_true', help='Render visible native game windows, as in normal play')
+    ap.add_argument('--defer-visible', action='store_true', help='External effects harness shows the window after native UI initialization; avoids the native pre-PipBuck resize race')
     ap.add_argument('--host-save-template',type=Path,help='Copy this slot-zero SOL into isolated slot nine; never modify the source')
     ap.add_argument('--join-save-template',type=Path,help='Copy this slot-zero SOL into isolated slot nine; never modify the source')
     ap.add_argument('--connect-after-load',action='store_true',help='External scenario driver loads isolated saves before starting TCP')
@@ -185,8 +186,11 @@ def main():
             desc.write_text('''<?xml version="1.0" encoding="utf-8"?>
 <application xmlns="http://ns.adobe.com/air/application/30.0">
 <id>'''+appid+'''</id><versionNumber>1.0</versionNumber><filename>RConnectTest</filename>
-<initialWindow><content>pfe.swf</content><visible>'''+str(args.visible_windows).lower()+'''</visible><renderMode>direct</renderMode></initialWindow>
+<initialWindow><content>pfe.swf</content><visible>'''+str(args.visible_windows and not args.defer_visible).lower()+'''</visible><renderMode>direct</renderMode></initialWindow>
 </application>''',encoding='utf-8')
+            if args.defer_visible:
+                assert args.effects and args.visible_windows, 'Deferred visibility requires the isolated effects harness'
+                (folder/'tests/show-window-when-ready.flag').write_text('native UI ready',encoding='utf-8')
             storage=Path(os.environ['APPDATA'])/appid/'Local Store'
             if role in vision_templates:
                 settings=storage/'RealisticVision_config.txt'
@@ -216,7 +220,7 @@ def main():
         # Both role inputs and configuration bytes exist before either AIR
         # instance starts. Keep configuration evidence after runtime cleanup.
         (output/'input.json').write_text(json.dumps(dict(candidate_sha256=candidate_hash,inputs=inputs,
-            configuration_files=configuration_files,descriptors=descriptors,visible_windows=args.visible_windows,solo=args.solo,
+            configuration_files=configuration_files,descriptors=descriptors,visible_windows=args.visible_windows,defer_visible=args.defer_visible,solo=args.solo,
             save_templates=save_inputs,vision_config_templates=vision_inputs,vision_smoke_version=args.vision_smoke_version),indent=2))
         for role,folder,desc,storage,appid in launches:
             stdout=(output/(role+'.stdout.log')).open('w',encoding='utf-8')
@@ -234,7 +238,7 @@ def main():
         (output/'run.json').write_text(json.dumps(dict(port=port,pids=[p.pid for p in procs],
             candidate=str(args.candidate.resolve()),sha256=candidate_hash,inputs=inputs,save_templates=save_inputs,
             vision_config_templates=vision_inputs,configuration_files=configuration_files,descriptors=descriptors,
-            visible_windows=args.visible_windows,solo=args.solo,
+            visible_windows=args.visible_windows,defer_visible=args.defer_visible,solo=args.solo,
             vision_smoke_version=args.vision_smoke_version,
             input_manifest_sha256=hashlib.sha256((output/'input.json').read_bytes()).hexdigest()),indent=2))
         print('OUTPUT '+str(output),flush=True)
