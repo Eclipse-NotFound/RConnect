@@ -57,10 +57,14 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument('output')
     ap.add_argument('--ui-deployment', required=True, type=Path)
+    ap.add_argument('--motion', default='build/m52/a22-fixes-24')
+    ap.add_argument('--version', default='0.2.22-fix25-keybinds')
     args = ap.parse_args()
     out = (ROOT/args.output).resolve()
     assert out.parent == ROOT/'build/m52' and not out.exists()
-    base, motion, ui = [ROOT/p for p in ('build/m52/a22-fixes-15', 'build/m52/a22-fixes-24', 'build/keybind-output')]
+    base, motion, ui = [ROOT/p for p in ('build/m52/a22-fixes-15', args.motion, 'build/keybind-output')]
+    motion=motion.resolve()
+    assert motion.parent==ROOT/'build/m52' and args.version.startswith('0.2.22-')
     bm, m = read(base/'prepared.json'), read(motion/'prepared.json')
     ui_sources = verify_ui(base, ui)
     deployment = args.ui_deployment.resolve()
@@ -78,7 +82,7 @@ def main():
         put(out/name, (ui/name).read_bytes())
     entry = out/'src/RConnectMod.as'
     text = entry.read_text(encoding='utf-8-sig')
-    version = '0.2.22-fix25-keybinds'
+    version = args.version
     assert text.count('"'+m['version']+'"') == 1
     entry.write_text(text.replace('"'+m['version']+'"', '"'+version+'"'), encoding='utf-8')
     for name in m['inputs']:

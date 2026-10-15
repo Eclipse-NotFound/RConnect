@@ -72,6 +72,7 @@ package rconnect.game
          // Reapply the same selected pose when pause mode changes, including
          // MovieClips whose last received snapshot object has not changed yet.
          _lastUnitVisual=new Dictionary(true);
+         _pausedMotionDirty=value;
          if(value)_satsRasterDirty=true;
          _projectiles.setPaused(value);
          _ports.setPaused(value);
@@ -139,6 +140,7 @@ package rconnect.game
       private var _hitUnits:Dictionary = new Dictionary();
       private var _unitMotion:Dictionary = new Dictionary();
       private var _satsRasterDirty:Boolean=false;
+      private var _pausedMotionDirty:Boolean=false;
       private var _satsTargets:SatsTargetVisuals=new SatsTargetVisuals();
       private var _pendingHits:Dictionary = new Dictionary();
       private var _forcingVisibility:Boolean = false;
@@ -214,6 +216,10 @@ package rconnect.game
          _forcingVisibility = true;
          try
          {
+            // A stop packet can arrive after ENTER_FRAME. Consume its pose
+            // before the final visibility/SATS capture in this same render;
+            // waiting for the next animation frame leaves a stale silhouette.
+            if(_mirroring && coopPaused && _pausedMotionDirty)tickFrozenAnims();
             // Read actual final player clip frames after native frame scripts.
             if(gg!=null)_presentation.observePlayer(gg,_sampleAt);
             if(gg!=null)_bodyEffects.observe(gg,_sampleAt);
@@ -5776,6 +5782,7 @@ package rconnect.game
          var motion:RemoteMotion=_unitMotion[u] as RemoteMotion;
          if(motion==null || !freezeAI)motion=_unitMotion[u]=RemoteMotion.enemy();
          motion.push({x:x,y:y,sampleTime:stamp,bodyEffects:bodyEffects,visual:visual,weapons:visual==null?null:visual.weapons},now);
+         if(coopPaused)_pausedMotionDirty=true;
          var sample:Object=coopPaused?motion.settle(presentationTime()):motion.sample(presentationTime());
          if(coopPaused && (u.X!=sample.x || u.Y!=sample.y))_satsRasterDirty=true;
          u["setPos"](sample.x,sample.y);
@@ -6248,6 +6255,7 @@ package rconnect.game
             }
          }
          _animatingMirrors = false;
+         _pausedMotionDirty=false;
          if(presentationTiming!=null){presentationTiming.motionMs+=getTimer()-measureAt;presentationTiming.motionCalls++;}
       }
 

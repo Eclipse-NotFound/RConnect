@@ -41,9 +41,16 @@ package {
       private var bodyFrames:Object={},bodyBacksteps:int=0,previousBody:Object,endpointPose:Object;
       private var seedClass:Object,originalSeed:Function;
       private var bodyTrace:Array=[];
+      private var pauseTiming:Array=[];
+      private var pauseRounds:int=1,walkNumber:int=0;
+      private var deferPausedPackets:Boolean=false,releasingPacket:Boolean=false;
+      private var delayedPackets:Array=[],lateExpected:Object,lateFrames:int=0,lateMisses:int=0;
+      private var pausedCheckPending:Boolean=false,lateMoving:int=0;
 
-      public function PresentationContinuityTestDoc(enemyTimeline:Boolean=false) {
+      public function PresentationContinuityTestDoc(enemyTimeline:Boolean=false,repeatPauses:int=1,latePackets:Boolean=false) {
          timelineOnly=enemyTimeline;
+         pauseRounds=Math.max(1,repeatPauses);
+         deferPausedPackets=latePackets;
          var app:String=NativeApplication.nativeApplication.applicationID;
          if(app.indexOf("rconnect-coop-")<0)return;
          host=app.indexOf("-host-")>=0;
@@ -60,7 +67,16 @@ package {
          p=p||{};p.type="continuity-test";p.op=op;
          if(host)mod.session.server.broadcast(p);else if(mod.session.link!=null)mod.session.link.send(p);
       }
-      private function watch(l:TcpLink):void {if(l!=null&&!links[l]){links[l]=true;l.addEventListener(TcpLink.MESSAGE,receive);}}
+      private function watch(l:TcpLink):void {if(l!=null&&!links[l]){links[l]=true;l.addEventListener(TcpLink.MESSAGE,receive);
+         if(!host&&deferPausedPackets)l.addEventListener(TcpLink.MESSAGE,deferPacket,false,100000);}}
+      private function deferPacket(e:NetMessageEvent):void {
+         if(releasingPacket||mod==null||!mod.game.coopPaused)return;
+         var p:Object=e.data;
+         if(!(p.enemyMotion is Array)&&p.type!="unitsync")return;
+         // Retain the exact authenticated TCP payload and ordinary Session
+         // handlers. Only delivery timing changes; no receiver position is set.
+         delayedPackets.push({link:e.currentTarget,data:p});e.stopImmediatePropagation();
+      }
       private function klass(n:String):Class {return mod.main.loaderInfo.applicationDomain.getDefinition(n) as Class;}
       private function stable():Boolean {return mod.session.rooms.ready&&!mod.session.rooms.busy&&!mod.game.isTransitioning();}
       private function findArena():void {
@@ -97,6 +113,11 @@ package {
          mod.stage.addEventListener(Event.ENTER_FRAME,before,false,100000);
          mod.stage.addEventListener(Event.ENTER_FRAME,after,false,-6000);
          mod.stage.addEventListener(Event.RENDER,render,false,-30000);
+         if(timelineOnly) {
+            mod.game.presentationTiming={viewMs:0,viewCalls:0,motionMs:0,motionCalls:0};
+            mod.stage.addEventListener(Event.ENTER_FRAME,endFrame,false,-30000);
+            mod.stage.addEventListener(Event.RENDER,beginRender,false,100000);
+         }
       }
       private function makeBox():void {
          var xml:XML=<obj cont="custom"><item id="kofe" kol="37"/></obj>;xml.item.@kol=37+round;
@@ -129,13 +150,17 @@ package {
          return enemy!=null;
       }
       private function startWalk():void {
+         ++walkNumber;Log.d("CONTINUITY WALK "+walkNumber+"/"+pauseRounds);
          trace=[];endpoint=pausedX=initialGap=lastEnemyX=NaN;resumeJump=0;stablePauseAt=0;
+         endpointReceived=endpointSettled=0;bufferFrames=[];bodyFrames={};bodyBacksteps=0;
+         previousBody=endpointPose=latestMotion=null;bodyTrace=[];pauseTiming=[];
+         lateExpected=null;
          moving=true;walkAt=lastWalk=getTimer();walkX=baseX+90;worldFrames=0;
          if(host){enemy.setPos(walkX,baseY);send("walk");}change("walk");
       }
       private function openSats():void {
          var w:Object=mod.game.world,g:Object=mod.game.gg;
-         gun=new NativeTestGun(g as Unit);gun.loc=mod.game.loc;gun.hold=90;
+         if(gun==null)gun=new NativeTestGun(g as Unit);gun.loc=mod.game.loc;gun.hold=90;
          g.currentWeapon=gun;g.childObjs[0]=gun;gun.addVisual();gun.setPers(g,g.pers);gun.lvl=0;
          g.ggControl=true;g.pipOff=0;w.catPause=false;w.pip.onoff(-1);g.storona=1;
          mod.game.loc.getAbsTile(enemy.X,enemy.Y-enemy.scY/2).visi=1;
@@ -164,7 +189,8 @@ package {
             else if(p.op=="enemy"&&!host)change("find-enemy");
             else if(p.op=="enemy-ready"&&host)startWalk();
             else if(p.op=="walk"&&!host)startWalk();
-            else if(p.op=="endpoint"&&!host){endpoint=p.x;endpointPose=p.pose;initialGap=Math.abs(enemy.X-endpoint);endpointReceived=getTimer();}
+            else if(p.op=="repeat"&&host)startWalk();
+            else if(p.op=="endpoint"&&!host){endpoint=p.x;endpointPose=p.pose;initialGap=Math.abs(enemy.X-endpoint);endpointReceived=getTimer();pauseStamp("endpoint-received");}
             else if(p.op=="paused-result"&&host){moving=false;send("resume");change("resume-wait");}
             else if(p.op=="resume"&&!host){mod.game.world.sats.onoff(-1);change("resuming");}
             else if(p.op=="done"){if(host)send("done");finish();}
@@ -172,6 +198,7 @@ package {
       }
       private function before(e:Event):void {
          ++renderFrame;if(phase=="done")return;
+         pauseStamp("enter-begin");
          var g:Object=mod.game.gg;g.invulner=true;g.dx=g.dy=0;g.isTake=0;
          g.setPos(baseX,baseY);g.setVisPos();
       }
@@ -189,7 +216,42 @@ package {
          }
          mod.stage.invalidate();
       }
+      // Observation only: bracket existing stage callbacks without driving the
+      // receiver, changing its cadence, or substituting logical positions for
+      // rendered positions. Keep repeated RENDER visits visible in this trace.
+      private function endFrame(e:Event):void {pauseStamp("enter-end");}
+      private function beginRender(e:Event):void {
+         // A packet released during resume is not a paused-frame expectation.
+         // Never carry an observation into a later pause or a later render.
+         lateExpected=null;
+         if(delayedPackets.length) {
+            var pending:Array=delayedPackets;delayedPackets=[];releasingPacket=true;
+            try {for each(var message:Object in pending) {
+               message.link.dispatchEvent(new NetMessageEvent(TcpLink.MESSAGE,message.data));
+               lateExpected=enemy==null||!mod.game.coopPaused?null:{x:Number(enemy.X)};
+               if(lateExpected!=null&&Math.abs(Number(enemy.vis.x)-Number(enemy.X))>1)++lateMoving;
+            }}finally{releasingPacket=false;}
+         }
+         pauseStamp("render-begin");
+      }
+      private function pauseStamp(kind:String):void {
+         if(!timelineOnly||enemy==null||(phase!="opening"&&phase!="paused"&&phase!="walk"))return;
+         var timing:Object=mod.game.presentationTiming;
+         pauseTiming.push({at:getTimer(),kind:kind,frame:renderFrame,phase:phase,
+            x:Number(enemy.vis.x),logicalX:Number(enemy.X),paused:mod.session.pause.paused,
+            sats:mod.game.world.sats.active,alreadyRendered:lastRender==renderFrame,
+            viewMs:timing.viewMs,viewCalls:timing.viewCalls,
+            motionMs:timing.motionMs,motionCalls:timing.motionCalls});
+         if(pauseTiming.length>220)pauseTiming.shift();
+      }
       private function render(e:Event):void {
+         pauseStamp("render-observed");
+         if(lateExpected!=null&&enemy!=null&&mod.game.coopPaused) {
+            ++lateFrames;
+            if(Math.abs(Number(enemy.vis.x)-Number(lateExpected.x))>1)++lateMisses;
+            Log.d("A22 LATE PAUSE FRAME "+JSON.stringify({frame:renderFrame,expected:lateExpected.x,actual:enemy.vis.x,misses:lateMisses}));
+         }
+         lateExpected=null;
          if(lastRender==renderFrame||phase=="done")return;lastRender=renderFrame;
          if(phase=="falling"||phase=="drop-wait") {
             var o:Object=drop();if(o!=null&&o.vis!=null&&o.vis.stage!=null)
@@ -215,6 +277,52 @@ package {
             if(timelineOnly&&!host&&endpointReceived>0&&endpointSettled==0&&Math.abs(x-endpoint)<=1)
                endpointSettled=getTimer();
          }
+         if(pausedCheckPending)checkPausedFrame();
+      }
+      private function checkPausedFrame():void {
+         pausedCheckPending=false;var w:Object=mod.game.world;
+         if(timelineOnly) {
+            bufferFrames.sort(Array.NUMERIC);
+            var lag:Number=bufferFrames.length?bufferFrames[int((bufferFrames.length-1)*.9)]:NaN;
+            check(bufferFrames.length>=8,"enemy buffered-frame sample coverage="+bufferFrames.length);
+            check(lag<=4,"enemy display is within four already-received native frames p90="+lag);
+            check(endpointSettled>0&&endpointSettled-endpointReceived<=100,"SATS final endpoint settles within 100ms after confirmed stop actual="+(endpointSettled-endpointReceived));
+            var bodyCount:int=0;for(var frameKey:String in bodyFrames)bodyCount++;
+            check(bodyCount>=8,"native walking body presents distinct animation frames="+bodyCount);
+            check(bodyBacksteps==0,"walking body does not rewind a few frames between packets count="+bodyBacksteps);
+            Log.d("A22 BODY FRAMES "+JSON.stringify(bodyTrace));
+            var pausedPose:Object=RConnectAnimationAccess.capture(enemy as Unit);
+            check(endpointPose!=null&&endpointPose.blit!=null&&pausedPose.blit!=null&&Math.abs(Number(endpointPose.blit.f)-Number(pausedPose.blit.f))<.01,
+               "SATS native body phase matches authority source="+JSON.stringify(endpointPose)+" display="+JSON.stringify(pausedPose));
+            Log.d("A22 ENEMY TIMELINE "+JSON.stringify({bodyFrames:bodyCount,bodyBacksteps:bodyBacksteps,bufferFrames:bufferFrames,p90:lag,initialPauseGap:initialGap,settleMs:endpointSettled-endpointReceived,trace:trace}));
+            Log.d("A22 PAUSE TIMING "+JSON.stringify(pauseTiming));
+         }
+         pausedX=enemy.X;check(Math.abs(pausedX-endpoint)<=1,"paused enemy matches authority endpoint gap="+Math.abs(pausedX-endpoint));
+         check(mod.session.pause.paused&&w.sats.active,"pause remains owned by native SATS");
+         var overlay:Object=null;
+         for each(var entry:Object in w.sats.units)
+            if(entry.u is MirrorHitUnit && MirrorHitUnit(entry.u).body===enemy)overlay=entry.v;
+         check(overlay!=null,"native SATS retains its real enemy targeting overlay");
+         check(overlay!=null&&Math.abs(Number(overlay.x)-endpoint)<=1,"SATS target overlay matches paused authority endpoint x="+(overlay==null?"missing":overlay.x));
+         if(timelineOnly && overlay!=null) {
+            var actual:MovieClip=overlay.getChildAt(0) as MovieClip;
+            var fresh:MovieClip=w.sats.drawUnit(enemy);
+            var actualBitmap:Bitmap=actual.getChildAt(0) as Bitmap;
+            var expectedBitmap:Bitmap=fresh.getChildAt(0) as Bitmap;
+            var comparison:Object=actualBitmap.bitmapData.compare(expectedBitmap.bitmapData);
+            Log.d("A22 SATS PIXELS "+JSON.stringify({comparison:comparison is BitmapData?"pixels":comparison,
+               actual:[actualBitmap.width,actualBitmap.height,actualBitmap.x,actualBitmap.y],
+               expected:[expectedBitmap.width,expectedBitmap.height,expectedBitmap.x,expectedBitmap.y],
+               pose:RConnectAnimationAccess.capture(enemy as Unit),bodyBounds:enemy.vis.getBounds(enemy.vis)}));
+            if(!(comparison is uint && uint(comparison)==0)) {
+               saveBitmap(actualBitmap.bitmapData,"actual");saveBitmap(expectedBitmap.bitmapData,"expected");
+               if(comparison is BitmapData)saveBitmap(comparison as BitmapData,"difference");
+            }
+            check(comparison is uint && uint(comparison)==0,"SATS target bitmap matches the final received native body pose");
+            if(comparison is flash.display.BitmapData)comparison.dispose();
+            expectedBitmap.bitmapData.dispose();
+         }
+         send("paused-result");change("paused-wait");
       }
       private function analyseDrop():void {
          var minY:Number=Infinity,maxY:Number=-Infinity,endY:Number=trace.length?trace[trace.length-1].y:NaN;
@@ -269,54 +377,13 @@ package {
                endpoint=enemy.X;check(worldFrames>=12,"source enemy was moving before pause frames="+worldFrames);
                send("endpoint",{x:endpoint,pose:RConnectAnimationAccess.capture(enemy as Unit)});change("paused");
             }
-            else if(!host&&phase=="paused"&&getTimer()-at>1200&&isFinite(endpoint)) {
-               if(timelineOnly) {
-                  bufferFrames.sort(Array.NUMERIC);
-                  var lag:Number=bufferFrames.length?bufferFrames[int((bufferFrames.length-1)*.9)]:NaN;
-                  check(bufferFrames.length>=8,"enemy buffered-frame sample coverage="+bufferFrames.length);
-                  check(lag<=4,"enemy display is within four already-received native frames p90="+lag);
-                  check(endpointSettled>0&&endpointSettled-endpointReceived<=100,"SATS final endpoint settles within 100ms after confirmed stop actual="+(endpointSettled-endpointReceived));
-                  var bodyCount:int=0;for(var frameKey:String in bodyFrames)bodyCount++;
-                  check(bodyCount>=8,"native walking body presents distinct animation frames="+bodyCount);
-                  check(bodyBacksteps==0,"walking body does not rewind a few frames between packets count="+bodyBacksteps);
-                  Log.d("A22 BODY FRAMES "+JSON.stringify(bodyTrace));
-                  var pausedPose:Object=RConnectAnimationAccess.capture(enemy as Unit);
-                  check(endpointPose!=null&&endpointPose.blit!=null&&pausedPose.blit!=null&&Math.abs(Number(endpointPose.blit.f)-Number(pausedPose.blit.f))<.01,
-                     "SATS native body phase matches authority source="+JSON.stringify(endpointPose)+" display="+JSON.stringify(pausedPose));
-                  Log.d("A22 ENEMY TIMELINE "+JSON.stringify({bodyFrames:bodyCount,bodyBacksteps:bodyBacksteps,bufferFrames:bufferFrames,p90:lag,initialPauseGap:initialGap,settleMs:endpointSettled-endpointReceived,trace:trace}));
-               }
-               pausedX=enemy.X;check(Math.abs(pausedX-endpoint)<=1,"paused enemy matches authority endpoint gap="+Math.abs(pausedX-endpoint));
-               check(mod.session.pause.paused&&w.sats.active,"pause remains owned by native SATS");
-               var overlay:Object=null;
-               for each(var entry:Object in w.sats.units)
-                  if(entry.u is MirrorHitUnit && MirrorHitUnit(entry.u).body===enemy)overlay=entry.v;
-               check(overlay!=null,"native SATS retains its real enemy targeting overlay");
-               check(overlay!=null&&Math.abs(Number(overlay.x)-endpoint)<=1,"SATS target overlay matches paused authority endpoint x="+(overlay==null?"missing":overlay.x));
-               if(timelineOnly && overlay!=null) {
-                  var actual:MovieClip=overlay.getChildAt(0) as MovieClip;
-                  var fresh:MovieClip=w.sats.drawUnit(enemy);
-                  var actualBitmap:Bitmap=actual.getChildAt(0) as Bitmap;
-                  var expectedBitmap:Bitmap=fresh.getChildAt(0) as Bitmap;
-                  var comparison:Object=actualBitmap.bitmapData.compare(expectedBitmap.bitmapData);
-                  Log.d("A22 SATS PIXELS "+JSON.stringify({comparison:comparison is BitmapData?"pixels":comparison,
-                     actual:[actualBitmap.width,actualBitmap.height,actualBitmap.x,actualBitmap.y],
-                     expected:[expectedBitmap.width,expectedBitmap.height,expectedBitmap.x,expectedBitmap.y],
-                     pose:RConnectAnimationAccess.capture(enemy as Unit),bodyBounds:enemy.vis.getBounds(enemy.vis)}));
-                  if(!(comparison is uint && uint(comparison)==0)) {
-                     saveBitmap(actualBitmap.bitmapData,"actual");saveBitmap(expectedBitmap.bitmapData,"expected");
-                     if(comparison is BitmapData)saveBitmap(comparison as BitmapData,"difference");
-                  }
-                  check(comparison is uint && uint(comparison)==0,"SATS target bitmap matches the final received native body pose");
-                  if(comparison is flash.display.BitmapData)comparison.dispose();
-                  expectedBitmap.bitmapData.dispose();
-               }
-               send("paused-result");change("paused-wait");
-            }
+            else if(!host&&phase=="paused"&&getTimer()-at>1200&&isFinite(endpoint))pausedCheckPending=true;
             else if(!host&&phase=="resuming"&&getTimer()-at>900&&!mod.session.pause.paused) {
                Log.d("CONTINUITY PAUSE "+JSON.stringify({endpoint:endpoint,initialGap:initialGap,pausedX:pausedX,resumeJump:resumeJump,trace:trace}));
                check(resumeJump<=4,"resume does not teleport a stopped enemy jump="+resumeJump);
                check(Math.abs(enemy.X-endpoint)<=1,"resumed enemy still matches source endpoint");
-               send("done");finish();
+               if(walkNumber<pauseRounds){send("repeat");change("repeat-wait");}
+               else {send("done");finish();}
             }
          }catch(error:Error){check(false,"tick "+error.getStackTrace());send("done");finish();}
       }
@@ -327,8 +394,18 @@ package {
       }
       private function finish():void {
          if(phase=="done")return;change("done");timer.stop();
+         if(!host&&deferPausedPackets) {
+            check(lateFrames>=4,"late paused TCP packet coverage="+lateFrames);
+            check(lateMoving>=1,"late delivery actually changes accepted logical position="+lateMoving);
+            check(lateMisses==0,"late paused TCP pose reaches the same render misses="+lateMisses);
+         }
          if(seedClass!=null)seedClass.rconnectSeedSource=originalSeed;
-         if(mod!=null){mod.stage.removeEventListener(Event.ENTER_FRAME,before);mod.stage.removeEventListener(Event.ENTER_FRAME,after);mod.stage.removeEventListener(Event.RENDER,render);}
+         if(mod!=null){mod.stage.removeEventListener(Event.ENTER_FRAME,before);mod.stage.removeEventListener(Event.ENTER_FRAME,after);mod.stage.removeEventListener(Event.RENDER,render);
+            mod.stage.removeEventListener(Event.ENTER_FRAME,endFrame);mod.stage.removeEventListener(Event.RENDER,beginRender);mod.game.presentationTiming=null;}
+         for(var link:Object in links) {
+            link.removeEventListener(TcpLink.MESSAGE,receive);
+            link.removeEventListener(TcpLink.MESSAGE,deferPacket);
+         }
          Log.d("COOP EFFECTS DONE continuity "+(host?"host":"join"));
       }
    }

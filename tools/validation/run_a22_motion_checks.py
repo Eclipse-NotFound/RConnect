@@ -10,6 +10,8 @@ CASES = [
     ('throw', 'A22ThrowCollisionTestDoc', 'rbl', 480, True),
     ('saved-grip', 'A22SavedGripStressTestDoc', 'rbl', 360, True),
     ('timeline', 'A22EnemyTimelineTestDoc', 'random_mane', 240, False),
+    ('late-pause', 'A22LatePausePacketTestDoc', 'random_mane', 300, False),
+    ('pause-timing', 'A22PauseTimingTestDoc', 'random_mane', 300, False),
     ('targets', 'TargetLifecycleTestDoc', 'random_mane', 300, False),
     ('continuity', 'PresentationContinuityTestDoc', 'random_mane', 300, False),
     ('animation', 'A22AnimationTestDoc', 'rbl', 240, False),
