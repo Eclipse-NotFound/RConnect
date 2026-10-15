@@ -1,3 +1,9 @@
+## 2026-10-15 菜单改键已部署并正式读回复验
+
+- 用户在快捷键统筹会话明确选择安装剩余六个客户端；备份后安装固定产物SHA256 B2ED7F3A9B1D176DFFB2B912D69DA8084982906FF71D6FBA8367BD36514E84F8。
+- 正式路径原字节复制到唯一AIR应用，七模组23项联合175＋171项通过；原本体/清单/配置及其它模块指纹复核无变。没有关闭玩家游戏或写真实存档。
+- 本模组旧文件SHA256 07B76ED8082462C43EAE7048AF041370FE315A5B6B23CCDF4E600E02ECD443A4，备份 D:/Program Files/Steam/steamapps/common/Remains/mods/ModLoader/build/backups/before-keybind-clients-20261015-214440-393ca9a3/RConnect/RConnectMod.swf。安装与统一回退见state/keybind-deployment-2026-10-15.md；保留其他任务WIP。
+
 ## 2026-10-15 联机面板与聊天改键候选，未部署
 
 - 新增NetKeybinds，浮窗F10/聊天Ctrl+Enter可在对应快捷键页改为精确组合或解除；本机即时保存，底栏/帮助同步。原聊天Enter/Esc与会话行为保留，按住面板键不反复开关。
