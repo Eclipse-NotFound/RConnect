@@ -16,13 +16,15 @@ CASES = [
     ('behavior', 'A22BehaviorTestDoc', 'rbl', 240, False),
     ('room', 'A22RoomTestDoc', 'random_mane', 600, False),
     ('respawn', 'RespawnRoomTestDoc', 'random_mane', 600, False),
+    ('pause', 'CoopPauseTestDoc', 'random_mane', 420, False),
+    ('density', 'ProjectileLoadTestDoc', 'random_mane', 420, False),
 ]
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--candidate', required=True)
     parser.add_argument('--bundle', required=True)
-    parser.add_argument('--fa', required=True)
+    parser.add_argument('--fa', help='Optional validated FA override; default uses the frozen installed version')
     parser.add_argument('--cases')
     parser.add_argument('--prefix', required=True)
     args = parser.parse_args()
@@ -35,8 +37,9 @@ def main():
         command = [sys.executable, '-B', '-X', 'utf8', str(ROOT/'tools/validation/run_a22_map_refresh.py'),
                    'candidate', '--candidate', args.candidate, '--bundle', args.bundle,
                    '--entry', entry, '--label', args.prefix+'-'+name, '--land', land,
-                   '--seconds', str(seconds), '--expected-version', manifest['version'],
-                   '--fa-candidate', args.fa]
+                   '--seconds', str(seconds), '--expected-version', manifest['version']]
+        if args.fa:
+            command += ['--fa-candidate', args.fa]
         if copied_save:
             saved = ROOT/'build/m52/littlepip-save-replay-01'
             command += ['--host-save-template', str(saved/'host/PFEgame0.sol'),

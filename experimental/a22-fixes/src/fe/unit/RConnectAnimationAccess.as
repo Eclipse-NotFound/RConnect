@@ -37,7 +37,7 @@ package fe.unit {
          // stopped-frame correction would cut those transitions short.
          if(unit is UnitTurret)return s;
          if(u.blitData!=null && unit.anims!=null && (a=unit.anims[u.animState])!=null)
-            s.blit={f:a.f,df:a.df,st:a.st,stab:a.stab,
+            s.blit={f:a.f,df:a.df,st:a.st,stab:a.stab,first:a.firstf,length:a.maxf,ret:a.retf,loop:a.replay,
                reverse:unit is UnitMerc && u.animState=="walk" && unit.aiNapr*Number(u.storona)<0};
          var osn:Object=u.vis==null || !("osn" in u.vis)?null:u.vis["osn"];
          if(osn is MovieClip) {

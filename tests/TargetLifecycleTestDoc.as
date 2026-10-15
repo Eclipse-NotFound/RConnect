@@ -118,16 +118,37 @@ package {
          var layerVisible:Boolean=graph.visObjs[2].visible,screenshotVisible:Boolean=graph.visSats.visible,targetsVisible:Boolean=sats.vis.visible;
          try {graph.visObjs[2].visible=true;graph.visSats.visible=false;sats.vis.visible=false;reference.draw(graph.visual);}
          finally {graph.visObjs[2].visible=layerVisible;graph.visSats.visible=screenshotVisible;sats.vis.visible=targetsVisible;}
-         var old:Object=pixels(bmp),current:Object=pixels(reference);reference.dispose();
+         var old:Object=pixels(bmp),current:Object=pixels(reference);
          check(old.count>=16&&current.count>=16,"native frozen/reference raster contains actual enemy marker counts="+old.count+"/"+current.count);
          check(old.count>0&&current.count>0&&Math.abs(old.x-current.x)<=1,"paused bitmap enemy and live endpoint coincide gap="+(old.x-current.x));
          Log.d("TARGET RASTER "+JSON.stringify({count:old.count,referenceCount:current.count,bitmapX:old.x,expectedX:current.x,endpoint:endpoint,bodyX:a.X}));
          var f:FileStream=new FileStream();f.open(File.applicationStorageDirectory.resolvePath("target-sats.png"),FileMode.WRITE);f.writeBytes(bmp.encode(bmp.rect,new PNGEncoderOptions()));f.close();
+         f.open(File.applicationStorageDirectory.resolvePath("target-reference.png"),FileMode.WRITE);f.writeBytes(reference.encode(reference.rect,new PNGEncoderOptions()));f.close();reference.dispose();
       }
       private function pixels(bmp:BitmapData):Object {
-         var count:int=0,sum:Number=0;
-         for(var py:int=0;py<bmp.height;py++)for(var px:int=0;px<bmp.width;px++)if(bmp.getPixel(px,py)==0xfb01fd){count++;sum+=px;}
-         return {count:count,x:sum/count};
+         // The native lighting/RV pass darkens the marker. Locate its largest
+         // connected magenta component by hue, without disabling lighting or
+         // treating an empty raster as a successful alignment check.
+         var points:Object={},width:int=bmp.width,key:int,color:uint,r:int,g:int,b:int;
+         for(var py:int=0;py<bmp.height;py++)for(var px:int=0;px<width;px++) {
+            color=bmp.getPixel(px,py);r=(color>>16)&255;g=(color>>8)&255;b=color&255;
+            if(r>=16&&b>=16&&g<=Math.min(r,b)*.1&&r>=b*.85&&r<=b*1.08)points[py*width+px]=true;
+         }
+         var best:Object={count:0,x:NaN};
+         for(var name:String in points) {
+            if(points[name]!==true)continue;
+            var todo:Array=[int(name)],count:int=0,sum:Number=0;
+            delete points[name];
+            while(todo.length>0) {
+               key=int(todo.pop());count++;sum+=key%width;
+               var neighbors:Array=[key-width,key+width];
+               if(key%width>0)neighbors.push(key-1);
+               if(key%width<width-1)neighbors.push(key+1);
+               for each(var next:int in neighbors)if(points[next]===true){delete points[next];todo.push(next);}
+            }
+            if(count>best.count)best={count:count,x:sum/count};
+         }
+         return best;
       }
       private function grip():void {
          var g:Object=mod.game.gg;g.mana=g.maxmana=10000;g.pers.maxTeleMassa=1000;g.pers.teleDist=1000000;

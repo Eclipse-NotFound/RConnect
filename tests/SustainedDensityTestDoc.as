@@ -32,6 +32,7 @@ package {
       private var densityProbe:int=0;
       private var frameAt:int=0,cpuMs:int=0,cpuMax:int=0,netAt:int=0,netMs:int=0,netMax:int=0;
       private var projectileLoad:Boolean=false,loadGuns:Array=[],projectileEvents:int=0,projectileSamples:int=0;
+      private var loadActors:Array=[];
       private var endedSamples:int=0;
       private var diagEnabled:Boolean=false,diagSampling:Boolean=false,diagNumber:int=0,diagAt:int=0,diagAfter:int=0;
       private var diagRows:Array=[];
@@ -116,6 +117,7 @@ package {
          var c:Class=mod.main.loaderInfo.applicationDomain.getDefinition("fe.unit."+name) as Class;
          var u:Object=new c(id,100,map,null);u.putLoc(mod.game.loc,x,mod.game.gg.Y);
          mod.game.loc.addObj(u);mod.game.loc.units.push(u);u.disabled=true;u.hp=u.maxhp=2000;u.xp=0;u.doop=true;
+         loadActors.push(u);
          return u;
       }
       private function message(e:NetMessageEvent):void {
@@ -273,7 +275,9 @@ package {
                var timingBridge:Object=mod.game;if("presentationTiming" in timingBridge)timingBridge.presentationTiming={viewMs:0,viewCalls:0,motionMs:0,motionCalls:0};
             }
             if(host&&phase=="load"){
-               for each(var u:Object in mod.game.loc.units)if(u!==mod.game.gg&&u.fraction<100){u.dx=3;u.setPos(u.X+((timer.currentCount%20<10)?2:-2),u.Y);if(u.currentWeapon!=null)u.currentWeapon.rot=Math.sin(getTimer()/400);}
+               // Drive only this fixture's native actors, never a third-party
+               // lamp/scene hit proxy merely because its fraction is below 100.
+               for each(var u:Object in loadActors)if(u.in_chain&&u.loc===mod.game.loc&&u.sost<3){u.dx=3;u.setPos(u.X+((timer.currentCount%20<10)?2:-2),u.Y);if(u.currentWeapon!=null)u.currentWeapon.rot=Math.sin(getTimer()/400);}
             }
             if(!host&&phase=="load"&&getTimer()-at>8000){
                intervals.sort(Array.NUMERIC);var p95:int=intervals.length?intervals[int(intervals.length*.95)]:9999;

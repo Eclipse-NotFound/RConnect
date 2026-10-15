@@ -6,6 +6,8 @@ package rconnect.game
    import flash.geom.Rectangle;
    import flash.utils.Dictionary;
    import flash.utils.getQualifiedClassName;
+   import flash.system.System;
+   import rconnect.core.Log;
    import rconnect.net.RoomCodec;
 
    /** Grafon.dyrka/decal changes frontBmp, including indestructible walls whose
@@ -33,6 +35,7 @@ package rconnect.game
       private var tileState:Object={};
       private var sequence:int=0,revision:int=0;
       private var domain:Object,margins:Object={};
+      private var bitmapDiagnostics:int=0;
       /** Receiver pixels changed; GameBridge can refresh a cached SATS raster. */
       public var dirty:Boolean=false;
 
@@ -109,10 +112,29 @@ package rconnect.game
             if(shadow!=null)shadow.dispose();
             active=loc;bitmap=b;tracked=[];contacts=new Dictionary(true);tileState={};
             // drawLoc has already rebuilt this room before a normal frame.
-            replay(loc,b);shadow=b.clone();
+            replay(loc,b);shadow=copyFront(loc,b,"before");
             for(var x:int=0;x<int(loc.spaceX);x++)for(var y:int=0;y<int(loc.spaceY);y++)
                tileState[id(x,y)]={h:Number(loc.space[x][y].hp),p:Number(loc.space[x][y].phis)};
          }
+      }
+
+      private function copyFront(loc:Object,b:BitmapData,where:String):BitmapData
+      {
+         try {return b.clone();}
+         catch(error:Error)
+         {
+            if(bitmapDiagnostics++<4)
+            {
+               var g:Object=get(loc,"grafon"),info:Object={where:where,error:error.toString(),
+                  heap:System.totalMemory,privateBytes:System.privateMemory,freeBytes:System.freeMemory,
+                  current:b===front(loc),grafonRoom:get(g,"loc")===loc,sceneLarge:get(g,"sceneLarge"),
+                  sceneX:get(g,"sceneX"),sceneY:get(g,"sceneY"),spaceX:get(loc,"spaceX"),spaceY:get(loc,"spaceY")};
+               try {info.width=b.width;info.height=b.height;info.pixel=b.getPixel32(0,0);}catch(invalid:Error){info.pixelError=invalid.toString();}
+               Log.d("RConnectWall: bitmap copy failed "+JSON.stringify(info));
+            }
+            throw error;
+         }
+         return null;
       }
 
       /** Call after native simulation and before sending the corresponding
@@ -450,7 +472,7 @@ package rconnect.game
       {
          var b:BitmapData=front(loc);if(b==null)return;
          replay(loc,b);
-         if(active===loc) {if(shadow!=null)shadow.dispose();bitmap=b;shadow=b.clone();}
+         if(active===loc) {if(shadow!=null)shadow.dispose();bitmap=b;shadow=copyFront(loc,b,"redraw");}
       }
       /** Ownership changes invalidate only transport cursors, not room marks. */
       public function roleChanged(loc:Object):void

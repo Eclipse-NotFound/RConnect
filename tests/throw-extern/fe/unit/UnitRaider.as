@@ -4,5 +4,6 @@ package fe.unit {
       public function UnitRaider(id:String=null,difficulty:Number=100,map:XML=null,data:Object=null) {}
       public function damageWall(direction:int=0):* {}
       public function attack():* {}
+      public function control():* {}
    }
 }

@@ -336,7 +336,13 @@ package rconnect.game
       {
          var rec:Object=states[u];
          if(rec!=null && rec.body!=null && rec.body.kind=="turret")return;
-         if(rec==null || !RConnectAnimationAccess.tick(u as Unit,rec.pose,!paused))if(!paused)u.animate();
+         var sample:Object=rec==null||rec.clock==null?null:rec.clock.currentSample;
+         var clocked:Boolean=sample!=null&&sample.bodyPose!=null&&sample.bodyPose.blit!=null;
+         if(clocked) {
+            RConnectAnimationAccess.receive(u as Unit,sample.bodyPose,String(sample.visual.anim),rec.pose,true,paused);
+            rec.pose=sample.bodyPose;
+         }
+         if(rec==null || !RConnectAnimationAccess.tick(u as Unit,rec.pose,!paused&&!clocked))if(!paused)u.animate();
       }
 
       public function enforce(u:Object):void

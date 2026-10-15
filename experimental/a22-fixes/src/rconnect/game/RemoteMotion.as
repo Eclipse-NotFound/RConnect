@@ -177,6 +177,7 @@ package rconnect.game
             // Native teleport changes world position immediately. Weapon and
             // body poses come from the matching side of that discontinuity.
             state.weapons=chosen.weapons;
+            state.bodyPose=chosen.visual==null?null:chosen.visual.pose;
             return state;
          }
          var span:Number=Number(b.at)-Number(a.at);
@@ -188,7 +189,31 @@ package rconnect.game
          }
          if(a.snap.weapons is Array && b.snap.weapons is Array)
             state.weapons=blendWeapons(a.snap.weapons as Array,b.snap.weapons as Array,t);
+         state.bodyPose=blendBodyPose(a.snap.visual,b.snap.visual,t,span);
          return state;
+      }
+
+      /** Blit bodies use the same received timeline as position and aim. A
+       * second local Animation.step clock can run ahead and rewind on receipt. */
+      private static function blendBodyPose(a:Object,b:Object,t:Number,span:Number):Object {
+         if(a==null||a.pose==null||a.pose.blit==null||a.pose.blit.length==null)return null;
+         if(b==null||b.pose==null||b.pose.blit==null||a.anim!=b.anim)return a.pose;
+         var first:Object=a.pose.blit,last:Object=b.pose.blit;
+         if(first.st||first.stab||last.stab||first.length!=last.length)return a.pose;
+         var delta:Number=Number(last.f)-Number(first.f),period:Number=Number(first.first)+Number(first.length)-Number(first.ret);
+         if(delta<0) {
+            if(!first.loop||period<=0)return a.pose;
+            delta+=period;
+            // Same-label explicit restarts are discontinuities, not an entire
+            // loop played in one short packet interval.
+            if(delta>Math.max(4,span*.06*Math.max(1,Math.abs(Number(first.df)))))return a.pose;
+         }
+         var pose:Object={},blit:Object={};
+         for(var key:String in a.pose)pose[key]=a.pose[key];
+         for(key in first)blit[key]=first[key];
+         blit.f=Number(first.f)+delta*t;
+         if(first.loop&&period>0&&blit.f>=Number(first.first)+Number(first.length))blit.f-=period;
+         pose.blit=blit;return pose;
       }
 
       private static function blendWeapons(first:Array,last:Array,t:Number):Array {

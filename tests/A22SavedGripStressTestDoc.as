@@ -371,11 +371,23 @@ package {
             var drag:Number=Math.min(1,Math.max(0,r-20)/20);
             var low:Boolean=collisionMode&&round>=2;
             aim(bx+100+(low?(round>=4?120:0):(collisionMode?70:120))*drag,
-               by-Number(target.scY)/2-(low?-10:(collisionMode?60:110))*lift);
+               by-Number(target.scY)/2-(low?-10:110)*lift);
             // Use only what the local player can see; the authority counter is
             // measured separately. The near-boundary case may legitimately
             // reach native resistance before E arrives and must record that.
-            if((collisionMode||round<2)&&r>=(collisionMode?45:(round==0?60:threshold-5))) {
+            // A wall-damage trial needs a trajectory clear of the caster.
+            // Native enemy contact can exchange momentum before any wall is
+            // reached. Wait using only natural Q/mouse movement; never move the
+            // enemy, suppress its AI/collisions or extend resistance to pass.
+            var clearLaunch:Boolean=!collisionMode||round>=2
+               || Number(target.Y)<Number(g.Y)-Number(g.scY)-10
+                  && Number(target.X)>Number(g.X)+Number(g.scX);
+            // High-wall coverage begins as soon as the natural trajectory is
+            // clear. A fixed extra hold can let native Raider resistance pull
+            // it back into the caster; long holds have a separate stress case.
+            var readyThrow:Boolean=collisionMode?(low?r>=45:clearLaunch)
+               :round<2&&r>=(round==0?60:threshold-5);
+            if(readyThrow&&clearLaunch) {
                actionSent=true;actionAt=getTimer();actionBefore=state(raw);
                viewOrigin={x:target.X,y:target.Y};
                viewEvent("E",{raw:actionBefore,body:state(target),player:{x:g.X,y:g.Y},attributes:attributes()});
@@ -540,6 +552,14 @@ package {
                var impact:Object=null;
                for each(var contact:Object in collisionEvidence)
                   if(contact.kind=="wall"&&Number(contact.before.t_throw)>0&&Number(contact.after.hp)<Number(contact.before.hp))impact=contact;
+                  else if(contact.kind=="attack-momentum"&&Number(contact.before.t_throw)>0&&contact.other.collisionTip==1) {
+                     var hit:Object=contact.other.before,old:Object=contact.before;
+                     var vx:Number=(Number(old.dx)*Number(old.massa)+Number(hit.dx)*Number(hit.massa))/(Number(old.massa)+Number(hit.massa));
+                     var vy:Number=(Number(old.dy)*Number(old.massa)+Number(hit.dy)*Number(hit.massa))/(Number(old.massa)+Number(hit.massa));
+                     check(Math.abs(Number(contact.after.dx)-((-Number(old.dx)+vx)*Number(old.knocked)+vx))<.0001
+                        && Math.abs(Number(contact.after.dy)-((-Number(old.dy)+vy)*Number(old.knocked)+vy))<.0001,
+                        "contact momentum follows native mass/recoil equation "+JSON.stringify(contact));
+                  }
                check(flightTravel>60||impact!=null,"authoritative native throw travels or reaches a damaging collision distance="+flightTravel);
                // High throws deliberately aim at the verified wall. A low
                // near-body throw can naturally go left or land first; absence

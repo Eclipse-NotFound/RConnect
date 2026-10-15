@@ -6,7 +6,7 @@ package {
       public function A22CollisionRaider() {super("1",10,<unit weap="lmg"/>,null);}
       private function sample():Object {
          var s:Object={},u:Object=this;
-         for each(var key:String in ["X","Y","dx","dy","t_throw","levit","hp","invulner","damWall","damWallSpeed"])
+         for each(var key:String in ["X","Y","dx","dy","t_throw","levit","hp","invulner","damWall","damWallSpeed","massa","knocked","aiNapr","levitaccel"])
             s[key]=GameBridge.probe(u,key);
          return s;
       }
@@ -18,10 +18,19 @@ package {
       }
       override public function attack():* {
          var before:Object=sample(),u:Object=this,other:Object=GameBridge.probe(u,"celUnit");
+         var otherBefore:Object={};
+         for each(var key:String in ["id","X","Y","dx","dy","massa","knocked","neujaz"])
+            otherBefore[key]=GameBridge.probe(other,key);
          var result:*=super.attack();
          var after:Object=sample();
          if(observed!=null && (before.dx!=after.dx || before.dy!=after.dy))
-            observed("attack-momentum",this,before,after,{id:GameBridge.probe(other,"id"),x:GameBridge.probe(other,"X"),y:GameBridge.probe(other,"Y"),collisionTip:GameBridge.probe(u,"collisionTip")});
+            observed("attack-momentum",this,before,after,{before:otherBefore,collisionTip:GameBridge.probe(u,"collisionTip")});
+         return result;
+      }
+      override public function control():* {
+         var before:Object=sample(),result:*=super.control(),after:Object=sample();
+         if(observed!=null && Number(before.levit)>0 && (before.dx!=after.dx || before.dy!=after.dy))
+            observed("held-native-control",this,before,after,null);
          return result;
       }
       override public function step():* {

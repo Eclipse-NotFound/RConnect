@@ -3,6 +3,11 @@ package {
    import flash.display.Sprite;
    import flash.display.Bitmap;
    import flash.display.MovieClip;
+   import flash.display.BitmapData;
+   import flash.display.PNGEncoderOptions;
+   import flash.filesystem.File;
+   import flash.filesystem.FileMode;
+   import flash.filesystem.FileStream;
    import flash.events.Event;
    import flash.events.TimerEvent;
    import flash.events.UncaughtErrorEvent;
@@ -15,6 +20,7 @@ package {
    import rconnect.net.NetMessageEvent;
    import rconnect.net.TcpLink;
    import fe.unit.Unit;
+   import fe.unit.RConnectAnimationAccess;
 
    /** Actual container interaction, native Loot physics and native SATS over TCP.
     * A controlled moving native enemy isolates presentation from autonomous AI.
@@ -32,6 +38,9 @@ package {
       private var lastEnemyX:Number=NaN,lastWalk:int=0;
       private var timelineOnly:Boolean=false,latestMotion:Object;
       private var endpointReceived:int=0,endpointSettled:int=0,bufferFrames:Array=[];
+      private var bodyFrames:Object={},bodyBacksteps:int=0,previousBody:Object,endpointPose:Object;
+      private var seedClass:Object,originalSeed:Function;
+      private var bodyTrace:Array=[];
 
       public function PresentationContinuityTestDoc(enemyTimeline:Boolean=false) {
          timelineOnly=enemyTimeline;
@@ -155,7 +164,7 @@ package {
             else if(p.op=="enemy"&&!host)change("find-enemy");
             else if(p.op=="enemy-ready"&&host)startWalk();
             else if(p.op=="walk"&&!host)startWalk();
-            else if(p.op=="endpoint"&&!host){endpoint=p.x;initialGap=Math.abs(enemy.X-endpoint);endpointReceived=getTimer();}
+            else if(p.op=="endpoint"&&!host){endpoint=p.x;endpointPose=p.pose;initialGap=Math.abs(enemy.X-endpoint);endpointReceived=getTimer();}
             else if(p.op=="paused-result"&&host){moving=false;send("resume");change("resume-wait");}
             else if(p.op=="resume"&&!host){mod.game.world.sats.onoff(-1);change("resuming");}
             else if(p.op=="done"){if(host)send("done");finish();}
@@ -173,7 +182,9 @@ package {
             if(moving&&!mod.session.pause.paused&&mod.game.world.allStat==1) {
                // Continuous known trajectory; all receiving movement remains production code.
                walkX+=3;enemy.setPos(walkX,baseY);enemy.setVisPos();++worldFrames;
-               if(timelineOnly){enemy.animState="walk";enemy.animate();}
+               // Use native movement animation selection; assigning animState
+               // with dx=0 would be overwritten to stay by Raider.animate.
+               if(timelineOnly){enemy.dx=3;enemy.stay=true;enemy.animate();}
             }
          }
          mod.stage.invalidate();
@@ -190,6 +201,17 @@ package {
             lastEnemyX=x;trace.push({t:getTimer(),x:x,logicalX:enemy.X,paused:mod.session.pause.paused,sats:mod.game.world.sats.active});
             if(timelineOnly&&!host&&phase=="walk"&&getTimer()-walkAt>600&&latestMotion!=null)
                bufferFrames.push(Math.max(0,(Number(latestMotion.x)-x)/3));
+            if(timelineOnly&&phase=="walk") {
+               var body:Object=RConnectAnimationAccess.capture(enemy as Unit),anim:String=String(enemy.animState);
+               if(body!=null&&body.blit!=null) {
+                  var f:Number=Number(body.blit.f);bodyFrames[anim+":"+int(f)]=true;
+                  // A loop wrap is a large negative change. Small backward
+                  // corrections during a single native gait are visible jitter.
+                  if(previousBody!=null&&previousBody.anim==anim&&f<previousBody.f-.01&&f>previousBody.f-4)bodyBacksteps++;
+                  previousBody={anim:anim,f:f};
+                  if(bodyTrace.length<160)bodyTrace.push({at:getTimer(),f:f,anim:anim,source:latestMotion==null?null:latestMotion.pose});
+               }
+            }
             if(timelineOnly&&!host&&endpointReceived>0&&endpointSettled==0&&Math.abs(x-endpoint)<=1)
                endpointSettled=getTimer();
          }
@@ -215,14 +237,24 @@ package {
          check(longest<=85,"falling loot has no stationary display gap above 85ms round="+round+" actual="+longest);
       }
       private function tick(e:TimerEvent):void {
-         mod=RConnectMod.instance;if(mod==null||mod.session==null||mod.game.gg==null||mod.game.loc==null)return;
+         mod=RConnectMod.instance;if(mod==null||mod.session==null)return;
+         if(seedClass==null) {
+            // Reuse the recorded baseline map, only in this isolated driver.
+            // A random room without a clear corridor cannot test gait/SATS.
+            seedClass=klass("fe.loc.Land");originalSeed=seedClass.rconnectSeedSource;
+            var fallback:Function=originalSeed;
+            seedClass.rconnectSeedSource=function(land:Object):uint {
+               return String(land.act.id)=="random_mane"?uint(2646199556):uint(fallback(land));
+            };
+         }
+         if(mod.game.gg==null||mod.game.loc==null)return;
          if(host&&mod.session.server!=null)for each(var l:TcpLink in mod.session.server.clients)watch(l);else if(!host)watch(mod.session.link);
          try {
             var w:Object=mod.game.world;mod.game.gg.invulner=true;
             if(phase=="done")return;
             if(getTimer()-at>90000){check(false,"timeout "+phase);finish();return;}
             if(phase=="boot"&&stable()&&String(mod.game.readWorldInfo().curLandId)=="random_mane") {
-               if(host&&ready){findArena();install();send("setup",{x:baseX,y:baseY});change("setup-wait");}
+               if(host&&ready){check(Number(GameBridge.probe(mod.game.world.land,"rconnectLayoutSeed"))==2646199556,"isolated fixture uses recorded native map seed");findArena();install();send("setup",{x:baseX,y:baseY});change("setup-wait");}
                else if(!host)send("ready");
             }
             else if(!host&&phase=="find-box"&&getTimer()-at>900&&(box=findBox())!=null){send("box-ready");change("box-wait");}
@@ -231,11 +263,11 @@ package {
                send("drop-trace",{trace:trace});change("drop-wait");
             }
             else if(!host&&phase=="find-enemy"&&findEnemy()&&mod.session.pause.policySats){send("enemy-ready");change("enemy-wait");}
-            else if(!host&&phase=="walk"&&getTimer()-at>1500)openSats();
+            else if(!host&&phase=="walk"&&getTimer()-at>(timelineOnly?2100:1500))openSats();
             else if(!host&&phase=="opening"&&w.sats.active&&mod.session.pause.paused) {check(true,"native joining SATS initiates shared pause");change("paused");}
             else if(host&&phase=="walk"&&mod.session.pause.paused) {
                endpoint=enemy.X;check(worldFrames>=12,"source enemy was moving before pause frames="+worldFrames);
-               send("endpoint",{x:endpoint});change("paused");
+               send("endpoint",{x:endpoint,pose:RConnectAnimationAccess.capture(enemy as Unit)});change("paused");
             }
             else if(!host&&phase=="paused"&&getTimer()-at>1200&&isFinite(endpoint)) {
                if(timelineOnly) {
@@ -244,7 +276,14 @@ package {
                   check(bufferFrames.length>=8,"enemy buffered-frame sample coverage="+bufferFrames.length);
                   check(lag<=4,"enemy display is within four already-received native frames p90="+lag);
                   check(endpointSettled>0&&endpointSettled-endpointReceived<=100,"SATS final endpoint settles within 100ms after confirmed stop actual="+(endpointSettled-endpointReceived));
-                  Log.d("A22 ENEMY TIMELINE "+JSON.stringify({bufferFrames:bufferFrames,p90:lag,initialPauseGap:initialGap,settleMs:endpointSettled-endpointReceived,trace:trace}));
+                  var bodyCount:int=0;for(var frameKey:String in bodyFrames)bodyCount++;
+                  check(bodyCount>=8,"native walking body presents distinct animation frames="+bodyCount);
+                  check(bodyBacksteps==0,"walking body does not rewind a few frames between packets count="+bodyBacksteps);
+                  Log.d("A22 BODY FRAMES "+JSON.stringify(bodyTrace));
+                  var pausedPose:Object=RConnectAnimationAccess.capture(enemy as Unit);
+                  check(endpointPose!=null&&endpointPose.blit!=null&&pausedPose.blit!=null&&Math.abs(Number(endpointPose.blit.f)-Number(pausedPose.blit.f))<.01,
+                     "SATS native body phase matches authority source="+JSON.stringify(endpointPose)+" display="+JSON.stringify(pausedPose));
+                  Log.d("A22 ENEMY TIMELINE "+JSON.stringify({bodyFrames:bodyCount,bodyBacksteps:bodyBacksteps,bufferFrames:bufferFrames,p90:lag,initialPauseGap:initialGap,settleMs:endpointSettled-endpointReceived,trace:trace}));
                }
                pausedX=enemy.X;check(Math.abs(pausedX-endpoint)<=1,"paused enemy matches authority endpoint gap="+Math.abs(pausedX-endpoint));
                check(mod.session.pause.paused&&w.sats.active,"pause remains owned by native SATS");
@@ -259,6 +298,14 @@ package {
                   var actualBitmap:Bitmap=actual.getChildAt(0) as Bitmap;
                   var expectedBitmap:Bitmap=fresh.getChildAt(0) as Bitmap;
                   var comparison:Object=actualBitmap.bitmapData.compare(expectedBitmap.bitmapData);
+                  Log.d("A22 SATS PIXELS "+JSON.stringify({comparison:comparison is BitmapData?"pixels":comparison,
+                     actual:[actualBitmap.width,actualBitmap.height,actualBitmap.x,actualBitmap.y],
+                     expected:[expectedBitmap.width,expectedBitmap.height,expectedBitmap.x,expectedBitmap.y],
+                     pose:RConnectAnimationAccess.capture(enemy as Unit),bodyBounds:enemy.vis.getBounds(enemy.vis)}));
+                  if(!(comparison is uint && uint(comparison)==0)) {
+                     saveBitmap(actualBitmap.bitmapData,"actual");saveBitmap(expectedBitmap.bitmapData,"expected");
+                     if(comparison is BitmapData)saveBitmap(comparison as BitmapData,"difference");
+                  }
                   check(comparison is uint && uint(comparison)==0,"SATS target bitmap matches the final received native body pose");
                   if(comparison is flash.display.BitmapData)comparison.dispose();
                   expectedBitmap.bitmapData.dispose();
@@ -271,10 +318,16 @@ package {
                check(Math.abs(enemy.X-endpoint)<=1,"resumed enemy still matches source endpoint");
                send("done");finish();
             }
-         }catch(error:Error){check(false,"tick "+error.getStackTrace());finish();}
+         }catch(error:Error){check(false,"tick "+error.getStackTrace());send("done");finish();}
+      }
+      private function saveBitmap(data:BitmapData,name:String):void {
+         var file:File=File.applicationStorageDirectory.resolvePath("presentation-sats-target-"+name+".png");
+         var stream:FileStream=new FileStream();stream.open(file,FileMode.WRITE);
+         try {stream.writeBytes(data.encode(data.rect,new PNGEncoderOptions()));}finally{stream.close();}
       }
       private function finish():void {
          if(phase=="done")return;change("done");timer.stop();
+         if(seedClass!=null)seedClass.rconnectSeedSource=originalSeed;
          if(mod!=null){mod.stage.removeEventListener(Event.ENTER_FRAME,before);mod.stage.removeEventListener(Event.ENTER_FRAME,after);mod.stage.removeEventListener(Event.RENDER,render);}
          Log.d("COOP EFFECTS DONE continuity "+(host?"host":"join"));
       }
