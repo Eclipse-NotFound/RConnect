@@ -379,9 +379,13 @@ package {
             // Native enemy contact can exchange momentum before any wall is
             // reached. Wait using only natural Q/mouse movement; never move the
             // enemy, suppress its AI/collisions or extend resistance to pass.
+            // Full vertical separation already clears the caster's body.
+            // Requiring horizontal separation as well can prevent E forever
+            // when a resisting Raider drifts over the caster. Native throwTele
+            // then aims upward; the real ceiling is also a damageWall surface.
+            // Keep the actual impact/HP-drop assertions unchanged below.
             var clearLaunch:Boolean=!collisionMode||round>=2
-               || Number(target.Y)<Number(g.Y)-Number(g.scY)-10
-                  && Number(target.X)>Number(g.X)+Number(g.scX);
+               || Number(target.Y)<Number(g.Y)-Number(g.scY)-10;
             // High-wall coverage begins as soon as the natural trajectory is
             // clear. A fixed extra hold can let native Raider resistance pull
             // it back into the caster; long holds have a separate stress case.

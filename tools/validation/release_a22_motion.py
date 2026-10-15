@@ -11,6 +11,7 @@ import uuid
 
 from release_a22_map import ROOT, GAME, sha, read, save, require, verify_install, replace
 from run_a22_motion_checks import CASES
+from prepare_a22_motion_keybinds import UI_FILES, UI_SHA, UI_VERSION, verify_ui, verify_ui_deployment
 
 CHANGED = {'src/RConnectMod.as', 'src/fe/unit/RConnectAnimationAccess.as',
            'src/rconnect/core/Session.as', 'src/rconnect/game/GameBridge.as',
@@ -25,11 +26,33 @@ def audit(out, bundle, evidence):
     require(m['kind'] == 'isolated-a22-followup' and m['native_unchanged'], 'Not a native-preserving candidate')
     require(sha(base/'deployment.json') == m['installed_deployment_sha256'], 'Baseline receipt changed')
     require(read(base/'deployment.json')['status'] == 'deployed-smoke-passed', 'Baseline not deployed')
-    require(m['control_sha256'] == bm['candidate_sha256'], 'Wrong installed control')
+    merged = m.get('keybind_merge')
+    if merged:
+        require(m['control_sha256'] == UI_SHA and m['control_version'] == UI_VERSION, 'Wrong shortcut control')
+        ui = ROOT/'build/keybind-output'
+        require(verify_ui(base,ui) == merged['ui_source'], 'Shortcut source changed')
+        require(sha(ROOT/'tools/validation/build_keybinds.py') == merged['recipe_sha256'], 'Shortcut recipe changed')
+        require(sha(out/'evidence/keybind-candidate.json') == merged['ui_candidate_sha256'], 'Shortcut receipt changed')
+        require(read(out/'evidence/keybind-candidate.json')['sha256'] == UI_SHA, 'Shortcut receipt binary')
+        require(sha(out/'evidence/keybind-deployment.json') == merged['deployment_sha256'], 'Shortcut deployment changed')
+        verify_ui_deployment(out/'evidence/keybind-deployment.json',bm['candidate_sha256'])
+        previous = ROOT/merged['motion_base']
+        pm = read(previous/'prepared.json')
+        require(sha(previous/'prepared.json') == merged['motion_prepared_sha256'], 'Motion source receipt changed')
+        require(m['base_prepared_sha256'] == merged['motion_prepared_sha256'], 'Motion lineage differs')
+        for n,h in pm['source'].items():
+            require(sha(previous/n) == h, 'Motion source changed: '+n)
+            if n not in UI_FILES and n != 'src/RConnectMod.as':
+                require(m['source'][n] == h, 'Merge changed motion behavior: '+n)
+        for n in UI_FILES:
+            require(m['source'][n] == merged['ui_source'][n], 'Merge changed shortcuts: '+n)
+    else:
+        require(m['control_sha256'] == bm['candidate_sha256'], 'Wrong installed control')
     require(m['original_game_sha256'] == m['candidate_game_sha256'] == runtime['files']['pfe.swf'], 'Native game changed')
-    require(set(m['source']) == set(bm['source']) | {'src/rconnect/game/SatsTargetVisuals.as'}, 'Unexpected source inventory')
+    added = {'src/rconnect/game/SatsTargetVisuals.as'} | ({'src/rconnect/ui/NetKeybinds.as'} if merged else set())
+    require(set(m['source']) == set(bm['source']) | added, 'Unexpected source inventory')
     differences = {n for n, h in m['source'].items() if bm['source'].get(n) != h}
-    require(differences == CHANGED, 'Unexpected production changes: '+str(differences))
+    require(differences == CHANGED | (UI_FILES if merged else set()), 'Unexpected production changes: '+str(differences))
     for n, h in {**m['source'], **m['inputs']}.items():
         require(sha(out/n) == h, 'Frozen input changed: '+n)
     for n in m['overrides']:
@@ -98,7 +121,7 @@ def audit(out, bundle, evidence):
     require(sha(ROOT/'release/RConnectMod.swf') == m['control_sha256'], 'Installed RConnect changed')
     return dict(version=m['version'], candidate_sha256=m['candidate_sha256'], native_sha256=m['candidate_game_sha256'],
                 prepared_sha256=sha(out/'prepared.json'), runtime_sha256=sha(bundle/'inputs.json'),
-                evidence_sha256=sha(evidence), runs=runs, legacy_warnings=warnings,
+                evidence_sha256=sha(evidence), runs=runs, legacy_warnings=warnings, preserved_shortcuts=bool(merged),
                 boundaries='A motion/SATS changes only. Native, B, FA, MSW and user configurations remain unchanged. Earlier failed attempts remain recorded.')
 
 
