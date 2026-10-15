@@ -23,6 +23,7 @@ def main():
     ap.add_argument('--game-root',type=Path,default=GAME)
     ap.add_argument('--game-candidate',type=Path,help='Diagnostic-only game SWF copied into isolated instances; installation stays read-only')
     ap.add_argument('--seconds',type=int,default=115)
+    ap.add_argument('--solo',action='store_true',help='Launch one offline instance; never host or connect')
     ap.add_argument('--keep-copies', action='store_true')
     ap.add_argument('--with-vision', action='store_true', help='Load the installed RealisticVision SWF in isolated copies')
     ap.add_argument('--vision-candidate',type=Path,help='Load this optional RV candidate instead of the installed SWF')
@@ -44,6 +45,9 @@ def main():
     ap.add_argument('--expected-version',default=re.search(r'VERSION:String\s*=\s*"([^"]+)"',
                     (ROOT/'src'/'RConnectMod.as').read_text(encoding='utf-8')).group(1))
     args=ap.parse_args()
+    if args.solo and (args.connect_after_load or args.join_save_template or args.presentation):
+        ap.error('--solo cannot use a join save, deferred connection or paired presentation test')
+    roles=('host',) if args.solo else ('host','join')
     if args.all_mods and not (args.presentation or args.effects or args.smoke): ap.error('--all-mods requires --presentation, --effects or --smoke')
     if args.msw_candidate:
         assert args.all_mods and args.msw_candidate.resolve().is_relative_to(ROOT/'build')
@@ -138,7 +142,7 @@ def main():
             if source.exists(): shutil.copy2(source,vision/name)
     configuration_files={};descriptors={};launches=[]
     try:
-        for role in ('host','join'):
+        for role in roles:
             folder=output/role; shutil.copytree(frozen,folder)
             release=folder/'mods'/'Rconnect'/'release'
             inputs[role]={'game':hashlib.sha256((folder/'pfe.swf').read_bytes()).hexdigest()}
@@ -159,6 +163,7 @@ def main():
             cfg=dict(nickname=role,hostIp='127.0.0.1',port=port,tickMs=50,
                      autoRole=role,autoGame='1',autoFollow='1',freezeAI='1',
                      worldInject='1',ghostCombat='1',autoHeal='1')
+            if args.solo: cfg.update(autoRole='',autoFollow='0',freezeAI='0')
             if role in save_templates: cfg.update(autoGame='',autoLoadSave='9',autoHeal='0')
             elif role=='host' and args.land: cfg['autoTravelLand']=args.land
             if args.connect_after_load:
@@ -206,7 +211,7 @@ def main():
         # Both role inputs and configuration bytes exist before either AIR
         # instance starts. Keep configuration evidence after runtime cleanup.
         (output/'input.json').write_text(json.dumps(dict(candidate_sha256=candidate_hash,inputs=inputs,
-            configuration_files=configuration_files,descriptors=descriptors,visible_windows=args.visible_windows,
+            configuration_files=configuration_files,descriptors=descriptors,visible_windows=args.visible_windows,solo=args.solo,
             save_templates=save_inputs,vision_config_templates=vision_inputs,vision_smoke_version=args.vision_smoke_version),indent=2))
         for role,folder,desc,storage,appid in launches:
             stdout=(output/(role+'.stdout.log')).open('w',encoding='utf-8')
@@ -224,7 +229,7 @@ def main():
         (output/'run.json').write_text(json.dumps(dict(port=port,pids=[p.pid for p in procs],
             candidate=str(args.candidate.resolve()),sha256=candidate_hash,inputs=inputs,save_templates=save_inputs,
             vision_config_templates=vision_inputs,configuration_files=configuration_files,descriptors=descriptors,
-            visible_windows=args.visible_windows,
+            visible_windows=args.visible_windows,solo=args.solo,
             vision_smoke_version=args.vision_smoke_version,
             input_manifest_sha256=hashlib.sha256((output/'input.json').read_bytes()).hexdigest()),indent=2))
         print('OUTPUT '+str(output),flush=True)
@@ -266,7 +271,7 @@ def main():
                     except PermissionError:
                         if attempt==5: print('Retained locked test copy: '+str(folder),flush=True)
                         else: time.sleep(0.5)
-    ok=inputs.get('host')==inputs.get('join')
+    ok=(set(inputs)=={'host'}) if args.solo else inputs.get('host')==inputs.get('join')
     for role,_ in artifacts:
         path=output/(role+'.log')
         content=path.read_text(encoding='utf-8',errors='replace') if path.exists() else ''

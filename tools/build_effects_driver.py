@@ -20,7 +20,7 @@ def main():
     ap.add_argument('--output',type=Path,required=True)
     ap.add_argument('--source-root',type=Path,help='Optional frozen production source directory for external declarations')
     ap.add_argument('--entry',default='EffectsTerrainTestDoc',choices=[
-        'A22SelfRestoreProbeDoc','A22EnergyRegressionTestDoc','A22ImpactLifetimeTestDoc','A22SavedThrowTestDoc','A22SavedGripStressTestDoc',
+        'SoloMapGenerationTestDoc','A22SelfRestoreProbeDoc','A22EnergyRegressionTestDoc','A22ImpactLifetimeTestDoc','A22SavedThrowTestDoc','A22SavedGripStressTestDoc',
         'A22ThrowTimingTestDoc','A22WallTestDoc','A22RoomTestDoc','A22PlasmaTestDoc','A22SmartPeerTestDoc','A22CadenceTestDoc','A22AnimationTestDoc','A22BehaviorTestDoc','NativeMapGenerationTestDoc','MapGenerationTestDoc','FriendlyHazardsTestDoc','MineSightTestDoc','ArchitectureTestDoc','EffectsTerrainTestDoc','TurretTestDoc','PresentationTestDoc','SmoothPresentationTestDoc',
         'SmoothNetworkTestDoc','AppearanceTestDoc','CombatFeedbackTestDoc','CombatFeedbackNetworkTestDoc',
         'AnimationGapsTestDoc','RoomCooperationTestDoc','CoopTestDoc','SatsTestDoc','CombatStateTestDoc',

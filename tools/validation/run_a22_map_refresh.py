@@ -27,6 +27,7 @@ def main():
     ap.add_argument('--label')
     ap.add_argument('--land')
     ap.add_argument('--seconds',type=int,default=600)
+    ap.add_argument('--solo',action='store_true')
     ap.add_argument('--expected-version')
     ap.add_argument('--frozen-runtime',action='store_true',help='Test an already frozen combination even when other developers changed the installation; still record and protect the installation observed at this run')
     ap.add_argument('--msw-candidate',type=Path)
@@ -85,6 +86,7 @@ def main():
         '--land',args.land or ('rbl' if args.entry=='NativeMapGenerationTestDoc' else 'random_mane'),
         '--expected-version',args.expected_version or ('0.2.22-dev' if control else '0.2.22-map1')]
     if not control: command+=['--game-candidate',str(out/'native/pfe.swf')]
+    if args.solo: command+=['--solo']
     save_inputs={}
     for role,path in [('host',args.host_save_template),('join',args.join_save_template)]:
         if path is not None:
@@ -114,7 +116,7 @@ def main():
     output=log.read_text(encoding='utf-8',errors='replace')
     for item in save_inputs.values(): assert sha(item['path'])==item['sha256'], 'Source save changed during replay'
     match=re.search(r'^OUTPUT .*?([0-9a-f]{10})\s*$',output,re.M)
-    receipt=dict(entry=args.entry,control=control,exit=proc.returncode,inputs=inputs,run=match[1] if match else None,
+    receipt=dict(entry=args.entry,control=control,solo=args.solo,exit=proc.returncode,inputs=inputs,run=match[1] if match else None,
         runtime_matches_installation=not runtime_difference,runtime_difference=runtime_difference,
         installation_changes={n:dict(before=h,after=sha(GAME/n) if (GAME/n).is_file() else None) for n,h in installation_before.items()
             if (sha(GAME/n) if (GAME/n).is_file() else None)!=h})
@@ -123,7 +125,8 @@ def main():
         actual=read(folder/'run.json')
         receipt['run_sha256']=sha(folder/'run.json')
         expected=m['original_game_sha256' if control else 'candidate_game_sha256']
-        for role in ('host','join'):
+        assert actual.get('solo',False)==args.solo
+        for role in (('host',) if args.solo else ('host','join')):
             assert actual['inputs'][role]['game']==expected
             assert actual['inputs'][role]['production']==sha(binary)
             for name,digest in actual['inputs'][role]['modules'].items():
