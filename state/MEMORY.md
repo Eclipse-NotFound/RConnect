@@ -37,7 +37,10 @@ Remains 1.02 双人合作模组，入口 `release/RConnectMod.swf`。A 是普通
 - 外置诊断`52e77c57b2`44项通过；固定八轮`3bfad1443d`149项通过，收敛30–72ms。它们不解释上一轮147ms，也不覆盖旧红。晚到真实TCP消息用例`a7b3dcdc86`89通过2失败：2次本次绘图仍显示旧位置，一轮108ms超限，定位到ENTER_FRAME之后到包多等一帧。
 - 已构建fix26-keybinds，`build/m52/a22-fixes-26`，SHA`8926511ff37c35683683b5f038f1724bf6f984af2ac13c5a0ccafdb30451bfa9`，prepared`6cc5f759ea85aa85811a0d4b6e4f352826c1e00f9f12461597a548619a24d487`。相对fix25仅版本与GameBridge：暂停晚到姿态在同次RENDER复制SATS前落位。
 - 新诊断红项另暴露外置夹具：跨轮残留lateExpected与Timer过早截取RV暂隐图。已清理逐RENDER预期、改最终RENDER像素对照，仍严格100ms/1px/逐像素，并验证至少一次待显示位置更新。不能把旧晚到红直接视为生产竞态的完整证明，须用修正夹具重做前后对照。
-- runtime16为当前130文件组合（新增AddictionSystem、RV BAA48289墙面候选已实际安装）。当前exec49292运行testpack26-02的qualify26-final完整13类。791bb58aa3原生resizeScreen #1009导致主侧驱动未启动；817fe61255、aca117f967夹具问题与其它性能红完整保留。详情见实测记录。
+- runtime16为当前130文件组合（新增AddictionSystem、RV BAA48289墙面候选已实际安装）。fix26真实抓投96项、长抓49项、时钟44项通过；435da29a25晚到四轮同帧落位0失败，但首轮行走P90=4.467已收帧，超过4帧，串行因此停止。791bb58aa3原生resizeScreen #1009导致主侧驱动未启动；所有旧红保留。
+- **2026-10-16当前候选fix27-keybinds**：`build/m52/a22-fixes-27`，SHA`b2a9be49fe35da42d9b206e943655c6e99a667d1eefdd175baf005cc1cea8309`，prepared`84b570538f21829b4acecc832d5723c101e30c39b0e90328e112a06335feb5b3`。在fix26上仅改敌人显示缓冲追赶：平缓升至最多1.5倍，固定时长效果仍原速，位置不超已收范围、时钟不倒退。
+- fix27首轮79bc17f6e2主19/0加31/0：固定300ms断流390ms追回；实机P90=1.933已收帧，暂停62ms，25身体帧、0小幅倒放、SATS逐像素一致。日期上下文切换中断99dbf588de，驱动未进入测试场景，不计通过；已保存原始记录/自有日志、核实PID结束并仅删重复运行副本。提交余量恢复19.28GiB。
+- 当前exec66289跑fix27/runtime16的qualify27-rest（晚到、8轮暂停、目标、连续性、动画、行为、换房、复活、暂停策略、密集）；fix27真实抓投/长抓和旧版对照仍待单独补齐。正式安装仍fix15-keybinds，未部署动作版。
 - `prepare_a22_motion_keybinds.py`已执行成功，逐源核对fix15→快捷键和fix24→动作修改；准备回执SHA`1c7df015dd7eba2fdc64b8efda8bd7642c26f438ef6b748c5e9ef9100a2ef868`。不混入根src其他历史线代码。
 - `release_a22_motion.py`支持两条来源的精确审计，尚未部署过。全部11类通过且核对当时安装后方可安装；普通加载失败必须回退。
 

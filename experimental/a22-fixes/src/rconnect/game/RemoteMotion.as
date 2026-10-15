@@ -20,6 +20,8 @@ package rconnect.game
       private var interval:int;
       private var immediateStart:Boolean;
       private var bufferLimit:int=0;
+      private var enemyRecovery:Boolean=false;
+      private var playbackRate:Number=1;
       // Only immediately visible drops use packet-burst buffering. A grab
       // has a separate low-latency policy, and avatar clocks stay unchanged.
       private var firstSample:Boolean=true;
@@ -46,7 +48,8 @@ package rconnect.game
          var motion:RemoteMotion=new RemoteMotion(50);motion.bufferLimit=100;return motion;
       }
       public static function enemy():RemoteMotion {
-         var motion:RemoteMotion=new RemoteMotion(50);motion.bufferLimit=100;return motion;
+         var motion:RemoteMotion=new RemoteMotion(50);motion.bufferLimit=100;
+         motion.enemyRecovery=true;return motion;
       }
 
       public function push(snap:Object, now:int):void
@@ -103,6 +106,7 @@ package rconnect.game
        * Retain that cursor so resume cannot replay the pre-pause position. */
       public function settle(now:int):Object {
          if(frames.length>0) {
+            playbackRate=1;
             cursor=Number(frames[frames.length-1].at);
             return sampleTimed(now);
          }
@@ -122,6 +126,7 @@ package rconnect.game
          if(last==null || now-arrivedAt>1000 || stamp-Number(last.at)>1000
             || clockOffset<offset-Math.max(250,interval*2) || (!port && dx*dx+dy*dy>600*600)) {
             frames=[];gaps=[];selected=null;state=null;preceding=null;firstSample=true;dropDelay=0;
+            playbackRate=1;
             offset=clockOffset;cursor=stamp-(immediateStart?0:delay());sampledAt=now;
          } else {
             // Host world broadcasts can repeat an unchanged peer snapshot.
@@ -161,7 +166,16 @@ package rconnect.game
          var wanted:Number=now-offset-delay(),next:Number=cursor+elapsed;
          // Adjust buffer depth by slightly changing playback speed, never by
          // rewinding the avatar when a slower packet interval is observed.
-         cursor=rateHeld()?next:next+Math.max(-elapsed*.1,Math.min(elapsed*.1,wanted-next));
+         if(rateHeld()) {playbackRate=1;cursor=next;}
+         else if(enemyRecovery) {
+            // A stalled receive buffer must not leave enemies several frames
+            // behind for seconds. Recover by gently changing speed, not by
+            // seeking past animation frames. Finite native effects above keep
+            // their exact playback rate. Other stream policies are unchanged.
+            var desiredRate:Number=1+Math.max(-.1,Math.min(.5,(wanted-next)/Math.max(1,elapsed)));
+            playbackRate+=Math.max(-elapsed*.003,Math.min(elapsed*.003,desiredRate-playbackRate));
+            cursor+=elapsed*playbackRate;
+         } else cursor=next+Math.max(-elapsed*.1,Math.min(elapsed*.1,wanted-next));
          var latest:Object=frames[frames.length-1];
          cursor=Math.min(cursor,Number(latest.at));
          while(frames.length>2 && Number(frames[1].at)<=cursor)preceding=frames.shift();

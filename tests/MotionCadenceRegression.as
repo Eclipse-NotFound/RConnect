@@ -24,6 +24,38 @@ package {
          check(edges>=50&&bounded,"20Hz displayed curve stays inside received positions");
          check(maxEdge<=.01,"20Hz packet boundary introduces no abrupt speed change actual="+maxEdge);
          bodyTimeline(check);
+         enemyRecovery(check);
+      }
+      private static function enemyRecovery(check:Function):void {
+         var motion:RemoteMotion=RemoteMotion.enemy(),queued:Array=[];
+         var previous:Number=NaN,latest:int=0,recovered:int=0,maxRate:Number=0;
+         var bounded:Boolean=true,forward:Boolean=true;
+         // Regular 20 Hz source, a 300 ms delivery stall, then one socket burst.
+         // Keep sampling during the stall exactly as a live receiver does.
+         for(var now:int=0;now<=2400;now+=10) {
+            if(now%50==0)queued.push(pose(now,(now*.03)%24));
+            if(now<800||now>=1100)while(queued.length) {
+               var incoming:Object=queued.shift();latest=incoming.sampleTime;motion.push(incoming,now);
+            }
+            motion.sample(now);
+            var cursor:Number=motion.sourceTime;
+            bounded=bounded&&cursor<=latest+.001;
+            if(isFinite(previous)) {
+               forward=forward&&cursor>=previous-.001;
+               if(now>=1100)maxRate=Math.max(maxRate,(cursor-previous)/10);
+            }
+            if(now>=1100&&latest-cursor<=110&&recovered==0)recovered=now;
+            previous=cursor;
+         }
+         Log.d("ENEMY BUFFER RECOVERY "+JSON.stringify({recoveredAfter:recovered-1100,maxRate:maxRate,bounded:bounded,forward:forward}));
+         check(recovered>0&&recovered-1100<=650,"enemy recovers a 300ms delivery stall within 650ms actual="+(recovered-1100));
+         check(bounded&&forward&&maxRate<=1.50001,"enemy recovery is monotonic, bounded and at most 1.5x speed");
+         motion=RemoteMotion.enemy();var effect:Object={};motion.retainRate(effect);
+         for(now=0;now<=500;now+=50){motion.push(pose(now,(now*.03)%24),now);motion.sample(now);}
+         previous=motion.sourceTime;
+         motion.push(pose(800,0),800);motion.sample(600);
+         check(Math.abs(motion.sourceTime-previous-100)<.001,"finite effect keeps its original playback duration during recovery");
+         motion.releaseRate(effect);
       }
       private static function pose(stamp:int,frame:Number,loop:Boolean=true):Object {
          return {x:stamp*.1,y:100,sampleTime:stamp,visual:{anim:"walk",pose:{ai:1,
