@@ -40,8 +40,12 @@ package {
       private var renderFallback:Boolean=false;
       private var actionWaitLogged:Boolean=false;
       private var expectedHp:Number=1000;
-      public function HiddenRoomTestDoc(follow:Boolean=false,corpses:Boolean=false,overlays:Boolean=false,count:int=5) {
+      private var diagnosticSeed:uint=0,seedInstalled:Boolean=false;
+      private var diagnosticDoor:Object,doorTrace:Array=[];
+      private var doorPrerequisiteWait:Boolean=false;
+      public function HiddenRoomTestDoc(follow:Boolean=false,corpses:Boolean=false,overlays:Boolean=false,count:int=5,seed:uint=0) {
          followHost=follow;preserveCorpses=corpses;testOverlays=overlays;rounds=count;
+         diagnosticSeed=seed;
          var id:String=NativeApplication.nativeApplication.applicationID;
          if(id.indexOf("rconnect-coop-")<0)return;
          host=id.indexOf("-host-")>=0;
@@ -60,6 +64,7 @@ package {
       private function watch(l:TcpLink):void {if(l!=null&&!links[l]){links[l]=true;l.addEventListener(TcpLink.MESSAGE,receive);}}
       private function finish():void {
          if(phase=="done")return;setPhase("done");timer.stop();
+         if(diagnosticSeed!=0)Log.d("HIDDEN TEST action-trace "+JSON.stringify(doorTrace));
          if(mod!=null){mod.game.gg.ctr.keyLeft=false;mod.stage.removeEventListener(Event.RENDER,render);}
          removeEventListener(Event.ENTER_FRAME,holdDoorPosition);
          Log.d("COOP EFFECTS DONE hidden-room "+(host?"host":"join"));
@@ -68,6 +73,16 @@ package {
       private function nativeDoor(room:Object):Object {for each(var o:Object in room.objs)if(o.inter!=null && o.inter.allact=="comein" && o.inter.prob==null)return o;return null;}
       private function find(id:String):Object {for each(var u:Object in mod.game.loc.units)if(u.id==id)return u;return null;}
       private function holdDoorPosition(e:Event):void {
+         if(mod!=null && diagnosticDoor!=null && doorTrace.length<180) {
+            var player:Object=mod.game.gg,inter:Object=diagnosticDoor;
+            doorTrace.push({at:getTimer(),phase:phase,room:mod.game.roomKey(),key:player.ctr.keyAction,
+               selected:player.actionObj===inter,remaining:player.t_action,work:player.t_work,fetter:player.isFetter,
+               sky:mod.game.loc.sky,active:inter.active,ready:inter.is_ready,isAct:inter.is_act,
+               lock:inter.lock,mine:inter.mine,allact:inter.allact,player:[player.X,player.Y],door:[inter.X,inter.Y],
+               alive:!inter.owner.dead,inChain:inter.owner.in_chain,ownerRoom:inter.owner.loc.id,
+               exitBlocked:mod.game.world.possiblyOut(),battle:mod.game.world.t_battle,
+               alarm:mod.game.loc.t_alarm,locationTime:mod.game.world.land.loc_t});
+         }
          if(mod!=null && host && phase=="control")mod.stage.invalidate();
          if(mod==null || armedDoor==null)return;
          var g:GameBridge=mod.game;
@@ -137,10 +152,28 @@ package {
             renderedRoom:w.grafon.loc.id,
             x:g.gg.X,y:g.gg.Y,authority:mod.session.rooms.authority,busy:mod.session.rooms.busy,ready:mod.session.rooms.ready};
       }
-      private function useDoor():void {
+      private function useDoor():Boolean {
          var g:GameBridge=mod.game,d:Object=nativeDoor(g.loc);
+         // Native outLoc rejects completed interactions while battle/alarm or
+         // arrival counters are active. Seconds elapsed are not simulation
+         // frames. Wait for the native gate without changing those counters;
+         // the phase deadline still fails a world that never becomes ready.
+         if(g.world.possiblyOut()!=0) {
+            if(!doorPrerequisiteWait)Log.d("HIDDEN TEST wait-native-exit "+JSON.stringify({round:round,
+               phase:phase,blocked:g.world.possiblyOut(),battle:g.world.t_battle,
+               alarm:g.loc.t_alarm,locationTime:g.world.land.loc_t}));
+            doorPrerequisiteWait=true;return false;
+         }
+         doorPrerequisiteWait=false;
+         check(true,"native exit prerequisites permit door action round "+round);
+         if(diagnosticSeed!=0) {
+            if(doorTrace.length>0)Log.d("HIDDEN TEST action-trace "+JSON.stringify(doorTrace));
+            doorTrace=[];
+            Log.d("HIDDEN TEST exit-prerequisites "+JSON.stringify({round:round,phase:phase,
+               blocked:g.world.possiblyOut(),battle:g.world.t_battle,alarm:g.loc.t_alarm,locationTime:g.world.land.loc_t}));
+         }
          check(d!=null,"native comein door exists at "+g.roomKey());
-         if(d==null){send("done");finish();return;}
+         if(d==null){send("done");finish();return false;}
          g.gg.setPos(d.inter.X,d.inter.Y);g.gg.setVisPos();g.gg.actionObj=null;g.gg.teleObj=null;g.gg.t_work=0;
          d.inter.setAct("lock",0);d.inter.mine=0;d.inter.is_ready=true;
          Log.d("HIDDEN TEST door-before "+JSON.stringify(state()));
@@ -148,7 +181,9 @@ package {
          // interaction; a Timer-side direct act() skips that ordering.
          g.gg.ctr.keyAction=true;g.gg.actionObj=d.inter;g.gg.t_action=d.inter.t_action;
          doorRoom=g.loc;armedDoor=d.inter;actionWaitLogged=false;d.inter.beginAct();
+         if(diagnosticSeed!=0)diagnosticDoor=d.inter;
          Log.d("HIDDEN TEST door-armed "+JSON.stringify(state()));
+         return true;
       }
       private function selectPair():Boolean {
          var land:Object=mod.game.world.land,candidates:Array=[];
@@ -210,12 +245,24 @@ package {
             } else {
                if(p.stage=="align"){front=p.front;back=p.back;doorInfo=p.door;TravelGuard.follow(mod.game,front);setPhase("align");}
                else if(p.stage=="enter"){round=int(p.round);expectedHp=p.hp==null?1000:Number(p.hp);setPhase("enter");}
-               else if(p.stage=="exit"){useDoor();setPhase("exit");}
+               else if(p.stage=="exit")setPhase("leave");
             }
          }catch(error:Error){check(false,"message "+error.getStackTrace());send("done");finish();}
       }
       private function tick(e:TimerEvent):void {
-         mod=RConnectMod.instance;if(mod==null || mod.game.gg==null || mod.game.loc==null)return;
+         mod=RConnectMod.instance;
+         if(mod!=null && mod.game!=null && host && diagnosticSeed!=0 && !seedInstalled) {
+            var landClass:Object=mod.main.loaderInfo.applicationDomain.getDefinition("fe.loc.Land");
+            var previous:Function=landClass.rconnectSeedSource as Function;
+            if(previous!=null) {
+               landClass.rconnectSeedSource=function(land:Object):uint {
+                  var original:uint=uint(previous(land));
+                  return String(land.act.id)=="random_mane"?diagnosticSeed:original;
+               };
+               seedInstalled=true;Log.d("HIDDEN TEST fixed diagnostic seed="+diagnosticSeed);
+            }
+         }
+         if(mod==null || mod.game.gg==null || mod.game.loc==null)return;
          if(host)for each(var peer:Object in mod.session.peers)watch(peer.link as TcpLink);else watch(mod.session.link);
          try {
             if(phase=="boot" && mod.config.getValue("autoLoadSave")=="9") {
@@ -270,7 +317,8 @@ package {
                check(mod.game.roomKey()==front.key,"join aligned with foreground room");
                mod.game.gg.setPos(doorInfo.x,doorInfo.y);mod.game.gg.setVisPos();send("aligned");setPhase("wait-enter");
             }
-            if(!host && phase=="enter" && getTimer()-at>1200){useDoor();setPhase("inside");}
+            if(!host && phase=="enter" && getTimer()-at>1200 && useDoor())setPhase("inside");
+            if(!host && phase=="leave" && useDoor())setPhase("exit");
             if(!host && phase=="inside" && getTimer()-at>1800) {
                if(mod.game.roomKey()!=back.key) {
                   // Native interaction counts simulation frames, not wall time.
