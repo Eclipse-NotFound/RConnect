@@ -49,8 +49,11 @@ package {
       private var nativeSpell:Object;
       private var wireSeen:Object={};
       private var pixelMs:int=0,pixelMax:int=0,pixelCalls:int=0,renderGap:int=0,previousRender:int=0;
+      private var waitLand:String,flightClasses:Object={},flightPoints:Object={},flightSeen:Dictionary=new Dictionary();
+      private var flightFrames:int=0,flightMoves:int=0,flightHolds:int=0,flightIntermediate:int=0;
 
-      public function EnergyImpactTestDoc(scenarios:Array=null,hardImpact:Boolean=false) {
+      public function EnergyImpactTestDoc(scenarios:Array=null,hardImpact:Boolean=false,expectedLand:String="") {
+         waitLand=expectedLand;
          if(scenarios!=null)cases=scenarios;ballistic=hardImpact;
          var id:String=NativeApplication.nativeApplication.applicationID;
          if(id.indexOf("rconnect-coop-")<0)return;host=id.indexOf("-host-")>=0;
@@ -81,6 +84,7 @@ package {
          sourcePixels=remotePixels=nativeShots=frames=0;localResult=peerResult=null;
          pixelMs=pixelMax=pixelCalls=renderGap=previousRender=0;
          wireSeen={};
+         flightClasses={};flightPoints={};flightSeen=new Dictionary();flightFrames=flightMoves=flightHolds=flightIntermediate=0;
          cleanupGun();
          localSource=cases[n].actor==(host?"host":"join") || (host && cases[n].actor=="enemy");
          target=null;
@@ -165,7 +169,12 @@ package {
          } else {actor.storona=1;actor.setWeaponPos(gun.tip);}
          // alilight has native preparation time. Keep requesting the attack
          // until native Weapon.step actually creates a projectile.
-         if(phase=="run" && !shot && getTimer()-at>1000) {gun.hold=10000;gun.t_reload=0;gun.attack();}
+         if(phase=="run" && (!shot || int(cases[round].burst)>0 && nativeShots<int(cases[round].burst)*gun.kol) && getTimer()-at>1000) {
+            if(!cases[round].burst){gun.hold=10000;gun.t_reload=0;}
+            // Semi-automatic weapons require a real release interval. Holding
+            // attack() every frame extends native t_auto and never fires again.
+            if(!cases[round].burst || gun.auto || gun.t_auto<=0)gun.attack();
+         }
       }
       private function after(e:Event):void {
          if(phase=="done" || phase=="boot")return;
@@ -237,6 +246,13 @@ package {
             if(layer==null)continue;
             for(var i:int=0;i<layer.numChildren;i++) {
                v=layer.getChildAt(i);
+               if(cases[round].burst && !localSource && flightClasses[getQualifiedClassName(v)] && v.visible) {
+                  flightFrames++;
+                  var last:Object=flightSeen[v];
+                  if(last!=null){if(Math.abs(v.x-last.x)>.01 || Math.abs(v.y-last.y)>.01)flightMoves++;else flightHolds++;}
+                  if(flightPoints[v.x.toFixed(4)+","+v.y.toFixed(4)]!==true)flightIntermediate++;
+                  flightSeen[v]={x:v.x,y:v.y};
+               }
                if(nativeVis[v] || !v.visible || v.stage==null || CLIPS[getQualifiedClassName(v)]!==true)continue;
                record(copies,remote,v,v);
             }
@@ -246,6 +262,7 @@ package {
          phase="sampled";
          localResult={source:source,remote:remote,sourcePixels:sourcePixels,remotePixels:remotePixels,
             measurement:{pixelMs:pixelMs,pixelMax:pixelMax,pixelCalls:pixelCalls,renderGap:renderGap},
+            flight:{frames:flightFrames,moves:flightMoves,holds:flightHolds,intermediate:flightIntermediate},
             shots:nativeShots,frames:frames,kol:nativeSpell!=null?1:gun==null?0:int(gun.kol),loss:target==null?0:targetHp-Number(target.hp)};
          send("result",{result:localResult});compare();
       }
@@ -258,7 +275,12 @@ package {
          var nativeResult:Object=localSource?localResult:peerResult;
          var copyResult:Object=localSource?peerResult:localResult;
          var expected:Array=nativeResult.source as Array,actual:Array=copyResult.remote as Array;
-         check(nativeResult.shots==nativeResult.kol && nativeResult.shots>0,"native attack creates all projectiles count="+nativeResult.shots+" expected="+nativeResult.kol);
+         var expectedShots:int=nativeResult.kol*Math.max(1,int(cases[round].burst));
+         check(nativeResult.shots==expectedShots && nativeResult.shots>0,"native attack creates all projectiles count="+nativeResult.shots+" expected="+expectedShots);
+         if(cases[round].burst && cases[round].interpolate) {
+            check(copyResult.flight.frames>0 && copyResult.flight.moves>0 && copyResult.flight.intermediate>0,
+               "sustained native shots show intermediate remote flight "+JSON.stringify(copyResult.flight));
+         }
          if(ballistic) {
             check(copyResult.shots==0,"impact display creates no damaging receiver Bullet");
             if(cases[round].target=="expiry")check(expected.length==0 && actual.length==0,"unhit ballistic expiry has no sparks");
@@ -316,6 +338,7 @@ package {
                // receipt and first rendering can lag under parallel load.
                // Still require a clear interval before collection.
                var expiryLimit:Number=2600;
+               if(cases[round].burst)expiryLimit=4800;
                if(cases[round].id=="sp_gwall") {
                   var nativeLife:Number=0;
                   for each(var nativeEnd:Object in expected)nativeLife=Math.max(nativeLife,Number(nativeEnd.last)-Number(nativeEnd.first));
@@ -366,6 +389,11 @@ package {
       }
       private function wire(snap:Object):void {
          if(snap==null)return;
+         if(cases[round].burst && snap.weapons is Array)for each(var gunState:Object in snap.weapons)
+            for each(var event:Object in gunState.events)if(event.flight!=null) {
+               var flight:Object=event.flight;flightClasses[String(flight.cls)]=true;
+               for each(var flightPoint:Object in flight.frames)flightPoints[Number(flightPoint.x).toFixed(4)+","+Number(flightPoint.y).toFixed(4)]=true;
+            }
          var list:Array=snap.spellVisuals is Array?snap.spellVisuals.concat():[];
          if(snap.weapons is Array)for each(var w:Object in snap.weapons)
             if(w.impacts is Array)list=list.concat(w.impacts);
@@ -379,10 +407,12 @@ package {
       }
       private function tick(e:TimerEvent):void {
          mod=RConnectMod.instance;if(mod==null || mod.game==null || mod.game.gg==null || mod.session==null)return;
+         if(phase=="boot")mod.game.gg.invulner=true;
          if(host)for each(var p:Object in mod.session.peers)watch(p.link as TcpLink);else watch(mod.session.link);
          if(mod.game.world.clickReq==1) {mod.stage.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_DOWN,true));mod.stage.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_UP,true));}
          if(phase!="done" && getTimer()-at>60000) {check(false,"timeout "+phase);send("done");finish();return;}
          if(!mod.session.rooms.ready || mod.session.rooms.busy || mod.game.isTransitioning())return;
+         if(phase=="boot" && waitLand!="" && String(mod.game.readWorldInfo().curLandId)!=waitLand)return;
          if(phase=="boot" && !host && timer.currentCount>160 && getTimer()-readyAt>500) {readyAt=getTimer();send("ready");}
          if(phase=="prepare") {
             if(cases[round].target=="unit" && target==null)target=findTarget();
@@ -391,7 +421,7 @@ package {
             }
             if(host && localPrepared && peerPrepared) {begin();send("go");}
          }
-         if(phase=="run" && getTimer()-at>3600)collect();
+         if(phase=="run" && getTimer()-at>(cases[round].burst?5000:3600))collect();
       }
       private function cleanupGun():void {
          nativeSpell=null;

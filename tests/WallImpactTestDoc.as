@@ -53,9 +53,11 @@ package
       private var origin:Object,away:Object,awaySeen:Boolean=false,returnSeen:Boolean=false;
       private var revisitExpected:Array,revisitHp:Array,revisitArea:Rectangle;
       private var oldDestroy:Boolean;
+      private var cases:Array=CASES,waitLand:String="",firstMarkSent:Boolean=false,firstMarkReceived:int=0,firstMarkPainted:int=0;
 
-      public function WallImpactTestDoc()
+      public function WallImpactTestDoc(scenarios:Array=null,expectedLand:String="")
       {
+         if(scenarios!=null)cases=scenarios;waitLand=expectedLand;
          var app:String=NativeApplication.nativeApplication.applicationID;
          if(app.indexOf("rconnect-coop-")<0)return;host=app.indexOf("-host-")>=0;
          loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR,function(e:UncaughtErrorEvent):void {
@@ -101,13 +103,14 @@ package
          reference=[];expected=[];nativeResult=peerNative=localResult=peerResult=null;
          nativeChanges={};nativeFinished=false;
          haveExpected=collected=peerDone=compared=false;expectedAt=0;sceneFrames=sourceVisible=0;duplicates=[];
-         sourceSide=CASES[n].actor=="both" || CASES[n].actor==(host?"host":"join");
+         firstMarkSent=false;firstMarkReceived=firstMarkPainted=0;
+         sourceSide=cases[n].actor=="both" || cases[n].actor==(host?"host":"join");
          if(host) {var tiles:Array=layout();mod.game.applyTilePatch(tiles);send("case",{layout:tiles});}
          configureWall();
       }
       private function configureWall():void
       {
-         var loc:Object=mod.game.loc,c:Object=CASES[round];
+         var loc:Object=mod.game.loc,c:Object=cases[round];
          loc.base=false;loc.black=false;loc.destroyOn=true;loc.tileSpawn=0;mod.game.world.black=false;
          for(var y:int=wallTop;y<=wallBottom;y++)
          {
@@ -148,12 +151,12 @@ package
          mod.game.forceCloseOverlays();w.testDam=true;
          for each(var u:Object in mod.game.loc.units)if(u!==g && String(u.id).indexOf("rconnect_ghost")!=0)u.disabled=true;
          var aimY:Number=wallTop*40+20+Math.min(round,wallBottom-wallTop)*40;
-         if(CASES[round].actor=="both" && !host)aimY-=60;
+         if(cases[round].actor=="both" && !host)aimY-=60;
          g.celX=wallX*40+80;g.celY=aimY;w.celX=g.celX;w.celY=g.celY;
          w.cam.celX=int(w.celX*w.cam.scaleV+w.cam.vx);w.cam.celY=int(w.celY*w.cam.scaleV+w.cam.vy);
          if(gun!=null){gun.findCel=false;gun.forceRot=Math.atan2(g.celY-g.weaponY,g.celX-g.weaponX);}
-         if(phase=="run" && sourceSide && !shot && getTimer()-at>900)
-         {gun.hold=10000;gun.t_reload=0;gun.attack();}
+         if(phase=="run" && sourceSide && (!shot || nativeCount<int(cases[round].burst)) && getTimer()-at>900)
+         {if(!cases[round].burst){gun.hold=10000;gun.t_reload=0;}gun.attack();}
       }
       private function after(e:Event):void
       {
@@ -183,7 +186,8 @@ package
                if(current[pi]==original[pi])delete nativeChanges[String(pi)];
                else nativeChanges[String(pi)]=Number(current[pi]);
             }
-            nativeFinished=shot && gun.t_attack<=0;
+            if(!firstMarkSent)for(var mark:String in nativeChanges){firstMarkSent=true;send("first-mark");break;}
+            nativeFinished=shot && nativeCount>=int(cases[round].burst) && gun.t_attack<=0;
             for(o in nativeBullets)if(o.in_chain===true)nativeFinished=false;
          }
          mod.stage.invalidate();
@@ -218,6 +222,10 @@ package
       private function render(e:Event):void
       {
          if(phase!="run" && phase!="duplicate")return;sceneFrames++;
+         if(phase=="run" && !sourceSide && firstMarkPainted==0 && baseline!=null) {
+            var pixels:Vector.<uint>=mod.game.world.grafon.frontBmp.getVector(area),prior:Vector.<uint>=baseline.getVector(baseline.rect);
+            for(var pi:int=0;pi<pixels.length;pi++)if(pixels[pi]!=prior[pi]){firstMarkPainted=getTimer();break;}
+         }
          if(phase=="run" && sourceSide && contact && nativeFinished && nativeResult==null)
          {
             var keys:Array=[];for(var key:String in nativeChanges)keys.push(int(key));keys.sort(Array.NUMERIC);
@@ -231,7 +239,7 @@ package
                decal:int(gun.tipDecal),hp:hp(),at:getTimer(),reference:RoomCodec.pack(reference)};
             check(nativeCount>0 && contact,"real native projectile reaches the wall");
             check(reference.length>=10,"native wall appearance changes pixels="+reference.length/2);
-            check(!CASES[round].hole || holes>0,"native requested hole changes alpha pixels="+holes);
+            check(!cases[round].hole || holes>0,"native requested hole changes alpha pixels="+holes);
             check(sourceVisible>0,"native wall change contributes final game pixels="+sourceVisible);
             addExpected(reference);send("expected",{result:nativeResult});
          }
@@ -244,7 +252,7 @@ package
          for(i=0;i<words.length;i+=2)values[String(words[i])]=words[i+1];
          var keys:Array=[];for(var k:String in values)keys.push(int(k));keys.sort(Array.NUMERIC);
          expected=[];for each(var index:int in keys)expected.push(index,values[String(index)]);
-         haveExpected=CASES[round].actor!="both" || (nativeResult!=null && peerNative!=null);
+         haveExpected=cases[round].actor!="both" || (nativeResult!=null && peerNative!=null);
          expectedAt=getTimer();
       }
       private var peerNative:Object;
@@ -256,7 +264,11 @@ package
          var b:BitmapData=mod.game.world.grafon.frontBmp,now:Vector.<uint>=b.getVector(area);
          var wrong:int=0,mask:Object={},extra:int=0;
          for(var i:int=0;i<expected.length;i+=2)
-         {mask[String(expected[i])]=true;if(now[int(expected[i])]!=uint(expected[i+1]))wrong++;}
+         {mask[String(expected[i])]=true;if(now[int(expected[i])]!=uint(expected[i+1])) {
+            wrong++;
+            if(wrong<=16)Log.d("A22 WALL DIFFERENCE "+JSON.stringify({round:round,index:expected[i],
+               expected:expected[i+1],actual:Number(now[int(expected[i])])}));
+         }}
          var changed:Array=sourcePatch();
          for(i=0;i<changed.length;i+=2)if(!mask[String(changed[i])])extra++;
          return {wrong:wrong,extra:extra,expected:expected.length/2,changed:changed.length/2,
@@ -269,6 +281,11 @@ package
       private function collect():void
       {
          collected=true;localResult=examine();phase="sampled";
+         if(!sourceSide) {
+            check(firstMarkReceived>0&&firstMarkPainted>0,"source witness and first remote wall pixels both observed");
+            Log.d("A22 WALL LATENCY "+JSON.stringify({round:round,scenario:cases[round],received:firstMarkReceived,
+               painted:firstMarkPainted,afterWitnessMs:firstMarkPainted-firstMarkReceived}));
+         }
          send("result",{result:{wrong:localResult.wrong,extra:localResult.extra,expected:localResult.expected,
             changed:localResult.changed,pixels:localResult.pixels,hp:localResult.hp,solid:localResult.solid,frames:localResult.frames}});
          compare();
@@ -281,7 +298,7 @@ package
          check(localResult.pixels>0,"synchronized marks affect final rendered game pixels="+localResult.pixels);
          check(localResult.solid && peerResult.solid,"small visual holes never open tile collision");
          check(same(localResult.hp,peerResult.hp),"HP settles once and both sides agree local="+localResult.hp+" peer="+peerResult.hp);
-         Log.d("WALL IMPACT METRIC "+JSON.stringify({role:host?"host":"join",round:round,scenario:CASES[round],
+         Log.d("WALL IMPACT METRIC "+JSON.stringify({role:host?"host":"join",round:round,scenario:cases[round],
             local:{wrong:localResult.wrong,extra:localResult.extra,pixels:localResult.pixels,hp:localResult.hp,frames:localResult.frames},
             peer:{wrong:peerResult.wrong,extra:peerResult.extra,pixels:peerResult.pixels,hp:peerResult.hp,frames:peerResult.frames},native:nativeResult || peerNative}));
          send("compared");advance();
@@ -289,7 +306,7 @@ package
       private function advance():void
       {
          if(!host || !compared || !peerDone)return;
-         if(round+1<CASES.length)prepare(round+1);
+         if(round+1<cases.length)prepare(round+1);
          else {send("duplicate-start");startDuplicate();}
       }
       private function startDuplicate():void
@@ -334,7 +351,7 @@ package
          // Retain real production packets as immutable duplicate inputs. A
          // host receives client terrain, a join receives authoritative unitsync.
          if(phase=="run" && ((host && p.type=="terrain" && p.wall!=null) ||
-            (!host && p.type=="unitsync" && p.wallPaint is Array)))
+            (!host && (p.type=="unitsync" || p.type=="wall-paint" || p.type=="worldstate") && p.wallPaint is Array)))
             if(duplicates.length<2)duplicates.push(JSON.parse(JSON.stringify(p)));
          if(p.type!="wall-impact-test")return;
          try
@@ -346,6 +363,7 @@ package
             {peerNative=null;prepare(int(p.round));mod.game.applyTilePatch(p.layout as Array);configureWall();}
             else if(p.stage=="prepared" && host && int(p.round)==round)peerPrepared=true;
             else if(p.stage=="go" && !host && int(p.round)==round)begin();
+            else if(p.stage=="first-mark" && int(p.round)==round)firstMarkReceived=getTimer();
             else if(p.stage=="expected" && int(p.round)==round)
             {peerNative=p.result;addExpected(RoomCodec.unpack(String(p.result.reference)) as Array);}
             else if(p.stage=="result" && int(p.round)==round){peerResult=p.result;compare();}
@@ -354,7 +372,7 @@ package
             else if(p.stage=="replay-production" && int(p.round)==round)
             {
                for each(var packet:Object in p.packets)
-                  if((host && packet.type=="unitsync" && packet.wallPaint is Array) ||
+                  if((host && (packet.type=="unitsync" || packet.type=="wall-paint" || packet.type=="worldstate") && packet.wallPaint is Array) ||
                      (!host && packet.type=="terrain" && packet.wall!=null))
                      for(var repeat:int=0;repeat<3;repeat++)
                         if(host)mod.session.server.broadcast(packet);else mod.session.link.send(packet);
@@ -377,6 +395,7 @@ package
       private function tick(e:TimerEvent):void
       {
          mod=RConnectMod.instance;if(mod==null || mod.game==null || mod.game.gg==null || mod.session==null)return;
+         if(phase=="boot")mod.game.gg.invulner=true;
          if(host)for each(var p:Object in mod.session.peers)watch(p.link as TcpLink);else watch(mod.session.link);
          if(mod.game.world.clickReq==1)
          {mod.stage.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_DOWN,true));mod.stage.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_UP,true));}
@@ -385,6 +404,7 @@ package
             if(phase=="done")return;
             if(getTimer()-at>60000){check(false,"timeout "+phase+" shot="+shot+" nativeCount="+nativeCount+" contact="+contact);send("done");finish();return;}
             if(!stable())return;
+            if(phase=="boot" && waitLand!="" && String(mod.game.readWorldInfo().curLandId)!=waitLand)return;
             if(phase=="boot" && !host && timer.currentCount>160 && getTimer()-readyAt>500){readyAt=getTimer();send("ready");}
             else if(phase=="prepare")
             {

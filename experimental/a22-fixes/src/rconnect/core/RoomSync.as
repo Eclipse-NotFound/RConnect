@@ -1,0 +1,416 @@
+package rconnect.core
+{
+   import modlocales.connect.RCLocale;
+   import flash.events.Event;
+   import flash.utils.getTimer;
+   import rconnect.game.GameBridge;
+   import rconnect.net.Protocol;
+   import rconnect.net.RoomCodec;
+   import rconnect.net.TcpLink;
+
+   /** Two-player room ownership. Door crossings use an ordered barrier:
+    * freeze -> flush mirror reports -> capture owners -> grant -> acknowledge.
+    * The native simulation never advances a new room before its grant. */
+   public class RoomSync
+   {
+      private var session:Session;
+      private var mod:RConnectMod;
+      private var game:GameBridge;
+      private var records:Object={};
+      private var nativeRoom:Object;
+      private var nativeLand:Object;
+      private var settledRoom:Object;
+      private var settledKey:String="";
+      private var hostInfo:Object;
+      private var peerInfo:Object;
+      private var serial:int=0;
+      private var pending:int=0;
+      private var savedPause:Boolean=false;
+      private var pauseWorld:Object;
+      private var deadline:int=0;
+      private var readySent:Boolean=false;
+      private var initial:Boolean=true;
+      private var blocked:Boolean=false;
+      private var requested:Boolean=false;
+      private var teammate:Object,followPending:Object;
+      private var followSeenAt:int=0,followAttemptAfter:int=0,followFailures:int=0;
+      private var followStarted:Boolean=false;
+      public var busy:Boolean=false;
+      public var ready:Boolean=false;
+      public var authority:Boolean=true;
+      public var term:int=0;
+      public var epoch:int=0;
+      public var status:String="";
+
+      public function RoomSync(s:Session)
+      {
+         session=s;mod=s.mod;game=mod.game;
+         game.mapGeneration=new MapGeneration(s);
+         mod.stage.addEventListener(Event.ENTER_FRAME,before,false,100000);
+         mod.stage.addEventListener(Event.ENTER_FRAME,after,false,-9000);
+      }
+      public function reset():void
+      {
+         if(mod.peerGrip!=null)mod.peerGrip.reset();
+         release();records={};nativeRoom=null;nativeLand=null;settledRoom=null;settledKey="";
+         ready=false;authority=true;initial=true;epoch=0;term=0;pending=0;hostInfo=null;
+         game.independentRooms=false;game.roomEpoch=0;status="";blocked=false;
+         requested=false;
+         teammate=null;cancelFollow();
+         TravelGuard.reset();
+         game.mapGeneration.reset();
+      }
+      private function connected():Boolean
+      {return session.mode==Session.CONNECTED || (session.mode==Session.HOSTING && session.peers.length>0);}
+      private function host():Boolean {return session.mode==Session.HOSTING;}
+      private function send(o:Object):void
+      {
+         o.type="room";
+         if(host())session.server.broadcast(o);else if(session.link!=null)session.link.send(o);
+      }
+      private function hold():void
+      {
+         // A room checkpoint must never preserve levitation without its caster.
+         if(mod.enemyGrip!=null)mod.enemyGrip.releaseForHandoff();
+         if(mod.peerGrip!=null)mod.peerGrip.reset();
+         game.releaseMovablesForHandoff();
+         if(!busy)
+         {
+            pauseWorld=game.world;savedPause=Boolean(GameBridge.probe(pauseWorld,"onPause"));
+            busy=true;deadline=getTimer()+45000;
+         }
+         game.roomHold=true;
+         if(pauseWorld!=null)pauseWorld.onPause=true;
+         status="房间交接中…";
+      }
+      private function release():void
+      {
+         if(busy && pauseWorld!=null)pauseWorld.onPause=savedPause;
+         busy=false;game.roomHold=false;pauseWorld=null;
+         if(ready && session.progress!=null)session.progress.prepare();
+         status=ready?(authority?"分房探索":"共同探索"):"";
+      }
+      private function before(e:Event):void
+      {
+         if(!connected()) {if(ready || busy)reset();return;}
+         try
+         {
+            game.refreshWorld();
+            if(game.world==null || game.loc==null || game.gg==null)return;
+            if(busy && pauseWorld===game.world)game.world.onPause=true;
+            if(!host())TravelGuard.guardTravel(game,this);
+            game.world.land.loc_t=0;
+            check();
+            followTeammate();
+            TravelGuard.update(game,!host());
+            if(busy && getTimer()>deadline && !blocked)
+            {
+               blocked=true;status="房间交接未完成，请断开后重连";
+               Log.d("RConnectRoom: handoff timed out; simulation remains paused");
+            }
+         }
+         catch(error:Error){fail(error);}
+      }
+      private function after(e:Event):void
+      {
+         if(!connected())return;
+         try {game.refreshWorld();check();if(game.world!=null && game.world.land!=null)game.world.land.loc_t=0;}
+         catch(error:Error){fail(error);}
+      }
+      private function check():void
+      {
+         if(game.loc==null || game.gg==null || game.isTransitioning())return;
+         if(!host() && hostInfo==null)return;
+         if(!host() && String(game.readWorldInfo().curLandId)!=String(hostInfo.curLandId))
+         {observeHost(hostInfo);return;}
+         var land:Object=game.world.land;
+         if(nativeLand!==land)
+         {
+            nativeLand=land;nativeRoom=null;
+            if(host()){epoch++;game.roomEpoch=epoch;records={};settledRoom=null;settledKey="";ready=false;}
+         }
+         if(nativeRoom!==game.loc)
+         {
+            nativeRoom=game.loc;
+            if(!host() && ready && TravelGuard.restricted(nativeRoom) && game.roomKey()!=String(hostInfo.roomKey))
+            {
+               if(settledRoom!=null)TravelGuard.returnTo(game,settledRoom);
+               nativeRoom=game.loc;notice("剧情和挑战区域需要跟随宿主共同进入");return;
+            }
+            hold();
+            if(host())begin();else
+            {
+               flush();send({op:"request",epoch:epoch,info:game.readWorldInfo()});
+            }
+         }
+         if(!host() && pending>0 && !readySent && busy)sendReady();
+         if(host() && requested && pending==0)begin();
+      }
+      private function begin():void
+      {
+         requested=true;
+         if(game.isTransitioning())return;
+         if(pending>0)return;
+         requested=false;
+         session.flushProgress();
+         hold();pending=++serial;blocked=false;
+         send({op:"seal",barrier:pending,epoch:epoch,info:game.readWorldInfo(),
+            together:TravelGuard.restricted(game.loc) || TravelGuard.restricted(settledRoom)});
+         Log.d("RConnectRoom: seal "+pending+" room="+game.roomKey());
+      }
+      /** Called for every host world update, including while maps load. */
+      public function observeHost(info:Object):void
+      {
+         if(info==null || host() || info.worldReady===false)return;
+         game.mapGeneration.receive(info);
+         hostInfo=info;
+         if(game.isPlayerDead() || game.isTransitioning())return;
+         game.refreshWorld();var mine:Object=game.readWorldInfo();if(mine==null)return;
+         var mapChange:Boolean=String(mine.curLandId)!=String(info.curLandId);
+         if(!mapChange && game.mapGeneration.differs(info,game.world.land)) {
+            // Joining an already-running expedition can have the same map ID
+            // and room coordinates but a completely different native layout.
+            // Rebuild only the joiner, before any room checkpoint is applied.
+            TravelGuard.allowTravel(String(info.curLandId));
+            game.followMapGeneration(info);
+            epoch=int(info.roomEpoch);game.roomEpoch=epoch;
+            settledRoom=null;settledKey="";ready=false;nativeRoom=null;
+            return;
+         }
+         if(mapChange || initial)
+         {
+            TravelGuard.allowTravel(String(info.curLandId));
+            game.independentRooms=false;
+            game.followHostWorld(info);
+            game.refreshWorld();
+         }
+         if(!mapChange && int(info.roomEpoch)>0 && epoch!=int(info.roomEpoch))
+         {
+            if(epoch>0 && !initial && nativeLand===game.world.land){TravelGuard.allowTravel(String(info.curLandId));game.followMapGeneration(info);}
+            epoch=int(info.roomEpoch);game.roomEpoch=epoch;
+            settledRoom=null;settledKey="";ready=false;nativeRoom=null;
+         }
+      }
+      public function stamp(msg:Object):Object
+      {
+         msg.roomKey=settledKey;msg.roomEpoch=epoch;msg.roomTerm=term;return msg;
+      }
+      /** Follow departures from a shared room. This prevents two followers
+       * exchanging rooms when their two position packets cross in flight. */
+      public function observeTeammate(info:Object):void {
+         if(info==null){teammate=null;cancelFollow();return;}
+         if(mod.config.getValue("followTeammate")!="1")cancelFollow();
+         else if(followPending!=null) {
+            // A new destination replaces the old request, including its retry
+            // timer. A map/epoch change belongs to the normal map barrier.
+            if(!sameFollowMap(followPending,info))cancelFollow();
+            else {
+               if(String(followPending.roomKey)!=String(info.roomKey)) {
+                  followAttemptAfter=0;followFailures=0;followStarted=false;
+               }
+               followPending=info;followSeenAt=getTimer();
+            }
+         }
+         else if(teammate!=null && sameFollowMap(teammate,info)
+            && String(teammate.roomKey)!=String(info.roomKey)
+            && String(teammate.roomKey)==game.roomKey()
+            && mod.config.getValue("followTeammate")=="1") {
+            followPending=info;followSeenAt=getTimer();followAttemptAfter=0;followFailures=0;
+         }
+         teammate=info;
+      }
+      private function sameFollowMap(a:Object,b:Object):Boolean {
+         return a!=null && b!=null && String(a.curLandId)==String(b.curLandId)
+            && String(a.curCoord)==String(b.curCoord) && int(a.roomEpoch)==int(b.roomEpoch)
+            && Number(a.landStage)==Number(b.landStage);
+      }
+      private function cancelFollow():void {
+         followPending=null;followSeenAt=0;followAttemptAfter=0;followFailures=0;followStarted=false;
+      }
+      private function followTeammate():void {
+         if(followPending==null)return;
+         var now:int=getTimer();
+         if(mod.config.getValue("followTeammate")!="1" || now-followSeenAt>3000){cancelFollow();return;}
+         if(session.pause!=null && session.pause.paused)return;
+         if(!ready || busy || pending!=0 || game.isTransitioning() || game.isPlayerDead())return;
+         var info:Object=followPending,mine:Object=game.readWorldInfo();
+         if(mine==null)return;
+         if(!sameFollowMap(info,mine) || int(info.roomEpoch)!=epoch
+            || String(info.landProb || "")!="" || TravelGuard.restricted(game.loc)){cancelFollow();return;}
+         if(String(info.roomKey)==game.roomKey()) {
+            // Reaching a native room is not completion until its ownership
+            // handoff has finished. The ready/busy gates above enforce that.
+            var arrived:Boolean=followStarted;cancelFollow();
+            if(arrived)notice("已跟随队友进入房间");return;
+         }
+         if(now<followAttemptAfter)return;
+         var target:Object;
+         try {target=game.world.land.locs[int(info.landX)][int(info.landY)][int(info.landZ)];}catch(e:*){}
+         if(target!=null && (String(info.roomKey)!=game.roomKey(target) || TravelGuard.restricted(target))){cancelFollow();return;}
+         // Temporary unavailability is not success. Keep the latest intent
+         // without reactivating a room every frame or waiting for a new door.
+         followAttemptAfter=now+Math.min(2000,500*(1+followFailures));
+         if(target==null || !TravelGuard.follow(game,info,!host())) {
+            if(followFailures++<3)Log.d("RConnectRoom: follow deferred room="+info.roomKey+" attempt="+followFailures);
+            return;
+         }
+         followStarted=true;check();
+      }
+      public function accepts(msg:Object):Boolean
+      {return !busy && acceptsReceipt(msg);}
+      /** Explicit local travel shares the ordinary-room handoff with walking. */
+      public function travelToTeammate(info:Object):Boolean
+      {
+         if((session.pause!=null && session.pause.paused) || !connected() || !ready || busy || pending!=0 || info==null || game.isTransitioning() || game.isPlayerDead())return false;
+         var mine:Object=game.readWorldInfo(),target:Object;
+         if(mine==null || String(info.curLandId)!=String(mine.curLandId) || int(info.roomEpoch)!=epoch
+            || String(info.landProb || "")!="" || TravelGuard.restricted(game.loc))return false;
+         try {target=game.world.land.locs[int(info.landX)][int(info.landY)][int(info.landZ)];}catch(e:*){}
+         if(target==null || String(info.roomKey)!=game.roomKey(target) || TravelGuard.restricted(target))return false;
+         cancelFollow();
+         if(target!==game.loc)
+         {
+            if(!TravelGuard.follow(game,{landX:info.landX,landY:info.landY,landZ:info.landZ,landProb:""},!host()))return false;
+            check();
+         }
+         return true;
+      }
+      public function acceptsReceipt(msg:Object):Boolean
+      {return ready && !authority && String(msg.roomKey)==settledKey && int(msg.roomEpoch)==epoch && int(msg.roomTerm)==term;}
+      public function handle(msg:Object):Boolean
+      {
+         if(msg==null || msg.type!="room")return false;
+         try
+         {
+            if(host())
+            {
+               if(msg.op=="request") {peerInfo=msg.info;if(pending==0)begin();}
+               else if(msg.op=="ready" && int(msg.barrier)==pending && int(msg.epoch)==epoch)commit(msg);
+               else if(msg.op=="ack" && int(msg.barrier)==pending)
+               {pending=0;release();Log.d("RConnectRoom: resumed "+settledKey+" term="+term);}
+            }
+            else if(msg.op=="seal")
+            {
+               if(epoch!=int(msg.epoch)){settledRoom=null;settledKey="";ready=false;}
+               observeHost(msg.info);pending=int(msg.barrier);epoch=int(msg.epoch);game.roomEpoch=epoch;
+               readySent=false;blocked=false;
+               if(msg.together && game.loc!=null && game.roomKey()!=String(msg.info.roomKey) && !game.isTransitioning())
+                  TravelGuard.follow(game,msg.info,true);
+               if(game.loc!=null && game.gg!=null && !game.isTransitioning()) {hold();sendReady();}
+            }
+            else if(msg.op=="grant" && int(msg.barrier)==pending && int(msg.epoch)==epoch)
+            {
+               var state:Object=RoomCodec.unpack(String(msg.state));
+               if(game.roomKey()!=String(state.key))throw new Error("Room changed during grant");
+               game.restoreCheckpoint(state,Boolean(msg.owner),msg.fresh!==true && (!authority || settledRoom!==game.loc || !ready));
+               authority=Boolean(msg.owner);ready=true;term=int(msg.term);settledRoom=game.loc;settledKey=game.roomKey();
+               initial=false;game.independentRooms=true;nativeRoom=game.loc;
+               TravelGuard.endTravel();
+               send({op:"ack",barrier:pending});pending=0;readySent=false;release();
+               Log.d("RConnectRoom: grant "+settledKey+" authority="+authority+" term="+term);
+            }
+         }
+         catch(error:Error){fail(error);}
+         return true;
+      }
+      private function sendReady():void
+      {
+         if(game.isTransitioning() || game.loc==null)return;
+         hold();flush();session.flushProgress();var own:Object=null;
+         if(ready && authority && settledRoom!=null)
+            own=game.inRoom(settledRoom,function():Object{return game.checkpoint();});
+         var info:Object=game.readWorldInfo();
+         var ownPacked:String=own==null?null:RoomCodec.pack(own);
+         // A checkpoint also discovers mines, binds loot keys and observes wall
+         // marks/weapon endings. Keep that first capture. When both names refer
+         // to this same held room, no world step or restore occurs between them;
+         // share its complete capture instead of repeating those observations.
+         var sameCapture:Boolean=own!=null && settledRoom===game.loc;
+         var freshState:Object=sameCapture?own:game.checkpoint();
+         // A granted room remains in the host's records for this epoch. If we
+         // did not leave it, commit uses that record (or our own update above),
+         // never fresh. Keep the capture's side effects, omit only its unused
+         // encoding/payload. Epoch resets clear ready before sendReady runs.
+         var knownCurrent:Boolean=ready && settledRoom===game.loc && settledKey==game.roomKey();
+         var freshPacked:String=knownCurrent?null:(sameCapture?ownPacked:RoomCodec.pack(freshState));
+         send({op:"ready",barrier:pending,epoch:epoch,info:info,
+            oldKey:settledKey,oldTerm:term,own:ownPacked,fresh:freshPacked});
+         readySent=true;
+      }
+      private function commit(msg:Object):void
+      {
+         peerInfo=msg.info;
+         if(ready && authority)session.flushGhostDamage();
+         if(ready && settledRoom!=null && authority)
+            records[settledKey]={state:game.inRoom(settledRoom,function():Object{return game.checkpoint();}),owner:0};
+         if(msg.own!=null)
+         {
+            var previous:Object=records[String(msg.oldKey)];
+            if(previous==null || int(previous.owner)!=1 || int(previous.term)!=int(msg.oldTerm))
+               throw new Error("Unexpected room owner checkpoint");
+            records[String(msg.oldKey)]={state:RoomCodec.unpack(String(msg.own)),owner:1};
+         }
+         var myKey:String=game.roomKey(),theirKey:String=String(peerInfo.roomKey);
+         var mine:Object=records[myKey];
+         if(mine==null)mine=records[myKey]={state:game.checkpoint(),owner:0};
+         if(settledRoom!==game.loc || !ready || int(mine.owner)!=0)
+            game.restoreCheckpoint(mine.state,true,int(mine.owner)!=0);
+         else game.freezeAI=false;
+         mine.owner=0;mine.term=pending;
+         var theirs:Object=records[theirKey];
+         var fresh:Boolean=theirs==null;
+         var grantPacked:String=null;
+         if(theirs==null)
+         {
+            if(msg.fresh==null)throw new Error("Missing new-room checkpoint: "+theirKey);
+            grantPacked=String(msg.fresh);
+            // Still decode before accepting the checkpoint into records. Only
+            // owner/term change below; its state stays untouched, so the already
+            // validated input is also the exact state sent in this fresh grant.
+            theirs=records[theirKey]={state:RoomCodec.unpack(grantPacked),owner:1};
+         }
+         if(theirKey!=myKey)theirs.owner=1;
+         theirs.term=pending;
+         authority=true;ready=true;term=pending;settledRoom=game.loc;settledKey=myKey;
+         game.independentRooms=true;
+         if(grantPacked==null)grantPacked=RoomCodec.pack(theirs.state);
+         send({op:"grant",barrier:pending,epoch:epoch,term:pending,owner:theirKey!=myKey,fresh:fresh,state:grantPacked});
+         Log.d("RConnectRoom: commit "+pending+" host="+myKey+" join="+theirKey);
+      }
+      private function flush():void
+      {
+         if(!ready || authority || settledRoom==null)return;
+         game.inRoom(settledRoom,function():void {session.flushRoomReports(true,true);});
+      }
+      /** Late reports are settled in the old native room before its snapshot.
+       * They cannot be accepted again after the authority term changes. */
+      public function report(msg:Object,link:TcpLink):Boolean
+      {
+         var type:String=String(msg.type);
+         if([Protocol.MSG_DAMAGE,Protocol.MSG_LOOT,Protocol.MSG_OBJS,Protocol.MSG_TERRAIN].indexOf(type)<0)return false;
+         if(!ready || !authority || String(msg.roomKey)!=settledKey || int(msg.roomEpoch)!=epoch || int(msg.roomTerm)!=term)return true;
+         game.inRoom(settledRoom,function():void
+         {
+            if(type==Protocol.MSG_DAMAGE)for each(var h:Object in msg.hits)
+               game.applyDamage(String(h.id),Number(h.dmg),game.getRemoteGhost(link.id),String(h.k),h);
+            else if(type==Protocol.MSG_LOOT) {
+               var lootReceipt:Object=game.applyLootReports(msg);
+               if(lootReceipt!=null)link.send(stamp(Protocol.make(Protocol.MSG_LOOT_ACK,lootReceipt)));
+            }
+            else if(type==Protocol.MSG_OBJS)game.applyObjReports(msg);
+            else if(type==Protocol.MSG_TERRAIN)
+            {
+               var receipt:Object=game.applyTileReport(String(link.id),msg);
+               if(receipt!=null){receipt.worldInfo=game.readWorldInfo();link.send(stamp(Protocol.make(Protocol.MSG_TERRAIN_ACK,receipt)));}
+            }
+         });
+         return true;
+      }
+      public function notice(s:String):void {status=s;if(mod.hud!=null)mod.hud.addChatLine("RConnect",RCLocale.text(s));}
+      private function fail(error:Error):void
+      {
+         hold();blocked=true;status="房间同步失败，请断开连接后重试";
+         Log.d("RConnectRoom: ERROR "+error+" "+error.getStackTrace());
+      }
+   }
+}

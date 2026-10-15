@@ -30,6 +30,9 @@ def main():
     ap.add_argument('--expected-version')
     ap.add_argument('--frozen-runtime',action='store_true',help='Test an already frozen combination even when other developers changed the installation; still record and protect the installation observed at this run')
     ap.add_argument('--msw-candidate',type=Path)
+    ap.add_argument('--host-save-template',type=Path)
+    ap.add_argument('--join-save-template',type=Path)
+    ap.add_argument('--connect-after-load',action='store_true')
     args = ap.parse_args()
     out, bundle = [(ROOT/p).resolve() for p in (args.candidate,args.bundle)]
     assert out.parent == bundle.parent == ROOT/'build/m52'
@@ -68,20 +71,30 @@ def main():
     assert re.fullmatch(r'[A-Za-z0-9_-]+',label)
     result=out/(label+'-result.json');log=out/(label+'-run.log')
     assert not result.exists() and not log.exists()
-    if args.entry=='NativeMapGenerationTestDoc': driver=out/'build'/('driver-'+args.mode)
-    else:
-        driver=out/'build'/('driver-'+label)
-        assert not driver.exists()
-        with (out/(label+'-build.log')).open('w',encoding='utf-8') as stream:
-            subprocess.run([sys.executable,'-B','-X','utf8',str(out/'tools/build_effects_driver.py'),
-                '--candidate',str(binary),'--source-root',str(out/'src'),'--java',str(JAVA),'--sdk',str(SDK),
-                '--entry',args.entry,'--output',str(driver)],cwd=ROOT,stdout=stream,stderr=subprocess.STDOUT,check=True)
+    # Every entry uses this candidate's frozen tests. Follow-up candidates do
+    # not contain the map-only preparer's old driver-candidate directory.
+    driver=out/'build'/('driver-'+label)
+    assert not driver.exists()
+    with (out/(label+'-build.log')).open('w',encoding='utf-8') as stream:
+        subprocess.run([sys.executable,'-B','-X','utf8',str(out/'tools/build_effects_driver.py'),
+            '--candidate',str(binary),'--source-root',str(out/'src'),'--java',str(JAVA),'--sdk',str(SDK),
+            '--entry',args.entry,'--output',str(driver)],cwd=ROOT,stdout=stream,stderr=subprocess.STDOUT,check=True)
     command=[sys.executable,'-B','-X','utf8',str(ROOT/'tools/run_coop_regression.py'),
         '--candidate',str(binary),'--game-root',str(bundle/'game'),'--effects-driver',str(driver),
         '--effects','--all-mods','--visible-windows','--seconds',str(args.seconds),
         '--land',args.land or ('rbl' if args.entry=='NativeMapGenerationTestDoc' else 'random_mane'),
         '--expected-version',args.expected_version or ('0.2.22-dev' if control else '0.2.22-map1')]
     if not control: command+=['--game-candidate',str(out/'native/pfe.swf')]
+    save_inputs={}
+    for role,path in [('host',args.host_save_template),('join',args.join_save_template)]:
+        if path is not None:
+            path=path.resolve()
+            assert path.is_file()
+            save_inputs[role]=dict(path=str(path),sha256=sha(path))
+            command+=['--'+role+'-save-template',str(path)]
+    if args.connect_after_load:
+        assert len(save_inputs)==2, 'Both save templates are needed before manual connection'
+        command+=['--connect-after-load']
     msw_hash=None
     if args.msw_candidate:
         msw=args.msw_candidate.resolve()
@@ -91,7 +104,7 @@ def main():
         msw_hash=sha(msw);assert msw_hash==msw_manifest['candidate_sha256']
         command+=['--msw-candidate',str(msw)]
     inputs=dict(prepared=sha(out/'prepared.json'),runtime=sha(bundle/'inputs.json'),
-        runner=sha(ROOT/'tools/run_coop_regression.py'),script=sha(__file__),msw=msw_hash,
+        runner=sha(ROOT/'tools/run_coop_regression.py'),script=sha(__file__),msw=msw_hash,saves=save_inputs,
         driver={p.name:sha(p) for p in driver.glob('*.swf')})
     save(out/(label+'-intent.json'),dict(command=command,inputs=inputs,installation_before=installation_before,
         runtime_matches_installation=not runtime_difference,runtime_difference=runtime_difference))
@@ -99,6 +112,7 @@ def main():
     with log.open('w',encoding='utf-8') as stream:
         proc=subprocess.run(command,cwd=ROOT,stdout=stream,stderr=subprocess.STDOUT)
     output=log.read_text(encoding='utf-8',errors='replace')
+    for item in save_inputs.values(): assert sha(item['path'])==item['sha256'], 'Source save changed during replay'
     match=re.search(r'^OUTPUT .*?([0-9a-f]{10})\s*$',output,re.M)
     receipt=dict(entry=args.entry,control=control,exit=proc.returncode,inputs=inputs,run=match[1] if match else None,
         runtime_matches_installation=not runtime_difference,runtime_difference=runtime_difference,

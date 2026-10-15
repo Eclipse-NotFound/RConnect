@@ -51,6 +51,10 @@ package {
          var factory:Object=mod.main.loaderInfo.applicationDomain.getDefinition("fe.weapon.Weapon");
          gun=factory.create(g,"lmg",0);gun.setPers(g,g.pers);g.currentWeapon=gun;g.childObjs=[gun];gun.addVisual();
          gun.precision=gun.deviation=gun.recoil=gun.recoilUp=0;gun.critCh=gun.dopCh=0;
+         // Fresh isolated characters do not meet the LMG's normal level gate.
+         // Like the existing native weapon fixtures, make this test weapon
+         // level-neutral; retain native control, cooldown, ammunition and hit.
+         gun.lvl=gun.perslvl=0;
          gun.skillConf=1;gun.damage=10;gun.destroy=0;gun.damageExpl=0;
          msw.cfg.smartEnabled=true;msw.cfg.smartExclusions={};
          mod.game.world.godMode=false;mod.game.world.testDam=true;
@@ -59,16 +63,17 @@ package {
       }
       private function start(n:int):void {
          round=n;phase="run";at=getTimer();localDone=peerDone=false;guided=locks=0;fireIssued=revokeSent=false;shots=new Dictionary();
-         var g:Object=mod.game.gg;g.maxhp=g.hp=10000;g.healhp=0;g.invulner=false;g.shithp=0;g.neujaz=0;
+         var g:Object=mod.game.gg;g.pers.healAll();g.maxhp=g.hp=10000;g.healhp=0;g.invulner=false;g.shithp=0;g.neujaz=0;
          g.skin=g.armor_qual=g.dexter=g.dexterPlus=g.dodge=0;g.currentArmor=null;g.allVulnerMult=1;
          hpBefore=g.hp;gun.hold=1000;ammoBefore=gun.hold;gun.hp=gun.maxhp;gun.t_reload=0;
-         gun.vel=round==6?12:180;msw.cfg.smartMultiLock=round==2;
+         gun.speed=round==6?12:180;msw.cfg.smartMultiLock=round==2;
          if(host)mod.friendlyFire.setEnabled(enabled());
       }
       private function before(e:Event):void {
          if(phase=="done"||phase=="boot")return;
          var b:Object=mod.game,g:Object=b.gg;b.forceCloseOverlays();
          g.disabled=false;g.ggControl=true;g.dx=g.dy=0;g.stay=true;g.setPos(bx+(host?40:300),by);g.setVisPos();
+         g.isTake=0;g.work="";b.loc.base=false;
          for each(var u:Object in b.loc.units)if(u!==g&&Number(u.fraction)<100){u.disabled=true;u.trigDis=true;}
          g.ctr.clearAll();g.storona=host?1:-1;
          b.world.celX=bx+(host?300:40);b.world.celY=by-g.scY/2;
@@ -133,6 +138,8 @@ package {
                   check(!msw.smart.targetAllowed(mod.game.gg,mod.game.world),"own player never becomes a target");
                }
                if(round==4||round==5) {
+                  Log.d("A22 SMART FIRE "+JSON.stringify({shooter:shooter(),hold:gun.hold,before:ammoBefore,issued:fireIssued,
+                     guided:guided,atkPoss:mod.game.gg.atkPoss,hp:mod.game.gg.hp,lvl:gun.lvl,ready:gun.ready}));
                   if(shooter())check(fireIssued&&gun.hold<ammoBefore&&guided>0,"native attack consumes ammo and receives guidance count="+guided);
                   else check(mod.game.gg.hp<hpBefore,"guided peer attack damages victim loss="+(hpBefore-mod.game.gg.hp));
                }

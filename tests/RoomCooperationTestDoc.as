@@ -23,7 +23,9 @@ package {
       private var a:Object,b:Object,expected:Object,fixture:Object,readySent:Boolean=false;
       private var gripFixture:Object;
       private var stale:Object,stageSeq:int=0,oldLand:Object,challenge:String="";
-      public function RoomCooperationTestDoc(){
+      private var testLand:String,includeFloor:Boolean,metrics:A22RoomMetrics;
+      public function RoomCooperationTestDoc(land:String="random_mane",floor:Boolean=true){
+         testLand=land;includeFloor=floor;
          var app:String=NativeApplication.nativeApplication.applicationID;
          if(app.indexOf("pfe-rconnect-coop-")!=0 && app.indexOf("pfe-modsettings-rconnect-coop-")!=0)return;
          host=app.indexOf("-host-")>=0;
@@ -37,7 +39,10 @@ package {
       private function send(p:String,data:Object=null):void {var m:Object=data||{};m.type="room-test";m.phase=p;if(host)mod.session.server.broadcast(m);else mod.session.link.send(m);}
       private function watch(l:TcpLink):void {if(l!=null && !links[l]){links[l]=true;l.addEventListener(TcpLink.MESSAGE,receive);}}
       private function info(loc:Object):Object{return {landX:loc.landX,landY:loc.landY,landZ:loc.landZ,landProb:loc.landProb,key:mod.game.roomKey(loc)};}
-      private function go(i:Object):void {TravelGuard.follow(mod.game,i);}
+      private function go(i:Object):void {
+         var began:int=getTimer();TravelGuard.follow(mod.game,i);
+         if(metrics!=null)Log.d("A22 ROOM TRAVEL "+JSON.stringify({elapsed:getTimer()-began,to:i.key,at:began}));
+      }
       private function stable():Boolean{return mod.session.rooms.ready && !mod.session.rooms.busy && !mod.game.isTransitioning();}
       private function findFixture():Object {for each(var u:Object in mod.game.loc.units)if(u.code=="rooms-fixture")return u;return null;}
       private function findGrip():Object {
@@ -70,6 +75,7 @@ package {
                else if(p.phase=="killed"){expected=p.expected;send("vacate");setPhase("vacate-wait");}
                else if(p.phase=="vacated"){go(b);setPhase("empty-revisit");}
                else if(p.phase=="revisited"){
+                  if(!includeFloor){send("done");finish();return;}
                   stageSeq=mod.session.rooms.epoch+1;oldLand=mod.game.world.land;
                   send("new-floor",{epoch:stageSeq});mod.game.world.game.gotoNextLevel();setPhase("new-floor");
                }
@@ -92,7 +98,9 @@ package {
       private function tick(e:TimerEvent):void {
          mod=RConnectMod.instance;if(mod==null || mod.game.gg==null || mod.game.loc==null)return;
          if(host){for each(var link:TcpLink in mod.session.server.clients)watch(link);}else watch(mod.session.link);
-         if(timer.currentCount<60 || mod.game.readWorldInfo().curLandId!="random_mane")return;
+         if(mod.game.gg!=null && phase=="boot")mod.game.gg.invulner=true;
+         if(timer.currentCount<60 || mod.game.readWorldInfo().curLandId!=testLand)return;
+         if(!includeFloor && metrics==null)metrics=new A22RoomMetrics(mod);
          try {
             mod.game.gg.invulner=true;mod.game.gg.disabled=true;mod.game.gg.dx=mod.game.gg.dy=0;
             if(!stable())return;
@@ -171,7 +179,7 @@ package {
                mod.game.travelToLand("stable_pi");setPhase("blocked-travel");
             }
             if(!host && phase=="blocked-travel" && getTimer()-at>1000) {
-               check(mod.game.readWorldInfo().curLandId=="random_mane" && int(mod.game.world.t_exit)==0,"join independent map exit is blocked before loading");
+               check(mod.game.readWorldInfo().curLandId==testLand && int(mod.game.world.t_exit)==0,"join independent map exit is blocked before loading");
                send("vacated");setPhase("wait-revisit");
             }
             if(host && phase=="empty-revisit" && mod.game.roomKey()==b.key && getTimer()-at>700) {
@@ -181,7 +189,7 @@ package {
                inspect(true);send("revisited");setPhase("wait-done");
             }
             if(!host && phase=="new-floor" && mod.session.rooms.epoch==stageSeq && mod.game.world.land!==oldLand) {
-               check(mod.game.readWorldInfo().curLandId=="random_mane","host same-map next floor brings join to the new generation");
+               check(mod.game.readWorldInfo().curLandId==testLand,"host same-map next floor brings join to the new generation");
                check(mod.game.loc.landProb=="","new floor has a normal room identity");
                send("floor-ready");setPhase("wait-challenge");
             }
@@ -257,6 +265,6 @@ package {
          check(unique,"loot identity keys remain unique after handoff");
          if(dead)check(loots.length==expected.loots,"no duplicate drops on repeated room import");
       }
-      private function finish():void {if(phase=="done")return;phase="done";timer.stop();Log.d("COOP EFFECTS DONE rooms "+(host?"host":"join"));}
+      private function finish():void {if(phase=="done")return;phase="done";timer.stop();if(metrics!=null)metrics.finish();Log.d("COOP EFFECTS DONE rooms "+(host?"host":"join"));}
    }
 }
