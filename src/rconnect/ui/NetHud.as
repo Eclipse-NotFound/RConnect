@@ -43,6 +43,7 @@ package rconnect.ui {
       private var box:Object={w:280,h:36,body:156},prefs:SharedObject,lastMode:String="",localError:String="";
       private var drag:Object,blockedKeys:Object={},imeActive:Boolean=false,imeCommitAt:int=-1000;
       private var disposed:Boolean=false;
+      private var keybinds:NetKeybinds=new NetKeybinds(),shortcutHeld:Object={};
 
       public function NetHud(stage:Stage,m:RConnectMod) {
          mod=m;surface=stage;name="rconnect-hud";
@@ -257,6 +258,7 @@ package rconnect.ui {
       }
       public function refresh():void {
          if(disposed)return;
+         keybinds.tick();
          var s:Session=mod.session,mode:String=s==null?Session.OFFLINE:s.mode;
          var connected:Boolean=mode==Session.CONNECTED || mode==Session.HOSTING && peers().length>0;
          var active:Boolean=mode==Session.HOSTING || mode==Session.CONNECTED;
@@ -350,12 +352,13 @@ package rconnect.ui {
             "Host setting. Attacks can hurt teammates when enabled.",
             "Настройка ведущего. Атаки могут ранить напарника.");
          versionLabel.text="RConnect v"+RConnectMod.VERSION+" · "+(mod.versionInfo==null?"":mod.versionInfo.version);
-         footer.text=tr("Ctrl+Enter 聊天 · F10","Ctrl+Enter: chat · F10","Ctrl+Enter: чат · F10");
+         footer.text=keybinds.label("chat")+tr(" 聊天 · "," Chat · "," Чат · ")+keybinds.label("panel");
          dockButton.text=tr("停靠","Dock","Край")+" "+(dock=="tl"?"↖":dock=="tr"?"↗":dock=="br"?"↘":dock=="bl"?"↙":"◇");
          helpButton.text=tr("说明","Help","Справка");
          helpText.text=tr("拖动标题可移动浮窗；“停靠”依次切换四角。\n\nCtrl+Enter 打开聊天；Enter 发送；Esc 收起。\nF10 隐藏或恢复，开合状态保留。\n\n共享探索只影响本端接收；关闭后保留已收到区域。\n\n全队暂停由宿主设置；双方都关闭相关界面后继续。\n\n滚轮可滚动当前页。原版菜单优先使用自己的快捷键。",
             "Drag the title to move. Dock cycles through four corners.\n\nCtrl+Enter opens chat; Enter sends; Esc collapses.\nF10 hides or restores the panel.\n\nExploration controls receiving locally; received areas remain.\n\nThe host sets co-op pause. Both players must close the relevant menus to resume.\n\nScroll the current tab with the wheel. Native menus keep their shortcuts.",
             "Перетащите заголовок. Кнопка «Край» меняет угол.\n\nCtrl+Enter открывает чат; Enter отправляет; Esc сворачивает.\nF10 скрывает и возвращает панель.\n\nРазведка влияет только на приём; полученные области сохраняются.\n\nПаузу настраивает ведущий. Для продолжения оба игрока закрывают соответствующие окна.\n\nПрокручивайте вкладку колёсиком. Игровые меню сохраняют свои клавиши.");
+         helpText.text=helpText.text.split("Ctrl+Enter").join(keybinds.label("chat")).split("F10").join(keybinds.label("panel"));
          refreshPauseBanner(pause);
          layout();
       }
@@ -473,6 +476,7 @@ package rconnect.ui {
          drag=null;preferredX=x;preferredY=y;savePreferences();e.stopImmediatePropagation();
       }
       private function cancelDrag(e:Event):void {
+         shortcutHeld={};
          if(drag!=null) {drag=null;preferredX=x;preferredY=y;savePreferences();}
       }
       private function outsideClick(e:MouseEvent):void {
@@ -508,8 +512,11 @@ package rconnect.ui {
             GameBridge.probe(GameBridge.probe(gui,"inform"),"visible")==true;
       }
       private function keyDown(e:KeyboardEvent):void {
+         if(keybinds.capturing())return;
+         if(shortcutHeld[e.keyCode]){e.stopImmediatePropagation();return;}
          var mine:Boolean=ownsInput();
-         if(e.keyCode==121) {
+         if(keybinds.matches("panel",e)) {
+            shortcutHeld[e.keyCode]=true;
             visible=!visible;help=false;releaseFocus();refresh();blockedKeys[e.keyCode]=true;e.stopImmediatePropagation();return;
          }
          if(mine) {
@@ -532,7 +539,8 @@ package rconnect.ui {
          // A fresh native key-down supersedes an older swallowed UI key-down.
          // Its later key-up must reach Ctr and clear that new native state.
          delete blockedKeys[e.keyCode];
-         if(e.keyCode==13 && e.ctrlKey && !nativeBusy() && !(surface.focus is TextField && TextField(surface.focus).type==TextFieldType.INPUT)) {
+         if(keybinds.matches("chat",e) && !nativeBusy() && !(surface.focus is TextField && TextField(surface.focus).type==TextFieldType.INPUT)) {
+            shortcutHeld[e.keyCode]=true;
             openPage("chat",true);blockedKeys[e.keyCode]=true;e.stopImmediatePropagation();return;
          }
          if(e.keyCode==27 && visible && !folded && !nativeBusy()) {
@@ -540,6 +548,7 @@ package rconnect.ui {
          }
       }
       private function keyUp(e:KeyboardEvent):void {
+         delete shortcutHeld[e.keyCode];
          if(blockedKeys[e.keyCode]) {
             // Ctr.clearAll leaves modifiers and its internal key-down vector.
             // Release the native state without forwarding input to game/UI listeners.
