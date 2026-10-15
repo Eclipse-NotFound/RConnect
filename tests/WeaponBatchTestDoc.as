@@ -100,7 +100,8 @@ package {
             owner.currentWeapon=oldWeapon;owner.childObjs=oldChildren;
             if(shot!=null && shot.in_chain)mod.game.loc.remObj(shot);
          }
-         finish();
+         timer.stop();
+         new NativeWeaponCadenceRegression(mod,check,finish);
       }
       private function received(e:NetMessageEvent):void {if(e.data.type=="unitsync")seenWorldSnapshot=true;}
       private function finish():void {

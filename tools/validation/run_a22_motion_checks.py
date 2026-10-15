@@ -7,11 +7,13 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 CASES = [
+    ('terrain', 'TerrainComparisonTestDoc', 'rbl', 240, False),
     ('throw', 'A22ThrowCollisionTestDoc', 'rbl', 480, True),
     ('saved-grip', 'A22SavedGripStressTestDoc', 'rbl', 360, True),
     ('timeline', 'A22EnemyTimelineTestDoc', 'random_mane', 240, False),
     ('late-pause', 'A22LatePausePacketTestDoc', 'random_mane', 300, False),
     ('pause-timing', 'A22PauseTimingTestDoc', 'random_mane', 300, False),
+    ('pause-repaint', 'A22PauseRepaintTestDoc', 'random_mane', 300, False),
     ('targets', 'TargetLifecycleTestDoc', 'random_mane', 300, False),
     ('continuity', 'PresentationContinuityTestDoc', 'random_mane', 300, False),
     ('animation', 'A22AnimationTestDoc', 'rbl', 240, False),
@@ -32,6 +34,7 @@ def main():
     parser.add_argument('--candidate', required=True)
     parser.add_argument('--bundle', required=True)
     parser.add_argument('--fa', help='Optional validated FA override; default uses the frozen installed version')
+    parser.add_argument('--rv', help='Optional validated RV wall comparison candidate')
     parser.add_argument('--cases')
     parser.add_argument('--prefix', required=True)
     args = parser.parse_args()
@@ -47,6 +50,8 @@ def main():
                    '--seconds', str(seconds), '--expected-version', manifest['version']]
         if args.fa:
             command += ['--fa-candidate', args.fa]
+        if args.rv:
+            command += ['--vision-candidate', args.rv]
         if copied_save:
             saved = ROOT/'build/m52/littlepip-save-replay-01'
             command += ['--host-save-template', str(saved/'host/PFEgame0.sol'),

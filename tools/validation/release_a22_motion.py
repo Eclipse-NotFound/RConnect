@@ -145,7 +145,7 @@ def audit(out, bundle, evidence):
     return dict(version=m['version'], candidate_sha256=m['candidate_sha256'], native_sha256=m['candidate_game_sha256'],
                 prepared_sha256=sha(out/'prepared.json'), runtime_sha256=sha(bundle/'inputs.json'),
                 evidence_sha256=sha(evidence), runs=runs, legacy_warnings=warnings, preserved_shortcuts=bool(merged),
-                boundaries='A motion/SATS changes only. Native, B, FA, MSW and user configurations remain unchanged. Earlier failed attempts remain recorded.')
+                boundaries='A motion/SATS and scoped HUD, exploration, packet-codec, weapon-capture optimizations. Native, B, other mods and user configurations remain unchanged. Earlier failed attempts remain recorded.')
 
 
 def main():

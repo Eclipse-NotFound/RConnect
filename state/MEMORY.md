@@ -21,33 +21,38 @@ Remains 1.02 双人合作模组，入口 `release/RConnectMod.swf`。A 是普通
 
 ## 3. 当前版本与证据
 
-- **当前实读安装A `0.2.22-fix15-keybinds`**，SHA `b2ed7f3a9b1d176dffb2b912d69da8084982906ff71d6fba8367bd36514e84f8`，由快捷键会话完成安装及复验。本会话尚未安装动作修复。当前根pfe由其它会话独立更新为 `08a96759720c7a2aa489fceedb209c6e704500fde7b1a4a49146bd578e99a8bc`；本会话未改。
-- 隔离动作候选 `build/m52/a22-fixes-24`，版本fix24，SHA `88cfafe6694deab890063ff19b4d8c507b6218ec2f3891aede200b743a738641`。准确生产源是该冻结树；**不要直接编译根src**（不同历史线及其他会话UI）。只叠加 `experimental/a22-fixes` 的已核对修改。
-- FA当前实读0.3.5 `b3304596...`，ModLoader2.4.0 `bd71b6f3...`，由对应会话独立安装。runtime13清单SHA `31ab6fd232a522f7191ad499f4a0199a86cb0b057c71ed40a08c30cb71c3dc7a`，129文件。
-- testpack24-04仍是fix24同字节，只更新外置测试。runtime13上真实抓投`35cf2bdefc`93/0、Littlepip长抓/挣脱`1be6501b93`49/0、时钟/SATS`fed7e00702`44/0、目标生命周期`aa2bc0fa1d`10/0、连续性`2626944a4f`45/0、动画`3cbcc4b63b`27/0、行为`2f271e49ff`41/0；换房后续仍在执行。完整结果和失败：[本轮实测](a22-motion-2026-10-15.md)。
-- 原生实际撞击已证实：主侧高抛HP952.35→897.17；加入侧高抛952.82→899.72。未增力度、魔力、抓取期限或关闭AI；低空身体接触仍按原生动量公式减速。
-- **已构建合并候选，未部署**：`build/m52/a22-fixes-25`，版本`0.2.22-fix25-keybinds`，SHA `2b5bcc4e76931cb1d447f63126129e6ffefd257a8cb8f401927cbd3277ccb3ef`。相对fix24仅更换版本和冻结的两份快捷键源码（提交`5fd2f13`），行为代码不变。完整新组合runtime14清单SHA`3246d8d020e24162e080dcd826085aa5b233a8acce3dc0eb6be6d720cd3f160c`。六客户端安装回执已为installed-and-verified；不得用旧fix24覆盖新UI。详见[其交接](keybind-integration-2026-10-15.md)。
-- B独立可玩入口仍为`build/ab/b3-playable-190`（Player-1/2.cmd）；B190完整44类8092项、额外有序延迟与十分钟持续射击等证据保持历史组合边界。B195未合格、不替换B190，见[B195验收](b195-qualification-2026-10-14.md)。本轮不恢复B开发。
-- 普通地图“开始新探索”种子修复已随Map1/fix15安装；旧RandomRooms显式种子选择器另有几何同步失败，不把它混为普通菜单已修。旧发布基线详见[fix15部署](deployment-a22-fixes-2026-10-15.md)。
+- **安装 A 仍为 `0.2.22-fix15-keybinds`**，SHA `b2ed7f3a9b1d176dffb2b912d69da8084982906ff71d6fba8367bd36514e84f8`；快捷键会话已安装和复验。本会话尚未安装动作修复。
+- **当前隔离候选 `0.2.22-fix39-keybinds`**：`build/m52/a22-fixes-39`，SHA `a02e5aafc2ba529d37a78c83ac92a055121b72d347d56ab8ca720802cc9ddf60`，prepared `ccb9401c418c75a9d014c52187abbcca84eabf0a32b44a198056f7fc7f26fbab`。准确生产源是该冻结树，修改入口为 `experimental/a22-fixes/src`，**禁止直接编译根src**（不同历史线）。39相对37只改版本、11个原生字段读取、原版枪口动画重播间隔；两份正式改键UI原样保留。38的Socket API实验未带回，39-motion只为构建中间物。
+- **当前组合 runtime17**：`build/m52/a22-map-runtime-17`，132文件，inputs SHA `fbdd08fd147bac801c7596de667e2c044629e7364e7cb324bfb640c3c8fc0a4d`。其它会话已分别安装根pfe `08a96759720c7a2aa489fceedb209c6e704500fde7b1a4a49146bd578e99a8bc`、FA0.3.5 `b3304596…`、ML2.4.0 `bd71b6f3…`、RV0.31.1 `baa48289…`、CS `f6ed93af…`、LAD0.3.0 `3ba6a9c9…`、PI `d4f6a096…`；完整清单在inputs。本会话未改它们。
+- B可玩入口仍为`build/ab/b3-playable-190`（Player-1/2.cmd）；B195未合格、不替换B190。本轮不恢复B开发，旧证据见[B195验收](b195-qualification-2026-10-14.md)。
+- 普通菜单“开始新探索”种子修复随Map1/fix15安装；旧RandomRooms显式选择器另有几何同步问题，不混称已修。见[fix15部署](deployment-a22-fixes-2026-10-15.md)。
 
 ## 4. 正在进行
 
-- 任务：修好加入侧Q→E短飞/无墙伤、敌人身体/武器卡顿、SATS画面滞后。
-- 已实现：轻量敌人动作20Hz；身体帧、位置、武器共享接收时间线，避免本机先推进再被旧帧拉回；SATS在最终可见性处理后更新原生目标位图与房间光栅，保留选择对象和攻击队列。
-- fix25/runtime14：真实抓投`f2f983a4d9`93项、长抓`1c8454b955`49项通过；`7b531d16d3`动作/SATS为43通过、1失败，最终显示用了147ms（门槛100ms）。41884已停止，未部署。
-- 外置诊断`52e77c57b2`44项通过；固定八轮`3bfad1443d`149项通过，收敛30–72ms。它们不解释上一轮147ms，也不覆盖旧红。晚到真实TCP消息用例`a7b3dcdc86`89通过2失败：2次本次绘图仍显示旧位置，一轮108ms超限，定位到ENTER_FRAME之后到包多等一帧。
-- 已构建fix26-keybinds，`build/m52/a22-fixes-26`，SHA`8926511ff37c35683683b5f038f1724bf6f984af2ac13c5a0ccafdb30451bfa9`，prepared`6cc5f759ea85aa85811a0d4b6e4f352826c1e00f9f12461597a548619a24d487`。相对fix25仅版本与GameBridge：暂停晚到姿态在同次RENDER复制SATS前落位。
-- 新诊断红项另暴露外置夹具：跨轮残留lateExpected与Timer过早截取RV暂隐图。已清理逐RENDER预期、改最终RENDER像素对照，仍严格100ms/1px/逐像素，并验证至少一次待显示位置更新。不能把旧晚到红直接视为生产竞态的完整证明，须用修正夹具重做前后对照。
-- runtime16为当前130文件组合（新增AddictionSystem、RV BAA48289墙面候选已实际安装）。fix26真实抓投96项、长抓49项、时钟44项通过；435da29a25晚到四轮同帧落位0失败，但首轮行走P90=4.467已收帧，超过4帧，串行因此停止。791bb58aa3原生resizeScreen #1009导致主侧驱动未启动；所有旧红保留。
-- **2026-10-16当前候选fix27-keybinds**：`build/m52/a22-fixes-27`，SHA`b2a9be49fe35da42d9b206e943655c6e99a667d1eefdd175baf005cc1cea8309`，prepared`84b570538f21829b4acecc832d5723c101e30c39b0e90328e112a06335feb5b3`。在fix26上仅改敌人显示缓冲追赶：平缓升至最多1.5倍，固定时长效果仍原速，位置不超已收范围、时钟不倒退。
-- fix27首轮79bc17f6e2主19/0加31/0：固定300ms断流390ms追回；实机P90=1.933已收帧，暂停62ms，25身体帧、0小幅倒放、SATS逐像素一致。日期上下文切换中断99dbf588de，驱动未进入测试场景，不计通过；已保存原始记录/自有日志、核实PID结束并仅删重复运行副本。提交余量恢复19.28GiB。
-- qualify27-rest已结束：晚到98、8轮暂停155、目标10、连续性51、动画27、行为41、房间64、复活27、暂停策略438项通过；连同首轮时钟共961项。密集980aab6fef主22/0、加28/13：每8秒63–71帧低于80门槛，6窗真实弹体帧计数为0。未部署；需先诊断，不移算旧结果或降低阈值。当前发现该A线NPC普通枪使用端点弹道，测试却要求逐帧数组；另host日志姿态为die，不能据此确定实际死亡；visible_windows真但实测nativeWindow.visible假，已补实际生命/可见性检查。fix27抓投/长抓及修正夹具旧版对照仍待补齐。
-- 当前待验fix28-keybinds `a22-fixes-28-02` / 最新外置testpack28-03，SHA`2695dd69ff1a067cc31be34ac5c355d10974ba0aac2cafd9bdc1b17603fb4da9`。仅新增隐藏/折叠HUD免刷新、按页扫描传送条件，以及已有探索行合并缓存；快捷键tick仍在提前返回之前。runtime17清单`fbdd08fd147bac801c7596de667e2c044629e7364e7cb324bfb640c3c8fc0a4d`。先完成固定密集前后对照，再重跑受影响玩法；不能用runtime16旧通过替代当前组合。
-- 密集前置5dec695887原生resizeScreen #1009、无host.log，保留原stdout/run/intent；包装器缺失日志异常已修正为明确未完成记录。隔离外置harness改为原生pip/grafon初始化后显示窗口，本体字节不变；普通发布加载仍须独立验证。旧fix27在固定地图/固定12轻机枪下ffb875e4ac主25/0加43/7；七窗46–57帧，弹体实际显示和移动全过。新fix28对照0f075d8b21主25/0加43/7仍失败，59/54/54/53/54/52/55帧。
-- 当前新候选fix30-keybinds `a22-fixes-30` / `a22-testpack-30-01`，SHA`79be4d3107511c79aa7153c96fa2dc94c87d83615b5ce70d0ea5eb3897ff58ef`：基于fix28增加协商式纯数据编码，保留JSON回退，有限数字沿用原JSON格式化结果。29精确数据红定位到小数末位与测试对象顺序，均有对照记录；30首轮加22项通过、主在原生commit前触发40秒启动超时。新外置夹具分开120秒原生就绪和40秒协议检查，c767fac31e协议44项通过；d4e0c4dfda密集65/59/59/62/60/61/60帧仍失败，另血翼按名字误取原房敌人已换实际稳定键，炮塔测试放至真实远端目标旁。不得部署未经最终18类验证的候选。
-- 当前最新隔离fix32-keybinds `a22-fixes-32` / `a22-testpack-32-01`，SHA`3f91540b6c3586f899221b5f023b9d34dff00963a150e462fb257321a8887f58`。新增历史武器按owner批次索引，结束即释放；修复新姿态同帧apply+tick两次推进枪口计数。31对照红全是外置新枪NaN角度已取证；32 beb610a542双侧13项行为全过，但测试过早结束没等普通unitsync，运行器仍判失败。最新夹具等待真实快照，exec8801武器→密集→探索→HUD。完整18类、旧版暂停因果对照及普通加载仍待完成，未部署。
-- `prepare_a22_motion_keybinds.py`已执行成功，逐源核对fix15→快捷键和fix24→动作修改；准备回执SHA`1c7df015dd7eba2fdc64b8efda8bd7642c26f438ef6b748c5e9ef9100a2ef868`。不混入根src其他历史线代码。
-- `release_a22_motion.py`支持两条来源的精确审计，尚未部署过。原13类加探索API/浮窗与隐藏改键/传送再加协议及武器批次共18类通过且核对当时安装后方可安装；普通加载失败必须回退。
+任务：加入侧Q→E短飞/无墙伤、敌人身体/武器卡顿、SATS画面滞后；不以旧组合通过替代当前版本验证。
+
+已实现并保留在fix32：
+- 轻量敌人动作20Hz、200ms完整修复快照；身体/位置/武器共用源时间线；敌人缓冲最多1.5倍平缓追赶，有限时长特效仍1倍，不倒退或超出已收状态。
+- SATS最终可见性处理后重采目标位图；ENTER_FRAME后到包的暂停姿态在同次RENDER落位，保留选中对象/攻击队列。
+- 抓投使用已接受的位置，FA0.3.5负责levit/t_throw期间不压速；原生力度、耗蓝、挣脱、撞击公式不改。
+- 隐藏/折叠HUD跳过无用文本刷新，快捷键tick仍最先；导航按页扫描；探索行缓存。正式两份改键源按精确变换保留。
+- 协商式纯数据AMF传输，保留JSON回退及精确数值；历史武器按owner同步批次索引、批末释放；新姿态apply不再与帧末tick重复推进枪口计数。
+
+当前实测与停点（2026-10-16）：
+- 安装仍fix15-keybinds + RV0.31.1；当前所有回执安装指纹未变。39包括33暂停帧间重绘、34精确整数编码、36原生字段快路径、37复用已采样姿态及色彩逐通道比较，保留同步字段和频率。
+- **39九类739项通过**：terrain198（8830329c13）、weapon-batch60（59a13fb445）、animation27（4c07c13e0a）、behavior43（bf4620713b）、Littlepip29抓投94（f216aa2547）、长抓49（fe890ccf96）、pause-timing155（c5cee0fac6）、pause-repaint103（f35300a8a6）、targets10（90a43c5a1a）。exec72899已结束，无排队测试。目标1929标记像素与最终RENDER逐像素相等，三张截图及哈希已复制到cooperation/90a43c5a1a/evidence并目检。
+- 真实Littlepip29原生Q/E近身/移远均产生一次抛出；撞击测试原生damageWall：主944.1004→891.6745，加942.4458→891.2656，FA保护速度改写0。低位自由飞行未撞墙的不冒充墙伤通过；真实存档未写。
+- 原版Weapon.shoot只在t_shoot<=1时重播。旧镜像每次shot均回第一帧。旧37原生对照30a076242d两端各8项红；39保留每个shot/弹体/命中，只按原生间隔重播，实际MovieClip.currentFrame及计时逐轮对上。dca415660a夹具写protected字段的失败另保留。
+- **39密集9f38c114ef仍红**：主25/0加43/7，七窗53/57/56/62/61/61/59帧/8秒，P95 236/190/249/197/187/186/210ms。原80帧/200ms门槛未改。移动弹体、五炮塔/尸鬼伤害通过，不代表整体卡顿解决。原房敌人/玩家入口未完全归一，不能把跨轮差值当优化因果。
+- 37连续性b68cd52ff6主21/0加29/1：第二次掉落首次停顿86ms>85ms。第二点比首点晚129ms，后续成批到达；未区分网络等待与主线程阻塞。39未复跑这个红，不靠重复跑到通过。
+- 原生技能夹具已纠正：旧f223d1693a每帧写派生承重1000会被原生按skill0重算0.6；遗漏telethrow专长的中间1fa70d574b力0。用原生tele20/magic20/telethrow1后a6d625411e主66/0加70/0共20次，生产仍37。所有旧红保留，没有放宽生产抓取资格/改伤害公式。
+- CPU诊断afc665b29a（37）：宿主2142样本，BinaryMessageCodec372、Session1000、RV453、WB255；加入侧1702，RV661、镜像272、最终视图96、WB288。含子调用，不能相加或当FPS收益。摘要testpack37-03/a37-current-cpu-summary.json，原栈完整保留。RV敌人遮罩不在本次墙面授权范围，未改。
+- RV已获准局部墙面优化并与其会话协调。RV01 v0.31.2 SHA5470892dada3154b466ee75adbd68ecb81f97ae00ca19c4e1e77b573a6414ab3，518项独立AIR、原生金属76/岩壁77及32对完整画面/雾层严格相等。RV仅helper+独立记录提交6108930，未动其authority/MEMORY/journal WIP，未部署。
+- WallBlend两处比较提案design/a37-wallblend-comparison-proposal.md待本人回答。原禁止消息有效，不改WB/CS源、不发WB消息；RV许可不覆盖WB。
+- tcpNoDelay当前游戏两侧1069（27a23007c1）；socket-api-04/05仅外层SWF51+namespace51可访问，只升级子SWF/namespace不足。38生产guard已撤回，未改正式根pfe/descriptor。独立证据不是性能通过。
+- 必需门禁仍20类；其余当前字节未跑，旧37证据不顶替39。release_a22_motion.py尚不支持联合RV门禁/备份及新增source集合，禁止直接部署。公共知识记录暂停帧间显示和AIR API根SWF版本边界。
+
+候选谱系、旧失败、输入指纹见[a22-motion-2026-10-15.md](a22-motion-2026-10-15.md)。本轮源/回归/记录一并提交本地git，未push。失败和唯一证据保留，已清重复运行资产；D盘约4.35GiB空闲。
 
 ## 5. 已知问题与证据边界
 
@@ -60,16 +65,16 @@ Remains 1.02 双人合作模组，入口 `release/RConnectMod.swf`。A 是普通
 
 ## 6. 直接接续顺序
 
-1. 核对本轮测试结果、所有安装指纹及快捷键部署完成消息。先让外部统一安装结束，避免反复冻结和重跑。
-2. 在正式快捷键基线上保留两份UI源，叠加已冻结动作修正；新建候选和runtime，不改旧回执。测试所需源码全冻结，禁止拿根src替代准确生产线。
-3. 完成真实抓投、存档边界、时钟/像素、目标生命周期、掉落/动画、行为、房间、复活、暂停、密集开火13类；失败诊断后只补受影响项，旧红不覆盖。未完成不能发布。
-4. 审计→备份RConnect→定向替换→普通双侧加载验证；只更新RConnect，原生/B/其他模组与配置不动。更新本记录、journal、部署回退说明并提交自己的文件，再向快捷键及FA回传。
+1. 优先针对CPU证据减少本模组包编码的中间分配，先在独立差分/同一数据交替计时中证明等价和收益，再决定是否进入生产；不把尝试当改善。
+2. 补完整场景输入以区分密集波动；原80帧/200ms和首次掉落85ms门槛不放宽。保留用户程序，只运行一组自有AIR。WallBlend授权未到就不动它。
+3. 修复剩余密集/首次掉落问题后，准确最终产物完成20类和普通双侧入口；改动后跑有关检查，不无因重复已过用例。两份UI沿正式改键recipe机械合并。
+4. 全合格后才维护RConnect+获准RV联合审计与独立备份回退，定向替换后正式路径验证；本体/B/其它模组配置不动。当前不部署。
 
 ## 7. 工具与深入入口
 
 - 本轮细节：[动作/SATS](a22-motion-2026-10-15.md)、[前轮进度](a22-followup-2026-10-15.md)、[刺刀报告](../design/a22-throw-attachment-compatibility.md)、[journal](journal.md)。FA任务已交回，不覆盖其新开发。
 - Python `C:/Users/hello/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe`，统一`-B -X utf8`。Java/SDK/FFDec从`tools/host_authority/common.py`定位。
-- A：`prepare_a22_fixes.py`/`prepare_a22_testpack.py`冻结，`run_a22_map_refresh.py`冻结当前安装/执行，`run_a22_motion_checks.py`串行13类，`release_a22_motion.py`审计部署。每次新目录、保留失败。
+- A：`prepare_a22_fixes.py`/`prepare_a22_testpack.py`冻结，`run_a22_map_refresh.py`冻结当前安装/执行，`run_a22_motion_checks.py`串行20类，`release_a22_motion.py`审计部署。每次新目录、保留失败。
 - B：`tools/host_authority/run_suite.py --scenarios ... --archive`，按原始输入审计再归档。入口、独立接口、存档规则见[B并行计划](../design/host-authority-parallel-plan-2026-10-11.md)、[B完整实况](host-authority-playable-2026-10-11.md)。
 - AIR隔离启动需已授权`require_escalated`；普通沙箱的进程/AppData视图可能不完整。只读明确自有PID/AppID日志，禁止广泛输出其他进程命令行。正常启动`application.xml`→根pfe1.02；原生参考`game-reference/decompiled/1.02/src102/scripts`。
 - 本地git身份eclipse/helloimyyt@163.com，不push、不改写历史。公共GitHubA22标签/安装包已有独立发布记录，本轮不更新远端。旧详细快照仍在git历史，不再在入口叠加相互矛盾的“最新”段落。

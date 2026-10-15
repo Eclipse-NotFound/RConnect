@@ -60,6 +60,9 @@ package {
          if(mismatches.length)Log.d("CODEC NATIVE DIFFERENCES "+JSON.stringify(mismatches));
          check(nativeBytes!=null && same(JSON.parse(JSON.stringify(nativePacket)),BinaryMessageCodec.unpack(nativeBytes)),
             "actual native snapshot decoding preserves the prior JSON data model");
+         var beforeInteger:ByteArray=BeforeIntegerMessageCodec.pack(nativePacket);
+         check(beforeInteger!=null&&same(BinaryMessageCodec.unpack(beforeInteger),BinaryMessageCodec.unpack(nativeBytes)),
+            "actual native packet matches frozen pre-integer-optimization codec");
          var shared:Object={n:7,items:["same",2]},input:Object={type:"codec-data",text:want.text,
             numbers:[0,-1,2147483648,1.25,NaN,Infinity,-Infinity,undefined],a:shared,b:shared,
             missing:undefined,callback:function():void {},value:null,yes:true,no:false};
@@ -76,6 +79,16 @@ package {
          var numericInput:Object={type:"numeric-oracle",numbers:numeric};
          check(same(JSON.parse(JSON.stringify(numericInput)),BinaryMessageCodec.unpack(BinaryMessageCodec.pack(numericInput))),
             "all 518 double boundary/random patterns exactly preserve JSON numeric results without epsilon");
+         var integers:Array=[-0,0,-2147483648,2147483647,2147483648,4294967295,4294967296,
+            -2147483649,-2147483647.5,2147483647.5,4294967295.5,0.00000000000001,-0.00000000000001];
+         for(j=0;j<1024;j++) {
+            seed=uint(seed*1664525+1013904223);integers.push(seed,int(seed));
+         }
+         var integerInput:Object={type:"integer-oracle",numbers:integers};
+         check(same(JSON.parse(JSON.stringify(integerInput)),BinaryMessageCodec.unpack(BinaryMessageCodec.pack(integerInput))),
+            "2061 signed/unsigned integer and adjacent fractional values exactly preserve JSON results");
+         var zero:Object=BinaryMessageCodec.unpack(BinaryMessageCodec.pack({type:"zero",number:-0}));
+         check(zero!=null&&1/Number(zero.number)==Number.POSITIVE_INFINITY,"integer shortcut preserves JSON positive zero");
          check(decoded!=null && decoded.a!==decoded.b && decoded.a.items!==decoded.b.items,"shared input references become independent receiver values");
          var malformed:int=0;
          for(var i:int=0;i<packed.length;i++) {

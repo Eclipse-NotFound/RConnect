@@ -46,11 +46,16 @@ package {
       private var deferPausedPackets:Boolean=false,releasingPacket:Boolean=false;
       private var delayedPackets:Array=[],lateExpected:Object,lateFrames:int=0,lateMisses:int=0;
       private var pausedCheckPending:Boolean=false,lateMoving:int=0;
+      private var betweenFrames:Boolean=false,repaintIssued:Boolean=false;
+      private var packetRelease:Timer=new Timer(10,1),savedFrameRate:Number=NaN;
+      private var paintReceived:int=0,paintFrame:int=0,repaintChecks:int=0;
 
-      public function PresentationContinuityTestDoc(enemyTimeline:Boolean=false,repeatPauses:int=1,latePackets:Boolean=false) {
+      public function PresentationContinuityTestDoc(enemyTimeline:Boolean=false,repeatPauses:int=1,latePackets:Boolean=false,betweenFramePackets:Boolean=false) {
          timelineOnly=enemyTimeline;
          pauseRounds=Math.max(1,repeatPauses);
          deferPausedPackets=latePackets;
+         betweenFrames=betweenFramePackets;
+         packetRelease.addEventListener(TimerEvent.TIMER,releaseBetweenFrames);
          var app:String=NativeApplication.nativeApplication.applicationID;
          if(app.indexOf("rconnect-coop-")<0)return;
          host=app.indexOf("-host-")>=0;
@@ -73,9 +78,30 @@ package {
          if(releasingPacket||mod==null||!mod.game.coopPaused)return;
          var p:Object=e.data;
          if(!(p.enemyMotion is Array)&&p.type!="unitsync")return;
+         if(betweenFrames && repaintIssued)return;
          // Retain the exact authenticated TCP payload and ordinary Session
          // handlers. Only delivery timing changes; no receiver position is set.
          delayedPackets.push({link:e.currentTarget,data:p});e.stopImmediatePropagation();
+         if(betweenFrames && !packetRelease.running) {
+            // A slow NEXT simulation frame must not delay a received stop pose.
+            // Only this isolated paused fixture changes its stage cadence.
+            savedFrameRate=mod.stage.frameRate;mod.stage.frameRate=2;
+            packetRelease.reset();packetRelease.start();
+         }
+      }
+      private function releaseBetweenFrames(e:TimerEvent):void {
+         repaintIssued=true;paintReceived=getTimer();paintFrame=renderFrame;
+         releaseQueuedPackets();
+         // Deliberately do not invalidate/updateAfterEvent here. Repainting is
+         // production's responsibility, not an effect of the test driver.
+      }
+      private function releaseQueuedPackets():void {
+         var pending:Array=delayedPackets;delayedPackets=[];releasingPacket=true;
+         try {for each(var message:Object in pending) {
+            message.link.dispatchEvent(new NetMessageEvent(TcpLink.MESSAGE,message.data));
+            lateExpected=enemy==null||!mod.game.coopPaused?null:{x:Number(enemy.X)};
+            if(lateExpected!=null&&Math.abs(Number(enemy.vis.x)-Number(enemy.X))>1)++lateMoving;
+         }}finally{releasingPacket=false;}
       }
       private function klass(n:String):Class {return mod.main.loaderInfo.applicationDomain.getDefinition(n) as Class;}
       private function stable():Boolean {return mod.session.rooms.ready&&!mod.session.rooms.busy&&!mod.game.isTransitioning();}
@@ -155,6 +181,7 @@ package {
          endpointReceived=endpointSettled=0;bufferFrames=[];bodyFrames={};bodyBacksteps=0;
          previousBody=endpointPose=latestMotion=null;bodyTrace=[];pauseTiming=[];
          lateExpected=null;
+         repaintIssued=false;paintReceived=0;
          moving=true;walkAt=lastWalk=getTimer();walkX=baseX+90;worldFrames=0;
          if(host){enemy.setPos(walkX,baseY);send("walk");}change("walk");
       }
@@ -223,14 +250,9 @@ package {
       private function beginRender(e:Event):void {
          // A packet released during resume is not a paused-frame expectation.
          // Never carry an observation into a later pause or a later render.
-         lateExpected=null;
-         if(delayedPackets.length) {
-            var pending:Array=delayedPackets;delayedPackets=[];releasingPacket=true;
-            try {for each(var message:Object in pending) {
-               message.link.dispatchEvent(new NetMessageEvent(TcpLink.MESSAGE,message.data));
-               lateExpected=enemy==null||!mod.game.coopPaused?null:{x:Number(enemy.X)};
-               if(lateExpected!=null&&Math.abs(Number(enemy.vis.x)-Number(enemy.X))>1)++lateMoving;
-            }}finally{releasingPacket=false;}
+         if(!betweenFrames) {
+            lateExpected=null;
+            if(delayedPackets.length)releaseQueuedPackets();
          }
          pauseStamp("render-begin");
       }
@@ -252,6 +274,19 @@ package {
             Log.d("A22 LATE PAUSE FRAME "+JSON.stringify({frame:renderFrame,expected:lateExpected.x,actual:enemy.vis.x,misses:lateMisses}));
          }
          lateExpected=null;
+         if(betweenFrames && paintReceived>0) {
+            var delay:int=getTimer()-paintReceived;
+            ++repaintChecks;
+            check(renderFrame==paintFrame && delay<=100,
+               "paused TCP pose repaints without another simulation frame ms="+delay+" frames="+(renderFrame-paintFrame));
+            paintReceived=0;
+            mod.stage.frameRate=savedFrameRate;savedFrameRate=NaN;
+         }
+         // Display-only timer events legitimately render between ENTER_FRAMEs.
+         // Observe the actual endpoint on every final render, not once per
+         // simulation frame; movement/animation cadence samples stay deduped.
+         if(timelineOnly&&!host&&enemy!=null&&endpointReceived>0&&endpointSettled==0
+            &&Math.abs(Number(enemy.vis.x)-endpoint)<=1)endpointSettled=getTimer();
          if(lastRender==renderFrame||phase=="done")return;lastRender=renderFrame;
          if(phase=="falling"||phase=="drop-wait") {
             var o:Object=drop();if(o!=null&&o.vis!=null&&o.vis.stage!=null)
@@ -394,6 +429,9 @@ package {
       }
       private function finish():void {
          if(phase=="done")return;change("done");timer.stop();
+         packetRelease.stop();
+         if(mod!=null && isFinite(savedFrameRate))mod.stage.frameRate=savedFrameRate;
+         if(!host&&betweenFrames)check(repaintChecks==pauseRounds,"between-frame repaint covers every fixed pause round="+repaintChecks);
          if(!host&&deferPausedPackets) {
             check(lateFrames>=4,"late paused TCP packet coverage="+lateFrames);
             check(lateMoving>=1,"late delivery actually changes accepted logical position="+lateMoving);

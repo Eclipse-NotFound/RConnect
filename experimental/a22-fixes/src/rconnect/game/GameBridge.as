@@ -4,11 +4,13 @@ package rconnect.game
    import flash.display.DisplayObjectContainer;
    import flash.display.DisplayObject;
    import flash.events.Event;
+   import flash.events.TimerEvent;
    import flash.geom.ColorTransform;
    import flash.text.TextField;
    import flash.text.TextFieldAutoSize;
    import flash.text.TextFormat;
    import flash.utils.Dictionary;
+   import flash.utils.Timer;
    import fe.serv.RConnectInteractionAccess;
    import fe.unit.Unit;
    import fe.loc.Location;
@@ -17,6 +19,8 @@ package rconnect.game
    import fe.unit.RConnectPerceptionAccess;
    import fe.unit.RConnectTelekinesisAccess;
    import fe.Obj;
+   import fe.Pt;
+   import fe.serv.Interact;
    import flash.utils.getTimer;
    import flash.utils.getQualifiedClassName;
    import rconnect.core.Log;
@@ -27,7 +31,7 @@ package rconnect.game
     * 约束（shared-knowledge/knowledge-validation/facts/modding-interop.md）：
     * - 只能访问 public 成员 + 反射；internal/private 不可访问。
     * - 密封类对不存在成员做 bracket 访问会抛 ReferenceError #1069 且吞掉外层
-    *   try —— 所以每个字段访问都必须独立 try 探测，不用大 try 包一坨。
+    *   try —— 未确认字段独立安全探测；原生Unit已核对的public var可直接读取。
     *
     * 入口链路（反编译 1.02/1.03/1.04 确认）：
     *   fe.World.w  (public static)  →  World 实例
@@ -76,6 +80,8 @@ package rconnect.game
          if(value)_satsRasterDirty=true;
          _projectiles.setPaused(value);
          _ports.setPaused(value);
+         if(value)requestPausedPaint();
+         else _pausedPaint.stop();
       }
       /** M5a：客户端冻结被同步单位 AI（由 Session 按配置注入）。 */
       public var freezeAI:Boolean = false;
@@ -99,6 +105,7 @@ package rconnect.game
       public function GameBridge(main:Object)
       {
          this.main = main;
+         _pausedPaint.addEventListener(TimerEvent.TIMER,paintPausedUpdate);
          _wall=new WallImpactVisuals(main);
          // M12：拦截 Stage DEACTIVATE——游戏在 World 构造时用默认优先级注册
          // onDeactivate（失焦 → pip.onoff(11) 打开 PipBuck 且永不自动关闭，
@@ -141,6 +148,23 @@ package rconnect.game
       private var _unitMotion:Dictionary = new Dictionary();
       private var _satsRasterDirty:Boolean=false;
       private var _pausedMotionDirty:Boolean=false;
+      private var _pausedPaint:Timer=new Timer(1,1);
+
+      /** A stopped pose can arrive just after the last stage render. Do not
+       * wait for another simulation frame to reveal it. Coalesce the socket
+       * batch into one display-only timer event; the usual final RENDER pass
+       * still owns visibility and SATS pixels. No AI or physics is advanced. */
+      private function requestPausedPaint():void {
+         if(!coopPaused || !_mirroring || roomHold || _pausedPaint.running)return;
+         _pausedPaint.reset();_pausedPaint.start();
+      }
+      private function paintPausedUpdate(event:TimerEvent):void {
+         if(!coopPaused || !_mirroring || roomHold || !_pausedMotionDirty)return;
+         var stage:Stage=probe(main,"stage") as Stage;
+         if(stage==null)return;
+         stage.invalidate();
+         event.updateAfterEvent();
+      }
       private var _satsTargets:SatsTargetVisuals=new SatsTargetVisuals();
       private var _pendingHits:Dictionary = new Dictionary();
       private var _forcingVisibility:Boolean = false;
@@ -231,12 +255,16 @@ package rconnect.game
                {
                   if(rec.ghost != null && rec.snap != null)
                   {
-                     if(rec.snap.bodyPlaying === false && rec.motion != null)
-                        driveVisAnim(rec.ghost,rec.motion.sample(presentationTime()),int(remoteId));
-                     if(rec.motion!=null)_peerAppearance.apply(rec.ghost,rec.motion.sample(presentationTime()).wings,coopPaused);
+                     // Final styles belong to the pose already placed this
+                     // frame. Reading a tint/wing must not advance the whole
+                     // body/weapon interpolation clock three more times.
+                     var peerSample:Object=rec.motion==null?null:rec.motion.currentSample;
+                     if(rec.snap.bodyPlaying === false && peerSample!=null)
+                        driveVisAnim(rec.ghost,peerSample,int(remoteId));
+                     if(peerSample!=null)_peerAppearance.apply(rec.ghost,peerSample.wings,coopPaused);
                      if(rec.snap.ap != null)
                         RemoteArmor.apply(probe(rec.ghost,"vis") as DisplayObjectContainer,String(rec.snap.ap.armor || ""));
-                     if(rec.motion!=null)_bodyEffects.apply(rec.ghost,rec.motion.sample(presentationTime()).bodyEffects,coopPaused);
+                     if(peerSample!=null)_bodyEffects.apply(rec.ghost,peerSample.bodyEffects,coopPaused);
                   }
                }
                catch(armorError:*) {logViewError("remote-"+remoteId,armorError);}
@@ -254,7 +282,8 @@ package rconnect.game
                if(probe(viewed,"loc")===loc)
                   try {applyUnitView(viewed,_unitView[viewed].host);_presentation.enforce(viewed);
                      var viewMotion:RemoteMotion=_unitMotion[viewed] as RemoteMotion;
-                     if(viewMotion!=null)_bodyEffects.apply(viewed,viewMotion.sample(presentationTime()).bodyEffects,coopPaused);}
+                     var viewSample:Object=viewMotion==null?null:viewMotion.currentSample;
+                     if(viewSample!=null)_bodyEffects.apply(viewed,viewSample.bodyEffects,coopPaused);}
                   catch(viewError:*) {logViewError(String(probe(viewed,"id")),viewError);}
             for(var u:Object in _hostAlive)
             {
@@ -558,13 +587,43 @@ package rconnect.game
          }
       }
 
+      // Only inherited public variables from native Pt/Obj/Unit 1.02. They
+      // cannot run a subclass getter. Keep the catch activation out of this
+      // frequent path; unknown names/objects still use the original probe.
+      private static const NATIVE_UNIT_FIELDS:Object={X:true,Y:true,X1:true,X2:true,Y1:true,Y2:true,
+         loc:true,nobj:true,pobj:true,in_chain:true,stay:true,sloy:true,dx:true,dy:true,vis:true,
+         id:true,animState:true,blitData:true,disabled:true,sost:true,hp:true,maxhp:true,shithp:true,
+         hpbar:true,doop:true,unres:true,invulner:true,isVis:true,isSats:true,invis:true,
+         levit:true,levitPoss:true,fracLevit:true,fraction:true,scX:true,scY:true,storona:true,
+         currentWeapon:true,prior:true,priorUnit:true,onCursor:true,celX:true,celY:true,celUnit:true,
+         inter:true,trigDis:true,armor_hp:true,demask:true,isSit:true,noise:true,overLook:true,
+         stealthMult:true,visibility:true,scrDie:true,scrAlarm:true,questId:true,
+         massa:true,massaMove:true,levit_max:true,levit_r:true,t_throw:true,isFly:true,isLaz:true,
+         nazv:true,level:true,npc:true,noAgro:true};
+      private static const NATIVE_POINT_FIELDS:Object={loc:true,nobj:true,pobj:true,in_chain:true,
+         stay:true,X:true,Y:true,sloy:true,dx:true,dy:true,vis:true};
+      private static const NATIVE_INTERACT_FIELDS:Object={owner:true,action:true,prob:true,allact:true,
+         userAction:true,scrAct:true,scrOpen:true,scrClose:true,scrTouch:true};
+
       /** 安全探测成员；成员不存在/不可访问时返回 null。 */
       public static function probe(o:Object, name:String):*
       {
-         if(o == null)
-         {
-            return null;
+         if(o==null)return null;
+         if(o is Unit && NATIVE_UNIT_FIELDS[name]===true
+            || o is Pt && NATIVE_POINT_FIELDS[name]===true
+            || o is Interact && NATIVE_INTERACT_FIELDS[name]===true) {
+            var value:*=o[name];return value===undefined?null:value;
          }
+         // These native hierarchies cannot also be flash.utils.Proxy. A missing
+         // timeline child/public name can be rejected without a catch scope;
+         // existing getters still take the protected read below. Even native
+         // DisplayObject getters such as width may be overridden by a subclass.
+         if((o is Pt || o is DisplayObject || o is Interact) && !(name in o))return null;
+         return probeOptional(o,name);
+      }
+
+      private static function probeOptional(o:Object,name:String):*
+      {
          try
          {
             if(!(name in o))return null;
@@ -5784,7 +5843,7 @@ package rconnect.game
          var motion:RemoteMotion=_unitMotion[u] as RemoteMotion;
          if(motion==null || !freezeAI)motion=_unitMotion[u]=RemoteMotion.enemy();
          motion.push({x:x,y:y,sampleTime:stamp,bodyEffects:bodyEffects,visual:visual,weapons:visual==null?null:visual.weapons},now);
-         if(coopPaused)_pausedMotionDirty=true;
+         if(coopPaused){_pausedMotionDirty=true;requestPausedPaint();}
          var sample:Object=coopPaused?motion.settle(presentationTime()):motion.sample(presentationTime());
          if(coopPaused && (u.X!=sample.x || u.Y!=sample.y))_satsRasterDirty=true;
          u["setPos"](sample.x,sample.y);

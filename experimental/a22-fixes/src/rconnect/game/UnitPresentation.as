@@ -343,8 +343,13 @@ package rconnect.game
                w.t_reload=Math.max(0,int(s.reload)-int(elapsed*30/1000));
                if(!paused && gun.queue>0 && getTimer()>=int(gun.next))
                {
-                  gun.queue--;gun.next=getTimer()+(s.cadence==null?80:Math.max(16,Math.min(250,Number(s.cadence))));gun.flash=3;
-                  play(w,"shoot");
+                  gun.queue--;gun.next=getTimer()+(s.cadence==null?80:Math.max(16,Math.min(250,Number(s.cadence))));
+                  // Native Weapon.shoot does not restart a muzzle clip while
+                  // its previous flash is still above one frame. Under burst
+                  // delivery the mirror could restart it every rendered frame,
+                  // repeatedly reconstructing its children and hiding motion.
+                  // Consume every shot; only clip restart follows that cooldown.
+                  if(int(gun.flash)<=1){gun.flash=3;play(w,"shoot");}
                   if(rec.body!=null && rec.body.kind=="turret")TurretDisplay.fire(u);
                }
                w.t_shoot=gun.flash;

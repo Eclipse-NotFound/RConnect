@@ -32,6 +32,7 @@ def main():
     ap.add_argument('--frozen-runtime',action='store_true',help='Test an already frozen combination even when other developers changed the installation; still record and protect the installation observed at this run')
     ap.add_argument('--msw-candidate',type=Path)
     ap.add_argument('--fa-candidate',type=Path)
+    ap.add_argument('--vision-candidate',type=Path)
     ap.add_argument('--host-save-template',type=Path)
     ap.add_argument('--join-save-template',type=Path)
     ap.add_argument('--connect-after-load',action='store_true')
@@ -114,8 +115,18 @@ def main():
         for name,digest in fa_manifest['source'].items():assert sha(fa.parent/name)==digest,name
         fa_hash=sha(fa);assert fa_hash==fa_manifest['candidate_sha256']
         command+=['--fa-candidate',str(fa)]
+    vision_hash=None
+    if args.vision_candidate:
+        vision=args.vision_candidate.resolve()
+        assert vision.parent.parent==ROOT/'build/m52' and vision.name=='RealisticVisionMod.swf'
+        vision_manifest=read(vision.parent/'prepared.json')
+        assert vision_manifest['kind']=='isolated-rv-wall-comparison'
+        assert vision_manifest['baseline_sha256']==frozen['files']['mods/RealisticVision/release/RealisticVisionMod.swf']
+        for name,digest in vision_manifest['source'].items():assert sha(vision.parent/name)==digest,name
+        vision_hash=sha(vision);assert vision_hash==vision_manifest['candidate_sha256']
+        command+=['--vision-candidate',str(vision)]
     inputs=dict(prepared=sha(out/'prepared.json'),runtime=sha(bundle/'inputs.json'),
-        runner=sha(ROOT/'tools/run_coop_regression.py'),script=sha(__file__),msw=msw_hash,fa=fa_hash,saves=save_inputs,
+        runner=sha(ROOT/'tools/run_coop_regression.py'),script=sha(__file__),msw=msw_hash,fa=fa_hash,vision=vision_hash,saves=save_inputs,
         driver={p.name:sha(p) for p in driver.glob('*.swf')})
     save(out/(label+'-intent.json'),dict(command=command,inputs=inputs,installation_before=installation_before,
         runtime_matches_installation=not runtime_difference,runtime_difference=runtime_difference))
@@ -145,6 +156,8 @@ def main():
                     assert digest==msw_hash;continue
                 if fa_hash and name.lower()=='mods/firearmattachments/release/firearmattachmentsmod.swf':
                     assert digest==fa_hash;continue
+                if vision_hash and name.lower()=='mods/realisticvision/release/realisticvisionmod.swf':
+                    assert digest==vision_hash;continue
                 assert digest==frozen['files'][name],name
             role_log=folder/(role+'.log')
             lines=role_log.read_text(encoding='utf-8-sig') if role_log.is_file() else ''

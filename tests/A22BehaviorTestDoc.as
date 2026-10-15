@@ -28,10 +28,13 @@ package {
       private var peerWings:Boolean=false,localWings:Boolean=false,peerDone:Boolean=false,localDone:Boolean=false;
       private var wings:Object={},bloat:Array=[],wire:Array=[],frames:Array=[];
       private var hpBefore:Number,releaseCount:int=0,observedThrow:int=0;
+      private var auditHolds:int=0;
+      private var totalRounds:int=5;
       private var beforeRelease:Object,lastRelease:Object;
       private var frameSerial:int=0,sampledSerial:int=-1;
       private const CASES:Array=["host-body","join-body","join-receiver","host-ai-horizontal","join-ai-horizontal"];
-      public function A22BehaviorTestDoc() {
+      public function A22BehaviorTestDoc(repetitions:int=1) {
+         totalRounds=CASES.length*Math.max(1,repetitions);
          var app:String=NativeApplication.nativeApplication.applicationID;
          if(app.indexOf("rconnect-coop-")<0)return;
          host=app.indexOf("-host-")>=0;
@@ -40,7 +43,8 @@ package {
          });
          timer.addEventListener(TimerEvent.TIMER,tick);timer.start();
       }
-      private function check(ok:Boolean,s:String):void {Log.d("COOP "+(ok?"PASS ":"FAIL ")+"a22-behavior "+s+" phase="+phase+" case="+CASES[round]);}
+      private function get caseIndex():int {return round%CASES.length;}
+      private function check(ok:Boolean,s:String):void {Log.d("COOP "+(ok?"PASS ":"FAIL ")+"a22-behavior "+s+" phase="+phase+" case="+CASES[caseIndex]+" round="+round);}
       private function change(s:String):void {phase=s;at=getTimer();}
       private function send(op:String,p:Object=null):void {
          p=p||{};p.type="a22-behavior-test";p.op=op;
@@ -53,6 +57,17 @@ package {
          l.addEventListener(TcpLink.MESSAGE,wireAfter,false,-100);
       }
       private function wireBefore(e:NetMessageEvent):void {
+         if(e.data.type=="unit-grip")Log.d("A22 GRIP EVENT "+JSON.stringify({at:getTimer(),phase:phase,round:round,host:host,message:e.data}));
+         if(host&&e.data.type=="unit-grip"&&e.data.op=="hold"&&auditHolds++<3) {
+            var body:Object=mod.game.unitForKey(String(e.data.k));
+            var actor:Object=mod.game.getRemoteGhost(TcpLink(e.target).id);
+            Log.d("A22 GRIP ELIGIBILITY "+JSON.stringify({at:getTimer(),round:round,key:e.data.k,
+               nativeBody:body!=null&&mod.game.grabBody(body)===body,bodyLoc:body!=null&&body.loc===mod.game.loc,
+               chain:body==null?null:body.in_chain,fraction:body==null?null:body.fraction,sost:body==null?null:body.sost,
+               poss:body==null?null:body.levitPoss,levit:body==null?null:body.levit,mass:body==null?null:body.massa,
+               hostHolds:mod.game.gg.teleObj===body,actor:actor!=null,actorLoc:actor!=null&&actor.loc===mod.game.loc,
+               actorSost:actor==null?null:actor.sost,actorHP:actor==null?null:actor.hp,input:e.data.input}));
+         }
          if(!host||target==null||e.data.type!="unit-grip"||e.data.op!="release")return;
          beforeRelease={x:target.dx,y:target.dy,t:target.t_throw};
       }
@@ -94,42 +109,69 @@ package {
          target=new c("1",10,<unit weap="lmg"/>,null);target.id="m52_throw";
          target.putLoc(mod.game.loc,bx+100,by);mod.game.loc.addObj(target);mod.game.loc.units.push(target);
          target.controlOn=false;target.xp=0;target.doop=true;target.invulner=false;target.walk=0;
-         // Keep the same living native body for all three throws. The ordinary
+         // Keep the same living native body for all throws. The ordinary
          // 50 HP fixture dies on the first 73-point impact and cannot be reused.
          target.hp=target.maxhp=1000;
          Log.d("A22 THROW NATIVE "+JSON.stringify({mass:target.massa,damWall:target.damWall,speed:target.damWallSpeed,hp:target.hp}));
          attach();change("wings");send("setup",{x:bx,y:by});
       }
       private function attach():void {
+         // Persist real skill inputs. Writing derived maxTeleMassa/throwForce
+         // each frame races native setParameters: its next recalculation used
+         // to restore this new character's 0.6 limit after a 1.1-mass grab.
+         // Do not weaken production's hold eligibility to accommodate that.
+         var p:Object=mod.game.gg.pers;
+         p.addSkill("tele",Math.max(0,20-Number(p.skills.tele)));
+         p.addSkill("magic",Math.max(0,20-Number(p.skills.magic)));
+         // Native AllData: the tele skill sets lifting mass, while telethrow
+         // rank 1 unlocks a 25-force throw. Use the same persistent perk input
+         // as a real character, so later stat recalculation keeps it valid.
+         if(!p.perks.telethrow)p.addPerk("telethrow");
+         p.setParameters();p.healAll();
+         Log.d("A22 NATIVE CASTER "+JSON.stringify({tele:p.skills.tele,magic:p.skills.magic,
+            perk:p.perks.telethrow,mass:p.maxTeleMassa,range:p.teleDist,force:p.throwForce,
+            master:p.telemaster,mult:p.unitLevitMult}));
+         check(p.maxTeleMassa>=1.1&&p.throwForce>0,"native skill and perk inputs support the real target and throw");
          mod.stage.addEventListener(Event.ENTER_FRAME,drive,false,100005);
          mod.stage.addEventListener(Event.ENTER_FRAME,afterControl,false,-7999);
          mod.stage.addEventListener(Event.RENDER,sample,false,-30000);
       }
-      private function owner():Boolean {return round==0 || round==3?host:!host;}
+      private function owner():Boolean {return caseIndex==0 || caseIndex==3?host:!host;}
       private function start(n:int):void {
-         round=n;acted=false;raw=null;wire=[];frames=[];lastRelease=null;releaseCount=observedThrow=0;
+         round=n;acted=false;raw=null;wire=[];frames=[];lastRelease=null;releaseCount=observedThrow=auditHolds=0;
          peerReady=localReady=peerDone=localDone=false;
          if(mod.game.gg.teleObj!=null)mod.game.gg.dropTeleObj();
          if(host) {
             target.setPos(bx+100,by);target.dx=target.dy=0;target.t_throw=0;target.levit_r=0;
             target.levitPoss=true;target.hp=target.maxhp;target.stun=0;target.levit=0;
-            target.controlOn=round>=3;
+            target.controlOn=caseIndex>=3;
          }
          change("settle");
       }
       private function grab():void {
          raw=target;
-         if((round==2 || round==4)&&!host)for each(var u:Object in mod.game.loc.units)
+         if((caseIndex==2 || caseIndex==4)&&!host)for each(var u:Object in mod.game.loc.units)
             if(u is MirrorHitUnit&&MirrorHitUnit(u).body===target){raw=u;break;}
-         if((round==2 || round==4)&&!host)check(raw is MirrorHitUnit,"use the actual cursor/collision receiver");
+         if((caseIndex==2 || caseIndex==4)&&!host)check(raw is MirrorHitUnit,"use the actual cursor/collision receiver");
          raw.onCursor=1;mod.game.loc.celObj=raw;mod.game.loc.celDist=0;
+         Log.d("A22 GRAB BEFORE "+JSON.stringify(grabState()));
          EnemyGrabProbe.grab(mod.game.gg);
+         Log.d("A22 GRAB AFTER "+JSON.stringify(grabState()));
          check(mod.game.gg.teleObj===raw,"native grab accepts selected object");
+      }
+      private function grabState():Object {
+         var g:Object=mod.game.gg;
+         return {at:getTimer(),phase:phase,round:round,host:host,mana:g.mana,held:g.teleObj==null?null:g.teleObj.id,
+            heldRaw:g.teleObj===raw,rawReceiver:raw is MirrorHitUnit,rawPoss:raw==null?null:raw.levitPoss,
+            rawMass:raw==null?null:raw.massa,rawLevit:raw==null?null:raw.levit,rawResistance:raw==null?null:raw.levit_r,
+            bodyPoss:target.levitPoss,bodyMass:target.massa,bodyLevit:target.levit,bodyResistance:target.levit_r,
+            maxMass:g.pers.maxTeleMassa,dist:mod.game.loc.celDist,maxDist:g.pers.teleDist,
+            master:g.pers.telemaster,port:mod.game.loc.portOn,pinok:g.pinok,bodyX:target.X,bodyY:target.Y};
       }
       private function hold():void {if(owner())grab();change("hold");}
       private function advance():void {
          if(!host||!localDone||!peerDone)return;
-         if(round+1<CASES.length){start(round+1);send("round",{round:round});}
+         if(round+1<totalRounds){start(round+1);send("round",{round:round});}
          else {send("done");finish();}
       }
       private function drive(e:Event):void {
@@ -137,17 +179,15 @@ package {
          if(phase=="done"||phase=="boot"||mod.game.gg==null)return;
          var g:Object=mod.game.gg,b:Object=mod.game;
          b.forceCloseOverlays();g.invulner=true;g.dx=g.dy=0;g.isTake=0;g.work="";
-         g.setPos(bx+(host?0:40),by-(round>=3?55:170));g.setVisPos();g.disabled=false;g.ctr.clearAll();
+         g.setPos(bx+(host?0:40),by-(caseIndex>=3?55:170));g.setVisPos();g.disabled=false;g.ctr.clearAll();
          b.loc.base=false;b.loc.portOn=true;
-         g.pers.maxTeleMassa=1000;g.pers.teleDist=1000000;g.pers.telemaster=1;
-         g.pers.unitLevitMult=100;g.pers.teleMult=1;g.pers.allDManaMult=1;g.pers.teleMana=0;g.pers.telePorog=0;
-         g.pers.throwForce=35;g.pers.throwDmagic=2;g.pers.throwDmanaMult=0;g.pers.spellsPoss=1;
-         g.maxmana=10000;if(phase=="settle")g.mana=10000;
+         if(phase=="settle")g.mana=g.maxmana;
          // Keep the held body above a real floor and below the caster. Native
          // throw aims away from the caster, then real gravity/run hits the floor.
-         g.celX=b.world.celX=bx+(round>=3?160:120);g.celY=b.world.celY=by-(round>=3?100:65);b.loc.celDist=0;
+         g.celX=b.world.celX=bx+(caseIndex>=3?160:120);g.celY=b.world.celY=by-(caseIndex>=3?100:65);b.loc.celDist=0;
          if(phase=="hold"&&owner()&&!acted&&getTimer()-at>1500) {
             acted=true;hpBefore=target.hp;g.ctr.keyAction=true;
+            Log.d("A22 BEFORE ACTION "+JSON.stringify(grabState()));
             Log.d("A22 INPUT THROW "+JSON.stringify({raw:raw is MirrorHitUnit?"receiver":"body",hp:hpBefore,
                x:raw.X,y:raw.Y,dx:raw.dx,dy:raw.dy,t:raw.t_throw,mana:g.mana}));
          }
@@ -212,7 +252,7 @@ package {
             if(phase=="hold"&&getTimer()-at>4500) {
                Log.d("A22 THROW FRAMES "+JSON.stringify(frames));Log.d("A22 THROW WIRE "+JSON.stringify(wire));
                if(owner())check(acted&&mod.game.gg.teleObj==null,"native action key actually releases the hold");
-               if(round<3)check(target.hp<hpBefore,"native floor collision deals damage before="+hpBefore+" after="+target.hp);
+               if(caseIndex<3)check(target.hp<hpBefore,"native floor collision deals damage before="+hpBefore+" after="+target.hp);
                // A real collision may consume t_throw in the same frame. Check
                // the received native state before that collision, not only the
                // post-frame timer which legitimately becomes zero.

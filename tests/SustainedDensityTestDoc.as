@@ -71,6 +71,18 @@ package {
                for(i=0;i<30;i++){body=checkedCodec.pack(plain);decoded=checkedCodec.unpack(body);}
             rows.push({jsonMs:jsonMs,binaryMs:binaryMs,jsonBytes:jsonBytes,binaryBytes:binaryBytes,
                checkedMs:checkedCodec==null?-1:getTimer()-start,checkedBytes:checkedCodec==null?0:body.length,decoded:decoded!=null});
+            // Same frozen native packet, alternating old/new order. This runs
+            // after the frame gate and cannot improve its measured frame count.
+            var paired:Object={};
+            for each(var method:String in (pass%2==0?["beforeInteger","current"]:["current","beforeInteger"])) {
+               start=getTimer();
+               for(i=0;i<30;i++) {
+                  if(method=="beforeInteger")body=BeforeIntegerMessageCodec.pack(plain);
+                  else if(checkedCodec!=null)body=checkedCodec.pack(plain);
+               }
+               paired[method]=getTimer()-start;
+            }
+            rows[rows.length-1].pairedPack=paired;
          }
          Log.d("PACKET CODEC PROBE "+JSON.stringify({role:host?"host":"join",rows:rows}));
       }

@@ -29,7 +29,17 @@ package rconnect.net {
          // AIR's JSON decimal formatter/parser can round the last binary bit.
          // Keep its exact numeric result so changing transport does not alter
          // equality-based health, color or position comparisons at the receiver.
-         if(value is Number)return isFinite(Number(value))?Number(String(value)):null;
+         if(value is Number) {
+            // Every signed/unsigned 32-bit integer is exactly represented by
+            // JSON's decimal formatter. These dominate frame counts, colours,
+            // IDs and quantized state; avoid a string allocation for each one.
+            // Returning the cast also normalizes -0 to JSON's positive zero.
+            var integer:int=int(value);
+            if(value==integer)return integer;
+            var unsigned:uint=uint(value);
+            if(value==unsigned)return unsigned;
+            return isFinite(Number(value))?Number(String(value)):null;
+         }
          if(value is String || value is Boolean)return value;
          if(parents[value])throw new Error("Cyclic packet");
          parents[value]=true;

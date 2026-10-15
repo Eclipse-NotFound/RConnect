@@ -32,6 +32,8 @@ package {
       private var endpoint:Number=NaN,walk:Boolean=false,walkFrames:int=0;
       private var walkReady:Boolean=false;
       private var selected:Object,selectedVisual:Object,queue:Object;
+      private var rasterPending:Boolean=false;
+      private var seedClass:Class,originalSeed:Function;
       public function TargetLifecycleTestDoc() {
          var app:String=NativeApplication.nativeApplication.applicationID;
          if(app.indexOf("rconnect-coop-")<0)return;host=app.indexOf("-host-")>=0;
@@ -63,7 +65,7 @@ package {
          for(var o:Object=l.firstObj;o!=null;o=o.nobj)
             if(o!==g&&!(o is Unit)&&GameBridge.probe(o,"X2")!=null&&o.X2>baseX-20&&o.X1<baseX+340&&o.Y2>baseY-190&&o.Y1<baseY+20)removed.push(o);
          for each(o in removed){l.remObj(o);var index:int=l.objs.indexOf(o);if(index>=0)l.objs.splice(index,1);if(l.celObj===o)l.celObj=null;}
-         g.invulner=true;g.transp=true;g.pers.healAll();g.setPos(baseX,baseY);g.setVisPos();l.base=false;l.portOn=true;
+         g.invulner=true;g.transp=true;g.pers.healAll();g.setPos(baseX+40,baseY);g.setVisPos();l.base=false;l.portOn=true;
          mod.stage.addEventListener(Event.ENTER_FRAME,before,false,95000);
          mod.stage.addEventListener(Event.ENTER_FRAME,after,false,-6000);
       }
@@ -91,7 +93,7 @@ package {
       private function before(e:Event):void {
          if(phase=="done")return;
          var g:Object=mod.game.gg,w:Object=mod.game.world;g.invulner=true;g.transp=true;g.dx=g.dy=0;g.isTake=0;
-         g.setPos(baseX,baseY);g.setVisPos();w.ctr.active=true;
+         g.setPos(baseX+40,baseY);g.setVisPos();w.ctr.active=true;
          if(aim!=null) {
             var ax:Number=aim.X,ay:Number=aim.Y-aim.scY/2;
             g.celX=w.celX=ax;g.celY=w.celY=ay;
@@ -101,7 +103,9 @@ package {
       private function after(e:Event):void {
          if(phase=="done")return;
          if(host&&a!=null&&walk&&!mod.session.pause.paused&&mod.game.world.allStat==1) {
-            a.setPos(a.X+3,baseY);a.setVisPos();++walkFrames;
+            // Keep the moving source inside the player's native lit corridor.
+            // An enemy disappearing into darkness cannot measure SATS raster alignment.
+            ++walkFrames;a.setPos(baseX+110+45*Math.sin(walkFrames*.07),baseY);a.setVisPos();
             if(walkFrames==25)send("walk-ready");
          }mod.stage.invalidate();
       }
@@ -115,40 +119,37 @@ package {
       private function checkRaster():void {
          var graph:Object=mod.game.world.grafon,bmp:BitmapData=graph.satsBmp;
          var reference:BitmapData=new BitmapData(bmp.width,bmp.height,true,0),sats:Object=mod.game.world.sats;
+         var without:BitmapData=reference.clone();
          var layerVisible:Boolean=graph.visObjs[2].visible,screenshotVisible:Boolean=graph.visSats.visible,targetsVisible:Boolean=sats.vis.visible;
-         try {graph.visObjs[2].visible=true;graph.visSats.visible=false;sats.vis.visible=false;reference.draw(graph.visual);}
-         finally {graph.visObjs[2].visible=layerVisible;graph.visSats.visible=screenshotVisible;sats.vis.visible=targetsVisible;}
-         var old:Object=pixels(bmp),current:Object=pixels(reference);
-         check(old.count>=16&&current.count>=16,"native frozen/reference raster contains actual enemy marker counts="+old.count+"/"+current.count);
-         check(old.count>0&&current.count>0&&Math.abs(old.x-current.x)<=1,"paused bitmap enemy and live endpoint coincide gap="+(old.x-current.x));
-         Log.d("TARGET RASTER "+JSON.stringify({count:old.count,referenceCount:current.count,bitmapX:old.x,expectedX:current.x,endpoint:endpoint,bodyX:a.X}));
+         var markerVisible:Boolean=marker.visible;
+         try {
+            graph.visObjs[2].visible=true;graph.visSats.visible=false;sats.vis.visible=false;
+            reference.draw(graph.visual);
+            marker.visible=false;without.draw(graph.visual);
+         } finally {marker.visible=markerVisible;graph.visObjs[2].visible=layerVisible;graph.visSats.visible=screenshotVisible;sats.vis.visible=targetsVisible;}
+         // Native lamp tint changes magenta's red/blue ratio. Determine the
+         // marker's actual contribution without guessing its post-light colour
+         // or accidentally selecting a same-colour decoration elsewhere.
+         var count:int=0,mismatch:int=0,sumX:Number=0;
+         for(var py:int=0;py<bmp.height;py++)for(var px:int=0;px<bmp.width;px++) {
+            var expected:uint=reference.getPixel32(px,py);
+            if(expected==without.getPixel32(px,py))continue;
+            count++;sumX+=px;
+            if(bmp.getPixel32(px,py)!=expected)mismatch++;
+         }
+         check(count>=16,"native reference raster contains actual enemy marker pixels="+count);
+         check(count>=16&&mismatch==0,"paused bitmap matches settled enemy marker pixel-for-pixel mismatches="+mismatch);
+         Log.d("TARGET RASTER "+JSON.stringify({count:count,mismatch:mismatch,expectedX:sumX/count,endpoint:endpoint,bodyX:a.X}));
          var f:FileStream=new FileStream();f.open(File.applicationStorageDirectory.resolvePath("target-sats.png"),FileMode.WRITE);f.writeBytes(bmp.encode(bmp.rect,new PNGEncoderOptions()));f.close();
-         f.open(File.applicationStorageDirectory.resolvePath("target-reference.png"),FileMode.WRITE);f.writeBytes(reference.encode(reference.rect,new PNGEncoderOptions()));f.close();reference.dispose();
+         f.open(File.applicationStorageDirectory.resolvePath("target-reference.png"),FileMode.WRITE);f.writeBytes(reference.encode(reference.rect,new PNGEncoderOptions()));f.close();
+         f.open(File.applicationStorageDirectory.resolvePath("target-without-marker.png"),FileMode.WRITE);f.writeBytes(without.encode(without.rect,new PNGEncoderOptions()));f.close();
+         reference.dispose();without.dispose();
       }
-      private function pixels(bmp:BitmapData):Object {
-         // The native lighting/RV pass darkens the marker. Locate its largest
-         // connected magenta component by hue, without disabling lighting or
-         // treating an empty raster as a successful alignment check.
-         var points:Object={},width:int=bmp.width,key:int,color:uint,r:int,g:int,b:int;
-         for(var py:int=0;py<bmp.height;py++)for(var px:int=0;px<width;px++) {
-            color=bmp.getPixel(px,py);r=(color>>16)&255;g=(color>>8)&255;b=color&255;
-            if(r>=16&&b>=16&&g<=Math.min(r,b)*.1&&r>=b*.85&&r<=b*1.08)points[py*width+px]=true;
-         }
-         var best:Object={count:0,x:NaN};
-         for(var name:String in points) {
-            if(points[name]!==true)continue;
-            var todo:Array=[int(name)],count:int=0,sum:Number=0;
-            delete points[name];
-            while(todo.length>0) {
-               key=int(todo.pop());count++;sum+=key%width;
-               var neighbors:Array=[key-width,key+width];
-               if(key%width>0)neighbors.push(key-1);
-               if(key%width<width-1)neighbors.push(key+1);
-               for each(var next:int in neighbors)if(points[next]===true){delete points[next];todo.push(next);}
-            }
-            if(count>best.count)best={count:count,x:sum/count};
-         }
-         return best;
+      private function rendered(e:Event):void {
+         if(!rasterPending || phase!="paused")return;
+         rasterPending=false;
+         try {checkRaster();send("paused-result");change("wait-resume");}
+         catch(error:Error){check(false,error.getStackTrace());send("done");finish();}
       }
       private function grip():void {
          var g:Object=mod.game.gg;g.mana=g.maxmana=10000;g.pers.maxTeleMassa=1000;g.pers.teleDist=1000000;
@@ -161,7 +162,15 @@ package {
             cursorHp:GameBridge.probe(mod.game.loc.celObj,"maxhp"),aCursor:a.onCursor,bCursor:b.onCursor}));
       }
       private function tick(e:TimerEvent):void {
-         mod=RConnectMod.instance;if(mod==null||mod.session==null||mod.game.gg==null||mod.game.loc==null)return;
+         mod=RConnectMod.instance;if(mod==null||mod.session==null)return;
+         if(seedClass==null) {
+            seedClass=klass("fe.loc.Land");originalSeed=seedClass.rconnectSeedSource;
+            var fallback:Function=originalSeed;
+            seedClass.rconnectSeedSource=function(land:Object):uint {
+               return String(land.act.id)=="random_mane"?uint(2646199556):uint(fallback(land));
+            };
+         }
+         if(mod.game.gg==null||mod.game.loc==null)return;
          if(host&&mod.session.server!=null)for each(var l:TcpLink in mod.session.server.clients)watch(l);else if(!host)watch(mod.session.link);
          try {
             if(phase=="done")return;if(getTimer()-at>90000){check(false,"timeout "+phase);send("done");finish();return;}
@@ -180,7 +189,9 @@ package {
                check(Math.abs(a.X-endpoint)<=1,"logical body settles at authoritative stop");
                check(selected!=null&&w.sats.units.indexOf(selected)>=0&&w.sats.que===queue,"target entry and attack queue retain identity");
                check(selected!=null&&Math.abs(selected.v.x-a.vis.x)<=1,"native target overlay coincides with settled enemy");
-               checkRaster();send("paused-result");change("wait-resume");
+               rasterPending=true;
+               mod.stage.addEventListener(Event.RENDER,rendered,false,-30000);
+               mod.stage.invalidate();
             } else if(!host&&phase=="aim-a"&&getTimer()-at>900&&!mod.session.pause.paused) {
                grip();check(mod.game.grabBody(g.teleObj)===a,"native grab resolves first enemy from mouse input");change("hold-a");
             } else if(!host&&phase=="hold-a"&&getTimer()-at>500) {
@@ -192,6 +203,6 @@ package {
             }
          }catch(err:Error){check(false,err.getStackTrace());send("done");finish();}
       }
-      private function finish():void {if(phase=="done")return;change("done");timer.stop();if(mod!=null){mod.stage.removeEventListener(Event.ENTER_FRAME,before);mod.stage.removeEventListener(Event.ENTER_FRAME,after);}Log.d("COOP EFFECTS DONE target-lifecycle");}
+      private function finish():void {if(phase=="done")return;change("done");timer.stop();if(seedClass!=null)seedClass.rconnectSeedSource=originalSeed;if(mod!=null){mod.stage.removeEventListener(Event.ENTER_FRAME,before);mod.stage.removeEventListener(Event.ENTER_FRAME,after);mod.stage.removeEventListener(Event.RENDER,rendered);}Log.d("COOP EFFECTS DONE target-lifecycle");}
    }
 }
