@@ -55,9 +55,14 @@ package {
       // latest-position helper or its interpolation buffer.
       private var latestWirePoint:Object,throwBasis:Object;
       private var changedDirectionCases:int=0;
+      private var collisionMode:Boolean=false;
+      private var collisionEvidence:Array=[];
+      private var attachmentBefore:Object,attachmentSamples:int=0,attachmentChanged:int=0,attachmentContacts:int=0;
 
 
-      public function A22SavedGripStressTestDoc() {
+      public function A22SavedGripStressTestDoc(wallCollision:Boolean=false) {
+         collisionMode=wallCollision;
+         if(collisionMode)CASES=["host-wall","join-wall","host-low-near","join-low-near","host-low-far","join-low-far"];
          var app:String=NativeApplication.nativeApplication.applicationID;
          if(app.indexOf("rconnect-coop-")<0)return;
          host=app.indexOf("-host-")>=0;
@@ -71,7 +76,7 @@ package {
          Log.d("COOP "+(ok?"PASS ":"FAIL ")+"a22-saved-grip-stress "+s+" case="+CASES[round]+" phase="+phase);
       }
       private function change(s:String):void {phase=s;at=getTimer();}
-      private function owner():Boolean {return !host;}
+      private function owner():Boolean {return collisionMode && round%2==0?host:!host;}
       private function send(op:String,p:Object=null):void {
          p=p||{};p.type="a22-saved-grip-stress-test";p.op=op;p.round=round;
          if(host)mod.session.server.broadcast(p);else mod.session.link.send(p);
@@ -93,7 +98,9 @@ package {
             possible:GameBridge.probe(o,"levitPoss"),resistance:GameBridge.probe(o,"levit_r"),
             resistanceMax:GameBridge.probe(o,"levit_max"),className:getQualifiedClassName(o),
             body:o===target,proxy:o is MirrorHitUnit,stun:GameBridge.probe(o,"stun"),
-            cursor:GameBridge.probe(o,"onCursor")};
+            cursor:GameBridge.probe(o,"onCursor"),damWall:GameBridge.probe(o,"damWall"),
+            damWallSpeed:GameBridge.probe(o,"damWallSpeed"),invulner:GameBridge.probe(o,"invulner"),
+            slow:GameBridge.probe(o,"slow"),isPlav:GameBridge.probe(o,"isPlav")};
       }
       private function attributes():Object {
          var g:Object=mod.game.gg,p:Object=g.pers;
@@ -130,8 +137,10 @@ package {
       }
       private function captureUnitPacket(p:Object):void {
          if(host||target==null||phase=="boot"||phase=="done"||phase=="round-done"
-            ||p==null||p.type!="unitsync"||!(p.units is Array))return;
-         for each(var u:Object in p.units)if(String(u.id)=="a22_saved_grip_stress") {
+            ||p==null)return;
+         var units:Array=p.type=="unitsync"?p.units as Array:p.type=="worldstate"?p.enemyMotion as Array:null;
+         if(units==null)return;
+         for each(var u:Object in units)if(String(u.id)=="a22_saved_grip_stress") {
             var accepted:Boolean=mod.session.rooms.accepts(p);
             if(accepted&&String(u.k)==mod.game.unitKey(target)&&isFinite(Number(u.sampleTime))
                &&isFinite(Number(u.x))&&isFinite(Number(u.y))
@@ -236,6 +245,10 @@ package {
                   for(var yy:int=20;yy<=200;yy+=20)
                      if(l.getAbsTile(x+xx,y-yy).phis!=0){clear=false;break;}
                }
+               if(clear && collisionMode) {
+                  for(var wallY:int=20;wallY<=200;wallY+=20)
+                     if(l.getAbsTile(x+320,y-wallY).phis!=1){clear=false;break;}
+               }
                if(clear)return {x:x,y:y};
             }
          throw new Error("No 280px native low-throw runway; do not replace native floor to force a pass");
@@ -243,18 +256,26 @@ package {
       private function prepare():void {
          var a:Object=arena();bx=a.x;by=a.y;
          var c:Class=mod.main.loaderInfo.applicationDomain.getDefinition("fe.unit.UnitRaider") as Class;
-         target=new c("1",10,<unit weap="lmg"/>,null);target.id="a22_saved_grip_stress";
+         target=collisionMode?new A22CollisionRaider():new c("1",10,<unit weap="lmg"/>,null);target.id="a22_saved_grip_stress";
          target.putLoc(mod.game.loc,bx+100,by);mod.game.loc.addObj(target);mod.game.loc.units.push(target);
          target.xp=0;target.doop=true;target.invulner=false;target.hp=target.maxhp=1000;
          Log.d("A22 GRIP STRESS native-raider "+JSON.stringify(state(target)));
          attach();start(0);send("setup",{x:bx,y:by});
       }
+      private function nativeCollision(kind:String,u:Object,before:Object,after:Object,other:Object):void {
+         if(!collisionMode||u!==target||collisionEvidence.length>=256)return;
+         var e:Object={kind:kind,before:before,after:after,other:other,at:getTimer(),frame:serial};
+         collisionEvidence.push(e);Log.d("A22 COLLISION "+JSON.stringify(e));
+      }
       private function attach():void {
          if(installedHooks)return;installedHooks=true;
+         if(collisionMode)A22CollisionRaider.observed=nativeCollision;
          mod.stage.addEventListener(Event.ENTER_FRAME,drive,false,100005);
          mod.stage.addEventListener(Event.ENTER_FRAME,captureThrowBasis,false,99001);
          mod.stage.addEventListener(Event.ENTER_FRAME,beforeDefaults,false,1);
          mod.stage.addEventListener(Event.ENTER_FRAME,afterDefaults,false,-1);
+         mod.stage.addEventListener(Event.ENTER_FRAME,beforeAttachments,false,-99);
+         mod.stage.addEventListener(Event.ENTER_FRAME,afterAttachments,false,-101);
          mod.stage.addEventListener(Event.ENTER_FRAME,afterRelay,false,-8001);
          // Production movement runs at -10000. RENDER at -20000 follows its
          // final visibility/pose work too; EXIT_FRAME can fire inside gotoAndStop.
@@ -270,13 +291,25 @@ package {
          authorityStart=authorityEnd=viewOrigin=null;lastRenderFrame=-1;viewOverflow=false;
          localEnd=peerEnd=lastAim=null;localEndAt=0;maxResistance=maxLift=holdLift=aimDistance=flightTravel=0;
          exhaustedSeen=false;selectorFrames=0;
+         collisionEvidence=[];
+         attachmentBefore=null;attachmentSamples=attachmentChanged=attachmentContacts=0;
          latestWirePoint=throwBasis=null;
          var g:Object=mod.game.gg;
+         if(round==0&&collisionMode) {
+            var lamps:int=0,leaked:int=0;
+            for each(var sceneUnit:Object in mod.game.loc.units)
+               if(getQualifiedClassName(sceneUnit)=="lad.native::LadLampTarget")lamps++;
+            if(lamps>0) {
+               for each(var snap:Object in mod.game.readUnitsSnapshot())
+                  if(snap.cls=="lad.native::LadLampTarget")leaked++;
+               check(leaked==0,"scene-only lamp targets remain owned by their module count="+lamps);
+            }
+         }
          if(g.teleObj!=null)g.dropTeleObj();
          mod.game.forceCloseOverlays();mod.game.world.ctr.active=true;mod.stage.focus=null;
          g.ctr.clearAll();g.ctr.keyAction=false;g.invulner=true;
          // Initial placement only. Both stand on the established native runway.
-         g.dx=g.dy=0;g.setPos(bx+(host?260:40),by);g.setVisPos();
+         g.dx=g.dy=0;g.setPos(bx+(collisionMode?(owner()?40:0):(host?260:40)),by);g.setVisPos();
          mod.game.loc.base=false;
          if(host) {
             target.setPos(bx+100,by);target.dx=target.dy=0;target.stun=0;
@@ -293,7 +326,7 @@ package {
       private function arm():void {
          threshold=Number(target.levit_max)*Number(mod.game.gg.pers.unitLevitMult);
          initialEnemy=state(target);
-         if(host){target.disabled=false;target.alarma(bx+260,by);}
+         if(host){target.disabled=false;target.alarma(bx+(collisionMode?40:260),by);}
          armFrame=serial;change("arm");viewEvent("arm",state(target));
       }
       private function press(code:int):void {
@@ -336,11 +369,13 @@ package {
             var r:Number=Number(raw.levit_r);
             var lift:Number=Math.min(1,Math.max(0,r)/20);
             var drag:Number=Math.min(1,Math.max(0,r-20)/20);
-            aim(bx+100+120*drag,by-Number(target.scY)/2-110*lift);
+            var low:Boolean=collisionMode&&round>=2;
+            aim(bx+100+(low?(round>=4?120:0):(collisionMode?70:120))*drag,
+               by-Number(target.scY)/2-(low?-10:(collisionMode?60:110))*lift);
             // Use only what the local player can see; the authority counter is
             // measured separately. The near-boundary case may legitimately
             // reach native resistance before E arrives and must record that.
-            if(round<2&&r>=(round==0?60:threshold-5)) {
+            if((collisionMode||round<2)&&r>=(collisionMode?45:(round==0?60:threshold-5))) {
                actionSent=true;actionAt=getTimer();actionBefore=state(raw);
                viewOrigin={x:target.X,y:target.Y};
                viewEvent("E",{raw:actionBefore,body:state(target),player:{x:g.X,y:g.Y},attributes:attributes()});
@@ -399,7 +434,7 @@ package {
             launch={verified:evidence,released:released,frame:serial,raw:state(raw),body:state(target),
                at:getTimer(),actionAt:actionAt,before:pre,attributes:attributes(),expectedNoImpulse:false,
                direction:expectedDirection()};
-            if(round==0)check(evidence,"native E produced a real throw before flight assertions");
+            if(round==0||collisionMode)check(evidence,"native E produced a real throw before flight assertions");
             Log.d("A22 GRIP STRESS native-result "+JSON.stringify(launch));
             if(host&&isNaN(originX)){originX=actionBefore.x;originY=actionBefore.y;minHP=actionBefore.hp;}
             if(host&&evidence)authorityStart={at:actionAt,frame:serial,x:actionBefore.x,y:actionBefore.y,t:raw.t_throw,source:"native-E"};
@@ -427,12 +462,39 @@ package {
          if(trace.length>0&&trace[trace.length-1].frame==serial)
             trace[trace.length-1].afterGripRelay={body:state(target),raw:state(raw),held:mod.game.gg.teleObj!=null};
       }
+      private function beforeAttachments(e:Event):void {
+         attachmentBefore=null;
+         if(!collisionMode||!host||target==null||!viewActive())return;
+         var carrier:Object=mod.main.getChildByName("FirearmAttachmentsCarrier");
+         if(carrier==null||carrier.api==null)return;
+         attachmentBefore={dx:target.dx,dy:target.dy,levit:target.levit,t:target.t_throw,hits:carrier.api.hits};
+      }
+      private function afterAttachments(e:Event):void {
+         if(attachmentBefore==null)return;
+         var carrier:Object=mod.main.getChildByName("FirearmAttachmentsCarrier");
+         var contact:Boolean=int(carrier.api.hits)>int(attachmentBefore.hits);
+         if(contact)attachmentContacts++;
+         if(Number(attachmentBefore.levit)<=0&&Number(attachmentBefore.t)<=0)return;
+         // A new real blade hit may legitimately change momentum. Between
+         // hits, the retained slow must never overwrite native held/throw speed.
+         if(!contact) {
+            attachmentSamples++;
+            if(Math.abs(Number(target.dx)-Number(attachmentBefore.dx))>.0001
+               ||Math.abs(Number(target.dy)-Number(attachmentBefore.dy))>.0001)attachmentChanged++;
+         }
+         if(contact||attachmentChanged>0)Log.d("A22 ATTACHMENT "+JSON.stringify({frame:serial,before:attachmentBefore,after:state(target),contact:contact}));
+      }
       private function receive(e:NetMessageEvent):void {
          var p:Object=e.data;if(p.type!="a22-saved-grip-stress-test")return;
          try {
             if(p.op=="done"){finish();return;}
             if(host&&phase=="boot"&&p.op=="ready")prepare();
-            else if(!host&&p.op=="setup"){bx=p.x;by=p.y;target=find();attach();start(0);}
+            else if(!host&&p.op=="setup"){
+               bx=p.x;by=p.y;target=find();
+               if(collisionMode&&target==null){target=new A22CollisionRaider();target.id="a22_saved_grip_stress";
+                  target.putLoc(mod.game.loc,bx+100,by);mod.game.loc.addObj(target);mod.game.loc.units.push(target);}
+               attach();start(0);
+            }
             else if(!host&&p.op=="round")start(int(p.round));
             else if(host&&p.op=="settled")peerReady=true;
             else if(!host&&p.op=="arm")arm();
@@ -441,7 +503,7 @@ package {
                peerLaunch=p.result;actionAt=getTimer();viewOrigin={x:target.X,y:target.Y};
                viewEvent("peer-action-result",{senderAt:p.result.at,senderActionAt:p.result.actionAt,body:state(target)});
             }
-            else if(host&&p.op=="ended"){peerEnd=p.result;if(actionAt==0)actionAt=getTimer();viewEvent("peer-ended",p.result);}
+            else if(!owner()&&p.op=="ended"){peerEnd=p.result;if(actionAt==0)actionAt=getTimer();viewEvent("peer-ended",p.result);}
             else if(host&&p.op=="round-done"){peerDone=true;advance();}
          }catch(error:Error){check(false,error.getStackTrace());send("done");finish();}
       }
@@ -468,6 +530,26 @@ package {
             initialEnemy:initialEnemy,finalEnemy:state(target),attributes:attributes(),overflow:viewOverflow}));
          check(!viewOverflow,"bounded diagnostic capture did not overflow");
          check(end!=null,"local grip ending observed without forcing drop");
+         if(collisionMode) {
+            check(proof!=null&&proof.verified===true,"wall trial has an actual native E release");
+            if(host) {
+               if(!owner())check(applied,"wall trial applies the received native impulse exactly once");
+               check(Number(initialEnemy.damWall)>0&&Number(initialEnemy.damWallSpeed)>0,"native target has collision damage parameters");
+               check(authorityStart!=null&&authorityEnd!=null,"authority observed a complete thrown interval");
+               check(attachmentSamples>0&&attachmentChanged==0,"FA preserves protected native motion between hits "+JSON.stringify({samples:attachmentSamples,changed:attachmentChanged,contacts:attachmentContacts}));
+               var impact:Object=null;
+               for each(var contact:Object in collisionEvidence)
+                  if(contact.kind=="wall"&&Number(contact.before.t_throw)>0&&Number(contact.after.hp)<Number(contact.before.hp))impact=contact;
+               check(flightTravel>60||impact!=null,"authoritative native throw travels or reaches a damaging collision distance="+flightTravel);
+               // High throws deliberately aim at the verified wall. A low
+               // near-body throw can naturally go left or land first; absence
+               // of a wall call there is not evidence of suppressed damage.
+               if(round<2)check(impact!=null,"native damageWall call within thrown interval really reduces HP "+JSON.stringify(impact));
+               else Log.d("A22 LOW THROW IMPACT "+JSON.stringify({caseName:CASES[round],impact:impact}));
+            }
+            localDone=true;change("round-done");if(host)advance();else send("round-done");
+            return;
+         }
          if(host&&proof!=null&&proof.verified===true&&kick!=null) {
             var direction:Object=proof.direction;
             check(direction!=null&&direction.usesLatest===true,"throw oracle has an independently received finite position");
@@ -505,7 +587,7 @@ package {
       private function advance():void {
          if(!host||!localDone||!peerDone)return;
          if(round+1<CASES.length){start(round+1);send("round",{round:round});}
-         else {check(changedDirectionCases>0,"at least one real release distinguishes buffered and received position directions");send("done");finish();}
+         else {if(!collisionMode)check(changedDirectionCases>0,"at least one real release distinguishes buffered and received position directions");send("done");finish();}
       }
       private function tick(e:TimerEvent):void {
          mod=RConnectMod.instance;if(mod==null||mod.session==null||mod.game==null)return;

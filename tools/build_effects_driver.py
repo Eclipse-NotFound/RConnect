@@ -20,7 +20,7 @@ def main():
     ap.add_argument('--output',type=Path,required=True)
     ap.add_argument('--source-root',type=Path,help='Optional frozen production source directory for external declarations')
     ap.add_argument('--entry',default='EffectsTerrainTestDoc',choices=[
-        'A22HiddenFixedMapTestDoc','A22HiddenTimingTestDoc',
+        'A22EnemyTimelineTestDoc','A22ThrowCollisionTestDoc','A22HiddenFixedMapTestDoc','A22HiddenTimingTestDoc',
         'SoloMapGenerationTestDoc','A22SelfRestoreProbeDoc','A22EnergyRegressionTestDoc','A22ImpactLifetimeTestDoc','A22SavedThrowTestDoc','A22SavedGripStressTestDoc',
         'A22ThrowTimingTestDoc','A22WallTestDoc','A22RoomTestDoc','A22PlasmaTestDoc','A22SmartPeerTestDoc','A22CadenceTestDoc','A22AnimationTestDoc','A22BehaviorTestDoc','NativeMapGenerationTestDoc','MapGenerationTestDoc','FriendlyHazardsTestDoc','MineSightTestDoc','ArchitectureTestDoc','EffectsTerrainTestDoc','TurretTestDoc','PresentationTestDoc','SmoothPresentationTestDoc',
         'SmoothNetworkTestDoc','AppearanceTestDoc','CombatFeedbackTestDoc','CombatFeedbackNetworkTestDoc',
@@ -47,6 +47,12 @@ def main():
     subprocess.run(declarations+['-source-path='+str(source_root),'-external-library-path+='+str(ROOT/'build/GameCombatStubs.swc'),
         '-include-classes='+','.join(classes),'-output='+str(external)],check=True,env=env)
     test_externals=[]
+    if args.entry in ('A22ThrowCollisionTestDoc','A22SavedGripStressTestDoc'):
+        throw_external=out/'ThrowDeclarations.swc'
+        subprocess.run(declarations+['-source-path='+str(ROOT/'tests/throw-extern'),
+            '-external-library-path+='+str(ROOT/'build/GameCombatStubs.swc'),
+            '-include-classes=fe.unit.UnitRaider','-output='+str(throw_external)],check=True,env=env)
+        test_externals=['-external-library-path+='+str(throw_external)]
     if args.entry in ('CoopPauseTestDoc','LightningSmartTestDoc'):
         # A native Pt in the real Location.step chain counts simulation calls.
         # Its compile-only base declaration stays external to the test SWF too.

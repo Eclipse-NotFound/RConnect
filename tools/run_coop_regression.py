@@ -28,6 +28,7 @@ def main():
     ap.add_argument('--with-vision', action='store_true', help='Load the installed RealisticVision SWF in isolated copies')
     ap.add_argument('--vision-candidate',type=Path,help='Load this optional RV candidate instead of the installed SWF')
     ap.add_argument('--msw-candidate',type=Path,help='Optional MSW compatibility candidate, copied only into isolated instances')
+    ap.add_argument('--fa-candidate',type=Path,help='Optional FirearmAttachments compatibility candidate, copied only into isolated instances')
     ap.add_argument('--smoke', action='store_true', help='Validate a production candidate without test classes')
     ap.add_argument('--vision-smoke-version',help='Additionally require this RV startup version and its tick-181 heartbeat')
     ap.add_argument('--presentation', action='store_true', help='Validate the dedicated dark-room rendering test document')
@@ -51,6 +52,8 @@ def main():
     if args.all_mods and not (args.presentation or args.effects or args.smoke): ap.error('--all-mods requires --presentation, --effects or --smoke')
     if args.msw_candidate:
         assert args.all_mods and args.msw_candidate.resolve().is_relative_to(ROOT/'build')
+    if args.fa_candidate:
+        assert args.all_mods and args.fa_candidate.resolve().is_relative_to(ROOT/'build')
     if args.vision_smoke_version and not (args.smoke and args.all_mods): ap.error('--vision-smoke-version requires normal all-mod smoke')
     if args.connect_after_load and (not args.effects_driver or not args.host_save_template or not args.join_save_template):
         ap.error('--connect-after-load requires an external driver and both isolated save templates')
@@ -132,6 +135,8 @@ def main():
                     path=args.vision_candidate.resolve()
                 if name.lower()=='moreskills&weapons' and filename==entry+'.swf' and args.msw_candidate:
                     path=args.msw_candidate.resolve()
+                if name.lower()=='firearmattachments' and filename==entry+'.swf' and args.fa_candidate:
+                    path=args.fa_candidate.resolve()
                 if path.exists(): shutil.copy2(path,destination/filename)
         (frozen/'mods'/'loader-manifest.txt').write_text('\n'.join(lines)+'\n',encoding='utf-8')
     elif args.with_vision:

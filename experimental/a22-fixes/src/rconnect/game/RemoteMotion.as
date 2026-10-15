@@ -45,6 +45,9 @@ package rconnect.game
       public static function held():RemoteMotion {
          var motion:RemoteMotion=new RemoteMotion(50);motion.bufferLimit=100;return motion;
       }
+      public static function enemy():RemoteMotion {
+         var motion:RemoteMotion=new RemoteMotion(50);motion.bufferLimit=100;return motion;
+      }
 
       public function push(snap:Object, now:int):void
       {
@@ -84,6 +87,8 @@ package rconnect.game
 
       /** Shared display cursor for this avatar's weapon and projectile frames. */
       public function get sourceTime():Number {return frames.length>0?cursor:NaN;}
+      public function get latestSampleTime():Number {return frames.length>0?Number(frames[frames.length-1].at):NaN;}
+      public function get currentSample():Object {return state;}
 
       /** Simulation input may need the last received location, not the older
        * display cursor. Return a fresh value without seeking or sampling it. */
@@ -182,8 +187,24 @@ package rconnect.game
                ? curve(key,a,b,t,span) : first+(last-first)*t;
          }
          if(a.snap.weapons is Array && b.snap.weapons is Array)
-            state.weapons=WeaponDisplay.interpolate(a.snap.weapons as Array,b.snap.weapons as Array,t);
+            state.weapons=blendWeapons(a.snap.weapons as Array,b.snap.weapons as Array,t);
          return state;
+      }
+
+      private static function blendWeapons(first:Array,last:Array,t:Number):Array {
+         var blended:Array=WeaponDisplay.interpolate(first,last,t),out:Array=[];
+         for each(var a:Object in blended) {
+            if(a.display!=null){out.push(a);continue;}
+            var copy:Object={};for(var key:String in a)copy[key]=a[key];
+            for each(var b:Object in last)if(a.slot==b.slot&&a.id==b.id&&a.variant==b.variant&&a.stream==b.stream) {
+               var angle:Number=Number(b.rot)-Number(a.rot);
+               while(angle>Math.PI)angle-=Math.PI*2;while(angle<-Math.PI)angle+=Math.PI*2;
+               copy.ox=Number(a.ox)+(Number(b.ox)-Number(a.ox))*t;
+               copy.oy=Number(a.oy)+(Number(b.oy)-Number(a.oy))*t;copy.rot=Number(a.rot)+angle*t;break;
+            }
+            out.push(copy);
+         }
+         return out;
       }
 
       /** Shape-preserving cubic interpolation makes velocity continuous across

@@ -5367,10 +5367,44 @@ package rconnect.game
        * native step-chain membership and must never be rebuilt as enemies. */
       private static function isSceneHitUnit(unit:Object):Boolean
       {
-         return getQualifiedClassName(unit)=="fe.unit::VirtualUnit";
+         return isSceneHitClass(getQualifiedClassName(unit));
+      }
+
+      private static function isSceneHitClass(name:String):Boolean
+      {
+         // Lamp targets are local projectile hit surfaces, with a controller
+         // constructor and no AI/body. Their owning mod keeps their lifetime.
+         return name=="fe.unit::VirtualUnit"||name=="lad.native::LadLampTarget";
       }
 
       /** M19：采集本世界单位快照（M4：宿主广播，客户端镜像）。 */
+      public function readEnemyMotion():Array {
+         if(loc==null||_mirroring||roomHold)return null;
+         _units.enter(loc);var result:Array=[];
+         for each(var u:Object in probe(loc,"units") as Array) {
+            if(u==gg||u is MirrorHitUnit||isSceneHitUnit(u)||Number(u.fraction)>=100||Number(u.sost)>=3)continue;
+            result.push({k:_units.key(u),id:String(u.id),x:Number(u.X),y:Number(u.Y),sampleTime:_sampleAt,
+               storona:Number(u.storona),sost:Number(u.sost),anim:String(u.animState),pose:RConnectAnimationAccess.capture(u as Unit),
+               body:TurretDisplay.capture(u),burning:BurnVisuals.capture(u),bodyEffects:_bodyEffects.capture(u),
+               weapons:_presentation.captureMotion(u),motion:unitFields(u,["dx","dy","stay","isFly","isLaz","levit"]),
+               grip:unitFields(u,MirrorHitUnit.GRIP)});
+         }
+         return result;
+      }
+
+      public function applyEnemyMotion(records:Array):void {
+         if(!freezeAI||loc==null||roomHold||records==null)return;
+         for each(var e:Object in records) {
+            var u:Object=unitForKey(String(e.k));
+            if(u==null||u.loc!==loc||Number(u.sost)>=3||!_hostAlive[u]||validLandPos(Number(e.x),Number(e.y))==null)continue;
+            var motion:RemoteMotion=_unitMotion[u] as RemoteMotion;
+            if(motion!=null&&isFinite(motion.latestSampleTime)&&Number(e.sampleTime)<motion.latestSampleTime)continue;
+            applyUnitFields(u,e.motion);applyUnitFields(u,e.grip);
+            if(enemyGrip!=null)enemyGrip.preserveLocal(u);
+            queueUnitMotion(u,Number(e.x),Number(e.y),e.sampleTime,e.bodyEffects,e);
+         }
+      }
+
       public function readUnitsSnapshot():Array
       {
          if(world == null || loc == null)
@@ -5504,7 +5538,7 @@ package rconnect.game
                else
                {
                   var safe:Object = validLandPos(Number(e.x), Number(e.y));
-                  queueUnitMotion(target, Number(safe.x), Number(safe.y),e.sampleTime,e.bodyEffects);
+                  queueUnitMotion(target, Number(safe.x), Number(safe.y),e.sampleTime,e.bodyEffects,e);
                }
                if(e.sost != undefined && Number(e.sost) != -1)
                {
@@ -5590,7 +5624,12 @@ package rconnect.game
                   _hostAlive[target] = true;
                }
                if(freezeAI) {
-                  _presentation.apply(target,e,main,_unitMotion[target] as RemoteMotion);
+                  if(Number(e.sost)>=3) {
+                     // A dead actor must not replay a still-alive buffered pose.
+                     target.setPos(Number(e.x),Number(e.y));target.setVisPos();
+                     _presentation.apply(target,e,main,_unitMotion[target] as RemoteMotion);
+                     delete _unitMotion[target];delete _lastUnitVisual[target];
+                  }
                   _projectiles.receive(target,e.weapons as Array,main,false,_unitMotion[target] as RemoteMotion);
                }
                var hit:MirrorHitUnit = _hitUnits[target];
@@ -5722,12 +5761,12 @@ package rconnect.game
       }
 
       // The same source-time buffer drives enemies and remote players.
-      private function queueUnitMotion(u:Object,x:Number,y:Number,stamp:*=null,bodyEffects:Object=null):void
+      private function queueUnitMotion(u:Object,x:Number,y:Number,stamp:*=null,bodyEffects:Object=null,visual:Object=null):void
       {
          var now:int = getTimer();
          var motion:RemoteMotion=_unitMotion[u] as RemoteMotion;
-         if(motion==null || !freezeAI)motion=_unitMotion[u]=new RemoteMotion(200);
-         motion.push({x:x,y:y,sampleTime:stamp,bodyEffects:bodyEffects},now);
+         if(motion==null || !freezeAI)motion=_unitMotion[u]=RemoteMotion.enemy();
+         motion.push({x:x,y:y,sampleTime:stamp,bodyEffects:bodyEffects,visual:visual,weapons:visual==null?null:visual.weapons},now);
          var sample:Object=coopPaused?motion.settle(presentationTime()):motion.sample(presentationTime());
          u["setPos"](sample.x,sample.y);
       }
@@ -6059,7 +6098,7 @@ package rconnect.game
          used=new Dictionary();_units.enter(loc);
          for each(var us:Object in s.units)
          {
-            if(String(us.cls)=="fe.unit::VirtualUnit")continue;
+            if(isSceneHitClass(String(us.cls)))continue;
             var unit:Object=_units.resolve(us,loc.units,used);
             if(unit==null)
             {
@@ -6179,8 +6218,17 @@ package rconnect.game
                   if(coopPaused && (u.X!=sample.x || u.Y!=sample.y))_satsRasterDirty=true;
                   u["setPos"](sample.x,sample.y);
                   u["setVisPos"]();
+                  if(sample.visual!=null) {
+                     var selected:Object=sample.visual;
+                     u.storona=Number(selected.storona)>=0?1:-1;
+                     if(_lastUnitVisual[u]!==selected) {
+                        _lastUnitVisual[u]=selected;
+                        _presentation.apply(u,selected,main,motion,coopPaused);
+                     }
+                  }
                }
-               if(!coopPaused){_presentation.animateBody(u);_presentation.tick(u);}
+               _presentation.animateBody(u,coopPaused);
+               _presentation.tick(u,coopPaused);
                var hit:MirrorHitUnit = _hitUnits[u];
                if(hit != null) {_mirrorMasks.prepare(u);hit.syncMotion();if(!coopPaused)hit.tickFeedback();}
                if(!coopPaused)refreshMirrorCursor(u,hit);
@@ -6237,6 +6285,7 @@ package rconnect.game
       }
 
       private var _frozen:Dictionary = new Dictionary();
+      private var _lastUnitVisual:Dictionary = new Dictionary(true);
       private var _animLogged:Object = {};
       private var _skinSeen:Boolean = false;
       private var _ponySeen:Boolean = false;

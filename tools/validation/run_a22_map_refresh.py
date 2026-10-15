@@ -31,6 +31,7 @@ def main():
     ap.add_argument('--expected-version')
     ap.add_argument('--frozen-runtime',action='store_true',help='Test an already frozen combination even when other developers changed the installation; still record and protect the installation observed at this run')
     ap.add_argument('--msw-candidate',type=Path)
+    ap.add_argument('--fa-candidate',type=Path)
     ap.add_argument('--host-save-template',type=Path)
     ap.add_argument('--join-save-template',type=Path)
     ap.add_argument('--connect-after-load',action='store_true')
@@ -105,8 +106,16 @@ def main():
         for name,digest in msw_manifest['source'].items():assert sha(msw.parent/name)==digest,name
         msw_hash=sha(msw);assert msw_hash==msw_manifest['candidate_sha256']
         command+=['--msw-candidate',str(msw)]
+    fa_hash=None
+    if args.fa_candidate:
+        fa=args.fa_candidate.resolve()
+        assert fa.parent.parent==ROOT/'build/m52' and fa.name=='FirearmAttachmentsMod.swf'
+        fa_manifest=read(fa.parent/'prepared.json')
+        for name,digest in fa_manifest['source'].items():assert sha(fa.parent/name)==digest,name
+        fa_hash=sha(fa);assert fa_hash==fa_manifest['candidate_sha256']
+        command+=['--fa-candidate',str(fa)]
     inputs=dict(prepared=sha(out/'prepared.json'),runtime=sha(bundle/'inputs.json'),
-        runner=sha(ROOT/'tools/run_coop_regression.py'),script=sha(__file__),msw=msw_hash,saves=save_inputs,
+        runner=sha(ROOT/'tools/run_coop_regression.py'),script=sha(__file__),msw=msw_hash,fa=fa_hash,saves=save_inputs,
         driver={p.name:sha(p) for p in driver.glob('*.swf')})
     save(out/(label+'-intent.json'),dict(command=command,inputs=inputs,installation_before=installation_before,
         runtime_matches_installation=not runtime_difference,runtime_difference=runtime_difference))
@@ -134,6 +143,8 @@ def main():
                 if name.lower().startswith('mods/rconnect/'):continue
                 if msw_hash and name.lower()=='mods/moreskills&weapons/release/moreskillsweaponsmod.swf':
                     assert digest==msw_hash;continue
+                if fa_hash and name.lower()=='mods/firearmattachments/release/firearmattachmentsmod.swf':
+                    assert digest==fa_hash;continue
                 assert digest==frozen['files'][name],name
             lines=(folder/(role+'.log')).read_text(encoding='utf-8-sig')
             receipt[role]=dict(passed=len(re.findall(r'^COOP PASS ',lines,re.M)),failed=len(re.findall(r'^COOP FAIL ',lines,re.M)),

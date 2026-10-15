@@ -1,6 +1,8 @@
 package {
    import flash.desktop.NativeApplication;
    import flash.display.Sprite;
+   import flash.display.Bitmap;
+   import flash.display.MovieClip;
    import flash.events.Event;
    import flash.events.TimerEvent;
    import flash.events.UncaughtErrorEvent;
@@ -28,8 +30,11 @@ package {
       private var endpoint:Number=NaN,pausedX:Number=NaN,resumeJump:Number=0;
       private var stablePauseAt:int=0,initialGap:Number=NaN,worldFrames:int=0;
       private var lastEnemyX:Number=NaN,lastWalk:int=0;
+      private var timelineOnly:Boolean=false,latestMotion:Object;
+      private var endpointReceived:int=0,endpointSettled:int=0,bufferFrames:Array=[];
 
-      public function PresentationContinuityTestDoc() {
+      public function PresentationContinuityTestDoc(enemyTimeline:Boolean=false) {
+         timelineOnly=enemyTimeline;
          var app:String=NativeApplication.nativeApplication.applicationID;
          if(app.indexOf("rconnect-coop-")<0)return;
          host=app.indexOf("-host-")>=0;
@@ -129,6 +134,10 @@ package {
       }
       private function receive(e:NetMessageEvent):void {
          var p:Object=e.data;
+         if(!host && timelineOnly) {
+            var poses:Array=p.enemyMotion is Array?p.enemyMotion:(p.type=="unitsync"?p.units:null);
+            if(poses!=null)for each(var motion:Object in poses)if(motion.id=="slaver2")latestMotion=motion;
+         }
          if(!host && p.lootMotion is Array && (phase=="falling" || phase=="drop-wait"))
             for each(var received:Object in p.lootMotion)
                if(received.item!=null && received.item.id=="kofe" && int(received.item.kol)==37+round)
@@ -137,7 +146,7 @@ package {
          try {
             if(p.op=="ready"&&host)ready=true;
             else if(p.op=="setup"&&!host){baseX=p.x;baseY=p.y;install();send("installed");change("waiting");}
-            else if(p.op=="installed"&&host)makeBox();
+            else if(p.op=="installed"&&host){if(timelineOnly)makeEnemy();else makeBox();}
             else if(p.op=="box"&&!host){round=p.round;trace=[];lootArrivals=[];change("find-box");}
             else if(p.op=="box-ready"&&host){send("open");if(round==1)box.inter.actOsn();change("falling");}
             else if(p.op=="open"&&!host){if(round==0)box.inter.actOsn();change("falling");}
@@ -146,7 +155,7 @@ package {
             else if(p.op=="enemy"&&!host)change("find-enemy");
             else if(p.op=="enemy-ready"&&host)startWalk();
             else if(p.op=="walk"&&!host)startWalk();
-            else if(p.op=="endpoint"&&!host){endpoint=p.x;initialGap=Math.abs(enemy.X-endpoint);}
+            else if(p.op=="endpoint"&&!host){endpoint=p.x;initialGap=Math.abs(enemy.X-endpoint);endpointReceived=getTimer();}
             else if(p.op=="paused-result"&&host){moving=false;send("resume");change("resume-wait");}
             else if(p.op=="resume"&&!host){mod.game.world.sats.onoff(-1);change("resuming");}
             else if(p.op=="done"){if(host)send("done");finish();}
@@ -164,6 +173,7 @@ package {
             if(moving&&!mod.session.pause.paused&&mod.game.world.allStat==1) {
                // Continuous known trajectory; all receiving movement remains production code.
                walkX+=3;enemy.setPos(walkX,baseY);enemy.setVisPos();++worldFrames;
+               if(timelineOnly){enemy.animState="walk";enemy.animate();}
             }
          }
          mod.stage.invalidate();
@@ -178,6 +188,10 @@ package {
             var x:Number=Number(enemy.vis.x);
             if(!host&&phase=="resuming"&&isFinite(lastEnemyX))resumeJump=Math.max(resumeJump,Math.abs(x-lastEnemyX));
             lastEnemyX=x;trace.push({t:getTimer(),x:x,logicalX:enemy.X,paused:mod.session.pause.paused,sats:mod.game.world.sats.active});
+            if(timelineOnly&&!host&&phase=="walk"&&getTimer()-walkAt>600&&latestMotion!=null)
+               bufferFrames.push(Math.max(0,(Number(latestMotion.x)-x)/3));
+            if(timelineOnly&&!host&&endpointReceived>0&&endpointSettled==0&&Math.abs(x-endpoint)<=1)
+               endpointSettled=getTimer();
          }
       }
       private function analyseDrop():void {
@@ -224,6 +238,14 @@ package {
                send("endpoint",{x:endpoint});change("paused");
             }
             else if(!host&&phase=="paused"&&getTimer()-at>1200&&isFinite(endpoint)) {
+               if(timelineOnly) {
+                  bufferFrames.sort(Array.NUMERIC);
+                  var lag:Number=bufferFrames.length?bufferFrames[int((bufferFrames.length-1)*.9)]:NaN;
+                  check(bufferFrames.length>=8,"enemy buffered-frame sample coverage="+bufferFrames.length);
+                  check(lag<=4,"enemy display is within four already-received native frames p90="+lag);
+                  check(endpointSettled>0&&endpointSettled-endpointReceived<=100,"SATS final endpoint settles within 100ms after confirmed stop actual="+(endpointSettled-endpointReceived));
+                  Log.d("A22 ENEMY TIMELINE "+JSON.stringify({bufferFrames:bufferFrames,p90:lag,initialPauseGap:initialGap,settleMs:endpointSettled-endpointReceived,trace:trace}));
+               }
                pausedX=enemy.X;check(Math.abs(pausedX-endpoint)<=1,"paused enemy matches authority endpoint gap="+Math.abs(pausedX-endpoint));
                check(mod.session.pause.paused&&w.sats.active,"pause remains owned by native SATS");
                var overlay:Object=null;
@@ -231,6 +253,16 @@ package {
                   if(entry.u is MirrorHitUnit && MirrorHitUnit(entry.u).body===enemy)overlay=entry.v;
                check(overlay!=null,"native SATS retains its real enemy targeting overlay");
                check(overlay!=null&&Math.abs(Number(overlay.x)-endpoint)<=1,"SATS target overlay matches paused authority endpoint x="+(overlay==null?"missing":overlay.x));
+               if(timelineOnly && overlay!=null) {
+                  var actual:MovieClip=overlay.getChildAt(0) as MovieClip;
+                  var fresh:MovieClip=w.sats.drawUnit(enemy);
+                  var actualBitmap:Bitmap=actual.getChildAt(0) as Bitmap;
+                  var expectedBitmap:Bitmap=fresh.getChildAt(0) as Bitmap;
+                  var comparison:Object=actualBitmap.bitmapData.compare(expectedBitmap.bitmapData);
+                  check(comparison is uint && uint(comparison)==0,"SATS target bitmap matches the final received native body pose");
+                  if(comparison is flash.display.BitmapData)comparison.dispose();
+                  expectedBitmap.bitmapData.dispose();
+               }
                send("paused-result");change("paused-wait");
             }
             else if(!host&&phase=="resuming"&&getTimer()-at>900&&!mod.session.pause.paused) {
