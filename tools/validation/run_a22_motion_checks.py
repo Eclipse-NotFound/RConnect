@@ -35,6 +35,7 @@ def main():
     parser.add_argument('--bundle', required=True)
     parser.add_argument('--fa', help='Optional validated FA override; default uses the frozen installed version')
     parser.add_argument('--rv', help='Optional validated RV wall comparison candidate')
+    parser.add_argument('--wb', help='Optional validated WallBlend comparison candidate')
     parser.add_argument('--cases')
     parser.add_argument('--prefix', required=True)
     args = parser.parse_args()
@@ -52,6 +53,8 @@ def main():
             command += ['--fa-candidate', args.fa]
         if args.rv:
             command += ['--vision-candidate', args.rv]
+        if args.wb:
+            command += ['--wallblend-candidate', args.wb]
         if copied_save:
             saved = ROOT/'build/m52/littlepip-save-replay-01'
             command += ['--host-save-template', str(saved/'host/PFEgame0.sol'),

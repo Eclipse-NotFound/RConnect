@@ -33,6 +33,7 @@ def main():
     ap.add_argument('--msw-candidate',type=Path)
     ap.add_argument('--fa-candidate',type=Path)
     ap.add_argument('--vision-candidate',type=Path)
+    ap.add_argument('--wallblend-candidate',type=Path)
     ap.add_argument('--host-save-template',type=Path)
     ap.add_argument('--join-save-template',type=Path)
     ap.add_argument('--connect-after-load',action='store_true')
@@ -125,8 +126,18 @@ def main():
         for name,digest in vision_manifest['source'].items():assert sha(vision.parent/name)==digest,name
         vision_hash=sha(vision);assert vision_hash==vision_manifest['candidate_sha256']
         command+=['--vision-candidate',str(vision)]
+    wallblend_hash=None
+    if args.wallblend_candidate:
+        wallblend=args.wallblend_candidate.resolve()
+        assert wallblend.parent.parent==ROOT/'build/m52' and wallblend.name=='WallBlendMod.swf'
+        wallblend_manifest=read(wallblend.parent/'prepared.json')
+        assert wallblend_manifest['kind']=='isolated-wallblend-comparison'
+        assert wallblend_manifest['baseline_sha256']==frozen['files']['mods/WallBlend/release/WallBlendMod.swf']
+        for name,digest in wallblend_manifest['source'].items():assert sha(wallblend.parent/name)==digest,name
+        wallblend_hash=sha(wallblend);assert wallblend_hash==wallblend_manifest['candidate_sha256']
+        command+=['--wallblend-candidate',str(wallblend)]
     inputs=dict(prepared=sha(out/'prepared.json'),runtime=sha(bundle/'inputs.json'),
-        runner=sha(ROOT/'tools/run_coop_regression.py'),script=sha(__file__),msw=msw_hash,fa=fa_hash,vision=vision_hash,saves=save_inputs,
+        runner=sha(ROOT/'tools/run_coop_regression.py'),script=sha(__file__),msw=msw_hash,fa=fa_hash,vision=vision_hash,wallblend=wallblend_hash,saves=save_inputs,
         driver={p.name:sha(p) for p in driver.glob('*.swf')})
     save(out/(label+'-intent.json'),dict(command=command,inputs=inputs,installation_before=installation_before,
         runtime_matches_installation=not runtime_difference,runtime_difference=runtime_difference))
@@ -158,6 +169,8 @@ def main():
                     assert digest==fa_hash;continue
                 if vision_hash and name.lower()=='mods/realisticvision/release/realisticvisionmod.swf':
                     assert digest==vision_hash;continue
+                if wallblend_hash and name.lower()=='mods/wallblend/release/wallblendmod.swf':
+                    assert digest==wallblend_hash;continue
                 assert digest==frozen['files'][name],name
             role_log=folder/(role+'.log')
             lines=role_log.read_text(encoding='utf-8-sig') if role_log.is_file() else ''

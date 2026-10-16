@@ -45,6 +45,40 @@ package {
       private var diagEnabled:Boolean=false,diagSampling:Boolean=false,diagNumber:int=0,diagAt:int=0,diagAfter:int=0;
       private var diagRows:Array=[];
       private var diagPacket:Object;
+      private function sceneInputs():void {
+         // Read-only evidence outside every timed window. Layout seed alone
+         // does not fix ambient actors, player entry, lighting or background.
+         var loc:Object=mod.game.loc,units:Array=[],cells:Array=[],art:Array=[];
+         var actorKeys:Array=["id","X","Y","dx","dy","sost","disabled","hp","maxhp","fraction","in_chain","levit","t_throw"];
+         var weaponKeys:Array=["id","rot","t_attack","t_reload","damage","speed","precision","deviation","hold"];
+         for each(var u:Object in loc.units) {
+            var row:Object=readInputs(u,actorKeys);row.cls=getQualifiedClassName(u);row.fixture=loadActors.indexOf(u)>=0;
+            row.weapon=u.currentWeapon==null?null:readInputs(u.currentWeapon,weaponKeys);units.push(row);
+         }
+         for(var y:int=0;y<loc.spaceY;y++) for(var x:int=0;x<loc.spaceX;x++)
+            cells.push(readInputs(loc.space[x][y],["front","back","phis","zForm","fRear","diagon","stair","shelf","door","fake","vid","vid2","visi"]));
+         for each(var bo:Object in loc.backobjs)art.push(readInputs(bo,["id","X","Y","scX","scY","frame","sloy","alpha","er"]));
+         Log.d("DENSITY INPUTS "+JSON.stringify({role:host?"host":"join",seed:GameBridge.probe(mod.game.world.land,"rconnectLayoutSeed"),
+            location:readInputs(loc,["id","spaceX","spaceY","darkness","lightOn","backwall","transpFon","homeStable","black"]),
+            color:String(loc.cTransform),backobjs:art,cells:cells,units:units,player:readInputs(mod.game.gg,actorKeys),
+            viewport:[mod.stage.stageWidth,mod.stage.stageHeight,mod.stage.frameRate,mod.stage.quality],
+            camera:readInputs(mod.game.world.cam,["scaleV","x","y"]),nativeFrame:GameBridge.probe(mod.game.world,"frame")}));
+      }
+      private function readInputs(value:Object,keys:Array):Object {
+         var result:Object={};for each(var key:String in keys) {
+            var item:*=GameBridge.probe(value,key);
+            if(item===undefined)result[key]="<undefined>";
+            else if(item===null || item is String || item is Boolean || item is Number)
+               result[key]=(item is Number && !isFinite(item))?String(item):item;
+            else if(item is XML || item is XMLList)result[key]=String(item);
+            else {
+               // Tile.door is a native Box with links back into the world.
+               // Record its identity, never recursively serialize the game.
+               result[key]={referenceClass:getQualifiedClassName(item),id:String(GameBridge.probe(item,"id")),
+                  x:String(GameBridge.probe(item,"X")),y:String(GameBridge.probe(item,"Y"))};
+            }
+         }return result;
+      }
       private function encodingProbe():void {
          var packet:Object=host?{type:"unitsync",units:mod.game.readUnitsSnapshot(),snap:mod.game.readSnapshot()}:diagPacket;
          if(packet==null)return;
@@ -254,6 +288,7 @@ package {
             }
             mod.game.readUnitsSnapshot();
             for each(var actor:Object in loadActors)if(actor.id=="slaver2"){aimKey=mod.game.unitKey(actor);break;}
+            sceneInputs();
             send("load",{aimKey:aimKey});setPhase("wait-load");return;
          }
          var xml:XML=<unit vis="right"/>;xml.@tr=turretKinds[index];
@@ -347,6 +382,7 @@ package {
                send("turret-checked");setPhase("wait");
             }
             if(!host&&phase=="load-wait"&&getTimer()-at>1500){
+               sceneInputs();
                Log.d("COOP PROBE window phase=0 visible="+mod.stage.nativeWindow.visible+" frameRate="+mod.stage.frameRate+" quality="+mod.stage.quality);
                send("load-ready");frames=prevFrame=maxFrame=0;intervals=[];setPhase("load");
                var timingBridge:Object=mod.game;if("presentationTiming" in timingBridge)timingBridge.presentationTiming={viewMs:0,viewCalls:0,motionMs:0,motionCalls:0};
