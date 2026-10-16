@@ -24,6 +24,7 @@ Remains 1.02 双人合作模组，入口 `release/RConnectMod.swf`。A 是普通
 - **安装 A 仍为 `0.2.22-fix15-keybinds`**，SHA `b2ed7f3a9b1d176dffb2b912d69da8084982906ff71d6fba8367bd36514e84f8`；快捷键会话已安装和复验。本会话尚未安装动作修复。
 - **当前隔离候选 `0.2.22-fix39-keybinds`**：`build/m52/a22-fixes-39`，SHA `a02e5aafc2ba529d37a78c83ac92a055121b72d347d56ab8ca720802cc9ddf60`，prepared `ccb9401c418c75a9d014c52187abbcca84eabf0a32b44a198056f7fc7f26fbab`。准确生产源是该冻结树，修改入口为 `experimental/a22-fixes/src`，**禁止直接编译根src**（不同历史线）。39相对37只改版本、11个原生字段读取、原版枪口动画重播间隔；两份正式改键UI原样保留。38的Socket API实验未带回，39-motion只为构建中间物。
 - **上轮冻结组合 runtime17**：`build/m52/a22-map-runtime-17`，132文件，inputs SHA `fbdd08fd147bac801c7596de667e2c044629e7364e7cb324bfb640c3c8fc0a4d`。内含根pfe `08a96759720c7a2aa489fceedb209c6e704500fde7b1a4a49146bd578e99a8bc`、FA0.3.5 `b3304596…`、ML2.4.0 `bd71b6f3…`、RV0.31.1 `baa48289…`、CS `f6ed93af…`、LAD0.3.0 `3ba6a9c9…`、PI `d4f6a096…`。LAD会话已于10-16 13:30:17另行部署0.3.1 `514a7671d4da517a31045aeaf8ffad3089aa66705fe58d14dc339f849589a7f6`（a2d28af，修进图黑框；17+89+正式17通过），无后续测试/部署待执行。runtime17自洽但不再等于安装，下一轮重新冻结；本会话未改这些安装件。
+- **新增冻结 runtime18**：`build/m52/a22-map-runtime-18`，inputs SHA `c6841b47203733802052a5b9150d115a9dcfd7bb1da6bb46a1baf4dd14a37535`，132文件中131份与17相同并只链接自己冻结的文件，新增仅LAD0.3.1；本机安装前后逐份复核一致。使用freeze的`--reuse-runtime`节省重复资产，绝不硬链接安装版。RV新候选尚待交付，不把18称为最终发布组合。
 - B可玩入口仍为`build/ab/b3-playable-190`（Player-1/2.cmd）；B195未合格、不替换B190。本轮不恢复B开发，旧证据见[B195验收](b195-qualification-2026-10-14.md)。
 - 普通菜单“开始新探索”种子修复随Map1/fix15安装；旧RandomRooms显式选择器另有几何同步问题，不混称已修。见[fix15部署](deployment-a22-fixes-2026-10-15.md)。
 

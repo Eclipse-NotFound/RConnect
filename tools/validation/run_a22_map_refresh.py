@@ -2,6 +2,7 @@
 import argparse
 import hashlib
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -30,6 +31,7 @@ def main():
     ap.add_argument('--solo',action='store_true')
     ap.add_argument('--expected-version')
     ap.add_argument('--frozen-runtime',action='store_true',help='Test an already frozen combination even when other developers changed the installation; still record and protect the installation observed at this run')
+    ap.add_argument('--reuse-runtime',type=Path,help='When freezing, reuse identical immutable assets from this own frozen bundle via hardlinks; never link installation files')
     ap.add_argument('--msw-candidate',type=Path)
     ap.add_argument('--fa-candidate',type=Path)
     ap.add_argument('--vision-candidate',type=Path)
@@ -51,14 +53,28 @@ def main():
             directory,entry = row.split('|')[:2]
             files.update(p for n in (entry+'.swf','config.txt','config.json') if (p:=GAME/'mods'/directory/'release'/n).is_file())
         hashes = {p.relative_to(GAME).as_posix():sha(p) for p in sorted(files)}
-        assert shutil.disk_usage(ROOT).free > sum(p.stat().st_size for p in files)*4
+        reused={}
+        if args.reuse_runtime:
+            previous=(ROOT/args.reuse_runtime).resolve()
+            assert previous.parent==ROOT/'build/m52' and previous!=bundle
+            previous_files=read(previous/'inputs.json')['files']
+            for name,digest in hashes.items():
+                source=(previous/'game'/name).resolve()
+                assert source.is_relative_to((previous/'game').resolve())
+                if previous_files.get(name)==digest:
+                    assert source.is_file() and not source.is_symlink() and sha(source)==digest,name
+                    reused[name]=source
+        copy_bytes=sum(p.stat().st_size for p in files if p.relative_to(GAME).as_posix() not in reused)
+        assert shutil.disk_usage(ROOT).free > copy_bytes*4+32*1024*1024
         bundle.mkdir()
         for name,digest in hashes.items():
             target=bundle/'game'/name;target.parent.mkdir(parents=True,exist_ok=True)
-            shutil.copy2(GAME/name,target)
+            if name in reused:os.link(reused[name],target)
+            else:shutil.copy2(GAME/name,target)
             assert sha(target)==digest and sha(GAME/name)==digest
         for name,digest in hashes.items(): assert sha(GAME/name)==digest, name
-        save(bundle/'inputs.json',dict(files=hashes,diagnostic_only=True,installation_modified=False))
+        save(bundle/'inputs.json',dict(files=hashes,diagnostic_only=True,installation_modified=False,
+            reused_runtime=str(previous) if reused else None,reused_files=sorted(reused)))
         print('Frozen runtime files:',len(hashes));return
     frozen=read(bundle/'inputs.json')
     installation_before={name:sha(GAME/name) if (GAME/name).is_file() else None for name in frozen['files']}
