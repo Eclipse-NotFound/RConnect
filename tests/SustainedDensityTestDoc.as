@@ -49,18 +49,31 @@ package {
          // Read-only evidence outside every timed window. Layout seed alone
          // does not fix ambient actors, player entry, lighting or background.
          var loc:Object=mod.game.loc,units:Array=[],cells:Array=[],art:Array=[];
-         var actorKeys:Array=["id","X","Y","dx","dy","sost","disabled","hp","maxhp","fraction","in_chain","levit","t_throw"];
+         var views:Dictionary=new Dictionary(true),viewGroups:Array=[];
+         var actorKeys:Array=["id","X","Y","dx","dy","sost","disabled","hp","maxhp","fraction","in_chain","levit","t_throw",
+            "player","npc","invis","isVis","isSats"];
          var weaponKeys:Array=["id","rot","t_attack","t_reload","damage","speed","precision","deviation","hold"];
          for each(var u:Object in loc.units) {
             var row:Object=readInputs(u,actorKeys);row.cls=getQualifiedClassName(u);row.fixture=loadActors.indexOf(u)>=0;
-            row.weapon=u.currentWeapon==null?null:readInputs(u.currentWeapon,weaponKeys);units.push(row);
+            row.weapon=u.currentWeapon==null?null:readInputs(u.currentWeapon,weaponKeys);
+            var vis:DisplayObject=GameBridge.probe(u,"vis") as DisplayObject;
+            if(vis!=null) {
+               var group:Object=views[vis];
+               if(group==null) {
+                  group={index:viewGroups.length,units:[],classes:[],visible:vis.visible,alpha:vis.alpha,
+                     cache:vis.cacheAsBitmap,mask:vis.mask==null?null:getQualifiedClassName(vis.mask)};
+                  views[vis]=group;viewGroups.push(group);
+               }
+               group.units.push(units.length);group.classes.push(row.cls);row.viewGroup=group.index;
+            }
+            units.push(row);
          }
          for(var y:int=0;y<loc.spaceY;y++) for(var x:int=0;x<loc.spaceX;x++)
             cells.push(readInputs(loc.space[x][y],["front","back","phis","zForm","fRear","diagon","stair","shelf","door","fake","vid","vid2","visi"]));
          for each(var bo:Object in loc.backobjs)art.push(readInputs(bo,["id","X","Y","scX","scY","frame","sloy","alpha","er"]));
          Log.d("DENSITY INPUTS "+JSON.stringify({role:host?"host":"join",seed:GameBridge.probe(mod.game.world.land,"rconnectLayoutSeed"),
             location:readInputs(loc,["id","spaceX","spaceY","darkness","lightOn","backwall","transpFon","homeStable","black"]),
-            color:String(loc.cTransform),backobjs:art,cells:cells,units:units,player:readInputs(mod.game.gg,actorKeys),
+            color:String(loc.cTransform),backobjs:art,cells:cells,units:units,viewGroups:viewGroups,player:readInputs(mod.game.gg,actorKeys),
             viewport:[mod.stage.stageWidth,mod.stage.stageHeight,mod.stage.frameRate,mod.stage.quality],
             camera:readInputs(mod.game.world.cam,["scaleV","x","y"]),nativeFrame:GameBridge.probe(mod.game.world,"frame")}));
       }
@@ -129,11 +142,18 @@ package {
       private function diagAfterFrame(e:Event):void {if(diagAt>0)diagAfter=getTimer();}
       private function diagEnd(e:Event):void {
          if(diagAt==0)return;
-         var end:int=getTimer(),total:int=0,cpu:int=0,stacks:Object={};
+         var end:int=getTimer(),total:int=0,cpu:int=0,stacks:Object={},allocations:Object={},deleted:int=0;
          if(diagSampling) {
             pauseSampling();total=getSampleCount();
             for each(var sample:Sample in getSamples()) {
-               if(sample is NewObjectSample || sample is DeleteObjectSample)continue;
+               if(sample is NewObjectSample) {
+                  // Summaries only: never retain a sampled object or its world.
+                  var created:NewObjectSample=sample as NewObjectSample;
+                  var kind:String=created.type==null?"<unknown>":getQualifiedClassName(created.type);
+                  var alloc:Object=allocations[kind];if(alloc==null)allocations[kind]=alloc={count:0,bytes:0};
+                  alloc.count++;alloc.bytes+=created.size;continue;
+               }
+               if(sample is DeleteObjectSample){deleted++;continue;}
                cpu++;var names:Array=[];
                if(sample.stack!=null)for each(var frame:StackFrame in sample.stack)
                   names.push(frame.name+"@"+frame.file+":"+frame.line);
@@ -141,7 +161,8 @@ package {
             }
             stopSampling();diagSampling=false;
          }
-         diagRows.push({phase:densityProbe,at:diagAt,after:diagAfter,end:end,samples:total,cpu:cpu,stacks:stacks});
+         diagRows.push({phase:densityProbe,at:diagAt,after:diagAfter,end:end,samples:total,cpu:cpu,stacks:stacks,
+            allocations:allocations,deleted:deleted});
          diagAt=0;
       }
       public function SustainedDensityTestDoc(withProjectiles:Boolean=false,profile:Boolean=false) {

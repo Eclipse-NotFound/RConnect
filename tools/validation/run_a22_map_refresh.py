@@ -137,9 +137,16 @@ def main():
         vision=args.vision_candidate.resolve()
         assert vision.parent.parent==ROOT/'build/m52' and vision.name=='RealisticVisionMod.swf'
         vision_manifest=read(vision.parent/'prepared.json')
-        assert vision_manifest['kind']=='isolated-rv-wall-comparison'
+        if vision_manifest['kind']=='isolated-rv-owner-candidate':
+            from prepare_a40_rv_owner import OWNER, BINARY, MAIN, HELPER
+            assert vision_manifest['origin_thread']==OWNER and vision_manifest['deployment_allowed'] is False
+            assert vision_manifest['candidate_sha256']==BINARY
+            assert vision_manifest['source']['src/RealisticVisionMod.as']==MAIN
+            assert vision_manifest['source']['src/RVWallSurface.as']==HELPER
+        else:
+            assert vision_manifest['kind']=='isolated-rv-wall-comparison'
         assert vision_manifest['baseline_sha256']==frozen['files']['mods/RealisticVision/release/RealisticVisionMod.swf']
-        for name,digest in vision_manifest['source'].items():assert sha(vision.parent/name)==digest,name
+        for name,digest in {**vision_manifest['source'],**vision_manifest['inputs']}.items():assert sha(vision.parent/name)==digest,name
         vision_hash=sha(vision);assert vision_hash==vision_manifest['candidate_sha256']
         command+=['--vision-candidate',str(vision)]
     wallblend_hash=None
@@ -154,6 +161,8 @@ def main():
         command+=['--wallblend-candidate',str(wallblend)]
     inputs=dict(prepared=sha(out/'prepared.json'),runtime=sha(bundle/'inputs.json'),
         runner=sha(ROOT/'tools/run_coop_regression.py'),script=sha(__file__),msw=msw_hash,fa=fa_hash,vision=vision_hash,wallblend=wallblend_hash,saves=save_inputs,
+        vision_prepared=sha(vision.parent/'prepared.json') if vision_hash else None,
+        wallblend_prepared=sha(wallblend.parent/'prepared.json') if wallblend_hash else None,
         driver={p.name:sha(p) for p in driver.glob('*.swf')})
     save(out/(label+'-intent.json'),dict(command=command,inputs=inputs,installation_before=installation_before,
         runtime_matches_installation=not runtime_difference,runtime_difference=runtime_difference))

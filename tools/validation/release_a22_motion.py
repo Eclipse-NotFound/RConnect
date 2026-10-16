@@ -26,6 +26,10 @@ def audit(out, bundle, evidence):
     changed = set(CHANGED)
     if 'src/rconnect/game/ExplorationSync.as' in m['overrides']:
         changed.add('src/rconnect/game/ExplorationSync.as')
+    # Reviewed A37/A39 pose-field and channel-comparison optimizations.
+    for name in ('src/rconnect/game/PlayerBodyEffects.as', 'src/rconnect/game/TerrainSync.as'):
+        if name in m['overrides'] and m['source'][name] != bm['source'].get(name):
+            changed.add(name)
     codec = {'src/rconnect/net/TcpLink.as', 'src/rconnect/net/BinaryMessageCodec.as'}
     if codec & m['overrides'].keys():
         require(codec <= m['overrides'].keys(), 'Incomplete negotiated codec override')
@@ -124,7 +128,7 @@ def audit(out, bundle, evidence):
             stdout = folder/(role+'.stdout.log')
             stdout_text = stdout.read_text(encoding='utf-8', errors='replace')
             require('out of memory' not in stdout_text.lower(), name+' AIR memory failure')
-            require(re.search(r'Error\s*#\d+|TypeError|ReferenceError|RangeError|VerifyError|uncaught',
+            require(re.search(r'\b(?:Error\s*#\d+|TypeError|ReferenceError|RangeError|VerifyError|uncaught)\b',
                               stdout_text, re.I) is None, name+' AIR/native exception')
             found = [line for line in text.splitlines() if "obj spawn '" in line and 'failed:' in line]
             require(all(line in known_warnings for line in found), name+' new object-spawn warning')
@@ -202,7 +206,7 @@ def main():
             log=(folder/(role+'.log')).read_text(encoding='utf-8-sig')
             require('v'+m['version']+' initialized' in log and 'tick 200' in log,'Smoke heartbeat')
             stdout=(folder/(role+'.stdout.log')).read_text(encoding='utf-8',errors='replace')
-            require(re.search(r'Error\s*#\d+|TypeError|ReferenceError|RangeError|VerifyError|uncaught|out of memory',
+            require(re.search(r'\b(?:Error\s*#\d+|TypeError|ReferenceError|RangeError|VerifyError|uncaught|out of memory)\b',
                               stdout,re.I) is None,'Smoke AIR/native exception')
         verify_install(runtime,overrides)
         d.update(status='deployed-smoke-passed',smoke_run=match[1],smoke_run_sha256=sha(folder/'run.json'))
