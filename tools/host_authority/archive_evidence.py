@@ -27,7 +27,9 @@ def blob_data(store, digest):
 def archive(run, store):
     run = inside_build(run)
     receipt = read(run/'run.json')
-    if (receipt.get('phase') not in ('B-native-probe', 'AB-native-comparison') or not receipt.get('experimental_only')
+    # B1/B2 used the same frozen files/exit/integrity receipt contract under
+    # the earlier phase name. Keep every other finalization check unchanged.
+    if (receipt.get('phase') not in ('B1-native-probe', 'B-native-probe', 'AB-native-comparison') or not receipt.get('experimental_only')
             or not receipt.get('owned_processes_exited') or not receipt.get('process_exit_codes')
             or any(p.get('code') is None for p in receipt['process_exit_codes'])
             or not receipt.get('installation_unchanged')
