@@ -14,6 +14,7 @@ import subprocess
 import time
 import uuid
 from validation.native_runtime_assets import native_runtime_files, asset_hashes
+from validation.runtime_memory import snapshot as memory_snapshot
 ROOT = Path(__file__).resolve().parents[1]
 GAME = ROOT.parents[1]
 
@@ -69,6 +70,18 @@ def main():
     token=uuid.uuid4().hex[:10]
     output=ROOT/'build'/'cooperation'/token
     output.mkdir(parents=True)
+    memory_before=memory_snapshot()
+    (output/'memory-before.json').write_text(json.dumps(memory_before,indent=2))
+    if memory_before['free_commit_bytes']<6*1024**3:
+        raise SystemExit('Less than 6 GiB commit headroom; no AIR instance started')
+    memory_rows=[memory_before];memory_stopped=False
+    memory_reader_hash=hashlib.sha256((ROOT/'tools/validation/runtime_memory.py').read_bytes()).hexdigest()
+    def record_memory():
+        nonlocal memory_stopped
+        row=memory_snapshot();memory_rows.append(row)
+        if row['free_commit_bytes']<512*1024**2:
+            memory_stopped=True
+        return not memory_stopped
     # Freeze one binary for both roles; rebuilding the candidate while host boots
     # must not silently give the joiner a different version.
     candidate=output/'candidate.swf'
@@ -226,8 +239,10 @@ def main():
         # instance starts. Keep configuration evidence after runtime cleanup.
         (output/'input.json').write_text(json.dumps(dict(candidate_sha256=candidate_hash,inputs=inputs,
             configuration_files=configuration_files,descriptors=descriptors,visible_windows=args.visible_windows,defer_visible=args.defer_visible,solo=args.solo,
-            save_templates=save_inputs,vision_config_templates=vision_inputs,vision_smoke_version=args.vision_smoke_version),indent=2))
+            save_templates=save_inputs,vision_config_templates=vision_inputs,vision_smoke_version=args.vision_smoke_version,
+            memory_reader_sha256=memory_reader_hash),indent=2))
         for role,folder,desc,storage,appid in launches:
+            if not record_memory():break
             stdout=(output/(role+'.stdout.log')).open('w',encoding='utf-8')
             proc=subprocess.Popen([str(game/'adl64.exe'),'-runtime',str(game/'runtimes/air/win64'),str(desc)],
                        cwd=folder,stdout=stdout,stderr=subprocess.STDOUT,creationflags=subprocess.CREATE_NO_WINDOW)
@@ -239,7 +254,10 @@ def main():
                 assert status['pid']==proc.pid and status['control']&1 and not status['state']&1
                 (output/(role+'.process-policy.json')).write_text(json.dumps(status,indent=2))
             print(json.dumps(dict(role=role,pid=proc.pid,appid=appid,log=str(storage/'RConnect.log'))),flush=True)
-            time.sleep(15 if role=='host' else 0)
+            boot_until=time.monotonic()+(15 if role=='host' else 0)
+            while time.monotonic()<boot_until:
+                if not record_memory():break
+                time.sleep(min(1,max(0,boot_until-time.monotonic())))
         (output/'run.json').write_text(json.dumps(dict(port=port,pids=[p.pid for p in procs],
             candidate=str(args.candidate.resolve()),sha256=candidate_hash,inputs=inputs,save_templates=save_inputs,
             vision_config_templates=vision_inputs,configuration_files=configuration_files,descriptors=descriptors,
@@ -249,6 +267,7 @@ def main():
         print('OUTPUT '+str(output),flush=True)
         deadline=time.monotonic()+args.seconds
         while time.monotonic()<deadline:
+            if not record_memory():break
             complete=True
             for role,path in artifacts:
                 content=path.read_text(encoding='utf-8',errors='replace') if path.exists() else ''
@@ -268,6 +287,9 @@ def main():
                 p.terminate()
                 try: p.wait(timeout=10)
                 except subprocess.TimeoutExpired: p.kill(); p.wait()
+        (output/'memory-timeline.json').write_text(json.dumps(dict(rows=memory_rows,
+            stopped_for_pressure=memory_stopped,minimum_commit_bytes=512*1024**2,
+            reader_sha256=memory_reader_hash),indent=2))
         for role,path in artifacts:
             if path.exists(): shutil.copy2(path,output/(role+'.log'))
             vision_log=path.parent/'RVision.log'
@@ -286,6 +308,8 @@ def main():
                         if attempt==5: print('Retained locked test copy: '+str(folder),flush=True)
                         else: time.sleep(0.5)
     ok=(set(inputs)=={'host'}) if args.solo else inputs.get('host')==inputs.get('join')
+    ok=ok and not memory_stopped
+    if memory_stopped:print('FAIL system commit headroom below 512 MiB; owned AIR instances stopped',flush=True)
     for role,_ in artifacts:
         path=output/(role+'.log')
         content=path.read_text(encoding='utf-8',errors='replace') if path.exists() else ''

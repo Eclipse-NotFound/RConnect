@@ -9,6 +9,7 @@ import subprocess
 import uuid
 from prepare_a33_rv import compile_as
 from run_a40_native import sha,read,save,ROOT,GAME
+from runtime_memory import snapshot, wait_owned
 
 def main():
     ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('mode',choices=('prepare','run'));ap.add_argument('candidate',type=Path)
@@ -29,6 +30,8 @@ def main():
     for n,h in m['inputs'].items():assert sha(folder/n)==h
     assert sha(folder/'WallNativePair.swf')==m['swf']
     app=folder/'app';evidence=folder/'evidence';assert not evidence.exists();evidence.mkdir()
+    memory=snapshot();save(evidence/'memory-before.json',memory)
+    assert memory['free_commit_bytes']>=6*1024**3, 'Less than 6 GiB commit headroom; no AIR started'
     app_id='wallblend-test-rconnect-pair-'+uuid.uuid4().hex[:12];runtime=Path(native['runtime']);process=None;links=[]
     installation={n:sha(GAME/n) for n in ('pfe.swf','mods/WallBlend/release/WallBlendMod.swf')}
     try:
@@ -52,8 +55,7 @@ def main():
                 stdout=log,stderr=subprocess.STDOUT,creationflags=subprocess.CREATE_NO_WINDOW)
             save(evidence/'intent.json',dict(app_id=app_id,pid=process.pid,prepared=sha(folder/'prepared.json'),installation_before=installation))
             print(json.dumps(dict(event='started',pid=process.pid,app_id=app_id)),flush=True)
-            try:code=process.wait(timeout=270)
-            except subprocess.TimeoutExpired:process.kill();process.wait();code=124
+            code=wait_owned(process,270,evidence/'memory-timeline.json')
         store=Path(os.environ['APPDATA'])/app_id/'Local Store'
         if store.exists():
             for p in store.iterdir():

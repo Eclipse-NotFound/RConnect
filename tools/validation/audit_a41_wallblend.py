@@ -13,6 +13,22 @@ from release_a22_map import ROOT, sha, read, require
 PREPARED = 'ced7b87907d1d4659dc8a3ca4f25289932769f5b3acf5f5f7ee8b73257ed8a75'
 FROZEN = '034def4228b08f30280a10793aee9cbdf6b4478a5df26951bf6caa207c96aa42'
 HOST = '2a4662488ba3b690eb23acfe4b79aca3f0d9ae114e5e2dee7595af3cabffb3ea'
+# The first four complete runs remain valid. Coverage lost its runner before
+# recording an exit, so it and the not-yet-started suites need new evidence.
+ATTEMPTS = {kind: ('memory-stable-01' if kind in ('Harness', 'Destruction')
+                   else 'session-recovery-04') for kind in COUNTS}
+
+
+def verify_memory(folder, require_exit=False):
+    memory = read(folder/'memory-timeline.json')
+    require(read(folder/'memory-before.json')['free_commit_bytes'] >= 6*1024**3
+            and memory['reason'] is None and memory['rows']
+            and min(row['free_commit_bytes'] for row in memory['rows']) >= 512*1024**2,
+            'Native test was under memory pressure: '+str(folder))
+    if require_exit:
+        require(memory.get('exit_code') == 0 and memory.get('process_returncode') == 0,
+                'Missing successful process exit: '+str(folder))
+    return sha(folder/'memory-timeline.json')
 
 
 def audit(candidate):
@@ -62,15 +78,40 @@ def audit(candidate):
         require(sha(native/name) == row['adapted'], 'Native fixture changed: '+name)
     for name, digest in nm['swfs'].items():
         require(sha(native/name) == digest, 'Native driver changed: '+name)
+    earlier = native/'evidence/candidate/Harness'
+    original_failure = read(earlier/'receipt.json')
+    require(original_failure['exit'] == 0xc0000005 and not original_failure['passed']
+            and 'out of memory' in (earlier/'stdout.log').read_text(encoding='utf-8'),
+            'Original memory-pressure failure was not preserved')
+    require((earlier/'environment-failure.json').is_file(), 'Missing resource exhaustion evidence')
+    interrupted = native/'evidence/memory-stable-01/control/Coverage'
+    recovered = read(interrupted/'interrupted-run.json')
+    require(recovered['qualified'] is False and recovered['exit_code'] is None
+            and recovered['raw_native_passed'] is True and recovered['raw_native_assertions'] == 373
+            and not (interrupted/'receipt.json').exists(), 'Interrupted run was reclassified')
+    for name, digest in recovered['recovered'].items():
+        path = (interrupted/name).resolve()
+        require(path.parent == interrupted.resolve() and sha(path) == digest,
+                'Recovered evidence changed: '+name)
+    blocked = {}
+    for attempt in ('session-recovery-02', 'session-recovery-03'):
+        folder = native/'evidence'/attempt/'control/Coverage'
+        require(read(folder/'memory-before.json')['free_commit_bytes'] < 6*1024**3
+                and not (folder/'intent.json').exists(), 'Blocked preflight was reclassified')
+        blocked[attempt] = sha(folder/'memory-before.json')
     runs = {}
     for role in ('control', 'candidate'):
         for kind, count in COUNTS.items():
-            folder = native/'evidence'/role/kind
+            attempt = ATTEMPTS[kind]
+            folder = native/'evidence'/attempt/role/kind
             intent = read(folder/'intent.json')
             require(intent['prepared'] == sha(native/'prepared.json') and intent['mod'] == nm[role]
                     and intent['host'] == HOST
+                    and intent['attempt'] == attempt
                     and intent['harness'] == nm['swfs'][role+'/WallBlend'+kind+'.swf'], 'Native run mismatch')
             runs[role+'/'+kind] = verify_run(folder, count)
+            runs[role+'/'+kind]['attempt'] = attempt
+            runs[role+'/'+kind]['memory_sha256'] = verify_memory(folder, attempt != 'memory-stable-01')
     pair = out/'paired-01'
     pm = read(pair/'prepared.json')
     require(pm['parent_native'] == sha(native/'prepared.json'), 'Same-scene parent changed')
@@ -80,6 +121,7 @@ def audit(candidate):
     evidence = pair/'evidence'
     require(read(evidence/'intent.json')['prepared'] == sha(pair/'prepared.json'), 'Same-scene intent changed')
     runs['same-scene'] = verify_run(evidence, 231)
+    runs['same-scene']['memory_sha256'] = verify_memory(evidence, True)
     images = read(evidence/'receipt.json')['images']
     old_names = sorted(n for n in images if '-old-' in n)
     require(len(images) == 76 and len(old_names) == 38
@@ -97,6 +139,10 @@ def audit(candidate):
                 prepared_sha256=PREPARED, candidate_sha256=m['candidate_sha256'],
                 baseline_sha256=m['baseline_sha256'], host_sha256=HOST,
                 semantic_groups=15, exact_comparisons=4859, runs=runs, exact_pixel_pairs=pairs,
+                original_failure_sha256=sha(earlier/'receipt.json'),
+                environment_failure_sha256=sha(earlier/'environment-failure.json'),
+                interrupted_run_sha256=sha(interrupted/'interrupted-run.json'),
+                blocked_preflight_sha256=blocked,
                 remaining='Exact final runtime; unchanged joint density and continuity gates; final functional regression and normal-loader smoke.')
 
 
