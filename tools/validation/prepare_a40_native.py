@@ -30,7 +30,9 @@ def main():
     original={n:subprocess.check_output(['git','-C',str(WB),'show',BASE+':'+n]) for n in files if n.endswith('.as')}
     records={}
     air=GAME/'mods/Sandevistan/build/tools/airsdk/frameworks/libs/air/airglobal.swc'
-    for role,version in (('control','0.5.4-scene'),('candidate',m['version'])):
+    baseline_version=m.get('baseline_version','0.5.4-scene')
+    assert baseline_version in ('0.5.4-scene','0.5.6-scene')
+    for role,version in (('control',baseline_version),('candidate',m['version'])):
         dest=native/role/'tests';dest.mkdir(parents=True)
         for name,body in original.items():
             # Exact identity is updated, no behavioral or performance condition.
