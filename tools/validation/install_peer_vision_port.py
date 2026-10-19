@@ -17,6 +17,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('candidate')
     ap.add_argument('--attempt', default='01')
+    ap.add_argument('--audit-only', action='store_true', help='Read-only evidence and installation check')
     args = ap.parse_args()
     require(re.fullmatch(r'[0-9]{2}', args.attempt), 'Invalid attempt')
     candidate = (ROOT / args.candidate).resolve()
@@ -65,6 +66,13 @@ def main():
     previous = 'a02e5aafc2ba529d37a78c83ac92a055121b72d347d56ab8ca720802cc9ddf60'
     require(sha(target) == previous, 'Installation changed since fix39 handoff')
     verify_install(current)
+    if args.audit_only:
+        print(json.dumps(dict(q_feature_qualified=True, full_release_qualified=False,
+                              candidate_sha256=digest, native_run=tested['run'],
+                              assertions=sum(tested[role]['passed'] for role in ('host', 'join')),
+                              scenarios=26, installed_sha256=previous,
+                              deployment_performed=False), ensure_ascii=False), flush=True)
+        return
     output = candidate / ('installation-' + args.attempt)
     output.mkdir(exist_ok=False)
     save(output / 'installation-before.json', current)
