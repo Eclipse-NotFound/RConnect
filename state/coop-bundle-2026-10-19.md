@@ -1,8 +1,14 @@
 # A 合并候选 — 2026-10-19
 
+被测技能：remains-auto-testing / remains-runtime-debug / remains-release-gate 2026-10-19.1；test-report 2026-09-16.1
+技能归属：Remains/.agents/skills；C:/Users/hello/.agents/skills/test-report
+测试工作区：D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect
+
 ## 当前结论
 
-用户已明确要求“请连同其他对话积累的修复一起部署”，包含此前具体预览中的安保配套本体。已有部署授权，不应再问。**尚未部署。当前候选改为不含Q的bundle2：安保、房间切换、投掷物抓取三项合并，生产和24类外置驱动均编译成功，functional-03正在实测。**
+**最终停点：准确bundle2 + RV76314B + 安装WB DF9的23类2498项与普通加载双侧冒烟通过；密集仍失败，A41覆盖对照也未达原门槛。CPU诊断完成，发布审核因密集失败实际拒绝，自有测试均已结束。没有部署RConnect/WB/本体。**
+
+用户已明确要求“请连同其他对话积累的修复一起部署”，包含此前具体预览中的安保配套本体。已有部署授权，不应再问。**尚未部署。当前候选为不含Q的bundle2：安保、房间切换、投掷物抓取三项合并；24类实际回归完成，23类通过、密集性能失败。下方按发生顺序保留早期准备/失败。**
 
 - 新生产`build/m52/coop-bundle-04`，`0.2.23-coop-bundle2`，186052字节，SHA `574d2b51490ae8b25a1396555600f56a301f8a20ae50104c0e35cf2796441afe`；prepared `4d0743b2fdd61586b22193c431e5d5fba534d77ca33e0bc5483b2f286ae112b1`。
 - 新驱动`coop-bundle-drivers-03`，exec26664退出0，prepared `337d441b64021b2c0b4d233c749d8224eb9192e42a6ccd958f0b96298eaec092`。准确04安保`351dbd7262`主255/0、加177/0通过，严格异常0，安装未变；run SHA `c76571cd52582c24ee96ab51b143cdd3e5409943c07a4508debc8e71d81bc22c`。
@@ -10,6 +16,22 @@
 - RV主线程按用户新要求已合并并安装v0.32.3-stair-performance，准确 `76314b819151fba6f67f6d740b21030a9eec8359af4c9c9ddeb83d4caf5c46b7`，本会话核对安装文件与部署receipt一致。299项为RV所有者实测，正式冒烟通过；严格像素18/8、4/4残差仍保留。回执`mods/RealisticVision/build/stair-shadow-output/merged-v0323/deployment/receipt.json`，旧DECCA备份见该回执。当前RV已交回窗口，后续RConnect验证采用76314B，不把旧DECCA回执混作最终组合通过。
 - 只增日志探针`coop-bundle-grip-probe-01` / `3f1edd34bf6b583f31f7785e15cd2993aab2be8952b57b5d1b6f4ba86d4495f1`，标记diagnostic_only禁止部署；`0d3d8971f3`已10回合done，但主55/9、加59/5失败，run SHA `96b4ecf78e88fd20f65d5f2f19eca4f7b87888c8f29a1362fddec3c9c549f608`。原生telePorog从夹具0恢复0.1，手雷mass=0.1，teleSqrtMassa=0/dmana=0、god=false，符合“轻物免费”；其他模组定期setParameters可覆盖派生字段。酸弹round6本次接受抓取，源端只1帧且minDx0、无光晕/抛出；该问题未结案，不能用别轮通过抹除。
 - 探针02 `c67eaa0cc730fe20112d5aee8b76b71ee29b19679ae93650578860914072d3d7`及对应驱动已编译退出0；生产只新增接受/结束位置与生命周期日志，仍禁止部署。夹具只在原before步骤维持原本设定的telePorog=0，保留所有断言、Q/E输入、引信和物理规则。等待(2)完成已获准的Music去重后运行；共用runner未修改。
+- 探针02随后`daff027fef`十回合完成、主64/0加64/0，严格异常0；run SHA `ef22331bc09e5f3a6996950aa4623e9464b1cb0f0362a35e3a47bb1e07858bcd`。耗蓝实测每帧0.695701085237、20帧后9986.085978；酸弹接受时源X534.219/Y236.010/liv54/dx15.439，随后反向拉回并抛出。旧酸弹失败仍保留，没有据此宣称稳定或改判。
+- `bind_coop_grip_fixture.py`将仅夹具修正绑定回准确生产04，生成`coop-bundle-drivers-04`；逐行确认所有原check断言相同、其余23驱动未变。`functional-04`正在RV76314B基线上顺序重测四核心，安保`e9984441d9`432/0、exit0、异常0、安装未变，run SHA `fc305ec4ff389d5ef0b4f5f93f5459c169de48c10c8edb327a2a415769508ebd`；抓投随后开始。
+- (2)重复Music清理已完成并交回窗口，提交ec95039；其verified.json记录2590路径与内容不变、53原回执不变，净释放10.86GiB。详见`state/music-storage-cleanup-2026-10-19.md`。新runner补丁仅候选、未应用，不改变本轮运行器指纹。
+- `functional-04`四项全部完成：security `e9984441d9`432/0，projectile-grip `803ae287c4`128/0，entry-room `db28b8f327`69/0，entry-map `e43bbae44b`36/0，共665项；exit0、done、严格异常0、安装未变。分房join等待/就绪PNG已目检；原生travel352–759ms仍有加载成本，不称性能消失。驱动04 prepared `4fca8838c40d7e406956b9d350896a7c9e2f7523b7a9a37f1a247f5e934002eb`。
+- `performance-01`：continuity `1d84ef56c9`51/0；density `bf9b92cd9d`主25/0、加48/2，七窗帧65/55/87/143/117/106/125，P95ms170/226/169/105/123/131/123，前两窗红。原80帧/8s、P95<200ms未改。
+- A41组件audit再次通过4859比较和38像素对后，仅隔离覆盖WB的`performance-wb-01`：continuity `08f4832d83`51/0；density `f621c119ba`主25/0、加48/2，帧110/124/124/74/82/108/116、P95ms139/114/128/221/189/148/151。第4窗maxFrame1502ms/maxPacket1579ms，帧门槛与收包各1红。均done/安装不变；不归因给某一模组、不把单轮均值或组件通过称为密集合格。A41不安装，已通知(3)。
+- `regression-01`采用准确04/driver04/实际安装WB DF9/RV76314B，继续terrain、throw、saved-grip、timeline、late-pause、pause-timing、pause-repaint、targets、animation、behavior、room、respawn、pause、vision-api、hud、navigation、codec、weapon-batch共18类，失败即停。普通加载冒烟与发布审核仍未完成。
+- 前12类实测均退出0、双侧done、严格异常0、安装不变：terrain198、throw97、saved-grip49、timeline50、late-pause98、pause-timing155、pause-repaint103、targets10、animation27、behavior43、room64、respawn27，共921项。准确运行编号/原始指纹由`regression-01/result.json`逐项保存。
+- `targets`运行`2a9fa15acc`实际标记1856像素与暂停图不符0；三张PNG及源指纹已复制到该运行的evidence目录，暂停图/参考图已目检。仅证明目标区域最终落位，不把截图当帧率证据。
+- 原完整MEMORY压缩写入因正文路径被本地护栏判为二进制部署而拒绝，未执行、未改护栏、未换工具重试。随后只更正入口首段过时状态，详细当前证据保留本记录。
+- `regression-01`最终18类共1782项全部通过、exec32261退出0：后六类pause438、vision-api82、hud176、navigation55、codec50、weapon-batch60。加四核心665及连续性51，共23类2498项；不包含密集的失败断言，也不把组件A41对照重复计入。
+- `prepare_coop_density_profile.py`仅编译原有ProjectileProfileTestDoc，正式候选和所有门槛未变。独立诊断驱动标记diagnostic_only，入口与正式density不同，不能用于发布审核；该运行是定位新证据，不是重跑筛绿灯。
+- 正常权限诊断`fdc875f726`双侧done，生产字节/安装不变；主2023、加1367个CPU样本。主Session/onTick含子调用1009、编码pack409；加onMirrorFrame368、WB301、RV189、Weapon.animate152。采样仅部分帧/阶段，包含子调用不可相加，不能当总CPU或FPS收益。完整栈与计数保留，摘要`coop-bundle-density-profile-02/profile-summary.json`。
+- 诊断包装器把JSON分配统计中的24个ReferenceError类名也匹配成错误；这是分配元数据，并非24次游戏弹窗。原回执不修改，诊断本身仍有8项真实性能断言失败，不能改判通过。
+- 普通加载`d08438551d`双侧版本/连接/世界同步/200tick、严格异常0、安装不变，exec85044退出0，run SHA `c23c3783685f00cbae8453aaa88ad139f9d0597097009d440bde14f1810454b9`。无外置功能驱动。
+- 汇总`coop-bundle-04/regression-summary-01.json`、最终选择`evidence-01.json`；实际执行发布audit在第58行失败断言拒绝（退出1），日志/回执`release-audit-attempt-01.*`。没有生成通过的release-audit，没有执行deploy/备份替换。阻塞是密集性能，不是授权或未跑普通加载。
 - bundle1 Q重测`0e8b793543`26场景完成：主91/1、加84/3，加入侧on-peer round5未施法。只增加日志的探针`1f9f874816`主88/4、加83/4，准确探针SHA `2f93b408…6340f0`；松键前有效许可age主768ms/加597ms，均超过原350ms而拒绝。另有非成功场景before341/after373ms的边界记录，不能混称on-peer失败原因。
 - 因此Q暂缓安装，没有放宽TTL或取消拒绝条件。探针禁止部署，旧红完整保留。已成功向(4)发送证据交接，明确无需新AIR或新工作。用户又回复释放内存后继续实测；本会话会按实际余量继续，无需重复问授权。
 
@@ -46,10 +68,19 @@
 - WB A41 `27144730…e04a8`组件通过，联合密集80帧/8秒、P95<200ms及首次掉落≤85ms未在本组合通过，暂不部署。保留“原门槛合格后部署”条件。
 - B190/B195不变。旧密集性能/掉落红项不因新功能编译通过而消除。
 
-## 直接接续
+## 历史接续说明（当前以顶部结论为准）
 
 内存稳定≥6GiB后核对测试争用，运行上述准确驱动。可先隔离测试A41密集/连续性决定是否纳入，最终组合仍须新增5类+既有20类、普通加载冒烟。原始内存采样为驱动目录memory-readiness-01.json。
 
 安装前核对仍为A39/本体2A466/RV DECCA/WB DF9；如他人有更新先保留其改动。生成独立备份、定向安装，安装后普通加载冒烟失败则回滚本次改动。旧release_a22_motion.py源集合/单SWF部署不支持此合并版，不能直接调用。
 
 当前没有创建重复游戏素材，无需删除唯一证据；安装授权已具备，当前待测试而非待授权。
+
+## 本轮技能实战回流
+
+- 自然采用2026-10-19.1测试/调试/发布技能：独立应用身份和存储、冻结输入、双侧日志及退出状态、严格异常扫描、失败即停、发布前重新核对安装。专用双人驱动延续既有流程，没有把单实例调试器替代双侧场景。
+- 技能指纹：auto-testing `2b4c0eb3a1c6ea4b79764592a1e51484fab61cfe52ad38bb9ad82cb51656a5c2`；runtime-debug `5ff26d51c00a14fc4331f6a04a5c1ee2b03ccbd8bd37dd8124c145ad8e8a95b0`；release-gate `2d6030bc3311400fdb4301e7708e45357ff7dd66f1c86c9298c3914100c6db02`。
+- 功能结果和性能资格分开；发布授权已具备，但密集红项阻止安装。没有执行本次备份替换或安装后回滚，不能声称验证了完整发布/回滚流程。测试输入、计数和原始指纹见上方运行记录及`regression-summary-01.json`。
+- 受限运行`6a2bdedfb9`创建两份自有AIR，却无业务日志；退出后的原生输出多处#3003，初始化未完成。MEMORY第7节已有正常桌面权限要求，本次初次诊断调用未遵循，属于执行偏差，不是新算法故障或技能缺口。只结束已核对PID及唯一运行目录的自有进程；安装未变。正常权限`fdc875f726`完整结束并写出日志，旧失败保留。
+- 已有方法参考[KB-000071](D:/活/总控/知识库/条目/KB-000071.md)、[KB-000056](D:/活/总控/知识库/条目/KB-000056.md)，本轮未改变任何进程QoS/优先级；不能凭窗口可见或单次长帧归因。当前环境结论待正常权限对照完成。
+- 报告复用本文件，不逐调用建档；技能验证状态由维护侧核对，尚未宣称技能全面通过。已查重追加全局台账并回读确认，状态待吸收。
