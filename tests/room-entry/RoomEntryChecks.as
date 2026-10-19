@@ -63,6 +63,9 @@ package {
          check(!mod.game.world.onPause,"exit sequence remains free to finish");
          mod.game.transition=false;mod.game.world.t_exit=0;seal(1);frame();
          check(mod.game.roomHold && mod.game.world.onPause,"room simulation waits for grant");
+         var readyMessage:Object;
+         for each(var sent:Object in mod.session.link.messages)if(sent.op=="ready")readyMessage=sent;
+         check(readyMessage!=null && readyMessage.fresh==null,"shared destination does not encode an unused native copy");
          check(pixel()!=red,"waiting for complete checkpoint hides provisional layout");
          mod.game.restoreHook=function():void{render();check(pixel()!=red,"partial checkpoint cannot be displayed");};
          grant(1);render();mod.game.restoreHook=null;
@@ -107,10 +110,44 @@ package {
          mod.session.rooms.handle({type:"room",op:"ready",barrier:sealMsg.barrier,epoch:sealMsg.epoch,
             info:mod.game.readWorldInfo(),oldKey:"",oldTerm:0,own:null,fresh:RoomCodec.pack(mod.game.checkpoint())});
          render();check(pixel()!=red,"host does not release presentation before join ack");
+         check(mod.game.restores==0,"new authoritative native room is never restored into itself");
          check(!mayPublish(),"host cannot publish world state before join ack");
          mod.session.rooms.handle({type:"room",op:"ack",barrier:sealMsg.barrier});render();
          check(pixel()==red && !mod.session.rooms.busy,"host releases its authoritative original room on ack");
          check(mayPublish(),"host can publish again after the acknowledged grant");
+         nameOfCase="only peer enters a different room";
+         var beforeRestore:int=mod.game.restores;
+         mod.session.rooms.handle({type:"room",op:"request",info:{roomKey:"map//1,0,0"}});render();
+         check(pixel()==red,"stationary host stays visible during peer handoff");
+         check(!mod.game.world.onPause && !mod.game.roomHold,"stationary host simulation continues");
+         var n:int=mod.session.outbox.length,peerSeal:Object=mod.session.outbox[n-1];
+         mod.session.rooms.handle({type:"room",op:"ready",barrier:peerSeal.barrier,epoch:peerSeal.epoch,
+            info:{roomKey:"map//1,0,0"},oldKey:"map//0,0,0",oldTerm:1,own:null,
+            fresh:RoomCodec.pack({key:"map//1,0,0",color:green,width:12,height:8})});
+         mod.session.rooms.handle({type:"room",op:"ack",barrier:peerSeal.barrier});render();
+         check(mod.game.restores==beforeRestore,"peer departure does not restore unchanged host room");
+         check(pixel()==red && !mod.game.world.onPause,"stationary host remains available after peer entry");
+         nameOfCase="native travel boundaries";
+         mod.game.world.cam={dblack:1.5};mod.game.world.t_die=0;mod.game.world.comLoad=-1;
+         mod.game.world.game={crea:true,curLandId:"map",lands:{}};
+         mod.game.transition=true;mod.game.world.t_exit=80;mod.game.world.vblack.alpha=0;
+         frame();check(mod.game.world.t_exit==80 && mod.game.world.cam.dblack==100,"unfinished fade speeds up without skipping loading");
+         mod.game.world.vblack.alpha=1;frame();check(mod.game.world.t_exit==21,"finished decorative fade uses the native quick-travel boundary");
+         for each(var boundary:int in [20,19,18,17]) {
+            mod.game.world.t_exit=boundary;frame();check(mod.game.world.t_exit==boundary,"native loading/click boundary retained "+boundary);
+         }
+         mod.game.world.t_exit=16;mod.game.world.cam.dblack=-10;mod.game.world.vblack.alpha=1;frame();
+         check(mod.game.world.t_exit==16 && mod.game.world.cam.dblack==-100,"uncompleted reveal keeps native control boundary");
+         mod.game.world.vblack.alpha=0;frame();check(mod.game.world.t_exit==2,"completed reveal still leaves the native HUD boundary");
+         nameOfCase="fresh independent join room";fresh(Session.CONNECTED);seal(1);frame();grant(1);frame();
+         var oldHostInfo:Object=mod.game.readWorldInfo();mod.game.setRoom("map//9,0,0",red);frame();
+         mod.session.rooms.handle({type:"room",op:"seal",barrier:2,epoch:1,info:oldHostInfo});
+         readyMessage=null;for each(sent in mod.session.link.messages)if(sent.op=="ready" && sent.barrier==2)readyMessage=sent;
+         beforeRestore=mod.game.restores;
+         mod.session.rooms.handle({type:"room",op:"grant",barrier:2,epoch:1,term:2,owner:true,fresh:true,
+            key:mod.game.roomKey(),state:readyMessage.fresh});render();
+         check(mod.game.restores==beforeRestore && pixel()==red,"matching fresh owner grant preserves the held native room");
+         check(mod.session.rooms.ready && mod.session.rooms.authority && !mod.game.roomHold,"fresh owner grant releases native simulation");
          nameOfCase="existing pause and foreign grant";fresh(Session.CONNECTED);mod.game.world.onPause=true;
          seal(1);grant(1);render();check(mod.game.world.onPause,"existing local pause survives handoff");
          mod.game.world.onPause=false;mod.game.setRoom("map//5,0,0",red);frame();seal(2);

@@ -37,10 +37,12 @@ package rconnect.game {
       public function releaseMovablesForHandoff():void{}
       public function followHostWorld(info:Object):String{return "skip-same-room";}
       public function followMapGeneration(info:Object):void{}
+      public function startSharedTravel(info:Object):Boolean{return false;}
       public function inRoom(room:Object,fn:Function):* {
          var previous:Object=loc;loc=room;try{return fn();}finally{loc=previous;}
       }
       public function checkpoint():Object{return {key:roomKey(),color:loc.color,width:12,height:8};}
+      public function roomRole(authority:Boolean):void{freezeAI=!authority;}
       public function restoreCheckpoint(s:Object,authority:Boolean,foreign:Boolean):void {
          restores++;if(restoreHook!=null)restoreHook();
          if(failRestore)throw new Error("injected restore failure");

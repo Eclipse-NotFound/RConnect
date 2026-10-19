@@ -11,10 +11,12 @@ from pathlib import Path
 import shutil
 import socket
 import subprocess
+import sys
 import time
 import uuid
 from validation.native_runtime_assets import native_runtime_files, asset_hashes
 from validation.runtime_memory import snapshot as memory_snapshot
+from validation.air_test_inventory import air_processes
 ROOT = Path(__file__).resolve().parents[1]
 GAME = ROOT.parents[1]
 
@@ -41,6 +43,9 @@ def main():
     ap.add_argument('--all-mods', action='store_true', help='Load all installed manifest modules in the isolated scenario')
     ap.add_argument('--responsive', action='store_true', help='Use the same process-local HighQoS policy as Start-Coop.bat')
     ap.add_argument('--visible-windows', action='store_true', help='Render visible native game windows, as in normal play')
+    ap.add_argument('--private-desktop', action='store_true', help='Keep the entire owned AIR process on a private Windows desktop')
+    ap.add_argument('--wait-host-world', action='store_true', help='Complete host bootstrap before starting the peer; no scenario travel is timed here')
+    ap.add_argument('--require-exclusive-air',action='store_true',help='Reject overlapping AIR processes; never stop a process owned by another task')
     ap.add_argument('--defer-visible', action='store_true', help='External effects harness shows the window after native UI initialization; avoids the native pre-PipBuck resize race')
     ap.add_argument('--host-save-template',type=Path,help='Copy this slot-zero SOL into isolated slot nine; never modify the source')
     ap.add_argument('--join-save-template',type=Path,help='Copy this slot-zero SOL into isolated slot nine; never modify the source')
@@ -50,6 +55,7 @@ def main():
     ap.add_argument('--expected-version',default=re.search(r'VERSION:String\s*=\s*"([^"]+)"',
                     (ROOT/'src'/'RConnectMod.as').read_text(encoding='utf-8')).group(1))
     args=ap.parse_args()
+    if args.private_desktop and args.visible_windows:ap.error('Private desktop and visible windows are mutually exclusive')
     if args.solo and (args.connect_after_load or args.join_save_template or args.presentation):
         ap.error('--solo cannot use a join save, deferred connection or paired presentation test')
     roles=('host',) if args.solo else ('host','join')
@@ -73,16 +79,25 @@ def main():
     output.mkdir(parents=True)
     memory_before=memory_snapshot()
     (output/'memory-before.json').write_text(json.dumps(memory_before,indent=2))
-    if memory_before['free_commit_bytes']<6*1024**3:
-        raise SystemExit('Less than 6 GiB commit headroom; no AIR instance started')
-    memory_rows=[memory_before];memory_stopped=False
+    if args.require_exclusive_air:
+        foreign=air_processes()
+        (output/'air-before.json').write_text(json.dumps(foreign),encoding='utf-8')
+        if foreign:raise SystemExit('Other AIR processes exist; timing run not started: '+str(foreign))
+    minimum_start_gib=3 if args.solo else 6
+    if memory_before['free_commit_bytes']<minimum_start_gib*1024**3:
+        raise SystemExit('Less than '+str(minimum_start_gib)+' GiB commit headroom; no AIR instance started')
+    memory_rows=[memory_before];memory_stopped=False;isolation_stopped=False
     memory_reader_hash=hashlib.sha256((ROOT/'tools/validation/runtime_memory.py').read_bytes()).hexdigest()
     def record_memory():
-        nonlocal memory_stopped
+        nonlocal memory_stopped,isolation_stopped
         row=memory_snapshot();memory_rows.append(row)
+        if args.require_exclusive_air:
+            own={p.pid for p in procs}
+            row['foreign_air']=[p for p in air_processes() if p['pid'] not in own]
+            if row['foreign_air']:isolation_stopped=True
         if row['free_commit_bytes']<512*1024**2:
             memory_stopped=True
-        return not memory_stopped
+        return not memory_stopped and not isolation_stopped
     # Freeze one binary for both roles; rebuilding the candidate while host boots
     # must not silently give the joiner a different version.
     candidate=output/'candidate.swf'
@@ -213,7 +228,7 @@ def main():
 <initialWindow><content>pfe.swf</content><visible>'''+str(args.visible_windows and not args.defer_visible).lower()+'''</visible><renderMode>direct</renderMode></initialWindow>
 </application>''',encoding='utf-8')
             if args.defer_visible:
-                assert args.effects and args.visible_windows, 'Deferred visibility requires the isolated effects harness'
+                assert args.effects and (args.visible_windows or args.private_desktop), 'Deferred visibility requires the isolated effects harness and an owned display'
                 (folder/'tests/show-window-when-ready.flag').write_text('native UI ready',encoding='utf-8')
             storage=Path(os.environ['APPDATA'])/appid/'Local Store'
             if role in vision_templates:
@@ -246,11 +261,19 @@ def main():
         (output/'input.json').write_text(json.dumps(dict(candidate_sha256=candidate_hash,inputs=inputs,
             configuration_files=configuration_files,descriptors=descriptors,visible_windows=args.visible_windows,defer_visible=args.defer_visible,solo=args.solo,
             save_templates=save_inputs,vision_config_templates=vision_inputs,vision_smoke_version=args.vision_smoke_version,
-            memory_reader_sha256=memory_reader_hash),indent=2))
+            memory_reader_sha256=memory_reader_hash,minimum_start_gib=minimum_start_gib,private_desktop=args.private_desktop,
+            require_exclusive_air=args.require_exclusive_air,air_inventory_sha256=hashlib.sha256((ROOT/'tools/validation/air_test_inventory.py').read_bytes()).hexdigest(),
+            desktop_helper_sha256=hashlib.sha256((GAME/'mods/ModLoader/tools/air_test_process.py').read_bytes()).hexdigest() if args.private_desktop else None),indent=2))
         for role,folder,desc,storage,appid in launches:
             if not record_memory():break
             stdout=(output/(role+'.stdout.log')).open('w',encoding='utf-8')
-            proc=subprocess.Popen([str(game/'adl64.exe'),'-runtime',str(game/'runtimes/air/win64'),str(desc)],
+            if args.private_desktop:
+                sys.path.insert(0,str(GAME/'mods/ModLoader/tools'))
+                from air_test_process import HiddenProcess
+                proc=HiddenProcess([str(game/'adl64.exe'),'-runtime',str(game/'runtimes/air/win64'),str(desc)],
+                       cwd=folder,stdout=stdout,stderr=stdout)
+            else:
+                proc=subprocess.Popen([str(game/'adl64.exe'),'-runtime',str(game/'runtimes/air/win64'),str(desc)],
                        cwd=folder,stdout=stdout,stderr=subprocess.STDOUT,creationflags=subprocess.CREATE_NO_WINDOW)
             procs.append(proc)
             if args.responsive:
@@ -260,14 +283,18 @@ def main():
                 assert status['pid']==proc.pid and status['control']&1 and not status['state']&1
                 (output/(role+'.process-policy.json')).write_text(json.dumps(status,indent=2))
             print(json.dumps(dict(role=role,pid=proc.pid,appid=appid,log=str(storage/'RConnect.log'))),flush=True)
-            boot_until=time.monotonic()+(15 if role=='host' else 0)
+            boot_until=time.monotonic()+((180 if args.wait_host_world and not args.solo else 15) if role=='host' else 0)
             while time.monotonic()<boot_until:
                 if not record_memory():break
+                if args.wait_host_world and not args.solo and role=='host':
+                    log_path=storage/'RConnect.log'
+                    boot_text=log_path.read_text(encoding='utf-8',errors='replace') if log_path.exists() else ''
+                    if re.search(r'RConnectDbg: tick .*world='+re.escape(args.land)+r'/[^\r\n]*t_exit=0[^\r\n]*allStat=1[^\r\n]*onPause=false',boot_text):break
                 time.sleep(min(1,max(0,boot_until-time.monotonic())))
         (output/'run.json').write_text(json.dumps(dict(port=port,pids=[p.pid for p in procs],
             candidate=str(args.candidate.resolve()),sha256=candidate_hash,inputs=inputs,save_templates=save_inputs,
             vision_config_templates=vision_inputs,configuration_files=configuration_files,descriptors=descriptors,
-            visible_windows=args.visible_windows,defer_visible=args.defer_visible,solo=args.solo,
+            visible_windows=args.visible_windows,defer_visible=args.defer_visible,solo=args.solo,private_desktop=args.private_desktop,wait_host_world=args.wait_host_world,
             vision_smoke_version=args.vision_smoke_version,
             input_manifest_sha256=hashlib.sha256((output/'input.json').read_bytes()).hexdigest()),indent=2))
         print('OUTPUT '+str(output),flush=True)
@@ -290,11 +317,13 @@ def main():
     finally:
         for p in procs:
             if p.poll() is None:
-                p.terminate()
+                if args.private_desktop:p.kill()
+                else:p.terminate()
                 try: p.wait(timeout=10)
                 except subprocess.TimeoutExpired: p.kill(); p.wait()
+            if args.private_desktop:p.close()
         (output/'memory-timeline.json').write_text(json.dumps(dict(rows=memory_rows,
-            stopped_for_pressure=memory_stopped,minimum_commit_bytes=512*1024**2,
+            stopped_for_pressure=memory_stopped,stopped_for_overlap=isolation_stopped,minimum_commit_bytes=512*1024**2,
             reader_sha256=memory_reader_hash),indent=2))
         for role,path in artifacts:
             if path.exists(): shutil.copy2(path,output/(role+'.log'))
@@ -314,7 +343,8 @@ def main():
                         if attempt==5: print('Retained locked test copy: '+str(folder),flush=True)
                         else: time.sleep(0.5)
     ok=(set(inputs)=={'host'}) if args.solo else inputs.get('host')==inputs.get('join')
-    ok=ok and not memory_stopped
+    ok=ok and not memory_stopped and not isolation_stopped
+    if isolation_stopped:print('FAIL another AIR instance overlapped; only owned instances stopped',flush=True)
     if memory_stopped:print('FAIL system commit headroom below 512 MiB; owned AIR instances stopped',flush=True)
     for role,_ in artifacts:
         path=output/(role+'.log')

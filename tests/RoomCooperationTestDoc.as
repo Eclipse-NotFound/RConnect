@@ -24,6 +24,7 @@ package {
       private var gripFixture:Object;
       private var stale:Object,stageSeq:int=0,oldLand:Object,challenge:String="";
       private var testLand:String,includeFloor:Boolean,metrics:A22RoomMetrics;
+      private var stationaryFailure:Boolean=false,stationarySamples:int=0;
       public function RoomCooperationTestDoc(land:String="random_mane",floor:Boolean=true){
          testLand=land;includeFloor=floor;
          var app:String=NativeApplication.nativeApplication.applicationID;
@@ -103,6 +104,12 @@ package {
          if(!includeFloor && metrics==null)metrics=new A22RoomMetrics(mod);
          try {
             mod.game.gg.invulner=true;mod.game.gg.disabled=true;mod.game.gg.dx=mod.game.gg.dy=0;
+            if(host && (phase=="wait-prepared" || phase=="split-hold")) {
+               stationarySamples++;
+               if((mod.session.rooms.entryPending || mod.game.roomHold) && !stationaryFailure) {
+                  stationaryFailure=true;check(false,"stationary host stays visible and running during peer-only room travel");
+               }
+            }
             if(!stable())return;
             if(host && phase=="boot" && mod.session.peers.length) {
                var list:Array=ordinaryRooms();
@@ -265,6 +272,6 @@ package {
          check(unique,"loot identity keys remain unique after handoff");
          if(dead)check(loots.length==expected.loots,"no duplicate drops on repeated room import");
       }
-      protected function finish():void {if(phase=="done")return;phase="done";timer.stop();if(metrics!=null)metrics.finish();Log.d("COOP EFFECTS DONE rooms "+(host?"host":"join"));}
+      protected function finish():void {if(phase=="done")return;phase="done";timer.stop();if(host)check(stationarySamples>0&&!stationaryFailure,"stationary host observation samples="+stationarySamples);if(metrics!=null)metrics.finish();Log.d("COOP EFFECTS DONE rooms "+(host?"host":"join"));}
    }
 }

@@ -76,8 +76,10 @@ def main():
         '</initialWindow><supportedProfiles>extendedDesktop</supportedProfiles></application>', encoding='utf-8')
     before = sha(GAME/'pfe.swf'), sha(ROOT/'release/RConnectMod.swf')
     with (out/'stdout.log').open('w', encoding='utf-8') as log:
-        process = subprocess.Popen([str(GAME/'adl64.exe'), '-runtime', str(GAME/'runtimes/air/win64'), str(descriptor)],
-            cwd=out, stdout=log, stderr=subprocess.STDOUT, creationflags=subprocess.CREATE_NO_WINDOW)
+        sys.path.insert(0,str(GAME/'mods/ModLoader/tools'))
+        from air_test_process import HiddenProcess
+        process = HiddenProcess([str(GAME/'adl64.exe'), '-runtime', str(GAME/'runtimes/air/win64'), str(descriptor)],
+            cwd=out, stdout=log, stderr=log)
         (out/'process.json').write_text(json.dumps(dict(pid=process.pid, app_id=appid)), encoding='utf-8')
         try:
             code = wait_owned(process, 40, out/'memory-timeline.json')
@@ -85,6 +87,7 @@ def main():
             if process.poll() is None:
                 process.kill()
                 process.wait()
+            process.close()
     result_file = Path(os.environ['APPDATA'])/appid/'Local Store/result.json'
     result = {}
     if result_file.is_file():

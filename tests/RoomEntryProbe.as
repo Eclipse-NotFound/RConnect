@@ -80,7 +80,9 @@ package {
          var cover:DisplayObject=parent.getChildByName("rconnect-room-entry");
          var earlyLoad:Boolean=int(w.t_exit)>0 && int(w.t_exit)<=16;
          var sameConfirmed:Boolean=confirmedRoom!=null && w.loc===confirmedRoom && w.land===confirmedLand;
-         var pending:Boolean=!rooms.ready || rooms.busy || !sameConfirmed;
+         // A remote-only handoff does not invalidate this confirmed native
+         // scene. It must remain visible while the ownership messages travel.
+         var pending:Boolean=!rooms.ready || !sameConfirmed;
          if(pending) {
             if(pendingAt<0)pendingAt=getTimer();
             pendingFrames++;if(earlyLoad)loadFrames++;
