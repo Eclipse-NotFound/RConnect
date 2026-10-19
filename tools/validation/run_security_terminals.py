@@ -36,7 +36,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__)
     for key in ('output', 'candidate', 'native', 'driver'):
         ap.add_argument('--'+key, type=Path, required=True)
-    ap.add_argument('--seconds', type=int, default=240)
+    ap.add_argument('--seconds', type=int, default=300)
     args = ap.parse_args()
     out, candidate, native, driver = [(ROOT/getattr(args, k)).resolve() for k in ('output','candidate','native','driver')]
     for p in (out, candidate, native, driver):
@@ -53,9 +53,10 @@ def main():
     assert sha(driver/'tests/SecurityTerminalTestDoc.as')==test['source_sha256']
     assert sha(GAME/'pfe.swf')==patch['original_sha256']
     before = installation()
+    version='0.2.22-fix39-security3'
     command = [sys.executable,'-B','-X','utf8',str(ROOT/'tools/run_coop_regression.py'),
         '--candidate',str(candidate/'RConnectMod.swf'),'--game-candidate',str(native/'pfe.swf'),
-        '--effects','--effects-driver',str(driver),'--expected-version','0.2.22-fix39-security3',
+        '--effects','--effects-driver',str(driver),'--expected-version',version,
         '--all-mods','--land','random_mane','--seconds',str(args.seconds)]
     out.mkdir()
     intent = dict(command=command, installation_before=before,
@@ -82,12 +83,19 @@ def main():
             path = run/(role+'.log')
             lines = path.read_text(encoding='utf-8-sig',errors='replace') if path.is_file() else ''
             bad = [s for s in lines.splitlines() if 'RConnect security:' in s or 'COOP FAIL ' in s
-                   or re.search(r'\b(?:TypeError|ReferenceError|VerifyError|RangeError|SecurityError)\b',s)]
+                   or re.search(r'\b(?:Error\s*#\d+|ArgumentError|TypeError|ReferenceError|VerifyError|RangeError|SecurityError)\b',s)]
+            stdout=run/(role+'.stdout.log')
+            native_text=stdout.read_text(encoding='utf-8',errors='replace') if stdout.is_file() else ''
+            native_errors=[s for s in native_text.splitlines() if re.search(
+                r'\b(?:Error\s*#\d+|ArgumentError|TypeError|ReferenceError|RangeError|VerifyError|SecurityError|out of memory)\b',s,re.I)]
             receipt[role]=dict(passed=len(re.findall(r'^COOP PASS security ',lines,re.M)),
-                failures=bad,done='COOP EFFECTS DONE '+role+' security checks=' in lines,
-                log_sha256=sha(path) if path.is_file() else None)
+                failures=bad,native_errors=native_errors,done='COOP EFFECTS DONE '+role+' security checks=' in lines,
+                version_loaded='v'+version+' initialized' in lines,
+                log_sha256=sha(path) if path.is_file() else None,
+                stdout_sha256=sha(stdout) if stdout.is_file() else None)
         receipt['passed']=result.returncode==0 and not receipt['installation_changes'] and all(
-            receipt[r]['done'] and receipt[r]['passed']>0 and not receipt[r]['failures'] for r in ('host','join'))
+            receipt[r]['done'] and receipt[r]['version_loaded'] and receipt[r]['passed']>0
+            and not receipt[r]['failures'] and not receipt[r]['native_errors'] for r in ('host','join'))
         receipt['gameplay_verified']=receipt['passed']
     (out/'result.json').write_text(json.dumps(receipt,ensure_ascii=False,indent=2),encoding='utf-8')
     print(json.dumps(receipt,ensure_ascii=False))

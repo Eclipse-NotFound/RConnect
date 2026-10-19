@@ -21,7 +21,8 @@ package {
       private const cases:Array=[
          {shared:true,hacker:0,skill:0},{shared:false,hacker:0,skill:0},
          {shared:false,hacker:1,skill:0},{shared:false,hacker:0,skill:1},
-         {shared:false,hacker:1,skill:1},{shared:true,hacker:1,skill:2}];
+         {shared:false,hacker:1,skill:1},{shared:true,hacker:1,skill:2},
+         {shared:false,hacker:0,skill:2},{shared:false,hacker:1,skill:2}];
       private var mod:RConnectMod,host:Boolean,timer:Timer=new Timer(100),links:Dictionary=new Dictionary();
       private var phase:String="boot",at:int=getTimer(),round:int=-1,peerReady:Boolean=false;
       private var fixture:Object,terminal:Object,unit:Object,baseHp:Number,baseMaxHp:Number,peerHp:Number,peerLoss:Number;
@@ -215,7 +216,7 @@ package {
                check(mod.game.gg.maxhp==baseMaxHp,"host maximum HP unchanged during the attack");
                loss=baseHp-mod.game.gg.hp;check(protectedSelf()?loss==0:loss>0,"native turret attack "+attackKind+" obeys host access; HP loss="+loss);
                if(attackKind<2){attackKind++;health();send("shot",{kind:attackKind});change("shot-ready");return;}
-               if(spec().skill==1) {
+               if(!spec().shared && spec().skill>0) {
                   reverseHp=unit.hp;send("reverse-shot");if(!mine())reverseFire();change("reverse-shot");
                } else switchPolicy();
             } else if(!host && p.op=="reverse-shot") {
@@ -264,7 +265,11 @@ package {
                for each(var b:Object in cp.objs)if(b.k==fixture.terminal)terminalState=b;
                check(terminalState!=null && terminalState.inter==null && terminalState.interNative==null,"room checkpoint cannot overwrite teammate's personal lock attempts");
                next();
-            } else if(!host && p.op=="done") {round=int(p.round);send("done-ack");finish();}
+            } else if(!host && p.op=="done") {
+               round=int(p.round);change("finish-wait");
+               mod.session.link.addEventListener(TcpLink.CLOSED,closedAfterDone,false,10000);
+               send("done-ack");
+            }
             else if(host && p.op=="done-ack") {offline();finish();}
          }catch(err:Error){check(false,err.getStackTrace());finish();}
       }
@@ -294,6 +299,12 @@ package {
             else if(host && phase=="switch" && getTimer()-at>1300){send("check-switch");change("switch-check");}
             else if(host && phase=="second-hack" && getTimer()-at>1500){send("check-second");change("second-check");}
          }catch(err:Error){check(false,err.getStackTrace());finish();}
+      }
+      private function closedAfterDone(e:Event):void {
+         e.target.removeEventListener(TcpLink.CLOSED,closedAfterDone);
+         // Mark this deliberate test teardown before the session's automatic
+         // reconnect handler runs. The acknowledgement has reached the host.
+         mod.session.leave();finish();
       }
       private function finish():void {phase="done";timer.stop();Log.d("COOP EFFECTS DONE "+(host?"host":"join")+" security checks="+checks+" failed="+failures);}
    }

@@ -12,7 +12,7 @@
 - 功能源：`experimental/security-terminals/src`。`tools/validation/prepare_security_terminals.py` 机械合并 Config、紧凑 HUD 和 GameBridge，不覆盖其它功能覆盖树。
 - 当前候选：`build/m52/security-terminals-08`，版本 `0.2.22-fix39-security3`，SWF `45a141c8124af50b03ee16dcc82e51d8ee3fa35c3140f17f7daffe85b1a7c41a`。编译通过；06/07旧字节与失败证据保留。
 - 原生副本：`build/m52/security-native-02/pfe.swf`，SHA `a8403f65d20b11daae3b9a8bc08951ea53b7c7d6c9d6f7b4fa941372094a4ca1`。固定安装基线 `2a4662488ba3b690eb23acfe4b79aca3f0d9ae114e5e2dee7595af3cabffb3ea`，只改 Interact、UnitTurret、Bullet。MainFE 加载器与非代码标签读回不变。
-- 外部驱动：`security-driver-10`，SHA `7dd47af24f369efcad6f32d8ca3a6630f25b02d3a98eb3b4257c8adb772ce995`；源码 `d41b27c65247514536986c78b7054373b6550dda61c3112c1eefe986be2f2311`。编译绑定08；后续若修夹具另建目录，不能覆盖原回执。
+- 外部驱动：`security-driver-12`，SHA `3eb0649cd6b5776f048cf64e76ec824a7f21dcc0b3be70ba2490f2ea3592738f`；源码 `95293c9aaebb78c2cf55d2b6d5bf8ccfee4f214bf8790c3c9be79620f684af0c`。编译绑定08；包含最高安保技能的双方个人破解/反击，合计8个场景。12等待完成确认和正常断开后，加入侧主动结束测试会话，防自动重连污染收尾日志。后续若修夹具另建目录，不能覆盖原回执。
 
 ## 机制
 
@@ -53,10 +53,12 @@
 
 本会话03已交回窗口；Q07随后因实际余量3.56/4.51GiB两次未启动。RV最终32组原生像素已通过并交回，尚剩约3分钟最终旧新性能对照；阶梯会话服务容量错误需恢复后重新交接。11:44:39实际预检可提交余量6.28GiB、无AIR/Java，已重新明确交给Q07。顺位Q→房间04→RC5完整→RV最终对照→安保08；每段仍需收到明确交接，不能依据旧消息同时启动。
 
+12:00后的最新交接：Q07已经177/0并审计；房间04两项105个目标断言通过、原Trap生成#1063诊断如实另记，均未部署。两方已交回，当前(5)在固定旧失败首图执行约定旧/新各10轮，之后交RV最后一轮，再运行本会话安保08。安保驱动12已编译，本会话当前无AIR；这些其他功能的通过不能替代08自身实测。
+
 本会话下一步精确命令（RConnect目录，既有隔离测试权限，必须使用全新输出目录）：
 
 ```powershell
-& 'C:/Users/hello/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe' -B -X utf8 tools/validation/run_security_terminals.py --output build/m52/security-run-04 --candidate build/m52/security-terminals-08 --native build/m52/security-native-02 --driver build/m52/security-driver-10 --seconds 240
+& 'C:/Users/hello/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe' -B -X utf8 tools/validation/run_security_terminals.py --output build/m52/security-run-04 --candidate build/m52/security-terminals-08 --native build/m52/security-native-02 --driver build/m52/security-driver-12 --seconds 300
 ```
 
 先读回源/产物指纹、当前安装及实际同权限内存；旧失败不覆盖。通过后目检`cooperation/<run>/host-presentation-security-*.png`及加入侧对应图。若伤害或权限仍失败，按真实状态和原生条件定位，不预设都是夹具错误。
