@@ -22,7 +22,7 @@ Remains 1.02 双人合作模组，入口 `release/RConnectMod.swf`。A 是普通
 
 ## 3. 当前版本与证据
 
-- **安装 A 仍为 `0.2.22-fix15-keybinds`**，SHA `b2ed7f3a9b1d176dffb2b912d69da8084982906ff71d6fba8367bd36514e84f8`；快捷键会话已安装和复验。本会话尚未安装动作修复。
+- **10-19 安装 A 已为 `0.2.22-fix39-keybinds`**，SHA `a02e5aafc2ba529d37a78c83ac92a055121b72d347d56ab8ca720802cc9ddf60`。用户要求先部署测试候选，由主会话交接 (4) 安装，正式加载器双侧冒烟 `d67361aaea` 通过；密集性能仍未合格，房间加载等新功能尚未包含。准确备份与回退见 [fix39 安装记录](fix39-user-deployment-2026-10-19.md)。下方 fix15 安装描述保留为历史证据。
 - **当前隔离候选 `0.2.22-fix39-keybinds`**：`build/m52/a22-fixes-39`，SHA `a02e5aafc2ba529d37a78c83ac92a055121b72d347d56ab8ca720802cc9ddf60`，prepared `ccb9401c418c75a9d014c52187abbcca84eabf0a32b44a198056f7fc7f26fbab`。准确生产源是该冻结树，修改入口为 `experimental/a22-fixes/src`，**禁止直接编译根src**（不同历史线）。39相对37只改版本、11个原生字段读取、原版枪口动画重播间隔；两份正式改键UI原样保留。38的Socket API实验未带回，39-motion只为构建中间物。
 - **上轮冻结组合 runtime17**：`build/m52/a22-map-runtime-17`，132文件，inputs SHA `fbdd08fd147bac801c7596de667e2c044629e7364e7cb324bfb640c3c8fc0a4d`。内含根pfe `08a96759720c7a2aa489fceedb209c6e704500fde7b1a4a49146bd578e99a8bc`、FA0.3.5 `b3304596…`、ML2.4.0 `bd71b6f3…`、RV0.31.1 `baa48289…`、CS `f6ed93af…`、LAD0.3.0 `3ba6a9c9…`、PI `d4f6a096…`。LAD会话已于10-16 13:30:17另行部署0.3.1 `514a7671d4da517a31045aeaf8ffad3089aa66705fe58d14dc339f849589a7f6`（a2d28af，修进图黑框；17+89+正式17通过），无后续测试/部署待执行。runtime17自洽但不再等于安装，下一轮重新冻结；本会话未改这些安装件。
 - **新增冻结 runtime18**：`build/m52/a22-map-runtime-18`，inputs SHA `c6841b47203733802052a5b9150d115a9dcfd7bb1da6bb46a1baf4dd14a37535`，132文件中131份与17相同并只链接自己冻结的文件，新增仅LAD0.3.1；本机安装前后逐份复核一致。使用freeze的`--reuse-runtime`节省重复资产，绝不硬链接安装版。RV新候选尚待交付，不把18称为最终发布组合。
@@ -33,6 +33,8 @@ Remains 1.02 双人合作模组，入口 `release/RConnectMod.swf`。A 是普通
 ## 4. 正在进行
 
 任务：加入侧Q→E短飞/无墙伤、敌人身体/武器卡顿、SATS画面滞后；不以旧组合通过替代当前版本验证。
+
+- **(2) 10-19 房间加载修复**：用户确认普通入口 A，进入前几秒两边墙/门/布局不同。`RoomSync` 原生加载期间会先暴露未确认画面；新增自己的加载层、最终 RENDER 检查及当前房间/Land 的世界状态准入，保留过门前最终玩家伤害回执。候选 `a22-room-entry-03` / `0.2.22-room-entry3-keybinds` / `f449cf85…98aa6` 编译通过；两条原生驱动编译通过。同一35项组件旧版16失败、候选35/0，原生实测待交接窗口，**尚未部署**。详情与准确复跑入口见 [房间记录](room-entry-sync-2026-10-19.md)。不改其它会话的独立覆盖源。
 
 - **最新 A41 接续（10-16 21:35）**：新WB0.5.6-scene DF9的13份CS生产源已冻结；两处比较缓存候选0.5.7-scene `27144730…e04a8`、prepared `ced7b879…d8a75`，保留CS绘图优化，15组/4859语义通过。RV已安装2E7150…并交回窗口，runtime19 inputs `67b093d4…84b91`冻结132文件/复用128份；21:30核对与安装全部相同。testpack41-01绑定新宿主2A466，生产仍fix39。首次candidate位图#2015/OOM/AIR崩溃及系统仅116MiB余量的证据保留。
 - **A41原生目前四次完整通过，共194项**：memory-stable-01 的 control/candidate Harness各43、Destruction各54，均退出0。control/Coverage原始373项通过，但执行会话和退出码丢失，22份原始文件已从唯一AppID校验恢复，明确qualified=false；未补造回执。只清理42份自有资产链接及描述符，原冻结资产保留。

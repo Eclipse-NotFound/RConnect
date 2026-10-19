@@ -7,6 +7,7 @@ package rconnect.core
    import rconnect.net.Protocol;
    import rconnect.net.RoomCodec;
    import rconnect.net.TcpLink;
+   import rconnect.ui.RoomEntryView;
 
    /** Two-player room ownership. Door crossings use an ordered barrier:
     * freeze -> flush mirror reports -> capture owners -> grant -> acknowledge.
@@ -32,6 +33,7 @@ package rconnect.core
       private var initial:Boolean=true;
       private var blocked:Boolean=false;
       private var requested:Boolean=false;
+      private var entryView:RoomEntryView=new RoomEntryView();
       private var teammate:Object,followPending:Object;
       private var followSeenAt:int=0,followAttemptAfter:int=0,followFailures:int=0;
       private var followStarted:Boolean=false;
@@ -48,6 +50,10 @@ package rconnect.core
          game.mapGeneration=new MapGeneration(s);
          mod.stage.addEventListener(Event.ENTER_FRAME,before,false,100000);
          mod.stage.addEventListener(Event.ENTER_FRAME,after,false,-9000);
+         // Native exitStep exposes the generated room before t_exit reaches
+         // zero. Gate presentation at RENDER as well as the frame boundary;
+         // network callbacks/native room activation can run after `after`.
+         mod.stage.addEventListener(Event.RENDER,present,false,-2000000000);
       }
       public function reset():void
       {
@@ -59,6 +65,24 @@ package rconnect.core
          teammate=null;cancelFollow();
          TravelGuard.reset();
          game.mapGeneration.reset();
+         entryView.clear();
+      }
+      private function currentSettledRoom():Boolean
+      {
+         return game.world!=null && settledRoom!=null && game.loc===settledRoom
+            && game.world.loc===settledRoom && game.world.land===nativeLand;
+      }
+      /** The locally generated scene is not a confirmed multiplayer room. */
+      public function get entryPending():Boolean
+      {
+         return connected() && game.world!=null && game.world.loc!=null
+            && (!ready || busy || blocked || !currentSettledRoom());
+      }
+      private function present(e:Event=null):void
+      {
+         if(e!=null)game.refreshWorld();
+         if(entryPending)entryView.show(game.world,mod.stage,blocked?status:"房间交接中…");
+         else entryView.clear();
       }
       private function connected():Boolean
       {return session.mode==Session.CONNECTED || (session.mode==Session.HOSTING && session.peers.length>0);}
@@ -92,7 +116,10 @@ package rconnect.core
       }
       private function before(e:Event):void
       {
-         if(!connected()) {if(ready || busy)reset();return;}
+         // Force a final presentation check even when native children handle
+         // ENTER_FRAME after the Stage listener or turn visibility back on.
+         if(connected())mod.stage.invalidate();
+         if(!connected()) {if(ready || busy)reset();else entryView.clear();return;}
          try
          {
             game.refreshWorld();
@@ -110,12 +137,14 @@ package rconnect.core
             }
          }
          catch(error:Error){fail(error);}
+         finally {present();}
       }
       private function after(e:Event):void
       {
          if(!connected())return;
          try {game.refreshWorld();check();if(game.world!=null && game.world.land!=null)game.world.land.loc_t=0;}
          catch(error:Error){fail(error);}
+         finally {present();}
       }
       private function check():void
       {
@@ -159,6 +188,14 @@ package rconnect.core
          Log.d("RConnectRoom: seal "+pending+" room="+game.roomKey());
       }
       /** Called for every host world update, including while maps load. */
+      public function receivedWelcome(info:Object):void
+      {
+         // A socket callback can arrive after this frame's Stage listener.
+         // Adopt the completed seed now and close the view in the same event.
+         try {observeHost(info);}
+         catch(error:Error){fail(error);}
+         finally {present();mod.stage.invalidate();}
+      }
       public function observeHost(info:Object):void
       {
          if(info==null || host() || info.worldReady===false)return;
@@ -257,7 +294,7 @@ package rconnect.core
          followStarted=true;check();
       }
       public function accepts(msg:Object):Boolean
-      {return !busy && acceptsReceipt(msg);}
+      {return !busy && currentSettledRoom() && acceptsReceipt(msg);}
       /** Explicit local travel shares the ordinary-room handoff with walking. */
       public function travelToTeammate(info:Object):Boolean
       {
@@ -276,12 +313,19 @@ package rconnect.core
          return true;
       }
       public function acceptsReceipt(msg:Object):Boolean
-      {return ready && !authority && String(msg.roomKey)==settledKey && int(msg.roomEpoch)==epoch && int(msg.roomTerm)==term;}
+      {
+         // Final player hits are flushed before the next grant. They belong to
+         // this authority term even when the native player has crossed a door;
+         // only world-state packets also require currentSettledRoom().
+         return ready && !authority && String(msg.roomKey)==settledKey
+            && int(msg.roomEpoch)==epoch && int(msg.roomTerm)==term;
+      }
       public function handle(msg:Object):Boolean
       {
          if(msg==null || msg.type!="room")return false;
          try
          {
+            game.refreshWorld();
             if(host())
             {
                if(msg.op=="request") {peerInfo=msg.info;if(pending==0)begin();}
@@ -311,6 +355,7 @@ package rconnect.core
             }
          }
          catch(error:Error){fail(error);}
+         finally {present();}
          return true;
       }
       private function sendReady():void

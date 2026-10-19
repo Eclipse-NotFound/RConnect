@@ -265,6 +265,6 @@ package {
          check(unique,"loot identity keys remain unique after handoff");
          if(dead)check(loots.length==expected.loots,"no duplicate drops on repeated room import");
       }
-      private function finish():void {if(phase=="done")return;phase="done";timer.stop();if(metrics!=null)metrics.finish();Log.d("COOP EFFECTS DONE rooms "+(host?"host":"join"));}
+      protected function finish():void {if(phase=="done")return;phase="done";timer.stop();if(metrics!=null)metrics.finish();Log.d("COOP EFFECTS DONE rooms "+(host?"host":"join"));}
    }
 }

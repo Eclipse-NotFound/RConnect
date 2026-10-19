@@ -136,6 +136,6 @@ package {
             }
          }catch(error:Error){check(false,error.getStackTrace());send("done");finish();}
       }
-      private function finish():void {if(phase=="done")return;change("done");t.stop();Log.d("COOP EFFECTS DONE native-map "+(host?"host":"join"));}
+      protected function finish():void {if(phase=="done")return;change("done");t.stop();Log.d("COOP EFFECTS DONE native-map "+(host?"host":"join"));}
    }
 }

@@ -399,6 +399,7 @@ package rconnect.core
                mode = CONNECTED;
                Log.d("RConnectNet: welcome id=" + myId + " host=" + hostName);
                compareWorldInfo(msg.worldInfo);
+               rooms.receivedWelcome(msg.worldInfo);
                // 自动化联测：join 连接成功后自动发一条聊天验证转发
                if(_autoRole == "join" && !_autoChatSent)
                {
