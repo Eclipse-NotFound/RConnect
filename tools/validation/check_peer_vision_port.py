@@ -61,7 +61,8 @@ def run(out):
     text=(out/'run.log').read_text(encoding='utf-8');match=re.search(r'^OUTPUT .*?([0-9a-f]{10})\s*$',text,re.M)
     changed={n:sha(GAME/n) for n,h in before.items() if sha(GAME/n)!=h}
     result=dict(exit=completed.returncode,run=match[1] if match else None,installation_changes=changed,
-        compiled_sha256=sha(out/'compiled.json'),runner_sha256=sha(ROOT/'tools/run_coop_regression.py'))
+        compiled_sha256=sha(out/'compiled.json'),runner_sha256=sha(ROOT/'tools/run_coop_regression.py'),
+        runtime_before_sha256=sha(out/'runtime-before.json'),script_sha256=sha(Path(__file__)))
     if match:
         folder=ROOT/'build/cooperation'/match[1]
         result['run_sha256']=sha(folder/'run.json')

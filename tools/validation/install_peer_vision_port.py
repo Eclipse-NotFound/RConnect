@@ -29,9 +29,14 @@ def main():
     require(tested['exit'] == 0 and not tested['installation_changes'], 'Native test not passed')
     require(tested['compiled_sha256'] == sha(candidate / 'compiled.json'), 'Wrong tested build')
     require(tested['runner_sha256'] == sha(ROOT / 'tools/run_coop_regression.py'), 'Runner changed')
+    require(tested['runtime_before_sha256'] == sha(candidate / 'runtime-before.json'),
+            'Test installation snapshot changed')
     folder = ROOT / 'build/cooperation' / tested['run']
     require(sha(folder / 'run.json') == tested['run_sha256'], 'Test run changed')
     run = read(folder / 'run.json')
+    require(sha(folder / 'input.json') == run['input_manifest_sha256'], 'Test inputs changed')
+    current = {'files': read(candidate / 'runtime-before.json')}
+    expected_modules = {name.lower(): value for name, value in current['files'].items()}
     digest = built['files']['RConnectMod.swf']
     require(run['sha256'] == digest and not run['solo'], 'Wrong binary or test mode')
     for role, parity in (('host', 0), ('join', 1)):
@@ -48,10 +53,17 @@ def main():
                 'Missing opposite-side observations: ' + role)
         require('v' + built['version'] + ' initialized' in log, 'Version absent')
         require(run['inputs'][role]['production'] == digest, 'Test did not load production bytes')
+        require(run['inputs'][role]['game'] == current['files']['pfe.swf'], 'Test native game mismatch')
+        require(run['inputs'][role]['driver'] == built['files']['driver/EffectsDriver.swf'],
+                'Test driver mismatch')
+        for name, value in run['inputs'][role]['modules'].items():
+            name = name.replace('\\', '/').lower()
+            expected = (built['files']['driver/EffectsHarness.swf']
+                        if name == 'mods/rconnect/release/rconnectmod.swf' else expected_modules.get(name))
+            require(value == expected, 'Test dependency mismatch: ' + name)
     target = ROOT / 'release/RConnectMod.swf'
     previous = 'a02e5aafc2ba529d37a78c83ac92a055121b72d347d56ab8ca720802cc9ddf60'
     require(sha(target) == previous, 'Installation changed since fix39 handoff')
-    current = {'files': read(candidate / 'runtime-before.json')}
     verify_install(current)
     output = candidate / ('installation-' + args.attempt)
     output.mkdir(exist_ok=False)
