@@ -6,9 +6,19 @@
 
 ## 当前结论
 
-**最终停点：准确bundle2 + RV76314B + 安装WB DF9的23类2498项与普通加载双侧冒烟通过；密集仍失败，A41覆盖对照也未达原门槛。CPU诊断完成，发布审核因密集失败实际拒绝，自有测试均已结束。没有部署RConnect/WB/本体。**
+**最新：用户在获知密集性能失败后明确要求“直接部署”，已安装0.2.23-coop-bundle2与保留CS0.8更新的安保本体03。新组合安保432项及安装后普通双侧启动通过。密集性能仍未合格，普通发布审核的旧失败保留；本次是用户明确要求的候选安装。**
 
-用户已明确要求“请连同其他对话积累的修复一起部署”，包含此前具体预览中的安保配套本体。已有部署授权，不应再问。**尚未部署。当前候选为不含Q的bundle2：安保、房间切换、投掷物抓取三项合并；24类实际回归完成，23类通过、密集性能失败。下方按发生顺序保留早期准备/失败。**
+本次安装包含安保共享/分别破解、房间切换和投掷物抓取合并修正，保留既有改键/UI。Q因许可过期失败继续暂缓；旧A41不安装，B不变。下方按发生顺序保留早期准备与失败。
+
+## 直接部署回执（17:29开始，安装后检查完成）
+
+- 用户原话“直接部署”，覆盖本次已说明的密集性能发布阻塞；没有修改原性能门槛或将失败改判。新增`deploy_coop_user_candidate.py`限定准确候选、当前CS回执和新安保验证，复用备份、原子替换与失败回滚流程。正常release audit保持原要求，另存`user-deployment-audit.json`。
+- 部署时CS刚更新为0.8：根本体A61E、CS B5E8、TDFC0324、WB0BD2。重新基于A61E制备安保03，只定向改Interact、UnitTurret、Bullet；回读确认Interact.move的CS场景偏移保留，MainFE及非代码标签一致。未覆盖CS/TDFC/WB/RV或配置。
+- 安保03 SHA `02bfabe6a3b4881dfa1227515e71f2a8ea863d4b1b468fbe1d8008aeba7d9240`，prepared `04f8fc1d6b040c67316f9c24ec3d20018afce25806ed8ff9f2aee50963663060`。RConnect为下方准确04的574D原字节。
+- 新组合安保`0067bdfd6f`主255/0、加177/0；双方完成、异常0、退出0、安装未变。run SHA `e86f205b3ba7a8df0a30a2e5543b6dcc99d5f398cc62aed0beb7aff7fcaed308`，结果`build/m52/coop-bundle-rebase-security-01/result.json`。
+- 已备份并安装两份文件；回执`build/m52/coop-bundle-04/deployment.json`状态`deployed-smoke-passed`。从实际安装文件普通加载双侧`6e43008d5b`通过，新版标记、连接、单位同步、tick200、严格无异常及输入指纹核对通过，无外部测试驱动。run SHA `98adc4fd26a29d8785c077460da07458be75345b64800a6e164ba48752a50647`。
+- 备份位于`build/backup/coop-bundle-20261019-172958-fae2b2`：`pfe.before.swf`为A61E，`RConnectMod.before.swf`为A02E。回退须先核对目标仍是本次02BF/574D，再恢复这两份并重启；若后续会话又改过，先合并而非盲目覆盖。此次未触发实际回滚。
+- 旧23类2498项属于旧CS/WB组合，新组合额外验证范围为安保与正式启动，不能称全24类重新通过。密集卡顿仍待优化。技能报告复用本文件，保持既有台账条目；用户指令覆盖这次性能阻塞，不改技能或授权表。
 
 - 新生产`build/m52/coop-bundle-04`，`0.2.23-coop-bundle2`，186052字节，SHA `574d2b51490ae8b25a1396555600f56a301f8a20ae50104c0e35cf2796441afe`；prepared `4d0743b2fdd61586b22193c431e5d5fba534d77ca33e0bc5483b2f286ae112b1`。
 - 新驱动`coop-bundle-drivers-03`，exec26664退出0，prepared `337d441b64021b2c0b4d233c749d8224eb9192e42a6ccd958f0b96298eaec092`。准确04安保`351dbd7262`主255/0、加177/0通过，严格异常0，安装未变；run SHA `c76571cd52582c24ee96ab51b143cdd3e5409943c07a4508debc8e71d81bc22c`。

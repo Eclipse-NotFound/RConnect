@@ -81,10 +81,11 @@ def build(candidate, out):
     save(out/'prepared.json',dict(candidate_sha256=m['sha256'],source_manifest=sha(candidate/'prepared.json'),
         recipe_sha256=sha(__file__),origins=frozen,files=inventory(out)))
 
-def run(candidate, out, drivers, selected, wb, smoke):
+def run(candidate, out, drivers, selected, wb, smoke, native=None):
     m=verify(candidate);assert m['compiled'] and sha(candidate/'RConnectMod.swf')==m['sha256']
     assert not selected.intersection(m.get('held_features',[]))
-    native=M52/'security-native-02';patch=read(native/'prepared.json')
+    native=native or M52/'security-native-02';assert native.parent==M52
+    patch=read(native/'prepared.json')
     assert sha(native/'pfe.swf')==patch['candidate_sha256']
     assert patch['loader_unchanged'] and patch['non_code_tags_unchanged']
     before=installation();assert before['pfe.swf']==patch['original_sha256']
@@ -138,9 +139,10 @@ def main():
     ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('mode',choices=['build','run','smoke'])
     ap.add_argument('--candidate',type=Path,required=True);ap.add_argument('--output',type=Path,required=True)
     ap.add_argument('--drivers',type=Path);ap.add_argument('--cases');ap.add_argument('--wb',type=Path)
+    ap.add_argument('--native',type=Path)
     a=ap.parse_args();candidate=(ROOT/a.candidate).resolve();out=(ROOT/a.output).resolve()
     assert candidate.parent==M52 and out.parent==M52
     if a.mode=='build':build(candidate,out)
-    else:run(candidate,out,(ROOT/a.drivers).resolve() if a.drivers else None,set(a.cases.split(',')) if a.cases else set(),(ROOT/a.wb).resolve() if a.wb else None,a.mode=='smoke')
+    else:run(candidate,out,(ROOT/a.drivers).resolve() if a.drivers else None,set(a.cases.split(',')) if a.cases else set(),(ROOT/a.wb).resolve() if a.wb else None,a.mode=='smoke',(ROOT/a.native).resolve() if a.native else None)
 
 if __name__=='__main__':main()

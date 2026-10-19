@@ -95,14 +95,17 @@ def replace(source, target, digest):
     finally:
         if temp.exists():temp.unlink()
 
-def deploy(candidate, proof):
-    assert read(candidate/'release-audit.json')==proof
+def deploy(candidate, proof, *, native=None, proof_file='release-audit.json'):
+    assert proof_file in ('release-audit.json','user-deployment-audit.json')
+    assert read(candidate/proof_file)==proof
+    native=native or M52/'security-native-02'
+    assert native.parent==M52
     assert snapshot()['free_commit_bytes']>=6*1024**3
     receipt=candidate/'deployment.json';assert not receipt.exists()
     assert installation()==proof['baseline']
     backup=ROOT/'build/backup'/('coop-bundle-'+datetime.datetime.now().strftime('%Y%m%d-%H%M%S')+'-'+uuid.uuid4().hex[:6])
     backup.mkdir(parents=True,exist_ok=False)
-    targets=[(GAME/'pfe.swf',M52/'security-native-02/pfe.swf',proof['native_sha256']),
+    targets=[(GAME/'pfe.swf',native/'pfe.swf',proof['native_sha256']),
         (ROOT/'release/RConnectMod.swf',candidate/'RConnectMod.swf',proof['candidate_sha256'])]
     items=[]
     for target,source,digest in targets:
