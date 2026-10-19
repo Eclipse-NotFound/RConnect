@@ -6,13 +6,34 @@
 
 当前只在 RConnect 自有隔离树实现。当前正式安装为 fix39-keybinds（由 (4) 按用户另一次要求安装）；此功能尚未安装。原生接口先仅修改自己的 pfe 副本，不写安装本体。真实存档不写。
 
+## 当前停点（13:10 后，覆盖下文历史待运行状态）
+
+- run07 / `0e07f5a3ff` 已结束：主222绿3红、加入160绿3红。48次最大HP稳定检查全部通过；双方第3/4/6轮反击未扣炮塔血，保留原始失败。尚未记录当时每颗弹实际碰撞对象，不能把旧红全部归因于其它敌人挡弹。
+- driver16在隔离场地保留原生敌人、仅将挡在射击通道内的无关敌人移出，并记录真正命中的对象。run12 / `66533805de` 的主243/0、加入165/0，共408项安保功能检查通过，双方正常结束、安装未变。但加入侧出现原生Area构造#1063，严格回执仍为false，**未安装**。
+- run08为测试监听端口绑定失败，未进入功能检查；run06、09、10、11均因启动余量不足6GiB而没有启动AIR。测试端口现按AIR相同的全地址监听检查，并允许显式选择非临时客户端端口；生产网络不变，未降低内存门槛。
+- Area/Trap继承问题已静态定位：它们在原生`firstObj`链而非箱子数组`loc.objs`，旧同步误当新掉落并使用六参构造。新候选记录初始原生实例、收到重复消息优先保留已有实例及脚本；新Trap使用原生四参构造并登记链/瓦片。缺失Area仍明确报错，不伪造脚本区域，也不从门禁排除错误。
+- 最新生产 `build/m52/security-terminals-10`，版本`0.2.22-fix39-security5`，SHA `cb94ddd299ef9d5b259b755a2279fb9327e0a988bb9d4970b601bbcd984c63ac`；原生仍native02。中间09已编译但没有运行，不冒称通过。driver17 SHA `aa2b18ca772b0ab96306d9e6b0f0cfc1fee586d01329a68f09525b1295a01099`，源码 `b6d809edfaad49b2cee163c4a8051e77494acb833cc1c3ef3e9e58b5d33c768e`。
+- **run13 / `271b17a2a5` 已完整通过**，准确10/native02/driver17：主255/0、加入177/0，共432项；双方done、运行器/严格包装器退出0，原生与捕获错误均0，安装前后未变。新增重复区域/陷阱、不同几何共起点、回调保留、陷阱真实撞击伤害（双方各两次75）与清理检查通过。自有21076/95116已退出；共享设置截图已目检，标签/说明均在紧凑面板内。
+- run13日志SHA：主`1607eddedfc721287f7d0bdb2f004ebc014128fa79dbbfbbbaaa4129eb7c539c`、加`69162c2c80d762caf74a0167315d9a5b1d63325fa001fd9c04ae25bc3b84d559`。08→10仅版本/GameBridge变化，权限簿、控制器、两适配器、Config/HUD源码指纹不变，已有34+16组件证据仍适用。
+- 普通加载器冒烟01因启动不足6GiB未启动AIR；短暂等待恢复至8.03GiB后，**冒烟02 / `03eaee9a1a` 双侧通过**，准确10/native02、无外部测试驱动、正常连接及tick200、错误0、安装未变，`gameplay_verified=false`明确只是启动检查。自有90936/84572已结束。候选仍未安装，配套本体安装需本轮明确授权。
+- 最后只读审计通过：全部冻结源码、候选、驱动、原始日志与各自清单吻合；功能轮与冒烟轮安装基线完全相同。run13回执SHA `549143c26cfdbe52a96a380e60337b9ac3a0a228bc6763e82756a0e84c49c4b3`，冒烟02回执`661809373141211d08be09db92bc7234710c572f4b235dad875c23f1fd1b3aa7`。一次“读SWF并另写汇总JSON”指令被护栏误判二进制部署而阻止；删除写操作后只读审计成功，没有维护护栏授权或换工具绕过，也未生成该额外JSON。原有两份真实运行回执完整保留。
+
+## 历史实测（12:35 后）
+
+- 生产仍为08/native02，安装没有改变。driver13把普通炮弹改为真实无强制目标碰撞；`security-run-04` / `46cb5e48e5` 完整结束，主223绿1红、加入161绿1红：第二回合宿主爆炸后上限变化，第三回合未破解加入侧普通弹伤害为0。没有原生异常，失败保留，不以单项通过替代整体结论。
+- driver14只加诊断，生产不变。`security-run-05` / `01bd7fab78` 为主224/0、加入162/0，共386项，双方done、退出0、无原生异常、安装无变化。地图种子4150082672，与run04的1888693154不同；这个通过不能单独解释旧失败。
+- 诊断明确发现原生 `Pers.setParameters` 遇 `game.triggers.nomed` 会把测试的 `organMult=0` 恢复为0.5。run05记录了这一变化；run04的独立伤势日志有爆炸对应的50.5259躯干损伤和54.7116血液损伤，解释次生伤势如何改变上限。两轮PermanentInjury原日志已复制至各自证据目录，不能归为该模组故障。
+- driver15仅在隔离测试角色取消无医疗挑战，并固定run04失败地图种子；保留普通碰撞、最大HP不变及全部原断言。准确driver SHA `28a9b9c14e69c6d46d40bf451fdbce310f1ed7e579285a0f046f3877546b3564`，源码 `d6cb801712ec7286c0f38bbf1024bbdc97098b333b99e885040f595a43090bf0`。
+- `security-run-06` 因启动时不足6GiB没有开AIR；复查约6.58GiB、无AIR/Java后，`security-run-07` / `0e07f5a3ff` 已启动，准确driver15，**尚待最终回执**。仅管理本轮72156/40276，旧05的31100/36668已退出。普通弹未伤的原因仍待相同地图取证，不预设为权限或夹具错误。
+- 紧凑设置截图再次目检：宿主按钮与“仅影响后续破解、已有权限保留”说明完整；面板高度不增加。新功能仍未安装。
+
 ## 实现与准确输入
 
 - 基线：`build/m52/a22-fixes-39/src`，禁止从根 src 重建；正式字节 `a02e5aafc2ba529d37a78c83ac92a055121b72d347d56ab8ca720802cc9ddf60`。
 - 功能源：`experimental/security-terminals/src`。`tools/validation/prepare_security_terminals.py` 机械合并 Config、紧凑 HUD 和 GameBridge，不覆盖其它功能覆盖树。
-- 当前候选：`build/m52/security-terminals-08`，版本 `0.2.22-fix39-security3`，SWF `45a141c8124af50b03ee16dcc82e51d8ee3fa35c3140f17f7daffe85b1a7c41a`。编译通过；06/07旧字节与失败证据保留。
+- 当前候选：`build/m52/security-terminals-10`，版本 `0.2.22-fix39-security5`，SWF `cb94ddd299ef9d5b259b755a2279fb9327e0a988bb9d4970b601bbcd984c63ac`。编译及432项原生检查通过；06—09历史字节与失败证据保留。
 - 原生副本：`build/m52/security-native-02/pfe.swf`，SHA `a8403f65d20b11daae3b9a8bc08951ea53b7c7d6c9d6f7b4fa941372094a4ca1`。固定安装基线 `2a4662488ba3b690eb23acfe4b79aca3f0d9ae114e5e2dee7595af3cabffb3ea`，只改 Interact、UnitTurret、Bullet。MainFE 加载器与非代码标签读回不变。
-- 外部驱动：`security-driver-12`，SHA `3eb0649cd6b5776f048cf64e76ec824a7f21dcc0b3be70ba2490f2ea3592738f`；源码 `95293c9aaebb78c2cf55d2b6d5bf8ccfee4f214bf8790c3c9be79620f684af0c`。编译绑定08；包含最高安保技能的双方个人破解/反击，合计8个场景。12等待完成确认和正常断开后，加入侧主动结束测试会话，防自动重连污染收尾日志。后续若修夹具另建目录，不能覆盖原回执。
+- 外部驱动：`security-driver-17`，SHA `aa2b18ca772b0ab96306d9e6b0f0cfc1fee586d01329a68f09525b1295a01099`；源码 `b6d809edfaad49b2cee163c4a8051e77494acb833cc1c3ef3e9e58b5d33c768e`。绑定10；8个安保场景，包含最高技能的双向个人破解/反击及原生区域/陷阱检查。测试通过后等待完成确认再主动断开，避免自动重连污染收尾。后续输出必须新目录，不能覆盖原回执。
 
 ## 机制
 
@@ -22,11 +43,10 @@
 
 权限范围为本次联机和地图轮次，普通房/背景隐藏房分别按房间标识记录。本轮不新增跨重启随机探索战斗存档或稳定重连协议；不能把内存记录说成永久存档。
 
-## 已有证据与待验
+## 组件证据与验证边界
 
 - `build/m52/security-access-04/result.json`：纯 AS3 独立 AIR **34 项通过、0 失败、退出0**。包括两人的个人权限、共享旧权限不撤销、重复和乱序消息、后生炮塔、不同房间、空房终端、外部对象改写隔离与新探索清空。
-- 原生接口及准确候选编译成功；并不代表原生游玩通过。
-- 双侧首轮已运行但未通过，详情见下。必须补齐的有效检查为子弹/气体/爆炸扣血、第二人独立破解和外来房间状态恢复；原生寻敌/锁状态等通过不能替代整体结论。
+- 准确10/native02已完成原生432项，通过子弹/气体/爆炸扣血、第二人独立破解、未授权玩家反击、外来房间状态恢复、设置保存/权限保持、离线原生行为。组件及状态恢复检查不是完整的长局分房、跨重启存档或公网验证。
 - 原有密集帧数、首次掉落等红项仍在 `a22-motion-2026-10-15.md`，fix39 的候选安装不等于完整性能验收。
 
 ## 首轮原生实测与修正
@@ -55,10 +75,10 @@
 
 12:00后的最新交接：Q07已经177/0并审计；房间04两项105个目标断言通过、原Trap生成#1063诊断如实另记，均未部署。两方已交回，当前(5)在固定旧失败首图执行约定旧/新各10轮，之后交RV最后一轮，再运行本会话安保08。安保驱动12已编译，本会话当前无AIR；这些其他功能的通过不能替代08自身实测。
 
-本会话下一步精确命令（RConnect目录，既有隔离测试权限，必须使用全新输出目录）：
+原生复测命令示例（RConnect目录，已有13回执；下面14必须尚不存在，且仅在有新修改/疑点时重跑）：
 
 ```powershell
-& 'C:/Users/hello/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe' -B -X utf8 tools/validation/run_security_terminals.py --output build/m52/security-run-04 --candidate build/m52/security-terminals-08 --native build/m52/security-native-02 --driver build/m52/security-driver-12 --seconds 300
+& 'C:/Users/hello/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe' -B -X utf8 tools/validation/run_security_terminals.py --output build/m52/security-run-14 --candidate build/m52/security-terminals-10 --native build/m52/security-native-02 --driver build/m52/security-driver-17 --seconds 300
 ```
 
 先读回源/产物指纹、当前安装及实际同权限内存；旧失败不覆盖。通过后目检`cooperation/<run>/host-presentation-security-*.png`及加入侧对应图。若伤害或权限仍失败，按真实状态和原生条件定位，不预设都是夹具错误。

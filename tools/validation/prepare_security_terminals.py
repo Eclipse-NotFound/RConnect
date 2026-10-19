@@ -28,7 +28,7 @@ def integrate(name, text):
         assert text.count(old) == count, (name, old[:100], text.count(old), count)
         text = text.replace(old, new)
     if name == 'RConnectMod.as':
-        change('"0.2.22-fix39-keybinds"', '"0.2.22-fix39-security3"')
+        change('"0.2.22-fix39-keybinds"', '"0.2.22-fix39-security5"')
         change('      public var friendlyFire:rconnect.core.FriendlyFire;',
                '      public var securityTerminals:rconnect.core.SecurityTerminals;\n      public var friendlyFire:rconnect.core.FriendlyFire;')
         change('         this.friendlyFire = new rconnect.core.FriendlyFire(this);',
@@ -59,6 +59,58 @@ def integrate(name, text):
             if(f==securityHint){item.renderY=securityY+36;item.renderH=Math.max(58,securityHint.textHeight+6);}
             if(f==versionLabel)item.renderY=securityY+36+Math.max(58,securityHint.textHeight+6)+6;''')
     elif name == 'rconnect/game/GameBridge.as':
+        # Areas/traps are native map objects in firstObj, not loc.objs. The old
+        # generic-spawn channel mistook them for new loot and used Box's six
+        # constructor arguments. Preserve existing native instances/scripts.
+        change('            _objTpl = {};', '            _objTpl = {};\n            _objNativeTpl = new Dictionary(true);')
+        change('            _objTplInit = true;\n            return null;', '''            var nativeObject:Object=probe(loc,"firstObj"),nativeGuard:int=0;
+            while(nativeObject!=null && nativeGuard++<800) {
+               var nativeClass:String=getQualifiedClassName(nativeObject);
+               if(nativeClass=="fe.loc::Area" || nativeClass=="fe.loc::Trap")_objNativeTpl[nativeObject]=true;
+               nativeObject=probe(nativeObject,"nobj");
+            }
+            _objTplInit = true;
+            return null;''')
+        change('                  if(!isLoot && id != null && id.length > 0',
+               '                  if(!isLoot && !_objNativeTpl[cur] && id != null && id.length > 0')
+        change('      private var _objTpl:Object = {};', '      private var _objTpl:Object = {};\n      private var _objNativeTpl:Dictionary = new Dictionary(true);')
+        change('''      public function applyObjSpawn(list:Array):void
+      {
+         if(loc == null || list == null)
+         {
+            return;
+         }''', '''      public function applyObjSpawn(list:Array):void
+      {
+         if(loc == null || list == null)
+         {
+            return;
+         }
+         if(_objSpawnLoc!==loc){_objSpawnLoc=loc;_objSpawnedIds={};}''')
+        change('               var key:String = String(s.id);', '''               var clsName:String=String(s.cls);
+               if((clsName=="fe.loc::Area" || clsName=="fe.loc::Trap") && existingNativeMapObject(s))continue;
+               var key:String = clsName=="fe.loc::Trap"?clsName+"|"+String(s.id)+"|"+String(s.x)+"|"+String(s.y):String(s.id);''')
+        change('               _objSpawnedIds[key] = true;\n               var clsName:String = String(s.cls);', '')
+        change('                  if(spawnLoot(ad, cls, s))\n                  {\n                     spawned++;',
+               '                  if(spawnLoot(ad, cls, s))\n                  {\n                     _objSpawnedIds[key] = true;\n                     spawned++;')
+        change('                     var obj:Object = new (cls as Class)(loc, String(s.id),\n                        Number(s.x), Number(s.y), null, null);\n                     spawned++;', '''                     if(clsName=="fe.loc::Area")throw new Error("Missing native Area template; cannot recreate scripts from a loot packet");
+                     var obj:Object;
+                     if(clsName=="fe.loc::Trap") {
+                        obj=new (cls as Class)(loc,String(s.id),int(s.x),int(s.y));loc.addObj(obj);
+                     } else obj=new (cls as Class)(loc,String(s.id),Number(s.x),Number(s.y),null,null);
+                     _objSpawnedIds[key] = true;
+                     spawned++;''')
+        change('      private var _objSpawnedIds:Object = {};', '''      private function existingNativeMapObject(s:Object):Boolean {
+         var cur:Object=probe(loc,"firstObj"),guard:int=0;
+         while(cur!=null && guard++<800) {
+            if(getQualifiedClassName(cur)==String(s.cls) && String(probe(cur,"id"))==String(s.id)
+               && Math.abs(Number(cur.X)-Number(s.x))<0.01 && Math.abs(Number(cur.Y)-Number(s.y))<0.01)return true;
+            cur=probe(cur,"nobj");
+         }
+         return false;
+      }
+
+      private var _objSpawnLoc:Object;
+      private var _objSpawnedIds:Object = {};''')
         change('      public var playerMines:rconnect.core.PlayerMines;',
                '      public var playerMines:rconnect.core.PlayerMines;\n      public var securityTerminals:rconnect.core.SecurityTerminals;\n      private function securityInteraction(i:Object):Boolean {return securityTerminals!=null && securityTerminals.ownsInteraction(i);}\n      private function securityTurret(u:Object):Boolean {return fe.unit.RConnectSecurityAccess.turret(u);}')
         change('      public function unitKey(o:Object):String {_units.enter(loc);return _units.known(o);}',

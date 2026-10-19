@@ -30,6 +30,9 @@ package {
       private var baseX:Number=0,baseY:Number=0;
       private var attackKind:int=0;
       private var reverseHp:Number=0;
+      private var seedInstalled:Boolean=false;
+      private static const MAP_SEED:uint=1888693154;
+      private var parked:Array=[];
       public function SecurityTerminalTestDoc() {
          var id:String=NativeApplication.nativeApplication.applicationID;
          if(id.indexOf("rconnect-coop-")<0)return;host=id.indexOf("-host-")>=0;
@@ -106,6 +109,10 @@ package {
       }
       private function health():void {
          var g:Object=mod.game.gg;
+         // The fresh test save starts in the native no-medicine challenge.
+         // Pers.setParameters would repeatedly restore organMult=0.5 there,
+         // defeating the explicit secondary-injury isolation below.
+         mod.game.world.game.triggers["nomed"]=false;
          // Native setParameters recomputes maxhp from Pers; changing only the
          // derived Unit field is undone by ordinary equipment/stat updates.
          // healAll alone leaves trauma stages stale. Native healing updates
@@ -136,6 +143,13 @@ package {
          for each(var b:Object in l.objs.concat())if(b.X2>baseX-20 && b.X1<baseX+360 && b.Y2>baseY-190 && b.Y1<baseY+20) {
             l.remObj(b);l.objs.splice(l.objs.indexOf(b),1);
          }
+         // This is a terminal/permission fixture, not a test that shoots through
+         // unrelated native enemies. Keep them alive, outside the firing lane.
+         for each(var u:Object in l.units)if(u!==mod.game.gg && u!==ghost() && u.fraction>0 && u.fraction<100
+            && u.X2>baseX-100 && u.X1<baseX+440 && u.Y2>baseY-220 && u.Y1<baseY+80) {
+            Log.d("SECURITY ARENA PARK "+JSON.stringify({cls:getQualifiedClassName(u),unit:scalarState(u,"id,X,Y,X1,X2,Y1,Y2,hp,sost,fraction")}));
+            parked.push(u);u.setPos(40,80);u.dx=u.dy=0;
+         }
       }
       private function hack():void {
          mod.game.world.pers.security=int(spec().skill);
@@ -147,15 +161,117 @@ package {
       }
       private function next():void {
          round++;if(round>=cases.length){send("done");change("finish-wait");return;}
-         toggle(spec().shared);mod.game.gg.setPos(baseX+60,baseY);create();health();peerReady=false;send("setup",{fixture:fixture});change("setup");
+         toggle(spec().shared);mod.game.gg.setPos(baseX+60,baseY);create();health();mapObjectAudit();peerReady=false;send("setup",{fixture:fixture});change("setup");
+      }
+      private function scalarState(o:Object,names:String):Object {
+         var out:Object={};if(o==null)return out;
+         for each(var key:String in names.split(","))try {
+            var value:*=o[key];
+            if(value is Number || value is String || value is Boolean)out[key]=value;
+         }catch(ignored:*){}
+         return out;
+      }
+      private function mapObjects():Array {
+         var result:Array=[],o:Object=mod.game.loc.firstObj,guard:int=0;
+         while(o!=null && guard++<800) {
+            var name:String=getQualifiedClassName(o);
+            if(name=="fe.loc::Area" || name=="fe.loc::Trap")result.push(o);
+            o=o.nobj;
+         }
+         return result;
+      }
+      private function packet(o:Object):Object {
+         var id:*=null;try{id=o.id;}catch(ignored:*){}
+         return {cls:getQualifiedClassName(o),id:String(id),x:o.X,y:o.Y,isLoot:false};
+      }
+      private function mapObjectAudit():void {
+         if(seen.mapobjects)return;seen.mapobjects=true;
+         var l:Object=mod.game.loc,ad:Object=mod.main.loaderInfo.applicationDomain,original:Array=mapObjects(),packets:Array=[],o:Object;
+         for each(o in original)packets.push(packet(o));
+         mod.game.applyObjSpawn(packets);mod.game.applyObjSpawn(packets);
+         var current:Array=mapObjects(),kept:Boolean=current.length==original.length;
+         for each(o in original)if(current.indexOf(o)<0)kept=false;
+         check(kept,"native map areas/traps retain original instances after duplicate packets count="+original.length);
+         var unexpected:int=0,newObjects:Array=mod.game.readNewObjs();
+         if(newObjects!=null)for each(var s:Object in newObjects)for each(o in original) {
+            var old:Object=packet(o);if(s.cls==old.cls && s.id==old.id && s.x==old.x && s.y==old.y)unexpected++;
+         }
+         check(unexpected==0,"native map areas/traps are not advertised as new drops");
+         // Different scripted regions may share one origin and have no id.
+         // A duplicate packet must retain both native instances and callbacks.
+         var areaClass:Class=ad.getDefinition("fe.loc.Area") as Class;
+         var a:Object=new areaClass(l,<area x="1" y="2" w="1" h="1" off="1"/>),b:Object=new areaClass(l,<area x="1" y="2" w="2" h="2" off="1"/>);
+         var callback:Function=function():void {};a.over=callback;b.out=callback;
+         l.addObj(a);l.addObj(b);l.areas.push(a,b);
+         try {
+            mod.game.applyObjSpawn([packet(a),packet(b)]);mod.game.applyObjSpawn([packet(a),packet(b)]);
+            current=mapObjects();check(current.length==original.length+2 && current.indexOf(a)>=0 && current.indexOf(b)>=0
+               && a.over===callback && b.out===callback && !a.enabled && !b.enabled && a.scX!=b.scX && a.scY!=b.scY,
+               "same-origin native areas retain separate geometry, scripts and disabled state");
+         } finally {l.remObj(a);l.remObj(b);l.areas.splice(l.areas.indexOf(a),1);l.areas.splice(l.areas.indexOf(b),1);}
+         var tiles:Array=[],traps:Array=[],t:Object,descriptors:Array=[];
+         for(var x:int=80;x<l.limX-40 && descriptors.length<2;x+=80) {
+            if(l.getAbsTile(x,130).trap==null && l.getAbsTile(x,70).trap==null)
+               descriptors.push({cls:"fe.loc::Trap",id:"spikes",x:x,y:120,isLoot:false});
+         }
+         check(descriptors.length==2,"two unused trap positions available for native constructor audit");
+         for each(s in descriptors)for each(var offset:int in [10,-50]) {
+            t=l.getAbsTile(s.x,s.y+offset);tiles.push({tile:t,old:t.trap});
+         }
+         try {
+            mod.game.applyObjSpawn(descriptors);mod.game.applyObjSpawn(descriptors);
+            current=mapObjects();for each(o in current)if(original.indexOf(o)<0)traps.push(o);
+            check(traps.length==2 && traps[0]!==traps[1],"two new same-id traps created once with native constructors");
+            for each(o in traps) {
+               check(o.dam>0 && o.vis!=null && o.in_chain && (l.getAbsTile(o.X,o.Y+10).trap===o || l.getAbsTile(o.X,o.Y-50).trap===o),
+                  "received trap retains native damage, visual and tile binding");
+               var g:Object=mod.game.gg,position:Object={x:g.X,y:g.Y,dx:g.dx,dy:g.dy,fly:g.isFly};
+               try {
+                  g.setPos(o.X,(o.Y1+o.Y2)/2);g.isFly=false;g.dy=12;g.neujaz=0;
+                  var hp:Number=g.hp;o.attKorp(g);
+                  check(g.hp<hp,"received trap causes native impact damage; HP loss="+(hp-g.hp));
+               } finally {g.setPos(position.x,position.y);g.dx=position.dx;g.dy=position.dy;g.isFly=position.fly;health();}
+            }
+         } finally {
+            for each(o in traps)l.remObj(o);
+            for each(var saved:Object in tiles)saved.tile.trap=saved.old;
+         }
+         check(mapObjects().length==original.length,"map object audit leaves the native room unchanged");
+      }
+      private function healthTrace(label:String):void {
+         var g:Object=mod.game.gg,p:Object=g.pers;
+         Log.d("SECURITY HEALTH "+JSON.stringify({label:label,role:host?"host":"join",round:round,kind:attackKind,
+            player:scalarState(g,"hp,maxhp,armor,skin,marmor,invulner,neujaz,cut,poison,rad,healhp"),
+            pers:scalarState(p,"begHP,inMaxHP,organMult,organMultPot,headHP,torsHP,legsHP,bloodHP,headSt,torsSt,legsSt,bloodSt")}));
       }
       private function fire(target:Object):void {
          var c:Class=mod.main.loaderInfo.applicationDomain.getDefinition("fe.weapon.Bullet") as Class;
          var bullet:Object=new c(unit,target.X+(attackKind>0?10:0),target.Y-target.scY/2,null,false);
-         bullet.targetObj=target;bullet.damage=100;bullet.tipDamage=0;bullet.probiv=0;bullet.critCh=0;
+         // Use ordinary collision, so a reprogrammed turret must pass the same
+         // faction/permission decision as a real shot. Forced targets bypass
+         // the native faction filter and would miss that regression.
+         bullet.targetObj=null;bullet.damage=100;bullet.tipDamage=0;bullet.probiv=0;bullet.critCh=0;
          bullet.vel=0;bullet.dx=bullet.dy=0;bullet.liv=3;
+         var overlaps:Array=[],fc:Object=mod.main.loaderInfo.applicationDomain.getDefinition("fe.unit.UnitTurret");
+         for each(var body:Object in mod.game.loc.units)if(bullet.X>=body.X1 && bullet.X<=body.X2 && bullet.Y>=body.Y1 && bullet.Y<=body.Y2) {
+            var entry:Object=scalarState(body,"id,hp,maxhp,X,Y,X1,X2,Y1,Y2,fraction,sost,disabled,trigDis,invulner,dexter,dexterPlus,dodge,transp,dopTestOn");
+            entry.cls=getQualifiedClassName(body);entry.target=body===target;
+            entry.allowed=fc.rconnectSecurityHit(unit,body,body.fraction!=unit.fraction);overlaps.push(entry);
+         }
+         healthTrace("before fire");
+         Log.d("SECURITY SHOT "+JSON.stringify({round:round,kind:attackKind,target:target.id,x:bullet.X,y:bullet.Y,
+            tile:scalarState(mod.game.loc.getAbsTile(bullet.X,bullet.Y),"phis,phX1,phX2,phY1,phY2"),overlaps:overlaps}));
          if(attackKind==0)bullet.step();
          else {bullet.targetObj=null;bullet.weap=unit.currentWeapon;bullet.damageExpl=100;bullet.destroy=0;bullet.explRadius=65;bullet.explTip=attackKind==1?2:1;bullet.explosion();}
+         var visited:Array=[];
+         if(bullet.parr!=null)for each(body in bullet.parr)visited.push({id:body.id,cls:getQualifiedClassName(body),target:body===target});
+         if(attackKind==0) {
+            var reached:Boolean=false;for each(var hit:Object in visited)if(hit.target)reached=true;
+            check(reached==fc.rconnectSecurityHit(unit,target,true),"ordinary turret shot collision follows this player's permission target="+target.id);
+         }
+         Log.d("SECURITY SHOT RESULT "+JSON.stringify({round:round,kind:attackKind,target:target.id,
+            bullet:scalarState(bullet,"off,babah,tilehit,inWall,damage,precision,miss,pier,probiv"),visited:visited}));
+         healthTrace("after fire");
          bullet.off=true;
       }
       private function reverseFire():void {
@@ -165,7 +281,18 @@ package {
          bullet.vel=0;bullet.dx=bullet.dy=0;bullet.liv=3;
          // Ordinary collision, with no targetObj bypass: the reprogrammed
          // turret must remain hittable by the player who has not hacked it.
-         bullet.step();bullet.off=true;
+         var overlaps:Array=[],fc:Object=mod.main.loaderInfo.applicationDomain.getDefinition("fe.unit.UnitTurret");
+         for each(var body:Object in mod.game.loc.units)if(bullet.X>=body.X1 && bullet.X<=body.X2 && bullet.Y>=body.Y1 && bullet.Y<=body.Y2) {
+            var entry:Object=scalarState(body,"id,hp,maxhp,X,Y,X1,X2,Y1,Y2,fraction,sost,disabled,trigDis,invulner,dexter,dexterPlus,dodge,dopTestOn");
+            entry.cls=getQualifiedClassName(body);entry.allowed=fc.rconnectSecurityHit(mod.game.gg,body,body.fraction!=mod.game.gg.fraction);overlaps.push(entry);
+         }
+         bullet.step();
+         var visited:Array=[];
+         if(bullet.parr!=null)for each(body in bullet.parr)visited.push({id:body.id,cls:getQualifiedClassName(body)});
+         Log.d("SECURITY REVERSE "+JSON.stringify({round:round,role:host?"host":"join",x:bullet.X,y:bullet.Y,
+            overlaps:overlaps,visited:visited,bullet:scalarState(bullet,"off,babah,tilehit,inWall,damage,precision,miss,pier,probiv")}));
+         check(visited.length>0 && visited[0].id==unit.id,"ordinary reverse shot reaches the intended turret collision");
+         bullet.off=true;
       }
       private function switchPolicy():void {toggle(!spec().shared);send("switch");change("switch");}
       private function audit():void {
@@ -200,7 +327,7 @@ package {
          var p:Object=e.data;if(p==null || p.type!="security-test")return;
          try {
             if(host && p.op=="ready"){peerReady=true;return;}
-            if(!host && p.op=="setup") {round=p.round;fixture=p.fixture;baseX=fixture.x;baseY=fixture.y;health();change("locate");return;}
+            if(!host && p.op=="setup") {round=p.round;fixture=p.fixture;baseX=fixture.x;baseY=fixture.y;health();mapObjectAudit();change("locate");return;}
             if(p.round!=round && p.op!="done")return;
             if(host && p.op=="located"){send("hack");if(mine())hack();change("settle");}
             else if(!host && p.op=="hack"){if(mine())hack();change("settle");}
@@ -209,11 +336,13 @@ package {
             else if(!host && p.op=="shot"){attackKind=p.kind;health();send("shot-ready");change("shot");}
             else if(host && p.op=="shot-ready"){fire(mod.game.gg);fire(ghost());change("shot");}
             else if(!host && p.op=="check-shot") {
-               check(mod.game.gg.maxhp==baseMaxHp,"local maximum HP unchanged during the attack");
+               healthTrace("check shot");
+               check(mod.game.gg.maxhp==baseMaxHp,"local maximum HP unchanged during the attack; before="+baseMaxHp+" after="+mod.game.gg.maxhp);
                var loss:Number=baseHp-mod.game.gg.hp;check(protectedSelf()?loss==0:loss>0,"native turret attack "+attackKind+" obeys local access; HP loss="+loss);
                send("shot-checked");change("wait");
             } else if(host && p.op=="shot-checked") {
-               check(mod.game.gg.maxhp==baseMaxHp,"host maximum HP unchanged during the attack");
+               healthTrace("check shot");
+               check(mod.game.gg.maxhp==baseMaxHp,"host maximum HP unchanged during the attack; before="+baseMaxHp+" after="+mod.game.gg.maxhp);
                loss=baseHp-mod.game.gg.hp;check(protectedSelf()?loss==0:loss>0,"native turret attack "+attackKind+" obeys host access; HP loss="+loss);
                if(attackKind<2){attackKind++;health();send("shot",{kind:attackKind});change("shot-ready");return;}
                if(!spec().shared && spec().skill>0) {
@@ -275,6 +404,14 @@ package {
       }
       private function tick(e:TimerEvent):void {
          mod=RConnectMod.instance;if(mod==null || phase=="done")return;
+         if(host && !seedInstalled) {
+            var landClass:Object=mod.main.loaderInfo.applicationDomain.getDefinition("fe.loc.Land");
+            var originalSeed:Function=landClass.rconnectSeedSource;
+            landClass.rconnectSeedSource=function(land:Object):uint {
+               return String(land.act.id)=="random_mane"?MAP_SEED:uint(originalSeed(land));
+            };
+            seedInstalled=true;
+         }
          // Protect the isolated characters during asynchronous map generation,
          // before the two-sided ready barrier. No damage assertion runs here.
          if(phase=="boot" && mod.game.gg!=null){mod.game.gg.invulner=true;mod.game.gg.hp=mod.game.gg.maxhp;}
@@ -284,9 +421,13 @@ package {
             if(getTimer()-at>(phase=="boot"?150000:25000)){check(false,"timeout "+phase);finish();return;}
             if(!stable())return;
             mod.game.forceCloseOverlays();mod.game.world.enemyAct=0;
+            if(host)for each(var parkedUnit:Object in parked)if(parkedUnit.loc===mod.game.loc) {
+               parkedUnit.setPos(40,80);parkedUnit.dx=parkedUnit.dy=0;
+            }
             if(baseY>0){mod.game.gg.setPos(baseX+(host?60:260),baseY);mod.game.gg.dx=mod.game.gg.dy=0;mod.game.gg.stay=true;}
             if(phase=="boot") {
                if(!seen.boot){check(mod.securityTerminals.supported,"native security interface present");seen.boot=true;}
+               if(!seen.seed){check(uint(mod.game.world.land.rconnectLayoutSeed)==MAP_SEED,"reproduce run04 map seed="+mod.game.world.land.rconnectLayoutSeed);seen.seed=true;}
                if(!host && mod.securityTerminals.stateReady) {
                   if(!seen.policy){check(true,"initial host security settings received before any policy toggle");seen.policy=true;}
                   send("ready");

@@ -24,6 +24,7 @@ def main():
     ap.add_argument('--game-root',type=Path,default=GAME)
     ap.add_argument('--game-candidate',type=Path,help='Diagnostic-only game SWF copied into isolated instances; installation stays read-only')
     ap.add_argument('--seconds',type=int,default=115)
+    ap.add_argument('--port',type=int,default=0,help='Optional isolated test listener port; zero asks the OS')
     ap.add_argument('--solo',action='store_true',help='Launch one offline instance; never host or connect')
     ap.add_argument('--keep-copies', action='store_true')
     ap.add_argument('--with-vision', action='store_true', help='Load the installed RealisticVision SWF in isolated copies')
@@ -101,8 +102,13 @@ def main():
     vision_templates={role:path.read_bytes() for role,path in [
         ('host',args.host_vision_config_template),('join',args.join_vision_config_template)] if path is not None}
     vision_inputs={role:hashlib.sha256(data).hexdigest() for role,data in vision_templates.items()}
+    if not 0 <= args.port <= 65535:
+        ap.error('port must be between 0 and 65535')
     with socket.socket() as probe:
-        probe.bind(('127.0.0.1',0)); port=probe.getsockname()[1]
+        # AIR HostServer binds all interfaces. Probe the same address scope.
+        if hasattr(socket,'SO_EXCLUSIVEADDRUSE'):
+            probe.setsockopt(socket.SOL_SOCKET,socket.SO_EXCLUSIVEADDRUSE,1)
+        probe.bind(('0.0.0.0',args.port)); port=probe.getsockname()[1]
     procs=[]; artifacts=[]; inputs={}
     # Snapshot all shared inputs once before either process starts. Other mod
     # tasks may deploy while this pair is running.
