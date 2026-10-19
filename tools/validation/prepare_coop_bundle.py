@@ -36,6 +36,7 @@ def normalized(path,text):
 def main():
     ap=argparse.ArgumentParser(description=__doc__)
     ap.add_argument('output',type=Path)
+    ap.add_argument('--without-peer-port',action='store_true',help='Hold the unqualified optional Q feature outside the release')
     args=ap.parse_args();out=(ROOT/args.output).resolve()
     assert out.parent==ROOT/'build/m52' and not out.exists()
     bm=read(BASE/'prepared.json')
@@ -45,7 +46,8 @@ def main():
     shutil.copytree(BASE/'tools/stubs',out/'tools/stubs')
     shutil.copyfile(BASE/'tools/build_mod.py',out/'tools/build_mod.py')
     provenance=[];conflicts=[]
-    for feature,manifest,pin in FEATURES:
+    features=[f for f in FEATURES if not (args.without_peer_port and f[0]=='peer-vision-port-07')]
+    for feature,manifest,pin in features:
         folder=ROOT/'build/m52'/feature;m=read(folder/manifest)
         assert sha(folder/'RConnectMod.swf')==pin,feature
         for name,digest in m['source'].items():assert sha(folder/name)==digest,(feature,name)
@@ -91,8 +93,10 @@ def main():
             shutil.copyfile(q/name,out/name)
         p=out/'src/RConnectMod.as';text=p.read_text(encoding='utf-8')
         assert text.count('"0.2.22-fix39-keybinds"')==1
-        write(p,text.replace('"0.2.22-fix39-keybinds"','"'+VERSION+'"'))
-    record=dict(kind='isolated-coop-bundle',version=VERSION,base_sha256=bm['candidate_sha256'],
+        version='0.2.23-coop-bundle2' if args.without_peer_port else VERSION
+        write(p,text.replace('"0.2.22-fix39-keybinds"','"'+version+'"'))
+    record=dict(kind='isolated-coop-bundle',version='0.2.23-coop-bundle2' if args.without_peer_port else VERSION,base_sha256=bm['candidate_sha256'],
+        held_features=['peer-port'] if args.without_peer_port else [],
         features=provenance,conflicts=conflicts,installed=False,compiled=False,recipe_sha256=sha(__file__),
         source={p.relative_to(out).as_posix():sha(p) for p in (out/'src').rglob('*.as')},
         inputs={p.relative_to(out).as_posix():sha(p) for p in (out/'tools').rglob('*') if p.is_file()})

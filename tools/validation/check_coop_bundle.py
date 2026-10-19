@@ -68,6 +68,7 @@ def build(candidate, out):
         harness=out/'EffectsHarness.swf'
         call(compiler+['-source-path='+str(tests/'harness'),'-output='+str(harness),str(tests/'harness/RConnectDoc.as')])
         for name,entry,_,_,_ in CASES:
+            if name in m.get('held_features',[]):continue
             driver=out/name;driver.mkdir()
             extra=[]
             if name in ('throw','saved-grip'): extra=['-external-library-path+='+str(extras['throw'])]
@@ -82,6 +83,7 @@ def build(candidate, out):
 
 def run(candidate, out, drivers, selected, wb, smoke):
     m=verify(candidate);assert m['compiled'] and sha(candidate/'RConnectMod.swf')==m['sha256']
+    assert not selected.intersection(m.get('held_features',[]))
     native=M52/'security-native-02';patch=read(native/'prepared.json')
     assert sha(native/'pfe.swf')==patch['candidate_sha256']
     assert patch['loader_unchanged'] and patch['non_code_tags_unchanged']

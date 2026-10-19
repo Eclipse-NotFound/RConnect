@@ -4,10 +4,10 @@
 
 | 目标 | 现用SHA256 | 合格后目标SHA256 |
 |---|---|---|
-| `mods/RConnect/release/RConnectMod.swf` | a02e5aafc2ba529d37a78c83ac92a055121b72d347d56ab8ca720802cc9ddf60 | 267994640b29041296ea1606b249ba5f9ae80136a52fe450ca77cbad8e043307 |
+| `mods/RConnect/release/RConnectMod.swf` | a02e5aafc2ba529d37a78c83ac92a055121b72d347d56ab8ca720802cc9ddf60 | 574d2b51490ae8b25a1396555600f56a301f8a20ae50104c0e35cf2796441afe |
 | 根目录 `pfe.swf` | 2a4662488ba3b690eb23acfe4b79aca3f0d9ae114e5e2dee7595af3cabffb3ea | a8403f65d20b11daae3b9a8bc08951ea53b7c7d6c9d6f7b4fa941372094a4ca1 |
 
-新功能：安保终端共享/分别破解及既得安全权限保留、房间切换加载层与真实场景就绪检查、可选队友视野Q传送、双向抓投投掷物；另含原生Area/Trap实例和构造修复。保留已有菜单改键和个人配置。版本为`0.2.23-coop-bundle1`。
+新功能：安保终端共享/分别破解及既得安全权限保留、房间切换加载层与真实场景就绪检查、双向抓投投掷物；另含原生Area/Trap实例和构造修复。保留已有菜单改键和个人配置。版本为`0.2.23-coop-bundle2`。Q共享视野传送在bundle1合并回归中暴露许可过期问题，本次暂缓，不通过放宽判定来换取绿灯。
 
 根pfe采用已审查的定向补丁，只涉及`fe.serv.Interact`、`fe.unit.UnitTurret`、`fe.weapon.Bullet`。冻结清单证明MainFE加载器和非代码资源未改。DLC及B入口不在本次目标内。
 

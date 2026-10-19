@@ -28,8 +28,10 @@ def check_log(folder, role, version, smoke=False):
 
 def audit(candidate, evidence):
     m=verify(candidate);assert m['compiled'] and sha(candidate/'RConnectMod.swf')==m['sha256']
+    assert not m.get('diagnostic_only',False),'Diagnostic probes cannot be deployed'
     selections=read(evidence);assert isinstance(selections,dict)
-    expected={r[0]:r[1] for r in CASES};required=set(expected)|{'smoke'};found={};baseline=None
+    expected={r[0]:r[1] for r in CASES if r[0] not in m.get('held_features',[])};required=set(expected)|{'smoke'};found={};baseline=None
+    assert set(m.get('held_features',[]))<= {'peer-port'}
     native=M52/'security-native-02';patch=read(native/'prepared.json')
     assert sha(native/'prepared.json')=='cf029626d99e948b096ea108177d794f78ada338260ce9c00c9f9d7912259cf9'
     assert sha(native/'pfe.swf')==patch['candidate_sha256'] and patch['loader_unchanged'] and patch['non_code_tags_unchanged']
