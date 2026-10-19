@@ -1,5 +1,12 @@
 # A 房间加载优化 — 2026-10-19
 
+## 10-20 最终回交后复核：新依赖确认，仍缺内存
+
+- CS完成598项候选门禁及正式回读51项后明确交回。本会话已独立回读：宿主 `81c1bfb552aa8efbb20ccf15cb404ab5d879f58515b466ff788a079f5f0ec015`，CS0.8.2 `cd65cec6c763ef18b345bcc1208baaa4911e02bdb1f557fe316ebbabff9bd856`，WB0.5.9-scene `14112da06214bca51c6875d2527e73246dcb4c985caadda719eb4f77f1c0920d`，LAD0.5.0 `4291b8250d607ea1c6b5be48ded48bb5fa42af37bfe0cb3ed7a2e7c84efbbf90`，RConnect仍574D。21项安装输入保存于 `build/m52/room-entry-fast-04/installation-window-return-01.json`。
+- 首次40秒内存采样 `memory-window-return-01.json` 最低5.55GiB，后获知交接消息先后差，可能包含LAD短测占用；不能用作空闲结论。本会话一直仅只读核对，没有启动或停止任何AIR/JVM。
+- LAD确认唯一PID102292正常退出、再明确交回后，重新30秒采样 `memory-window-return-02.json`：每次AIR均0，最低4.99GiB、末次5.20GiB，仍低于双实例6GiB门槛。保持原保护，未尝试运行房间04。
+- 已明确再次临时交还给LAD做排队的0.5.1最终门禁，等待用户释放内存。它完成后须再次明确回交及报告安装变化；新旧性能对比仍需重新冻结同一最终组合。未部署房间04。
+
 ## 10-20 02:11 依赖安装正在复验
 
 - LAD协调会话转达：CS于02:11:17完成598项候选门禁后更新宿主/CS/WB，安装后独立回读尚未结束，失败可能回退。当前**不把新组合当已复验完成**，RConnect不启动AIR/JVM，仍等待明确交回及内存恢复。
