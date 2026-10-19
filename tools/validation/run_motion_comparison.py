@@ -44,6 +44,16 @@ def signature(run):
             for role, inp in run['inputs'].items()}
 
 
+def exclusive_air_evidence(inputs, timeline, expected_digest):
+    if inputs.get('require_exclusive_air') is not True or inputs.get('air_inventory_sha256') != expected_digest:
+        return False
+    if timeline.get('stopped_for_overlap') is not False:
+        return False
+    rows = timeline.get('rows', [])
+    monitored = [row['foreign_air'] for row in rows if isinstance(row, dict) and 'foreign_air' in row]
+    return bool(monitored) and all(isinstance(foreign, list) and not foreign for foreign in monitored)
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     for name in ('candidate', 'drivers', 'output'):
@@ -62,10 +72,17 @@ def main():
     digest = sha(binary)
     assert digest == cm['candidate_sha256'] and cm['compiled']
     before = installation()
+    runner = ROOT/'tools/run_coop_regression.py'
+    helper = ROOT/'tools/validation/air_test_inventory.py'
+    runner_digest, helper_digest = sha(runner), sha(helper)
     reference = (ROOT / args.reference).resolve() if args.reference else None
     if reference:
         assert reference.parent == M52
-        assert read(reference/'intent.json')['installation'] == before, 'Installation changed between controls'
+        previous = read(reference/'intent.json')
+        assert previous['installation'] == before, 'Installation changed between controls'
+        assert previous.get('require_exclusive_air') is True, 'Start a new baseline with overlap detection enabled'
+        assert previous['runner_sha256']==runner_digest and previous['air_inventory_sha256']==helper_digest, \
+            'Runner or overlap detector changed between controls'
     out.mkdir()
     binding = out/'driver'
     binding.mkdir()
@@ -75,10 +92,15 @@ def main():
     # old public declarations are used by both; no production code is embedded.
     save(binding/'driver-input.json', dict(candidate_sha256=digest,
          identical_driver=sha(binding/'EffectsDriver.swf'), source_binding=sha(drivers/args.case/'driver-input.json')))
-    runner = ROOT/'tools/run_coop_regression.py'
+    evidence = out/'runner-source'
+    evidence.mkdir()
+    for source in (runner, helper):
+        shutil.copyfile(source, evidence/source.name)
+    assert sha(evidence/runner.name)==runner_digest and sha(evidence/helper.name)==helper_digest
     intent = dict(candidate=str(candidate), candidate_sha256=digest, version=cm['version'],
                   driver_manifest=sha(drivers/'prepared.json'), case=args.case, installation=before,
-                  reference=str(reference) if reference else None, runner_sha256=sha(runner),
+                  reference=str(reference) if reference else None, runner_sha256=runner_digest,
+                  require_exclusive_air=True, air_inventory_sha256=helper_digest,
                   wrapper_sha256=sha(Path(__file__)))
     save(out/'intent.json', intent)
     # Read-only launcher inventory. The existing paired runner preserves the
@@ -91,13 +113,15 @@ def main():
     command = [sys.executable, '-B', '-X', 'utf8', str(runner), '--candidate', str(binary),
         '--effects', '--effects-driver', str(binding), '--all-mods', '--land', land,
         '--seconds', str(seconds), '--expected-version', cm['version'], '--port', str(test_port()),
-        '--private-desktop', '--defer-visible', '--wait-host-world']
+        '--private-desktop', '--defer-visible', '--wait-host-world', '--require-exclusive-air']
     with (out/'runner.log').open('w', encoding='utf-8') as log:
         process = subprocess.run(command, cwd=ROOT, stdout=log, stderr=subprocess.STDOUT)
     raw = (out/'runner.log').read_text(encoding='utf-8', errors='replace')
     found = re.search(r'^OUTPUT .*?([0-9a-f]{10})\s*$', raw, re.M)
     result = dict(exit_code=process.returncode, run=found[1] if found else None,
         installation_unchanged=before == installation(), runner_unchanged=intent['runner_sha256']==sha(runner),
+        air_inventory_unchanged=helper_digest==sha(helper), exclusive_air_confirmed=False,
+        invalid_reason='foreign AIR before start' if 'Other AIR processes exist; timing run not started' in raw else None,
         passed=False, performance_qualified=False, full_release_qualified=False)
     if found:
         folder = ROOT/'build/cooperation'/found[1]
@@ -124,7 +148,12 @@ def main():
                 frame_intervals=summary([r['dt'] for trace in traces for r in trace]), metrics=metrics,
                 log_sha256=sha(log) if log.exists() else None)
         result['memory'] = read(folder/'memory-timeline.json')
+        run_input = read(folder/'input.json')
+        result['exclusive_air_confirmed'] = exclusive_air_evidence(run_input, result['memory'], helper_digest)
+        if not result['exclusive_air_confirmed']:
+            result['invalid_reason'] = 'overlap detected or complete overlap evidence absent'
         result['passed'] = process.returncode==0 and result['installation_unchanged'] and result['runner_unchanged'] \
+            and result['air_inventory_unchanged'] and result['exclusive_air_confirmed'] \
             and result['same_runtime_as_reference'] and all(r['done'] and r['version'] and r['checks']>0 and not r['errors']
                                                           for r in result['roles'].values())
     save(out/'result.json', result)
