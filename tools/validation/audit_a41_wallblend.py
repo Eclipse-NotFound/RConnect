@@ -115,8 +115,17 @@ def audit(candidate):
     pair = out/'paired-01'
     pm = read(pair/'prepared.json')
     require(pm['parent_native'] == sha(native/'prepared.json'), 'Same-scene parent changed')
+    require(pm['component_prepared'] == PREPARED and pm['versions'] == ['0.5.6-scene','0.5.7-scene'],
+            'Same-scene production versions changed')
     for name, digest in pm['inputs'].items():
         require(sha(pair/name) == digest, 'Same-scene source changed: '+name)
+    for name in ('WallNativePair.as','WallNativePairDoc.as'):
+        source = (pair/'original-src'/name).read_text(encoding='utf-8-sig')
+        if name == 'WallNativePair.as':
+            source = replace_once(source, '"0.5.4-scene"', '"0.5.6-scene"')
+            source = replace_once(source, '"0.5.5-scene"', '"0.5.7-scene"')
+        require((pair/'src'/name).read_text(encoding='utf-8') == source,
+                'Same-scene assertions changed: '+name)
     require(sha(pair/'WallNativePair.swf') == pm['swf'], 'Same-scene driver changed')
     evidence = pair/'evidence'
     require(read(evidence/'intent.json')['prepared'] == sha(pair/'prepared.json'), 'Same-scene intent changed')

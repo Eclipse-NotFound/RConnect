@@ -19,11 +19,24 @@ def main():
     folder=out/args.label;native=read(out/'native/prepared.json')
     if args.mode=='prepare':
         assert not folder.exists();(folder/'src').mkdir(parents=True)
-        for name in ('WallNativePair.as','WallNativePairDoc.as'):shutil.copyfile(ROOT/'tests/wallblend'/name,folder/'src'/name)
+        component=read(out/'prepared.json')
+        versions=(component.get('baseline_version','0.5.4-scene'),component.get('version','0.5.5-scene'))
+        assert versions in (('0.5.4-scene','0.5.5-scene'),('0.5.6-scene','0.5.7-scene'))
+        (folder/'original-src').mkdir()
+        for name in ('WallNativePair.as','WallNativePairDoc.as'):
+            original=folder/'original-src'/name
+            shutil.copyfile(ROOT/'tests/wallblend'/name,original)
+            source=original.read_text(encoding='utf-8-sig')
+            if name=='WallNativePair.as':
+                for before,after in zip(('0.5.4-scene','0.5.5-scene'),versions):
+                    assert source.count('"'+before+'"')==1
+                    source=source.replace('"'+before+'"','"'+after+'"')
+            (folder/'src'/name).write_text(source,encoding='utf-8')
         compile_as(folder/'src/WallNativePairDoc.as',folder/'WallNativePair.swf',[folder/'src'],
             [GAME/'mods/Sandevistan/build/tools/airsdk/frameworks/libs/air/airglobal.swc'])
         save(folder/'prepared.json',dict(parent_native=sha(out/'native/prepared.json'),
-            inputs={p.relative_to(folder).as_posix():sha(p) for p in (folder/'src').glob('*.as')},
+            component_prepared=sha(out/'prepared.json'),versions=list(versions),
+            inputs={p.relative_to(folder).as_posix():sha(p) for directory in ('src','original-src') for p in (folder/directory).glob('*.as')},
             swf=sha(folder/'WallNativePair.swf'),script=sha(Path(__file__))))
         print(json.dumps(dict(prepared=str(folder))));return
     m=read(folder/'prepared.json');assert m['parent_native']==sha(out/'native/prepared.json')
