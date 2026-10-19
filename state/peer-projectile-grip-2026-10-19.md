@@ -2,7 +2,13 @@
 
 任务：玩家无法用念力捡起队友扔出的手雷等物品。负责会话 RConnect (5)，`01a151ba-c524-70b1-b544-a5cf605efecb`。其它并行任务不由本会话修改；统一合并由原 RConnect 会话负责。
 
-## 接续入口（12:08）
+## 接续入口（合并版失败补记）
+
+- **最新状态：主会话合并后的全模组回归未通过，不能凭下列独立候选128/0认定组合版合格。** 失败证据 `build/cooperation/fcee59d6c2`，准确候选 `build/m52/coop-bundle-04/RConnectMod.swf`，SHA `574d2b51490ae8b25a1396555600f56a301f8a20ae50104c0e35cf2796441afe`，驱动准备目录 `build/m52/coop-bundle-functional-03`（沿用test05来源）。主会话报告240秒总限结束；本会话只读回日志确认宿主50 PASS/8 FAIL、加入侧50 PASS/6 FAIL，双方各9条结果、均无done。
+- 该组合冻结 `ProjectileGrip.as` 与本overlay仍是准确原字节 `1af840a99c2f080f13e5a10264fa80e0057934231ce596edf3bdbf4fe31aa700`。记录到的抓取者minMana保持10000，扣蓝断言失败，尚不能认定是产品机制缺陷还是全模组/夹具干扰。round6宿主投酸弹，加入侧仅持有1帧后收到ineligible/retired（join.log:178–188），源端ownerHeld=0、kicks=0（host.log:167–171）；其它多个场景持有/冲量成功。
+- 后续由主会话统一定位；本会话不另行修复、不启动新AIR/编译、不改安装。测试窗口已交RV，本补记只保存现成结果。下列独立对照成功与所有历史失败均保持原判。
+
+## 独立候选交付状态（12:08）
 
 - **实现已保存，既定旧/新各十回合对照已完成：旧版复现，候选投掷物功能断言128 PASS / 0 FAIL；未部署。** 此结果不代表全游戏零异常：旧/新加入侧日志各有两条原生Trap构造#1063，详见下文。经测候选是 `build/m52/peer-projectile-grip-04/RConnectMod.swf`，SHA `ccf842e123cdb057e10a0e39a1e85430883a62e0f6cd3d9902269805cf141801`，版本 `0.2.22-peer-grenade-01`。overlay 类与冻结候选源 SHA 均为 `1af840a99c2f080f13e5a10264fa80e0057934231ce596edf3bdbf4fe31aa700`，实测前后匹配。
 - 最终完整驱动是 `build/m52/peer-projectile-test-05/build/control` 和 `.../candidate`；二者二进制相同，固定此前失败的地图种子2056490076。旧版 `910f790151`、候选 `5a5e9441a4`，均完成十回合。本轮已按约定结束，不再追加探针；短测与旧失败记录全部保留，不改判。
