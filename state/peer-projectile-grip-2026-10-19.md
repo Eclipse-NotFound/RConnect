@@ -4,7 +4,7 @@
 
 ## 接续入口（12:08）
 
-- **实现已保存，既定旧/新各十回合对照已完成：旧版复现，候选128 PASS / 0 FAIL；未部署。** 经测候选是 `build/m52/peer-projectile-grip-04/RConnectMod.swf`，SHA `ccf842e123cdb057e10a0e39a1e85430883a62e0f6cd3d9902269805cf141801`，版本 `0.2.22-peer-grenade-01`。overlay 类与冻结候选源 SHA 均为 `1af840a99c2f080f13e5a10264fa80e0057934231ce596edf3bdbf4fe31aa700`，实测前后匹配。
+- **实现已保存，既定旧/新各十回合对照已完成：旧版复现，候选投掷物功能断言128 PASS / 0 FAIL；未部署。** 此结果不代表全游戏零异常：旧/新加入侧日志各有两条原生Trap构造#1063，详见下文。经测候选是 `build/m52/peer-projectile-grip-04/RConnectMod.swf`，SHA `ccf842e123cdb057e10a0e39a1e85430883a62e0f6cd3d9902269805cf141801`，版本 `0.2.22-peer-grenade-01`。overlay 类与冻结候选源 SHA 均为 `1af840a99c2f080f13e5a10264fa80e0057934231ce596edf3bdbf4fe31aa700`，实测前后匹配。
 - 最终完整驱动是 `build/m52/peer-projectile-test-05/build/control` 和 `.../candidate`；二者二进制相同，固定此前失败的地图种子2056490076。旧版 `910f790151`、候选 `5a5e9441a4`，均完成十回合。本轮已按约定结束，不再追加探针；短测与旧失败记录全部保留，不改判。
 - 每次用已有 `tools/run_coop_regression.py`：`--effects --land random_mane --seconds 150 --responsive --visible-windows --defer-visible`；旧版 candidate 为 `build/m52/a22-fixes-39/RConnectMod.swf`、expected-version `0.2.22-fix39-keybinds`；新版用上述候选与版本。各用对应 `--effects-driver`。独立AppID，真实存档只读，不启动额外编译/测试抢占已协调窗口。
 - 回执统一用 `tools/validation/analyze_peer_projectile_checks.py build/cooperation/<run>`，包含新控制器的故障日志。旧版应复现缺口；候选若失败继续按具体日志修正，不降低原生移动/冲量/引信/唯一实体断言。
@@ -26,10 +26,13 @@
 | 原生单次爆炸、引信 | 保留 | 保留；酸弹按原生碰撞结束，不强加定时引信要求 |
 | 接收侧多出伤害实体 | 无 | 无；只保留一个可抓取的无模拟Obj |
 | 控制器异常/未结束 | 无控制器，完成 | 新控制器故障关键字0、完整结束 |
+| 原生陷阱构造异常 | join.log:30–31各1条spikes/fspikes #1063 | join.log:29–30各1条spikes/fspikes #1063 |
 
 场景：普通手雷按E、炸药按Q松手、`spgren`持有至引信结束、酸性炸弹按E、投出普通手雷后移除投掷快捷槽/切换武器再按E。每个场景交换宿主/加入侧身份各一次。候选同时验证原生Q选取、扣蓝、源端念力光晕、代理释放/到期清理；未直接写teleObj或调用私有抓取入口。
 
 完整记录各位于 `build/cooperation/<run>/peer-projectile-summary.json`，并保留log、run/input清单、内存记录及配置。候选host日志SHA `1d132e9a778ed5c2ab61115509d511b77e2432199c1ecf5cd404dc3d1204eb6a`；join日志SHA `0ecceb6731d5d731017df904e8d59856b05c5bd336f084a66090ceef497dbe14`。
+
+主会话复核提醒后，回读原日志确认：候选 `join.log:29–30` 和旧版 `join.log:30–31` 均记录 `obj spawn 'spikes'/'fspikes' failed: ArgumentError: Error #1063: Argument count mismatch on fe.loc::Trap(). Expected 2, got 6.`，随后该同步批次 `spawned=0 skipped=2`。这是两批均可观察到的陷阱构造失败，尚未在本工作修复；不能把它归为此次新增控制器错误，也不能将128项功能断言通过表述为全游戏无异常。当前专用analyzer的 `passed` 只覆盖列出的功能断言、新控制器故障、错误对话框及未捕获异常，不包含这种已捕获并记录的obj spawn异常。原日志不删改，本批不追加AIR测试；交由主会话与房间同步工作统一处理。
 
 证据边界：这是原生游戏+生产RConnect通信的功能回归，没有加载全模组，不是最终合并版本的性能或发布验收；没有直接断言玩家/敌人的爆炸扣血数值。测试使用同一原生地图种子和同一房间key `random_mane//0,4,0`，夹具高度由角色初始位置选定，旧版baseY920、候选baseY320，因此不能称逐帧完全相同的几何回放；本次候选高度与早前失败候选的320一致。换房/断线中的持有清理尚未动态覆盖。本批成功不能抹掉此前 `c9dc07f45e` 的完整失败，尤其不能把其原因仅归于Q重试；此前输入时序/随机构造条件也不同。
 
