@@ -1,5 +1,12 @@
 # A 房间加载优化 — 2026-10-19
 
+## 10-20 03:00后最终安装与阻塞（当前）
+
+- LAD0.5.1于02:58:06部署，协调方报告任务579项及正式回读43项通过、全部自有实例退出且无后续队列。本会话实际回读其SHA `bafe52b9145194c2e9d3a08a3331236fee5f1b6a3e1f016a46d9bc288c04c47a`；宿主81C1/CS CD65/WB1411/RConnect574D未变。21项完整输入保存于 `room-entry-fast-04/installation-window-return-02.json`。之前4291组合仅为历史基准。
+- 收到明确回交后，首读AIR=0、余量6.48GiB；但 `room-travel-candidate-05` 启动检查时降到不足6GiB，**未启动AIR，无双人计时**，失败回执保留。不能把短暂内存回升说成已恢复实测。
+- 再连续50秒采样 `memory-window-return-03.json`，10次AIR均0，最低5.210GiB、最高5.251GiB、末次5.245GiB。未放宽6GiB启动/512MiB运行保护；停止实测，等待用户释放内存。已明确归还空闲窗口，告知无需继续为本会话预留。
+- 房间04生产指纹再次核对仍 `94032224d1119217047ad2fd64347ce5080ed798224abde4e813b497cfdba2a5`，组件56/0，尚无04原生双人验证；仍未部署。用户准备继续后先核对当时队列/安装/稳定余量，再跑最新组合下单人、旧版与04双人对比及分房/整图/大场景回归。
+
 ## 10-20 最终回交后复核：新依赖确认，仍缺内存
 
 - CS完成598项候选门禁及正式回读51项后明确交回。本会话已独立回读：宿主 `81c1bfb552aa8efbb20ccf15cb404ab5d879f58515b466ff788a079f5f0ec015`，CS0.8.2 `cd65cec6c763ef18b345bcc1208baaa4911e02bdb1f557fe316ebbabff9bd856`，WB0.5.9-scene `14112da06214bca51c6875d2527e73246dcb4c985caadda719eb4f77f1c0920d`，LAD0.5.0 `4291b8250d607ea1c6b5be48ded48bb5fa42af37bfe0cb3ed7a2e7c84efbbf90`，RConnect仍574D。21项安装输入保存于 `build/m52/room-entry-fast-04/installation-window-return-01.json`。
