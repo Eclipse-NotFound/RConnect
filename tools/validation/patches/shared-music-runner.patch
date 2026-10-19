@@ -1,0 +1,36 @@
+--- a/tools/run_coop_regression.py
++++ b/tools/run_coop_regression.py
+@@ -14,6 +14,7 @@
+ import time
+ import uuid
+ from validation.native_runtime_assets import native_runtime_files, asset_hashes
++from validation.shared_music import MusicCache
+ from validation.runtime_memory import snapshot as memory_snapshot
+ ROOT = Path(__file__).resolve().parents[1]
+ GAME = ROOT.parents[1]
+@@ -120,6 +121,7 @@
+     if shutil.disk_usage(output).free < required_bytes:
+         raise SystemExit('Insufficient space for isolated test copies; no AIR instance started')
+     frozen=output/'frozen'; frozen.mkdir()
++    music_cache=MusicCache(ROOT/'build')
+     if args.responsive:
+         (frozen/'tools').mkdir()
+         for name in ('RConnect.Process.ps1','keep_test_responsive.ps1'):
+@@ -127,7 +129,7 @@
+     for source in assets:
+         destination=frozen/source.relative_to(game)
+         destination.parent.mkdir(parents=True,exist_ok=True)
+-        shutil.copy2(source,destination)
++        music_cache.copy(source,destination)
+     if args.game_candidate:
+         patch=args.game_candidate.resolve()
+         assert patch.is_relative_to(ROOT/'build') and patch.name=='pfe.swf'
+@@ -173,7 +175,7 @@
+     configuration_files={};descriptors={};launches=[]
+     try:
+         for role in roles:
+-            folder=output/role; shutil.copytree(frozen,folder)
++            folder=output/role; shutil.copytree(frozen,folder,copy_function=music_cache.copy)
+             release=folder/'mods'/'Rconnect'/'release'
+             inputs[role]={'game':hashlib.sha256((folder/'pfe.swf').read_bytes()).hexdigest()}
+             inputs[role]['assets']=asset_hashes(folder,asset_names)
