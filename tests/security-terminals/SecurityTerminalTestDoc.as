@@ -24,7 +24,7 @@ package {
          {shared:false,hacker:1,skill:1},{shared:true,hacker:1,skill:2}];
       private var mod:RConnectMod,host:Boolean,timer:Timer=new Timer(100),links:Dictionary=new Dictionary();
       private var phase:String="boot",at:int=getTimer(),round:int=-1,peerReady:Boolean=false;
-      private var fixture:Object,terminal:Object,unit:Object,baseHp:Number,peerHp:Number,peerLoss:Number;
+      private var fixture:Object,terminal:Object,unit:Object,baseHp:Number,baseMaxHp:Number,peerHp:Number,peerLoss:Number;
       private var seen:Object={},beforeXp:Number,afterXp:Number,checks:int=0,failures:int=0;
       private var baseX:Number=0,baseY:Number=0;
       private var attackKind:int=0;
@@ -107,12 +107,19 @@ package {
          var g:Object=mod.game.gg;
          // Native setParameters recomputes maxhp from Pers; changing only the
          // derived Unit field is undone by ordinary equipment/stat updates.
-         g.pers.begHP=5000;g.pers.inMaxHP=1000000;g.pers.healAll();g.pers.setParameters();
+         // healAll alone leaves trauma stages stale. Native healing updates
+         // those stages before we recompute the character's final maximum.
+         g.pers.heal(1000000,4);g.pers.heal(1000000,5);g.pers.heal(1000000,6);
+         g.pers.begHP=5000;g.pers.setParameters();
+         // Measure primary HP damage without secondary injuries also changing
+         // the maximum. This affects only these isolated test characters.
+         g.pers.organMult=0;g.pers.regenFew=0;
          g.hp=g.maxhp;g.invulner=false;g.neujaz=0;g.currentArmor=null;g.rad=0;
          g.shithp=0;g.armor=g.skin=g.marmor=0;g.armor_qual=0;g.dexter=g.dexterPlus=g.dodge=0;
          g.healhp=0;g.invis=false;g.obs=g.maxObs;mod.game.world.godMode=false;
-         baseHp=g.hp;
-         check(g.sost<3 && mod.game.world.t_die==0 && baseHp>=5000,"native test character alive with stable maximum health="+baseHp);
+         baseHp=g.hp;baseMaxHp=g.maxhp;
+         check(g.sost<3 && mod.game.world.t_die==0 && baseHp==baseMaxHp && baseMaxHp>=1000,
+            "native test character alive and fully healed; HP="+baseHp+" max="+baseMaxHp);
       }
       private function arena():void {
          var l:Object=mod.game.loc;
@@ -138,7 +145,7 @@ package {
          check(terminal.inter.lock==0,"actual native unlock command succeeded");
       }
       private function next():void {
-         round++;if(round>=cases.length){send("done");offline();finish();return;}
+         round++;if(round>=cases.length){send("done");change("finish-wait");return;}
          toggle(spec().shared);mod.game.gg.setPos(baseX+60,baseY);create();health();peerReady=false;send("setup",{fixture:fixture});change("setup");
       }
       private function fire(target:Object):void {
@@ -201,9 +208,11 @@ package {
             else if(!host && p.op=="shot"){attackKind=p.kind;health();send("shot-ready");change("shot");}
             else if(host && p.op=="shot-ready"){fire(mod.game.gg);fire(ghost());change("shot");}
             else if(!host && p.op=="check-shot") {
+               check(mod.game.gg.maxhp==baseMaxHp,"local maximum HP unchanged during the attack");
                var loss:Number=baseHp-mod.game.gg.hp;check(protectedSelf()?loss==0:loss>0,"native turret attack "+attackKind+" obeys local access; HP loss="+loss);
                send("shot-checked");change("wait");
             } else if(host && p.op=="shot-checked") {
+               check(mod.game.gg.maxhp==baseMaxHp,"host maximum HP unchanged during the attack");
                loss=baseHp-mod.game.gg.hp;check(protectedSelf()?loss==0:loss>0,"native turret attack "+attackKind+" obeys host access; HP loss="+loss);
                if(attackKind<2){attackKind++;health();send("shot",{kind:attackKind});change("shot-ready");return;}
                if(spec().skill==1) {
@@ -255,7 +264,8 @@ package {
                for each(var b:Object in cp.objs)if(b.k==fixture.terminal)terminalState=b;
                check(terminalState!=null && terminalState.inter==null && terminalState.interNative==null,"room checkpoint cannot overwrite teammate's personal lock attempts");
                next();
-            } else if(!host && p.op=="done")finish();
+            } else if(!host && p.op=="done") {round=int(p.round);send("done-ack");finish();}
+            else if(host && p.op=="done-ack") {offline();finish();}
          }catch(err:Error){check(false,err.getStackTrace());finish();}
       }
       private function tick(e:TimerEvent):void {
@@ -272,7 +282,10 @@ package {
             if(baseY>0){mod.game.gg.setPos(baseX+(host?60:260),baseY);mod.game.gg.dx=mod.game.gg.dy=0;mod.game.gg.stay=true;}
             if(phase=="boot") {
                if(!seen.boot){check(mod.securityTerminals.supported,"native security interface present");seen.boot=true;}
-               if(!host)send("ready");else if(peerReady && ghost()!=null){arena();next();}
+               if(!host && mod.securityTerminals.stateReady) {
+                  if(!seen.policy){check(true,"initial host security settings received before any policy toggle");seen.policy=true;}
+                  send("ready");
+               } else if(host && peerReady && ghost()!=null){arena();next();}
             } else if(phase=="locate" && locate() && mod.securityTerminals.shared==spec().shared) {
                check(terminal.inter.lock>0,"other endpoint starts with a locked native terminal");send("located");change("wait-hack");
             } else if(host && phase=="settle" && getTimer()-at>1800) {audit();send("audit");change("audit-wait");}

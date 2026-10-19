@@ -10,9 +10,9 @@
 
 - 基线：`build/m52/a22-fixes-39/src`，禁止从根 src 重建；正式字节 `a02e5aafc2ba529d37a78c83ac92a055121b72d347d56ab8ca720802cc9ddf60`。
 - 功能源：`experimental/security-terminals/src`。`tools/validation/prepare_security_terminals.py` 机械合并 Config、紧凑 HUD 和 GameBridge，不覆盖其它功能覆盖树。
-- 当前候选：`build/m52/security-terminals-06`，版本 `0.2.22-fix39-security1`，SWF `498fe827fd39386d0efa76e41ee8b95165f90d85233c3dcf7c9a84afbc013782`。编译通过。
+- 当前候选：`build/m52/security-terminals-08`，版本 `0.2.22-fix39-security3`，SWF `45a141c8124af50b03ee16dcc82e51d8ee3fa35c3140f17f7daffe85b1a7c41a`。编译通过；06/07旧字节与失败证据保留。
 - 原生副本：`build/m52/security-native-02/pfe.swf`，SHA `a8403f65d20b11daae3b9a8bc08951ea53b7c7d6c9d6f7b4fa941372094a4ca1`。固定安装基线 `2a4662488ba3b690eb23acfe4b79aca3f0d9ae114e5e2dee7595af3cabffb3ea`，只改 Interact、UnitTurret、Bullet。MainFE 加载器与非代码标签读回不变。
-- 外部驱动：`tests/security-terminals/SecurityTerminalTestDoc.as`，由 `tools/validation/build_security_driver.py` 与准确候选绑定；03 已编译，后续若修夹具另建目录，不能覆盖原回执。
+- 外部驱动：`security-driver-10`，SHA `7dd47af24f369efcad6f32d8ca3a6630f25b02d3a98eb3b4257c8adb772ce995`；源码 `d41b27c65247514536986c78b7054373b6550dda61c3112c1eefe986be2f2311`。编译绑定08；后续若修夹具另建目录，不能覆盖原回执。
 
 ## 机制
 
@@ -41,16 +41,24 @@
 
 ## 测试协调与接续
 
+11:24 前后的 `security-run-03` / `cooperation/3a387ac8bf`（06/native02/driver08）完整收尾，退出1、安装无变化。主141通过8失败，加入89通过14失败；第二人原生破解、未破解玩家反击已改写阵营炮塔、外来房间状态恢复与切换保留均通过。失败仍包括4500/5000的测试角色上限变化，以及主侧先断链导致加入侧等不到完成消息。保持整体未通过，不以分项通过替代结论。主/加入的设置滚动截图已目检：标签完整、宿主可操作、加入侧禁用，保留紧凑面板尺寸。
+
+已按原生源码进一步修正准备：`healAll`只恢复肢体HP，不更新伤势阶段，`setParameters`仍可能按旧阶段扣生命上限；且先写的`inMaxHP`会被`defaultParams`重置。09改用原生`heal`恢复阶段，测试角色关闭次生肢体损伤，主要生命扣血仍走真实子弹/气体/爆炸，并新增攻击前后最大HP不变的断言。完成协议等待加入侧确认后才退出联机，避免发送缓冲尚未送出就断开。
+
+生产07还修复源码审查确认的首次状态订阅竞态：welcome与首次权限状态可在同批到达，而新监听尚未接上。加入侧每秒请求一次，收到后停止；换图重新确认。首次设置到达前完成的破解暂存，收到宿主设置后按请求顺序送出。测试启动屏障现在要求首次设置已收到，不能再依赖后续切换设置间接恢复。该07变化尚待实机重跑，不能沿用06的分项通过冒充验证。
+
+随后补了低占用的实际控制器专项检查（`check_security_handshake.py`）：控制器/权限簿/消息类型由冻结候选准确复制，游戏适配器用测试替身、传输链路故意丢弃首次状态；不加载游戏、不证明原生炮塔伤害。首版检查01另有固定等待过短，保留16项4红原始结果；改为等待真实完成条件后，**同一检查对07：16项2失败；对08：16项0失败、退出0**。故障证据明确为换图重置请求编号，却未重置宿主的已收编号，首个新请求会被误认为重复。08同步重置此编号。两份最终回执为`security-handshake-02-control/receipt.json`与`security-handshake-03-candidate/receipt.json`。覆盖首次消息丢失补收、早于初始状态的破解、补收停止、换图重新确认、两次排队顺序、旧地图消息拒绝与旧权限不扩大；已有34项权限检查源未变。
+
 第一轮已完成RC5、A41、Q、安保与RC2分房。RC5普通手雷短probe已通过；其完整回归仍待。A41组件1281项/38对图像已由(3)读回复核，非联合性能门禁。RC2的04新发送门控、Q07均仅编译及组件或旧字节通过，尚未部署。
 
-当前没有本会话自有AIR。RV阶梯会话连续服务容量错误，未能启动；RV主会话也在真实6 GiB门槛前退出。资源稳定后明确交接，功能接续为安保→Q→房间04→RC5完整；RV约1分钟原生像素及90秒阶梯另与其就绪状态对齐，性能采样需要稳定窗口。不要依据旧消息自动同时启动。
+本会话03已交回窗口；Q07随后因实际余量3.56/4.51GiB两次未启动。RV最终32组原生像素已通过并交回，尚剩约3分钟最终旧新性能对照；阶梯会话服务容量错误需恢复后重新交接。11:44:39实际预检可提交余量6.28GiB、无AIR/Java，已重新明确交给Q07。顺位Q→房间04→RC5完整→RV最终对照→安保08；每段仍需收到明确交接，不能依据旧消息同时启动。
 
 本会话下一步精确命令（RConnect目录，既有隔离测试权限，必须使用全新输出目录）：
 
 ```powershell
-& 'C:/Users/hello/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe' -B -X utf8 tools/validation/run_security_terminals.py --output build/m52/security-run-03 --candidate build/m52/security-terminals-06 --native build/m52/security-native-02 --driver build/m52/security-driver-08 --seconds 240
+& 'C:/Users/hello/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe' -B -X utf8 tools/validation/run_security_terminals.py --output build/m52/security-run-04 --candidate build/m52/security-terminals-08 --native build/m52/security-native-02 --driver build/m52/security-driver-10 --seconds 240
 ```
 
-先读回源/产物指纹、当前安装及实际同权限内存；旧失败不覆盖。通过后目检`cooperation/<run>/host-presentation-security-*.png`及加入侧对应图。若伤害或第二人权限仍失败，按新增的SECURITY HACK真实状态和原生条件定位，不预设都是夹具错误。
+先读回源/产物指纹、当前安装及实际同权限内存；旧失败不覆盖。通过后目检`cooperation/<run>/host-presentation-security-*.png`及加入侧对应图。若伤害或权限仍失败，按真实状态和原生条件定位，不预设都是夹具错误。
 
-开跑前核对准确二进制/驱动指纹、当前安装和至少6 GiB可提交余量；只管理自己的隔离 AppID，保留其它游戏/后台实例，记录背景负载。第一轮安保结束后先交 RC2，若失败先离线修复再安排后续窗口。发布前另走发布门禁，配套本体修改按已有授权边界处理。
+开跑前核对准确二进制/驱动指纹、当前安装和至少6 GiB可提交余量；只管理自己的隔离 AppID，保留其它游戏/后台实例，记录背景负载。发布前另走发布门禁，配套本体修改按已有授权边界处理。

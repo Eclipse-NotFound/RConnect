@@ -19,7 +19,7 @@ package rconnect.core {
       private var timer:Timer=new Timer(100),ledger:SecurityAccessState=new SecurityAccessState();
       private var localViews:Object={},pending:Object={};
       private var transport:Object,mode:String="",epoch:int=-1,serial:int=0,requestSerial:int=0;
-      private var known:Boolean=false,policy:Boolean=true,policyRevision:int=0,nextState:int=0,errors:int=0;
+      private var known:Boolean=false,policy:Boolean=true,policyRevision:int=0,nextState:int=0,nextHello:int=0,errors:int=0;
       private var factory:Object,hookFunction:Function;
       private var lastRoom:Object,lastApply:String="";
       public var supported:Boolean=false;
@@ -41,6 +41,7 @@ package rconnect.core {
             && !game.roomHold && game.loc!=null && game.gg!=null && !game.isTransitioning();
       }
       public function get canChangePolicy():Boolean {return supported && (host() || session.mode==Session.OFFLINE);}
+      public function get stateReady():Boolean {return supported && (host() || session.mode==Session.OFFLINE || known);}
       public function get shared():Boolean {return host() || session.mode==Session.OFFLINE?mod.config.getValue("sharedSecurityHack")!="0":policy;}
       public function setShared(value:Boolean):Boolean {
          if(!canChangePolicy)return false;
@@ -68,9 +69,13 @@ package rconnect.core {
          if(mode!=session.mode || transport!==current) {
             for(var old:Object in links)TcpLink(old).removeEventListener(TcpLink.MESSAGE,receive);
             links=new Dictionary();resetWorld();mode=session.mode;transport=current;epoch=-1;
-            known=host();policy=mod.config.getValue("sharedSecurityHack")!="0";policyRevision=host()?1:0;nextState=0;
+            known=host();policy=mod.config.getValue("sharedSecurityHack")!="0";policyRevision=host()?1:0;nextState=0;nextHello=0;
          }
-         if(epoch!=int(session.rooms.epoch)) {resetWorld();epoch=int(session.rooms.epoch);nextState=0;}
+         if(epoch!=int(session.rooms.epoch)) {
+            resetWorld();epoch=int(session.rooms.epoch);known=host();nextState=0;nextHello=0;
+            // Request numbers belong to this map epoch, just like receipts.
+            for(var peer:Object in links){links[peer].last=0;links[peer].state="";}
+         }
          for(var key:Object in links)if(!connected(key as TcpLink)) {
             TcpLink(key).removeEventListener(TcpLink.MESSAGE,receive);delete links[key];
          }
@@ -97,8 +102,22 @@ package rconnect.core {
             TcpLink(l).send(packet);links[l].state=signature;
          }
       }
+      private function requestState():void {
+         if(known || session.mode!=Session.CONNECTED || !connected(session.link as TcpLink) || getTimer()<nextHello)return;
+         // Welcome and the first state can arrive in one socket batch before
+         // this controller's next tick attaches its listener. Ask until known.
+         nextHello=getTimer()+1000;
+         session.link.send({type:"security-terminals",op:"hello",epoch:epoch});
+      }
+      private function sendPending():void {
+         if(host() || !known || !connected(session.link as TcpLink))return;
+         var queue:Array=[];
+         for each(var p:Object in pending)if(!p.sent && p.request.epoch==epoch)queue.push(p);
+         queue.sort(function(a:Object,b:Object):Number {return a.request.seq-b.request.seq;});
+         for each(p in queue){p.sent=true;session.link.send(p.request);}
+      }
       private function request(inter:Object,skill:int):void {
-         if(!ready() || !host() && !known || int(inter.lock)!=0)return;
+         if(!ready() || int(inter.lock)!=0)return;
          var unitKeys:Array=[],room:String=game.roomKey(),terminal:String=game.securityObjectKey(inter.owner);
          for each(var u:Object in game.loc.units)if(RConnectSecurityAccess.turret(u) && u.sost<3 && u.hp>0) {
             var unitKey:String=game.securityUnitKey(u),state:Object=RConnectSecurityAccess.state(u);
@@ -110,8 +129,8 @@ package rconnect.core {
          if(terminal=="")return;
          var q:Object={type:"security-terminals",op:"request",epoch:epoch,seq:++requestSerial,
             room:room,terminal:terminal,skill:Math.max(0,Math.min(2,skill)),units:unitKeys};
-         pending[room+"|"+terminal]=q;
-         if(host())accept(q,session.myId);else session.link.send(q);
+         pending[room+"|"+terminal]={request:q,sent:false};
+         if(host())accept(q,session.myId);else {sendPending();requestState();}
       }
       private function accept(q:Object,actor:int):void {
          var receipt:Object={id:serial+1,room:q.room,terminal:q.terminal,actor:actor,
@@ -134,6 +153,9 @@ package rconnect.core {
          try {
             sync();
             if(int(q.epoch)!=epoch)return;
+            if(q.op=="hello" && host() && links[l]!=null) {
+               links[l].state="";nextState=0;broadcast();return;
+            }
             if(q.op=="request" && host() && links[l]!=null && q.seq is Number && q.seq>links[l].last) {
                var check:Object={id:1,room:q.room,terminal:q.terminal,actor:l.id,shared:shared,skill:q.skill,units:q.units};
                if(!SecurityAccessState.valid(check))return;
@@ -144,6 +166,7 @@ package rconnect.core {
             for each(var r:Object in q.receipts)if(!SecurityAccessState.valid(r))return;
             known=true;policy=q.shared;policyRevision=int(q.policyRevision);
             for each(r in q.receipts)ledger.add(r);
+            sendPending();
             applyCurrent();
          } catch(err:Error) {fault(err);}
       }
@@ -247,7 +270,7 @@ package rconnect.core {
          if(ledger.terminalOpen(game.roomKey(),terminal,session.myId) && int(inter.lock)!=0)inter.setAct("lock",101);
       }
       private function before(e:Event):void {try {sync();applyCurrent();}catch(err:Error){fault(err);}}
-      private function tick(e:TimerEvent):void {try {sync();broadcast();}catch(err:Error){fault(err);}}
+      private function tick(e:TimerEvent):void {try {sync();requestState();broadcast();}catch(err:Error){fault(err);}}
       private function fault(e:Error):void {if(errors++<8)Log.d("RConnect security: "+e);}
    }
 }

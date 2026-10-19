@@ -28,7 +28,7 @@ def integrate(name, text):
         assert text.count(old) == count, (name, old[:100], text.count(old), count)
         text = text.replace(old, new)
     if name == 'RConnectMod.as':
-        change('"0.2.22-fix39-keybinds"', '"0.2.22-fix39-security1"')
+        change('"0.2.22-fix39-keybinds"', '"0.2.22-fix39-security3"')
         change('      public var friendlyFire:rconnect.core.FriendlyFire;',
                '      public var securityTerminals:rconnect.core.SecurityTerminals;\n      public var friendlyFire:rconnect.core.FriendlyFire;')
         change('         this.friendlyFire = new rconnect.core.FriendlyFire(this);',
@@ -46,6 +46,8 @@ def integrate(name, text):
          enabled(securityMode,mod.securityTerminals!=null && mod.securityTerminals.canChangePolicy);
          securityHint.text=mod.securityTerminals!=null && !mod.securityTerminals.supported?
             tr("需重启并加载配套游戏版本。","Restart with the matching game build.","Перезапустите совместимую сборку игры."):
+            mod.securityTerminals!=null && !mod.securityTerminals.stateReady?
+            tr("正在接收宿主的安保设置。","Receiving the host's security settings.","Получение настроек безопасности хоста."):
             tr("由宿主设置。只影响之后的破解，已获得的炮塔安全权限保留。",
                "Host setting. Applies to future hacks; existing turret access is kept.",
                "Настройка хоста. Только для новых взломов; полученный доступ сохраняется.");

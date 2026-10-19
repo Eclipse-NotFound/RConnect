@@ -55,7 +55,7 @@ def main():
     before = installation()
     command = [sys.executable,'-B','-X','utf8',str(ROOT/'tools/run_coop_regression.py'),
         '--candidate',str(candidate/'RConnectMod.swf'),'--game-candidate',str(native/'pfe.swf'),
-        '--effects','--effects-driver',str(driver),'--expected-version','0.2.22-fix39-security1',
+        '--effects','--effects-driver',str(driver),'--expected-version','0.2.22-fix39-security3',
         '--all-mods','--land','random_mane','--seconds',str(args.seconds)]
     out.mkdir()
     intent = dict(command=command, installation_before=before,
