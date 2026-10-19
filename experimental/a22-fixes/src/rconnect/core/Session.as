@@ -988,7 +988,7 @@ package rconnect.core
          // M24/M25/M26：joiner 高频（200ms）扫描本地 Loot 拾取/推动 + Box
          // 位移（念力）+ ist 变化（开门/开锁/搜刮）→ 上报宿主（搬运中的
          // 物体每秒 5 跳，接收端 tween 平滑）
-         if(mode==CONNECTED && rooms.ready && !rooms.busy && !rooms.authority && mod.game!=null)
+         if(mode==CONNECTED && rooms.canSyncWorld && !rooms.authority && mod.game!=null)
          {
             var sceneDue:Boolean=flash.utils.getTimer()>=_nextSceneReport;
             if(sceneDue)_nextSceneReport=flash.utils.getTimer()+200;
@@ -1054,7 +1054,7 @@ package rconnect.core
             broadcastWorldState();
             // 宿主按实际时间每约200ms广播单位快照 + 世界身份。
             // M17：不设 units>0 门槛——房间无敌人时也要传瓦片/物品/新生成
-            if(flash.utils.getTimer()>=_nextWorldSnapshot && mod.game != null && rooms.ready && !rooms.busy && !mod.game.isTransitioning())
+            if(flash.utils.getTimer()>=_nextWorldSnapshot && mod.game != null && rooms.canSyncWorld && !mod.game.isTransitioning())
             {
                // AIR coalesces delayed timers under load. Counting four callbacks
                // stretched 200ms updates to 500ms; use elapsed time without catch-up bursts.
@@ -1206,7 +1206,7 @@ package rconnect.core
          }
          var ws:Object = Protocol.make(Protocol.MSG_WORLDSTATE,
             {tick: _tickCount, players: players});
-         if(mod.game!=null && rooms.ready && !rooms.busy && rooms.authority && !mod.game.isTransitioning()) {
+         if(mod.game!=null && rooms.canSyncWorld && rooms.authority && !mod.game.isTransitioning()) {
             ws.enemyMotion=mod.game.readEnemyMotion();
             var movingLoot:Array=mod.game.readLootSync(true);
             if(movingLoot!=null)ws.lootMotion=movingLoot;

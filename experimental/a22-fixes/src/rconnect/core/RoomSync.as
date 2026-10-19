@@ -294,7 +294,11 @@ package rconnect.core
          followStarted=true;check();
       }
       public function accepts(msg:Object):Boolean
-      {return !busy && currentSettledRoom() && acceptsReceipt(msg);}
+      {return canSyncWorld && acceptsReceipt(msg);}
+      /** A native activation can precede the next barrier/frame callback. Do
+       * not label its snapshots/reports with the previous room's authority. */
+      public function get canSyncWorld():Boolean
+      {return ready && !busy && currentSettledRoom();}
       /** Explicit local travel shares the ordinary-room handoff with walking. */
       public function travelToTeammate(info:Object):Boolean
       {
