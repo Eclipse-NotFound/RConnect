@@ -3,10 +3,18 @@ import argparse
 import os
 import shutil
 import subprocess
+import sys
 from check_coop_bundle import ROOT,M52,JAVA,SDK,read,save,sha,inventory
 
 def main():
     ap=argparse.ArgumentParser();ap.add_argument('output');a=ap.parse_args()
+    sys.path.insert(0,str(ROOT.parents[1]/'mods/ModLoader/tools'))
+    from test_registry import Registration
+    with Registration(owner='RConnect / 房间测试驱动编译',purpose='外部驱动编译（无游戏，避免污染其他性能采样）',
+                      run_dir=ROOT/a.output,evidence=ROOT/a.output/'compile.log',wait=0) as record:
+        build(a);record.outcome='passed';record.note='外部驱动编译完成；不是功能验收'
+
+def build(a):
     out=(ROOT/a.output).resolve();assert out.parent==M52 and not out.exists();out.mkdir()
     original=M52/'coop-bundle-drivers-04';src=out/'tests';src.mkdir()
     names=('RoomTravelTimingTestDoc','RoomTravelSceneTestDoc','A22RoomEntryTestDoc','A22MapEntryTestDoc',

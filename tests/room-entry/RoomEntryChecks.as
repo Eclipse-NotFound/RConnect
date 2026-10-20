@@ -45,6 +45,7 @@ package {
             state:RoomCodec.pack({key:key||mod.game.roomKey(),color:green,width:12,height:8})});
       }
       private function run():void {
+         nameOfCase="terrain checkpoint encoding";RoomCodecChecks.run(check);
          nameOfCase="welcome received between frames";fresh(Session.OFFLINE);mod.session.mode=Session.CONNECTED;
          if("receivedWelcome" in mod.session.rooms)Object(mod.session.rooms).receivedWelcome(null);
          check(pixel()!=red,"welcome closes the provisional scene before any new frame");
@@ -148,6 +149,18 @@ package {
             key:mod.game.roomKey(),state:readyMessage.fresh});render();
          check(mod.game.restores==beforeRestore && pixel()==red,"matching fresh owner grant preserves the held native room");
          check(mod.session.rooms.ready && mod.session.rooms.authority && !mod.game.roomHold,"fresh owner grant releases native simulation");
+         nameOfCase="host joins the existing peer-owned room";
+         seal(3);
+         readyMessage=null;for each(sent in mod.session.link.messages)if(sent.op=="ready" && sent.barrier==3)readyMessage=sent;
+         check(readyMessage.own!=null && readyMessage.fresh==null,"held owner sends one complete checkpoint");
+         mod.session.rooms.handle({type:"room",op:"grant",barrier:3,epoch:1,term:3,owner:false,retained:true,
+            key:mod.game.roomKey(),state:readyMessage.own});render();
+         check(mod.game.retainedRestores==1,"exact held checkpoint reuses terrain and object state");
+         check(mod.session.rooms.ready && !mod.session.rooms.authority && !mod.game.roomHold,"retained checkpoint still transfers simulation authority");
+         nameOfCase="retained hint without a held owner checkpoint";
+         seal(4);mod.session.rooms.handle({type:"room",op:"grant",barrier:4,epoch:1,term:4,owner:false,retained:true,
+            key:mod.game.roomKey(),state:readyMessage.own});render();
+         check(mod.session.rooms.busy && mod.game.roomHold,"unverified retained grant stays blocked");
          nameOfCase="existing pause and foreign grant";fresh(Session.CONNECTED);mod.game.world.onPause=true;
          seal(1);grant(1);render();check(mod.game.world.onPause,"existing local pause survives handoff");
          mod.game.world.onPause=false;mod.game.setRoom("map//5,0,0",red);frame();seal(2);

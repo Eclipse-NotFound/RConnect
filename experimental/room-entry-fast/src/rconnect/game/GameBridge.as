@@ -6200,25 +6200,27 @@ package rconnect.game
          adoptHostLandParams(info);regenCurrentLand();
       }
 
-      public function restoreCheckpoint(s:Object,authority:Boolean,foreign:Boolean):void
+      public function restoreCheckpoint(s:Object,authority:Boolean,foreign:Boolean,retained:Boolean=false):void
       {
          if(s==null) {roomRole(authority);return;}
          if(int(s.width)!=int(loc.spaceX) || int(s.height)!=int(loc.spaceY))
             throw new Error("Room geometry differs: "+roomKey());
          roomRole(authority);
          if(mapProgress!=null)mapProgress.restore(s.points);
-         if(foreign)_objects.clearRoom(loc);
-         reconcileObjs(s.objs as Array);
          var used:Dictionary=new Dictionary();
-         for each(var os:Object in s.objs)
-         {
-            var box:Object=_objects.resolve(os,loc.objs,used);
-            if(box!=null){NativeRoomState.restore(box,os.runtime);
-               if(securityInteraction(probe(box,"inter")))securityTerminals.restoreInteraction(probe(box,"inter"),String(os.k));
-               else {NativeRoomState.restore(probe(box,"inter"),os.inter);RConnectInteractionAccess.restore(probe(box,"inter"),os.interNative);}}
+         if(!retained) {
+            if(foreign)_objects.clearRoom(loc);
+            reconcileObjs(s.objs as Array);
+            for each(var os:Object in s.objs)
+            {
+               var box:Object=_objects.resolve(os,loc.objs,used);
+               if(box!=null){NativeRoomState.restore(box,os.runtime);
+                  if(securityInteraction(probe(box,"inter")))securityTerminals.restoreInteraction(probe(box,"inter"),String(os.k));
+                  else {NativeRoomState.restore(probe(box,"inter"),os.inter);RConnectInteractionAccess.restore(probe(box,"inter"),os.interNative);}}
+            }
+            _terrain.restoreCheckpoint(loc,s.tiles as Array);
          }
          if(authority)boxTrackReset(); // Restored owner velocities belong to native physics.
-         _terrain.restoreCheckpoint(loc,s.tiles as Array);
          // A mirror is a display surrogate. Reconstruct native units when its
          // authority changes, with original difficulty, AI and weapons.
          if(foreign)
@@ -6265,7 +6267,8 @@ package rconnect.game
          if(playerMines!=null)playerMines.restore(s.mines as Array,authority,foreign);
          if(securityTerminals!=null)securityTerminals.worldChanged();
          tileRedrawIfDirty();
-         _wall.restore(loc,s.wallPaint as Array);_satsRasterDirty=true;
+         if(!retained)_wall.restore(loc,s.wallPaint as Array);
+         _satsRasterDirty=true;
       }
 
       /** 从游戏全量数据 AllData.d 中取单位 XML（blit 动画定义的数据源）。 */

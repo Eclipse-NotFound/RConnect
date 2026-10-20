@@ -1,4 +1,5 @@
 package rconnect.core {
+   import RConnectModDomains;
    import rconnect.game.GameBridge;
 
    /** One seed per actual native Land construction. Cached visits never call
@@ -23,7 +24,10 @@ package rconnect.core {
          savedSceneMode=undefined;
       }
       private function scene():Object {
-         if(sceneClass==null)try {sceneClass=session.mod.game.main.loaderInfo.applicationDomain.getDefinition("ContinuousSceneMod");}catch(e:*){}
+         if(sceneClass==null)try {
+            var domain:Object=RConnectModDomains.find(session.mod.game.main,"ContinuousSceneMod");
+            if(domain!=null)sceneClass=domain.getDefinition("ContinuousSceneMod");
+         }catch(e:*){}
          return sceneClass;
       }
       /** Report the actual cached world, not the preference for the next trip. */

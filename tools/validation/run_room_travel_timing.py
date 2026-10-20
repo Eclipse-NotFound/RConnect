@@ -49,10 +49,20 @@ def main():
             assert inp['driver']==sha(binding/'EffectsDriver.swf')
             path=run/(role+'.log');text=path.read_text(encoding='utf-8-sig',errors='replace') if path.exists() else ''
             stdout=run/(role+'.stdout.log');all_text=text+'\n'+(stdout.read_text(encoding='utf-8',errors='replace') if stdout.exists() else '')
+            module_logs=run/'module-logs'/role
+            for module_log in sorted(module_logs.glob('*.log')):
+                if module_log.name!='RConnect.log':all_text+='\n'+module_log.read_text(encoding='utf-8',errors='replace')
             errors=[line for line in all_text.splitlines() if 'COOP FAIL' in line
                 or ('obj spawn' in line and 'failed' in line)
                 or ('RConnect' in line and (' failed:' in line or ' ERROR' in line))
+                or re.search(r'\bERROR\b',line)
                 or re.search(r'\b(?:Error\s*#\d+|TypeError|ArgumentError|ReferenceError|VerifyError|RangeError|SecurityError|out of memory)\b',line,re.I)]
+            scene_log=module_logs/'ContinuousScene.log'
+            scene_text=scene_log.read_text(encoding='utf-8',errors='replace') if scene_log.exists() else ''
+            if '[ContinuousScene] registered ' not in scene_text:errors.append('ContinuousScene initialization was not confirmed')
+            scene_asset='mods/ContinuousScene/release/scene.xml'
+            if inp.get('mod_assets',{}).get(scene_asset)!=before.get(scene_asset):errors.append('ContinuousScene scene asset differs or is missing')
+            errors=list(dict.fromkeys(errors))
             rows=[json.loads(s.split('TRAVEL RESULT ',1)[1]) for s in text.splitlines() if s.startswith('TRAVEL RESULT ')]
             result['roles'][role]=dict(checks=len(re.findall(r'^COOP PASS ',text,re.M)),errors=errors,
                 done='COOP EFFECTS DONE' in text,version='v'+version+' initialized' in text,rows=rows,log_sha256=sha(path) if path.exists() else None)

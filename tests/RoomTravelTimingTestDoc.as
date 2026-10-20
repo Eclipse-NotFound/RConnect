@@ -1,6 +1,7 @@
 package {
    import flash.desktop.NativeApplication;
    import flash.display.Sprite;
+   import flash.display.Loader;
    import flash.events.Event;
    import flash.events.MouseEvent;
    import flash.utils.Dictionary;
@@ -19,6 +20,7 @@ package {
       private var exitAt:int=-1,exitDone:int=-1,coverMs:int=0,pausedMs:int=0,lastFrame:int=0;
       private var localResult:Object;
       private var soloBootTravel:Boolean=false;
+      private var sceneClass:Object;
       protected function merged():Boolean{return false;}
       public function RoomTravelTimingTestDoc() {
          var id:String=NativeApplication.nativeApplication.applicationID;
@@ -89,7 +91,19 @@ package {
          solo=mod.config.getValue("autoRole")=="";
          if(!configured) {
             configured=true;mod.config.setValue("followTeammate","0");
-            try {var cls:Object=mod.game.main.loaderInfo.applicationDomain.getDefinition("ContinuousSceneMod");cls.nativeEnabled=host&&merged();}catch(ignored:*){}
+            var sceneConfigured:Boolean=false;
+            try {
+               var nativeMain:MainFE=mod.game.main as MainFE;
+               for(var key:Object in nativeMain.modEntryByLoader) {
+                  var loader:Loader=key as Loader;
+                  if(loader==null || !loader.contentLoaderInfo.applicationDomain.hasDefinition("ContinuousSceneMod"))continue;
+                  var cls:Object=loader.contentLoaderInfo.applicationDomain.getDefinition("ContinuousSceneMod");
+                  sceneClass=cls;
+                  cls.nativeEnabled=host&&merged();
+                  sceneConfigured=Boolean(cls.nativeEnabled)==(host&&merged());break;
+               }
+            }catch(error:*){Log.d("TRAVEL CONFIG ERROR "+error);}
+            check(sceneConfigured,"native scene preference was explicitly configured");
             Log.d("TRAVEL CONFIG "+JSON.stringify({host:host,solo:solo,merged:merged()}));
          }
          if(host)for each(var p:Object in mod.session.peers)watch(p.link as TcpLink);else watch(mod.session.link);
@@ -120,6 +134,10 @@ package {
       }
       private function finish():void {
          if(phase=="done")return;phase="done";removeEventListener(Event.ENTER_FRAME,tick);
+         if(!host && !solo && sceneClass!=null) {
+            mod.session.leave();
+            check(sceneClass.nativeEnabled===false,"disconnect restores the joiner's original scene preference");
+         }
          Log.d("COOP EFFECTS DONE travel-timing "+(host?"host":"join"));
       }
    }

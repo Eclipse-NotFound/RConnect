@@ -27,7 +27,9 @@ def installation():
         if line.startswith('#') or '|' not in line:
             continue
         directory, entry = line.split('|')[:2]
-        for name in (entry+'.swf', 'config.txt', 'config.json'):
+        names=[entry+'.swf', 'config.txt', 'config.json']
+        if directory.lower()=='continuousscene':names.append('scene.xml')
+        for name in names:
             path = GAME/'mods'/directory/'release'/name
             if path.is_file():
                 files.add(path)

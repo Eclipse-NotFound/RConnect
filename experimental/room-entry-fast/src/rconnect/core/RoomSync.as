@@ -38,6 +38,7 @@ package rconnect.core
       private var barrierStarted:int=0;
       private var freshRoom:Object;
       private var freshWire:String;
+      private var heldRoom:Object,heldState:Object,heldWire:String;
       private var blocked:Boolean=false;
       private var requested:Boolean=false;
       private var entryView:RoomEntryView=new RoomEntryView();
@@ -123,6 +124,7 @@ package rconnect.core
          busy=false;game.roomHold=false;pauseWorld=null;
          localEntry=false;
          freshRoom=null;freshWire=null;
+         heldRoom=null;heldState=null;heldWire=null;
          if(ready && session.progress!=null)session.progress.prepare();
          status=ready?(authority?"分房探索":"共同探索"):"";
       }
@@ -416,6 +418,18 @@ package rconnect.core
                }else if(msg.unchanged===true) {
                   if(!currentSettledRoom() || !ready || !authority || msg.owner!==true || String(msg.key)!=game.roomKey())
                      throw new Error("Invalid unchanged room grant");
+               }else if(msg.retained===true) {
+                  // Only reuse our own exact checkpoint while this same native
+                  // room remained frozen. Unit/loot authority still changes.
+                  if(!ready || !authority || heldRoom!==game.loc || !game.roomHold || heldState==null
+                     || heldWire==null || msg.state!==heldWire || String(msg.key)!=game.roomKey())
+                     throw new Error("Invalid retained room grant");
+                  restoring=true;
+                  // Retain the exact JSON-decoded numbers used by the new
+                  // authority too; the original capture can differ by one ULP.
+                  state=RoomCodec.unpack(String(msg.state));
+                  game.restoreCheckpoint(state,Boolean(msg.owner),false,true);
+                  restoring=false;
                }else {
                   state=RoomCodec.unpack(String(msg.state));
                   if(game.roomKey()!=String(state.key))throw new Error("Room changed during grant");
@@ -453,6 +467,7 @@ package rconnect.core
          // Owner state remains complete (including mines, loot and wall marks).
          // Reuse that capture when both fields refer to the same held room.
          var sameCapture:Boolean=own!=null && settledRoom===game.loc;
+         heldRoom=sameCapture?game.loc:null;heldState=sameCapture?own:null;heldWire=sameCapture?ownPacked:null;
          var knownCurrent:Boolean=ready && settledRoom===game.loc && settledKey==game.roomKey();
          // For a shared destination the host already owns its complete native
          // state. A second freshly generated copy is never used by commit.
@@ -494,6 +509,9 @@ package rconnect.core
          var unchanged:Boolean=theirs!=null && int(theirs.owner)==1 && theirKey!=myKey
             && String(msg.oldKey)==theirKey && msg.own==null && msg.fresh==null;
          var fresh:Boolean=theirs==null;
+         // The former owner is still in the same frozen room. Return its exact
+         // validated bytes, not a newly serialized copy of an equivalent state.
+         var retained:Boolean=msg.own!=null && String(msg.oldKey)==theirKey;
          var grantPacked:String=null;
          if(theirs==null)
          {
@@ -508,9 +526,10 @@ package rconnect.core
          theirs.term=pending;
          authority=true;ready=true;term=pending;settledRoom=game.loc;settledKey=myKey;
          game.independentRooms=true;
+         if(retained)grantPacked=String(msg.own);
          if(grantPacked==null && !unchanged)grantPacked=RoomCodec.pack(theirs.state);
          send({op:"grant",barrier:pending,epoch:epoch,term:pending,owner:theirKey!=myKey,fresh:fresh,
-            unchanged:unchanged,key:theirKey,state:grantPacked});
+            unchanged:unchanged,retained:retained,key:theirKey,state:grantPacked});
          Log.d("RConnectRoom: commit "+pending+" host="+myKey+" join="+theirKey);
       }
       private function flush():void

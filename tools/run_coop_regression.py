@@ -46,6 +46,7 @@ def main():
     ap.add_argument('--private-desktop', action='store_true', help='Keep the entire owned AIR process on a private Windows desktop')
     ap.add_argument('--wait-host-world', action='store_true', help='Complete host bootstrap before starting the peer; no scenario travel is timed here')
     ap.add_argument('--require-exclusive-air',action='store_true',help='Reject overlapping AIR processes; never stop a process owned by another task')
+    ap.add_argument('--registry-wait',type=float,default=0,help='Seconds to wait for shared test registration; zero defers without starting AIR')
     ap.add_argument('--defer-visible', action='store_true', help='External effects harness shows the window after native UI initialization; avoids the native pre-PipBuck resize race')
     ap.add_argument('--host-save-template',type=Path,help='Copy this slot-zero SOL into isolated slot nine; never modify the source')
     ap.add_argument('--join-save-template',type=Path,help='Copy this slot-zero SOL into isolated slot nine; never modify the source')
@@ -77,6 +78,19 @@ def main():
     token=uuid.uuid4().hex[:10]
     output=ROOT/'build'/'cooperation'/token
     output.mkdir(parents=True)
+    sys.path.insert(0,str(GAME/'mods/ModLoader/tools'))
+    from test_registry import Registration
+    with Registration(owner='RConnect / 房间与合作回归',purpose=args.expected_version+' '+('solo' if args.solo else 'host/join'),
+                      run_dir=output,evidence=output/'registry-result.json',wait=args.registry_wait) as record:
+        ok=run_registered(args,ap,output,record)
+        record.outcome='passed' if ok else 'failed'
+        record.note='运行器断言及模组日志检查'+('通过；专项范围见结果' if ok else '未通过，原始日志保留')
+        (output/'registry-result.json').write_text(json.dumps(dict(id=record.id,passed=ok,note=record.note),ensure_ascii=False,indent=2),encoding='utf-8')
+    raise SystemExit(0 if ok else 1)
+
+def run_registered(args,ap,output,record):
+    game=args.game_root.resolve();token=output.name
+    roles=('host',) if args.solo else ('host','join')
     memory_before=memory_snapshot()
     (output/'memory-before.json').write_text(json.dumps(memory_before,indent=2))
     if args.require_exclusive_air:
@@ -167,7 +181,13 @@ def main():
             if name.lower()=='rconnect': continue
             destination=frozen/'mods'/name/'release';destination.mkdir(parents=True,exist_ok=True)
             source=game/'mods'/name/'release'
-            for filename in (entry+'.swf','config.txt','config.json'):
+            filenames=[entry+'.swf','config.txt','config.json']
+            if name.lower()=='continuousscene':
+                # Required by register() even when native map merging is off.
+                # Without it the module silently fails before attaching its API.
+                assert (source/'scene.xml').is_file(), 'ContinuousScene scene.xml is missing'
+                filenames.append('scene.xml')
+            for filename in filenames:
                 path=source/filename
                 if name.lower()=='realisticvision' and filename==entry+'.swf' and args.vision_candidate:
                     path=args.vision_candidate.resolve()
@@ -205,6 +225,8 @@ def main():
             if args.all_mods:
                 inputs[role]['modules']={str(p.relative_to(folder)):hashlib.sha256(p.read_bytes()).hexdigest()
                                         for p in (folder/'mods').glob('*/release/*.swf')}
+                inputs[role]['mod_assets']={p.relative_to(folder).as_posix():hashlib.sha256(p.read_bytes()).hexdigest()
+                                           for p in (folder/'mods').glob('*/release/*.xml')}
             cfg=dict(nickname=role,hostIp='127.0.0.1',port=port,tickMs=50,
                      autoRole=role,autoGame='1',autoFollow='1',freezeAI='1',
                      worldInject='1',ghostCombat='1',autoHeal='1')
@@ -243,7 +265,7 @@ def main():
                 template.write_bytes(save_templates[role])
             configuration_files[role]={}
             config_paths = sorted(p for p in (folder/'mods').glob('*/release/*')
-                                  if p.is_file() and p.suffix.lower() in ('.txt','.json'))
+                                  if p.is_file() and p.suffix.lower() in ('.txt','.json','.xml'))
             for config_path in config_paths:
                 relative=config_path.relative_to(folder).as_posix()
                 payload=config_path.read_bytes()
@@ -267,6 +289,7 @@ def main():
         for role,folder,desc,storage,appid in launches:
             if not record_memory():break
             stdout=(output/(role+'.stdout.log')).open('w',encoding='utf-8')
+            record.before_launch(role+' / '+appid+' / '+str(desc))
             if args.private_desktop:
                 sys.path.insert(0,str(GAME/'mods/ModLoader/tools'))
                 from air_test_process import HiddenProcess
@@ -276,6 +299,7 @@ def main():
                 proc=subprocess.Popen([str(game/'adl64.exe'),'-runtime',str(game/'runtimes/air/win64'),str(desc)],
                        cwd=folder,stdout=stdout,stderr=subprocess.STDOUT,creationflags=subprocess.CREATE_NO_WINDOW)
             procs.append(proc)
+            record.child(proc.pid)
             if args.responsive:
                 policy=subprocess.run(['powershell.exe','-NoLogo','-NoProfile','-File',str(folder/'tools/keep_test_responsive.ps1'),
                     '-OwnedProcessId',str(proc.pid),'-Descriptor',str(desc)],capture_output=True,text=True,check=True)
@@ -322,6 +346,7 @@ def main():
                 try: p.wait(timeout=10)
                 except subprocess.TimeoutExpired: p.kill(); p.wait()
             if args.private_desktop:p.close()
+        record.child_stopped()
         (output/'memory-timeline.json').write_text(json.dumps(dict(rows=memory_rows,
             stopped_for_pressure=memory_stopped,stopped_for_overlap=isolation_stopped,minimum_commit_bytes=512*1024**2,
             reader_sha256=memory_reader_hash),indent=2))
@@ -329,6 +354,11 @@ def main():
             if path.exists(): shutil.copy2(path,output/(role+'.log'))
             vision_log=path.parent/'RVision.log'
             if vision_log.exists(): shutil.copy2(vision_log,output/(role+'-vision.log'))
+            # Mod initialization errors may be written only to a private log.
+            # Preserve every log from this run's unique application storage.
+            module_logs=output/'module-logs'/role;module_logs.mkdir(parents=True,exist_ok=True)
+            for module_log in path.parent.glob('*.log'):
+                shutil.copy2(module_log,module_logs/module_log.name)
             for picture in path.parent.glob('presentation-*.png'):
                 shutil.copy2(picture,output/(role+'-'+picture.name))
         if not args.keep_copies:
@@ -349,6 +379,17 @@ def main():
     for role,_ in artifacts:
         path=output/(role+'.log')
         content=path.read_text(encoding='utf-8',errors='replace') if path.exists() else ''
+        module_errors=[]
+        for module_log in (output/'module-logs'/role).glob('*.log'):
+            for line in module_log.read_text(encoding='utf-8',errors='replace').splitlines():
+                if re.search(r'\bERROR\b|\b(?:Error\s*#\d+|TypeError|ArgumentError|ReferenceError|VerifyError|RangeError|SecurityError|out of memory)\b',line):
+                    module_errors.append(module_log.name+': '+line)
+        if args.all_mods and any('ContinuousSceneMod.swf' in n for n in inputs.get(role,{}).get('modules',{})):
+            scene_log=output/'module-logs'/role/'ContinuousScene.log'
+            scene_text=scene_log.read_text(encoding='utf-8',errors='replace') if scene_log.exists() else ''
+            if '[ContinuousScene] registered ' not in scene_text:module_errors.append('ContinuousScene did not finish initialization')
+        if module_errors:
+            ok=False;print(role+' module errors: '+json.dumps(list(dict.fromkeys(module_errors)),ensure_ascii=False),flush=True)
         if args.vision_smoke_version:
             vision_log=output/(role+'-vision.log')
             vision_text=vision_log.read_text(encoding='utf-8',errors='replace') if vision_log.exists() else ''
@@ -377,5 +418,5 @@ def main():
         for line in content.splitlines():
             if 'COOP ' in line: print(line,flush=True)
     print('RESULT '+('PASS' if ok else 'FAIL'),flush=True)
-    raise SystemExit(0 if ok else 1)
+    return ok
 if __name__=='__main__': main()

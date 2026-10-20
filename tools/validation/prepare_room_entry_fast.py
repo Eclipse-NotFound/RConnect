@@ -8,7 +8,17 @@ import sys
 from check_coop_bundle import ROOT, M52, JAVA, SDK, read, save, sha, inventory, verify
 
 def main():
-    ap=argparse.ArgumentParser();ap.add_argument('output');ap.add_argument('--build',action='store_true');ap.add_argument('--version',required=True);a=ap.parse_args()
+    ap=argparse.ArgumentParser();ap.add_argument('output');ap.add_argument('--build',action='store_true');ap.add_argument('--version',required=True);ap.add_argument('--registry-wait',type=float,default=0);a=ap.parse_args()
+    if a.build:
+        # Compilation also disturbs another mod's performance measurements.
+        sys.path.insert(0,str(ROOT.parents[1]/'mods/ModLoader/tools'))
+        from test_registry import Registration
+        with Registration(owner='RConnect / 房间候选编译',purpose=a.version+' 编译（无游戏）',
+                          run_dir=ROOT/a.output,evidence=ROOT/a.output/'compile.log',wait=a.registry_wait) as record:
+            prepare(a);record.outcome='passed';record.note='编译成功；不代表原生功能通过'
+    else:prepare(a)
+
+def prepare(a):
     out=(ROOT/a.output).resolve();assert out.parent==M52 and not out.exists()
     base=M52/'coop-bundle-04';m=verify(base)
     assert sha(base/'RConnectMod.swf')=='574d2b51490ae8b25a1396555600f56a301f8a20ae50104c0e35cf2796441afe'

@@ -21,6 +21,7 @@ package {
       private var failures:Object={},finished:Boolean=false;
       private var pictures:Object={},pendingAt:int=-1,waits:Array=[];
       private var worldPackets:int=0;
+      private var connection:Object;
       public function RoomEntryProbe(m:RConnectMod) {
          mod=m;m.stage.addEventListener(Event.RENDER,render,false,-2147483648);
          m.stage.addEventListener(Event.ENTER_FRAME,watch,false,200000);watch();
@@ -39,14 +40,26 @@ package {
       }
       private function watch(e:Event=null):void {
          var session:Object=mod.session;
+         observeConnection();
          observeLink(session.link as TcpLink);
          for each(var peer:Object in session.peers)observeLink(peer.link as TcpLink);
+      }
+      private function observeConnection():void {
+         var session:Object=mod.session;
+         var current:Object=session.mode==Session.CONNECTED?session.link:
+            (session.mode==Session.HOSTING && session.peers.length>0?session.peers[0].link:null);
+         if(current!==connection) {
+            connection=current;confirmedRoom=null;confirmedLand=null;confirmedStamp=null;
+         }
       }
       private function observeLink(link:TcpLink):void {
          if(link==null || links[link])return;
          links[link]=true;link.addEventListener(TcpLink.MESSAGE,settled);
       }
       private function settled(e:NetMessageEvent):void {
+         // A new TCP connection must confirm even an unchanged native Land.
+         // Never inherit the previous session's render approval after rejoin.
+         observeConnection();
          var p:Object=e.data,rooms:Object=mod.session.rooms;
          if(p!=null && mod.session.mode==Session.CONNECTED) {
             var info:Object=null,hasWorld:Boolean=false;

@@ -29,11 +29,19 @@ def main():
     parser.add_argument('output', type=Path)
     parser.add_argument('--source', type=Path, required=True)
     parser.add_argument('--run', action='store_true')
+    parser.add_argument('--registry-wait',type=float,default=0)
     args = parser.parse_args()
     out, source = [(ROOT/p).resolve() for p in (args.output, args.source)]
     assert out.parent == ROOT/'build/m52' and not out.exists()
     assert source.is_relative_to(ROOT)
     out.mkdir()
+    sys.path.insert(0,str(GAME/'mods/ModLoader/tools'))
+    from test_registry import Registration
+    with Registration(owner='RConnect / 房间交接组件',purpose='真实RoomSync与显示树组件断言',
+                      run_dir=out,evidence=out/'receipt.json',resource='game' if args.run else 'offline',wait=args.registry_wait) as record:
+        run_component(args,out,source,record)
+
+def run_component(args,out,source,record):
     src = out/'src'
     shutil.copytree(ROOT/'tests/room-entry', src)
     files = ['rconnect/core/RoomSync.as', 'rconnect/net/RoomCodec.as', 'rconnect/net/Protocol.as']
@@ -78,8 +86,10 @@ def main():
     with (out/'stdout.log').open('w', encoding='utf-8') as log:
         sys.path.insert(0,str(GAME/'mods/ModLoader/tools'))
         from air_test_process import HiddenProcess
+        record.before_launch('component / '+appid+' / '+str(descriptor))
         process = HiddenProcess([str(GAME/'adl64.exe'), '-runtime', str(GAME/'runtimes/air/win64'), str(descriptor)],
             cwd=out, stdout=log, stderr=log)
+        record.child(process.pid)
         (out/'process.json').write_text(json.dumps(dict(pid=process.pid, app_id=appid)), encoding='utf-8')
         try:
             code = wait_owned(process, 40, out/'memory-timeline.json')
@@ -88,6 +98,7 @@ def main():
                 process.kill()
                 process.wait()
             process.close()
+            record.child_stopped()
     result_file = Path(os.environ['APPDATA'])/appid/'Local Store/result.json'
     result = {}
     if result_file.is_file():
@@ -102,7 +113,8 @@ def main():
     for row in result.get('assertions', []):
         if not row['passed']:
             print('FAIL '+row['label'])
-    raise SystemExit(code or int(not unchanged or not result.get('passed')))
+    if code or not unchanged or not result.get('passed'):raise SystemExit(code or 1)
+    record.outcome='passed';record.note='RoomSync组件断言通过；不是完整原生游戏验收'
 
 
 if __name__ == '__main__':

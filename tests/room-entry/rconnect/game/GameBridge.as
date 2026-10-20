@@ -8,6 +8,7 @@ package rconnect.game {
       public var roomHold:Boolean=false,independentRooms:Boolean=false,freezeAI:Boolean=false;
       public var roomEpoch:int=0,transition:Boolean=false,failRestore:Boolean=false;
       public var restores:int=0,restoreHook:Function;
+      public var retainedRestores:int=0;
       public function GameBridge(root:Sprite) {
          main=root;world={main:root,onPause:false,land:{act:{id:"map"},loc_t:0},gg:{},t_exit:0};
          for each(var name:String in ["vwait","vfon","visual","vscene","vblack","vpip","vsats","vgui","vstand","verror","vconsol"]) {
@@ -43,8 +44,9 @@ package rconnect.game {
       }
       public function checkpoint():Object{return {key:roomKey(),color:loc.color,width:12,height:8};}
       public function roomRole(authority:Boolean):void{freezeAI=!authority;}
-      public function restoreCheckpoint(s:Object,authority:Boolean,foreign:Boolean):void {
+      public function restoreCheckpoint(s:Object,authority:Boolean,foreign:Boolean,retained:Boolean=false):void {
          restores++;if(restoreHook!=null)restoreHook();
+         if(retained)retainedRestores++;
          if(failRestore)throw new Error("injected restore failure");
          loc.color=uint(s.color);paint(loc.color);
       }
