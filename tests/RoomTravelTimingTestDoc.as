@@ -21,6 +21,8 @@ package {
       private var localResult:Object;
       private var soloBootTravel:Boolean=false;
       private var sceneClass:Object;
+      private var landClass:Object,originalSeed:Function,timingSeed:Function;
+      private static const MAP_SEED:uint=1380142925;
       protected function merged():Boolean{return false;}
       public function RoomTravelTimingTestDoc() {
          var id:String=NativeApplication.nativeApplication.applicationID;
@@ -65,9 +67,11 @@ package {
          var actual:Boolean=false;
          try {actual=w.grafon.sceneNativeCall("state",[w.land])!=null;}catch(ignored:*){}
          if(target=="random_mane") {
+            check(Number(info.layoutSeed)==MAP_SEED,"timing uses the same native generation seed");
             check(actual==merged(),"requested scene mode matches the native constructed world");
             if(merged())check(w.loc.spaceX>48 || w.loc.spaceY>25,"native merged scene is actually larger than one ordinary room");
          }
+         check(w.gg.ggControl && !w.pip.noAct,"native player controls are restored");
          return {round:round,elapsed:getTimer()-at,exitStart:exitAt<0?-1:exitAt-at,
             exitEnd:exitDone<0?-1:exitDone-at,cover:coverMs,paused:pausedMs,solo:solo,
             x:Number(w.gg.X),y:Number(w.gg.Y),key:mod.game.roomKey(),width:w.loc.spaceX,height:w.loc.spaceY,
@@ -104,6 +108,17 @@ package {
                }
             }catch(error:*){Log.d("TRAVEL CONFIG ERROR "+error);}
             check(sceneConfigured,"native scene preference was explicitly configured");
+            // Control only this isolated benchmark's random input. Keep native
+            // generation and the production prepare/adopt path; the separate
+            // map suite still exercises the unmodified random seed policy.
+            landClass=mod.game.main.loaderInfo.applicationDomain.getDefinition("fe.loc.Land");
+            originalSeed=landClass.rconnectSeedSource;
+            timingSeed=function(land:Object):uint {
+               if(!solo && !host)return originalSeed(land);
+               if(!solo && host)Object(mod.session.rooms).prepareMap(land,MAP_SEED,true);
+               return MAP_SEED;
+            };
+            landClass.rconnectSeedSource=timingSeed;
             Log.d("TRAVEL CONFIG "+JSON.stringify({host:host,solo:solo,merged:merged()}));
          }
          if(host)for each(var p:Object in mod.session.peers)watch(p.link as TcpLink);else watch(mod.session.link);
@@ -134,6 +149,7 @@ package {
       }
       private function finish():void {
          if(phase=="done")return;phase="done";removeEventListener(Event.ENTER_FRAME,tick);
+         if(landClass!=null && landClass.rconnectSeedSource===timingSeed)landClass.rconnectSeedSource=originalSeed;
          if(!host && !solo && sceneClass!=null) {
             mod.session.leave();
             check(sceneClass.nativeEnabled===false,"disconnect restores the joiner's original scene preference");

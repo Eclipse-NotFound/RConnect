@@ -17,6 +17,7 @@ def main():
     ap.add_argument('--output',required=True)
     ap.add_argument('--scenario',choices=['timing','scene','entry-room','entry-map'],default='timing')
     ap.add_argument('--solo',action='store_true')
+    ap.add_argument('--registry-wait',type=float,default=300)
     a=ap.parse_args()
     candidate=(ROOT/a.candidate).resolve();drivers=(ROOT/a.drivers).resolve();out=(ROOT/a.output).resolve()
     assert candidate.parent==M52 and drivers.parent==M52 and out.parent==M52 and not out.exists()
@@ -34,6 +35,7 @@ def main():
     cmd=[sys.executable,'-B','-X','utf8',str(ROOT/'tools/run_coop_regression.py'),'--candidate',str(binary),
         '--effects','--effects-driver',str(binding),'--all-mods','--land','random_mane' if a.scenario=='entry-room' else 'rbl','--seconds','600',
         '--expected-version',version,'--port',str(test_port()),'--private-desktop','--defer-visible','--wait-host-world','--require-exclusive-air']
+    cmd+=['--registry-wait',str(a.registry_wait)]
     if a.solo:cmd+=['--solo']
     with (out/'runner.log').open('w',encoding='utf-8') as log:
         process=subprocess.run(cmd,cwd=ROOT,stdout=log,stderr=subprocess.STDOUT)

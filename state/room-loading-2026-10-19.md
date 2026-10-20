@@ -1,5 +1,12 @@
 # A 房间加载优化 — 2026-10-19
 
+## 10-20 10:17 最新候选与待完成实测
+
+- 最新准确候选 `build/m52/room-entry-fast-08` / `0.2.24-room-entry8`，SHA `dbd5944d0afc35048ba8f675a02718dbcdfd7eb2ee639022621efe774f046b4d`。字段表和保留房间的JSON数值一致性修正已编译；组件 `room-fast-component-candidate-08` 67/0、退出0，含24000格完整等价、旧格式与非法表拒绝，原数据限额未变。这不是原生大场景性能合格。
+- driver09已经编译。时间对照在隔离驱动中固定native Land种子1380142925，主侧仍调用实际RoomSync.prepareMap，加入侧仍调用生产seedFor；离线只固定随机输入，不替换原生地图生成。随机种子政策和重访另由未改钩子的entry-map场景验证。新增原生ggControl/pip.noAct检查。
+- `room-travel-scene-04` 正在共享登记排队，尚无实际结果。接续先读其runner.log与result.json；若未启动不要当成功或失败的原生数据。安装仍22项原组合、RC574D，未部署。
+- room08首次排队被共享表Markdown替换的瞬时WinError5打断、第二次排队超时，均未编译；其后重试成功，原记录保留。编译/组件当前均按game登记，不能绕过共享占用运行。
+
 ## 10-20 09:53 当前停点：完整资源复测发现大场景快照超限
 
 - 必须纠正下方“相同完整组合”解释：历史隔离复制器只带SWF/config，遗漏CS `release/scene.xml`。从7轮独立AppID恢复的13份CS日志均证明register发生#3003，证据 `build/m52/room-runtime-assets-audit-01.json` 及各轮 `recovered-module-logs`。旧RC功能断言原样保留，但这些轮次不构成CS完整初始化下的性能/联合合格证据。
