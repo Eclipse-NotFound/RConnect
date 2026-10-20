@@ -131,6 +131,12 @@ package {
          if(nativeLoad)check(loadFrames>0,"observed native exit 16..1 frames="+loadFrames);
          if(mod.session.mode==Session.CONNECTED)check(worldPackets>0,"checked incoming world packet identities="+worldPackets);
          Log.d("ROOM ENTRY waits-ms="+JSON.stringify(waits)+" unfinished="+(pendingAt>=0));
+         try {
+            var scalarParity:Object=RoomScalarParity.run(mod.game.world);
+            Log.d("ROOM SCALAR PARITY "+JSON.stringify(scalarParity));
+            check(scalarParity.objects>0 && scalarParity.fields>0 && scalarParity.differences.length==0,
+               "native tile/unit/weapon/object scalar capture preserves the previous implementation");
+         } catch(scalarError:Error){check(false,"native scalar comparison: "+scalarError);}
          for(var label:String in pictures) {
             var b:BitmapData=pictures[label],file:FileStream=new FileStream();
             try {

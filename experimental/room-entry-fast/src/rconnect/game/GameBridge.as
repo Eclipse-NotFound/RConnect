@@ -6143,6 +6143,7 @@ package rconnect.game
 
       public function checkpoint():Object
       {
+         var timingStart:int=getTimer(),timing:Object={};
          rconnect.core.TravelGuard.clear();
          var list:Array=readUnitsSnapshot() || [],used:Dictionary=new Dictionary();
          for each(var s:Object in list)
@@ -6150,6 +6151,7 @@ package rconnect.game
             var u:Object=_units.resolve(s,loc.units,used);
             if(u!=null)s.runtime=NativeRoomState.unit(u);
          }
+         timing.units=getTimer()-timingStart;
          var objects:Array=readObjsSnapshot() || [];used=new Dictionary();
          for each(s in objects)
          {
@@ -6158,10 +6160,15 @@ package rconnect.game
                if(securityInteraction(probe(b,"inter")))securityTerminals.rememberInteraction(probe(b,"inter"),String(s.k));
                else {s.inter=NativeRoomState.scalars(probe(b,"inter"));s.interNative=RConnectInteractionAccess.capture(probe(b,"inter"));}}
          }
-         return {key:roomKey(),width:loc.spaceX,height:loc.spaceY,roomId:String(probe(loc.room,"id")),
-            units:list,objs:objects,loots:readLootSync() || [],tiles:_terrain.checkpoint(loc),wallPaint:_wall.checkpoint(loc),
+         timing.objects=getTimer()-timingStart;
+         var terrain:Object=_terrain.checkpoint(loc);timing.terrain=getTimer()-timingStart;
+         var result:Object={key:roomKey(),width:loc.spaceX,height:loc.spaceY,roomId:String(probe(loc.room,"id")),
+            units:list,objs:objects,loots:readLootSync() || [],tiles:terrain,wallPaint:_wall.checkpoint(loc),
             points:mapProgress==null?null:mapProgress.capture(loc),
             mines:playerMines==null?[]:playerMines.checkpoint()};
+         timing.total=getTimer()-timingStart;timing.key=result.key;timing.tiles=terrain is Array?terrain.length:terrain.rows.length;
+         Log.d("RConnectRoomTiming capture "+JSON.stringify(timing));
+         return result;
       }
 
       public function roomRole(authority:Boolean):void
@@ -6202,10 +6209,12 @@ package rconnect.game
 
       public function restoreCheckpoint(s:Object,authority:Boolean,foreign:Boolean,retained:Boolean=false):void
       {
+         var timingStart:int=getTimer(),timing:Object={authority:authority,foreign:foreign,retained:retained};
          if(s==null) {roomRole(authority);return;}
          if(int(s.width)!=int(loc.spaceX) || int(s.height)!=int(loc.spaceY))
             throw new Error("Room geometry differs: "+roomKey());
          roomRole(authority);
+         timing.role=getTimer()-timingStart;
          if(mapProgress!=null)mapProgress.restore(s.points);
          var used:Dictionary=new Dictionary();
          if(!retained) {
@@ -6218,8 +6227,10 @@ package rconnect.game
                   if(securityInteraction(probe(box,"inter")))securityTerminals.restoreInteraction(probe(box,"inter"),String(os.k));
                   else {NativeRoomState.restore(probe(box,"inter"),os.inter);RConnectInteractionAccess.restore(probe(box,"inter"),os.interNative);}}
             }
-            _terrain.restoreCheckpoint(loc,s.tiles as Array);
+            timing.objects=getTimer()-timingStart;
+            _terrain.restoreCheckpoint(loc,s.tiles);
          }
+         timing.terrain=getTimer()-timingStart;
          if(authority)boxTrackReset(); // Restored owner velocities belong to native physics.
          // A mirror is a display surrogate. Reconstruct native units when its
          // authority changes, with original difficulty, AI and weapons.
@@ -6256,6 +6267,7 @@ package rconnect.game
          for each(unit in (loc.units as Array).concat())
             if(unit!=gg && !(unit is MirrorHitUnit) && !isSceneHitUnit(unit) && (probeNum(unit,"fraction",0)<100 || securityTurret(unit)) && !used[unit])
             {loc.remObj(unit);index=loc.units.indexOf(unit);if(index>=0)loc.units.splice(index,1);}
+         timing.units=getTimer()-timingStart;
          for each(var loot:Array in lootWalk())loc.remObj(loot[0]);
          lootSyncReset();_lootLoc=loc;applyLootSync(s.loots as Array);
          for(var lootKey:String in _lootObjOf)
@@ -6266,9 +6278,13 @@ package rconnect.game
          if(!authority)applyUnitsSync(s.units as Array);
          if(playerMines!=null)playerMines.restore(s.mines as Array,authority,foreign);
          if(securityTerminals!=null)securityTerminals.worldChanged();
+         timing.effects=getTimer()-timingStart;
          tileRedrawIfDirty();
+         timing.redraw=getTimer()-timingStart;
          if(!retained)_wall.restore(loc,s.wallPaint as Array);
          _satsRasterDirty=true;
+         timing.total=getTimer()-timingStart;timing.key=s.key;
+         Log.d("RConnectRoomTiming restore "+JSON.stringify(timing));
       }
 
       /** 从游戏全量数据 AllData.d 中取单位 XML（blit 动画定义的数据源）。 */

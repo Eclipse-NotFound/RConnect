@@ -245,10 +245,17 @@ package {
          var bullet:Object=new bc(g.gg,tx*40+20,ty*40+20,null,false);bullet.damage=0;bullet.destroy=1000;bullet.dx=1;bullet.dy=0;bullet.precision=0;bullet.partEmit=false;bullet.run();
          check(tile.phis==0,"native solo join bullet destroys wall");
          var burst:Object=g.loc.space[tx+1][ty];burst.mainFrame("A");burst.indestruct=false;burst.hp=100;burst.thre=0;burst.door=null;burst.trap=null;
-         var box:Object=null;
-         for each(var ob:Object in g.loc.objs)if(GameBridge.probe(ob,"hp")!=null && GameBridge.probe(ob,"dead")===false){box=ob;break;}
-         if(box!=null){box.hp=19;if(box.inter!=null)box.inter.saveLoot=2;}
-         expected={hp:613,maxhp:901,armor:37,xp:23,damage:17.25,ammo:47,tx:tx,ty:ty,burstX:tx+1,burstHp:100,box:box==null?null:{id:box.id,x:box.X,y:box.Y},dead:false};
+         // Random rooms can contain only non-interactive debris. Always build
+         // an actual native container so that missing interaction restoration
+         // is a failure, never a silently skipped assertion.
+         var boxClass:Class=mod.main.loaderInfo.applicationDomain.getDefinition("fe.loc.Box") as Class;
+         var box:Object=new boxClass(g.loc,"case",Math.min(g.loc.spaceX*40-80,g.gg.X+180),g.gg.Y,
+            <obj cont="custom"><item id="kofe" kol="2"/></obj>,null);
+         g.loc.addObj(box);g.loc.objs.push(box);
+         check(box.inter!=null,"native container fixture has an interaction");
+         if(box.inter==null)throw new Error("Missing native room container interaction");
+         box.hp=19;box.inter.saveLoot=2;
+         expected={hp:613,maxhp:901,armor:37,xp:23,damage:17.25,ammo:47,tx:tx,ty:ty,burstX:tx+1,burstHp:100,box:{id:box.id,x:box.X,y:box.Y},dead:false};
          var ic:Class=mod.main.loaderInfo.applicationDomain.getDefinition("fe.serv.Item") as Class,lc:Class=mod.main.loaderInfo.applicationDomain.getDefinition("fe.loc.Loot") as Class;
          new lc(g.loc,new ic(null,"kofe",3),g.gg.X+160,g.gg.Y,false,false,false);
          expected.loots=(g.readLootSync()||[]).length;
@@ -266,7 +273,7 @@ package {
          check(g.loc.space[expected.burstX][expected.ty].hp==expected.burstHp,"wall hit immediately before handoff is retained exactly once");
          if(expected.box!=null){var found:Object=null;for each(var ob:Object in g.loc.objs)if(ob.id==expected.box.id && Math.abs(ob.X-expected.box.x)<50){found=ob;break;}
             check(found!=null && found.hp==19,"scene object partial damage retained");
-            if(found!=null && found.inter!=null)check(found.inter.saveLoot==2,"container stays looted");}
+            check(found!=null && found.inter!=null && found.inter.saveLoot==2,"container stays looted");}
          var loots:Array=g.readLootSync()||[],keys:Object={},unique:Boolean=true;
          for each(var lo:Object in loots){if(keys[lo.k])unique=false;keys[lo.k]=true;}
          check(unique,"loot identity keys remain unique after handoff");

@@ -18,7 +18,7 @@ def build(a):
     out=(ROOT/a.output).resolve();assert out.parent==M52 and not out.exists();out.mkdir()
     original=M52/'coop-bundle-drivers-04';src=out/'tests';src.mkdir()
     names=('RoomTravelTimingTestDoc','RoomTravelSceneTestDoc','A22RoomEntryTestDoc','A22MapEntryTestDoc',
-           'RoomEntryProbe','RoomCooperationTestDoc','A22RoomMetrics','NativeMapGenerationTestDoc')
+           'RoomEntryProbe','RoomCooperationTestDoc','A22RoomMetrics','NativeMapGenerationTestDoc','RoomScalarParity')
     for name in names:shutil.copyfile(ROOT/'tests'/(name+'.as'),src/(name+'.as'))
     shutil.copytree(original/'tests/fe',src/'fe')
     for name in ('ProductionDeclarations.swc',):shutil.copyfile(original/name,out/name)

@@ -46,6 +46,7 @@ package {
       }
       private function run():void {
          nameOfCase="terrain checkpoint encoding";RoomCodecChecks.run(check);
+         nameOfCase="direct native tile checkpoint";NativeTileStateChecks.run(check);
          nameOfCase="welcome received between frames";fresh(Session.OFFLINE);mod.session.mode=Session.CONNECTED;
          if("receivedWelcome" in mod.session.rooms)Object(mod.session.rooms).receivedWelcome(null);
          check(pixel()!=red,"welcome closes the provisional scene before any new frame");

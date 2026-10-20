@@ -55,6 +55,7 @@ def main():
             for module_log in sorted(module_logs.glob('*.log')):
                 if module_log.name!='RConnect.log':all_text+='\n'+module_log.read_text(encoding='utf-8',errors='replace')
             errors=[line for line in all_text.splitlines() if 'COOP FAIL' in line
+                or 'handoff timed out' in line or 'game error dialog' in line
                 or ('obj spawn' in line and 'failed' in line)
                 or ('RConnect' in line and (' failed:' in line or ' ERROR' in line))
                 or re.search(r'\bERROR\b',line)
