@@ -23,6 +23,7 @@ def main():
     assert candidate.parent==M52 and drivers.parent==M52 and out.parent==M52 and not out.exists()
     audit(candidate)
     meta=read(drivers/'prepared.json')
+    assert not (a.solo and meta.get('diagnostic_only')), 'First resumed mirror frame profiling requires a peer'
     for n,h in meta['files'].items():assert sha(drivers/n)==h,n
     binary=candidate/'RConnectMod.swf';digest=sha(binary)
     version=re.search(r'VERSION:String\s*=\s*"([^"]+)"',(candidate/'src/RConnectMod.as').read_text(encoding='utf-8')).group(1)
@@ -30,7 +31,8 @@ def main():
     for n in ('EffectsDriver.swf','EffectsHarness.swf'):shutil.copyfile(drivers/a.scenario/n,binding/n)
     save(binding/'driver-input.json',dict(candidate_sha256=digest,identical_driver=sha(binding/'EffectsDriver.swf')))
     save(out/'intent.json',dict(candidate=str(candidate),candidate_sha256=digest,driver_manifest=sha(drivers/'prepared.json'),
-        scenario=a.scenario,solo=a.solo,installation=before,runner_sha256=sha(ROOT/'tools/run_coop_regression.py'),wrapper_sha256=sha(__file__)))
+        scenario=a.scenario,solo=a.solo,diagnostic_only=bool(meta.get('diagnostic_only',False)),installation=before,
+        runner_sha256=sha(ROOT/'tools/run_coop_regression.py'),wrapper_sha256=sha(__file__)))
     timed=a.scenario in ('timing','scene')
     cmd=[sys.executable,'-B','-X','utf8',str(ROOT/'tools/run_coop_regression.py'),'--candidate',str(binary),
         '--effects','--effects-driver',str(binding),'--all-mods','--land','random_mane' if a.scenario=='entry-room' else 'rbl','--seconds','600',
@@ -70,7 +72,26 @@ def main():
             rows=[json.loads(s.split('TRAVEL RESULT ',1)[1]) for s in text.splitlines() if s.startswith('TRAVEL RESULT ')]
             result['roles'][role]=dict(checks=len(re.findall(r'^COOP PASS ',text,re.M)),errors=errors,
                 done='COOP EFFECTS DONE' in text,version='v'+version+' initialized' in text,rows=rows,log_sha256=sha(path) if path.exists() else None)
+            if result['diagnostic_only']:
+                result['roles'][role]['profile']=[json.loads(s.split('A22 ROOM FIRST FRAME TIMING ',1)[1])
+                    for s in text.splitlines() if s.startswith('A22 ROOM FIRST FRAME TIMING ')]
+                result['roles'][role]['terrain_diff']=[json.loads(s.split('ROOM TERRAIN DIFF ',1)[1])
+                    for s in text.splitlines() if s.startswith('ROOM TERRAIN DIFF ')]
+                result['roles'][role]['raster_parity']=[json.loads(s.split('ROOM RASTER PARITY ',1)[1])
+                    for s in text.splitlines() if s.startswith('ROOM RASTER PARITY ')]
         result['passed']=process.returncode==0 and before==after and all(r['done'] and r['version'] and not r['errors'] and (len(r['rows'])==3 if timed else r['checks']>0) for r in result['roles'].values())
+        if result['diagnostic_only']:
+            if meta.get('diagnostic_kind')=='raster':
+                rows=result['roles'].get('join',{}).get('raster_parity',[])
+                result['profile_valid']=len(rows)==2 and all(r.get('valid') and r.get('comparedLayers',0)>0 for r in rows)
+            else:
+                profiles=result['roles'].get('join',{}).get('profile',[])
+                result['profile_valid']=len(profiles)==2 and all(
+                    len(p.get('markers',[]))>=8 and p.get('presentation',{}).get('motionCalls',0)>0 for p in profiles)
+                if 'tests/RoomTerrainDiff.as' in meta['files']:
+                    diffs=result['roles']['join']['terrain_diff']
+                    result['profile_valid']=result['profile_valid'] and len(diffs)==2 and all(d.get('valid') for d in diffs)
+            result['passed']=result['passed'] and result['profile_valid']
         result['memory']=read(run/'memory-timeline.json')
     save(out/'result.json',result)
     print(json.dumps({k:v for k,v in result.items() if k!='memory'},ensure_ascii=False),flush=True)

@@ -2,7 +2,6 @@ package {
    import flash.events.Event;
    import flash.utils.getTimer;
    import flash.utils.Dictionary;
-   import flash.sampler.*;
    import rconnect.core.Log;
    import rconnect.net.TcpLink;
    import rconnect.net.NetMessageEvent;
@@ -13,8 +12,24 @@ package {
       private var previousFrame:Object,maxGapContext:Object;
       private var lastRoomOp:String="",lastPeerPhase:String="";
       private var profile:Boolean=false,sampling:Boolean=false,sampleFrames:int=0,sampleAt:int=0;
+      private var phaseMarks:Array=[],markerListeners:Array=[];
+      private var previousTiming:Object;
+      private var terrainProbe:RoomTerrainDiff;
       public function A22RoomMetrics(m:RConnectMod,profileFirstFrame:Boolean=false) {
          mod=m;profile=profileFirstFrame;mod.stage.addEventListener(Event.ENTER_FRAME,frame,false,100006);
+         if(profile) {
+            for each(var priority:int in [99999,89999,1,-1,-50,-79,-81,-99,-101,-199,-201,-500,-1000,-6999,-9001,-10001,-2000000000])
+               addMarker(Event.ENTER_FRAME,priority,"enter:"+priority);
+            addMarker(Event.RENDER,2000000000,"render:first");
+            addMarker(Event.RENDER,-2000000000,"render:last");
+         }
+      }
+      private function addMarker(type:String,priority:int,label:String):void {
+         var listener:Function=function(event:Event):void {
+            if(sampling)phaseMarks.push({phase:label,at:getTimer()});
+         };
+         markerListeners.push({type:type,listener:listener});
+         mod.stage.addEventListener(type,listener,false,priority);
       }
       private function frame(e:Event):void {
          // Start after grant, then include the complete first resumed frame.
@@ -50,6 +65,9 @@ package {
          if(e.data.type=="room-test")lastPeerPhase=String(e.data.phase);
          starts[e]=getTimer();
          if(e.data.type=="room")lastRoomOp=String(e.data.op);
+         if(profile && e.data.type=="room" && e.data.op=="grant" && mod.game.loc!=null && mod.game.loc.spaceX>48) {
+            terrainProbe=new RoomTerrainDiff();terrainProbe.before(mod.game.loc);
+         }
       }
       private function after(e:NetMessageEvent):void {
          var p:Object=e.data,now:int=getTimer(),began:int=starts[e];delete starts[e];
@@ -68,32 +86,24 @@ package {
             freshMissing:!p.hasOwnProperty("fresh"),freshKind:typeof p.fresh,
             freshStateBytes:p.fresh is String?String(p.fresh).length:0}));
          if(profile && p.op=="grant" && mod.game.loc!=null && mod.game.loc.spaceX>48) {
+            if(terrainProbe!=null){terrainProbe.after(mod.game.loc);terrainProbe=null;}
             if(sampling)finishSample();
-            clearSamples();sampleInternalAllocs(false);startSampling();
+            phaseMarks=[];previousTiming=mod.game.presentationTiming;
+            mod.game.presentationTiming={viewMs:0,viewCalls:0,motionMs:0,motionCalls:0};
             sampling=true;sampleFrames=2;sampleAt=getTimer();
          }
       }
       private function finishSample():void {
          if(!sampling)return;
-         var end:int=getTimer();pauseSampling();sampling=false;
-         var counts:Object={},total:int=getSampleCount(),cpu:int=0,alloc:int=0,deleted:int=0;
-         for each(var sample:Sample in getSamples()) {
-            if(sample is NewObjectSample){alloc++;continue;}
-            if(sample is DeleteObjectSample){deleted++;continue;}
-            cpu++;var names:Array=[];
-            if(sample.stack!=null)for each(var f:StackFrame in sample.stack)names.push(f.name);
-            var key:String=names.join(" <- ");counts[key]=int(counts[key])+1;
-         }
-         stopSampling();clearSamples();
-         var rows:Array=[];
-         for(key in counts)rows.push({stack:key,count:counts[key]});
-         rows.sortOn("count",Array.NUMERIC|Array.DESCENDING);
-         Log.d("A22 ROOM FIRST FRAME CPU "+JSON.stringify({from:sampleAt,at:end,ms:end-sampleAt,
-            room:mod.game.roomKey(),samples:total,cpu:cpu,allocations:alloc,deleted:deleted,top:rows.slice(0,35),
+         var end:int=getTimer();sampling=false;
+         var timing:Object=mod.game.presentationTiming;mod.game.presentationTiming=previousTiming;previousTiming=null;
+         Log.d("A22 ROOM FIRST FRAME TIMING "+JSON.stringify({from:sampleAt,at:end,ms:end-sampleAt,
+            room:mod.game.roomKey(),markers:phaseMarks,presentation:timing,
             diagnosticOnly:true}));
       }
       public function finish():void {
          finishSample();
+         for each(var marker:Object in markerListeners)mod.stage.removeEventListener(marker.type,marker.listener);
          mod.stage.removeEventListener(Event.ENTER_FRAME,frame);
          for(var l:Object in links){l.removeEventListener(TcpLink.MESSAGE,before);l.removeEventListener(TcpLink.MESSAGE,after);}
          gaps.sort(Array.NUMERIC);

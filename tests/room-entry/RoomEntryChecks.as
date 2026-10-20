@@ -47,6 +47,7 @@ package {
       private function run():void {
          nameOfCase="terrain checkpoint encoding";RoomCodecChecks.run(check);
          nameOfCase="direct native tile checkpoint";NativeTileStateChecks.run(check);
+         nameOfCase="unchanged terrain view";RoomTerrainViewChecks.run(check);
          nameOfCase="welcome received between frames";fresh(Session.OFFLINE);mod.session.mode=Session.CONNECTED;
          if("receivedWelcome" in mod.session.rooms)Object(mod.session.rooms).receivedWelcome(null);
          check(pixel()!=red,"welcome closes the provisional scene before any new frame");
@@ -106,14 +107,19 @@ package {
          check(pixel()!=red && mod.session.rooms.busy,"restore failure keeps invalid room covered and paused");
          nameOfCase="disconnect";mod.session.mode=Session.OFFLINE;mod.session.rooms.reset();render();
          check(pixel()==red && !mod.game.roomHold && !mod.game.world.onPause,"disconnect removes only owned cover and pause");
+         nameOfCase="seal arrives during native join load";fresh(Session.CONNECTED);
+         mod.game.transition=true;mod.game.world.t_exit=21;seal(1);frame();
+         check(!mod.game.roomHold && !mod.game.world.onPause,
+            "pending peer seal cannot use an unstarted local deadline to freeze native loading");
          nameOfCase="hosting first handshake";fresh(Session.HOSTING);frame();
          check(pixel()!=red,"host also waits for complete first handshake");
          var sealMsg:Object=mod.session.outbox[0];
          mod.session.rooms.handle({type:"room",op:"ready",barrier:sealMsg.barrier,epoch:sealMsg.epoch,
             info:mod.game.readWorldInfo(),oldKey:"",oldTerm:0,own:null,fresh:RoomCodec.pack(mod.game.checkpoint())});
-         render();check(pixel()!=red,"host does not release presentation before join ack");
+         render();check(pixel()==red && !mod.game.world.onPause && !mod.game.roomHold,
+            "host resumes its committed authoritative room without waiting for peer rendering");
          check(mod.game.restores==0,"new authoritative native room is never restored into itself");
-         check(!mayPublish(),"host cannot publish world state before join ack");
+         check(mayPublish(),"committed host snapshots follow the grant in TCP order");
          mod.session.rooms.handle({type:"room",op:"ack",barrier:sealMsg.barrier});render();
          check(pixel()==red && !mod.session.rooms.busy,"host releases its authoritative original room on ack");
          check(mayPublish(),"host can publish again after the acknowledged grant");
@@ -129,6 +135,20 @@ package {
          mod.session.rooms.handle({type:"room",op:"ack",barrier:peerSeal.barrier});render();
          check(mod.game.restores==beforeRestore,"peer departure does not restore unchanged host room");
          check(pixel()==red && !mod.game.world.onPause,"stationary host remains available after peer entry");
+         nameOfCase="new host entry while previous ack is pending";
+         fresh(Session.HOSTING);frame();sealMsg=mod.session.outbox[0];
+         mod.session.rooms.handle({type:"room",op:"ready",barrier:sealMsg.barrier,epoch:sealMsg.epoch,
+            info:mod.game.readWorldInfo(),oldKey:"",oldTerm:0,own:null,fresh:RoomCodec.pack(mod.game.checkpoint())});
+         n=mod.session.outbox.length;mod.game.setRoom("map//2,0,0",red);frame();
+         check(mod.session.outbox.length==n && !mayPublish() && mod.session.rooms.entryPending,
+            "next native entry waits for the prior ack and cannot publish under the old room identity");
+         mod.session.rooms.handle({type:"room",op:"ack",barrier:sealMsg.barrier});frame();
+         peerSeal=mod.session.outbox[mod.session.outbox.length-1];
+         check(peerSeal.op=="seal" && peerSeal.barrier!=sealMsg.barrier && mod.game.roomHold,
+            "prior ack allows exactly the next pending handoff to start");
+         mod.session.rooms.handle({type:"room",op:"ack",barrier:sealMsg.barrier});render();
+         check(mod.game.roomHold && mod.session.rooms.entryPending,
+            "duplicate old ack cannot release the next unconfirmed room");
          nameOfCase="native travel boundaries";
          mod.game.world.cam={dblack:1.5};mod.game.world.t_die=0;mod.game.world.comLoad=-1;
          mod.game.world.game={crea:true,curLandId:"map",lands:{}};

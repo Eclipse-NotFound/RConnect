@@ -8,7 +8,9 @@ from check_coop_bundle import ROOT,M52,JAVA,SDK,read,save,sha,inventory
 
 def main():
     ap=argparse.ArgumentParser();ap.add_argument('output');ap.add_argument('--registry-wait',type=float,default=0)
-    ap.add_argument('--profile',action='store_true',help='Diagnostic-only first resumed frame CPU sampler for scene scenario');a=ap.parse_args()
+    ap.add_argument('--profile',action='store_true',help='Diagnostic-only first resumed frame event timing for scene scenario')
+    ap.add_argument('--raster-parity',action='store_true',help='Diagnostic-only native terrain redraw pixel comparison');a=ap.parse_args()
+    assert not (a.profile and a.raster_parity)
     sys.path.insert(0,str(ROOT.parents[1]/'mods/ModLoader/tools'))
     from test_registry import Registration
     with Registration(owner='RConnect / 房间测试驱动编译',purpose='外部驱动编译（无游戏，避免污染其他性能采样）',
@@ -19,12 +21,13 @@ def build(a):
     out=(ROOT/a.output).resolve();assert out.parent==M52 and not out.exists();out.mkdir()
     original=M52/'coop-bundle-drivers-04';src=out/'tests';src.mkdir()
     names=('RoomTravelTimingTestDoc','RoomTravelSceneTestDoc','A22RoomEntryTestDoc','A22MapEntryTestDoc',
-           'RoomEntryProbe','RoomCooperationTestDoc','A22RoomMetrics','NativeMapGenerationTestDoc','RoomScalarParity','RoomTravelSceneProfileTestDoc')
+           'RoomEntryProbe','RoomCooperationTestDoc','A22RoomMetrics','NativeMapGenerationTestDoc','RoomScalarParity','RoomTravelSceneProfileTestDoc','RoomTerrainDiff',
+           'RoomTravelRasterParityTestDoc','RoomRasterParity')
     for name in names:shutil.copyfile(ROOT/'tests'/(name+'.as'),src/(name+'.as'))
     shutil.copytree(original/'tests/fe',src/'fe')
     for name in ('ProductionDeclarations.swc',):shutil.copyfile(original/name,out/name)
     with (out/'compile.log').open('w',encoding='utf-8') as log:
-        for name,entry in [('timing','RoomTravelTimingTestDoc'),('scene','RoomTravelSceneProfileTestDoc' if a.profile else 'RoomTravelSceneTestDoc'),
+        for name,entry in [('timing','RoomTravelTimingTestDoc'),('scene','RoomTravelRasterParityTestDoc' if a.raster_parity else 'RoomTravelSceneProfileTestDoc' if a.profile else 'RoomTravelSceneTestDoc'),
                            ('entry-room','A22RoomEntryTestDoc'),('entry-map','A22MapEntryTestDoc')]:
             target=out/name;target.mkdir();shutil.copyfile(original/'EffectsHarness.swf',target/'EffectsHarness.swf')
             cmd=[str(JAVA),'-Xmx384m','-jar',str(SDK/'lib/mxmlc.jar'),'+configname=air',
@@ -33,7 +36,8 @@ def build(a):
                 '-external-library-path+='+str(M52/'coop-bundle-04/build/GameCombatStubs.swc'),
                 '-output='+str(target/'EffectsDriver.swf'),str(src/(entry+'.as'))]
             subprocess.run(cmd,stdout=log,stderr=subprocess.STDOUT,check=True,env=dict(os.environ,AIR_HOME=str(SDK)))
-    save(out/'prepared.json',dict(files=inventory(out),recipe_sha256=sha(__file__),external=True,diagnostic_only=a.profile))
+    save(out/'prepared.json',dict(files=inventory(out),recipe_sha256=sha(__file__),external=True,
+        diagnostic_only=a.profile or a.raster_parity,diagnostic_kind='raster' if a.raster_parity else 'profile' if a.profile else None))
     print(out)
 
 if __name__=='__main__':main()

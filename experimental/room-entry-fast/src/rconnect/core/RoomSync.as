@@ -147,8 +147,9 @@ package rconnect.core
             check();
             followTeammate();
             TravelGuard.update(game,!host());
-            if(busy && getTimer()>deadline && !blocked)
+            if((busy || (host() && pending>0)) && getTimer()>deadline && !blocked)
             {
+               hold();
                blocked=true;status="房间交接未完成，请断开后重连";
                Log.d("RConnectRoom: handoff timed out; simulation remains paused");
             }
@@ -531,6 +532,11 @@ package rconnect.core
          send({op:"grant",barrier:pending,epoch:epoch,term:pending,owner:theirKey!=myKey,fresh:fresh,
             unchanged:unchanged,retained:retained,key:theirKey,state:grantPacked});
          Log.d("RConnectRoom: commit "+pending+" host="+myKey+" join="+theirKey);
+         // The host's ownership and native state are now committed. TCP keeps
+         // this grant ahead of subsequent snapshots, so rendering the peer's
+         // copy is not a prerequisite for local simulation. Keep `pending`
+         // until ACK: another handoff still cannot overtake this transaction.
+         release();
       }
       private function flush():void
       {

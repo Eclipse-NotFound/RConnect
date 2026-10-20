@@ -6213,6 +6213,12 @@ package rconnect.game
          if(s==null) {roomRole(authority);return;}
          if(int(s.width)!=int(loc.spaceX) || int(s.height)!=int(loc.spaceY))
             throw new Error("Room geometry differs: "+roomKey());
+         // A complete restore is still required. Only the expensive terrain
+         // raster can be retained, and only when no pending/previous paint can
+         // be left behind. Changed/unknown terrain uses the old full redraw.
+         var terrainView:RoomTerrainView;
+         if(!retained && !_terrain.dirty && (s.wallPaint==null || s.wallPaint.length==0)
+            && _wall.checkpoint(loc).length==0)terrainView=new RoomTerrainView(loc);
          roomRole(authority);
          timing.role=getTimer()-timingStart;
          if(mapProgress!=null)mapProgress.restore(s.points);
@@ -6279,6 +6285,10 @@ package rconnect.game
          if(playerMines!=null)playerMines.restore(s.mines as Array,authority,foreign);
          if(securityTerminals!=null)securityTerminals.worldChanged();
          timing.effects=getTimer()-timingStart;
+         if(_terrain.dirty && terrainView!=null && terrainView.unchanged(loc)) {
+            terrainView.refresh(world);_terrain.dirty=false;_satsRasterDirty=true;
+            timing.terrainReused=true;
+         }
          tileRedrawIfDirty();
          timing.redraw=getTimer()-timingStart;
          if(!retained)_wall.restore(loc,s.wallPaint as Array);
