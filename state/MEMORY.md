@@ -22,20 +22,24 @@ Remains 1.02 双人合作模组，入口 release/RConnectMod.swf。A 是普通�
 - 当前宿主pfe 81c1bfb5…0ec015，WB14112da0…c0920d，RV76314b81…f5c46b7，LAD0.6.0 E3233F78…6E796E。10-20约11:24后CS由CD65…更新为7f1f2961c6e299d949423591f3c65c610c2eaefa7fc72e8a583a402770d6b51f，已通知CS；每轮重读22项安装输入，不覆盖它方新版本。
 - B入口仍 build/ab/b3-playable-190；B195未合格，不替换。旧范围见[b195验收](b195-qualification-2026-10-14.md)。
 - 当前源码入口 **experimental/room-entry-fast/src**，稀疏叠加 **build/m52/coop-bundle-04/src**；禁止直接编译历史根src。
-- 最新实际测试候选12：build/m52/room-entry-fast-12 / 0.2.24-room-entry12 / d5c0d8c490529ae45755f42fc47138c23b5e8303be7198b8278b1dbfd6472a6c。直接地块表避免中间完整对象展开；82项组件通过。13计时版6F4D…已通过大场景39项，14新增整数网格默认值尚在编译/组件排队。
+- 最新候选15：build/m52/room-entry-fast-15 / 0.2.24-room-entry15 / 015131a34044f0ac605c6ea8c15ec79630ec54909e4e5aa2868e8991b57b645d。基于14的网格默认值，再将原生Tile的13个观测字段改为类型化读取，非原生对象保留旧路径；102项组件通过。均未部署。
 
 ## 4. 正在进行与实测证据
 
 - room11新旧实际标量采集逐字段相同；普通分房152f61f702主25+加52=77项通过。未换房宿主保持可见并继续模拟，敌人/炮塔、墙体晚到命中、容器唯一掉落、抓取与重访均过。约3.2万字段比较无差异。
 - room11大场景88b1365390功能39/0、22项安装未变；首次主24.315/加28.009秒、重访15.457/19.071秒，明显未达单人。单人同种子3c81150d7d为12.408/3.124/5.174秒，但原生Math.random敌人/出生仍不同，不算严格同图百分比。
 - room12大场景b71ee6e9b2功能39/0、实际CS仍0.8.2，首次22.820/28.759秒、回基地7.416/5.814秒、重访14.576/19.338秒。解码510/807ms；主采集约1秒、打包2.7/1.95秒、加入恢复3.75/2.89秒。运行期间CS安装变更，wrapper退出1、整轮不作为当前组合资格，原结果不改绿。
-- **最新**：12普通分房b482d2e41e共72项通过、CS7F1F安装不变，但随机夹具无容器交互，缺5条搜刮检查；driver11已修为必有原生case，编译排队。13大场景a1a965436a39/0、22输入不变，首次21.922/26.982秒、重访14.187/19.002秒。**排队中**：driver11、room14编译及组件。
+- 12普通分房b482d2e41e共72项通过、CS7F1F安装不变，但随机夹具无容器交互，缺5条搜刮检查；driver11起修为必有原生case。14大场景94d20357da功能39/0、22输入不变：首次20.058/25.021秒、回基地12.596/8.585秒、重访16.315/22.618秒。打包降至570/734ms，但整体仍不合格。
+- 15组件102/0；30000格地块观测旧375/新231ms，仅组件收益。driver12增加外部帧/网络处理计时，不改生产。
+- 15大场景scene-11/3f6135e0ea有效完成39/0、22项未变；首次主18.473/加22.361秒，回基地6.521/5.778秒，重访10.381/14.312秒。加入grant结束后第一帧另耗4.2–4.4秒，无对应慢网络回调，尚未定位具体函数。scene-profile-01使用只读CPU采样驱动13排队，仅诊断不能用于性能验收。
+- 前轮scene-10/d61f41b4ca准备超时、无旅行结果。Windows Kernel-Power确认12:01:02合盖待机、12:07:09恢复，与独立Python采样364663ms缺口吻合；最低余量6.37GiB。保留失败，不延长超时。
+- 15普通分房native-05仅登记等待900秒超时，未启动AIR；native-06/3d98a7cd87已启动，待完整结果。
 - 普通房截图已目检host waiting/ready、join ready：初始未确认场景遮罩和放行画面符合记录；未换房可见性由持续渲染断言验证，不从初始waiting图推断。join waiting也已目检，均为初始化等待/放行画面。
 - 10的AMF方向组件73/0但比原编码更慢，已否决并撤出活动源码；不部署。11稀疏JSON74/0；12直接表82/0，保持原1M字符/16MB上限与旧格式读入。
 
 ## 5. 已知问题与证据边界
 
-- **房间加载目标尚未达到**。不能把功能通过、隐藏遮罩或编译成功当性能合格。13已查明3.5MB快照压缩本身约1秒，14去除规则坐标重复值以减轻数据处理，待实测。
+- **房间加载目标尚未达到**。14压缩已经减轻，仍有原生切换后数秒交接、加入侧还原及后续帧开销。15待有效原生计时，不依据启动待机推断代码性能。
 - 旧隔离复制器漏CS scene.xml，已从7轮13份日志证实CS初始化失败。修正复制/所有私有日志收集后核对22项；旧room04耗时不再作为完整CS组合证据。见[缺件调查](../knowledge/experiments/2026-10-20-isolated-mod-resources.md)。
 - room06完整大场景快照超过16MB；room08虽39功能项过但首次握手超时，整轮失败。原失败均保留。
 - A密集性能和旧掉落连续性仍未合格，B195性能和血翼像素差异未关闭；本轮不宣称一并解决。
@@ -44,7 +48,7 @@ Remains 1.02 双人合作模组，入口 release/RConnectMod.swf。A 是普通�
 
 ## 6. 下一步
 
-1. 读driver11/room14编译及组件；新格式检查通过后测14大场景和必有容器的普通分房，解决实际额外耗时。
+1. 读取15/driver12的native-06与scene-profile-01结果，定位加入侧恢复后4秒第一帧；不可把CPU采样轮的耗时当性能资格。保留待机中断失败，原门槛不变。
 2. 在最新相同安装组合验证普通新旧房、单人对应流程、共享整图与出生、状态保留；没有新证据不重复刷绿。
 3. 最终同一候选字节通过实际性能和核心功能后，执行release-gate备份/部署/安装后隔离复验/失败回滚，更新记录并提交。
 
@@ -54,5 +58,5 @@ Remains 1.02 双人合作模组，入口 release/RConnectMod.swf。A 是普通�
 - Python=C:/Users/hello/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe；Java=C:/Users/hello/Documents/_sandevistan_dev/jdk-11.0.32.1+1-jre/bin/java.exe；SDK=mods/Sandevistan/build/tools/flexsdk。PowerShell login:false。
 - 构建：tools/validation/prepare_room_entry_fast.py <新build/m52目录> --version <新版本> --build --registry-wait900（参数与900之间加空格）。
 - 组件：tools/validation/run_room_entry_checks.py <新目录> --source <冻结候选>/src --run --registry-wait 900。
-- 原生：tools/validation/run_room_travel_timing.py --candidate <冻结候选> --drivers build/m52/room-travel-driver-10 --output <新目录> --scenario scene|timing|entry-room|entry-map [--solo] --registry-wait 900。独立后台桌面需当前工具允许的提升权限，不用前台绕过。
+- 原生：tools/validation/run_room_travel_timing.py --candidate <冻结候选> --drivers build/m52/room-travel-driver-12 --output <新目录> --scenario scene|timing|entry-room|entry-map [--solo] --registry-wait 900。独立后台桌面需当前工具允许的提升权限，不用前台绕过。
 - 构建和每次运行保留准确源/产物/driver/安装输入；脚本自动清冗余私有运行副本。不可编辑冻结结果来消除失败。

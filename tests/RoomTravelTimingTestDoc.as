@@ -21,9 +21,11 @@ package {
       private var localResult:Object;
       private var soloBootTravel:Boolean=false;
       private var sceneClass:Object;
+      private var metrics:A22RoomMetrics;
       private var landClass:Object,originalSeed:Function,timingSeed:Function;
       private static const MAP_SEED:uint=1380142925;
       protected function merged():Boolean{return false;}
+      protected function profileFirstFrame():Boolean{return false;}
       public function RoomTravelTimingTestDoc() {
          var id:String=NativeApplication.nativeApplication.applicationID;
          if(id.indexOf("rconnect-coop-")<0)return;
@@ -55,6 +57,7 @@ package {
       private function begin():void {
          phase="travel";at=getTimer();lastFrame=at;exitAt=exitDone=-1;coverMs=pausedMs=0;
          localResult=null;reported=false;peer=null;
+         Log.d("TRAVEL CLOCK "+JSON.stringify({started:at,round:round,target:target}));
       }
       private function depart():void {
          target=round%2==0?"random_mane":"rbl";
@@ -72,7 +75,7 @@ package {
             if(merged())check(w.loc.spaceX>48 || w.loc.spaceY>25,"native merged scene is actually larger than one ordinary room");
          }
          check(w.gg.ggControl && !w.pip.noAct,"native player controls are restored");
-         return {round:round,elapsed:getTimer()-at,exitStart:exitAt<0?-1:exitAt-at,
+         return {round:round,at:getTimer(),started:at,elapsed:getTimer()-at,exitStart:exitAt<0?-1:exitAt-at,
             exitEnd:exitDone<0?-1:exitDone-at,cover:coverMs,paused:pausedMs,solo:solo,
             x:Number(w.gg.X),y:Number(w.gg.Y),key:mod.game.roomKey(),width:w.loc.spaceX,height:w.loc.spaceY,
             seed:info.layoutSeed,units:w.loc.units.length,merged:merged(),actualMerged:actual,target:target};
@@ -92,6 +95,7 @@ package {
       }
       private function tick(e:Event):void {
          mod=RConnectMod.instance;if(mod==null || mod.game.gg==null)return;
+         if(metrics==null)metrics=new A22RoomMetrics(mod,profileFirstFrame());
          solo=mod.config.getValue("autoRole")=="";
          if(!configured) {
             configured=true;mod.config.setValue("followTeammate","0");
@@ -149,6 +153,7 @@ package {
       }
       private function finish():void {
          if(phase=="done")return;phase="done";removeEventListener(Event.ENTER_FRAME,tick);
+         if(metrics!=null)metrics.finish();
          if(landClass!=null && landClass.rconnectSeedSource===timingSeed)landClass.rconnectSeedSource=originalSeed;
          if(!host && !solo && sceneClass!=null) {
             mod.session.leave();

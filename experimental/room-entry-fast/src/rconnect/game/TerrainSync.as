@@ -71,6 +71,16 @@ package rconnect.game
       }
       private function state(t:Object,x:int,y:int):Object
       {
+         var native:Tile=t as Tile;
+         if(native!=null)return {x:x,y:y,p:native.phis,f:native.front,b:native.back,z:native.zad,
+            zf:native.zForm,w:native.water,st:native.stair,h:native.hp,o:native.opac,v:native.vid,
+            v2:native.vid2,d:native.diagon,sh:native.shelf};
+         return dynamicState(t,x,y);
+      }
+      // Only fallback objects require optional field access. Keep their
+      // missing/throwing-member behavior outside the native Tile hot path.
+      private function dynamicState(t:Object,x:int,y:int):Object
+      {
          var s:Object={x:x,y:y};
          for(var f:String in FIELDS) try {s[f]=t[FIELDS[f]];} catch(e:*) {}
          return s;

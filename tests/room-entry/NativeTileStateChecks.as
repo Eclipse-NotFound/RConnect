@@ -86,6 +86,7 @@ package {
             && large.space[239][124].hp==(239*7+124*13)%1001,"full-sized grid table restores the final row and non-coordinate state");
          trace("NATIVE GRID BENCH "+JSON.stringify({captureOld:captureOld,packOld:packOld,charsOld:oldWire.length,
             captureNew:captureNew,packNew:packNew,charsNew:nextWire.length}));
+         TerrainSnapshotChecks.run(check,large);
       }
    }
 }

@@ -46,7 +46,7 @@ def run_component(args,out,source,record):
     shutil.copytree(ROOT/'tests/room-entry', src)
     files = ['rconnect/core/RoomSync.as', 'rconnect/net/RoomCodec.as', 'rconnect/net/Protocol.as', 'rconnect/net/BinaryMessageCodec.as']
     if (source/'rconnect/game/NativeTileState.as').is_file():
-        files += ['rconnect/game/NativeTileState.as','rconnect/game/NativeRoomState.as']
+        files += ['rconnect/game/NativeTileState.as','rconnect/game/NativeRoomState.as','rconnect/game/TerrainSync.as']
     fallback = ROOT/'build/m52/coop-bundle-04/src'
     if (source/'rconnect/ui/RoomEntryView.as').is_file() or (fallback/'rconnect/ui/RoomEntryView.as').is_file():
         files.append('rconnect/ui/RoomEntryView.as')

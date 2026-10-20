@@ -42,7 +42,8 @@ def main():
     raw=(out/'runner.log').read_text(encoding='utf-8',errors='replace')
     found=re.search(r'^OUTPUT .*?([0-9a-f]{10})\s*$',raw,re.M)
     after=installation()
-    result=dict(exit_code=process.returncode,run=found[1] if found else None,installation_unchanged=before==after,passed=False)
+    result=dict(exit_code=process.returncode,run=found[1] if found else None,installation_unchanged=before==after,
+        diagnostic_only=bool(meta.get('diagnostic_only',False)),passed=False)
     if found:
         run=ROOT/'build/cooperation'/found[1];manifest=read(run/'run.json');result['roles']={}
         for role in (('host',) if a.solo else ('host','join')):
