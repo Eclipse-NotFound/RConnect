@@ -1,0 +1,29 @@
+{
+  "ancestor_manifest": "fe7659ab07e113a2a873c54ee39169f9d769b954892ac0a49d5751ee5c94174d",
+  "compiled": false,
+  "runtime_tested": false,
+  "diagnostic_only": true,
+  "ancestors": {
+    "build/m52/recovery-seed-gate-driver-01/prepared.json": "fe7659ab07e113a2a873c54ee39169f9d769b954892ac0a49d5751ee5c94174d",
+    "experimental/recovery-seed-raster-control/prepare_driver.py": "e6fcc0cd1f580955663a024313605ff3dc08a6cfa2c9c52bbe9ff5a43465a569",
+    "experimental/recovery-seed-raster-control/native_runner.py": "685659bce8264761ba8b67a8e7f07a1cafffb4d6221747536077e114f4759cfa",
+    "experimental/recovery-seed-raster-control/control_inputs.py": "a1b5721ce3caa098e7cc065d8f4b60270ed463b64655710199cd17f79a648fd4"
+  },
+  "files": {
+    "check_sources.py": "b6358e9ebc8df1a1867c42487599dbd4270f809ccc0ac6886dc60ad712ce739a",
+    "collect.py": "7b8eba847e617360d113cf790b26ddd45a8cd202657a212a9cb08ddbe825b041",
+    "driver-inputs.json": "4ff53f694734515224bfafc78afd3822fb25c97ddf1f14f4bc3d5dc0889f1694",
+    "driver.patch": "027ee947770f5ad9dcd80e499e1749240fefbae14040174ff1b91cf245a6b674",
+    "generate.py": "930668ef09bf3911c462517cb73ae03f4fe1066d069c5106123a5e5bbd793995",
+    "prepare.py": "349bdc253421e7836010c20475365faab97eb6d6cd8eb3ffb6df6a705d93a915",
+    "README.md": "b7b3f6ca601272db5163092fcb5a4b4a1b1de1aeca762c1d49d219c667ba474e",
+    "RoomInputCpuProfile.as": "7ff56fe352ca89c3644528ef1328c3826697f67745f712bd8e7ac87e6a8a84c3",
+    "static-checks.json": "23e76206a0b28a2262390617a8651d57bc8c4116bc20454ddbd8a90cd0977d06",
+    "tests/A22RoomMetrics.as": "314823fd0fcd04e71277dcd3e8ee1a647317e611c5ff7b8fb0e7058c25179d6e",
+    "tests/FirstRasterSceneProbe.as": "b11e182eb74719a0a02a831b160dda8d2475a106f0770d3631411572ce17b8a2",
+    "tests/RoomInputCpuProfile.as": "7ff56fe352ca89c3644528ef1328c3826697f67745f712bd8e7ac87e6a8a84c3",
+    "tests/RoomTravelSceneTestDoc.as": "55e2caa583fc5f14c1844e10fd46506b9d681b889fb9b94ab82053b02df2547b",
+    "tests/RoomTravelTimingTestDoc.as": "1f2e4a67b888f4cc878f8957f4b29776c705fa484746b7fd3e9c480d2f6263c2",
+    "tests/SeedGateNativeIntent.as": "d20e0ec2485d0b3fde9a0efd663957c82c9b3f94b1d59d3bec346d0fce55feb7"
+  }
+}

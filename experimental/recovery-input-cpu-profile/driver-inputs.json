@@ -1,0 +1,16 @@
+{
+  "sources": {
+    "A22RoomMetrics.as": "314823fd0fcd04e71277dcd3e8ee1a647317e611c5ff7b8fb0e7058c25179d6e",
+    "FirstRasterSceneProbe.as": "b11e182eb74719a0a02a831b160dda8d2475a106f0770d3631411572ce17b8a2",
+    "RoomInputCpuProfile.as": "7ff56fe352ca89c3644528ef1328c3826697f67745f712bd8e7ac87e6a8a84c3",
+    "RoomTravelSceneTestDoc.as": "55e2caa583fc5f14c1844e10fd46506b9d681b889fb9b94ab82053b02df2547b",
+    "RoomTravelTimingTestDoc.as": "1f2e4a67b888f4cc878f8957f4b29776c705fa484746b7fd3e9c480d2f6263c2",
+    "SeedGateNativeIntent.as": "d20e0ec2485d0b3fde9a0efd663957c82c9b3f94b1d59d3bec346d0fce55feb7"
+  },
+  "ancestor": "build\\m52\\recovery-seed-gate-driver-01",
+  "ancestor_manifest_sha256": "fe7659ab07e113a2a873c54ee39169f9d769b954892ac0a49d5751ee5c94174d",
+  "diagnostic_only": true,
+  "original_driver_recovered_by_stripping": true,
+  "compiled": false,
+  "runtime_tested": false
+}

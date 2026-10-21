@@ -1,0 +1,161 @@
+{
+  "scope": "static source and offline report validation only",
+  "assertions": [
+    {
+      "passed": true,
+      "label": "exact frozen shared driver manifest"
+    },
+    {
+      "passed": true,
+      "label": "removing only tagged inserts recovers the entire frozen driver"
+    },
+    {
+      "passed": true,
+      "label": "unchanged A22RoomMetrics.as"
+    },
+    {
+      "passed": true,
+      "label": "unchanged FirstRasterSceneProbe.as"
+    },
+    {
+      "passed": true,
+      "label": "unchanged RoomTravelSceneTestDoc.as"
+    },
+    {
+      "passed": true,
+      "label": "unchanged SeedGateNativeIntent.as"
+    },
+    {
+      "passed": true,
+      "label": "original input thresholds retained"
+    },
+    {
+      "passed": true,
+      "label": "timeout remains before accepting third frame"
+    },
+    {
+      "passed": true,
+      "label": "sampler surrounds first grant MESSAGE handlers"
+    },
+    {
+      "passed": true,
+      "label": "join round0 only"
+    },
+    {
+      "passed": true,
+      "label": "allocation/deletion samples excluded before stack access"
+    },
+    {
+      "passed": true,
+      "label": "no allocation class/object/size reads"
+    },
+    {
+      "passed": true,
+      "label": "native buffer callback clears; exported arrays separately bounded"
+    },
+    {
+      "passed": true,
+      "label": "CPU/stack/scan limits explicit"
+    },
+    {
+      "passed": true,
+      "label": "marker/name/depth limits explicit"
+    },
+    {
+      "passed": true,
+      "label": "stop pauses without enumeration or file IO"
+    },
+    {
+      "passed": true,
+      "label": "CPU stack payload exported outside log error scanner"
+    },
+    {
+      "passed": true,
+      "label": "known failure path stops before original diagnostic log"
+    },
+    {
+      "passed": true,
+      "label": "failure diagnostic is outside sampling"
+    },
+    {
+      "passed": true,
+      "label": "successful round0 stops before later travel rounds"
+    },
+    {
+      "passed": true,
+      "label": "capped/instrumented run never advertises performance qualification"
+    },
+    {
+      "passed": true,
+      "label": "a functional input failure can retain valid CPU diagnostic evidence"
+    },
+    {
+      "passed": true,
+      "label": "zero CPU cannot qualify complete diagnostic"
+    },
+    {
+      "passed": true,
+      "label": "missing baseline marker cannot qualify complete diagnostic"
+    },
+    {
+      "passed": true,
+      "label": "truncated CPU cannot qualify complete diagnostic"
+    },
+    {
+      "passed": true,
+      "label": "buffer scan truncated cannot qualify complete diagnostic"
+    },
+    {
+      "passed": true,
+      "label": "unsupported sampler cannot qualify complete diagnostic"
+    },
+    {
+      "passed": true,
+      "label": "window cap cannot qualify complete diagnostic"
+    },
+    {
+      "passed": true,
+      "label": "bad stack index rejected"
+    },
+    {
+      "passed": true,
+      "label": "duplicate ordinal rejected"
+    },
+    {
+      "passed": true,
+      "label": "ordinal beyond buffer rejected"
+    },
+    {
+      "passed": true,
+      "label": "too long name rejected"
+    },
+    {
+      "passed": true,
+      "label": "generated source fingerprint A22RoomMetrics.as"
+    },
+    {
+      "passed": true,
+      "label": "generated source fingerprint FirstRasterSceneProbe.as"
+    },
+    {
+      "passed": true,
+      "label": "generated source fingerprint RoomInputCpuProfile.as"
+    },
+    {
+      "passed": true,
+      "label": "generated source fingerprint RoomTravelSceneTestDoc.as"
+    },
+    {
+      "passed": true,
+      "label": "generated source fingerprint RoomTravelTimingTestDoc.as"
+    },
+    {
+      "passed": true,
+      "label": "generated source fingerprint SeedGateNativeIntent.as"
+    }
+  ],
+  "passed": 38,
+  "failed": 0,
+  "compiled": false,
+  "runtime_tested": false
+}

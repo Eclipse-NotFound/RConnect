@@ -1,0 +1,91 @@
+--- frozen-shared-scene/RoomTravelTimingTestDoc.as
++++ input-cpu/RoomTravelTimingTestDoc.as
+@@ -25,6 +25,9 @@
+       private var inputActor:Object,inputCtr:Object,inputEvidence:Object;
+       private var baselineAt:int=0,baselineX:Number=0,baselineFrames:int=0;
+       private var soloBootTravel:Boolean=false;
++      // BEGIN EXTERNAL INPUT CPU
++      private var inputProfile:RoomInputCpuProfile;
++      // END EXTERNAL INPUT CPU
+       private var sceneClass:Object;
+       private var metrics:A22RoomMetrics;
+       private var landClass:Object,originalSeed:Function,timingSeed:Function;
+@@ -50,6 +53,9 @@
+       }
+       private function watch(link:TcpLink):void {
+          if(link!=null&&!links[link]){links[link]=true;link.addEventListener(TcpLink.MESSAGE,receive);}
++      // BEGIN EXTERNAL INPUT CPU
++         if(inputProfile!=null)inputProfile.watch(link);
++      // END EXTERNAL INPUT CPU
+       }
+       private function receive(e:NetMessageEvent):void {
+          var p:Object=e.data;if(p.type!="travel-timing-test")return;
+@@ -133,10 +139,20 @@
+             };
+             landClass.rconnectSeedSource=timingSeed;
+             rasterProbe=new FirstRasterSceneProbe(mod);
++      // BEGIN EXTERNAL INPUT CPU
++            if(!host&&!solo)inputProfile=new RoomInputCpuProfile(
++               function():Boolean{return round==0 && phase=="travel" && target=="random_mane";},
++               function():Object {var w:Object=mod.game.world,r:Object=mod.session.rooms;
++                  return {phase:phase,round:round,ready:r.ready,busy:r.busy,cover:r.entryPending,
++                     pause:w.onPause,exit:w.t_exit,term:r.term,epoch:r.epoch};});
++      // END EXTERNAL INPUT CPU
+             Log.d("TRAVEL CONFIG "+JSON.stringify({host:host,solo:solo,merged:merged()}));
+          }
+          if(host)for each(var p:Object in mod.session.peers)watch(p.link as TcpLink);else watch(mod.session.link);
+          rasterProbe.sample();
++      // BEGIN EXTERNAL INPUT CPU
++         if(inputProfile!=null)inputProfile.frame();
++      // END EXTERNAL INPUT CPU
+          var w:Object=mod.game.world,now:int=getTimer();mod.game.gg.invulner=true;
+          if(w.clickReq==1){mod.stage.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_DOWN,true));mod.stage.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_UP,true));}
+          // Production autoTravelLand only runs while hosting. The offline
+@@ -188,6 +204,9 @@
+          inputEvidence={direction:inputDirection,baseline:[],pressed:[],released:[]};
+          localResult.inputEvidence=inputEvidence;
+          inputEvidence.baseline.push(inputSample("baseline-start"));phase="input-baseline";
++      // BEGIN EXTERNAL INPUT CPU
++         if(inputProfile!=null)inputProfile.mark("baseline-start",baselineAt);
++      // END EXTERNAL INPUT CPU
+       }
+       private function inputSample(kind:String):Object {
+          var w:Object=mod.game.world,g:Object=mod.game.gg;
+@@ -196,11 +215,17 @@
+             sameActor:g===inputActor,sameCtr:w.ctr===inputCtr};
+       }
+       private function inputError(label:String):void {
++      // BEGIN EXTERNAL INPUT CPU
++         if(inputProfile!=null)inputProfile.stop("input-failure");
++      // END EXTERNAL INPUT CPU
+          Log.d("SCENE TRAVEL INPUT "+JSON.stringify({round:round,role:host?"host":"join",evidence:inputEvidence}));
+          check(false,label);abort();
+       }
+       private function baselineInput():void {
+          var row:Object=inputSample("baseline-frame");inputEvidence.baseline.push(row);
++      // BEGIN EXTERNAL INPUT CPU
++         if(inputProfile!=null)inputProfile.mark("baseline-frame",int(row.t));
++      // END EXTERNAL INPUT CPU
+          // No velocity or control field is written. Existing drift or active
+          // controls invalidate this fixture rather than counting as response.
+          for each(var sample:Object in inputEvidence.baseline) {
+@@ -255,6 +280,9 @@
+          // zero: KEY_UP is not a physics stop command.
+          localResult.inputReleaseVerifiedWall=new Date().time;
+          check(true,"native travel and input restoration finished");
++      // BEGIN EXTERNAL INPUT CPU
++         if(inputProfile!=null && round==0)inputProfile.stop("round0-input-complete");
++      // END EXTERNAL INPUT CPU
+          Log.d("TRAVEL RESULT "+JSON.stringify(localResult));
+          if(host||solo){phase="wait";at=getTimer();compare();}
+          else {send("result",{value:localResult});phase="wait";at=getTimer();}
+@@ -263,6 +291,9 @@
+       private function finish():void {
+          if(phase=="done")return;phase="done";releaseKey();if(rasterProbe!=null)rasterProbe.dispose();removeEventListener(Event.ENTER_FRAME,tick);
+          if(metrics!=null)metrics.finish();
++      // BEGIN EXTERNAL INPUT CPU
++         if(inputProfile!=null)inputProfile.finish();
++      // END EXTERNAL INPUT CPU
+          if(landClass!=null && landClass.rconnectSeedSource===timingSeed)landClass.rconnectSeedSource=originalSeed;
+          if(!host && !solo && sceneClass!=null) {
+             mod.session.leave();

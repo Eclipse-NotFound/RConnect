@@ -1,0 +1,400 @@
+{
+  "read_only_review": true,
+  "diagnostic_only": true,
+  "performance_qualified": false,
+  "profiles": [
+    {
+      "run": "3b8269a9a7",
+      "log_sha256": "454d84a70b7f956a17cd5efe502889494f812495e07377b3a69a49252eb80ec5",
+      "cpu_samples": 1385,
+      "counts_are_inclusive_not_call_counts": true,
+      "paths": {
+        "tickFrozenAnims": {
+          "samples": 272,
+          "phases": {
+            "0": 62,
+            "1": 66,
+            "2": 0,
+            "3": 0,
+            "4": 0,
+            "5": 72,
+            "6": 72
+          }
+        },
+        "UnitPresentation/tick": {
+          "samples": 111,
+          "phases": {
+            "0": 16,
+            "1": 30,
+            "2": 0,
+            "3": 0,
+            "4": 0,
+            "5": 32,
+            "6": 33
+          }
+        },
+        "UnitPresentation/play": {
+          "samples": 71,
+          "phases": {
+            "0": 0,
+            "1": 20,
+            "2": 0,
+            "3": 0,
+            "4": 0,
+            "5": 25,
+            "6": 26
+          }
+        },
+        "UnitPresentation/apply": {
+          "samples": 10,
+          "phases": {
+            "0": 2,
+            "1": 1,
+            "2": 0,
+            "3": 0,
+            "4": 0,
+            "5": 5,
+            "6": 2
+          }
+        },
+        "UnitPresentation/animateBody": {
+          "samples": 3,
+          "phases": {
+            "0": 1,
+            "1": 0,
+            "2": 0,
+            "3": 0,
+            "4": 0,
+            "5": 0,
+            "6": 2
+          }
+        },
+        "RemoteMotion/sample": {
+          "samples": 78,
+          "phases": {
+            "0": 27,
+            "1": 13,
+            "2": 0,
+            "3": 0,
+            "4": 0,
+            "5": 23,
+            "6": 15
+          }
+        },
+        "MirrorMasks": {
+          "samples": 38,
+          "phases": {
+            "0": 6,
+            "1": 10,
+            "2": 0,
+            "3": 0,
+            "4": 0,
+            "5": 9,
+            "6": 13
+          }
+        },
+        "MirrorHitUnit/syncMotion": {
+          "samples": 35,
+          "phases": {
+            "0": 12,
+            "1": 9,
+            "2": 0,
+            "3": 0,
+            "4": 0,
+            "5": 6,
+            "6": 8
+          }
+        },
+        "RConnectAnimationAccess": {
+          "samples": 5,
+          "phases": {
+            "0": 2,
+            "1": 0,
+            "2": 0,
+            "3": 0,
+            "4": 0,
+            "5": 2,
+            "6": 1
+          }
+        },
+        "RealisticVisionMod/applyMask": {
+          "samples": 122,
+          "phases": {
+            "0": 27,
+            "1": 61,
+            "2": 0,
+            "3": 0,
+            "4": 0,
+            "5": 9,
+            "6": 25
+          }
+        },
+        "RealisticVisionMod/hideEnemies": {
+          "samples": 164,
+          "phases": {
+            "0": 36,
+            "1": 78,
+            "2": 0,
+            "3": 0,
+            "4": 0,
+            "5": 16,
+            "6": 34
+          }
+        }
+      },
+      "play_via_tick": 71,
+      "play_via_apply": 0,
+      "recursive_tick_samples": 0,
+      "play_stacks": [
+        [
+          "[execute-queued]@null:0 <- flash.display::MovieClip/gotoAndPlay@null:0 <- rconnect.game::UnitPresentation/play@null:0 <- rconnect.game::UnitPresentation/tick@null:0 <- rconnect.game::GameBridge/tickFrozenAnims@null:0 <- rconnect.game::GameBridge/onMirrorFrame@null:0 <- [enterFrameEvent]@null:0",
+          29
+        ],
+        [
+          "flash.display::Sprite/constructChildren@null:0 <- flash.display::Sprite@null:0 <- flash.display::MovieClip@null:0 <- [execute-queued]@null:0 <- flash.display::MovieClip/gotoAndPlay@null:0 <- rconnect.game::UnitPresentation/play@null:0 <- rconnect.game::UnitPresentation/tick@null:0 <- rconnect.game::GameBridge/tickFrozenAnims@null:0 <- rconnect.game::GameBridge/onMirrorFrame@null:0 <- [enterFrameEvent]@null:0",
+          6
+        ],
+        [
+          "[reap]@null:0 <- flash.events::EventDispatcher/addEventListener@null:0 <- fl.managers::FocusManager/addFocusables@null:0 <- fl.managers::FocusManager/addedHandler@null:0 <- [execute-queued]@null:0 <- flash.display::MovieClip/gotoAndPlay@null:0 <- rconnect.game::UnitPresentation/play@null:0 <- rconnect.game::UnitPresentation/tick@null:0 <- rconnect.game::GameBridge/tickFrozenAnims@null:0 <- rconnect.game::GameBridge/onMirrorFrame@null:0 <- [enterFrameEvent]@null:0",
+          5
+        ],
+        [
+          "[reap]@null:0 <- [execute-queued]@null:0 <- flash.display::MovieClip/gotoAndPlay@null:0 <- rconnect.game::UnitPresentation/play@null:0 <- rconnect.game::UnitPresentation/tick@null:0 <- rconnect.game::GameBridge/tickFrozenAnims@null:0 <- rconnect.game::GameBridge/onMirrorFrame@null:0 <- [enterFrameEvent]@null:0",
+          5
+        ],
+        [
+          "[execute-queued]@null:0 <- [execute-queued]@null:0 <- flash.display::MovieClip/gotoAndPlay@null:0 <- rconnect.game::UnitPresentation/play@null:0 <- rconnect.game::UnitPresentation/tick@null:0 <- rconnect.game::GameBridge/tickFrozenAnims@null:0 <- rconnect.game::GameBridge/onMirrorFrame@null:0 <- [enterFrameEvent]@null:0",
+          4
+        ],
+        [
+          "flash.display::Sprite/constructChildren@null:0 <- flash.display::Sprite@null:0 <- flash.display::MovieClip@null:0 <- flash.display::Sprite/constructChildren@null:0 <- flash.display::Sprite@null:0 <- flash.display::MovieClip@null:0 <- [execute-queued]@null:0 <- flash.display::MovieClip/gotoAndPlay@null:0 <- rconnect.game::UnitPresentation/play@null:0 <- rconnect.game::UnitPresentation/tick@null:0 <- rconnect.game::GameBridge/tickFrozenAnims@null:0 <- rconnect.game::GameBridge/onMirrorFrame@null:0 <- [enterFrameEvent]@null:0",
+          3
+        ],
+        [
+          "flash.events::EventDispatcher/addEventListener@null:0 <- fl.managers::FocusManager/addFocusables@null:0 <- fl.managers::FocusManager/addedHandler@null:0 <- [execute-queued]@null:0 <- flash.display::MovieClip/gotoAndPlay@null:0 <- rconnect.game::UnitPresentation/play@null:0 <- rconnect.game::UnitPresentation/tick@null:0 <- rconnect.game::GameBridge/tickFrozenAnims@null:0 <- rconnect.game::GameBridge/onMirrorFrame@null:0 <- [enterFrameEvent]@null:0",
+          3
+        ],
+        [
+          "[execute-queued]@null:0 <- [execute-queued]@null:0 <- [execute-queued]@null:0 <- flash.display::MovieClip/gotoAndPlay@null:0 <- rconnect.game::UnitPresentation/play@null:0 <- rconnect.game::UnitPresentation/tick@null:0 <- rconnect.game::GameBridge/tickFrozenAnims@null:0 <- rconnect.game::GameBridge/onMirrorFrame@null:0 <- [enterFrameEvent]@null:0",
+          3
+        ]
+      ]
+    },
+    {
+      "run": "a6a7e27789",
+      "log_sha256": "b4c465dea51c78218e1dadc64ab292b44a814aac4d76152e720e8362037326d6",
+      "cpu_samples": 1259,
+      "counts_are_inclusive_not_call_counts": true,
+      "paths": {
+        "tickFrozenAnims": {
+          "samples": 278,
+          "phases": {
+            "0": 71,
+            "1": 78,
+            "2": 0,
+            "3": 0,
+            "4": 0,
+            "5": 64,
+            "6": 65
+          }
+        },
+        "UnitPresentation/tick": {
+          "samples": 111,
+          "phases": {
+            "0": 17,
+            "1": 28,
+            "2": 0,
+            "3": 0,
+            "4": 0,
+            "5": 28,
+            "6": 38
+          }
+        },
+        "UnitPresentation/play": {
+          "samples": 71,
+          "phases": {
+            "0": 0,
+            "1": 21,
+            "2": 0,
+            "3": 0,
+            "4": 0,
+            "5": 18,
+            "6": 32
+          }
+        },
+        "UnitPresentation/apply": {
+          "samples": 16,
+          "phases": {
+            "0": 6,
+            "1": 6,
+            "2": 0,
+            "3": 0,
+            "4": 0,
+            "5": 1,
+            "6": 3
+          }
+        },
+        "UnitPresentation/animateBody": {
+          "samples": 5,
+          "phases": {
+            "0": 1,
+            "1": 1,
+            "2": 0,
+            "3": 0,
+            "4": 0,
+            "5": 3,
+            "6": 0
+          }
+        },
+        "RemoteMotion/sample": {
+          "samples": 72,
+          "phases": {
+            "0": 23,
+            "1": 27,
+            "2": 0,
+            "3": 0,
+            "4": 0,
+            "5": 12,
+            "6": 10
+          }
+        },
+        "MirrorMasks": {
+          "samples": 42,
+          "phases": {
+            "0": 3,
+            "1": 14,
+            "2": 0,
+            "3": 0,
+            "4": 0,
+            "5": 13,
+            "6": 12
+          }
+        },
+        "MirrorHitUnit/syncMotion": {
+          "samples": 29,
+          "phases": {
+            "0": 11,
+            "1": 7,
+            "2": 0,
+            "3": 0,
+            "4": 0,
+            "5": 7,
+            "6": 4
+          }
+        },
+        "RConnectAnimationAccess": {
+          "samples": 10,
+          "phases": {
+            "0": 3,
+            "1": 4,
+            "2": 0,
+            "3": 0,
+            "4": 0,
+            "5": 2,
+            "6": 1
+          }
+        },
+        "RealisticVisionMod/applyMask": {
+          "samples": 123,
+          "phases": {
+            "0": 14,
+            "1": 26,
+            "2": 0,
+            "3": 0,
+            "4": 0,
+            "5": 28,
+            "6": 55
+          }
+        },
+        "RealisticVisionMod/hideEnemies": {
+          "samples": 150,
+          "phases": {
+            "0": 19,
+            "1": 33,
+            "2": 0,
+            "3": 0,
+            "4": 0,
+            "5": 35,
+            "6": 63
+          }
+        }
+      },
+      "play_via_tick": 71,
+      "play_via_apply": 0,
+      "recursive_tick_samples": 0,
+      "play_stacks": [
+        [
+          "[execute-queued]@null:0 <- flash.display::MovieClip/gotoAndPlay@null:0 <- rconnect.game::UnitPresentation/play@null:0 <- rconnect.game::UnitPresentation/tick@null:0 <- rconnect.game::GameBridge/tickFrozenAnims@null:0 <- rconnect.game::GameBridge/onMirrorFrame@null:0 <- [enterFrameEvent]@null:0",
+          19
+        ],
+        [
+          "flash.display::Sprite/constructChildren@null:0 <- flash.display::Sprite@null:0 <- flash.display::MovieClip@null:0 <- [execute-queued]@null:0 <- flash.display::MovieClip/gotoAndPlay@null:0 <- rconnect.game::UnitPresentation/play@null:0 <- rconnect.game::UnitPresentation/tick@null:0 <- rconnect.game::GameBridge/tickFrozenAnims@null:0 <- rconnect.game::GameBridge/onMirrorFrame@null:0 <- [enterFrameEvent]@null:0",
+          13
+        ],
+        [
+          "flash.events::EventDispatcher/addEventListener@null:0 <- fl.managers::FocusManager/addFocusables@null:0 <- fl.managers::FocusManager/addedHandler@null:0 <- [execute-queued]@null:0 <- flash.display::MovieClip/gotoAndPlay@null:0 <- rconnect.game::UnitPresentation/play@null:0 <- rconnect.game::UnitPresentation/tick@null:0 <- rconnect.game::GameBridge/tickFrozenAnims@null:0 <- rconnect.game::GameBridge/onMirrorFrame@null:0 <- [enterFrameEvent]@null:0",
+          6
+        ],
+        [
+          "[reap]@null:0 <- flash.events::EventDispatcher/addEventListener@null:0 <- fl.managers::FocusManager/addFocusables@null:0 <- fl.managers::FocusManager/addedHandler@null:0 <- [execute-queued]@null:0 <- flash.display::MovieClip/gotoAndPlay@null:0 <- rconnect.game::UnitPresentation/play@null:0 <- rconnect.game::UnitPresentation/tick@null:0 <- rconnect.game::GameBridge/tickFrozenAnims@null:0 <- rconnect.game::GameBridge/onMirrorFrame@null:0 <- [enterFrameEvent]@null:0",
+          5
+        ],
+        [
+          "[reap]@null:0 <- flash.display::Sprite/constructChildren@null:0 <- flash.display::Sprite@null:0 <- flash.display::MovieClip@null:0 <- [execute-queued]@null:0 <- flash.display::MovieClip/gotoAndPlay@null:0 <- rconnect.game::UnitPresentation/play@null:0 <- rconnect.game::UnitPresentation/tick@null:0 <- rconnect.game::GameBridge/tickFrozenAnims@null:0 <- rconnect.game::GameBridge/onMirrorFrame@null:0 <- [enterFrameEvent]@null:0",
+          5
+        ],
+        [
+          "[reap]@null:0 <- flash.events::EventDispatcher/addEventListener@null:0 <- fl.managers::FocusManager/addFocusables@null:0 <- fl.managers::FocusManager/addedHandler@null:0 <- flash.display::Sprite/constructChildren@null:0 <- flash.display::Sprite@null:0 <- flash.display::MovieClip@null:0 <- [execute-queued]@null:0 <- flash.display::MovieClip/gotoAndPlay@null:0 <- rconnect.game::UnitPresentation/play@null:0 <- rconnect.game::UnitPresentation/tick@null:0 <- rconnect.game::GameBridge/tickFrozenAnims@null:0 <- rconnect.game::GameBridge/onMirrorFrame@null:0 <- [enterFrameEvent]@null:0",
+          4
+        ],
+        [
+          "flash.events::EventDispatcher/addEventListener@null:0 <- fl.managers::FocusManager/addFocusables@null:0 <- fl.managers::FocusManager/addFocusables@null:0 <- fl.managers::FocusManager/addedHandler@null:0 <- [execute-queued]@null:0 <- flash.display::MovieClip/gotoAndPlay@null:0 <- rconnect.game::UnitPresentation/play@null:0 <- rconnect.game::UnitPresentation/tick@null:0 <- rconnect.game::GameBridge/tickFrozenAnims@null:0 <- rconnect.game::GameBridge/onMirrorFrame@null:0 <- [enterFrameEvent]@null:0",
+          4
+        ],
+        [
+          "[execute-queued]@null:0 <- [execute-queued]@null:0 <- flash.display::MovieClip/gotoAndPlay@null:0 <- rconnect.game::UnitPresentation/play@null:0 <- rconnect.game::UnitPresentation/tick@null:0 <- rconnect.game::GameBridge/tickFrozenAnims@null:0 <- rconnect.game::GameBridge/onMirrorFrame@null:0 <- [enterFrameEvent]@null:0",
+          3
+        ]
+      ]
+    }
+  ],
+  "exact_sources": {
+    "rconnect/game/GameBridge.as": {
+      "sha256": "26bb0f7cd4da7c74c83bd2657575823247196c41a861babf23bb40c17fc3cbf7",
+      "same_in_13": true
+    },
+    "rconnect/game/UnitPresentation.as": {
+      "sha256": "d67dbcbed8d3ef67771eb10e41516102dabb34aad3a7065ab71ec7822ff53178",
+      "same_in_13": true
+    },
+    "rconnect/game/MirrorMasks.as": {
+      "sha256": "b4283cf68870010c4d454a6c7d511f00dbc5c3540e1839f878dfe680084f5e24",
+      "same_in_13": true
+    },
+    "rconnect/game/MirrorHitUnit.as": {
+      "sha256": "e5339ba7481c4e14d90171939e4a8729a4b8812dddf27bce1a006dd65de79147",
+      "same_in_13": true
+    },
+    "rconnect/game/RemoteMotion.as": {
+      "sha256": "5f0d0ba3b8de5ec1a08d392b4147f04a4d318c0bcdd0a2f7bbf236a5d28fc877",
+      "same_in_13": true
+    },
+    "rconnect/game/WeaponDisplay.as": {
+      "sha256": "c76a6b157992398dbb8d8620de2482375594423226cd64b90e13e8fee96066f2",
+      "same_in_13": true
+    },
+    "fe/unit/RConnectAnimationAccess.as": {
+      "sha256": "2a0020f3a442c0d8b717e12d6a31ce26b51530e0a361930cb9035a68a2c41af7",
+      "same_in_13": true
+    }
+  },
+  "rv_frozen_source": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RealisticVision\\build\\regression-recovery-output\\production-singlepass\\src",
+  "rv_swf_sha256": "7852f61e083993e69431d5d8ca2fdf3c07d4068715946d04b3e796cecbe86764",
+  "rv_manifest_sha256": "efd797ba21940287515d38e9b6f7b710e371e9f70d81ef710d89ceab8a0e259d",
+  "rv_sources_verified": true,
+  "native_weapon_reference": {
+    "path": "game-reference/decompiled/1.02/src102/scripts/fe/weapon/Weapon.as",
+    "sha256": "3e5cf1dc01d7304d5824c7dfd08f0f4de73d2d107ff2b30d2abfb3d6f770b4e4",
+    "is_current_installed_method_byte_audit": false
+  }
+}

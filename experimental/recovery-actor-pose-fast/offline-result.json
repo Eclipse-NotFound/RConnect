@@ -1,0 +1,73 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "passed": true,
+      "label": "all original, overlay and component fingerprints verified"
+    },
+    {
+      "passed": true,
+      "label": "one exact block replacement"
+    },
+    {
+      "passed": true,
+      "label": "reverse patch is exact full original class"
+    },
+    {
+      "passed": true,
+      "label": "Before component strips to exact complete production source"
+    },
+    {
+      "passed": true,
+      "label": "After component strips to exact complete production source"
+    },
+    {
+      "passed": true,
+      "label": "elapsed clock read preserved"
+    },
+    {
+      "passed": true,
+      "label": "unchanged suffix from w.t_prep="
+    },
+    {
+      "passed": true,
+      "label": "unchanged suffix from w.t_reload="
+    },
+    {
+      "passed": true,
+      "label": "unchanged suffix from if(!paused && gun.queue>0"
+    },
+    {
+      "passed": true,
+      "label": "unchanged suffix from if(int(gun.flash)<=1)"
+    },
+    {
+      "passed": true,
+      "label": "unchanged suffix from w.animate();"
+    },
+    {
+      "passed": true,
+      "label": "unchanged suffix from telekinesis.weapon(w,s.aura);"
+    },
+    {
+      "passed": true,
+      "label": "unchanged suffix from melee.apply(u,w,"
+    },
+    {
+      "passed": true,
+      "label": "identity predicate preserves all four fields and coercion"
+    },
+    {
+      "passed": true,
+      "label": "elapsed read stays before source lookup"
+    },
+    {
+      "passed": true,
+      "label": "Python tools parse without importing compiler or AIR runner"
+    }
+  ],
+  "expected_runtime_assertions": 54,
+  "runtime_assertions_executed": false,
+  "JVM_started": false,
+  "AIR_started": false
+}
