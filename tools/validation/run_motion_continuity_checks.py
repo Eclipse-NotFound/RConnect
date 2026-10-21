@@ -39,7 +39,10 @@ def main():
         src = out/'src'
         shutil.copytree(ROOT/'tests/motion-continuity', src)
         originals={}
-        for name in ['RemoteMotion','ProjectileVisuals','EnergyImpactVisuals']:
+        names=['RemoteMotion','ProjectileVisuals','EnergyImpactVisuals']
+        for optional in ('ProjectileFrameStream', 'ImpactEventQueue', 'BallisticImpactVisuals'):
+            if (source/('rconnect/game/'+optional+'.as')).exists():names.append(optional)
+        for name in names:
             relative=Path('rconnect/game')/(name+'.as')
             origin=source/relative
             if not origin.is_file():origin=BASE/'src'/relative

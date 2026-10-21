@@ -65,8 +65,12 @@ def main():
     candidate, drivers, out = [(ROOT / p).resolve() for p in (args.candidate, args.drivers, args.output)]
     assert candidate.parent == drivers.parent == out.parent == M52 and not out.exists()
     cm, dm = read(candidate/'prepared.json'), read(drivers/'prepared.json')
-    for name, digest in {**cm['source'], **cm['inputs']}.items():
-        assert sha(candidate/name) == digest, name
+    if cm['kind'] == 'isolated-recovery':
+        from audit_room_entry_candidate import audit
+        audit(candidate)
+    else:
+        for name, digest in {**cm['source'], **cm['inputs']}.items():
+            assert sha(candidate/name) == digest, name
     for name, digest in dm['files'].items():
         assert sha(drivers/name) == digest, name
     binary = candidate/'RConnectMod.swf'

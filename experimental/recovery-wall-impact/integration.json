@@ -1,0 +1,63 @@
+{
+  "base": "build/m52/coop-bundle-04",
+  "base_sha256": "574d2b51490ae8b25a1396555600f56a301f8a20ae50104c0e35cf2796441afe",
+  "files": [
+    {
+      "path": "rconnect/game/BallisticImpactVisuals.as",
+      "base_sha256": null,
+      "prior_candidate_sha256": "ab6432ecf161d86a64e724fc645d9d3fce92e0692efb919176c7fb106b79ff92",
+      "sha256": "516ce98fb6d9523c5eeb7b7c8e9c4ccb320d11a75594af26f3e3c6e3b8caf6eb"
+    },
+    {
+      "path": "rconnect/game/EnergyImpactVisuals.as",
+      "base_sha256": "8f940810a84b3e1ac65a5eb83393da90c6ab66cdc14aace8de69f1aee14d52c2",
+      "prior_candidate_sha256": "28e4de97ccd156ef5eb54af8f55d13b9405417cf17c7e227013e0863c1eba341",
+      "sha256": "36fd20d98c2fdde8f862351f1e32237e4df8a472a82b4a25ca73407e94e69946"
+    },
+    {
+      "path": "rconnect/game/ImpactEventQueue.as",
+      "base_sha256": null,
+      "prior_candidate_sha256": "f9fa3a5140fb07b01e1798579a6a97e13361f4ca12a1847c2456c5c8894259f3",
+      "sha256": "f7b2a3542b3778f2fc63f448bd4f99919288e5bb526be2aa6c95d1c494f6f5a8"
+    },
+    {
+      "path": "rconnect/game/ProjectileVisuals.as",
+      "base_sha256": "7837f01edba489fa3bde5deb4ef5adaae32a2297f994993c1f65e1664b13cf7e",
+      "prior_candidate_sha256": "3a63d4a1d81ba31dbccc9883d8414fbb33c69443f7a781135d1c1204b9f01bf8",
+      "sha256": "3a63d4a1d81ba31dbccc9883d8414fbb33c69443f7a781135d1c1204b9f01bf8"
+    },
+    {
+      "path": "rconnect/game/UnitPresentation.as",
+      "base_sha256": "c93cf23601069a6cd151a03bfd2deab422125fa74c00574e0a3712fd0f2e0f49",
+      "prior_candidate_sha256": "6b3434de93285e6eb8601024bbdb17461a5418bfb06b7e4cd3b54c1b7a5be2db",
+      "sha256": "b80359673dc5db4fcdc3b3a5834e54ab8f976aecc123e05712011b797ce040df"
+    }
+  ],
+  "compiled": false,
+  "native_tested": false,
+  "component_tested": false,
+  "static_delimiters": "pass",
+  "existing_native_scenarios": 43,
+  "added_material_scenarios": 14,
+  "tests": {
+    "EnergyImpactTestDoc.as": "3577313171b700e1f58773d5c9b344adb494953f63c7a43d89766c26ba193556",
+    "RecoveryWallMaterialsTestDoc.as": "42d9c78e47e69d479cf8f7ad286453ad0509fda5588e478e8a06af4367dccaac",
+    "WallBallisticTestDoc.as": "50b91b3b4a334eced2da2bf11e630ab66199fec62a0c1f1354b43fbc06bc01d2",
+    "WallEnergyTestDoc.as": "5db77bf9d9a10371124c21cd2a59648423c833f66211368c19ef48be517f59a9",
+    "WallMagicTestDoc.as": "9bcccba5f3534b65d1e229ef02b00359be2f27016f9eabf8c0258ecc5aa5f85c"
+  },
+  "components": {
+    "fe/graph/Part.as": "64cb8e0e9f8636f9c2e4313c1402faa83c8f00cf1ec6012ad9949834c9378b64",
+    "fe/weapon/Bullet.as": "63011b629e18c988a0467e79077f28ff9aa48e6f5740a0f42baf3451642afd02",
+    "fe/weapon/PhisBullet.as": "697dacf95fd59014d66fcb07d3ce47eaf98f60ef19f27ea8df0cc826030a16fb",
+    "fe/World.as": "d03eb321e60f59e48d679257d99db40c6f254c3350378b59413f60096f4f1402",
+    "flPlasma.as": "dc017adcf8a0237a2fc5d2cd8ec39d4b391cdd5a1943a27ade2cb9fa5c2c24c3",
+    "ImpactCaptureChecks.as": "2134fae75589f3e261208ecb89d41a9fdc11fc97fa2de54a0296af5e705296f7",
+    "ImpactQueueChecks.as": "b972bbf7977a310bb1f394b050a5bd66b14f0f3f7c9df73a02d03da752048e80",
+    "rconnect/core/Log.as": "bdbc83e85990973e446e8d7b8c39f694408eb453973e26edf41d5969ef778b37",
+    "rconnect/game/GameBridge.as": "2a432d5a2feccb8d2c2427b88d29b6731078a5ab13120d9746884afa800f5dad",
+    "rconnect/game/RemoteMotion.as": "5e97abe4505a27c520f9b8087fd4f470b03742657914905fcfbb46d56799263a",
+    "visualFlame.as": "06b42b908b53d5dc2fcfa4c30cd3ff6a9c2eb9bf335aebeb10f841067af7f29b"
+  },
+  "component_assertions_not_run": 41
+}

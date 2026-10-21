@@ -1,0 +1,2 @@
+# Recovery manifests hash exact source bytes. Do not convert line endings.
+experimental/recovery-*/** -text

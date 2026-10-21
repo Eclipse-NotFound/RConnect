@@ -1,0 +1,40 @@
+{
+  "kind": "recovery-player-aura-source-only",
+  "base_sha256": "574d2b51490ae8b25a1396555600f56a301f8a20ae50104c0e35cf2796441afe",
+  "production_files": {
+    "rconnect/core/PeerGrip.as": {
+      "baseline": "2d44e4b2dabec605ff512ebb3319708b5c76b6e62c489bcca9a95f2ee7d9651b",
+      "previous_increment": "e85e81da3c318e9163592ffdaae84e067fda6f8d3af93cd66c7dc043905d8840",
+      "recovery_increment": "e85e81da3c318e9163592ffdaae84e067fda6f8d3af93cd66c7dc043905d8840"
+    },
+    "rconnect/game/GameBridge.as": {
+      "baseline": "6c8216257ead7dc7aa35a1b278d3c117d63e1a81cf72ac7671db22321114a835",
+      "previous_increment": "b739452afbf4c9e5e9ec1eb5ffb2ba27d0df3ff099054307d44e48e4b3300f84",
+      "recovery_increment": "12e76b589c706c0705b2ba1171b80f9b930ab6ce34fd369c1c4f5d41f4e42968"
+    },
+    "rconnect/game/PlayerBodyEffects.as": {
+      "baseline": "94aaa38d7dac7a8dbfa70d0aaf63002988b4cf26a4435ab9aad09c857339af42",
+      "previous_increment": "11260028854167d8bd0c9f7e806e23081204dd0386902fdf746ba8e10485ccbd",
+      "recovery_increment": "11260028854167d8bd0c9f7e806e23081204dd0386902fdf746ba8e10485ccbd"
+    },
+    "rconnect/game/TelekinesisVisuals.as": {
+      "baseline": "e3abdaf0892aa284fc5d35fe2bf1f77d1fb2c068ba6f98828fb25b1f825fc169",
+      "previous_increment": "539056d7477ac109be2d0e4a7ae2902b1700e9bafb51b8661ec7ab8ae4ea7370",
+      "recovery_increment": "539056d7477ac109be2d0e4a7ae2902b1700e9bafb51b8661ec7ab8ae4ea7370"
+    }
+  },
+  "test_source": {
+    "tests/PeerAuraFixture.as": "7c10f25986a6ad8c91f7e2b45a14861187cc864b51b4cb53b64012ab2815dd2e",
+    "tests/PeerGripTestDoc.as": "9a02ef6f083e9e3fec3a8cbf31f282dcb9050a799a331370e11df86b28561224",
+    "tests/PeerThrowDamageTestDoc.as": "950fce4ada12525760b5c55c861b9b4188d2b4b5a5c5adf21c2cdcbdb4a52e9e",
+    "component/PlayerAuraChecks.as": "d7ea878ab2aa2559c191fdd097964602c2bd11ca57cf03f9b129dff19c7e276d",
+    "component/rconnect/game/GameBridge.as": "975e4434cc3901a7cfb56b7af8dcad16a7396b2896d4d043bf8ad97fd6927987"
+  },
+  "increment_patch_sha256": "7150c020f37ace73cf376579b1eb93df7864786b419e7c13ad02b2d92418ca17",
+  "compiled": false,
+  "native_test_run": false,
+  "deployed": false,
+  "native_visual_qualified": false,
+  "note": "No AIR or compiler launched by this subtask; parent integrates and serially validates.",
+  "parent_test_revision": "Native ColorTransform reference and same Q ability fixture at Timer action boundary; frozen failed drivers preserved in build/m52."
+}
