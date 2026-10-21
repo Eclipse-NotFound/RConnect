@@ -1,0 +1,15 @@
+{
+  "base": "build\\m52\\recovery-05\\src\\rconnect\\net\\RoomCodec.as",
+  "source_sha256": "549dbffadf05547509a0c2fe8a3637c0ef089305ebe7637322e6a196c471828c",
+  "files": {
+    "build/m52/recovery-05/src/rconnect/net/RoomCodec.as": "549dbffadf05547509a0c2fe8a3637c0ef089305ebe7637322e6a196c471828c",
+    "experimental/recovery-codec-diagnostics/src/rconnect/net/RoomCodec.as": "296ee4d8d94f77faa62dcc17a39cb1e2492c756d3027311713c33935ca6b6b4a",
+    "experimental/recovery-codec-diagnostics/components/CodecDiagnosticChecks.as": "95be1da8f16b39cb3776e7c0deb5ab6118ca9fe5a1a29d10de07e174523ca453",
+    "experimental/recovery-codec-diagnostics/components/rconnect/core/Log.as": "df69225c66bf39889306a81f133f3b15a558f72c94fef844377df2bf2d55d217",
+    "experimental/recovery-codec-diagnostics/components/rconnect/net/CodecAfter.as": "153bf5021b0d653bafdfe95b8b7cd9233017a74bd27a7501de4eef4e1a3b44ee",
+    "experimental/recovery-codec-diagnostics/components/rconnect/net/CodecBefore.as": "c78e925f2b6367660d1fa90bba397a161bb7bc708a3b3cc38786b09450f9e939"
+  },
+  "gameplay_change": false,
+  "default_diagnostics": false,
+  "native_tested": false
+}

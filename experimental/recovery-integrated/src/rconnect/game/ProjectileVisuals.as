@@ -204,6 +204,10 @@ package rconnect.game {
       private function remove(i:int):void {var a:Object=active[i],v:DisplayObject=a.vis;if(ProjectileGrip.instance!=null)ProjectileGrip.instance.forget(a);if(a.rateHeld && a.motion!=null)a.motion.releaseRate(a);if(v!=null && v.parent!=null)v.parent.removeChild(v);delete a.channel.records[String(a.seq)];active.splice(i,1);}
       public function forget(owner:Object):void {
          var slots:Object=seen[owner];if(slots==null)return;
+         var now:int=getTimer();
+         for each(var stream:Object in slots) {
+            impactEvents.forget(stream,now);energyImpacts.forget(stream,now);
+         }
          for(var i:int=active.length-1;i>=0;i--)
             for each(var channel:Object in slots)if(active[i].channel===channel){remove(i);break;}
          delete seen[owner];

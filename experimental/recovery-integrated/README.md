@@ -1,8 +1,8 @@
-# Recovery integrated source — 0.2.24-recovery3
+# Recovery integrated source — 0.2.24-recovery6
 
-此目录是隔离源码整合候选，不是安装版。recovery2追加光晕RGB/alpha分组恢复；当前recovery3再逐方法合入原生旅行计划、旧grant防护与两处采集消重，共85个AS文件。冻结产物为 `build/m52/recovery-03` / `a98c6d00e85afad965ea2358c1bf4b8571a48f8e0c71ea244c68931e47a59cf1`，已编译，未部署，未获得完整玩法或性能合格结论。
+此目录是隔离源码整合候选，不是安装版。recovery2追加光晕RGB/alpha分组恢复，recovery3合入原生旅行计划、旧grant防护与两处采集消重，recovery4追加有界墙痕解码缓存，recovery5修复射手离房后的待播命中时钟；当前recovery6将逐格编码诊断改为显式启用，共85个AS文件。冻结产物为 `build/m52/recovery-06` / `3f828464b5c27a8fb5bb25e1bfb483a72631318684cf30872c7c3bed7e9281d1`，已编译，未部署，尚无本版本的原生和性能资格。
 
-当前实测状态统一见 [恢复记录](../../state/recovery-2026-10-21.md)。下文原整合检查是来源说明；各轮冻结目录与回执才是对应版本的编译和执行证据。原生旅行需搭配隔离 `recovery-native-travel-host-01` / E159；cost499、RoomSync50、计划33组件通过。probe-fast与wall-decode尚未合入此树。
+当前实测状态统一见 [恢复记录](../../state/recovery-2026-10-21.md)。下文原整合检查是来源说明；各轮冻结目录与回执才是对应版本的编译和执行证据。原生旅行需搭配隔离 `recovery-native-travel-host-01` / E159；cost499、RoomSync50、计划33、墙痕缓存120组件通过。03已通过16轮原生光晕与固定地图三段旅行，但实际高速飞行仍失败。04真实8轮仍有6条连续性失败，不能称性能达标。05追加的impact-detach共用组件旧版35条中13失败、修正版35/0；05普通枪14轮实际主106/0、加104/0，但不代表真实离房场景通过。06编码诊断开关199/0组件通过。probe-fast仍未合入。
 
 ## 来源与合并顺序
 

@@ -1,0 +1,27 @@
+{
+  "kind": "recovery-impact-detach",
+  "base": "build/m52/recovery-03",
+  "base_swf_sha256": "a98c6d00e85afad965ea2358c1bf4b8571a48f8e0c71ea244c68931e47a59cf1",
+  "expected_normal_assertions": 35,
+  "base_sources": {
+    "rconnect/game/ImpactEventQueue.as": "0996719782f7238b4e38596ec72a8e273995d4efb1241514ca9e632d98cdc658",
+    "rconnect/game/ProjectileFrameStream.as": "938b8ee0d3afa262e4b23c608c6b46d9b84b6cb71f4cb4b148ccb445de3c679c",
+    "rconnect/game/ProjectileVisuals.as": "6e584f4ee777f9dda609c0bd9b7ad17e2189bdd8ac2a7519f11187c8fa313593",
+    "rconnect/game/EnergyImpactVisuals.as": "ff86c28bd4beaee27842ee9e71cbbb2987b0c9c418a2a2d3f078a22d29b82c32",
+    "rconnect/game/BallisticImpactVisuals.as": "516ce98fb6d9523c5eeb7b7c8e9c4ccb320d11a75594af26f3e3c6e3b8caf6eb",
+    "rconnect/game/RemoteMotion.as": "cd58b1286bc913149ac02ad60713e82c251b8e574043444b4f3ccfd6e4a2ebc5"
+  },
+  "overlay_sources": {
+    "rconnect/game/EnergyImpactVisuals.as": "d049d4a3fd996ac3088eb5bd2e4f8c765b954efe61f34a0899fa26e29cd72dee",
+    "rconnect/game/ImpactEventQueue.as": "d0c9c3f3639bad51f9d6a9a8c613dde82554edb418457b94b2f2ee197d6c855c",
+    "rconnect/game/ProjectileFrameStream.as": "a7039e20094c9df3f9e7a7ee2f22e1f1262d067c0e7f0356cb994743fbfc30d9",
+    "rconnect/game/ProjectileVisuals.as": "2d4c56c8bef80534e3225aede43397da273d4f3aa86f76097a37fdc2aa8dea09"
+  },
+  "validated": {
+    "static_only": true,
+    "compiled": false,
+    "air_run": false,
+    "native_game": false,
+    "red_green_executed": false
+  }
+}

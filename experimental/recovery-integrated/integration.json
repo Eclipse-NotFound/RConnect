@@ -1,5 +1,5 @@
 {
-  "version": "0.2.24-recovery3",
+  "version": "0.2.24-recovery6",
   "compiled": false,
   "runtime_tested": false,
   "baseline": "build/m52/coop-bundle-04",
@@ -397,6 +397,99 @@
           "merge": "exact reviewed method anchors"
         }
       ]
+    },
+    {
+      "name": "validated-exact-wall-word-cache",
+      "source": "experimental/recovery-wall-decode/src",
+      "ancestor": "build/m52/recovery-02/src",
+      "files": [
+        {
+          "path": "rconnect/game/WallImpactVisuals.as",
+          "ancestor_sha256": "e1125fa1865598705c1753fd8e49ede037cd16936a680a7a078c4cf9b5ac5a34",
+          "source_sha256": "e17257bae728c8ebd53330a6f9b0be82eca95bc331d4bc99da502e17744fc0f4",
+          "before_sha256": "edf9c0e2bc0b830a8c83fcae7a0a9141d6b32b5b0342cd00d988030ff399584b",
+          "merged_sha256": "0b12230008c12cd792bdb98d715de6f12a0942a048d717901080787a653364e9",
+          "merge": "exact decode/reset methods, bounded cache members and helpers; recovery3 observe deduplication retained"
+        }
+      ],
+      "component": {
+        "receipt": "build/m52/recovery-wall-decode-component-01/receipt.json",
+        "receipt_sha256": "274cd884a9cbb171bf3d8687f0db40c723ff0a1c03ef9bb9ab9e3f4bf25e3f13",
+        "raw_result_sha256": "9d1389d55806c2b87c6fc453d34c9ea2dc0e4d8257283c00f5ac28ef924aeae7",
+        "intent_sha256": "6b9ae537895515c8f0648d01e65b938a401d7c334e7d68c3eaf0424d3167229d",
+        "component_sha256": "c80133db135d957d912de0d3d93f150c3a27967169b5f518f0d1454320b747d4",
+        "checks": 120,
+        "failed": 0,
+        "native_game_test": false,
+        "performance_qualified": false
+      }
+    },
+    {
+      "name": "received-impact-clock-detach-on-shooter-leave",
+      "source": "experimental/recovery-impact-detach/src",
+      "manifest_sha256": "1a816ad39a211d8702d39bbb500d58c16336aef66a730c682ee196a4cdfb4f6b",
+      "component": [
+        {
+          "variant": "control",
+          "path": "build/m52/impact-detach-control-01",
+          "receipt_sha256": "b10c3f5638744472d005a221d439af32c3e391d797abafed2a0bd713870e100d",
+          "result_sha256": "ed3e4cd4cd0dd104468e0f5ec00c3152955b2ff748e5026191e8134e2425302f",
+          "swf_sha256": "9df73abff34958b59899f6137f3a067b32cfeaf9cd0387cee98a8ccbb0c733d6",
+          "checks": 35,
+          "failures": 13
+        },
+        {
+          "variant": "candidate",
+          "path": "build/m52/impact-detach-candidate-01",
+          "receipt_sha256": "e727659373bc48755970a65a024df664b8abae7dcabfe121e58b507a615ce598",
+          "result_sha256": "54d8ba252b6482b553323c6f9d3a320bcfb9724e91a71a82d897a9fc2a2f774e",
+          "swf_sha256": "1dc573c847a0c255ec64e507a8a9ed43d678093769ae7675649e0b9adc08fa11",
+          "checks": 35,
+          "failures": 0
+        }
+      ],
+      "files": [
+        {
+          "path": "rconnect/game/EnergyImpactVisuals.as",
+          "before_sha256": "ff86c28bd4beaee27842ee9e71cbbb2987b0c9c418a2a2d3f078a22d29b82c32",
+          "merged_sha256": "d049d4a3fd996ac3088eb5bd2e4f8c765b954efe61f34a0899fa26e29cd72dee"
+        },
+        {
+          "path": "rconnect/game/ImpactEventQueue.as",
+          "before_sha256": "0996719782f7238b4e38596ec72a8e273995d4efb1241514ca9e632d98cdc658",
+          "merged_sha256": "d0c9c3f3639bad51f9d6a9a8c613dde82554edb418457b94b2f2ee197d6c855c"
+        },
+        {
+          "path": "rconnect/game/ProjectileFrameStream.as",
+          "before_sha256": "938b8ee0d3afa262e4b23c608c6b46d9b84b6cb71f4cb4b148ccb445de3c679c",
+          "merged_sha256": "a7039e20094c9df3f9e7a7ee2f22e1f1262d067c0e7f0356cb994743fbfc30d9"
+        },
+        {
+          "path": "rconnect/game/ProjectileVisuals.as",
+          "before_sha256": "6e584f4ee777f9dda609c0bd9b7ad17e2189bdd8ac2a7519f11187c8fa313593",
+          "merged_sha256": "2d4c56c8bef80534e3225aede43397da273d4f3aa86f76097a37fdc2aa8dea09"
+        }
+      ]
+    },
+    {
+      "name": "opt-in-codec-diagnostics",
+      "source": "experimental/recovery-codec-diagnostics/src",
+      "files": [
+        {
+          "path": "rconnect/net/RoomCodec.as",
+          "before_sha256": "549dbffadf05547509a0c2fe8a3637c0ef089305ebe7637322e6a196c471828c",
+          "merged_sha256": "296ee4d8d94f77faa62dcc17a39cb1e2492c756d3027311713c33935ca6b6b4a"
+        }
+      ],
+      "component": {
+        "receipt": "build/m52/recovery-codec-diagnostics-component-01/receipt.json",
+        "receipt_sha256": "701ea57f47be7b7293e249400b1cafe5f94cd30e702e51d059823460a7f9575b",
+        "raw_result_sha256": "151cd76f5ea059785faa820d26c401d87eea3b73b2a9601a35b71e0a1592d5a1",
+        "checks": 199,
+        "failed": 0,
+        "native_game_test": false,
+        "performance_qualified": false
+      }
     }
   ],
   "manual_changes": [
@@ -470,7 +563,7 @@
     },
     {
       "path": "RConnectMod.as",
-      "sha256": "db3ce41136ab11d4b0b9f0fdc44e24276cf79e8dc9a0885493a91f076c37caaa",
+      "sha256": "0fc4c0ded2eaa379176c2638743d220df9bef48cee90f06ad196c1cb7449a2fc",
       "baseline_sha256": "1de9483aca55b011d3d6ab99238c88c9b2028a8d1d8c2ab51e4ecb5c546833ec",
       "changed": true
     },
@@ -692,7 +785,7 @@
     },
     {
       "path": "rconnect/game/EnergyImpactVisuals.as",
-      "sha256": "ff86c28bd4beaee27842ee9e71cbbb2987b0c9c418a2a2d3f078a22d29b82c32",
+      "sha256": "d049d4a3fd996ac3088eb5bd2e4f8c765b954efe61f34a0899fa26e29cd72dee",
       "baseline_sha256": "8f940810a84b3e1ac65a5eb83393da90c6ab66cdc14aace8de69f1aee14d52c2",
       "changed": true
     },
@@ -722,7 +815,7 @@
     },
     {
       "path": "rconnect/game/ImpactEventQueue.as",
-      "sha256": "0996719782f7238b4e38596ec72a8e273995d4efb1241514ca9e632d98cdc658",
+      "sha256": "d0c9c3f3639bad51f9d6a9a8c613dde82554edb418457b94b2f2ee197d6c855c",
       "baseline_sha256": null,
       "changed": true
     },
@@ -800,13 +893,13 @@
     },
     {
       "path": "rconnect/game/ProjectileFrameStream.as",
-      "sha256": "938b8ee0d3afa262e4b23c608c6b46d9b84b6cb71f4cb4b148ccb445de3c679c",
+      "sha256": "a7039e20094c9df3f9e7a7ee2f22e1f1262d067c0e7f0356cb994743fbfc30d9",
       "baseline_sha256": null,
       "changed": true
     },
     {
       "path": "rconnect/game/ProjectileVisuals.as",
-      "sha256": "6e584f4ee777f9dda609c0bd9b7ad17e2189bdd8ac2a7519f11187c8fa313593",
+      "sha256": "2d4c56c8bef80534e3225aede43397da273d4f3aa86f76097a37fdc2aa8dea09",
       "baseline_sha256": "7837f01edba489fa3bde5deb4ef5adaae32a2297f994993c1f65e1664b13cf7e",
       "changed": true
     },
@@ -890,7 +983,7 @@
     },
     {
       "path": "rconnect/game/WallImpactVisuals.as",
-      "sha256": "edf9c0e2bc0b830a8c83fcae7a0a9141d6b32b5b0342cd00d988030ff399584b",
+      "sha256": "0b12230008c12cd792bdb98d715de6f12a0942a048d717901080787a653364e9",
       "baseline_sha256": "e1125fa1865598705c1753fd8e49ede037cd16936a680a7a078c4cf9b5ac5a34",
       "changed": true
     },
@@ -932,7 +1025,7 @@
     },
     {
       "path": "rconnect/net/RoomCodec.as",
-      "sha256": "549dbffadf05547509a0c2fe8a3637c0ef089305ebe7637322e6a196c471828c",
+      "sha256": "296ee4d8d94f77faa62dcc17a39cb1e2492c756d3027311713c33935ca6b6b4a",
       "baseline_sha256": "0a5903d409914791323f9775db5a5bb253e67ba583f5d4f4b926ac72b9c8bd48",
       "changed": true
     },
@@ -974,40 +1067,66 @@
     }
   ],
   "changed_files": [
+    "RConnectMod.as",
+    "RConnectModDomains.as",
+    "fe/serv/RConnectInteractionAccess.as",
+    "fe/unit/RConnectAnimationAccess.as",
+    "fe/unit/RConnectUnitAccess.as",
+    "modlocales/connect/RCLocale.as",
+    "modlocales/connect/RCLocaleMessages.as",
+    "rconnect/core/CoopPause.as",
+    "rconnect/core/EnemyGrip.as",
     "rconnect/core/MapGeneration.as",
+    "rconnect/core/NativeTravelPlan.as",
     "rconnect/core/PeerGrip.as",
     "rconnect/core/RoomSync.as",
     "rconnect/core/Session.as",
+    "rconnect/core/TeammateNavigation.as",
+    "rconnect/core/TravelGuard.as",
     "rconnect/game/BallisticImpactVisuals.as",
     "rconnect/game/EnergyImpactVisuals.as",
     "rconnect/game/GameBridge.as",
+    "rconnect/game/HitFeedback.as",
     "rconnect/game/ImpactEventQueue.as",
+    "rconnect/game/MirrorHitUnit.as",
     "rconnect/game/NativeRoomState.as",
     "rconnect/game/NativeTileState.as",
     "rconnect/game/PlayerBodyEffects.as",
     "rconnect/game/ProjectileFrameStream.as",
     "rconnect/game/ProjectileVisuals.as",
+    "rconnect/game/RemoteArmor.as",
+    "rconnect/game/RemoteLoot.as",
     "rconnect/game/RemoteMotion.as",
     "rconnect/game/RoomTerrainView.as",
     "rconnect/game/TelekinesisVisuals.as",
     "rconnect/game/TerrainSync.as",
     "rconnect/game/UnitPresentation.as",
+    "rconnect/game/WallImpactVisuals.as",
+    "rconnect/game/WorldProgress.as",
     "rconnect/net/HostServer.as",
+    "rconnect/net/Protocol.as",
     "rconnect/net/RoomCodec.as",
-    "rconnect/ui/RoomEntryView.as",
-    "RConnectMod.as",
-    "RConnectModDomains.as"
+    "rconnect/net/TcpLink.as",
+    "rconnect/ui/RoomEntryView.as"
   ],
   "static_checks": {
     "input_hashes": true,
     "exact_overlap_anchors": true,
     "no_conflict_markers": true,
     "version": true,
-    "compiler_checked": false
+    "compiler_checked": false,
+    "frozen_recovery3_85_files": true,
+    "wall_component_120_raw_assertions": true,
+    "recovery3_observe_deduplication_preserved": true,
+    "impact_detach_red_green_35": true,
+    "codec_diagnostics_component_199": true
   },
   "static_errors": [],
   "hash_note": "Layer merged_sha256 values describe intermediate merges. The source array is the final normalized LF source inventory; text-equivalent CRLF normalization is not a functional edit.",
-  "followup_review": "Exact method merges; cost499, RoomSync50, plan33 component checks. Native gameplay and performance pending.",
+  "followup_review": "Codec diagnostics default off; actual old/new encoding, decoding and limits 199/0. Native frame-time effect untested.",
   "native_host_candidate": "build/m52/recovery-native-travel-host-01",
-  "native_host_sha256": "e159fe0f0a1cbb34596d18b9979f439e80823fbeda369be7b2220a42e8e5d30c"
+  "native_host_sha256": "e159fe0f0a1cbb34596d18b9979f439e80823fbeda369be7b2220a42e8e5d30c",
+  "gameplay_qualified": false,
+  "performance_qualified": false,
+  "integration_recipe_sha256": "16a0738798816440573537c141ff5d090941e6cfd1eb102be806aa5144b41c1d"
 }

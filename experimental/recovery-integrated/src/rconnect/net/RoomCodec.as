@@ -6,15 +6,17 @@ package rconnect.net
    /** Bounded compressed checkpoints keep full terrain below the TCP frame cap. */
    public class RoomCodec
    {
+      /** Explicit diagnostic opt-in. Per-cell disk writes must not run during ordinary play. */
+      public static var timingEnabled:Boolean=false;
       private static const DIGITS:String="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
       public static function pack(o:Object):String
       {
-         var started:int=getTimer(),timing:Object={};
-         var payload:Object=compact(o);timing.table=getTimer()-started;
-         var json:String=JSON.stringify(payload);timing.json=getTimer()-started;
-         var b:ByteArray=new ByteArray();b.writeUTFBytes(json);timing.utf=getTimer()-started;
+         var started:int=timingEnabled?getTimer():0,timing:Object=timingEnabled?{}:null;
+         var payload:Object=compact(o);if(timing!=null)timing.table=getTimer()-started;
+         var json:String=JSON.stringify(payload);if(timing!=null)timing.json=getTimer()-started;
+         var b:ByteArray=new ByteArray();b.writeUTFBytes(json);if(timing!=null)timing.utf=getTimer()-started;
          if(b.length>16000000)throw new Error("Room checkpoint exceeds limit: "+b.length);
-         timing.bytes=b.length;b.compress();b.position=0;timing.compress=getTimer()-started;
+         if(timing!=null)timing.bytes=b.length;b.compress();b.position=0;if(timing!=null)timing.compress=getTimer()-started;
          var out:Array=[];
          while(b.bytesAvailable)
          {
@@ -24,14 +26,16 @@ package rconnect.net
          }
          var result:String=out.join("");
          if(result.length>1000000)throw new Error("Compressed room checkpoint exceeds limit: "+result.length);
-         Log.d("RConnectRoomTiming pack key="+o.key+" ms="+(getTimer()-started)+" chars="+result.length);
-         timing.total=getTimer()-started;timing.key=o.key;timing.chars=result.length;
-         Log.d("RConnectRoomTiming encode-stages "+JSON.stringify(timing));
+         if(timing!=null) {
+            Log.d("RConnectRoomTiming pack key="+o.key+" ms="+(getTimer()-started)+" chars="+result.length);
+            timing.total=getTimer()-started;timing.key=o.key;timing.chars=result.length;
+            Log.d("RConnectRoomTiming encode-stages "+JSON.stringify(timing));
+         }
          return result;
       }
       public static function unpack(s:String):Object
       {
-         var started:int=getTimer(),timing:Object={};
+         var started:int=timingEnabled?getTimer():0,timing:Object=timingEnabled?{}:null;
          if(s==null || s.length>1000000)throw new Error("Invalid room checkpoint");
          var b:ByteArray=new ByteArray();
          for(var i:int=0;i<s.length;i+=4)
@@ -39,13 +43,15 @@ package rconnect.net
             var a:int=DIGITS.indexOf(s.charAt(i)),c:int=DIGITS.indexOf(s.charAt(i+1)),d:int=DIGITS.indexOf(s.charAt(i+2)),e:int=DIGITS.indexOf(s.charAt(i+3));
             b.writeByte((a<<2)|(c>>4));if(d>=0)b.writeByte((c<<4)|(d>>2));if(e>=0)b.writeByte((d<<6)|e);
          }
-         timing.base64=getTimer()-started;b.uncompress();b.position=0;timing.inflate=getTimer()-started;
+         if(timing!=null)timing.base64=getTimer()-started;b.uncompress();b.position=0;if(timing!=null)timing.inflate=getTimer()-started;
          if(b.length>16000000)throw new Error("Room checkpoint exceeds limit");
-         var json:String=b.readUTFBytes(b.length);timing.utf=getTimer()-started;
-         var result:Object=JSON.parse(json);timing.json=getTimer()-started;result=expand(result);
-         Log.d("RConnectRoomTiming unpack key="+result.key+" ms="+(getTimer()-started)+" bytes="+b.length);
-         timing.total=getTimer()-started;timing.key=result.key;timing.bytes=b.length;
-         Log.d("RConnectRoomTiming decode-stages "+JSON.stringify(timing));
+         var json:String=b.readUTFBytes(b.length);if(timing!=null)timing.utf=getTimer()-started;
+         var result:Object=JSON.parse(json);if(timing!=null)timing.json=getTimer()-started;result=expand(result);
+         if(timing!=null) {
+            Log.d("RConnectRoomTiming unpack key="+result.key+" ms="+(getTimer()-started)+" bytes="+b.length);
+            timing.total=getTimer()-started;timing.key=result.key;timing.bytes=b.length;
+            Log.d("RConnectRoomTiming decode-stages "+JSON.stringify(timing));
+         }
          return result;
       }
       /** Terrain repeats the same property names tens of thousands of times.

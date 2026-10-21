@@ -17,6 +17,16 @@ package rconnect.game {
          var time:Number=state.motion!=null?state.motion.sourceTime:NaN;
          return isFinite(time)?time:now-Number(state.offset)-Number(state.delay);
       }
+      /** No later packet is guaranteed after a shooter leaves this room.
+       * Anchor the fallback to the last displayed cursor, not the latest
+       * received endpoint. Call with the effective paused time when stopped. */
+      public static function detachClock(state:Object,now:int):void {
+         if(state==null || state.motion==null)return;
+         receiveClock(state,null,Number(state.offset),Number(state.delay),now);
+         // This fallback starts here, even if its event arrived mid-pause.
+         // Resume must subtract the pause interval from this new anchor.
+         state.clockAt=now;
+      }
       public static function shiftClock(state:Object,elapsed:int):void {
          state.offset=Number(state.offset)+elapsed;
          if(state.detachedOffset!=null && isFinite(Number(state.detachedOffset)))

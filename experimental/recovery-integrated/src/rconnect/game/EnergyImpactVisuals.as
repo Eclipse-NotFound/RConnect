@@ -272,6 +272,14 @@ package rconnect.game {
          if(v!=null && v.parent!=null)v.parent.removeChild(v);
          delete a.state.records[String(a.id)];active.splice(index,1);
       }
+      /** A confirmed finite impact can outlive the shooter's room presence.
+       * Keep its actual frames/end and retirement rules; only release the
+       * owner clock which GameBridge will no longer advance. */
+      public function forget(channel:Object,now:int):void {
+         var state:Object=channels[channel];if(state==null)return;
+         if(pauseAt>=0)now=Math.min(now,pauseAt);
+         for each(var a:Object in state.records)ProjectileFrameStream.detachClock(a,now);
+      }
       public function reset():void {
          while(active.length>0)remove(active.length-1);
          channels=new Dictionary(true);sources=new Dictionary(true);claimed=new Dictionary(true);checkedHits=new Dictionary(true);

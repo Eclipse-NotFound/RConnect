@@ -123,7 +123,15 @@ def main():
             assert sha(host_candidate/'sources'/name)==source_digest,name
         result['native_host']=host_intent
     save(out/'result.json',result)
-    print(json.dumps({k:v for k,v in result.items() if k!='memory'},ensure_ascii=False),flush=True)
+    # Keep complete phase/input/source evidence on disk, not in every progress
+    # item. This only shortens console output; qualification above is unchanged.
+    shown={k:v for k,v in result.items() if k not in ('memory','roles','native_host')}
+    if 'roles' in result:
+        shown['roles']={role:dict(checks=value['checks'],errors=value['errors'],done=value['done'],
+            rows=[{key:row.get(key) for key in ('round','target','elapsed','controlResponseElapsed')}
+                  for row in value['rows']]) for role,value in result['roles'].items()}
+    if host_intent:shown['native_host_sha256']=host_intent['candidate_sha256']
+    print(json.dumps(shown,ensure_ascii=False),flush=True)
     if not result['passed']:raise SystemExit(1)
 
 

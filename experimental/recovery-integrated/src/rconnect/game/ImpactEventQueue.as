@@ -25,7 +25,10 @@ package rconnect.game {
             var key:String=String(event.seq);
             if(state.seen[key] || !isFinite(Number(s.at)) || !(s.groups is Array))continue;
             state.seen[key]=true;state.order.push({seq:event.seq,at:now});
-            pending.push({s:s,loc:loc,main:main,clock:state,received:now});
+            // Retain the channel only while its bounded pending hit exists.
+            // forget(owner) drops the weapon map; without this reference a
+            // weak channel key could disappear before pause/resume shifts it.
+            pending.push({s:s,loc:loc,main:main,clock:state,received:now,channel:channel});
             if(pending.length>512)pending.shift();
          }
       }
@@ -53,6 +56,10 @@ package rconnect.game {
             for each(var state:Object in channels)ProjectileFrameStream.shiftClock(state,now-Math.max(pauseAt,int(state.clockAt)));
             pauseAt=-1;
          }
+      }
+      public function forget(channel:Object,now:int):void {
+         var state:Object=channels[channel];if(state==null)return;
+         ProjectileFrameStream.detachClock(state,pauseAt>=0?Math.min(now,pauseAt):now);
       }
       public function reset():void {channels=new Dictionary(true);pending=[];pauseAt=-1;}
    }

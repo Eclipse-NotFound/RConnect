@@ -16,6 +16,7 @@ package {
    import flash.geom.Matrix;
    import flash.geom.Rectangle;
    import flash.utils.Dictionary;
+   import flash.utils.ByteArray;
    import flash.utils.Timer;
    import flash.utils.getTimer;
    import flash.utils.getQualifiedClassName;
@@ -53,7 +54,10 @@ package {
       private var localPrepared:Boolean=false,peerPrepared:Boolean=false,targetHp:Number=0,frames:int=0;
       private var nativeSpell:Object;
       private var wireSeen:Object={};
+      private var wirePackets:int=0,wireImpactPackets:int=0,wireSummary:String="";
+      private var diagnosticParts:Dictionary=new Dictionary(true),diagnosticPartCount:int=0;
       private var pixelMs:int=0,pixelMax:int=0,pixelCalls:int=0,renderGap:int=0,previousRender:int=0;
+      private var pixelMeasures:Array=[],lastPixel:Object,pendingPictures:Array=[];
       private var waitLand:String,flightClasses:Object={},flightPoints:Object={},flightSeen:Dictionary=new Dictionary();
       private var flightFrames:int=0,flightMoves:int=0,flightHolds:int=0,flightIntermediate:int=0;
 
@@ -91,7 +95,9 @@ package {
          contacts=new Dictionary(true);nativeContacts=0;
          sourcePixels=remotePixels=nativeShots=frames=0;localResult=peerResult=null;
          pixelMs=pixelMax=pixelCalls=renderGap=previousRender=0;
+         pixelMeasures=[];lastPixel=null;
          wireSeen={};
+         wirePackets=wireImpactPackets=diagnosticPartCount=0;wireSummary="";diagnosticParts=new Dictionary(true);
          flightClasses={};flightPoints={};flightSeen=new Dictionary();flightFrames=flightMoves=flightHolds=flightIntermediate=0;
          cleanupGun();
          localSource=cases[n].actor==(host?"host":"join") || (host && cases[n].actor=="enemy");
@@ -202,7 +208,24 @@ package {
             if(cases[round].melee===true && !shot && Number(gun.t_attack)>0) {nativeShots=1;shot=true;}
             for(var b:Object=mod.game.loc.firstObj;b!=null;b=b.nobj) {
                if(GameBridge.probe(b,"weap")!==gun || GameBridge.probe(b,"begx")==null)continue;
-               if(GameBridge.probe(b,"tilehit")===true && !contacts[b]){contacts[b]=true;nativeContacts++;}
+               if(GameBridge.probe(b,"tilehit")===true && !contacts[b]){
+                  contacts[b]=true;nativeContacts++;
+                  if(ballistic && round<=1) {
+                     var nearby:Array=[];
+                     for(var part:Object=mod.game.loc.firstObj;part!=null;part=part.nobj) {
+                        if(getQualifiedClassName(part)!="fe.graph::Part" || Math.abs(Number(part.X)-Number(b.X))>40 || Math.abs(Number(part.Y)-Number(b.Y))>40)continue;
+                        nearby.push({x:part.X,y:part.Y,liv:part.liv,mliv:part.mliv,age:Number(part.mliv)-Number(part.liv),
+                           dx:part.dx,dy:part.dy,withinCaptureBox:Math.abs(Number(part.X)-Number(b.X))<=20 && Math.abs(Number(part.Y)-Number(b.Y))<=25,
+                           sparks:part.blitData===mod.game.world.grafon.getSpriteList("sprIskr",1)});
+                     }
+                     Log.d("BALLISTIC SOURCE CONTACT "+JSON.stringify({round:round,at:getTimer(),wall:new Date().time,
+                        x:b.X,y:b.Y,vel:b.vel,dx:b.dx,dy:b.dy,tipDecal:b.tipDecal,babah:b.babah,
+                        inChain:b.in_chain,explRadius:b.explRadius,ownerMatches:gun.owner===actor,weaponLocMatches:gun.loc===mod.game.loc,
+                        roomHold:mod.game.roomHold,active:mod.game.loc.active,
+                        clip:b.vis==null?null:getQualifiedClassName(b.vis),frame:b.vis is MovieClip?MovieClip(b.vis).currentFrame:0,
+                        nearby:nearby}));
+                  }
+               }
                if(shots[b])continue;
                shots[b]=true;nativeShots++;b.miss=0;b.critCh=0;b.critInvis=0;b.desintegr=0;b.probiv=0;b.precision=0;
                if(cases[round].target=="expiry")b.liv=1;
@@ -222,28 +245,77 @@ package {
          // per case, then keep observing every distinct particle and pose.
          // CPU BitmapData draws per particle distort short animation timing.
          if((list===source && sourcePixels==0) || (list===remote && remotePixels==0)) {
-            var began:int=getTimer(),count:int=pixels(v),cost:int=getTimer()-began;
+            var began:int=getTimer(),beganWall:Number=new Date().time,count:int=pixels(v),cost:int=getTimer()-began;
             pixelCalls++;pixelMs+=cost;pixelMax=Math.max(pixelMax,cost);
+            if(pixelMeasures.length<32)pixelMeasures.push({call:pixelCalls,renderFrame:frames,started:began,
+               ended:getTimer(),wallStart:beganWall,wallEnd:new Date().time,totalMs:cost,pixels:count,
+               source:list===source,stages:lastPixel});
             if(count>0) {if(list===source)sourcePixels=1;else remotePixels=1;}
          }
       }
       private function pixels(v:DisplayObject):int {
+         lastPixel={allocationMs:0,pairDrawMs:0,pixelCompareMs:0,screenshotAllocationMs:0,screenshotDrawMs:0,pngDeferred:true};
          if(v==null || !v.visible || v.stage==null || v.alpha<=0)return 0;
          var root:DisplayObject=mod.main as DisplayObject;
          var r:Rectangle=v.getBounds(root).intersection(new Rectangle(0,0,mod.stage.stageWidth,mod.stage.stageHeight));
          if(r.width<1 || r.height<1 || r.width*r.height>150000)return 0;
+         var began:int=getTimer();
          var a:BitmapData=new BitmapData(Math.ceil(r.width),Math.ceil(r.height),false,0),b:BitmapData=a.clone();
-         var m:Matrix=new Matrix(1,0,0,1,-r.x,-r.y);a.draw(root,m);v.visible=false;b.draw(root,m);v.visible=true;
+         lastPixel.allocationMs=getTimer()-began;began=getTimer();
+         var m:Matrix=new Matrix(1,0,0,1,-r.x,-r.y);a.draw(root,m);v.visible=false;
+         try {b.draw(root,m);}finally {v.visible=true;}
+         lastPixel.pairDrawMs=getTimer()-began;began=getTimer();
          var av:Vector.<uint>=a.getVector(a.rect),bv:Vector.<uint>=b.getVector(b.rect),count:int=0;
          for(var i:int=0;i<av.length;i++)if(av[i]!=bv[i])count++;
+         lastPixel.pixelCompareMs=getTimer()-began;
          if(count>0 && (round==0 || round==2 || round==6)) {
+            // Keep the exact successful native display now. PNG compression
+            // and disk I/O must not block this particle loop or the next shot.
+            // At most the three legacy screenshot rounds retain a full bitmap.
+            began=getTimer();
             var picture:BitmapData=new BitmapData(mod.stage.stageWidth,mod.stage.stageHeight,false,0);
+            lastPixel.screenshotAllocationMs=getTimer()-began;
+            began=getTimer();var captureWall:Number=new Date().time;
             picture.draw(root);
-            var path:File=File.applicationStorageDirectory.resolvePath("presentation-impact-"+round+".png");
-            var stream:FileStream=new FileStream();stream.open(path,FileMode.WRITE);
-            stream.writeBytes(picture.encode(picture.rect,new PNGEncoderOptions()));stream.close();picture.dispose();
+            var captureEnd:int=getTimer(),captureEndWall:Number=new Date().time;
+            lastPixel.screenshotDrawMs=captureEnd-began;
+            // Preserve the old last-write-wins filename when both source and
+            // copy evidence happen to be sampled in one case.
+            for(i=pendingPictures.length-1;i>=0;i--)if(int(pendingPictures[i].round)==round) {
+               BitmapData(pendingPictures[i].picture).dispose();pendingPictures.splice(i,1);
+            }
+            pendingPictures.push({round:round,picture:picture,capturedAt:began,capturedWall:captureWall,
+               captureEndedAt:captureEnd,captureEndedWall:captureEndWall,drawMs:lastPixel.screenshotDrawMs,
+               allocationMs:lastPixel.screenshotAllocationMs,renderFrame:frames});
          }
          a.dispose();b.dispose();return count;
+      }
+      private function exportPictures():void {
+         // Called only after phase=done and the action observers are removed.
+         // This work is evidence export, never part of an impact timing sample.
+         while(pendingPictures.length>0) {
+            var item:Object=pendingPictures.shift(),picture:BitmapData=item.picture as BitmapData;
+            var encoded:ByteArray=null,stream:FileStream=null,opened:Boolean=false;
+            var began:int=getTimer(),wall:Number=new Date().time,encodedAt:int=0;
+            try {
+               encoded=picture.encode(picture.rect,new PNGEncoderOptions());encodedAt=getTimer();
+               var path:File=File.applicationStorageDirectory.resolvePath("presentation-impact-"+item.round+".png");
+               stream=new FileStream();stream.open(path,FileMode.WRITE);opened=true;
+               stream.writeBytes(encoded);stream.close();opened=false;
+               Log.d("IMPACT PNG EXPORT "+JSON.stringify({role:host?"host":"join",round:item.round,
+                  capturedAt:item.capturedAt,capturedWall:item.capturedWall,captureEndedAt:item.captureEndedAt,
+                  captureEndedWall:item.captureEndedWall,screenshotAllocationMs:item.allocationMs,
+                  screenshotDrawMs:item.drawMs,renderFrame:item.renderFrame,
+                  exportStarted:began,exportWall:wall,encodeMs:encodedAt-began,writeMs:getTimer()-encodedAt,
+                  exportEnded:getTimer(),exportEndedWall:new Date().time,bytes:encoded.length,afterSampling:true}));
+            } catch(error:Error) {
+               check(false,"deferred PNG export failed for sampled case="+item.round+": "+error);
+            } finally {
+               if(opened)try {stream.close();}catch(ignored:*){}
+               if(encoded!=null)encoded.clear();
+               if(picture!=null)picture.dispose();
+            }
+         }
       }
       private function render(e:Event):void {
          if(phase!="run")return;frames++;
@@ -252,6 +324,17 @@ package {
          for(var o:Object=mod.game.loc.firstObj;o!=null;o=o.nobj) {
             if(getQualifiedClassName(o)!="fe.graph::Part")continue;
             var v:DisplayObject=o.vis as DisplayObject;
+            // Observe received native Parts even when the final display filter
+            // rejects them. Do not call capture/readSnapshot: those consume or
+            // age production records and would change the fault under test.
+            if(ballistic && round<=1 && diagnosticPartCount<20 && !diagnosticParts[o]
+               && o.blitData===mod.game.world.grafon.getSpriteList("sprIskr",1)) {
+               diagnosticParts[o]=true;diagnosticPartCount++;
+               Log.d("BALLISTIC NATIVE PART "+JSON.stringify({at:getTimer(),wall:new Date().time,round:round,
+                  elapsed:getTimer()-at,renderFrame:frames,role:host?"host":"join",localSource:localSource,shot:shot,nativeShots:nativeShots,
+                  x:o.X,y:o.Y,liv:o.liv,mliv:o.mliv,inChain:o.in_chain,active:mod.game.loc.active,roomHold:mod.game.roomHold,
+                  hasVis:v!=null,visible:v!=null && v.visible,staged:v!=null && v.stage!=null,alpha:v==null?null:v.alpha}));
+            }
             if(v==null)continue;
             if(ballistic) {
                var atlas:String=cases[round].target=="unit"
@@ -288,8 +371,14 @@ package {
       }
       private function collect():void {
          phase="sampled";
+         Log.d("IMPACT PIXEL TIMING "+JSON.stringify({role:host?"host":"join",round:round,pixelMs:pixelMs,
+            pixelMax:pixelMax,pixelCalls:pixelCalls,renderGap:renderGap,samples:pixelMeasures,
+            boundedSamples:32,pngEncodingDuringSampling:false}));
+         if(ballistic && round<=1)Log.d("BALLISTIC DIAGNOSTIC SUMMARY "+JSON.stringify({role:host?"host":"join",round:round,
+            wirePackets:wirePackets,wireImpactPackets:wireImpactPackets,observedParts:diagnosticPartCount,
+            sourceContacts:nativeContacts,renderedSource:source.length,renderedRemote:remote.length}));
          localResult={source:source,remote:remote,sourcePixels:sourcePixels,remotePixels:remotePixels,
-            measurement:{pixelMs:pixelMs,pixelMax:pixelMax,pixelCalls:pixelCalls,renderGap:renderGap},
+            measurement:{pixelMs:pixelMs,pixelMax:pixelMax,pixelCalls:pixelCalls,renderGap:renderGap,pngEncodingDuringSampling:false},
             flight:{frames:flightFrames,moves:flightMoves,holds:flightHolds,intermediate:flightIntermediate},
             shots:nativeShots,contacts:nativeContacts,frames:frames,kol:nativeSpell!=null?1:gun==null?0:int(gun.kol),loss:target==null?0:targetHp-Number(target.hp)};
          send("result",{result:localResult});compare();
@@ -397,10 +486,10 @@ package {
       }
       private function receive(e:NetMessageEvent):void {
          var p:Object=e.data;
-         if(phase=="run" && !localSource && !ballistic) {
-            if(p.snap!=null)wire(p.snap);
+         if(phase=="run" && !localSource) {
+            if(p.snap!=null)wire(p.snap,host?1:0,String(p.type));
             if(p.players is Array)for each(var player:Object in p.players)
-               if(int(player.id)==0)wire(player.snap);
+               if(int(player.id)==0)wire(player.snap,0,String(p.type));
          }
          if(p.type!="energy-impact-test")return;
          try {
@@ -420,8 +509,53 @@ package {
             else if(p.stage=="done")finish();
          } catch(error:Error) {check(false,error.getStackTrace());send("done");finish();}
       }
-      private function wire(snap:Object):void {
+      private function wire(snap:Object,peerId:int=-1,packetType:String=""):void {
          if(snap==null)return;
+         if(ballistic) {
+            if(round==0) {
+               wirePackets++;
+               var guns:Array=[],hasImpact:Boolean=false,stored:Boolean=false;
+               if(snap.weapons is Array)for each(var state:Object in snap.weapons) {
+                  var events:Array=state.events as Array,impactCount:int=0,endedCount:int=0;
+                  if(events!=null)for each(var ev:Object in events) {
+                     if(ev.impact!=null || ev.flight!=null && ev.flight.impact!=null)impactCount++;
+                     if(ev.flight!=null && ev.flight.ended===true)endedCount++;
+                  }
+                  hasImpact=hasImpact || impactCount>0;
+                  guns.push({id:state.id,stream:state.stream,events:events==null?0:events.length,
+                     first:events==null||events.length==0?null:events[0].seq,last:events==null||events.length==0?null:events[events.length-1].seq,
+                     impacts:impactCount,ended:endedCount});
+               }
+               if(hasImpact)wireImpactPackets++;
+               var records:Array=host?mod.session.peers:mod.session.remotes;
+               for each(var rec:Object in records)if(int(rec.id)==peerId && rec.snap===snap)stored=true;
+               var ghost:Object=mod.game.getRemoteGhost(peerId);
+               // This listener runs after Session's normal MESSAGE listener.
+               // Stored means Session retained this exact object, not that the
+               // private projectile queue necessarily accepted its impact.
+               var envelope:Object={packetType:packetType,peerId:peerId,guns:guns,sessionStored:stored,
+                  incomingRoom:snap.roomKey,incomingEpoch:snap.roomEpoch,incomingLoc:snap.locId,
+                  localRoom:mod.game.roomKey(),localEpoch:mod.game.roomEpoch,localLoc:mod.game.loc.id,
+                  active:mod.game.loc.active,roomHold:mod.game.roomHold,paused:mod.game.coopPaused,
+                  ghost:ghost!=null,ghostSameLoc:ghost!=null && ghost.loc===mod.game.loc};
+               var summary:String=JSON.stringify(envelope);
+               if(summary!=wireSummary) {
+                  wireSummary=summary;envelope.at=getTimer();envelope.wall=new Date().time;
+                  envelope.sampleTime=snap.sampleTime;envelope.packetCount=wirePackets;
+                  Log.d("BALLISTIC WIRE ENVELOPE "+JSON.stringify(envelope));
+               }
+            }
+            if(round==0 && snap.weapons is Array)for each(var bw:Object in snap.weapons)
+               for each(var be:Object in bw.events) {
+                  var bf:Object=be.flight,bi:Object=be.impact!=null?be.impact:(bf==null?null:bf.impact);
+                  var sig:String=String(bw.stream)+"/"+String(be.seq)+"/"+(bf==null?"none":String(bf.ended)+"/"+String(bf.end))+"/"+JSON.stringify(bi);
+                  if(wireSeen[sig])continue;wireSeen[sig]=true;
+                  Log.d("BALLISTIC IMPACT WIRE "+JSON.stringify({round:round,at:getTimer(),wall:new Date().time,
+                     stream:bw.stream,seq:be.seq,sampleTime:bw.sampleTime,born:be.at,hasFlight:bf!=null,
+                     points:bf==null||!(bf.frames is Array)?0:bf.frames.length,ended:bf==null?null:bf.ended,impact:bi}));
+               }
+            return;
+         }
          if(cases[round].burst && snap.weapons is Array)for each(var gunState:Object in snap.weapons)
             for each(var event:Object in gunState.events)if(event.flight!=null) {
                var flight:Object=event.flight;flightClasses[String(flight.cls)]=true;
@@ -473,6 +607,7 @@ package {
       private function finish():void {
          if(phase=="done")return;phase="done";timer.stop();
          if(mod!=null) {mod.stage.removeEventListener(Event.ENTER_FRAME,before);mod.stage.removeEventListener(Event.ENTER_FRAME,after);mod.stage.removeEventListener(Event.RENDER,render);cleanupGun();}
+         exportPictures();
          Log.d("COOP EFFECTS DONE energy-impact "+(host?"host":"join"));
       }
    }
