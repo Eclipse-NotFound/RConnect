@@ -68,6 +68,7 @@ Remains 1.02 双人合作模组，入口 release/RConnectMod.swf。A 是普通�
 
 ## 7. 构建、测试和深入记录
 
+- RConnect (2) 原版加载UI独立增量：`experimental/native-loading-ui`，冻结`build/m52/native-loading-01` / `0.2.24-native-loading1` / `f95d830b…62c5af`，基于准确room19；移除自绘交接提示，复用原版加载资源，147组件过。完整原生被用户游戏占用/4.49GiB内存门槛拦下，未启动AIR、未部署、不宣称耗时缩短；已有独立功能驱动。准确指纹/重跑入口见[原版加载UI记录](native-loading-ui-2026-10-21.md)，由主会话统一集成。
 - 主记录：[房间加载](room-loading-2026-10-19.md)、[journal](journal.md)。提交前用git status核对本轮文件，避免覆盖其他会话工作。
 - Python=C:/Users/hello/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe；Java=C:/Users/hello/Documents/_sandevistan_dev/jdk-11.0.32.1+1-jre/bin/java.exe；SDK=mods/Sandevistan/build/tools/flexsdk。PowerShell login:false。
 - 构建：tools/validation/prepare_room_entry_fast.py <新build/m52目录> --version <新版本> --build --registry-wait900（参数与900之间加空格）。
