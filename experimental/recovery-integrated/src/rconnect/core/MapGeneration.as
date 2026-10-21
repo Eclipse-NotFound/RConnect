@@ -18,11 +18,20 @@ package rconnect.core {
             if(nativeGame.rconnectTravelBridge!=null)throw new Error("Native travel hook already owned");
             nativeGame.rconnectTravelBridge=nativeTravel;nativeTravelSupported=true;
          }
+         var grafon:Object=s.mod.game.main.loaderInfo.applicationDomain.getDefinition("fe.graph.Grafon");
+         if("rconnectRasterBridge" in grafon) {
+            if(grafon.rconnectRasterBridge!=null)throw new Error("Native first raster hook already owned");
+            grafon.rconnectRasterBridge=firstRaster;
+         }
          var cls:Object=s.mod.game.main.loaderInfo.applicationDomain.getDefinition("fe.loc.Land");
          if("rconnectSeedSource" in cls) {
             cls.rconnectSeedSource=seedFor; supported=true;
             Log.d("RConnectMap: native expedition seed interface ready");
          }else Log.d("RConnectMap: legacy fixed-seed Land; native expedition patch required");
+      }
+      private function firstRaster(w:Object,l:Object,g:Object):Object {
+         if(session.rooms==null || session.mode!=Session.CONNECTED)return null;
+         return session.rooms.openFirstRaster(w,l,g);
       }
       private function nativeTravel(phase:String,g:Object,info:Object):Object {
          var bridge:GameBridge=session.mod.game;

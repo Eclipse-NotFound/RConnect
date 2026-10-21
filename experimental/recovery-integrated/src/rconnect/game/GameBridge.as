@@ -3506,6 +3506,14 @@ package rconnect.game
          tileRedrawIfDirty();_wall.receive(loc,list,true);tileRedrawIfDirty();
       }
 
+      /** The native camera has produced the first restored viewport. */
+      public function finishFirstRaster():void
+      {
+         if(probe(probe(loc,"grafon"),"rconnectRasterPending")===true)
+            throw new Error("First raster still unpainted");
+         _wall.redraw(loc);_satsRasterDirty=true;
+      }
+
       public function tileRedrawIfDirty():void
       {
          if(_terrain.dirty && world!=null) {
@@ -6230,7 +6238,8 @@ package rconnect.game
          // raster can be retained, and only when no pending/previous paint can
          // be left behind. Changed/unknown terrain uses the old full redraw.
          var terrainView:RoomTerrainView;
-         if(!retained && !_terrain.dirty && (s.wallPaint==null || s.wallPaint.length==0)
+         if(!retained && probe(probe(loc,"grafon"),"rconnectRasterPending")!==true
+            && !_terrain.dirty && (s.wallPaint==null || s.wallPaint.length==0)
             && _wall.checkpoint(loc).length==0)terrainView=new RoomTerrainView(loc);
          roomRole(authority);
          timing.role=getTimer()-timingStart;

@@ -1,0 +1,108 @@
+{
+  "passed": true,
+  "checks": 25,
+  "assertions": [
+    {
+      "label": "authored source accepted",
+      "passed": true
+    },
+    {
+      "label": "actual host03 optional braces accepted",
+      "passed": true
+    },
+    {
+      "label": "sceneEnsure correct direct branch",
+      "passed": true
+    },
+    {
+      "label": "sceneEnsure rejects wrong return",
+      "passed": true
+    },
+    {
+      "label": "sceneEnsure rejects missing return",
+      "passed": true
+    },
+    {
+      "label": "sceneEnsure rejects reversed condition",
+      "passed": true
+    },
+    {
+      "label": "sceneEnsure rejects guard moved",
+      "passed": true
+    },
+    {
+      "label": "sceneEnsure rejects extra branch work",
+      "passed": true
+    },
+    {
+      "label": "sceneTick correct direct branch",
+      "passed": true
+    },
+    {
+      "label": "sceneTick rejects wrong return",
+      "passed": true
+    },
+    {
+      "label": "sceneTick rejects missing return",
+      "passed": true
+    },
+    {
+      "label": "sceneTick rejects reversed condition",
+      "passed": true
+    },
+    {
+      "label": "sceneTick rejects guard moved",
+      "passed": true
+    },
+    {
+      "label": "sceneTick rejects extra branch work",
+      "passed": true
+    },
+    {
+      "label": "sceneViewReady correct direct branch",
+      "passed": true
+    },
+    {
+      "label": "sceneViewReady rejects wrong return",
+      "passed": true
+    },
+    {
+      "label": "sceneViewReady rejects missing return",
+      "passed": true
+    },
+    {
+      "label": "sceneViewReady rejects reversed condition",
+      "passed": true
+    },
+    {
+      "label": "sceneViewReady rejects guard moved",
+      "passed": true
+    },
+    {
+      "label": "sceneViewReady rejects extra branch work",
+      "passed": true
+    },
+    {
+      "label": "draw reset reversed",
+      "passed": true
+    },
+    {
+      "label": "draw reset missing",
+      "passed": true
+    },
+    {
+      "label": "draw reset wrong value",
+      "passed": true
+    },
+    {
+      "label": "draw reset moved",
+      "passed": true
+    },
+    {
+      "label": "completed ticket scans again",
+      "passed": true
+    }
+  ],
+  "subprocess_started": false,
+  "air_started": false
+}

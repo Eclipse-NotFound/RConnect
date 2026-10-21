@@ -1,0 +1,13 @@
+{
+  "base": "build\\m52\\recovery-first-raster-02",
+  "base_sha256": "7975167afc40992946624a8d73369df05f7c42ff742b52c4573bba0928b8f239",
+  "base_source_sha256": "b1be43039e16634750ca104ebf92303a3b3757b0247df0fd0d0275bc36cf5a6f",
+  "sources": {
+    "rconnect/core/RoomSync.as": "c2e68fe658a81be4b3ceb285daf453ca57b9d4a5895e80720dd629c374e3f85e",
+    "rconnect/core/SeedRasterEntry.as": "9980a528b48051906e5bf4128d304b1687cfde02a99980ddfcbbbf80c8d5972e"
+  },
+  "host_sha256": "fd92fbd5ae92b5c8d4cbf8151d11796a140810f34988b7031e258c747d86734e",
+  "compiled": false,
+  "runtime_tested": false,
+  "installed": false
+}

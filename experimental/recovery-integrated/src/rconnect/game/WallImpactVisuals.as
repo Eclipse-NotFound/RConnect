@@ -101,7 +101,8 @@ package rconnect.game
          var g:Object=get(loc,"grafon");
          // Grafon is shared by rooms. inRoom(oldRoom) must never paint the new
          // room's bitmap while settling reports on the old-room TCP barrier.
-         return loc!=null && get(g,"loc")===loc?get(g,"frontBmp") as BitmapData:null;
+         return loc!=null && get(g,"loc")===loc && get(g,"rconnectRasterPending")!==true
+            ?get(g,"frontBmp") as BitmapData:null;
       }
       private function solid(loc:Object,x:int,y:int):Boolean
       {

@@ -1,0 +1,180 @@
+{
+  "run": "22d8c35101",
+  "native_passed": false,
+  "fixture_verified": true,
+  "original_failures_preserved": true,
+  "new_execution": false,
+  "roles": {
+    "host": {
+      "pass": 28,
+      "fail": 0,
+      "done": 1,
+      "windows": [],
+      "viewport": [
+        1280,
+        800,
+        30,
+        "HIGH"
+      ],
+      "other_count": 36,
+      "background_count": 57,
+      "tile_sha256": "d32107a49eebdb243c0e936b676af5188c84d7947527aa603223fdce21ff5d53"
+    },
+    "join": {
+      "pass": 46,
+      "fail": 7,
+      "done": 1,
+      "windows": [
+        {
+          "phase": 0,
+          "frames": 66,
+          "p95ms": 218,
+          "maxms": 301,
+          "packets": 38,
+          "maxPacketMs": 502,
+          "aimSamples": 44,
+          "event_cost": {
+            "cpuMs": 1659,
+            "cpuMax": 43,
+            "netMs": 73859,
+            "netMax": 72773
+          }
+        },
+        {
+          "phase": 1,
+          "frames": 70,
+          "p95ms": 203,
+          "maxms": 267,
+          "packets": 34,
+          "maxPacketMs": 375,
+          "aimSamples": 51,
+          "event_cost": {
+            "cpuMs": 3532,
+            "cpuMax": 78,
+            "netMs": 75085,
+            "netMax": 72773
+          },
+          "projectiles": {
+            "visible": 838,
+            "moving": 341
+          }
+        },
+        {
+          "phase": 2,
+          "frames": 71,
+          "p95ms": 202,
+          "maxms": 302,
+          "packets": 31,
+          "maxPacketMs": 359,
+          "aimSamples": 51,
+          "event_cost": {
+            "cpuMs": 5386,
+            "cpuMax": 78,
+            "netMs": 76318,
+            "netMax": 72773
+          },
+          "projectiles": {
+            "visible": 952,
+            "moving": 412
+          }
+        },
+        {
+          "phase": 3,
+          "frames": 69,
+          "p95ms": 208,
+          "maxms": 282,
+          "packets": 32,
+          "maxPacketMs": 377,
+          "aimSamples": 48,
+          "event_cost": {
+            "cpuMs": 7228,
+            "cpuMax": 78,
+            "netMs": 77548,
+            "netMax": 72773
+          },
+          "projectiles": {
+            "visible": 1058,
+            "moving": 462
+          }
+        },
+        {
+          "phase": 4,
+          "frames": 69,
+          "p95ms": 199,
+          "maxms": 261,
+          "packets": 34,
+          "maxPacketMs": 393,
+          "aimSamples": 49,
+          "event_cost": {
+            "cpuMs": 9154,
+            "cpuMax": 79,
+            "netMs": 78844,
+            "netMax": 72773
+          },
+          "projectiles": {
+            "visible": 970,
+            "moving": 415
+          }
+        },
+        {
+          "phase": 5,
+          "frames": 68,
+          "p95ms": 209,
+          "maxms": 261,
+          "packets": 35,
+          "maxPacketMs": 418,
+          "aimSamples": 49,
+          "event_cost": {
+            "cpuMs": 10977,
+            "cpuMax": 79,
+            "netMs": 80168,
+            "netMax": 72773
+          },
+          "projectiles": {
+            "visible": 954,
+            "moving": 412
+          }
+        },
+        {
+          "phase": 6,
+          "frames": 69,
+          "p95ms": 189,
+          "maxms": 260,
+          "packets": 32,
+          "maxPacketMs": 371,
+          "aimSamples": 48,
+          "event_cost": {
+            "cpuMs": 12862,
+            "cpuMax": 99,
+            "netMs": 81371,
+            "netMax": 72773
+          },
+          "projectiles": {
+            "visible": 1160,
+            "moving": 514
+          }
+        }
+      ],
+      "viewport": [
+        1280,
+        800,
+        30,
+        "HIGH"
+      ],
+      "other_count": 39,
+      "background_count": 57,
+      "tile_sha256": "d32107a49eebdb243c0e936b676af5188c84d7947527aa603223fdce21ff5d53"
+    }
+  },
+  "sha256": {
+    "build\\m52\\recovery-density-fixed-control-03\\result.json": "db5251891e89019ada6b93498baca67121646193136fc1762b1d6d04d5981eb6",
+    "build\\m52\\recovery-density-fixed-control-03\\fixture-audit.json": "b9b503d7bc08a9289d69fe7e44252f1ed15829614518ecc07a2a1d352bbdb48e",
+    "build\\m52\\recovery-density-fixed-drivers-03\\prepared.json": "e0e9647f3fed9fa723518d8db6f1c67c2e44f8cfa55402be9d68d43755a10ebf",
+    "build\\m52\\recovery-density-fixed-drivers-03\\tests\\SustainedDensityTestDoc.as": "c69bf548dae01ee2862cc062ed81aece9972cffdeb6c30032724cdc4b0695696"
+  },
+  "crossrole": {
+    "actor_differences": [],
+    "camera_differences": [],
+    "room_differences": []
+  }
+}

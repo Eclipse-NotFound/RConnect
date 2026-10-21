@@ -1,0 +1,304 @@
+{
+  "passed": true,
+  "checks": 74,
+  "assertions": [
+    {
+      "passed": true,
+      "label": "Python syntax check_sources.py"
+    },
+    {
+      "passed": true,
+      "label": "Python syntax generate.py"
+    },
+    {
+      "passed": true,
+      "label": "Python syntax prepare_components.py"
+    },
+    {
+      "passed": true,
+      "label": "unchanged RoomSync method nativeTravelPending"
+    },
+    {
+      "passed": true,
+      "label": "unchanged RoomSync method nativePrepare"
+    },
+    {
+      "passed": true,
+      "label": "unchanged RoomSync method RoomSync"
+    },
+    {
+      "passed": true,
+      "label": "unchanged RoomSync method currentSettledRoom"
+    },
+    {
+      "passed": true,
+      "label": "unchanged RoomSync method entryPending"
+    },
+    {
+      "passed": true,
+      "label": "unchanged RoomSync method present"
+    },
+    {
+      "passed": true,
+      "label": "unchanged RoomSync method connected"
+    },
+    {
+      "passed": true,
+      "label": "unchanged RoomSync method host"
+    },
+    {
+      "passed": true,
+      "label": "unchanged RoomSync method send"
+    },
+    {
+      "passed": true,
+      "label": "unchanged RoomSync method hold"
+    },
+    {
+      "passed": true,
+      "label": "unchanged RoomSync method release"
+    },
+    {
+      "passed": true,
+      "label": "unchanged RoomSync method after"
+    },
+    {
+      "passed": true,
+      "label": "unchanged RoomSync method check"
+    },
+    {
+      "passed": true,
+      "label": "unchanged RoomSync method begin"
+    },
+    {
+      "passed": true,
+      "label": "unchanged RoomSync method receivedWelcome"
+    },
+    {
+      "passed": true,
+      "label": "unchanged RoomSync method announceNativeTravel"
+    },
+    {
+      "passed": true,
+      "label": "unchanged RoomSync method adoptNativeTravel"
+    },
+    {
+      "passed": true,
+      "label": "unchanged RoomSync method replayNativePrepare"
+    },
+    {
+      "passed": true,
+      "label": "unchanged RoomSync method receiveNativePrepare"
+    },
+    {
+      "passed": true,
+      "label": "unchanged RoomSync method prepareMap"
+    },
+    {
+      "passed": true,
+      "label": "unchanged RoomSync method prepareCachedMap"
+    },
+    {
+      "passed": true,
+      "label": "unchanged RoomSync method advanceSharedTravelFade"
+    },
+    {
+      "passed": true,
+      "label": "unchanged RoomSync method clearNativeEntry"
+    },
+    {
+      "passed": true,
+      "label": "unchanged RoomSync method cancelNativeEntry"
+    },
+    {
+      "passed": true,
+      "label": "unchanged RoomSync method nativeDestinationReady"
+    },
+    {
+      "passed": true,
+      "label": "unchanged RoomSync method applyWaitingNativeSeal"
+    },
+    {
+      "passed": true,
+      "label": "unchanged RoomSync method applySeal"
+    },
+    {
+      "passed": true,
+      "label": "unchanged RoomSync method stamp"
+    },
+    {
+      "passed": true,
+      "label": "unchanged RoomSync method observeTeammate"
+    },
+    {
+      "passed": true,
+      "label": "unchanged RoomSync method sameFollowMap"
+    },
+    {
+      "passed": true,
+      "label": "unchanged RoomSync method cancelFollow"
+    },
+    {
+      "passed": true,
+      "label": "unchanged RoomSync method followTeammate"
+    },
+    {
+      "passed": true,
+      "label": "unchanged RoomSync method accepts"
+    },
+    {
+      "passed": true,
+      "label": "unchanged RoomSync method canSyncWorld"
+    },
+    {
+      "passed": true,
+      "label": "unchanged RoomSync method travelToTeammate"
+    },
+    {
+      "passed": true,
+      "label": "unchanged RoomSync method acceptsReceipt"
+    },
+    {
+      "passed": true,
+      "label": "unchanged RoomSync method sendReady"
+    },
+    {
+      "passed": true,
+      "label": "unchanged RoomSync method commit"
+    },
+    {
+      "passed": true,
+      "label": "unchanged RoomSync method flush"
+    },
+    {
+      "passed": true,
+      "label": "unchanged RoomSync method report"
+    },
+    {
+      "passed": true,
+      "label": "unchanged RoomSync method notice"
+    },
+    {
+      "passed": true,
+      "label": "only one new RoomSync lifecycle helper"
+    },
+    {
+      "passed": true,
+      "label": "bind only after actual startSharedTravel true"
+    },
+    {
+      "passed": true,
+      "label": "seed selection not merely receipt"
+    },
+    {
+      "passed": true,
+      "label": "initial hook does not pause exitStep"
+    },
+    {
+      "passed": true,
+      "label": "local token never emitted in ACK"
+    },
+    {
+      "passed": true,
+      "label": "duplicate grant compares internal identity"
+    },
+    {
+      "passed": true,
+      "label": "random entry uses first valid seal anchor"
+    },
+    {
+      "passed": true,
+      "label": "anchor installed before awaiting native frame"
+    },
+    {
+      "passed": true,
+      "label": "real component rconnect\\core\\RoomSync.as"
+    },
+    {
+      "passed": true,
+      "label": "real component rconnect\\core\\SeedRasterEntry.as"
+    },
+    {
+      "passed": true,
+      "label": "same previously validated FirstRasterGate"
+    },
+    {
+      "passed": true,
+      "label": "component source experimental\\recovery-first-raster\\components\\room\\modlocales\\connect\\RCLocale.as"
+    },
+    {
+      "passed": true,
+      "label": "component source experimental\\recovery-first-raster\\components\\room\\NativeTravelRoomChecks.as"
+    },
+    {
+      "passed": true,
+      "label": "component source experimental\\recovery-first-raster\\components\\room\\rconnect\\core\\FirstRasterGate.as"
+    },
+    {
+      "passed": true,
+      "label": "component source experimental\\recovery-first-raster\\components\\room\\rconnect\\core\\Log.as"
+    },
+    {
+      "passed": true,
+      "label": "component source experimental\\recovery-first-raster\\components\\room\\rconnect\\core\\MapGeneration.as"
+    },
+    {
+      "passed": true,
+      "label": "component source experimental\\recovery-first-raster\\components\\room\\rconnect\\core\\NativeTravelPlan.as"
+    },
+    {
+      "passed": true,
+      "label": "component source experimental\\recovery-first-raster\\components\\room\\rconnect\\core\\RoomSync.as"
+    },
+    {
+      "passed": true,
+      "label": "component source experimental\\recovery-first-raster\\components\\room\\rconnect\\core\\Session.as"
+    },
+    {
+      "passed": true,
+      "label": "component source experimental\\recovery-first-raster\\components\\room\\rconnect\\core\\TravelGuard.as"
+    },
+    {
+      "passed": true,
+      "label": "component source experimental\\recovery-first-raster\\components\\room\\rconnect\\core\\TravelPlacement.as"
+    },
+    {
+      "passed": true,
+      "label": "component source experimental\\recovery-first-raster\\components\\room\\rconnect\\game\\GameBridge.as"
+    },
+    {
+      "passed": true,
+      "label": "component source experimental\\recovery-first-raster\\components\\room\\rconnect\\net\\Protocol.as"
+    },
+    {
+      "passed": true,
+      "label": "component source experimental\\recovery-first-raster\\components\\room\\rconnect\\net\\RoomCodec.as"
+    },
+    {
+      "passed": true,
+      "label": "component source experimental\\recovery-first-raster\\components\\room\\rconnect\\net\\TcpLink.as"
+    },
+    {
+      "passed": true,
+      "label": "component source experimental\\recovery-first-raster\\components\\room\\rconnect\\ui\\RoomEntryView.as"
+    },
+    {
+      "passed": true,
+      "label": "component source experimental\\recovery-first-raster\\components\\room\\RConnectMod.as"
+    },
+    {
+      "passed": true,
+      "label": "component source experimental\\recovery-seed-first-raster\\src\\rconnect\\core\\RoomSync.as"
+    },
+    {
+      "passed": true,
+      "label": "component source experimental\\recovery-seed-first-raster\\src\\rconnect\\core\\SeedRasterEntry.as"
+    },
+    {
+      "passed": true,
+      "label": "component source experimental\\recovery-seed-first-raster\\tests\\seed-cases.inc"
+    }
+  ],
+  "compiled": false,
+  "air_started": false
+}

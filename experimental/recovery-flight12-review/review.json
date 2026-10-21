@@ -1,0 +1,328 @@
+{
+  "native_passed": false,
+  "original_failures_preserved": true,
+  "performance_qualified": false,
+  "cases": [
+    {
+      "round": 0,
+      "weapon": "lmg",
+      "failed": [],
+      "source_gap": 52,
+      "remote_gap": 85,
+      "allowed_gap": 91.5,
+      "start_lag_ms": 321,
+      "large_gaps": [
+        {
+          "ms": 78,
+          "before": {
+            "at": 50075,
+            "frame": 12,
+            "wall": 1792617972357
+          },
+          "after": {
+            "at": 50153,
+            "frame": 13,
+            "wall": 1792617972435
+          },
+          "intervening_render_rows": 1,
+          "intervening_game_frames": [],
+          "wire": []
+        },
+        {
+          "ms": 85,
+          "before": {
+            "at": 50312,
+            "frame": 17,
+            "wall": 1792617972595
+          },
+          "after": {
+            "at": 50397,
+            "frame": 18,
+            "wall": 1792617972680
+          },
+          "intervening_render_rows": 0,
+          "intervening_game_frames": [],
+          "wire": [
+            {
+              "at": 50327,
+              "type": "worldstate",
+              "samples": 11,
+              "sampleTime": 89890,
+              "end": 0
+            },
+            {
+              "at": 50329,
+              "type": "worldstate",
+              "samples": 12,
+              "sampleTime": 89967,
+              "end": 89967
+            },
+            {
+              "at": 50346,
+              "type": "worldstate",
+              "samples": 12,
+              "sampleTime": 90021,
+              "end": 89967
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "round": 1,
+      "weapon": "lmg",
+      "failed": [],
+      "source_gap": 45,
+      "remote_gap": 45,
+      "allowed_gap": 85.0,
+      "start_lag_ms": 133,
+      "large_gaps": []
+    },
+    {
+      "round": 2,
+      "weapon": "quick",
+      "failed": [],
+      "source_gap": 42,
+      "remote_gap": 73,
+      "allowed_gap": 85.0,
+      "start_lag_ms": 174,
+      "large_gaps": [
+        {
+          "ms": 92,
+          "before": {
+            "at": 58039,
+            "frame": 50,
+            "wall": 1792617980321
+          },
+          "after": {
+            "at": 58131,
+            "frame": 51,
+            "wall": 1792617980413
+          },
+          "intervening_render_rows": 1,
+          "intervening_game_frames": [],
+          "wire": [
+            {
+              "at": 58076,
+              "type": "worldstate",
+              "samples": 19,
+              "sampleTime": 97693,
+              "end": 97693
+            },
+            {
+              "at": 58095,
+              "type": "worldstate",
+              "samples": 19,
+              "sampleTime": 97766,
+              "end": 97693
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "round": 3,
+      "weapon": "quick",
+      "failed": [],
+      "source_gap": 63,
+      "remote_gap": 47,
+      "allowed_gap": 99.0,
+      "start_lag_ms": 136,
+      "large_gaps": [
+        {
+          "ms": 72,
+          "before": {
+            "at": 101627,
+            "frame": 59,
+            "wall": 1792617984216
+          },
+          "after": {
+            "at": 101699,
+            "frame": 60,
+            "wall": 1792617984287
+          },
+          "intervening_render_rows": 1,
+          "intervening_game_frames": [],
+          "wire": [
+            {
+              "at": 101672,
+              "type": "playerstate",
+              "samples": 20,
+              "sampleTime": 61893,
+              "end": 0
+            },
+            {
+              "at": 101673,
+              "type": "playerstate",
+              "samples": 21,
+              "sampleTime": 61948,
+              "end": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "round": 4,
+      "weapon": "plamg",
+      "failed": [],
+      "source_gap": 52,
+      "remote_gap": 65,
+      "allowed_gap": 87.0,
+      "start_lag_ms": 207,
+      "large_gaps": [
+        {
+          "ms": 70,
+          "before": {
+            "at": 65966,
+            "frame": 47,
+            "wall": 1792617988248
+          },
+          "after": {
+            "at": 66036,
+            "frame": 48,
+            "wall": 1792617988319
+          },
+          "intervening_render_rows": 1,
+          "intervening_game_frames": [],
+          "wire": [
+            {
+              "at": 66006,
+              "type": "worldstate",
+              "samples": 22,
+              "sampleTime": 105633,
+              "end": 105633
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "round": 5,
+      "weapon": "plamg",
+      "failed": [],
+      "source_gap": 61,
+      "remote_gap": 53,
+      "allowed_gap": 102.0,
+      "start_lag_ms": 150,
+      "large_gaps": [
+        {
+          "ms": 72,
+          "before": {
+            "at": 109518,
+            "frame": 58,
+            "wall": 1792617992107
+          },
+          "after": {
+            "at": 109590,
+            "frame": 59,
+            "wall": 1792617992179
+          },
+          "intervening_render_rows": 1,
+          "intervening_game_frames": [],
+          "wire": [
+            {
+              "at": 109561,
+              "type": "playerstate",
+              "samples": 19,
+              "sampleTime": 69766,
+              "end": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "round": 6,
+      "weapon": "alilight",
+      "failed": [],
+      "source_gap": 45,
+      "remote_gap": 72,
+      "allowed_gap": 85.0,
+      "start_lag_ms": 154,
+      "large_gaps": [
+        {
+          "ms": 91,
+          "before": {
+            "at": 73498,
+            "frame": 40,
+            "wall": 1792617995780
+          },
+          "after": {
+            "at": 73589,
+            "frame": 41,
+            "wall": 1792617995871
+          },
+          "intervening_render_rows": 1,
+          "intervening_game_frames": [],
+          "wire": [
+            {
+              "at": 73534,
+              "type": "worldstate",
+              "samples": 2,
+              "sampleTime": 113144,
+              "end": 0
+            },
+            {
+              "at": 73546,
+              "type": "unitsync",
+              "samples": 4,
+              "sampleTime": 113144,
+              "end": 0
+            },
+            {
+              "at": 73547,
+              "type": "worldstate",
+              "samples": 2,
+              "sampleTime": 113211,
+              "end": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "round": 7,
+      "weapon": "alilight",
+      "failed": [
+        "final_render_gap_relative_to_source"
+      ],
+      "source_gap": 55,
+      "remote_gap": 109,
+      "allowed_gap": 87.0,
+      "start_lag_ms": 140,
+      "large_gaps": [
+        {
+          "ms": 110,
+          "before": {
+            "at": 78599,
+            "frame": 57,
+            "wall": 1792618000881
+          },
+          "after": {
+            "at": 78709,
+            "frame": 58,
+            "wall": 1792618000991
+          },
+          "intervening_render_rows": 1,
+          "intervening_game_frames": [],
+          "wire": [
+            {
+              "at": 78617,
+              "type": "unitsync",
+              "samples": 20,
+              "sampleTime": 118245,
+              "end": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "inputs": {
+    "build\\m52\\recovery-flight-native-10\\result.json": "ac2f5d80831ce29b73e87ee6f450b0f24cd03a4ea6a7a875470c1cb8c32972db",
+    "build\\m52\\recovery-flight-native-10\\flight-summary.json": "e2f08d4948b0910051f56e7f55346b894c862cc6bfd60036363c82c108b15f3c",
+    "build\\cooperation\\48e9ff1838\\host.log": "4538579030781ded3cf9d0551a53f7fc4276a2856dfeed551b40a8f2c11c2982",
+    "build\\cooperation\\48e9ff1838\\join.log": "761907d11fe02ff7891b8936efffeef6dd4cb9d06e77e6e7a22365bdd3ec42a7"
+  }
+}

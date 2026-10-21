@@ -1,5 +1,5 @@
 {
-  "version": "0.2.24-recovery12",
+  "version": "0.2.24-recovery13",
   "compiled": false,
   "runtime_tested": false,
   "baseline": "build/m52/coop-bundle-04",
@@ -658,6 +658,79 @@
           "merged_sha256": "d67dbcbed8d3ef67771eb10e41516102dabb34aad3a7065ab71ec7822ff53178"
         }
       ]
+    },
+    {
+      "name": "native-and-seed-confirmed-first-raster",
+      "proposals": [
+        {
+          "path": "experimental\\recovery-first-raster",
+          "sha256": "c324ebf190893fbf6590d2550a882fd4d7dcb26e0faa57aa06d41a9d7aa69526"
+        },
+        {
+          "path": "experimental\\recovery-seed-first-raster",
+          "sha256": "251f8ea3ca39f8235e6694b454f0f4b05f7d3772464cb4f10a01aa468a92762b"
+        }
+      ],
+      "required_host_sha256": "fd92fbd5ae92b5c8d4cbf8151d11796a140810f34988b7031e258c747d86734e",
+      "component_proofs": [
+        {
+          "path": "build\\m52\\recovery-first-raster-gate-01",
+          "checks": 19,
+          "receipt_sha256": "753ea44d6fa045640c17c2e8c79bce0eebd6c7481144cda67e36258d2a5c6731"
+        },
+        {
+          "path": "build\\m52\\recovery-first-raster-room-02",
+          "checks": 79,
+          "receipt_sha256": "0b186496a5efdabab2c181998017cd57d385090e7c8274ecd2b1e457c3e50758"
+        },
+        {
+          "path": "build\\m52\\recovery-first-raster-native-methods-02",
+          "checks": 20,
+          "receipt_sha256": "559d5de52c6264aec1aefd3e87775032108cc89786031405aaba7c239f90a1a4"
+        },
+        {
+          "path": "build\\m52\\recovery-seed-first-raster-room-01",
+          "checks": 109,
+          "receipt_sha256": "148ef3050d0da7e1dfa3f2d388d599038215bf2f4e7e2b0bc0f91671b1b08438"
+        }
+      ],
+      "files": [
+        {
+          "path": "RConnectMod.as",
+          "before_sha256": "7d1454f55275df268b57657e4cd4646679990bc27e4e9aaee60c90f82b87ff23",
+          "merged_sha256": "ebee2d4cd487ecba51443b2de4d0139e7a87fd27d4c5d5400d01c89fa6da26f1"
+        },
+        {
+          "path": "rconnect/core/FirstRasterGate.as",
+          "before_sha256": null,
+          "merged_sha256": "c4db67de41dd3e21d6aa5949f4214cf6b8ef49521c784d85e1e95dc447745821"
+        },
+        {
+          "path": "rconnect/core/MapGeneration.as",
+          "before_sha256": "0826f92fa6fd05859e730131da939e7ec74016a2280e69122833a76c45a0b645",
+          "merged_sha256": "d1cf5413388382bf8517c95326fd5009c7b7510e0cde5dd409e988d4bcd1c774"
+        },
+        {
+          "path": "rconnect/core/RoomSync.as",
+          "before_sha256": "efafed73dda4df38aab2176f791f6b91cf2a6d68ed9ab420e657662e54639961",
+          "merged_sha256": "c2e68fe658a81be4b3ceb285daf453ca57b9d4a5895e80720dd629c374e3f85e"
+        },
+        {
+          "path": "rconnect/core/SeedRasterEntry.as",
+          "before_sha256": null,
+          "merged_sha256": "9980a528b48051906e5bf4128d304b1687cfde02a99980ddfcbbbf80c8d5972e"
+        },
+        {
+          "path": "rconnect/game/GameBridge.as",
+          "before_sha256": "e1cd085795e134ca293a5eb83fe44e22a0bc7edfb172f960a2c6a1e8bdec9260",
+          "merged_sha256": "26bb0f7cd4da7c74c83bd2657575823247196c41a861babf23bb40c17fc3cbf7"
+        },
+        {
+          "path": "rconnect/game/WallImpactVisuals.as",
+          "before_sha256": "502b77cc7973107614ba0d91373c7774e898fa42413aee2eb1728299e35bd601",
+          "merged_sha256": "5629cb78bb4826d92c137c2d07ec264db716c6c80ad629369d10f87300086924"
+        }
+      ]
     }
   ],
   "manual_changes": [
@@ -731,7 +804,7 @@
     },
     {
       "path": "RConnectMod.as",
-      "sha256": "7d1454f55275df268b57657e4cd4646679990bc27e4e9aaee60c90f82b87ff23",
+      "sha256": "ebee2d4cd487ecba51443b2de4d0139e7a87fd27d4c5d5400d01c89fa6da26f1",
       "baseline_sha256": "1de9483aca55b011d3d6ab99238c88c9b2028a8d1d8c2ab51e4ecb5c546833ec",
       "changed": true
     },
@@ -832,6 +905,12 @@
       "changed": true
     },
     {
+      "path": "rconnect/core/FirstRasterGate.as",
+      "baseline_sha256": null,
+      "sha256": "c4db67de41dd3e21d6aa5949f4214cf6b8ef49521c784d85e1e95dc447745821",
+      "changed": true
+    },
+    {
       "path": "rconnect/core/FriendlyFire.as",
       "sha256": "592e6790affd4e6037659fcc38dc798b2f5a5a1fcdf4eec1f594c0e56ee4c606",
       "baseline_sha256": "592e6790affd4e6037659fcc38dc798b2f5a5a1fcdf4eec1f594c0e56ee4c606",
@@ -851,7 +930,7 @@
     },
     {
       "path": "rconnect/core/MapGeneration.as",
-      "sha256": "0826f92fa6fd05859e730131da939e7ec74016a2280e69122833a76c45a0b645",
+      "sha256": "d1cf5413388382bf8517c95326fd5009c7b7510e0cde5dd409e988d4bcd1c774",
       "baseline_sha256": "4fb1bd07b75bb9531e3915ff64abf65723e0e1e783fb17594d9c3e3c20a4489c",
       "changed": true
     },
@@ -893,7 +972,7 @@
     },
     {
       "path": "rconnect/core/RoomSync.as",
-      "sha256": "efafed73dda4df38aab2176f791f6b91cf2a6d68ed9ab420e657662e54639961",
+      "sha256": "c2e68fe658a81be4b3ceb285daf453ca57b9d4a5895e80720dd629c374e3f85e",
       "baseline_sha256": "536f587088965ee6f38147d11f2a07723e4c78c48062ad618814cd1f40b36163",
       "changed": true
     },
@@ -902,6 +981,12 @@
       "sha256": "4d400bb5e48ec32ef2750849e46dee8c6fcffa205719e5af9ae197ac2cfcaf1b",
       "baseline_sha256": "4d400bb5e48ec32ef2750849e46dee8c6fcffa205719e5af9ae197ac2cfcaf1b",
       "changed": false
+    },
+    {
+      "path": "rconnect/core/SeedRasterEntry.as",
+      "baseline_sha256": null,
+      "sha256": "9980a528b48051906e5bf4128d304b1687cfde02a99980ddfcbbbf80c8d5972e",
+      "changed": true
     },
     {
       "path": "rconnect/core/Session.as",
@@ -965,7 +1050,7 @@
     },
     {
       "path": "rconnect/game/GameBridge.as",
-      "sha256": "e1cd085795e134ca293a5eb83fe44e22a0bc7edfb172f960a2c6a1e8bdec9260",
+      "sha256": "26bb0f7cd4da7c74c83bd2657575823247196c41a861babf23bb40c17fc3cbf7",
       "baseline_sha256": "6c8216257ead7dc7aa35a1b278d3c117d63e1a81cf72ac7671db22321114a835",
       "changed": true
     },
@@ -1151,7 +1236,7 @@
     },
     {
       "path": "rconnect/game/WallImpactVisuals.as",
-      "sha256": "502b77cc7973107614ba0d91373c7774e898fa42413aee2eb1728299e35bd601",
+      "sha256": "5629cb78bb4826d92c137c2d07ec264db716c6c80ad629369d10f87300086924",
       "baseline_sha256": "e1125fa1865598705c1753fd8e49ede037cd16936a680a7a078c4cf9b5ac5a34",
       "changed": true
     },
@@ -1244,10 +1329,12 @@
     "modlocales/connect/RCLocaleMessages.as",
     "rconnect/core/CoopPause.as",
     "rconnect/core/EnemyGrip.as",
+    "rconnect/core/FirstRasterGate.as",
     "rconnect/core/MapGeneration.as",
     "rconnect/core/NativeTravelPlan.as",
     "rconnect/core/PeerGrip.as",
     "rconnect/core/RoomSync.as",
+    "rconnect/core/SeedRasterEntry.as",
     "rconnect/core/Session.as",
     "rconnect/core/TeammateNavigation.as",
     "rconnect/core/TravelGuard.as",
@@ -1296,14 +1383,15 @@
     "acid_ground_component": true,
     "accumulated_clock_component": true,
     "terrain_loop_component": true,
-    "gas_pulse_component": true
+    "gas_pulse_component": true,
+    "seed_first_raster_component": true
   },
   "static_errors": [],
   "hash_note": "Layer merged_sha256 values describe intermediate merges. The source array is the final normalized LF source inventory; text-equivalent CRLF normalization is not a functional edit.",
-  "followup_review": "Gas components only; native gas, final loading, motion and performance still unqualified.",
+  "followup_review": "Native/seed first raster components only. Final loading, pixels, gameplay and performance unqualified.",
   "native_host_candidate": "build/m52/recovery-native-travel-host-01",
   "native_host_sha256": "e159fe0f0a1cbb34596d18b9979f439e80823fbeda369be7b2220a42e8e5d30c",
   "gameplay_qualified": false,
   "performance_qualified": false,
-  "integration_recipe_sha256": "af7febb4ae85f7462e0a0bc1f38f081ea1091822b51e0ea2f7f005667e2d1575"
+  "integration_recipe_sha256": "84aa9faf9a8ce8a7fcc8ae278a1b273caa6f23c424325b66133aa07ee391a851"
 }
