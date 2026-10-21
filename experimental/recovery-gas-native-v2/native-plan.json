@@ -1,0 +1,20 @@
+{
+  "entry": "GasPulseNativeTestDoc",
+  "baseline": "build\\m52\\recovery-gas-driver-01\\tests",
+  "baseline_hashes": {
+    "GasPulseNativeTestDoc.as": "c2e7955b918a37a9d2c87825725ae1131d5c41e11a1177dc5fae7ea1e33e1bad",
+    "GasPulseProbe.as": "498ca428ed190a3d79ab1918758031c87eb92770e69f302abf74d3a083950b71"
+  },
+  "files": {
+    "GasPulseNativeTestDoc.as": "ce59b035fddb83dc1c37be145523884aef1ea621784321ff742bfb8ae25373ea",
+    "GasPulseProbe.as": "f92507b2a8da89f8d2653c90a617f5ab1eaf008726e74129033065a332a61a72"
+  },
+  "rounds": 4,
+  "seconds": 360,
+  "per_phase_timeout_ms": 26000,
+  "cold_first_round": true,
+  "generator_sha256": "14a34f9ca021d5bb028f2268a26bda433780600c1aab747d7cf95e06c50c3155",
+  "compiled": false,
+  "air_started": false,
+  "performance_qualified": false
+}

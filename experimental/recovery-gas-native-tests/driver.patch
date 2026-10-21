@@ -1,0 +1,347 @@
+--- acid-native/AcidGroundNativeTestDoc.as
++++ gas-native/GasPulseNativeTestDoc.as
+@@ -18,14 +18,14 @@
+    import rconnect.net.TcpLink;
+    import rconnect.net.NetMessageEvent;
+ 
+-   /** Dedicated ground-acid suite: native G input -> actual PhisBullet/Part
+-    * -> production TCP -> actual receiving Part and stage pixels. Four trials:
+-    * dry host/join source, water host/join source. Not a flight/FPS benchmark. */
+-   public class AcidGroundNativeTestDoc extends Sprite {
++   /** Four real G trials: one/double gas grenade, each direction.
++    * Source oracle is actual Part objects, not configured explosion count.
++    * Production wire/display are read-only observations; no clock injection. */
++   public class GasPulseNativeTestDoc extends Sprite {
+       public static const MOD_CLASS:Class=RConnectMod;
+       private static const CASES:Array=[
+-         {id:"acidgr",quick:true,water:false,part:"acidexpl",ground:"acid",impact:true},
+-         {id:"acidgr",quick:true,water:true,part:"acidexpl",ground:"acid",impact:true}
++         {id:"gasgr",quick:true,water:false,part:"gas",shots:1},
++         {id:"gasgr",quick:true,water:false,part:"gas",shots:2}
+       ];
+       private var cases:Array=CASES;
+       private var mod:RConnectMod,host:Boolean,source:Boolean,t:Timer=new Timer(100);
+@@ -47,11 +47,12 @@
+       private var swapLive:Boolean=false,swapFlightFrames:int=0,swapLmgFrames:int=0;
+       private var groundCount:int=0,sprayCount:int=0,groundPixels:int=0,aux:Dictionary=new Dictionary();
+       private var diagnosticAt:int=0,observedFrames:int=0;
+-      private var ground:AcidGroundProbe,gameFrame:int=0,inputReleased:int=0,issued:Boolean=false;
++      private var ground:GasPulseProbe,gameFrame:int=0,inputReleased:int=0,issued:Boolean=false;
+       private var bootActor:Object,bootRoom:Object,bootFrames:int=0,bootWatching:Boolean=false,bootLogged:Boolean=false;
+       private var originalInventory:Object;
++      private var gasBullets:Array=[],lastShotFrame:int=-100,gasOverlap:Boolean=false,gasDone:Boolean=false;
+ 
+-      public function AcidGroundNativeTestDoc(scenarios:Array=null) {
++      public function GasPulseNativeTestDoc(scenarios:Array=null) {
+          if(scenarios!=null)cases=scenarios;
+          var app:String=NativeApplication.nativeApplication.applicationID;
+          if(!/^pfe-modsettings-rconnect-coop-(host|join)-[a-f0-9]{10}$/.test(app))return;host=app.indexOf("-host-")>=0;
+@@ -59,10 +60,10 @@
+          t.addEventListener(TimerEvent.TIMER,tick);t.start();
+       }
+       private function check(ok:Boolean,s:String):void {
+-         Log.d("COOP "+(ok?"PASS ":"FAIL ")+"acid-ground-native "+s+" round="+round);
++         Log.d("COOP "+(ok?"PASS ":"FAIL ")+"gas-pulse-native "+s+" round="+round);
+       }
+       private function send(stage:String,p:Object=null):void {
+-         if(mod==null)return;p=p||{};p.type="acid-ground-native-test";p.stage=stage;p.round=round;
++         if(mod==null)return;p=p||{};p.type="gas-pulse-native-test";p.stage=stage;p.round=round;
+          if(host)mod.session.server.broadcast(p);else if(mod.session.link!=null)mod.session.link.send(p);
+       }
+       private function watch(link:TcpLink):void {
+@@ -89,6 +90,8 @@
+          floorY=int(baseY/40);wallX=int(baseX/40)+8;
+          saveTiles();
+          mod.stage.addEventListener(Event.ENTER_FRAME,before,false,100000);
++         mod.stage.addEventListener(Event.ENTER_FRAME,clockBefore,false,90001);
++         mod.stage.addEventListener(Event.ENTER_FRAME,clockAfter,false,89999);
+          mod.stage.addEventListener(Event.RENDER,render,false,-30000);
+       }
+       private function saveTiles():void {
+@@ -105,6 +108,7 @@
+          restoreWeapon();round=n;spec=cases[int(n/2)];source=host==(n%2==0);
+          gameFrame=inputReleased=0;issued=false;
+          nativeBullet=null;nativeClass="";nativeBirth=nativeEnd=peerEnd=sourceShots=0;
++         gasBullets=[];lastShotFrame=-100;gasOverlap=false;gasDone=false;
+          nativeExplosion=peerExplosion=localResult=peerResult=null;
+          flightFrames=flightLate=flightPeak=flightClear=bounces=rotations=explosionParts=explosionPixels=0;
+          flightMs=0;lastFrame=0;lastDY=0;lastRotation=NaN;unexpectedBullets=0;
+@@ -119,7 +123,7 @@
+             tile.phX1=r.x*40;tile.phX2=(r.x+1)*40;tile.phY1=r.y*40;tile.phY2=(r.y+1)*40;
+          }
+          mod.game.world.redrawLoc();
+-         ground=new AcidGroundProbe(mod,source,round);
++         ground=new GasPulseProbe(mod,source,round);
+          var emitter:Object=mod.main.loaderInfo.applicationDomain.getDefinition("fe.graph.Emitter").arr[spec.part];
+          if(emitter==null)throw new Error("Missing native emitter "+spec.part);
+          effectClass=emitter.visClass as Class;effectBitmap=emitter.blit?mod.game.world.grafon.getSpriteList(emitter.blit,1):null;
+@@ -158,6 +162,8 @@
+          Log.d("EXPLOSIVE PREPARE "+JSON.stringify({round:round,id:spec.id,water:spec.water,source:source,role:host?"host":"join"}));
+          setPhase("prepared");
+       }
++      private function clockBefore(e:Event):void {if(ground!=null)ground.beginFrame(true);}
++      private function clockAfter(e:Event):void {if(ground!=null)ground.beginFrame(false);}
+       private function before(e:Event):void {
+          if(!saved || phase=="done")return;gameFrame++;
+          var g:Object=mod.game.gg,w:Object=mod.game.world,ctr:Object=w.ctr;
+@@ -169,7 +175,7 @@
+          ctr.keyAttack=ctr.keyGrenad=ctr.keyMagic=false;
+          g.celX=w.celX=baseX+210;g.celY=w.celY=baseY-45;
+          w.cam.celX=w.celX*w.cam.scaleV+w.cam.vx;w.cam.celY=w.celY*w.cam.scaleV+w.cam.vy;
+-         if(phase=="run" && source && !issued && gun!=null && gun.b==null) {
++         if(phase=="run" && source && sourceShots<int(spec.shots) && gun!=null && gameFrame>lastShotFrame+1) {
+             if(spec.magic===true)ctr.keyMagic=true;else if(spec.quick)ctr.keyGrenad=true;else ctr.keyAttack=true;
+          }
+          if(source && issued && !ctr.keyGrenad && inputReleased==0)inputReleased=gameFrame;
+@@ -207,12 +213,12 @@
+             // A living character can retain the prologue's stopped artwork.
+             // Clear it through native methods only after room/loading gates.
+             // Actual deaths are rejected above; never heal or set sost/t_die.
+-            Log.d("ACID BOOT PREPARE "+JSON.stringify(bootState()));
++            Log.d("GAS BOOT PREPARE "+JSON.stringify(bootState()));
+             bootActor=g;bootRoom=mod.game.loc;bootFrames=0;bootLogged=false;
+             g.anim();g.controlOn();g.invulner=true;
+          }
+          if(bootFrames>=2 && !bootLogged) {
+-            bootLogged=true;Log.d("ACID BOOT READY "+JSON.stringify(bootState()));
++            bootLogged=true;Log.d("GAS BOOT READY "+JSON.stringify(bootState()));
+          }
+       }
+       private function tick(e:TimerEvent):void {
+@@ -223,7 +229,7 @@
+          if(w.clickReq==1){mod.stage.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_DOWN,true));mod.stage.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_UP,true));}
+          if(phase=="done")return;
+          if(getTimer()-at>(phase=="boot"?180000:26000)) {
+-            if(phase=="boot")Log.d("ACID BOOT TIMEOUT "+JSON.stringify(bootState()));
++            if(phase=="boot")Log.d("GAS BOOT TIMEOUT "+JSON.stringify(bootState()));
+             fail("timeout "+phase);return;
+          }
+          if(phase=="boot")prepareBootActor();
+@@ -241,13 +247,15 @@
+                      effects:explosionParts,ground:groundCount,frames:flightFrames,worldFrames:observedFrames}));
+                }
+                var ended:int=source?nativeEnd:peerEnd;
+-               if(ended>0 && ((ground.allEnded && getTimer()-ground.lastBirth>=500)
++               if(ended>0 && ((ground.allEnded && getTimer()-ground.lastActivity>=500)
+                   || (ground.count==0 && getTimer()-ended>=6000)))complete();
+             }
+          } catch(err:Error){fail(err.getStackTrace());}
+       }
+       private function receive(e:NetMessageEvent):void {
+-         var p:Object=e.data;if(p.type!="acid-ground-native-test" || phase=="done")return;
++         var p:Object=e.data;
++         if(phase=="run" && ground!=null)ground.observePacket(p);
++         if(p.type!="gas-pulse-native-test" || phase=="done")return;
+          try {
+             if(host && p.stage=="ready" && phase=="boot" && bootFrames>=2 && bootWorldReady()) {
+                var loc:Object=mod.game.loc;
+@@ -277,87 +285,34 @@
+       private function render(e:Event):void {
+          if(phase!="run")return;
+          try {
+-            var now:int=getTimer(),dt:int=lastFrame==0?0:now-lastFrame;lastFrame=now;observedFrames++;
++            var now:int=getTimer();observedFrames++;
+             if(source && gun!=null && gun.b!=null && !nativeShots[gun.b]) {
+-               nativeShots[gun.b]=true;sourceShots++;
+-               if(nativeBullet==null) {
+-                  nativeBullet=gun.b;issued=true;nativeBirth=now;nativeClass=getQualifiedClassName(nativeBullet.vis);
+-                  send("native-born",{cls:nativeClass});
+-                  check(Number(nativeBullet.explRadius)>0 && (spec.quick?getQualifiedClassName(nativeBullet)=="fe.weapon::PhisBullet":true),
+-                     "native input fired the requested explosive id="+spec.id+" bullet="+getQualifiedClassName(nativeBullet));
+-                  Log.d("EXPLOSIVE NATIVE BORN "+JSON.stringify({round:round,cls:nativeClass,liv:nativeBullet.liv,dx:nativeBullet.dx,dy:nativeBullet.dy,damage:nativeBullet.damage,damageExpl:nativeBullet.damageExpl}));
+-                  if(spec.swap) {
+-                     // Native favourite-toggle clears the old quick slot;
+-                     // changeWeapon(false) performs the normal timed switch.
+-                     // Do not touch the flying Bullet or force its end/pose.
+-                     swapRequested=now;
+-                     mod.game.gg.invent.favItem(spec.id,29);
+-                     mod.game.gg.changeWeapon("lmg");
+-                  }
++               var bullet:Object=gun.b;
++               nativeShots[bullet]=true;sourceShots++;issued=true;lastShotFrame=gameFrame;
++               if(gasBullets.length>0 && gasBullets[0].bullet.in_chain)gasOverlap=true;
++               gasBullets.push({bullet:bullet,born:now,bornWall:new Date().time,exploded:0,end:0});
++               if(nativeBullet==null){nativeBullet=bullet;nativeBirth=now;nativeClass=getQualifiedClassName(bullet.vis);}
++               check(getQualifiedClassName(bullet)=="fe.weapon::PhisBullet" && Number(bullet.explRadius)>0
++                  && int(bullet.tipDamage)==7,"native G creates actual toxic PhisBullet shot="+sourceShots);
++               send("native-born",{cls:nativeClass});
++            }
++            if(source) {
++               var ended:Boolean=sourceShots==int(spec.shots);
++               for each(var record:Object in gasBullets) {
++                  bullet=record.bullet;
++                  if(bullet.isExpl && record.exploded==0)record.exploded=now;
++                  if(!bullet.in_chain && record.end==0)record.end=now;
++                  ended=ended && record.end>0;
+                }
+-            }
+-            var visible:Boolean=false;
+-            if(source && nativeBullet!=null) {
+-               if(spec.swap && swapDetached==0 && mod.game.gg.currentWeapon===standby
+-                  && mod.game.gg.throwWeapon!==gun && mod.game.gg.childObjs.indexOf(gun)<0) {
+-                  swapDetached=now;swapLive=nativeBullet.in_chain && !nativeBullet.isExpl;
+-                  send("native-swap",{live:swapLive});
+-                  Log.d("EXPLOSIVE NATIVE SWAP "+JSON.stringify({round:round,requested:swapRequested,born:nativeBirth,detached:now,
+-                     live:swapLive,weapon:mod.game.gg.currentWeapon.id,remaining:nativeBullet.liv}));
++               if(ended && !gasDone){gasDone=true;nativeEnd=now;send("native-end");}
++            } else {
++               var guard:int=0;
++               for(var o:Object=mod.game.loc.firstObj;o!=null && guard++<20000;o=o.nobj) {
++                  var cname:String=getQualifiedClassName(o);
++                  if((cname=="fe.weapon::Bullet" || cname=="fe.weapon::PhisBullet") && o.weap!=null
++                     && String(o.weap.id)==spec.id && !unexpected[o]){unexpected[o]=true;unexpectedBullets++;}
+                }
+-               if(nativeBullet.isExpl && nativeExplosion==null) {
+-                  nativeExplosion={x:nativeBullet.X,y:nativeBullet.Y,at:now,water:Number(nativeBullet.inWater)>0,life:now-nativeBirth};
+-                  send("native-explosion",{value:nativeExplosion});
+-               }
+-               if(!nativeBullet.in_chain && nativeEnd==0){nativeEnd=now;send("native-end");}
+-               if(lastDY>0.5 && Number(nativeBullet.dy)<-0.5)bounces++;
+-               lastDY=Number(nativeBullet.dy);
+-               // Bullet.step can keep its native clip visible for the final
+-               // post-impact frames. Compare actual pixels on both sides;
+-               // isExpl alone is not the native display's removal boundary.
+-               if(nativeBullet.in_chain)visible=sampleFlight(nativeBullet.vis as DisplayObject,now,dt);
+-            } else if(!source && nativeClass!="") {
+-               var layer:DisplayObjectContainer=mod.game.world.grafon.visObjs[2],copies:int=0;
+-               for(var i:int=0;i<layer.numChildren;i++) {
+-                  var v:DisplayObject=layer.getChildAt(i);
+-                  // An equipped WThrow uses the same display class as its
+-                  // projectile. The new swap case must not count the held
+-                  // grenade as a second flying grenade before LMG arrives.
+-                  if(spec.swap) {
+-                     var peer:Object=mod.game.getRemoteGhost(host?1:0);
+-                     if(peer!=null && peer.currentWeapon!=null && peer.currentWeapon.vis===v)continue;
+-                  }
+-                  if(getQualifiedClassName(v)==nativeClass && sampleFlight(v,now,dt)){copies++;visible=true;}
+-               }
+-               flightPeak=Math.max(flightPeak,copies);
+-               if(peerEnd>0 && now-peerEnd>1500)flightClear=Math.max(flightClear,copies);
+-            }
+-            if(visible){flightFrames++;flightMs+=dt;if(now-at>3300)flightLate++;}
+-            if(spec.swap && (source?swapDetached>0:swapPeerAt>0)) {
+-               if(visible)swapFlightFrames++;
+-               var shown:Object=source?mod.game.gg:mod.game.getRemoteGhost(host?1:0);
+-               if(shown!=null && shown.currentWeapon!=null && shown.currentWeapon.id=="lmg")swapLmgFrames++;
+-            }
+-            // Native Part identity discriminates a real explosion from gun
+-            // flashes, UI blips and Bullet hit particles. Blitted explosions
+-            // share MovieClip's class, so compare the native sprite sheet too.
+-            var guard:int=0;
+-            for(var o:Object=mod.game.loc.firstObj;o!=null && guard++<10000;o=o.nobj) {
+-               var cname:String=getQualifiedClassName(o);
+-               if(cname=="fe.graph::Part" && ((effectClass!=null && o.vClass===effectClass) || (effectBitmap!=null && o.blitData===effectBitmap))) {
+-                  if(!parts[o]){
+-                     parts[o]=true;explosionParts++;explosionPositions.push({x:o.X,y:o.Y,at:now});
+-                     // Impact bottles emit before PhisBullet clamps its body
+-                     // outside the tile. The actual native Part is the oracle.
+-                     if(source && spec.impact && nativeExplosion!=null && explosionParts==1) {
+-                        nativeExplosion.x=o.X;nativeExplosion.y=o.Y;send("native-explosion",{value:nativeExplosion});
+-                     }
+-                  }
+-
+-               }
+-               if(!source && (cname=="fe.weapon::Bullet" || cname=="fe.weapon::PhisBullet") && o.weap!=null && String(o.weap.id)==spec.id && !unexpected[o]) {
+-                  unexpected[o]=true;unexpectedBullets++;
+-               }
++               if(guard>=20000)throw new Error("Native object chain exceeds fixture bound");
+             }
+             ground.scan(gameFrame);groundCount=ground.count;
+          } catch(err:Error){fail(err.getStackTrace());}
+@@ -380,52 +335,38 @@
+       }
+ 
+       private function complete():void {
+-         var endpoint:Object=source?nativeExplosion:peerExplosion,proof:Object=ground.result();
+-         localResult={source:source,id:spec.id,water:spec.water,shots:sourceShots,flight:flightFrames,
+-            unexpected:unexpectedBullets,explosion:endpoint,inputReleased:inputReleased,proof:proof};
+-         Log.d("ACID GROUND RESULT "+JSON.stringify({round:round,role:host?"host":"join",value:localResult}));
+-         check(endpoint!=null && Boolean(endpoint.water)==Boolean(spec.water),"actual native acid detonation uses requested dry/water branch");
+-         check(flightFrames>0,"real projectile display existed before native terminal");
+-         check(proof.rows.length>0 && !proof.overflow,"actual native acid Part objects exist; acidexpl alone is insufficient");
+-         check(proof.pixel!=null && proof.pixel.pixels>0,"acid Part contributes final-stage pixels; readback deferred until expiry");
+-         check(proof.allEnded,"every observed acid Part expires through native lifetime");
+-         var properties:Boolean=proof.rows.length>0,life:Boolean=properties,animated:Boolean=false,faded:Boolean=false;
+-         for each(var row:Object in proof.rows) {
+-            properties=properties && row.partClass=="fe.graph::Part" && row.visualClass=="visualAcid" && row.stable;
+-            life=life && row.mliv>=100 && row.mliv<=129 && row.firstLiv>0 && row.removedFrame>row.bornFrame && row.detached && row.finalLiv<=0;
+-            animated=animated || row.animated;faded=faded || row.alphaMax>=.5 && row.alphaMin<row.alphaMax;
+-         }
+-         check(properties,"ground entities use native stationary Part/visualAcid");
+-         check(life,"native 100..129-frame acid lifespan reaches removal and detaches its display");
+-         check(animated && faded,"actual acid artwork animates and changes native alpha");
++         // Stop action sampling before any bitmap readback or PNG encoding.
++         setPhase("result");var proof:Object=ground.result(),shots:Array=[];
++         for each(var record:Object in gasBullets)shots.push({born:record.born,bornWall:record.bornWall,
++            exploded:record.exploded,end:record.end});
++         localResult={source:source,id:spec.id,requested:int(spec.shots),shots:sourceShots,shotRows:shots,
++            overlap:gasOverlap,unexpected:unexpectedBullets,inputReleased:inputReleased,proof:proof};
++         Log.d("GAS PULSE RESULT "+JSON.stringify({round:round,role:host?"host":"join",value:localResult}));
++         check(!proof.overflow && proof.visualRows.length>0,"bounded actual gas visuals exist");
++         check(proof.pixel!=null && proof.pixel.pixels>0,"real gas contributes final-stage pixels; encoding follows sampling");
++         check(proof.allEnded,"every observed gas visual reaches its real end");
+          if(source) {
+-            check(sourceShots==1 && inputReleased>0,"one real G throw, input released before ground terminal");
+-            var onSurface:Boolean=proof.rows.length>0;
+-            for each(row in proof.rows) {
+-               var tile:Object=row.surface;
+-               onSurface=onSurface && tile!=null && tile.ty>1 && (tile.phis>0 || tile.shelf)
+-                  && (tile.zForm!=0 || tile.above==0) && Math.abs(row.x-tile.x)<=2.01 && Math.abs(row.y-tile.y)<.01;
+-            }
+-            check(onSurface,"source acid Part uses actual exposed native tile surface, without fire -33 offset");
+-         } else check(unexpectedBullets==0,"receiver does not create another native damaging acid projectile");
+-         setPhase("result");if(host)advance();else send("result",{value:localResult});
++            check(sourceShots==int(spec.shots) && inputReleased>0,"requested actual G throws and input release");
++            check(proof.nativeRows.length>0 && proof.visualRows.length==proof.nativeRows.length,
++               "source actual Part identities correspond to artwork, without expected twelve assumption");
++            check(int(spec.shots)==1 || gasOverlap,"double trial has two simultaneously live native projectiles");
++         } else {
++            check(unexpectedBullets==0 && proof.nativeRows.length==0,"receiver creates no native gas Part or damaging projectile");
++            check(proof.wireRows.length>0 && proof.wireRows.length==proof.visualRows.length,
++               "actual unique production gas records each appear once in display tree");
++            var terminal:Boolean=proof.wireRows.length>0;
++            for each(var row:Object in proof.wireRows)terminal=terminal && row.end>0 && row.strictEnd===true;
++            check(terminal,"every actually received gas record has source ending and strict native lifetime");
++         }
++         if(host)advance();else send("result",{value:localResult});
+       }
+       private function advance():void {
+          if(!host || localResult==null || peerResult==null)return;
+          var origin:Object=localResult.source?localResult:peerResult,remote:Object=localResult.source?peerResult:localResult;
+-         var a:Array=origin.proof.rows,b:Array=remote.proof.rows,used:Object={},matches:Array=[];
+-         var equal:Boolean=a.length>0 && a.length==b.length;
+-         for each(var r:Object in b) {
+-            var chosen:int=-1,distance:Number=1e30;
+-            for(var i:int=0;i<a.length;i++)if(!used[i]) {
+-               var dx:Number=Math.abs(Number(r.x)-Number(a[i].x)),dy:Number=Math.abs(Number(r.y)-Number(a[i].y));
+-               if(dx<=4 && dy<=4 && dx*dx+dy*dy<distance){chosen=i;distance=dx*dx+dy*dy;}
+-            }
+-            if(chosen<0)equal=false;
+-            else {used[chosen]=true;matches.push({source:a[chosen].id,remote:r.id,dx:r.x-a[chosen].x,dy:r.y-a[chosen].y});}
+-         }
+-         check(equal,"one-to-one ground footprint follows real source Parts within +/-4px, source="+a.length+" remote="+b.length);
+-         Log.d("ACID GROUND COMPARE "+JSON.stringify({round:round,water:spec.water,matches:matches,matched:equal}));
++         check(origin.proof.nativeRows.length>0 && origin.proof.nativeRows.length==remote.proof.wireRows.length
++            && origin.proof.nativeRows.length==remote.proof.visualRows.length,
++            "actual source Part count equals distinct wire and remote visual counts; source="+origin.proof.nativeRows.length
++            +" wire="+remote.proof.wireRows.length+" visual="+remote.proof.visualRows.length);
+          nextRound();
+       }
+       private function restoreWeapon():void {
+@@ -453,6 +394,7 @@
+          if(mod!=null) {
+             mod.stage.removeEventListener(Event.ENTER_FRAME,bootFrame);
+             mod.stage.removeEventListener(Event.ENTER_FRAME,before);mod.stage.removeEventListener(Event.RENDER,render);
++            mod.stage.removeEventListener(Event.ENTER_FRAME,clockBefore);mod.stage.removeEventListener(Event.ENTER_FRAME,clockAfter);
+             if(saved && mod.game.gg!=null) {
+                restoreWeapon();var g:Object=mod.game.gg,w:Object=mod.game.world;
+                g.changeWeapon("not",true);
+@@ -471,7 +413,7 @@
+          }
+          for(var link:Object in links)TcpLink(link).removeEventListener(TcpLink.MESSAGE,receive);
+          loaderInfo.uncaughtErrorEvents.removeEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR,onError);
+-         Log.d("COOP EFFECTS DONE acid-ground-native "+(host?"host":"join"));
++         Log.d("COOP EFFECTS DONE gas-pulse-native "+(host?"host":"join"));
+       }
+    }
+ }

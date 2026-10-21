@@ -1,0 +1,41 @@
+--- frozen-scene-input/RoomTravelTimingTestDoc.as
++++ shared-intent/RoomTravelTimingTestDoc.as
+@@ -20,7 +20,7 @@
+       private var peer:Object,reported:Boolean=false,bootNotice:int=0,configured:Boolean=false;
+       private var exitAt:int=-1,exitDone:int=-1,coverMs:int=0,pausedMs:int=0,lastFrame:int=0;
+       private var localResult:Object;
+-      private var rasterProbe:FirstRasterSceneProbe,livingPrepared:Boolean=false;
++      private var rasterProbe:FirstRasterSceneProbe,livingPrepared:Boolean=false,seedGateIntent:Object;
+       private var requestedWall:Number=0,keyCode:int=0,inputAt:int=0,inputX:Number=0,inputDirection:int=1;
+       private var inputActor:Object,inputCtr:Object,inputEvidence:Object;
+       private var baselineAt:int=0,baselineX:Number=0,baselineFrames:int=0;
+@@ -60,7 +60,7 @@
+       }
+       private function begin(wall:Number=0):void {
+          requestedWall=wall>0?wall:new Date().time;
+-         rasterProbe.begin(SceneRasterBuildConfig.REQUIRE_SEED_TICKET && !solo && !host && target=="random_mane");
++         rasterProbe.begin(seedGateIntent.expectSeedTicket && !solo && !host && target=="random_mane");
+          phase="travel";at=getTimer();lastFrame=at;exitAt=exitDone=-1;coverMs=pausedMs=0;
+          localResult=null;reported=false;peer=null;
+          Log.d("TRAVEL CLOCK "+JSON.stringify({started:at,round:round,target:target}));
+@@ -104,7 +104,10 @@
+          if(metrics==null)metrics=new A22RoomMetrics(mod);
+          solo=mod.config.getValue("autoRole")=="";
+          if(!configured) {
+-            configured=true;mod.config.setValue("followTeammate","0");
++            configured=true;
++            try{seedGateIntent=SeedGateNativeIntent.read();Log.d("SEED GATE INTENT "+JSON.stringify(seedGateIntent));}
++            catch(intentError:Error){check(false,"explicit seed gate intent: "+intentError);finish();return;}
++            mod.config.setValue("followTeammate","0");
+             var sceneConfigured:Boolean=false;
+             try {
+                var nativeMain:MainFE=mod.game.main as MainFE;
+@@ -173,7 +176,7 @@
+       }
+       private function startInputCheck():void {
+          var w:Object=mod.game.world,g:Object=mod.game.gg;
+-         localResult.flagsReadyWall=new Date().time;localResult.requestedWall=requestedWall;
++         localResult.flagsReadyWall=new Date().time;localResult.requestedWall=requestedWall;localResult.seedGateIntent=seedGateIntent;
+          localResult.rasterEvidence=rasterProbe.finish();
+          if(!check(localResult.rasterEvidence.passed,"expected production first-raster ticket was observed and really finished")){abort();return;}
+ 

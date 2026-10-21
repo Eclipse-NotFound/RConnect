@@ -1,0 +1,36 @@
+--- common/run_coop_regression.py
++++ isolated/native_runner.py
+@@ -1,3 +1,6 @@
++from pathlib import Path
++import sys
++sys.path.insert(0,str(Path(__file__).resolve().parents[2]/"tools"))
+ """Unique AIR ids and independent game copies; no installed SWF/save mutations.
+ Only terminates the processes created by this invocation. Uses fresh characters
+ unless explicit read-only save templates are supplied for an isolated replay.
+@@ -22,7 +25,7 @@
+ from validation.native_runtime_assets import native_runtime_files, asset_hashes
+ from validation.runtime_memory import snapshot as memory_snapshot
+ from validation.air_test_inventory import air_processes
+-ROOT = Path(__file__).resolve().parents[1]
++ROOT = Path(__file__).resolve().parents[2]
+ GAME = ROOT.parents[1]
+ 
+ class RunCancelled(Exception):
+@@ -208,6 +211,9 @@
+         driver_dir=frozen/'tests';driver_dir.mkdir()
+         shutil.copy2(candidate,driver_dir/'RConnectProduction.swf')
+         shutil.copy2(args.effects_driver/'EffectsDriver.swf',driver_dir/'EffectsDriver.swf')
++        gate_intent=json.loads((args.effects_driver/'seed-gate-intent.json').read_text(encoding='utf-8'))
++        assert gate_intent['schema']==1 and type(gate_intent['expectSeedTicket']) is bool and gate_intent['candidateSha']==candidate_hash
++        shutil.copy2(args.effects_driver/'seed-gate-intent.json',driver_dir/'seed-gate-intent.json')
+         shutil.copy2(args.effects_driver/'EffectsHarness.swf',release/'RConnectMod.swf')
+     manifest=game/'mods'/'loader-manifest.txt'
+     allowed={'rconnect'}
+@@ -259,6 +265,7 @@
+             if args.effects_driver:
+                 inputs[role]['production']=hashlib.sha256((folder/'tests/RConnectProduction.swf').read_bytes()).hexdigest()
+                 inputs[role]['driver']=hashlib.sha256((folder/'tests/EffectsDriver.swf').read_bytes()).hexdigest()
++                inputs[role]['seed_gate_intent']=hashlib.sha256((folder/'tests/seed-gate-intent.json').read_bytes()).hexdigest()
+                 inputs[role]['harness']=hashlib.sha256((release/'RConnectMod.swf').read_bytes()).hexdigest()
+             if args.with_vision:
+                 vision=folder/'mods'/'RealisticVision'/'release'

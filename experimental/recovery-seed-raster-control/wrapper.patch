@@ -1,0 +1,57 @@
+--- frozen-first-raster/run_native.py
++++ seed-control/run_native.py
+@@ -10,22 +10,23 @@
+ import sys
+ from check_coop_bundle import ROOT, M52, read, save, sha
+ from run_security_terminals import installation, test_port
+-from native_inputs import audit,host_input,verify_host_intent,verify_driver
++from control_inputs import audit,host_input,verify_host_intent,verify_driver,validate_gate_result
+ 
+ 
+ def main():
+     ap=argparse.ArgumentParser()
+     ap.add_argument('--candidate',required=True)
++    ap.add_argument('--gate-expect',choices=['on','off'],required=True)
+     ap.add_argument('--drivers',required=True)
+     ap.add_argument('--output',required=True)
+     ap.add_argument('--game-candidate',required=True,help='Verified isolated native-travel host directory; never installs it')
+-    ap.add_argument('--scenario',choices=['scene','entry-room'],default='scene')
++    ap.add_argument('--scenario',choices=['scene'],default='scene')
+     ap.add_argument('--solo',action='store_true')
+     ap.add_argument('--registry-wait',type=float,default=300)
+     a=ap.parse_args()
+     candidate=(ROOT/a.candidate).resolve();drivers=(ROOT/a.drivers).resolve();out=(ROOT/a.output).resolve()
+     assert candidate.parent==M52 and drivers.parent==M52 and out.parent==M52 and not out.exists()
+-    audit(candidate)
++    audit(candidate,a.gate_expect)
+     meta=read(drivers/'prepared.json')
+     verify_driver(drivers,meta,a.scenario)
+     assert not (a.solo and meta.get('diagnostic_only')), 'First resumed mirror frame profiling requires a peer'
+@@ -42,11 +43,13 @@
+     out.mkdir();binding=out/'driver';binding.mkdir()
+     for n in ('EffectsDriver.swf','EffectsHarness.swf'):shutil.copyfile(drivers/a.scenario/n,binding/n)
+     save(binding/'driver-input.json',dict(candidate_sha256=digest,identical_driver=sha(binding/'EffectsDriver.swf')))
++    gate_intent=dict(schema=1,expectSeedTicket=a.gate_expect=='on',candidateSha=digest)
++    save(binding/'seed-gate-intent.json',gate_intent)
+     save(out/'intent.json',dict(candidate=str(candidate),candidate_sha256=digest,driver_manifest=sha(drivers/'prepared.json'),
+-        scenario=a.scenario,solo=a.solo,diagnostic_only=bool(meta.get('diagnostic_only',False)),installation=before,
+-        runner_sha256=sha(ROOT/'tools/run_coop_regression.py'),wrapper_sha256=sha(__file__),native_host=host_intent))
++        scenario=a.scenario,solo=a.solo,seed_gate_intent=gate_intent,diagnostic_only=bool(meta.get('diagnostic_only',False)),installation=before,
++        runner_sha256=sha(Path(__file__).resolve().parent/'native_runner.py'),wrapper_sha256=sha(__file__),native_host=host_intent))
+     timed=a.scenario in ('timing','scene')
+-    cmd=[sys.executable,'-B','-X','utf8',str(ROOT/'tools/run_coop_regression.py'),'--candidate',str(binary),
++    cmd=[sys.executable,'-B','-X','utf8',str(Path(__file__).resolve().parent/'native_runner.py'),'--candidate',str(binary),
+         '--effects','--effects-driver',str(binding),'--all-mods','--land','random_mane' if a.scenario=='entry-room' else 'rbl','--seconds','600',
+         '--expected-version',version,'--port',str(test_port()),'--private-desktop','--defer-visible','--wait-host-world','--require-exclusive-air']
+     cmd+=['--registry-wait',str(a.registry_wait)]
+@@ -110,8 +113,10 @@
+     if host_candidate:
+         verify_host_intent(host_candidate,host_intent,after)
+         result['native_host']=host_intent
++    audit(candidate,a.gate_expect)
+     verify_driver(drivers,meta,a.scenario)
+     assert sha(drivers/'prepared.json')==read(out/'intent.json')['driver_manifest']
++    if found:validate_gate_result(result,gate_intent,run,binding)
+     save(out/'result.json',result)
+     # Keep complete phase/input/source evidence on disk, not in every progress
+     # item. This only shortens console output; qualification above is unchanged.

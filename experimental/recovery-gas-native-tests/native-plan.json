@@ -1,0 +1,15 @@
+{
+  "entry": "GasPulseNativeTestDoc",
+  "baseline": "experimental\\recovery-acid-native-tests\\native\\AcidGroundNativeTestDoc.as",
+  "baseline_sha256": "aa02ac1760bca30ce0967093cf1c5ecaaafa276db87a40ba03e8a22e41510643",
+  "files": {
+    "GasPulseNativeTestDoc.as": "c2e7955b918a37a9d2c87825725ae1131d5c41e11a1177dc5fae7ea1e33e1bad",
+    "GasPulseProbe.as": "498ca428ed190a3d79ab1918758031c87eb92770e69f302abf74d3a083950b71"
+  },
+  "rounds": 4,
+  "seconds": 360,
+  "compiled": false,
+  "air_started": false,
+  "performance_qualified": false,
+  "generator_sha256": "14dac21017d75505aaaa8cec7ce40b58fe34055fbe0c29204a149b012a23bfef"
+}

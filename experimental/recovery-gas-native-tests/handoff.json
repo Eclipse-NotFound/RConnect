@@ -1,0 +1,36 @@
+{
+  "kind": "gas-native-external-driver-sources",
+  "revision": "02-unique-trajectory-and-artifact-audit",
+  "entry": "GasPulseNativeTestDoc",
+  "rounds": 4,
+  "seconds": 360,
+  "files": {
+    "check.py": "8cb0260ff0ba6f2b67608ce0e44f500b368c61c1368e1a081b14084afc2d8f13",
+    "counterexamples-recheck.json": "570b38035a9f1f5ca81a98eeaae8f4724e6bb32e831fb5ae08d494e13cb06e9b",
+    "driver.patch": "52390146206340b4d21f41f483d78eaf3fe053b2dd5e893b91723a54e13b3b95",
+    "generate.py": "14dac21017d75505aaaa8cec7ce40b58fe34055fbe0c29204a149b012a23bfef",
+    "native/GasPulseNativeTestDoc.as": "c2e7955b918a37a9d2c87825725ae1131d5c41e11a1177dc5fae7ea1e33e1bad",
+    "native/GasPulseProbe.as": "498ca428ed190a3d79ab1918758031c87eb92770e69f302abf74d3a083950b71",
+    "native-plan.json": "56ef5f69367607e285b867d369df6e2df0d40bcfc848d53d4b60ae353f4a8dcb",
+    "native_tool.py": "6d077538133a5ff9586868429ae87050b38702ec2c9771a446727ec4f0d3eb94",
+    "offline-checks.json": "dd4f8a45ef2ba3ee29f734343c7aff5b6d61d3b3d21392455d4b88b7f440ee68",
+    "README.md": "2855db8a7caf2de6c9bb45db451854e3652cb531d0a3dc3c6ec8b3a939c18062",
+    "verify_results.py": "476bb819ffaa83293e54c7b0850275da8580a0451de68a46087fac3a9b0b0f20"
+  },
+  "offline_checks": 30,
+  "offline_passed": true,
+  "compiled": false,
+  "AIR_started": false,
+  "JVM_started": false,
+  "production_qualified": false,
+  "performance_qualified": false,
+  "fullLifecycleQualified": false,
+  "cursorAlignmentQualified": false,
+  "cursorAlignment": "unknown; private production RemoteMotion not observed",
+  "review_sources": {
+    "experimental\\recovery-gas-native-review\\README.md": "599ec345486ba85c99ffad783de49e98387a3ac132771577528d1739950a576d",
+    "experimental\\recovery-gas-native-review\\counterexamples.json": "b9420e95d1c7d95e735df615c259f37c41d5b6c3bbde1818b56be6ae7f08f3ef"
+  },
+  "scope": "Unique complete observed source Part-to-wire sequence; all observed display poses ordered within that same wire; native source terminal frame and receipt/last-pose bounds; no private playback-cursor claim",
+  "known_review_counterexamples_rejected": 4
+}

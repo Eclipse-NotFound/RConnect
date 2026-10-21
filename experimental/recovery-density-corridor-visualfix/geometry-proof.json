@@ -1,0 +1,75 @@
+{
+  "static_geometry_only": true,
+  "runtime_verified": false,
+  "unchanged_native_speed": true,
+  "native_speed_variation": [
+    160,
+    240
+  ],
+  "muzzle_bounds": [
+    240,
+    860,
+    460,
+    950
+  ],
+  "direction_radians": [
+    -1.508996938995747,
+    -0.5853981633974483
+  ],
+  "open_rectangle": [
+    40,
+    40,
+    1880,
+    960
+  ],
+  "guaranteed_collision_free_native_steps_if_preconditions_hold": 3,
+  "conservative_first_possible_boundary_distance": 821.5683530300793,
+  "steps": [
+    {
+      "step": 1,
+      "max_distance": 240,
+      "envelope": [
+        240,
+        620.4581538782875,
+        660.038117013956,
+        950
+      ]
+    },
+    {
+      "step": 2,
+      "max_distance": 480,
+      "envelope": [
+        240,
+        380.916307756575,
+        860.0762340279119,
+        950
+      ]
+    },
+    {
+      "step": 3,
+      "max_distance": 720,
+      "envelope": [
+        240,
+        141.37446163486254,
+        1060.1143510418678,
+        950
+      ]
+    }
+  ],
+  "limits": [
+    "Geometry does not guarantee final visibility, TCP delivery, source sampling or FPS.",
+    "Runtime muzzle/native parameter checks must pass; native findCel=false uses existing forceRot. No warm-up shots.",
+    "Perimeter collision still uses native Bullet.run; no damage/lifetime/speed patch.",
+    "Existing 80 disabled enemies are ignored by native Bullet.run; both players are left of muzzle cone.",
+    "Unknown active static objects/proxies fail setup instead of being silently ignored.",
+    "Geometry is for initial bounded fixture; actual measured motion checks remain decisive."
+  ],
+  "reference_sha256": {
+    "game-reference\\decompiled\\1.02\\src102\\scripts\\fe\\AllData.as": "975b0d0e68059a288549805c960c4402b34cc88740a8309007f75b6f0e2763e2",
+    "game-reference\\decompiled\\1.02\\src102\\scripts\\fe\\weapon\\Weapon.as": "3e5cf1dc01d7304d5824c7dfd08f0f4de73d2d107ff2b30d2abfb3d6f770b4e4",
+    "game-reference\\decompiled\\1.02\\src102\\scripts\\fe\\weapon\\Bullet.as": "c5d89dae281dd23cfb9a1b99c1b47b28b0e33c9923a5eac708295f2e5a697586",
+    "game-reference\\decompiled\\1.02\\src102\\scripts\\fe\\loc\\Tile.as": "ce77b312880301eba59c82f72d81dba92d51bba5d0c9929345c5ea743f601cc1",
+    "game-reference\\decompiled\\1.02\\src102\\scripts\\fe\\loc\\Location.as": "197483f298595771eabb06cf76633cf4403f4cb3400fdfb3462d6b691c19c707",
+    "game-reference\\decompiled\\1.02\\src102\\scripts\\fe\\graph\\Grafon.as": "03005a7396bb61bc8507ef1afb40ee133ecd3429b40d9882d75fec197c630240"
+  }
+}

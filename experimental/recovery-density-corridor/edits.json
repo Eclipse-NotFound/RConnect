@@ -1,0 +1,26 @@
+[
+  [
+    "         mod.game.readUnitsSnapshot();arenaKeys=[];arenaExpected=[];",
+    "         CorridorFixture.apply(mod,loadActors,loadGuns,true);\n         mod.game.readUnitsSnapshot();arenaKeys=[];arenaExpected=[];"
+  ],
+  [
+    "            arenaRemoved=DensityFixture.removeExtras(mod,objects);arenaCleaned=true;loadActors=objects;",
+    "            arenaRemoved=DensityFixture.removeExtras(mod,objects);arenaCleaned=true;loadActors=objects;\n            CorridorFixture.apply(mod,loadActors,loadGuns,false);"
+  ],
+  [
+    "         var common:Object={player:DensityFixture.player(mod),camera:DensityFixture.camera(mod),actors:DensityFixture.sorted(actual)};",
+    "         var corridor:Object=CorridorFixture.status(mod,objects);\n         var common:Object={player:DensityFixture.player(mod),camera:DensityFixture.camera(mod),actors:DensityFixture.sorted(actual),corridor:corridor.common};"
+  ],
+  [
+    "            && rosterOK && DensityFixture.atPoint(mod.game.gg) && peerOK,common:common,bodyCount:objects.length,",
+    "            && rosterOK && DensityFixture.atPoint(mod.game.gg) && peerOK && corridor.ok,common:common,bodyCount:objects.length,corridorBad:corridor.bad,"
+  ],
+  [
+    "            check(true,\"density actual camera/player/roster stable before timing\");",
+    "            check(true,\"density actual camera/player/roster stable before timing\");\n            check(true,\"density open corridor native collision and zero optional static objects verified\");"
+  ],
+  [
+    "         if(arenaLogged)return;arenaLogged=true;sceneInputs();",
+    "         if(arenaLogged)return;arenaLogged=true;sceneInputs();\n         CorridorFixture.log(mod,loadActors,host);"
+  ]
+]

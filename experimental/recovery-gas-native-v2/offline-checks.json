@@ -1,0 +1,191 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "label": "Exact failed frozen gas driver01 ancestors",
+      "passed": true
+    },
+    {
+      "label": "Generated native driver exact",
+      "passed": true
+    },
+    {
+      "label": "Generated native probe exact",
+      "passed": true
+    },
+    {
+      "label": "Native AS inputs match plan",
+      "passed": true
+    },
+    {
+      "label": "Recipes parse",
+      "passed": true
+    },
+    {
+      "label": "No production capture or artificial pulse call",
+      "passed": true
+    },
+    {
+      "label": "Native G and overlap requirement retained",
+      "passed": true
+    },
+    {
+      "label": "Sampling stops before PNG work",
+      "passed": true
+    },
+    {
+      "label": "Exact generic DONE marker",
+      "passed": true
+    },
+    {
+      "label": "Source frame bounds use only external event brackets",
+      "passed": true
+    },
+    {
+      "label": "Cold first round and original deadlines retained",
+      "passed": true
+    },
+    {
+      "label": "Release waits for native readiness",
+      "passed": true
+    },
+    {
+      "label": "No writes to native latch or cooldown",
+      "passed": true
+    },
+    {
+      "label": "Capture immutable reference survives final observation replacement",
+      "passed": true
+    },
+    {
+      "label": "Good scalar fixture validates",
+      "passed": true
+    },
+    {
+      "label": "Replay into native object chain rejected",
+      "passed": true
+    },
+    {
+      "label": "Missing strict terminal rejected",
+      "passed": true
+    },
+    {
+      "label": "Actual received pose correspondence succeeds",
+      "passed": true
+    },
+    {
+      "label": "Invented display pose rejected",
+      "passed": true
+    },
+    {
+      "label": "Review counterexample rejected: Remote disappears 1ms after birth while native source and wire remain alive",
+      "passed": true
+    },
+    {
+      "label": "Review counterexample rejected: Later remote pose and frame wrong after first matching pose",
+      "passed": true
+    },
+    {
+      "label": "Review counterexample rejected: Source Part and displayed source positions unrelated to wire",
+      "passed": true
+    },
+    {
+      "label": "Review counterexample rejected: Identical complete histories have ambiguous identities",
+      "passed": true
+    },
+    {
+      "label": "Backward observed trajectory rejected",
+      "passed": true
+    },
+    {
+      "label": "Wire ending outside real source removal frame rejected",
+      "passed": true
+    },
+    {
+      "label": "Display removal before actual terminal receipt rejected",
+      "passed": true
+    },
+    {
+      "label": "Missing actual terminal receipt timestamp rejected",
+      "passed": true
+    },
+    {
+      "label": "Missing actual final displayed pose rejected",
+      "passed": true
+    },
+    {
+      "label": "Same-frame later RENDER keeps birth and exact original PNG identity",
+      "passed": true
+    },
+    {
+      "label": "Old same-frame birth timestamp overwrite still rejected",
+      "passed": true
+    },
+    {
+      "label": "PNG cannot silently bind replacement RENDER revision",
+      "passed": true
+    },
+    {
+      "label": "Capture cannot postdate final frame observation",
+      "passed": true
+    },
+    {
+      "label": "Pose changes during with/without screenshot are rejected",
+      "passed": true
+    },
+    {
+      "label": "Captured pose must belong to the same ordered wire history",
+      "passed": true
+    },
+    {
+      "label": "Premature second G while native latch remains set is rejected",
+      "passed": true
+    },
+    {
+      "label": "Missing native release-readiness observation is rejected",
+      "passed": true
+    },
+    {
+      "label": "Real PNG recomputed difference and exact saved proof pass",
+      "passed": true
+    },
+    {
+      "label": "Log versus saved proof mismatch rejected",
+      "passed": true
+    },
+    {
+      "label": "Identical PNG pair rejected",
+      "passed": true
+    },
+    {
+      "label": "Claimed pixel count different from actual PNG rejected",
+      "passed": true
+    },
+    {
+      "label": "PNG dimensions must equal recorded capture rectangle",
+      "passed": true
+    },
+    {
+      "label": "Pixel object and frame metadata must belong to observed track",
+      "passed": true
+    },
+    {
+      "label": "Empty or missing rounds never pass",
+      "passed": true
+    },
+    {
+      "label": "Complete four bidirectional fixture records accepted",
+      "passed": true
+    },
+    {
+      "label": "Original framework failure preserved",
+      "passed": true
+    }
+  ],
+  "count": 45,
+  "native_game": false,
+  "AS3_executed": false,
+  "JVM_started": false,
+  "AIR_started": false,
+  "performance_qualified": false
+}

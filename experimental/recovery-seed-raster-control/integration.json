@@ -1,0 +1,32 @@
+{
+  "base": "build/m52/recovery-13",
+  "base_sha256": "1177eb1ae9b227bcf3c0eb39dedad92b63ac16dcb7ffb0b421ea0a2024bfddb1",
+  "overlay": {
+    "src/rconnect/core/RoomSync.as": "1f1a89b4f731273622b765ec8ae5fa2ff8996e2265238ec54ee66d83f39a29ca"
+  },
+  "original_room_sha256": "c2e68fe658a81be4b3ceb285daf453ca57b9d4a5895e80720dd629c374e3f85e",
+  "component_inputs": {
+    "experimental\\recovery-seed-first-raster\\components\\room\\modlocales\\connect\\RCLocale.as": "e2e718a5585b7adcb095731ea6bbbf5f7984f777798bea713f4d9551069eabef",
+    "experimental\\recovery-seed-first-raster\\components\\room\\NativeTravelRoomChecks.as": "21d992b6da7520259634c1544f325821cdf010587b93b8b027259d7b0f5d6e73",
+    "experimental\\recovery-seed-first-raster\\components\\room\\rconnect\\core\\FirstRasterGate.as": "c4db67de41dd3e21d6aa5949f4214cf6b8ef49521c784d85e1e95dc447745821",
+    "experimental\\recovery-seed-first-raster\\components\\room\\rconnect\\core\\Log.as": "cffc3f4b9b4194e507a8488dfd89ad7a55e29d8fdb2519391a43668353a76237",
+    "experimental\\recovery-seed-first-raster\\components\\room\\rconnect\\core\\MapGeneration.as": "88f40023f87e6eaa05d6b7a43ca5d1f1fbd0bb0f8fdc108e328e354644958fa0",
+    "experimental\\recovery-seed-first-raster\\components\\room\\rconnect\\core\\NativeTravelPlan.as": "e40903e83e23996d2aac1bb10984ffedf6de7984e541de1bf15b2fd0aa9309d1",
+    "experimental\\recovery-seed-first-raster\\components\\room\\rconnect\\core\\RoomSync.as": "c2e68fe658a81be4b3ceb285daf453ca57b9d4a5895e80720dd629c374e3f85e",
+    "experimental\\recovery-seed-first-raster\\components\\room\\rconnect\\core\\SeedRasterEntry.as": "9980a528b48051906e5bf4128d304b1687cfde02a99980ddfcbbbf80c8d5972e",
+    "experimental\\recovery-seed-first-raster\\components\\room\\rconnect\\core\\Session.as": "16b8afcc7eda96776c06dd82eebeb6ca30cea92ed2cd5cbd0ce0de3686a498a8",
+    "experimental\\recovery-seed-first-raster\\components\\room\\rconnect\\core\\TravelGuard.as": "d62648d780765839f941667e4ceff096580f53f3dccf18c37312b5b1fc684179",
+    "experimental\\recovery-seed-first-raster\\components\\room\\rconnect\\core\\TravelPlacement.as": "b426e339c592d055f6e396f54aa825681eeae9d8aeea30acdd16be2faeff7c72",
+    "experimental\\recovery-seed-first-raster\\components\\room\\rconnect\\game\\GameBridge.as": "54bc60fa8046357ed35b805e5ae2d8f26f2329e49f4fae4cfec6ad39afc3630b",
+    "experimental\\recovery-seed-first-raster\\components\\room\\rconnect\\net\\Protocol.as": "32f6777591247b93e05e56eced25c1b2d6d4427feacac0aa248f06afd16a0b8e",
+    "experimental\\recovery-seed-first-raster\\components\\room\\rconnect\\net\\RoomCodec.as": "296ee4d8d94f77faa62dcc17a39cb1e2492c756d3027311713c33935ca6b6b4a",
+    "experimental\\recovery-seed-first-raster\\components\\room\\rconnect\\net\\TcpLink.as": "3519958acdd84a1efb590e0956a49e6cc0397ca48ec2ae0d06fd0ecb6aa009ed",
+    "experimental\\recovery-seed-first-raster\\components\\room\\rconnect\\ui\\RoomEntryView.as": "969ffe5824685edb1bdfab3b35f9e77dbcedd4eb14b012495611277d5b7f025c",
+    "experimental\\recovery-seed-first-raster\\components\\room\\RConnectMod.as": "bdf7dd4b572a52762b2431c7d94d9818af8ef72dd5109f4bb27d807c36748f6a"
+  },
+  "private_runtime_original_sha256": "7eca453b13480140da5f36bb33d2319739a927562ccafdbb61a8b20cdb5ae4d3",
+  "private_runtime_sha256": "685659bce8264761ba8b67a8e7f07a1cafffb4d6221747536077e114f4759cfa",
+  "compiled": false,
+  "runtime_tested": false,
+  "protocol_changed": false
+}

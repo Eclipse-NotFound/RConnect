@@ -1,0 +1,143 @@
+--- frozen-driver01/GasPulseNativeTestDoc.as
++++ native-v2/GasPulseNativeTestDoc.as
+@@ -51,6 +51,7 @@
+       private var bootActor:Object,bootRoom:Object,bootFrames:int=0,bootWatching:Boolean=false,bootLogged:Boolean=false;
+       private var originalInventory:Object;
+       private var gasBullets:Array=[],lastShotFrame:int=-100,gasOverlap:Boolean=false,gasDone:Boolean=false;
++      private var releasePending:Boolean=false,throwGates:Array=[];
+ 
+       public function GasPulseNativeTestDoc(scenarios:Array=null) {
+          if(scenarios!=null)cases=scenarios;
+@@ -108,7 +109,7 @@
+          restoreWeapon();round=n;spec=cases[int(n/2)];source=host==(n%2==0);
+          gameFrame=inputReleased=0;issued=false;
+          nativeBullet=null;nativeClass="";nativeBirth=nativeEnd=peerEnd=sourceShots=0;
+-         gasBullets=[];lastShotFrame=-100;gasOverlap=false;gasDone=false;
++         gasBullets=[];lastShotFrame=-100;gasOverlap=false;gasDone=false;releasePending=false;throwGates=[];
+          nativeExplosion=peerExplosion=localResult=peerResult=null;
+          flightFrames=flightLate=flightPeak=flightClear=bounces=rotations=explosionParts=explosionPixels=0;
+          flightMs=0;lastFrame=0;lastDY=0;lastRotation=NaN;unexpectedBullets=0;
+@@ -175,8 +176,17 @@
+          ctr.keyAttack=ctr.keyGrenad=ctr.keyMagic=false;
+          g.celX=w.celX=baseX+210;g.celY=w.celY=baseY-45;
+          w.cam.celX=w.celX*w.cam.scaleV+w.cam.vx;w.cam.celY=w.celY*w.cam.scaleV+w.cam.vy;
+-         if(phase=="run" && source && sourceShots<int(spec.shots) && gun!=null && gameFrame>lastShotFrame+1) {
+-            if(spec.magic===true)ctr.keyMagic=true;else if(spec.quick)ctr.keyGrenad=true;else ctr.keyAttack=true;
++         if(phase=="run" && source && sourceShots<int(spec.shots) && gun!=null) {
++            // Native WThrow sets t_auto=3; pressing too early renews that latch.
++            // Leave G released until native actions (not this driver) clear it.
++            if(releasePending && gameFrame>lastShotFrame && int(gun.t_auto)==0 && gun.attackPos()) {
++               throwGates.push({afterShot:sourceShots,afterFrame:lastShotFrame,frame:gameFrame,at:getTimer(),
++                  tAuto:int(gun.t_auto),tAttack:int(gun.t_attack),tReload:int(gun.t_reload),attackPos:gun.attackPos()});
++               releasePending=false;
++            }
++            if(!releasePending) {
++               if(spec.magic===true)ctr.keyMagic=true;else if(spec.quick)ctr.keyGrenad=true;else ctr.keyAttack=true;
++            }
+          }
+          if(source && issued && !ctr.keyGrenad && inputReleased==0)inputReleased=gameFrame;
+          mod.stage.invalidate();
+@@ -288,7 +298,7 @@
+             var now:int=getTimer();observedFrames++;
+             if(source && gun!=null && gun.b!=null && !nativeShots[gun.b]) {
+                var bullet:Object=gun.b;
+-               nativeShots[bullet]=true;sourceShots++;issued=true;lastShotFrame=gameFrame;
++               nativeShots[bullet]=true;sourceShots++;issued=true;lastShotFrame=gameFrame;releasePending=true;
+                if(gasBullets.length>0 && gasBullets[0].bullet.in_chain)gasOverlap=true;
+                gasBullets.push({bullet:bullet,born:now,bornWall:new Date().time,exploded:0,end:0});
+                if(nativeBullet==null){nativeBullet=bullet;nativeBirth=now;nativeClass=getQualifiedClassName(bullet.vis);}
+@@ -340,13 +350,17 @@
+          for each(var record:Object in gasBullets)shots.push({born:record.born,bornWall:record.bornWall,
+             exploded:record.exploded,end:record.end});
+          localResult={source:source,id:spec.id,requested:int(spec.shots),shots:sourceShots,shotRows:shots,
+-            overlap:gasOverlap,unexpected:unexpectedBullets,inputReleased:inputReleased,proof:proof};
++            overlap:gasOverlap,unexpected:unexpectedBullets,inputReleased:inputReleased,throwGates:throwGates,proof:proof};
+          Log.d("GAS PULSE RESULT "+JSON.stringify({round:round,role:host?"host":"join",value:localResult}));
+          check(!proof.overflow && proof.visualRows.length>0,"bounded actual gas visuals exist");
+          check(proof.pixel!=null && proof.pixel.pixels>0,"real gas contributes final-stage pixels; encoding follows sampling");
+          check(proof.allEnded,"every observed gas visual reaches its real end");
+          if(source) {
+             check(sourceShots==int(spec.shots) && inputReleased>0,"requested actual G throws and input release");
++            var released:Boolean=throwGates.length==Math.max(0,int(spec.shots)-1);
++            for each(var gate:Object in throwGates)released=released && gate.tAuto==0 && gate.attackPos===true
++               && gate.tAttack<=0 && gate.tReload<=0 && gate.frame>gate.afterFrame;
++            check(released,"each repeated G waits for native release latch and attack readiness without writes");
+             check(proof.nativeRows.length>0 && proof.visualRows.length==proof.nativeRows.length,
+                "source actual Part identities correspond to artwork, without expected twelve assumption");
+             check(int(spec.shots)==1 || gasOverlap,"double trial has two simultaneously live native projectiles");
+@@ -388,7 +402,12 @@
+       private function onError(e:UncaughtErrorEvent):void {
+          e.preventDefault();fail("uncaught "+(e.error is Error?Error(e.error).getStackTrace():String(e.error)));
+       }
+-      private function fail(s:String):void {check(false,s);send("done");finish();}
++      private function fail(s:String):void {
++         if(gun!=null)Log.d("GAS INPUT DIAGNOSTIC "+JSON.stringify({round:round,phase:phase,shots:sourceShots,
++            requested:spec==null?0:int(spec.shots),pending:releasePending,frame:gameFrame,lastShotFrame:lastShotFrame,
++            tAuto:int(gun.t_auto),tAttack:int(gun.t_attack),tReload:int(gun.t_reload),attackPos:gun.attackPos(),gates:throwGates}));
++         check(false,s);send("done");finish();
++      }
+       private function finish():void {
+          if(phase=="done")return;setPhase("done");t.stop();if(ground!=null)ground.dispose();
+          if(mod!=null) {
+--- frozen-driver01/GasPulseProbe.as
++++ native-v2/GasPulseProbe.as
+@@ -56,15 +56,25 @@
+          if(row==null) {
+             if(visualRows.length>=96){overflow=true;return;}
+             row={id:visualRows.length,cls:getQualifiedClassName(v),bornAt:now,bornWall:new Date().time,
+-               bornFrame:frame,endAt:0,endWall:0,alphaMin:1,alphaMax:0,samples:[]};
++               bornFrame:frame,endAt:0,endWall:0,alphaMin:1,alphaMax:0,samples:[],captures:[]};
+             shown[v]=row;visualRows.push(row);lastBirth=lastActivity=now;
+          }
+          if(row.endAt>0)row.reappeared=true;
+          row.alphaMin=Math.min(row.alphaMin,v.alpha);row.alphaMax=Math.max(row.alphaMax,v.alpha);
+          var sample:Object=pose(v,now,frame);
+-         if(row.samples.length>0 && row.samples[row.samples.length-1].frame==frame)row.samples[row.samples.length-1]=sample;
+-         else if(row.samples.length<128)row.samples.push(sample);else overflow=true;
+-         if(withPart==null && v.visible && v.stage!=null && v.alpha>=.5)capturePixels(v,row,frame);
++         sample.observedAt=now;sample.observedWall=sample.wall;sample.revision=0;
++         if(row.samples.length>0 && row.samples[row.samples.length-1].frame==frame) {
++            var previous:Object=row.samples[row.samples.length-1];
++            // Preserve the first observation identity/time in this game frame.
++            // Replace the final pose, but never mutate a captured sample object.
++            sample.at=previous.at;sample.wall=previous.wall;sample.revision=int(previous.revision)+1;
++            sample.sampleId=String(frame)+":"+String(sample.revision);
++            row.samples[row.samples.length-1]=sample;
++         } else {
++            sample.sampleId=String(frame)+":0";
++            if(row.samples.length<128)row.samples.push(sample);else overflow=true;
++         }
++         if(withPart==null && v.visible && v.stage!=null && v.alpha>=.5)capturePixels(v,row,frame,sample);
+       }
+       public function scan(frame:int):void {
+          if(mod.game.loc!==room)throw new Error("Gas fixture changed room during trial");
+@@ -132,15 +142,17 @@
+             }
+          }
+       }
+-      private function capturePixels(v:DisplayObject,row:Object,frame:int):void {
++      private function capturePixels(v:DisplayObject,row:Object,frame:int,sample:Object):void {
+          var root:DisplayObject=mod.main as DisplayObject;
+          var r:Rectangle=v.getBounds(root).intersection(new Rectangle(0,0,mod.stage.stageWidth,mod.stage.stageHeight));
+          if(r.width<1 || r.height<1 || r.width*r.height>150000)return;
+          withPart=new BitmapData(Math.ceil(r.width),Math.ceil(r.height),false,0);withoutPart=withPart.clone();
+          var matrix:Matrix=new Matrix(1,0,0,1,-r.x,-r.y),visible:Boolean=v.visible,start:int=getTimer();
++         var beforePose:Object=pose(v,start,frame);
++         row.captures.push(sample); // An immutable reference to this exact RENDER revision.
+          try {withPart.draw(root,matrix);v.visible=false;withoutPart.draw(root,matrix);}finally{v.visible=visible;}
+-         pixel={visual:row.id,frame:frame,sampleAt:row.samples[row.samples.length-1].at,
+-            pose:pose(v,start,frame),at:start,wall:new Date().time,drawMs:getTimer()-start,
++         pixel={visual:row.id,frame:frame,sampleAt:sample.at,sampleId:sample.sampleId,observedAt:sample.observedAt,
++            pose:beforePose,afterPose:pose(v,getTimer(),frame),at:start,wall:new Date().time,drawMs:getTimer()-start,
+             bounds:{x:r.x,y:r.y,w:r.width,h:r.height},pixels:0};
+       }
+       private function write(file:File,bytes:ByteArray,text:String=null):void {
+@@ -158,7 +170,7 @@
+          }
+          var data:Object={round:round,source:source,nativeRows:nativeRows,visualRows:visualRows,wireRows:wireRows,
+             allEnded:allEnded,overflow:overflow,pixel:pixel,readbackAt:readAt,encodeMs:getTimer()-readAt,
+-            quietMs:readAt-lastActivity,lastActivity:lastActivity,clockObservation:"source-frame-bounds-only",playbackCursorObserved:false};
++            quietMs:readAt-lastActivity,lastActivity:lastActivity,observationSchema:"first-time-final-pose-capture-revision-v2",clockObservation:"source-frame-bounds-only",playbackCursorObserved:false};
+          write(folder.resolvePath(prefix+"-proof.json"),null,JSON.stringify(data));dispose();return data;
+       }
+       public function dispose():void {if(withPart!=null){withPart.dispose();withPart=null;}if(withoutPart!=null){withoutPart.dispose();withoutPart=null;}}

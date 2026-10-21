@@ -1,0 +1,11 @@
+--- recovery13/RoomSync.as
++++ seed-gate-off/RoomSync.as
+@@ -401,7 +401,7 @@
+             if(!seedRaster.destination(w,l)) {firstRaster.cancel();return null;}
+             if(g.scenePreload!==true && g.sceneCullRender!==true) {firstRaster.cancel();return null;}
+             if(firstRaster.active && !firstRaster.matches(w,l,g,seedRaster.id)) {firstRaster.cancel();return null;}
+-            return firstRaster.open(w,l,g,seedRaster.id);
++            return null; // Isolated control: seed identity/anchor/restore remain; native raster runs normally.
+          }
+          if(!nativeTravel.matchesWorld(w)) {firstRaster.cancel();return null;}
+          if(session.mode!=Session.CONNECTED || blocked || w!==game.world || w==null

@@ -1,0 +1,8 @@
+{
+  "original_wrapper_sha256": "ba4469b2ec55829f357ce51bac1f9f5309e97fb07db277a55a9022b8e0f23c1a",
+  "native_runner_sha256": "7eca453b13480140da5f36bb33d2319739a927562ccafdbb61a8b20cdb5ae4d3",
+  "derived_runner_sha256": "69d6e237b642821479f6d05c9af9a74f7cd62a4884578d4072fbeb7b7402ea6a",
+  "adapter_sha256": "45091e8cc3a35c225308ee154b3a5bc49a7107f60f2e0f840d14a164e85a3889",
+  "execution_or_assertion_changes": false,
+  "air_started": false
+}

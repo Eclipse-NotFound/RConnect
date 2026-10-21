@@ -1,0 +1,13 @@
+{
+  "sources": {
+    "A22RoomMetrics.as": "314823fd0fcd04e71277dcd3e8ee1a647317e611c5ff7b8fb0e7058c25179d6e",
+    "FirstRasterSceneProbe.as": "b11e182eb74719a0a02a831b160dda8d2475a106f0770d3631411572ce17b8a2",
+    "RoomTravelSceneTestDoc.as": "55e2caa583fc5f14c1844e10fd46506b9d681b889fb9b94ab82053b02df2547b",
+    "RoomTravelTimingTestDoc.as": "9615bda7cef3649c6aacf6461839aa50d8de4f82bc86dab96e68932a9ade485f",
+    "SeedGateNativeIntent.as": "d20e0ec2485d0b3fde9a0efd663957c82c9b3f94b1d59d3bec346d0fce55feb7"
+  },
+  "previous_manifest": "6a66c0219ab746002aaf9c6d9a950663fb6e3e831ca29e9f92e01ee862911247",
+  "same_driver_both_modes": true,
+  "compiled": false,
+  "runtime_tested": false
+}

@@ -1,0 +1,74 @@
+--- common/run_room_travel_timing.py
++++ isolated/run_native.py
+@@ -1,3 +1,6 @@
++from pathlib import Path
++import sys
++sys.path.insert(0,str(Path(__file__).resolve().parents[2]/"tools/validation"))
+ """Run identical external native travel checks against pinned A binaries."""
+ import argparse
+ import json
+@@ -7,7 +10,7 @@
+ import sys
+ from check_coop_bundle import ROOT, M52, read, save, sha
+ from run_security_terminals import installation, test_port
+-from audit_room_entry_candidate import audit
++from native_inputs import audit,host_input,verify_host_intent,verify_driver
+ 
+ 
+ def main():
+@@ -15,8 +18,8 @@
+     ap.add_argument('--candidate',required=True)
+     ap.add_argument('--drivers',required=True)
+     ap.add_argument('--output',required=True)
+-    ap.add_argument('--game-candidate',help='Verified isolated native-travel host directory; never installs it')
+-    ap.add_argument('--scenario',choices=['timing','scene','entry-room','entry-map'],default='timing')
++    ap.add_argument('--game-candidate',required=True,help='Verified isolated native-travel host directory; never installs it')
++    ap.add_argument('--scenario',choices=['scene','entry-room'],default='scene')
+     ap.add_argument('--solo',action='store_true')
+     ap.add_argument('--registry-wait',type=float,default=300)
+     a=ap.parse_args()
+@@ -24,6 +27,7 @@
+     assert candidate.parent==M52 and drivers.parent==M52 and out.parent==M52 and not out.exists()
+     audit(candidate)
+     meta=read(drivers/'prepared.json')
++    verify_driver(drivers,meta,a.scenario)
+     assert not (a.solo and meta.get('diagnostic_only')), 'First resumed mirror frame profiling requires a peer'
+     for n,h in meta['files'].items():assert sha(drivers/n)==h,n
+     binary=candidate/'RConnectMod.swf';digest=sha(binary)
+@@ -34,19 +38,7 @@
+     if a.game_candidate:
+         host_candidate=(ROOT/a.game_candidate).resolve()
+         assert host_candidate.parent==M52
+-        host_meta=read(host_candidate/'prepared.json')
+-        assert host_meta['kind']=='recovery-native-travel-host'
+-        assert host_meta.get('compiled') is True and host_meta.get('validated') is True
+-        assert host_meta.get('installed_unchanged') is True and host_meta.get('source_set_unchanged') is True
+-        assert host_meta['original_sha256']==before['pfe.swf']
+-        assert host_meta['candidate_sha256']==sha(host_candidate/'pfe.swf')
+-        assert host_meta['non_code_tags_unchanged'] and host_meta['loader_unchanged']
+-        assert sha(host_candidate/'native-input.json')==host_meta['native_input_sha256']
+-        for name,source_digest in host_meta['source_inputs'].items():
+-            assert sha(host_candidate/'sources'/name)==source_digest,name
+-        host_intent=dict(directory=str(host_candidate),manifest_sha256=sha(host_candidate/'prepared.json'),
+-            original_sha256=host_meta['original_sha256'],candidate_sha256=host_meta['candidate_sha256'],
+-            native_input_sha256=host_meta['native_input_sha256'],sources=host_meta['source_inputs'])
++        host_intent=host_input(host_candidate,before)
+     out.mkdir();binding=out/'driver';binding.mkdir()
+     for n in ('EffectsDriver.swf','EffectsHarness.swf'):shutil.copyfile(drivers/a.scenario/n,binding/n)
+     save(binding/'driver-input.json',dict(candidate_sha256=digest,identical_driver=sha(binding/'EffectsDriver.swf')))
+@@ -116,12 +108,10 @@
+             result['passed']=result['passed'] and result['profile_valid']
+         result['memory']=read(run/'memory-timeline.json')
+     if host_candidate:
+-        assert sha(host_candidate/'prepared.json')==host_intent['manifest_sha256']
+-        assert sha(host_candidate/'pfe.swf')==host_intent['candidate_sha256']
+-        assert sha(host_candidate/'native-input.json')==host_intent['native_input_sha256']
+-        for name,source_digest in host_intent['sources'].items():
+-            assert sha(host_candidate/'sources'/name)==source_digest,name
++        verify_host_intent(host_candidate,host_intent,after)
+         result['native_host']=host_intent
++    verify_driver(drivers,meta,a.scenario)
++    assert sha(drivers/'prepared.json')==read(out/'intent.json')['driver_manifest']
+     save(out/'result.json',result)
+     # Keep complete phase/input/source evidence on disk, not in every progress
+     # item. This only shortens console output; qualification above is unchanged.

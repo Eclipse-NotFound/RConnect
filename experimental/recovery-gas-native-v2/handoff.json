@@ -1,0 +1,33 @@
+{
+  "kind": "gas-native-external-driver-v2",
+  "entry": "GasPulseNativeTestDoc",
+  "rounds": 4,
+  "seconds": 360,
+  "per_phase_timeout_ms": 26000,
+  "cold_first_round": true,
+  "offline_checks": 45,
+  "offline_passed": true,
+  "compiled": false,
+  "JVM_started": false,
+  "AIR_started": false,
+  "performance_qualified": false,
+  "fullLifecycleQualified": false,
+  "cursorAlignmentQualified": false,
+  "original_4733dbf4b4_inputs_unchanged": true,
+  "original_input_hash_count": 14,
+  "native_added_assertions": "One readiness assertion per source trial; two per role; no original assertion removed",
+  "files": {
+    "check.py": "514f493b7ad76bb5b79ccd2ece0b7135e39ca4b671d9882986b8856b24c5973c",
+    "counterexamples-recheck.json": "570b38035a9f1f5ca81a98eeaae8f4724e6bb32e831fb5ae08d494e13cb06e9b",
+    "diagnostic-plan.md": "72f760d2882813ed045bfa94872b6d7dadcc727f8cbd869ff7346a9bcdabf154",
+    "driver.patch": "e9f342dc3a9b033313921dd8348b496bccbb656f4ea78fad6bfd73fcff834549",
+    "generate.py": "14a34f9ca021d5bb028f2268a26bda433780600c1aab747d7cf95e06c50c3155",
+    "native/GasPulseNativeTestDoc.as": "ce59b035fddb83dc1c37be145523884aef1ea621784321ff742bfb8ae25373ea",
+    "native/GasPulseProbe.as": "f92507b2a8da89f8d2653c90a617f5ab1eaf008726e74129033065a332a61a72",
+    "native-plan.json": "1d4f93c966ad8b24f70e3d0dd936550e58adf040169e7d8b212a038f42f48b42",
+    "native_tool.py": "aa70856f7b6af71136fd0ad2fca264a0520616af14b0c4da8c57b7b43cae77dd",
+    "offline-checks.json": "06f99119761204a63ce6987ecfb0ff67ca74dc7e91a612661228e13da862f9dd",
+    "README.md": "8d8b2936c0b5010653e55c0e5d85c0d6de01a027748db541f0ea99ab3c754ae7",
+    "verify_results.py": "929201d6a5e4720b98c3ce073b89486cf2db35e4ca49ade181eac091af93716c"
+  }
+}

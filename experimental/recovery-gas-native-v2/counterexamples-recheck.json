@@ -1,0 +1,23 @@
+{
+  "prior_review": "../recovery-gas-native-review/counterexamples.json",
+  "counterexamples": [
+    {
+      "name": "Remote disappears 1ms after birth while native source and wire remain alive",
+      "accepted": false
+    },
+    {
+      "name": "Later remote pose and frame wrong after first matching pose",
+      "accepted": false
+    },
+    {
+      "name": "Source Part and displayed source positions unrelated to wire",
+      "accepted": false
+    },
+    {
+      "name": "Identical complete histories have ambiguous identities",
+      "accepted": false
+    }
+  ],
+  "JVM_started": false,
+  "AIR_started": false
+}

@@ -1,0 +1,33 @@
+{
+  "kind": "frozen-native-raster-scene-input-adapter",
+  "candidate": "build/m52/recovery-13",
+  "candidate_sha256": "1177eb1ae9b227bcf3c0eb39dedad92b63ac16dcb7ffb0b421ea0a2024bfddb1",
+  "native_host": "build/m52/recovery-first-raster-host-03",
+  "native_host_sha256": "fd92fbd5ae92b5c8d4cbf8151d11796a140810f34988b7031e258c747d86734e",
+  "static_checks": 58,
+  "static_failed": 0,
+  "air_started": false,
+  "driver_compiled": false,
+  "files": {
+    "check_native_sources.py": "63a9323aa296c47ebb2702498ffc5b98615290f0d20fac04522efaaa0d7ae3fb",
+    "driver-inputs.json": "f36e38663938117c1e23c89a4340ce5cf13a7de3fca6ad119e8b9c6e53cb5c47",
+    "generate_runner.py": "714d4088566f4207244976cbdf6050768e4e8cc31b1d6ea13809f4ec4115f342",
+    "generate_scene_driver.py": "4ff51b0593d0fb3fce95385539a966aae047e38967bc2f3869af0f7e119faeb0",
+    "native-static-checks.json": "025c9523ce4828eec386daa94ec088096f5fdba38bee288f6cd4d35062512901",
+    "native_inputs.py": "45091e8cc3a35c225308ee154b3a5bc49a7107f60f2e0f840d14a164e85a3889",
+    "prepare_scene.py": "052c04e3ec527845d4deb82c413976393769b1c57f6d3eccbc7e5144f9c0e362",
+    "readback-offline-checks.json": "a46a7ab4fcdf289e732c5084bc2c61a16f5c26c69561f8db93aced8fee625ca0",
+    "readback.py": "96e413ff9a596e40a8ad74fe66a4d1c8b8325f3b3890c5a9c0595b53287231e2",
+    "README.md": "9f23689880e86e5370abf9bbb6603e623dfe90ba59886e5f1c4ea59b2c40c632",
+    "reverify_host.py": "47ce9c10e256d56554ea3ab1704b7db2833cc5dbb242e03a285ea2149e4472a6",
+    "run_native.py": "69d6e237b642821479f6d05c9af9a74f7cd62a4884578d4072fbeb7b7402ea6a",
+    "runner-inputs.json": "62983a54812d1bd44024d4e8a3e770ded31c0faffda14d999a355f106816b6c0",
+    "runner.patch": "3b80ec2f859e4c3142e0dfeebfb467fd1e031b2e8b8067f5f6df68def767e10a",
+    "scene-driver.patch": "725d29db81c775b2486b60e4ebcc27229ac04b9d504d7577d8d9d97d842ad470",
+    "test_readback.py": "b048c449c1c268540a7824d256b40b5ed2f8c234eb5bdd42dc0aee1039faaf3c",
+    "tests/A22RoomMetrics.as": "314823fd0fcd04e71277dcd3e8ee1a647317e611c5ff7b8fb0e7058c25179d6e",
+    "tests/FirstRasterSceneProbe.as": "b11e182eb74719a0a02a831b160dda8d2475a106f0770d3631411572ce17b8a2",
+    "tests/RoomTravelSceneTestDoc.as": "55e2caa583fc5f14c1844e10fd46506b9d681b889fb9b94ab82053b02df2547b",
+    "tests/RoomTravelTimingTestDoc.as": "c90ae2641986a54e1ecec1343b80c0c942461b4e55aa7b25a33b014d751b2201"
+  }
+}

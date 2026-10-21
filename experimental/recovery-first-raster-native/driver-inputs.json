@@ -1,0 +1,14 @@
+{
+  "base_manifest": "3106b031b97743e2a0fda30e26ab735a387b201683339ab4335a998b0d25b784",
+  "cold_manifest": "d8f7671f055e99f1da98ded93f6da5a237a036e7cf0a713c9c3d854efba0da23",
+  "cold_source_sha256": "7fc2b7a69fab14b0e4dacd0f15fceefd4f646c4d339120f2918ea901a4847f5f",
+  "sources": {
+    "A22RoomMetrics.as": "314823fd0fcd04e71277dcd3e8ee1a647317e611c5ff7b8fb0e7058c25179d6e",
+    "FirstRasterSceneProbe.as": "b11e182eb74719a0a02a831b160dda8d2475a106f0770d3631411572ce17b8a2",
+    "RoomTravelSceneTestDoc.as": "55e2caa583fc5f14c1844e10fd46506b9d681b889fb9b94ab82053b02df2547b",
+    "RoomTravelTimingTestDoc.as": "c90ae2641986a54e1ecec1343b80c0c942461b4e55aa7b25a33b014d751b2201"
+  },
+  "compiled": false,
+  "runtime_tested": false,
+  "original_scene_checks_retained": true
+}
