@@ -1,0 +1,140 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "passed": true,
+      "label": "frozen10 unchanged: rconnect/game/GameBridge.as"
+    },
+    {
+      "passed": true,
+      "label": "09/10 equal: rconnect/game/GameBridge.as"
+    },
+    {
+      "passed": true,
+      "label": "overlay is exact approved local delta: rconnect/game/GameBridge.as"
+    },
+    {
+      "passed": true,
+      "label": "overlay hash: rconnect/game/GameBridge.as"
+    },
+    {
+      "passed": true,
+      "label": "all other methods byte-equivalent: rconnect/game/GameBridge.as"
+    },
+    {
+      "passed": true,
+      "label": "frozen10 unchanged: rconnect/game/ObjectIdentity.as"
+    },
+    {
+      "passed": true,
+      "label": "09/10 equal: rconnect/game/ObjectIdentity.as"
+    },
+    {
+      "passed": true,
+      "label": "overlay is exact approved local delta: rconnect/game/ObjectIdentity.as"
+    },
+    {
+      "passed": true,
+      "label": "overlay hash: rconnect/game/ObjectIdentity.as"
+    },
+    {
+      "passed": true,
+      "label": "all other methods byte-equivalent: rconnect/game/ObjectIdentity.as"
+    },
+    {
+      "passed": true,
+      "label": "component fingerprint: components/LookupUnit.as"
+    },
+    {
+      "passed": true,
+      "label": "component fingerprint: components/rconnect/game/GameBridge.as"
+    },
+    {
+      "passed": true,
+      "label": "component fingerprint: components/rconnect/game/LookupCounters.as"
+    },
+    {
+      "passed": true,
+      "label": "component fingerprint: components/rconnect/game/ObjectIdentity.as"
+    },
+    {
+      "passed": true,
+      "label": "component fingerprint: components/rconnect/game/ObjectIdentityControl.as"
+    },
+    {
+      "passed": true,
+      "label": "component fingerprint: components/rconnect/game/ObjectIdentityCountControl.as"
+    },
+    {
+      "passed": true,
+      "label": "component fingerprint: components/rconnect/game/ObjectIdentityCountProposal.as"
+    },
+    {
+      "passed": true,
+      "label": "component fingerprint: components/UnitLookupChecks.as"
+    },
+    {
+      "passed": true,
+      "label": "readonly dependency: MirrorHitUnit.as"
+    },
+    {
+      "passed": true,
+      "label": "readonly dependency: MirrorMasks.as"
+    },
+    {
+      "passed": true,
+      "label": "timed proposal is full real class with no instrumentation"
+    },
+    {
+      "passed": true,
+      "label": "timed control changes class name only"
+    },
+    {
+      "passed": true,
+      "label": "counter full class has only native indexOf wrapper: before"
+    },
+    {
+      "passed": true,
+      "label": "counter full class has only native indexOf wrapper: after"
+    },
+    {
+      "passed": true,
+      "label": "valid position computed once"
+    },
+    {
+      "passed": true,
+      "label": "both explicit prepares retained"
+    },
+    {
+      "passed": true,
+      "label": "register call unchanged"
+    },
+    {
+      "passed": true,
+      "label": "existing native/effect call order unchanged apart from redundant validator"
+    },
+    {
+      "passed": true,
+      "label": "only new receiver skips second sync"
+    },
+    {
+      "passed": true,
+      "label": "native proxy constructor ends in sync"
+    },
+    {
+      "passed": true,
+      "label": "guard-only finite membership equivalence: 13104 combinations"
+    },
+    {
+      "passed": true,
+      "label": "18 declared full-class comparison scenarios"
+    }
+  ],
+  "count": 32,
+  "guard_combinations": 13104,
+  "full_class_as3_executed": false,
+  "compiled": false,
+  "air_run": false,
+  "planned_case_count": 18,
+  "performance_qualified": false
+}

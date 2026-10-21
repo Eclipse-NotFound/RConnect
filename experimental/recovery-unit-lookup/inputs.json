@@ -1,0 +1,32 @@
+{
+  "base": "build/m52/recovery-10",
+  "version": "0.2.24-recovery10",
+  "base_swf_sha256": "184eea3d6405ee57cb0bc3f6cfa78668f5ca9334888b0ca2af04095bc17c4608",
+  "sources": {
+    "rconnect/game/GameBridge.as": {
+      "base_sha256": "e1cd085795e134ca293a5eb83fe44e22a0bc7edfb172f960a2c6a1e8bdec9260",
+      "proposal_sha256": "300b349066f8d87d323588e1fce45b74ecedf39f7883fee9cea75287fd81f000"
+    },
+    "rconnect/game/ObjectIdentity.as": {
+      "base_sha256": "0bc4cc3429f78f0e43164dea4af4481e4230fdf335bd0eed6e7090baf0937774",
+      "proposal_sha256": "aa52a8e51099c94d833bcc7cc938e3e2dd111fbfe6e08086c9f485d0b2ee9d38"
+    }
+  },
+  "components": {
+    "components/LookupUnit.as": "5d684f38ec1d74e88bd7dec7ad37396dd851cd25c3639a377504ead16198a5f3",
+    "components/rconnect/game/GameBridge.as": "1604c78ee001079ea1f3c5956a090494622f7e0cac377d46646a88ba7a5922cc",
+    "components/rconnect/game/LookupCounters.as": "b2c922d01559e04564020eaf9801d637873a6b98e99a3873db78cf54ef850afa",
+    "components/rconnect/game/ObjectIdentity.as": "aa52a8e51099c94d833bcc7cc938e3e2dd111fbfe6e08086c9f485d0b2ee9d38",
+    "components/rconnect/game/ObjectIdentityControl.as": "e1f7fdc9d5ce66f5b29d3ca7d825288dbe68ee5d40636d1819aa99b1e49087cd",
+    "components/rconnect/game/ObjectIdentityCountControl.as": "0bcbc5b9f497cf6f0e9934a995cd3ba73b0f5e0b8bf01a0af055328b9fbd4b79",
+    "components/rconnect/game/ObjectIdentityCountProposal.as": "521d5d94dbda4f2ec55e3011c1c608c473b0447875fa0cd06d4c4f80a96cb38e",
+    "components/UnitLookupChecks.as": "f2bccacadd7aafa3047fde79d904ba7bd739a2ad1df65efa8727df59effaab2f"
+  },
+  "read_only_dependencies": {
+    "MirrorHitUnit.as": "e5339ba7481c4e14d90171939e4a8729a4b8812dddf27bce1a006dd65de79147",
+    "MirrorMasks.as": "b4283cf68870010c4d454a6c7d511f00dbc5c3540e1839f878dfe680084f5e24"
+  },
+  "compiled": false,
+  "air_run": false,
+  "measurement_boundary": "Full ObjectIdentity classes; only native GameBridge.probe is a documented fixture. Timings use uninstrumented classes; call counts use separate full-class copies with one indexOf wrapper."
+}

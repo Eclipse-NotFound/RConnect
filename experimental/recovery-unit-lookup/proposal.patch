@@ -1,0 +1,76 @@
+--- recovery-10/src/rconnect/game/GameBridge.as
++++ recovery-unit-lookup/src/rconnect/game/GameBridge.as
+@@ -5633,10 +5633,14 @@
+          _mirroring = true;
+          _units.enter(loc);
+          var used:Dictionary = new Dictionary();
++         var members:Dictionary = new Dictionary();
++         var unitList:Array = units as Array;
++         for(var memberIndex:int=0;memberIndex<unitList.length;memberIndex++)
++            if(unitList[memberIndex]!=null)members[unitList[memberIndex]]=memberIndex;
+          for each(var e:Object in list)
+          {
+             var eid:String = String(e.id);
+-            var target:Object = _units.resolve(e, units as Array, used);
++            var target:Object = _units.resolve(e, unitList, used, members);
+             if(target == null)
+             {
+                continue;
+@@ -5648,7 +5652,8 @@
+                if(freezeAI && securityTurret(target) && e.security!=null)fe.unit.RConnectSecurityAccess.mirror(target,e.security,int(e.fraction));
+                // M26：镜像落点校验（同注入防护）——生成图两侧几何不同时
+                // 拒绝越界 setPos，保命优先于位置精度（就近吸附会瞬移）
+-               if(validLandPos(Number(e.x), Number(e.y)) == null)
++               var safe:Object = validLandPos(Number(e.x), Number(e.y));
++               if(safe == null)
+                {
+                   if(!_posSkipLogged[eid])
+                   {
+@@ -5659,7 +5664,6 @@
+                }
+                else
+                {
+-                  var safe:Object = validLandPos(Number(e.x), Number(e.y));
+                   queueUnitMotion(target, Number(safe.x), Number(safe.y),e.sampleTime,e.bodyEffects,e);
+                }
+                if(e.sost != undefined && Number(e.sost) != -1)
+@@ -5758,7 +5762,8 @@
+                if(freezeAI && numOr(e.fraction,0)>0 && (numOr(e.fraction,0)<100 || securityTurret(target))
+                   && numOr(e.sost,1)<3 && !isTrigger(target))
+                {
+-                  if(hit == null)
++                  var createdHit:Boolean = hit == null;
++                  if(createdHit)
+                   {
+                      _mirrorMasks.prepare(target);
+                      hit = new MirrorHitUnit(target);
+@@ -5766,7 +5771,8 @@
+                      (units as Array).push(hit);
+                   }
+                   _mirrorMasks.prepare(target);
+-                  hit.sync();
++                  // A new receiver already syncs at the end of its constructor.
++                  if(!createdHit)hit.sync();
+                   _mirrorMasks.register(target,hit);
+                }
+                else if(hit != null) removeHitUnit(target);
+--- recovery-10/src/rconnect/game/ObjectIdentity.as
++++ recovery-unit-lookup/src/rconnect/game/ObjectIdentity.as
+@@ -67,12 +67,15 @@
+          if(k.indexOf(prefix)==0)serial=Math.max(serial,int(k.substr(prefix.length)));
+       }
+ 
+-      public function resolve(s:Object, list:Array, used:Dictionary):Object
++      public function resolve(s:Object, list:Array, used:Dictionary, members:Dictionary=null):Object
+       {
+          if(s == null || list == null) return null;
+          var k:String = s.k == null ? "" : String(s.k);
+          var found:Object = k == "" ? null : objects[k];
+-         if(found != null && list.indexOf(found) >= 0 && used[found] != true)
++         // A per-call index is only a hint: native callbacks may move/remove entries.
++         var memberIndex:* = members==null || found==null ? undefined : members[found];
++         if(found != null && ((memberIndex!==undefined && list[int(memberIndex)]===found)
++            || list.indexOf(found) >= 0) && used[found] != true)
+          {
+             used[found] = true;
+             return found;

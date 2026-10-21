@@ -1,0 +1,13 @@
+{
+  "entry": "components/UnitLookupChecks.as",
+  "source_path": "components",
+  "result": "File.applicationStorageDirectory/result.json",
+  "output_rule": "new build/m52 directory; registry + unique AIR ID + hidden desktop required",
+  "do_not_include": [
+    "src/rconnect/game/GameBridge.as",
+    "game SWF",
+    "stub SWC"
+  ],
+  "native_game": false,
+  "compile_and_run": "parent only; not executed by prepare.py"
+}
