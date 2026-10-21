@@ -1,0 +1,115 @@
+--- original-frame-helper
++++ intact-partial-frame-helper
+@@ -50,8 +50,8 @@
+       private function beginFrame(e:Event):void {
+          frameNo++;
+          if(!armed || stopped)return;
+-         // A second ENTER without RENDER is not a completed frame sample.
+-         if(current!=null)closeWindow("missing-render",false);
++         // A second ENTER closes the actual elapsed range, never invents RENDER.
++         if(current!=null)closeWindow("missing-render",true);
+          if(getTimer()-armAt>MAX_WINDOW_MS){stop("diagnostic-window-cap");return;}
+          observed++;
+          var take:Boolean=selected<MAX_WINDOWS;
+@@ -61,9 +61,11 @@
+          if(!take){skipped++;return;}
+          var w:Object={id:selected++,frame:frameNo,startAt:getTimer(),endAt:-1,startNative:0,endNative:0,
+             beginCostMs:0,closeCostMs:0,scanCostMs:0,nativeScanned:0,nativeScanComplete:false,
+-            cpuDropped:0,stackTruncated:false,nativeTruncated:false,duplicateRenders:0,
+-            contextStart:row.context,contextEnd:null,closeReason:"open",valid:false,
+-            invalidReasons:[],cpuRows:[],stacks:[],lastNative:0};
++            cpuDropped:0,stackTruncated:false,stack_tail_truncated:false,complete_stack_capture:false,
++            nativeTruncated:false,duplicateRenders:0,
++            contextStart:row.context,contextEnd:null,closeReason:"open",
++            usable_cpu:false,partial_window:false,completed_render_window:false,
++            invalidReasons:[],cpuRows:[],stacks:[],stack_tails:[],lastNative:0};
+          windows.push(w);current=w;lastClosed=null;
+          try {
+             clearSamples();sampleInternalAllocs(false);startSampling();
+@@ -96,13 +98,16 @@
+          }
+          w.contextEnd=readContext();
+          if(w.cpuRows.length==0)invalidate(w,"no-cpu-samples");
+-         w.valid=w.invalidReasons.length==0;
+-         if(w.valid){keptCpu+=w.cpuRows.length;keptStacks+=w.stacks.length;}
+-         else {w.cpuRows=[];w.stacks=[];}
++         w.usable_cpu=w.invalidReasons.length==0;
++         w.completed_render_window=w.usable_cpu && reason=="render";
++         w.partial_window=w.usable_cpu && (reason=="missing-render" || reason=="stop-before-render");
++         w.complete_stack_capture=w.usable_cpu && !w.stack_tail_truncated;
++         if(w.usable_cpu){keptCpu+=w.cpuRows.length;keptStacks+=w.stacks.length;}
++         else {w.cpuRows=[];w.stacks=[];w.stack_tails=[];}
+          w.closeCostMs=getTimer()-closing;
+       }
+       private function scan(w:Object):void {
+-         var began:int=getTimer(),seen:int=0,ids:Object={},rows:Array=[],namesById:Array=[];
++         var began:int=getTimer(),seen:int=0,ids:Object={},rows:Array=[],namesById:Array=[],tailsById:Array=[];
+          var remainingCpu:int=MAX_CPU-keptCpu,remainingStacks:int=MAX_STACKS-keptStacks;
+          try {
+             for each(var sample:Sample in getSamples()) {
+@@ -110,16 +115,17 @@
+                var ordinal:int=seen++;
+                if(sample is NewObjectSample || sample is DeleteObjectSample)continue;
+                if(rows.length>=remainingCpu){w.cpuDropped++;invalidate(w,"cpu-cap");continue;}
+-               var names:Array=[],depth:int=0;
++               var names:Array=[],depth:int=0,tail:Boolean=false;
+                if(sample.stack!=null)for each(var f:StackFrame in sample.stack) {
+-                  if(depth++>=MAX_DEPTH){w.stackTruncated=true;invalidate(w,"stack-depth-cap");break;}
++                  // Only outer callers are omitted; the native buffer and visible leaf remain valid.
++                  if(depth++>=MAX_DEPTH){tail=true;w.stack_tail_truncated=true;break;}
+                   var name:String=String(f.name);
+                   if(name.length>MAX_NAME){name=name.substr(0,MAX_NAME);w.stackTruncated=true;invalidate(w,"stack-name-cap");}
+                   names.push(name);
+                }
+-               var key:String="$"+JSON.stringify(names),id:int;
++               var key:String=(tail?"$tail:":"$full:")+JSON.stringify(names),id:int;
+                if(ids.hasOwnProperty(key))id=int(ids[key]);
+-               else if(namesById.length<remainingStacks){id=namesById.length;ids[key]=id;namesById.push(names);}
++               else if(namesById.length<remainingStacks){id=namesById.length;ids[key]=id;namesById.push(names);tailsById.push(tail);}
+                else {w.stackTruncated=true;invalidate(w,"stack-count-cap");continue;}
+                var stamp:Number=Number(sample.time);
+                if(!isFinite(stamp) || stamp<0){invalidate(w,"sample-time-invalid");continue;}
+@@ -128,7 +134,7 @@
+          } catch(error:*) {invalidate(w,"sampler-enumeration");}
+          w.nativeScanned=seen;w.nativeScanComplete=seen==Number(w.endNative);
+          if(!w.nativeScanComplete)invalidate(w,"native-enumeration-count");
+-         w.cpuRows=rows;w.stacks=namesById;w.scanCostMs=getTimer()-began;
++         w.cpuRows=rows;w.stacks=namesById;w.stack_tails=tailsById;w.scanCostMs=getTimer()-began;
+       }
+       public function frame():void {mark("driver-frame");}
+       public function mark(label:String,originalClock:int=-1):void {
+@@ -146,8 +152,8 @@
+       public function stop(why:String):void {
+          if(stopped)return;
+          mark("capture-stop");stopAt=getTimer();stopReason=why;
+-         // An input failure/finish during ENTER does not invent a final RENDER.
+-         if(current!=null)closeWindow("stop-before-render",false);
++         // Keep intact CPU evidence through this actual stop; no final RENDER.
++         if(current!=null)closeWindow("stop-before-render",true);
+          stopped=true;
+       }
+       public function finish():void {
+@@ -155,7 +161,7 @@
+          stage.removeEventListener(Event.ENTER_FRAME,beginFrame);stage.removeEventListener(Event.RENDER,endFrame);
+          for(var item:Object in links)item.removeEventListener(TcpLink.MESSAGE,grantReturned);
+          links=new Dictionary();
+-         var report:Object={schema:2,diagnosticOnly:true,performanceQualified:false,
++         var report:Object={schema:3,diagnosticOnly:true,performanceQualified:false,
+             applicationId:NativeApplication.nativeApplication.applicationID,role:"join",round:0,
+             armed:armed,armAt:armAt,grantFrame:grantFrame,stopAt:stopAt,stopReason:stopReason,
+             origin:"first six ENTER_FRAME windows after round0 target grant handlers return; grant itself excluded",
+@@ -167,12 +173,12 @@
+             sampleTime:"raw Sample.time microseconds; no offset to getTimer is assumed",
+             ordinalMeaning:"per-window native index; reset each ENTER_FRAME, never compare across windows",
+             countsAreNotDurations:true,allocationClassesExported:false,samplerCallbackUsed:false};
+-         var file:File=File.applicationStorageDirectory.resolvePath("room-input-cpu-frames.json");
++         var file:File=File.applicationStorageDirectory.resolvePath("room-input-cpu-frames-partial.json");
+          var stream:FileStream=new FileStream();
+          try {
+             stream.open(file,FileMode.WRITE);stream.writeUTFBytes(JSON.stringify(report));stream.close();
+             Log.d("SCENE INPUT CPU FRAMES FILE "+JSON.stringify({file:file.name,windows:windows.length,
+-               validCpu:keptCpu,reason:stopReason,diagnosticOnly:true}));
++               usableCpu:keptCpu,reason:stopReason,diagnosticOnly:true}));
+          }catch(error:*) {try{stream.close();}catch(ignored:*){}
+             Log.d("COOP FAIL travel-timing CPU frame diagnostic export unavailable");}
+       }

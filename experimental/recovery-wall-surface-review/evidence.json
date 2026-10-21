@@ -1,0 +1,202 @@
+{
+  "kind": "readonly-review-no-new-runtime",
+  "source_sha256": {
+    "build/m52/recovery-14/src/rconnect/game/WallImpactVisuals.as": "0c0917eac6c417814612183f4951d2d0a37cad5ab2743945b6313d941532d3f5",
+    "build/m52/recovery-14/src/rconnect/game/BallisticImpactVisuals.as": "516ce98fb6d9523c5eeb7b7c8e9c4ccb320d11a75594af26f3e3c6e3b8caf6eb",
+    "build/m52/recovery-14/src/rconnect/game/EnergyImpactVisuals.as": "8f6f299600e25ee019e88ff118cec4da51b318f196afa4bcf5ff5e6680fcd7c0",
+    "build/m52/recovery-first-raster-host-03/import/fe/graph/Grafon.as": "976526e741392904bb2575c7e6c73055cdb589ae177e033ad9fdebcc6faa850d",
+    "build/m52/recovery-first-raster-host-03/before/scripts/fe/graph/Grafon.as": "09ff2387e744acb9716ae6760de2f8a1c49963da76ae97d072d1bcb759ab6ef3",
+    "build/m52/recovery-first-raster-host-03/prepared.json": "1dfa42c494c33eafb0cab1ca5b6ad43f5a6ae73419ce657827e952a4dfd74312",
+    "build/m52/recovery-drivers-10/tests/EnergyImpactTestDoc.as": "0cd8f51cea09d497ecea1ed6ff27fd94af54d07afde27d67766a836ab493e057",
+    "build/m52/recovery-drivers-10/tests/WallBallisticTestDoc.as": "50b91b3b4a334eced2da2bf11e630ab66199fec62a0c1f1354b43fbc06bc01d2",
+    "tests/WallImpactTestDoc.as": "2ae12500d04ac64620dadcf6d0944c204e735481442173a68038a43ce9357578",
+    "experimental/recovery-wall-encode/components/WallEncodeChecks.as": "1ae84a1e6e2b8238a612227378f6a9390ee45e3a968bf4a094681e9dde9965e7",
+    "build/cooperation/4c2df11055/run.json": "ab96c0a624aee0e9380f643e0c466e4434deb0f176abe5083f53e2907e2998fd",
+    "build/cooperation/1a257a900d/run.json": "bc7a937af5d692c655e87693eddbcb633134778f059d50c291bf361c5ea149a5",
+    "build/cooperation/1a257a900d/host.log": "cf4623894fdf892b85a3ab981f5ec14cf6d6248f68f23cebbb3583478d0b7f0f",
+    "build/cooperation/1a257a900d/join.log": "20ac89c2ebf2ee070b51864f9fefb83b165c8c34ded2d4d91e8688714d7393ce",
+    "workspace:mods/WallBlend/src/wallblend/SceneBlendCache.as": "d0c65b4ec10f1297fc0c395670150b7ee880396c46defcd633a68f01c52a1c17",
+    "workspace:mods/ContinuousScene/src/ContinuousSceneMod.as": "d97c62521892dbf46dbac9d38bfe6cb721fb49d0f8fea5cfea4b5e796851c450"
+  },
+  "native_run": "4c2df11055",
+  "roles": {
+    "host": {
+      "log_sha256": "6feeea2b7754b4828f2e7dbe847bae7a27b911431023dd9796f12368e79448c8",
+      "wallblend_sha256": "38edd113ecfe4ef404dcea64493090aa481980b806ecee9eefabbc50f2bba1f4",
+      "pass": 106,
+      "fail": 0,
+      "scene_observations": [
+        {
+          "line": 2,
+          "at": 12797,
+          "largeScene": false,
+          "sceneChunks": 0
+        },
+        {
+          "line": 4,
+          "at": 24124,
+          "largeScene": false,
+          "sceneChunks": 0
+        },
+        {
+          "line": 5,
+          "at": 34127,
+          "largeScene": false,
+          "sceneChunks": 0
+        },
+        {
+          "line": 6,
+          "at": 44149,
+          "largeScene": false,
+          "sceneChunks": 0
+        },
+        {
+          "line": 7,
+          "at": 54161,
+          "largeScene": false,
+          "sceneChunks": 0
+        },
+        {
+          "line": 8,
+          "at": 64170,
+          "largeScene": false,
+          "sceneChunks": 0
+        },
+        {
+          "line": 9,
+          "at": 74217,
+          "largeScene": false,
+          "sceneChunks": 0
+        },
+        {
+          "line": 10,
+          "at": 84223,
+          "largeScene": false,
+          "sceneChunks": 0
+        },
+        {
+          "line": 11,
+          "at": 94243,
+          "largeScene": false,
+          "sceneChunks": 0
+        },
+        {
+          "line": 12,
+          "at": 104254,
+          "largeScene": false,
+          "sceneChunks": 0
+        },
+        {
+          "line": 13,
+          "at": 114272,
+          "largeScene": false,
+          "sceneChunks": 0
+        },
+        {
+          "line": 14,
+          "at": 124287,
+          "largeScene": false,
+          "sceneChunks": 0
+        },
+        {
+          "line": 15,
+          "at": 134316,
+          "largeScene": false,
+          "sceneChunks": 0
+        },
+        {
+          "line": 16,
+          "at": 144320,
+          "largeScene": false,
+          "sceneChunks": 0
+        },
+        {
+          "line": 17,
+          "at": 154339,
+          "largeScene": false,
+          "sceneChunks": 0
+        }
+      ]
+    },
+    "join": {
+      "log_sha256": "c7f25497c8a9a854000eb03c74ae0df3c937a39012b7b8aff5e90d47d9a4201e",
+      "wallblend_sha256": "8d337da414586b34de32e7505f3f0440b4ed1fcdaf3cc8efdc0f81cea7709dce",
+      "pass": 104,
+      "fail": 0,
+      "scene_observations": [
+        {
+          "line": 2,
+          "at": 12488,
+          "largeScene": false,
+          "sceneChunks": 0
+        },
+        {
+          "line": 4,
+          "at": 24609,
+          "largeScene": false,
+          "sceneChunks": 0
+        },
+        {
+          "line": 5,
+          "at": 34626,
+          "largeScene": false,
+          "sceneChunks": 0
+        },
+        {
+          "line": 6,
+          "at": 44652,
+          "largeScene": false,
+          "sceneChunks": 0
+        },
+        {
+          "line": 7,
+          "at": 54671,
+          "largeScene": false,
+          "sceneChunks": 0
+        },
+        {
+          "line": 8,
+          "at": 64708,
+          "largeScene": false,
+          "sceneChunks": 0
+        },
+        {
+          "line": 9,
+          "at": 74708,
+          "largeScene": false,
+          "sceneChunks": 0
+        },
+        {
+          "line": 10,
+          "at": 84730,
+          "largeScene": false,
+          "sceneChunks": 0
+        },
+        {
+          "line": 11,
+          "at": 94735,
+          "largeScene": false,
+          "sceneChunks": 0
+        },
+        {
+          "line": 12,
+          "at": 104758,
+          "largeScene": false,
+          "sceneChunks": 0
+        },
+        {
+          "line": 13,
+          "at": 114762,
+          "largeScene": false,
+          "sceneChunks": 0
+        }
+      ]
+    }
+  },
+  "old_persistent_run": "1a257a900d",
+  "limitations": [
+    "No new sceneLarge paired pixel test was run.",
+    "Old persistent run uses c631 host / final-presentation-29, not recovery14.",
+    "Other mod consumers were read from necessary current source only."
+  ]
+}

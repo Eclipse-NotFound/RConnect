@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "base_files": 88,
+  "output_files": 88,
+  "unchanged_base_files": 86,
+  "changed": [
+    "RConnectMod.as",
+    "rconnect/game/UnitPresentation.as"
+  ],
+  "class_overlay_byte_exact": true,
+  "version_only_entry_change": true,
+  "component_assertions": 54,
+  "component_failed": 0,
+  "JVMStarted": false,
+  "AIRStarted": false,
+  "compiled": false,
+  "native_game_tested": false,
+  "performance_qualified": false
+}

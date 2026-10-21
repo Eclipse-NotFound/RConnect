@@ -1,0 +1,361 @@
+{
+  "scope": "source-only and Python report counterexamples; not AS execution",
+  "assertions": [
+    {
+      "passed": true,
+      "label": "original helper preserved exactly in original and baseline"
+    },
+    {
+      "passed": true,
+      "label": "original source manifest preserved exactly"
+    },
+    {
+      "passed": true,
+      "label": "exact frozen shared scene ancestor"
+    },
+    {
+      "passed": true,
+      "label": "entire original driver recovered by stripping only diagnostic inserts"
+    },
+    {
+      "passed": true,
+      "label": "unchanged A22RoomMetrics.as"
+    },
+    {
+      "passed": true,
+      "label": "unchanged FirstRasterSceneProbe.as"
+    },
+    {
+      "passed": true,
+      "label": "unchanged RoomTravelSceneTestDoc.as"
+    },
+    {
+      "passed": true,
+      "label": "unchanged SeedGateNativeIntent.as"
+    },
+    {
+      "passed": true,
+      "label": "original 1000ms and three-frame checks preserved"
+    },
+    {
+      "passed": true,
+      "label": "original deadline precedes accepting third baseline frame"
+    },
+    {
+      "passed": true,
+      "label": "join-only helper receives actual stage"
+    },
+    {
+      "passed": true,
+      "label": "eligibility still round0 target travel only"
+    },
+    {
+      "passed": true,
+      "label": "arm after target grant handlers, never starts sampling in grant"
+    },
+    {
+      "passed": true,
+      "label": "grant callback excludes CPU capture entirely"
+    },
+    {
+      "passed": true,
+      "label": "high-priority frame begin and final render end"
+    },
+    {
+      "passed": true,
+      "label": "first six actual post-grant frames only"
+    },
+    {
+      "passed": true,
+      "label": "unselected and omitted frame records explicit"
+    },
+    {
+      "passed": true,
+      "label": "missing render reads intact elapsed range before next window"
+    },
+    {
+      "passed": true,
+      "label": "duplicate same-frame RENDER never reopens sampler"
+    },
+    {
+      "passed": true,
+      "label": "finish/input failure reads intact elapsed range without inventing RENDER"
+    },
+    {
+      "passed": true,
+      "label": "CPU integrity separate from completed render qualification"
+    },
+    {
+      "passed": true,
+      "label": "only intact non-render windows marked partial"
+    },
+    {
+      "passed": true,
+      "label": "no full-buffer callback dependency"
+    },
+    {
+      "passed": true,
+      "label": "pause before enumeration"
+    },
+    {
+      "passed": true,
+      "label": "each selected sampler window ends independently"
+    },
+    {
+      "passed": true,
+      "label": "zero/lost/incomplete native samples explicitly invalid"
+    },
+    {
+      "passed": true,
+      "label": "invalid window discards all CPU and stack data"
+    },
+    {
+      "passed": true,
+      "label": "native count precheck and iterator hard cap"
+    },
+    {
+      "passed": true,
+      "label": "retained CPU and stack limits apply globally across windows"
+    },
+    {
+      "passed": true,
+      "label": "bounded stack depth and text"
+    },
+    {
+      "passed": true,
+      "label": "outer stack depth truncation retains visible leaf without invalidating buffer"
+    },
+    {
+      "passed": true,
+      "label": "truncated prefix distinct from genuinely complete 24-level stack"
+    },
+    {
+      "passed": true,
+      "label": "full-stack qualification separate from buffer and render completion"
+    },
+    {
+      "passed": true,
+      "label": "skip allocations/deletions before reading stack"
+    },
+    {
+      "passed": true,
+      "label": "no sampled allocation class/object/size inspection"
+    },
+    {
+      "passed": true,
+      "label": "CPU payload stored outside runtime log"
+    },
+    {
+      "passed": true,
+      "label": "diagnostic cost separately recorded"
+    },
+    {
+      "passed": true,
+      "label": "original failure and success boundaries stop sampler"
+    },
+    {
+      "passed": true,
+      "label": "stop before original failure output/cleanup"
+    },
+    {
+      "passed": true,
+      "label": "diagnostic does not claim runtime qualification"
+    },
+    {
+      "passed": true,
+      "label": "valid six windows qualify diagnostic despite original functional input failure"
+    },
+    {
+      "passed": true,
+      "label": "intact CPU windows yield actual stack summary"
+    },
+    {
+      "passed": true,
+      "label": "per-window ordinal reset accepted instead of false global regression"
+    },
+    {
+      "passed": true,
+      "label": "intact render with outer stack tail retains CPU but no full-stack qualification"
+    },
+    {
+      "passed": true,
+      "label": "summary keeps visible stack prefix and labels unknown caller tail"
+    },
+    {
+      "passed": true,
+      "label": "partial CPU and truncated caller tail remain independently qualified"
+    },
+    {
+      "passed": true,
+      "label": "missing-render retains intact CPU but never full-six qualification"
+    },
+    {
+      "passed": true,
+      "label": "missing-render summary exposes actual partial range and stacks"
+    },
+    {
+      "passed": true,
+      "label": "stop-before-render retains intact CPU but never full-six qualification"
+    },
+    {
+      "passed": true,
+      "label": "stop-before-render summary exposes actual partial range and stacks"
+    },
+    {
+      "passed": true,
+      "label": "all intact partial windows usable without any complete render claim"
+    },
+    {
+      "passed": true,
+      "label": "native-count-regressed remains invalid, does not infer stacks"
+    },
+    {
+      "passed": true,
+      "label": "native-scan-cap remains invalid, does not infer stacks"
+    },
+    {
+      "passed": true,
+      "label": "cpu-cap remains invalid, does not infer stacks"
+    },
+    {
+      "passed": true,
+      "label": "sampler-enumeration remains invalid, does not infer stacks"
+    },
+    {
+      "passed": true,
+      "label": "no-cpu-samples remains invalid, does not infer stacks"
+    },
+    {
+      "passed": true,
+      "label": "all-invalid capture unusable"
+    },
+    {
+      "passed": true,
+      "label": "marker overflow cannot claim complete capture"
+    },
+    {
+      "passed": true,
+      "label": "global time cap cannot claim complete capture"
+    },
+    {
+      "passed": true,
+      "label": "invalid window retains stacks rejected"
+    },
+    {
+      "passed": true,
+      "label": "missing RENDER marked complete rejected"
+    },
+    {
+      "passed": true,
+      "label": "partial and complete simultaneously rejected"
+    },
+    {
+      "passed": true,
+      "label": "partial absent despite no RENDER rejected"
+    },
+    {
+      "passed": true,
+      "label": "partial counter regression rejected"
+    },
+    {
+      "passed": true,
+      "label": "partial truncated buffer rejected"
+    },
+    {
+      "passed": true,
+      "label": "tail absent despite truncated stack rejected"
+    },
+    {
+      "passed": true,
+      "label": "tail marked but visible stack too short rejected"
+    },
+    {
+      "passed": true,
+      "label": "truncated tail claims complete stack rejected"
+    },
+    {
+      "passed": true,
+      "label": "stack tail metadata count mismatch rejected"
+    },
+    {
+      "passed": true,
+      "label": "invalid stack metadata retains CPU qualification rejected"
+    },
+    {
+      "passed": true,
+      "label": "counter regression marked valid rejected"
+    },
+    {
+      "passed": true,
+      "label": "zero CPU marked valid rejected"
+    },
+    {
+      "passed": true,
+      "label": "duplicate ordinal rejected"
+    },
+    {
+      "passed": true,
+      "label": "bad stack index rejected"
+    },
+    {
+      "passed": true,
+      "label": "non-finite sample time rejected"
+    },
+    {
+      "passed": true,
+      "label": "native scan beyond cap rejected"
+    },
+    {
+      "passed": true,
+      "label": "duplicate frame identity rejected"
+    },
+    {
+      "passed": true,
+      "label": "wrong duplicate-render total rejected"
+    },
+    {
+      "passed": true,
+      "label": "hidden skipped frame rejected"
+    },
+    {
+      "passed": true,
+      "label": "marker regression inside valid window rejected"
+    },
+    {
+      "passed": true,
+      "label": "too long stack name rejected"
+    },
+    {
+      "passed": true,
+      "label": "more than six windows rejected"
+    },
+    {
+      "passed": true,
+      "label": "source hash A22RoomMetrics.as"
+    },
+    {
+      "passed": true,
+      "label": "source hash FirstRasterSceneProbe.as"
+    },
+    {
+      "passed": true,
+      "label": "source hash RoomInputCpuProfile.as"
+    },
+    {
+      "passed": true,
+      "label": "source hash RoomTravelSceneTestDoc.as"
+    },
+    {
+      "passed": true,
+      "label": "source hash RoomTravelTimingTestDoc.as"
+    },
+    {
+      "passed": true,
+      "label": "source hash SeedGateNativeIntent.as"
+    }
+  ],
+  "passed": 88,
+  "failed": 0,
+  "compiled": false,
+  "runtime_tested": false
+}

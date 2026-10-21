@@ -1,0 +1,31 @@
+{
+  "ancestor_manifest": "fe7659ab07e113a2a873c54ee39169f9d769b954892ac0a49d5751ee5c94174d",
+  "compiled": false,
+  "runtime_tested": false,
+  "diagnostic_only": true,
+  "ancestors": {
+    "build/m52/recovery-seed-gate-driver-01/prepared.json": "fe7659ab07e113a2a873c54ee39169f9d769b954892ac0a49d5751ee5c94174d",
+    "experimental/recovery-input-cpu-profile/generate.py": "930668ef09bf3911c462517cb73ae03f4fe1066d069c5106123a5e5bbd793995",
+    "experimental/recovery-input-cpu-profile/prepare.py": "349bdc253421e7836010c20475365faab97eb6d6cd8eb3ffb6df6a705d93a915",
+    "experimental/recovery-seed-raster-control/prepare_driver.py": "e6fcc0cd1f580955663a024313605ff3dc08a6cfa2c9c52bbe9ff5a43465a569",
+    "experimental/recovery-seed-raster-control/native_runner.py": "685659bce8264761ba8b67a8e7f07a1cafffb4d6221747536077e114f4759cfa",
+    "experimental/recovery-seed-raster-control/control_inputs.py": "a1b5721ce3caa098e7cc065d8f4b60270ed463b64655710199cd17f79a648fd4"
+  },
+  "files": {
+    "check_sources.py": "80a8ce1e7ce65c03aef222b6879efdb26b14031f57ff89031aaa3202a24f4837",
+    "collect.py": "77f1be7d1dcdcf724dc662ecd73ca022076f5e60be88bc136146cd63b39c59f0",
+    "driver-inputs.json": "81d54ceae1c7dd5967742b2c7d53cee0bba3ad08ca982649ecabb0e7d2882544",
+    "driver.patch": "cfa3b1dbf1d5f7b9721ae695c5d17d3da6bfa8856aa6b477755fb7a61635debf",
+    "generate.py": "28d7c1f2e96032fe0818fc7bbbab412bc243f3429652436065bd42f05067b5f7",
+    "prepare.py": "fd7ac89e8b72b0a7ea9353d655be0cae4c84fbba65910c67bc1290bafa4d9164",
+    "README.md": "085b2a5fe92a81b510d7d49f25654eb8833c1b24b2212d3aca1939608cbffb3c",
+    "RoomInputCpuProfile.as": "02ade28f2347ae597a60dcb9613a48cf4ef77a31f2c61cf65b8b73e30e283132",
+    "static-checks.json": "47c00097641c4cf33275288d1bd926b281bc6ca295d1c7b9b14b0ea41b5f0d40",
+    "tests/A22RoomMetrics.as": "314823fd0fcd04e71277dcd3e8ee1a647317e611c5ff7b8fb0e7058c25179d6e",
+    "tests/FirstRasterSceneProbe.as": "b11e182eb74719a0a02a831b160dda8d2475a106f0770d3631411572ce17b8a2",
+    "tests/RoomInputCpuProfile.as": "02ade28f2347ae597a60dcb9613a48cf4ef77a31f2c61cf65b8b73e30e283132",
+    "tests/RoomTravelSceneTestDoc.as": "55e2caa583fc5f14c1844e10fd46506b9d681b889fb9b94ab82053b02df2547b",
+    "tests/RoomTravelTimingTestDoc.as": "0712ee98cdff5e6e8e37dfe06b8532988cd75231a5c5388111b31cf495f42a64",
+    "tests/SeedGateNativeIntent.as": "d20e0ec2485d0b3fde9a0efd663957c82c9b3f94b1d59d3bec346d0fce55feb7"
+  }
+}

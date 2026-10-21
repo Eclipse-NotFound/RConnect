@@ -1,0 +1,90 @@
+{
+  "run": "e2ecb96939",
+  "passed": false,
+  "performance_qualified": false,
+  "installed_unchanged": true,
+  "exclusive": true,
+  "same_runtime_as_reference": true,
+  "checks": {
+    "host": {
+      "pass": 29,
+      "fail": 0
+    },
+    "join": {
+      "pass": 40,
+      "fail": 14
+    }
+  },
+  "join_phases": [
+    {
+      "frames": 37,
+      "p95ms": 358,
+      "maxms": 396,
+      "aimSamples": 30
+    },
+    {
+      "frames": 40,
+      "p95ms": 339,
+      "maxms": 386,
+      "aimSamples": 32
+    },
+    {
+      "frames": 40,
+      "p95ms": 370,
+      "maxms": 423,
+      "aimSamples": 29
+    },
+    {
+      "frames": 39,
+      "p95ms": 395,
+      "maxms": 429,
+      "aimSamples": 27
+    },
+    {
+      "frames": 39,
+      "p95ms": 393,
+      "maxms": 453,
+      "aimSamples": 27
+    },
+    {
+      "frames": 39,
+      "p95ms": 351,
+      "maxms": 407,
+      "aimSamples": 29
+    },
+    {
+      "frames": 38,
+      "p95ms": 377,
+      "maxms": 389,
+      "aimSamples": 26
+    }
+  ],
+  "fixture_audit_keys": [
+    "original_result_sha256",
+    "performance_qualified",
+    "original_failures_preserved",
+    "input_comparable",
+    "attribution_allowed",
+    "passed",
+    "roles",
+    "module_errors",
+    "native_passed",
+    "diagnostic_only",
+    "reference",
+    "reference_result_sha256",
+    "differences",
+    "difference_count",
+    "same_driver",
+    "same_runtime",
+    "raw_spawn_differences",
+    "corridor",
+    "corridor_static_prepared",
+    "corridor_static_differences",
+    "corridor_static_equal",
+    "geometry_is_not_performance_pass",
+    "recipe_sha256",
+    "delegated_exit",
+    "original_result_unchanged",
+    "recipe_and_driver_unchanged"
+  ]
+}

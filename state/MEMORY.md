@@ -22,6 +22,7 @@ Remains 1.02 双人合作模组，入口 release/RConnectMod.swf。A 是普通�
 - 已完成用户要求的回退，安装仍 **0.2.23-coop-bundle2 / 574d2b51490ae8b25a1396555600f56a301f8a20ae50104c0e35cf2796441afe**。回执 `build/m52/motion2-user-rollback-20261021-215647/rollback.json`；精确护栏授权已撤销，不再重做。宿主 BEFC，RV7852、CS7F1F；每轮冻结22项，历史不同组合不得混用。
 - 准确 recovery13：`build/m52/recovery-13` / `1177eb1a…fddb1`，87AS。包含原版加载UI/首绘、念力光晕、击墙/气体/酸液与运动修正，但加载与密集性能仍失败，**未部署**。随机图首绘配套隔离宿主 `recovery-first-raster-host-03` / FD92；安装宿主未改。
 - 新 recovery14：`build/m52/recovery-14` / `225a794040c71f2a55ff433366a7969201ac3a58ffaab0a655cee1e4eefbe5f7`，88AS，只在13叠墙痕专用编码及版本字符串。完整源码 `experimental/recovery-wall-encode-buildsrc`；其它85类原字节不变。4277cc066e同driver02密集仍失败：主29/0、加40/14；加入七段36–42帧、p95 306–405ms。原生高速6e154179bd完成8组，主63/0、加76/2，接触显示帧数及闪电95ms间隔未达标。
+- 独立 recovery15：`build/m52/recovery-15` / `6fbb2d6cb8be8e454d875d7661714e2d879d8d92c1a96b8206f55e3e76ea1d72`，14仅叠武器姿态回退算术消重及版本。完整源码 `experimental/recovery-actor-pose-buildsrc`。e2ecb96939同场密集仍主29/0、加40/14失败，加入七段37–40帧、p95 339–395ms；没有足够整体改善，未部署。
 - 活动 `experimental/recovery-integrated` 仍是13；14独立源码，勿用旧根src覆盖。新增正式 `prepare_recovery.py --source` 复用完整源码清单与编译流程，减少复制构建脚本；默认来源不变。
 - 气体时钟诊断 `recovery-gas-clock-01` / `2142fe…b4759` 仅诊断，不是生产候选。原版13的3类插桩剥除后逐字节相同；输出 `recovery-gas-clock-native-01`。版本号相同不等于相同二进制。
 
@@ -34,8 +35,10 @@ Remains 1.02 双人合作模组，入口 release/RConnectMod.swf。A 是普通�
 - **密集走廊**：双方80本体/39演员武器/玩家与远端对象真实挂载。相同driver02，旧574D fc179988af主29/0、加40/14失败；13 6fa1e2589c主29/0、加39/15失败。加入每8秒约32–39帧，两者均未过原门槛。未据波动给改善百分比；该场地仍有128格地形轮转成本，与旧随机房不是同工作负载。
 - **密集采样**：3b8269a9a7诊断主2689CPU样本，WallImpactVisuals.packed包含797（29.6%），实际开火期updates也占大头；不是只有初始快照。JSON分配表中的ReferenceError类名触发包装器正则误判，原失败未改。含调用关系的百分比不可相加或推算FPS。见 `experimental/recovery13-density-review`。
 - **14密集采样**：a6a7e27789主2318样本、packed500，加入1259样本、tickFrozenAnims278/RV236/WB187，包含式计数不能相加或换算收益。确认武器位置先按旧回退计算再被clockSample覆盖的小冗余，正在独立等价修改；射击重启是原生所需，不删动画。RV以本体/命中代理两次处理同一vis属结构成本，不能移除命中代理或MirrorMasks规避。见 `recovery-join-animation-review`。
-- **姿态小修正**：`recovery-actor-pose-fast-component-01`实际54/0，组件0316e899…753a2d，安装/输入未变；完整旧新类的边界调用、姿态和射击队列一致。候选仅单方法消除被覆盖的回退算术，未合入完整15或原生实测，不把它称为整机性能改善。BinaryMessageCodec只读审查未找到安全且明确有益的微优化，停止重复尝试该方向。
+- **姿态小修正**：`recovery-actor-pose-fast-component-01`实际54/0，组件0316e899…753a2d，安装/输入未变；完整旧新类的边界调用、姿态和射击队列一致。已编译独立15并完成原生密集，仍失败，不把它称为整机性能改善。BinaryMessageCodec只读审查未找到安全且明确有益的微优化，停止重复尝试该方向。
+- **大图弹痕实质缺口**：准确14只读Grafon.frontBmp，sceneLarge时它是scratch，真实显示另在sceneSurfaces的nativeBuffers[0]；解码还限1920×1000。既有210项普通枪火星原生记录全部largeScene=false，不能证明大图持久弹痕正确。`recovery-wall-surface-review`已查明坐标/绘制/重建路径；正在独立宿主局部绘制回调及真实大图反例，未改CS源码或安装版。
 - **加载CPU采样失效**：825a566b2a再次在首轮加入侧1000ms基线失败，出现1597ms整帧空档。采样原始序号3→0、0 CPU、callbackDrains0，冻结collector拒绝非单调记录；`recovery-input-cpu-invalid-01`保存原JSON与无效说明，不作函数归因。不得把38项静态检查当作原生采样成功。
+- **逐帧采样取得局部证据**：398cddcf6b仍首轮输入基线失败；逐帧driver C8D1…C456、profile F824…62F共345 CPU样本。窗0无CPU、窗1超原生枚举上限，无效；窗2/3完整、窗4为输入失败前有效半窗。collector核验通过但完整六窗/性能资格均false；扫描自身213/137/79ms也计入原失败，不能拿诊断时长替代普通运行。精确记录 `recovery-input-cpu-frames-partial-review-01`。
 - **14高速复核**：case4数据提前到达，23ms是同一gameFrame两次RENDER（含22ms像素读回），下一真实帧晚80ms；确定失败为只有1个接触帧，不能断言提前删尾。case6闪电95ms空档前已有足够轨迹，缺的是中间最终游戏帧，不是缺下一位置包。详见 `recovery-flight14-review`，原阈值/失败均保持。
 - **墙痕编码**：真实组件 `recovery-wall-encode-component-01` 49/0；82份历史自然数据像素/uint/旧格式、原子拒绝、预测ACK/毁墙/复访/批次界限通过。两次ABBA旧编码740/739/771/773ms，新475/499/510/517ms；冷解旧314/312/318/304，新290/280/277/282。只是独立完整类成本，原生频率和整机收益待验。第二次原生接触触发缓存失效没有直接组件断言，失效逻辑本身未改。
 - **气体v2**：b15c17f816主37/0、加33/0及24PNG/JSON通过；严格轨迹13错：10条漏末姿态+3条派生一一对应错。9条漏1末采样、1条漏2；没有有序歧义或terminal收到前删除。源/线/显示四轮12/12/23/23。首轮80–158ms，旧4733dbf4b4秒级首显未再现，不归功于仅修夹具。见 `experimental/recovery-gas-v2-review`。
@@ -52,8 +55,8 @@ Remains 1.02 双人合作模组，入口 release/RConnectMod.swf。A 是普通�
 
 ## 6. 下一步
 
-1. 准确14密集/高速仍失败；独立准备武器姿态冗余消除，审查BinaryMessageCodec的叶节点开销。禁止跳动画/减同步频率换FPS。
-2. 加载连续CPU采样失效，先核对运行时采样缓冲边界，改用已验证的短窗口方向；目标仍是单人相应流程耗时，不增加超时。另核查大图sceneSurfaces与WallImpactVisuals只读frontBmp的兼容边界，尚未认定修复方案。
+1. 准确14/15密集仍失败，停止没有整体证据的小修正扩散。禁止跳动画/减同步频率换FPS。
+2. 加载连续CPU采样失效，改用首6帧独立短窗口，保留原1000ms期限和有效部分窗口；目标仍是单人相应流程耗时。另以准确14先做大图真实墙痕反例，再验证局部表面适配与重建，不把普通房火星通过当作大图资格。
 3. 所有最终目标与门禁满足后才部署；目前继续保持574D。构建/测试共享登记串行，常规状态不广播外部会话。
 
 ## 7. 入口

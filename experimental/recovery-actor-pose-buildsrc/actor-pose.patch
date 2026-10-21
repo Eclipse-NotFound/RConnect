@@ -1,0 +1,37 @@
+--- recovery14/src/rconnect/game/UnitPresentation.as
++++ recovery15/src/rconnect/game/UnitPresentation.as
+@@ -412,19 +412,25 @@
+                var v:Object=get(w,"vis");
+                if(v!=null && (v.parent==null || (get(get(u,"vis"),"stage")!=null && v.stage!==u.vis.stage))) w.addVisual();
+                var m:Object=gun.motion;
+-               var elapsed:int=getTimer()-int(m.at),p:Number=m.duration>0?Math.min(1,elapsed/m.duration):1;
+-               var angle:Number=Number(s.rot)-Number(m.r);
+-               while(angle>Math.PI)angle-=Math.PI*2;
+-               while(angle<-Math.PI)angle+=Math.PI*2;
+-               w.X=Number(u.X)+Number(m.x)+(Number(s.ox)-Number(m.x))*p;
+-               w.Y=Number(u.Y)+Number(m.y)+(Number(s.oy)-Number(m.y))*p;
+-               w.rot=Number(m.r)+angle*p;
+-               // Body and weapon share a source cursor, without a second tween.
++               var elapsed:int=getTimer()-int(m.at),sourcePose:Object=null;
++               // The source clock already interpolated this weapon. Only a
++               // missing identity needs the legacy arrival-time fallback.
+                if(clockSample!=null && clockSample.weapons is Array)
+                   for each(var pose:Object in clockSample.weapons)
+                      if(pose.slot==s.slot&&pose.id==s.id&&pose.variant==s.variant&&pose.stream==s.stream) {
+-                        w.X=Number(u.X)+Number(pose.ox);w.Y=Number(u.Y)+Number(pose.oy);w.rot=Number(pose.rot);break;
++                        sourcePose=pose;break;
+                      }
++               if(sourcePose!=null) {
++                  w.X=Number(u.X)+Number(sourcePose.ox);w.Y=Number(u.Y)+Number(sourcePose.oy);w.rot=Number(sourcePose.rot);
++               } else {
++                  var p:Number=m.duration>0?Math.min(1,elapsed/m.duration):1;
++                  var angle:Number=Number(s.rot)-Number(m.r);
++                  while(angle>Math.PI)angle-=Math.PI*2;
++                  while(angle<-Math.PI)angle+=Math.PI*2;
++                  w.X=Number(u.X)+Number(m.x)+(Number(s.ox)-Number(m.x))*p;
++                  w.Y=Number(u.Y)+Number(m.y)+(Number(s.oy)-Number(m.y))*p;
++                  w.rot=Number(m.r)+angle*p;
++               }
+                w.t_prep=Math.max(0,int(s.prep)-int(elapsed*30/1000));
+                w.t_reload=Math.max(0,int(s.reload)-int(elapsed*30/1000));
+                if(!paused && gun.queue>0 && getTimer()>=int(gun.next))
