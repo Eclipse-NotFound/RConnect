@@ -18,7 +18,7 @@ GAME = ROOT.parents[1]
 M52 = ROOT / 'build/m52'
 CASES = {'fast-motion': ('rbl', 240), 'continuity': ('random_mane', 300),
          'density': ('random_mane', 420), 'pause-timing': ('random_mane', 300),
-         'animation': ('rbl', 240)}
+         'animation': ('rbl', 240), 'native-jump': ('rbl', 300), 'fast-held': ('rbl', 360)}
 
 
 def read(path):
@@ -60,6 +60,7 @@ def main():
         ap.add_argument('--'+name, type=Path, required=True)
     ap.add_argument('--case', choices=CASES, required=True)
     ap.add_argument('--reference', type=Path)
+    ap.add_argument('--registry-wait', type=int, default=300)
     args = ap.parse_args()
     candidate, drivers, out = [(ROOT / p).resolve() for p in (args.candidate, args.drivers, args.output)]
     assert candidate.parent == drivers.parent == out.parent == M52 and not out.exists()
@@ -113,7 +114,8 @@ def main():
     command = [sys.executable, '-B', '-X', 'utf8', str(runner), '--candidate', str(binary),
         '--effects', '--effects-driver', str(binding), '--all-mods', '--land', land,
         '--seconds', str(seconds), '--expected-version', cm['version'], '--port', str(test_port()),
-        '--private-desktop', '--defer-visible', '--wait-host-world', '--require-exclusive-air']
+        '--private-desktop', '--defer-visible', '--wait-host-world', '--require-exclusive-air',
+        '--registry-wait', str(args.registry_wait)]
     with (out/'runner.log').open('w', encoding='utf-8') as log:
         process = subprocess.run(command, cwd=ROOT, stdout=log, stderr=subprocess.STDOUT)
     raw = (out/'runner.log').read_text(encoding='utf-8', errors='replace')
@@ -123,6 +125,8 @@ def main():
         air_inventory_unchanged=helper_digest==sha(helper), exclusive_air_confirmed=False,
         invalid_reason='foreign AIR before start' if 'Other AIR processes exist; timing run not started' in raw else None,
         passed=False, performance_qualified=False, full_release_qualified=False)
+    if not found and 'commit headroom; no AIR instance started' in raw:
+        result['invalid_reason'] = 'insufficient commit headroom before start'
     if found:
         folder = ROOT/'build/cooperation'/found[1]
         run = read(folder/'run.json')
