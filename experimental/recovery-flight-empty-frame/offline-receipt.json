@@ -1,0 +1,473 @@
+{
+  "kind": "offline-fixture-classification-only",
+  "tests": 28,
+  "failures": 0,
+  "errors": 0,
+  "successful": true,
+  "historical": [
+    {
+      "run": "18f969414e",
+      "historical_status_changed": false,
+      "historical_coop_failures": [
+        "COOP FAIL native-flight-continuity remote final-composite native artwork {\"pixels\":259,\"costMs\":14,\"wall\":1792603009444,\"frame\":41} offscreen=2 case=1",
+        "COOP FAIL native-flight-continuity contact tail retains native position/frame/duration sourceMs=101 remoteMs=28 gameFrames=1 case=3",
+        "COOP FAIL native-flight-continuity final-render gaps sourceP95=56 remoteMax=102 limit=99 case=4",
+        "COOP FAIL native-flight-continuity final-render gaps sourceP95=40 remoteMax=104 limit=85 case=6",
+        "COOP FAIL native-flight-continuity native animated flight frames advance sourceChanges=29 remoteChanges=21 remoteFrameHold=139 case=7"
+      ],
+      "eligible_for_pass_with_original_logs": false,
+      "cases": [
+        {
+          "round": 0,
+          "weapon": "lmg",
+          "changed_checks": [],
+          "original_failed_checks": [],
+          "reclassified_failed_checks": [],
+          "viewport_evidence": {
+            "emptySamples": 0,
+            "matchedNativeEmpty": 0,
+            "unprovenNativeEmpty": 0,
+            "outsideViewport": 0,
+            "invalidBounds": 0,
+            "proofs": [],
+            "passed": true
+          },
+          "remote_samples_retained": 16,
+          "other_checks_and_metrics_identical": true
+        },
+        {
+          "round": 1,
+          "weapon": "lmg",
+          "changed_checks": [
+            "all_remote_samples_in_viewport"
+          ],
+          "original_failed_checks": [
+            "all_remote_samples_in_viewport"
+          ],
+          "reclassified_failed_checks": [],
+          "viewport_evidence": {
+            "emptySamples": 2,
+            "matchedNativeEmpty": 2,
+            "unprovenNativeEmpty": 0,
+            "outsideViewport": 0,
+            "invalidBounds": 0,
+            "proofs": [
+              {
+                "remoteRow": 92,
+                "remoteClip": 0,
+                "sourceRow": 68,
+                "sourceClip": 0,
+                "f": 4,
+                "x": 78.85,
+                "y": 669.05,
+                "remoteFrame": 54,
+                "sourceFrame": 35,
+                "screen": {
+                  "y": -4473617.2,
+                  "h": 0,
+                  "x": -9595840.8,
+                  "w": 0
+                }
+              },
+              {
+                "remoteRow": 93,
+                "remoteClip": 0,
+                "sourceRow": 68,
+                "sourceClip": 0,
+                "f": 4,
+                "x": 78.85,
+                "y": 669.05,
+                "remoteFrame": 54,
+                "sourceFrame": 35,
+                "screen": {
+                  "y": -4473617.2,
+                  "h": 0,
+                  "x": -9595840.8,
+                  "w": 0
+                }
+              }
+            ],
+            "passed": true
+          },
+          "remote_samples_retained": 28,
+          "other_checks_and_metrics_identical": true
+        },
+        {
+          "round": 2,
+          "weapon": "quick",
+          "changed_checks": [],
+          "original_failed_checks": [],
+          "reclassified_failed_checks": [],
+          "viewport_evidence": {
+            "emptySamples": 0,
+            "matchedNativeEmpty": 0,
+            "unprovenNativeEmpty": 0,
+            "outsideViewport": 0,
+            "invalidBounds": 0,
+            "proofs": [],
+            "passed": true
+          },
+          "remote_samples_retained": 24,
+          "other_checks_and_metrics_identical": true
+        },
+        {
+          "round": 3,
+          "weapon": "quick",
+          "changed_checks": [],
+          "original_failed_checks": [
+            "contact_tail_native_position_frame_duration"
+          ],
+          "reclassified_failed_checks": [
+            "contact_tail_native_position_frame_duration"
+          ],
+          "viewport_evidence": {
+            "emptySamples": 0,
+            "matchedNativeEmpty": 0,
+            "unprovenNativeEmpty": 0,
+            "outsideViewport": 0,
+            "invalidBounds": 0,
+            "proofs": [],
+            "passed": true
+          },
+          "remote_samples_retained": 42,
+          "other_checks_and_metrics_identical": true
+        },
+        {
+          "round": 4,
+          "weapon": "plamg",
+          "changed_checks": [],
+          "original_failed_checks": [
+            "final_render_gap_relative_to_source"
+          ],
+          "reclassified_failed_checks": [
+            "final_render_gap_relative_to_source"
+          ],
+          "viewport_evidence": {
+            "emptySamples": 0,
+            "matchedNativeEmpty": 0,
+            "unprovenNativeEmpty": 0,
+            "outsideViewport": 0,
+            "invalidBounds": 0,
+            "proofs": [],
+            "passed": true
+          },
+          "remote_samples_retained": 34,
+          "other_checks_and_metrics_identical": true
+        },
+        {
+          "round": 5,
+          "weapon": "plamg",
+          "changed_checks": [],
+          "original_failed_checks": [],
+          "reclassified_failed_checks": [],
+          "viewport_evidence": {
+            "emptySamples": 0,
+            "matchedNativeEmpty": 0,
+            "unprovenNativeEmpty": 0,
+            "outsideViewport": 0,
+            "invalidBounds": 0,
+            "proofs": [],
+            "passed": true
+          },
+          "remote_samples_retained": 52,
+          "other_checks_and_metrics_identical": true
+        },
+        {
+          "round": 6,
+          "weapon": "alilight",
+          "changed_checks": [],
+          "original_failed_checks": [
+            "final_render_gap_relative_to_source"
+          ],
+          "reclassified_failed_checks": [
+            "final_render_gap_relative_to_source"
+          ],
+          "viewport_evidence": {
+            "emptySamples": 0,
+            "matchedNativeEmpty": 0,
+            "unprovenNativeEmpty": 0,
+            "outsideViewport": 0,
+            "invalidBounds": 0,
+            "proofs": [],
+            "passed": true
+          },
+          "remote_samples_retained": 50,
+          "other_checks_and_metrics_identical": true
+        },
+        {
+          "round": 7,
+          "weapon": "alilight",
+          "changed_checks": [],
+          "original_failed_checks": [
+            "animated_native_clip_advances"
+          ],
+          "reclassified_failed_checks": [
+            "animated_native_clip_advances"
+          ],
+          "viewport_evidence": {
+            "emptySamples": 0,
+            "matchedNativeEmpty": 0,
+            "unprovenNativeEmpty": 0,
+            "outsideViewport": 0,
+            "invalidBounds": 0,
+            "proofs": [],
+            "passed": true
+          },
+          "remote_samples_retained": 58,
+          "other_checks_and_metrics_identical": true
+        }
+      ],
+      "input_sha256": {
+        "host": "25537df12dc4a30b9c3ada848a8ecf02ece553f5e19aad03395a7960eca7046f",
+        "join": "701aa0367b3afa2b39620f0685d9654759f6d7d9d463ec4d21153cf4ae80121e"
+      }
+    },
+    {
+      "run": "7d1c0cb805",
+      "historical_status_changed": false,
+      "historical_coop_failures": [
+        "COOP FAIL native-flight-continuity final-render gaps sourceP95=71 remoteMax=135 limit=121.5 case=5",
+        "COOP FAIL native-flight-continuity remote final-composite native artwork {\"wall\":1792603307590,\"costMs\":22,\"pixels\":391,\"frame\":5} offscreen=2 case=0",
+        "COOP FAIL native-flight-continuity flight has no 85ms position stall maxHold=128 moves=11 case=6",
+        "COOP FAIL native-flight-continuity final-render gaps sourceP95=54 remoteMax=106 limit=96 case=6",
+        "COOP FAIL native-flight-continuity native animated flight frames advance sourceChanges=27 remoteChanges=6 remoteFrameHold=221 case=6",
+        "COOP FAIL native-flight-continuity flight has no 85ms position stall maxHold=124 moves=12 case=7",
+        "COOP FAIL native-flight-continuity final-render gaps sourceP95=53 remoteMax=134 limit=94.5 case=7",
+        "COOP FAIL native-flight-continuity native animated flight frames advance sourceChanges=28 remoteChanges=10 remoteFrameHold=163 case=7",
+        "COOP FAIL native-flight-continuity contact tail retains native position/frame/duration sourceMs=112 remoteMs=19 gameFrames=1 case=7",
+        "COOP FAIL native-flight-continuity native animated contact tail advances sourceChanges=2 remoteChanges=0 case=7"
+      ],
+      "eligible_for_pass_with_original_logs": false,
+      "cases": [
+        {
+          "round": 0,
+          "weapon": "lmg",
+          "changed_checks": [
+            "all_remote_samples_in_viewport"
+          ],
+          "original_failed_checks": [
+            "all_remote_samples_in_viewport"
+          ],
+          "reclassified_failed_checks": [],
+          "viewport_evidence": {
+            "emptySamples": 2,
+            "matchedNativeEmpty": 2,
+            "unprovenNativeEmpty": 0,
+            "outsideViewport": 0,
+            "invalidBounds": 0,
+            "proofs": [
+              {
+                "remoteRow": 14,
+                "remoteClip": 0,
+                "sourceRow": 36,
+                "sourceClip": 0,
+                "f": 4,
+                "x": 1844.9,
+                "y": 663.5,
+                "remoteFrame": 10,
+                "sourceFrame": 20,
+                "screen": {
+                  "y": 4465080,
+                  "h": 0,
+                  "x": 9742461.6,
+                  "w": 0
+                }
+              },
+              {
+                "remoteRow": 15,
+                "remoteClip": 0,
+                "sourceRow": 36,
+                "sourceClip": 0,
+                "f": 4,
+                "x": 1844.9,
+                "y": 663.5,
+                "remoteFrame": 10,
+                "sourceFrame": 20,
+                "screen": {
+                  "y": 4465080,
+                  "h": 0,
+                  "x": 9742461.6,
+                  "w": 0
+                }
+              }
+            ],
+            "passed": true
+          },
+          "remote_samples_retained": 12,
+          "other_checks_and_metrics_identical": true
+        },
+        {
+          "round": 1,
+          "weapon": "lmg",
+          "changed_checks": [],
+          "original_failed_checks": [],
+          "reclassified_failed_checks": [],
+          "viewport_evidence": {
+            "emptySamples": 0,
+            "matchedNativeEmpty": 0,
+            "unprovenNativeEmpty": 0,
+            "outsideViewport": 0,
+            "invalidBounds": 0,
+            "proofs": [],
+            "passed": true
+          },
+          "remote_samples_retained": 16,
+          "other_checks_and_metrics_identical": true
+        },
+        {
+          "round": 2,
+          "weapon": "quick",
+          "changed_checks": [],
+          "original_failed_checks": [],
+          "reclassified_failed_checks": [],
+          "viewport_evidence": {
+            "emptySamples": 0,
+            "matchedNativeEmpty": 0,
+            "unprovenNativeEmpty": 0,
+            "outsideViewport": 0,
+            "invalidBounds": 0,
+            "proofs": [],
+            "passed": true
+          },
+          "remote_samples_retained": 36,
+          "other_checks_and_metrics_identical": true
+        },
+        {
+          "round": 3,
+          "weapon": "quick",
+          "changed_checks": [],
+          "original_failed_checks": [],
+          "reclassified_failed_checks": [],
+          "viewport_evidence": {
+            "emptySamples": 0,
+            "matchedNativeEmpty": 0,
+            "unprovenNativeEmpty": 0,
+            "outsideViewport": 0,
+            "invalidBounds": 0,
+            "proofs": [],
+            "passed": true
+          },
+          "remote_samples_retained": 46,
+          "other_checks_and_metrics_identical": true
+        },
+        {
+          "round": 4,
+          "weapon": "plamg",
+          "changed_checks": [],
+          "original_failed_checks": [],
+          "reclassified_failed_checks": [],
+          "viewport_evidence": {
+            "emptySamples": 0,
+            "matchedNativeEmpty": 0,
+            "unprovenNativeEmpty": 0,
+            "outsideViewport": 0,
+            "invalidBounds": 0,
+            "proofs": [],
+            "passed": true
+          },
+          "remote_samples_retained": 42,
+          "other_checks_and_metrics_identical": true
+        },
+        {
+          "round": 5,
+          "weapon": "plamg",
+          "changed_checks": [],
+          "original_failed_checks": [
+            "final_render_gap_relative_to_source"
+          ],
+          "reclassified_failed_checks": [
+            "final_render_gap_relative_to_source"
+          ],
+          "viewport_evidence": {
+            "emptySamples": 0,
+            "matchedNativeEmpty": 0,
+            "unprovenNativeEmpty": 0,
+            "outsideViewport": 0,
+            "invalidBounds": 0,
+            "proofs": [],
+            "passed": true
+          },
+          "remote_samples_retained": 38,
+          "other_checks_and_metrics_identical": true
+        },
+        {
+          "round": 6,
+          "weapon": "alilight",
+          "changed_checks": [],
+          "original_failed_checks": [
+            "moves_without_85ms_position_stall",
+            "final_render_gap_relative_to_source",
+            "animated_native_clip_advances"
+          ],
+          "reclassified_failed_checks": [
+            "moves_without_85ms_position_stall",
+            "final_render_gap_relative_to_source",
+            "animated_native_clip_advances"
+          ],
+          "viewport_evidence": {
+            "emptySamples": 0,
+            "matchedNativeEmpty": 0,
+            "unprovenNativeEmpty": 0,
+            "outsideViewport": 0,
+            "invalidBounds": 0,
+            "proofs": [],
+            "passed": true
+          },
+          "remote_samples_retained": 50,
+          "other_checks_and_metrics_identical": true
+        },
+        {
+          "round": 7,
+          "weapon": "alilight",
+          "changed_checks": [],
+          "original_failed_checks": [
+            "moves_without_85ms_position_stall",
+            "final_render_gap_relative_to_source",
+            "contact_tail_native_position_frame_duration",
+            "animated_native_clip_advances",
+            "animated_native_contact_advances"
+          ],
+          "reclassified_failed_checks": [
+            "moves_without_85ms_position_stall",
+            "final_render_gap_relative_to_source",
+            "contact_tail_native_position_frame_duration",
+            "animated_native_clip_advances",
+            "animated_native_contact_advances"
+          ],
+          "viewport_evidence": {
+            "emptySamples": 0,
+            "matchedNativeEmpty": 0,
+            "unprovenNativeEmpty": 0,
+            "outsideViewport": 0,
+            "invalidBounds": 0,
+            "proofs": [],
+            "passed": true
+          },
+          "remote_samples_retained": 48,
+          "other_checks_and_metrics_identical": true
+        }
+      ],
+      "input_sha256": {
+        "host": "12b396b920651e7ff47e9e615786473eed9cde2198966e52f992a52aae1691c4",
+        "join": "9cee4cc8178cd75d7f5eb9ca8c94139bf7d64d694162f499b729116e1f2aa40a"
+      }
+    }
+  ],
+  "air_run": false,
+  "jvm_run": false,
+  "production_changed": false,
+  "source_sha256": {
+    "NativeFlightContinuityTestDoc.as": "3fd803a59bfa84fd9aa5e82c3d6df83934d5041ac399b0b335ef57468f0da23a",
+    "NativeFlightBounds.as": "4582f97f79ac7fe4abf3d9d2ef6feac4e5f5ac25558c55478d32ba87698ed90a",
+    "analyze.py": "790e7c0b7f00daa8e9a11e3f45cf216706e01b23a27a2430c01efecea4bef381",
+    "bounds_evidence.py": "6cac870750c7b5d54009c9cb746710d544ba60a42428e0fe126f1200f8bb2016",
+    "test_empty_frame.py": "148e4953c8c417dbb9d430e99718fafcbbea8828be94eece1ee1475483aa66bd",
+    "audit_offline.py": "c9dee853594eeab541ad16395d869f4e15e74e5650a75a0bbe4f82aa7a2d8604"
+  },
+  "baseline_sha256": {
+    "NativeFlightContinuityTestDoc.as": "e530e573a67a4e0ed6c5d231be9c134806de999b677adf5b4c1bae12ff26c5bf",
+    "analyze.py": "33f031f53db510ea7d2efae188397c811e93ea0d49f66a19747c2687805fde00",
+    "test_analyze.py": "fe7394563e18b769c5c24a7b2137a3c8a2170887ff7ba84ce972e976b0bc8280"
+  },
+  "unittest_output": "............................\n----------------------------------------------------------------------\nRan 28 tests in 0.012s\n\nOK\n"
+}

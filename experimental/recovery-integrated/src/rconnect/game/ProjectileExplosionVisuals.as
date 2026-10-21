@@ -43,7 +43,8 @@ package rconnect.game {
             case 7:names=["gas"];if(!repeat)snd="gas_e";break;
             case 8:names=["impexpl"];snd="emp_e";break;
             case 10:
-               if(!repeat){names=["acidexpl","acidkap"];snd="acid_e";}
+               if(!repeat){names=["acidexpl","acidkap"];snd="acid_e";
+                  BurnVisuals.playGround(main,loc,state.ground as Array,"acid");}
                break;
             case 11:names=["iceexpl","snow"];snd="cryo_e";break;
             case 15:names=["balefire","baleblast"];snd="bale_e";break;

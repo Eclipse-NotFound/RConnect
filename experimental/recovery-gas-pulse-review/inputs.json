@@ -1,0 +1,18 @@
+{
+  "kind": "gasgr-readonly-review",
+  "source_hashes": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\src\\fe\\weapon\\RConnectProjectileAccess.as": "e80bf1ffe95443a4a75f5dad118fe1b9a856bfcebd46031564d124f1663b90ec",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\tools\\stubs\\fe\\weapon\\Bullet.as": "3b1a7ead10f9d187219c064413e9d4ab9c4ac575a66a71e3178eb7093d343905",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\src\\rconnect\\game\\WeaponCapture.as": "320720ef6d758d498217b895bde872486c957a24f0a58e137bb11c5053e630c5",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-07\\src\\rconnect\\game\\UnitPresentation.as": "3e408515983fc28ad7b1a383c9e7353c5c137c960ae6ecf88e086204addb63cd",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-07\\src\\rconnect\\game\\ImpactEventQueue.as": "1f8918766bbc3aad2d6237ba6ff59438ce8ca300abd3b1bd670c01b217f6fe5e",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-native-travel-host-01\\before\\scripts\\fe\\weapon\\Bullet.as": "fc6a0a71649ec70747f05d32a3f47a953ef1c53daa84da04321f4f2daef156af",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-native-travel-host-01\\prepared.json": "bde1e160ebe4b274a793c4b07793a59f653a57be18595e56714f74b02c182d33",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\game-reference\\decompiled\\1.02\\src102\\scripts\\fe\\AllData.as": "975b0d0e68059a288549805c960c4402b34cc88740a8309007f75b6f0e2763e2",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\game-reference\\decompiled\\1.02\\src102\\scripts\\fe\\graph\\Emitter.as": "408570268b0ef7a973df2c93aa19fb03b02fe4fb05b825226bb5ae6e1a01b395"
+  },
+  "native_counter_is_execution_count": false,
+  "compiled": false,
+  "air_started": false,
+  "production_changed": false
+}

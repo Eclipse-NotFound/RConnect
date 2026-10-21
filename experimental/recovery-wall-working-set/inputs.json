@@ -1,0 +1,30 @@
+{
+  "baseline": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-07",
+  "baselineSHA256": "c9f6492117124dea23a6991396cf9957d7b73a9730b747b4c8b1cad9533ca3bc",
+  "JVMStarted": false,
+  "AIRStarted": false,
+  "sourceInputs": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-07\\src\\rconnect\\game\\WallImpactVisuals.as": "0b12230008c12cd792bdb98d715de6f12a0942a048d717901080787a653364e9",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-07\\src\\rconnect\\net\\RoomCodec.as": "296ee4d8d94f77faa62dcc17a39cb1e2492c756d3027311713c33935ca6b6b4a"
+  },
+  "logSHA256": "7b6cb1d4d0a71bfe0a4bc7a5baad6e55bc8114c7278fe253c74da88bd1c268a5",
+  "fixtureInput": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-cost\\components\\fe\\weapon\\Bullet.as": "013887d103cdeadf2e4fc327a424d5f5fe5db00de9e137b37b8fcea4cfa597ae"
+  },
+  "payloads": 82,
+  "traceMisses": 1276,
+  "outputs": {
+    "src/rconnect/game/WallImpactVisuals.as": "502b77cc7973107614ba0d91373c7774e898fa42413aee2eb1728299e35bd601",
+    "components/fe/weapon/Bullet.as": "013887d103cdeadf2e4fc327a424d5f5fe5db00de9e137b37b8fcea4cfa597ae",
+    "components/rconnect/core/Log.as": "bb5022e071467f5c91953c3c30d0db1de30b3bad84e2421b544eacef622d33b4",
+    "components/rconnect/game/GameBridge.as": "f0d9a9dcc7c6c640acc19d82103fd60d726117e72973cf3b2b273363dfe491a6",
+    "components/rconnect/game/WallAfter.as": "b7e09effbeeba7c2c2b494b948ac41ef8770feadaf08837efaf89d5d26ab2e8d",
+    "components/rconnect/game/WallBefore.as": "f2db91613276f368a22911b27fb29849bfec5145aee3d507d24186257671f0e4",
+    "components/rconnect/net/RoomCodec.as": "9bf78f73a2d3524fac0ea3feb4a639876463e3951af43e4beb582800ebfee7f3",
+    "components/rconnect/net/WorkingSetCounter.as": "1ab9f07cc8bb51b737e546b3cfb0e9ab63d34ab83d5fd22a3fbfee5d63af9ecc",
+    "components/WorkingSetChecks.as": "6231bbd30386983a403fc4c8c041f27bc379183dd355d55e199bdd781c4e99cc",
+    "data/flight-payloads.json": "6a3054ebef1d39bac535f87dbcd8ec62a160ed29a6db510cf06c23450af96f2b"
+  },
+  "recipeSHA256": "5a91c3106740cfed457de0e73e4f2dc7801339b8291645c3bbdf8ef889a30704",
+  "patchSHA256": "6d84baed7225ac071caced96d81370c319222e542cc3f2e8491b36f2986e5a8a"
+}

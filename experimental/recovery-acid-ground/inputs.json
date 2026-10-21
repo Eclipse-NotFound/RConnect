@@ -1,0 +1,24 @@
+{
+  "baseline": {
+    "BurnVisuals.as": "74be601fe5404e70f13440ed15ce5b32950153ae6c5c3bfbab9e902ad2abe070",
+    "ProjectileExplosionVisuals.as": "42ca278448b3768c5168c13d03efc9b57602fdc8aea6189990d7a6cd0dab78d2"
+  },
+  "ancestor": "build/m52/recovery-07",
+  "prepare_sha256": "2640bb03ea63cec9ae587cfac9037e7d615e03e433444c2f6dc1b3f22d9abcdf",
+  "patch_sha256": "24419f16bda8435a8777f21f76b21110bc569bba9362dc98db68841e8f78e289",
+  "expected_assertions": 49,
+  "native_game_tested": false,
+  "performance_qualified": false,
+  "files": {
+    "src/rconnect/game/BurnVisuals.as": "511bb9f5abbedd771e9b5588565087c07257d5a7fec5bbb4b2476cec2f841baf",
+    "src/rconnect/game/ProjectileExplosionVisuals.as": "9851281cbe57419762a8b7c167e89aa8d29237d72840c33c5f62f35e334ecefb",
+    "components/AcidGroundChecks.as": "adfbe5401249eb936784514f37cc5d7565673cb98a2e06944dcf3af54b35de6e",
+    "components/AcidRoomFixture.as": "fb6b4d4da7ad4b7a296d8e8d517e0413bbe2ab92839760857f75ffa02bed4391",
+    "components/rconnect/core/Log.as": "bdbc83e85990973e446e8d7b8c39f694408eb453973e26edf41d5969ef778b37",
+    "components/rconnect/game/BurnVisualsAfter.as": "0b51895a67eab203b3bc77c51c367f263255030999e333ba73be7334a190e3ca",
+    "components/rconnect/game/BurnVisualsBefore.as": "6cfcac22d302e8fd0ab1c96bb38dfef21bb733c3999a84242a2e4341ffa8ecff",
+    "components/rconnect/game/GameBridge.as": "2a432d5a2feccb8d2c2427b88d29b6731078a5ab13120d9746884afa800f5dad",
+    "components/rconnect/game/ProjectileExplosionVisualsAfter.as": "d5af1213923076eb6ca0cf3a56dda3b53c35f4efc77403d0b8b683dd6e6abae2",
+    "components/rconnect/game/ProjectileExplosionVisualsBefore.as": "5981b16ee1be6478bd74e5b77c422b03a24230647b03569d6c75f5060c219050"
+  }
+}

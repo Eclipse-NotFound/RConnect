@@ -1,0 +1,39 @@
+{
+  "kind": "recovery-special-native-followup",
+  "baseline_candidate": "build/m52/recovery-07",
+  "baseline_candidate_sha256": "c9f6492117124dea23a6991396cf9957d7b73a9730b747b4c8b1cad9533ca3bc",
+  "baseline_queue_sha256": "1f8918766bbc3aad2d6237ba6ff59438ce8ca300abd3b1bd670c01b217f6fe5e",
+  "baseline_driver": "build/m52/recovery-special-driver-02/tests/MSWNoVisualExplosionTestDoc.as",
+  "baseline_driver_sha256": "398caa209a5cfff136fe473e04a2c5504b04c0651f47eb3a79f5dea5d76c51fb",
+  "source_hashes": {
+    "tests/MSWNoVisualExplosionTestDoc.as": "bf42054816a8e322c49ab523495535e710ee694b3e7d6bf49bca37004a31a3f2",
+    "diagnostic-src/rconnect/game/ImpactEventQueue.as": "8d2e4bf9b4df2b532cc632294d0c4c6c3b6caa9e6b04d18bf1d44deca1e340cc"
+  },
+  "tool_hashes": {
+    "native_tool.py": "6432243f2c9d0f79c5c2e182b100c75c4517f43331f6f9cb8681cd6670492db9",
+    "diagnostic_candidate.py": "a5af0bd69a3726340245f36cff344ef292e2f5f11de1c91cfa273ade2a618aa5"
+  },
+  "offline_checks": 9,
+  "evidence": {
+    "run": "build/cooperation/e82a41c002",
+    "host_log_sha256": "da787e4fe0b754ddc0dae18143651123084a367141d1d2ec451607d1f0b3c10a",
+    "join_log_sha256": "510e3794812e7f26f426225512f8cb4230fb24c98c74a97bb7bbb002e20c0462"
+  },
+  "diagnostic_default": "disabled",
+  "diagnostic_queue_capacity": 128,
+  "fixture_observation_capacity": 256,
+  "static_checked": true,
+  "compiled": false,
+  "air_started": false,
+  "production_functional_fix": false,
+  "native_pass": false,
+  "performance_qualified": false,
+  "compile_followup": {
+    "failed_build": "build/m52/recovery-special-driver-03",
+    "reason": "RConnectMod is a plain class; mod.loaderInfo is not a member",
+    "fixed_lookup": "this.loaderInfo.applicationDomain inherited from the exact production domain by EffectsHarness",
+    "old_driver_source_sha256": "d645c961fef78124ae99aa31a10f12d6523523a798a1a78905501d7e743cf516",
+    "compiled_after_fix": false,
+    "air_started": false
+  }
+}

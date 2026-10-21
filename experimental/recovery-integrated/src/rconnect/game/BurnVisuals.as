@@ -3,7 +3,7 @@ package rconnect.game {
    import flash.utils.getTimer;
    import rconnect.core.Log;
 
-   /** Cosmetic copies of the native burning status and fire left by a fire blast.
+   /** Cosmetic copies of burning status and native fire/acid blast footprints.
     * No Effect, Bullet or damage path is run on the receiving world. */
    public class BurnVisuals {
       private var last:Dictionary=new Dictionary(true);
@@ -44,15 +44,16 @@ package rconnect.game {
 
       public function reset():void {last=new Dictionary(true);logged=false;}
 
-      /** Reproduce Bullet.explLiquid("fire",-33)'s *visual* footprint after
-       * the native blast changed the source tiles. This reads only the source
-       * Location and sends coordinates, so a receiver with a delayed terrain
-       * patch still gets the correct fire positions. Native fire Part has no
-       * damage or terrain behavior (fe.graph.Part.step). */
+      /** Read Bullet.explLiquid's surface footprint after native terrain damage.
+       * Fire uses phY1-33 and excludes water; acid uses phY1 even in water.
+       * Coordinates come from the source, never a receiver's delayed terrain.
+       * Both emit native cosmetic Part objects, without damage behavior. */
       public static function captureGround(b:Object):Array {
          var out:Array=[];
-         if(b==null || int(GameBridge.probe(b,"tipDamage"))!=3
-            || Number(GameBridge.probe(b,"inWater"))>0)return out;
+         if(b==null)return out;
+         var type:int=int(GameBridge.probe(b,"tipDamage"));
+         if(type!=3 && type!=10)return out;
+         if(type==3 && Number(GameBridge.probe(b,"inWater"))>0)return out;
          var weapon:Object=GameBridge.probe(b,"weap");
          var custom:*=GameBridge.probe(weapon,"visexpl");
          if(custom!=null && String(custom)!="")return out;
@@ -74,9 +75,9 @@ package rconnect.game {
             if(tile==null || above==null)continue;
             if(!(int(GameBridge.probe(tile,"phis"))>0 || GameBridge.probe(tile,"shelf")===true))continue;
             if(int(GameBridge.probe(tile,"zForm"))==0 && int(GameBridge.probe(above,"phis"))!=0)continue;
-            var fireY:Number=Number(GameBridge.probe(tile,"phY1"))-33;
-            if(!isFinite(fireY))continue;
-            out.push({x:(tx+.5)*40,y:fireY});
+            var surfaceY:Number=Number(GameBridge.probe(tile,"phY1"))-(type==3?33:0);
+            if(!isFinite(surfaceY))continue;
+            out.push({x:(tx+.5)*40,y:surfaceY});
             if(out.length>=256)return out;
          }
          return out;
@@ -84,7 +85,8 @@ package rconnect.game {
 
       /** A native Emitter creates Part objects with the game's own lifespan.
        * Never call Bullet.explosion/explLiquid on a remote world. */
-      public static function playGround(main:Object,room:Object,points:Array):void {
+      public static function playGround(main:Object,room:Object,points:Array,kind:String="fire"):void {
+         if(kind!="fire" && kind!="acid")return;
          if(main==null || room==null || points==null || GameBridge.probe(room,"active")!==true)return;
          var emitter:Object=main.loaderInfo.applicationDomain.getDefinition("fe.graph.Emitter");
          var n:int=Math.min(points.length,256);
@@ -94,8 +96,11 @@ package rconnect.game {
             var point:Object=points[i];
             if(point==null)continue;
             var x:Number=Number(point.x),y:Number=Number(point.y);
-            if(isFinite(x)&&isFinite(y)&&x>=0&&y>=0&&x<=maxX&&y<=maxY)
-               emitter.emit("fire",room,x,y);
+            if(isFinite(x)&&isFinite(y)&&x>=0&&y>=0&&x<=maxX&&y<=maxY) {
+               // Native explLiquid jitters +/-2px. Keep the existing fire path;
+               // acid draws its cosmetic jitter here, not on the source RNG.
+               emitter.emit(kind,room,x+(kind=="acid"?Math.random()*4-2:0),y);
+            }
          }
       }
    }

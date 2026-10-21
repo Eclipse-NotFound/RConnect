@@ -1,0 +1,79 @@
+--- continuity-extra/NativeFlightContinuityTestDoc.as
++++ recovery-flight-empty-frame/NativeFlightContinuityTestDoc.as
+@@ -169,9 +169,10 @@
+          if(clipIds[v]==null)clipIds[v]=nextClip++;
+          var root:DisplayObject=mod.main as DisplayObject,r:Rectangle=v.getBounds(root);
+          var hit:Rectangle=r.intersection(new Rectangle(0,0,mod.stage.stageWidth,mod.stage.stageHeight));
++         var screen:Object={x:r.x,y:r.y,w:r.width,h:r.height},emptyBounds:Boolean=NativeFlightBounds.empty(screen);
+          return {id:clipIds[v],x:v.x,y:v.y,rot:v.rotation,sx:v.scaleX,sy:v.scaleY,alpha:v.alpha,
+             f:v is MovieClip?MovieClip(v).currentFrame:1,viewport:hit.width>0 && hit.height>0,
+-            screen:{x:r.x,y:r.y,w:r.width,h:r.height}};
++            screen:screen,emptyBounds:emptyBounds,outsideViewport:!emptyBounds && !(hit.width>0 && hit.height>0)};
+       }
+       private function compositedPixels(v:DisplayObject):Object {
+          var start:int=getTimer(),root:DisplayObject=mod.main as DisplayObject,r:Rectangle=v.getBounds(root);
+@@ -361,7 +362,8 @@
+          }
+          var tailGap:Number=Math.max(0,total-maxProgress),coverage:Number=total>0?(maxProgress-minProgress)/total:0;
+          var allowedGap:Number=Math.max(85,Number(ss.p95VisibleGapMs)*1.5+15);
+-         var result:Object={source:ss,remote:rs,sourceFlight:sf,remoteFlight:rf,sourceContact:sc,remoteContact:rc,
++         var viewportEvidence:Object=NativeFlightBounds.evaluate(nativeFrames,frames);
++         var result:Object={source:ss,remote:rs,sourceFlight:sf,remoteFlight:rf,sourceContact:sc,remoteContact:rc,viewportEvidence:viewportEvidence,
+             peak:peak,pixelProof:pixelProof,contactProof:contactProof,sourceMeta:sourceMeta,
+             maxPathError:maxDistance,maxNativeStep:maxStep,sourcePathLength:total,tailGap:tailGap,coverage:coverage,reverse:reverse,
+             startLagMs:sp.length && rp.length?rp[0].wall-sp[0].wall:null,
+@@ -370,7 +372,7 @@
+          check(sp.length>=3 && rp.length>=3 && ss.visibleGameFrames>=3 && rs.visibleGameFrames>=3,
+             "actual native and final-render trajectories source="+sp.length+" remote="+rp.length+" gameFrames="+ss.visibleGameFrames+"/"+rs.visibleGameFrames);
+          check(peak==1 && reverse==0,"one remote projectile with no reversed progress peak="+peak+" reverse="+reverse);
+-         check(pixelProof!=null && pixelProof.pixels>0 && rs.offscreen==0,"remote final-composite native artwork "+JSON.stringify(pixelProof)+" offscreen="+rs.offscreen);
++         check(pixelProof!=null && pixelProof.pixels>0 && viewportEvidence.passed,"remote final-composite native artwork "+JSON.stringify(pixelProof)+" rawOffscreen="+rs.offscreen+" viewportEvidence="+JSON.stringify(viewportEvidence));
+          check(rp.length>0 && maxDistance<=3,"final-render path follows source maxError="+maxDistance);
+          check(rp.length>0 && rf.moves>=2 && rf.maxHoldMs<=85,"flight has no 85ms position stall maxHold="+rf.maxHoldMs+" moves="+rf.moves);
+          check(rp.length>0 && rs.maxVisibleGapMs<=allowedGap,"final-render gaps sourceP95="+ss.p95VisibleGapMs+" remoteMax="+rs.maxVisibleGapMs+" limit="+allowedGap);
+--- continuity-extra/analyze.py
++++ recovery-flight-empty-frame/analyze.py
+@@ -9,6 +9,8 @@
+ import math
+ import struct
+ from pathlib import Path
++
++import bounds_evidence
+ 
+ EXPECTED = (("lmg", "host"), ("lmg", "join"), ("quick", "host"),
+             ("quick", "join"), ("plamg", "host"), ("plamg", "join"),
+@@ -189,6 +191,7 @@
+     same_metadata = metadata_equal(source["info"], remote["info"], "$.info", roundtrips) and metadata_equal(source["end"], remote["end"], "$.end", roundtrips)
+     if "contact" in source or "contact" in remote:
+         same_metadata = same_metadata and metadata_equal(source.get("contact"), remote.get("contact"), "$.contact", roundtrips)
++    viewport_evidence = bounds_evidence.evaluate(sr, rr)
+     checks = {
+         "one_native_shot": source["meta"]["shotCount"] == 1,
+         "source_pixels": source_pixels.get("pixels", 0) > 0,
+@@ -198,7 +201,7 @@
+         "monotonic_render_clock": ss["monotonic"] and rs["monotonic"],
+         "one_remote_clip": rs["peak"] == 1,
+         "no_reversed_progress": reverse == 0,
+-        "all_remote_samples_in_viewport": rs["offscreen"] == 0,
++        "all_remote_samples_in_viewport": viewport_evidence["passed"],
+         "source_path_error_3px": bool(errors) and max(errors) <= 3,
+         "moves_without_85ms_position_stall": rf["moves"] >= 2 and rf["max_hold_ms"] <= 85,
+         "final_render_gap_relative_to_source": bool(rp) and rs["max_visible_gap_ms"] <= gap_limit,
+@@ -216,7 +219,7 @@
+         checks["animated_native_contact_advances"] = rc["animation_changes"] >= 1 and rc["max_animation_hold_ms"] <= sc["max_animation_hold_ms"] * 1.5 + 85
+     return dict(checks=checks, sampled_flight_checks_passed=all(checks.values()), source=ss, remote=rs,
+                 source_flight=sf, remote_flight=rf, source_contact=sc, remote_contact=rc, native_contact=contact,
+-                metadata_roundtrip_ulps=roundtrips,
++                viewport_evidence=viewport_evidence,metadata_roundtrip_ulps=roundtrips,
+                 phase_timings=dict(source=phase_timings(source), remote=phase_timings(remote)),
+                 passive_wire_receipts=remote.get("wire", []),
+                 source_path_length=arc[-1], max_native_step=max_step,
+@@ -259,7 +262,7 @@
+                   both_roles_done=done, coop_failures=log_failures, cases=cases,
+                   sampled_flight_checks_passed=not (missing or duplicates or unexpected or log_failures) and done
+                   and len(cases) == len(EXPECTED) and all(c["sampled_flight_checks_passed"] for c in cases),
+-                  inputs={str(p.resolve()): digest(p) for p in (args.host_log, args.join_log, Path(__file__))})
++                  inputs={str(p.resolve()): digest(p) for p in (args.host_log, args.join_log, Path(__file__), Path(bounds_evidence.__file__))})
+     args.output.parent.mkdir(parents=True, exist_ok=True)
+     with args.output.open("x", encoding="utf-8") as stream:
+         json.dump(result, stream, ensure_ascii=False, indent=2, allow_nan=False)

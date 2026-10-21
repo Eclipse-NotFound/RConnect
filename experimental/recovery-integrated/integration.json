@@ -1,5 +1,5 @@
 {
-  "version": "0.2.24-recovery7",
+  "version": "0.2.24-recovery9",
   "compiled": false,
   "runtime_tested": false,
   "baseline": "build/m52/coop-bundle-04",
@@ -528,6 +528,53 @@
           "merged_sha256": "1f8918766bbc3aad2d6237ba6ff59438ce8ca300abd3b1bd670c01b217f6fe5e"
         }
       ]
+    },
+    {
+      "name": "bounded-wall-cache-working-set",
+      "source": "experimental\\recovery-wall-working-set",
+      "proposal_sha256": "ef4b76a024aa09ef2d40dac497f82054476b4d668bcf277136f6421561e54d16",
+      "proof": {
+        "path": "build\\m52\\recovery-wall-working-set-component-03",
+        "checks": 73,
+        "old_unpack": 1276,
+        "new_unpack": 82,
+        "receipt_sha256": "8b4212aa9f4d84d98292ea1aa5e617fa23dc3376f9869ed758e9fa4b803c886e",
+        "raw_sha256": "56207e1bb762d5f593d4e505474eec84e7958cc71d7c90a4be6ca1dd088e580a",
+        "game_loaded": false,
+        "performance_qualified": false
+      },
+      "files": [
+        {
+          "path": "rconnect/game/WallImpactVisuals.as",
+          "before_sha256": "0b12230008c12cd792bdb98d715de6f12a0942a048d717901080787a653364e9",
+          "merged_sha256": "502b77cc7973107614ba0d91373c7774e898fa42413aee2eb1728299e35bd601"
+        }
+      ]
+    },
+    {
+      "name": "native-acid-ground-footprints",
+      "source": "experimental\\recovery-acid-ground",
+      "proposal_sha256": "aed03c506bfceccb803537e93df611a0853e6a02607c5be1ecd097e6e3457cb9",
+      "proof": {
+        "path": "build\\m52\\recovery-acid-ground-component-03",
+        "checks": 49,
+        "receipt_sha256": "e7206a3325af81b7da2738bfac2496ec73d68cd861457d43bddcf3f661558c56",
+        "raw_sha256": "11b57241e292c1b4f621ce9e36495bd017ba6d57420372829c75f029806f1265",
+        "native_game_tested": false,
+        "performance_qualified": false
+      },
+      "files": [
+        {
+          "path": "rconnect/game/BurnVisuals.as",
+          "before_sha256": "74be601fe5404e70f13440ed15ce5b32950153ae6c5c3bfbab9e902ad2abe070",
+          "merged_sha256": "511bb9f5abbedd771e9b5588565087c07257d5a7fec5bbb4b2476cec2f841baf"
+        },
+        {
+          "path": "rconnect/game/ProjectileExplosionVisuals.as",
+          "before_sha256": "42ca278448b3768c5168c13d03efc9b57602fdc8aea6189990d7a6cd0dab78d2",
+          "merged_sha256": "9851281cbe57419762a8b7c167e89aa8d29237d72840c33c5f62f35e334ecefb"
+        }
+      ]
     }
   ],
   "manual_changes": [
@@ -601,7 +648,7 @@
     },
     {
       "path": "RConnectMod.as",
-      "sha256": "e1e2512800ded6d55929e05319626177216a3498dfde862961d540d5d66c74e1",
+      "sha256": "71ab90c2b404d785ec5a5a7d3d93eb8c9f1901fd240a05a038ebe0c53f607147",
       "baseline_sha256": "1de9483aca55b011d3d6ab99238c88c9b2028a8d1d8c2ab51e4ecb5c546833ec",
       "changed": true
     },
@@ -805,9 +852,9 @@
     },
     {
       "path": "rconnect/game/BurnVisuals.as",
-      "sha256": "74be601fe5404e70f13440ed15ce5b32950153ae6c5c3bfbab9e902ad2abe070",
+      "sha256": "511bb9f5abbedd771e9b5588565087c07257d5a7fec5bbb4b2476cec2f841baf",
       "baseline_sha256": "74be601fe5404e70f13440ed15ce5b32950153ae6c5c3bfbab9e902ad2abe070",
-      "changed": false
+      "changed": true
     },
     {
       "path": "rconnect/game/CooperativeBonus.as",
@@ -925,9 +972,9 @@
     },
     {
       "path": "rconnect/game/ProjectileExplosionVisuals.as",
-      "sha256": "42ca278448b3768c5168c13d03efc9b57602fdc8aea6189990d7a6cd0dab78d2",
+      "sha256": "9851281cbe57419762a8b7c167e89aa8d29237d72840c33c5f62f35e334ecefb",
       "baseline_sha256": "42ca278448b3768c5168c13d03efc9b57602fdc8aea6189990d7a6cd0dab78d2",
-      "changed": false
+      "changed": true
     },
     {
       "path": "rconnect/game/ProjectileFrameStream.as",
@@ -1021,7 +1068,7 @@
     },
     {
       "path": "rconnect/game/WallImpactVisuals.as",
-      "sha256": "0b12230008c12cd792bdb98d715de6f12a0942a048d717901080787a653364e9",
+      "sha256": "502b77cc7973107614ba0d91373c7774e898fa42413aee2eb1728299e35bd601",
       "baseline_sha256": "e1125fa1865598705c1753fd8e49ede037cd16936a680a7a078c4cf9b5ac5a34",
       "changed": true
     },
@@ -1122,6 +1169,7 @@
     "rconnect/core/TeammateNavigation.as",
     "rconnect/core/TravelGuard.as",
     "rconnect/game/BallisticImpactVisuals.as",
+    "rconnect/game/BurnVisuals.as",
     "rconnect/game/EnergyImpactVisuals.as",
     "rconnect/game/GameBridge.as",
     "rconnect/game/HitFeedback.as",
@@ -1130,6 +1178,7 @@
     "rconnect/game/NativeRoomState.as",
     "rconnect/game/NativeTileState.as",
     "rconnect/game/PlayerBodyEffects.as",
+    "rconnect/game/ProjectileExplosionVisuals.as",
     "rconnect/game/ProjectileFrameStream.as",
     "rconnect/game/ProjectileVisuals.as",
     "rconnect/game/RemoteArmor.as",
@@ -1158,14 +1207,16 @@
     "recovery3_observe_deduplication_preserved": true,
     "impact_detach_red_green_35": true,
     "codec_diagnostics_component_199": true,
-    "no_clip_explosion_component": true
+    "no_clip_explosion_component": true,
+    "bounded_working_set_component": true,
+    "acid_ground_component": true
   },
   "static_errors": [],
   "hash_note": "Layer merged_sha256 values describe intermediate merges. The source array is the final normalized LF source inventory; text-equivalent CRLF normalization is not a functional edit.",
-  "followup_review": "87 proposal component checks pass; final merged detach/native visual checks pending. Gas pulses and acid ground remain separate gaps.",
+  "followup_review": "Acid ground component passes; native acid, gas pulses, motion and loading remain unqualified.",
   "native_host_candidate": "build/m52/recovery-native-travel-host-01",
   "native_host_sha256": "e159fe0f0a1cbb34596d18b9979f439e80823fbeda369be7b2220a42e8e5d30c",
   "gameplay_qualified": false,
   "performance_qualified": false,
-  "integration_recipe_sha256": "ca393d4425445ff04d23ca0576ecfae99d7e36750d2c72008d2c918652b1f4a1"
+  "integration_recipe_sha256": "92413755a3b989f43f72b1552d21ce8128bbeca1e09ffec01f3cee41297bb7c8"
 }

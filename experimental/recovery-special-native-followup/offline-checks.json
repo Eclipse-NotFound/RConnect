@@ -1,0 +1,52 @@
+{
+  "kind": "offline-adapter-checks",
+  "created_at": "2026-10-21T18:07:01.673346+00:00",
+  "passed": true,
+  "checks": [
+    {
+      "label": "Two Python recipes parse",
+      "passed": true
+    },
+    {
+      "label": "Exact compiled 07 source/binary manifest verifies read-only",
+      "passed": true
+    },
+    {
+      "label": "AS hashes match accepted inputs",
+      "passed": true
+    },
+    {
+      "label": "Regular failure keeps assertions and qualification",
+      "passed": true
+    },
+    {
+      "label": "Regular success keeps assertions and qualification",
+      "passed": true
+    },
+    {
+      "label": "Diagnostic failure keeps assertions and qualification",
+      "passed": true
+    },
+    {
+      "label": "Diagnostic success keeps assertions and qualification",
+      "passed": true
+    },
+    {
+      "label": "Diagnostic --control rejected before runner",
+      "passed": true
+    },
+    {
+      "label": "Changed helper rejected before runner",
+      "passed": true
+    }
+  ],
+  "checks_passed": 9,
+  "checks_failed": 0,
+  "jvm_started": false,
+  "air_started": false,
+  "native_qualified": false,
+  "recipe_sha256": {
+    "native_tool.py": "6432243f2c9d0f79c5c2e182b100c75c4517f43331f6f9cb8681cd6670492db9",
+    "diagnostic_candidate.py": "a5af0bd69a3726340245f36cff344ef292e2f5f11de1c91cfa273ade2a618aa5"
+  }
+}

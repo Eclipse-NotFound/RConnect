@@ -28,9 +28,9 @@ package rconnect.game
       private static const MARGIN:int=96;
       // Cache only validated, numeric sparse words; room/version checks stay
       // outside this cache. Three independent bounds limit retained memory.
-      private static const WORD_CACHE_ENTRIES:int=64;
-      private static const WORD_CACHE_WORDS:int=32768;
-      private static const WORD_CACHE_CHARS:int=131072;
+      private static const WORD_CACHE_ENTRIES:int=128;
+      private static const WORD_CACHE_WORDS:int=131072;
+      private static const WORD_CACHE_CHARS:int=524288;
       private var wordCache:Dictionary=new Dictionary();
       private var wordOrder:Array=[];
       private var wordCount:int=0,wordChars:int=0;

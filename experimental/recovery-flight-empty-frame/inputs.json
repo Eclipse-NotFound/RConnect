@@ -1,0 +1,14 @@
+{
+  "baseline": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-tests\\continuity-extra",
+  "source_sha256": {
+    "NativeFlightContinuityTestDoc.as": "e530e573a67a4e0ed6c5d231be9c134806de999b677adf5b4c1bae12ff26c5bf",
+    "analyze.py": "33f031f53db510ea7d2efae188397c811e93ea0d49f66a19747c2687805fde00"
+  },
+  "status": "source only; AIR/JVM not run; historical failures preserved",
+  "outputs": {
+    "NativeFlightContinuityTestDoc.as": "3fd803a59bfa84fd9aa5e82c3d6df83934d5041ac399b0b335ef57468f0da23a",
+    "analyze.py": "790e7c0b7f00daa8e9a11e3f45cf216706e01b23a27a2430c01efecea4bef381",
+    "NativeFlightBounds.as": "4582f97f79ac7fe4abf3d9d2ef6feac4e5f5ac25558c55478d32ba87698ed90a",
+    "bounds_evidence.py": "6cac870750c7b5d54009c9cb746710d544ba60a42428e0fe126f1200f8bb2016"
+  }
+}
