@@ -10,7 +10,7 @@ package rconnect.game {
          else return null;
          // Unit.explosion constructs a non-running Bullet and explodes it at once.
          // Its inWater stays -1; only Bullet.run samples water for flying bullets.
-         return {armed:u.lootIsDrop!=true,type:type,water:false};
+         return {armed:u.lootIsDrop!=true,type:type,water:false,nativeGasParts:type==7 || type==19};
       }
       public static function play(main:Object,loc:Object,s:Object,x:Number,y:Number):void {
          if(s==null || loc==null)return;
@@ -36,7 +36,10 @@ package rconnect.game {
             if(name=="iskr" || name=="snow")options={kol:16};
             else if(name=="acidkap")options={kol:Math.floor(Math.random()*5+30)};
             else if(name=="bubble")options={kol:30,rx:100,ry:100,rdx:10,rdy:10};
-            emitter.emit(name,loc,x,y+(name=="balefire"?-60:0),options);
+            if(name=="gas" || name=="pinkgas") {
+               if(s.nativeGasParts===true)continue;
+               EnergyImpactVisuals.ignoreNativePart(emitter.arr[name].cast(loc,x,y,options));
+            } else emitter.emit(name,loc,x,y+(name=="balefire"?-60:0),options);
          }
          if(snd!="")sound.ps(snd,x,y);
       }

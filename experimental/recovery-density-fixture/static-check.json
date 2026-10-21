@@ -1,0 +1,28 @@
+{
+  "static_checks": true,
+  "original_assertions_unchanged": true,
+  "original_frame_method_unchanged": true,
+  "original_render_detector_unchanged": true,
+  "original_seven_8000ms_windows_unchanged": true,
+  "same_external_declarations_and_stub": true,
+  "internal_variant_safe_probe": true,
+  "message_failure_notifies_peer_and_finishes": true,
+  "actual_remote_ids_including_host_zero": true,
+  "remote_identity_deduplicated": true,
+  "exactly_one_remote_required": true,
+  "preparation_timeout_45000ms_unchanged": true,
+  "as_compiled": false,
+  "air_started": false,
+  "fixture_runtime_verified": false,
+  "files": {
+    "audit.py": "293d8e60c53e47dc946c03726bb4ea5cf57ec3e785a1413a00ee840e83545abe",
+    "check.py": "8d8b571f133b0559b3654c97c57f82d7316c3f79c93ae871a65588e3fe05d08e",
+    "prepare.py": "99249ad83c9adc2d4073d614e0dc4952c22ec647b228c363c5bcbd4220dd7cad",
+    "run.py": "7d6bee96c9aa4d817754894f1e623ba4a081bd0a193960ddf65217162993b598",
+    "tests/DensityFixture.as": "9291ef603230e0ae98df0283a5c73a43abaee53e829052e8abeae86555ffb062",
+    "tests/DensityTotalsTestDoc.as": "d9304dea6cb606c42759b5881a841f481a09ec9cee54808a1667ffe41f5a2fca",
+    "tests/DensityTrajectoryTotals.as": "fec11d73fe8da3a72d9fbe8c03a45dbf2cec4ef4ff47246d499f9b3bdbd72ad9",
+    "tests/ProjectileLoadTestDoc.as": "95e742b45c3b8163364451da8730ff15c8345e5b65e60e8260ce9d64c784290f",
+    "tests/SustainedDensityTestDoc.as": "c69bf548dae01ee2862cc062ed81aece9972cffdeb6c30032724cdc4b0695696"
+  }
+}

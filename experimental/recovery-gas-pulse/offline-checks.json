@@ -1,0 +1,59 @@
+{
+  "passed": true,
+  "count": 12,
+  "checks": [
+    {
+      "label": "Manifest and exact recovery11 ancestor",
+      "passed": true
+    },
+    {
+      "label": "Exactly four production overlays",
+      "passed": true
+    },
+    {
+      "label": "Component real classes are full exact before and after",
+      "passed": true
+    },
+    {
+      "label": "Control and candidate differ only in four production classes",
+      "passed": true
+    },
+    {
+      "label": "63 direct assertions excluding catch and definition",
+      "passed": true
+    },
+    {
+      "label": "Shared entry and boundary fixtures unchanged",
+      "passed": true
+    },
+    {
+      "label": "No additional source object-chain traversal",
+      "passed": true
+    },
+    {
+      "label": "Room gas uses delta and explicit point budget",
+      "passed": true
+    },
+    {
+      "label": "Native pulse countdown is never read or synthesized",
+      "passed": true
+    },
+    {
+      "label": "New and legacy projectile and death replay are separated",
+      "passed": true
+    },
+    {
+      "label": "Native end changes only gas lifetime",
+      "passed": true
+    },
+    {
+      "label": "Python recipes parse without any launched process",
+      "passed": true
+    }
+  ],
+  "AS3_executed": false,
+  "JVM_started": false,
+  "AIR_started": false,
+  "production_qualified": false,
+  "performance_qualified": false
+}

@@ -12,7 +12,9 @@ package rconnect.game {
          // visual may already be detached when the last simulation step ends.
          return {x:x,y:y,type:int(GameBridge.probe(b,"tipDamage")),
             water:Number(GameBridge.probe(b,"inWater"))>0,
-            custom:custom==null?"":String(custom),ground:BurnVisuals.captureGround(b)};
+            custom:custom==null?"":String(custom),ground:BurnVisuals.captureGround(b),
+            nativeGasParts:custom=="gas" || custom=="pinkgas" || ((custom==null || custom=="")
+               && (int(GameBridge.probe(b,"tipDamage"))==7 || int(GameBridge.probe(b,"tipDamage"))==19))};
       }
 
       public static function play(main:Object,loc:Object,state:Object):void {
@@ -57,7 +59,13 @@ package rconnect.game {
             if(name=="iskr" || name=="snow")options={kol:16};
             else if(name=="acidkap")options={kol:Math.floor(Math.random()*5+30)};
             else if(name=="bubble")options={kol:30,rx:100,ry:100,rdx:10,rdy:10};
-            emitter.emit(name,loc,x,y+(name=="balefire"?-60:0),options);
+            if(name=="gas" || name=="pinkgas") {
+               // New packets carry each actually created Part separately. Keep
+               // the once-only explosion sound even when native maxkol emits none.
+               if(state.nativeGasParts===true)continue;
+               // Legacy cosmetic replay is still allowed, but never recaptured.
+               EnergyImpactVisuals.ignoreNativePart(emitter.arr[name].cast(loc,x,y,options));
+            } else emitter.emit(name,loc,x,y+(name=="balefire"?-60:0),options);
          }
          if(snd!="") {
             var sound:Object=main.loaderInfo.applicationDomain.getDefinition("fe.Snd");

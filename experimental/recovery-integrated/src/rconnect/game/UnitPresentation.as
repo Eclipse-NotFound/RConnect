@@ -19,7 +19,7 @@ package rconnect.game
       private var retainedByOwner:Dictionary;
       private var captureDepth:int=0;
       private var errors:Object = {};
-      private var shotStream:int=0;
+      private var shotStream:int=0,gasStream:int=0;
       private var frameTime:int=0;
       private var scannedAt:int=-1,scannedLoc:Object;
       private var frameBullets:Dictionary=new Dictionary(true);
@@ -76,14 +76,17 @@ package rconnect.game
        * native chain once per frame, rather than scanning it once per gun. */
       private function scanBullets(loc:Object,stamp:int):void {
          if(loc===scannedLoc&&stamp==scannedAt)return;
+         if(loc!==scannedLoc)gasStream=++shotStream;
          scannedLoc=loc;scannedAt=stamp;frameBullets=new Dictionary(true);
+         energyImpacts.beginGasFrame(loc);
          var o:Object=get(loc,"firstObj");
          for(var guard:int=0;o!=null&&guard++<16384;o=get(o,"nobj")) {
-            if(!(o is Bullet))continue;
+            if(!(o is Bullet)){energyImpacts.observeGasPart(o,stamp);continue;}
             var w:Object=get(o,"weap");if(w==null)continue;
             if(frameBullets[w]==null)frameBullets[w]=[];
             frameBullets[w].push(o);
          }
+         energyImpacts.finishGasFrame(stamp);
       }
 
       /** kol_shoot resets when a burst ends. Observe every game frame and
@@ -215,6 +218,13 @@ package rconnect.game
                oy:Number(get(w,"Y"))-Number(get(u,"Y")),rot:Number(get(w,"rot")),
                prep:int(get(w,"t_prep")),reload:int(get(w,"t_reload")),
                cadence:Math.max(16,Number(get(w,"rapid"))*1000/30)});
+         }
+         if(playerDisplay) {
+            // This explicit room stream merely rides the local player's packet.
+            // It identifies actual Part objects, never their presumed shooter.
+            var gas:Array=energyImpacts.captureGas(get(u,"loc"));
+            if(gas.length>0)result.push({id:"@room-gas",variant:0,stream:gasStream,
+               roomParts:true,effectsOnly:true,main:false,sampleTime:frameTime,events:[],impacts:gas});
          }
          return result;
       }

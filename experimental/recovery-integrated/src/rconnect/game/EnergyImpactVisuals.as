@@ -26,7 +26,7 @@ package rconnect.game {
          flame:"visualFlame",arson:"visualFlame",flare:"visualFlare"};
       private static const CLIPS:Object={flPlasma:true,flPlasma2:true,flLaser:true,flLaser2:true,
          flSpark:true,flSparkl:true,flDray:true,visualTeleFlare:true,visualIceFlare:true,
-         flPlevok:true,flPinkPlevok:true,visualBum:true,visualBumNecro:true,visualBumAcid:true,visualFlame:true,visualFlare:true};
+         flPlevok:true,flPinkPlevok:true,visualBum:true,visualBumNecro:true,visualBumAcid:true,visualFlame:true,visualFlare:true,visualGas:true,visualPinkGas:true};
       private static const RETAIN_MS:int=1000;
       private static const MAX_EVENTS:int=96;
       private var sources:Dictionary=new Dictionary(true);
@@ -34,6 +34,38 @@ package rconnect.game {
       private var checkedHits:Dictionary=new Dictionary(true);
       private var chainLoc:Object,chainStamp:int=-1,bullets:Dictionary=new Dictionary(true),parts:Object={};
       private var serial:int=0;
+      private var gasRoom:Object,gasRecords:Array=[],gasSeen:Dictionary=new Dictionary(true);
+      private var gasKinds:Dictionary=new Dictionary(true),gasClips:Dictionary=new Dictionary(true);
+      private static var replayedParts:Dictionary=new Dictionary(true);
+
+      /** Old packets still use native Emitter recipes. Never send their cosmetic
+       * result back as a newly observed source Part. New gas packets use clips. */
+      public static function ignoreNativePart(p:Object):void {if(p!=null)replayedParts[p]=true;}
+      public function beginGasFrame(loc:Object):void {
+         if(gasRoom===loc)return;
+         gasRoom=loc;gasRecords=[];gasSeen=new Dictionary(true);
+      }
+      /** Called inside the existing object-chain traversal, not once per gun.
+       * Cached native class identities avoid repeated class-name formatting. */
+      public function observeGasPart(p:Object,stamp:int):void {
+         if(p==null || stamp<=0 || replayedParts[p])return;
+         var kind:Object=p.constructor;
+         if(gasKinds[kind]===undefined)gasKinds[kind]=getQualifiedClassName(p)=="fe.graph::Part";
+         if(gasKinds[kind]!==true || gasSeen[p] || get(p,"loc")!==gasRoom || get(p,"in_chain")!==true)return;
+         var v:DisplayObject=get(p,"vis") as DisplayObject;if(v==null)return;
+         kind=Object(v).constructor;
+         if(gasClips[kind]===undefined) {
+            var name:String=getQualifiedClassName(v);
+            gasClips[kind]=(name=="visualGas" || name=="visualPinkGas")?name:"";
+         }
+         var clip:String=String(gasClips[kind]);if(clip=="")return;
+         gasSeen[p]=true;
+         gasRecords.push({part:p,loc:gasRoom,wire:{id:++serial,cls:clip,layer:int(get(p,"sloy")),
+            blend:String(v.blendMode),frames:[],end:0,strictEnd:true}});
+      }
+      public function finishGasFrame(stamp:int):void {sampleRecords(gasRecords,stamp);}
+      public function captureGas(loc:Object):Array {return loc===gasRoom?deltaRecords(gasRecords,64):[];}
+
       private var channels:Dictionary=new Dictionary(true),active:Array=[],errors:Object={};
       private var pauseAt:int=-1;
 
@@ -51,7 +83,7 @@ package rconnect.game {
                var v:DisplayObject=get(o,"vis") as DisplayObject;
                if(v==null)continue;
                cls=getQualifiedClassName(v);
-               if(CLIPS[cls]===true && get(o,"in_chain")===true && Number(o.mliv)-Number(o.liv)<=1) {
+               if(CLIPS[cls]===true && cls!="visualGas" && cls!="visualPinkGas" && get(o,"in_chain")===true && Number(o.mliv)-Number(o.liv)<=1) {
                   // Only native particles born in this simulation step can be
                   // attributed to a newly ended bullet. Spatial buckets avoid
                   // each rapid-fire impact walking all room effects.
@@ -110,10 +142,14 @@ package rconnect.game {
                claimed[p]=true;list.push(record);
             }
          }
-         for each(record in list) {
+         sampleRecords(list,stamp);
+      }
+
+      private function sampleRecords(list:Array,stamp:int):void {
+         for each(var record:Object in list) {
             var wire:Object=record.wire;
             if(int(wire.end)>0)continue;
-            p=record.part;
+            var p:Object=record.part;
             if(get(p,"in_chain")!==true || get(p,"loc")!==record.loc) {wire.end=stamp;continue;}
             var visual:DisplayObject=get(p,"vis") as DisplayObject;
             if(visual==null) {wire.end=stamp;continue;}
@@ -143,10 +179,12 @@ package rconnect.game {
 
       /** Frequent effects packets carry only new/revised native samples; the
        * ordinary capture remains cumulative for recovery. */
-      public function captureDelta(w:Object):Array {
-         var out:Array=[],list:Array=sources[w] as Array;
+      public function captureDelta(w:Object):Array {return deltaRecords(sources[w] as Array);}
+      private function deltaRecords(list:Array,pointBudget:int=0):Array {
+         var out:Array=[],remaining:int=pointBudget;
          if(list==null)return out;
          for each(var record:Object in list) {
+            if(pointBudget>0 && remaining<=0)break;
             var wire:Object=record.wire,all:Array=wire.frames as Array;
             if(all==null || all.length==0)continue;
             var points:Array=ProjectileFrameStream.afterWithRevision(all,
@@ -156,8 +194,15 @@ package rconnect.game {
             // A terminal-only packet still supplies one known pose, allowing
             // a missed initial packet to recover without inventing artwork.
             if(points.length==0)points.push(all[all.length-1]);
-            out.push({id:wire.id,cls:wire.cls,layer:wire.layer,blend:wire.blend,frames:points,end:wire.end,delta:true});
-            record.fastPoint=points[points.length-1];record.fastAt=record.fastPoint.at;record.fastEnd=wire.end;
+            if(pointBudget>0 && points.length>remaining)points=points.slice(0,remaining);
+            // A bounded prefix is not permission to end before later native
+            // samples. Only consume the transmitted prefix and its true end.
+            var end:int=pointBudget==0 || points[points.length-1]===all[all.length-1]?int(wire.end):0;
+            remaining-=points.length;
+            var packet:Object={id:wire.id,cls:wire.cls,layer:wire.layer,blend:wire.blend,frames:points,end:end,delta:true};
+            if(wire.strictEnd===true)packet.strictEnd=true;
+            out.push(packet);
+            record.fastPoint=points[points.length-1];record.fastAt=record.fastPoint.at;record.fastEnd=end;
          }
          return out;
       }
@@ -208,6 +253,9 @@ package rconnect.game {
             if(time<Number(frames[0].at))continue;
             var point:Object=frames[0];
             for each(var p:Object in frames) {if(Number(p.at)>time)break;point=p;}
+            // A persistent gas cloud has a real sampled end. Do not apply the
+            // short flash's missed-frame recovery to extend its native lifetime.
+            if(ended && s.strictEnd===true) {remove(i);continue;}
             if(ended) {
                // A 67ms flash can fall entirely between two display frames.
                // Show its real first pose once, then only its final known pose
@@ -284,6 +332,7 @@ package rconnect.game {
          while(active.length>0)remove(active.length-1);
          channels=new Dictionary(true);sources=new Dictionary(true);claimed=new Dictionary(true);checkedHits=new Dictionary(true);
          chainLoc=null;chainStamp=-1;bullets=new Dictionary(true);parts={};
+         gasRoom=null;gasRecords=[];gasSeen=new Dictionary(true);
       }
       public function get count():int {return active.length;}
    }

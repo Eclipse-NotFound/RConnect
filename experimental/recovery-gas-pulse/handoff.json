@@ -1,0 +1,50 @@
+{
+  "base": "build\\m52\\recovery-11",
+  "base_sha256": "cd721f0e56679302747ab2c9e687e20bd877a1ee8f520d6d589c7c43fa64ebb5",
+  "overlays": {
+    "UnitPresentation.as": "d67dbcbed8d3ef67771eb10e41516102dabb34aad3a7065ab71ec7822ff53178",
+    "EnergyImpactVisuals.as": "8f6f299600e25ee019e88ff118cec4da51b318f196afa4bcf5ff5e6680fcd7c0",
+    "ProjectileExplosionVisuals.as": "c079a94739c8eafc48067e2872e6f09da60e618fab82b92df034e32e1b5e6144",
+    "DeathVisuals.as": "6456e166446874297546d32e8593e5a6cb6036b3e2619f08b75e5e03098e201c"
+  },
+  "documents": {
+    "prepare.py": "06ea637c4d83982e603cd50b2674873f438467400455bf71b7c5ed2889281f82",
+    "check.py": "28e7e018c781f7863f81c2d6f4b2acb04e90b7c3f44db82a152c7aa4b38c292a",
+    "inputs.json": "4554a4c385788ed905ea5356151639a757ddcf7e03885a5238161822e4c0a7ed",
+    "proposal.patch": "ec7d2b33d5b8451210e4d9099a33e9e00166f4e9d4445ca6a80145fcd8caaf80",
+    "README.md": "87a999e8ae17b46dab155028af26c4a289bdbfc673777801bfc796d2b64f6d35",
+    "offline-checks.json": "a997266dc4bd9d5d96fa19a3e3ec6669df8a1fc64dc704b6e437d82d9954a586"
+  },
+  "offline_checks": 12,
+  "offline_passed": true,
+  "AS3_component_assertions": 63,
+  "AS3_executed": false,
+  "JVM_started": false,
+  "AIR_started": false,
+  "qualified": false,
+  "performance_qualified": false,
+  "revision": "03-native-removal-fixture",
+  "prior_runs_retained": {
+    "control01_assertions": 63,
+    "control01_failed": 35,
+    "unrelated_short_flash_assertion_was_wrong": true,
+    "candidate01_compile_failed": true,
+    "control02_assertions": 63,
+    "control02_failed": 34,
+    "candidate02_assertions": 63,
+    "candidate02_failed": 1,
+    "source_issue": false,
+    "fixture_in_chain_was_wrong": true
+  },
+  "next_outputs": [
+    "build/m52/recovery-gas-pulse-control-03",
+    "build/m52/recovery-gas-pulse-component-03"
+  ],
+  "call_chain_review": {
+    "no_checkpoint_capture_true": true,
+    "no_peer_broadcast_consumes_delta": true,
+    "send_has_no_commit_receipt": true,
+    "normal_gas_delta_preserves_strictEnd": true,
+    "strictEnd_not_sticky_on_omitted_field": true
+  }
+}

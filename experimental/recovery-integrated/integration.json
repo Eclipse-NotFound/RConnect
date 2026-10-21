@@ -1,5 +1,5 @@
 {
-  "version": "0.2.24-recovery11",
+  "version": "0.2.24-recovery12",
   "compiled": false,
   "runtime_tested": false,
   "baseline": "build/m52/coop-bundle-04",
@@ -615,6 +615,49 @@
           "merged_sha256": "eec001f4de8bdfc5ad892c2de2e892c07cceac15ebe7c5cf10fda4a1047592dc"
         }
       ]
+    },
+    {
+      "name": "actual-native-gas-particles",
+      "source": "experimental\\recovery-gas-pulse",
+      "proposal_sha256": "4554a4c385788ed905ea5356151639a757ddcf7e03885a5238161822e4c0a7ed",
+      "component_proofs": [
+        {
+          "path": "build\\m52\\recovery-gas-pulse-control-03",
+          "checks": 63,
+          "failed": 34,
+          "receipt_sha256": "8cec6c4f777710a9952f6ddc69787e29db16dbb516f8e91690cc7368962b0c65",
+          "raw_sha256": "7e2136c08cc0ddd91f62ac71e01018ef9ee602436d1fabd1e9ec0d0f6b8de1a5"
+        },
+        {
+          "path": "build\\m52\\recovery-gas-pulse-component-03",
+          "checks": 63,
+          "failed": 0,
+          "receipt_sha256": "676d7fb9b2206621fcd41b97588b84d91dc2c5f52f9ea21a0aa7faec4b974ed5",
+          "raw_sha256": "b4498a42eca3c564d71909535434fa5ccea49a43b57b94691106abb7b3ae0699"
+        }
+      ],
+      "files": [
+        {
+          "path": "rconnect/game/DeathVisuals.as",
+          "before_sha256": "16bf7e1903bf72890cdbcb15b3da175e5b8afe268d24e14406f5229bb3fd2f89",
+          "merged_sha256": "6456e166446874297546d32e8593e5a6cb6036b3e2619f08b75e5e03098e201c"
+        },
+        {
+          "path": "rconnect/game/EnergyImpactVisuals.as",
+          "before_sha256": "d049d4a3fd996ac3088eb5bd2e4f8c765b954efe61f34a0899fa26e29cd72dee",
+          "merged_sha256": "8f6f299600e25ee019e88ff118cec4da51b318f196afa4bcf5ff5e6680fcd7c0"
+        },
+        {
+          "path": "rconnect/game/ProjectileExplosionVisuals.as",
+          "before_sha256": "9851281cbe57419762a8b7c167e89aa8d29237d72840c33c5f62f35e334ecefb",
+          "merged_sha256": "c079a94739c8eafc48067e2872e6f09da60e618fab82b92df034e32e1b5e6144"
+        },
+        {
+          "path": "rconnect/game/UnitPresentation.as",
+          "before_sha256": "3e408515983fc28ad7b1a383c9e7353c5c137c960ae6ecf88e086204addb63cd",
+          "merged_sha256": "d67dbcbed8d3ef67771eb10e41516102dabb34aad3a7065ab71ec7822ff53178"
+        }
+      ]
     }
   ],
   "manual_changes": [
@@ -688,7 +731,7 @@
     },
     {
       "path": "RConnectMod.as",
-      "sha256": "8d5d2d4483fb61c20e17643384f4792c6fc43d90b2b51f8a8d5eddf39c1a8784",
+      "sha256": "7d1454f55275df268b57657e4cd4646679990bc27e4e9aaee60c90f82b87ff23",
       "baseline_sha256": "1de9483aca55b011d3d6ab99238c88c9b2028a8d1d8c2ab51e4ecb5c546833ec",
       "changed": true
     },
@@ -904,13 +947,13 @@
     },
     {
       "path": "rconnect/game/DeathVisuals.as",
-      "sha256": "16bf7e1903bf72890cdbcb15b3da175e5b8afe268d24e14406f5229bb3fd2f89",
+      "sha256": "6456e166446874297546d32e8593e5a6cb6036b3e2619f08b75e5e03098e201c",
       "baseline_sha256": "16bf7e1903bf72890cdbcb15b3da175e5b8afe268d24e14406f5229bb3fd2f89",
-      "changed": false
+      "changed": true
     },
     {
       "path": "rconnect/game/EnergyImpactVisuals.as",
-      "sha256": "d049d4a3fd996ac3088eb5bd2e4f8c765b954efe61f34a0899fa26e29cd72dee",
+      "sha256": "8f6f299600e25ee019e88ff118cec4da51b318f196afa4bcf5ff5e6680fcd7c0",
       "baseline_sha256": "8f940810a84b3e1ac65a5eb83393da90c6ab66cdc14aace8de69f1aee14d52c2",
       "changed": true
     },
@@ -1012,7 +1055,7 @@
     },
     {
       "path": "rconnect/game/ProjectileExplosionVisuals.as",
-      "sha256": "9851281cbe57419762a8b7c167e89aa8d29237d72840c33c5f62f35e334ecefb",
+      "sha256": "c079a94739c8eafc48067e2872e6f09da60e618fab82b92df034e32e1b5e6144",
       "baseline_sha256": "42ca278448b3768c5168c13d03efc9b57602fdc8aea6189990d7a6cd0dab78d2",
       "changed": true
     },
@@ -1096,7 +1139,7 @@
     },
     {
       "path": "rconnect/game/UnitPresentation.as",
-      "sha256": "3e408515983fc28ad7b1a383c9e7353c5c137c960ae6ecf88e086204addb63cd",
+      "sha256": "d67dbcbed8d3ef67771eb10e41516102dabb34aad3a7065ab71ec7822ff53178",
       "baseline_sha256": "c93cf23601069a6cd151a03bfd2deab422125fa74c00574e0a3712fd0f2e0f49",
       "changed": true
     },
@@ -1210,6 +1253,7 @@
     "rconnect/core/TravelGuard.as",
     "rconnect/game/BallisticImpactVisuals.as",
     "rconnect/game/BurnVisuals.as",
+    "rconnect/game/DeathVisuals.as",
     "rconnect/game/EnergyImpactVisuals.as",
     "rconnect/game/GameBridge.as",
     "rconnect/game/HitFeedback.as",
@@ -1251,14 +1295,15 @@
     "bounded_working_set_component": true,
     "acid_ground_component": true,
     "accumulated_clock_component": true,
-    "terrain_loop_component": true
+    "terrain_loop_component": true,
+    "gas_pulse_component": true
   },
   "static_errors": [],
   "hash_note": "Layer merged_sha256 values describe intermediate merges. The source array is the final normalized LF source inventory; text-equivalent CRLF normalization is not a functional edit.",
-  "followup_review": "Full terrain class equivalence only; native loading and final motion remain unqualified.",
+  "followup_review": "Gas components only; native gas, final loading, motion and performance still unqualified.",
   "native_host_candidate": "build/m52/recovery-native-travel-host-01",
   "native_host_sha256": "e159fe0f0a1cbb34596d18b9979f439e80823fbeda369be7b2220a42e8e5d30c",
   "gameplay_qualified": false,
   "performance_qualified": false,
-  "integration_recipe_sha256": "4590f0713c1acf1769c0edc518d4b97d5bef386ff444512d0e8d3b137441fbe1"
+  "integration_recipe_sha256": "af7febb4ae85f7462e0a0bc1f38f081ea1091822b51e0ea2f7f005667e2d1575"
 }
