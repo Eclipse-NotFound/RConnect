@@ -60,6 +60,7 @@ package {
          }throw new Error("no native floored peer grip corridor");
       }
       private function install():void {
+         check(mod.game.readWorldInfo().layoutSeed==PeerAuraFixture.SEED,"same native corridor layout in both exact-byte runs");
          check(mod.config.getValue("allowPeerGrip")=="0"&&mod.config.getValue("peerGripStruggle")=="1","safe personal defaults");
          mod.config.setValue("followTeammate","0");mod.game.forceCloseOverlays();
          var l:Object=mod.game.loc;
@@ -165,7 +166,9 @@ package {
          pictures.push({name:name,bitmap:bitmap});
       }
       private function tick(e:TimerEvent):void {
-         mod=RConnectMod.instance;if(mod==null||mod.session==null||mod.game.gg==null||mod.game.loc==null)return;
+         mod=RConnectMod.instance;if(mod==null||mod.session==null)return;
+         try {PeerAuraFixture.prepare(mod,host);}catch(setupError:Error){check(false,setupError.getStackTrace());finish();return;}
+         if(mod.game.gg==null||mod.game.loc==null)return;
          if(host&&mod.session.server!=null)for each(var l:TcpLink in mod.session.server.clients)watch(l);else if(!host)watch(mod.session.link);
          try {
             if(phase=="done")return;if(getTimer()-at>(phase=="boot"?180000:90000)){check(false,"timeout "+phase);send("done");finish();return;}
