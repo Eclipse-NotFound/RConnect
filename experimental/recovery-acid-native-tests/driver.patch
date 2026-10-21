@@ -1,0 +1,418 @@
+--- existing/ExplosiveVisualTestDoc.as
++++ isolated/AcidGroundNativeTestDoc.as
+@@ -18,20 +18,14 @@
+    import rconnect.net.TcpLink;
+    import rconnect.net.NetMessageEvent;
+ 
+-   /** Native player input -> real Bullet/PhisBullet -> production TCP -> pixels.
+-    * This driver never calls shoot, Bullet.step/run/explosion, cosmetic receive
+-    * or the production explosion recipe. It also runs against the old SWF.
+-    * Each weapon fires once in each direction; the receiver never fires it. */
+-   public class ExplosiveVisualTestDoc extends Sprite {
++   /** Dedicated ground-acid suite: native G input -> actual PhisBullet/Part
++    * -> production TCP -> actual receiving Part and stage pixels. Four trials:
++    * dry host/join source, water host/join source. Not a flight/FPS benchmark. */
++   public class AcidGroundNativeTestDoc extends Sprite {
+       public static const MOD_CLASS:Class=RConnectMod;
+       private static const CASES:Array=[
+-         {id:"dinamit",quick:true,water:false,part:"expl",extended:true},
+-         {id:"grenade",quick:true,water:false,part:"expl"},
+-         {id:"aglau",quick:false,water:false,part:"expl"},
+-         {id:"bfg",quick:false,water:false,part:"plaexpl"},
+-         {id:"spgren",quick:true,water:false,part:"sparkleexpl"},
+-         {id:"grenade",quick:true,water:true,part:"explw"},
+-         {id:"grenade",quick:true,water:false,part:"expl",swap:true}
++         {id:"acidgr",quick:true,water:false,part:"acidexpl",ground:"acid",impact:true},
++         {id:"acidgr",quick:true,water:true,part:"acidexpl",ground:"acid",impact:true}
+       ];
+       private var cases:Array=CASES;
+       private var mod:RConnectMod,host:Boolean,source:Boolean,t:Timer=new Timer(100);
+@@ -53,19 +47,22 @@
+       private var swapLive:Boolean=false,swapFlightFrames:int=0,swapLmgFrames:int=0;
+       private var groundCount:int=0,sprayCount:int=0,groundPixels:int=0,aux:Dictionary=new Dictionary();
+       private var diagnosticAt:int=0,observedFrames:int=0;
++      private var ground:AcidGroundProbe,gameFrame:int=0,inputReleased:int=0,issued:Boolean=false;
++      private var bootActor:Object,bootRoom:Object,bootFrames:int=0,bootWatching:Boolean=false,bootLogged:Boolean=false;
++      private var originalInventory:Object;
+ 
+-      public function ExplosiveVisualTestDoc(scenarios:Array=null) {
++      public function AcidGroundNativeTestDoc(scenarios:Array=null) {
+          if(scenarios!=null)cases=scenarios;
+          var app:String=NativeApplication.nativeApplication.applicationID;
+-         if(app.indexOf("rconnect-coop-")<0)return;host=app.indexOf("-host-")>=0;
++         if(!/^pfe-modsettings-rconnect-coop-(host|join)-[a-f0-9]{10}$/.test(app))return;host=app.indexOf("-host-")>=0;
+          loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR,onError);
+          t.addEventListener(TimerEvent.TIMER,tick);t.start();
+       }
+       private function check(ok:Boolean,s:String):void {
+-         Log.d("COOP "+(ok?"PASS ":"FAIL ")+"explosive-visual "+s+" round="+round);
++         Log.d("COOP "+(ok?"PASS ":"FAIL ")+"acid-ground-native "+s+" round="+round);
+       }
+       private function send(stage:String,p:Object=null):void {
+-         if(mod==null)return;p=p||{};p.type="explosive-visual-test";p.stage=stage;p.round=round;
++         if(mod==null)return;p=p||{};p.type="acid-ground-native-test";p.stage=stage;p.round=round;
+          if(host)mod.session.server.broadcast(p);else if(mod.session.link!=null)mod.session.link.send(p);
+       }
+       private function watch(link:TcpLink):void {
+@@ -77,10 +74,13 @@
+          g.anim();
+          oldGun=g.currentWeapon;oldChildren=g.childObjs;oldThrow=g.throwWeapon;oldMagic=g.magicWeapon;
+          oldGrenader=g.pers.grenader;oldSky=mod.game.loc.sky;oldLevels=w.weaponsLevelsOff;saved=true;
+-         var wc:Object=mod.main.loaderInfo.applicationDomain.getDefinition("fe.weapon.Weapon");
+-         standby=wc.create(g,"lmg",0);standby.setPers(g,g.pers);standby.addVisual();
+-         if(oldGun!=null)oldGun.remVisual();
+-         g.currentWeapon=standby;g.childObjs=[standby,g.punchWeapon];g.throwWeapon=null;
++         originalInventory={weapons:g.invent.weapons,fav:g.invent.fav,favIds:g.invent.favIds};
++         g.invent.weapons=copyArray(g.invent.weapons);g.invent.fav=copyArray(g.invent.fav);g.invent.favIds=copyArray(g.invent.favIds);
++         g.childObjs=g.childObjs.concat();g.changeWeapon("not",true);
++         g.invent.weapons.lmg=null;standby=g.invent.addWeapon("lmg");g.changeWeapon("lmg",true);
++         g.throwWeapon=null;
++         check(g.currentWeapon===standby && g.invent.weapons.lmg===standby && g.childObjs.indexOf(standby)>=0,
++            "standby uses native owned inventory and equipment path");
+          // Isolated fixture only: disable the proximity perk, keep the native
+          // weapon's fuse/velocity/gravity/bounce and the whole simulation intact.
+          g.pers.grenader=0;mod.game.loc.sky=false;w.weaponsLevelsOff=false;
+@@ -101,7 +101,9 @@
+          }
+       }
+       private function prepare(n:int):void {
++         if(ground!=null)ground.dispose();
+          restoreWeapon();round=n;spec=cases[int(n/2)];source=host==(n%2==0);
++         gameFrame=inputReleased=0;issued=false;
+          nativeBullet=null;nativeClass="";nativeBirth=nativeEnd=peerEnd=sourceShots=0;
+          nativeExplosion=peerExplosion=localResult=peerResult=null;
+          flightFrames=flightLate=flightPeak=flightClear=bounces=rotations=explosionParts=explosionPixels=0;
+@@ -117,12 +119,14 @@
+             tile.phX1=r.x*40;tile.phX2=(r.x+1)*40;tile.phY1=r.y*40;tile.phY2=(r.y+1)*40;
+          }
+          mod.game.world.redrawLoc();
++         ground=new AcidGroundProbe(mod,source,round);
+          var emitter:Object=mod.main.loaderInfo.applicationDomain.getDefinition("fe.graph.Emitter").arr[spec.part];
+          if(emitter==null)throw new Error("Missing native emitter "+spec.part);
+          effectClass=emitter.visClass as Class;effectBitmap=emitter.blit?mod.game.world.grafon.getSpriteList(emitter.blit,1):null;
+          if(source) {
+-            var g:Object=mod.game.gg,wc:Object=mod.main.loaderInfo.applicationDomain.getDefinition("fe.weapon.Weapon");
+-            gun=wc.create(g,spec.id,0);gun.setPers(g,g.pers);gun.lvl=0;gun.perslvl=0;
++            var g:Object=mod.game.gg;
++            g.invent.weapons[spec.id]=null;gun=g.invent.addWeapon(spec.id);
++            gun.setPers(g,g.pers);gun.lvl=0;gun.perslvl=0;
+             if(spec.magic===true) {
+                g.mana=10000;g.pers.manaHP=10000;g.pers.spellsPoss=1;
+             } else {
+@@ -143,8 +147,10 @@
+                g.magicWeapon=gun;gun.loc=mod.game.loc;gun.setNull();gun.addVisual2();
+                check(g.currentWeapon!==gun && g.childObjs.indexOf(gun)<0,"quick magic uses native magicWeapon outside equipment id="+spec.id);
+             } else if(spec.quick) {
+-               g.throwWeapon=gun;gun.loc=mod.game.loc;gun.setNull();
+-               check(g.currentWeapon!==gun && g.childObjs.indexOf(gun)<0,"quick throw uses native throwWeapon outside currentWeapon/childObjs id="+spec.id);
++               g.invent.favItem(spec.id,29);
++               check(g.invent.weapons[spec.id]===gun && g.throwWeapon===gun && g.invent.fav[29]==spec.id
++                  && g.currentWeapon!==gun && g.childObjs.indexOf(gun)<0,
++                  "quick throw uses native owned inventory/favourite outside currentWeapon/childObjs id="+spec.id);
+             } else {
+                standby.remVisual();g.currentWeapon=gun;g.childObjs=[gun,g.punchWeapon];gun.addVisual();gun.hold=gun.holder;
+             }
+@@ -153,7 +159,7 @@
+          setPhase("prepared");
+       }
+       private function before(e:Event):void {
+-         if(!saved || phase=="done")return;
++         if(!saved || phase=="done")return;gameFrame++;
+          var g:Object=mod.game.gg,w:Object=mod.game.world,ctr:Object=w.ctr;
+          mod.game.forceCloseOverlays();g.invulner=true;g.disabled=!source;g.ggControl=true;g.isTake=0;
+          g.setPos(baseX,baseY);g.dx=g.dy=0;g.storona=1;g.setVisPos();
+@@ -163,21 +169,67 @@
+          ctr.keyAttack=ctr.keyGrenad=ctr.keyMagic=false;
+          g.celX=w.celX=baseX+210;g.celY=w.celY=baseY-45;
+          w.cam.celX=w.celX*w.cam.scaleV+w.cam.vx;w.cam.celY=w.celY*w.cam.scaleV+w.cam.vy;
+-         if(phase=="run" && source && gun!=null && gun.b==null) {
++         if(phase=="run" && source && !issued && gun!=null && gun.b==null) {
+             if(spec.magic===true)ctr.keyMagic=true;else if(spec.quick)ctr.keyGrenad=true;else ctr.keyAttack=true;
+          }
++         if(source && issued && !ctr.keyGrenad && inputReleased==0)inputReleased=gameFrame;
+          mod.stage.invalidate();
++      }
++      private function bootState():Object {
++         var g:Object=mod.game.gg,w:Object=mod.game.world;
++         return {role:host?"host":"join",at:getTimer(),timerTicks:t.currentCount,frames:bootFrames,
++            ready:mod.session.rooms.ready,busy:mod.session.rooms.busy,transition:mod.game.isTransitioning(),
++            hp:Number(g.hp),sost:int(g.sost),dead:g.pers.dead,animOff:g.animOff,control:g.ggControl,
++            disabled:g.disabled,work:g.work,t_work:g.t_work,t_die:w.t_die,t_exit:w.t_exit,comLoad:w.comLoad,
++            clickReq:w.clickReq,onPause:w.onPause,allStat:w.allStat,roomActive:mod.game.loc!=null?mod.game.loc.active:null,
++            blackVisible:w.vblack.visible,blackAlpha:w.vblack.alpha,
++            label:g.vis!=null && g.vis.osn!=null?g.vis.osn.currentLabel:null};
++      }
++      private function bootWorldReady():Boolean {
++         var g:Object=mod.game.gg,w:Object=mod.game.world,loc:Object=mod.game.loc;
++         return mod.session.rooms.ready && !mod.session.rooms.busy && !mod.game.isTransitioning()
++            && loc!=null && loc.active && g.loc===loc && int(g.sost)==1 && Number(g.hp)>0 && !g.pers.dead
++            && !w.onPause && int(w.allStat)==1 && int(w.clickReq)==0
++            && (!w.vblack.visible || Number(w.vblack.alpha)<=0) && g.vis!=null && g.vis.stage!=null;
++      }
++      private function bootFrame(e:Event):void {
++         if(phase!="boot" || bootActor==null)return;
++         var g:Object=mod.game.gg;
++         if(g===bootActor && mod.game.loc===bootRoom && bootWorldReady()
++            && !g.animOff && g.ggControl && !g.disabled && g.work!="die" && g.work!="res"
++            && g.vis.osn.currentLabel!="die")bootFrames++;
++         else bootFrames=0;
++      }
++      private function prepareBootActor():void {
++         if(!bootWorldReady())return;
++         var g:Object=mod.game.gg;
++         if(bootActor!==g || bootRoom!==mod.game.loc) {
++            // A living character can retain the prologue's stopped artwork.
++            // Clear it through native methods only after room/loading gates.
++            // Actual deaths are rejected above; never heal or set sost/t_die.
++            Log.d("ACID BOOT PREPARE "+JSON.stringify(bootState()));
++            bootActor=g;bootRoom=mod.game.loc;bootFrames=0;bootLogged=false;
++            g.anim();g.controlOn();g.invulner=true;
++         }
++         if(bootFrames>=2 && !bootLogged) {
++            bootLogged=true;Log.d("ACID BOOT READY "+JSON.stringify(bootState()));
++         }
+       }
+       private function tick(e:TimerEvent):void {
+          mod=RConnectMod.instance;if(mod==null || mod.game==null || mod.game.gg==null)return;
+          if(host){for each(var l:TcpLink in mod.session.server.clients)watch(l);}else watch(mod.session.link);
+          var w:Object=mod.game.world;mod.game.gg.invulner=true;
++         if(!bootWatching){bootWatching=true;mod.stage.addEventListener(Event.ENTER_FRAME,bootFrame,false,-2147483647);}
+          if(w.clickReq==1){mod.stage.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_DOWN,true));mod.stage.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_UP,true));}
+          if(phase=="done")return;
+-         if(getTimer()-at>(phase=="boot"?70000:26000)){fail("timeout "+phase);return;}
++         if(getTimer()-at>(phase=="boot"?180000:26000)) {
++            if(phase=="boot")Log.d("ACID BOOT TIMEOUT "+JSON.stringify(bootState()));
++            fail("timeout "+phase);return;
++         }
++         if(phase=="boot")prepareBootActor();
+          if(!mod.session.rooms.ready || mod.session.rooms.busy || mod.game.isTransitioning())return;
+          try {
+-            if(phase=="boot" && !host && t.currentCount>130 && getTimer()-readyAt>500 && (!w.vblack.visible || w.vblack.alpha<=0)) {
++            if(phase=="boot" && !host && bootFrames>=2 && bootWorldReady() && getTimer()-readyAt>500) {
+                readyAt=getTimer();send("ready");
+             }
+             if(phase=="run") {
+@@ -188,15 +240,16 @@
+                      phase:phase,pause:w.onPause,black:w.vblack.visible,allStat:w.allStat,animOff:mod.game.gg.animOff,
+                      effects:explosionParts,ground:groundCount,frames:flightFrames,worldFrames:observedFrames}));
+                }
+-               if(source && nativeEnd>0 && getTimer()-nativeEnd>=2100)complete();
+-               else if(!source && peerEnd>0 && getTimer()-peerEnd>=2100)complete();
++               var ended:int=source?nativeEnd:peerEnd;
++               if(ended>0 && ((ground.allEnded && getTimer()-ground.lastBirth>=500)
++                  || (ground.count==0 && getTimer()-ended>=6000)))complete();
+             }
+          } catch(err:Error){fail(err.getStackTrace());}
+       }
+       private function receive(e:NetMessageEvent):void {
+-         var p:Object=e.data;if(p.type!="explosive-visual-test" || phase=="done")return;
++         var p:Object=e.data;if(p.type!="acid-ground-native-test" || phase=="done")return;
+          try {
+-            if(host && p.stage=="ready" && phase=="boot") {
++            if(host && p.stage=="ready" && phase=="boot" && bootFrames>=2 && bootWorldReady()) {
+                var loc:Object=mod.game.loc;
+                if(loc.spaceX<15 || loc.spaceY<10)throw new Error("Fixture requires a 15x10 or larger room");
+                baseX=Math.max(160,Math.min(Math.floor(mod.game.gg.X/40)*40,loc.spaceX*40-440));
+@@ -228,7 +281,7 @@
+             if(source && gun!=null && gun.b!=null && !nativeShots[gun.b]) {
+                nativeShots[gun.b]=true;sourceShots++;
+                if(nativeBullet==null) {
+-                  nativeBullet=gun.b;nativeBirth=now;nativeClass=getQualifiedClassName(nativeBullet.vis);
++                  nativeBullet=gun.b;issued=true;nativeBirth=now;nativeClass=getQualifiedClassName(nativeBullet.vis);
+                   send("native-born",{cls:nativeClass});
+                   check(Number(nativeBullet.explRadius)>0 && (spec.quick?getQualifiedClassName(nativeBullet)=="fe.weapon::PhisBullet":true),
+                      "native input fired the requested explosive id="+spec.id+" bullet="+getQualifiedClassName(nativeBullet));
+@@ -300,24 +353,13 @@
+                         nativeExplosion.x=o.X;nativeExplosion.y=o.Y;send("native-explosion",{value:nativeExplosion});
+                      }
+                   }
+-                  if(explosionPixels==0 && pixels(o.vis as DisplayObject)>0)explosionPixels++;
+-               }
+-               if(cname=="fe.graph::Part" && spec.ground!=null) {
+-                  var emitters:Object=mod.main.loaderInfo.applicationDomain.getDefinition("fe.graph.Emitter").arr;
+-                  if(o.vClass===emitters[String(spec.ground)].visClass) {
+-                     if(!aux[o]){aux[o]=true;groundCount++;}
+-                     // Prove actual stage pixels once. Drawing the whole game
+-                     // twice for every puddle on every frame stalls the very
+-                     // native fuse being measured. Identity/count stays live.
+-                     if(groundPixels==0 && pixels(o.vis as DisplayObject)>0)groundPixels++;
+-                  } else if(spec.ground=="acid" && o.blitData===mod.game.world.grafon.getSpriteList("sprGBlood",1) && !aux[o]) {
+-                     aux[o]=true;sprayCount++;
+-                  }
++
+                }
+                if(!source && (cname=="fe.weapon::Bullet" || cname=="fe.weapon::PhisBullet") && o.weap!=null && String(o.weap.id)==spec.id && !unexpected[o]) {
+                   unexpected[o]=true;unexpectedBullets++;
+                }
+             }
++            ground.scan(gameFrame);groundCount=ground.count;
+          } catch(err:Error){fail(err.getStackTrace());}
+       }
+       private function sampleFlight(v:DisplayObject,now:int,dt:int):Boolean {
+@@ -329,89 +371,73 @@
+          // fireball's many flame Parts and distorted the source flight clock.
+          // Presence, visibility, bounds, pose and end remain sampled each frame.
+          if(flightPixelSeen[v]!==true) {
+-            if(pixels(v)==0)return false;flightPixelSeen[v]=true;
++            flightPixelSeen[v]=true;
+          }
+          if(!isNaN(lastRotation) && Math.abs(v.rotation-lastRotation)>.1)rotations++;
+          lastRotation=v.rotation;
+          if(flightPositions.length<300)flightPositions.push({at:now,x:v.x,y:v.y,r:v.rotation});
+          return true;
+       }
+-      private function pixels(v:DisplayObject):int {
+-         if(v==null || !v.visible || v.stage==null || v.alpha<=0)return 0;
+-         var root:DisplayObject=mod.main as DisplayObject,r:Rectangle=v.getBounds(root);
+-         r=r.intersection(new Rectangle(0,0,mod.stage.stageWidth,mod.stage.stageHeight));
+-         if(r.width<1 || r.height<1 || r.width*r.height>500000)return 0;
+-         var a:BitmapData=new BitmapData(Math.ceil(r.width),Math.ceil(r.height),false,0),b:BitmapData=a.clone();
+-         var m:Matrix=new Matrix(1,0,0,1,-r.x,-r.y),was:Boolean=v.visible,n:int=0;
+-         try {
+-            a.draw(root,m);v.visible=false;b.draw(root,m);
+-            var av:Vector.<uint>=a.getVector(a.rect),bv:Vector.<uint>=b.getVector(b.rect);
+-            for(var i:int=0;i<av.length;i++)if(av[i]!=bv[i])n++;
+-         } finally {v.visible=was;a.dispose();b.dispose();}
+-         return n;
+-      }
++
+       private function complete():void {
+-         var endpoint:Object=source?nativeExplosion:peerExplosion;
+-         localResult={source:source,id:spec.id,water:spec.water,shots:sourceShots,flight:flightFrames,ms:flightMs,late:flightLate,
+-            peak:flightPeak,clear:flightClear,bounces:bounces,rotations:rotations,parts:explosionParts,pixels:explosionPixels,
+-            unexpected:unexpectedBullets,explosion:endpoint,positions:explosionPositions,ground:groundCount,spray:sprayCount,
+-            swap:spec.swap===true,swapRequested:swapRequested,swapDetached:swapDetached,swapLive:swapLive,
+-            swapFlight:swapFlightFrames,swapLmg:swapLmgFrames};
+-         Log.d("EXPLOSIVE RESULT "+JSON.stringify(localResult));
+-         Log.d("EXPLOSIVE FLIGHT "+JSON.stringify({round:round,role:source?"native":"remote",points:flightPositions}));
+-         check(flightFrames>0,"actual "+(source?"native":"remote")+" flight pixels id="+spec.id+" frames="+flightFrames);
+-         check(endpoint!=null,"source reached native isExpl before removal id="+spec.id);
+-         check((spec.pulses?explosionParts>1:explosionParts==1) && explosionPixels>0,"native explosion effect has actual pixels id="+spec.id+" effects="+explosionParts+" frames="+explosionPixels);
+-         if(spec.ground!=null)check(groundCount>0 && groundPixels>0,"native ground residue has pixels kind="+spec.ground+" parts="+groundCount);
+-         if(spec.ground=="acid")check(sprayCount>=30,"acid splash particles visible count="+sprayCount);
+-         if(endpoint!=null) {
+-            check(Boolean(endpoint.water)==Boolean(spec.water),"native detonation uses requested water branch");
+-            var positionOK:Boolean=explosionPositions.length==(spec.pulses?explosionParts:1);
+-            // The native gas emitter deliberately scatters clouds within rx/ry;
+-            // compare its declared spread, not an explosion's zero-radius rule.
+-            var spread:Object=mod.main.loaderInfo.applicationDomain.getDefinition("fe.graph.Emitter").arr[spec.part];
+-            for each(var ep:Object in explosionPositions)positionOK=positionOK
+-               && Math.abs(ep.x-endpoint.x)<=Math.abs(Number(spread.rx))/2+1
+-               && Math.abs(ep.y-endpoint.y)<=Math.abs(Number(spread.ry))/2+1;
+-            check(positionOK,"effect uses actual native detonation position");
+-         }
++         var endpoint:Object=source?nativeExplosion:peerExplosion,proof:Object=ground.result();
++         localResult={source:source,id:spec.id,water:spec.water,shots:sourceShots,flight:flightFrames,
++            unexpected:unexpectedBullets,explosion:endpoint,inputReleased:inputReleased,proof:proof};
++         Log.d("ACID GROUND RESULT "+JSON.stringify({round:round,role:host?"host":"join",value:localResult}));
++         check(endpoint!=null && Boolean(endpoint.water)==Boolean(spec.water),"actual native acid detonation uses requested dry/water branch");
++         check(flightFrames>0,"real projectile display existed before native terminal");
++         check(proof.rows.length>0 && !proof.overflow,"actual native acid Part objects exist; acidexpl alone is insufficient");
++         check(proof.pixel!=null && proof.pixel.pixels>0,"acid Part contributes final-stage pixels; readback deferred until expiry");
++         check(proof.allEnded,"every observed acid Part expires through native lifetime");
++         var properties:Boolean=proof.rows.length>0,life:Boolean=properties,animated:Boolean=false,faded:Boolean=false;
++         for each(var row:Object in proof.rows) {
++            properties=properties && row.partClass=="fe.graph::Part" && row.visualClass=="visualAcid" && row.stable;
++            life=life && row.mliv>=100 && row.mliv<=129 && row.firstLiv>0 && row.removedFrame>row.bornFrame && row.detached && row.finalLiv<=0;
++            animated=animated || row.animated;faded=faded || row.alphaMax>=.5 && row.alphaMin<row.alphaMax;
++         }
++         check(properties,"ground entities use native stationary Part/visualAcid");
++         check(life,"native 100..129-frame acid lifespan reaches removal and detaches its display");
++         check(animated && faded,"actual acid artwork animates and changes native alpha");
+          if(source) {
+-            check(sourceShots==1,"one real source shot, no direct bullet simulation");
+-            if(spec.quick && !spec.water && !spec.impact)check(bounces>0 && rotations>0,"native thrown explosive really bounces and rotates");
+-         } else {
+-            check(flightPeak<=1 && flightClear==0,"repeated snapshots neither duplicate nor strand the projectile peak="+flightPeak+" afterEnd="+flightClear);
+-            check(unexpectedBullets==0,"receiver produces no native damaging projectile for the cosmetic replay");
+-            if(spec.quick && !spec.water)check(rotations>0,"remote thrown explosive preserves native rotation");
+-         }
+-         if(spec.extended)check(flightLate>0 && endpoint!=null && endpoint.life>3300,"long native fuse stays visible beyond old 2.5 second cutoff");
+-         if(spec.swap) {
+-            if(source)check(swapRequested==nativeBirth && swapDetached>0 && swapLive,
+-               "native LMG switch requested on birth frame removes old weapon while grenade is still live");
+-            else check(swapPeerAt>0 && swapLive,"peer confirms old weapon really left equipment and quick slot before detonation");
+-            check(swapFlightFrames>0 && swapLmgFrames>0,"in-flight grenade remains visible after LMG switch frames="+swapFlightFrames);
+-         }
+-         setPhase("result");
+-         if(host)advance();else send("result",{value:localResult});
++            check(sourceShots==1 && inputReleased>0,"one real G throw, input released before ground terminal");
++            var onSurface:Boolean=proof.rows.length>0;
++            for each(row in proof.rows) {
++               var tile:Object=row.surface;
++               onSurface=onSurface && tile!=null && tile.ty>1 && (tile.phis>0 || tile.shelf)
++                  && (tile.zForm!=0 || tile.above==0) && Math.abs(row.x-tile.x)<=2.01 && Math.abs(row.y-tile.y)<.01;
++            }
++            check(onSurface,"source acid Part uses actual exposed native tile surface, without fire -33 offset");
++         } else check(unexpectedBullets==0,"receiver does not create another native damaging acid projectile");
++         setPhase("result");if(host)advance();else send("result",{value:localResult});
+       }
+       private function advance():void {
+          if(!host || localResult==null || peerResult==null)return;
+          var origin:Object=localResult.source?localResult:peerResult,remote:Object=localResult.source?peerResult:localResult;
+-         check(origin.ms>0 && remote.ms>=origin.ms*.75-100 && remote.ms<=origin.ms*1.35+200,
+-            "remote preserves native visible flight duration native="+origin.ms+" remote="+remote.ms+" id="+spec.id);
+-         if(spec.pulses)check(origin.parts==remote.parts,"every actual native pulse plays once source="+origin.parts+" remote="+remote.parts);
+-         if(spec.ground!=null)check(origin.ground==remote.ground,"ground footprint preserves native tile count source="+origin.ground+" remote="+remote.ground);
++         var a:Array=origin.proof.rows,b:Array=remote.proof.rows,used:Object={},matches:Array=[];
++         var equal:Boolean=a.length>0 && a.length==b.length;
++         for each(var r:Object in b) {
++            var chosen:int=-1,distance:Number=1e30;
++            for(var i:int=0;i<a.length;i++)if(!used[i]) {
++               var dx:Number=Math.abs(Number(r.x)-Number(a[i].x)),dy:Number=Math.abs(Number(r.y)-Number(a[i].y));
++               if(dx<=4 && dy<=4 && dx*dx+dy*dy<distance){chosen=i;distance=dx*dx+dy*dy;}
++            }
++            if(chosen<0)equal=false;
++            else {used[chosen]=true;matches.push({source:a[chosen].id,remote:r.id,dx:r.x-a[chosen].x,dy:r.y-a[chosen].y});}
++         }
++         check(equal,"one-to-one ground footprint follows real source Parts within +/-4px, source="+a.length+" remote="+b.length);
++         Log.d("ACID GROUND COMPARE "+JSON.stringify({round:round,water:spec.water,matches:matches,matched:equal}));
+          nextRound();
+       }
+       private function restoreWeapon():void {
+          if(!saved)return;
+          var g:Object=mod.game.gg;
+-         if(gun!=null){gun.remVisual();gun=null;}
++         if(gun!=null){if(g.throwWeapon===gun)g.invent.favItem(gun.id,29);gun.remVisual();gun=null;}
+          if(ammo!=""){g.invent.items[ammo].kol=oldAmmo;ammo="";}
+          if(swapInventory!=null) {
+             g.invent.weapons=swapInventory.weapons;g.invent.fav=swapInventory.fav;g.invent.favIds=swapInventory.favIds;
+             swapInventory=null;
+          }
+-         g.currentWeapon=standby;g.childObjs=[standby,g.punchWeapon];g.throwWeapon=null;g.magicWeapon=null;
++         if(g.currentWeapon!==standby)g.changeWeapon("lmg",true);g.throwWeapon=null;g.magicWeapon=null;
+          if(standby!=null)standby.addVisual();
+       }
+       private function copyArray(value:Array):Array {
+@@ -423,13 +449,19 @@
+       }
+       private function fail(s:String):void {check(false,s);send("done");finish();}
+       private function finish():void {
+-         if(phase=="done")return;setPhase("done");t.stop();
++         if(phase=="done")return;setPhase("done");t.stop();if(ground!=null)ground.dispose();
+          if(mod!=null) {
++            mod.stage.removeEventListener(Event.ENTER_FRAME,bootFrame);
+             mod.stage.removeEventListener(Event.ENTER_FRAME,before);mod.stage.removeEventListener(Event.RENDER,render);
+             if(saved && mod.game.gg!=null) {
+                restoreWeapon();var g:Object=mod.game.gg,w:Object=mod.game.world;
+-               if(standby!=null)standby.remVisual();
+-               g.currentWeapon=oldGun;g.childObjs=oldChildren;g.throwWeapon=oldThrow;g.magicWeapon=oldMagic;g.pers.grenader=oldGrenader;
++               g.changeWeapon("not",true);
++               g.invent.weapons=originalInventory.weapons;g.invent.fav=originalInventory.fav;g.invent.favIds=originalInventory.favIds;
++               g.childObjs=oldChildren;if(oldGun!=null)g.changeWeapon(oldGun.id,true);
++               g.throwWeapon=oldThrow;g.magicWeapon=oldMagic;g.pers.grenader=oldGrenader;
++               check(g.currentWeapon===oldGun && g.invent.weapons===originalInventory.weapons
++                  && g.invent.fav===originalInventory.fav && g.invent.favIds===originalInventory.favIds,
++                  "original owned inventory and equipped weapon restored");
+                mod.game.loc.sky=oldSky;w.weaponsLevelsOff=oldLevels;
+                w.ctr.keyAttack=w.ctr.keyGrenad=w.ctr.keyMagic=false;
+                if(oldGun!=null)oldGun.addVisual();
+@@ -439,7 +471,7 @@
+          }
+          for(var link:Object in links)TcpLink(link).removeEventListener(TcpLink.MESSAGE,receive);
+          loaderInfo.uncaughtErrorEvents.removeEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR,onError);
+-         Log.d("COOP EFFECTS DONE explosive-visual "+(host?"host":"join"));
++         Log.d("COOP EFFECTS DONE acid-ground-native "+(host?"host":"join"));
+       }
+    }
+ }

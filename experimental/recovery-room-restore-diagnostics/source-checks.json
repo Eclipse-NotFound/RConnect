@@ -1,0 +1,641 @@
+{
+  "passed": true,
+  "checks": 154,
+  "failed": 0,
+  "assertions": [
+    {
+      "label": "strip restores exact recovery07 RConnectMod.as",
+      "passed": true
+    },
+    {
+      "label": "method/class scope nesting preserved RConnectMod.as",
+      "passed": true
+    },
+    {
+      "label": "block 1 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 2 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "strip restores exact recovery07 rconnect/core/RoomSync.as",
+      "passed": true
+    },
+    {
+      "label": "method/class scope nesting preserved rconnect/core/RoomSync.as",
+      "passed": true
+    },
+    {
+      "label": "block 3 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 14 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 15 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 10 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 11 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 12 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 6 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 7 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 13 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 5 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 4 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 9 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 8 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "strip restores exact recovery07 rconnect/game/GameBridge.as",
+      "passed": true
+    },
+    {
+      "label": "method/class scope nesting preserved rconnect/game/GameBridge.as",
+      "passed": true
+    },
+    {
+      "label": "block 30 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 31 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 24 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 25 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 26 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 27 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 28 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 29 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 22 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 67 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 68 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 60 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 61 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 69 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 70 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 71 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 72 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 23 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 16 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 32 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 33 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 34 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 35 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 17 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 18 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 19 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 20 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 38 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 36 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 37 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 39 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 41 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 40 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 42 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 43 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 44 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 45 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 46 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 47 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 48 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 49 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 50 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 51 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 52 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 53 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 54 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 55 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 56 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 57 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 58 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 59 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 62 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 64 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 63 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 65 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 66 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 21 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "strip restores exact recovery07 rconnect/game/NativeRoomState.as",
+      "passed": true
+    },
+    {
+      "label": "method/class scope nesting preserved rconnect/game/NativeRoomState.as",
+      "passed": true
+    },
+    {
+      "label": "block 73 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 74 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 75 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 77 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 78 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 79 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 80 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 85 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 81 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 82 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 86 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 83 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 84 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 76 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "strip restores exact recovery07 rconnect/game/UnitPresentation.as",
+      "passed": true
+    },
+    {
+      "label": "method/class scope nesting preserved rconnect/game/UnitPresentation.as",
+      "passed": true
+    },
+    {
+      "label": "block 87 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 89 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 90 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 91 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 88 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "strip restores exact recovery07 rconnect/game/TerrainSync.as",
+      "passed": true
+    },
+    {
+      "label": "method/class scope nesting preserved rconnect/game/TerrainSync.as",
+      "passed": true
+    },
+    {
+      "label": "block 92 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 93 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 94 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 95 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 96 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 97 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "strip restores exact recovery07 rconnect/game/NativeTileState.as",
+      "passed": true
+    },
+    {
+      "label": "method/class scope nesting preserved rconnect/game/NativeTileState.as",
+      "passed": true
+    },
+    {
+      "label": "block 98 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 99 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 100 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 101 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "strip restores exact recovery07 rconnect/game/RoomTerrainView.as",
+      "passed": true
+    },
+    {
+      "label": "method/class scope nesting preserved rconnect/game/RoomTerrainView.as",
+      "passed": true
+    },
+    {
+      "label": "block 102 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 103 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 104 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 105 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 106 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 107 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "strip restores exact recovery07 rconnect/net/RoomCodec.as",
+      "passed": true
+    },
+    {
+      "label": "method/class scope nesting preserved rconnect/net/RoomCodec.as",
+      "passed": true
+    },
+    {
+      "label": "block 108 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 109 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 110 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 111 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "block 112 adds diagnostic/read-only calls only",
+      "passed": true
+    },
+    {
+      "label": "all inserted blocks counted",
+      "passed": true
+    },
+    {
+      "label": "only one aggregate log call, no per-unit logs",
+      "passed": true
+    },
+    {
+      "label": "transaction/class/render buffers bounded",
+      "passed": true
+    },
+    {
+      "label": "finish at fourth ENTER_FRAME after first three frames",
+      "passed": true
+    },
+    {
+      "label": "actual isolated AIR ID gate retained",
+      "passed": true
+    },
+    {
+      "label": "collector has no game, rendering, timer or direct file actions",
+      "passed": true
+    },
+    {
+      "label": "observer does not stop events",
+      "passed": true
+    },
+    {
+      "label": "listener teardown is present after quota",
+      "passed": true
+    },
+    {
+      "label": "timed scope unit.constructor",
+      "passed": true
+    },
+    {
+      "label": "timed scope unit.restoreRuntime",
+      "passed": true
+    },
+    {
+      "label": "timed scope unit.restoreInternal",
+      "passed": true
+    },
+    {
+      "label": "timed scope terrain.capture",
+      "passed": true
+    },
+    {
+      "label": "timed scope terrain.restore",
+      "passed": true
+    },
+    {
+      "label": "timed scope terrain.nativeCapture",
+      "passed": true
+    },
+    {
+      "label": "timed scope terrain.nativeRestore",
+      "passed": true
+    },
+    {
+      "label": "timed scope terrain.viewCapture",
+      "passed": true
+    },
+    {
+      "label": "timed scope terrain.viewCompare",
+      "passed": true
+    },
+    {
+      "label": "timed scope frame.rcMirror",
+      "passed": true
+    },
+    {
+      "label": "timed scope frame.rcView",
+      "passed": true
+    },
+    {
+      "label": "timed scope frame.rcPerception",
+      "passed": true
+    },
+    {
+      "label": "timed scope frame.rcMask",
+      "passed": true
+    },
+    {
+      "label": "timed scope room.grant",
+      "passed": true
+    },
+    {
+      "label": "timed scope room.commit",
+      "passed": true
+    },
+    {
+      "label": "original scene12 complete frozen inventory verified, unchanged",
+      "passed": true
+    }
+  ],
+  "source_only": true,
+  "as_executed": false,
+  "compiled": false,
+  "air_started": false,
+  "performance_qualified": false,
+  "base_sha256": "c9f6492117124dea23a6991396cf9957d7b73a9730b747b4c8b1cad9533ca3bc",
+  "proposal_sha256": "ffc0c37d23338065aca8366c5b0ecb9369543d940f4aa90cd7ed2617cbad967c",
+  "scene_driver": {
+    "path": "build\\m52\\room-travel-driver-12",
+    "manifest_sha256": "3106b031b97743e2a0fda30e26ab735a387b201683339ab4335a998b0d25b784",
+    "scene_test_sha256": "c94ff2225b721a842cd3bf086754e6be6c210c72a44dfb7303ec1306a41ab240",
+    "changed": false
+  },
+  "tools": {
+    "check_sources.py": "25959662d77e8732b37efa818469bb66fc46efd2e82c8db2264c68c998c8b663",
+    "generate.py": "88732c4dcbdf7d01757c9a50c0ec42d9ab110f1b59af8a42fe9932fe66ecb3d3",
+    "prepare.py": "a0abede29380e8ca43304a2b55b42d8d771b1ffe5205b8e1df2354771910775d"
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "schema": 1,
+  "purpose": "timing08_diagnostic_only",
+  "baseline": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-08\\src",
+  "baseline_prepared_sha256": "722ae10b5b157a7d2d4a9f92d32c9c954e3df61fc1069c587322510328a264fa",
+  "baseline_binary_sha256": "74d2ab0f6c1d174153af56e9c3a8e3750fa429de066f0dfe90226d48db906f02",
+  "recipe_dependencies": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-flight-diagnostics\\make_overlay.py": "6b6dcb0c53d51e614ab9c8c6dc536d5affe18b1c136c347a30f6ce1904a57f98"
+  },
+  "files": [
+    {
+      "source": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-08\\src\\rconnect\\game\\RemoteMotion.as",
+      "source_sha256": "cd58b1286bc913149ac02ad60713e82c251b8e574043444b4f3ccfd6e4a2ebc5",
+      "overlay": "src/rconnect/game/RemoteMotion.as",
+      "sha256": "fe1eef381779cdd138a87b5163418d2d75234771be4ba8b4f74f30ba271bb3ce",
+      "stripped_equal": true,
+      "diagnostic_spans": 5
+    },
+    {
+      "source": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-08\\src\\rconnect\\game\\ProjectileFrameStream.as",
+      "source_sha256": "a7039e20094c9df3f9e7a7ee2f22e1f1262d067c0e7f0356cb994743fbfc30d9",
+      "overlay": "src/rconnect/game/ProjectileFrameStream.as",
+      "sha256": "9a44caf0ceaf79419efde56deede99ebe033714aaf654ab920f55736cb93b17e",
+      "stripped_equal": true,
+      "diagnostic_spans": 4
+    },
+    {
+      "source": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-08\\src\\rconnect\\game\\ProjectileVisuals.as",
+      "source_sha256": "17a65244a2d7283e37b699ade9d45eeef7a19e132b0b1a0a49e50da4fa0d85fd",
+      "overlay": "src/rconnect/game/ProjectileVisuals.as",
+      "sha256": "15929f1c38bc75a6d94cc098cf8227d3ba2b16cad58dbd5995288b9203b37692",
+      "stripped_equal": true,
+      "diagnostic_spans": 8
+    },
+    {
+      "source": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-08\\src\\rconnect\\core\\Session.as",
+      "source_sha256": "e699b9c5a02799367bba8afd924d450d064cab3f0a5e9a36ea7d400b378b10ba",
+      "overlay": "src/rconnect/core/Session.as",
+      "sha256": "f870aa6961a05685be58e904af918ff6210f25144ba19329ae65c5c8c0241900",
+      "stripped_equal": true,
+      "diagnostic_spans": 7
+    },
+    {
+      "source": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-08\\src\\rconnect\\game\\GameBridge.as",
+      "source_sha256": "e1cd085795e134ca293a5eb83fe44e22a0bc7edfb172f960a2c6a1e8bdec9260",
+      "overlay": "src/rconnect/game/GameBridge.as",
+      "sha256": "480f67d0e23f8e2441ac18996bc8524271d8ea98e062087d172d5ec8c3a0b174",
+      "stripped_equal": true,
+      "diagnostic_spans": 9
+    }
+  ],
+  "driver": {
+    "source": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-flight-drivers-14\\tests\\NativeFlightContinuityTestDoc.as",
+    "source_sha256": "3fd803a59bfa84fd9aa5e82c3d6df83934d5041ac399b0b335ef57468f0da23a",
+    "overlay": "tests/NativeFlightContinuityTestDoc.as",
+    "sha256": "9cb12e8fa7422a5dea2e2dcf3d02b95957be8917b8138768d9899fc469e69d65",
+    "stripped_equal": true
+  },
+  "driver_support": {
+    "NativeFlightBounds.as": "4582f97f79ac7fe4abf3d9d2ef6feac4e5f5ac25558c55478d32ba87698ed90a"
+  },
+  "new_files": {
+    "src/rconnect/diagnostics/FlightDiagnostics.as": "d2099dfefbc7ed9cbd23d56e6b703c1486cdbbdd88c1910b4f7ee801e92f4f1d",
+    "tests/FlightDiagnosticRecorder.as": "15d473961cc837738a929d6ac4c7c76a403f1ff7315eb0d9043e5d3a508fcd2f"
+  },
+  "method_files": {
+    "make_overlay.py": "0a2c3b23ce32c3047297b91ff862aa3ba8c204a88bb512d43735869b28e351e1",
+    "prepare.py": "d51e8aa0e1cf5f91eac0ffba0c5e18f909d85fc393eb73b05fc032c88cdd7eb5",
+    "run.py": "32a90e3efc71c701149aeccca64b1f5c93bed972a34610f6be2d8cb628fc29cf",
+    "analyze.py": "db1295922c2168bc00590cb582954e2cc4856db25e368464049ad30ca604051e",
+    "test_static.py": "9772867964d6847a523b459d41714d30eddc88fc491f1416a92e6a02818d0d09",
+    "README.md": "108bc8c89f66777746b081ec3a48f0687e2dea8f1731d1e84b9987e1d0fcceb3"
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "kind": "restore-runner-offline-checks",
+  "checks": [
+    {
+      "label": "Exact compiled diagnostic fingerprint",
+      "passed": true
+    },
+    {
+      "label": "Other candidate rejected",
+      "passed": true
+    },
+    {
+      "label": "Read-only complete candidate/scene12/E159/tools/22 installation inputs",
+      "passed": true
+    },
+    {
+      "label": "success: exact evidence/qualification/restore",
+      "passed": true
+    },
+    {
+      "label": "framework-failure: exact evidence/qualification/restore",
+      "passed": true
+    },
+    {
+      "label": "incomplete-costs: exact evidence/qualification/restore",
+      "passed": true
+    },
+    {
+      "label": "input-change: exact evidence/qualification/restore",
+      "passed": true
+    },
+    {
+      "label": "malformed-cost-row: exact evidence/qualification/restore",
+      "passed": true
+    },
+    {
+      "label": "exception-after-raw-success: exact evidence/qualification/restore",
+      "passed": true
+    },
+    {
+      "label": "Missing rows cannot pass",
+      "passed": true
+    },
+    {
+      "label": "Malformed frames cannot pass",
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "count": 11,
+  "jvm_started": false,
+  "air_started": false,
+  "native_qualified": false,
+  "sources": {
+    "check_run_native.py": "8b5a2876e9110d60d3dc63bf22e8d955f78a716c3b08ad4515a939bc125875c4",
+    "run_native.py": "d7c03949fa0fa60d9bf6af94aa3e4aed0b116dd58f0f6718c2fb3d582c588b3d"
+  }
+}

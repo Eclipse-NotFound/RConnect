@@ -1,0 +1,18 @@
+{
+  "entry": "AcidGroundNativeTestDoc",
+  "baseline": "tests\\ExplosiveVisualTestDoc.as",
+  "baseline_sha256": "fe8a509218d3beba8321b598eaeaf0e9e199928a8f32bf81aadecf6e3377d82a",
+  "source_sha256": "aa02ac1760bca30ce0967093cf1c5ecaaafa276db87a40ba03e8a22e41510643",
+  "files": {
+    "AcidGroundNativeTestDoc.as": "aa02ac1760bca30ce0967093cf1c5ecaaafa276db87a40ba03e8a22e41510643",
+    "AcidGroundProbe.as": "4bb1776a982e6502f10fc382def37d46040e143158517b471e0b1bcfdedc95bc"
+  },
+  "rounds": 4,
+  "seconds": 360,
+  "compiled": false,
+  "air_started": false,
+  "performance_qualified": false,
+  "image_readback": "after all observed ground Parts expire; PNG saved to isolated application storage",
+  "position_tolerance_px": 4,
+  "generator_sha256": "046ba42093c731fe916d8342d8df7fa27a1ca64d22af58113933d930de7e9d79"
+}

@@ -1,0 +1,861 @@
+--- recovery07/RConnectMod.as
++++ diagnostic/RConnectMod.as
+@@ -1,6 +1,8 @@
+ package
+ {
+-   import flash.display.Stage;
++/*RCRESTORE:1:BEGIN*/
++   import rconnect.game.RestoreCostTrace;
++/*RCRESTORE:1:END*/   import flash.display.Stage;
+    import flash.utils.getQualifiedClassName;
+    import rconnect.core.Config;
+    import rconnect.core.Log;
+@@ -64,7 +66,9 @@
+       public function RConnectMod(main:Object)
+       {
+          this.main = main;
+-         this.stage = main["stage"] as Stage;
++         this.stage = main["stage"] as Stage;/*RCRESTORE:2:BEGIN*/
++RestoreCostTrace.enable(this.stage);
++/*RCRESTORE:2:END*/
+          // 自检：确认 main 身份（版本探测与游戏接入都依赖它）
+          try
+          {
+--- recovery07/rconnect/core/RoomSync.as
++++ diagnostic/rconnect/core/RoomSync.as
+@@ -1,6 +1,8 @@
+ package rconnect.core
+ {
+-   import modlocales.connect.RCLocale;
++/*RCRESTORE:3:BEGIN*/
++   import rconnect.game.RestoreCostTrace;
++/*RCRESTORE:3:END*/   import modlocales.connect.RCLocale;
+    import flash.events.Event;
+    import flash.utils.getTimer;
+    import rconnect.game.GameBridge;
+@@ -98,11 +100,15 @@
+             && (!ready || localEntry || restoring || blocked || !currentSettledRoom());
+       }
+       private function present(e:Event=null):void
+-      {
++      {/*RCRESTORE:14:BEGIN*/
++RestoreCostTrace.begin("room.present");try {
++/*RCRESTORE:14:END*/
+          if(e!=null)game.refreshWorld();
+          if(entryPending)entryView.show(game.world,mod.stage,"");
+          else entryView.clear();
+-      }
++      /*RCRESTORE:15:BEGIN*/
++} finally {RestoreCostTrace.end("room.present");}
++/*RCRESTORE:15:END*/}
+       private function connected():Boolean
+       {return session.mode==Session.CONNECTED || (session.mode==Session.HOSTING && session.peers.length>0);}
+       private function host():Boolean {return session.mode==Session.HOSTING;}
+@@ -180,14 +186,18 @@
+                Log.d("RConnectRoom: handoff timed out; simulation remains paused");
+             }
+          }
+-         catch(error:Error){fail(error);}
++         catch(error:Error){/*RCRESTORE:10:BEGIN*/
++RestoreCostTrace.abort();
++/*RCRESTORE:10:END*/fail(error);}
+          finally {present();}
+       }
+       private function after(e:Event):void
+       {
+          if(!connected())return;
+          try {game.refreshWorld();check();if(game.world!=null && game.world.land!=null)game.world.land.loc_t=0;}
+-         catch(error:Error){fail(error);}
++         catch(error:Error){/*RCRESTORE:11:BEGIN*/
++RestoreCostTrace.abort();
++/*RCRESTORE:11:END*/fail(error);}
+          finally {present();}
+       }
+       private function check():void
+@@ -248,7 +258,9 @@
+             if(nativePrepare!=null)receiveNativePrepare(nativePrepare);
+             if(deferredNative==null)observeHost(info);
+          }
+-         catch(error:Error){fail(error);}
++         catch(error:Error){/*RCRESTORE:12:BEGIN*/
++RestoreCostTrace.abort();
++/*RCRESTORE:12:END*/fail(error);}
+          finally {present();mod.stage.invalidate();}
+       }
+       public function observeHost(info:Object):void
+@@ -558,7 +570,11 @@
+                }else applySeal(msg);
+             }
+             else if(msg.op=="grant" && int(msg.barrier)==pending && int(msg.epoch)==epoch && acceptsJoinGrant(msg))
+-            {
++            {/*RCRESTORE:6:BEGIN*/
++RestoreCostTrace.transaction("join",String(msg.key),epoch,pending);
++RestoreCostTrace.phase("grant-begin");
++RestoreCostTrace.begin("room.grant");try {
++/*RCRESTORE:6:END*/
+                var completingNative:Boolean=nativeTravel.current!=null && String(msg.travelId)==nativeTravel.id;
+                var state:Object;
+                if(msg.fresh===true && msg.owner===true && freshRoom===game.loc && freshWire!=null
+@@ -605,9 +621,14 @@
+                }else if(nativePreviousBarrier==pending)nativePreviousBarrier=0;
+                pending=0;readySent=false;release();
+                Log.d("RConnectRoom: grant "+settledKey+" authority="+authority+" term="+term+" ms="+(getTimer()-barrierStarted));
+-            }
+-         }
+-         catch(error:Error){fail(error);}
++            /*RCRESTORE:7:BEGIN*/
++RestoreCostTrace.postGrant();
++} finally {RestoreCostTrace.end("room.grant");}
++/*RCRESTORE:7:END*/}
++         }
++         catch(error:Error){/*RCRESTORE:13:BEGIN*/
++RestoreCostTrace.abort();
++/*RCRESTORE:13:END*/fail(error);}
+          finally {present();}
+          return true;
+       }
+@@ -620,7 +641,11 @@
+             if(!TravelGuard.follow(game,hostInfo,true))return;
+             nativeRoom=game.loc;
+          }
+-         var keepOwner:Boolean=ready && authority && currentSettledRoom() && hostInfo!=null && String(hostInfo.roomKey)!=settledKey;
++/*RCRESTORE:5:BEGIN*/
++RestoreCostTrace.transaction("join",game.roomKey(),epoch,pending);
++RestoreCostTrace.phase("ready-begin");
++RestoreCostTrace.begin("room.ready");try {
++/*RCRESTORE:5:END*/         var keepOwner:Boolean=ready && authority && currentSettledRoom() && hostInfo!=null && String(hostInfo.roomKey)!=settledKey;
+          hold(!keepOwner);flush();session.flushProgress();var own:Object=null;
+          if(ready && authority && settledRoom!=null && !keepOwner)
+             own=game.inRoom(settledRoom,function():Object{return game.checkpoint();});
+@@ -643,12 +668,19 @@
+             travelId:nativePreviousBarrier>0 && pending==nativePreviousBarrier?"":nativeTravel.id,
+             oldKey:settledKey,oldTerm:term,own:ownPacked,fresh:freshPacked});
+          readySent=true;
+-      }
++      /*RCRESTORE:4:BEGIN*/
++} finally {RestoreCostTrace.end("room.ready");}
++RestoreCostTrace.phase("ready-sent");
++/*RCRESTORE:4:END*/}
+       private function commit(msg:Object):void
+       {
+          peerInfo=msg.info;
+          if(ready && authority)session.flushGhostDamage();
+-         var myKey:String=game.roomKey(),theirKey:String=String(msg.info.roomKey);
++         var myKey:String=game.roomKey(),theirKey:String=String(msg.info.roomKey);/*RCRESTORE:9:BEGIN*/
++RestoreCostTrace.transaction("host",myKey,epoch,pending);
++RestoreCostTrace.phase("commit-begin");
++RestoreCostTrace.begin("room.commit");try {
++/*RCRESTORE:9:END*/
+          if(ready && settledRoom!=null && authority && (settledRoom!==game.loc || theirKey==myKey))
+             records[settledKey]={state:game.inRoom(settledRoom,function():Object{return game.checkpoint();}),owner:0};
+          if(msg.own!=null)
+@@ -700,7 +732,10 @@
+          // copy is not a prerequisite for local simulation. Keep `pending`
+          // until ACK: another handoff still cannot overtake this transaction.
+          release();
+-      }
++      /*RCRESTORE:8:BEGIN*/
++RestoreCostTrace.postGrant();
++} finally {RestoreCostTrace.end("room.commit");}
++/*RCRESTORE:8:END*/}
+       private function flush():void
+       {
+          if(!ready || authority || settledRoom==null)return;
+--- recovery07/rconnect/game/GameBridge.as
++++ diagnostic/rconnect/game/GameBridge.as
+@@ -240,7 +240,9 @@
+       /** M27：宿主快照里存活的镜像单位（applyUnitsSync 每轮重建；
+        *  死亡/离房自动移出——不强制显示尸体）。 */
+       private function onVisForceFrame(e:Event):void
+-      {
++      {/*RCRESTORE:30:BEGIN*/
++RestoreCostTrace.begin("frame.rcView");try {
++/*RCRESTORE:30:END*/
+          _mirrorMasks.clean(loc,world,main as DisplayObject);
+          if(roomHold)return;
+          if(_forcingVisibility || _animatingMirrors || _applyingUnits) return;
+@@ -335,10 +337,14 @@
+             if(_satsRasterDirty)refreshPausedSatsRaster();
+             if(presentationTiming!=null){presentationTiming.viewMs+=getTimer()-measureAt;presentationTiming.viewCalls++;}
+          }
+-      }
++      /*RCRESTORE:31:BEGIN*/
++} finally {RestoreCostTrace.end("frame.rcView");}
++/*RCRESTORE:31:END*/}
+ 
+       private function onMirrorFrame(e:Event):void
+-      {
++      {/*RCRESTORE:24:BEGIN*/
++RestoreCostTrace.begin("frame.rcMirror");try {
++/*RCRESTORE:24:END*/
+          _mirrorMasks.clean(loc,world,main as DisplayObject);
+          if(roomHold)return;
+          _wall.observe(loc);
+@@ -360,15 +366,23 @@
+          if(!_mirroring) return;
+          if(!coopPaused)mirrorContainerActions();
+          tickFrozenAnims();
+-      }
+-
+-      private function onMirrorMaskFrame(e:Event):void {
++      /*RCRESTORE:25:BEGIN*/
++} finally {RestoreCostTrace.end("frame.rcMirror");}
++/*RCRESTORE:25:END*/}
++
++      private function onMirrorMaskFrame(e:Event):void {/*RCRESTORE:26:BEGIN*/
++RestoreCostTrace.begin("frame.rcMask");try {
++/*RCRESTORE:26:END*/
+          if(_mirroring && !roomHold && !_forcingVisibility && !_applyingUnits)
+             _mirrorMasks.observe(loc,world,main as DisplayObject);
+-      }
++      /*RCRESTORE:27:BEGIN*/
++} finally {RestoreCostTrace.end("frame.rcMask");}
++/*RCRESTORE:27:END*/}
+ 
+       private function onPerceptionFrame(e:Event):void
+-      {
++      {/*RCRESTORE:28:BEGIN*/
++RestoreCostTrace.begin("frame.rcPerception");try {
++/*RCRESTORE:28:END*/
+          // Timestamp the simulation frame before its variable rendering work.
+          // Timers may send it more than once, but it is still the same sample.
+          _sampleAt=getTimer();
+@@ -379,7 +393,9 @@
+          // Native findCel only offers the local player. Supply visible teammate
+          // candidates before control can patrol/turn away in the same frame.
+          if(!roomHold && !coopPaused && !_mirroring)redirectNearbyAggro();
+-      }
++      /*RCRESTORE:29:BEGIN*/
++} finally {RestoreCostTrace.end("frame.rcPerception");}
++/*RCRESTORE:29:END*/}
+ 
+       private function presentationTime():int {return coopPaused?_coopPauseAt:(_sampleAt>0?_sampleAt:getTimer());}
+ 
+@@ -5609,7 +5625,9 @@
+        * @return {matched, total} 供日志统计
+        */
+       public function applyUnitsSync(list:Array):Object
+-      {
++      {/*RCRESTORE:22:BEGIN*/
++RestoreCostTrace.begin("mirror.applyUnits");try {
++/*RCRESTORE:22:END*/
+          var res:Object = {matched: 0, total: 0};
+          if(world == null || loc == null || list == null)
+          {
+@@ -5760,14 +5778,32 @@
+                {
+                   if(hit == null)
+                   {
+-                     _mirrorMasks.prepare(target);
+-                     hit = new MirrorHitUnit(target);
++                     /*RCRESTORE:67:BEGIN*/
++RestoreCostTrace.begin("mirror.maskPrepare");try {
++/*RCRESTORE:67:END*/_mirrorMasks.prepare(target);/*RCRESTORE:68:BEGIN*/
++} finally {RestoreCostTrace.end("mirror.maskPrepare");}
++/*RCRESTORE:68:END*/
++/*RCRESTORE:60:BEGIN*/
++RestoreCostTrace.begin("mirror.hitConstructor");try {
++/*RCRESTORE:60:END*/                     hit = new MirrorHitUnit(target);/*RCRESTORE:61:BEGIN*/
++} finally {RestoreCostTrace.end("mirror.hitConstructor");}
++RestoreCostTrace.count("mirror.hitCreated");
++/*RCRESTORE:61:END*/
+                      _hitUnits[target] = hit;
+                      (units as Array).push(hit);
+                   }
+-                  _mirrorMasks.prepare(target);
++                  /*RCRESTORE:69:BEGIN*/
++RestoreCostTrace.begin("mirror.maskPrepare");try {
++/*RCRESTORE:69:END*/_mirrorMasks.prepare(target);/*RCRESTORE:70:BEGIN*/
++} finally {RestoreCostTrace.end("mirror.maskPrepare");}
++/*RCRESTORE:70:END*/
+                   hit.sync();
+-                  _mirrorMasks.register(target,hit);
++/*RCRESTORE:71:BEGIN*/
++RestoreCostTrace.begin("mirror.maskRegister");try {
++/*RCRESTORE:71:END*/                  _mirrorMasks.register(target,hit);/*RCRESTORE:72:BEGIN*/
++} finally {RestoreCostTrace.end("mirror.maskRegister");}
++
++/*RCRESTORE:72:END*/
+                }
+                else if(hit != null) removeHitUnit(target);
+                res.matched++;
+@@ -5791,7 +5827,10 @@
+             }
+          } finally {_applyingUnits=false;}
+          return res;
+-      }
++      /*RCRESTORE:23:BEGIN*/
++} finally {RestoreCostTrace.end("mirror.applyUnits");}
++return null;
++/*RCRESTORE:23:END*/}
+       private var _applyingUnits:Boolean=false;
+ 
+       /**
+@@ -6152,17 +6191,29 @@
+       }
+ 
+       public function checkpoint():Object
+-      {
++      {/*RCRESTORE:16:BEGIN*/
++RestoreCostTrace.begin("checkpoint.total");try {
++/*RCRESTORE:16:END*/
+          var timingStart:int=getTimer(),timing:Object={};
+          rconnect.core.TravelGuard.clear();
+-         var list:Array=readUnitsSnapshot() || [],used:Dictionary=new Dictionary();
++/*RCRESTORE:32:BEGIN*/
++RestoreCostTrace.begin("checkpoint.unitSnapshot");try {
++/*RCRESTORE:32:END*/         var list:Array=readUnitsSnapshot() || [],used:Dictionary=new Dictionary();/*RCRESTORE:33:BEGIN*/
++} finally {RestoreCostTrace.end("checkpoint.unitSnapshot");}
++
++/*RCRESTORE:33:END*/
+          for each(var s:Object in list)
+          {
+             var u:Object=_units.resolve(s,loc.units,used);
+             if(u!=null)s.runtime=NativeRoomState.unit(u);
+          }
+          timing.units=getTimer()-timingStart;
+-         var objects:Array=readObjsSnapshot() || [];used=new Dictionary();
++/*RCRESTORE:34:BEGIN*/
++RestoreCostTrace.begin("checkpoint.objectSnapshot");try {
++/*RCRESTORE:34:END*/         var objects:Array=readObjsSnapshot() || [];used=new Dictionary();/*RCRESTORE:35:BEGIN*/
++} finally {RestoreCostTrace.end("checkpoint.objectSnapshot");}
++
++/*RCRESTORE:35:END*/
+          for each(s in objects)
+          {
+             var b:Object=_objects.resolve(s,loc.objs,used);
+@@ -6179,10 +6230,15 @@
+          timing.total=getTimer()-timingStart;timing.key=result.key;timing.tiles=terrain is Array?terrain.length:terrain.rows.length;
+          Log.d("RConnectRoomTiming capture "+JSON.stringify(timing));
+          return result;
+-      }
++      /*RCRESTORE:17:BEGIN*/
++} finally {RestoreCostTrace.end("checkpoint.total");}
++return null;
++/*RCRESTORE:17:END*/}
+ 
+       public function roomRole(authority:Boolean):void
+-      {
++      {/*RCRESTORE:18:BEGIN*/
++RestoreCostTrace.begin("restore.roomRole");try {
++/*RCRESTORE:18:END*/
+          restoreContainerActions();
+          _wall.roleChanged(loc);
+          _presentation.reset();_projectiles.reset();_telekinesis.reset();_burnVisuals.reset();_bodyEffects.reset();clearHitUnits();restoreMirrorMasks();restoreUnitViews();
+@@ -6192,7 +6248,9 @@
+          _unitMotion=new Dictionary();_mirroring=!authority;freezeAI=!authority;
+          _lastLocRef=null;resetBaselinesIfWorldChanged();
+          mirrorContainerActions();
+-      }
++      /*RCRESTORE:19:BEGIN*/
++} finally {RestoreCostTrace.end("restore.roomRole");}
++/*RCRESTORE:19:END*/}
+ 
+       /** A host-confirmed trip uses the native quick exit (21 frames), with
+        * generation already announced. No legacy follow cooldown or early setPos. */
+@@ -6221,8 +6279,14 @@
+       }
+ 
+       public function restoreCheckpoint(s:Object,authority:Boolean,foreign:Boolean,retained:Boolean=false):void
+-      {
+-         var timingStart:int=getTimer(),timing:Object={authority:authority,foreign:foreign,retained:retained};
++      {/*RCRESTORE:20:BEGIN*/
++RestoreCostTrace.begin("restore.total");try {
++/*RCRESTORE:20:END*/
++         var timingStart:int=getTimer(),timing:Object={authority:authority,foreign:foreign,retained:retained};/*RCRESTORE:38:BEGIN*/
++RestoreCostTrace.count(authority?"restore.authority":"restore.mirror");
++RestoreCostTrace.count(foreign?"restore.foreign":"restore.local");
++RestoreCostTrace.count(retained?"restore.retained":"restore.full");
++/*RCRESTORE:38:END*/
+          if(s==null) {roomRole(authority);return;}
+          if(int(s.width)!=int(loc.spaceX) || int(s.height)!=int(loc.spaceY))
+             throw new Error("Room geometry differs: "+roomKey());
+@@ -6238,7 +6302,12 @@
+          var used:Dictionary=new Dictionary();
+          if(!retained) {
+             if(foreign)_objects.clearRoom(loc);
+-            reconcileObjs(s.objs as Array);
++/*RCRESTORE:36:BEGIN*/
++RestoreCostTrace.begin("restore.reconcileObjects");try {
++/*RCRESTORE:36:END*/            reconcileObjs(s.objs as Array);/*RCRESTORE:37:BEGIN*/
++} finally {RestoreCostTrace.end("restore.reconcileObjects");}
++
++/*RCRESTORE:37:END*/
+             for each(var os:Object in s.objs)
+             {
+                var box:Object=_objects.resolve(os,loc.objs,used);
+@@ -6255,46 +6324,111 @@
+          // authority changes, with original difficulty, AI and weapons.
+          if(foreign)
+          {
+-            for each(var previous:Object in (loc.units as Array).concat())
++/*RCRESTORE:39:BEGIN*/
++RestoreCostTrace.begin("restore.removeForeignUnits");try {
++/*RCRESTORE:39:END*/            for each(var previous:Object in (loc.units as Array).concat())
+             {
+                if(previous==gg || isSceneHitUnit(previous) || (probeNum(previous,"fraction",0)>=100 && !securityTurret(previous)))continue;
+-               loc.remObj(previous);var index:int=loc.units.indexOf(previous);if(index>=0)loc.units.splice(index,1);
++               loc.remObj(previous);var index:int=loc.units.indexOf(previous);if(index>=0)loc.units.splice(index,1);/*RCRESTORE:41:BEGIN*/
++RestoreCostTrace.count("unit.removedForeign");
++/*RCRESTORE:41:END*/
+                delete _spawnedPuppets[previous];
+             }
+-            _units.clearRoom(loc);
++            _units.clearRoom(loc);/*RCRESTORE:40:BEGIN*/
++} finally {RestoreCostTrace.end("restore.removeForeignUnits");}
++
++/*RCRESTORE:40:END*/
+          }
+          used=new Dictionary();_units.enter(loc);
+          for each(var us:Object in s.units)
+          {
+             if(isSceneHitClass(String(us.cls)))continue;
+-            var unit:Object=_units.resolve(us,loc.units,used);
++/*RCRESTORE:42:BEGIN*/
++RestoreCostTrace.begin("unit.resolve");try {
++/*RCRESTORE:42:END*/            var unit:Object=_units.resolve(us,loc.units,used);/*RCRESTORE:43:BEGIN*/
++} finally {RestoreCostTrace.end("unit.resolve");}
++RestoreCostTrace.count(unit==null?"unit.missing":"unit.resolved");
++RestoreCostTrace.count(Number(us.sost)>=3?"unit.deadSnapshot":"unit.liveSnapshot");
++/*RCRESTORE:43:END*/
+             if(unit==null)
+             {
+-               var cls:Class=main.loaderInfo.applicationDomain.getDefinition(String(us.cls)) as Class;
+-               var map:XML=us.runtime.internal.xml==null?<unit/>:new XML(us.runtime.internal.xml);
+-               if(int(us.tr)>0)map.@tr=int(us.tr);
+-               unit=new cls(NativeRoomState.constructorId(us),Number(loc.locDifLevel),map,null);
+-               unit.putLoc(loc,Number(us.x),Number(us.y));loc.addObj(unit);loc.units.push(unit);
++/*RCRESTORE:44:BEGIN*/
++RestoreCostTrace.begin("unit.classLookup");try {
++/*RCRESTORE:44:END*/               var cls:Class=main.loaderInfo.applicationDomain.getDefinition(String(us.cls)) as Class;/*RCRESTORE:45:BEGIN*/
++} finally {RestoreCostTrace.end("unit.classLookup");}
++
++/*RCRESTORE:45:END*/
++/*RCRESTORE:46:BEGIN*/
++RestoreCostTrace.begin("unit.constructorXML");try {
++/*RCRESTORE:46:END*/               var map:XML=us.runtime.internal.xml==null?<unit/>:new XML(us.runtime.internal.xml);
++               if(int(us.tr)>0)map.@tr=int(us.tr);/*RCRESTORE:47:BEGIN*/
++} finally {RestoreCostTrace.end("unit.constructorXML");}
++
++/*RCRESTORE:47:END*/
++/*RCRESTORE:48:BEGIN*/
++RestoreCostTrace.begin("unit.constructor");try {
++/*RCRESTORE:48:END*/               unit=new cls(NativeRoomState.constructorId(us),Number(loc.locDifLevel),map,null);/*RCRESTORE:49:BEGIN*/
++} finally {RestoreCostTrace.end("unit.constructor");}
++RestoreCostTrace.count("unit.created");RestoreCostTrace.createdClass(String(us.cls));
++/*RCRESTORE:49:END*/
++               /*RCRESTORE:50:BEGIN*/
++RestoreCostTrace.begin("unit.putLoc");try {
++/*RCRESTORE:50:END*/unit.putLoc(loc,Number(us.x),Number(us.y));/*RCRESTORE:51:BEGIN*/
++} finally {RestoreCostTrace.end("unit.putLoc");}
++
++/*RCRESTORE:51:END*//*RCRESTORE:52:BEGIN*/
++RestoreCostTrace.begin("unit.addObj");try {
++/*RCRESTORE:52:END*/loc.addObj(unit);/*RCRESTORE:53:BEGIN*/
++} finally {RestoreCostTrace.end("unit.addObj");}
++
++/*RCRESTORE:53:END*/loc.units.push(unit);
+                _units.bind(String(us.k),unit);used[unit]=true;
+             }
+-            NativeRoomState.restoreUnit(unit,us.runtime,main);
+-            RConnectAnimationAccess.receive(unit as Unit,us.pose,String(us.anim));
+-            if(us.body!=null)TurretDisplay.receive(unit,us.body);
++/*RCRESTORE:54:BEGIN*/
++RestoreCostTrace.begin("unit.restoreCall");try {
++/*RCRESTORE:54:END*/            NativeRoomState.restoreUnit(unit,us.runtime,main);/*RCRESTORE:55:BEGIN*/
++} finally {RestoreCostTrace.end("unit.restoreCall");}
++
++/*RCRESTORE:55:END*/
++/*RCRESTORE:56:BEGIN*/
++RestoreCostTrace.begin("unit.pose");try {
++/*RCRESTORE:56:END*/            RConnectAnimationAccess.receive(unit as Unit,us.pose,String(us.anim));/*RCRESTORE:57:BEGIN*/
++} finally {RestoreCostTrace.end("unit.pose");}
++
++/*RCRESTORE:57:END*/
++/*RCRESTORE:58:BEGIN*/
++RestoreCostTrace.begin("unit.body");try {
++/*RCRESTORE:58:END*/            if(us.body!=null)TurretDisplay.receive(unit,us.body);/*RCRESTORE:59:BEGIN*/
++} finally {RestoreCostTrace.end("unit.body");}
++
++/*RCRESTORE:59:END*/
+             delete _spawnedPuppets[unit];
+          }
+          // Empty is a real checkpoint too, not a temporary network omission.
+-         for each(unit in (loc.units as Array).concat())
++/*RCRESTORE:62:BEGIN*/
++RestoreCostTrace.begin("restore.pruneUnits");try {
++/*RCRESTORE:62:END*/         for each(unit in (loc.units as Array).concat())
+             if(unit!=gg && !(unit is MirrorHitUnit) && !isSceneHitUnit(unit) && (probeNum(unit,"fraction",0)<100 || securityTurret(unit)) && !used[unit])
+-            {loc.remObj(unit);index=loc.units.indexOf(unit);if(index>=0)loc.units.splice(index,1);}
+-         timing.units=getTimer()-timingStart;
+-         for each(var loot:Array in lootWalk())loc.remObj(loot[0]);
++            {loc.remObj(unit);/*RCRESTORE:64:BEGIN*/
++RestoreCostTrace.count("unit.pruned");
++/*RCRESTORE:64:END*/index=loc.units.indexOf(unit);if(index>=0)loc.units.splice(index,1);}
++/*RCRESTORE:63:BEGIN*/
++} finally {RestoreCostTrace.end("restore.pruneUnits");}
++
++/*RCRESTORE:63:END*/         timing.units=getTimer()-timingStart;
++/*RCRESTORE:65:BEGIN*/
++RestoreCostTrace.begin("restore.loot");try {
++/*RCRESTORE:65:END*/         for each(var loot:Array in lootWalk())loc.remObj(loot[0]);
+          lootSyncReset();_lootLoc=loc;applyLootSync(s.loots as Array);
+          for(var lootKey:String in _lootObjOf)
+          {
+             _lootIdOf[_lootObjOf[lootKey]]=lootKey;
+             _lootIdSeq=Math.max(_lootIdSeq,int(lootKey.substr(2)));
+          }
+-         if(!authority)applyUnitsSync(s.units as Array);
++/*RCRESTORE:66:BEGIN*/
++} finally {RestoreCostTrace.end("restore.loot");}
++
++/*RCRESTORE:66:END*/         if(!authority)applyUnitsSync(s.units as Array);
+          if(playerMines!=null)playerMines.restore(s.mines as Array,authority,foreign);
+          if(securityTerminals!=null)securityTerminals.worldChanged();
+          timing.effects=getTimer()-timingStart;
+@@ -6308,7 +6442,9 @@
+          _satsRasterDirty=true;
+          timing.total=getTimer()-timingStart;timing.key=s.key;
+          Log.d("RConnectRoomTiming restore "+JSON.stringify(timing));
+-      }
++      /*RCRESTORE:21:BEGIN*/
++} finally {RestoreCostTrace.end("restore.total");}
++/*RCRESTORE:21:END*/}
+ 
+       /** 从游戏全量数据 AllData.d 中取单位 XML（blit 动画定义的数据源）。 */
+       private function findUnitXml(id:String):Object
+--- recovery07/rconnect/game/NativeRoomState.as
++++ diagnostic/rconnect/game/NativeRoomState.as
+@@ -59,7 +59,9 @@
+          for(var n:String in s)if(!OMIT[n])try {o[n]=s[n] is Array?JSON.parse(JSON.stringify(s[n])):s[n];}catch(e:*){}
+       }
+       public static function unit(u:Object):Object
+-      {
++      {/*RCRESTORE:73:BEGIN*/
++RestoreCostTrace.begin("checkpoint.unitRuntime");try {
++/*RCRESTORE:73:END*/
+          var s:Object={p:scalars(u),internal:RConnectUnitAccess.capture(u as Unit),guns:[]};
+          var children:Array=GameBridge.probe(u,"childObjs") as Array;
+          if(children!=null)for(var i:int=0;i<children.length;i++)
+@@ -69,29 +71,60 @@
+             s.guns.push({slot:i,main:w===GameBridge.probe(u,"currentWeapon"),p:scalars(w)});
+          }
+          return s;
+-      }
++      /*RCRESTORE:74:BEGIN*/
++} finally {RestoreCostTrace.end("checkpoint.unitRuntime");}
++return null;
++/*RCRESTORE:74:END*/}
+       public static function restoreUnit(u:Object,s:Object,main:Object):void
+-      {
++      {/*RCRESTORE:75:BEGIN*/
++RestoreCostTrace.begin("unit.restoreRuntime");try {
++/*RCRESTORE:75:END*/
+          if(s==null)return;
+-         restore(u,s.p);
+-         RConnectUnitAccess.restore(u as Unit,s.internal);
++/*RCRESTORE:77:BEGIN*/
++RestoreCostTrace.begin("unit.restoreScalars");try {
++/*RCRESTORE:77:END*/         restore(u,s.p);/*RCRESTORE:78:BEGIN*/
++} finally {RestoreCostTrace.end("unit.restoreScalars");}
++
++/*RCRESTORE:78:END*/
++/*RCRESTORE:79:BEGIN*/
++RestoreCostTrace.begin("unit.restoreInternal");try {
++/*RCRESTORE:79:END*/         RConnectUnitAccess.restore(u as Unit,s.internal);/*RCRESTORE:80:BEGIN*/
++} finally {RestoreCostTrace.end("unit.restoreInternal");}
++
++/*RCRESTORE:80:END*/
+          var factory:Object=main.loaderInfo.applicationDomain.getDefinition("fe.weapon.Weapon");
+          var children:Array=u.childObjs==null?[]:u.childObjs;
+          for each(var gun:Object in s.guns)
+          {
+-            var w:Object=children[int(gun.slot)];
++            var w:Object=children[int(gun.slot)];/*RCRESTORE:85:BEGIN*/
++RestoreCostTrace.count("gun.visited");
++/*RCRESTORE:85:END*/
+             if(w==null || w.id!=gun.p.id || GameBridge.probe(w,"variant")!=gun.p.variant)
+             {
+                if(w!=null && GameBridge.probe(w,"remVisual") is Function)w.remVisual();
+-               w=factory.create(u,String(gun.p.id),int(gun.p.variant));
++/*RCRESTORE:81:BEGIN*/
++RestoreCostTrace.begin("gun.constructor");try {
++/*RCRESTORE:81:END*/               w=factory.create(u,String(gun.p.id),int(gun.p.variant));/*RCRESTORE:82:BEGIN*/
++} finally {RestoreCostTrace.end("gun.constructor");}
++
++/*RCRESTORE:82:END*/
+                if(w==null)throw new Error("Cannot restore weapon "+gun.p.id);
+-               children[int(gun.slot)]=w;
++               children[int(gun.slot)]=w;/*RCRESTORE:86:BEGIN*/
++RestoreCostTrace.count("gun.created");
++/*RCRESTORE:86:END*/
+             }
+-            restore(w,gun.p);if(gun.main)u.currentWeapon=w;
++            /*RCRESTORE:83:BEGIN*/
++RestoreCostTrace.begin("gun.restoreScalars");try {
++/*RCRESTORE:83:END*/restore(w,gun.p);/*RCRESTORE:84:BEGIN*/
++} finally {RestoreCostTrace.end("gun.restoreScalars");}
++
++/*RCRESTORE:84:END*/if(gun.main)u.currentWeapon=w;
+          }
+          u.childObjs=children;u.setVisPos();
+          if(int(u.sost)>=4){if(u.loc!=null)u.loc.remObj(u);u.remVisual();}
+-      }
++      /*RCRESTORE:76:BEGIN*/
++} finally {RestoreCostTrace.end("unit.restoreRuntime");}
++/*RCRESTORE:76:END*/}
+       public static function constructorId(s:Object):String
+       {
+          var cid:String=String(s.id);
+--- recovery07/rconnect/game/UnitPresentation.as
++++ diagnostic/rconnect/game/UnitPresentation.as
+@@ -293,13 +293,17 @@
+       }
+ 
+       public function apply(u:Object,snapshot:Object,main:Object,motion:RemoteMotion=null,paused:Boolean=false,deferTick:Boolean=false):void
+-      {
++      {/*RCRESTORE:87:BEGIN*/
++RestoreCostTrace.begin("presentation.apply");try {
++/*RCRESTORE:87:END*/
+          try
+          {
+             var rec:Object=states[u];
+             if(rec==null)
+             {
+-               var children:Array=get(u,"childObjs") as Array;
++/*RCRESTORE:89:BEGIN*/
++RestoreCostTrace.count("presentation.newState");
++/*RCRESTORE:89:END*/               var children:Array=get(u,"childObjs") as Array;
+                rec=states[u]={sost:int(snapshot.sost),guns:{},originalChildren:children==null?null:children.concat(),
+                   originalCurrent:get(u,"currentWeapon"),created:[],styles:new Dictionary()};
+             }
+@@ -345,7 +349,12 @@
+                   if(weapon==null || String(get(weapon,"id"))!=s.id || int(get(weapon,"variant"))!=int(s.variant))
+                   {
+                      var factory:Object=main.loaderInfo.applicationDomain.getDefinition("fe.weapon.Weapon");
+-                     var replacement:Object=factory.create(u,String(s.id),int(s.variant));
++/*RCRESTORE:90:BEGIN*/
++RestoreCostTrace.begin("presentation.gunConstructor");try {
++/*RCRESTORE:90:END*/                     var replacement:Object=factory.create(u,String(s.id),int(s.variant));/*RCRESTORE:91:BEGIN*/
++} finally {RestoreCostTrace.end("presentation.gunConstructor");}
++if(replacement!=null)RestoreCostTrace.count("presentation.gunCreated");
++/*RCRESTORE:91:END*/
+                      if(replacement==null) continue;
+                      if(weapon!=null) weapon.remVisual();
+                      if(local==null) local=u.childObjs=[];
+@@ -376,7 +385,9 @@
+             if(!deferTick)tick(u,paused);
+          }
+          catch(e:*) {failed(u,e);}
+-      }
++      /*RCRESTORE:88:BEGIN*/
++} finally {RestoreCostTrace.end("presentation.apply");}
++/*RCRESTORE:88:END*/}
+ 
+       private function play(w:Object,label:String):void
+       {
+--- recovery07/rconnect/game/TerrainSync.as
++++ diagnostic/rconnect/game/TerrainSync.as
+@@ -22,7 +22,9 @@
+       public function reset():void { room=null; base=[]; observed={}; queued={}; pending=null; receipts={}; dirty=false; }
+ 
+       public function checkpoint(loc:Object):Object
+-      {
++      {/*RCRESTORE:92:BEGIN*/
++RestoreCostTrace.begin("terrain.capture");try {
++/*RCRESTORE:92:END*/
+          enter(loc);var table:Object=NativeTileState.capture(loc);
+          if(table!=null)return table;
+          var out:Array=[];
+@@ -32,9 +34,14 @@
+             s.native=NativeRoomState.scalars(t);out.push(s);
+          }
+          return out;
+-      }
++      /*RCRESTORE:93:BEGIN*/
++} finally {RestoreCostTrace.end("terrain.capture");}
++return null;
++/*RCRESTORE:93:END*/}
+       public function restoreCheckpoint(loc:Object,snapshot:Object):void
+-      {
++      {/*RCRESTORE:94:BEGIN*/
++RestoreCostTrace.begin("terrain.restore");try {
++/*RCRESTORE:94:END*/
+          reset();enter(loc);
+          if(snapshot!=null && !(snapshot is Array) && (snapshot.nativeTileTable===1 || snapshot.nativeTileTable===2)) {
+             NativeTileState.restore(loc,snapshot,function(t:Object,x:int,y:int):void {observed[key(x,y)]=state(t,x,y);});
+@@ -44,10 +51,14 @@
+          if(list==null)throw new Error("Invalid terrain checkpoint");
+          for each(var s:Object in list)NativeRoomState.restore(tile(int(s.x),int(s.y)),s.native);
+          apply(loc,list,false);dirty=true;
+-      }
++      /*RCRESTORE:95:BEGIN*/
++} finally {RestoreCostTrace.end("terrain.restore");}
++/*RCRESTORE:95:END*/}
+ 
+       private function enter(loc:Object):void
+-      {
++      {/*RCRESTORE:96:BEGIN*/
++RestoreCostTrace.begin("terrain.enter");try {
++/*RCRESTORE:96:END*/
+          if(room===loc) return;
+          reset(); room=loc; epoch++; cursor=0;
+          if(room==null) return;
+@@ -61,7 +72,9 @@
+                column[y]=observed[key(x,y)]=state(t,x,y);
+             }
+          }
+-      }
++      /*RCRESTORE:97:BEGIN*/
++} finally {RestoreCostTrace.end("terrain.enter");}
++/*RCRESTORE:97:END*/}
+ 
+       private function key(x:int,y:int):String {return x+","+y;}
+       private function tile(x:int,y:int):Object
+--- recovery07/rconnect/game/NativeTileState.as
++++ diagnostic/rconnect/game/NativeTileState.as
+@@ -38,7 +38,9 @@
+             values[slot]=base[slot]+(kind%2==1?x:y)*(kind<=2?1:40);
+          }
+       }
+-      public static function capture(loc:Object):Object {
++      public static function capture(loc:Object):Object {/*RCRESTORE:98:BEGIN*/
++RestoreCostTrace.begin("terrain.nativeCapture");try {
++/*RCRESTORE:98:END*/
+          var width:int=int(loc.spaceX),height:int=int(loc.spaceY);
+          if(width<1 || height<1 || width>512 || height>256)return null;
+          var first:Object=loc.space[0][0];
+@@ -78,8 +80,13 @@
+             rows.push(row);
+          }
+          return {nativeTileTable:2,width:width,height:height,names:names,base:base,grid:grid,rows:rows};
+-      }
+-      public static function restore(loc:Object,table:Object,after:Function):void {
++      /*RCRESTORE:99:BEGIN*/
++} finally {RestoreCostTrace.end("terrain.nativeCapture");}
++return null;
++/*RCRESTORE:99:END*/}
++      public static function restore(loc:Object,table:Object,after:Function):void {/*RCRESTORE:100:BEGIN*/
++RestoreCostTrace.begin("terrain.nativeRestore");try {
++/*RCRESTORE:100:END*/
+          if(table==null || (table.nativeTileTable!==1 && table.nativeTileTable!==2)
+             || table.width!==loc.spaceX || table.height!==loc.spaceY
+             || !(table.names is Array) || !(table.base is Array) || !(table.rows is Array)
+@@ -133,6 +140,8 @@
+             after(tile,x,y);
+             for(i=0;i<row.length;i+=2)values[int(row[i])]=table.base[int(row[i])];
+          }
+-      }
++      /*RCRESTORE:101:BEGIN*/
++} finally {RestoreCostTrace.end("terrain.nativeRestore");}
++/*RCRESTORE:101:END*/}
+    }
+ }
+--- recovery07/rconnect/game/RoomTerrainView.as
++++ diagnostic/rconnect/game/RoomTerrainView.as
+@@ -43,7 +43,9 @@
+          }
+          return out;
+       }
+-      public function RoomTerrainView(loc:Object) {
++      public function RoomTerrainView(loc:Object) {/*RCRESTORE:102:BEGIN*/
++RestoreCostTrace.begin("terrain.viewCapture");try {
++/*RCRESTORE:102:END*/
+          try {
+             room=loc;renderer=loc.grafon;width=int(loc.spaceX);height=int(loc.spaceY);
+             if(renderer==null || renderer.loc!==loc || loc.isRebuild || loc.isRecalc
+@@ -58,8 +60,12 @@
+             }
+             valid=true;
+          } catch(e:*) {valid=false;}
+-      }
+-      public function unchanged(loc:Object):Boolean {
++      /*RCRESTORE:103:BEGIN*/
++} finally {RestoreCostTrace.end("terrain.viewCapture");}
++/*RCRESTORE:103:END*/}
++      public function unchanged(loc:Object):Boolean {/*RCRESTORE:104:BEGIN*/
++RestoreCostTrace.begin("terrain.viewCompare");try {
++/*RCRESTORE:104:END*/
+          if(!valid || loc!==room || loc.grafon!==renderer || renderer.loc!==room
+             || loc.spaceX!=width || loc.spaceY!=height || loc.isRebuild || loc.isRecalc)return false;
+          try {
+@@ -79,10 +85,15 @@
+             return true;
+          } catch(e:*) {return false;}
+          return false;
+-      }
++      /*RCRESTORE:105:BEGIN*/
++} finally {RestoreCostTrace.end("terrain.viewCompare");}
++return false;
++/*RCRESTORE:105:END*/}
+       /** Keep the non-raster side effects of Grafon.drawLoc. Calling through
+        * native methods preserves the installed renderer's lighting behavior. */
+-      public function refresh(world:Object):void {
++      public function refresh(world:Object):void {/*RCRESTORE:106:BEGIN*/
++RestoreCostTrace.begin("terrain.viewRefresh");try {
++/*RCRESTORE:106:END*/
+          // ContinuousScene can give regions different backwall styles. Keep
+          // the contours used to draw these exact cached pixels, rather than
+          // recomputing every region under the current global room style.
+@@ -95,6 +106,8 @@
+          renderer.setLight();renderer.visLight.visible=room.black && world.black;
+          renderer.warShadow();renderer.drawAllObjs();
+          world.cam.setLoc(room);world.gui.setAll();
+-      }
++      /*RCRESTORE:107:BEGIN*/
++} finally {RestoreCostTrace.end("terrain.viewRefresh");}
++/*RCRESTORE:107:END*/}
+    }
+ }
+--- recovery07/rconnect/net/RoomCodec.as
++++ diagnostic/rconnect/net/RoomCodec.as
+@@ -1,6 +1,8 @@
+ package rconnect.net
+ {
+-   import flash.utils.ByteArray;
++/*RCRESTORE:108:BEGIN*/
++   import rconnect.game.RestoreCostTrace;
++/*RCRESTORE:108:END*/   import flash.utils.ByteArray;
+    import flash.utils.getTimer;
+    import rconnect.core.Log;
+    /** Bounded compressed checkpoints keep full terrain below the TCP frame cap. */
+@@ -10,7 +12,9 @@
+       public static var timingEnabled:Boolean=false;
+       private static const DIGITS:String="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+       public static function pack(o:Object):String
+-      {
++      {/*RCRESTORE:109:BEGIN*/
++RestoreCostTrace.begin("codec.pack");try {
++/*RCRESTORE:109:END*/
+          var started:int=timingEnabled?getTimer():0,timing:Object=timingEnabled?{}:null;
+          var payload:Object=compact(o);if(timing!=null)timing.table=getTimer()-started;
+          var json:String=JSON.stringify(payload);if(timing!=null)timing.json=getTimer()-started;
+@@ -32,9 +36,14 @@
+             Log.d("RConnectRoomTiming encode-stages "+JSON.stringify(timing));
+          }
+          return result;
+-      }
++      /*RCRESTORE:110:BEGIN*/
++} finally {RestoreCostTrace.end("codec.pack");}
++return null;
++/*RCRESTORE:110:END*/}
+       public static function unpack(s:String):Object
+-      {
++      {/*RCRESTORE:111:BEGIN*/
++RestoreCostTrace.begin("codec.unpack");try {
++/*RCRESTORE:111:END*/
+          var started:int=timingEnabled?getTimer():0,timing:Object=timingEnabled?{}:null;
+          if(s==null || s.length>1000000)throw new Error("Invalid room checkpoint");
+          var b:ByteArray=new ByteArray();
+@@ -53,7 +62,10 @@
+             Log.d("RConnectRoomTiming decode-stages "+JSON.stringify(timing));
+          }
+          return result;
+-      }
++      /*RCRESTORE:112:BEGIN*/
++} finally {RestoreCostTrace.end("codec.unpack");}
++return null;
++/*RCRESTORE:112:END*/}
+       /** Terrain repeats the same property names tens of thousands of times.
+        * A schema table removes only those names, preserving missing/null fields,
+        * native scalars, arrays and JSON's existing numeric conversion exactly.

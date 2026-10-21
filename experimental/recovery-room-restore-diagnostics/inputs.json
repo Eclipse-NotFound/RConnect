@@ -1,0 +1,46 @@
+{
+  "base": "build\\m52\\recovery-07",
+  "base_sha256": "c9f6492117124dea23a6991396cf9957d7b73a9730b747b4c8b1cad9533ca3bc",
+  "base_manifest_sha256": "25b0177a1758c96fc8bae74f2001b551f1a5e25c434938a62a5c190f9d473d15",
+  "diagnostic_only": true,
+  "compiled": false,
+  "air_started": false,
+  "performance_qualified": false,
+  "source": {
+    "RConnectMod.as": "e1e2512800ded6d55929e05319626177216a3498dfde862961d540d5d66c74e1",
+    "rconnect/core/RoomSync.as": "efafed73dda4df38aab2176f791f6b91cf2a6d68ed9ab420e657662e54639961",
+    "rconnect/game/GameBridge.as": "e1cd085795e134ca293a5eb83fe44e22a0bc7edfb172f960a2c6a1e8bdec9260",
+    "rconnect/game/NativeRoomState.as": "1e91028348b29dc1bd00dc55cf4d5df5d5ee40469ef9ea0f7e9626d30a601938",
+    "rconnect/game/UnitPresentation.as": "3e408515983fc28ad7b1a383c9e7353c5c137c960ae6ecf88e086204addb63cd",
+    "rconnect/game/TerrainSync.as": "317c9658b0632f3bb8333c11cd302c68ef45e7a9f2f54ed6b6c631b6c1b92b44",
+    "rconnect/game/NativeTileState.as": "dab683e9d14e18e8b7e35a917da8a7e237391b602f43d315661fd0d11ce8cae5",
+    "rconnect/game/RoomTerrainView.as": "a2eb59b8536414d26daa39a82c71c414009c5d4b29a7a24539e025d1b852877f",
+    "rconnect/net/RoomCodec.as": "296ee4d8d94f77faa62dcc17a39cb1e2492c756d3027311713c33935ca6b6b4a"
+  },
+  "overlay": {
+    "RConnectMod.as": "366d01d23efee472a1d101c096d52e5439d994cd4a6bceedbfce689e702e96ac",
+    "rconnect/core/RoomSync.as": "09255d144caf1ae8a8db82cd4683b17e6e4990902d608566de18485f29b94a2b",
+    "rconnect/game/GameBridge.as": "0ee4a6211b36608c9315150627aa4430a9fa1b3c578ad8ccc9ece1ba1643172a",
+    "rconnect/game/NativeRoomState.as": "649de9e6f60dd8c0612c94754219833bc7f838f516cabc06a2f9f85fcf2a8b58",
+    "rconnect/game/UnitPresentation.as": "d8ce18d2a822d0e41bc8a102464967c7faab417c680e8f8f391a4e5672eb2742",
+    "rconnect/game/TerrainSync.as": "aa60fd646d075bd7ce20b8687d9f09fdf988dbfe6211d25e4248c81edab13e51",
+    "rconnect/game/NativeTileState.as": "c11a3580da84dbc29cba5f281f72596f221c4a7e9044681cb8cc671e50d1af88",
+    "rconnect/game/RoomTerrainView.as": "f0fc75bc0cb312c0543c1225f54330c5b3ecc240535f89e7c060dfecdbdf4271",
+    "rconnect/net/RoomCodec.as": "735f2277251f618604766663eacdb2c300893658aaab2f168773f537e454755c",
+    "rconnect/game/RestoreCostTrace.as": "a0b096bfa3baa8db4528f1521518641e6fd11dd49ae34cba9593e034903ffa33"
+  },
+  "stripped_equal": {
+    "RConnectMod.as": true,
+    "rconnect/core/RoomSync.as": true,
+    "rconnect/game/GameBridge.as": true,
+    "rconnect/game/NativeRoomState.as": true,
+    "rconnect/game/UnitPresentation.as": true,
+    "rconnect/game/TerrainSync.as": true,
+    "rconnect/game/NativeTileState.as": true,
+    "rconnect/game/RoomTerrainView.as": true,
+    "rconnect/net/RoomCodec.as": true
+  },
+  "helper": "rconnect/game/RestoreCostTrace.as",
+  "inserted_blocks": 112,
+  "generator_sha256": "88732c4dcbdf7d01757c9a50c0ec42d9ab110f1b59af8a42fe9932fe66ecb3d3"
+}
