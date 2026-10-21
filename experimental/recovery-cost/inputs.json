@@ -1,0 +1,37 @@
+{
+  "base": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-02\\src",
+  "files": {
+    "game/ProjectileFrameStream.as": {
+      "base_sha256": "20326b683e4856e0b9d3657ce7d6c3da818409f8de319aad721b966eff189fdc",
+      "overlay_sha256": "938b8ee0d3afa262e4b23c608c6b46d9b84b6cb71f4cb4b148ccb445de3c679c"
+    },
+    "game/UnitPresentation.as": {
+      "base_sha256": "c22936e1a5c1e8c3c27881f508e7b20f70f565d44ab605eca219365fdd7d1320",
+      "overlay_sha256": "3b8049b3de582dd9559248c0370db230669233930cf50ab651babc1fe09179ce"
+    },
+    "game/EnergyImpactVisuals.as": {
+      "base_sha256": "c3a28a45ad56292f043c49201f95a879384983df87e80bc3dd09eb1aa2ad4d85",
+      "overlay_sha256": "ff86c28bd4beaee27842ee9e71cbbb2987b0c9c418a2a2d3f078a22d29b82c32"
+    },
+    "game/WallImpactVisuals.as": {
+      "base_sha256": "e1125fa1865598705c1753fd8e49ede037cd16936a680a7a078c4cf9b5ac5a34",
+      "overlay_sha256": "edf9c0e2bc0b830a8c83fcae7a0a9141d6b32b5b0342cd00d988030ff399584b"
+    },
+    "game/GameBridge.as": {
+      "base_sha256": "16330c074a9b2eeb13a5681408b747a5c585f164f7d489b696f4c413803fb2d2",
+      "overlay_sha256": "134041357daf21cb75a10e50f1f5d81448e8246e64f3024a1bbfc78f94545792"
+    },
+    "core/Session.as": {
+      "base_sha256": "1cc4b2ddba1e1dc71c4ed7f39c5a5cff3e62b84b549c97c79aae7197f73fb0c5",
+      "overlay_sha256": "070b39f2e98e90578a1bb3998eba3e84d8deece8a47686d72295e26625e6a47f"
+    }
+  },
+  "compiled": false,
+  "AIR_started": false,
+  "JVM_started": false,
+  "boundaries": [
+    "Source-derived capture methods; native weapon discovery/captureFlight/terrain producer are fixtures.",
+    "Real WallImpactVisuals/RoomCodec methods; only observation counters added to copied test classes.",
+    "Extracted history loops have only loop-visit counters added; production branch expressions are unchanged."
+  ]
+}

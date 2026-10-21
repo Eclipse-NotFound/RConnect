@@ -7,16 +7,38 @@ package rconnect.core {
    public final class MapGeneration {
       private var session:Session;
       private var remote:Object;
+      public var nativeTravelSupported:Boolean=false;
       private var sceneClass:Object;
       private var savedSceneMode:*;
       public var supported:Boolean=false;
       public function MapGeneration(s:Session) {
          session=s;
+         var nativeGame:Object=s.mod.game.main.loaderInfo.applicationDomain.getDefinition("fe.loc.Game");
+         if("rconnectTravelBridge" in nativeGame) {
+            if(nativeGame.rconnectTravelBridge!=null)throw new Error("Native travel hook already owned");
+            nativeGame.rconnectTravelBridge=nativeTravel;nativeTravelSupported=true;
+         }
          var cls:Object=s.mod.game.main.loaderInfo.applicationDomain.getDefinition("fe.loc.Land");
          if("rconnectSeedSource" in cls) {
             cls.rconnectSeedSource=seedFor; supported=true;
             Log.d("RConnectMap: native expedition seed interface ready");
          }else Log.d("RConnectMap: legacy fixed-seed Land; native expedition patch required");
+      }
+      private function nativeTravel(phase:String,g:Object,info:Object):Object {
+         var bridge:GameBridge=session.mod.game;
+         if(bridge.world==null || bridge.world.game!==g || int(bridge.world.t_exit)<=0
+            || int(bridge.world.t_die)>0 || int(bridge.world.comLoad)>=0)return null;
+         if(phase=="adopt" && session.mode==Session.CONNECTED)
+            return session.rooms.adoptNativeTravel(g);
+         if(phase=="announce" && session.mode==Session.HOSTING && session.peers.length>0) {
+            // Sending an optimization hint must not break the host's native load.
+            try {
+               info.sceneMerged=sceneMode({act:g.curLand},true);
+               info.layoutSeed=0;
+               session.rooms.announceNativeTravel(info);
+            } catch(error:Error){Log.d("RConnectTravel: prepare failed; native travel continues: "+error);}
+         }
+         return null;
       }
       public function reset():void {
          remote=null;

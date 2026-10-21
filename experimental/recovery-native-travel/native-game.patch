@@ -1,0 +1,62 @@
+--- BEFC/fe.loc.Game
++++ candidate/fe.loc.Game
+@@ -7,6 +7,9 @@
+    
+    public class Game
+    {
++      /** Optional multiplayer entry contract. Null preserves native single-player decisions. */
++      public static var rconnectTravelBridge:Function = null;
++
+       
+       public var lands:Array;
+       
+@@ -338,7 +341,16 @@
+          {
+             World.w.land.saveObjs(this.objs);
+          }
+-         this.Encounter();
++         var rconnectPlan:Object = rconnectTravelBridge == null ? null : rconnectTravelBridge("adopt",this,null);
++         if(rconnectPlan == null)
++         {
++            this.Encounter();
++         }
++         else
++         {
++            this.curLandId = String(rconnectPlan.curLandId);
++            this.curCoord = rconnectPlan.entryCoord == null ? null : String(rconnectPlan.entryCoord);
++         }
+          this.curLand = this.lands[this.curLandId];
+          if(this.curLand == null)
+          {
+@@ -349,7 +361,11 @@
+          {
+             _loc1_ = true;
+          }
+-         if(this.curLand.land == null || this.crea)
++         if(rconnectPlan != null)
++         {
++            _loc1_ = Boolean(rconnectPlan.firstVisit);
++         }
++         if(this.curLand.land == null || this.crea || rconnectPlan != null && rconnectPlan.nativeCreate === true)
+          {
+             _loc2_ = 0;
+             if(this.triggers["firstroom"] > 0)
+@@ -360,7 +376,17 @@
+                   _loc2_ = World.w.pers.level - 1;
+                }
+             }
+-            if(this.crea)
++            if(rconnectPlan != null)
++            {
++               _loc2_ = int(rconnectPlan.constructorLevel);
++            }
++            if(!this.curLand.rnd && rconnectTravelBridge != null)
++            {
++               rconnectTravelBridge("announce",this,{curLandId:this.curLand.id,nativeCreate:true,
++                  firstVisit:Boolean(_loc1_),constructorLevel:_loc2_,entryCoord:this.curCoord,
++                  landStage:this.curLand.landStage,hostVisitedBefore:this.curLand.visited});
++            }
++            if(this.crea || rconnectPlan != null && rconnectPlan.nativeCreate === true && this.curLand.land != null)
+             {
+                World.w.grafon.sceneResetGeneration(this.curLand.id);
+             }

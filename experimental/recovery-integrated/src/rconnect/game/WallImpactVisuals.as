@@ -416,9 +416,9 @@ package rconnect.game
 
       /** Rotating cumulative cells repair old/later peer views without a full
        * foreground bitmap on every unitsync. No new native projectile is made. */
-      public function snapshot(loc:Object):Array
+      public function snapshot(loc:Object,observeNow:Boolean=true):Array
       {
-         observe(loc);var s:Object=state(loc),keys:Array=[],out:Array=[],size:int=0;
+         if(observeNow)observe(loc);var s:Object=state(loc),keys:Array=[],out:Array=[],size:int=0;
          for(var k:String in s.cells)
          {
             var c:Object=s.cells[k];if(!solid(loc,c.x,c.y))discard(loc,k);else keys.push(k);

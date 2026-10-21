@@ -59,6 +59,7 @@ package rconnect.game
       public var gg:Object;          // 玩家 UnitPlayer（探测缓存）
       public var loc:Object;         // 当前 Location
       public var roomEpoch:int=0;
+      public var activeTravelId:String="";
       public var independentRooms:Boolean=false;
       public var roomHold:Boolean=false;
       public var mapGeneration:rconnect.core.MapGeneration;
@@ -1938,7 +1939,7 @@ package rconnect.game
          w.curCoord = game != null ? String(probe(game, "curCoord")) : "";
          w.locId = loc != null ? String(probe(loc, "id")) : "";
          w.landProb=loc==null?"":String(probe(loc,"landProb"));
-         w.roomKey=roomKey();w.roomEpoch=roomEpoch;
+         w.roomKey=roomKey();w.roomEpoch=roomEpoch;w.travelId=activeTravelId;
          var land:Object = probe(world, "land");
          // curLandId changes before the old native world has finished exiting.
          // A destination without its completed generation must not start the
@@ -3470,7 +3471,7 @@ package rconnect.game
       public function applyTilePatch(list:Array):void {_terrain.apply(loc,list,freezeAI);}
       public function scanTileReports():Object {
          var report:Object=_terrain.report(loc);_wall.observe(loc,report==null?null:report.tiles as Array);
-         var paint:Object=_wall.report(loc);
+         var paint:Object=_wall.report(loc,false);
          if(paint!=null){if(report==null)report={tiles:[]};report.wall=paint;}
          return report;
       }
@@ -3498,7 +3499,7 @@ package rconnect.game
          if(receipt.seq!=null)_terrain.acknowledge(loc,receipt);
          if(receipt.wallReceipt!=null)_wall.acknowledge(loc,receipt.wallReceipt);
       }
-      public function readWallPaint():Array {return _wall.snapshot(loc);}
+      public function readWallPaint(observeNow:Boolean=true):Array {return _wall.snapshot(loc,observeNow);}
       public function readWallPaintUpdates():Array {return _wall.updates(loc);}
       public function wallPaintUpdatesSent(list:Array):void {_wall.sentUpdates(loc,list);}
       public function applyWallPaint(list:Array):void {
@@ -6201,12 +6202,15 @@ package rconnect.game
          if(world==null || gg==null || isPlayerDead() || isTransitioning())return false;
          var target:String=String(info.curLandId),g:Object=world.game,act:Object=g.lands[target];
          if(act==null || target=="" || String(g.curLandId)=="")return false;
-         if(mapGeneration!=null)mapGeneration.adopt(info,act);
+         if(mapGeneration!=null) {
+            if(info.nativeCreate===true && info.travelId!=null)mapGeneration.receive(info);
+            else mapGeneration.adopt(info,act);
+         }
          adoptHostLandParams(info);
          forceCloseOverlays();
          // Cached visits stay cached. A genuinely different seed/mode was
          // invalidated by adopt; gotoLand constructs it through normal exitStep.
-         g.crea=false;g.gotoLand(target,null,true);
+         g.crea=false;g.gotoLand(target,info.entryCoord==null?null:String(info.entryCoord),true);
          Log.d("RConnectTravel: begin target="+target+" exit="+world.t_exit);
          return int(world.t_exit)>0;
       }

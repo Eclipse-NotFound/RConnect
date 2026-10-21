@@ -149,9 +149,8 @@ package rconnect.game {
          for each(var record:Object in list) {
             var wire:Object=record.wire,all:Array=wire.frames as Array;
             if(all==null || all.length==0)continue;
-            var points:Array=ProjectileFrameStream.after(all,record.fastAt==null?Number.NEGATIVE_INFINITY:Number(record.fastAt));
-            if(record.fastPoint!=null)for each(var revised:Object in all)
-               if(Number(revised.at)==Number(record.fastAt) && !ProjectileFrameStream.samePoint(revised,record.fastPoint)) {points.unshift(revised);break;}
+            var points:Array=ProjectileFrameStream.afterWithRevision(all,
+               record.fastAt==null?Number.NEGATIVE_INFINITY:Number(record.fastAt),record.fastPoint,Number(record.fastAt));
             var ending:Boolean=int(wire.end)>0 && int(record.fastEnd)!=int(wire.end);
             if(points.length==0 && !ending)continue;
             // A terminal-only packet still supplies one known pose, allowing

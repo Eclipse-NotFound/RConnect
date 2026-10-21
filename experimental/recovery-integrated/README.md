@@ -1,6 +1,8 @@
-# Recovery integrated source — 0.2.24-recovery1
+# Recovery integrated source — 0.2.24-recovery3
 
-此目录是隔离源码整合候选，不是安装版。仅含 84 个 AS 源文件及整合记录；相对准确 574D 基线有 23 个文件变化。未编译、未运行 AIR、未部署，也未获得性能合格结论。
+此目录是隔离源码整合候选，不是安装版。recovery2追加光晕RGB/alpha分组恢复；当前recovery3再逐方法合入原生旅行计划、旧grant防护与两处采集消重，共85个AS文件。冻结产物为 `build/m52/recovery-03` / `a98c6d00e85afad965ea2358c1bf4b8571a48f8e0c71ea244c68931e47a59cf1`，已编译，未部署，未获得完整玩法或性能合格结论。
+
+当前实测状态统一见 [恢复记录](../../state/recovery-2026-10-21.md)。下文原整合检查是来源说明；各轮冻结目录与回执才是对应版本的编译和执行证据。原生旅行需搭配隔离 `recovery-native-travel-host-01` / E159；cost499、RoomSync50、计划33组件通过。probe-fast与wall-decode尚未合入此树。
 
 ## 来源与合并顺序
 

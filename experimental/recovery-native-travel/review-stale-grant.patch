@@ -1,0 +1,119 @@
+--- a/src/rconnect/core/RoomSync.as
++++ b/src/rconnect/core/RoomSync.as
+@@ -152,7 +152,7 @@
+             if(game.world==null || game.loc==null || game.gg==null)return;
+             if(deferredNative!=null) {var deferred:Object=deferredNative;deferredNative=null;receiveNativePrepare(deferred);}
+             if(!nativeTravel.matchesWorld(game.world)) {
+-               cancelNativeEntry();
++               cancelNativeEntry(true);
+             }
+             if(nativeTravel.current!=null && game.isPlayerDead()) {
+                cancelNativeEntry();
+@@ -295,7 +295,7 @@
+       public function adoptNativeTravel(nativeGame:Object):Object {
+          // loadGame replaces Game/gg inside the same World. The native caller
+          // can reach this bridge before the next Stage cancellation check.
+-         if(!nativeTravel.matchesWorld(game.world)){cancelNativeEntry();return null;}
++         if(!nativeTravel.matchesWorld(game.world)){cancelNativeEntry(true);return null;}
+          return nativeTravel.adopt(game.world,nativeGame);
+       }
+       public function replayNativePrepare(link:TcpLink):void {
+@@ -381,7 +381,13 @@
+       private function clearNativeEntry():void {
+          nativeSeal=null;nativeStartLand=null;nativeBarrier=0;nativePreviousBarrier=0;
+       }
+-      private function cancelNativeEntry():void {
++      private function cancelNativeEntry(discardBarrier:Boolean=false):void {
++         if(discardBarrier) {
++            // A replacement Game cannot inherit the previous world's grant,
++            // including the legacy barrier that was ahead of this native plan.
++            // Clearing only the plan would make an empty travelId valid again.
++            pending=0;readySent=false;requested=false;
++         }
+          nativeTravel.cancel();nativeDeadline=0;preparing=null;game.activeTravelId="";
+          clearNativeEntry();TravelGuard.endTravel();
+       }
+@@ -519,6 +525,12 @@
+          try
+          {
+             game.refreshWorld();
++            // Socket callbacks can arrive before the next frame/adopt callback.
++            // Retire the old barrier before inspecting any room message so a
++            // delayed legacy grant cannot import state into a replacement Game.
++            if(!nativeTravel.matchesWorld(game.world)) {
++               cancelNativeEntry(true);return true;
++            }
+             if(host())
+             {
+                if(msg.op=="request") {peerInfo=msg.info;if(pending==0)begin();}
+--- a/tests/native-room-component/NativeTravelRoomChecks.as
++++ b/tests/native-room-component/NativeTravelRoomChecks.as
+@@ -121,6 +121,23 @@
+          check(mod.session.rooms.adoptNativeTravel(mod.game.world.game)==null,"replacement Game enters natively without consuming an old plan");
+          check(mod.game.world===originalWorld && !mod.session.rooms.nativeTravelPending && mod.game.activeTravelId=="","same-World replacement cancels local plan identity");
+ 
++         caseName="replacement before old grant callback";settled();
++         mod.session.rooms.handle({type:"room",op:"seal",barrier:2,epoch:1,info:mod.game.readWorldInfo()});
++         p=plan();mod.session.rooms.handle(p);mod.session.rooms.handle(seal(3));
++         var restoresBefore:int=mod.game.restores;mod.session.link.messages=[];
++         // loadGame can replace Game/Land while retaining World. Deliver the
++         // delayed grant before ENTER_FRAME or a native adopt callback can cancel.
++         mod.game.world.game={curLandId:"map",crea:false,lands:{map:{id:"map",rnd:false},way:{id:"way",rnd:false}}};
++         mod.game.completeNative({curLandId:"map"});
++         grant(2,1,"");
++         check(mod.game.restores==restoresBefore,"old grant cannot restore a checkpoint into replacement Game");
++         check(count("ack")==0,"replacement cannot acknowledge the obsolete barrier");
++         check(!mod.session.rooms.nativeTravelPending && mod.game.activeTravelId=="","message entry cancels the replaced native plan immediately");
++         grant(2,1,"");
++         check(mod.game.restores==restoresBefore && count("ack")==0,"cleared plan cannot reopen the old grant on duplicate delivery");
++         frame();grant(2,1,"");
++         check(mod.game.restores==restoresBefore && count("ack")==0,"next frame does not make the obsolete grant valid again");
++
+          caseName="disconnect during unconfirmed native exit";settled();p=plan();mod.session.rooms.handle(p);
+          mod.session.mode=Session.OFFLINE;frame();
+          check(!mod.session.rooms.nativeTravelPending && mod.game.activeTravelId=="" && !mod.game.roomHold,"offline frame clears a plan even when ready and busy are both false");
+--- a/tests/NativeTravelPlanChecks.as
++++ b/tests/NativeTravelPlanChecks.as
+@@ -1,9 +1,28 @@
+ package {
++   import flash.desktop.NativeApplication;
+    import flash.display.Sprite;
++   import flash.events.Event;
++   import flash.filesystem.File;
++   import flash.filesystem.FileMode;
++   import flash.filesystem.FileStream;
+    import rconnect.core.NativeTravelPlan;
+    public class NativeTravelPlanChecks extends Sprite {
+-      private var count:int=0;
+-      public function NativeTravelPlanChecks() {
++      private var count:int=0,failed:int=0,assertions:Array=[];
++      public function NativeTravelPlanChecks(){addEventListener(Event.ADDED_TO_STAGE,begin);}
++      private function begin(e:Event):void {
++         removeEventListener(Event.ADDED_TO_STAGE,begin);
++         try{run();}catch(error:Error){
++            if(assertions.length==0 || assertions[assertions.length-1].passed) {
++               assertions.push({passed:false,label:"uncaught "+error+" "+error.getStackTrace()});failed++;
++            }
++            trace(error+" "+error.getStackTrace());
++         }
++         var file:FileStream=new FileStream();file.open(File.applicationStorageDirectory.resolvePath("result.json"),FileMode.WRITE);
++         file.writeUTFBytes(JSON.stringify({passed:failed==0,failed:failed,assertions:assertions,
++            functional_only:true,native_runtime:false}));file.close();
++         NativeApplication.nativeApplication.exit(failed?1:0);
++      }
++      private function run():void {
+          var world:Object={},g:Object={curLandId:"way"};
+          world.game=g;
+          var host:NativeTravelPlan=new NativeTravelPlan("host"),join:NativeTravelPlan=new NativeTravelPlan("join");
+@@ -57,7 +76,10 @@
+          expect(function():void{replacement.adopt(world,world.game);},"loadGame cannot consume the previous Game plan");
+          trace("NATIVE_TRAVEL_CHECKS_PASS count="+count);
+       }
+-      private function check(value:Boolean,label:String):void {if(!value)throw new Error("FAIL "+label);count++;}
++      private function check(value:Boolean,label:String):void {
++         assertions.push({passed:value,label:label});
++         if(!value){failed++;throw new Error("FAIL "+label);}count++;
++      }
+       private function expect(fn:Function,label:String):void {var failed:Boolean=false;try{fn();}catch(e:Error){failed=true;}check(failed,label);}
+    }
+ }

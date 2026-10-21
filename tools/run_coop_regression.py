@@ -1,6 +1,11 @@
 """Unique AIR ids and independent game copies; no installed SWF/save mutations.
 Only terminates the processes created by this invocation. Uses fresh characters
 unless explicit read-only save templates are supplied for an isolated replay.
+To cancel voluntarily, create cancel-request.json in the printed QUEUED_OUTPUT directory
+(optionally {"reason": "..."}). Its presence is sufficient, even if JSON is
+incomplete. A queued request is checked immediately after registration is acquired;
+the shared registry wait itself is unchanged. Cancellation exits 130, never passes,
+and preserves cancel-result.json plus logs after normal owned-process cleanup.
 """
 import argparse
 import hashlib
@@ -19,6 +24,30 @@ from validation.runtime_memory import snapshot as memory_snapshot
 from validation.air_test_inventory import air_processes
 ROOT = Path(__file__).resolve().parents[1]
 GAME = ROOT.parents[1]
+
+class RunCancelled(Exception):
+    def __init__(self, evidence):
+        self.evidence=evidence
+        super().__init__('Cancellation requested at '+evidence['phase'])
+
+
+def check_cancel_requested(output,phase):
+    marker=output/'cancel-request.json'
+    if not marker.exists():return
+    evidence=dict(cancelled=True,passed=False,phase=phase,request=str(marker),
+                  observed_utc_ms=int(time.time()*1000))
+    try:
+        raw=marker.read_bytes()
+        evidence['request_sha256']=hashlib.sha256(raw).hexdigest()
+        request=json.loads(raw.decode('utf-8-sig'))
+        if isinstance(request,dict) and isinstance(request.get('reason'),str):
+            evidence['reason']=request['reason'][:2048]
+    except (OSError,ValueError):
+        # A writer may still be filling the file. Never turn a partial request
+        # into permission to launch another instance.
+        evidence['request_note']='Marker present; content unreadable or incomplete'
+    raise RunCancelled(evidence)
+
 
 def main():
     ap=argparse.ArgumentParser()
@@ -78,17 +107,28 @@ def main():
     token=uuid.uuid4().hex[:10]
     output=ROOT/'build'/'cooperation'/token
     output.mkdir(parents=True)
+    # Publish before waiting so a queued invocation can be cancelled by marker.
+    print('QUEUED_OUTPUT '+str(output),flush=True)
     sys.path.insert(0,str(GAME/'mods/ModLoader/tools'))
     from test_registry import Registration
+    cancelled=False
     with Registration(owner='RConnect / 房间与合作回归',purpose=args.expected_version+' '+('solo' if args.solo else 'host/join'),
                       run_dir=output,evidence=output/'registry-result.json',wait=args.registry_wait) as record:
-        ok=run_registered(args,ap,output,record)
-        record.outcome='passed' if ok else 'failed'
-        record.note='运行器断言及模组日志检查'+('通过；专项范围见结果' if ok else '未通过，原始日志保留')
-        (output/'registry-result.json').write_text(json.dumps(dict(id=record.id,passed=ok,note=record.note),ensure_ascii=False,indent=2),encoding='utf-8')
-    raise SystemExit(0 if ok else 1)
+        try:
+            ok=run_registered(args,ap,output,record)
+        except RunCancelled as error:
+            ok=False;cancelled=True
+            (output/'cancel-result.json').write_text(json.dumps(error.evidence,ensure_ascii=False,indent=2),encoding='utf-8')
+            print('RESULT CANCELLED: '+str(error),flush=True)
+        record.outcome='interrupted' if cancelled else ('passed' if ok else 'failed')
+        record.note='自愿取消；自有实例已清理，原始日志保留，未判定通过' if cancelled else '运行器断言及模组日志检查'+('通过；专项范围见结果' if ok else '未通过，原始日志保留')
+        (output/'registry-result.json').write_text(json.dumps(dict(id=record.id,passed=ok,cancelled=cancelled,note=record.note),ensure_ascii=False,indent=2),encoding='utf-8')
+    raise SystemExit(130 if cancelled else (0 if ok else 1))
 
 def run_registered(args,ap,output,record):
+    # First operation after Registration.__enter__: a queued marker cannot be
+    # overlooked during memory checks, input freezing or launch preparation.
+    check_cancel_requested(output,'registration acquired')
     game=args.game_root.resolve();token=output.name
     roles=('host',) if args.solo else ('host','join')
     memory_before=memory_snapshot()
@@ -138,7 +178,7 @@ def run_registered(args,ap,output,record):
         if hasattr(socket,'SO_EXCLUSIVEADDRUSE'):
             probe.setsockopt(socket.SOL_SOCKET,socket.SO_EXCLUSIVEADDRUSE,1)
         probe.bind(('0.0.0.0',args.port)); port=probe.getsockname()[1]
-    procs=[]; artifacts=[]; inputs={}
+    procs=[]; stdout_files=[]; artifacts=[]; inputs={}
     # Snapshot all shared inputs once before either process starts. Other mod
     # tasks may deploy while this pair is running.
     # Preserve native music playback too. A missing-Music diagnostic captured
@@ -208,6 +248,7 @@ def run_registered(args,ap,output,record):
     configuration_files={};descriptors={};launches=[]
     try:
         for role in roles:
+            check_cancel_requested(output,'preparing '+role)
             folder=output/role; shutil.copytree(frozen,folder)
             release=folder/'mods'/'Rconnect'/'release'
             inputs[role]={'game':hashlib.sha256((folder/'pfe.swf').read_bytes()).hexdigest()}
@@ -287,15 +328,19 @@ def run_registered(args,ap,output,record):
             require_exclusive_air=args.require_exclusive_air,air_inventory_sha256=hashlib.sha256((ROOT/'tools/validation/air_test_inventory.py').read_bytes()).hexdigest(),
             desktop_helper_sha256=hashlib.sha256((GAME/'mods/ModLoader/tools/air_test_process.py').read_bytes()).hexdigest() if args.private_desktop else None),indent=2))
         for role,folder,desc,storage,appid in launches:
+            check_cancel_requested(output,'before '+role+' launch')
             if not record_memory():break
             stdout=(output/(role+'.stdout.log')).open('w',encoding='utf-8')
+            stdout_files.append(stdout)
             record.before_launch(role+' / '+appid+' / '+str(desc))
             if args.private_desktop:
                 sys.path.insert(0,str(GAME/'mods/ModLoader/tools'))
                 from air_test_process import HiddenProcess
+                check_cancel_requested(output,'before '+role+' process creation')
                 proc=HiddenProcess([str(game/'adl64.exe'),'-runtime',str(game/'runtimes/air/win64'),str(desc)],
                        cwd=folder,stdout=stdout,stderr=stdout)
             else:
+                check_cancel_requested(output,'before '+role+' process creation')
                 proc=subprocess.Popen([str(game/'adl64.exe'),'-runtime',str(game/'runtimes/air/win64'),str(desc)],
                        cwd=folder,stdout=stdout,stderr=subprocess.STDOUT,creationflags=subprocess.CREATE_NO_WINDOW)
             procs.append(proc)
@@ -309,6 +354,7 @@ def run_registered(args,ap,output,record):
             print(json.dumps(dict(role=role,pid=proc.pid,appid=appid,log=str(storage/'RConnect.log'))),flush=True)
             boot_until=time.monotonic()+((180 if args.wait_host_world and not args.solo else 15) if role=='host' else 0)
             while time.monotonic()<boot_until:
+                check_cancel_requested(output,'host bootstrap')
                 if not record_memory():break
                 if args.wait_host_world and not args.solo and role=='host':
                     log_path=storage/'RConnect.log'
@@ -324,6 +370,7 @@ def run_registered(args,ap,output,record):
         print('OUTPUT '+str(output),flush=True)
         deadline=time.monotonic()+args.seconds
         while time.monotonic()<deadline:
+            check_cancel_requested(output,'runtime loop')
             if not record_memory():break
             complete=True
             for role,path in artifacts:
@@ -336,16 +383,21 @@ def run_registered(args,ap,output,record):
                     vision_log=path.parent/'RVision.log'
                     vision_text=vision_log.read_text(encoding='utf-8',errors='replace') if vision_log.exists() else ''
                     complete=complete and ('init ok '+args.vision_smoke_version) in vision_text and 'tick 181' in vision_text
+            check_cancel_requested(output,'runtime completion')
             if complete: break
             time.sleep(2)
+        check_cancel_requested(output,'runtime finished')
     finally:
         for p in procs:
             if p.poll() is None:
                 if args.private_desktop:p.kill()
                 else:p.terminate()
-                try: p.wait(timeout=10)
-                except subprocess.TimeoutExpired: p.kill(); p.wait()
+            # Reap even a child which exited by itself; retain registry ownership
+            # until all children are known stopped and desktop handles are closed.
+            try: p.wait(timeout=10)
+            except subprocess.TimeoutExpired: p.kill(); p.wait()
             if args.private_desktop:p.close()
+        for stdout in stdout_files:stdout.close()
         record.child_stopped()
         (output/'memory-timeline.json').write_text(json.dumps(dict(rows=memory_rows,
             stopped_for_pressure=memory_stopped,stopped_for_overlap=isolation_stopped,minimum_commit_bytes=512*1024**2,
@@ -372,6 +424,7 @@ def run_registered(args,ap,output,record):
                     except PermissionError:
                         if attempt==5: print('Retained locked test copy: '+str(folder),flush=True)
                         else: time.sleep(0.5)
+    check_cancel_requested(output,'after cleanup')
     ok=(set(inputs)=={'host'}) if args.solo else inputs.get('host')==inputs.get('join')
     ok=ok and not memory_stopped and not isolation_stopped
     if isolation_stopped:print('FAIL another AIR instance overlapped; only owned instances stopped',flush=True)
@@ -417,6 +470,7 @@ def run_registered(args,ap,output,record):
         print(role+' failures: '+json.dumps(bad,ensure_ascii=False),flush=True)
         for line in content.splitlines():
             if 'COOP ' in line: print(line,flush=True)
+    check_cancel_requested(output,'before result')
     print('RESULT '+('PASS' if ok else 'FAIL'),flush=True)
     return ok
 if __name__=='__main__': main()

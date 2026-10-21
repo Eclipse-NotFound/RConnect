@@ -1,5 +1,5 @@
 {
-  "version": "0.2.24-recovery1",
+  "version": "0.2.24-recovery3",
   "compiled": false,
   "runtime_tested": false,
   "baseline": "build/m52/coop-bundle-04",
@@ -272,6 +272,131 @@
           "merged_sha256": "f41cd07d23ab556884349befff6d4dcccee77814d4c916458f9330e2ec1f2ce6"
         }
       ]
+    },
+    {
+      "name": "aura-rgb-alpha-ownership",
+      "source": "experimental\\recovery-aura-followup\\src",
+      "ancestor": "build/m52/recovery-01/src",
+      "files": [
+        {
+          "path": "rconnect/game/TelekinesisVisuals.as",
+          "source_sha256": "2a98e2d94bf6d0cfcf62f64e830845a3919a9cb461719b81ae5f152031be30b1",
+          "ancestor_sha256": "539056d7477ac109be2d0e4a7ae2902b1700e9bafb51b8661ec7ab8ae4ea7370",
+          "before_sha256": "539056d7477ac109be2d0e4a7ae2902b1700e9bafb51b8661ec7ab8ae4ea7370",
+          "merge": "reviewed single-file delta",
+          "merged_sha256": "2a98e2d94bf6d0cfcf62f64e830845a3919a9cb461719b81ae5f152031be30b1"
+        }
+      ]
+    },
+    {
+      "name": "native-travel-with-stale-grant-guard",
+      "source": "experimental/recovery-native-travel/src",
+      "ancestor": "build/m52/recovery-01/src",
+      "files": [
+        {
+          "path": "rconnect/core/MapGeneration.as",
+          "ancestor_sha256": "ba5ea9bf85933329759575ce19e8d5260f9218c1e0aacccd1fa956d1e045a3a6",
+          "before_sha256": "ba5ea9bf85933329759575ce19e8d5260f9218c1e0aacccd1fa956d1e045a3a6",
+          "source_sha256": "0826f92fa6fd05859e730131da939e7ec74016a2280e69122833a76c45a0b645",
+          "merged_sha256": "0826f92fa6fd05859e730131da939e7ec74016a2280e69122833a76c45a0b645",
+          "merge": "exact delta from unchanged recovery1 ancestor"
+        },
+        {
+          "path": "rconnect/core/NativeTravelPlan.as",
+          "ancestor_sha256": null,
+          "before_sha256": null,
+          "source_sha256": "e40903e83e23996d2aac1bb10984ffedf6de7984e541de1bf15b2fd0aa9309d1",
+          "merged_sha256": "e40903e83e23996d2aac1bb10984ffedf6de7984e541de1bf15b2fd0aa9309d1",
+          "merge": "exact delta from unchanged recovery1 ancestor"
+        },
+        {
+          "path": "rconnect/core/RoomSync.as",
+          "ancestor_sha256": "14d651cb6f369bb06cd3ae224ccbc2135e4935b5a96be47bc2166994bb5fd298",
+          "before_sha256": "14d651cb6f369bb06cd3ae224ccbc2135e4935b5a96be47bc2166994bb5fd298",
+          "source_sha256": "efafed73dda4df38aab2176f791f6b91cf2a6d68ed9ab420e657662e54639961",
+          "merged_sha256": "efafed73dda4df38aab2176f791f6b91cf2a6d68ed9ab420e657662e54639961",
+          "merge": "exact delta from unchanged recovery1 ancestor"
+        },
+        {
+          "path": "rconnect/core/Session.as",
+          "ancestor_sha256": "1cc4b2ddba1e1dc71c4ed7f39c5a5cff3e62b84b549c97c79aae7197f73fb0c5",
+          "before_sha256": "1cc4b2ddba1e1dc71c4ed7f39c5a5cff3e62b84b549c97c79aae7197f73fb0c5",
+          "source_sha256": "5d75f5741b50d9344a9ee98fdf329314628962c4c4ff71fb483921845ae47883",
+          "merged_sha256": "5d75f5741b50d9344a9ee98fdf329314628962c4c4ff71fb483921845ae47883",
+          "merge": "exact delta from unchanged recovery1 ancestor"
+        },
+        {
+          "path": "rconnect/core/TravelGuard.as",
+          "ancestor_sha256": "76fb5ff44149e8f2d8ae677d16ec0799f4cb75b4a743f235b93176805259a31d",
+          "before_sha256": "76fb5ff44149e8f2d8ae677d16ec0799f4cb75b4a743f235b93176805259a31d",
+          "source_sha256": "c0f02644d7a835913e02d7a9fdb57a8516430b3a6d3d6b5695fca7a6039fb297",
+          "merged_sha256": "c0f02644d7a835913e02d7a9fdb57a8516430b3a6d3d6b5695fca7a6039fb297",
+          "merge": "exact delta from unchanged recovery1 ancestor"
+        },
+        {
+          "path": "rconnect/game/GameBridge.as",
+          "ancestor_sha256": "16330c074a9b2eeb13a5681408b747a5c585f164f7d489b696f4c413803fb2d2",
+          "before_sha256": "16330c074a9b2eeb13a5681408b747a5c585f164f7d489b696f4c413803fb2d2",
+          "source_sha256": "7ecceb73c2253ddda7e9ccff7e4bd6aed37d00d7b76899214797c6e176ea592b",
+          "merged_sha256": "7ecceb73c2253ddda7e9ccff7e4bd6aed37d00d7b76899214797c6e176ea592b",
+          "merge": "exact delta from unchanged recovery1 ancestor"
+        }
+      ]
+    },
+    {
+      "name": "equivalent-capture-deduplication",
+      "source": "experimental/recovery-cost/src",
+      "ancestor": "build/m52/recovery-02/src",
+      "files": [
+        {
+          "path": "rconnect/game/ProjectileFrameStream.as",
+          "ancestor_sha256": "20326b683e4856e0b9d3657ce7d6c3da818409f8de319aad721b966eff189fdc",
+          "source_sha256": "938b8ee0d3afa262e4b23c608c6b46d9b84b6cb71f4cb4b148ccb445de3c679c",
+          "before_sha256": "20326b683e4856e0b9d3657ce7d6c3da818409f8de319aad721b966eff189fdc",
+          "merged_sha256": "938b8ee0d3afa262e4b23c608c6b46d9b84b6cb71f4cb4b148ccb445de3c679c",
+          "merge": "unchanged recovery2 ancestor"
+        },
+        {
+          "path": "rconnect/game/UnitPresentation.as",
+          "ancestor_sha256": "c22936e1a5c1e8c3c27881f508e7b20f70f565d44ab605eca219365fdd7d1320",
+          "source_sha256": "3b8049b3de582dd9559248c0370db230669233930cf50ab651babc1fe09179ce",
+          "before_sha256": "c22936e1a5c1e8c3c27881f508e7b20f70f565d44ab605eca219365fdd7d1320",
+          "merged_sha256": "3b8049b3de582dd9559248c0370db230669233930cf50ab651babc1fe09179ce",
+          "merge": "unchanged recovery2 ancestor"
+        },
+        {
+          "path": "rconnect/game/EnergyImpactVisuals.as",
+          "ancestor_sha256": "c3a28a45ad56292f043c49201f95a879384983df87e80bc3dd09eb1aa2ad4d85",
+          "source_sha256": "ff86c28bd4beaee27842ee9e71cbbb2987b0c9c418a2a2d3f078a22d29b82c32",
+          "before_sha256": "c3a28a45ad56292f043c49201f95a879384983df87e80bc3dd09eb1aa2ad4d85",
+          "merged_sha256": "ff86c28bd4beaee27842ee9e71cbbb2987b0c9c418a2a2d3f078a22d29b82c32",
+          "merge": "unchanged recovery2 ancestor"
+        },
+        {
+          "path": "rconnect/game/WallImpactVisuals.as",
+          "ancestor_sha256": "e1125fa1865598705c1753fd8e49ede037cd16936a680a7a078c4cf9b5ac5a34",
+          "source_sha256": "edf9c0e2bc0b830a8c83fcae7a0a9141d6b32b5b0342cd00d988030ff399584b",
+          "before_sha256": "e1125fa1865598705c1753fd8e49ede037cd16936a680a7a078c4cf9b5ac5a34",
+          "merged_sha256": "edf9c0e2bc0b830a8c83fcae7a0a9141d6b32b5b0342cd00d988030ff399584b",
+          "merge": "unchanged recovery2 ancestor"
+        },
+        {
+          "path": "rconnect/game/GameBridge.as",
+          "ancestor_sha256": "16330c074a9b2eeb13a5681408b747a5c585f164f7d489b696f4c413803fb2d2",
+          "source_sha256": "134041357daf21cb75a10e50f1f5d81448e8246e64f3024a1bbfc78f94545792",
+          "before_sha256": "7ecceb73c2253ddda7e9ccff7e4bd6aed37d00d7b76899214797c6e176ea592b",
+          "merged_sha256": "e1cd085795e134ca293a5eb83fe44e22a0bc7edfb172f960a2c6a1e8bdec9260",
+          "merge": "exact reviewed method anchors"
+        },
+        {
+          "path": "rconnect/core/Session.as",
+          "ancestor_sha256": "1cc4b2ddba1e1dc71c4ed7f39c5a5cff3e62b84b549c97c79aae7197f73fb0c5",
+          "source_sha256": "070b39f2e98e90578a1bb3998eba3e84d8deece8a47686d72295e26625e6a47f",
+          "before_sha256": "5d75f5741b50d9344a9ee98fdf329314628962c4c4ff71fb483921845ae47883",
+          "merged_sha256": "e699b9c5a02799367bba8afd924d450d064cab3f0a5e9a36ea7d400b378b10ba",
+          "merge": "exact reviewed method anchors"
+        }
+      ]
     }
   ],
   "manual_changes": [
@@ -338,6 +463,24 @@
   "deployed": false,
   "source": [
     {
+      "path": "RConnectDoc.as",
+      "sha256": "764967e351e57e10fbcf1c3136d5170e633c6cd2e750a7427c6a180e3a1e34e1",
+      "baseline_sha256": "764967e351e57e10fbcf1c3136d5170e633c6cd2e750a7427c6a180e3a1e34e1",
+      "changed": false
+    },
+    {
+      "path": "RConnectMod.as",
+      "sha256": "db3ce41136ab11d4b0b9f0fdc44e24276cf79e8dc9a0885493a91f076c37caaa",
+      "baseline_sha256": "1de9483aca55b011d3d6ab99238c88c9b2028a8d1d8c2ab51e4ecb5c546833ec",
+      "changed": true
+    },
+    {
+      "path": "RConnectModDomains.as",
+      "sha256": "372167c4a32b2ac9b23b7addc7959ba3c70b7f74fea9732cdd1c650112eb9b00",
+      "baseline_sha256": null,
+      "changed": true
+    },
+    {
       "path": "fe/inter/RConnectTravelAccess.as",
       "sha256": "ee2fb60621ba8ee21b6d585a284858be01eb6b9aee06cd4fe68e8c867dc1cec8",
       "baseline_sha256": "ee2fb60621ba8ee21b6d585a284858be01eb6b9aee06cd4fe68e8c867dc1cec8",
@@ -347,7 +490,7 @@
       "path": "fe/serv/RConnectInteractionAccess.as",
       "sha256": "9653273952f792db310f707a0232a88b15330c0fe7cccdb740394929f0da74cb",
       "baseline_sha256": "118533088a2d7dadf4cf5016f376a96374e22c539f7732c052598f6211fa4886",
-      "changed": false
+      "changed": true
     },
     {
       "path": "fe/serv/RConnectSecurityInteractionAccess.as",
@@ -359,7 +502,7 @@
       "path": "fe/unit/RConnectAnimationAccess.as",
       "sha256": "2a0020f3a442c0d8b717e12d6a31ce26b51530e0a361930cb9035a68a2c41af7",
       "baseline_sha256": "69ef25e550c29ac38e38e53731f38dd651d05346aea5b8937500bd0ee073f605",
-      "changed": false
+      "changed": true
     },
     {
       "path": "fe/unit/RConnectFeedbackAccess.as",
@@ -389,7 +532,7 @@
       "path": "fe/unit/RConnectUnitAccess.as",
       "sha256": "0558d8470454bb60069b90664302642a3facfcfe27291e4b5329923d834ac3d0",
       "baseline_sha256": "1e49291317222540157667c5c2cd0ea6db9538844e74516b1d08a2b27aea47bb",
-      "changed": false
+      "changed": true
     },
     {
       "path": "fe/weapon/RConnectMeleeAccess.as",
@@ -401,13 +544,13 @@
       "path": "modlocales/connect/RCLocale.as",
       "sha256": "e459365fc529e7ea89c70d5c2c742196a0fdd82e78b0d5efdf4e8cc82dc2566d",
       "baseline_sha256": "96d80b0f2d21620e08caf93864a77a58e10214a0dc817ea21e6a1e6ce8548ffb",
-      "changed": false
+      "changed": true
     },
     {
       "path": "modlocales/connect/RCLocaleMessages.as",
       "sha256": "1adf3374819dcb458c9af4fd50949a251cac688ffae07a8e2c42d10e4e405312",
       "baseline_sha256": "06ad485dd3e5b174edf7d30c93f715dbd8f15b47af852d95bb5a4cd9566336f7",
-      "changed": false
+      "changed": true
     },
     {
       "path": "rconnect/core/Config.as",
@@ -419,13 +562,13 @@
       "path": "rconnect/core/CoopPause.as",
       "sha256": "dd3428e87665d53dde470e36dadb37389f9819f5a00b48a9add154f1505662f9",
       "baseline_sha256": "1ea5e5a0225d989e0dbfb5076fb00a2e0ee694354d54ed75769b8d4b0606334e",
-      "changed": false
+      "changed": true
     },
     {
       "path": "rconnect/core/EnemyGrip.as",
       "sha256": "ebf5e806aaf74a407df2e3eff5a90b92786de4deb2a2890e2fe31dcb92cca176",
       "baseline_sha256": "a05fa1046ec7a2cbb1848ffccb899169b1163d2b239b03e4d92ba849bcc50faf",
-      "changed": false
+      "changed": true
     },
     {
       "path": "rconnect/core/FriendlyFire.as",
@@ -447,8 +590,14 @@
     },
     {
       "path": "rconnect/core/MapGeneration.as",
-      "sha256": "ba5ea9bf85933329759575ce19e8d5260f9218c1e0aacccd1fa956d1e045a3a6",
+      "sha256": "0826f92fa6fd05859e730131da939e7ec74016a2280e69122833a76c45a0b645",
       "baseline_sha256": "4fb1bd07b75bb9531e3915ff64abf65723e0e1e783fb17594d9c3e3c20a4489c",
+      "changed": true
+    },
+    {
+      "path": "rconnect/core/NativeTravelPlan.as",
+      "sha256": "e40903e83e23996d2aac1bb10984ffedf6de7984e541de1bf15b2fd0aa9309d1",
+      "baseline_sha256": null,
       "changed": true
     },
     {
@@ -483,7 +632,7 @@
     },
     {
       "path": "rconnect/core/RoomSync.as",
-      "sha256": "14d651cb6f369bb06cd3ae224ccbc2135e4935b5a96be47bc2166994bb5fd298",
+      "sha256": "efafed73dda4df38aab2176f791f6b91cf2a6d68ed9ab420e657662e54639961",
       "baseline_sha256": "536f587088965ee6f38147d11f2a07723e4c78c48062ad618814cd1f40b36163",
       "changed": true
     },
@@ -495,7 +644,7 @@
     },
     {
       "path": "rconnect/core/Session.as",
-      "sha256": "1cc4b2ddba1e1dc71c4ed7f39c5a5cff3e62b84b549c97c79aae7197f73fb0c5",
+      "sha256": "e699b9c5a02799367bba8afd924d450d064cab3f0a5e9a36ea7d400b378b10ba",
       "baseline_sha256": "b87d67e2b7de5eaca5b5760e8dca522ef7202183fddc127a840244e6bebf7b98",
       "changed": true
     },
@@ -503,13 +652,13 @@
       "path": "rconnect/core/TeammateNavigation.as",
       "sha256": "d0a31616433a654b1fadde9b9b387ac16caae35335770280023c8ad6e92983ed",
       "baseline_sha256": "4697dc1eb4634e6062a78e54ab889819edb25c080098a01a83f27232f69e74dd",
-      "changed": false
+      "changed": true
     },
     {
       "path": "rconnect/core/TravelGuard.as",
-      "sha256": "76fb5ff44149e8f2d8ae677d16ec0799f4cb75b4a743f235b93176805259a31d",
+      "sha256": "c0f02644d7a835913e02d7a9fdb57a8516430b3a6d3d6b5695fca7a6039fb297",
       "baseline_sha256": "76fb5ff44149e8f2d8ae677d16ec0799f4cb75b4a743f235b93176805259a31d",
-      "changed": false
+      "changed": true
     },
     {
       "path": "rconnect/core/TravelPlacement.as",
@@ -543,7 +692,7 @@
     },
     {
       "path": "rconnect/game/EnergyImpactVisuals.as",
-      "sha256": "c3a28a45ad56292f043c49201f95a879384983df87e80bc3dd09eb1aa2ad4d85",
+      "sha256": "ff86c28bd4beaee27842ee9e71cbbb2987b0c9c418a2a2d3f078a22d29b82c32",
       "baseline_sha256": "8f940810a84b3e1ac65a5eb83393da90c6ab66cdc14aace8de69f1aee14d52c2",
       "changed": true
     },
@@ -555,7 +704,7 @@
     },
     {
       "path": "rconnect/game/GameBridge.as",
-      "sha256": "16330c074a9b2eeb13a5681408b747a5c585f164f7d489b696f4c413803fb2d2",
+      "sha256": "e1cd085795e134ca293a5eb83fe44e22a0bc7edfb172f960a2c6a1e8bdec9260",
       "baseline_sha256": "6c8216257ead7dc7aa35a1b278d3c117d63e1a81cf72ac7671db22321114a835",
       "changed": true
     },
@@ -569,7 +718,7 @@
       "path": "rconnect/game/HitFeedback.as",
       "sha256": "6fe0cdc3071cf2fc2372170e7cc1b6c5535169d1c141452613762567eb18269f",
       "baseline_sha256": "72441f9c5c5a5e45328aae78bbd6592dcd6630293e7a785c7b2af1ba47a07a17",
-      "changed": false
+      "changed": true
     },
     {
       "path": "rconnect/game/ImpactEventQueue.as",
@@ -587,7 +736,7 @@
       "path": "rconnect/game/MirrorHitUnit.as",
       "sha256": "e5339ba7481c4e14d90171939e4a8729a4b8812dddf27bce1a006dd65de79147",
       "baseline_sha256": "6f3ea3364734977a8c270108c876afcd60e954f6b26cc771b5ebd34a026f9e05",
-      "changed": false
+      "changed": true
     },
     {
       "path": "rconnect/game/MirrorMasks.as",
@@ -651,7 +800,7 @@
     },
     {
       "path": "rconnect/game/ProjectileFrameStream.as",
-      "sha256": "20326b683e4856e0b9d3657ce7d6c3da818409f8de319aad721b966eff189fdc",
+      "sha256": "938b8ee0d3afa262e4b23c608c6b46d9b84b6cb71f4cb4b148ccb445de3c679c",
       "baseline_sha256": null,
       "changed": true
     },
@@ -665,7 +814,7 @@
       "path": "rconnect/game/RemoteArmor.as",
       "sha256": "41d6baae9dd164454397d30b7194d5626ba004a374139a2a869c088f5adb59df",
       "baseline_sha256": "f9de592e2d079cabafcad9625dbb1f2739f8337db8b90aaaf4992cad1fc52249",
-      "changed": false
+      "changed": true
     },
     {
       "path": "rconnect/game/RemoteDamageUnit.as",
@@ -677,7 +826,7 @@
       "path": "rconnect/game/RemoteLoot.as",
       "sha256": "bbe29cd6b2e97dae4c6fbcfa861d50883963f8dee752acee37cae795b5a6b666",
       "baseline_sha256": "b051ea9a719a135534aa84315064595ad085f75474b080f742d2addb881dce12",
-      "changed": false
+      "changed": true
     },
     {
       "path": "rconnect/game/RemoteMotion.as",
@@ -705,7 +854,7 @@
     },
     {
       "path": "rconnect/game/TelekinesisVisuals.as",
-      "sha256": "539056d7477ac109be2d0e4a7ae2902b1700e9bafb51b8661ec7ab8ae4ea7370",
+      "sha256": "2a98e2d94bf6d0cfcf62f64e830845a3919a9cb461719b81ae5f152031be30b1",
       "baseline_sha256": "e3abdaf0892aa284fc5d35fe2bf1f77d1fb2c068ba6f98828fb25b1f825fc169",
       "changed": true
     },
@@ -729,7 +878,7 @@
     },
     {
       "path": "rconnect/game/UnitPresentation.as",
-      "sha256": "c22936e1a5c1e8c3c27881f508e7b20f70f565d44ab605eca219365fdd7d1320",
+      "sha256": "3b8049b3de582dd9559248c0370db230669233930cf50ab651babc1fe09179ce",
       "baseline_sha256": "c93cf23601069a6cd151a03bfd2deab422125fa74c00574e0a3712fd0f2e0f49",
       "changed": true
     },
@@ -741,9 +890,9 @@
     },
     {
       "path": "rconnect/game/WallImpactVisuals.as",
-      "sha256": "e1125fa1865598705c1753fd8e49ede037cd16936a680a7a078c4cf9b5ac5a34",
+      "sha256": "edf9c0e2bc0b830a8c83fcae7a0a9141d6b32b5b0342cd00d988030ff399584b",
       "baseline_sha256": "e1125fa1865598705c1753fd8e49ede037cd16936a680a7a078c4cf9b5ac5a34",
-      "changed": false
+      "changed": true
     },
     {
       "path": "rconnect/game/WeaponDisplay.as",
@@ -755,7 +904,7 @@
       "path": "rconnect/game/WorldProgress.as",
       "sha256": "051d47bd3a9ba9a242bf89ab8e99c2f81b823964c968942d685dddf6769aaef3",
       "baseline_sha256": "9d1ef52d3710581906c61d23d0daa641b64a66c77db6f812d9001944de723d13",
-      "changed": false
+      "changed": true
     },
     {
       "path": "rconnect/net/BinaryMessageCodec.as",
@@ -779,7 +928,7 @@
       "path": "rconnect/net/Protocol.as",
       "sha256": "32f6777591247b93e05e56eced25c1b2d6d4427feacac0aa248f06afd16a0b8e",
       "baseline_sha256": "9655eb28a4c417750bbbf318a0ce20bd485080051447c0caf0500ce76218b39d",
-      "changed": false
+      "changed": true
     },
     {
       "path": "rconnect/net/RoomCodec.as",
@@ -791,7 +940,7 @@
       "path": "rconnect/net/TcpLink.as",
       "sha256": "93aafc0aad7a410107f2eea2cee288d9366c6cacce289c5b2552dc95140e350c",
       "baseline_sha256": "b7ab3b85e9d97a3096c2ceb466515bdade58f705ac8585b96984c435a3359a5a",
-      "changed": false
+      "changed": true
     },
     {
       "path": "rconnect/ui/HudLayout.as",
@@ -822,24 +971,6 @@
       "sha256": "2043b149453cc710e39163e2cc2c89c8f77abf61c577133b76fb4a8119bba080",
       "baseline_sha256": "2043b149453cc710e39163e2cc2c89c8f77abf61c577133b76fb4a8119bba080",
       "changed": false
-    },
-    {
-      "path": "RConnectDoc.as",
-      "sha256": "764967e351e57e10fbcf1c3136d5170e633c6cd2e750a7427c6a180e3a1e34e1",
-      "baseline_sha256": "764967e351e57e10fbcf1c3136d5170e633c6cd2e750a7427c6a180e3a1e34e1",
-      "changed": false
-    },
-    {
-      "path": "RConnectMod.as",
-      "sha256": "91d0661a389c38673ea8ed85871f1e2932b3edb33312a0fc7f1571dcbd6e474f",
-      "baseline_sha256": "1de9483aca55b011d3d6ab99238c88c9b2028a8d1d8c2ab51e4ecb5c546833ec",
-      "changed": true
-    },
-    {
-      "path": "RConnectModDomains.as",
-      "sha256": "372167c4a32b2ac9b23b7addc7959ba3c70b7f74fea9732cdd1c650112eb9b00",
-      "baseline_sha256": null,
-      "changed": true
     }
   ],
   "changed_files": [
@@ -868,16 +999,15 @@
     "RConnectModDomains.as"
   ],
   "static_checks": {
-    "source_files": 84,
-    "changed_from_baseline": 23,
-    "all_layer_inputs_unchanged": true,
-    "no_merge_markers_or_delimiter_or_duplicate_method_errors": true,
-    "held_peer_aura_calls": 3,
-    "new_ordinary_projectiles_use_native_frames": true,
-    "no_new_analytic_terminal_retiming": true,
-    "has_effects_capture_and_receive": true,
-    "version": true
+    "input_hashes": true,
+    "exact_overlap_anchors": true,
+    "no_conflict_markers": true,
+    "version": true,
+    "compiler_checked": false
   },
   "static_errors": [],
-  "hash_note": "Layer merged_sha256 values describe intermediate merges. The source array is the final normalized LF source inventory; text-equivalent CRLF normalization is not a functional edit."
+  "hash_note": "Layer merged_sha256 values describe intermediate merges. The source array is the final normalized LF source inventory; text-equivalent CRLF normalization is not a functional edit.",
+  "followup_review": "Exact method merges; cost499, RoomSync50, plan33 component checks. Native gameplay and performance pending.",
+  "native_host_candidate": "build/m52/recovery-native-travel-host-01",
+  "native_host_sha256": "e159fe0f0a1cbb34596d18b9979f439e80823fbeda369be7b2220a42e8e5d30c"
 }

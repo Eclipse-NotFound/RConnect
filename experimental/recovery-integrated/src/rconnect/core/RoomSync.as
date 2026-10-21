@@ -32,6 +32,11 @@ package rconnect.core
       private var readySent:Boolean=false;
       private var initial:Boolean=true;
       private var preparing:Object;
+      private var nativeTravel:NativeTravelPlan;
+      private var nativeDeadline:int=0;
+      private var deferredNative:Object;
+      private var nativeSeal:Object,nativeStartLand:Object;
+      private var nativeBarrier:int=0,nativePreviousBarrier:int=0;
       private var preparedToken:String="";
       private var restoring:Boolean=false;
       private var localEntry:Boolean=false;
@@ -51,10 +56,13 @@ package rconnect.core
       public var term:int=0;
       public var epoch:int=0;
       public var status:String="";
+      public function get nativeTravelPending():Boolean {return nativeTravel.current!=null || deferredNative!=null;}
+      public function get nativePrepare():Object {return nativeTravel.current;}
 
       public function RoomSync(s:Session)
       {
          session=s;mod=s.mod;game=mod.game;
+         nativeTravel=new NativeTravelPlan(getTimer().toString(16)+"-"+uint(Math.random()*4294967295).toString(16));
          game.mapGeneration=new MapGeneration(s);
          mod.stage.addEventListener(Event.ENTER_FRAME,before,false,100000);
          mod.stage.addEventListener(Event.ENTER_FRAME,after,false,-9000);
@@ -71,6 +79,8 @@ package rconnect.core
          game.independentRooms=false;game.roomEpoch=0;status="";blocked=false;
          requested=false;
          preparing=null;preparedToken="";restoring=false;localEntry=false;
+         nativeTravel.reset();nativeDeadline=0;deferredNative=null;game.activeTravelId="";
+         clearNativeEntry();
          teammate=null;cancelFollow();
          TravelGuard.reset();
          game.mapGeneration.reset();
@@ -135,16 +145,30 @@ package rconnect.core
          // Force a final presentation check even when native children handle
          // ENTER_FRAME after the Stage listener or turn visibility back on.
          if(connected())mod.stage.invalidate();
-         if(!connected()) {if(ready || busy)reset();else entryView.clear();return;}
+         if(!connected()) {if(ready || busy || nativeTravelPending)reset();else entryView.clear();return;}
          try
          {
             game.refreshWorld();
             if(game.world==null || game.loc==null || game.gg==null)return;
+            if(deferredNative!=null) {var deferred:Object=deferredNative;deferredNative=null;receiveNativePrepare(deferred);}
+            if(!nativeTravel.matchesWorld(game.world)) {
+               cancelNativeEntry(true);
+            }
+            if(nativeTravel.current!=null && game.isPlayerDead()) {
+               cancelNativeEntry();
+            }
+            if(nativeTravel.current!=null && getTimer()>nativeDeadline && !blocked)
+               throw new Error("Native travel plan timed out before room confirmation");
             if(busy && pauseWorld===game.world)game.world.onPause=true;
             if(!host())TravelGuard.guardTravel(game,this);
             advanceSharedTravelFade();
             if(host())prepareCachedMap();
-            else if(preparing!=null && !game.isTransitioning())startPreparedMap();
+            else if(preparing!=null && !game.isTransitioning()) {
+               startPreparedMap();
+               // Native generation is allowed to run; a completed but not yet
+               // granted map must not simulate while waiting for the host seal.
+               if(nativeTravel.current!=null && nativeTravel.started && !game.isTransitioning())hold();
+            }
             game.world.land.loc_t=0;
             check();
             followTeammate();
@@ -168,8 +192,12 @@ package rconnect.core
       }
       private function check():void
       {
+         if(!host())applyWaitingNativeSeal();
          if(game.loc==null || game.gg==null || game.isTransitioning())return;
-         if(!host() && preparing!=null)return;
+         if(!host() && preparing!=null) {
+            if(nativeTravel.current!=null && nativePreviousBarrier>0 && pending==nativePreviousBarrier && !readySent)sendReady();
+            return;
+         }
          if(!host() && hostInfo==null)return;
          if(!host() && String(game.readWorldInfo().curLandId)!=String(hostInfo.curLandId))
          {observeHost(hostInfo);return;}
@@ -204,25 +232,36 @@ package rconnect.core
          requested=false;
          session.flushProgress();
          hold(!ready || !currentSettledRoom());pending=++serial;blocked=false;
-         send({op:"seal",barrier:pending,epoch:epoch,info:game.readWorldInfo(),
+         var entryInfo:Object=game.readWorldInfo();
+         var entryAnchor:Object=nativeTravel.captureAnchor(entryInfo);
+         send({op:"seal",barrier:pending,epoch:epoch,info:entryInfo,travelId:nativeTravel.id,entryAnchor:entryAnchor,
             together:TravelGuard.restricted(game.loc) || TravelGuard.restricted(settledRoom),
             peerRoom:peerInfo==null?"":String(peerInfo.roomKey)});
          Log.d("RConnectRoom: seal "+pending+" room="+game.roomKey());
       }
       /** Called for every host world update, including while maps load. */
-      public function receivedWelcome(info:Object):void
+      public function receivedWelcome(info:Object,nativePrepare:Object=null):void
       {
          // A socket callback can arrive after this frame's Stage listener.
          // Adopt the completed seed now and close the view in the same event.
-         try {observeHost(info);}
+         try {
+            if(nativePrepare!=null)receiveNativePrepare(nativePrepare);
+            if(deferredNative==null)observeHost(info);
+         }
          catch(error:Error){fail(error);}
          finally {present();mod.stage.invalidate();}
       }
       public function observeHost(info:Object):void
       {
          if(info==null || host() || info.worldReady===false)return;
+         if(nativeTravel.retiredToken(info.travelId))return;
+         if(nativeTravel.current!=null && String(info.travelId)!=nativeTravel.id)return;
+         if(nativeTravel.current!=null && nativePreviousBarrier>0)return;
          game.mapGeneration.receive(info);
          hostInfo=info;
+         if(nativeTravel.current!=null && !nativeTravel.started) {
+            preparing=nativeTravel.current.info;startPreparedMap();return;
+         }
          preparing=null;
          if(game.isPlayerDead() || game.isTransitioning())return;
          game.refreshWorld();var mine:Object=game.readWorldInfo();if(mine==null)return;
@@ -242,6 +281,44 @@ package rconnect.core
             settledRoom=null;settledKey="";ready=false;nativeRoom=null;
          }
          if(initial && game.roomKey()!=String(info.roomKey))TravelGuard.follow(game,info,true);
+      }
+      /** Native Game supplies its actual post-Encounter construction inputs. */
+      public function announceNativeTravel(info:Object):void {
+         if(!host() || !connected() || nativeTravel.current!=null || pending>0)return;
+         if(game.mapGeneration==null || !game.mapGeneration.nativeTravelSupported)return;
+         for each(var peer:Object in session.peers)if(int(peer.nativeTravel)!=1)return;
+         var message:Object=nativeTravel.offer(info,epoch,game.world);
+         game.activeTravelId=nativeTravel.id;nativeDeadline=getTimer()+45000;
+         send(message);
+         Log.d("RConnectTravel: native prepare "+nativeTravel.id+" target="+info.curLandId+" t="+getTimer());
+      }
+      public function adoptNativeTravel(nativeGame:Object):Object {
+         // loadGame replaces Game/gg inside the same World. The native caller
+         // can reach this bridge before the next Stage cancellation check.
+         if(!nativeTravel.matchesWorld(game.world)){cancelNativeEntry(true);return null;}
+         return nativeTravel.adopt(game.world,nativeGame);
+      }
+      public function replayNativePrepare(link:TcpLink):void {
+         if(!host() || nativeTravel.current==null || link==null)return;
+         for each(var peer:Object in session.peers)
+            if(peer.link===link && int(peer.nativeTravel)==1){link.send(nativeTravel.current);return;}
+      }
+      private function receiveNativePrepare(msg:Object):void {
+         if(game.mapGeneration==null || !game.mapGeneration.nativeTravelSupported) {
+            throw new Error("Native travel plan requires matching host bridge");
+         }
+         if(!NativeTravelPlan.valid(msg))throw new Error("Invalid native prepare");
+         if(game.world==null || game.world.game==null || game.gg==null) {
+            if(deferredNative!=null && deferredNative.travelId!==msg.travelId)throw new Error("Native prepare overtook boot");
+            deferredNative=msg;return;
+         }
+         var act:Object=game.world.game.lands[String(msg.info.curLandId)];
+         if(act==null || act.rnd)throw new Error("Native prepare target unavailable or random");
+         if(!nativeTravel.receive(msg,game.world,epoch))return;
+         clearNativeEntry();nativePreviousBarrier=pending;
+         msg.info.travelId=nativeTravel.id;preparing=msg.info;
+         nativeDeadline=getTimer()+45000;
+         game.mapGeneration.receive(preparing);startPreparedMap();
       }
       /** Announce a seed as soon as native construction selects it. The peer
        * can build concurrently instead of waiting for host loading/fade-out. */
@@ -279,15 +356,72 @@ package rconnect.core
       }
       private function startPreparedMap():void {
          if(preparing==null || game.world==null || game.world.game==null || game.gg==null
-            || game.isTransitioning() || game.isPlayerDead())return;
+            || game.isTransitioning() || game.isPlayerDead() || int(game.world.ng_wait)>0)return;
          var info:Object=preparing;
-         if(String(game.world.game.curLandId)==String(info.curLandId)
+         if(nativeTravel.current!=null && (nativeTravel.started || pending>0 || session.pause!=null && session.pause.paused))return;
+         if(nativeTravel.current==null && String(game.world.game.curLandId)==String(info.curLandId)
             && !game.mapGeneration.differs(info,game.world.land))return;
-         TravelGuard.allowTravel(String(info.curLandId));
+         TravelGuard.allowTravel(String(info.curLandId),nativeTravel.id);
+         var previousLand:Object=game.world.land;
          if(game.startSharedTravel(info)) {
+            if(nativeTravel.current!=null) {
+               // A boot-time unconfirmed room may already be held. Let native
+               // exitStep run, without declaring that old room confirmed.
+               if(busy && pending==0) {
+                  if(pauseWorld!=null)pauseWorld.onPause=savedPause;
+                  pauseWorld=null;busy=false;game.roomHold=false;
+               }
+               nativeStartLand=previousLand;
+               nativeTravel.markStarted(game.world);game.activeTravelId=nativeTravel.id;
+            }
             initial=true;ready=false;settledRoom=null;settledKey="";nativeRoom=null;
             game.independentRooms=false;
          }
+      }
+      private function clearNativeEntry():void {
+         nativeSeal=null;nativeStartLand=null;nativeBarrier=0;nativePreviousBarrier=0;
+      }
+      private function cancelNativeEntry(discardBarrier:Boolean=false):void {
+         if(discardBarrier) {
+            // A replacement Game cannot inherit the previous world's grant,
+            // including the legacy barrier that was ahead of this native plan.
+            // Clearing only the plan would make an empty travelId valid again.
+            pending=0;readySent=false;requested=false;
+         }
+         nativeTravel.cancel();nativeDeadline=0;preparing=null;game.activeTravelId="";
+         clearNativeEntry();TravelGuard.endTravel();
+      }
+      /** An exit counter alone does not prove this plan built its destination:
+       * a paused, rejected or failed native entry can still expose the old Land. */
+      private function nativeDestinationReady():Boolean {
+         return nativeTravel.current!=null && nativeTravel.started && nativeTravel.consumed
+            && nativeTravel.matchesWorld(game.world) && !game.isTransitioning()
+            && game.world!=null && game.world.land!=null && game.world.land!==nativeStartLand
+            && String(game.world.land.act.id)==String(nativeTravel.current.info.curLandId)
+            && String(game.world.game.curLandId)==String(nativeTravel.current.info.curLandId);
+      }
+      private function applyWaitingNativeSeal():void {
+         if(nativeSeal==null || nativePreviousBarrier>0 || !nativeDestinationReady())return;
+         // Do not let a seal for a new map replace an unfinished old room grant.
+         if(pending>0 && pending!=nativeBarrier)return;
+         var msg:Object=nativeSeal;nativeSeal=null;nativeBarrier=int(msg.barrier);
+         applySeal(msg);
+      }
+      private function acceptsJoinGrant(msg:Object):Boolean {
+         if(nativeTravel.current==null)return nativeTravel.accepts(msg.travelId);
+         if(String(msg.travelId)==nativeTravel.id)
+            return nativeBarrier>0 && pending==nativeBarrier && nativeDestinationReady();
+         return nativeTravel.current!=null && nativePreviousBarrier>0
+            && pending==nativePreviousBarrier && int(msg.barrier)==nativePreviousBarrier
+            && String(msg.travelId || "")=="";
+      }
+      private function applySeal(msg:Object):void {
+         if(epoch!=int(msg.epoch)){settledRoom=null;settledKey="";ready=false;}
+         observeHost(msg.info);pending=int(msg.barrier);epoch=int(msg.epoch);game.roomEpoch=epoch;
+         readySent=false;blocked=false;
+         if(msg.together && game.loc!=null && game.roomKey()!=String(msg.info.roomKey) && !game.isTransitioning())
+            TravelGuard.follow(game,msg.info,true);
+         if(game.loc!=null && game.gg!=null && !game.isTransitioning())sendReady();
       }
       public function stamp(msg:Object):Object
       {
@@ -391,27 +525,41 @@ package rconnect.core
          try
          {
             game.refreshWorld();
+            // Socket callbacks can arrive before the next frame/adopt callback.
+            // Retire the old barrier before inspecting any room message so a
+            // delayed legacy grant cannot import state into a replacement Game.
+            if(!nativeTravel.matchesWorld(game.world)) {
+               cancelNativeEntry(true);return true;
+            }
             if(host())
             {
                if(msg.op=="request") {peerInfo=msg.info;if(pending==0)begin();}
-               else if(msg.op=="ready" && int(msg.barrier)==pending && int(msg.epoch)==epoch)commit(msg);
-               else if(msg.op=="ack" && int(msg.barrier)==pending)
-               {pending=0;release();Log.d("RConnectRoom: resumed "+settledKey+" term="+term+" ms="+(getTimer()-barrierStarted));}
+               else if(msg.op=="ready" && int(msg.barrier)==pending && int(msg.epoch)==epoch && nativeTravel.accepts(msg.travelId))commit(msg);
+               else if(msg.op=="ack" && int(msg.barrier)==pending && nativeTravel.accepts(msg.travelId))
+               {if(nativeTravel.current!=null)nativeTravel.finish(String(msg.travelId));nativeDeadline=0;game.activeTravelId="";pending=0;release();Log.d("RConnectRoom: resumed "+settledKey+" term="+term+" ms="+(getTimer()-barrierStarted));}
             }
             else if(msg.op=="prepare") {
+               if(msg.planVersion!=null) {receiveNativePrepare(msg);return true;}
+               if(nativeTravel.current!=null)return true;
                preparing=msg.info;game.mapGeneration.receive(preparing);startPreparedMap();
             }
             else if(msg.op=="seal")
             {
-               if(epoch!=int(msg.epoch)){settledRoom=null;settledKey="";ready=false;}
-               observeHost(msg.info);pending=int(msg.barrier);epoch=int(msg.epoch);game.roomEpoch=epoch;
-               readySent=false;blocked=false;
-               if(msg.together && game.loc!=null && game.roomKey()!=String(msg.info.roomKey) && !game.isTransitioning())
-                  TravelGuard.follow(game,msg.info,true);
-               if(game.loc!=null && game.gg!=null && !game.isTransitioning())sendReady();
+               if(!nativeTravel.accepts(msg.travelId))return true;
+               if(nativeTravel.current!=null) {
+                  nativeTravel.acceptAnchor(msg.entryAnchor);
+                  if(nativeSeal!=null && (int(nativeSeal.barrier)!=int(msg.barrier) || int(nativeSeal.epoch)!=int(msg.epoch)))
+                     throw new Error("Native seal overtook its pending destination");
+                  if(nativeBarrier>0) {
+                     if(nativeBarrier!=int(msg.barrier) || epoch!=int(msg.epoch))throw new Error("Native barrier changed");
+                     return true; // This exact seal has already produced its ready.
+                  }
+                  nativeSeal=msg;applyWaitingNativeSeal();
+               }else applySeal(msg);
             }
-            else if(msg.op=="grant" && int(msg.barrier)==pending && int(msg.epoch)==epoch)
+            else if(msg.op=="grant" && int(msg.barrier)==pending && int(msg.epoch)==epoch && acceptsJoinGrant(msg))
             {
+               var completingNative:Boolean=nativeTravel.current!=null && String(msg.travelId)==nativeTravel.id;
                var state:Object;
                if(msg.fresh===true && msg.owner===true && freshRoom===game.loc && freshWire!=null
                   && msg.state===freshWire && String(msg.key)==game.roomKey()) {
@@ -440,13 +588,22 @@ package rconnect.core
                   game.restoreCheckpoint(state,Boolean(msg.owner),msg.fresh!==true && (!authority || settledRoom!==game.loc || !ready));
                   restoring=false;
                }
-               if(initial && hostInfo!=null && game.roomKey()==String(hostInfo.roomKey)
+               if(completingNative) {
+                  nativeTravel.acceptAnchor(msg.entryAnchor);
+                  if(game.roomKey()!=String(nativeTravel.anchor.roomKey))throw new Error("Native entry room differs");
+                  TravelPlacement.place(game.gg,Number(nativeTravel.anchor.x),Number(nativeTravel.anchor.y));
+               }
+               else if(initial && hostInfo!=null && game.roomKey()==String(hostInfo.roomKey)
                   && isFinite(Number(hostInfo.x)) && isFinite(Number(hostInfo.y)))
                   TravelPlacement.place(game.gg,Number(hostInfo.x),Number(hostInfo.y));
                authority=Boolean(msg.owner);ready=true;term=int(msg.term);settledRoom=game.loc;settledKey=game.roomKey();
                initial=false;game.independentRooms=true;nativeRoom=game.loc;
                TravelGuard.endTravel();
-               send({op:"ack",barrier:pending});pending=0;readySent=false;release();
+               send({op:"ack",barrier:pending,travelId:completingNative?nativeTravel.id:""});
+               if(completingNative) {
+                  nativeTravel.finish(String(msg.travelId));clearNativeEntry();nativeDeadline=0;game.activeTravelId="";
+               }else if(nativePreviousBarrier==pending)nativePreviousBarrier=0;
+               pending=0;readySent=false;release();
                Log.d("RConnectRoom: grant "+settledKey+" authority="+authority+" term="+term+" ms="+(getTimer()-barrierStarted));
             }
          }
@@ -457,6 +614,8 @@ package rconnect.core
       private function sendReady():void
       {
          if(game.isTransitioning() || game.loc==null)return;
+         if(nativeTravel.current!=null && !(nativePreviousBarrier>0 && pending==nativePreviousBarrier)
+            && (nativeBarrier<=0 || pending!=nativeBarrier || !nativeDestinationReady()))return;
          if(initial && hostInfo!=null && game.roomKey()!=String(hostInfo.roomKey)) {
             if(!TravelGuard.follow(game,hostInfo,true))return;
             nativeRoom=game.loc;
@@ -481,6 +640,7 @@ package rconnect.core
          var freshPacked:String=needFresh?(sameCapture?ownPacked:RoomCodec.pack(freshState)):null;
          freshRoom=needFresh?game.loc:null;freshWire=freshPacked;
          send({op:"ready",barrier:pending,epoch:epoch,info:info,
+            travelId:nativePreviousBarrier>0 && pending==nativePreviousBarrier?"":nativeTravel.id,
             oldKey:settledKey,oldTerm:term,own:ownPacked,fresh:freshPacked});
          readySent=true;
       }
@@ -532,6 +692,7 @@ package rconnect.core
          if(retained)grantPacked=String(msg.own);
          if(grantPacked==null && !unchanged)grantPacked=RoomCodec.pack(theirs.state);
          send({op:"grant",barrier:pending,epoch:epoch,term:pending,owner:theirKey!=myKey,fresh:fresh,
+            travelId:nativeTravel.id,entryAnchor:nativeTravel.anchor,
             unchanged:unchanged,retained:retained,key:theirKey,state:grantPacked});
          Log.d("RConnectRoom: commit "+pending+" host="+myKey+" join="+theirKey);
          // The host's ownership and native state are now committed. TCP keeps

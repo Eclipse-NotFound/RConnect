@@ -1,0 +1,83 @@
+--- a/rconnect/game/WallImpactVisuals.as
++++ b/rconnect/game/WallImpactVisuals.as
+@@ -26,6 +26,14 @@
+       private static const MAX_CELLS:int=64;
+       private static const MAX_WIRE:int=48000;
+       private static const MARGIN:int=96;
++      // Cache only validated, numeric sparse words; room/version checks stay
++      // outside this cache. Three independent bounds limit retained memory.
++      private static const WORD_CACHE_ENTRIES:int=64;
++      private static const WORD_CACHE_WORDS:int=32768;
++      private static const WORD_CACHE_CHARS:int=131072;
++      private var wordCache:Dictionary=new Dictionary();
++      private var wordOrder:Array=[];
++      private var wordCount:int=0,wordChars:int=0;
+       private var rooms:Dictionary=new Dictionary(true);
+       private var active:Object,shadow:BitmapData,bitmap:BitmapData;
+       private var scratchA:BitmapData=new BitmapData(CELL,CELL,true,0);
+@@ -282,21 +290,47 @@
+                if((bytes+=String(c.d).length)>MAX_WIRE && limit)return null;
+                // One 40x40 sparse cell has at most 3200 numeric words. Reject
+                // expanded data before touching any pixels or accepting a seq.
+-               var words:Array=RoomCodec.unpack(String(c.d)) as Array;
+-               if(words==null || words.length>2*CELL*CELL || words.length%2!=0)return null;
+-               var previous:int=-1;
+-               for(var i:int=0;i<words.length;i+=2)
+-               {
+-                  var index:Number=Number(words[i]),color:Number=Number(words[i+1]);
+-                  if(!isFinite(index) || index!=int(index) || index<=previous || index>=CELL*CELL ||
+-                     !isFinite(color) || color<0 || color>4294967295 || color!=Math.floor(color))return null;
+-                  previous=int(index);
+-               }
++               var words:Array=decodeWords(String(c.d));
++               if(words==null)return null;
+                seen[k]=true;out.push({x:x,y:y,v:int(c.v),words:words});
+             }
+          }
+          catch(e:*) {return null;}
+          return out;
++      }
++      /** The payload alone determines these words. Cache hits still return a
++       * fresh array, so later consumers cannot mutate the retained value. */
++      private function decodeWords(data:String):Array
++      {
++         var cached:Object=wordCache[data];
++         if(cached!=null && cached.data===data)return cached.words.concat();
++         var words:Array=RoomCodec.unpack(data) as Array;
++         if(words==null || words.length>2*CELL*CELL || words.length%2!=0)return null;
++         var previous:int=-1,numeric:Boolean=true;
++         for(var i:int=0;i<words.length;i+=2)
++         {
++            var index:Number=Number(words[i]),color:Number=Number(words[i+1]);
++            if(!isFinite(index) || index!=int(index) || index<=previous || index>=CELL*CELL ||
++               !isFinite(color) || color<0 || color>4294967295 || color!=Math.floor(color))return null;
++            previous=int(index);
++            // Preserve legacy Number coercion for unusual payloads, but never
++            // retain nested mutable arrays/objects or change returned types.
++            if(!(words[i] is Number) || !(words[i+1] is Number))numeric=false;
++         }
++         if(numeric && data.length<=WORD_CACHE_CHARS)rememberWords(data,words);
++         return words;
++      }
++      private function rememberWords(data:String,words:Array):void
++      {
++         while(wordOrder.length && (wordOrder.length>=WORD_CACHE_ENTRIES ||
++            wordCount+words.length>WORD_CACHE_WORDS || wordChars+data.length>WORD_CACHE_CHARS))
++         {
++            var old:Object=wordOrder.shift();delete wordCache[old.data];
++            wordCount-=old.words.length;wordChars-=old.data.length;
++         }
++         var entry:Object={data:data,words:words.concat()};
++         wordCache[data]=entry;wordOrder.push(entry);
++         wordCount+=words.length;wordChars+=data.length;
+       }
+       private function protectedPixels(s:Object):Object
+       {
+@@ -484,6 +518,7 @@
+       {
+          if(shadow!=null)shadow.dispose();shadow=null;bitmap=null;active=null;
+          rooms=new Dictionary(true);tracked=[];contacts=new Dictionary(true);tileState={};dirty=false;
++         wordCache=new Dictionary();wordOrder=[];wordCount=0;wordChars=0;
+       }
+    }
+ }

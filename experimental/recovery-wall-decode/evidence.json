@@ -1,0 +1,44 @@
+{
+  "run": "build/cooperation/a9441a62e1",
+  "scope": "whole run, not first round",
+  "roles": {
+    "host": {
+      "log_sha256": "7f8374968126a228259cc0c83369d462cb8ca316fa14fd433694754bb273d201",
+      "decode_records": 43,
+      "summed_reported_total_ms": 90,
+      "without_key": 43,
+      "remote_traces": 3,
+      "remote_fields": [
+        "end",
+        "frames",
+        "info",
+        "result",
+        "role",
+        "round"
+      ],
+      "remote_with_wire": 0
+    },
+    "join": {
+      "log_sha256": "eda2aca683414f5660941112f66713b40a806549feba39c3cace97c12beeef6c",
+      "decode_records": 2494,
+      "summed_reported_total_ms": 4338,
+      "without_key": 2493,
+      "remote_traces": 5,
+      "remote_fields": [
+        "end",
+        "frames",
+        "info",
+        "result",
+        "role",
+        "round"
+      ],
+      "remote_with_wire": 0
+    }
+  },
+  "exact_repeated_payload_observed_in_existing_trace": false,
+  "performance_qualification": false,
+  "notes": [
+    "total includes the first synchronous diagnostic write and is measured before the second write",
+    "array decode records lack key but do not contain a call stack or exact encoded string; do not equate all with cache hits"
+  ]
+}

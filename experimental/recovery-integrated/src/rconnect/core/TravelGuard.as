@@ -14,6 +14,7 @@ package rconnect.core
    {
       private static var changed:Array=[];
       private static var permittedLand:String="";
+      private static var permittedTravel:String="";
       private static var authorizedExitWorld:Object;
       private static var authorizedExitRemaining:int=0;
       private static var travelState:Object;
@@ -23,7 +24,7 @@ package rconnect.core
       {mod=m;m.stage.addEventListener(MouseEvent.CLICK,click,true,100000);}
       private function click(e:MouseEvent):void
       {
-         if(mod.session.mode!=Session.CONNECTED && !mod.session.rooms.busy)return;
+         if(mod.session.mode!=Session.CONNECTED && !mod.session.rooms.busy && !mod.session.rooms.nativeTravelPending)return;
          var page:Object=GameBridge.probe(GameBridge.probe(mod.game.world,"pip"),"currentPage");
          if(RConnectTravelAccess.blocked(page,e.target as DisplayObject))
          {e.stopImmediatePropagation();mod.session.rooms.notice("请由宿主发起全队换图");}
@@ -35,9 +36,9 @@ package rconnect.core
       }
       /** Authorize one native exit to the host's destination. Native loading
        * can exceed a timeout and Encounter may redirect the map mid-exit. */
-      public static function allowTravel(landId:String):void {permittedLand=landId;}
+      public static function allowTravel(landId:String,travelId:String=""):void {permittedLand=landId;permittedTravel=travelId;}
       public static function endTravel():void
-      {permittedLand="";authorizedExitWorld=null;authorizedExitRemaining=0;}
+      {permittedLand="";permittedTravel="";authorizedExitWorld=null;authorizedExitRemaining=0;}
       public static function reset():void
       {
          clear();endTravel();travelState=null;
@@ -74,6 +75,7 @@ package rconnect.core
          {authorizedExitWorld=null;authorizedExitRemaining=0;}
          if(remaining>0)
          {
+            if(permittedTravel!="" && permittedTravel!=game.activeTravelId)endTravel();
             if(authorizedExitWorld===w)
             {authorizedExitRemaining=remaining;return;}
             if(permittedLand!="" && String(g.curLandId)==permittedLand)

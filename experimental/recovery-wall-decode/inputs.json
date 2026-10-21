@@ -1,0 +1,38 @@
+{
+  "base": "build/m52/recovery-02/src",
+  "base_inputs": {
+    "rconnect/game/WallImpactVisuals.as": "e1125fa1865598705c1753fd8e49ede037cd16936a680a7a078c4cf9b5ac5a34",
+    "rconnect/net/RoomCodec.as": "549dbffadf05547509a0c2fe8a3637c0ef089305ebe7637322e6a196c471828c",
+    "rconnect/net/BinaryMessageCodec.as": "001479db144318320669ce3d89e6c275c210a7d81b9e6f116cdb58e6091376f1"
+  },
+  "overlay": {
+    "rconnect/game/WallImpactVisuals.as": "e17257bae728c8ebd53330a6f9b0be82eca95bc331d4bc99da502e17744fc0f4"
+  },
+  "components": {
+    "RecoveryWallDecodeChecks.as": "eb93f450e56e975903ba62f2bbb043a903d668f1e10ae2fb4b8d9a78df1a6e38",
+    "rconnect/core/Log.as": "e5b5cb03c32734261af51d15b4efbd75ef35541066ef09e3c48138d878d1c09b",
+    "rconnect/game/GameBridge.as": "d57d86055cbba7f07d97335f5e8eed13a98de18e91eb31f0faf6332329cf4da7",
+    "rconnect/game/WallAfter.as": "a7cf5599b53cbdc2fbb47118b280cf66458213a35294e0173fb066f3ea5e22e1",
+    "rconnect/game/WallBefore.as": "433736598bca90fc572ce520d1b8b36dc8a16763adc91f5de0c4805a5fb74c12",
+    "rconnect/net/BinaryMessageCodec.as": "001479db144318320669ce3d89e6c275c210a7d81b9e6f116cdb58e6091376f1",
+    "rconnect/net/DecodeCounter.as": "732903ed136c3d5dc68bb04a1a0456c211cfa81f5e6dd5cf5ef20d2188f5a047",
+    "rconnect/net/RoomCodec.as": "7891dc9be947a76f64bc3cfcab9253af6a8d74fcc90c6a770b8c4a0639766924"
+  },
+  "recipe_sha256": "bee6350096fb083898e66d28c1bc5e7c3101c4dec328582c1ae096f166b31a4e",
+  "compiled": false,
+  "runtime_tested": false,
+  "deployed": false,
+  "expected_component_assertions": 120,
+  "component_assertions_executed": 0,
+  "component_boundary": [
+    "Real complete WallImpactVisuals before/after, renamed and decode made public only in fixtures",
+    "Real RoomCodec plus one unpack-entry counter; Log is in-memory; GameBridge only provides safe probe",
+    "Native room/grafon fixtures are small BitmapData grids; no TCP or game timing claims"
+  ],
+  "cache_limits": {
+    "entries": 64,
+    "words": 32768,
+    "encoded_chars": 131072
+  },
+  "protocol_or_frequency_changed": false
+}

@@ -33,7 +33,7 @@ ENTRIES = {
     'NativeFlightContinuityTestDoc': (8, 360, '真实枪弹与移动闪电逐弹源轨迹、TCP及最终RENDER停顿和尾段'),
 }
 COMPONENTS = {
-    'aura': ('PlayerAuraChecks', 26, ('TelekinesisVisuals', 'PlayerBodyEffects')),
+    'aura': ('PlayerAuraChecks', 59, ('TelekinesisVisuals', 'PlayerBodyEffects')),
     'impact': ('ImpactQueueChecks', 41, ('ImpactEventQueue', 'BallisticImpactVisuals', 'EnergyImpactVisuals', 'ProjectileFrameStream')),
 }
 
@@ -71,7 +71,8 @@ def freeze(source, out, components_only=False, entry_names=None):
     copy(stub, Path('inputs/GameCombatStubs.swc'))
     # Only the needed external test closure, not the entire historical test tree.
     for origin in [ROOT / 'experimental/recovery-aura/tests',
-                   ROOT / 'experimental/recovery-wall-impact/tests', HERE / 'tests', HERE / 'continuity-extra']:
+                   ROOT / 'experimental/recovery-wall-impact/tests', HERE / 'tests', HERE / 'continuity-extra',
+                   ROOT / 'experimental/recovery-aura-followup/tests']:
         for p in sorted(origin.rglob('*.as')):
             copy(p, Path('tests') / p.relative_to(origin))
     copy(HERE / 'continuity-extra/analyze.py', Path('analysis/native_flight.py'))
@@ -80,7 +81,7 @@ def freeze(source, out, components_only=False, entry_names=None):
     for p in sorted((ROOT / 'tests/harness').rglob('*.as')):
         copy(p, Path('harness') / p.relative_to(ROOT / 'tests/harness'))
     for kind, (entry, count, production) in COMPONENTS.items():
-        origin = ROOT / ('experimental/recovery-aura/component' if kind == 'aura'
+        origin = ROOT / ('experimental/recovery-aura-followup/component' if kind == 'aura'
                          else 'experimental/recovery-wall-impact/components')
         for p in sorted(origin.rglob('*.as')):
             copy(p, Path('components') / kind / 'src' / p.relative_to(origin))
@@ -127,12 +128,13 @@ def verify(out, source, runtime=False):
     verify_files(out, manifest['inputs'])
     if manifest.get('compiled'):
         verify_files(out, manifest['files'])
-    # During build all upstream inputs must still match. During execution the
-    # frozen test tree is authoritative: editing a newer test must not invalidate
-    # an already compiled native driver. The bound production stays pinned.
+    # The frozen test tree is authoritative during both build and execution.
+    # A later template edit must not abort an already queued build: every copied
+    # byte is already recorded above and is the byte the compiler will consume.
+    # Production sources and binaries remain pinned to their original locations.
     for name, digest in manifest['originals'].items():
         original = Path(name)
-        if not runtime or original.is_relative_to(source) or original in (source.parent / 'RConnectMod.swf', BASE):
+        if original.is_relative_to(source) or original in (source.parent / 'RConnectMod.swf', BASE):
             assert sha(original) == digest, 'An original input changed: ' + name
     return manifest
 

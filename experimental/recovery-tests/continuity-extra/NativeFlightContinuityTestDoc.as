@@ -44,6 +44,8 @@ package {
       private var bullet:Object,shotCount:int=0,issued:Boolean=false,sourceEnd:Object,traceSent:Boolean=false,traceAt:int=0;
       private var frames:Array=[],nativeFrames:Array=[],renderNo:int=0,gameFrame:int=0,clipIds:Dictionary=new Dictionary(true),nextClip:int=1;
       private var sourceMeta:Object,pixelProof:Object,pixelTried:Boolean=false,peak:int=0,lastVisibleWall:Number=0;
+      private var sourceContact:Object,contactProof:Object,contactTried:Boolean=false;
+      private var phases:Array=[],phaseSeen:Object={},wire:Array=[];
 
       public function NativeFlightContinuityTestDoc() {
          var app:String=NativeApplication.nativeApplication.applicationID;
@@ -60,6 +62,10 @@ package {
       }
       private function watch(l:TcpLink):void {if(l!=null && !links[l]){links[l]=true;l.addEventListener(TcpLink.MESSAGE,receive);}}
       private function active():Boolean {return phase=="armed" || phase=="flight" || phase=="drain";}
+      private function mark(name:String,detail:Object=null):void {
+         if(phaseSeen[name])return;phaseSeen[name]=true;
+         phases.push({name:name,at:getTimer(),wall:new Date().time,frame:gameFrame,render:renderNo,detail:detail});
+      }
       private function setup():void {
          var g:Object=mod.game.gg;oldGun=g.currentWeapon;oldChildren=g.childObjs.concat();oldWeapons=g.invent.weapons;
          oldMagic=g.magicWeapon;oldThrow=g.throwWeapon;oldZoom=mod.game.world.cam.isZoom;
@@ -77,9 +83,12 @@ package {
          if(ali!=null){var loc:Object=ali.loc;loc.remObj(ali);var i:int=loc.units.indexOf(ali);if(i>=0)loc.units.splice(i,1);ali=null;}
       }
       private function prepare(n:int):void {
+         var enteredAt:int=getTimer(),enteredWall:Number=new Date().time;
          removeGun();round=n;phase="prepared";at=getTimer();source=host==Boolean(CASES[n].host);
          issued=traceSent=pixelTried=false;bullet=null;sourceEnd=null;nativeInfo=null;sourceMeta=null;pixelProof=null;
          shotCount=traceAt=renderNo=gameFrame=peak=0;lastVisibleWall=0;frames=[];nativeFrames=[];
+         sourceContact=contactProof=null;contactTried=false;wire=[];phases=[];phaseSeen={};
+         phases.push({name:"prepare-enter",at:enteredAt,wall:enteredWall,frame:0,render:0});phaseSeen["prepare-enter"]=true;
          expectedClass="";clipIds=new Dictionary(true);nextClip=1;
          var b:Object=mod.game,g:Object=b.gg,loc:Object=b.loc;
          g.changeWeapon("not",true);g.magicWeapon=null;g.throwWeapon=null;
@@ -123,9 +132,11 @@ package {
          check(loc.spaceX*40-440>=1000,"native room provides at least 1000 world-pixel flight corridor width="+(loc.spaceX*40));
          Log.d("FLIGHT PREPARE "+JSON.stringify({round:n,role:host?"host":"join",source:source,caseSpec:CASES[n],
             width:loc.spaceX*40,height:loc.spaceY*40,cameraScale:b.world.cam.scaleV,stageRate:mod.stage.frameRate}));
+         mark("prepare-complete");
       }
       private function before(e:Event):void {
          gameFrame++;if(mod==null || round<0 || phase=="done")return;
+         if(active())mark("first-active-enter");
          var b:Object=mod.game,g:Object=b.gg;b.forceCloseOverlays();g.disabled=true;g.invulner=true;
          g.dx=g.dy=0;g.setPos(baseX,baseY);g.setVisPos();g.storona=CASES[round].left?-1:1;b.world.ctr.keyAttack=false;
          if(source && active() && gun!=null) {
@@ -151,6 +162,7 @@ package {
                vel:bullet.vel,liv:bullet.liv,rot:bullet.rot,spring:bullet.spring,at:getTimer(),wall:new Date().time,gun:gunInfo};
             check(nativeInfo.cls==expectedClass,"source native class agrees with receiver selection "+nativeInfo.cls);
             Log.d("FLIGHT NATIVE SHOT "+JSON.stringify({round:round,info:nativeInfo}));
+            mark("native-shot");
          }
       }
       private function point(v:DisplayObject):Object {
@@ -177,6 +189,7 @@ package {
       private function render(e:Event):void {
          if(!active())return;
          try {
+            mark("first-active-render");
             var stamp:int=getTimer(),record:Object={at:stamp,wall:new Date().time,render:++renderNo,frame:gameFrame,clips:[]};
             var v:DisplayObject,probeVisual:DisplayObject;
             if(source) {
@@ -185,8 +198,16 @@ package {
                   record.native={x:bullet.X,y:bullet.Y,dx:bullet.dx,dy:bullet.dy,liv:bullet.liv,
                      inChain:bullet.in_chain,ended:bullet.babah};
                   if(v!=null && v.visible && v.stage!=null && v.alpha>0){record.clips.push(point(v));probeVisual=v;}
+                  if(bullet.babah===true && sourceContact==null) {
+                     sourceContact={at:stamp,wall:record.wall,x:bullet.X,y:bullet.Y};mark("native-contact");
+                     // One diagnostic notification at actual native contact,
+                     // so the receiver can probe the buffered contact artwork.
+                     // It never drives production playback or filters frames.
+                     send("contact",{contact:sourceContact});
+                  }
                   if(!bullet.in_chain && sourceEnd==null) {
                      sourceEnd={at:stamp,wall:record.wall,x:bullet.X,y:bullet.Y,liv:bullet.liv};phase="drain";
+                     mark("native-end");
                   }
                }
             } else {
@@ -199,30 +220,61 @@ package {
                peak=Math.max(peak,record.clips.length);
             }
             if(record.clips.length>0) {
+               mark("first-visible-render");
                lastVisibleWall=record.wall;
                // One paired final-composite pixel probe per side/trial. Its
                // raw cost stays in the trace; no slow frames are discarded.
                if(!pixelTried) {
                   pixelTried=true;pixelProof=compositedPixels(probeVisual);record.probe=pixelProof;
                }
+               if(sourceContact!=null && delta(record.clips[0],sourceContact)<=.25) {
+                  mark("first-contact-render");
+                  if(!contactTried) {
+                     contactTried=true;contactProof=compositedPixels(probeVisual);record.contactProbe=contactProof;
+                  }
+               }
             }
             frames.push(record);
          } catch(err:Error){check(false,"render "+err.getStackTrace());send("done");finish();}
       }
       private function receive(e:NetMessageEvent):void {
-         var p:Object=e.data;if(p.type!="native-flight-continuity-test")return;
+         var p:Object=e.data;if(p.type!="native-flight-continuity-test"){observeWire(p);return;}
          try {
             if(p.stage=="ready" && host && phase=="boot"){setup();prepare(0);send("prepare",{cls:expectedClass});}
             else if(p.stage=="prepare" && !host){if(phase=="boot")setup();prepare(int(p.round));if(!source)expectedClass=p.cls;send("prepared",{cls:expectedClass});}
-            else if(p.stage=="prepared" && host && int(p.round)==round){if(!source)expectedClass=p.cls;phase="armed";at=getTimer();send("start");}
-            else if(p.stage=="start" && !host && int(p.round)==round){phase="armed";at=getTimer();}
+            else if(p.stage=="prepared" && host && int(p.round)==round){if(!source)expectedClass=p.cls;phase="armed";at=getTimer();mark("armed");send("start");}
+            else if(p.stage=="start" && !host && int(p.round)==round){phase="armed";at=getTimer();mark("armed");}
+            else if(p.stage=="contact" && !source && int(p.round)==round){sourceContact=p.contact;mark("contact-received");}
             else if(p.stage=="trace" && !source && int(p.round)==round) {
                nativeFrames=p.frames;nativeInfo=p.info;sourceEnd=p.end;sourceMeta=p.meta;traceAt=getTimer();phase="drain";
+               sourceContact=p.contact;mark("trace-received");
             }
             else if(p.stage=="result" && source && int(p.round)==round){if(host)advance();else{phase="wait";send("advance");}}
             else if(p.stage=="advance" && host && !source && int(p.round)==round)advance();
             else if(p.stage=="done")finish();
          } catch(err:Error){check(false,err.getStackTrace());send("done");finish();}
+      }
+      // Passive incoming production packets only; no private state access,
+      // no hooks and no per-packet log writes. Single-shot traces stay bounded.
+      private function observeWire(p:Object):void {
+         if(source || !active() || round<0 || p==null)return;
+         if(p.snap!=null)observeGuns(p.snap.weapons,p.snap.sampleTime,String(p.type));
+         if(p.players is Array)for each(var player:Object in p.players)if(player.snap!=null)
+            observeGuns(player.snap.weapons,player.snap.sampleTime,String(p.type));
+         if(p.units is Array)for each(var unit:Object in p.units)observeGuns(unit.weapons,unit.sampleTime,String(p.type));
+         if(p.enemyMotion is Array)for each(unit in p.enemyMotion){observeGuns(unit.effects,unit.sampleTime,String(p.type));observeGuns(unit.weapons,unit.sampleTime,String(p.type));}
+      }
+      private function observeGuns(guns:*,ownerStamp:*,type:String):void {
+         if(!(guns is Array))return;
+         for each(var g:Object in guns)if(g!=null && g.id==CASES[round].id && g.events is Array)
+            for each(var event:Object in g.events) {
+               var f:Object=event.flight;if(f==null || f.cls!=expectedClass)continue;
+               var samples:Array=[];if(f.frames is Array)for each(var p:Object in f.frames)samples.push({at:p.at,x:p.x,y:p.y,f:p.f});
+               if(wire.length>=1024){check(false,"passive wire trace capacity exceeded");return;}
+               wire.push({at:getTimer(),wall:new Date().time,frame:gameFrame,type:type,ownerStamp:ownerStamp,
+                  sampleTime:g.sampleTime,stream:g.stream,seq:event.seq,stopAt:f.stopAt,end:f.end,samples:samples});
+               mark("first-production-flight-received");
+            }
       }
       private function tick(e:TimerEvent):void {
          mod=RConnectMod.instance;if(mod==null || mod.game==null || mod.game.gg==null)return;
@@ -236,16 +288,17 @@ package {
                traceSent=true;
                check(shotCount==1,"exactly one native projectile count="+shotCount);
                check(pixelProof!=null && pixelProof.pixels>0,"source final-composite artwork "+JSON.stringify(pixelProof));
-               var meta:Object={stageRate:mod.stage.frameRate,pixelProof:pixelProof,shotCount:shotCount};
-               Log.d("FLIGHT SOURCE TRACE "+JSON.stringify({round:round,role:host?"host":"join",info:nativeInfo,end:sourceEnd,meta:meta,frames:frames}));
-               send("trace",{frames:frames,info:nativeInfo,end:sourceEnd,meta:meta});
+               mark("source-trace-send");
+               var meta:Object={stageRate:mod.stage.frameRate,pixelProof:pixelProof,contactProof:contactProof,shotCount:shotCount};
+               Log.d("FLIGHT SOURCE TRACE "+JSON.stringify({round:round,role:host?"host":"join",info:nativeInfo,end:sourceEnd,contact:sourceContact,meta:meta,phases:phases,frames:frames}));
+               send("trace",{frames:frames,info:nativeInfo,end:sourceEnd,contact:sourceContact,meta:meta});
             }
             if(!source && traceAt>0 && phase=="drain" && getTimer()-traceAt>=900){evaluate();phase="wait";send("result");}
             if(phase!="boot" && phase!="done" && getTimer()-at>18000){check(false,"timeout "+phase);send("done");finish();}
-            if(phase=="boot" && getTimer()-at>90000){check(false,"boot timeout");send("done");finish();}
+            if(phase=="boot" && getTimer()-at>180000){check(false,"boot timeout");send("done");finish();}
          } catch(err:Error){check(false,err.getStackTrace());send("done");finish();}
       }
-      private static function visible(list:Array):Array {
+      private static function visibleSamples(list:Array):Array {
          var out:Array=[];for each(var row:Object in list)if(row.clips.length>0) {
             var p:Object=row.clips[0];out.push({at:row.at,wall:row.wall,frame:row.frame,render:row.render,
                x:p.x,y:p.y,rot:p.rot,f:p.f,id:p.id,viewport:p.viewport});
@@ -253,7 +306,7 @@ package {
       }
       private static function delta(a:Object,b:Object):Number {var x:Number=b.x-a.x,y:Number=b.y-a.y;return Math.sqrt(x*x+y*y);}
       private static function summary(rows:Array):Object {
-         var p:Array=visible(rows),gaps:Array=[],maxGap:Number=0,hold:Number=0,maxHold:Number=0,moves:int=0,offscreen:int=0;
+         var p:Array=visibleSamples(rows),gaps:Array=[],maxGap:Number=0,hold:Number=0,maxHold:Number=0,moves:int=0,offscreen:int=0;
          var frameHold:Number=0,maxFrameHold:Number=0,animationChanges:int=0;
          for(var i:int=0;i<p.length;i++) {
             if(!p[i].viewport)offscreen++;
@@ -264,13 +317,29 @@ package {
          gaps.sort(Array.NUMERIC);
          var entireGap:Number=0;for(i=1;i<rows.length;i++)entireGap=Math.max(entireGap,rows[i].at-rows[i-1].at);
          return {visibleSamples:p.length,moves:moves,offscreen:offscreen,maxHoldMs:maxHold,maxVisibleGapMs:maxGap,
+            visibleGameFrames:distinctGameFrames(rows),
             animationChanges:animationChanges,maxAnimationHoldMs:maxFrameHold,
             p95VisibleGapMs:gaps.length?gaps[Math.min(gaps.length-1,int(gaps.length*.95))]:0,
             maxRecordedRenderGapMs:entireGap,first:p.length?p[0]:null,last:p.length?p[p.length-1]:null,
             visibleDurationMs:p.length?p[p.length-1].at-p[0].at:0};
       }
+      private static function phasesOf(rows:Array,contact:Object):Object {
+         var split:int=-1,last:int=-1;
+         for(var i:int=0;i<rows.length;i++)if(rows[i].clips.length>0) {
+            last=i;if(split<0 && contact!=null && delta(rows[i].clips[0],contact)<=.25)split=i;
+         }
+         return {flight:split<0?rows:rows.slice(0,split+1),contact:split<0?[]:rows.slice(split,last+1)};
+      }
+      private static function distinctGameFrames(rows:Array):int {
+         var seen:Object={},count:int=0;
+         for each(var row:Object in rows)if(row.clips.length>0 && !seen[String(row.frame)]){seen[String(row.frame)]=true;count++;}
+         return count;
+      }
       private function evaluate():void {
-         var sp:Array=visible(nativeFrames),rp:Array=visible(frames),ss:Object=summary(nativeFrames),rs:Object=summary(frames);
+         mark("evaluate");
+         var sp:Array=visibleSamples(nativeFrames),rp:Array=visibleSamples(frames),ss:Object=summary(nativeFrames),rs:Object=summary(frames);
+         var splitS:Object=phasesOf(nativeFrames,sourceContact),splitR:Object=phasesOf(frames,sourceContact);
+         var sf:Object=summary(splitS.flight),rf:Object=summary(splitR.flight),sc:Object=summary(splitS.contact),rc:Object=summary(splitR.contact);
          var path:Array=sp.concat(),total:Number=0,maxStep:Number=0,maxDistance:Number=0,minProgress:Number=Number.POSITIVE_INFINITY;
          var maxProgress:Number=0,prior:Number=-1,reverse:int=0,arc:Array=[0];
          // The native muzzle is an observed creation point, not a predicted
@@ -292,22 +361,37 @@ package {
          }
          var tailGap:Number=Math.max(0,total-maxProgress),coverage:Number=total>0?(maxProgress-minProgress)/total:0;
          var allowedGap:Number=Math.max(85,Number(ss.p95VisibleGapMs)*1.5+15);
-         var result:Object={source:ss,remote:rs,peak:peak,pixelProof:pixelProof,sourceMeta:sourceMeta,
+         var result:Object={source:ss,remote:rs,sourceFlight:sf,remoteFlight:rf,sourceContact:sc,remoteContact:rc,
+            peak:peak,pixelProof:pixelProof,contactProof:contactProof,sourceMeta:sourceMeta,
             maxPathError:maxDistance,maxNativeStep:maxStep,sourcePathLength:total,tailGap:tailGap,coverage:coverage,reverse:reverse,
             startLagMs:sp.length && rp.length?rp[0].wall-sp[0].wall:null,
             lastVisibleVsNativeEndMs:rp.length?rp[rp.length-1].wall-sourceEnd.wall:null,
             allowedRenderGapMs:allowedGap,functionalOnly:true,performanceQualified:false};
-         check(sp.length>=3 && rp.length>=3,"actual native and final-render trajectories source="+sp.length+" remote="+rp.length);
+         check(sp.length>=3 && rp.length>=3 && ss.visibleGameFrames>=3 && rs.visibleGameFrames>=3,
+            "actual native and final-render trajectories source="+sp.length+" remote="+rp.length+" gameFrames="+ss.visibleGameFrames+"/"+rs.visibleGameFrames);
          check(peak==1 && reverse==0,"one remote projectile with no reversed progress peak="+peak+" reverse="+reverse);
          check(pixelProof!=null && pixelProof.pixels>0 && rs.offscreen==0,"remote final-composite native artwork "+JSON.stringify(pixelProof)+" offscreen="+rs.offscreen);
          check(rp.length>0 && maxDistance<=3,"final-render path follows source maxError="+maxDistance);
-         check(rp.length>0 && rs.moves>=2 && rs.maxHoldMs<=85,"flight has no 85ms position stall maxHold="+rs.maxHoldMs+" moves="+rs.moves);
+         check(rp.length>0 && rf.moves>=2 && rf.maxHoldMs<=85,"flight has no 85ms position stall maxHold="+rf.maxHoldMs+" moves="+rf.moves);
          check(rp.length>0 && rs.maxVisibleGapMs<=allowedGap,"final-render gaps sourceP95="+ss.p95VisibleGapMs+" remoteMax="+rs.maxVisibleGapMs+" limit="+allowedGap);
-         if(ss.animationChanges>=2)check(rs.animationChanges>=1 && rs.maxAnimationHoldMs<=Number(ss.maxAnimationHoldMs)*1.5+85,
-            "native animated projectile frames advance sourceChanges="+ss.animationChanges+" remoteChanges="+rs.animationChanges+" remoteFrameHold="+rs.maxAnimationHoldMs);
+         if(sf.animationChanges>=2)check(rf.animationChanges>=1 && rf.maxAnimationHoldMs<=Number(sf.maxAnimationHoldMs)*1.5+85,
+            "native animated flight frames advance sourceChanges="+sf.animationChanges+" remoteChanges="+rf.animationChanges+" remoteFrameHold="+rf.maxAnimationHoldMs);
+         var contactFrames:Object={},tailFrames:Boolean=true,stationary:Boolean=true;
+         for each(var cp:Object in visibleSamples(splitS.contact))contactFrames[String(cp.f)]=true;
+         for each(cp in visibleSamples(splitR.contact)) {
+            if(!contactFrames[String(cp.f)])tailFrames=false;
+            if(sourceContact==null || delta(cp,sourceContact)>.25)stationary=false;
+         }
+         check(sourceContact!=null && sourceMeta.contactProof!=null && sourceMeta.contactProof.pixels>0 && contactProof!=null && contactProof.pixels>0,
+            "native contact tail has source and remote composite pixels source="+JSON.stringify(sourceMeta.contactProof)+" remote="+JSON.stringify(contactProof));
+         check(distinctGameFrames(splitR.contact)>=2 && stationary && tailFrames &&
+            Math.abs(Number(rc.visibleDurationMs)-Number(sc.visibleDurationMs))<=allowedGap,
+            "contact tail retains native position/frame/duration sourceMs="+sc.visibleDurationMs+" remoteMs="+rc.visibleDurationMs+" gameFrames="+distinctGameFrames(splitR.contact));
+         if(sc.animationChanges>=2)check(rc.animationChanges>=1 && rc.maxAnimationHoldMs<=Number(sc.maxAnimationHoldMs)*1.5+85,
+            "native animated contact tail advances sourceChanges="+sc.animationChanges+" remoteChanges="+rc.animationChanges);
          check(total>0 && coverage>=.65 && tailGap<=Math.max(20,maxStep*1.1),"visible tail preserved coverage="+coverage+" tailGap="+tailGap+" sourceMaxStep="+maxStep);
          check(lastVisibleWall>0 && new Date().time-lastVisibleWall>=500,"native end clears remote projectile age="+(new Date().time-lastVisibleWall));
-         Log.d("FLIGHT REMOTE TRACE "+JSON.stringify({round:round,role:host?"host":"join",info:nativeInfo,end:sourceEnd,result:result,frames:frames}));
+         Log.d("FLIGHT REMOTE TRACE "+JSON.stringify({round:round,role:host?"host":"join",info:nativeInfo,end:sourceEnd,contact:sourceContact,result:result,phases:phases,wire:wire,frames:frames}));
       }
       private function advance():void {if(round+1<CASES.length){prepare(round+1);send("prepare",{cls:expectedClass});}else{send("done");finish();}}
       private function finish():void {

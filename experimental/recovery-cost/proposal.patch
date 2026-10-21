@@ -1,0 +1,102 @@
+--- recovery-02/src/rconnect/game/ProjectileFrameStream.as
++++ overlay/src/rconnect/game/ProjectileFrameStream.as
+@@ -44,6 +44,19 @@
+          for each(var point:Object in frames)if(Number(point.at)>stamp)out.push(point);
+          return out;
+       }
++      /** Same result as after() followed by the first changed same-stamp
++       * point. Keep input order, including duplicate or out-of-order samples;
++       * only the history traversal is shared. */
++      public static function afterWithRevision(frames:Array,stamp:Number,previous:Object,revisionStamp:Number):Array {
++         var out:Array=[],revised:Object=null;
++         for each(var point:Object in frames) {
++            var at:Number=Number(point.at);
++            if(at>stamp)out.push(point);
++            if(revised==null && previous!=null && at==revisionStamp && !samePoint(point,previous))revised=point;
++         }
++         if(revised!=null)out.unshift(revised);
++         return out;
++      }
+       public static function merge(previous:Array,incoming:Array):Array {
+          if(previous==null||previous.length==0)return incoming==null?[]:incoming.concat();
+          if(incoming==null||incoming.length==0)return previous;
+--- recovery-02/src/rconnect/game/UnitPresentation.as
++++ overlay/src/rconnect/game/UnitPresentation.as
+@@ -246,13 +246,9 @@
+             var events:Array=[];
+             for each(var shot:Object in r.events) {
+                var fresh:Boolean=shot.fastSent!==true;
+-               var points:Array=shot.recorded?ProjectileFrameStream.after(shot.frames as Array,
+-                  fresh||shot.fastAt==null?Number.NEGATIVE_INFINITY:Number(shot.fastAt)):null;
+-               // observeFinal may replace the last point at the SAME source
+-               // stamp. Preserve that correction, not just greater timestamps.
+-               if(!fresh && shot.recorded && shot.fastPoint!=null)
+-                  for each(var revised:Object in shot.frames)
+-                     if(Number(revised.at)==Number(shot.fastAt) && !ProjectileFrameStream.samePoint(revised,shot.fastPoint)) {points.unshift(revised);break;}
++               var points:Array=shot.recorded?ProjectileFrameStream.afterWithRevision(shot.frames as Array,
++                  fresh||shot.fastAt==null?Number.NEGATIVE_INFINITY:Number(shot.fastAt),
++                  fresh?null:shot.fastPoint,Number(shot.fastAt)):null;
+                var ending:Boolean=int(shot.end)>0 && int(shot.fastEnd)!=int(shot.end);
+                var stopping:Boolean=int(shot.stopped)>0 && int(shot.fastStop)!=int(shot.stopped);
+                var exploding:Boolean=shot.explosion!=null && shot.fastExplosion!==shot.explosion;
+--- recovery-02/src/rconnect/game/EnergyImpactVisuals.as
++++ overlay/src/rconnect/game/EnergyImpactVisuals.as
+@@ -149,9 +149,8 @@
+          for each(var record:Object in list) {
+             var wire:Object=record.wire,all:Array=wire.frames as Array;
+             if(all==null || all.length==0)continue;
+-            var points:Array=ProjectileFrameStream.after(all,record.fastAt==null?Number.NEGATIVE_INFINITY:Number(record.fastAt));
+-            if(record.fastPoint!=null)for each(var revised:Object in all)
+-               if(Number(revised.at)==Number(record.fastAt) && !ProjectileFrameStream.samePoint(revised,record.fastPoint)) {points.unshift(revised);break;}
++            var points:Array=ProjectileFrameStream.afterWithRevision(all,
++               record.fastAt==null?Number.NEGATIVE_INFINITY:Number(record.fastAt),record.fastPoint,Number(record.fastAt));
+             var ending:Boolean=int(wire.end)>0 && int(record.fastEnd)!=int(wire.end);
+             if(points.length==0 && !ending)continue;
+             // A terminal-only packet still supplies one known pose, allowing
+--- recovery-02/src/rconnect/game/WallImpactVisuals.as
++++ overlay/src/rconnect/game/WallImpactVisuals.as
+@@ -416,9 +416,9 @@
+ 
+       /** Rotating cumulative cells repair old/later peer views without a full
+        * foreground bitmap on every unitsync. No new native projectile is made. */
+-      public function snapshot(loc:Object):Array
+-      {
+-         observe(loc);var s:Object=state(loc),keys:Array=[],out:Array=[],size:int=0;
++      public function snapshot(loc:Object,observeNow:Boolean=true):Array
++      {
++         if(observeNow)observe(loc);var s:Object=state(loc),keys:Array=[],out:Array=[],size:int=0;
+          for(var k:String in s.cells)
+          {
+             var c:Object=s.cells[k];if(!solid(loc,c.x,c.y))discard(loc,k);else keys.push(k);
+--- recovery-02/src/rconnect/game/GameBridge.as
++++ overlay/src/rconnect/game/GameBridge.as
+@@ -3470,7 +3470,7 @@
+       public function applyTilePatch(list:Array):void {_terrain.apply(loc,list,freezeAI);}
+       public function scanTileReports():Object {
+          var report:Object=_terrain.report(loc);_wall.observe(loc,report==null?null:report.tiles as Array);
+-         var paint:Object=_wall.report(loc);
++         var paint:Object=_wall.report(loc,false);
+          if(paint!=null){if(report==null)report={tiles:[]};report.wall=paint;}
+          return report;
+       }
+@@ -3498,7 +3498,7 @@
+          if(receipt.seq!=null)_terrain.acknowledge(loc,receipt);
+          if(receipt.wallReceipt!=null)_wall.acknowledge(loc,receipt.wallReceipt);
+       }
+-      public function readWallPaint():Array {return _wall.snapshot(loc);}
++      public function readWallPaint(observeNow:Boolean=true):Array {return _wall.snapshot(loc,observeNow);}
+       public function readWallPaintUpdates():Array {return _wall.updates(loc);}
+       public function wallPaintUpdatesSent(list:Array):void {_wall.sentUpdates(loc,list);}
+       public function applyWallPaint(list:Array):void {
+--- recovery-02/src/rconnect/core/Session.as
++++ overlay/src/rconnect/core/Session.as
+@@ -1083,7 +1083,8 @@
+                {
+                   usMsg.tilePatch = tpatch;
+                }
+-               usMsg.wallPaint=mod.game.readWallPaint();
++               // readTilePatch just observed native contacts and this terrain delta.
++               usMsg.wallPaint=mod.game.readWallPaint(false);
+                var nspawn:Array = mod.game.readNewObjs();
+                if(nspawn != null)
+                {

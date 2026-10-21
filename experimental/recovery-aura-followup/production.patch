@@ -1,0 +1,29 @@
+--- recovery-01/src/rconnect/game/TelekinesisVisuals.as
++++ followup/src/rconnect/game/TelekinesisVisuals.as
+@@ -137,7 +137,25 @@
+             for each(f in rec.filters)if(f is GlowFilter)filters.push(f);
+             v.filters=filters;
+          }
+-         if(rec.style!=null && equalColors(colors(v.transform.colorTransform),rec.style.ct))v.transform.colorTransform=rec.ct;
++         if(rec.style!=null && rec.style.ct is Array && rec.style.ct.length==8) {
++            // DisplayObject.alpha aliases ColorTransform.alphaMultiplier.
++            // Native stealth/visibility may change only that channel between
++            // our last paint and release. RGB ownership must remain separate;
++            // likewise a newer native tint must not keep our old opacity.
++            var current:ColorTransform=v.transform.colorTransform,original:ColorTransform=rec.ct;
++            var applied:Array=rec.style.ct;
++            var ownRGB:Boolean=current.redMultiplier==applied[0] && current.greenMultiplier==applied[1]
++               && current.blueMultiplier==applied[2] && current.redOffset==applied[4]
++               && current.greenOffset==applied[5] && current.blueOffset==applied[6];
++            var ownAlpha:Boolean=current.alphaMultiplier==applied[3] && current.alphaOffset==applied[7];
++            if(ownRGB) {
++               current.redMultiplier=original.redMultiplier;current.greenMultiplier=original.greenMultiplier;
++               current.blueMultiplier=original.blueMultiplier;current.redOffset=original.redOffset;
++               current.greenOffset=original.greenOffset;current.blueOffset=original.blueOffset;
++            }
++            if(ownAlpha){current.alphaMultiplier=original.alphaMultiplier;current.alphaOffset=original.alphaOffset;}
++            if(ownRGB || ownAlpha)v.transform.colorTransform=current;
++         }
+          delete active[o];
+       }
+       public function reset():void {

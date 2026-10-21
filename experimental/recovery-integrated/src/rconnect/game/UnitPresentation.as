@@ -246,13 +246,9 @@ package rconnect.game
             var events:Array=[];
             for each(var shot:Object in r.events) {
                var fresh:Boolean=shot.fastSent!==true;
-               var points:Array=shot.recorded?ProjectileFrameStream.after(shot.frames as Array,
-                  fresh||shot.fastAt==null?Number.NEGATIVE_INFINITY:Number(shot.fastAt)):null;
-               // observeFinal may replace the last point at the SAME source
-               // stamp. Preserve that correction, not just greater timestamps.
-               if(!fresh && shot.recorded && shot.fastPoint!=null)
-                  for each(var revised:Object in shot.frames)
-                     if(Number(revised.at)==Number(shot.fastAt) && !ProjectileFrameStream.samePoint(revised,shot.fastPoint)) {points.unshift(revised);break;}
+               var points:Array=shot.recorded?ProjectileFrameStream.afterWithRevision(shot.frames as Array,
+                  fresh||shot.fastAt==null?Number.NEGATIVE_INFINITY:Number(shot.fastAt),
+                  fresh?null:shot.fastPoint,Number(shot.fastAt)):null;
                var ending:Boolean=int(shot.end)>0 && int(shot.fastEnd)!=int(shot.end);
                var stopping:Boolean=int(shot.stopped)>0 && int(shot.fastStop)!=int(shot.stopped);
                var exploding:Boolean=shot.explosion!=null && shot.fastExplosion!==shot.explosion;

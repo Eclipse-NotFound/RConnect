@@ -44,6 +44,19 @@ package rconnect.game {
          for each(var point:Object in frames)if(Number(point.at)>stamp)out.push(point);
          return out;
       }
+      /** Same result as after() followed by the first changed same-stamp
+       * point. Keep input order, including duplicate or out-of-order samples;
+       * only the history traversal is shared. */
+      public static function afterWithRevision(frames:Array,stamp:Number,previous:Object,revisionStamp:Number):Array {
+         var out:Array=[],revised:Object=null;
+         for each(var point:Object in frames) {
+            var at:Number=Number(point.at);
+            if(at>stamp)out.push(point);
+            if(revised==null && previous!=null && at==revisionStamp && !samePoint(point,previous))revised=point;
+         }
+         if(revised!=null)out.unshift(revised);
+         return out;
+      }
       public static function merge(previous:Array,incoming:Array):Array {
          if(previous==null||previous.length==0)return incoming==null?[]:incoming.concat();
          if(incoming==null||incoming.length==0)return previous;

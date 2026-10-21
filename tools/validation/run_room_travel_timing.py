@@ -15,6 +15,7 @@ def main():
     ap.add_argument('--candidate',required=True)
     ap.add_argument('--drivers',required=True)
     ap.add_argument('--output',required=True)
+    ap.add_argument('--game-candidate',help='Verified isolated native-travel host directory; never installs it')
     ap.add_argument('--scenario',choices=['timing','scene','entry-room','entry-map'],default='timing')
     ap.add_argument('--solo',action='store_true')
     ap.add_argument('--registry-wait',type=float,default=300)
@@ -27,17 +28,37 @@ def main():
     for n,h in meta['files'].items():assert sha(drivers/n)==h,n
     binary=candidate/'RConnectMod.swf';digest=sha(binary)
     version=re.search(r'VERSION:String\s*=\s*"([^"]+)"',(candidate/'src/RConnectMod.as').read_text(encoding='utf-8')).group(1)
-    before=installation();out.mkdir();binding=out/'driver';binding.mkdir()
+    before=installation()
+    host_candidate=None
+    host_intent=None
+    if a.game_candidate:
+        host_candidate=(ROOT/a.game_candidate).resolve()
+        assert host_candidate.parent==M52
+        host_meta=read(host_candidate/'prepared.json')
+        assert host_meta['kind']=='recovery-native-travel-host'
+        assert host_meta.get('compiled') is True and host_meta.get('validated') is True
+        assert host_meta.get('installed_unchanged') is True and host_meta.get('source_set_unchanged') is True
+        assert host_meta['original_sha256']==before['pfe.swf']
+        assert host_meta['candidate_sha256']==sha(host_candidate/'pfe.swf')
+        assert host_meta['non_code_tags_unchanged'] and host_meta['loader_unchanged']
+        assert sha(host_candidate/'native-input.json')==host_meta['native_input_sha256']
+        for name,source_digest in host_meta['source_inputs'].items():
+            assert sha(host_candidate/'sources'/name)==source_digest,name
+        host_intent=dict(directory=str(host_candidate),manifest_sha256=sha(host_candidate/'prepared.json'),
+            original_sha256=host_meta['original_sha256'],candidate_sha256=host_meta['candidate_sha256'],
+            native_input_sha256=host_meta['native_input_sha256'],sources=host_meta['source_inputs'])
+    out.mkdir();binding=out/'driver';binding.mkdir()
     for n in ('EffectsDriver.swf','EffectsHarness.swf'):shutil.copyfile(drivers/a.scenario/n,binding/n)
     save(binding/'driver-input.json',dict(candidate_sha256=digest,identical_driver=sha(binding/'EffectsDriver.swf')))
     save(out/'intent.json',dict(candidate=str(candidate),candidate_sha256=digest,driver_manifest=sha(drivers/'prepared.json'),
         scenario=a.scenario,solo=a.solo,diagnostic_only=bool(meta.get('diagnostic_only',False)),installation=before,
-        runner_sha256=sha(ROOT/'tools/run_coop_regression.py'),wrapper_sha256=sha(__file__)))
+        runner_sha256=sha(ROOT/'tools/run_coop_regression.py'),wrapper_sha256=sha(__file__),native_host=host_intent))
     timed=a.scenario in ('timing','scene')
     cmd=[sys.executable,'-B','-X','utf8',str(ROOT/'tools/run_coop_regression.py'),'--candidate',str(binary),
         '--effects','--effects-driver',str(binding),'--all-mods','--land','random_mane' if a.scenario=='entry-room' else 'rbl','--seconds','600',
         '--expected-version',version,'--port',str(test_port()),'--private-desktop','--defer-visible','--wait-host-world','--require-exclusive-air']
     cmd+=['--registry-wait',str(a.registry_wait)]
+    if host_candidate:cmd+=['--game-candidate',str(host_candidate/'pfe.swf')]
     if a.solo:cmd+=['--solo']
     with (out/'runner.log').open('w',encoding='utf-8') as log:
         process=subprocess.run(cmd,cwd=ROOT,stdout=log,stderr=subprocess.STDOUT)
@@ -50,7 +71,8 @@ def main():
         run=ROOT/'build/cooperation'/found[1];manifest=read(run/'run.json');result['roles']={}
         for role in (('host',) if a.solo else ('host','join')):
             inp=manifest['inputs'][role]
-            assert inp['game']==before['pfe.swf'] and inp['production']==digest
+            expected_host=host_intent['candidate_sha256'] if host_intent else before['pfe.swf']
+            assert inp['game']==expected_host and inp['production']==digest
             assert inp['driver']==sha(binding/'EffectsDriver.swf')
             path=run/(role+'.log');text=path.read_text(encoding='utf-8-sig',errors='replace') if path.exists() else ''
             stdout=run/(role+'.stdout.log');all_text=text+'\n'+(stdout.read_text(encoding='utf-8',errors='replace') if stdout.exists() else '')
@@ -93,6 +115,13 @@ def main():
                     result['profile_valid']=result['profile_valid'] and len(diffs)==2 and all(d.get('valid') for d in diffs)
             result['passed']=result['passed'] and result['profile_valid']
         result['memory']=read(run/'memory-timeline.json')
+    if host_candidate:
+        assert sha(host_candidate/'prepared.json')==host_intent['manifest_sha256']
+        assert sha(host_candidate/'pfe.swf')==host_intent['candidate_sha256']
+        assert sha(host_candidate/'native-input.json')==host_intent['native_input_sha256']
+        for name,source_digest in host_intent['sources'].items():
+            assert sha(host_candidate/'sources'/name)==source_digest,name
+        result['native_host']=host_intent
     save(out/'result.json',result)
     print(json.dumps({k:v for k,v in result.items() if k!='memory'},ensure_ascii=False),flush=True)
     if not result['passed']:raise SystemExit(1)

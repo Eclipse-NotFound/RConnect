@@ -320,7 +320,7 @@ package rconnect.core
       private function onLinkConnected(e:Event):void
       {
          Log.d("RConnectNet: connected to host, sending hello");
-         link.send(Protocol.make(Protocol.MSG_HELLO, {name: myName}));
+         link.send(Protocol.make(Protocol.MSG_HELLO, {name: myName,nativeTravel:mod.game.mapGeneration.nativeTravelSupported?1:0}));
       }
 
       private function onLinkClosed(e:Event):void
@@ -399,7 +399,7 @@ package rconnect.core
                mode = CONNECTED;
                Log.d("RConnectNet: welcome id=" + myId + " host=" + hostName);
                compareWorldInfo(msg.worldInfo);
-               rooms.receivedWelcome(msg.worldInfo);
+               rooms.receivedWelcome(msg.worldInfo,msg.nativePrepare);
                // 自动化联测：join 连接成功后自动发一条聊天验证转发
                if(_autoRole == "join" && !_autoChatSent)
                {
@@ -569,11 +569,12 @@ package rconnect.core
             case Protocol.MSG_HELLO:
                link.id = nextPeerId();
                link.peerName = msg.name != undefined ? String(msg.name) : "Pony";
-               peers.push({id: link.id, name: link.peerName, link: link, snap: null});
+               peers.push({id: link.id, name: link.peerName, link: link, snap: null,nativeTravel:int(msg.nativeTravel)});
                var wInfo:Object = mod.game != null
                   ? mod.game.readWorldInfo() : null;
                link.send(Protocol.make(Protocol.MSG_WELCOME,
-                  {id: link.id, name: myName, worldInfo: wInfo}));
+                  {id: link.id, name: myName, worldInfo: wInfo,nativePrepare:int(msg.nativeTravel)==1?rooms.nativePrepare:null}));
+               if(int(msg.nativeTravel)==1)rooms.replayNativePrepare(link);
                Log.d("RConnectNet: peer #" + link.id + " '" + link.peerName
                   + "' joined");
                broadcastWorldState();
@@ -1083,7 +1084,8 @@ package rconnect.core
                {
                   usMsg.tilePatch = tpatch;
                }
-               usMsg.wallPaint=mod.game.readWallPaint();
+               // readTilePatch just observed native contacts and this terrain delta.
+               usMsg.wallPaint=mod.game.readWallPaint(false);
                var nspawn:Array = mod.game.readNewObjs();
                if(nspawn != null)
                {
