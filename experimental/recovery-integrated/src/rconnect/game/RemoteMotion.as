@@ -22,6 +22,16 @@ package rconnect.game
       private var bufferLimit:int=0;
       private var enemyRecovery:Boolean=false;
       private var playbackRate:Number=1;
+      // Ordinary actor clocks only. Keep calibration debt separate from packet
+      // jitter: a series of small offset corrections must not create seconds
+      // of catch-up at 1.1x. No receive callback seeks this display cursor.
+      private var calibrationDebt:Number=0;
+      private var calibrationRate:Number=1;
+      private var calibrating:Boolean=false;
+      private function actorCalibration():Boolean {return !immediateStart && bufferLimit==0;}
+      private function clearCalibration():void {
+         calibrationDebt=0;calibrationRate=1;calibrating=false;
+      }
       // Only immediately visible drops use packet-burst buffering. A grab
       // has a separate low-latency policy, and avatar clocks stay unchanged.
       private var firstSample:Boolean=true;
@@ -62,6 +72,7 @@ package rconnect.game
          }
          var previous:Object=sample(now);
          frames=[];
+         clearCalibration();
          preceding=null;
          var jump:Boolean=previous==null || now-at>1000;
          if(previous!=null)
@@ -108,6 +119,7 @@ package rconnect.game
        * the display buffer at the received endpoint, without extrapolation.
        * Retain that cursor so resume cannot replay the pre-pause position. */
       public function settle(now:int):Object {
+         clearCalibration();
          if(frames.length>0) {
             playbackRate=1;
             cursor=Number(frames[frames.length-1].at);
@@ -129,7 +141,7 @@ package rconnect.game
          if(last==null || now-arrivedAt>1000 || stamp-Number(last.at)>1000
             || clockOffset<offset-Math.max(250,interval*2) || (!port && dx*dx+dy*dy>600*600)) {
             frames=[];gaps=[];selected=null;state=null;preceding=null;firstSample=true;dropDelay=0;
-            playbackRate=1;
+            playbackRate=1;clearCalibration();
             offset=clockOffset;cursor=stamp-(immediateStart?0:delay());sampledAt=now;
          } else {
             // Host world broadcasts can repeat an unchanged peer snapshot.
@@ -144,7 +156,12 @@ package rconnect.game
             // socket callback. Seeking its cursor here discards the entire
             // short arc and leaves it motionless until the next packet batch.
             var correction:Number=previousOffset-offset;
-            if(!immediateStart && correction>Math.max(100,interval*2))cursor+=correction;
+            if(actorCalibration()) {
+               // A teleport or room identity boundary ends the old recovery.
+               if(port || last.snap.roomKey!=snap.roomKey || last.snap.roomEpoch!=snap.roomEpoch)
+                  clearCalibration();
+               else calibrationDebt+=correction;
+            } else if(!immediateStart && correction>Math.max(100,interval*2))cursor+=correction;
             if(immediateStart)dropDelay=Math.min(500,Math.max(dropDelay,(now-arrivedAt)*1.25));
             gaps.push(stamp-Number(last.at));if(gaps.length>8)gaps.shift();
          }
@@ -170,7 +187,10 @@ package rconnect.game
          var wanted:Number=now-offset-delay(),next:Number=cursor+elapsed;
          // Adjust buffer depth by slightly changing playback speed, never by
          // rewinding the avatar when a slower packet interval is observed.
-         if(rateHeld()) {playbackRate=1;cursor=next;}
+         var beforeCursor:Number=cursor;
+         if(rateHeld()) {
+            playbackRate=1;calibrationRate=1;calibrating=false;cursor=next;
+         }
          else if(enemyRecovery) {
             // A stalled receive buffer must not leave enemies several frames
             // behind for seconds. Recover by gently changing speed, not by
@@ -179,9 +199,32 @@ package rconnect.game
             var desiredRate:Number=1+Math.max(-.1,Math.min(.5,(wanted-next)/Math.max(1,elapsed)));
             playbackRate+=Math.max(-elapsed*.003,Math.min(elapsed*.003,desiredRate-playbackRate));
             cursor+=elapsed*playbackRate;
+         } else if(actorCalibration()) {
+            var ordinary:Number=next+Math.max(-elapsed*.1,Math.min(elapsed*.1,wanted-next));
+            // Only real elapsed time may retire debt or change the recovery
+            // speed. Repeated RENDER/sample calls at one timestamp stay inert.
+            if(elapsed>0)calibrationDebt=Math.min(calibrationDebt,Math.max(0,wanted-next));
+            if(!calibrating && calibrationDebt>Math.max(100,interval*2)) {
+               calibrating=true;
+            }
+            if(calibrating && elapsed>0) {
+               var ordinaryRate:Number=(ordinary-beforeCursor)/elapsed;
+               var desiredCalibrationRate:Number=calibrationDebt>0
+                  ?Math.max(ordinaryRate,1+Math.min(.5,calibrationDebt/200)):ordinaryRate;
+               var previousRate:Number=calibrationRate;
+               calibrationRate+=Math.max(-elapsed*.003,Math.min(elapsed*.003,desiredCalibrationRate-calibrationRate));
+               // Integrate a continuous speed ramp, bounded to 0.9--1.5x.
+               cursor+=elapsed*(previousRate+calibrationRate)*.5;
+               if(calibrationDebt==0 && calibrationRate==ordinaryRate)calibrating=false;
+            } else {
+               cursor=ordinary;
+               if(elapsed>0)calibrationRate=(ordinary-beforeCursor)/elapsed;
+            }
          } else cursor=next+Math.max(-elapsed*.1,Math.min(elapsed*.1,wanted-next));
          var latest:Object=frames[frames.length-1];
          cursor=Math.min(cursor,Number(latest.at));
+         if(actorCalibration() && elapsed>0)
+            calibrationDebt=Math.max(0,calibrationDebt-Math.max(0,cursor-beforeCursor-elapsed));
          while(frames.length>2 && Number(frames[1].at)<=cursor)preceding=frames.shift();
          var a:Object=frames[0],b:Object=frames.length>1?frames[1]:a;
          if(cursor>=Number(b.at))a=b;

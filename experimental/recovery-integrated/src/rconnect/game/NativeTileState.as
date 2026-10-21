@@ -32,10 +32,20 @@ package rconnect.game {
          if(name=="phY1" || name=="phY2")return 4;
          return 0;
       }
-      private static function gridDefaults(values:Array,base:Array,names:Array,grid:Array,x:int,y:int):void {
+      /** Per-call metadata only: no room/table survives this operation. */
+      private static function gridPlan(names:Array,grid:Array):Vector.<int> {
+         var plan:Vector.<int>=new Vector.<int>();
          for each(var slot:int in grid) {
             var kind:int=coordinate(names[slot]);
-            values[slot]=base[slot]+(kind%2==1?x:y)*(kind<=2?1:40);
+            plan.push(slot,kind%2==1?1:0,kind<=2?1:40);
+         }
+         return plan;
+      }
+      private static function gridDefaults(values:Array,base:Array,plan:Vector.<int>,x:int,y:int):void {
+         for(var i:int=0;i<plan.length;i+=3) {
+            var slot:int=plan[i];
+            // Preserve base + coordinate * step (and its floating-point order).
+            values[slot]=base[slot]+(plan[i+1]==1?x:y)*plan[i+2];
          }
       }
       public static function capture(loc:Object):Object {
@@ -60,13 +70,14 @@ package rconnect.game {
          var rows:Array=[],grid:Array=[],defaults:Array=base.concat();
          for(var slot:int=0;slot<names.length;slot++)
             if(coordinate(names[slot]) && base[slot] is Number && base[slot]===int(base[slot]))grid.push(slot);
+         var plan:Vector.<int>=gridPlan(names,grid);
          for(var x:int=0;x<width;x++)for(var y:int=0;y<height;y++) {
             var tile:Object=loc.space[x][y];
             if(tile==null || getQualifiedClassName(tile)!="fe.loc::Tile")return null;
             // A field absent from the first tile may become a scalar later.
             // Fall back instead of silently dropping that uncommon state.
             for each(name in excluded)if(primitive(tile[name]) || tile[name] is Array)return null;
-            var row:Array=[];gridDefaults(defaults,base,names,grid,x,y);
+            var row:Array=[];gridDefaults(defaults,base,plan,x,y);
             for(var i:int=0;i<names.length;i++) {
                name=names[i];var value:*=tile[name];
                if(!primitive(value)) {
@@ -86,12 +97,14 @@ package rconnect.game {
             || table.names.length<1 || table.names.length>256 || table.base.length!=table.names.length
             || table.rows.length!=int(loc.spaceX)*int(loc.spaceY))throw new Error("Invalid native terrain table");
          var allowed:Object=fieldTypes(loc.space[0][0]),required:Object={},slots:Object={},name:String,i:int;
+         var slotTypes:Vector.<String>=new Vector.<String>(table.names.length,true);
+         var slotRequired:Vector.<Boolean>=new Vector.<Boolean>(table.names.length,true);
          for each(name in REQUIRED)required[name]=true;
          for(i=0;i<table.names.length;i++) {
             var field:*=table.names[i];
             if(!(field is String) || !allowed.hasOwnProperty(field) || slots.hasOwnProperty(field)
                || !matchesType(table.base[i],allowed[field]))throw new Error("Invalid native terrain field");
-            slots[field]=i;
+            slots[field]=i;slotTypes[i]=allowed[field];slotRequired[i]=Boolean(required[field]);
          }
          for each(name in REQUIRED)
             if(!slots.hasOwnProperty(name) || table.base[int(slots[name])]==null)throw new Error("Incomplete native terrain fields");
@@ -106,25 +119,28 @@ package rconnect.game {
                gridSeen[gridSlot]=true;grid.push(int(gridSlot));
             }
          }
-         var height:int=int(loc.spaceY),row:*,tile:Object,slot:*,seen:Object,value:*,index:int=0;
+         var height:int=int(loc.spaceY),row:*,tile:Object,slot:*,value:*,index:int=0;
+         // One marker vector replaces a fresh lookup object for each row.
+         // index has already advanced to a nonzero row number before use.
+         var seen:Vector.<int>=new Vector.<int>(table.names.length,true);
+         var plan:Vector.<int>=gridPlan(table.names,grid);
          // Validate the entire transfer before changing any native tile.
          for each(row in table.rows) {
             tile=loc.space[int(index/height)][index%height];index++;
             if(tile==null || getQualifiedClassName(tile)!="fe.loc::Tile" || !(row is Array) || row.length%2!=0
                || row.length>table.names.length*2)throw new Error("Invalid native terrain row");
-            seen={};
             for(i=0;i<row.length;i+=2) {
                slot=row[i];value=row[i+1];
-               if(!(slot is Number) || slot!=int(slot) || slot<0 || slot>=table.names.length || seen[slot]===true
-                  || !matchesType(value,allowed[table.names[int(slot)]]) || (value==null && required[table.names[int(slot)]]))
+               if(!(slot is Number) || slot!=int(slot) || slot<0 || slot>=table.names.length || seen[int(slot)]==index
+                  || !matchesType(value,slotTypes[int(slot)]) || (value==null && slotRequired[int(slot)]))
                   throw new Error("Invalid native terrain value");
-               seen[slot]=true;
+               seen[int(slot)]=index;
             }
          }
          var values:Array=table.base.concat();index=0;
          for each(row in table.rows) {
             var x:int=int(index/height),y:int=index%height;index++;tile=loc.space[x][y];
-            gridDefaults(values,table.base,table.names,grid,x,y);
+            gridDefaults(values,table.base,plan,x,y);
             for(i=0;i<row.length;i+=2)values[int(row[i])]=row[i+1];
             for(i=0;i<values.length;i++)if(values[i]!=null)tile[table.names[i]]=values[i];
             // The former restore applies native scalars, then its top-level

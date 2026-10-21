@@ -1,5 +1,5 @@
 {
-  "version": "0.2.24-recovery9",
+  "version": "0.2.24-recovery11",
   "compiled": false,
   "runtime_tested": false,
   "baseline": "build/m52/coop-bundle-04",
@@ -575,6 +575,46 @@
           "merged_sha256": "9851281cbe57419762a8b7c167e89aa8d29237d72840c33c5f62f35e334ecefb"
         }
       ]
+    },
+    {
+      "name": "continuous-accumulated-clock-recovery",
+      "source": "experimental\\recovery-clock-catchup",
+      "proposal_sha256": "c729e82f068bccf0e7d0a6fc9613892e13bb74d1bdbf7065ba420b59e155cccd",
+      "proof": {
+        "path": "build\\m52\\recovery-clock-catchup-component-01",
+        "checks": 40,
+        "receipt_sha256": "b0f4a148f973a7f2d07eb5b9d281630821e12d9bcb7dafcf3ebf032470f425d4",
+        "raw_sha256": "9afe1ade82e7c9eae434ff090ec548bbcf4074fd5d64933bc93904cb2d01d0e0",
+        "native_game_tested": false,
+        "performance_qualified": false
+      },
+      "files": [
+        {
+          "path": "rconnect/game/RemoteMotion.as",
+          "before_sha256": "cd58b1286bc913149ac02ad60713e82c251b8e574043444b4f3ccfd6e4a2ebc5",
+          "merged_sha256": "5f0d0ba3b8de5ec1a08d392b4147f04a4d318c0bcdd0a2f7bbf236a5d28fc877"
+        }
+      ]
+    },
+    {
+      "name": "local-terrain-loop-metadata",
+      "source": "experimental\\recovery-terrain-loop",
+      "proposal_sha256": "cde83b352800503f3a2136ff55b124ceae488b7cda85e127ee9bc9c46a592eff",
+      "proof": {
+        "path": "build\\m52\\recovery-terrain-loop-component-03",
+        "checks": 67,
+        "receipt_sha256": "122778424511b8bf6d988a2dac44f93f0cf379129bc4ce31a81fd5a5a2c0d86b",
+        "raw_sha256": "8fa17bbccdfdfb42b51cec0d3530ed10853c43fc23845996e02eb61bd51b4d17",
+        "native_game_tested": false,
+        "performance_qualified": false
+      },
+      "files": [
+        {
+          "path": "rconnect/game/NativeTileState.as",
+          "before_sha256": "dab683e9d14e18e8b7e35a917da8a7e237391b602f43d315661fd0d11ce8cae5",
+          "merged_sha256": "eec001f4de8bdfc5ad892c2de2e892c07cceac15ebe7c5cf10fda4a1047592dc"
+        }
+      ]
     }
   ],
   "manual_changes": [
@@ -648,7 +688,7 @@
     },
     {
       "path": "RConnectMod.as",
-      "sha256": "71ab90c2b404d785ec5a5a7d3d93eb8c9f1901fd240a05a038ebe0c53f607147",
+      "sha256": "8d5d2d4483fb61c20e17643384f4792c6fc43d90b2b51f8a8d5eddf39c1a8784",
       "baseline_sha256": "1de9483aca55b011d3d6ab99238c88c9b2028a8d1d8c2ab51e4ecb5c546833ec",
       "changed": true
     },
@@ -936,7 +976,7 @@
     },
     {
       "path": "rconnect/game/NativeTileState.as",
-      "sha256": "dab683e9d14e18e8b7e35a917da8a7e237391b602f43d315661fd0d11ce8cae5",
+      "sha256": "eec001f4de8bdfc5ad892c2de2e892c07cceac15ebe7c5cf10fda4a1047592dc",
       "baseline_sha256": null,
       "changed": true
     },
@@ -1008,7 +1048,7 @@
     },
     {
       "path": "rconnect/game/RemoteMotion.as",
-      "sha256": "cd58b1286bc913149ac02ad60713e82c251b8e574043444b4f3ccfd6e4a2ebc5",
+      "sha256": "5f0d0ba3b8de5ec1a08d392b4147f04a4d318c0bcdd0a2f7bbf236a5d28fc877",
       "baseline_sha256": "19f035bfccb5a035fdb9df84c364db3a2eb845e2c002d825f8ed0665517174aa",
       "changed": true
     },
@@ -1209,14 +1249,16 @@
     "codec_diagnostics_component_199": true,
     "no_clip_explosion_component": true,
     "bounded_working_set_component": true,
-    "acid_ground_component": true
+    "acid_ground_component": true,
+    "accumulated_clock_component": true,
+    "terrain_loop_component": true
   },
   "static_errors": [],
   "hash_note": "Layer merged_sha256 values describe intermediate merges. The source array is the final normalized LF source inventory; text-equivalent CRLF normalization is not a functional edit.",
-  "followup_review": "Acid ground component passes; native acid, gas pulses, motion and loading remain unqualified.",
+  "followup_review": "Full terrain class equivalence only; native loading and final motion remain unqualified.",
   "native_host_candidate": "build/m52/recovery-native-travel-host-01",
   "native_host_sha256": "e159fe0f0a1cbb34596d18b9979f439e80823fbeda369be7b2220a42e8e5d30c",
   "gameplay_qualified": false,
   "performance_qualified": false,
-  "integration_recipe_sha256": "92413755a3b989f43f72b1552d21ce8128bbeca1e09ffec01f3cee41297bb7c8"
+  "integration_recipe_sha256": "4590f0713c1acf1769c0edc518d4b97d5bef386ff444512d0e8d3b137441fbe1"
 }

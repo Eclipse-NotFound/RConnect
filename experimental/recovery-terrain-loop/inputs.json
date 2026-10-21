@@ -1,0 +1,51 @@
+{
+  "kind": "terrain-loop-proposal",
+  "base_swf_sha256": "1507686cd0811f6e6697a663ceed08ed7f85c8562399d50ccc79a891f8503acf",
+  "input_sources": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-09\\RConnectMod.swf": "1507686cd0811f6e6697a663ceed08ed7f85c8562399d50ccc79a891f8503acf",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-09\\src\\rconnect\\game\\NativeTileState.as": "dab683e9d14e18e8b7e35a917da8a7e237391b602f43d315661fd0d11ce8cae5",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-09\\prepared.json": "4abf96a8459b2e3c1ddaa24d6d02affe617ec5ab500d0d6691633507075c808b",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-09\\src\\rconnect\\game\\NativeRoomState.as": "1e91028348b29dc1bd00dc55cf4d5df5d5ee40469ef9ea0f7e9626d30a601938",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-09\\src\\rconnect\\net\\RoomCodec.as": "296ee4d8d94f77faa62dcc17a39cb1e2492c756d3027311713c33935ca6b6b4a",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\tests\\room-entry\\fe\\loc\\Tile.as": "a5267e18c3479c50d8b4eb5881690566e297d168bf3191fd36fb281e513c370a",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\tests\\room-entry\\fe\\unit\\Unit.as": "413999d9d8d9a001b125eaf7c140f70a49b23f44ac07e31629f9780bd5fcaaf2",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\tests\\room-entry\\fe\\unit\\RConnectUnitAccess.as": "4dca64ac4410ed30997830ad2e092cf4bc9dbdee6204a2d8f1cfd1578d818806",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\tests\\room-entry\\rconnect\\game\\TurretDisplay.as": "a0a2e0f98b82a3d00bdd21b7abf21a24dbe830d112878103da38eda63ed9f53d",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\tests\\room-entry\\rconnect\\core\\Log.as": "5dd88b219ed476a019d535c985a6ee75fb493e45de53d68f37c3c8e7801243d7"
+  },
+  "outputs": {
+    "check_sources.py": "8c078ea742076696e57f10a6fae2e91f505209030c6b4f498aa35932991ddbcb",
+    "prepare.py": "6a117df1b1ec30d01bb059a29a8b22a8b876c90b2cdb2a30cba4701175666b46",
+    "proposal.patch": "2c30754302c35262208b5351222c508b69db71ed4429fa55f355c3ead3d76f10",
+    "README.md": "f6ab1703ff8ba01b9da145f8c67c37e8fb9c73aa60c7607df3672ad426aa3272",
+    "components/TerrainLoopChecks.as": "dba6d340aec00af8eb86239aa38e34cd071e8f5192e5c7dfec97f6a677329dc3",
+    "components/fe/loc/Tile.as": "a5267e18c3479c50d8b4eb5881690566e297d168bf3191fd36fb281e513c370a",
+    "components/fe/unit/RConnectUnitAccess.as": "4dca64ac4410ed30997830ad2e092cf4bc9dbdee6204a2d8f1cfd1578d818806",
+    "components/fe/unit/Unit.as": "413999d9d8d9a001b125eaf7c140f70a49b23f44ac07e31629f9780bd5fcaaf2",
+    "components/rconnect/core/Log.as": "5dd88b219ed476a019d535c985a6ee75fb493e45de53d68f37c3c8e7801243d7",
+    "components/rconnect/game/ControlNativeTileState.as": "f1c50da9071883ad56c8868156aa488558969b92c9fe967d84e127693e65d730",
+    "components/rconnect/game/GameBridge.as": "ef48de47fbd27f843edeceea4c87acfc0320811de7ac581fc5b46b324840e85a",
+    "components/rconnect/game/NativeRoomState.as": "1e91028348b29dc1bd00dc55cf4d5df5d5ee40469ef9ea0f7e9626d30a601938",
+    "components/rconnect/game/NativeTileState.as": "eec001f4de8bdfc5ad892c2de2e892c07cceac15ebe7c5cf10fda4a1047592dc",
+    "components/rconnect/game/TurretDisplay.as": "a0a2e0f98b82a3d00bdd21b7abf21a24dbe830d112878103da38eda63ed9f53d",
+    "components/rconnect/net/RoomCodec.as": "296ee4d8d94f77faa62dcc17a39cb1e2492c756d3027311713c33935ca6b6b4a",
+    "src/rconnect/game/NativeTileState.as": "eec001f4de8bdfc5ad892c2de2e892c07cceac15ebe7c5cf10fda4a1047592dc"
+  },
+  "expected_assertions": 67,
+  "compiled": false,
+  "air_started": false,
+  "performance_qualified": false,
+  "fixture_revision": "direct-scalar-validation-03",
+  "previous_incomplete_run": "build/m52/recovery-terrain-loop-component-01",
+  "previous_incomplete_receipt_sha256": "f193994c3f8d75952d61e9f822bc938435960bf5fc86b8bb6b7744461dfb5642",
+  "previous_incomplete_runs": [
+    {
+      "path": "build/m52/recovery-terrain-loop-component-01",
+      "receipt_sha256": "f193994c3f8d75952d61e9f822bc938435960bf5fc86b8bb6b7744461dfb5642"
+    },
+    {
+      "path": "build/m52/recovery-terrain-loop-component-02",
+      "receipt_sha256": "9ce9645de26e07946b80c644579018de4f2d0fabbb02d8bc42d0d6b03423e607"
+    }
+  ]
+}

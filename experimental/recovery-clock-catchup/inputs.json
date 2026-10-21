@@ -1,0 +1,33 @@
+{
+  "baseline": "recovery-09",
+  "compiled": false,
+  "AIR_started": false,
+  "performance_qualified": false,
+  "native_qualified": false,
+  "ancestors": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-09\\src\\rconnect\\game\\RemoteMotion.as": "cd58b1286bc913149ac02ad60713e82c251b8e574043444b4f3ccfd6e4a2ebc5",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-09\\src\\rconnect\\game\\TeleportVisuals.as": "ec323ce52b1926e6cb1c98e722c78544cd396fa5b3661ba257111b4b703c272c",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-09\\src\\rconnect\\game\\WeaponDisplay.as": "c76a6b157992398dbb8d8620de2482375594423226cd64b90e13e8fee96066f2",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-09\\src\\rconnect\\game\\ProjectileFrameStream.as": "a7039e20094c9df3f9e7a7ee2f22e1f1262d067c0e7f0356cb994743fbfc30d9",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-09\\RConnectMod.swf": "1507686cd0811f6e6697a663ceed08ed7f85c8562399d50ccc79a891f8503acf",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\dae70df14b\\join.log": "14b891469c6ad35a94d5c8d242c0ff9e424c497d53e638ef3a1c47209ac752f0"
+  },
+  "files": {
+    "check_static.py": "16bceaeafb74665cd156b5d465f706b446208d1681f64d741aa22894cf23f6fd",
+    "components/ClockCatchupChecks.as": "beea78616c634c56bc15dd0c410a6d32b144142887e968ef82ae048289363fa1",
+    "components/ClockTrace.as": "0e3c75e13f19e7aa8bc2f6b5b519f4a128c244e01bd841623767ebee30a3e696",
+    "components/rconnect/game/ProjectileFrameStreamAfter.as": "323a6c56432b0cee7a4fb773d76af342e82ccaee8a9f998f3005959a381463b2",
+    "components/rconnect/game/ProjectileFrameStreamBefore.as": "13ae97ecd57fe7dfcd3e9ee367b65cf3094c109d228d18f6a4d614eb77f254b9",
+    "components/rconnect/game/RemoteMotionAfter.as": "f9fe34ad1322c080f193350d62a1aa9e331096180d559b66688688ae51418850",
+    "components/rconnect/game/RemoteMotionBefore.as": "c0dccf9c4e5feb97430eb00c9ec09217a33ec4f481debf9941b4dd9667c33bb7",
+    "components/rconnect/game/TeleportVisuals.as": "8e625526994614514b135c4878cdc32a2ee663440dcb253bd1b886ee1e2520e1",
+    "components/rconnect/game/WeaponDisplay.as": "8a5e069cde6b9ace1cbb317cedad3b423596bd968a66b74763b719691f4f7bac",
+    "model-replay.json": "6a40c4589d801268c3b19f15477c843ec1fb3496662a350f9044bf484c6a17aa",
+    "prepare.py": "2d6fb6ad6a0b2b95ef4f75a5ec3feb92ee1b6ece5debdcab652309a463f3c7e8",
+    "proposal.patch": "ca742dcb22361bb4beb1d6437abf2c9befbd32e9de0b202aede43226e990fc1f",
+    "README.md": "22fff246178376127c03f86eb1125ddc4219fddf5f322e3227f0f1a325befc97",
+    "replay_model.py": "ff90f2a20ce2ab055de5617f8201bb9bffcd9006d3f18a9339b467e84f8aa7d5",
+    "src/rconnect/game/RemoteMotion.as": "5f0d0ba3b8de5ec1a08d392b4147f04a4d318c0bcdd0a2f7bbf236a5d28fc877",
+    "trace.json": "52fbe1449d8ce1470ae5122b7f05cc3631679df100821dc29d7989cee0f75ac3"
+  }
+}
