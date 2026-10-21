@@ -1,0 +1,742 @@
+{
+  "run": "3b8269a9a7",
+  "host_log_sha256": "fd7650fe62d09ca1166d6b30770f78fedda3744526439bb86f0dc3d44151cf23",
+  "profile_prefixes": [
+    "PROJECTILE PROFILE "
+  ],
+  "packed_stacks": [
+    [
+      "flash.utils::ByteArray/_compress@null:0 <- flash.utils::ByteArray/compress@null:0 <- rconnect.net::RoomCodec$/pack@null:0 <- rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/updates@null:0 <- rconnect.game::GameBridge/readWallPaintUpdates@null:0 <- rconnect.core::Session/broadcastWorldState@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+      126
+    ],
+    [
+      "rconnect.net::RoomCodec$/pack@null:0 <- rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/updates@null:0 <- rconnect.game::GameBridge/readWallPaintUpdates@null:0 <- rconnect.core::Session/broadcastWorldState@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+      114
+    ],
+    [
+      "JSON$/stringifySpecializedToString@null:0 <- JSON$/stringify@null:0 <- rconnect.net::RoomCodec$/pack@null:0 <- rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/updates@null:0 <- rconnect.game::GameBridge/readWallPaintUpdates@null:0 <- rconnect.core::Session/broadcastWorldState@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+      107
+    ],
+    [
+      "[reap]@null:0 <- rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/updates@null:0 <- rconnect.game::GameBridge/readWallPaintUpdates@null:0 <- rconnect.core::Session/broadcastWorldState@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+      67
+    ],
+    [
+      "rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/updates@null:0 <- rconnect.game::GameBridge/readWallPaintUpdates@null:0 <- rconnect.core::Session/broadcastWorldState@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+      62
+    ],
+    [
+      "[reap]@null:0 <- JSON$/stringifySpecializedToString@null:0 <- JSON$/stringify@null:0 <- rconnect.net::RoomCodec$/pack@null:0 <- rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/updates@null:0 <- rconnect.game::GameBridge/readWallPaintUpdates@null:0 <- rconnect.core::Session/broadcastWorldState@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+      55
+    ],
+    [
+      "[sweep]@null:0 <- rconnect.net::RoomCodec$/pack@null:0 <- rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/updates@null:0 <- rconnect.game::GameBridge/readWallPaintUpdates@null:0 <- rconnect.core::Session/broadcastWorldState@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+      49
+    ],
+    [
+      "[reap]@null:0 <- rconnect.net::RoomCodec$/pack@null:0 <- rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/updates@null:0 <- rconnect.game::GameBridge/readWallPaintUpdates@null:0 <- rconnect.core::Session/broadcastWorldState@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+      36
+    ],
+    [
+      "Array$/_join@null:0 <- Array/http://adobe.com/AS3/2006/builtin::join@null:0 <- rconnect.net::RoomCodec$/pack@null:0 <- rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/updates@null:0 <- rconnect.game::GameBridge/readWallPaintUpdates@null:0 <- rconnect.core::Session/broadcastWorldState@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+      34
+    ],
+    [
+      "[reap]@null:0 <- Array$/_join@null:0 <- Array/http://adobe.com/AS3/2006/builtin::join@null:0 <- rconnect.net::RoomCodec$/pack@null:0 <- rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/updates@null:0 <- rconnect.game::GameBridge/readWallPaintUpdates@null:0 <- rconnect.core::Session/broadcastWorldState@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+      25
+    ],
+    [
+      "JSON$/stringifySpecializedToString@null:0 <- JSON$/stringify@null:0 <- rconnect.net::RoomCodec$/pack@null:0 <- rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/snapshot@null:0 <- rconnect.game::GameBridge/readWallPaint@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+      19
+    ],
+    [
+      "flash.utils::ByteArray/_compress@null:0 <- flash.utils::ByteArray/compress@null:0 <- rconnect.net::RoomCodec$/pack@null:0 <- rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/snapshot@null:0 <- rconnect.game::GameBridge/readWallPaint@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+      16
+    ],
+    [
+      "rconnect.net::RoomCodec$/pack@null:0 <- rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/snapshot@null:0 <- rconnect.game::GameBridge/readWallPaint@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+      16
+    ],
+    [
+      "[reap]@null:0 <- rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/snapshot@null:0 <- rconnect.game::GameBridge/readWallPaint@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+      12
+    ],
+    [
+      "rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/snapshot@null:0 <- rconnect.game::GameBridge/readWallPaint@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+      10
+    ],
+    [
+      "flash.utils::ByteArray/get bytesAvailable@null:0 <- rconnect.net::RoomCodec$/pack@null:0 <- rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/updates@null:0 <- rconnect.game::GameBridge/readWallPaintUpdates@null:0 <- rconnect.core::Session/broadcastWorldState@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+      7
+    ]
+  ],
+  "error_regex_matches": [
+    {
+      "role": "host",
+      "file": "RConnect.log",
+      "line": 86,
+      "prefix": "PROJECTILE PROFILE {\"role\":\"host\",\"frames\":[{\"stacks\":{\"rconnect.game::GameBridge$/probe@n",
+      "matches": [
+        {
+          "token": "ReferenceError",
+          "context": "\"count\":1,\"bytes\":4},\"SustainedDensityTestDoc\":{\"count\":1,\"bytes\":4},\"ReferenceError\":{\"count\":1,\"bytes\":112},\"MSWSmartWeapons\":{\"count\":2,\"bytes\":8},\"rconnect.core"
+        },
+        {
+          "token": "ReferenceError",
+          "context": "count\":4,\"bytes\":16},\"SustainedDensityTestDoc\":{\"count\":1,\"bytes\":4},\"ReferenceError\":{\"count\":1,\"bytes\":112},\"MSWSmartWeapons\":{\"count\":2,\"bytes\":8},\"fe.unit::Unit"
+        },
+        {
+          "token": "ReferenceError",
+          "context": "count\":4,\"bytes\":16},\"SustainedDensityTestDoc\":{\"count\":1,\"bytes\":4},\"ReferenceError\":{\"count\":1,\"bytes\":112},\"MSWSmartWeapons\":{\"count\":2,\"bytes\":8},\"fe.unit::Unit"
+        },
+        {
+          "token": "ReferenceError",
+          "context": "count\":4,\"bytes\":16},\"SustainedDensityTestDoc\":{\"count\":1,\"bytes\":4},\"ReferenceError\":{\"count\":1,\"bytes\":112},\"MSWSmartWeapons\":{\"count\":2,\"bytes\":8},\"fe.unit::Unit"
+        },
+        {
+          "token": "ReferenceError",
+          "context": "count\":4,\"bytes\":16},\"SustainedDensityTestDoc\":{\"count\":1,\"bytes\":4},\"ReferenceError\":{\"count\":1,\"bytes\":112},\"MSWSmartWeapons\":{\"count\":2,\"bytes\":8},\"fe.unit::Unit"
+        },
+        {
+          "token": "ReferenceError",
+          "context": "count\":1,\"bytes\":4},\"rconnect.core::PeerGrip\":{\"count\":4,\"bytes\":16},\"ReferenceError\":{\"count\":1,\"bytes\":112},\"MSWSmartWeapons\":{\"count\":2,\"bytes\":8},\"fe.unit::Unit"
+        },
+        {
+          "token": "ReferenceError",
+          "context": "rip\":{\"count\":4,\"bytes\":16},\"fe.graph::Part\":{\"count\":1,\"bytes\":256},\"ReferenceError\":{\"count\":1,\"bytes\":112},\"MSWSmartWeapons\":{\"count\":2,\"bytes\":8},\"fe.unit::Unit"
+        },
+        {
+          "token": "ReferenceError",
+          "context": "gOverlay\":{\"count\":1,\"bytes\":4},\"bullet_tre\":{\"count\":1,\"bytes\":792},\"ReferenceError\":{\"count\":1,\"bytes\":112},\"MSWSmartWeapons\":{\"count\":2,\"bytes\":8},\"Function\":{\"c"
+        }
+      ],
+      "profile_data": true
+    },
+    {
+      "role": "join",
+      "file": "RConnect.log",
+      "line": 249,
+      "prefix": "PROJECTILE PROFILE {\"role\":\"join\",\"frames\":[{\"cpu\":88,\"allocations\":{\"SettingsPipTab\":{\"co",
+      "matches": [
+        {
+          "token": "ReferenceError",
+          "context": "9,\"bytes\":125804},\"flash.geom::Rectangle\":{\"count\":560,\"bytes\":2360},\"ReferenceError\":{\"count\":1,\"bytes\":112},\"lad::LadRuntime\":{\"count\":2,\"bytes\":8},\"rconnect.game"
+        },
+        {
+          "token": "ReferenceError",
+          "context": "424,\"bytes\":253084},\"flash.geom::Rectangle\":{\"count\":91,\"bytes\":484},\"ReferenceError\":{\"count\":1,\"bytes\":112},\"lad::LadRuntime\":{\"count\":2,\"bytes\":8},\"lad::LadKeys\""
+        },
+        {
+          "token": "ReferenceError",
+          "context": "366,\"bytes\":218748},\"flash.geom::Rectangle\":{\"count\":91,\"bytes\":484},\"ReferenceError\":{\"count\":1,\"bytes\":112},\"lad::LadRuntime\":{\"count\":2,\"bytes\":8},\"lad::LadKeys\""
+        },
+        {
+          "token": "ReferenceError",
+          "context": "183,\"bytes\":110412},\"flash.geom::Rectangle\":{\"count\":91,\"bytes\":484},\"ReferenceError\":{\"count\":1,\"bytes\":112},\"lad::LadRuntime\":{\"count\":2,\"bytes\":8},\"lad::LadKeys\""
+        },
+        {
+          "token": "ReferenceError",
+          "context": "198,\"bytes\":119292},\"flash.geom::Rectangle\":{\"count\":91,\"bytes\":484},\"ReferenceError\":{\"count\":1,\"bytes\":112},\"lad::LadRuntime\":{\"count\":2,\"bytes\":8},\"lad::LadKeys\""
+        },
+        {
+          "token": "ReferenceError",
+          "context": "675,\"bytes\":401676},\"flash.geom::Rectangle\":{\"count\":91,\"bytes\":484},\"ReferenceError\":{\"count\":1,\"bytes\":112},\"lad::LadRuntime\":{\"count\":2,\"bytes\":8},\"lad::LadKeys\""
+        },
+        {
+          "token": "ReferenceError",
+          "context": "4,\"bytes\":371484},\"flash.geom::Rectangle\":{\"count\":559,\"bytes\":2356},\"ReferenceError\":{\"count\":1,\"bytes\":112},\"lad::LadRuntime\":{\"count\":2,\"bytes\":8},\"rconnect.game"
+        },
+        {
+          "token": "ReferenceError",
+          "context": "0,\"bytes\":321756},\"flash.geom::Rectangle\":{\"count\":566,\"bytes\":2684},\"ReferenceError\":{\"count\":1,\"bytes\":112},\"lad::LadRuntime\":{\"count\":2,\"bytes\":8},\"lad::LadKeys\""
+        }
+      ],
+      "profile_data": true
+    }
+  ],
+  "original_results_unchanged": true,
+  "semantic_corpus_source": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-wall-working-set\\data\\flight-payloads.json",
+  "corpus_sha256": "6a3054ebef1d39bac535f87dbcd8ec62a160ed29a6db510cf06c23450af96f2b",
+  "corpus_is_current_density_distribution": false,
+  "python_zlib_size_only_not_AS_speed": true,
+  "size_rows": [
+    {
+      "id": 0,
+      "pixels": 171,
+      "legacy_chars": 1240,
+      "binary_chars": 1040,
+      "raw_bytes": 1028
+    },
+    {
+      "id": 1,
+      "pixels": 623,
+      "legacy_chars": 4348,
+      "binary_chars": 3616,
+      "raw_bytes": 3740
+    },
+    {
+      "id": 2,
+      "pixels": 171,
+      "legacy_chars": 1140,
+      "binary_chars": 944,
+      "raw_bytes": 1028
+    },
+    {
+      "id": 3,
+      "pixels": 624,
+      "legacy_chars": 4076,
+      "binary_chars": 3384,
+      "raw_bytes": 3746
+    },
+    {
+      "id": 4,
+      "pixels": 623,
+      "legacy_chars": 3996,
+      "binary_chars": 3296,
+      "raw_bytes": 3740
+    },
+    {
+      "id": 5,
+      "pixels": 623,
+      "legacy_chars": 3896,
+      "binary_chars": 3208,
+      "raw_bytes": 3740
+    },
+    {
+      "id": 6,
+      "pixels": 623,
+      "legacy_chars": 3716,
+      "binary_chars": 3028,
+      "raw_bytes": 3740
+    },
+    {
+      "id": 7,
+      "pixels": 621,
+      "legacy_chars": 3968,
+      "binary_chars": 3240,
+      "raw_bytes": 3728
+    },
+    {
+      "id": 8,
+      "pixels": 342,
+      "legacy_chars": 2464,
+      "binary_chars": 1992,
+      "raw_bytes": 2054
+    },
+    {
+      "id": 9,
+      "pixels": 623,
+      "legacy_chars": 4440,
+      "binary_chars": 3664,
+      "raw_bytes": 3740
+    },
+    {
+      "id": 10,
+      "pixels": 624,
+      "legacy_chars": 3928,
+      "binary_chars": 3360,
+      "raw_bytes": 3746
+    },
+    {
+      "id": 11,
+      "pixels": 624,
+      "legacy_chars": 4024,
+      "binary_chars": 3432,
+      "raw_bytes": 3746
+    },
+    {
+      "id": 12,
+      "pixels": 624,
+      "legacy_chars": 3900,
+      "binary_chars": 3344,
+      "raw_bytes": 3746
+    },
+    {
+      "id": 13,
+      "pixels": 624,
+      "legacy_chars": 3768,
+      "binary_chars": 3148,
+      "raw_bytes": 3746
+    },
+    {
+      "id": 14,
+      "pixels": 1496,
+      "legacy_chars": 4312,
+      "binary_chars": 3884,
+      "raw_bytes": 8978
+    },
+    {
+      "id": 15,
+      "pixels": 624,
+      "legacy_chars": 4248,
+      "binary_chars": 3516,
+      "raw_bytes": 3746
+    },
+    {
+      "id": 16,
+      "pixels": 613,
+      "legacy_chars": 3496,
+      "binary_chars": 2912,
+      "raw_bytes": 3680
+    },
+    {
+      "id": 17,
+      "pixels": 624,
+      "legacy_chars": 3496,
+      "binary_chars": 2932,
+      "raw_bytes": 3746
+    },
+    {
+      "id": 18,
+      "pixels": 1600,
+      "legacy_chars": 4628,
+      "binary_chars": 4104,
+      "raw_bytes": 9602
+    },
+    {
+      "id": 19,
+      "pixels": 4,
+      "legacy_chars": 40,
+      "binary_chars": 36,
+      "raw_bytes": 26
+    },
+    {
+      "id": 20,
+      "pixels": 623,
+      "legacy_chars": 4188,
+      "binary_chars": 3480,
+      "raw_bytes": 3740
+    },
+    {
+      "id": 21,
+      "pixels": 624,
+      "legacy_chars": 4200,
+      "binary_chars": 3460,
+      "raw_bytes": 3746
+    },
+    {
+      "id": 22,
+      "pixels": 624,
+      "legacy_chars": 4168,
+      "binary_chars": 3452,
+      "raw_bytes": 3746
+    },
+    {
+      "id": 23,
+      "pixels": 624,
+      "legacy_chars": 3928,
+      "binary_chars": 3240,
+      "raw_bytes": 3746
+    },
+    {
+      "id": 24,
+      "pixels": 173,
+      "legacy_chars": 1200,
+      "binary_chars": 1036,
+      "raw_bytes": 1040
+    },
+    {
+      "id": 25,
+      "pixels": 624,
+      "legacy_chars": 4132,
+      "binary_chars": 3484,
+      "raw_bytes": 3746
+    },
+    {
+      "id": 26,
+      "pixels": 624,
+      "legacy_chars": 4056,
+      "binary_chars": 3388,
+      "raw_bytes": 3746
+    },
+    {
+      "id": 27,
+      "pixels": 623,
+      "legacy_chars": 4032,
+      "binary_chars": 3316,
+      "raw_bytes": 3740
+    },
+    {
+      "id": 28,
+      "pixels": 624,
+      "legacy_chars": 3832,
+      "binary_chars": 3124,
+      "raw_bytes": 3746
+    },
+    {
+      "id": 29,
+      "pixels": 173,
+      "legacy_chars": 1172,
+      "binary_chars": 1000,
+      "raw_bytes": 1040
+    },
+    {
+      "id": 30,
+      "pixels": 575,
+      "legacy_chars": 3912,
+      "binary_chars": 3216,
+      "raw_bytes": 3452
+    },
+    {
+      "id": 31,
+      "pixels": 6,
+      "legacy_chars": 36,
+      "binary_chars": 40,
+      "raw_bytes": 38
+    },
+    {
+      "id": 32,
+      "pixels": 638,
+      "legacy_chars": 4544,
+      "binary_chars": 3728,
+      "raw_bytes": 3830
+    },
+    {
+      "id": 33,
+      "pixels": 346,
+      "legacy_chars": 2332,
+      "binary_chars": 1948,
+      "raw_bytes": 2078
+    },
+    {
+      "id": 34,
+      "pixels": 638,
+      "legacy_chars": 4092,
+      "binary_chars": 3344,
+      "raw_bytes": 3830
+    },
+    {
+      "id": 35,
+      "pixels": 638,
+      "legacy_chars": 3940,
+      "binary_chars": 3216,
+      "raw_bytes": 3830
+    },
+    {
+      "id": 36,
+      "pixels": 638,
+      "legacy_chars": 4040,
+      "binary_chars": 3320,
+      "raw_bytes": 3830
+    },
+    {
+      "id": 37,
+      "pixels": 638,
+      "legacy_chars": 4224,
+      "binary_chars": 3428,
+      "raw_bytes": 3830
+    },
+    {
+      "id": 38,
+      "pixels": 638,
+      "legacy_chars": 4220,
+      "binary_chars": 3520,
+      "raw_bytes": 3830
+    },
+    {
+      "id": 39,
+      "pixels": 638,
+      "legacy_chars": 4252,
+      "binary_chars": 3476,
+      "raw_bytes": 3830
+    },
+    {
+      "id": 40,
+      "pixels": 638,
+      "legacy_chars": 4280,
+      "binary_chars": 3508,
+      "raw_bytes": 3830
+    },
+    {
+      "id": 41,
+      "pixels": 638,
+      "legacy_chars": 4280,
+      "binary_chars": 3504,
+      "raw_bytes": 3830
+    },
+    {
+      "id": 42,
+      "pixels": 346,
+      "legacy_chars": 2588,
+      "binary_chars": 2128,
+      "raw_bytes": 2078
+    },
+    {
+      "id": 43,
+      "pixels": 636,
+      "legacy_chars": 4280,
+      "binary_chars": 3512,
+      "raw_bytes": 3818
+    },
+    {
+      "id": 44,
+      "pixels": 637,
+      "legacy_chars": 4380,
+      "binary_chars": 3560,
+      "raw_bytes": 3824
+    },
+    {
+      "id": 45,
+      "pixels": 638,
+      "legacy_chars": 4004,
+      "binary_chars": 3228,
+      "raw_bytes": 3830
+    },
+    {
+      "id": 46,
+      "pixels": 634,
+      "legacy_chars": 4300,
+      "binary_chars": 3560,
+      "raw_bytes": 3806
+    },
+    {
+      "id": 47,
+      "pixels": 636,
+      "legacy_chars": 4008,
+      "binary_chars": 3348,
+      "raw_bytes": 3818
+    },
+    {
+      "id": 48,
+      "pixels": 637,
+      "legacy_chars": 4488,
+      "binary_chars": 3680,
+      "raw_bytes": 3824
+    },
+    {
+      "id": 49,
+      "pixels": 637,
+      "legacy_chars": 4268,
+      "binary_chars": 3536,
+      "raw_bytes": 3824
+    },
+    {
+      "id": 50,
+      "pixels": 346,
+      "legacy_chars": 2492,
+      "binary_chars": 2084,
+      "raw_bytes": 2078
+    },
+    {
+      "id": 51,
+      "pixels": 638,
+      "legacy_chars": 4264,
+      "binary_chars": 3500,
+      "raw_bytes": 3830
+    },
+    {
+      "id": 52,
+      "pixels": 638,
+      "legacy_chars": 4320,
+      "binary_chars": 3548,
+      "raw_bytes": 3830
+    },
+    {
+      "id": 53,
+      "pixels": 638,
+      "legacy_chars": 4136,
+      "binary_chars": 3396,
+      "raw_bytes": 3830
+    },
+    {
+      "id": 54,
+      "pixels": 638,
+      "legacy_chars": 4380,
+      "binary_chars": 3640,
+      "raw_bytes": 3830
+    },
+    {
+      "id": 55,
+      "pixels": 638,
+      "legacy_chars": 4328,
+      "binary_chars": 3568,
+      "raw_bytes": 3830
+    },
+    {
+      "id": 56,
+      "pixels": 638,
+      "legacy_chars": 4096,
+      "binary_chars": 3356,
+      "raw_bytes": 3830
+    },
+    {
+      "id": 57,
+      "pixels": 1500,
+      "legacy_chars": 4324,
+      "binary_chars": 3896,
+      "raw_bytes": 9002
+    },
+    {
+      "id": 58,
+      "pixels": 346,
+      "legacy_chars": 2424,
+      "binary_chars": 1992,
+      "raw_bytes": 2078
+    },
+    {
+      "id": 59,
+      "pixels": 638,
+      "legacy_chars": 4320,
+      "binary_chars": 3556,
+      "raw_bytes": 3830
+    },
+    {
+      "id": 60,
+      "pixels": 638,
+      "legacy_chars": 4592,
+      "binary_chars": 3748,
+      "raw_bytes": 3830
+    },
+    {
+      "id": 61,
+      "pixels": 576,
+      "legacy_chars": 3864,
+      "binary_chars": 3188,
+      "raw_bytes": 3458
+    },
+    {
+      "id": 62,
+      "pixels": 1576,
+      "legacy_chars": 4556,
+      "binary_chars": 4044,
+      "raw_bytes": 9458
+    },
+    {
+      "id": 63,
+      "pixels": 601,
+      "legacy_chars": 4272,
+      "binary_chars": 3532,
+      "raw_bytes": 3608
+    },
+    {
+      "id": 64,
+      "pixels": 171,
+      "legacy_chars": 1200,
+      "binary_chars": 1012,
+      "raw_bytes": 1028
+    },
+    {
+      "id": 65,
+      "pixels": 624,
+      "legacy_chars": 3824,
+      "binary_chars": 3120,
+      "raw_bytes": 3746
+    },
+    {
+      "id": 66,
+      "pixels": 624,
+      "legacy_chars": 3488,
+      "binary_chars": 2912,
+      "raw_bytes": 3746
+    },
+    {
+      "id": 67,
+      "pixels": 624,
+      "legacy_chars": 3584,
+      "binary_chars": 2992,
+      "raw_bytes": 3746
+    },
+    {
+      "id": 68,
+      "pixels": 624,
+      "legacy_chars": 3736,
+      "binary_chars": 2972,
+      "raw_bytes": 3746
+    },
+    {
+      "id": 69,
+      "pixels": 342,
+      "legacy_chars": 2316,
+      "binary_chars": 1900,
+      "raw_bytes": 2054
+    },
+    {
+      "id": 70,
+      "pixels": 624,
+      "legacy_chars": 4044,
+      "binary_chars": 3288,
+      "raw_bytes": 3746
+    },
+    {
+      "id": 71,
+      "pixels": 624,
+      "legacy_chars": 3504,
+      "binary_chars": 2900,
+      "raw_bytes": 3746
+    },
+    {
+      "id": 72,
+      "pixels": 624,
+      "legacy_chars": 3740,
+      "binary_chars": 3160,
+      "raw_bytes": 3746
+    },
+    {
+      "id": 73,
+      "pixels": 624,
+      "legacy_chars": 3404,
+      "binary_chars": 2820,
+      "raw_bytes": 3746
+    },
+    {
+      "id": 74,
+      "pixels": 582,
+      "legacy_chars": 4272,
+      "binary_chars": 3544,
+      "raw_bytes": 3494
+    },
+    {
+      "id": 75,
+      "pixels": 624,
+      "legacy_chars": 3836,
+      "binary_chars": 3276,
+      "raw_bytes": 3746
+    },
+    {
+      "id": 76,
+      "pixels": 623,
+      "legacy_chars": 3884,
+      "binary_chars": 3176,
+      "raw_bytes": 3740
+    },
+    {
+      "id": 77,
+      "pixels": 624,
+      "legacy_chars": 3516,
+      "binary_chars": 2928,
+      "raw_bytes": 3746
+    },
+    {
+      "id": 78,
+      "pixels": 624,
+      "legacy_chars": 3308,
+      "binary_chars": 2804,
+      "raw_bytes": 3746
+    },
+    {
+      "id": 79,
+      "pixels": 624,
+      "legacy_chars": 3616,
+      "binary_chars": 3040,
+      "raw_bytes": 3746
+    },
+    {
+      "id": 80,
+      "pixels": 344,
+      "legacy_chars": 2408,
+      "binary_chars": 1980,
+      "raw_bytes": 2066
+    },
+    {
+      "id": 81,
+      "pixels": 624,
+      "legacy_chars": 3780,
+      "binary_chars": 3160,
+      "raw_bytes": 3746
+    }
+  ],
+  "size_totals": {
+    "legacy": 298328,
+    "binary": 247892
+  }
+}

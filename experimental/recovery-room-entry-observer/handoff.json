@@ -1,0 +1,24 @@
+{
+  "kind": "external-room-entry-observer",
+  "compiled": false,
+  "air_started": false,
+  "component_assertions_prepared": 43,
+  "offline_checks": 13,
+  "native_rerun": false,
+  "base_manifest": "3106b031b97743e2a0fda30e26ab735a387b201683339ab4335a998b0d25b784",
+  "sources": {
+    "check_offline.py": "d045830581457a4f089309933c5fcc8c26dd361322f46eb443184c94f903346d",
+    "component/RoomEntryConfirmation.as": "631b0ec4fdd5994e8dd2d9d97bc2a55fea1259c589cbd5c6558ab6fb584da56c",
+    "component/RoomEntryObserverChecks.as": "f2b9722c43b64f009370ee88a41ced28af9ef022de253dbab57b8d890a10c0bc",
+    "generate.py": "d58b0d8d92ab5593aebb1b5bc10dd548a7a22d7765ca0b6e3a623614d6887694",
+    "native-timeline.json": "fabe02b2eeedd5af5268409efcbcdb16e6497a9529fa74854017cfbf6e20aed1",
+    "observer.patch": "058f582d22805b398bb9363abce128cdeca271b7dc4aa95a97b9f0b2fa57e8d8",
+    "offline-result.json": "ac1d1aba3285b8044f0ecfa4b5a5565fd6a826b310af8f47e609974627916719",
+    "prepare.py": "7188e9c0fb06b80020b50cea6d7f1d5df8eb3aca2506643bf4e0a35f8597f5e2",
+    "README.md": "c6164a90eccc22192c9abdf8c2022cbe16f51e3b9c0360ad3652a0d1a2be66b0",
+    "run_native.py": "1937cfde01b5c2e183b334d0e025c36fe64ef72e12f32222945af3b07a2e3f81",
+    "static-checks.json": "310da3946df1d6f2c609d89274066a6ab32cd843f95f7bc9f880105323737b63",
+    "tests/RoomEntryConfirmation.as": "631b0ec4fdd5994e8dd2d9d97bc2a55fea1259c589cbd5c6558ab6fb584da56c",
+    "tests/RoomEntryProbe.as": "88e510f0b146d1c4d66bae5204f928d004960b59ffb89b14af3a5e9a9cda7a62"
+  }
+}

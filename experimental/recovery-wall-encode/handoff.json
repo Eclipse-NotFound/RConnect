@@ -1,0 +1,36 @@
+{
+  "kind": "isolated-wall-cell-encode",
+  "base": "recovery13",
+  "base_sha256": "1177eb1ae9b227bcf3c0eb39dedad92b63ac16dcb7ffb0b421ea0a2024bfddb1",
+  "production_files": [
+    "src/rconnect/game/WallImpactVisuals.as",
+    "src/rconnect/net/WallCellCodec.as"
+  ],
+  "offline_checks": 17,
+  "component_assertions_prepared": 49,
+  "compiled": false,
+  "AIRStarted": false,
+  "performance_qualified": false,
+  "files": {
+    "analyze.py": "ffc54d85c7d886c6699106e6b17a1c76a3fcd921fe07647c0a6e48696b17e0cd",
+    "check_offline.py": "475aa5ef9524bb38fa8cc3a0b322f09f88bb82b8d9b77c71d2de25a2aec7b473",
+    "components/fe/weapon/Bullet.as": "013887d103cdeadf2e4fc327a424d5f5fe5db00de9e137b37b8fcea4cfa597ae",
+    "components/natural-payloads.json": "6a3054ebef1d39bac535f87dbcd8ec62a160ed29a6db510cf06c23450af96f2b",
+    "components/rconnect/core/Log.as": "d81f766636e0baf8153d1ebc172fa15c5ce7d491974f9b028110f26eb8a737a7",
+    "components/rconnect/game/GameBridge.as": "f0d9a9dcc7c6c640acc19d82103fd60d726117e72973cf3b2b273363dfe491a6",
+    "components/rconnect/game/WallAfter.as": "90bc0ebf1d128f8f7ef6bff92bb32aeeedd81e8bb4a9fe61c6fafd43c0c1e159",
+    "components/rconnect/game/WallBefore.as": "840bfc556b0462ebfb329b2454af2b454174cd793c8112d742b3759346eac49e",
+    "components/rconnect/net/RoomCodec.as": "296ee4d8d94f77faa62dcc17a39cb1e2492c756d3027311713c33935ca6b6b4a",
+    "components/rconnect/net/WallCellCodec.as": "4d0bb10dbe60227f167fad2d0c48fa3e6dd22b114f496084ba651ca84761dc8c",
+    "components/WallEncodeChecks.as": "1ae84a1e6e2b8238a612227378f6a9390ee45e3a968bf4a094681e9dde9965e7",
+    "inputs.json": "563741b63bdbfb7f65458461ab95131909def831e2e7b5c501d251f64695e8fe",
+    "offline-result.json": "e96844605a97b7cdfe45929c96a9a2d791c0b5dade9f44758557dce3e9e381dc",
+    "prepare.py": "54637ca1ebc8dac8724675f1966e1569027ef3597e3de28755ff7a7ce005578e",
+    "profile-review.json": "cb5e92704bbc09a15e91d1414022e0a2ef5fc6b450e9f3de8e4d66e66b1f74ca",
+    "proposal.patch": "a476e316f1d3f04a8a7af5a0eb710136fda2be7ba3164f9a3e959da70b16d315",
+    "README.md": "732efa5f34855e479230fc28a1366939c26137e9db5eeb09d5204850fc4585b9",
+    "run_component.py": "48a3486500a5153cd62dda5e7dd26912455cda231aaf1c99b985da155a7dac7f",
+    "src/rconnect/game/WallImpactVisuals.as": "0c0917eac6c417814612183f4951d2d0a37cad5ab2743945b6313d941532d3f5",
+    "src/rconnect/net/WallCellCodec.as": "4d0bb10dbe60227f167fad2d0c48fa3e6dd22b114f496084ba651ca84761dc8c"
+  }
+}

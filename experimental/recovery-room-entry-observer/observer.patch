@@ -1,0 +1,72 @@
+--- scene12/RoomEntryProbe.as
++++ observer/RoomEntryProbe.as
+@@ -22,6 +22,7 @@
+       private var pictures:Object={},pendingAt:int=-1,waits:Array=[];
+       private var worldPackets:int=0;
+       private var connection:Object;
++      private var confirmation:RoomEntryConfirmation=new RoomEntryConfirmation();
+       public function RoomEntryProbe(m:RConnectMod) {
+          mod=m;m.stage.addEventListener(Event.RENDER,render,false,-2147483648);
+          m.stage.addEventListener(Event.ENTER_FRAME,watch,false,200000);watch();
+@@ -49,12 +50,12 @@
+          var current:Object=session.mode==Session.CONNECTED?session.link:
+             (session.mode==Session.HOSTING && session.peers.length>0?session.peers[0].link:null);
+          if(current!==connection) {
+-            connection=current;confirmedRoom=null;confirmedLand=null;confirmedStamp=null;
++            connection=current;confirmedRoom=null;confirmedLand=null;confirmedStamp=null;confirmation.reset();
+          }
+       }
+       private function observeLink(link:TcpLink):void {
+          if(link==null || links[link])return;
+-         links[link]=true;link.addEventListener(TcpLink.MESSAGE,settled);
++         links[link]=true;link.addEventListener(TcpLink.MESSAGE,settled,false,-2147483648);
+       }
+       private function settled(e:NetMessageEvent):void {
+          // A new TCP connection must confirm even an unchanged native Land.
+@@ -74,14 +75,31 @@
+             }
+          }
+          if(p==null || p.type!="room")return;
+-         // Session handles these messages first. Record the actual confirmed
+-         // identity here: a test/native action can travel again before RENDER.
+-         if((mod.session.mode==Session.HOSTING && p.op=="ack") ||
++         // Session's priority-0 handler has already processed this exact message.
++         // READY can commit/release the host locally; ACK confirms the peer later.
++         // Reject messages from a previously observed (now disconnected) socket.
++         if(e.currentTarget!==connection)return;
++         var isHost:Boolean=mod.session.mode==Session.HOSTING;
++         if((isHost && (p.op=="ready" || p.op=="ack")) ||
+             (mod.session.mode==Session.CONNECTED && p.op=="grant")) {
+-            if(!rooms.ready || rooms.busy || int(p.barrier)!=int(rooms.term))return;
+-            confirmedRoom=mod.game.world.loc;confirmedLand=mod.game.world.land;
+-            confirmedStamp=rooms.stamp({});
++            var view:Object=confirmationView(),accepted:Boolean=confirmation.observe(isHost,p,view);
++            if(accepted) {
++               confirmedRoom=confirmation.room;confirmedLand=confirmation.land;confirmedStamp=confirmation.stamp;
++            }
++            Log.d("ROOM ENTRY CONFIRM "+JSON.stringify({at:getTimer(),wall:new Date().time,op:p.op,
++               accepted:accepted,localCommitted:confirmation.same(view),
++               peerAcknowledged:confirmation.same(view) && confirmation.peerAcknowledged,confirmedStamp:confirmedStamp,
++               barrier:p.barrier,epoch:rooms.epoch,term:rooms.term,stamp:rooms.stamp({}),
++               ready:rooms.ready,busy:rooms.busy,canSync:rooms.canSyncWorld,
++               sameRoom:mod.game.world.loc===confirmedRoom,sameLand:mod.game.world.land===confirmedLand}));
+          }
++      }
++      private function confirmationView():Object {
++         var w:Object=mod.game.world,rooms:Object=mod.session.rooms;
++         return {room:w.loc,land:w.land,gameRoom:mod.game.loc,landRoom:w.land!=null?w.land.loc:null,
++            playerRoom:w.gg!=null?w.gg.loc:null,key:mod.game.roomKey(),stamp:rooms.stamp({}),
++            term:rooms.term,epoch:rooms.epoch,ready:rooms.ready,busy:rooms.busy,
++            authority:rooms.authority,canSync:rooms.canSyncWorld};
+       }
+       private function render(e:Event):void {
+          if(finished || mod.game==null || mod.game.world==null)return;
+@@ -92,7 +110,7 @@
+          var parent:DisplayObjectContainer=visual.parent;
+          var cover:DisplayObject=parent.getChildByName("rconnect-room-entry");
+          var earlyLoad:Boolean=int(w.t_exit)>0 && int(w.t_exit)<=16;
+-         var sameConfirmed:Boolean=confirmedRoom!=null && w.loc===confirmedRoom && w.land===confirmedLand;
++         var sameConfirmed:Boolean=confirmation.same(confirmationView());
+          // A remote-only handoff does not invalidate this confirmed native
+          // scene. It must remain visible while the ownership messages travel.
+          var pending:Boolean=!rooms.ready || !sameConfirmed;

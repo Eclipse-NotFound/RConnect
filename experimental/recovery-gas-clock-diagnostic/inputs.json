@@ -1,0 +1,48 @@
+{
+  "kind": "gas-clock-diagnostic",
+  "baseline_sha256": "1177eb1ae9b227bcf3c0eb39dedad92b63ac16dcb7ffb0b421ea0a2024bfddb1",
+  "baseline_manifest_sha256": "e7109bec3f02ef8c7b5cf1070293022bc1ebf941942b91486910a742fc139fc4",
+  "files": [
+    {
+      "source": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-13\\src\\rconnect\\game\\GameBridge.as",
+      "source_sha256": "26bb0f7cd4da7c74c83bd2657575823247196c41a861babf23bb40c17fc3cbf7",
+      "overlay": "src/rconnect/game/GameBridge.as",
+      "sha256": "43f2ffd6a861b20c930194084b3eab75a0110477d53a346624914f50a74ae3ad",
+      "stripped_bytes_equal": true
+    },
+    {
+      "source": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-13\\src\\rconnect\\game\\RemoteMotion.as",
+      "source_sha256": "5f0d0ba3b8de5ec1a08d392b4147f04a4d318c0bcdd0a2f7bbf236a5d28fc877",
+      "overlay": "src/rconnect/game/RemoteMotion.as",
+      "sha256": "1646fb2d9853416f1ba2805da427db31b5c79056a1aa10acf654ce41583640b4",
+      "stripped_bytes_equal": true
+    },
+    {
+      "source": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-13\\src\\rconnect\\game\\EnergyImpactVisuals.as",
+      "source_sha256": "8f6f299600e25ee019e88ff118cec4da51b318f196afa4bcf5ff5e6680fcd7c0",
+      "overlay": "src/rconnect/game/EnergyImpactVisuals.as",
+      "sha256": "dde3c62f166e2473fc1f69a6e65145585659ee67672d2c9b4c320089730eb9d0",
+      "stripped_bytes_equal": true
+    },
+    {
+      "source": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-gas-native-v2\\native\\GasPulseNativeTestDoc.as",
+      "source_sha256": "ce59b035fddb83dc1c37be145523884aef1ea621784321ff742bfb8ae25373ea",
+      "overlay": "tests/GasPulseNativeTestDoc.as",
+      "sha256": "f9d8395a6eaa7ba7c68e3ebb6926e20f6300ea0fbdd9ddefc8c125ff7525fd61",
+      "stripped_bytes_equal": true
+    }
+  ],
+  "support": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-gas-native-v2\\native\\GasPulseProbe.as": "f92507b2a8da89f8d2653c90a617f5ab1eaf008726e74129033065a332a61a72",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-gas-native-v2\\verify_results.py": "929201d6a5e4720b98c3ce073b89486cf2db35e4ca49ade181eac091af93716c"
+  },
+  "dependencies": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-flight-diagnostics\\make_overlay.py": "6b6dcb0c53d51e614ab9c8c6dc536d5affe18b1c136c347a30f6ce1904a57f98",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-flight-timing08\\make_overlay.py": "0a2c3b23ce32c3047297b91ff862aa3ba8c204a88bb512d43735869b28e351e1"
+  },
+  "diagnostic_only": true,
+  "new_files": {
+    "src/rconnect/diagnostics/FlightDiagnostics.as": "a7676ae6ffbe215882d32cc544fee154207b67ebe493be3d495b0294256753df",
+    "tests/GasClockRecorder.as": "14d7e64dd867ab84d59d667c1a488f8f1a67dfe34f1f32347dbcc31d4af9ce69"
+  }
+}

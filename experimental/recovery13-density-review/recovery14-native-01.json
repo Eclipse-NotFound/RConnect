@@ -1,0 +1,91 @@
+{
+  "run": "4277cc066e",
+  "candidate": "225a794040c71f2a55ff433366a7969201ac3a58ffaab0a655cee1e4eefbe5f7",
+  "passed": false,
+  "performance_qualified": false,
+  "installation_unchanged": true,
+  "same_runtime_as_reference": true,
+  "input_comparable": true,
+  "corridor_static_equal": true,
+  "checks": {
+    "host": 29,
+    "join": 40
+  },
+  "errors": {
+    "host": [],
+    "join": [
+      "COOP FAIL network-state 80 enemies keep stage frames progressing",
+      "COOP FAIL network-state weapon aim advances between snapshots",
+      "COOP FAIL network-state 80 enemies keep stage frames progressing",
+      "COOP FAIL network-state weapon aim advances between snapshots",
+      "COOP FAIL network-state 80 enemies keep stage frames progressing",
+      "COOP FAIL network-state weapon aim advances between snapshots",
+      "COOP FAIL network-state 80 enemies keep stage frames progressing",
+      "COOP FAIL network-state weapon aim advances between snapshots",
+      "COOP FAIL network-state 80 enemies keep stage frames progressing",
+      "COOP FAIL network-state weapon aim advances between snapshots",
+      "COOP FAIL network-state 80 enemies keep stage frames progressing",
+      "COOP FAIL network-state weapon aim advances between snapshots",
+      "COOP FAIL network-state 80 enemies keep stage frames progressing",
+      "COOP FAIL network-state weapon aim advances between snapshots"
+    ]
+  },
+  "windows": [
+    {
+      "frames": 36,
+      "p95ms": 306,
+      "maxms": 333,
+      "packets": 54,
+      "maxPacketMs": 532,
+      "aimSamples": 29
+    },
+    {
+      "frames": 40,
+      "p95ms": 376,
+      "maxms": 416,
+      "packets": 34,
+      "maxPacketMs": 547,
+      "aimSamples": 32
+    },
+    {
+      "frames": 41,
+      "p95ms": 349,
+      "maxms": 377,
+      "packets": 33,
+      "maxPacketMs": 577,
+      "aimSamples": 28
+    },
+    {
+      "frames": 42,
+      "p95ms": 329,
+      "maxms": 397,
+      "packets": 33,
+      "maxPacketMs": 552,
+      "aimSamples": 30
+    },
+    {
+      "frames": 41,
+      "p95ms": 405,
+      "maxms": 422,
+      "packets": 34,
+      "maxPacketMs": 581,
+      "aimSamples": 28
+    },
+    {
+      "frames": 40,
+      "p95ms": 361,
+      "maxms": 364,
+      "packets": 32,
+      "maxPacketMs": 609,
+      "aimSamples": 29
+    },
+    {
+      "frames": 41,
+      "p95ms": 375,
+      "maxms": 421,
+      "packets": 33,
+      "maxPacketMs": 568,
+      "aimSamples": 29
+    }
+  ]
+}

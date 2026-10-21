@@ -1,0 +1,27 @@
+{
+  "kind": "gas-clock-diagnostic-source-only",
+  "baseline_sha256": "1177eb1ae9b227bcf3c0eb39dedad92b63ac16dcb7ffb0b421ea0a2024bfddb1",
+  "files": {
+    "analyze.py": "6d77474715eac4e01691dfb3a6c126be7b04bf4f71742fdeb19f891ce69187c9",
+    "inputs.json": "fad1f919eca53c925686b1bebfd847c5e97abee2dbf6c805d3095f5f47ea0287",
+    "make_overlay.py": "6b50ba0da33e6f97880d0994510478d4d072045ca387c30a4f09d21c9d1b7b6a",
+    "README.md": "4de20ff95bf86cb5e1d83b73d56cf1ab1193c0c8c4f0971b68f3bd70bc01cfe1",
+    "src/rconnect/diagnostics/FlightDiagnostics.as": "a7676ae6ffbe215882d32cc544fee154207b67ebe493be3d495b0294256753df",
+    "src/rconnect/game/EnergyImpactVisuals.as": "dde3c62f166e2473fc1f69a6e65145585659ee67672d2c9b4c320089730eb9d0",
+    "src/rconnect/game/GameBridge.as": "43f2ffd6a861b20c930194084b3eab75a0110477d53a346624914f50a74ae3ad",
+    "src/rconnect/game/RemoteMotion.as": "1646fb2d9853416f1ba2805da427db31b5c79056a1aa10acf654ce41583640b4",
+    "static-checks.json": "e4a8b5881a32259ab3bd09423db93676164406ff1899f89a15aec22cd39a22ba",
+    "test_static.py": "7cb76c1b1c421bf2dd9877fab1dd90ced0482eb14e3c7f6f7e0fd6ebd2a600ab",
+    "tests/GasClockRecorder.as": "14d7e64dd867ab84d59d667c1a488f8f1a67dfe34f1f32347dbcc31d4af9ce69",
+    "tests/GasPulseNativeTestDoc.as": "f9d8395a6eaa7ba7c68e3ebb6926e20f6300ea0fbdd9ddefc8c125ff7525fd61"
+  },
+  "static_checks": 63,
+  "JVM": false,
+  "AIR": false,
+  "compiled": false,
+  "installed": false,
+  "diagnostic_only": true,
+  "diagnostic_runtime_qualified": false,
+  "performance_qualified": false,
+  "adapter_cancelled": true
+}

@@ -1,0 +1,6 @@
+{
+  "original_probe_calls": 15,
+  "all_original_probe_assertions_unchanged": true,
+  "original_suite_byte_exact": true,
+  "component_uses_exact_observer_helper": true
+}

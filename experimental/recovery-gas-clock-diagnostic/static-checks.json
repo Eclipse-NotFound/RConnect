@@ -1,0 +1,264 @@
+{
+  "passed": true,
+  "checks": 63,
+  "rows": [
+    {
+      "label": "Python syntax analyze.py",
+      "passed": true
+    },
+    {
+      "label": "Python syntax make_overlay.py",
+      "passed": true
+    },
+    {
+      "label": "Python syntax test_static.py",
+      "passed": true
+    },
+    {
+      "label": "AS package braces FlightDiagnostics.as",
+      "passed": true
+    },
+    {
+      "label": "AS package braces EnergyImpactVisuals.as",
+      "passed": true
+    },
+    {
+      "label": "AS package braces GameBridge.as",
+      "passed": true
+    },
+    {
+      "label": "AS package braces RemoteMotion.as",
+      "passed": true
+    },
+    {
+      "label": "AS package braces GasClockRecorder.as",
+      "passed": true
+    },
+    {
+      "label": "AS package braces GasPulseNativeTestDoc.as",
+      "passed": true
+    },
+    {
+      "label": "accurate13 binary and prepared ancestry",
+      "passed": true
+    },
+    {
+      "label": "all 87 accurate13 source files unchanged",
+      "passed": true
+    },
+    {
+      "label": "strip exact bytes GameBridge.as",
+      "passed": true
+    },
+    {
+      "label": "manifest hashes GameBridge.as",
+      "passed": true
+    },
+    {
+      "label": "strip exact bytes RemoteMotion.as",
+      "passed": true
+    },
+    {
+      "label": "manifest hashes RemoteMotion.as",
+      "passed": true
+    },
+    {
+      "label": "strip exact bytes EnergyImpactVisuals.as",
+      "passed": true
+    },
+    {
+      "label": "manifest hashes EnergyImpactVisuals.as",
+      "passed": true
+    },
+    {
+      "label": "strip exact bytes GasPulseNativeTestDoc.as",
+      "passed": true
+    },
+    {
+      "label": "manifest hashes GasPulseNativeTestDoc.as",
+      "passed": true
+    },
+    {
+      "label": "exact dependency make_overlay.py",
+      "passed": true
+    },
+    {
+      "label": "exact dependency make_overlay.py",
+      "passed": true
+    },
+    {
+      "label": "exact dependency GasPulseProbe.as",
+      "passed": true
+    },
+    {
+      "label": "exact dependency verify_results.py",
+      "passed": true
+    },
+    {
+      "label": "new helper manifest FlightDiagnostics.as",
+      "passed": true
+    },
+    {
+      "label": "new helper manifest GasClockRecorder.as",
+      "passed": true
+    },
+    {
+      "label": "no extra rateHeld call or owner traversal",
+      "passed": true
+    },
+    {
+      "label": "no added clock evaluation sample(now)",
+      "passed": true
+    },
+    {
+      "label": "no added clock evaluation sampleTimed(now)",
+      "passed": true
+    },
+    {
+      "label": "no added clock evaluation delay()",
+      "passed": true
+    },
+    {
+      "label": "no added clock evaluation pushTimed(snap,now)",
+      "passed": true
+    },
+    {
+      "label": "bind before first player push",
+      "passed": true
+    },
+    {
+      "label": "default null sink / two actor clocks",
+      "passed": true
+    },
+    {
+      "label": "late existing timed or legacy state rejected",
+      "passed": true
+    },
+    {
+      "label": "fixed 6MiB / overflow invalidates",
+      "passed": true
+    },
+    {
+      "label": "no diagnostic log inside production hooks",
+      "passed": true
+    },
+    {
+      "label": "only deferred export writes logs",
+      "passed": true
+    },
+    {
+      "label": "first round cutoff and deferred finish",
+      "passed": true
+    },
+    {
+      "label": "synthetic complete host",
+      "passed": true
+    },
+    {
+      "label": "synthetic complete join",
+      "passed": true
+    },
+    {
+      "label": "schema indices retain source/cursor/wire identity",
+      "passed": true
+    },
+    {
+      "label": "wire observer order is diagnostic not invented timing gate",
+      "passed": true
+    },
+    {
+      "label": "overflow fails",
+      "passed": true
+    },
+    {
+      "label": "late bind fails",
+      "passed": true
+    },
+    {
+      "label": "third clock fails",
+      "passed": true
+    },
+    {
+      "label": "callback error fails",
+      "passed": true
+    },
+    {
+      "label": "unfinished first round fails",
+      "passed": true
+    },
+    {
+      "label": "incomplete export fails",
+      "passed": true
+    },
+    {
+      "label": "late cutoff fails",
+      "passed": true
+    },
+    {
+      "label": "missing exact gas id fails",
+      "passed": true
+    },
+    {
+      "label": "missing source birth identity fails",
+      "passed": true
+    },
+    {
+      "label": "ambiguous gas identity fails",
+      "passed": true
+    },
+    {
+      "label": "stage visibility absent fails",
+      "passed": true
+    },
+    {
+      "label": "source history before binding fails",
+      "passed": true
+    },
+    {
+      "label": "missing removal fails",
+      "passed": true
+    },
+    {
+      "label": "missing strictEnd comparison time fails",
+      "passed": true
+    },
+    {
+      "label": "last sampled pose omission remains observable",
+      "passed": true
+    },
+    {
+      "label": "missing own cost fails",
+      "passed": true
+    },
+    {
+      "label": "unknown operation fails",
+      "passed": true
+    },
+    {
+      "label": "invalid numeric value fails",
+      "passed": true
+    },
+    {
+      "label": "malformed width fails",
+      "passed": true
+    },
+    {
+      "label": "unbalanced sample fails",
+      "passed": true
+    },
+    {
+      "label": "unbalanced push fails",
+      "passed": true
+    },
+    {
+      "label": "original FAIL never read as diagnostic pass qualification",
+      "passed": true
+    }
+  ],
+  "JVM": false,
+  "AIR": false,
+  "compiled": false,
+  "native_qualified": false,
+  "diagnostic_runtime_qualified": false,
+  "performance_qualified": false
+}

@@ -1,0 +1,717 @@
+{
+  "base_file_count": 87,
+  "unchanged_files": 84,
+  "removable_overlays": 3,
+  "added_helpers": 1,
+  "output_source_count": 88,
+  "all_87_original_files_stripped_bytes_equal": true,
+  "files": [
+    {
+      "path": "RConnectDoc.as",
+      "mode": "exact-copy",
+      "base_sha256": "764967e351e57e10fbcf1c3136d5170e633c6cd2e750a7427c6a180e3a1e34e1",
+      "source_sha256": "764967e351e57e10fbcf1c3136d5170e633c6cd2e750a7427c6a180e3a1e34e1",
+      "stripped_sha256": "764967e351e57e10fbcf1c3136d5170e633c6cd2e750a7427c6a180e3a1e34e1",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "RConnectMod.as",
+      "mode": "exact-copy",
+      "base_sha256": "ebee2d4cd487ecba51443b2de4d0139e7a87fd27d4c5d5400d01c89fa6da26f1",
+      "source_sha256": "ebee2d4cd487ecba51443b2de4d0139e7a87fd27d4c5d5400d01c89fa6da26f1",
+      "stripped_sha256": "ebee2d4cd487ecba51443b2de4d0139e7a87fd27d4c5d5400d01c89fa6da26f1",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "RConnectModDomains.as",
+      "mode": "exact-copy",
+      "base_sha256": "372167c4a32b2ac9b23b7addc7959ba3c70b7f74fea9732cdd1c650112eb9b00",
+      "source_sha256": "372167c4a32b2ac9b23b7addc7959ba3c70b7f74fea9732cdd1c650112eb9b00",
+      "stripped_sha256": "372167c4a32b2ac9b23b7addc7959ba3c70b7f74fea9732cdd1c650112eb9b00",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "fe/inter/RConnectTravelAccess.as",
+      "mode": "exact-copy",
+      "base_sha256": "ee2fb60621ba8ee21b6d585a284858be01eb6b9aee06cd4fe68e8c867dc1cec8",
+      "source_sha256": "ee2fb60621ba8ee21b6d585a284858be01eb6b9aee06cd4fe68e8c867dc1cec8",
+      "stripped_sha256": "ee2fb60621ba8ee21b6d585a284858be01eb6b9aee06cd4fe68e8c867dc1cec8",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "fe/serv/RConnectInteractionAccess.as",
+      "mode": "exact-copy",
+      "base_sha256": "9653273952f792db310f707a0232a88b15330c0fe7cccdb740394929f0da74cb",
+      "source_sha256": "9653273952f792db310f707a0232a88b15330c0fe7cccdb740394929f0da74cb",
+      "stripped_sha256": "9653273952f792db310f707a0232a88b15330c0fe7cccdb740394929f0da74cb",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "fe/serv/RConnectSecurityInteractionAccess.as",
+      "mode": "exact-copy",
+      "base_sha256": "1d1a89adc3d3a96c1c170e0d8f011deacd12b314ec46bde4e0621f1d6293e8a8",
+      "source_sha256": "1d1a89adc3d3a96c1c170e0d8f011deacd12b314ec46bde4e0621f1d6293e8a8",
+      "stripped_sha256": "1d1a89adc3d3a96c1c170e0d8f011deacd12b314ec46bde4e0621f1d6293e8a8",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "fe/unit/RConnectAnimationAccess.as",
+      "mode": "exact-copy",
+      "base_sha256": "2a0020f3a442c0d8b717e12d6a31ce26b51530e0a361930cb9035a68a2c41af7",
+      "source_sha256": "2a0020f3a442c0d8b717e12d6a31ce26b51530e0a361930cb9035a68a2c41af7",
+      "stripped_sha256": "2a0020f3a442c0d8b717e12d6a31ce26b51530e0a361930cb9035a68a2c41af7",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "fe/unit/RConnectFeedbackAccess.as",
+      "mode": "exact-copy",
+      "base_sha256": "92f35d760620a1277f21202b77549bafad00f2b3217dfeeadf341d22ef52b123",
+      "source_sha256": "92f35d760620a1277f21202b77549bafad00f2b3217dfeeadf341d22ef52b123",
+      "stripped_sha256": "92f35d760620a1277f21202b77549bafad00f2b3217dfeeadf341d22ef52b123",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "fe/unit/RConnectPerceptionAccess.as",
+      "mode": "exact-copy",
+      "base_sha256": "be6ee0a5795addfe0a55573b950b5990441731f9fc3233a39708bca832e967b8",
+      "source_sha256": "be6ee0a5795addfe0a55573b950b5990441731f9fc3233a39708bca832e967b8",
+      "stripped_sha256": "be6ee0a5795addfe0a55573b950b5990441731f9fc3233a39708bca832e967b8",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "fe/unit/RConnectSecurityAccess.as",
+      "mode": "exact-copy",
+      "base_sha256": "cb9c12c909bc1fea74bbbfdf06efb1dab57099d94a5498cb1de4a99bc8106318",
+      "source_sha256": "cb9c12c909bc1fea74bbbfdf06efb1dab57099d94a5498cb1de4a99bc8106318",
+      "stripped_sha256": "cb9c12c909bc1fea74bbbfdf06efb1dab57099d94a5498cb1de4a99bc8106318",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "fe/unit/RConnectTelekinesisAccess.as",
+      "mode": "exact-copy",
+      "base_sha256": "7498fa3c85f61b759730377bfee8b36d59b674f725670fe47503e5fd34e289f1",
+      "source_sha256": "7498fa3c85f61b759730377bfee8b36d59b674f725670fe47503e5fd34e289f1",
+      "stripped_sha256": "7498fa3c85f61b759730377bfee8b36d59b674f725670fe47503e5fd34e289f1",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "fe/unit/RConnectUnitAccess.as",
+      "mode": "exact-copy",
+      "base_sha256": "0558d8470454bb60069b90664302642a3facfcfe27291e4b5329923d834ac3d0",
+      "source_sha256": "0558d8470454bb60069b90664302642a3facfcfe27291e4b5329923d834ac3d0",
+      "stripped_sha256": "0558d8470454bb60069b90664302642a3facfcfe27291e4b5329923d834ac3d0",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "fe/weapon/RConnectMeleeAccess.as",
+      "mode": "exact-copy",
+      "base_sha256": "2f55938707bc2e0ce0dd72304e4126acad7b958faf712a72fced5d817a27a658",
+      "source_sha256": "2f55938707bc2e0ce0dd72304e4126acad7b958faf712a72fced5d817a27a658",
+      "stripped_sha256": "2f55938707bc2e0ce0dd72304e4126acad7b958faf712a72fced5d817a27a658",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "modlocales/connect/RCLocale.as",
+      "mode": "exact-copy",
+      "base_sha256": "e459365fc529e7ea89c70d5c2c742196a0fdd82e78b0d5efdf4e8cc82dc2566d",
+      "source_sha256": "e459365fc529e7ea89c70d5c2c742196a0fdd82e78b0d5efdf4e8cc82dc2566d",
+      "stripped_sha256": "e459365fc529e7ea89c70d5c2c742196a0fdd82e78b0d5efdf4e8cc82dc2566d",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "modlocales/connect/RCLocaleMessages.as",
+      "mode": "exact-copy",
+      "base_sha256": "1adf3374819dcb458c9af4fd50949a251cac688ffae07a8e2c42d10e4e405312",
+      "source_sha256": "1adf3374819dcb458c9af4fd50949a251cac688ffae07a8e2c42d10e4e405312",
+      "stripped_sha256": "1adf3374819dcb458c9af4fd50949a251cac688ffae07a8e2c42d10e4e405312",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/core/Config.as",
+      "mode": "exact-copy",
+      "base_sha256": "28de8236cf4d8ef66b70db419484be366fb0d7df4400266d15ef089b358d505d",
+      "source_sha256": "28de8236cf4d8ef66b70db419484be366fb0d7df4400266d15ef089b358d505d",
+      "stripped_sha256": "28de8236cf4d8ef66b70db419484be366fb0d7df4400266d15ef089b358d505d",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/core/CoopPause.as",
+      "mode": "exact-copy",
+      "base_sha256": "dd3428e87665d53dde470e36dadb37389f9819f5a00b48a9add154f1505662f9",
+      "source_sha256": "dd3428e87665d53dde470e36dadb37389f9819f5a00b48a9add154f1505662f9",
+      "stripped_sha256": "dd3428e87665d53dde470e36dadb37389f9819f5a00b48a9add154f1505662f9",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/core/EnemyGrip.as",
+      "mode": "exact-copy",
+      "base_sha256": "ebf5e806aaf74a407df2e3eff5a90b92786de4deb2a2890e2fe31dcb92cca176",
+      "source_sha256": "ebf5e806aaf74a407df2e3eff5a90b92786de4deb2a2890e2fe31dcb92cca176",
+      "stripped_sha256": "ebf5e806aaf74a407df2e3eff5a90b92786de4deb2a2890e2fe31dcb92cca176",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/core/FirstRasterGate.as",
+      "mode": "exact-copy",
+      "base_sha256": "c4db67de41dd3e21d6aa5949f4214cf6b8ef49521c784d85e1e95dc447745821",
+      "source_sha256": "c4db67de41dd3e21d6aa5949f4214cf6b8ef49521c784d85e1e95dc447745821",
+      "stripped_sha256": "c4db67de41dd3e21d6aa5949f4214cf6b8ef49521c784d85e1e95dc447745821",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/core/FriendlyFire.as",
+      "mode": "exact-copy",
+      "base_sha256": "592e6790affd4e6037659fcc38dc798b2f5a5a1fcdf4eec1f594c0e56ee4c606",
+      "source_sha256": "592e6790affd4e6037659fcc38dc798b2f5a5a1fcdf4eec1f594c0e56ee4c606",
+      "stripped_sha256": "592e6790affd4e6037659fcc38dc798b2f5a5a1fcdf4eec1f594c0e56ee4c606",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/core/Log.as",
+      "mode": "exact-copy",
+      "base_sha256": "3863a2136c06c7769483945f3c24456ca8b2ddefe842ca6f696049cf750428f7",
+      "source_sha256": "3863a2136c06c7769483945f3c24456ca8b2ddefe842ca6f696049cf750428f7",
+      "stripped_sha256": "3863a2136c06c7769483945f3c24456ca8b2ddefe842ca6f696049cf750428f7",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/core/ManualStartup.as",
+      "mode": "exact-copy",
+      "base_sha256": "16ed42504c3bb5ccd4211d8cda7c0bb030eafbfe80d46e5ec761d1e40abb010e",
+      "source_sha256": "16ed42504c3bb5ccd4211d8cda7c0bb030eafbfe80d46e5ec761d1e40abb010e",
+      "stripped_sha256": "16ed42504c3bb5ccd4211d8cda7c0bb030eafbfe80d46e5ec761d1e40abb010e",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/core/MapGeneration.as",
+      "mode": "exact-copy",
+      "base_sha256": "d1cf5413388382bf8517c95326fd5009c7b7510e0cde5dd409e988d4bcd1c774",
+      "source_sha256": "d1cf5413388382bf8517c95326fd5009c7b7510e0cde5dd409e988d4bcd1c774",
+      "stripped_sha256": "d1cf5413388382bf8517c95326fd5009c7b7510e0cde5dd409e988d4bcd1c774",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/core/NativeTravelPlan.as",
+      "mode": "exact-copy",
+      "base_sha256": "e40903e83e23996d2aac1bb10984ffedf6de7984e541de1bf15b2fd0aa9309d1",
+      "source_sha256": "e40903e83e23996d2aac1bb10984ffedf6de7984e541de1bf15b2fd0aa9309d1",
+      "stripped_sha256": "e40903e83e23996d2aac1bb10984ffedf6de7984e541de1bf15b2fd0aa9309d1",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/core/PeerGrip.as",
+      "mode": "exact-copy",
+      "base_sha256": "e85e81da3c318e9163592ffdaae84e067fda6f8d3af93cd66c7dc043905d8840",
+      "source_sha256": "e85e81da3c318e9163592ffdaae84e067fda6f8d3af93cd66c7dc043905d8840",
+      "stripped_sha256": "e85e81da3c318e9163592ffdaae84e067fda6f8d3af93cd66c7dc043905d8840",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/core/PeerThrowDamage.as",
+      "mode": "exact-copy",
+      "base_sha256": "8e375c08409d3a886a55278c9e9410002df05c18956e004d8579ffaceecb0097",
+      "source_sha256": "8e375c08409d3a886a55278c9e9410002df05c18956e004d8579ffaceecb0097",
+      "stripped_sha256": "8e375c08409d3a886a55278c9e9410002df05c18956e004d8579ffaceecb0097",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/core/PlayerMines.as",
+      "mode": "exact-copy",
+      "base_sha256": "3744643bf28902f8332d366aa0f6436c2ebd698d496af812286c164a10a0fc3f",
+      "source_sha256": "3744643bf28902f8332d366aa0f6436c2ebd698d496af812286c164a10a0fc3f",
+      "stripped_sha256": "3744643bf28902f8332d366aa0f6436c2ebd698d496af812286c164a10a0fc3f",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/core/ProjectileGrip.as",
+      "mode": "exact-copy",
+      "base_sha256": "1af840a99c2f080f13e5a10264fa80e0057934231ce596edf3bdbf4fe31aa700",
+      "source_sha256": "1af840a99c2f080f13e5a10264fa80e0057934231ce596edf3bdbf4fe31aa700",
+      "stripped_sha256": "1af840a99c2f080f13e5a10264fa80e0057934231ce596edf3bdbf4fe31aa700",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/core/RoomDiagnostics.as",
+      "mode": "exact-copy",
+      "base_sha256": "fabbb2506701b1da9b88f89c81141f7ec3cec06be248c332bfc132b7d68cd175",
+      "source_sha256": "fabbb2506701b1da9b88f89c81141f7ec3cec06be248c332bfc132b7d68cd175",
+      "stripped_sha256": "fabbb2506701b1da9b88f89c81141f7ec3cec06be248c332bfc132b7d68cd175",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/core/RoomSync.as",
+      "mode": "exact-copy",
+      "base_sha256": "c2e68fe658a81be4b3ceb285daf453ca57b9d4a5895e80720dd629c374e3f85e",
+      "source_sha256": "c2e68fe658a81be4b3ceb285daf453ca57b9d4a5895e80720dd629c374e3f85e",
+      "stripped_sha256": "c2e68fe658a81be4b3ceb285daf453ca57b9d4a5895e80720dd629c374e3f85e",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/core/SecurityTerminals.as",
+      "mode": "exact-copy",
+      "base_sha256": "4d400bb5e48ec32ef2750849e46dee8c6fcffa205719e5af9ae197ac2cfcaf1b",
+      "source_sha256": "4d400bb5e48ec32ef2750849e46dee8c6fcffa205719e5af9ae197ac2cfcaf1b",
+      "stripped_sha256": "4d400bb5e48ec32ef2750849e46dee8c6fcffa205719e5af9ae197ac2cfcaf1b",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/core/SeedRasterEntry.as",
+      "mode": "exact-copy",
+      "base_sha256": "9980a528b48051906e5bf4128d304b1687cfde02a99980ddfcbbbf80c8d5972e",
+      "source_sha256": "9980a528b48051906e5bf4128d304b1687cfde02a99980ddfcbbbf80c8d5972e",
+      "stripped_sha256": "9980a528b48051906e5bf4128d304b1687cfde02a99980ddfcbbbf80c8d5972e",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/core/Session.as",
+      "mode": "exact-copy",
+      "base_sha256": "e699b9c5a02799367bba8afd924d450d064cab3f0a5e9a36ea7d400b378b10ba",
+      "source_sha256": "e699b9c5a02799367bba8afd924d450d064cab3f0a5e9a36ea7d400b378b10ba",
+      "stripped_sha256": "e699b9c5a02799367bba8afd924d450d064cab3f0a5e9a36ea7d400b378b10ba",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/core/TeammateNavigation.as",
+      "mode": "exact-copy",
+      "base_sha256": "d0a31616433a654b1fadde9b9b387ac16caae35335770280023c8ad6e92983ed",
+      "source_sha256": "d0a31616433a654b1fadde9b9b387ac16caae35335770280023c8ad6e92983ed",
+      "stripped_sha256": "d0a31616433a654b1fadde9b9b387ac16caae35335770280023c8ad6e92983ed",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/core/TravelGuard.as",
+      "mode": "exact-copy",
+      "base_sha256": "c0f02644d7a835913e02d7a9fdb57a8516430b3a6d3d6b5695fca7a6039fb297",
+      "source_sha256": "c0f02644d7a835913e02d7a9fdb57a8516430b3a6d3d6b5695fca7a6039fb297",
+      "stripped_sha256": "c0f02644d7a835913e02d7a9fdb57a8516430b3a6d3d6b5695fca7a6039fb297",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/core/TravelPlacement.as",
+      "mode": "exact-copy",
+      "base_sha256": "4b9a37772e2a71305e56ecec7158de7f3549df6bf17341c60e9df7c6d0835e52",
+      "source_sha256": "4b9a37772e2a71305e56ecec7158de7f3549df6bf17341c60e9df7c6d0835e52",
+      "stripped_sha256": "4b9a37772e2a71305e56ecec7158de7f3549df6bf17341c60e9df7c6d0835e52",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/game/BallisticImpactVisuals.as",
+      "mode": "exact-copy",
+      "base_sha256": "516ce98fb6d9523c5eeb7b7c8e9c4ccb320d11a75594af26f3e3c6e3b8caf6eb",
+      "source_sha256": "516ce98fb6d9523c5eeb7b7c8e9c4ccb320d11a75594af26f3e3c6e3b8caf6eb",
+      "stripped_sha256": "516ce98fb6d9523c5eeb7b7c8e9c4ccb320d11a75594af26f3e3c6e3b8caf6eb",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/game/BurnVisuals.as",
+      "mode": "exact-copy",
+      "base_sha256": "511bb9f5abbedd771e9b5588565087c07257d5a7fec5bbb4b2476cec2f841baf",
+      "source_sha256": "511bb9f5abbedd771e9b5588565087c07257d5a7fec5bbb4b2476cec2f841baf",
+      "stripped_sha256": "511bb9f5abbedd771e9b5588565087c07257d5a7fec5bbb4b2476cec2f841baf",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/game/CooperativeBonus.as",
+      "mode": "exact-copy",
+      "base_sha256": "d5de26364ff3b4c571257c6c074be67e8f9d8d5bf0c8767034b91d59bdab7c1f",
+      "source_sha256": "d5de26364ff3b4c571257c6c074be67e8f9d8d5bf0c8767034b91d59bdab7c1f",
+      "stripped_sha256": "d5de26364ff3b4c571257c6c074be67e8f9d8d5bf0c8767034b91d59bdab7c1f",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/game/DeathVisuals.as",
+      "mode": "exact-copy",
+      "base_sha256": "6456e166446874297546d32e8593e5a6cb6036b3e2619f08b75e5e03098e201c",
+      "source_sha256": "6456e166446874297546d32e8593e5a6cb6036b3e2619f08b75e5e03098e201c",
+      "stripped_sha256": "6456e166446874297546d32e8593e5a6cb6036b3e2619f08b75e5e03098e201c",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/game/EnergyImpactVisuals.as",
+      "mode": "removable-diagnostic",
+      "base_sha256": "8f6f299600e25ee019e88ff118cec4da51b318f196afa4bcf5ff5e6680fcd7c0",
+      "source_sha256": "dde3c62f166e2473fc1f69a6e65145585659ee67672d2c9b4c320089730eb9d0",
+      "stripped_sha256": "8f6f299600e25ee019e88ff118cec4da51b318f196afa4bcf5ff5e6680fcd7c0",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/game/ExplorationSync.as",
+      "mode": "exact-copy",
+      "base_sha256": "1a216868d899a78b9c46125e1d036c76cfe577277eb682ae0ccb68365e0ac757",
+      "source_sha256": "1a216868d899a78b9c46125e1d036c76cfe577277eb682ae0ccb68365e0ac757",
+      "stripped_sha256": "1a216868d899a78b9c46125e1d036c76cfe577277eb682ae0ccb68365e0ac757",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/game/GameBridge.as",
+      "mode": "removable-diagnostic",
+      "base_sha256": "26bb0f7cd4da7c74c83bd2657575823247196c41a861babf23bb40c17fc3cbf7",
+      "source_sha256": "43f2ffd6a861b20c930194084b3eab75a0110477d53a346624914f50a74ae3ad",
+      "stripped_sha256": "26bb0f7cd4da7c74c83bd2657575823247196c41a861babf23bb40c17fc3cbf7",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/game/GroundItemState.as",
+      "mode": "exact-copy",
+      "base_sha256": "2667094e8080d95624b92f3afafdf390c04d46664aded3844c919beebf0495e6",
+      "source_sha256": "2667094e8080d95624b92f3afafdf390c04d46664aded3844c919beebf0495e6",
+      "stripped_sha256": "2667094e8080d95624b92f3afafdf390c04d46664aded3844c919beebf0495e6",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/game/HitFeedback.as",
+      "mode": "exact-copy",
+      "base_sha256": "6fe0cdc3071cf2fc2372170e7cc1b6c5535169d1c141452613762567eb18269f",
+      "source_sha256": "6fe0cdc3071cf2fc2372170e7cc1b6c5535169d1c141452613762567eb18269f",
+      "stripped_sha256": "6fe0cdc3071cf2fc2372170e7cc1b6c5535169d1c141452613762567eb18269f",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/game/ImpactEventQueue.as",
+      "mode": "exact-copy",
+      "base_sha256": "1f8918766bbc3aad2d6237ba6ff59438ce8ca300abd3b1bd670c01b217f6fe5e",
+      "source_sha256": "1f8918766bbc3aad2d6237ba6ff59438ce8ca300abd3b1bd670c01b217f6fe5e",
+      "stripped_sha256": "1f8918766bbc3aad2d6237ba6ff59438ce8ca300abd3b1bd670c01b217f6fe5e",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/game/MeleeVisuals.as",
+      "mode": "exact-copy",
+      "base_sha256": "2a3c82dac17f96614f67d1711be5339056208e3485e38d2d159e0f303c075a00",
+      "source_sha256": "2a3c82dac17f96614f67d1711be5339056208e3485e38d2d159e0f303c075a00",
+      "stripped_sha256": "2a3c82dac17f96614f67d1711be5339056208e3485e38d2d159e0f303c075a00",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/game/MirrorHitUnit.as",
+      "mode": "exact-copy",
+      "base_sha256": "e5339ba7481c4e14d90171939e4a8729a4b8812dddf27bce1a006dd65de79147",
+      "source_sha256": "e5339ba7481c4e14d90171939e4a8729a4b8812dddf27bce1a006dd65de79147",
+      "stripped_sha256": "e5339ba7481c4e14d90171939e4a8729a4b8812dddf27bce1a006dd65de79147",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/game/MirrorMasks.as",
+      "mode": "exact-copy",
+      "base_sha256": "b4283cf68870010c4d454a6c7d511f00dbc5c3540e1839f878dfe680084f5e24",
+      "source_sha256": "b4283cf68870010c4d454a6c7d511f00dbc5c3540e1839f878dfe680084f5e24",
+      "stripped_sha256": "b4283cf68870010c4d454a6c7d511f00dbc5c3540e1839f878dfe680084f5e24",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/game/NativeHit.as",
+      "mode": "exact-copy",
+      "base_sha256": "04a3f3f1cc2c2f9331ce2095c04d1bd6cdd2d7f44249fae17b189bf558046f41",
+      "source_sha256": "04a3f3f1cc2c2f9331ce2095c04d1bd6cdd2d7f44249fae17b189bf558046f41",
+      "stripped_sha256": "04a3f3f1cc2c2f9331ce2095c04d1bd6cdd2d7f44249fae17b189bf558046f41",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/game/NativeRoomState.as",
+      "mode": "exact-copy",
+      "base_sha256": "1e91028348b29dc1bd00dc55cf4d5df5d5ee40469ef9ea0f7e9626d30a601938",
+      "source_sha256": "1e91028348b29dc1bd00dc55cf4d5df5d5ee40469ef9ea0f7e9626d30a601938",
+      "stripped_sha256": "1e91028348b29dc1bd00dc55cf4d5df5d5ee40469ef9ea0f7e9626d30a601938",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/game/NativeTileState.as",
+      "mode": "exact-copy",
+      "base_sha256": "eec001f4de8bdfc5ad892c2de2e892c07cceac15ebe7c5cf10fda4a1047592dc",
+      "source_sha256": "eec001f4de8bdfc5ad892c2de2e892c07cceac15ebe7c5cf10fda4a1047592dc",
+      "stripped_sha256": "eec001f4de8bdfc5ad892c2de2e892c07cceac15ebe7c5cf10fda4a1047592dc",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/game/ObjectIdentity.as",
+      "mode": "exact-copy",
+      "base_sha256": "0bc4cc3429f78f0e43164dea4af4481e4230fdf335bd0eed6e7090baf0937774",
+      "source_sha256": "0bc4cc3429f78f0e43164dea4af4481e4230fdf335bd0eed6e7090baf0937774",
+      "stripped_sha256": "0bc4cc3429f78f0e43164dea4af4481e4230fdf335bd0eed6e7090baf0937774",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/game/PeerAppearance.as",
+      "mode": "exact-copy",
+      "base_sha256": "84e4afbc0987aca18efec934e38b210562dc740bc8921ffcfb92558b267b219a",
+      "source_sha256": "84e4afbc0987aca18efec934e38b210562dc740bc8921ffcfb92558b267b219a",
+      "stripped_sha256": "84e4afbc0987aca18efec934e38b210562dc740bc8921ffcfb92558b267b219a",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/game/PeerHitUnit.as",
+      "mode": "exact-copy",
+      "base_sha256": "3f96545d85d8f2ec23c802201e6794122374efc895796bd2915fed88f3274c5d",
+      "source_sha256": "3f96545d85d8f2ec23c802201e6794122374efc895796bd2915fed88f3274c5d",
+      "stripped_sha256": "3f96545d85d8f2ec23c802201e6794122374efc895796bd2915fed88f3274c5d",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/game/PlayerBodyEffects.as",
+      "mode": "exact-copy",
+      "base_sha256": "11260028854167d8bd0c9f7e806e23081204dd0386902fdf746ba8e10485ccbd",
+      "source_sha256": "11260028854167d8bd0c9f7e806e23081204dd0386902fdf746ba8e10485ccbd",
+      "stripped_sha256": "11260028854167d8bd0c9f7e806e23081204dd0386902fdf746ba8e10485ccbd",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/game/PlayerMineGate.as",
+      "mode": "exact-copy",
+      "base_sha256": "200d5b535441781e3a02e71ec8132a8d923ae84b80f056e51e10f65827d0dd40",
+      "source_sha256": "200d5b535441781e3a02e71ec8132a8d923ae84b80f056e51e10f65827d0dd40",
+      "stripped_sha256": "200d5b535441781e3a02e71ec8132a8d923ae84b80f056e51e10f65827d0dd40",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/game/ProjectileExplosionVisuals.as",
+      "mode": "exact-copy",
+      "base_sha256": "c079a94739c8eafc48067e2872e6f09da60e618fab82b92df034e32e1b5e6144",
+      "source_sha256": "c079a94739c8eafc48067e2872e6f09da60e618fab82b92df034e32e1b5e6144",
+      "stripped_sha256": "c079a94739c8eafc48067e2872e6f09da60e618fab82b92df034e32e1b5e6144",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/game/ProjectileFrameStream.as",
+      "mode": "exact-copy",
+      "base_sha256": "a7039e20094c9df3f9e7a7ee2f22e1f1262d067c0e7f0356cb994743fbfc30d9",
+      "source_sha256": "a7039e20094c9df3f9e7a7ee2f22e1f1262d067c0e7f0356cb994743fbfc30d9",
+      "stripped_sha256": "a7039e20094c9df3f9e7a7ee2f22e1f1262d067c0e7f0356cb994743fbfc30d9",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/game/ProjectileVisuals.as",
+      "mode": "exact-copy",
+      "base_sha256": "17a65244a2d7283e37b699ade9d45eeef7a19e132b0b1a0a49e50da4fa0d85fd",
+      "source_sha256": "17a65244a2d7283e37b699ade9d45eeef7a19e132b0b1a0a49e50da4fa0d85fd",
+      "stripped_sha256": "17a65244a2d7283e37b699ade9d45eeef7a19e132b0b1a0a49e50da4fa0d85fd",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/game/RemoteArmor.as",
+      "mode": "exact-copy",
+      "base_sha256": "41d6baae9dd164454397d30b7194d5626ba004a374139a2a869c088f5adb59df",
+      "source_sha256": "41d6baae9dd164454397d30b7194d5626ba004a374139a2a869c088f5adb59df",
+      "stripped_sha256": "41d6baae9dd164454397d30b7194d5626ba004a374139a2a869c088f5adb59df",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/game/RemoteDamageUnit.as",
+      "mode": "exact-copy",
+      "base_sha256": "c9b22eb3bd0c3cc8abec7c93c1117c2b230a2f7256bd4ddd56f894bd02a44792",
+      "source_sha256": "c9b22eb3bd0c3cc8abec7c93c1117c2b230a2f7256bd4ddd56f894bd02a44792",
+      "stripped_sha256": "c9b22eb3bd0c3cc8abec7c93c1117c2b230a2f7256bd4ddd56f894bd02a44792",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/game/RemoteLoot.as",
+      "mode": "exact-copy",
+      "base_sha256": "bbe29cd6b2e97dae4c6fbcfa861d50883963f8dee752acee37cae795b5a6b666",
+      "source_sha256": "bbe29cd6b2e97dae4c6fbcfa861d50883963f8dee752acee37cae795b5a6b666",
+      "stripped_sha256": "bbe29cd6b2e97dae4c6fbcfa861d50883963f8dee752acee37cae795b5a6b666",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/game/RemoteMotion.as",
+      "mode": "removable-diagnostic",
+      "base_sha256": "5f0d0ba3b8de5ec1a08d392b4147f04a4d318c0bcdd0a2f7bbf236a5d28fc877",
+      "source_sha256": "1646fb2d9853416f1ba2805da427db31b5c79056a1aa10acf654ce41583640b4",
+      "stripped_sha256": "5f0d0ba3b8de5ec1a08d392b4147f04a4d318c0bcdd0a2f7bbf236a5d28fc877",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/game/RoomTerrainView.as",
+      "mode": "exact-copy",
+      "base_sha256": "a2eb59b8536414d26daa39a82c71c414009c5d4b29a7a24539e025d1b852877f",
+      "source_sha256": "a2eb59b8536414d26daa39a82c71c414009c5d4b29a7a24539e025d1b852877f",
+      "stripped_sha256": "a2eb59b8536414d26daa39a82c71c414009c5d4b29a7a24539e025d1b852877f",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/game/SatsTargetVisuals.as",
+      "mode": "exact-copy",
+      "base_sha256": "36bae920ba10e4b9a2120f4ec897ef2e8b0add047fb6969adf1a76ab1fb7db2c",
+      "source_sha256": "36bae920ba10e4b9a2120f4ec897ef2e8b0add047fb6969adf1a76ab1fb7db2c",
+      "stripped_sha256": "36bae920ba10e4b9a2120f4ec897ef2e8b0add047fb6969adf1a76ab1fb7db2c",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/game/SecurityAccessState.as",
+      "mode": "exact-copy",
+      "base_sha256": "03f116efc293b2287ebd6de0cad8487c9b93f87c814f4611ed70f35e333ed37e",
+      "source_sha256": "03f116efc293b2287ebd6de0cad8487c9b93f87c814f4611ed70f35e333ed37e",
+      "stripped_sha256": "03f116efc293b2287ebd6de0cad8487c9b93f87c814f4611ed70f35e333ed37e",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/game/TelekinesisVisuals.as",
+      "mode": "exact-copy",
+      "base_sha256": "2a98e2d94bf6d0cfcf62f64e830845a3919a9cb461719b81ae5f152031be30b1",
+      "source_sha256": "2a98e2d94bf6d0cfcf62f64e830845a3919a9cb461719b81ae5f152031be30b1",
+      "stripped_sha256": "2a98e2d94bf6d0cfcf62f64e830845a3919a9cb461719b81ae5f152031be30b1",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/game/TeleportVisuals.as",
+      "mode": "exact-copy",
+      "base_sha256": "ec323ce52b1926e6cb1c98e722c78544cd396fa5b3661ba257111b4b703c272c",
+      "source_sha256": "ec323ce52b1926e6cb1c98e722c78544cd396fa5b3661ba257111b4b703c272c",
+      "stripped_sha256": "ec323ce52b1926e6cb1c98e722c78544cd396fa5b3661ba257111b4b703c272c",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/game/TerrainSync.as",
+      "mode": "exact-copy",
+      "base_sha256": "317c9658b0632f3bb8333c11cd302c68ef45e7a9f2f54ed6b6c631b6c1b92b44",
+      "source_sha256": "317c9658b0632f3bb8333c11cd302c68ef45e7a9f2f54ed6b6c631b6c1b92b44",
+      "stripped_sha256": "317c9658b0632f3bb8333c11cd302c68ef45e7a9f2f54ed6b6c631b6c1b92b44",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/game/TurretDisplay.as",
+      "mode": "exact-copy",
+      "base_sha256": "b9bf6c7be6343d123d4e7d9df91efcf58a09cd69fda0ee55040a8969a9f86cd7",
+      "source_sha256": "b9bf6c7be6343d123d4e7d9df91efcf58a09cd69fda0ee55040a8969a9f86cd7",
+      "stripped_sha256": "b9bf6c7be6343d123d4e7d9df91efcf58a09cd69fda0ee55040a8969a9f86cd7",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/game/UnitPresentation.as",
+      "mode": "exact-copy",
+      "base_sha256": "d67dbcbed8d3ef67771eb10e41516102dabb34aad3a7065ab71ec7822ff53178",
+      "source_sha256": "d67dbcbed8d3ef67771eb10e41516102dabb34aad3a7065ab71ec7822ff53178",
+      "stripped_sha256": "d67dbcbed8d3ef67771eb10e41516102dabb34aad3a7065ab71ec7822ff53178",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/game/VersionProbe.as",
+      "mode": "exact-copy",
+      "base_sha256": "b565f16eac1bde5bc036f774cfb9b730ae38b270899aaf0f0adf05e4771f07f1",
+      "source_sha256": "b565f16eac1bde5bc036f774cfb9b730ae38b270899aaf0f0adf05e4771f07f1",
+      "stripped_sha256": "b565f16eac1bde5bc036f774cfb9b730ae38b270899aaf0f0adf05e4771f07f1",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/game/WallImpactVisuals.as",
+      "mode": "exact-copy",
+      "base_sha256": "5629cb78bb4826d92c137c2d07ec264db716c6c80ad629369d10f87300086924",
+      "source_sha256": "5629cb78bb4826d92c137c2d07ec264db716c6c80ad629369d10f87300086924",
+      "stripped_sha256": "5629cb78bb4826d92c137c2d07ec264db716c6c80ad629369d10f87300086924",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/game/WeaponDisplay.as",
+      "mode": "exact-copy",
+      "base_sha256": "c76a6b157992398dbb8d8620de2482375594423226cd64b90e13e8fee96066f2",
+      "source_sha256": "c76a6b157992398dbb8d8620de2482375594423226cd64b90e13e8fee96066f2",
+      "stripped_sha256": "c76a6b157992398dbb8d8620de2482375594423226cd64b90e13e8fee96066f2",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/game/WorldProgress.as",
+      "mode": "exact-copy",
+      "base_sha256": "051d47bd3a9ba9a242bf89ab8e99c2f81b823964c968942d685dddf6769aaef3",
+      "source_sha256": "051d47bd3a9ba9a242bf89ab8e99c2f81b823964c968942d685dddf6769aaef3",
+      "stripped_sha256": "051d47bd3a9ba9a242bf89ab8e99c2f81b823964c968942d685dddf6769aaef3",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/net/BinaryMessageCodec.as",
+      "mode": "exact-copy",
+      "base_sha256": "001479db144318320669ce3d89e6c275c210a7d81b9e6f116cdb58e6091376f1",
+      "source_sha256": "001479db144318320669ce3d89e6c275c210a7d81b9e6f116cdb58e6091376f1",
+      "stripped_sha256": "001479db144318320669ce3d89e6c275c210a7d81b9e6f116cdb58e6091376f1",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/net/HostServer.as",
+      "mode": "exact-copy",
+      "base_sha256": "fdb0407c39975b25d1591611e6db5cd9f3b349e2611568687c885e042424b748",
+      "source_sha256": "fdb0407c39975b25d1591611e6db5cd9f3b349e2611568687c885e042424b748",
+      "stripped_sha256": "fdb0407c39975b25d1591611e6db5cd9f3b349e2611568687c885e042424b748",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/net/NetMessageEvent.as",
+      "mode": "exact-copy",
+      "base_sha256": "45886a1f4c10ca4f1fc831803ff54ccc91c2f8c0d12d4a37f2e2a952ff91db7b",
+      "source_sha256": "45886a1f4c10ca4f1fc831803ff54ccc91c2f8c0d12d4a37f2e2a952ff91db7b",
+      "stripped_sha256": "45886a1f4c10ca4f1fc831803ff54ccc91c2f8c0d12d4a37f2e2a952ff91db7b",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/net/Protocol.as",
+      "mode": "exact-copy",
+      "base_sha256": "32f6777591247b93e05e56eced25c1b2d6d4427feacac0aa248f06afd16a0b8e",
+      "source_sha256": "32f6777591247b93e05e56eced25c1b2d6d4427feacac0aa248f06afd16a0b8e",
+      "stripped_sha256": "32f6777591247b93e05e56eced25c1b2d6d4427feacac0aa248f06afd16a0b8e",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/net/RoomCodec.as",
+      "mode": "exact-copy",
+      "base_sha256": "296ee4d8d94f77faa62dcc17a39cb1e2492c756d3027311713c33935ca6b6b4a",
+      "source_sha256": "296ee4d8d94f77faa62dcc17a39cb1e2492c756d3027311713c33935ca6b6b4a",
+      "stripped_sha256": "296ee4d8d94f77faa62dcc17a39cb1e2492c756d3027311713c33935ca6b6b4a",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/net/TcpLink.as",
+      "mode": "exact-copy",
+      "base_sha256": "93aafc0aad7a410107f2eea2cee288d9366c6cacce289c5b2552dc95140e350c",
+      "source_sha256": "93aafc0aad7a410107f2eea2cee288d9366c6cacce289c5b2552dc95140e350c",
+      "stripped_sha256": "93aafc0aad7a410107f2eea2cee288d9366c6cacce289c5b2552dc95140e350c",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/ui/HudLayout.as",
+      "mode": "exact-copy",
+      "base_sha256": "da332cdfdb1776a8a8666dc6c22754f093cd5dd2652da9d1a22a1536b3ac2ef5",
+      "source_sha256": "da332cdfdb1776a8a8666dc6c22754f093cd5dd2652da9d1a22a1536b3ac2ef5",
+      "stripped_sha256": "da332cdfdb1776a8a8666dc6c22754f093cd5dd2652da9d1a22a1536b3ac2ef5",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/ui/NetHud.as",
+      "mode": "exact-copy",
+      "base_sha256": "5ceba3e5c58937dc7eaa21feb1906d5c2fd4a58a065ace5f4caafdd63f880f43",
+      "source_sha256": "5ceba3e5c58937dc7eaa21feb1906d5c2fd4a58a065ace5f4caafdd63f880f43",
+      "stripped_sha256": "5ceba3e5c58937dc7eaa21feb1906d5c2fd4a58a065ace5f4caafdd63f880f43",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/ui/NetKeybinds.as",
+      "mode": "exact-copy",
+      "base_sha256": "94d0b52a6c9af92f3fa92645415995cefeb7ff27e5f294c04cad448b76b1a233",
+      "source_sha256": "94d0b52a6c9af92f3fa92645415995cefeb7ff27e5f294c04cad448b76b1a233",
+      "stripped_sha256": "94d0b52a6c9af92f3fa92645415995cefeb7ff27e5f294c04cad448b76b1a233",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/ui/RoomEntryView.as",
+      "mode": "exact-copy",
+      "base_sha256": "969ffe5824685edb1bdfab3b35f9e77dbcedd4eb14b012495611277d5b7f025c",
+      "source_sha256": "969ffe5824685edb1bdfab3b35f9e77dbcedd4eb14b012495611277d5b7f025c",
+      "stripped_sha256": "969ffe5824685edb1bdfab3b35f9e77dbcedd4eb14b012495611277d5b7f025c",
+      "stripped_bytes_equal": true
+    },
+    {
+      "path": "rconnect/ui/TeammateMap.as",
+      "mode": "exact-copy",
+      "base_sha256": "2043b149453cc710e39163e2cc2c89c8f77abf61c577133b76fb4a8119bba080",
+      "source_sha256": "2043b149453cc710e39163e2cc2c89c8f77abf61c577133b76fb4a8119bba080",
+      "stripped_sha256": "2043b149453cc710e39163e2cc2c89c8f77abf61c577133b76fb4a8119bba080",
+      "stripped_bytes_equal": true
+    }
+  ],
+  "added": [
+    {
+      "path": "rconnect/diagnostics/FlightDiagnostics.as",
+      "sha256": "a7676ae6ffbe215882d32cc544fee154207b67ebe493be3d495b0294256753df"
+    }
+  ],
+  "base_and_frozen_overlay_unchanged": true,
+  "compiled": false,
+  "runtime_tested": false,
+  "JVM": false,
+  "AIR": false
+}

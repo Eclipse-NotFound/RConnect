@@ -1,0 +1,64 @@
+{
+  "passed": true,
+  "assertions": [
+    {
+      "passed": true,
+      "label": "Exact compiled scene12 manifest"
+    },
+    {
+      "passed": true,
+      "label": "Every original observer check/require body is unchanged"
+    },
+    {
+      "passed": true,
+      "label": "Original native room/scalar suites are copied byte-exact"
+    },
+    {
+      "passed": true,
+      "label": "Component and driver share exact observation helper bytes"
+    },
+    {
+      "passed": true,
+      "label": "Exactly 43 normal AS component assertions prepared (not executed)"
+    },
+    {
+      "passed": true,
+      "label": "All new Python source parses without launching subprocesses"
+    },
+    {
+      "passed": true,
+      "label": "Separate local commit/ACK and actual identity/stamp guards present"
+    },
+    {
+      "passed": true,
+      "label": "Observer runs after Session and rejects old socket identities"
+    },
+    {
+      "passed": true,
+      "label": "Observer neither controls pause nor drives production protocol"
+    },
+    {
+      "passed": true,
+      "label": "Original native13 failed result remains failed"
+    },
+    {
+      "passed": true,
+      "label": "Both original failed-run native logs remain byte-exact"
+    },
+    {
+      "passed": true,
+      "label": "Both old failures lie strictly after native host commit and before peer ACK"
+    },
+    {
+      "passed": true,
+      "label": "Underlying 600s/native/22-input runner is unchanged"
+    }
+  ],
+  "checks": 13,
+  "failed": 0,
+  "as_component_assertions_prepared": 43,
+  "as_component_executed": false,
+  "compiled": false,
+  "air_started": false,
+  "native_rerun": false
+}

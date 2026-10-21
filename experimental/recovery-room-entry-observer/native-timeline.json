@@ -1,0 +1,189 @@
+{
+  "run": "a542373a5f",
+  "original_result_sha256": "37fb77420c1af6b25bb7f849203a0b223668fb9ac5d6a7e10eecb34424527a32",
+  "original_passed": false,
+  "original_exit": 1,
+  "host_log_sha256": "7332cb5dccd96e293dd46f0080958ad79871d1076a83d456612e98fad330c87e",
+  "join_log_sha256": "0d3305e199cbd4b55b6280e5ec2edb67244b044ca1097069d97c2353b71e5eb7",
+  "host_checks": 25,
+  "join_checks": 53,
+  "failures": [
+    {
+      "busy": false,
+      "transition": false,
+      "label": "unconfirmed native scene is covered at render",
+      "sameLand": false,
+      "at": 72699,
+      "room": "random_mane//0,4,0",
+      "sameRoom": false,
+      "stamp": {
+        "roomKey": "random_mane//0,4,0",
+        "roomEpoch": 1,
+        "roomTerm": 1
+      },
+      "ready": true,
+      "exit": 0,
+      "confirmed": null
+    },
+    {
+      "busy": false,
+      "transition": false,
+      "label": "new native room cannot publish before handoff",
+      "sameLand": false,
+      "at": 72701,
+      "room": "random_mane//0,4,0",
+      "sameRoom": false,
+      "stamp": {
+        "roomKey": "random_mane//0,4,0",
+        "roomEpoch": 1,
+        "roomTerm": 1
+      },
+      "ready": true,
+      "exit": 0,
+      "confirmed": null
+    }
+  ],
+  "timeline": [
+    {
+      "term": 1,
+      "ready_finished": 72647,
+      "ready_context": {
+        "busy": false,
+        "authority": true,
+        "roomOp": "ready",
+        "fading": false,
+        "ready": true,
+        "cover": false,
+        "peerPhase": "",
+        "term": 1,
+        "nativePause": false,
+        "epoch": 1,
+        "exit": 0,
+        "room": "random_mane//0,4,0"
+      },
+      "ack_finished": 73202,
+      "ack_after_local_ms": 555
+    },
+    {
+      "term": 2,
+      "ready_finished": 74742,
+      "ready_context": {
+        "busy": false,
+        "authority": true,
+        "roomOp": "ready",
+        "fading": false,
+        "ready": true,
+        "cover": false,
+        "peerPhase": "",
+        "term": 2,
+        "nativePause": false,
+        "epoch": 1,
+        "exit": 0,
+        "room": "random_mane//0,4,0"
+      },
+      "ack_finished": 74788,
+      "ack_after_local_ms": 46
+    },
+    {
+      "term": 3,
+      "ready_finished": 86752,
+      "ready_context": {
+        "busy": false,
+        "authority": true,
+        "roomOp": "ready",
+        "fading": false,
+        "ready": true,
+        "cover": false,
+        "peerPhase": "prepared",
+        "term": 3,
+        "nativePause": false,
+        "epoch": 1,
+        "exit": 0,
+        "room": "random_mane//0,0,0"
+      },
+      "ack_finished": 86792,
+      "ack_after_local_ms": 40
+    },
+    {
+      "term": 4,
+      "ready_finished": 91653,
+      "ready_context": {
+        "busy": false,
+        "authority": true,
+        "roomOp": "ready",
+        "fading": false,
+        "ready": true,
+        "cover": false,
+        "peerPhase": "mirrored",
+        "term": 4,
+        "nativePause": false,
+        "epoch": 1,
+        "exit": 0,
+        "room": "random_mane//0,4,0"
+      },
+      "ack_finished": 92163,
+      "ack_after_local_ms": 510
+    },
+    {
+      "term": 5,
+      "ready_finished": 95652,
+      "ready_context": {
+        "busy": false,
+        "authority": true,
+        "roomOp": "ready",
+        "fading": false,
+        "ready": true,
+        "cover": false,
+        "peerPhase": "killed",
+        "term": 5,
+        "nativePause": false,
+        "epoch": 1,
+        "exit": 0,
+        "room": "random_mane//0,4,0"
+      },
+      "ack_finished": 95879,
+      "ack_after_local_ms": 227
+    },
+    {
+      "term": 6,
+      "ready_finished": 98918,
+      "ready_context": {
+        "busy": false,
+        "authority": true,
+        "roomOp": "ready",
+        "fading": false,
+        "ready": true,
+        "cover": false,
+        "peerPhase": "vacated",
+        "term": 6,
+        "nativePause": false,
+        "epoch": 1,
+        "exit": 0,
+        "room": "random_mane//0,0,0"
+      },
+      "ack_finished": 99231,
+      "ack_after_local_ms": 313
+    },
+    {
+      "term": 7,
+      "ready_finished": 100826,
+      "ready_context": {
+        "busy": false,
+        "authority": true,
+        "roomOp": "ready",
+        "fading": false,
+        "ready": true,
+        "cover": false,
+        "peerPhase": "vacated",
+        "term": 7,
+        "nativePause": false,
+        "epoch": 1,
+        "exit": 0,
+        "room": "random_mane//0,0,0"
+      },
+      "ack_finished": 101199,
+      "ack_after_local_ms": 373
+    }
+  ],
+  "observation_only": true
+}

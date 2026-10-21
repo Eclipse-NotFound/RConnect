@@ -13,7 +13,8 @@ ROOM_SHA = '051240012891ab8e6e41d30d8fb13ab16d120f41c5d9578a84a9146906257fea'
 
 
 def prepare(args):
-    source = ROOT / 'experimental/recovery-integrated'
+    source = (ROOT / args.source).resolve()
+    assert source.parent == ROOT / 'experimental' and source.is_dir(), 'Use a reviewed experimental source directory'
     out = (ROOT / args.output).resolve()
     assert out.parent == M52 and not out.exists()
     base, room = M52 / 'coop-bundle-04', M52 / 'room-entry-fast-19'
@@ -37,7 +38,8 @@ def prepare(args):
         room_manifest_sha256=sha(room / 'prepared.json'),
         integration_sha256=sha(source / 'integration.json'),
         source=inventory(out / 'src'), inputs=inventory(out / 'tools'),
-        recipe_sha256=sha(__file__), compiled=False, installed=False,
+        recipe_sha256=sha(__file__), source_root=str(source),
+        diagnostic_only=integrated.get('diagnostic_only', False), compiled=False, installed=False,
         gameplay_qualified=False, performance_qualified=False)
     assert inventory(source / 'src') == original == meta['source']
     save(out / 'prepared.json', meta)
@@ -69,6 +71,8 @@ def prepare(args):
 def main():
     ap=argparse.ArgumentParser(description=__doc__)
     ap.add_argument('output', type=Path)
+    ap.add_argument('--source', type=Path, default=Path('experimental/recovery-integrated'),
+                    help='Reviewed complete source and integration manifest; defaults to the active recovery candidate')
     ap.add_argument('--version', default='0.2.24-recovery1')
     ap.add_argument('--build', action='store_true')
     ap.add_argument('--registry-wait', type=float, default=300)

@@ -1,0 +1,230 @@
+{
+  "passed": true,
+  "checks": 55,
+  "assertions": [
+    {
+      "passed": true,
+      "label": "same 18 source files: on"
+    },
+    {
+      "passed": true,
+      "label": "exactly two fixture repairs: on"
+    },
+    {
+      "passed": true,
+      "label": "exact old passed fixture: on/rconnect/core/TravelGuard.as"
+    },
+    {
+      "passed": true,
+      "label": "exact old passed fixture: on/rconnect/core/TravelPlacement.as"
+    },
+    {
+      "passed": true,
+      "label": "all 109 intended cases unchanged: on"
+    },
+    {
+      "passed": true,
+      "label": "exact13 production FirstRasterGate: on"
+    },
+    {
+      "passed": true,
+      "label": "exact13 production SeedRasterEntry: on"
+    },
+    {
+      "passed": true,
+      "label": "exact13 production NativeTravelPlan: on"
+    },
+    {
+      "passed": true,
+      "label": "follow substitute still checks native land identity and room: on"
+    },
+    {
+      "passed": true,
+      "label": "placement substitute preserves explicit coordinate observation: on"
+    },
+    {
+      "passed": true,
+      "label": "explicit import/package present: on/NativeTravelRoomChecks.as -> rconnect.core.*"
+    },
+    {
+      "passed": true,
+      "label": "explicit import/package present: on/NativeTravelRoomChecks.as -> rconnect.net.*"
+    },
+    {
+      "passed": true,
+      "label": "explicit import/package present: on/RConnectMod.as -> rconnect.core.Session"
+    },
+    {
+      "passed": true,
+      "label": "explicit import/package present: on/RConnectMod.as -> rconnect.game.GameBridge"
+    },
+    {
+      "passed": true,
+      "label": "explicit import/package present: on/RoomSync.as -> modlocales.connect.RCLocale"
+    },
+    {
+      "passed": true,
+      "label": "explicit import/package present: on/RoomSync.as -> rconnect.game.GameBridge"
+    },
+    {
+      "passed": true,
+      "label": "explicit import/package present: on/RoomSync.as -> rconnect.net.Protocol"
+    },
+    {
+      "passed": true,
+      "label": "explicit import/package present: on/RoomSync.as -> rconnect.net.RoomCodec"
+    },
+    {
+      "passed": true,
+      "label": "explicit import/package present: on/RoomSync.as -> rconnect.net.TcpLink"
+    },
+    {
+      "passed": true,
+      "label": "explicit import/package present: on/RoomSync.as -> rconnect.ui.RoomEntryView"
+    },
+    {
+      "passed": true,
+      "label": "explicit import/package present: on/Session.as -> rconnect.net.TcpLink"
+    },
+    {
+      "passed": true,
+      "label": "explicit import/package present: on/TravelGuard.as -> rconnect.game.GameBridge"
+    },
+    {
+      "passed": true,
+      "label": "explicit import/package present: on/GameBridge.as -> rconnect.core.MapGeneration"
+    },
+    {
+      "passed": true,
+      "label": "explicit import/package present: on/RoomCodec.as -> rconnect.core.Log"
+    },
+    {
+      "passed": true,
+      "label": "same 18 source files: off"
+    },
+    {
+      "passed": true,
+      "label": "exactly two fixture repairs: off"
+    },
+    {
+      "passed": true,
+      "label": "exact old passed fixture: off/rconnect/core/TravelGuard.as"
+    },
+    {
+      "passed": true,
+      "label": "exact old passed fixture: off/rconnect/core/TravelPlacement.as"
+    },
+    {
+      "passed": true,
+      "label": "all 109 intended cases unchanged: off"
+    },
+    {
+      "passed": true,
+      "label": "exact13 production FirstRasterGate: off"
+    },
+    {
+      "passed": true,
+      "label": "exact13 production SeedRasterEntry: off"
+    },
+    {
+      "passed": true,
+      "label": "exact13 production NativeTravelPlan: off"
+    },
+    {
+      "passed": true,
+      "label": "follow substitute still checks native land identity and room: off"
+    },
+    {
+      "passed": true,
+      "label": "placement substitute preserves explicit coordinate observation: off"
+    },
+    {
+      "passed": true,
+      "label": "explicit import/package present: off/NativeTravelRoomChecks.as -> rconnect.core.*"
+    },
+    {
+      "passed": true,
+      "label": "explicit import/package present: off/NativeTravelRoomChecks.as -> rconnect.net.*"
+    },
+    {
+      "passed": true,
+      "label": "explicit import/package present: off/RConnectMod.as -> rconnect.core.Session"
+    },
+    {
+      "passed": true,
+      "label": "explicit import/package present: off/RConnectMod.as -> rconnect.game.GameBridge"
+    },
+    {
+      "passed": true,
+      "label": "explicit import/package present: off/RoomSync.as -> modlocales.connect.RCLocale"
+    },
+    {
+      "passed": true,
+      "label": "explicit import/package present: off/RoomSync.as -> rconnect.game.GameBridge"
+    },
+    {
+      "passed": true,
+      "label": "explicit import/package present: off/RoomSync.as -> rconnect.net.Protocol"
+    },
+    {
+      "passed": true,
+      "label": "explicit import/package present: off/RoomSync.as -> rconnect.net.RoomCodec"
+    },
+    {
+      "passed": true,
+      "label": "explicit import/package present: off/RoomSync.as -> rconnect.net.TcpLink"
+    },
+    {
+      "passed": true,
+      "label": "explicit import/package present: off/RoomSync.as -> rconnect.ui.RoomEntryView"
+    },
+    {
+      "passed": true,
+      "label": "explicit import/package present: off/Session.as -> rconnect.net.TcpLink"
+    },
+    {
+      "passed": true,
+      "label": "explicit import/package present: off/TravelGuard.as -> rconnect.game.GameBridge"
+    },
+    {
+      "passed": true,
+      "label": "explicit import/package present: off/GameBridge.as -> rconnect.core.MapGeneration"
+    },
+    {
+      "passed": true,
+      "label": "explicit import/package present: off/RoomCodec.as -> rconnect.core.Log"
+    },
+    {
+      "passed": true,
+      "label": "on/off only expected constant and one real RoomSync return differ"
+    },
+    {
+      "passed": true,
+      "label": "on uses complete accurate13 RoomSync"
+    },
+    {
+      "passed": true,
+      "label": "off only disables seed first-raster ticket; all restore/ACK/anchor logic remains"
+    },
+    {
+      "passed": true,
+      "label": "all original17 files audited; no other unintended fixture replacement"
+    },
+    {
+      "passed": true,
+      "label": "Python syntax: check_sources.py"
+    },
+    {
+      "passed": true,
+      "label": "Python syntax: compare_components.py"
+    },
+    {
+      "passed": true,
+      "label": "Python syntax: prepare_components.py"
+    }
+  ],
+  "expected_runtime_checks_each": 109,
+  "JVM_started": false,
+  "AIR_started": false,
+  "component_compiled": false
+}

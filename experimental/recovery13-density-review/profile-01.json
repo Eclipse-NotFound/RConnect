@@ -1,0 +1,1039 @@
+{
+  "run": "3b8269a9a7",
+  "diagnostic_only": true,
+  "performance_qualified": false,
+  "release_qualified": false,
+  "installed_unchanged": true,
+  "exclusive": true,
+  "result_sha256": "78bbef9a1ae30d40843a5f338b0aa812ce222adf1f669255f18fb20051a77bff",
+  "roles": {
+    "host": {
+      "log_sha256": "fd7650fe62d09ca1166d6b30770f78fedda3744526439bb86f0dc3d44151cf23",
+      "recorded_frames": 456,
+      "sampled_windows": 24,
+      "cpu_samples": 2689,
+      "phases": {
+        "0": {
+          "windows": 6,
+          "cpu": 393,
+          "elapsed_ms": 367,
+          "enter_ms": 109,
+          "after_enter_ms": 258
+        },
+        "1": {
+          "windows": 6,
+          "cpu": 787,
+          "elapsed_ms": 713,
+          "enter_ms": 216,
+          "after_enter_ms": 497
+        },
+        "5": {
+          "windows": 6,
+          "cpu": 783,
+          "elapsed_ms": 709,
+          "enter_ms": 175,
+          "after_enter_ms": 534
+        },
+        "6": {
+          "windows": 6,
+          "cpu": 726,
+          "elapsed_ms": 656,
+          "enter_ms": 170,
+          "after_enter_ms": 486
+        }
+      },
+      "inclusive_top": [
+        [
+          "flash.utils::Timer/tick",
+          1843
+        ],
+        [
+          "flash.utils::Timer/_timerDispatch",
+          1843
+        ],
+        [
+          "rconnect.core::Session/onTick",
+          1826
+        ],
+        [
+          "rconnect.core::Session/broadcastWorldState",
+          1089
+        ],
+        [
+          "rconnect.game::WallImpactVisuals/packed",
+          797
+        ],
+        [
+          "[enterFrameEvent]",
+          771
+        ],
+        [
+          "rconnect.game::WallImpactVisuals/updates",
+          713
+        ],
+        [
+          "rconnect.game::GameBridge/readWallPaintUpdates",
+          713
+        ],
+        [
+          "rconnect.net::RoomCodec$/pack",
+          634
+        ],
+        [
+          "[reap]",
+          569
+        ],
+        [
+          "rconnect.net::TcpLink/send",
+          492
+        ],
+        [
+          "rconnect.net::HostServer/broadcast",
+          489
+        ],
+        [
+          "rconnect.net::BinaryMessageCodec$/pack",
+          486
+        ],
+        [
+          "rconnect.net::BinaryMessageCodec$/copy",
+          339
+        ],
+        [
+          "rconnect.game::GameBridge$/probe",
+          255
+        ],
+        [
+          "rconnect.game::GameBridge/readUnitsSnapshot",
+          221
+        ],
+        [
+          "Array/http://adobe.com/AS3/2006/builtin::join",
+          194
+        ],
+        [
+          "Array$/_join",
+          194
+        ],
+        [
+          "JSON$/stringifySpecializedToString",
+          193
+        ],
+        [
+          "JSON$/stringify",
+          193
+        ],
+        [
+          "WallBlendMod$/onFrame",
+          183
+        ],
+        [
+          "RealisticVisionMod/onFrame",
+          166
+        ],
+        [
+          "RealisticVisionMod/onFrameInner",
+          164
+        ],
+        [
+          "rconnect.game::GameBridge$/probeOptional",
+          157
+        ],
+        [
+          "fe::World/step",
+          152
+        ],
+        [
+          "fe::MainMenu/mainStep",
+          152
+        ],
+        [
+          "fe.loc::Land/step",
+          150
+        ],
+        [
+          "fe.loc::Location/step",
+          150
+        ],
+        [
+          "flash.utils::ByteArray/_compress",
+          142
+        ],
+        [
+          "flash.utils::ByteArray/compress",
+          142
+        ],
+        [
+          "rconnect.game::GameBridge/readEnemyMotion",
+          140
+        ],
+        [
+          "flash.utils::ByteArray/writeObject",
+          140
+        ],
+        [
+          "fe.weapon::Bullet/step",
+          140
+        ],
+        [
+          "fe.weapon::Bullet/run",
+          139
+        ],
+        [
+          "[execute-queued]",
+          130
+        ],
+        [
+          "[activation-object]",
+          128
+        ],
+        [
+          "wallblend::BackgroundBlendLayer/update",
+          126
+        ],
+        [
+          "rconnect.game::GameBridge$/unitFields",
+          117
+        ],
+        [
+          "[mark]",
+          108
+        ],
+        [
+          "rconnect.game::ExplorationSync/packet",
+          107
+        ],
+        [
+          "rconnect.game::GameBridge/onMirrorFrame",
+          106
+        ],
+        [
+          "rconnect.game::UnitPresentation$/get",
+          105
+        ],
+        [
+          "MethodInfo-4",
+          96
+        ],
+        [
+          "RealisticVisionMod/captureExploration",
+          96
+        ],
+        [
+          "flash.display::MovieClip/gotoAndPlay",
+          90
+        ]
+      ],
+      "leaf_top": [
+        [
+          "[reap]",
+          569
+        ],
+        [
+          "rconnect.net::BinaryMessageCodec$/copy",
+          237
+        ],
+        [
+          "flash.utils::ByteArray/_compress",
+          142
+        ],
+        [
+          "JSON$/stringifySpecializedToString",
+          131
+        ],
+        [
+          "rconnect.net::RoomCodec$/pack",
+          130
+        ],
+        [
+          "flash.utils::ByteArray/writeObject",
+          126
+        ],
+        [
+          "[mark]",
+          108
+        ],
+        [
+          "Array$/_join",
+          104
+        ],
+        [
+          "rconnect.game::GameBridge$/probe",
+          98
+        ],
+        [
+          "rconnect.game::WallImpactVisuals/packed",
+          72
+        ],
+        [
+          "rconnect.game::GameBridge$/probeOptional",
+          53
+        ],
+        [
+          "[execute-queued]",
+          53
+        ],
+        [
+          "[sweep]",
+          49
+        ],
+        [
+          "[activation-object]",
+          48
+        ],
+        [
+          "flash.display::BitmapData/draw",
+          43
+        ],
+        [
+          "rconnect.game::GameBridge$/unitFields",
+          41
+        ],
+        [
+          "wallblend::BackgroundBlendLayer/update",
+          38
+        ],
+        [
+          "RealisticVisionMod/captureExploration",
+          30
+        ],
+        [
+          "flash.display::Sprite/constructChildren",
+          26
+        ],
+        [
+          "Array/http://adobe.com/AS3/2006/builtin::push",
+          24
+        ],
+        [
+          "global/flash.sampler::startSampling",
+          23
+        ],
+        [
+          "flash.display::BitmapData/copyPixels",
+          22
+        ],
+        [
+          "GameBridge$/get",
+          20
+        ],
+        [
+          "RealisticVisionMod/applyMask",
+          17
+        ],
+        [
+          "rconnect.game::UnitPresentation/observeWeapon",
+          16
+        ],
+        [
+          "flash.display::BitmapData/compare",
+          15
+        ],
+        [
+          "rconnect.game::WallImpactVisuals/captureCell",
+          14
+        ],
+        [
+          "flash.events::EventDispatcher/addEventListener",
+          12
+        ],
+        [
+          "flash.display::BitmapData/copyChannel",
+          12
+        ],
+        [
+          "rconnect.game::UnitPresentation/weaponList",
+          11
+        ],
+        [
+          "rconnect.game::GameBridge/readUnitsSnapshot",
+          11
+        ],
+        [
+          "rconnect.game::WallImpactVisuals/observe",
+          10
+        ],
+        [
+          "String$/_split",
+          10
+        ],
+        [
+          "GameBridge$/snapshot",
+          10
+        ],
+        [
+          "flash.utils::ByteArray/get bytesAvailable",
+          8
+        ]
+      ],
+      "stacks_top": [
+        [
+          "flash.utils::ByteArray/_compress@null:0 <- flash.utils::ByteArray/compress@null:0 <- rconnect.net::RoomCodec$/pack@null:0 <- rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/updates@null:0 <- rconnect.game::GameBridge/readWallPaintUpdates@null:0 <- rconnect.core::Session/broadcastWorldState@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+          126
+        ],
+        [
+          "rconnect.net::RoomCodec$/pack@null:0 <- rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/updates@null:0 <- rconnect.game::GameBridge/readWallPaintUpdates@null:0 <- rconnect.core::Session/broadcastWorldState@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+          114
+        ],
+        [
+          "JSON$/stringifySpecializedToString@null:0 <- JSON$/stringify@null:0 <- rconnect.net::RoomCodec$/pack@null:0 <- rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/updates@null:0 <- rconnect.game::GameBridge/readWallPaintUpdates@null:0 <- rconnect.core::Session/broadcastWorldState@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+          107
+        ],
+        [
+          "flash.utils::ByteArray/writeObject@null:0 <- rconnect.net::BinaryMessageCodec$/pack@null:0 <- rconnect.net::TcpLink/send@null:0 <- rconnect.net::HostServer/broadcast@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+          73
+        ],
+        [
+          "[reap]@null:0 <- rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/updates@null:0 <- rconnect.game::GameBridge/readWallPaintUpdates@null:0 <- rconnect.core::Session/broadcastWorldState@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+          67
+        ],
+        [
+          "rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/updates@null:0 <- rconnect.game::GameBridge/readWallPaintUpdates@null:0 <- rconnect.core::Session/broadcastWorldState@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+          62
+        ],
+        [
+          "[reap]@null:0 <- JSON$/stringifySpecializedToString@null:0 <- JSON$/stringify@null:0 <- rconnect.net::RoomCodec$/pack@null:0 <- rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/updates@null:0 <- rconnect.game::GameBridge/readWallPaintUpdates@null:0 <- rconnect.core::Session/broadcastWorldState@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+          55
+        ],
+        [
+          "flash.utils::ByteArray/writeObject@null:0 <- rconnect.net::BinaryMessageCodec$/pack@null:0 <- rconnect.net::TcpLink/send@null:0 <- rconnect.net::HostServer/broadcast@null:0 <- rconnect.core::Session/broadcastWorldState@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+          52
+        ],
+        [
+          "rconnect.net::BinaryMessageCodec$/copy@null:0 <- rconnect.net::BinaryMessageCodec$/copy@null:0 <- rconnect.net::BinaryMessageCodec$/copy@null:0 <- rconnect.net::BinaryMessageCodec$/copy@null:0 <- rconnect.net::BinaryMessageCodec$/pack@null:0 <- rconnect.net::TcpLink/send@null:0 <- rconnect.net::HostServer/broadcast@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+          49
+        ],
+        [
+          "[sweep]@null:0 <- rconnect.net::RoomCodec$/pack@null:0 <- rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/updates@null:0 <- rconnect.game::GameBridge/readWallPaintUpdates@null:0 <- rconnect.core::Session/broadcastWorldState@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+          49
+        ],
+        [
+          "[reap]@null:0 <- wallblend::BackgroundBlendLayer/update@null:0 <- WallBlendMod$/onFrame@null:0 <- [enterFrameEvent]@null:0",
+          44
+        ],
+        [
+          "flash.display::BitmapData/draw@null:0 <- fe.graph::Grafon/decal@null:0 <- fe.graph::Grafon/dyrka@null:0 <- fe.loc::Location/hitTile@null:0 <- fe.weapon::Bullet/run@null:0 <- fe.weapon::Bullet/step@null:0 <- fe.loc::Location/step@null:0 <- fe.loc::Land/step@null:0 <- fe::World/step@null:0 <- fe::MainMenu/mainStep@null:0 <- [enterFrameEvent]@null:0",
+          43
+        ],
+        [
+          "wallblend::BackgroundBlendLayer/update@null:0 <- WallBlendMod$/onFrame@null:0 <- [enterFrameEvent]@null:0",
+          38
+        ],
+        [
+          "[reap]@null:0 <- rconnect.net::RoomCodec$/pack@null:0 <- rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/updates@null:0 <- rconnect.game::GameBridge/readWallPaintUpdates@null:0 <- rconnect.core::Session/broadcastWorldState@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+          36
+        ],
+        [
+          "Array$/_join@null:0 <- Array/http://adobe.com/AS3/2006/builtin::join@null:0 <- rconnect.net::RoomCodec$/pack@null:0 <- rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/updates@null:0 <- rconnect.game::GameBridge/readWallPaintUpdates@null:0 <- rconnect.core::Session/broadcastWorldState@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+          34
+        ],
+        [
+          "rconnect.net::BinaryMessageCodec$/copy@null:0 <- rconnect.net::BinaryMessageCodec$/copy@null:0 <- rconnect.net::BinaryMessageCodec$/copy@null:0 <- rconnect.net::BinaryMessageCodec$/copy@null:0 <- rconnect.net::BinaryMessageCodec$/copy@null:0 <- rconnect.net::BinaryMessageCodec$/pack@null:0 <- rconnect.net::TcpLink/send@null:0 <- rconnect.net::HostServer/broadcast@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+          32
+        ],
+        [
+          "rconnect.net::BinaryMessageCodec$/copy@null:0 <- rconnect.net::BinaryMessageCodec$/copy@null:0 <- rconnect.net::BinaryMessageCodec$/copy@null:0 <- rconnect.net::BinaryMessageCodec$/copy@null:0 <- rconnect.net::BinaryMessageCodec$/copy@null:0 <- rconnect.net::BinaryMessageCodec$/pack@null:0 <- rconnect.net::TcpLink/send@null:0 <- rconnect.net::HostServer/broadcast@null:0 <- rconnect.core::Session/broadcastWorldState@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+          32
+        ],
+        [
+          "rconnect.net::BinaryMessageCodec$/copy@null:0 <- rconnect.net::BinaryMessageCodec$/copy@null:0 <- rconnect.net::BinaryMessageCodec$/copy@null:0 <- rconnect.net::BinaryMessageCodec$/pack@null:0 <- rconnect.net::TcpLink/send@null:0 <- rconnect.net::HostServer/broadcast@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+          31
+        ],
+        [
+          "RealisticVisionMod/captureExploration@null:0 <- MethodInfo-4@null:0 <- rconnect.game::ExplorationSync/packet@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+          30
+        ],
+        [
+          "[reap]@null:0 <- Array$/_join@null:0 <- Array/http://adobe.com/AS3/2006/builtin::join@null:0 <- RealisticVisionMod/captureExploration@null:0 <- MethodInfo-4@null:0 <- rconnect.game::ExplorationSync/packet@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+          28
+        ],
+        [
+          "rconnect.game::GameBridge$/unitFields@null:0 <- rconnect.game::GameBridge/readUnitsSnapshot@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+          28
+        ],
+        [
+          "Array$/_join@null:0 <- Array/http://adobe.com/AS3/2006/builtin::join@null:0 <- wallblend::BlendLayer/gridKey@null:0 <- wallblend::BlendLayer/update@null:0 <- WallBlendMod$/onFrame@null:0 <- [enterFrameEvent]@null:0",
+          26
+        ],
+        [
+          "[execute-queued]@null:0 <- flash.display::MovieClip/gotoAndPlay@null:0 <- fe.weapon::Bullet/popadalo@null:0 <- fe.weapon::Bullet/run@null:0 <- fe.weapon::Bullet/step@null:0 <- fe.loc::Location/step@null:0 <- fe.loc::Land/step@null:0 <- fe::World/step@null:0 <- fe::MainMenu/mainStep@null:0 <- [enterFrameEvent]@null:0",
+          25
+        ],
+        [
+          "[reap]@null:0 <- Array$/_join@null:0 <- Array/http://adobe.com/AS3/2006/builtin::join@null:0 <- rconnect.net::RoomCodec$/pack@null:0 <- rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/updates@null:0 <- rconnect.game::GameBridge/readWallPaintUpdates@null:0 <- rconnect.core::Session/broadcastWorldState@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+          25
+        ],
+        [
+          "rconnect.net::BinaryMessageCodec$/copy@null:0 <- rconnect.net::BinaryMessageCodec$/copy@null:0 <- rconnect.net::BinaryMessageCodec$/copy@null:0 <- rconnect.net::BinaryMessageCodec$/copy@null:0 <- rconnect.net::BinaryMessageCodec$/pack@null:0 <- rconnect.net::TcpLink/send@null:0 <- rconnect.net::HostServer/broadcast@null:0 <- rconnect.core::Session/broadcastWorldState@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+          23
+        ]
+      ],
+      "allocation_count_top": [
+        [
+          "String",
+          932954
+        ],
+        [
+          "Object",
+          177280
+        ],
+        [
+          "Array",
+          68461
+        ],
+        [
+          "Function",
+          8463
+        ],
+        [
+          "flash.events::Event",
+          5121
+        ],
+        [
+          "flash.geom::Rectangle",
+          4188
+        ],
+        [
+          "flash.geom::Transform",
+          3850
+        ],
+        [
+          "flash.geom::ColorTransform",
+          3640
+        ],
+        [
+          "rconnect.game::GameBridge",
+          3163
+        ],
+        [
+          "flash.display::MovieClip",
+          3147
+        ],
+        [
+          "flash.display::Shape",
+          2750
+        ],
+        [
+          "builtin.as$0::MethodClosure",
+          2430
+        ]
+      ],
+      "valid_cpu_sample": true,
+      "scope": "ENTER_FRAME through final RENDER only; inclusive rows overlap; no allocation stacks; sampling overhead excluded from qualification"
+    },
+    "join": {
+      "log_sha256": "454d84a70b7f956a17cd5efe502889494f812495e07377b3a69a49252eb80ec5",
+      "recorded_frames": 251,
+      "sampled_windows": 24,
+      "cpu_samples": 1385,
+      "phases": {
+        "0": {
+          "windows": 6,
+          "cpu": 313,
+          "elapsed_ms": 280,
+          "enter_ms": 198,
+          "after_enter_ms": 82
+        },
+        "1": {
+          "windows": 6,
+          "cpu": 382,
+          "elapsed_ms": 340,
+          "enter_ms": 249,
+          "after_enter_ms": 91
+        },
+        "5": {
+          "windows": 6,
+          "cpu": 315,
+          "elapsed_ms": 286,
+          "enter_ms": 209,
+          "after_enter_ms": 77
+        },
+        "6": {
+          "windows": 6,
+          "cpu": 375,
+          "elapsed_ms": 334,
+          "enter_ms": 247,
+          "after_enter_ms": 87
+        }
+      },
+      "inclusive_top": [
+        [
+          "[enterFrameEvent]",
+          1019
+        ],
+        [
+          "[reap]",
+          307
+        ],
+        [
+          "rconnect.game::GameBridge/onMirrorFrame",
+          301
+        ],
+        [
+          "rconnect.game::GameBridge/tickFrozenAnims",
+          272
+        ],
+        [
+          "RealisticVisionMod/onFrame",
+          259
+        ],
+        [
+          "RealisticVisionMod/onFrameInner",
+          258
+        ],
+        [
+          "WallBlendMod$/onFrame",
+          214
+        ],
+        [
+          "flash.utils::Timer/_timerDispatch",
+          193
+        ],
+        [
+          "flash.utils::Timer/tick",
+          193
+        ],
+        [
+          "rconnect.core::Session/onTick",
+          189
+        ],
+        [
+          "RealisticVisionMod/hideEnemies",
+          164
+        ],
+        [
+          "wallblend::BackgroundBlendLayer/update",
+          149
+        ],
+        [
+          "Array/http://adobe.com/AS3/2006/builtin::join",
+          148
+        ],
+        [
+          "Array$/_join",
+          148
+        ],
+        [
+          "[execute-queued]",
+          129
+        ],
+        [
+          "RealisticVisionMod/applyMask",
+          122
+        ],
+        [
+          "rconnect.game::UnitPresentation/tick",
+          111
+        ],
+        [
+          "rconnect.game::GameBridge/onVisForceFrame",
+          107
+        ],
+        [
+          "rconnect.game::GameBridge$/probe",
+          106
+        ],
+        [
+          "TdfcRuntime$/onFrame",
+          98
+        ],
+        [
+          "GameBridge$/snapshot",
+          91
+        ],
+        [
+          "rconnect.game::ExplorationSync/packet",
+          85
+        ],
+        [
+          "RVWallSurface/update",
+          82
+        ],
+        [
+          "RealisticVisionMod/updateWallSurface",
+          82
+        ],
+        [
+          "MethodInfo-4",
+          79
+        ],
+        [
+          "RealisticVisionMod/captureExploration",
+          79
+        ],
+        [
+          "rconnect.game::RemoteMotion/sample",
+          78
+        ],
+        [
+          "rconnect.game::RemoteMotion/sampleTimed",
+          74
+        ],
+        [
+          "flash.display::MovieClip/gotoAndPlay",
+          71
+        ],
+        [
+          "rconnect.game::UnitPresentation/play",
+          71
+        ],
+        [
+          "wallblend::BlendLayer/update",
+          63
+        ],
+        [
+          "wallblend::BlendLayer/gridKey",
+          62
+        ],
+        [
+          "[activation-object]",
+          59
+        ],
+        [
+          "RVWallSurface/updateContour",
+          57
+        ],
+        [
+          "rconnect.core::Session/flushRoomReports",
+          48
+        ],
+        [
+          "GameBridge$/get",
+          40
+        ],
+        [
+          "rconnect.game::GameBridge$/probeOptional",
+          39
+        ],
+        [
+          "GameBridge$/num",
+          38
+        ],
+        [
+          "rconnect.game::PlayerBodyEffects/apply",
+          35
+        ],
+        [
+          "rconnect.game::MirrorHitUnit/syncMotion",
+          35
+        ],
+        [
+          "flash.display::MovieClip",
+          35
+        ],
+        [
+          "flash.display::Sprite",
+          35
+        ],
+        [
+          "fl.managers::FocusManager/addedHandler",
+          33
+        ],
+        [
+          "fl.managers::FocusManager/addFocusables",
+          33
+        ],
+        [
+          "flash.display::Sprite/constructChildren",
+          31
+        ]
+      ],
+      "leaf_top": [
+        [
+          "[reap]",
+          307
+        ],
+        [
+          "rconnect.game::GameBridge$/probe",
+          67
+        ],
+        [
+          "Array$/_join",
+          64
+        ],
+        [
+          "[execute-queued]",
+          59
+        ],
+        [
+          "RealisticVisionMod/applyMask",
+          56
+        ],
+        [
+          "wallblend::BackgroundBlendLayer/update",
+          54
+        ],
+        [
+          "GameBridge$/get",
+          40
+        ],
+        [
+          "[activation-object]",
+          28
+        ],
+        [
+          "[mark]",
+          28
+        ],
+        [
+          "global/flash.sampler::startSampling",
+          23
+        ],
+        [
+          "flash.display::Sprite/constructChildren",
+          22
+        ],
+        [
+          "RealisticVisionMod/captureExploration",
+          17
+        ],
+        [
+          "rconnect.game::GameBridge$/probeOptional",
+          17
+        ],
+        [
+          "flash.display::BitmapData/paletteMap",
+          17
+        ],
+        [
+          "flash.display::BitmapData/compare",
+          16
+        ],
+        [
+          "Math$/_max",
+          15
+        ],
+        [
+          "fe.loc::Location/getTile",
+          14
+        ],
+        [
+          "rconnect.game::TerrainSync/matchesTile",
+          14
+        ],
+        [
+          "RealisticVisionMod/hideEnemies",
+          14
+        ],
+        [
+          "String$/_split",
+          14
+        ],
+        [
+          "flash.display::BitmapData/copyPixels",
+          13
+        ],
+        [
+          "rconnect.game::WeaponDisplay$/interpolate",
+          13
+        ],
+        [
+          "rconnect.game::TerrainSync/capture",
+          12
+        ],
+        [
+          "GameBridge$/snapshot",
+          11
+        ],
+        [
+          "rconnect.game::RemoteMotion/sampleTimed",
+          11
+        ],
+        [
+          "rconnect.game::MirrorMasks/prepare",
+          10
+        ],
+        [
+          "GameBridge$/num",
+          10
+        ],
+        [
+          "RealisticVisionMod/unitBBox",
+          10
+        ],
+        [
+          "flash.events::EventDispatcher/addEventListener",
+          10
+        ],
+        [
+          "rconnect.game::GameBridge/captureUnitDamage",
+          8
+        ],
+        [
+          "rconnect.game::MirrorHitUnit/syncMotion",
+          8
+        ],
+        [
+          "rconnect.game::RemoteMotion$/blendBodyPose",
+          8
+        ],
+        [
+          "rconnect.net::BinaryMessageCodec$/copy",
+          8
+        ],
+        [
+          "flash.filesystem::FileStream/open",
+          8
+        ],
+        [
+          "RVWallSurface/update",
+          7
+        ]
+      ],
+      "stacks_top": [
+        [
+          "RealisticVisionMod/applyMask@null:0 <- RealisticVisionMod/hideEnemies@null:0 <- RealisticVisionMod/onFrameInner@null:0 <- RealisticVisionMod/onFrame@null:0 <- [enterFrameEvent]@null:0",
+          56
+        ],
+        [
+          "wallblend::BackgroundBlendLayer/update@null:0 <- WallBlendMod$/onFrame@null:0 <- [enterFrameEvent]@null:0",
+          54
+        ],
+        [
+          "[reap]@null:0 <- wallblend::BackgroundBlendLayer/update@null:0 <- WallBlendMod$/onFrame@null:0 <- [enterFrameEvent]@null:0",
+          33
+        ],
+        [
+          "Array$/_join@null:0 <- Array/http://adobe.com/AS3/2006/builtin::join@null:0 <- wallblend::BlendLayer/gridKey@null:0 <- wallblend::BlendLayer/update@null:0 <- WallBlendMod$/onFrame@null:0 <- [enterFrameEvent]@null:0",
+          31
+        ],
+        [
+          "[execute-queued]@null:0 <- flash.display::MovieClip/gotoAndPlay@null:0 <- rconnect.game::UnitPresentation/play@null:0 <- rconnect.game::UnitPresentation/tick@null:0 <- rconnect.game::GameBridge/tickFrozenAnims@null:0 <- rconnect.game::GameBridge/onMirrorFrame@null:0 <- [enterFrameEvent]@null:0",
+          29
+        ],
+        [
+          "[reap]@null:0 <- Array$/_join@null:0 <- Array/http://adobe.com/AS3/2006/builtin::join@null:0 <- wallblend::BackgroundBlendLayer/update@null:0 <- WallBlendMod$/onFrame@null:0 <- [enterFrameEvent]@null:0",
+          27
+        ],
+        [
+          "GameBridge$/get@null:0 <- GameBridge$/num@null:0 <- GameBridge$/snapshot@null:0 <- TdfcRuntime$/onFrame@null:0 <- [enterFrameEvent]@null:0",
+          26
+        ],
+        [
+          "[reap]@null:0 <- Array$/_join@null:0 <- Array/http://adobe.com/AS3/2006/builtin::join@null:0 <- RealisticVisionMod/captureExploration@null:0 <- MethodInfo-4@null:0 <- rconnect.game::ExplorationSync/packet@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+          25
+        ],
+        [
+          "[reap]@null:0 <- Array$/_join@null:0 <- Array/http://adobe.com/AS3/2006/builtin::join@null:0 <- wallblend::BlendLayer/gridKey@null:0 <- wallblend::BlendLayer/update@null:0 <- WallBlendMod$/onFrame@null:0 <- [enterFrameEvent]@null:0",
+          24
+        ],
+        [
+          "global/flash.sampler::startSampling@null:0 <- SustainedDensityTestDoc/diagBegin@null:0 <- [enterFrameEvent]@null:0",
+          23
+        ],
+        [
+          "Array$/_join@null:0 <- Array/http://adobe.com/AS3/2006/builtin::join@null:0 <- wallblend::BackgroundBlendLayer/update@null:0 <- WallBlendMod$/onFrame@null:0 <- [enterFrameEvent]@null:0",
+          21
+        ],
+        [
+          "[reap]@null:0 <- RealisticVisionMod/captureExploration@null:0 <- MethodInfo-4@null:0 <- rconnect.game::ExplorationSync/packet@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+          20
+        ],
+        [
+          "[execute-queued]@null:0",
+          18
+        ],
+        [
+          "rconnect.game::GameBridge$/probe@null:0 <- rconnect.game::MirrorHitUnit/syncMotion@null:0 <- rconnect.game::GameBridge/tickFrozenAnims@null:0 <- rconnect.game::GameBridge/onMirrorFrame@null:0 <- [enterFrameEvent]@null:0",
+          17
+        ],
+        [
+          "RealisticVisionMod/captureExploration@null:0 <- MethodInfo-4@null:0 <- rconnect.game::ExplorationSync/packet@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+          17
+        ],
+        [
+          "flash.display::BitmapData/paletteMap@null:0 <- RVWallSurface/updateContour@null:0 <- RVWallSurface/update@null:0 <- RealisticVisionMod/updateWallSurface@null:0 <- RealisticVisionMod/onFrameInner@null:0 <- RealisticVisionMod/onFrame@null:0 <- [enterFrameEvent]@null:0",
+          17
+        ],
+        [
+          "flash.display::BitmapData/compare@null:0 <- RVWallSurface/updateContour@null:0 <- RVWallSurface/update@null:0 <- RealisticVisionMod/updateWallSurface@null:0 <- RealisticVisionMod/onFrameInner@null:0 <- RealisticVisionMod/onFrame@null:0 <- [enterFrameEvent]@null:0",
+          16
+        ],
+        [
+          "Math$/_max@null:0 <- RealisticVisionMod/applyMask@null:0 <- RealisticVisionMod/hideEnemies@null:0 <- RealisticVisionMod/onFrameInner@null:0 <- RealisticVisionMod/onFrame@null:0 <- [enterFrameEvent]@null:0",
+          15
+        ],
+        [
+          "rconnect.game::TerrainSync/matchesTile@null:0 <- rconnect.game::TerrainSync/capture@null:0 <- rconnect.game::TerrainSync/report@null:0 <- rconnect.game::GameBridge/scanTileReports@null:0 <- rconnect.core::Session/flushRoomReports@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+          14
+        ],
+        [
+          "GameBridge$/get@null:0 <- GameBridge$/snapshot@null:0 <- TdfcRuntime$/onFrame@null:0 <- [enterFrameEvent]@null:0",
+          14
+        ],
+        [
+          "RealisticVisionMod/hideEnemies@null:0 <- RealisticVisionMod/onFrameInner@null:0 <- RealisticVisionMod/onFrame@null:0 <- [enterFrameEvent]@null:0",
+          14
+        ],
+        [
+          "[reap]@null:0 <- [activation-object]@null:0 <- rconnect.game::BurnVisuals/present@null:0 <- rconnect.game::UnitPresentation/tick@null:0 <- rconnect.game::GameBridge/tickFrozenAnims@null:0 <- rconnect.game::GameBridge/onMirrorFrame@null:0 <- [enterFrameEvent]@null:0",
+          13
+        ],
+        [
+          "[reap]@null:0 <- RealisticVisionMod/applyMask@null:0 <- RealisticVisionMod/hideEnemies@null:0 <- RealisticVisionMod/onFrameInner@null:0 <- RealisticVisionMod/onFrame@null:0 <- [enterFrameEvent]@null:0",
+          13
+        ],
+        [
+          "flash.display::BitmapData/copyPixels@null:0 <- RVWallSurface/copyForeground@null:0 <- RVWallSurface/updateContour@null:0 <- RVWallSurface/update@null:0 <- RealisticVisionMod/updateWallSurface@null:0 <- RealisticVisionMod/onFrameInner@null:0 <- RealisticVisionMod/onFrame@null:0 <- [enterFrameEvent]@null:0",
+          13
+        ],
+        [
+          "[reap]@null:0 <- rconnect.game::RemoteMotion/sampleTimed@null:0 <- rconnect.game::RemoteMotion/sample@null:0 <- rconnect.game::GameBridge/tickFrozenAnims@null:0 <- rconnect.game::GameBridge/onMirrorFrame@null:0 <- [enterFrameEvent]@null:0",
+          12
+        ]
+      ],
+      "allocation_count_top": [
+        [
+          "String",
+          359451
+        ],
+        [
+          "Object",
+          47592
+        ],
+        [
+          "Array",
+          47190
+        ],
+        [
+          "Function",
+          10860
+        ],
+        [
+          "flash.events::Event",
+          4562
+        ],
+        [
+          "rconnect.game::GameBridge",
+          4233
+        ],
+        [
+          "flash.geom::Rectangle",
+          4135
+        ],
+        [
+          "rconnect.game::UnitPresentation",
+          3280
+        ],
+        [
+          "flash.display::Shape",
+          2703
+        ],
+        [
+          "flash.geom::Transform",
+          2496
+        ],
+        [
+          "flash.geom::ColorTransform",
+          2304
+        ],
+        [
+          "flash.display::MovieClip",
+          2276
+        ]
+      ],
+      "valid_cpu_sample": true,
+      "scope": "ENTER_FRAME through final RENDER only; inclusive rows overlap; no allocation stacks; sampling overhead excluded from qualification"
+    }
+  }
+}

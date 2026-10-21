@@ -1,0 +1,468 @@
+--- frozen-control/on/rconnect/core/TravelGuard.as
++++ fixed-component/on/rconnect/core/TravelGuard.as
+@@ -1,182 +1,17 @@
+-package rconnect.core
+-{
+-   import modlocales.connect.RCLocale;
+-   import flash.display.DisplayObject;
+-   import flash.events.MouseEvent;
+-   import flash.utils.getQualifiedClassName;
+-   import flash.utils.Dictionary;
+-   import fe.inter.RConnectTravelAccess;
++package rconnect.core {
+    import rconnect.game.GameBridge;
+-
+-   /** Entry-side restrictions, before the native handler can spend a scroll,
+-    * refill a floor or synchronously run a challenge script. */
+-   public class TravelGuard
+-   {
+-      private static var changed:Array=[];
+-      private static var permittedLand:String="";
+-      private static var permittedTravel:String="";
+-      private static var authorizedExitWorld:Object;
+-      private static var authorizedExitRemaining:int=0;
+-      private static var travelState:Object;
+-      private static var storyOriginal:Dictionary=new Dictionary();
+-      private var mod:RConnectMod;
+-      public function TravelGuard(m:RConnectMod)
+-      {mod=m;m.stage.addEventListener(MouseEvent.CLICK,click,true,100000);}
+-      private function click(e:MouseEvent):void
+-      {
+-         if(mod.session.mode!=Session.CONNECTED && !mod.session.rooms.busy && !mod.session.rooms.nativeTravelPending)return;
+-         var page:Object=GameBridge.probe(GameBridge.probe(mod.game.world,"pip"),"currentPage");
+-         if(RConnectTravelAccess.blocked(page,e.target as DisplayObject))
+-         {e.stopImmediatePropagation();mod.session.rooms.notice("请由宿主发起全队换图");}
+-      }
+-      public static function clear():void
+-      {
+-         for each(var s:Object in changed)try {s.o.action=s.action;s.o.active=s.active;s.o.is_act=s.is_act;s.o.actionText=s.text;}catch(e:*){}
+-         changed=[];
+-      }
+-      /** Authorize one native exit to the host's destination. Native loading
+-       * can exceed a timeout and Encounter may redirect the map mid-exit. */
+-      public static function allowTravel(landId:String,travelId:String=""):void {permittedLand=landId;permittedTravel=travelId;}
+-      public static function endTravel():void
+-      {permittedLand="";permittedTravel="";authorizedExitWorld=null;authorizedExitRemaining=0;}
+-      public static function reset():void
+-      {
+-         clear();endTravel();travelState=null;
+-         for(var o:Object in storyOriginal)for(var k:String in storyOriginal[o])o[k]=storyOriginal[o][k];
+-         storyOriginal=new Dictionary();
+-      }
+-      private static function suppress(o:Object,k:String,value:*):void
+-      {
+-         if(o==null)return;
+-         var old:Object=storyOriginal[o];if(old==null)old=storyOriginal[o]={};
+-         if(!old.hasOwnProperty(k))old[k]=o[k];o[k]=value;
+-      }
+-      /** A grouped challenge runs its scripts and waves on the host only. */
+-      public static function mirrorStory(room:Object):void
+-      {
+-         if(room==null)return;
+-         var prob:Object=GameBridge.probe(room,"prob");
+-         if(prob!=null)
+-         {
+-            for each(var k:String in ["inScript","outScript","closeScript","alarmScript"])suppress(prob,k,null);
+-            suppress(prob,"onWave",false);
+-         }
+-         for each(var area:Object in room.areas)if(scripted(area))suppress(area,"enabled",false);
+-         for each(var script:Object in room.land.scripts)
+-            if(GameBridge.probe(GameBridge.probe(script,"owner"),"loc")===room)suppress(script,"running",false);
+-      }
+-      public static function guardTravel(game:GameBridge,rooms:RoomSync):void
+-      {
+-         if(game.world==null || game.gg==null || game.isPlayerDead())return;
+-         var w:Object=game.world,g:Object=w.game,remaining:int=int(w.t_exit);
+-         // A completed, replaced or restarted exit cannot reuse the old grant.
+-         // Normal exitStep only decrements (or waits), including during loading.
+-         if(authorizedExitWorld!==w || remaining<=0 || remaining>authorizedExitRemaining)
+-         {authorizedExitWorld=null;authorizedExitRemaining=0;}
+-         if(remaining>0)
+-         {
+-            if(permittedTravel!="" && permittedTravel!=game.activeTravelId)endTravel();
+-            if(authorizedExitWorld===w)
+-            {authorizedExitRemaining=remaining;return;}
+-            if(permittedLand!="" && String(g.curLandId)==permittedLand)
+-            {
+-               permittedLand="";authorizedExitWorld=w;authorizedExitRemaining=remaining;return;
+-            }
+-            if(travelState==null)return;
+-            for(var k:String in travelState)g[k]=travelState[k];
+-            w.t_exit=0;w.pip.noAct=false;game.gg.controlOn();w.cam.dblack=0;w.vblack.alpha=0;
+-            rooms.notice("请由宿主发起全队换图");
+-         }
+-         else
+-         {
+-            travelState={};
+-            for each(k in ["curLandId","curCoord","missionId","crea"])travelState[k]=g[k];
+-         }
+-      }
+-      public static function update(game:GameBridge,joining:Boolean):void
+-      {
+-         clear();if(!joining || game.loc==null)return;
+-         mirrorStory(game.loc);
+-         var arrays:Array=[game.loc.objs,game.loc.units,game.loc.acts];
+-         for each(var list:Array in arrays)if(list!=null)for each(var o:Object in list)
+-         {
+-            var inter:Object=GameBridge.probe(o,"inter");
+-            if(inter==null && GameBridge.probe(o,"action")!=null)inter=o;
+-            if(inter==null)continue;
+-            var owner:Object=GameBridge.probe(inter,"owner");
+-            if(GameBridge.probe(inter,"prob")!=null || ["probreturn","exit"].indexOf(String(GameBridge.probe(inter,"allact")))>=0
+-               || (owner!=null && getQualifiedClassName(owner).indexOf("CheckPoint")>=0
+-                  && ["returnb","returnm"].indexOf(String(inter.userAction))>=0) || scripted(inter))
+-            {
+-               changed.push({o:inter,action:inter.action,active:inter.active,is_act:inter.is_act,text:inter.actionText});
+-               inter.action=0;inter.active=false;inter.is_act=false;
+-               inter.actionText=RCLocale.text("请由宿主带队进入");
+-            }
+-         }
+-      }
+-      private static function scripted(o:Object):Boolean
+-      {
+-         for each(var k:String in ["scrDie","scrAlarm","scrAct","scrOpen","scrClose","scrTouch","scrOver","scrOut"])
+-            if(GameBridge.probe(o,k)!=null)return true;
+-         var q:*=GameBridge.probe(o,"questId");return q!=null && String(q)!="";
+-      }
+-      public static function restricted(loc:Object):Boolean
+-      {
+-         if(loc==null)return false;
+-         if(GameBridge.probe(loc,"prob")!=null || String(GameBridge.probe(loc,"landProb"))!="")return true;
+-         var xml:XML=GameBridge.probe(GameBridge.probe(loc,"room"),"xml") as XML;
+-         if(xml!=null && xml.scr.length()>0)return true;
+-         for each(var list:Array in [loc.units,loc.objs,loc.areas])if(list!=null)for each(var o:Object in list)
+-            if(scripted(o) || scripted(GameBridge.probe(o,"inter")))return true;
+-         return false;
+-      }
+-      public static function returnTo(game:GameBridge,room:Object):void
+-      {follow(game,{landX:room.landX,landY:room.landY,landZ:room.landZ,landProb:room.landProb});}
+-      /** False means the native destination is not ready and no room changed.
+-       * Exceptions after a partial native transition still stop the barrier. */
+-      public static function follow(game:GameBridge,info:Object,mirror:Boolean=false):Boolean
+-      {
+-         var land:Object=game.world.land,prob:String=String(info.landProb || "");
+-         if(prob!="" || String(land.prob)!="")
+-         {
+-            // Random maps only prebuild the challenges selected locally. The
+-            // host may have selected a different one from the same native pool.
+-            if(prob!="" && land.probs[prob]==null)
+-            {
+-               land.buildProb(prob);
+-               if(land.probs[prob]==null)throw new Error("Missing native challenge: "+prob);
+-               var made:Object=land.probs[prob][0][0][0];
+-               made.setObjects();made.preStep();if(made.prob!=null)made.prob.prepare();
+-            }
+-            if(mirror)
+-            {
+-               mirrorStory(game.loc);
+-               if(prob!="" && land.probs[prob]!=null)mirrorStory(land.probs[prob][0][0][0]);
+-            }
+-            land.gotoProb(prob);
+-            if(String(land.prob)!=prob)throw new Error("Challenge entry failed: "+prob);
+-         }
+-         else
+-         {
+-            var target:Object;
+-            try {target=land.locs[int(info.landX)][int(info.landY)][int(info.landZ)];}catch(e:*){}
+-            if(target==null)return false;
+-            if(mirror)mirrorStory(target);
+-            var oldX:int=land.locX,oldY:int=land.locY,oldZ:int=land.locZ,oldRoom:Object=land.loc;
+-            land.locX=int(info.landX);land.locY=int(info.landY);land.locZ=int(info.landZ);
+-            if(target!==oldRoom) {
+-               if(!land.ativateLoc()) {
+-                  if(land.loc!==oldRoom)throw new Error("Native room activation partially changed destination");
+-                  land.locX=oldX;land.locY=oldY;land.locZ=oldZ;return false;
+-               }
+-               if(land.loc!==target || game.world.loc!==target || game.gg.loc!==target)
+-                  throw new Error("Native room activation did not reach destination");
+-               land.setGGToSpawnPoint();
+-            }
+-         }
+-         game.refreshWorld();
+-         TravelPlacement.place(game.gg,info.x==null?Number(game.gg.X):Number(info.x),info.y==null?Number(game.gg.Y):Number(info.y));
+-         return true;
++   public class TravelGuard {
++      public static function reset():void{}
++      public static function clear():void{}
++      public static function guardTravel(g:GameBridge,r:RoomSync):void{}
++      public static function update(g:GameBridge,joining:Boolean):void{}
++      public static function restricted(room:Object):Boolean{return false;}
++      public static function returnTo(g:GameBridge,room:Object):void{}
++      public static function allowTravel(id:String,travelId:String=""):void{}
++      public static function endTravel():void{}
++      public static function follow(g:GameBridge,info:Object,mirror:Boolean=false):Boolean {
++         if(String(g.world.land.act.id)!=String(info.curLandId))throw new Error("Fixture: follow attempted inside the wrong native Land");
++         return g.roomKey()==String(info.roomKey);
+       }
+    }
+ }
+--- frozen-control/on/rconnect/core/TravelPlacement.as
++++ fixed-component/on/rconnect/core/TravelPlacement.as
+@@ -1,32 +1,5 @@
+ package rconnect.core {
+-   import rconnect.game.GameBridge;
+-
+-   /** A discontinuous move must also move the native floating weapon anchors.
+-    * Unit.setPos/setVisPos only move the pony. Weapon.actions otherwise eases
+-    * from the previous room's position and transmits that same offset to peers. */
+    public class TravelPlacement {
+-      public static function place(gg:Object,x:Number,y:Number):void {
+-         if(gg==null || !isFinite(x) || !isFinite(y))throw new Error("Invalid travel placement");
+-         var dx:Number=x-Number(gg.X),dy:Number=y-Number(gg.Y);
+-         gg.setPos(x,y);gg.dx=0;gg.dy=0;gg.isLaz=0;gg.setVisPos();
+-         // setWeaponPos queries terrain using the previous anchor before it
+-         // updates its Y. Keep that query in the new coordinate neighborhood.
+-         gg.weaponX+=dx;gg.weaponY+=dy;
+-         var list:Array=[],w:Object;
+-         for each(var key:String in ["currentWeapon","throwWeapon","magicWeapon"]) {
+-            w=GameBridge.probe(gg,key);
+-            if(w!=null && list.indexOf(w)<0 && GameBridge.probe(w,"owner")===gg)list.push(w);
+-         }
+-         for each(w in list) {
+-            gg.setWeaponPos(int(w.tip));
+-            w.X=int(w.tip)==5?Number(gg.magicX):Number(gg.weaponX);
+-            w.Y=int(w.tip)==5?Number(gg.magicY):Number(gg.weaponY);
+-            // No actions/step/setNull: these can fire, spend ammo, or reset
+-            // attack/reload timers. Only refresh the native display pose.
+-            if(GameBridge.probe(w,"vis")!=null)w.animate();
+-         }
+-         w=GameBridge.probe(gg,"currentWeapon");
+-         gg.setWeaponPos(w==null?0:int(w.tip));
+-      }
++      public static function place(gg:Object,x:Number,y:Number):void {gg.X=x;gg.Y=y;}
+    }
+ }
+--- frozen-control/off/rconnect/core/TravelGuard.as
++++ fixed-component/off/rconnect/core/TravelGuard.as
+@@ -1,182 +1,17 @@
+-package rconnect.core
+-{
+-   import modlocales.connect.RCLocale;
+-   import flash.display.DisplayObject;
+-   import flash.events.MouseEvent;
+-   import flash.utils.getQualifiedClassName;
+-   import flash.utils.Dictionary;
+-   import fe.inter.RConnectTravelAccess;
++package rconnect.core {
+    import rconnect.game.GameBridge;
+-
+-   /** Entry-side restrictions, before the native handler can spend a scroll,
+-    * refill a floor or synchronously run a challenge script. */
+-   public class TravelGuard
+-   {
+-      private static var changed:Array=[];
+-      private static var permittedLand:String="";
+-      private static var permittedTravel:String="";
+-      private static var authorizedExitWorld:Object;
+-      private static var authorizedExitRemaining:int=0;
+-      private static var travelState:Object;
+-      private static var storyOriginal:Dictionary=new Dictionary();
+-      private var mod:RConnectMod;
+-      public function TravelGuard(m:RConnectMod)
+-      {mod=m;m.stage.addEventListener(MouseEvent.CLICK,click,true,100000);}
+-      private function click(e:MouseEvent):void
+-      {
+-         if(mod.session.mode!=Session.CONNECTED && !mod.session.rooms.busy && !mod.session.rooms.nativeTravelPending)return;
+-         var page:Object=GameBridge.probe(GameBridge.probe(mod.game.world,"pip"),"currentPage");
+-         if(RConnectTravelAccess.blocked(page,e.target as DisplayObject))
+-         {e.stopImmediatePropagation();mod.session.rooms.notice("请由宿主发起全队换图");}
+-      }
+-      public static function clear():void
+-      {
+-         for each(var s:Object in changed)try {s.o.action=s.action;s.o.active=s.active;s.o.is_act=s.is_act;s.o.actionText=s.text;}catch(e:*){}
+-         changed=[];
+-      }
+-      /** Authorize one native exit to the host's destination. Native loading
+-       * can exceed a timeout and Encounter may redirect the map mid-exit. */
+-      public static function allowTravel(landId:String,travelId:String=""):void {permittedLand=landId;permittedTravel=travelId;}
+-      public static function endTravel():void
+-      {permittedLand="";permittedTravel="";authorizedExitWorld=null;authorizedExitRemaining=0;}
+-      public static function reset():void
+-      {
+-         clear();endTravel();travelState=null;
+-         for(var o:Object in storyOriginal)for(var k:String in storyOriginal[o])o[k]=storyOriginal[o][k];
+-         storyOriginal=new Dictionary();
+-      }
+-      private static function suppress(o:Object,k:String,value:*):void
+-      {
+-         if(o==null)return;
+-         var old:Object=storyOriginal[o];if(old==null)old=storyOriginal[o]={};
+-         if(!old.hasOwnProperty(k))old[k]=o[k];o[k]=value;
+-      }
+-      /** A grouped challenge runs its scripts and waves on the host only. */
+-      public static function mirrorStory(room:Object):void
+-      {
+-         if(room==null)return;
+-         var prob:Object=GameBridge.probe(room,"prob");
+-         if(prob!=null)
+-         {
+-            for each(var k:String in ["inScript","outScript","closeScript","alarmScript"])suppress(prob,k,null);
+-            suppress(prob,"onWave",false);
+-         }
+-         for each(var area:Object in room.areas)if(scripted(area))suppress(area,"enabled",false);
+-         for each(var script:Object in room.land.scripts)
+-            if(GameBridge.probe(GameBridge.probe(script,"owner"),"loc")===room)suppress(script,"running",false);
+-      }
+-      public static function guardTravel(game:GameBridge,rooms:RoomSync):void
+-      {
+-         if(game.world==null || game.gg==null || game.isPlayerDead())return;
+-         var w:Object=game.world,g:Object=w.game,remaining:int=int(w.t_exit);
+-         // A completed, replaced or restarted exit cannot reuse the old grant.
+-         // Normal exitStep only decrements (or waits), including during loading.
+-         if(authorizedExitWorld!==w || remaining<=0 || remaining>authorizedExitRemaining)
+-         {authorizedExitWorld=null;authorizedExitRemaining=0;}
+-         if(remaining>0)
+-         {
+-            if(permittedTravel!="" && permittedTravel!=game.activeTravelId)endTravel();
+-            if(authorizedExitWorld===w)
+-            {authorizedExitRemaining=remaining;return;}
+-            if(permittedLand!="" && String(g.curLandId)==permittedLand)
+-            {
+-               permittedLand="";authorizedExitWorld=w;authorizedExitRemaining=remaining;return;
+-            }
+-            if(travelState==null)return;
+-            for(var k:String in travelState)g[k]=travelState[k];
+-            w.t_exit=0;w.pip.noAct=false;game.gg.controlOn();w.cam.dblack=0;w.vblack.alpha=0;
+-            rooms.notice("请由宿主发起全队换图");
+-         }
+-         else
+-         {
+-            travelState={};
+-            for each(k in ["curLandId","curCoord","missionId","crea"])travelState[k]=g[k];
+-         }
+-      }
+-      public static function update(game:GameBridge,joining:Boolean):void
+-      {
+-         clear();if(!joining || game.loc==null)return;
+-         mirrorStory(game.loc);
+-         var arrays:Array=[game.loc.objs,game.loc.units,game.loc.acts];
+-         for each(var list:Array in arrays)if(list!=null)for each(var o:Object in list)
+-         {
+-            var inter:Object=GameBridge.probe(o,"inter");
+-            if(inter==null && GameBridge.probe(o,"action")!=null)inter=o;
+-            if(inter==null)continue;
+-            var owner:Object=GameBridge.probe(inter,"owner");
+-            if(GameBridge.probe(inter,"prob")!=null || ["probreturn","exit"].indexOf(String(GameBridge.probe(inter,"allact")))>=0
+-               || (owner!=null && getQualifiedClassName(owner).indexOf("CheckPoint")>=0
+-                  && ["returnb","returnm"].indexOf(String(inter.userAction))>=0) || scripted(inter))
+-            {
+-               changed.push({o:inter,action:inter.action,active:inter.active,is_act:inter.is_act,text:inter.actionText});
+-               inter.action=0;inter.active=false;inter.is_act=false;
+-               inter.actionText=RCLocale.text("请由宿主带队进入");
+-            }
+-         }
+-      }
+-      private static function scripted(o:Object):Boolean
+-      {
+-         for each(var k:String in ["scrDie","scrAlarm","scrAct","scrOpen","scrClose","scrTouch","scrOver","scrOut"])
+-            if(GameBridge.probe(o,k)!=null)return true;
+-         var q:*=GameBridge.probe(o,"questId");return q!=null && String(q)!="";
+-      }
+-      public static function restricted(loc:Object):Boolean
+-      {
+-         if(loc==null)return false;
+-         if(GameBridge.probe(loc,"prob")!=null || String(GameBridge.probe(loc,"landProb"))!="")return true;
+-         var xml:XML=GameBridge.probe(GameBridge.probe(loc,"room"),"xml") as XML;
+-         if(xml!=null && xml.scr.length()>0)return true;
+-         for each(var list:Array in [loc.units,loc.objs,loc.areas])if(list!=null)for each(var o:Object in list)
+-            if(scripted(o) || scripted(GameBridge.probe(o,"inter")))return true;
+-         return false;
+-      }
+-      public static function returnTo(game:GameBridge,room:Object):void
+-      {follow(game,{landX:room.landX,landY:room.landY,landZ:room.landZ,landProb:room.landProb});}
+-      /** False means the native destination is not ready and no room changed.
+-       * Exceptions after a partial native transition still stop the barrier. */
+-      public static function follow(game:GameBridge,info:Object,mirror:Boolean=false):Boolean
+-      {
+-         var land:Object=game.world.land,prob:String=String(info.landProb || "");
+-         if(prob!="" || String(land.prob)!="")
+-         {
+-            // Random maps only prebuild the challenges selected locally. The
+-            // host may have selected a different one from the same native pool.
+-            if(prob!="" && land.probs[prob]==null)
+-            {
+-               land.buildProb(prob);
+-               if(land.probs[prob]==null)throw new Error("Missing native challenge: "+prob);
+-               var made:Object=land.probs[prob][0][0][0];
+-               made.setObjects();made.preStep();if(made.prob!=null)made.prob.prepare();
+-            }
+-            if(mirror)
+-            {
+-               mirrorStory(game.loc);
+-               if(prob!="" && land.probs[prob]!=null)mirrorStory(land.probs[prob][0][0][0]);
+-            }
+-            land.gotoProb(prob);
+-            if(String(land.prob)!=prob)throw new Error("Challenge entry failed: "+prob);
+-         }
+-         else
+-         {
+-            var target:Object;
+-            try {target=land.locs[int(info.landX)][int(info.landY)][int(info.landZ)];}catch(e:*){}
+-            if(target==null)return false;
+-            if(mirror)mirrorStory(target);
+-            var oldX:int=land.locX,oldY:int=land.locY,oldZ:int=land.locZ,oldRoom:Object=land.loc;
+-            land.locX=int(info.landX);land.locY=int(info.landY);land.locZ=int(info.landZ);
+-            if(target!==oldRoom) {
+-               if(!land.ativateLoc()) {
+-                  if(land.loc!==oldRoom)throw new Error("Native room activation partially changed destination");
+-                  land.locX=oldX;land.locY=oldY;land.locZ=oldZ;return false;
+-               }
+-               if(land.loc!==target || game.world.loc!==target || game.gg.loc!==target)
+-                  throw new Error("Native room activation did not reach destination");
+-               land.setGGToSpawnPoint();
+-            }
+-         }
+-         game.refreshWorld();
+-         TravelPlacement.place(game.gg,info.x==null?Number(game.gg.X):Number(info.x),info.y==null?Number(game.gg.Y):Number(info.y));
+-         return true;
++   public class TravelGuard {
++      public static function reset():void{}
++      public static function clear():void{}
++      public static function guardTravel(g:GameBridge,r:RoomSync):void{}
++      public static function update(g:GameBridge,joining:Boolean):void{}
++      public static function restricted(room:Object):Boolean{return false;}
++      public static function returnTo(g:GameBridge,room:Object):void{}
++      public static function allowTravel(id:String,travelId:String=""):void{}
++      public static function endTravel():void{}
++      public static function follow(g:GameBridge,info:Object,mirror:Boolean=false):Boolean {
++         if(String(g.world.land.act.id)!=String(info.curLandId))throw new Error("Fixture: follow attempted inside the wrong native Land");
++         return g.roomKey()==String(info.roomKey);
+       }
+    }
+ }
+--- frozen-control/off/rconnect/core/TravelPlacement.as
++++ fixed-component/off/rconnect/core/TravelPlacement.as
+@@ -1,32 +1,5 @@
+ package rconnect.core {
+-   import rconnect.game.GameBridge;
+-
+-   /** A discontinuous move must also move the native floating weapon anchors.
+-    * Unit.setPos/setVisPos only move the pony. Weapon.actions otherwise eases
+-    * from the previous room's position and transmits that same offset to peers. */
+    public class TravelPlacement {
+-      public static function place(gg:Object,x:Number,y:Number):void {
+-         if(gg==null || !isFinite(x) || !isFinite(y))throw new Error("Invalid travel placement");
+-         var dx:Number=x-Number(gg.X),dy:Number=y-Number(gg.Y);
+-         gg.setPos(x,y);gg.dx=0;gg.dy=0;gg.isLaz=0;gg.setVisPos();
+-         // setWeaponPos queries terrain using the previous anchor before it
+-         // updates its Y. Keep that query in the new coordinate neighborhood.
+-         gg.weaponX+=dx;gg.weaponY+=dy;
+-         var list:Array=[],w:Object;
+-         for each(var key:String in ["currentWeapon","throwWeapon","magicWeapon"]) {
+-            w=GameBridge.probe(gg,key);
+-            if(w!=null && list.indexOf(w)<0 && GameBridge.probe(w,"owner")===gg)list.push(w);
+-         }
+-         for each(w in list) {
+-            gg.setWeaponPos(int(w.tip));
+-            w.X=int(w.tip)==5?Number(gg.magicX):Number(gg.weaponX);
+-            w.Y=int(w.tip)==5?Number(gg.magicY):Number(gg.weaponY);
+-            // No actions/step/setNull: these can fire, spend ammo, or reset
+-            // attack/reload timers. Only refresh the native display pose.
+-            if(GameBridge.probe(w,"vis")!=null)w.animate();
+-         }
+-         w=GameBridge.probe(gg,"currentWeapon");
+-         gg.setWeaponPos(w==null?0:int(w.tip));
+-      }
++      public static function place(gg:Object,x:Number,y:Number):void {gg.X=x;gg.Y=y;}
+    }
+ }

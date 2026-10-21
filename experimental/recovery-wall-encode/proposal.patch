@@ -1,0 +1,39 @@
+--- recovery13/rconnect/game/WallImpactVisuals.as
++++ wall-encode/rconnect/game/WallImpactVisuals.as
+@@ -9,6 +9,7 @@
+    import flash.system.System;
+    import rconnect.core.Log;
+    import rconnect.net.RoomCodec;
++   import rconnect.net.WallCellCodec;
+ 
+    /** Grafon.dyrka/decal changes frontBmp, including indestructible walls whose
+     * HP never changes. Keep the actual pixels: replaying dyrka chooses another
+@@ -240,9 +241,7 @@
+       private function packed(c:Object):Object
+       {
+          if(c.wire!=null)return c.wire;
+-         var indices:Array=[];for(var key:String in c.values)indices.push(int(key));indices.sort(Array.NUMERIC);
+-         var words:Array=[];for each(var i:int in indices)words.push(i,Number(c.values[String(i)]));
+-         var wire:Object={x:int(c.x),y:int(c.y),v:int(c.v),d:RoomCodec.pack(words)};
++         var wire:Object={x:int(c.x),y:int(c.y),v:int(c.v),d:WallCellCodec.pack(c.values)};
+          if(c.v!==undefined)c.wire=wire;
+          return wire;
+       }
+@@ -305,7 +304,7 @@
+       {
+          var cached:Object=wordCache[data];
+          if(cached!=null && cached.data===data)return cached.words.concat();
+-         var words:Array=RoomCodec.unpack(data) as Array;
++         var words:Array=WallCellCodec.isCell(data)?WallCellCodec.unpack(data):RoomCodec.unpack(data) as Array;
+          if(words==null || words.length>2*CELL*CELL || words.length%2!=0)return null;
+          var previous:int=-1,numeric:Boolean=true;
+          for(var i:int=0;i<words.length;i+=2)
+@@ -344,7 +343,7 @@
+             {
+                k=id(c.x,c.y);var merged:Object={};
+                if(out[k]!=null)for(var key:String in out[k])merged[key]=true;
+-               var words:Array=RoomCodec.unpack(String(c.d)) as Array;
++               var words:Array=decodeWords(String(c.d));
+                for(var i:int=0;i<words.length;i+=2)merged[String(words[i])]=true;
+                out[k]=merged;
+             }

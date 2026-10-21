@@ -1,0 +1,201 @@
+{
+  "old": {
+    "encode_ms": [
+      740,
+      739,
+      771,
+      773
+    ],
+    "decode_ms": [
+      314,
+      312,
+      318,
+      304
+    ],
+    "encode_mean_ms": 755.75,
+    "decode_mean_ms": 312.0
+  },
+  "new": {
+    "encode_ms": [
+      475,
+      499,
+      510,
+      517
+    ],
+    "decode_ms": [
+      290,
+      280,
+      277,
+      282
+    ],
+    "encode_mean_ms": 500.25,
+    "decode_mean_ms": 282.25
+  },
+  "component_only_reduction": {
+    "encode": 0.33807476017201454,
+    "cold_decode": 0.0953525641025641
+  },
+  "qualifies_native_performance": false,
+  "historical_payloads": 82,
+  "blocks": [
+    {
+      "chars": 894984,
+      "coldDecode": {
+        "ms": 314,
+        "resetOutsideTiming": true,
+        "words": 297180,
+        "checksum": 2240691086,
+        "calls": 246
+      },
+      "side": "old",
+      "ms": 740,
+      "block": 0,
+      "checksum": 19329,
+      "calls": 246
+    },
+    {
+      "chars": 743736,
+      "coldDecode": {
+        "ms": 290,
+        "resetOutsideTiming": true,
+        "words": 297180,
+        "checksum": 2240691086,
+        "calls": 246
+      },
+      "side": "new",
+      "ms": 475,
+      "block": 1,
+      "checksum": 19128,
+      "calls": 246
+    },
+    {
+      "chars": 743736,
+      "coldDecode": {
+        "ms": 280,
+        "resetOutsideTiming": true,
+        "words": 297180,
+        "checksum": 2240691086,
+        "calls": 246
+      },
+      "side": "new",
+      "ms": 499,
+      "block": 2,
+      "checksum": 19128,
+      "calls": 246
+    },
+    {
+      "chars": 894984,
+      "coldDecode": {
+        "ms": 312,
+        "resetOutsideTiming": true,
+        "words": 297180,
+        "checksum": 2240691086,
+        "calls": 246
+      },
+      "side": "old",
+      "ms": 739,
+      "block": 3,
+      "checksum": 19329,
+      "calls": 246
+    },
+    {
+      "chars": 894984,
+      "coldDecode": {
+        "ms": 318,
+        "resetOutsideTiming": true,
+        "words": 297180,
+        "checksum": 2240691086,
+        "calls": 246
+      },
+      "side": "old",
+      "ms": 771,
+      "block": 4,
+      "checksum": 19329,
+      "calls": 246
+    },
+    {
+      "chars": 743736,
+      "coldDecode": {
+        "ms": 277,
+        "resetOutsideTiming": true,
+        "words": 297180,
+        "checksum": 2240691086,
+        "calls": 246
+      },
+      "side": "new",
+      "ms": 510,
+      "block": 5,
+      "checksum": 19128,
+      "calls": 246
+    },
+    {
+      "chars": 743736,
+      "coldDecode": {
+        "ms": 282,
+        "resetOutsideTiming": true,
+        "words": 297180,
+        "checksum": 2240691086,
+        "calls": 246
+      },
+      "side": "new",
+      "ms": 517,
+      "block": 6,
+      "checksum": 19128,
+      "calls": 246
+    },
+    {
+      "chars": 894984,
+      "coldDecode": {
+        "ms": 304,
+        "resetOutsideTiming": true,
+        "words": 297180,
+        "checksum": 2240691086,
+        "calls": 246
+      },
+      "side": "old",
+      "ms": 773,
+      "block": 7,
+      "checksum": 19329,
+      "calls": 246
+    }
+  ],
+  "source_result_sha256": "a436699c94f5ea6d0f2409881ace785e3c8db324ac595d2cd6e1b2b41caac8e0",
+  "natural": {
+    "oldChars": 298328,
+    "payloads": 82,
+    "currentDensityDistribution": false,
+    "newChars": 247912
+  },
+  "batches": [
+    {
+      "batch": 0,
+      "cells": 2,
+      "chars": 32200,
+      "side": 0
+    },
+    {
+      "batch": 1,
+      "cells": 2,
+      "chars": 32108,
+      "side": 0
+    },
+    {
+      "batch": 2,
+      "cells": 2,
+      "chars": 32184,
+      "side": 0
+    },
+    {
+      "batch": 0,
+      "cells": 3,
+      "chars": 37192,
+      "side": 1
+    },
+    {
+      "batch": 1,
+      "cells": 3,
+      "chars": 37164,
+      "side": 1
+    }
+  ]
+}

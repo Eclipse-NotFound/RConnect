@@ -1,0 +1,359 @@
+{
+  "base": "build/m52/recovery-13",
+  "base_sha256": "1177eb1ae9b227bcf3c0eb39dedad92b63ac16dcb7ffb0b421ea0a2024bfddb1",
+  "original_control_manifest_sha256": "aa40c3bb4d00b7819c68eb1002d80539e28c35a974fa5483f4026f4ac9322a71",
+  "passed_fixture": {
+    "path": "build\\m52\\recovery-seed-first-raster-room-01",
+    "receipt_sha256": "148ef3050d0da7e1dfa3f2d388d599038215bf2f4e7e2b0bc0f91671b1b08438",
+    "intent_sha256": "2722eb831966894cd5fff7c757bf577facdfba4412f8bc97c7081e0e3ee990fd",
+    "component_sha256": "ab979894326becd582c7053590212b42e85604ca6e81d72513f157fd10c4a6d7",
+    "checks": 109
+  },
+  "preserved_failure": {
+    "path": "build\\m52\\recovery-seed-gate-on-component-01",
+    "receipt_sha256": "16d4bda73d5cc19be11536f241c5dc404ecfdc6df92dac900930ca4c7cd3732d",
+    "compile_log_sha256": "c87aacd49034cfde2b9144e4a796b445ddc5f012b4d2dbdea8d15eb2cb1573f4",
+    "compiled": false,
+    "air_started": false
+  },
+  "repairs": [
+    "rconnect/core/TravelGuard.as",
+    "rconnect/core/TravelPlacement.as"
+  ],
+  "changes": {
+    "on": [
+      "rconnect/core/TravelGuard.as",
+      "rconnect/core/TravelPlacement.as"
+    ],
+    "off": [
+      "rconnect/core/TravelGuard.as",
+      "rconnect/core/TravelPlacement.as"
+    ]
+  },
+  "origins": {
+    "on/modlocales/connect/RCLocale.as": {
+      "path": "experimental\\recovery-seed-raster-control\\components\\on\\modlocales\\connect\\RCLocale.as",
+      "sha256": "e2e718a5585b7adcb095731ea6bbbf5f7984f777798bea713f4d9551069eabef",
+      "boundary": "unchanged paired component source"
+    },
+    "on/NativeTravelRoomChecks.as": {
+      "path": "experimental\\recovery-seed-raster-control\\components\\on\\NativeTravelRoomChecks.as",
+      "sha256": "0b51d2b5ae16195a53cfa762f81a7541f630bd1cce2ce729a633aacf972a29a4",
+      "boundary": "unchanged paired component source"
+    },
+    "on/rconnect/core/FirstRasterGate.as": {
+      "path": "experimental\\recovery-seed-raster-control\\components\\on\\rconnect\\core\\FirstRasterGate.as",
+      "sha256": "c4db67de41dd3e21d6aa5949f4214cf6b8ef49521c784d85e1e95dc447745821",
+      "boundary": "unchanged paired component source"
+    },
+    "on/rconnect/core/Log.as": {
+      "path": "experimental\\recovery-seed-raster-control\\components\\on\\rconnect\\core\\Log.as",
+      "sha256": "cffc3f4b9b4194e507a8488dfd89ad7a55e29d8fdb2519391a43668353a76237",
+      "boundary": "unchanged paired component source"
+    },
+    "on/rconnect/core/MapGeneration.as": {
+      "path": "experimental\\recovery-seed-raster-control\\components\\on\\rconnect\\core\\MapGeneration.as",
+      "sha256": "88f40023f87e6eaa05d6b7a43ca5d1f1fbd0bb0f8fdc108e328e354644958fa0",
+      "boundary": "unchanged paired component source"
+    },
+    "on/rconnect/core/NativeTravelPlan.as": {
+      "path": "experimental\\recovery-seed-raster-control\\components\\on\\rconnect\\core\\NativeTravelPlan.as",
+      "sha256": "e40903e83e23996d2aac1bb10984ffedf6de7984e541de1bf15b2fd0aa9309d1",
+      "boundary": "unchanged paired component source"
+    },
+    "on/rconnect/core/RoomSync.as": {
+      "path": "experimental\\recovery-seed-raster-control\\components\\on\\rconnect\\core\\RoomSync.as",
+      "sha256": "c2e68fe658a81be4b3ceb285daf453ca57b9d4a5895e80720dd629c374e3f85e",
+      "boundary": "unchanged paired component source"
+    },
+    "on/rconnect/core/SeedRasterEntry.as": {
+      "path": "experimental\\recovery-seed-raster-control\\components\\on\\rconnect\\core\\SeedRasterEntry.as",
+      "sha256": "9980a528b48051906e5bf4128d304b1687cfde02a99980ddfcbbbf80c8d5972e",
+      "boundary": "unchanged paired component source"
+    },
+    "on/rconnect/core/Session.as": {
+      "path": "experimental\\recovery-seed-raster-control\\components\\on\\rconnect\\core\\Session.as",
+      "sha256": "16b8afcc7eda96776c06dd82eebeb6ca30cea92ed2cd5cbd0ce0de3686a498a8",
+      "boundary": "unchanged paired component source"
+    },
+    "on/rconnect/core/TravelGuard.as": {
+      "path": "build\\m52\\recovery-seed-first-raster-room-01\\src\\rconnect\\core\\TravelGuard.as",
+      "sha256": "d62648d780765839f941667e4ceff096580f53f3dccf18c37312b5b1fc684179",
+      "boundary": "original tested fixture, not a native implementation"
+    },
+    "on/rconnect/core/TravelPlacement.as": {
+      "path": "build\\m52\\recovery-seed-first-raster-room-01\\src\\rconnect\\core\\TravelPlacement.as",
+      "sha256": "b426e339c592d055f6e396f54aa825681eeae9d8aeea30acdd16be2faeff7c72",
+      "boundary": "original tested fixture, not a native implementation"
+    },
+    "on/rconnect/game/GameBridge.as": {
+      "path": "experimental\\recovery-seed-raster-control\\components\\on\\rconnect\\game\\GameBridge.as",
+      "sha256": "54bc60fa8046357ed35b805e5ae2d8f26f2329e49f4fae4cfec6ad39afc3630b",
+      "boundary": "unchanged paired component source"
+    },
+    "on/rconnect/net/Protocol.as": {
+      "path": "experimental\\recovery-seed-raster-control\\components\\on\\rconnect\\net\\Protocol.as",
+      "sha256": "32f6777591247b93e05e56eced25c1b2d6d4427feacac0aa248f06afd16a0b8e",
+      "boundary": "unchanged paired component source"
+    },
+    "on/rconnect/net/RoomCodec.as": {
+      "path": "experimental\\recovery-seed-raster-control\\components\\on\\rconnect\\net\\RoomCodec.as",
+      "sha256": "296ee4d8d94f77faa62dcc17a39cb1e2492c756d3027311713c33935ca6b6b4a",
+      "boundary": "unchanged paired component source"
+    },
+    "on/rconnect/net/TcpLink.as": {
+      "path": "experimental\\recovery-seed-raster-control\\components\\on\\rconnect\\net\\TcpLink.as",
+      "sha256": "3519958acdd84a1efb590e0956a49e6cc0397ca48ec2ae0d06fd0ecb6aa009ed",
+      "boundary": "unchanged paired component source"
+    },
+    "on/rconnect/ui/RoomEntryView.as": {
+      "path": "experimental\\recovery-seed-raster-control\\components\\on\\rconnect\\ui\\RoomEntryView.as",
+      "sha256": "969ffe5824685edb1bdfab3b35f9e77dbcedd4eb14b012495611277d5b7f025c",
+      "boundary": "unchanged paired component source"
+    },
+    "on/RConnectMod.as": {
+      "path": "experimental\\recovery-seed-raster-control\\components\\on\\RConnectMod.as",
+      "sha256": "bdf7dd4b572a52762b2431c7d94d9818af8ef72dd5109f4bb27d807c36748f6a",
+      "boundary": "unchanged paired component source"
+    },
+    "on/SeedGateCaseMode.as": {
+      "path": "experimental\\recovery-seed-raster-control\\components\\on\\SeedGateCaseMode.as",
+      "sha256": "5c693fa09f558047fd2bea01040c1b4be176432621d4268576361c853c102257",
+      "boundary": "unchanged paired component source"
+    },
+    "off/modlocales/connect/RCLocale.as": {
+      "path": "experimental\\recovery-seed-raster-control\\components\\off\\modlocales\\connect\\RCLocale.as",
+      "sha256": "e2e718a5585b7adcb095731ea6bbbf5f7984f777798bea713f4d9551069eabef",
+      "boundary": "unchanged paired component source"
+    },
+    "off/NativeTravelRoomChecks.as": {
+      "path": "experimental\\recovery-seed-raster-control\\components\\off\\NativeTravelRoomChecks.as",
+      "sha256": "0b51d2b5ae16195a53cfa762f81a7541f630bd1cce2ce729a633aacf972a29a4",
+      "boundary": "unchanged paired component source"
+    },
+    "off/rconnect/core/FirstRasterGate.as": {
+      "path": "experimental\\recovery-seed-raster-control\\components\\off\\rconnect\\core\\FirstRasterGate.as",
+      "sha256": "c4db67de41dd3e21d6aa5949f4214cf6b8ef49521c784d85e1e95dc447745821",
+      "boundary": "unchanged paired component source"
+    },
+    "off/rconnect/core/Log.as": {
+      "path": "experimental\\recovery-seed-raster-control\\components\\off\\rconnect\\core\\Log.as",
+      "sha256": "cffc3f4b9b4194e507a8488dfd89ad7a55e29d8fdb2519391a43668353a76237",
+      "boundary": "unchanged paired component source"
+    },
+    "off/rconnect/core/MapGeneration.as": {
+      "path": "experimental\\recovery-seed-raster-control\\components\\off\\rconnect\\core\\MapGeneration.as",
+      "sha256": "88f40023f87e6eaa05d6b7a43ca5d1f1fbd0bb0f8fdc108e328e354644958fa0",
+      "boundary": "unchanged paired component source"
+    },
+    "off/rconnect/core/NativeTravelPlan.as": {
+      "path": "experimental\\recovery-seed-raster-control\\components\\off\\rconnect\\core\\NativeTravelPlan.as",
+      "sha256": "e40903e83e23996d2aac1bb10984ffedf6de7984e541de1bf15b2fd0aa9309d1",
+      "boundary": "unchanged paired component source"
+    },
+    "off/rconnect/core/RoomSync.as": {
+      "path": "experimental\\recovery-seed-raster-control\\components\\off\\rconnect\\core\\RoomSync.as",
+      "sha256": "1f1a89b4f731273622b765ec8ae5fa2ff8996e2265238ec54ee66d83f39a29ca",
+      "boundary": "unchanged paired component source"
+    },
+    "off/rconnect/core/SeedRasterEntry.as": {
+      "path": "experimental\\recovery-seed-raster-control\\components\\off\\rconnect\\core\\SeedRasterEntry.as",
+      "sha256": "9980a528b48051906e5bf4128d304b1687cfde02a99980ddfcbbbf80c8d5972e",
+      "boundary": "unchanged paired component source"
+    },
+    "off/rconnect/core/Session.as": {
+      "path": "experimental\\recovery-seed-raster-control\\components\\off\\rconnect\\core\\Session.as",
+      "sha256": "16b8afcc7eda96776c06dd82eebeb6ca30cea92ed2cd5cbd0ce0de3686a498a8",
+      "boundary": "unchanged paired component source"
+    },
+    "off/rconnect/core/TravelGuard.as": {
+      "path": "build\\m52\\recovery-seed-first-raster-room-01\\src\\rconnect\\core\\TravelGuard.as",
+      "sha256": "d62648d780765839f941667e4ceff096580f53f3dccf18c37312b5b1fc684179",
+      "boundary": "original tested fixture, not a native implementation"
+    },
+    "off/rconnect/core/TravelPlacement.as": {
+      "path": "build\\m52\\recovery-seed-first-raster-room-01\\src\\rconnect\\core\\TravelPlacement.as",
+      "sha256": "b426e339c592d055f6e396f54aa825681eeae9d8aeea30acdd16be2faeff7c72",
+      "boundary": "original tested fixture, not a native implementation"
+    },
+    "off/rconnect/game/GameBridge.as": {
+      "path": "experimental\\recovery-seed-raster-control\\components\\off\\rconnect\\game\\GameBridge.as",
+      "sha256": "54bc60fa8046357ed35b805e5ae2d8f26f2329e49f4fae4cfec6ad39afc3630b",
+      "boundary": "unchanged paired component source"
+    },
+    "off/rconnect/net/Protocol.as": {
+      "path": "experimental\\recovery-seed-raster-control\\components\\off\\rconnect\\net\\Protocol.as",
+      "sha256": "32f6777591247b93e05e56eced25c1b2d6d4427feacac0aa248f06afd16a0b8e",
+      "boundary": "unchanged paired component source"
+    },
+    "off/rconnect/net/RoomCodec.as": {
+      "path": "experimental\\recovery-seed-raster-control\\components\\off\\rconnect\\net\\RoomCodec.as",
+      "sha256": "296ee4d8d94f77faa62dcc17a39cb1e2492c756d3027311713c33935ca6b6b4a",
+      "boundary": "unchanged paired component source"
+    },
+    "off/rconnect/net/TcpLink.as": {
+      "path": "experimental\\recovery-seed-raster-control\\components\\off\\rconnect\\net\\TcpLink.as",
+      "sha256": "3519958acdd84a1efb590e0956a49e6cc0397ca48ec2ae0d06fd0ecb6aa009ed",
+      "boundary": "unchanged paired component source"
+    },
+    "off/rconnect/ui/RoomEntryView.as": {
+      "path": "experimental\\recovery-seed-raster-control\\components\\off\\rconnect\\ui\\RoomEntryView.as",
+      "sha256": "969ffe5824685edb1bdfab3b35f9e77dbcedd4eb14b012495611277d5b7f025c",
+      "boundary": "unchanged paired component source"
+    },
+    "off/RConnectMod.as": {
+      "path": "experimental\\recovery-seed-raster-control\\components\\off\\RConnectMod.as",
+      "sha256": "bdf7dd4b572a52762b2431c7d94d9818af8ef72dd5109f4bb27d807c36748f6a",
+      "boundary": "unchanged paired component source"
+    },
+    "off/SeedGateCaseMode.as": {
+      "path": "experimental\\recovery-seed-raster-control\\components\\off\\SeedGateCaseMode.as",
+      "sha256": "566b2378b658afd72dfe179ddf485115cd569626d4cdb50e5c3094a141b04c41",
+      "boundary": "unchanged paired component source"
+    }
+  },
+  "dependency_audit": [
+    {
+      "path": "modlocales/connect/RCLocale.as",
+      "passed_source_sha256": "e2e718a5585b7adcb095731ea6bbbf5f7984f777798bea713f4d9551069eabef",
+      "control_source_sha256": "e2e718a5585b7adcb095731ea6bbbf5f7984f777798bea713f4d9551069eabef",
+      "identical_to_passed": true,
+      "control_is_production": false,
+      "fix": "unchanged"
+    },
+    {
+      "path": "NativeTravelRoomChecks.as",
+      "passed_source_sha256": "21d992b6da7520259634c1544f325821cdf010587b93b8b027259d7b0f5d6e73",
+      "control_source_sha256": "0b51d2b5ae16195a53cfa762f81a7541f630bd1cce2ce729a633aacf972a29a4",
+      "identical_to_passed": false,
+      "control_is_production": false,
+      "fix": "retain intentional shared on/off cases"
+    },
+    {
+      "path": "rconnect/core/FirstRasterGate.as",
+      "passed_source_sha256": "c4db67de41dd3e21d6aa5949f4214cf6b8ef49521c784d85e1e95dc447745821",
+      "control_source_sha256": "c4db67de41dd3e21d6aa5949f4214cf6b8ef49521c784d85e1e95dc447745821",
+      "identical_to_passed": true,
+      "control_is_production": true,
+      "fix": "unchanged"
+    },
+    {
+      "path": "rconnect/core/Log.as",
+      "passed_source_sha256": "cffc3f4b9b4194e507a8488dfd89ad7a55e29d8fdb2519391a43668353a76237",
+      "control_source_sha256": "cffc3f4b9b4194e507a8488dfd89ad7a55e29d8fdb2519391a43668353a76237",
+      "identical_to_passed": true,
+      "control_is_production": false,
+      "fix": "unchanged"
+    },
+    {
+      "path": "rconnect/core/MapGeneration.as",
+      "passed_source_sha256": "88f40023f87e6eaa05d6b7a43ca5d1f1fbd0bb0f8fdc108e328e354644958fa0",
+      "control_source_sha256": "88f40023f87e6eaa05d6b7a43ca5d1f1fbd0bb0f8fdc108e328e354644958fa0",
+      "identical_to_passed": true,
+      "control_is_production": false,
+      "fix": "unchanged"
+    },
+    {
+      "path": "rconnect/core/NativeTravelPlan.as",
+      "passed_source_sha256": "e40903e83e23996d2aac1bb10984ffedf6de7984e541de1bf15b2fd0aa9309d1",
+      "control_source_sha256": "e40903e83e23996d2aac1bb10984ffedf6de7984e541de1bf15b2fd0aa9309d1",
+      "identical_to_passed": true,
+      "control_is_production": true,
+      "fix": "unchanged"
+    },
+    {
+      "path": "rconnect/core/RoomSync.as",
+      "passed_source_sha256": "c2e68fe658a81be4b3ceb285daf453ca57b9d4a5895e80720dd629c374e3f85e",
+      "control_source_sha256": "c2e68fe658a81be4b3ceb285daf453ca57b9d4a5895e80720dd629c374e3f85e",
+      "identical_to_passed": true,
+      "control_is_production": true,
+      "fix": "unchanged"
+    },
+    {
+      "path": "rconnect/core/SeedRasterEntry.as",
+      "passed_source_sha256": "9980a528b48051906e5bf4128d304b1687cfde02a99980ddfcbbbf80c8d5972e",
+      "control_source_sha256": "9980a528b48051906e5bf4128d304b1687cfde02a99980ddfcbbbf80c8d5972e",
+      "identical_to_passed": true,
+      "control_is_production": true,
+      "fix": "unchanged"
+    },
+    {
+      "path": "rconnect/core/Session.as",
+      "passed_source_sha256": "16b8afcc7eda96776c06dd82eebeb6ca30cea92ed2cd5cbd0ce0de3686a498a8",
+      "control_source_sha256": "16b8afcc7eda96776c06dd82eebeb6ca30cea92ed2cd5cbd0ce0de3686a498a8",
+      "identical_to_passed": true,
+      "control_is_production": false,
+      "fix": "unchanged"
+    },
+    {
+      "path": "rconnect/core/TravelGuard.as",
+      "passed_source_sha256": "d62648d780765839f941667e4ceff096580f53f3dccf18c37312b5b1fc684179",
+      "control_source_sha256": "c0f02644d7a835913e02d7a9fdb57a8516430b3a6d3d6b5695fca7a6039fb297",
+      "identical_to_passed": false,
+      "control_is_production": true,
+      "fix": "restore original fixture"
+    },
+    {
+      "path": "rconnect/core/TravelPlacement.as",
+      "passed_source_sha256": "b426e339c592d055f6e396f54aa825681eeae9d8aeea30acdd16be2faeff7c72",
+      "control_source_sha256": "4b9a37772e2a71305e56ecec7158de7f3549df6bf17341c60e9df7c6d0835e52",
+      "identical_to_passed": false,
+      "control_is_production": true,
+      "fix": "restore original fixture"
+    },
+    {
+      "path": "rconnect/game/GameBridge.as",
+      "passed_source_sha256": "54bc60fa8046357ed35b805e5ae2d8f26f2329e49f4fae4cfec6ad39afc3630b",
+      "control_source_sha256": "54bc60fa8046357ed35b805e5ae2d8f26f2329e49f4fae4cfec6ad39afc3630b",
+      "identical_to_passed": true,
+      "control_is_production": false,
+      "fix": "unchanged"
+    },
+    {
+      "path": "rconnect/net/Protocol.as",
+      "passed_source_sha256": "32f6777591247b93e05e56eced25c1b2d6d4427feacac0aa248f06afd16a0b8e",
+      "control_source_sha256": "32f6777591247b93e05e56eced25c1b2d6d4427feacac0aa248f06afd16a0b8e",
+      "identical_to_passed": true,
+      "control_is_production": true,
+      "fix": "unchanged"
+    },
+    {
+      "path": "rconnect/net/RoomCodec.as",
+      "passed_source_sha256": "296ee4d8d94f77faa62dcc17a39cb1e2492c756d3027311713c33935ca6b6b4a",
+      "control_source_sha256": "296ee4d8d94f77faa62dcc17a39cb1e2492c756d3027311713c33935ca6b6b4a",
+      "identical_to_passed": true,
+      "control_is_production": true,
+      "fix": "unchanged"
+    },
+    {
+      "path": "rconnect/net/TcpLink.as",
+      "passed_source_sha256": "3519958acdd84a1efb590e0956a49e6cc0397ca48ec2ae0d06fd0ecb6aa009ed",
+      "control_source_sha256": "3519958acdd84a1efb590e0956a49e6cc0397ca48ec2ae0d06fd0ecb6aa009ed",
+      "identical_to_passed": true,
+      "control_is_production": false,
+      "fix": "unchanged"
+    },
+    {
+      "path": "rconnect/ui/RoomEntryView.as",
+      "passed_source_sha256": "969ffe5824685edb1bdfab3b35f9e77dbcedd4eb14b012495611277d5b7f025c",
+      "control_source_sha256": "969ffe5824685edb1bdfab3b35f9e77dbcedd4eb14b012495611277d5b7f025c",
+      "identical_to_passed": true,
+      "control_is_production": true,
+      "fix": "unchanged"
+    },
+    {
+      "path": "RConnectMod.as",
+      "passed_source_sha256": "bdf7dd4b572a52762b2431c7d94d9818af8ef72dd5109f4bb27d807c36748f6a",
+      "control_source_sha256": "bdf7dd4b572a52762b2431c7d94d9818af8ef72dd5109f4bb27d807c36748f6a",
+      "identical_to_passed": true,
+      "control_is_production": false,
+      "fix": "unchanged"
+    }
+  ],
+  "expected_checks_each": 109,
+  "tests_changed": false,
+  "production_changed": false,
+  "driver_changed": false,
+  "JVM_started": false,
+  "AIR_started": false
+}

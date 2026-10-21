@@ -1,0 +1,80 @@
+{
+  "passed": true,
+  "checks": 17,
+  "failed": 0,
+  "assertions": [
+    {
+      "passed": true,
+      "label": "Exact recovery13 binary and source inputs"
+    },
+    {
+      "passed": true,
+      "label": "No RoomCodec protocol override"
+    },
+    {
+      "passed": true,
+      "label": "All Python parses without subprocess launch"
+    },
+    {
+      "passed": true,
+      "label": "Unchanged MAX_CELLS:int=64"
+    },
+    {
+      "passed": true,
+      "label": "Unchanged MAX_WIRE:int=48000"
+    },
+    {
+      "passed": true,
+      "label": "Unchanged WORD_CACHE_ENTRIES:int=128"
+    },
+    {
+      "passed": true,
+      "label": "Unchanged WORD_CACHE_WORDS:int=131072"
+    },
+    {
+      "passed": true,
+      "label": "Unchanged WORD_CACHE_CHARS:int=524288"
+    },
+    {
+      "passed": true,
+      "label": "Unversioned queued cells remain uncached"
+    },
+    {
+      "passed": true,
+      "label": "Pending prediction uses same validated old/new format decoder"
+    },
+    {
+      "passed": true,
+      "label": "Exact historical natural corpus and order"
+    },
+    {
+      "passed": true,
+      "label": "Python format cross-check round-trips all natural offset/uint pairs (not AS execution)"
+    },
+    {
+      "passed": true,
+      "label": "All historical new format texts fit explicit per-cell bound"
+    },
+    {
+      "passed": true,
+      "label": "49 normal AS checks prepared; includes two-side transport loops and excludes catch-all failures"
+    },
+    {
+      "passed": true,
+      "label": "Two ABBA rounds use same eight full-corpus encode/cold-decode blocks"
+    },
+    {
+      "passed": true,
+      "label": "Timing excludes fixture creation and cache reset; includes actual production encode/decode"
+    },
+    {
+      "passed": true,
+      "label": "Profile Error regex hits are allocations data in two diagnostic lines, original results unchanged"
+    }
+  ],
+  "as_checks_prepared": 49,
+  "as_checks_executed": false,
+  "JVMStarted": false,
+  "AIRStarted": false,
+  "performance_qualified": false
+}
