@@ -20,7 +20,7 @@ Remains 1.02 双人合作模组，入口 release/RConnectMod.swf。A 是普通�
 ## 3. 当前安装与候选
 
 - **RConnect安装仍0.2.23-coop-bundle2，SHA574d2b51490ae8b25a1396555600f56a301f8a20ae50104c0e35cf2796441afe**；冻结生产 build/m52/coop-bundle-04。本轮房间候选均未部署。旧回执见[合并记录](coop-bundle-2026-10-19.md)。
-- 当前宿主pfe BEFCF050…F9B82A、TDFC7ACD4519…DDCE5（CS会话12:45部署并复验）；WB14112da0…c0920d，RV76314b81…f5c46b7，LAD0.6.0 E3233F78…6E796E，CS7f1f2961…d6b51f。每轮重读22项安装输入，不覆盖它方新版本。
+- 当前宿主pfe BEFCF050…F9B82A、TDFC7ACD4519…DDCE5；WB14112da0…c0920d，LAD0.6.0 E3233F78…6E796E，CS7f1f2961…d6b51f。10-21收尾后RV更新为v0.33.0-vision-settings / **8d4a1963…c55bf1**，MSW更新为**526a6fd0…546ab71**（均已直接核对安装哈希）；此前运动原生对照为RV76314/MSWB7A3组合。**下一轮必须在新组合重新建立旧RC/候选对照，不能复用旧性能基线。** 每轮重读22项输入，不覆盖它方新版本。
 - B入口仍 build/ab/b3-playable-190；B195未合格，不替换。旧范围见[b195验收](b195-qualification-2026-10-14.md)。
 - 当前运动源码 **experimental/motion-continuity/src**，房间源码另在 **experimental/room-entry-fast/src**，各自稀疏叠加 **build/m52/coop-bundle-04/src**；禁止直接编译历史根src，禁止未经验证混装。
 - 运动候选 **build/m52/motion-continuity-02 / 0.2.24-motion2 / 6e03c9a719bcd23c029ee61bef6a8dc334abd44d28e6e4885578b00b00f98cef**，仅RemoteMotion与ProjectileVisuals。70组件通过；原生资源同驱动旧12/2、新14/0（两种闪电3/15→15/15移动）；高速TCP旧b1bb4e4adf和新e6daeeff3f均主3/加5功能过，但候选帧间隔更差，性能不合格、未部署。[运动记录](motion-continuity-2026-10-21.md)。
