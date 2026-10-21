@@ -20,13 +20,17 @@ Remains 1.02 双人合作模组，入口 release/RConnectMod.swf。A 是普通�
 ## 3. 当前安装与候选
 
 - **RConnect安装仍0.2.23-coop-bundle2，SHA574d2b51490ae8b25a1396555600f56a301f8a20ae50104c0e35cf2796441afe**；冻结生产 build/m52/coop-bundle-04。本轮房间候选均未部署。旧回执见[合并记录](coop-bundle-2026-10-19.md)。
-- 当前宿主pfe **7D423BD7…85BCD4**（10-21 CS的SATS补丁，已核对部署/备份指纹）、TDFC7ACD4519…DDCE5；WB14112da0…c0920d，CS7f1f2961…d6b51f。10-21 16:29后直接核对：LAD **0.7.0 / 8adba691…c7e3ef**，RV **f2b8a973…49a561**，MSW **526a6fd0…546ab71**，RC仍574D。高速旧对照为BEFC/RV76314/MSWB7A3，跳跃旧对照为7D42/RV8D4A/LADE323，均不能当作当前组合基线。宿主BEFC备份为mods/ContinuousScene/build/backups/sats-20261021-154054/pfe.swf，勿用旧整包覆盖新宿主。每轮重读22项输入。
+- 当前宿主pfe **5432A3B9…77B71D**（10-21 17:54 CS的Grafon素材复用修正，回执impact-deployment-20261021.json verified，本会话已直接核对；仅pfe变化）、TDFC7ACD4519…DDCE5；WB14112da0…c0920d，CS7f1f2961…d6b51f。LAD **0.7.0 / 8adba691…c7e3ef**，RV **f2b8a973…49a561**，MSW **526a6fd0…546ab71**，RC仍574D。前宿主7D42备份位于mods/ContinuousScene/build/backups/impact-20261021-175427/pfe.swf，勿用旧整包覆盖新宿主。每轮重读22项输入；历史不同组合不得混算。
 - B入口仍 build/ab/b3-playable-190；B195未合格，不替换。旧范围见[b195验收](b195-qualification-2026-10-14.md)。
 - 当前运动源码 **experimental/motion-continuity/src**，房间源码另在 **experimental/room-entry-fast/src**，各自稀疏叠加 **build/m52/coop-bundle-04/src**；禁止直接编译历史根src，禁止未经验证混装。
-- 运动候选 **build/m52/motion-continuity-02 / 0.2.24-motion2 / 6e03c9a719bcd23c029ee61bef6a8dc334abd44d28e6e4885578b00b00f98cef**，仅RemoteMotion与ProjectileVisuals。70组件通过；原生资源同驱动旧12/2、新14/0（两种闪电3/15→15/15移动）；高速TCP旧b1bb4e4adf和新e6daeeff3f均主3/加5功能过，但候选帧间隔更差，性能不合格、未部署。[运动记录](motion-continuity-2026-10-21.md)。
+- 运动候选 **build/m52/motion-continuity-02 / 0.2.24-motion2 / 6e03c9a719bcd23c029ee61bef6a8dc334abd44d28e6e4885578b00b00f98cef**，仅RemoteMotion与ProjectileVisuals。70组件通过；原生资源旧12/2、新14/0（闪电3/15→15/15移动）。已完成真实跳跃、双向念力、容器/SATS与高速功能对照；当前5432宿主另60功能项通过，但密集性能门槛未合格，未部署。限定候选审计`build/m52/motion2-release-02/audit.json`已生成，等待用户对保留密集性能限制的明确选择。[运动记录](motion-continuity-2026-10-21.md)。
 - 已有原生证据的候选17：room-entry-fast-17 / 93cc715eafe8778bba505f63803844e39800dedfddd4805150716db6c24568e3，未变地形复用画面，其余完整还原。最新隔离19：build/m52/room-entry-fast-19 / 0.2.24-room-entry19 / **051240012891ab8e6e41d30d8fb13ab16d120f41c5d9578a84a9146906257fea**。19另有宿主提交后恢复操作、等待ACK仍禁止下一交接，以及保留本地分区轮廓；131组件过、原生尚未运行。均未部署。
 
 ## 4. 正在进行与实测证据
+
+- 10-21傍晚按“继续测试和部署”恢复：7D42组合跳跃旧04d638b82a/新7ca9da12c6各12项过，确认并解除活体开场animOff的测试准备问题；真实念力旧462690af35/新1f957add4c各85项过。容器/SATS初轮因测试使用未入背包的枪触发FA after空快照，旧/新均失败；改用原生Invent.addWeapon/changeWeapon，新增背包装备一致断言后旧7d8abca53b/新3375f5b90d各52项过。未改FA生产代码。
+- 密集旧266aa2bb76/新de08d91f47各68功能项过，但七阶段流畅度门槛均失败，仍不能称性能合格。高速旧e5beeef33a/新97fc004b24/紧邻旧96563f5195均8项过；平均帧间隔分别78.48/79.23、83.52/86.62、82.21/84.52ms，存在时间负载波动，不给改善百分比。完整结果及边界见运动记录。
+- 当前5432宿主：候选容器/SATS 97ec653e01共52项过；高速旧55b6869dfd/新1aec44a7a7均8项过，主/加平均帧间隔旧80.51/80.79ms、新84.25/85.51ms，不能称整体更流畅。限定审计motion2-release-02完成，正式RC未部署。已向用户提出**仅针对此候选接受既有密集性能限制后部署，还是全部达标再部署**的决定，依据发布技能的失败门禁；不能把等待时间视为答复。部署脚本tools/validation/release_motion_candidate.py已准备，仅在用户明确接受该限制后使用--deploy --accept-known-density-limit；否则仅audit。只换RC，保留当前宿主，失败回滚。未接受时拒绝安装的负向检查通过；未做部署或安装后冒烟。
 
 - 10-21固定回放确认25ms时钟校准可让玩家/念力物品同一显示时刻跳20px；新点会重写已显示曲线导致念力/掉落约9–10px跳动。候选平滑吸收小校准并固定已开始段的斜率。两种移动闪电不再被额外排除插值，光束/火焰、终止时间与不外推保持。未证明解决所有实机卡顿。
 - 初轮实机运动基线因用户AIR未启动；恢复后原生资源旧14af030096/新9d7b71e0ab通过预期对照，安装22项不变。高速TCP平均帧间隔旧79.1/80.7ms、新98.7/100.6ms；仅功能过，不能称流畅改善，也不足以归因版本退步。旧版再测97105327c1被RV设置offline AIR89560中途干扰、无有效样本，已协调该会话后续AIR组件也登记game。候选首轮外部AIR48084拦下无run；跳跃首轮不足6GiB未启动。最新40秒8样本余量5.05–5.85GiB，停止新增双人启动、不降低门槛。跳跃/高速念力外部驱动已编译，接续见运动记录。
@@ -62,7 +66,7 @@ Remains 1.02 双人合作模组，入口 release/RConnectMod.swf。A 是普通�
 
 ## 6. 下一步
 
-0. 用户已恢复测试：余量达6GiB后先以新宿主/RV/MSW组合、`motion2-native-input-drivers-04`同驱动重跑574D与motion2原生跳跃，核源动画前提与PNG；再补高速角色、念力、容器掉落和密集对照。受限时保留结果，不以资源回放替代实际双人。复核安装输入与外部AIR，不与BEFC旧组合混算。其它会话增量逐文件合并验证。
+0. 等待用户对本候选密集性能限制的明确选择；接受后重查22项输入/内存/登记，再执行release_motion_candidate.py --output build/m52/motion2-release-02 --deploy --accept-known-density-limit（独立桌面需提升权限）。脚本自动备份、只换RC、正常loader双人冒烟及失败回滚；成功后更新记忆/部署回执并提交。若不接受则继续优化，不降低原门槛。跳跃、念力、容器/SATS/当前宿主高速与审计均已完成，不从旧停点重跑。其它会话增量仍独立未集成。
 1. 用户释放内存后核对至少6GiB、共享登记和22项安装输入，使用准确19跑新的scene输出目录，确认载入中seal不再误暂停、宿主等待减少且实际恢复操作正常。scene14是失败记录，不覆盖。
 2. 对准确19补普通分房/连续换房/状态保留及像素回归（raster驱动17仅诊断），必要时同组合单人对照；仍未达单人就继续定位，禁止直接部署。CS已按其用户要求暂停性能实测，离线兼容须另基于574D，不与房间WIP混装。
 3. 最终同一候选字节通过实际性能和核心功能后，执行release-gate备份/部署/安装后隔离复验/失败回滚，更新记录并提交。

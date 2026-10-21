@@ -187,8 +187,13 @@ package {
       }
       private function openSats():void {
          var w:Object=mod.game.world,g:Object=mod.game.gg;
-         if(gun==null)gun=new NativeTestGun(g as Unit);gun.loc=mod.game.loc;gun.hold=90;
-         g.currentWeapon=gun;g.childObjs[0]=gun;gun.addVisual();gun.setPers(g,g.pers);gun.lvl=0;
+         // Equip a genuinely owned native weapon. Assigning an unowned test
+         // subclass bypassed Invent, so attachment observers had no record.
+         if(gun==null)gun=w.invent.addWeapon("lmg");
+         gun.lvl=0;gun.hold=90;
+         if(g.currentWeapon!==gun)g.changeWeapon("lmg",true);
+         check(g.currentWeapon===gun&&w.invent.weapons.lmg===gun,
+            "SATS uses the native equipped inventory weapon");
          g.ggControl=true;g.pipOff=0;w.catPause=false;w.pip.onoff(-1);g.storona=1;
          mod.game.loc.getAbsTile(enemy.X,enemy.Y-enemy.scY/2).visi=1;
          w.ctr.keySats=true;change("opening");

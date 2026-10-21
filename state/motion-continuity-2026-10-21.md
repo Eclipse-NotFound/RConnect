@@ -90,6 +90,23 @@ LAD回执`mods/LightAndDarkness/state/brightness-deployment-2026-10-21.json`记�
 - `tools/validation/prepare_motion_continuity.py` 冻结/编译候选；`run_motion_continuity_checks.py` 执行组件；原生运动对照可复用 `run_motion_comparison.py` 的 fast-motion、continuity、pause-timing、density。角色跳跃、原生闪电和抓取应补对应实景，不把受控直线夹具当完整覆盖。
 - 其它会话独立处理：`native-loading-ui`（基于房间19）、`peer-player-aura`（玩家被抓光晕）、`wall-impact-effects`（击墙火星/命中特效）。均已协调，本会话统一集成，禁止互相覆盖。ProjectileVisuals最终合并时将本轮tickBeam变更与命中特效receive/tick/reset增量分别核对。
 
+### 10-21 傍晚恢复实测（部署前进行中）
+
+- 用户明确继续测试和部署；开始时空 AIR、空共享占用，可提交余量 8.06 GiB。22项安装输入仍为7D42 / RC574D / RVF2B8 / LAD8ADB / MSW526A。所有运行保持整组登记、独立桌面与存储、6 GiB启动门槛，无外部AIR混跑。
+- 新驱动04原生跳跃：基线 `motion2-baseline-jump-04 / 04d638b82a`、候选 `motion2-candidate-jump-02 / 7ca9da12c6` 均主6/加6通过。宿主准备日志明确记录活体 `animOff=true, pose=die`，原生 `anim()` 后测量全程无锁、源/对侧身体均推进，确认前轮夹具问题。双方各7次起跳、114px高度。平均帧间隔旧57.01/57.34ms，新54.81/56.69ms；p95旧67/72、新64/71ms。各轮双方第2张实际PNG已目检，角色正常呈现。只有一轮受控走廊，非密集性能结论。
+- 双向高速念力真实输入：基线 `motion2-baseline-held-01 / 462690af35`、候选 `motion2-candidate-held-01 / 1f957add4c` 均主43/加42通过。原生箱子/掉落物，Q抓取、快速指针路径、Q释放、原生重力落地，4轮全过。接收端轨迹最佳拟合延迟旧100–110ms、新100–130ms，均不超过原160ms门槛；不声称延迟普遍降低。
+- 第一套连续性基线 `motion2-baseline-continuity-01 / 44b47aebcd` 与候选 `motion2-candidate-continuity-01 / d989c21e75` 均为主21/加30行为项通过，但FA日志多次 `fa::Runtime/after #1009`，**整轮失败**。测试直接把未放入Invent的NativeTestGun挂为当前枪；FA按背包建立快照，after读取当前枪快照时为空。仅修正本模组测试：改用原生Invent.addWeapon + UnitPlayer.changeWeapon，并新增背包/装备同一实体断言；未改FA及生产候选、未删错误检查。新 `motion2-continuity-drivers-01` 编译成功，须旧/新均用此驱动重新验证，原红记录保留。
+
+- 修正驱动后的连续性：`motion2-baseline-continuity-02 / 7d8abca53b` 与 `motion2-candidate-continuity-02 / 3375f5b90d` 均主21/加31通过，模块日志无错误；两轮原生容器掉落、SATS暂停终点/覆盖层与恢复位置通过。证据确认未登记到背包的测试枪是前轮FA空快照触发条件；本轮只改测试，不宣称修复了FA生产问题。
+- 密集旧/新 `motion2-baseline-density-01 / 266aa2bb76`、`motion2-candidate-density-01 / de08d91f47`：各主25/加43功能通过，但加入侧7个8秒阶段全部未满足80帧/慢帧门槛，**两轮性能失败**。总显示帧旧368、新411；加入运动处理平均旧11.440、新11.474ms/帧，视图单次旧2.526、新2.612ms。宿主七阶段总帧旧536、新528（约1.5%差异）。控制12把LMG相同，但原生环境单位旧88/新87，并非整个世界逐项相同；不据此宣称性能提升百分比。密集低帧率仍为已知问题。
+- 高速对照旧 `motion2-baseline-fast-04 / e5beeef33a` 与新 `motion2-candidate-fast-03 / 97fc004b24` 均主3/加5行为通过，无直线段停帧。主/加平均帧间隔旧78.48/79.23、新83.52/86.62ms，p95旧96/98、新98/108ms。尚不足判断版本开销，已启动紧邻旧版复测 `motion2-baseline-fast-05`；不得忽略此差异直接宣称无性能回退。
+- CS告知其5432A3B9宿主候选即将部署；已协调保留7D42至紧邻旧版复测结束，结束后放行其窗口。此刻正式RC仍574D、motion2未部署。新宿主若安装，不能把旧7D42运行记录写作新组合实测。
+- 紧邻旧版复测 `motion2-baseline-fast-05 / 96563f5195` 8项过，主/加均值82.21/84.52ms、p95 96/107ms。与前一旧版78.48/79.23ms存在波动；候选83.52/86.62ms接近这次旧版，但尚不足断言性能改进。结束后已通知CS释放保留窗口。
+- CS安装完成后直接核对，仅pfe由7D42变为 **5432a3b9b6820a94ae15ac0a97b13c4edc534d3dc6dbed12063e0fe47677b71d**。其impact-deployment-20261021.json为verified，7D42备份为mods/ContinuousScene/build/backups/impact-20261021-175427/pfe.swf。其403+136项属于他方范围，不计入RC验收。
+- 新5432实际组合：`motion2-candidate-continuity-03 / 97ec653e01` 主21/加31通过；`motion2-baseline-fast-06 / 55b6869dfd`、`motion2-candidate-fast-04 / 1aec44a7a7` 各主3/加5通过。高速平均帧间隔旧80.51/80.79ms、新84.25/85.51ms；p95旧95/94ms、新97/104ms。无直线停帧，仍不能宣称整体更流畅；5432组合未重做密集压力轮，不把7D42失败改成通过。
+- 用户已收到一次明确选择：接受密集性能未达标、先部署限定运动候选，或继续优化到全部达标。**截至本轮记录仍未收到答复，因此没有安装。** 这不重复索取通常部署权限，仅针对发布技能失败门禁的已知性能限制；不能以既往另一候选的例外或等待时间代替本次决定。
+- `tools/validation/release_motion_candidate.py`限定准确6E03候选及5432/RC574D安装组合；核源码/产物/实测清单、保留密集红结果，接受限制后才备份/原子替换本模组并启动安装后正常loader双人冒烟，失败自动回滚。未接受例外时拒绝且未写release/输出目录的负向检查已过，正式部署分支尚未执行。`motion2-release-01`是初版审计；补组件源指纹与实际资源证据后最终审计为 **build/m52/motion2-release-02/audit.json**，语法和只读审计通过，full_performance_qualified=false。安装文件仍574D，不触碰真实存档/配置，不覆盖新宿主。
+
 ## 可复现入口
 
 ```text

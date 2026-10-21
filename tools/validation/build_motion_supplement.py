@@ -1,4 +1,4 @@
-"""Freeze external native jump/held-input drivers; production remains external."""
+"""Freeze selected external native motion drivers; production remains external."""
 import argparse
 import json
 import os
@@ -12,12 +12,13 @@ from check_coop_bundle import ROOT, M52, JAVA, SDK, sha, read, save, inventory
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--output', type=Path, required=True)
+    ap.add_argument('--case', action='append', choices=('native-jump','fast-held','continuity'))
     args = ap.parse_args()
     out = (ROOT / args.output).resolve()
     assert out.parent == M52 and not out.exists()
     sys.path.insert(0, str(ROOT.parents[1] / 'mods/ModLoader/tools'))
     from test_registry import Registration
-    with Registration(owner='RConnect / 原生运动补充驱动', purpose='跳跃/高速念力驱动编译',
+    with Registration(owner='RConnect / 原生运动补充驱动', purpose='选定运动回归驱动编译',
                       run_dir=out, evidence=out/'prepared.json', wait=300) as record:
         base = M52 / 'coop-bundle-drivers-04'
         manifest = read(base / 'prepared.json')
@@ -27,7 +28,9 @@ def main():
         shutil.copytree(base/'tests', out/'tests')
         declarations = base/'ProductionDeclarations.swc'
         stubs = M52/'coop-bundle-04/build/GameCombatStubs.swc'
-        entries = {'native-jump': 'NativeJumpNetworkTestDoc', 'fast-held': 'FastHeldTestDoc'}
+        all_entries = {'native-jump': 'NativeJumpNetworkTestDoc', 'fast-held': 'FastHeldTestDoc',
+                       'continuity': 'PresentationContinuityTestDoc'}
+        entries = {k: all_entries[k] for k in (args.case or ['native-jump','fast-held'])}
         results = {}
         for kind, entry in entries.items():
             shutil.copyfile(ROOT/'tests'/(entry+'.as'), out/'tests'/(entry+'.as'))
@@ -53,7 +56,7 @@ def main():
         if any(results.values()):
             raise SystemExit(1)
         record.outcome = 'passed'
-        record.note = '两个外部驱动编译成功；没有原生运行结论'
+        record.note = '选定外部驱动编译成功；没有原生运行结论'
         print(json.dumps(dict(output=str(out), compile_exits=results)), flush=True)
 
 
