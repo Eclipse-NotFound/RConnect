@@ -1,0 +1,51 @@
+package {
+   import flash.desktop.NativeApplication;
+   import flash.display.Sprite;
+   import flash.display.DisplayObject;
+   import flash.filesystem.File;
+   import flash.filesystem.FileMode;
+   import flash.filesystem.FileStream;
+   import rconnect.game.ProjectileVisuals;
+   public class ProjectileContinuityChecks extends Sprite {
+      private var checks:Array=[],failures:int=0;
+      public function ProjectileContinuityChecks() {
+         try {
+            run("visualBullet",1,true);run("visbullightning",1,true);run("visbullightning2",1,true);
+            run("visbullightning",2,false);run("visbulflame",1,false);
+         }catch(e:Error){check(false,"uncaught "+e.getStackTrace());}
+         var s:FileStream=new FileStream();s.open(File.applicationStorageDirectory.resolvePath("result.json"),FileMode.WRITE);
+         s.writeUTFBytes(JSON.stringify({pass:checks.length-failures,fail:failures,checks:checks,gameLoaded:false}));s.close();
+         NativeApplication.nativeApplication.exit(failures?1:0);
+      }
+      private function check(ok:Boolean,label:String):void {checks.push({pass:ok,label:label});if(!ok)failures++;}
+      private function run(name:String,spring:int,continuous:Boolean):void {
+         var visual:ProjectileVisuals=new ProjectileVisuals(),clock:MotionFixtureClock=new MotionFixtureClock();
+         var layer:Sprite=new Sprite(),loc:Object={},owner:Object={loc:loc};
+         var main:Object={loaderInfo:{applicationDomain:{getDefinition:function(n:String):Object {
+            return n=="fe.World"?{w:{grafon:{visObjs:[null,null,layer]}}}:Sprite;
+         }}}};
+         var frames:Array=[];
+         for(var i:int=0;i<4;i++)frames.push({at:1000+i*50,x:100+i*125,y:50+i*25,rot:10,sx:1,sy:1,a:1,f:1,ls:1,lf:1});
+         var flight:Object={cls:name,x:100,y:50,spring:spring,rot:0,blend:"normal",frames:frames,end:1200};
+         visual.receive(owner,[{id:"test",variant:0,stream:1,sampleTime:1150,events:[{seq:1,flight:flight}]}],main,true,clock);
+         var good:Boolean=true,moved:int=0,last:Number=NaN;
+         for(i=0;i<=15;i++) {
+            clock.time=1000+i*10;visual.tick(loc,2000+i*10);
+            var v:DisplayObject=layer.numChildren?layer.getChildAt(0):null;
+            var step:Number=continuous?i*10:Math.floor(i/5)*50;
+            good=good&&v!=null&&Math.abs(v.x-(100+step*2.5))<.001&&Math.abs(v.y-(50+step*.5))<.001;
+            if(v!=null){if(isFinite(last)&&v.x!=last)moved++;last=v.x;}
+         }
+         check(good,name+" spring="+spring+" confirmed segment position continuous="+continuous+" movingSteps="+moved);
+         clock.time=1199;visual.tick(loc,2199);
+         check(layer.numChildren==1&&layer.getChildAt(0).x==475,name+" no extrapolation beyond latest sample");
+         clock.time=1200;visual.tick(loc,2200);
+         check(layer.numChildren==0,name+" original ending respected");visual.reset();
+      }
+   }
+}
+import rconnect.game.RemoteMotion;
+class MotionFixtureClock extends RemoteMotion {
+   public var time:Number=1000;
+   override public function get sourceTime():Number {return time;}
+}
