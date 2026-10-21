@@ -1,0 +1,56 @@
+{
+  "variant": "control",
+  "source": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-04\\src",
+  "entry": "SpecialImpactChecks.as",
+  "production": {
+    "rconnect/game/UnitPresentation.as": {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-04\\src\\rconnect\\game\\UnitPresentation.as",
+      "sha256": "3b8049b3de582dd9559248c0370db230669233930cf50ab651babc1fe09179ce"
+    },
+    "rconnect/game/ProjectileVisuals.as": {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-04\\src\\rconnect\\game\\ProjectileVisuals.as",
+      "sha256": "6e584f4ee777f9dda609c0bd9b7ad17e2189bdd8ac2a7519f11187c8fa313593"
+    },
+    "rconnect/game/ImpactEventQueue.as": {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-04\\src\\rconnect\\game\\ImpactEventQueue.as",
+      "sha256": "0996719782f7238b4e38596ec72a8e273995d4efb1241514ca9e632d98cdc658"
+    },
+    "rconnect/game/ProjectileFrameStream.as": {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-04\\src\\rconnect\\game\\ProjectileFrameStream.as",
+      "sha256": "938b8ee0d3afa262e4b23c608c6b46d9b84b6cb71f4cb4b148ccb445de3c679c"
+    },
+    "rconnect/game/RemoteMotion.as": {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-04\\src\\rconnect\\game\\RemoteMotion.as",
+      "sha256": "cd58b1286bc913149ac02ad60713e82c251b8e574043444b4f3ccfd6e4a2ebc5"
+    },
+    "rconnect/game/ProjectileExplosionVisuals.as": {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-04\\src\\rconnect\\game\\ProjectileExplosionVisuals.as",
+      "sha256": "42ca278448b3768c5168c13d03efc9b57602fdc8aea6189990d7a6cd0dab78d2"
+    },
+    "rconnect/net/BinaryMessageCodec.as": {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-04\\src\\rconnect\\net\\BinaryMessageCodec.as",
+      "sha256": "001479db144318320669ce3d89e6c275c210a7d81b9e6f116cdb58e6091376f1"
+    }
+  },
+  "fixture": {
+    "SpecialImpactChecks.as": "6aa47967a6c22d7fb662c5d091c161bf1737db534353c989e74c5f990c2bffbe",
+    "fe/unit/RConnectAnimationAccess.as": "6e0c77b523580a50b333e49db91ad253b7947ef1ec81168e4e56c876746b959f",
+    "fe/unit/Unit.as": "fa2433974712c34eea245b3aa502a26ee34e21ce956acd131c3e71ec0c016b16",
+    "fe/weapon/Bullet.as": "5e4f36b36df384c0d79cd92f4401ad793152a017b86db1c93fe16eff6a51eda4",
+    "rconnect/core/Log.as": "0d0b97bb743639b9df0a4eccdf6f77edd4397b323e4338f112e3e6c6bc8f3f4c",
+    "rconnect/core/ProjectileGrip.as": "0a88bad5cbec884215503a4664d317b3ade909e08dc5425259ae5d5cbd8af04f",
+    "rconnect/game/BallisticImpactVisuals.as": "3a6aab166fe6af800c8ec68b2a5a22ad079d9a3267944a8cc0ed6eaa3339e35e",
+    "rconnect/game/BurnVisuals.as": "10e0c3cb6f3002c2f9615bc5d02bbcda30c5c0bc58d390aaad7fb0e06a58edf8",
+    "rconnect/game/DeathVisuals.as": "ab7b92dd8c29f6255d2f5a6c8bf598531e1aca7c27778d7e8a9246f000e4f91e",
+    "rconnect/game/EnergyImpactVisuals.as": "7b9bd3644d639d4cec7e855a9ef738ed3874afb12a2437d119e1888cc7c6b412",
+    "rconnect/game/GameBridge.as": "591075e548a6cbb2d9244a23c3a5aa96fbb9c81f64606b90ced6b21bd5efc834",
+    "rconnect/game/MeleeVisuals.as": "bd7a8fbe015994f89341c6af16193de4fc92dee6c1318a50b01edb51b0e98c4b",
+    "rconnect/game/TelekinesisVisuals.as": "73d89c11bc87f2e8cf43f137b9660d0d3fd9b672e9cba1e2335d527b715245b0",
+    "rconnect/game/TeleportVisuals.as": "345542c32a058cf596a4587b0cd7980468b8ef71e735b6ed068fe25562bb766a",
+    "rconnect/game/TurretDisplay.as": "ee978a337679100d4d33f01cfa0db86162002d5769611ea36b213a0dd136401a",
+    "rconnect/game/WeaponDisplay.as": "f0acaca71a7af44a7ef5beb1558f3d13b233f0b3bff44493a72cbb1ffd7702e2"
+  },
+  "compiled": false,
+  "air_started": false,
+  "native_game": false
+}

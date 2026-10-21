@@ -1,5 +1,5 @@
 {
-  "version": "0.2.24-recovery6",
+  "version": "0.2.24-recovery7",
   "compiled": false,
   "runtime_tested": false,
   "baseline": "build/m52/coop-bundle-04",
@@ -490,6 +490,44 @@
         "native_game_test": false,
         "performance_qualified": false
       }
+    },
+    {
+      "name": "native-no-clip-explosion-events",
+      "source": "experimental\\recovery-special-impact",
+      "delta_sha256": "79a7a6444cbae74e1fdbcf094aefa4ab95a7fdeeca5cc97f111e12276be25c16",
+      "proof": [
+        {
+          "path": "build\\m52\\recovery-special-control-01",
+          "rows": 77,
+          "failures": 23,
+          "receipt_sha256": "f8bf24977e96d406942bf7c4d98caacb7cf60128c2d19812d6170b29a73ff0bd",
+          "raw_sha256": "9a10af4fe22bbdd7944bb530b5ef4b915067b8d8ffcdf0004881c1db034a5d5a"
+        },
+        {
+          "path": "build\\m52\\recovery-special-component-02",
+          "rows": 87,
+          "failures": 0,
+          "receipt_sha256": "65fb382eec54c6c9fed0d6d1d6c14f9b8dd9a6e98e90ec043363f927422dc396",
+          "raw_sha256": "3c9892271c5193f089263d0c987c8ff4ca192e4f98ab085a3c3f0f377eaaaea5"
+        }
+      ],
+      "files": [
+        {
+          "path": "rconnect/game/UnitPresentation.as",
+          "before_sha256": "3b8049b3de582dd9559248c0370db230669233930cf50ab651babc1fe09179ce",
+          "merged_sha256": "3e408515983fc28ad7b1a383c9e7353c5c137c960ae6ecf88e086204addb63cd"
+        },
+        {
+          "path": "rconnect/game/ProjectileVisuals.as",
+          "before_sha256": "2d4c56c8bef80534e3225aede43397da273d4f3aa86f76097a37fdc2aa8dea09",
+          "merged_sha256": "17a65244a2d7283e37b699ade9d45eeef7a19e132b0b1a0a49e50da4fa0d85fd"
+        },
+        {
+          "path": "rconnect/game/ImpactEventQueue.as",
+          "before_sha256": "d0c9c3f3639bad51f9d6a9a8c613dde82554edb418457b94b2f2ee197d6c855c",
+          "merged_sha256": "1f8918766bbc3aad2d6237ba6ff59438ce8ca300abd3b1bd670c01b217f6fe5e"
+        }
+      ]
     }
   ],
   "manual_changes": [
@@ -563,7 +601,7 @@
     },
     {
       "path": "RConnectMod.as",
-      "sha256": "0fc4c0ded2eaa379176c2638743d220df9bef48cee90f06ad196c1cb7449a2fc",
+      "sha256": "e1e2512800ded6d55929e05319626177216a3498dfde862961d540d5d66c74e1",
       "baseline_sha256": "1de9483aca55b011d3d6ab99238c88c9b2028a8d1d8c2ab51e4ecb5c546833ec",
       "changed": true
     },
@@ -815,7 +853,7 @@
     },
     {
       "path": "rconnect/game/ImpactEventQueue.as",
-      "sha256": "d0c9c3f3639bad51f9d6a9a8c613dde82554edb418457b94b2f2ee197d6c855c",
+      "sha256": "1f8918766bbc3aad2d6237ba6ff59438ce8ca300abd3b1bd670c01b217f6fe5e",
       "baseline_sha256": null,
       "changed": true
     },
@@ -899,7 +937,7 @@
     },
     {
       "path": "rconnect/game/ProjectileVisuals.as",
-      "sha256": "2d4c56c8bef80534e3225aede43397da273d4f3aa86f76097a37fdc2aa8dea09",
+      "sha256": "17a65244a2d7283e37b699ade9d45eeef7a19e132b0b1a0a49e50da4fa0d85fd",
       "baseline_sha256": "7837f01edba489fa3bde5deb4ef5adaae32a2297f994993c1f65e1664b13cf7e",
       "changed": true
     },
@@ -971,7 +1009,7 @@
     },
     {
       "path": "rconnect/game/UnitPresentation.as",
-      "sha256": "3b8049b3de582dd9559248c0370db230669233930cf50ab651babc1fe09179ce",
+      "sha256": "3e408515983fc28ad7b1a383c9e7353c5c137c960ae6ecf88e086204addb63cd",
       "baseline_sha256": "c93cf23601069a6cd151a03bfd2deab422125fa74c00574e0a3712fd0f2e0f49",
       "changed": true
     },
@@ -1119,14 +1157,15 @@
     "wall_component_120_raw_assertions": true,
     "recovery3_observe_deduplication_preserved": true,
     "impact_detach_red_green_35": true,
-    "codec_diagnostics_component_199": true
+    "codec_diagnostics_component_199": true,
+    "no_clip_explosion_component": true
   },
   "static_errors": [],
   "hash_note": "Layer merged_sha256 values describe intermediate merges. The source array is the final normalized LF source inventory; text-equivalent CRLF normalization is not a functional edit.",
-  "followup_review": "Codec diagnostics default off; actual old/new encoding, decoding and limits 199/0. Native frame-time effect untested.",
+  "followup_review": "87 proposal component checks pass; final merged detach/native visual checks pending. Gas pulses and acid ground remain separate gaps.",
   "native_host_candidate": "build/m52/recovery-native-travel-host-01",
   "native_host_sha256": "e159fe0f0a1cbb34596d18b9979f439e80823fbeda369be7b2220a42e8e5d30c",
   "gameplay_qualified": false,
   "performance_qualified": false,
-  "integration_recipe_sha256": "16a0738798816440573537c141ff5d090941e6cfd1eb102be806aa5144b41c1d"
+  "integration_recipe_sha256": "ca393d4425445ff04d23ca0576ecfae99d7e36750d2c72008d2c918652b1f4a1"
 }

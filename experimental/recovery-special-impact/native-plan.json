@@ -1,0 +1,25 @@
+{
+  "entry": "MSWNoVisualExplosionTestDoc",
+  "source": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-special-impact\\native\\MSWNoVisualExplosionTestDoc.as",
+  "source_sha256": "398caa209a5cfff136fe473e04a2c5504b04c0651f47eb3a79f5dea5d76c51fb",
+  "external_only": [
+    {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-drivers-09\\ProductionDeclarations.swc",
+      "sha256": "e0a630f733ec58848147b5b945bab6c4dc42197b61b1f6724ff0bf7175186c70"
+    },
+    {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-drivers-09\\inputs\\GameCombatStubs.swc",
+      "sha256": "4ee221d1b3e82ebafe57c462ec151059e47398ec412326b5dfbb8be183905b09"
+    }
+  ],
+  "harness": {
+    "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-drivers-09\\EffectsHarness.swf",
+    "sha256": "2e68e44049fd86091fbf20d150ce10e6a14de33f09f6957ec1c473a45e7d09ab"
+  },
+  "logical_rounds": 2,
+  "done_marker": "COOP EFFECTS DONE msw-no-visual",
+  "compiled": false,
+  "air_started": false,
+  "gameplay_damage_qualified": false,
+  "performance_qualified": false
+}

@@ -1,0 +1,38 @@
+{
+  "base": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-05\\src",
+  "files": {
+    "rconnect/game/UnitPresentation.as": {
+      "base_sha256": "3b8049b3de582dd9559248c0370db230669233930cf50ab651babc1fe09179ce",
+      "proposal_sha256": "3e408515983fc28ad7b1a383c9e7353c5c137c960ae6ecf88e086204addb63cd",
+      "modified_methods": [
+        "capture",
+        "captureEffects"
+      ],
+      "added_methods": [],
+      "merged_text_sha256": "3e408515983fc28ad7b1a383c9e7353c5c137c960ae6ecf88e086204addb63cd"
+    },
+    "rconnect/game/ProjectileVisuals.as": {
+      "base_sha256": "2d4c56c8bef80534e3225aede43397da273d4f3aa86f76097a37fdc2aa8dea09",
+      "proposal_sha256": "c0a2f2bd13e90ab1dba14ebcfc429eb9ff700e0027c6dbfbc838034180d098bf",
+      "modified_methods": [
+        "tickBeam"
+      ],
+      "added_methods": [],
+      "merged_text_sha256": "17a65244a2d7283e37b699ade9d45eeef7a19e132b0b1a0a49e50da4fa0d85fd"
+    },
+    "rconnect/game/ImpactEventQueue.as": {
+      "base_sha256": "d0c9c3f3639bad51f9d6a9a8c613dde82554edb418457b94b2f2ee197d6c855c",
+      "proposal_sha256": "fb72dda8483ff16e6abceeea96ff5586ad13525c124e6810484743c0757b2b9a",
+      "modified_methods": [
+        "receive",
+        "tick"
+      ],
+      "added_methods": [
+        "enqueue"
+      ],
+      "merged_text_sha256": "1f8918766bbc3aad2d6237ba6ff59438ce8ca300abd3b1bd670c01b217f6fe5e"
+    }
+  },
+  "integrated_written": false,
+  "compiled": false
+}

@@ -169,9 +169,8 @@ package rconnect.game {
       }
       private function tickBeam(a:Object,now:int):Boolean {
          var s:Object=a.s,list:Array=s.frames as Array,time:Number=ProjectileFrameStream.sourceTime(a,now);
-         if(!a.exploded&&s.explosion!=null&&time>=Number(s.explosion.at)) {
-            a.exploded=true;ProjectileExplosionVisuals.play(a.main,a.loc,s.explosion);
-         }
+         // Confirmed explosions share ImpactEventQueue with no-clip events.
+         // A repeated full packet or a late clip must not replay them here.
          if(int(s.end)>0 && time>=Number(s.end))return false;
          if(now-int(a.updated)>15000)return false;
          if(list==null || list.length==0 || time<Number(list[0].at))return true;

@@ -1,0 +1,17 @@
+{
+  "python_syntax": true,
+  "delimiter_sanity": true,
+  "base_and_overlay_hashes_match": true,
+  "changed_component_production_files": [
+    "rconnect/game/ImpactEventQueue.as",
+    "rconnect/game/ProjectileVisuals.as",
+    "rconnect/game/UnitPresentation.as"
+  ],
+  "shared_fixtures_identical": true,
+  "native_driver_sha256": "398caa209a5cfff136fe473e04a2c5504b04c0651f47eb3a79f5dea5d76c51fb",
+  "component_fixture_sha256": "6aa47967a6c22d7fb662c5d091c161bf1737db534353c989e74c5f990c2bffbe",
+  "compiled": false,
+  "air_started": false,
+  "native_game_tested": false,
+  "performance_qualified": false
+}

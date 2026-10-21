@@ -1,0 +1,25 @@
+{
+  "source": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-07\\src",
+  "production": {
+    "rconnect/game/ImpactEventQueue.as": "1f8918766bbc3aad2d6237ba6ff59438ce8ca300abd3b1bd670c01b217f6fe5e",
+    "rconnect/game/ProjectileFrameStream.as": "a7039e20094c9df3f9e7a7ee2f22e1f1262d067c0e7f0356cb994743fbfc30d9",
+    "rconnect/game/ProjectileVisuals.as": "17a65244a2d7283e37b699ade9d45eeef7a19e132b0b1a0a49e50da4fa0d85fd",
+    "rconnect/game/EnergyImpactVisuals.as": "d049d4a3fd996ac3088eb5bd2e4f8c765b954efe61f34a0899fa26e29cd72dee",
+    "rconnect/game/BallisticImpactVisuals.as": "516ce98fb6d9523c5eeb7b7c8e9c4ccb320d11a75594af26f3e3c6e3b8caf6eb",
+    "rconnect/game/RemoteMotion.as": "cd58b1286bc913149ac02ad60713e82c251b8e574043444b4f3ccfd6e4a2ebc5"
+  },
+  "fixture": {
+    "DetachChecks.as": "6b92033692b06d6f20b20484afe0f3a8da7bdc869c32d2eced9b878aae432ec5",
+    "FixtureClock.as": "e767e9731f0b986432382f5fb49aa6f352916f6cd6c3ce742247d277038ee591",
+    "FixtureFlare.as": "88194cc6bd99404bc9f8358fabe48402279417734903ebb2475179bdb100b945",
+    "rconnect/core/Log.as": "0d0b97bb743639b9df0a4eccdf6f77edd4397b323e4338f112e3e6c6bc8f3f4c",
+    "rconnect/core/ProjectileGrip.as": "0a88bad5cbec884215503a4664d317b3ade909e08dc5425259ae5d5cbd8af04f",
+    "rconnect/game/GameBridge.as": "591075e548a6cbb2d9244a23c3a5aa96fbb9c81f64606b90ced6b21bd5efc834",
+    "rconnect/game/ProjectileExplosionVisuals.as": "719f01e385e198ddee9ca98b9a614410a93c5be9f883de88da6bbb4cadcace6a",
+    "rconnect/game/TeleportVisuals.as": "345542c32a058cf596a4587b0cd7980468b8ef71e735b6ed068fe25562bb766a",
+    "rconnect/game/WeaponDisplay.as": "f0acaca71a7af44a7ef5beb1558f3d13b233f0b3bff44493a72cbb1ffd7702e2"
+  },
+  "expected": 35,
+  "compiled": false,
+  "native_game": false
+}

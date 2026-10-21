@@ -1,0 +1,67 @@
+{
+  "schema": 1,
+  "purpose": "diagnostic_only_not_performance_qualification",
+  "baseline": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-05\\src",
+  "baseline_prepared_sha256": "38a2aad9d9e49abef0d865983f0989ac0012ce51fa5e7b70f4148f804dcd8066",
+  "baseline_binary_sha256": "bf15665a7457eb5997009b45717524512a6622bd8efccc7388e269f14ab045ae",
+  "files": [
+    {
+      "source": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-05\\src\\rconnect\\game\\RemoteMotion.as",
+      "source_sha256": "cd58b1286bc913149ac02ad60713e82c251b8e574043444b4f3ccfd6e4a2ebc5",
+      "overlay": "src\\rconnect\\game\\RemoteMotion.as",
+      "sha256": "4f083f23ff9d02d1a9d83cd5da0db501f76b7956e5a0f66b0ea1890b30675d8c",
+      "diagnostic_spans": 5,
+      "stripped_equal": true
+    },
+    {
+      "source": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-05\\src\\rconnect\\game\\ProjectileFrameStream.as",
+      "source_sha256": "a7039e20094c9df3f9e7a7ee2f22e1f1262d067c0e7f0356cb994743fbfc30d9",
+      "overlay": "src\\rconnect\\game\\ProjectileFrameStream.as",
+      "sha256": "9a44caf0ceaf79419efde56deede99ebe033714aaf654ab920f55736cb93b17e",
+      "diagnostic_spans": 4,
+      "stripped_equal": true
+    },
+    {
+      "source": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-05\\src\\rconnect\\game\\ProjectileVisuals.as",
+      "source_sha256": "2d4c56c8bef80534e3225aede43397da273d4f3aa86f76097a37fdc2aa8dea09",
+      "overlay": "src\\rconnect\\game\\ProjectileVisuals.as",
+      "sha256": "b82a03f003074962f8fe36b9748b04decd40f1267ab96de90bff75c1f93f9eb3",
+      "diagnostic_spans": 8,
+      "stripped_equal": true
+    },
+    {
+      "source": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-05\\src\\rconnect\\game\\WallImpactVisuals.as",
+      "source_sha256": "0b12230008c12cd792bdb98d715de6f12a0942a048d717901080787a653364e9",
+      "overlay": "src\\rconnect\\game\\WallImpactVisuals.as",
+      "sha256": "694ee77ca0144b1590285c0802947ca4682ea55402c1b36eaf305d0ce1cbce67",
+      "diagnostic_spans": 9,
+      "stripped_equal": true
+    },
+    {
+      "source": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-05\\src\\rconnect\\net\\RoomCodec.as",
+      "source_sha256": "549dbffadf05547509a0c2fe8a3637c0ef089305ebe7637322e6a196c471828c",
+      "overlay": "src\\rconnect\\net\\RoomCodec.as",
+      "sha256": "13b7d89cfdb208366a57e37b1da7f1c6d83c2b42fbb4a3189786f14927304e1b",
+      "diagnostic_spans": 9,
+      "stripped_equal": true
+    }
+  ],
+  "driver": {
+    "source": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-drivers-09\\tests\\NativeFlightContinuityTestDoc.as",
+    "source_sha256": "e530e573a67a4e0ed6c5d231be9c134806de999b677adf5b4c1bae12ff26c5bf",
+    "overlay": "tests\\NativeFlightContinuityTestDoc.as",
+    "sha256": "05f1898263c40ed9099318156ccfb9a7db259f7ed122a4a0cb5615eead7d4181",
+    "stripped_equal": true
+  },
+  "new_files": {
+    "src/rconnect/diagnostics/FlightDiagnostics.as": "bc234ce33f3bc665ce1152ee26c4f94bc8d15d7950def3ae32b7a115bb2b9e6b",
+    "tests/FlightDiagnosticRecorder.as": "98470dc5da1a5ad61a7bd899d5687246598ff76e4114a1de7a037ae66b58dbf1"
+  },
+  "method_files": {
+    "make_overlay.py": "6b6dcb0c53d51e614ab9c8c6dc536d5affe18b1c136c347a30f6ce1904a57f98",
+    "prepare.py": "c5cd63fe8f91d06c3a51cdbc54c562506eec82e5f055846157c32fd6f0493025",
+    "analyze.py": "e81c08b06e067a900341415076d34ae52eb99296889d627212c4c26a40d87440",
+    "test_static.py": "1ee295c324267fc800076eaa30ea967ffe98636f4f2f224642681a98d11f8558",
+    "README.md": "d788bf4cf3317acca1cd30fa501eeeea7f73fd111d6c87734926a17c621c98e6"
+  }
+}

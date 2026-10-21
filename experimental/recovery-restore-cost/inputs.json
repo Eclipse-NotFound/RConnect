@@ -1,0 +1,21 @@
+{
+  "status": "diagnosis-only; no optimization source, no compiled component, no AIR/JVM run",
+  "candidate_sha256": "3f828464b5c27a8fb5bb25e1bfb483a72631318684cf30872c7c3bed7e9281d1",
+  "native_host_sha256": "e159fe0f0a1cbb34596d18b9979f439e80823fbeda369be7b2220a42e8e5d30c",
+  "dual_run": "2ca638e617",
+  "solo_run": "8451331768",
+  "rconnect_sources": {
+    "mods/RConnect/build/m52/recovery-06/src/rconnect/game/GameBridge.as": "e1cd085795e134ca293a5eb83fe44e22a0bc7edfb172f960a2c6a1e8bdec9260",
+    "mods/RConnect/build/m52/recovery-06/src/rconnect/game/NativeRoomState.as": "1e91028348b29dc1bd00dc55cf4d5df5d5ee40469ef9ea0f7e9626d30a601938",
+    "mods/RConnect/build/m52/recovery-06/src/rconnect/game/ObjectIdentity.as": "0bc4cc3429f78f0e43164dea4af4481e4230fdf335bd0eed6e7090baf0937774",
+    "mods/RConnect/build/m52/recovery-06/src/rconnect/game/UnitPresentation.as": "3b8049b3de582dd9559248c0370db230669233930cf50ab651babc1fe09179ce",
+    "mods/RConnect/build/m52/recovery-06/src/rconnect/game/MirrorHitUnit.as": "e5339ba7481c4e14d90171939e4a8729a4b8812dddf27bce1a006dd65de79147",
+    "mods/RConnect/build/m52/recovery-06/src/fe/unit/RConnectUnitAccess.as": "0558d8470454bb60069b90664302642a3facfcfe27291e4b5329923d834ac3d0",
+    "mods/RConnect/build/m52/recovery-06/src/rconnect/core/RoomSync.as": "efafed73dda4df38aab2176f791f6b91cf2a6d68ed9ab420e657662e54639961",
+    "mods/RConnect/build/m52/room-travel-driver-12/tests/RoomTravelTimingTestDoc.as": "c94ff2225b721a842cd3bf086754e6be6c210c72a44dfb7303ec1306a41ab240"
+  },
+  "receipts": {
+    "mods/RConnect/build/m52/recovery-scene-native-01/result.json": "17146f48936673b6347aed562ea555cbe7271fff5d7a0bee0ae81e9e87a73c5d",
+    "mods/RConnect/build/m52/recovery-scene-solo-01/result.json": "a9b97795080e95f820e6ebe894f5f56bc24f738e8949282b3947827c1b41a21e"
+  }
+}

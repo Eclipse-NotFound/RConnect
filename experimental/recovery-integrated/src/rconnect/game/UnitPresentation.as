@@ -201,6 +201,7 @@ package rconnect.game
                // Keep its confirmed hit independent of that visual's lifetime.
                var packet:Object={seq:shot.seq,at:shot.at,flight:flight};
                if(flight==null && shot.impact!=null)packet.impact=shot.impact;
+               if(flight==null && shot.explosion!=null)packet.explosion=shot.explosion;
                if(int(shot.end)>0 && int(shot.endSentAt)==0)shot.endSentAt=getTimer();
                events.push(packet);
             }
@@ -255,7 +256,7 @@ package rconnect.game
                var impacting:Boolean=shot.impact!=null && shot.fastImpact!==shot.impact;
                if(!fresh && (points==null||points.length==0) && !ending && !stopping && !exploding && !impacting)continue;
                var flight:Object=captureFlight(shot);
-               if(flight==null && shot.impact==null)continue;
+               if(flight==null && shot.impact==null && shot.explosion==null)continue;
                if(flight!=null && shot.impact!=null)flight.impact=shot.impact;
                if(flight!=null && shot.recorded) {
                   flight.frames=points;flight.delta=true;flight.end=shot.end;flight.explosion=shot.explosion;
@@ -264,7 +265,8 @@ package rconnect.game
                shot.fastSent=true;shot.fastEnd=shot.end;shot.fastStop=shot.stopped;
                shot.fastExplosion=shot.explosion;shot.fastImpact=shot.impact;
                var packet:Object={seq:shot.seq,at:shot.at,flight:flight};
-               if(flight==null)packet.impact=shot.impact;
+               if(flight==null && shot.impact!=null)packet.impact=shot.impact;
+               if(flight==null && shot.explosion!=null)packet.explosion=shot.explosion;
                if(int(shot.end)>0 && int(shot.endSentAt)==0)shot.endSentAt=getTimer();
                events.push(packet);
             }
