@@ -1,0 +1,34 @@
+{
+  "kind": "read-only-analyzer-counterexamples",
+  "JVM_started": false,
+  "AIR_started": false,
+  "author_files_changed": false,
+  "files": {
+    "native/GasPulseNativeTestDoc.as": "c2ef2b948c3a938d57141f1011f7efad4d7701f07c03d1cb5e16c4d148a89605",
+    "native/GasPulseProbe.as": "7ffad73aa06b80caf1eda990c6a0605e2bd6d537d45e6496381b907e6cdf2ee2",
+    "verify_results.py": "b82b073dffc3f542d6e6f693ed89b0a4f89617b70ed6292728dd6fad8e187d98",
+    "native_tool.py": "92223594c546df37a753c319c046a6f980b84262d2d1dc742e797d34f707814a"
+  },
+  "counterexamples": [
+    {
+      "counterexample": "Remote disappears 1 ms after birth while source/wire end stays 3000 ms",
+      "accepted": true,
+      "errors": []
+    },
+    {
+      "counterexample": "Later remote pose and MovieClip frame completely wrong after one matching pose",
+      "accepted": true,
+      "errors": []
+    },
+    {
+      "counterexample": "Source Part and source display coordinates unrelated to wire/display coordinates",
+      "accepted": true,
+      "errors": []
+    },
+    {
+      "counterexample": "Two identical wire pose histories admit ambiguous display identity and greedy pairing",
+      "accepted": true,
+      "errors": []
+    }
+  ]
+}

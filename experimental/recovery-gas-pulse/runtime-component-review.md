@@ -8,4 +8,4 @@
 - control-03实际63项/34失败；candidate-03实际63项/0失败。同一63标签与完整组件输入经整合脚本复核。真实AMF编码的本组件包最大5327字节；只是这些构造载荷，不代表原生带宽。
 - 组件回执：build/m52/recovery-gas-pulse-component-03/receipt.json，SHA256 `676d7fb9b2206621fcd41b97588b84d91dc2c5f52f9ea21a0aa7faec4b974ed5`。原始结果SHA256 `b4498a42eca3c564d71909535434fa5ccea49a43b57b94691106abb7b3ae0699`。
 
-四类准确合入experimental/recovery-integrated，源版本推进0.2.24-recovery12，尚未编译和原生验证。未合入first-raster独立方案。原生单/双颗双向四轮由recovery-gas-native-tests准备；来源离房/末包缺失仍沿既有15秒边界，不能凭组件关闭这项限制。安装保持回退574D。
+四类准确合入experimental/recovery-integrated，源版本推进0.2.24-recovery12，已编译 `f16a8d005fc188b93044b2e7fdb99421edd6cb2a7182511b7a1219c78cf072b3`，尚无气体原生验证。未合入first-raster独立方案。原生单/双颗双向四轮由recovery-gas-native-tests准备；来源离房/末包缺失仍沿既有15秒边界，不能凭组件关闭这项限制。安装保持回退574D。

@@ -1,0 +1,481 @@
+{
+  "passed": true,
+  "checks": 118,
+  "assertions": [
+    {
+      "passed": true,
+      "label": "Python syntax check_sources.py"
+    },
+    {
+      "passed": true,
+      "label": "Python syntax generate.py"
+    },
+    {
+      "passed": true,
+      "label": "Python syntax prepare.py"
+    },
+    {
+      "passed": true,
+      "label": "Python syntax prepare_components.py"
+    },
+    {
+      "passed": true,
+      "label": "Python syntax prepare_host.py"
+    },
+    {
+      "passed": true,
+      "label": "exact base rconnect/core/RoomSync.as"
+    },
+    {
+      "passed": true,
+      "label": "exact base rconnect/core/MapGeneration.as"
+    },
+    {
+      "passed": true,
+      "label": "exact base rconnect/game/GameBridge.as"
+    },
+    {
+      "passed": true,
+      "label": "exact base rconnect/game/WallImpactVisuals.as"
+    },
+    {
+      "passed": true,
+      "label": "exact base fe/graph/Grafon.as"
+    },
+    {
+      "passed": true,
+      "label": "overlay fingerprint src/rconnect/core/RoomSync.as"
+    },
+    {
+      "passed": true,
+      "label": "overlay fingerprint src/rconnect/core/MapGeneration.as"
+    },
+    {
+      "passed": true,
+      "label": "overlay fingerprint src/rconnect/game/GameBridge.as"
+    },
+    {
+      "passed": true,
+      "label": "overlay fingerprint src/rconnect/game/WallImpactVisuals.as"
+    },
+    {
+      "passed": true,
+      "label": "overlay fingerprint native/fe/graph/Grafon.as"
+    },
+    {
+      "passed": true,
+      "label": "overlay fingerprint src\\rconnect\\core\\FirstRasterGate.as"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method Grafon"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneSurfaces"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneMask"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneMatrix"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method scenePrepare"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneClear"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneDrop"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneBackdropObjects"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneIndexBackdrops"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneBackdropObjectBounds"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneBackdropArtBounds"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneBackdropTransformBounds"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneRender"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneViewport"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneCullSurfaces"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneApplyCompactDecal"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneDecalBounds"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneDecalAlphaBounds"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneDecalSourcePixel"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneDecalPaint"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneDecalArtBounds"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneDecalTransformBounds"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneApply"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneRestoreMarks"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneSats"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneTrack"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneSave"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneSetRegions"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneSyncRegionLighting"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneRegionStyle"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneRegionSlices"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneRegionStyleKey"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneRegionColorKey"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneRegionClearScratch"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneRegionDrawPass"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneRegionEnsureScratch"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneApplyRegionAction"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneDrawRegionChunk"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneUpdateEntityColor"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneEntitySameColor"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method scenePreloadAll"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneFinishBatch"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method scenePreloadRegions"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneNativeBackwall"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneNativeCall"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneSetNativeEnvironment"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneNativeEnvironment"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneForgetLand"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneResetGeneration"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneMaterialFill"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneConfigureBorders"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneEnsureUpcoming"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneFirstWindow"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneCancelWarm"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneClearWarm"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneBeginWarm"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method sceneAdvanceWarm"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method checkLoaded"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method allProgress"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method createCursors"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method createCursor"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method getObj"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method drawFon"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method setFonSize"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method warShadow"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method setLight"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method drawAllObjs"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method drawBackWall"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method setMCT"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method drawKusok"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method getSpriteList"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method drawSats"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method onSats"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method drawWater"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method tileDie"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method dyrka"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method decal"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method gwall"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method paint"
+    },
+    {
+      "passed": true,
+      "label": "unchanged native method specEffect"
+    },
+    {
+      "passed": true,
+      "label": "sceneDrawSteps differs only by two exact captured increments"
+    },
+    {
+      "passed": true,
+      "label": "native import source contains no FFDec pseudo-instructions"
+    },
+    {
+      "passed": true,
+      "label": "exact extracted component method rconnectRasterPending"
+    },
+    {
+      "passed": true,
+      "label": "exact extracted component method rconnectRasterWaiting"
+    },
+    {
+      "passed": true,
+      "label": "exact extracted component method rconnectRasterPainted"
+    },
+    {
+      "passed": true,
+      "label": "exact extracted component method sceneOpen"
+    },
+    {
+      "passed": true,
+      "label": "exact extracted component method sceneEnsure"
+    },
+    {
+      "passed": true,
+      "label": "exact extracted component method sceneTick"
+    },
+    {
+      "passed": true,
+      "label": "exact extracted component method sceneViewReady"
+    },
+    {
+      "passed": true,
+      "label": "open callback never stops native exitStep"
+    },
+    {
+      "passed": true,
+      "label": "only confirmed merged native destination"
+    },
+    {
+      "passed": true,
+      "label": "host/offline are not deferred"
+    },
+    {
+      "passed": true,
+      "label": "unsupported renderer configuration cancels previous ticket"
+    },
+    {
+      "passed": true,
+      "label": "completed ticket short circuits view readiness scanning"
+    },
+    {
+      "passed": true,
+      "label": "wall finish before ACK"
+    },
+    {
+      "passed": true,
+      "label": "finish before acknowledgement"
+    },
+    {
+      "passed": true,
+      "label": "real component rconnect/core/RoomSync.as"
+    },
+    {
+      "passed": true,
+      "label": "real component rconnect/core/FirstRasterGate.as"
+    },
+    {
+      "passed": true,
+      "label": "real lifecycle component"
+    },
+    {
+      "passed": true,
+      "label": "unpainted terrain cannot be reused"
+    },
+    {
+      "passed": true,
+      "label": "unpainted wall pixels cannot be sampled"
+    },
+    {
+      "passed": true,
+      "label": "no extra native camera calculation"
+    }
+  ],
+  "compiled": false,
+  "air_started": false,
+  "native_game_test": false
+}

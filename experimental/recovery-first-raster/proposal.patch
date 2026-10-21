@@ -1,0 +1,292 @@
+--- build\m52\recovery-11\src\rconnect\core\RoomSync.as
++++ experimental/recovery-first-raster/src/rconnect/core/RoomSync.as
+@@ -33,6 +33,8 @@
+       private var initial:Boolean=true;
+       private var preparing:Object;
+       private var nativeTravel:NativeTravelPlan;
++      private var firstRaster:FirstRasterGate=new FirstRasterGate();
++      private var nativeFrame:int=0;
+       private var nativeDeadline:int=0;
+       private var deferredNative:Object;
+       private var nativeSeal:Object,nativeStartLand:Object;
+@@ -73,6 +75,7 @@
+       }
+       public function reset():void
+       {
++         firstRaster.cancel();
+          if(mod.peerGrip!=null)mod.peerGrip.reset();
+          release();records={};nativeRoom=null;nativeLand=null;settledRoom=null;settledKey="";
+          ready=false;authority=true;initial=true;epoch=0;term=0;pending=0;hostInfo=null;
+@@ -99,7 +102,10 @@
+       }
+       private function present(e:Event=null):void
+       {
+-         if(e!=null)game.refreshWorld();
++         if(e!=null) {
++            game.refreshWorld();
++            if(firstRaster.awaitingView)try {finishFirstRaster();}catch(error:Error){fail(error);}
++         }
+          if(entryPending)entryView.show(game.world,mod.stage,"");
+          else entryView.clear();
+       }
+@@ -144,6 +150,7 @@
+       {
+          // Force a final presentation check even when native children handle
+          // ENTER_FRAME after the Stage listener or turn visibility back on.
++         ++nativeFrame;
+          if(connected())mod.stage.invalidate();
+          if(!connected()) {if(ready || busy || nativeTravelPending)reset();else entryView.clear();return;}
+          try
+@@ -378,10 +385,48 @@
+             game.independentRooms=false;
+          }
+       }
++      /** Called only by the patched large-scene sceneOpen, after native
++       * World.loc assignment. No pause here: exitStep still must reach zero. */
++      public function openFirstRaster(w:Object,l:Object,g:Object):Object {
++         if(!nativeTravel.matchesWorld(w)) {firstRaster.cancel();return null;}
++         if(session.mode!=Session.CONNECTED || blocked || w!==game.world || w==null
++            || w.game==null || w.land==null || l==null || g==null
++            || nativeTravel.current==null || !nativeTravel.started || !nativeTravel.consumed
++            || nativeTravel.current.info.sceneMerged!==true || nativePreviousBarrier>0
++            || w.land===nativeStartLand || l!==w.loc || l.land!==w.land
++            || String(w.land.act.id)!=String(nativeTravel.current.info.curLandId)
++            || String(w.game.curLandId)!=String(nativeTravel.current.info.curLandId)
++            || game.isPlayerDead())return null;
++         // Existing viewReady means the whole map when culling is disabled.
++         // Nonpreload/culling-off cannot finish that condition with one view;
++         // retain the ordinary renderer rather than invent a second readiness rule.
++         if(g.scenePreload!==true && g.sceneCullRender!==true) {firstRaster.cancel();return null;}
++         if(firstRaster.active && !firstRaster.matches(w,l,g,nativeTravel.id)) {
++            firstRaster.cancel();return null; // changed native room: ordinary draw
++         }
++         return firstRaster.open(w,l,g,nativeTravel.id);
++      }
++      private function finishFirstRaster():void {
++         if(!connected() || host() || game.isPlayerDead() || !nativeTravel.matchesWorld(game.world)
++            || !firstRaster.matches(game.world,game.loc,game.world==null?null:game.world.grafon,nativeTravel.id)) {
++            cancelNativeEntry(true);return;
++         }
++         if(!firstRaster.ready(game.world,game.loc,game.world.grafon,nativeTravel.id,nativeFrame))return;
++         // The natural Camera.calc/sceneTick has now painted the anchored
++         // viewport. Restore logical wall marks before exposing that frame.
++         game.finishFirstRaster();
++         var receipt:Object=firstRaster.complete();
++         if(pending!=int(receipt.barrier) || epoch!=int(receipt.epoch))throw new Error("First raster barrier changed");
++         send({op:"ack",barrier:pending,travelId:String(receipt.travelId)});
++         nativeTravel.finish(String(receipt.travelId));clearNativeEntry();nativeDeadline=0;game.activeTravelId="";
++         pending=0;readySent=false;release();
++         Log.d("RConnectRoom: first raster ready "+settledKey+" term="+term+" ms="+(getTimer()-barrierStarted));
++      }
+       private function clearNativeEntry():void {
+          nativeSeal=null;nativeStartLand=null;nativeBarrier=0;nativePreviousBarrier=0;
+       }
+       private function cancelNativeEntry(discardBarrier:Boolean=false):void {
++         firstRaster.cancel();
+          if(discardBarrier) {
+             // A replacement Game cannot inherit the previous world's grant,
+             // including the legacy barrier that was ahead of this native plan.
+@@ -559,7 +604,14 @@
+             }
+             else if(msg.op=="grant" && int(msg.barrier)==pending && int(msg.epoch)==epoch && acceptsJoinGrant(msg))
+             {
++               if(firstRaster.awaitingView) {
++                  if(!firstRaster.sameGrant(int(msg.barrier),int(msg.epoch),String(msg.travelId)))
++                     throw new Error("Grant overtook pending first raster");
++                  return true; // exact duplicate: never restore/reward twice
++               }
+                var completingNative:Boolean=nativeTravel.current!=null && String(msg.travelId)==nativeTravel.id;
++               var delayedRaster:Boolean=completingNative && firstRaster.active;
++               if(delayedRaster)firstRaster.beginRestore(game.world,game.loc,game.world.grafon,nativeTravel.id);
+                var state:Object;
+                if(msg.fresh===true && msg.owner===true && freshRoom===game.loc && freshWire!=null
+                   && msg.state===freshWire && String(msg.key)==game.roomKey()) {
+@@ -599,6 +651,12 @@
+                authority=Boolean(msg.owner);ready=true;term=int(msg.term);settledRoom=game.loc;settledKey=game.roomKey();
+                initial=false;game.independentRooms=true;nativeRoom=game.loc;
+                TravelGuard.endTravel();
++               if(delayedRaster) {
++                  firstRaster.restored(game.world,game.loc,game.world.grafon,nativeTravel.id,pending,epoch,nativeFrame);
++                  // No new state machine for ordinary rooms: only this exact
++                  // native large destination waits for its next native raster.
++                  mod.stage.invalidate();return true;
++               }
+                send({op:"ack",barrier:pending,travelId:completingNative?nativeTravel.id:""});
+                if(completingNative) {
+                   nativeTravel.finish(String(msg.travelId));clearNativeEntry();nativeDeadline=0;game.activeTravelId="";
+@@ -733,6 +791,7 @@
+       public function notice(s:String):void {status=s;if(mod.hud!=null)mod.hud.addChatLine("RConnect",RCLocale.text(s));}
+       private function fail(error:Error):void
+       {
++         firstRaster.cancel();
+          hold();blocked=true;status="房间同步失败，请断开连接后重试";
+          Log.d("RConnectRoom: ERROR "+error+" "+error.getStackTrace());
+       }
+--- build\m52\recovery-11\src\rconnect\core\MapGeneration.as
++++ experimental/recovery-first-raster/src/rconnect/core/MapGeneration.as
+@@ -18,11 +18,20 @@
+             if(nativeGame.rconnectTravelBridge!=null)throw new Error("Native travel hook already owned");
+             nativeGame.rconnectTravelBridge=nativeTravel;nativeTravelSupported=true;
+          }
++         var grafon:Object=s.mod.game.main.loaderInfo.applicationDomain.getDefinition("fe.graph.Grafon");
++         if("rconnectRasterBridge" in grafon) {
++            if(grafon.rconnectRasterBridge!=null)throw new Error("Native first raster hook already owned");
++            grafon.rconnectRasterBridge=firstRaster;
++         }
+          var cls:Object=s.mod.game.main.loaderInfo.applicationDomain.getDefinition("fe.loc.Land");
+          if("rconnectSeedSource" in cls) {
+             cls.rconnectSeedSource=seedFor; supported=true;
+             Log.d("RConnectMap: native expedition seed interface ready");
+          }else Log.d("RConnectMap: legacy fixed-seed Land; native expedition patch required");
++      }
++      private function firstRaster(w:Object,l:Object,g:Object):Object {
++         if(session.rooms==null || session.mode!=Session.CONNECTED)return null;
++         return session.rooms.openFirstRaster(w,l,g);
+       }
+       private function nativeTravel(phase:String,g:Object,info:Object):Object {
+          var bridge:GameBridge=session.mod.game;
+--- build\m52\recovery-11\src\rconnect\game\GameBridge.as
++++ experimental/recovery-first-raster/src/rconnect/game/GameBridge.as
+@@ -3506,6 +3506,14 @@
+          tileRedrawIfDirty();_wall.receive(loc,list,true);tileRedrawIfDirty();
+       }
+ 
++      /** The native camera has produced the first restored viewport. */
++      public function finishFirstRaster():void
++      {
++         if(probe(probe(loc,"grafon"),"rconnectRasterPending")===true)
++            throw new Error("First raster still unpainted");
++         _wall.redraw(loc);_satsRasterDirty=true;
++      }
++
+       public function tileRedrawIfDirty():void
+       {
+          if(_terrain.dirty && world!=null) {
+@@ -6230,7 +6238,8 @@
+          // raster can be retained, and only when no pending/previous paint can
+          // be left behind. Changed/unknown terrain uses the old full redraw.
+          var terrainView:RoomTerrainView;
+-         if(!retained && !_terrain.dirty && (s.wallPaint==null || s.wallPaint.length==0)
++         if(!retained && probe(probe(loc,"grafon"),"rconnectRasterPending")!==true
++            && !_terrain.dirty && (s.wallPaint==null || s.wallPaint.length==0)
+             && _wall.checkpoint(loc).length==0)terrainView=new RoomTerrainView(loc);
+          roomRole(authority);
+          timing.role=getTimer()-timingStart;
+--- build\m52\recovery-11\src\rconnect\game\WallImpactVisuals.as
++++ experimental/recovery-first-raster/src/rconnect/game/WallImpactVisuals.as
+@@ -101,7 +101,8 @@
+          var g:Object=get(loc,"grafon");
+          // Grafon is shared by rooms. inRoom(oldRoom) must never paint the new
+          // room's bitmap while settling reports on the old-room TCP barrier.
+-         return loc!=null && get(g,"loc")===loc?get(g,"frontBmp") as BitmapData:null;
++         return loc!=null && get(g,"loc")===loc && get(g,"rconnectRasterPending")!==true
++            ?get(g,"frontBmp") as BitmapData:null;
+       }
+       private function solid(loc:Object,x:int,y:int):Boolean
+       {
+--- build\m52\recovery-native-travel-host-01\after\scripts\fe\graph\Grafon.as
++++ experimental/recovery-first-raster/native/fe/graph/Grafon.as
+@@ -689,8 +689,38 @@
+          return new Rectangle(left,top,Math.max(a.x,b.x,c.x,d.x) - left,Math.max(a.y,b.y,c.y,d.y) - top);
+       }
+       
++      // Optional local loading optimization. Older/no RConnect returns null;
++      // the native initialization and every ordinary render path stay intact.
++      public static var rconnectRasterBridge:Function = null;
++      private var rconnectRasterTicket:Object;
++      public function get rconnectRasterPending() : Boolean
++      {
++         return this.rconnectRasterTicket != null && this.rconnectRasterTicket.unpainted === true;
++      }
++      private function rconnectRasterWaiting() : Boolean
++      {
++         return this.rconnectRasterTicket != null && this.rconnectRasterTicket.waiting === true;
++      }
++      private function rconnectRasterPainted() : void
++      {
++         if(this.rconnectRasterTicket != null && this.rconnectRasterTicket.unpainted === true
++            && !this.rconnectRasterWaiting() && this.sceneResident > 0 && this.sceneViewReady())
++         {
++            this.rconnectRasterTicket.unpainted = false;
++         }
++      }
+       private function sceneOpen(value:Location) : void
+       {
++         var ticket:Object = null;
++         if(rconnectRasterBridge != null)
++         {
++            try {
++               ticket = rconnectRasterBridge(World.w,value,this);
++               if(ticket == null || !(ticket.waiting is Boolean) || !(ticket.unpainted is Boolean))ticket = null;
++            }
++            catch(error:*) { ticket = null;trace("RConnect first raster fallback: " + error); }
++         }
++         this.rconnectRasterTicket = ticket;
+          this.sceneSyncRegionLighting(value);
+          this.sceneClear();
+          this.sceneSide = this.sceneChunkSide == 640 ? 640 : 320;
+@@ -719,6 +749,7 @@
+             this.sceneEnsure(left,top,World.w.swfStage.stageWidth,World.w.swfStage.stageHeight,true);
+          }
+          this.drawAllObjs();
++         this.rconnectRasterPainted();
+       }
+       
+       private function sceneRender(cx:int, cy:int) : void
+@@ -785,6 +816,7 @@
+       
+       private function sceneEnsure(left:Number, top:Number, width:Number, height:Number, initial:Boolean = false) : void
+       {
++         if(this.rconnectRasterWaiting())return;
+          if(this.scenePreload && this.sceneResident == Math.ceil(this.loc.limX / this.sceneSide) * Math.ceil(this.loc.limY / this.sceneSide))
+          {
+             return;
+@@ -799,6 +831,7 @@
+       
+       public function sceneTick() : void
+       {
++         if(this.rconnectRasterWaiting())return;
+          if(!this.sceneLarge || this.loc == null)
+          {
+             return;
+@@ -807,6 +840,7 @@
+          var scale:Number = Number(camera.scaleV > 0 ? camera.scaleV : 1);
+          this.sceneEnsure((-camera.vx - camera.quakeX) / scale,(-camera.vy - camera.quakeY) / scale,camera.screenX / scale,camera.screenY / scale);
+          this.sceneCullSurfaces();
++         this.rconnectRasterPainted();
+       }
+       
+       public function sceneViewport() : Rectangle
+@@ -2297,6 +2331,7 @@
+       
+       public function sceneViewReady() : Boolean
+       {
++         if(this.rconnectRasterWaiting())return false;
+          if(!this.sceneLarge)
+          {
+             return true;
+@@ -2756,13 +2791,9 @@
+                      tile.y = j * Tile.tileY;
+                      voda.addChild(tile);
+                   }
+-                  var _loc1_:* = §§findproperty(j);
+-                  var _loc2_:Number = Number(_loc1_.j) + 1;
+-                  _loc1_.j = _loc2_;
+-               }
+-               _loc1_ = §§findproperty(i);
+-               _loc2_ = Number(_loc1_.i) + 1;
+-               _loc1_.i = _loc2_;
++                  j++;
++               }
++               i++;
+             }
+          });
+          steps.push(function():void
+@@ -3569,6 +3600,7 @@
+             this.sceneOpen(param1);
+             return;
+          }
++         if(!this.sceneRasterizing)this.rconnectRasterTicket = null;
+          sceneStarted = int(getTimer());
+          this.scenePrepare(param1);
+          transpFon = false;

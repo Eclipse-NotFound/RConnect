@@ -1,0 +1,24 @@
+{
+  "base": "recovery-11",
+  "host": "E159",
+  "inputs": {
+    "build\\m52\\recovery-11\\src\\rconnect\\core\\RoomSync.as": "efafed73dda4df38aab2176f791f6b91cf2a6d68ed9ab420e657662e54639961",
+    "build\\m52\\recovery-11\\src\\rconnect\\core\\MapGeneration.as": "0826f92fa6fd05859e730131da939e7ec74016a2280e69122833a76c45a0b645",
+    "build\\m52\\recovery-11\\src\\rconnect\\game\\GameBridge.as": "e1cd085795e134ca293a5eb83fe44e22a0bc7edfb172f960a2c6a1e8bdec9260",
+    "build\\m52\\recovery-11\\src\\rconnect\\game\\WallImpactVisuals.as": "502b77cc7973107614ba0d91373c7774e898fa42413aee2eb1728299e35bd601",
+    "build\\m52\\recovery-native-travel-host-01\\after\\scripts\\fe\\graph\\Grafon.as": "09ff2387e744acb9716ae6760de2f8a1c49963da76ae97d072d1bcb759ab6ef3"
+  },
+  "overlays": {
+    "src/rconnect/core/RoomSync.as": "b1be43039e16634750ca104ebf92303a3b3757b0247df0fd0d0275bc36cf5a6f",
+    "src/rconnect/core/MapGeneration.as": "d1cf5413388382bf8517c95326fd5009c7b7510e0cde5dd409e988d4bcd1c774",
+    "src/rconnect/game/GameBridge.as": "26bb0f7cd4da7c74c83bd2657575823247196c41a861babf23bb40c17fc3cbf7",
+    "src/rconnect/game/WallImpactVisuals.as": "5629cb78bb4826d92c137c2d07ec264db716c6c80ad629369d10f87300086924",
+    "native/fe/graph/Grafon.as": "976526e741392904bb2575c7e6c73055cdb589ae177e033ad9fdebcc6faa850d",
+    "src\\rconnect\\core\\FirstRasterGate.as": "c4db67de41dd3e21d6aa5949f4214cf6b8ef49521c784d85e1e95dc447745821"
+  },
+  "source_only": true,
+  "compiled": false,
+  "runtime_tested": false,
+  "installation_modified": false,
+  "scope": "join confirmed native shared large scene; no ordinary room change"
+}
