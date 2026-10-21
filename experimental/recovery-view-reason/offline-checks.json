@@ -1,0 +1,59 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "label": "Exact11 source and one overlay",
+      "passed": true
+    },
+    {
+      "label": "Strip returns exact original bytes",
+      "passed": true
+    },
+    {
+      "label": "Generator reproduces overlay with explicit imports",
+      "passed": true
+    },
+    {
+      "label": "Refresh has no instrumentation",
+      "passed": true
+    },
+    {
+      "label": "External mutation cannot strip equal",
+      "passed": true
+    },
+    {
+      "label": "Three scene observations accepted",
+      "passed": true
+    },
+    {
+      "label": "Missing observation rejected",
+      "passed": true
+    },
+    {
+      "label": "Malformed evidence rejected",
+      "passed": true
+    },
+    {
+      "label": "raw-success-stays-diagnostic-only",
+      "passed": true
+    },
+    {
+      "label": "original-failure-retained",
+      "passed": true
+    },
+    {
+      "label": "changed-inputs-not-qualified",
+      "passed": true
+    },
+    {
+      "label": "missing-reasons-not-qualified",
+      "passed": true
+    }
+  ],
+  "count": 12,
+  "jvm_started": false,
+  "air_started": false,
+  "actual_as_execution": false,
+  "gameplay_qualified": false,
+  "performance_qualified": false
+}

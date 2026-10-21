@@ -1,0 +1,24 @@
+{
+  "base": "build/m52/recovery-11",
+  "base_sha256": "cd721f0e56679302747ab2c9e687e20bd877a1ee8f520d6d589c7c43fa64ebb5",
+  "files": {
+    "check.py": "73ceceb590ea8606373af26af3c5a5a6af5c01ce03381cc837c074aaf8c5ceed",
+    "diagnostic.patch": "f72e3b3ea8ca8698709f2a5adf695a815c619171501fcd993e84624057801141",
+    "generate.py": "ca0784836759523100fca26f3d01fde00a4bb33ce971093f35e1b1b9b5847a09",
+    "inputs.json": "72845a907f64c31694aa304d77c3804a3976954df96f6f9687be91e0ed2f886b",
+    "offline-checks.json": "b1eb1839474679ccdcb60eee7a9c199737ea7304d20a548ef5cbb2a92a8fa94c",
+    "prepare.py": "0a9b768ccb44b3c0fad8933d863b659f977650d9373185be1a291b606e0dc908",
+    "README.md": "96b0b7cf6b0a7c1f8572b6bc2f92c19b9a4e86fe0a6851786c6a3dff175cc2b6",
+    "run_native.py": "834a8669a464f257ec965ccd131b74e9c7ad08c5aef2f4488f8d141ab93ea15b",
+    "src/rconnect/game/RoomTerrainView.as": "29be3d4d7b6b8dee210e9a07a1e3ab155c41202edd912ddab68bab41a97e13e3"
+  },
+  "offline_checks": 12,
+  "offline_passed": true,
+  "compiled": false,
+  "air_started": false,
+  "diagnostic_only": true,
+  "gameplay_qualified": false,
+  "performance_qualified": false,
+  "previous_compile_failure": "build/m52/recovery-view-reason-diag-01 (undefined package qualifiers, no AIR)",
+  "next_candidate": "build/m52/recovery-view-reason-diag-02"
+}

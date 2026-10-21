@@ -1,0 +1,19 @@
+{
+  "kind": "view-reason-proposal",
+  "base": "build\\m52\\recovery-11",
+  "base_sha256": "cd721f0e56679302747ab2c9e687e20bd877a1ee8f520d6d589c7c43fa64ebb5",
+  "base_manifest_sha256": "4d32c312567f91f3342f1f51a03d7d610bd01f28e2ce29b612e94780eb3a0d60",
+  "source": {
+    "rconnect/game/RoomTerrainView.as": "a2eb59b8536414d26daa39a82c71c414009c5d4b29a7a24539e025d1b852877f"
+  },
+  "overlay": {
+    "rconnect/game/RoomTerrainView.as": "29be3d4d7b6b8dee210e9a07a1e3ab155c41202edd912ddab68bab41a97e13e3"
+  },
+  "generator_sha256": "ca0784836759523100fca26f3d01fde00a4bb33ce971093f35e1b1b9b5847a09",
+  "stripped_equal": true,
+  "diagnostic_only": true,
+  "compiled": false,
+  "air_started": false,
+  "gameplay_qualified": false,
+  "performance_qualified": false
+}
