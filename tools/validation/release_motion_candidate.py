@@ -135,7 +135,7 @@ def deploy(out, proof, accepted):
         cmd=[sys.executable,'-B','-X','utf8',str(ROOT/'tools/run_coop_regression.py'),
              '--candidate',str(target),'--smoke','--all-mods','--land','random_mane',
              '--seconds','180','--expected-version',proof['version'],'--port',str(test_port()),
-             '--private-desktop','--defer-visible','--wait-host-world',
+             '--private-desktop','--wait-host-world',
              '--require-exclusive-air','--registry-wait','600']
         with (out/'installed-smoke.log').open('w',encoding='utf-8') as log:
             code=subprocess.run(cmd,cwd=ROOT,stdout=log,stderr=subprocess.STDOUT).returncode
