@@ -1,0 +1,22 @@
+{
+  "files": {
+    "run.py": "9364a42e7086ec14b145f1a299efa1a73b7ac6b4a8fae1733692dc9ee868f1b5",
+    "check.py": "155b4d1cc72529a061e164df02a67ec192cc1690efcae3b8207ad54879e5548c",
+    "README.md": "6f5ea881a5df3870def37c90d7b8adae2fd48b75ead9371eade6e54d95eeb24a",
+    "component/SamplerPositiveDoc.as": "548f32c4ec7c4d0f9581a4f240eb67f60be6b1ef8243eecf8fc3ce346f1fbb56",
+    "component/FlashPaintTailSampler.as": "f0706d7fdff62a0aaeebd1e200e8899a3f534a1d1abb76a56d4a2d4ade3f1601"
+  },
+  "originals": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\tools\\validation\\run_recovery_component.py": "9952aeeaa37f6eead636cceff9f25fabff3045671d3c4cbb60c326909d1e572d",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-paint-tail-sampler-v3\\src\\FlashPaintTailSampler.as": "f0706d7fdff62a0aaeebd1e200e8899a3f534a1d1abb76a56d4a2d4ade3f1601",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-after-render-sampler-drivers-01\\command.json": "f9e87e2c90e0fc50bbbbfc353a4e4f62e15d1ec2df907a57ceb84daeda672006",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-after-render-sampler-drivers-01\\prepared.json": "86e620b74fed40e4b1752a08ce195965f55dbc21e547509d1010f8d20ca66bac",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-after-render-sampler-20-01\\intent.json": "4c0c6ab7b1dbc806ab5781ba99e8000b182b0b50e837518ec0463c2dde289792",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-after-render-sampler-20-01\\cpu-profile.json": "4a93606310c5f0919d0261ca66fbc7dd102761b49e5ce5fcfa1facdc864b1049",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-early-paint-tail-driver-01\\paint-compile-command.json": "9cce2b66feb85176707c3567a7cf3ba9cdf8cb3f7912c9012957a218edc48a9e"
+  },
+  "expected": 1,
+  "compiled": false,
+  "air_started": false,
+  "performance_qualified": false
+}

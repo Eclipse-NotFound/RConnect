@@ -1,0 +1,91 @@
+--- aggregate/FirstRasterSceneProbe.as
++++ tail/FirstRasterSceneProbe.as
+@@ -8,14 +8,23 @@
+       private var tickets:Dictionary=new Dictionary(),rows:Array=[],expected:Boolean=false;
+       private var startPermit:Object,heldSeen:Boolean=false;
+       private var paintProbe:PaintTimingBuffer;
++      private var tailProbe:PaintTailSampler;
+       public function FirstRasterSceneProbe(value:Object) {
+          mod=value;cls=mod.game.main.loaderInfo.applicationDomain.getDefinition("fe.graph.Grafon");
+          paintProbe=new PaintTimingBuffer(cls);
++         // Only the frozen exclusive diagnostic runner may load this driver.
++         tailProbe=new PaintTailSampler(new FlashPaintTailSampler(true),
++            function():Boolean {return paintProbe.ownsObserver();});
++         tailProbe.attach(mod.stage);
++         paintProbe.tailObserver=function(g:Object,w:Object,gameValue:Object,l:Object,v:Object):void {
++            tailProbe.observe(g,w,gameValue,l,v);
++         };
+          if(!("rconnectRasterBridge" in cls) || !(cls.rconnectRasterBridge is Function))return;
+          original=cls.rconnectRasterBridge;
+          wrapper=function(w:Object,l:Object,g:Object):Object {
+             var ticket:Object=original(w,l,g);
+             paintProbe.bind(w,l,g);
++            tailProbe.bind(w,l,g);
+             if(active && ticket!=null && tickets[ticket]==null) {
+                var permit:Object=query();
+                var row:Object={at:getTimer(),wall:new Date().time,initialWaiting:ticket.waiting,
+@@ -39,6 +48,7 @@
+       public function begin(required:Boolean):void {
+          active=true;expected=required;tickets=new Dictionary();rows=[];heldSeen=false;startPermit=query();
+          paintProbe.begin(mod.game.world);
++         tailProbe.begin(mod.game.world);
+       }
+       public function sample():void {
+          if(!active)return;
+@@ -71,12 +81,33 @@
+             readbackOnly:true,pixelEquality:false,fullModFreezeQualified:false};
+       }
+       private function finishPaint(reason:String):Object {
++         // Cancel/close while the original aggregate slot is still owned.
++         var tail:Object=tailProbe.finish(reason);
+          var result:Object=paintProbe.finish(reason);
+          if(result!=null)Log.d("EARLY PAINT PROFILE "+JSON.stringify(result));
++         if(tail!=null) {
++            var encodeStart:int=getTimer(),encodeStartWall:Number=new Date().time;
++            var payload:String=JSON.stringify(tail);
++            var encodeEnd:int=getTimer(),encodeEndWall:Number=new Date().time;
++            var outputStart:int=getTimer(),outputStartWall:Number=new Date().time;
++            Log.d("EARLY PAINT TAIL "+payload);
++            var outputEnd:int=getTimer(),outputEndWall:Number=new Date().time;
++            // This small timing marker's own output cost is not self-measured.
++            Log.d("EARLY PAINT TAIL OUTPUT "+JSON.stringify({segment:tail.segment,
++               encodeStart:encodeStart,encodeEnd:encodeEnd,encodeStartWall:encodeStartWall,encodeEndWall:encodeEndWall,
++               outputStart:outputStart,outputEnd:outputEnd,outputStartWall:outputStartWall,outputEndWall:outputEndWall,
++               encodeMs:encodeEnd-encodeStart,outputMs:outputEnd-outputStart,characters:payload.length,
++               diagnosticOnly:true,performanceQualified:false}));
++         }
+          return result;
+       }
+       public function dispose():void {
+          finishPaint("dispose");
++         paintProbe.tailObserver=null;
++         var tailSummary:Object=tailProbe.dispose();
++         Log.d("EARLY PAINT TAIL SUMMARY "+JSON.stringify({kind:tailSummary.kind,
++            globalFaults:tailSummary.globalFaults,cleanupBlocked:tailSummary.cleanupBlocked,
++            segments:tailSummary.rows.length,diagnosticOnly:true,performanceQualified:false,runtimeQualified:false}));
+          if(cls!=null && cls.rconnectRasterBridge===wrapper)cls.rconnectRasterBridge=original;
+          active=false;tickets=new Dictionary();
+       }
+--- aggregate/PaintTimingBuffer.as
++++ tail/PaintTimingBuffer.as
+@@ -11,6 +11,10 @@
+       private var ownershipPreserved:Boolean=true;
+       private var calls:int=0,positiveMsCalls:int=0,zeroMsCalls:int=0,incompleteCalls:int=0;
+       private var inclusiveTotalMs:Number=0,maxMs:Number=0,lastFinished:Number=-1,lastWall:Number=-1;
++      public var tailObserver:Function;
++      public function ownsObserver():Boolean {
++         return active && attached && cls!=null && cls.rconnectPaintTimingBridge===own;
++      }
+       public function PaintTimingBuffer(type:Object) {cls=type;own=receive;}
+       private function bucket(category:String):Object {
+          return {category:category,calls:0,positiveMsCalls:0,zeroMsCalls:0,totalMs:0,maxMs:0,
+@@ -111,6 +115,9 @@
+                started:started,finished:finished,startedWall:wallStart,finishedWall:wallEnd,
+                residentBefore:Number(v.residentBefore),residentAfter:Number(v.residentAfter),completed:v.completed===true,
+                left:Number(v.left),top:Number(v.top),width:Number(v.width),height:Number(v.height)});
++            // The aggregate entry above remains the sole native observer. A stable
++            // resident call cannot trigger the 0-to-positive tail window.
++            if(attached && tailObserver!=null)tailObserver(g,w,gameValue,l,v);
+          }catch(ignored:*) {
+             faults++;
+             store({phase:"observer-error",category:category,important:true,observerError:true,

@@ -1,0 +1,13 @@
+{
+  "originals": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-paint-aggregate\\tests\\FirstRasterSceneProbe.as": "a1e5298292f33aa30dee4f827eb89d39270b1ae181c086ae3ff67b8c83f593e7",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-paint-aggregate\\tests\\PaintTimingBuffer.as": "b8684081e88fccba936ab987710e22bf735ef7daf1297357e791d91b9c8ce56e",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-paint-tail-sampler-v3\\src\\PaintTailSampler.as": "1d35215b6a24a1dae4e6d5071ab168b1777c9789d96340931417177448b81c61",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-paint-tail-sampler-v3\\src\\FlashPaintTailSampler.as": "f0706d7fdff62a0aaeebd1e200e8899a3f534a1d1abb76a56d4a2d4ade3f1601"
+  },
+  "helper_manifest": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-paint-tail-sampler-v3\\component-inputs.json",
+  "helper_manifest_sha256": "5c9b55b1295116179678a4fd725b5cf33bac827669b290c75a490efec320e8c3",
+  "source_only": true,
+  "compiled": false,
+  "performance_qualified": false
+}

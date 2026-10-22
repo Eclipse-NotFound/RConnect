@@ -1,0 +1,149 @@
+{
+  "files": [
+    {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\AddictionSystem\\release\\AddictionSystemMod.swf",
+      "sha256": "5a4d9a405777867826061bb50178df931591987ea0737580bd0aa8a89458b9b3",
+      "sampler_tokens": [],
+      "namespace_token": false
+    },
+    {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\ContinuousScene\\release\\ContinuousSceneMod.swf",
+      "sha256": "7f1f2961c6e299d949423591f3c65c610c2eaefa7fc72e8a583a402770d6b51f",
+      "sampler_tokens": [],
+      "namespace_token": false
+    },
+    {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\FirearmAttachments\\release\\FirearmAttachmentsMod.swf",
+      "sha256": "b3304596eb7e08796f9de2cf02e1e7cccff10e188d26fedfa960aa6370d2a4b9",
+      "sampler_tokens": [],
+      "namespace_token": false
+    },
+    {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\LightAndDarkness\\release\\LightAndDarknessMod.swf",
+      "sha256": "8adba6914df5aada4df12a646b6c22df4b95b9630a55dd05ca7f713621c7e3ef",
+      "sampler_tokens": [],
+      "namespace_token": false
+    },
+    {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\ModLoader\\release\\ModLoaderMod.swf",
+      "sha256": "bd71b6f31774b97841d4c158451da0353b53bc46ac72f8e2a7fe2c3f3f4908b1",
+      "sampler_tokens": [],
+      "namespace_token": false
+    },
+    {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\MoreSkills&Weapons\\release\\MoreSkillsWeaponsMod.swf",
+      "sha256": "526a6fd09297fb4f502236076b4252bf97bb50d2f77000b13763cf118546ab71",
+      "sampler_tokens": [],
+      "namespace_token": false
+    },
+    {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\PermanentInjury\\release\\PermanentInjuryMod.swf",
+      "sha256": "d4f6a096ee06f8869fffb316801c6325df26f54260a34666ac17ec24ad8bd083",
+      "sampler_tokens": [],
+      "namespace_token": false
+    },
+    {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RandomRooms\\release\\RandomRoomsMod.swf",
+      "sha256": "3f8789c62f9b2ef8efc082597f672a2fea230a0d7fce3be90c04efd9582e5145",
+      "sampler_tokens": [],
+      "namespace_token": false
+    },
+    {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-early-exit-compile-01\\RConnectMod.swf",
+      "sha256": "d356483f927c608b5973982558127ce4feb0873a36676909ed3b3d6ac8b7acb3",
+      "sampler_tokens": [],
+      "namespace_token": false
+    },
+    {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-early-paint-host-03\\pfe.swf",
+      "sha256": "29d36cdd94aadc5368156f80e854808d78b74baf8347ebfcc80c644d73601ef7",
+      "sampler_tokens": [],
+      "namespace_token": true
+    },
+    {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-early-sandy-scene-driver-01\\scene\\EffectsHarness.swf",
+      "sha256": "d52ef4300c7d472ee05884d7b4709f4abf80b3e6ff935b695a9ed986db021086",
+      "sampler_tokens": [],
+      "namespace_token": false
+    },
+    {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RealisticVision\\build\\backups\\before-combat-visibility-20261022-182545-6d09e8\\RealisticVisionMod.before.swf",
+      "sha256": "7852f61e083993e69431d5d8ca2fdf3c07d4068715946d04b3e796cecbe86764",
+      "sampler_tokens": [],
+      "namespace_token": false
+    },
+    {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RModifier\\release\\LootEditorMod.swf",
+      "sha256": "4f1d6cf19979f4ea4960f8ccd8377c1d3cac490bed9949866885357d073c8625",
+      "sampler_tokens": [],
+      "namespace_token": false
+    },
+    {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\Sandevistan\\build\\out\\a-travel-hold-20261022-003\\SandevistanMod.swf",
+      "sha256": "3e220b595f54249c82fcad36e1b13364c0456c4e8b5f4e20f876c3964c7d331c",
+      "sampler_tokens": [],
+      "namespace_token": false
+    },
+    {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\TDFC\\release\\TDFCMod.swf",
+      "sha256": "7acd45193109267dbbf875240528048ad6f1d09fa3b8b36baa6f98ebb5fddce5",
+      "sampler_tokens": [],
+      "namespace_token": false
+    },
+    {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\WallBlend\\release\\WallBlendMod.swf",
+      "sha256": "14112da06214bca51c6875d2527e73246dcb4c985caadda719eb4f77f1c0920d",
+      "sampler_tokens": [],
+      "namespace_token": false
+    },
+    {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\sound.swf",
+      "sha256": "8f120cb5ed009e0953ee034e715b146c4845792acc29b913d69178f307994ee1",
+      "sampler_tokens": [],
+      "namespace_token": false
+    },
+    {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\sound_unit.swf",
+      "sha256": "1fe0208c783410e273efb65916b53092febcfa73507d79e7ca669dadf50e86fb",
+      "sampler_tokens": [],
+      "namespace_token": false
+    },
+    {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\sound_weapon.swf",
+      "sha256": "2b2674d4654844efd1ee2e7a30c10abe9d40c50702bd792d46ad1a13331a43d6",
+      "sampler_tokens": [],
+      "namespace_token": false
+    },
+    {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\sprite.swf",
+      "sha256": "49b459d129a16daa065d471cee5ebf9d59914d682a9f07e5a28caf2e52050246",
+      "sampler_tokens": [],
+      "namespace_token": false
+    },
+    {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\sprite1.swf",
+      "sha256": "de792cbda95f06e55a91e0ca7604770f1ced6387a42026951a4bf0a70ec11e4a",
+      "sampler_tokens": [],
+      "namespace_token": false
+    },
+    {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\texture.swf",
+      "sha256": "ef4842a1e78f8f8661e84590c82701c3ea54efb71245116bb7a712fed8985ed8",
+      "sampler_tokens": [],
+      "namespace_token": false
+    },
+    {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\texture1.swf",
+      "sha256": "6646ccf91f912a7384875a5ed40a33c907041645f558a79277fc5f2dc8164678",
+      "sampler_tokens": [],
+      "namespace_token": false
+    }
+  ],
+  "manifest": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\loader-manifest.txt",
+  "manifest_sha256": "33de189e1209fdd397e811a52e9ac67ff0dedaeeae5cfeff4b7d15d4536eb133",
+  "known_code_sampler_entry": "FlashPaintTailSampler only",
+  "compiled_driver_excluded": true,
+  "evidence_limit": "No explicit sampler API names in other loaded SWFs; exact host03 alone has a namespace-only token. Not a claim about arbitrary external profilers or obfuscated dynamic names",
+  "required_runner": "same frozen runner with exclusive AIR, unique application id, no profiler launch or sampler callback",
+  "performance_qualified": false
+}
