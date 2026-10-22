@@ -1,0 +1,20 @@
+--- accurate21/rconnect/game/WallImpactVisuals.as
++++ accurate21-plus-two-setters/rconnect/game/WallImpactVisuals.as
+@@ -424,7 +424,7 @@
+                      cell.values[key]=color;wrote=true;
+                   }
+                   if(b!=null && x<b.width && y<b.height && b.getPixel32(x,y)!=color)
+-                  {b.setPixel32(x,y,color);dirty=true;}
++                  {b.setPixel32(x,y,NativeWallColor.setter(color));dirty=true;}
+                }
+                if(visible!=null && visible.length)painted.push({x:c.x,y:c.y,words:visible});
+                if(wrote) {cell.v=++revision;cell.wire=null;}
+@@ -551,7 +551,7 @@
+                for(var key:String in c.values)
+                {
+                   var i:int=int(key),x:int=int(c.x)*CELL+i%CELL,y:int=int(c.y)*CELL+int(i/CELL);
+-                  if(x<b.width && y<b.height)b.setPixel32(x,y,uint(c.values[key]));
++                  if(x<b.width && y<b.height)b.setPixel32(x,y,NativeWallColor.setter(uint(c.values[key])));
+                }
+             }
+          }

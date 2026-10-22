@@ -1,0 +1,1791 @@
+{
+  "scope": "read-only, functional/diagnostic; no performance qualification",
+  "smoothness_qualified": false,
+  "qualification_reason": "Original runners pass, but held/drop sampled RENDER gaps and SATS entry lag remain; repeated-coordinate checks do not bound time between changed samples.",
+  "runs": {
+    "fast-held": {
+      "run": "f8bc3462f4",
+      "candidate": "9ac7ede757c253bbf61e0c44334870b4a95112f976c1b40f2f390822a8b7e7ba",
+      "version": "0.2.24-recovery21",
+      "driver_manifest": "677fabc0191e7809d588d2ce3b64f02c8de119131e7db46b1624d314bfa22a5b",
+      "wrapper": "f593468414493251a8a6525e2371833fa1c6b797fc0b8527a8e2c341b0c74ff9",
+      "runner": "7eca453b13480140da5f36bb33d2319739a927562ccafdbb61a8b20cdb5ae4d3",
+      "roles": {
+        "host": {
+          "checks": 43,
+          "errors": [],
+          "done": true,
+          "version": true,
+          "frame_intervals": null,
+          "metrics": [],
+          "log_sha256": "ac6cf8a87bdd9092f1371923d3c5827bc64f6ff415a4c2940626a7f77bcf108b"
+        },
+        "join": {
+          "checks": 42,
+          "errors": [],
+          "done": true,
+          "version": true,
+          "frame_intervals": null,
+          "metrics": [],
+          "log_sha256": "8517776cce57942b9ef3ff45c47239533968ee0d2cd1eef7d9fadfaf76ce1297"
+        }
+      },
+      "vision_templates": {
+        "host": "24a0162f565dfa9a04e42bd64ca6fb688d556d50d99a528dbfa703d680eaba0c",
+        "join": "f3c7dfe712a836188d712f70b7d30fd83b8bb70435de28757196b3f926bf23f8"
+      },
+      "gate_fields": {
+        "passed": true,
+        "installation_unchanged": true,
+        "exclusive_air_confirmed": true,
+        "process_policy_confirmed": true,
+        "vision_templates_confirmed": true,
+        "vision_templates_unchanged": true,
+        "performance_qualified": false,
+        "full_release_qualified": false
+      }
+    },
+    "continuity": {
+      "run": "60ccbb7140",
+      "candidate": "9ac7ede757c253bbf61e0c44334870b4a95112f976c1b40f2f390822a8b7e7ba",
+      "version": "0.2.24-recovery21",
+      "driver_manifest": "d51ae3e751e93d1ae9d57b836c57a36e0a6f2d0fbb8bfcd02549247ac6976f31",
+      "wrapper": "f593468414493251a8a6525e2371833fa1c6b797fc0b8527a8e2c341b0c74ff9",
+      "runner": "7eca453b13480140da5f36bb33d2319739a927562ccafdbb61a8b20cdb5ae4d3",
+      "roles": {
+        "host": {
+          "checks": 21,
+          "errors": [],
+          "done": true,
+          "version": true,
+          "frame_intervals": null,
+          "metrics": [],
+          "log_sha256": "f24a6014df9bd3512af9e0606ae0d7c22866c74ff2f03c6fadd59ac716f36619"
+        },
+        "join": {
+          "checks": 31,
+          "errors": [],
+          "done": true,
+          "version": true,
+          "frame_intervals": null,
+          "metrics": [],
+          "log_sha256": "9b11b44a982005409bb8e3f3a21a86dad0c376d75b41c2f842f98db5d0a53ea2"
+        }
+      },
+      "vision_templates": {
+        "host": "24a0162f565dfa9a04e42bd64ca6fb688d556d50d99a528dbfa703d680eaba0c",
+        "join": "f3c7dfe712a836188d712f70b7d30fd83b8bb70435de28757196b3f926bf23f8"
+      },
+      "gate_fields": {
+        "passed": true,
+        "installation_unchanged": true,
+        "exclusive_air_confirmed": true,
+        "process_policy_confirmed": true,
+        "vision_templates_confirmed": true,
+        "vision_templates_unchanged": true,
+        "performance_qualified": false,
+        "full_release_qualified": false
+      }
+    },
+    "native-jump": {
+      "run": "8a6260b367",
+      "candidate": "9ac7ede757c253bbf61e0c44334870b4a95112f976c1b40f2f390822a8b7e7ba",
+      "version": "0.2.24-recovery21",
+      "driver_manifest": "677fabc0191e7809d588d2ce3b64f02c8de119131e7db46b1624d314bfa22a5b",
+      "wrapper": "f593468414493251a8a6525e2371833fa1c6b797fc0b8527a8e2c341b0c74ff9",
+      "runner": "7eca453b13480140da5f36bb33d2319739a927562ccafdbb61a8b20cdb5ae4d3",
+      "roles": {
+        "host": {
+          "checks": 6,
+          "errors": [],
+          "done": true,
+          "version": true,
+          "frame_intervals": null,
+          "metrics": [
+            "COOP METRIC native-jump {\"frames\":324,\"airborneRepeatedPositions\":5,\"pulses\":7,\"role\":\"host\",\"diagnosticOnly\":true}"
+          ],
+          "log_sha256": "20bcd2bde59b463bf3fa4ffeaaf88df89111565abf76cb373a4718c3fd537733"
+        },
+        "join": {
+          "checks": 6,
+          "errors": [],
+          "done": true,
+          "version": true,
+          "frame_intervals": null,
+          "metrics": [
+            "COOP METRIC native-jump {\"airborneRepeatedPositions\":10,\"frames\":304,\"diagnosticOnly\":true,\"pulses\":7,\"role\":\"join\"}"
+          ],
+          "log_sha256": "b48f34e8e9366a10a62bb81a74e9f403fa876a2261a269ac1151814f19fddff1"
+        }
+      },
+      "vision_templates": {
+        "host": "24a0162f565dfa9a04e42bd64ca6fb688d556d50d99a528dbfa703d680eaba0c",
+        "join": "f3c7dfe712a836188d712f70b7d30fd83b8bb70435de28757196b3f926bf23f8"
+      },
+      "gate_fields": {
+        "passed": true,
+        "installation_unchanged": true,
+        "exclusive_air_confirmed": true,
+        "process_policy_confirmed": true,
+        "vision_templates_confirmed": true,
+        "vision_templates_unchanged": true,
+        "performance_qualified": false,
+        "full_release_qualified": false
+      }
+    }
+  },
+  "input_hashes": {
+    "build/m52/recovery21-formal-fast-held-01/intent.json": "2a7f5dc739b993cafc7745f4fdf18927505bd6cd86207864b85826ada8318742",
+    "build/m52/recovery21-formal-fast-held-01/result.json": "db5bf227ba491185484fd9801ccdfbf430141859e7e95addf85cc66e2dd7b197",
+    "build/m52/recovery21-formal-fast-held-01/installation-inventory.json": "23cd9236de4fa0cdab45c9650e59af660e71dfd96c3f5df4c634ad0f3c93d4bc",
+    "build/cooperation/f8bc3462f4/input.json": "56ee5f9224c74ed9a201d1fdbf4ce384e363fa1e214f3966b2de557bd1512361",
+    "build/cooperation/f8bc3462f4/host.log": "ac6cf8a87bdd9092f1371923d3c5827bc64f6ff415a4c2940626a7f77bcf108b",
+    "build/cooperation/f8bc3462f4/join.log": "8517776cce57942b9ef3ff45c47239533968ee0d2cd1eef7d9fadfaf76ce1297",
+    "build/m52/recovery21-formal-continuity-01/intent.json": "97b5902f9bdbb5a7a783d03124cdd1400e45aaa84b4743c7cd13fb1b456f3092",
+    "build/m52/recovery21-formal-continuity-01/result.json": "8da291cae9e1efefa1e27b7fdc2710d8657dfaa62c95f2f77a13f0eb7201cf91",
+    "build/m52/recovery21-formal-continuity-01/installation-inventory.json": "23cd9236de4fa0cdab45c9650e59af660e71dfd96c3f5df4c634ad0f3c93d4bc",
+    "build/cooperation/60ccbb7140/input.json": "093425e579115bd1605ee5dda80d88de70cd3dcbb05581167c5538c2ba9a7876",
+    "build/cooperation/60ccbb7140/host.log": "f24a6014df9bd3512af9e0606ae0d7c22866c74ff2f03c6fadd59ac716f36619",
+    "build/cooperation/60ccbb7140/join.log": "9b11b44a982005409bb8e3f3a21a86dad0c376d75b41c2f842f98db5d0a53ea2",
+    "build/m52/recovery21-formal-native-jump-01/intent.json": "c7fa8f38006ead58fda547db7650e1abd40e5d3fc2911c7c341023c1ab1ba5f0",
+    "build/m52/recovery21-formal-native-jump-01/result.json": "7bcdf4f4426b9be70cf387645dda9e6500ad4ad246519e39132fbcc282d6bc92",
+    "build/m52/recovery21-formal-native-jump-01/installation-inventory.json": "23cd9236de4fa0cdab45c9650e59af660e71dfd96c3f5df4c634ad0f3c93d4bc",
+    "build/cooperation/8a6260b367/input.json": "09427ea6f72e049bd4adac195afaa7e5355f62cbc862a072c11ed1fe277a469b",
+    "build/cooperation/8a6260b367/host.log": "20bcd2bde59b463bf3fa4ffeaaf88df89111565abf76cb373a4718c3fd537733",
+    "build/cooperation/8a6260b367/join.log": "b48f34e8e9366a10a62bb81a74e9f403fa876a2261a269ac1151814f19fddff1",
+    "build/m52/motion2-native-input-drivers-04/tests/FastHeldTestDoc.as": "0be443b3109d361b1216410116cbffc2e5612ed87a63b4ad198826afcad3bc62",
+    "build/m52/motion2-native-input-drivers-04/tests/NativeJumpNetworkTestDoc.as": "8f0ca6315cea9409ca06971039a79d56b63e1fb23184c94527c853ca7a6f30ed",
+    "build/m52/motion2-continuity-drivers-01/tests/PresentationContinuityTestDoc.as": "2e998334580505028b9fa58d3daa6067e3eaa92d3df313db4ecfeeba26a8e6f9"
+  },
+  "fast_held": [
+    {
+      "round": 0,
+      "observer": "join",
+      "source_role": "host",
+      "metric_line": 62,
+      "original": {
+        "rmsPixels": 0.4940806427899337,
+        "sourceOffset": -36800,
+        "lagMs": 110,
+        "samples": 63,
+        "round": 0,
+        "role": "join"
+      },
+      "recomputed_fit": {
+        "rms": 0.4940806427899337,
+        "lag_ms": 110,
+        "fit_samples": 63,
+        "matches_original": true
+      },
+      "repeat": {
+        "repeated_pairs": 1,
+        "ratio_per_sample": 0.012658227848101266,
+        "longest": {
+          "pairs": 1,
+          "ms": 62,
+          "indices": [
+            40,
+            41
+          ],
+          "before": {
+            "levit": 1,
+            "y": 212.05,
+            "local": false,
+            "t": 3011,
+            "cx": 339.5047558231712,
+            "dx": 0,
+            "x": 338.6,
+            "cy": 197.0889545413572,
+            "dy": 0,
+            "resistance": null
+          },
+          "after": {
+            "levit": 1,
+            "y": 212.05,
+            "local": false,
+            "t": 3073,
+            "cx": 338.62109185432075,
+            "dx": 0,
+            "x": 338.6,
+            "cy": 197.06833786636895,
+            "dy": 0,
+            "resistance": null
+          }
+        }
+      },
+      "source_trace_gap": {
+        "stats": {
+          "n": 78,
+          "minimum": 37,
+          "median": 52,
+          "p95_nearest_rank": 79,
+          "maximum": 97
+        },
+        "largest": [
+          {
+            "ms": 97,
+            "indices": [
+              20,
+              21
+            ],
+            "before": {
+              "levit": 1,
+              "y": 215.3,
+              "local": true,
+              "resistance": null,
+              "t": 1908,
+              "cx": 348.8213571852281,
+              "dx": -0.7481611063990936,
+              "x": 388.95,
+              "cy": 200,
+              "dy": -0.8368325590396353
+            },
+            "after": {
+              "levit": 1,
+              "y": 214.65,
+              "local": true,
+              "resistance": null,
+              "t": 2005,
+              "cx": 336.6873838053071,
+              "dx": -1.398528885119275,
+              "x": 387.55,
+              "cy": 200,
+              "dy": -0.6694660472317082
+            }
+          }
+        ]
+      },
+      "source_reference_gap": {
+        "stats": {
+          "n": 78,
+          "minimum": 37,
+          "median": 52,
+          "p95_nearest_rank": 78,
+          "maximum": 97
+        },
+        "largest": [
+          {
+            "ms": 97,
+            "indices": [
+              20,
+              21
+            ],
+            "before": {
+              "at": 71983,
+              "x": 388.95
+            },
+            "after": {
+              "at": 72080,
+              "x": 387.55
+            }
+          }
+        ]
+      },
+      "observer_gap": {
+        "stats": {
+          "n": 78,
+          "minimum": 42,
+          "median": 53,
+          "p95_nearest_rank": 71,
+          "maximum": 89
+        },
+        "largest": [
+          {
+            "ms": 89,
+            "indices": [
+              34,
+              35
+            ],
+            "before": {
+              "at": 35906,
+              "x": 358.5
+            },
+            "after": {
+              "at": 35995,
+              "x": 351.7
+            }
+          }
+        ]
+      },
+      "observer_trace_gap": {
+        "stats": {
+          "n": 78,
+          "minimum": 42,
+          "median": 53,
+          "p95_nearest_rank": 71,
+          "maximum": 89
+        },
+        "largest": [
+          {
+            "ms": 89,
+            "indices": [
+              34,
+              35
+            ],
+            "before": {
+              "levit": 1,
+              "y": 212.3,
+              "local": false,
+              "t": 2617,
+              "cx": 363.2537030808296,
+              "dx": 0,
+              "x": 358.5,
+              "cy": 197.42250185835601,
+              "dy": 0,
+              "resistance": null
+            },
+            "after": {
+              "levit": 1,
+              "y": 212.2,
+              "local": false,
+              "t": 2706,
+              "cx": 358.52868994879117,
+              "dx": 0,
+              "x": 351.7,
+              "cy": 197.31991406945292,
+              "dy": 0,
+              "resistance": null
+            }
+          }
+        ]
+      },
+      "release_wire_ms": 188,
+      "floor_supported": true,
+      "source_samples": 79,
+      "observer_samples": 79,
+      "source_span": 51.39999999999998,
+      "observer_span": 51.14999999999998
+    },
+    {
+      "round": 1,
+      "observer": "host",
+      "source_role": "join",
+      "metric_line": 120,
+      "original": {
+        "rmsPixels": 0.5854510062551982,
+        "sourceOffset": 36803,
+        "samples": 66,
+        "lagMs": 110,
+        "round": 1,
+        "role": "host"
+      },
+      "recomputed_fit": {
+        "rms": 0.5854510062551982,
+        "lag_ms": 110,
+        "fit_samples": 66,
+        "matches_original": true
+      },
+      "repeat": {
+        "repeated_pairs": 0,
+        "ratio_per_sample": 0.0,
+        "longest": null
+      },
+      "source_trace_gap": {
+        "stats": {
+          "n": 78,
+          "minimum": 38,
+          "median": 53,
+          "p95_nearest_rank": 68,
+          "maximum": 102
+        },
+        "largest": [
+          {
+            "ms": 102,
+            "indices": [
+              2,
+              3
+            ],
+            "before": {
+              "levit": 1,
+              "y": 271.5,
+              "local": true,
+              "t": 902,
+              "cx": 355,
+              "dx": 0.31690673891573784,
+              "x": 352.7,
+              "cy": 200,
+              "dy": -3.8874100093157384,
+              "resistance": null
+            },
+            "after": {
+              "levit": 1,
+              "y": 267.6,
+              "local": true,
+              "t": 1004,
+              "cx": 355,
+              "dx": 0.25352539113259026,
+              "x": 352.95,
+              "cy": 200,
+              "dy": -3.909928007452591,
+              "resistance": null
+            }
+          }
+        ]
+      },
+      "source_reference_gap": {
+        "stats": {
+          "n": 78,
+          "minimum": 38,
+          "median": 53,
+          "p95_nearest_rank": 68,
+          "maximum": 102
+        },
+        "largest": [
+          {
+            "ms": 102,
+            "indices": [
+              2,
+              3
+            ],
+            "before": {
+              "at": 46442,
+              "x": 352.7
+            },
+            "after": {
+              "at": 46544,
+              "x": 352.95
+            }
+          }
+        ]
+      },
+      "observer_gap": {
+        "stats": {
+          "n": 78,
+          "minimum": 37,
+          "median": 51,
+          "p95_nearest_rank": 73,
+          "maximum": 91
+        },
+        "largest": [
+          {
+            "ms": 91,
+            "indices": [
+              28,
+              29
+            ],
+            "before": {
+              "at": 84698,
+              "x": 374.3
+            },
+            "after": {
+              "at": 84789,
+              "x": 372.15
+            }
+          }
+        ]
+      },
+      "observer_trace_gap": {
+        "stats": {
+          "n": 78,
+          "minimum": 37,
+          "median": 51,
+          "p95_nearest_rank": 73,
+          "maximum": 91
+        },
+        "largest": [
+          {
+            "ms": 91,
+            "indices": [
+              28,
+              29
+            ],
+            "before": {
+              "levit": 1,
+              "y": 212.85,
+              "local": false,
+              "resistance": null,
+              "t": 2352,
+              "cx": 377.29278374226976,
+              "dx": 0,
+              "x": 374.3,
+              "cy": 198.0612454526612,
+              "dy": 0
+            },
+            "after": {
+              "levit": 1,
+              "y": 212.7,
+              "local": false,
+              "resistance": null,
+              "t": 2443,
+              "cx": 374.3135489059181,
+              "dx": 0,
+              "x": 372.15,
+              "cy": 197.8612558142263,
+              "dy": 0
+            }
+          }
+        ]
+      },
+      "release_wire_ms": 96,
+      "floor_supported": true,
+      "source_samples": 79,
+      "observer_samples": 79,
+      "source_span": 51.39999999999998,
+      "observer_span": 51.25
+    },
+    {
+      "round": 2,
+      "observer": "join",
+      "source_role": "host",
+      "metric_line": 95,
+      "original": {
+        "rmsPixels": 1.4388246202307222,
+        "sourceOffset": -36802,
+        "lagMs": 110,
+        "samples": 60,
+        "round": 2,
+        "role": "join"
+      },
+      "recomputed_fit": {
+        "rms": 1.4388246202307222,
+        "lag_ms": 110,
+        "fit_samples": 60,
+        "matches_original": true
+      },
+      "repeat": {
+        "repeated_pairs": 0,
+        "ratio_per_sample": 0.0,
+        "longest": null
+      },
+      "source_trace_gap": {
+        "stats": {
+          "n": 78,
+          "minimum": 36,
+          "median": 47,
+          "p95_nearest_rank": 68,
+          "maximum": 88
+        },
+        "largest": [
+          {
+            "ms": 88,
+            "indices": [
+              40,
+              41
+            ],
+            "before": {
+              "levit": 1,
+              "y": 215,
+              "local": true,
+              "resistance": null,
+              "t": 2782,
+              "cx": 399.8551357463373,
+              "dx": 1.3505151498994938,
+              "x": 340.55,
+              "cy": 200,
+              "dy": -0.007713741219336346
+            },
+            "after": {
+              "levit": 1,
+              "y": 215,
+              "local": true,
+              "resistance": null,
+              "t": 2870,
+              "cx": 407.94743688327185,
+              "dx": 1.8804121199195951,
+              "x": 342.45,
+              "cy": 200,
+              "dy": -0.006170992975469077
+            }
+          }
+        ]
+      },
+      "source_reference_gap": {
+        "stats": {
+          "n": 78,
+          "minimum": 36,
+          "median": 47,
+          "p95_nearest_rank": 68,
+          "maximum": 89
+        },
+        "largest": [
+          {
+            "ms": 89,
+            "indices": [
+              40,
+              41
+            ],
+            "before": {
+              "at": 97142,
+              "x": 340.55
+            },
+            "after": {
+              "at": 97231,
+              "x": 342.45
+            }
+          }
+        ]
+      },
+      "observer_gap": {
+        "stats": {
+          "n": 78,
+          "minimum": 39,
+          "median": 51,
+          "p95_nearest_rank": 65,
+          "maximum": 105
+        },
+        "largest": [
+          {
+            "ms": 105,
+            "indices": [
+              38,
+              39
+            ],
+            "before": {
+              "at": 60445,
+              "x": 339.15
+            },
+            "after": {
+              "at": 60550,
+              "x": 340.85
+            }
+          }
+        ]
+      },
+      "observer_trace_gap": {
+        "stats": {
+          "n": 78,
+          "minimum": 39,
+          "median": 51,
+          "p95_nearest_rank": 65,
+          "maximum": 105
+        },
+        "largest": [
+          {
+            "ms": 105,
+            "indices": [
+              38,
+              39
+            ],
+            "before": {
+              "levit": 0,
+              "y": 213.7,
+              "local": false,
+              "t": 2814,
+              "cx": 339.05147908386107,
+              "dx": 0,
+              "x": 339.15,
+              "cy": 197.54080900182313,
+              "dy": 0,
+              "resistance": null
+            },
+            "after": {
+              "levit": 0,
+              "y": 213.65,
+              "local": false,
+              "t": 2919,
+              "cx": 340.33344384339154,
+              "dx": 0,
+              "x": 340.85,
+              "cy": 197.53275289921285,
+              "dy": 0,
+              "resistance": null
+            }
+          }
+        ]
+      },
+      "release_wire_ms": -1,
+      "floor_supported": true,
+      "source_samples": 79,
+      "observer_samples": 79,
+      "source_span": 51.39999999999998,
+      "observer_span": 52.25
+    },
+    {
+      "round": 3,
+      "observer": "host",
+      "source_role": "join",
+      "metric_line": 152,
+      "original": {
+        "rmsPixels": 1.260097275077163,
+        "sourceOffset": 36802,
+        "samples": 63,
+        "lagMs": 130,
+        "round": 3,
+        "role": "host"
+      },
+      "recomputed_fit": {
+        "rms": 1.260097275077163,
+        "lag_ms": 130,
+        "fit_samples": 63,
+        "matches_original": true
+      },
+      "repeat": {
+        "repeated_pairs": 0,
+        "ratio_per_sample": 0.0,
+        "longest": null
+      },
+      "source_trace_gap": {
+        "stats": {
+          "n": 78,
+          "minimum": 39,
+          "median": 53,
+          "p95_nearest_rank": 89,
+          "maximum": 219
+        },
+        "largest": [
+          {
+            "ms": 219,
+            "indices": [
+              52,
+              53
+            ],
+            "before": {
+              "levit": 1,
+              "y": 215,
+              "local": true,
+              "t": 3836,
+              "cx": 361.17864281477193,
+              "dx": 2.377928787481135,
+              "x": 376.45,
+              "cy": 200,
+              "dy": -0.0005300842602697087,
+              "resistance": null
+            },
+            "after": {
+              "levit": 1,
+              "y": 215,
+              "local": true,
+              "t": 4055,
+              "cx": 348.8213571852281,
+              "dx": 1.102343029984908,
+              "x": 377.55,
+              "cy": 200,
+              "dy": -0.00042406740821576694,
+              "resistance": null
+            }
+          }
+        ]
+      },
+      "source_reference_gap": {
+        "stats": {
+          "n": 78,
+          "minimum": 39,
+          "median": 54,
+          "p95_nearest_rank": 89,
+          "maximum": 219
+        },
+        "largest": [
+          {
+            "ms": 219,
+            "indices": [
+              52,
+              53
+            ],
+            "before": {
+              "at": 73460,
+              "x": 376.45
+            },
+            "after": {
+              "at": 73679,
+              "x": 377.55
+            }
+          }
+        ]
+      },
+      "observer_gap": {
+        "stats": {
+          "n": 78,
+          "minimum": 37,
+          "median": 56,
+          "p95_nearest_rank": 94,
+          "maximum": 249
+        },
+        "largest": [
+          {
+            "ms": 249,
+            "indices": [
+              51,
+              52
+            ],
+            "before": {
+              "at": 110244,
+              "x": 368
+            },
+            "after": {
+              "at": 110493,
+              "x": 375
+            }
+          }
+        ]
+      },
+      "observer_trace_gap": {
+        "stats": {
+          "n": 78,
+          "minimum": 37,
+          "median": 56,
+          "p95_nearest_rank": 94,
+          "maximum": 249
+        },
+        "largest": [
+          {
+            "ms": 249,
+            "indices": [
+              51,
+              52
+            ],
+            "before": {
+              "levit": 0,
+              "y": 213.35,
+              "local": false,
+              "resistance": null,
+              "t": 3854,
+              "cx": 365.4431751503717,
+              "dx": 0,
+              "x": 368,
+              "cy": 197.5046896790966,
+              "dy": 0
+            },
+            "after": {
+              "levit": 0,
+              "y": 213.3,
+              "local": false,
+              "resistance": null,
+              "t": 4103,
+              "cx": 369.485496488429,
+              "dx": 0,
+              "x": 375,
+              "cy": 197.50365180902926,
+              "dy": 0
+            }
+          }
+        ]
+      },
+      "release_wire_ms": -1,
+      "floor_supported": true,
+      "source_samples": 79,
+      "observer_samples": 79,
+      "source_span": 51.39999999999998,
+      "observer_span": 52.25
+    }
+  ],
+  "drops": [
+    {
+      "round": 0,
+      "longestStillMs": 0,
+      "airFrames": 17,
+      "sourceSpan": 42.35000000000002,
+      "span": 42.14999999999998,
+      "line": 62,
+      "source": {
+        "samples": 124,
+        "gaps": {
+          "stats": {
+            "n": 123,
+            "minimum": 25,
+            "median": 34,
+            "p95_nearest_rank": 45,
+            "maximum": 117
+          },
+          "largest": [
+            {
+              "ms": 117,
+              "indices": [
+                49,
+                50
+              ],
+              "before": {
+                "y": 319,
+                "x": 307.5,
+                "t": 71431,
+                "dx": 0,
+                "logicalY": 319,
+                "dy": 0,
+                "stay": true
+              },
+              "after": {
+                "y": 319,
+                "x": 307.5,
+                "t": 71548,
+                "dx": 0,
+                "logicalY": 319,
+                "dy": 0,
+                "stay": true
+              }
+            }
+          ]
+        },
+        "air_gaps": {
+          "stats": {
+            "n": 16,
+            "minimum": 28,
+            "median": 33,
+            "p95_nearest_rank": 65,
+            "maximum": 65
+          },
+          "largest": [
+            {
+              "ms": 65,
+              "indices": [
+                14,
+                15
+              ],
+              "before": {
+                "y": 304.4,
+                "x": 298.35,
+                "t": 70154,
+                "dx": 4.559645904228091,
+                "logicalY": 304.4036108534783,
+                "dy": 6.960240723565221,
+                "stay": false
+              },
+              "after": {
+                "y": 312.35,
+                "x": 302.95,
+                "t": 70219,
+                "dx": 4.559645904228091,
+                "logicalY": 312.36385157704353,
+                "dy": 7.960240723565221,
+                "stay": false
+              }
+            }
+          ]
+        },
+        "repeated": {
+          "repeated_pairs": 0,
+          "ratio_per_sample": 0.0,
+          "longest": null
+        }
+      },
+      "display": {
+        "samples": 126,
+        "gaps": {
+          "stats": {
+            "n": 125,
+            "minimum": 22,
+            "median": 34,
+            "p95_nearest_rank": 40,
+            "maximum": 160
+          },
+          "largest": [
+            {
+              "ms": 160,
+              "indices": [
+                10,
+                11
+              ],
+              "before": {
+                "y": 280.7,
+                "x": 277.25,
+                "t": 31553,
+                "dx": 0,
+                "logicalY": 280.7531479382487,
+                "dy": 0,
+                "stay": false
+              },
+              "after": {
+                "y": 291.45,
+                "x": 289.25,
+                "t": 31713,
+                "dx": 0,
+                "logicalY": 291.48312940634787,
+                "dy": 0,
+                "stay": false
+              }
+            }
+          ]
+        },
+        "air_gaps": {
+          "stats": {
+            "n": 17,
+            "minimum": 28,
+            "median": 34,
+            "p95_nearest_rank": 160,
+            "maximum": 160
+          },
+          "largest": [
+            {
+              "ms": 160,
+              "indices": [
+                10,
+                11
+              ],
+              "before": {
+                "y": 280.7,
+                "x": 277.25,
+                "t": 31553,
+                "dx": 0,
+                "logicalY": 280.7531479382487,
+                "dy": 0,
+                "stay": false
+              },
+              "after": {
+                "y": 291.45,
+                "x": 289.25,
+                "t": 31713,
+                "dx": 0,
+                "logicalY": 291.48312940634787,
+                "dy": 0,
+                "stay": false
+              }
+            }
+          ]
+        },
+        "repeated": {
+          "repeated_pairs": 0,
+          "ratio_per_sample": 0.0,
+          "longest": null
+        }
+      },
+      "arrivals": {
+        "samples": 16,
+        "gaps": {
+          "stats": {
+            "n": 15,
+            "minimum": 0,
+            "median": 64,
+            "p95_nearest_rank": 166,
+            "maximum": 166
+          },
+          "largest": [
+            {
+              "ms": 166,
+              "indices": [
+                6,
+                7
+              ],
+              "before": {
+                "y": 291.48312940634787,
+                "received": 31569,
+                "x": 289.2753967549652,
+                "sample": 70052,
+                "stay": false
+              },
+              "after": {
+                "y": 304.4036108534783,
+                "received": 31735,
+                "x": 298.39468856342137,
+                "sample": 70135,
+                "stay": false
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "round": 1,
+      "longestStillMs": 30,
+      "airFrames": 19,
+      "sourceSpan": 38.5,
+      "span": 37.94999999999999,
+      "line": 77,
+      "source": {
+        "samples": 125,
+        "gaps": {
+          "stats": {
+            "n": 124,
+            "minimum": 25,
+            "median": 34,
+            "p95_nearest_rank": 49,
+            "maximum": 89
+          },
+          "largest": [
+            {
+              "ms": 89,
+              "indices": [
+                8,
+                9
+              ],
+              "before": {
+                "y": 282.5,
+                "x": 221,
+                "t": 75377,
+                "dx": -0.998215670697391,
+                "logicalY": 282.54251305479556,
+                "dy": 1.5047236727550626,
+                "stay": false
+              },
+              "after": {
+                "y": 285,
+                "x": 220,
+                "t": 75466,
+                "dx": -0.998215670697391,
+                "logicalY": 285.0472367275506,
+                "dy": 2.5047236727550626,
+                "stay": false
+              }
+            }
+          ]
+        },
+        "air_gaps": {
+          "stats": {
+            "n": 15,
+            "minimum": 26,
+            "median": 34,
+            "p95_nearest_rank": 89,
+            "maximum": 89
+          },
+          "largest": [
+            {
+              "ms": 89,
+              "indices": [
+                8,
+                9
+              ],
+              "before": {
+                "y": 282.5,
+                "x": 221,
+                "t": 75377,
+                "dx": -0.998215670697391,
+                "logicalY": 282.54251305479556,
+                "dy": 1.5047236727550626,
+                "stay": false
+              },
+              "after": {
+                "y": 285,
+                "x": 220,
+                "t": 75466,
+                "dx": -0.998215670697391,
+                "logicalY": 285.0472367275506,
+                "dy": 2.5047236727550626,
+                "stay": false
+              }
+            }
+          ]
+        },
+        "repeated": {
+          "repeated_pairs": 0,
+          "ratio_per_sample": 0.0,
+          "longest": null
+        }
+      },
+      "display": {
+        "samples": 125,
+        "gaps": {
+          "stats": {
+            "n": 124,
+            "minimum": 25,
+            "median": 33,
+            "p95_nearest_rank": 49,
+            "maximum": 95
+          },
+          "largest": [
+            {
+              "ms": 95,
+              "indices": [
+                96,
+                97
+              ],
+              "before": {
+                "y": 318.95,
+                "x": 213.95,
+                "t": 40115,
+                "dx": 0,
+                "logicalY": 319,
+                "dy": 0,
+                "stay": true
+              },
+              "after": {
+                "y": 318.95,
+                "x": 213.95,
+                "t": 40210,
+                "dx": 0,
+                "logicalY": 319,
+                "dy": 0,
+                "stay": true
+              }
+            }
+          ]
+        },
+        "air_gaps": {
+          "stats": {
+            "n": 19,
+            "minimum": 27,
+            "median": 32,
+            "p95_nearest_rank": 41,
+            "maximum": 41
+          },
+          "largest": [
+            {
+              "ms": 41,
+              "indices": [
+                14,
+                15
+              ],
+              "before": {
+                "y": 288.9,
+                "x": 218.95,
+                "t": 37116,
+                "dx": 0,
+                "logicalY": 288.95229092703926,
+                "dy": 0,
+                "stay": false
+              },
+              "after": {
+                "y": 293.7,
+                "x": 217.85,
+                "t": 37157,
+                "dx": 0,
+                "logicalY": 293.72716670881744,
+                "dy": 0,
+                "stay": false
+              }
+            }
+          ]
+        },
+        "repeated": {
+          "repeated_pairs": 2,
+          "ratio_per_sample": 0.016,
+          "longest": {
+            "pairs": 1,
+            "ms": 30,
+            "indices": [
+              0,
+              1
+            ],
+            "before": {
+              "y": 293,
+              "x": 228,
+              "t": 36667,
+              "dx": 0,
+              "logicalY": 293.0094473455101,
+              "dy": 0,
+              "stay": false
+            },
+            "after": {
+              "y": 293,
+              "x": 228,
+              "t": 36697,
+              "dx": 0,
+              "logicalY": 293.0094473455101,
+              "dy": 0,
+              "stay": false
+            }
+          }
+        }
+      },
+      "arrivals": {
+        "samples": 15,
+        "gaps": {
+          "stats": {
+            "n": 14,
+            "minimum": 37,
+            "median": 67,
+            "p95_nearest_rank": 117,
+            "maximum": 117
+          },
+          "largest": [
+            {
+              "ms": 117,
+              "indices": [
+                5,
+                6
+              ],
+              "before": {
+                "y": 293.05668407306075,
+                "received": 37022,
+                "x": 218.0214119516313,
+                "sample": 75525,
+                "stay": false
+              },
+              "after": {
+                "y": 305.0661314185709,
+                "received": 37139,
+                "x": 216.02498061023653,
+                "sample": 75599,
+                "stay": false
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "pause": {
+    "resumeJump": 0,
+    "initialGap": 0,
+    "pausedX": 305,
+    "endpoint": 305,
+    "line": 101,
+    "samples": 100,
+    "gaps": {
+      "stats": {
+        "n": 99,
+        "minimum": 21,
+        "median": 33,
+        "p95_nearest_rank": 58,
+        "maximum": 159
+      },
+      "largest": [
+        {
+          "ms": 159,
+          "indices": [
+            41,
+            42
+          ],
+          "before": {
+            "logicalX": 296,
+            "x": 296,
+            "paused": true,
+            "sats": true,
+            "t": 42895
+          },
+          "after": {
+            "logicalX": 305,
+            "x": 305,
+            "paused": true,
+            "sats": true,
+            "t": 43054
+          }
+        },
+        {
+          "ms": 155,
+          "indices": [
+            9,
+            10
+          ],
+          "before": {
+            "logicalX": 192.34807450581448,
+            "x": 192.3,
+            "paused": false,
+            "sats": false,
+            "t": 41627
+          },
+          "after": {
+            "logicalX": 202.63864747965343,
+            "x": 202.6,
+            "paused": false,
+            "sats": false,
+            "t": 41782
+          }
+        },
+        {
+          "ms": 106,
+          "indices": [
+            40,
+            41
+          ],
+          "before": {
+            "logicalX": 288.43151348456627,
+            "x": 288.4,
+            "paused": false,
+            "sats": false,
+            "t": 42789
+          },
+          "after": {
+            "logicalX": 296,
+            "x": 296,
+            "paused": true,
+            "sats": true,
+            "t": 42895
+          }
+        }
+      ]
+    },
+    "flags_edges": [
+      {
+        "index": 0,
+        "sample": {
+          "logicalX": 170,
+          "x": 170,
+          "paused": false,
+          "sats": false,
+          "t": 41290
+        }
+      },
+      {
+        "index": 41,
+        "sample": {
+          "logicalX": 296,
+          "x": 296,
+          "paused": true,
+          "sats": true,
+          "t": 42895
+        }
+      },
+      {
+        "index": 75,
+        "sample": {
+          "logicalX": 305,
+          "x": 305,
+          "paused": true,
+          "sats": false,
+          "t": 44147
+        }
+      },
+      {
+        "index": 76,
+        "sample": {
+          "logicalX": 305,
+          "x": 305,
+          "paused": false,
+          "sats": false,
+          "t": 44192
+        }
+      }
+    ],
+    "final": {
+      "logicalX": 305,
+      "x": 305,
+      "paused": false,
+      "sats": false,
+      "t": 45039
+    }
+  },
+  "jumps": {
+    "host": {
+      "original": {
+        "frames": 324,
+        "airborneRepeatedPositions": 5,
+        "pulses": 7,
+        "role": "host",
+        "diagnosticOnly": true
+      },
+      "frame_start_gaps": {
+        "stats": {
+          "n": 323,
+          "minimum": 31,
+          "median": 46,
+          "p95_nearest_rank": 71,
+          "maximum": 1221
+        },
+        "largest": [
+          {
+            "ms": 1221,
+            "indices": [
+              64,
+              65
+            ],
+            "before": {
+              "body": 10,
+              "dt": 60,
+              "sourceLabel": "jump",
+              "stay": false,
+              "x": 300,
+              "sourceBody": 20,
+              "peerY": 537.85,
+              "y": 536,
+              "sourceAnimOff": false,
+              "peerX": 380,
+              "t": 3042,
+              "dy": 4
+            },
+            "after": {
+              "body": 13,
+              "dt": 1221,
+              "sourceLabel": "jump",
+              "stay": false,
+              "x": 300,
+              "sourceBody": 21,
+              "peerY": 529,
+              "y": 541,
+              "sourceAnimOff": false,
+              "peerX": 380,
+              "t": 4263,
+              "dy": 5
+            }
+          },
+          {
+            "ms": 1182,
+            "indices": [
+              165,
+              166
+            ],
+            "before": {
+              "body": 30,
+              "dt": 38,
+              "sourceLabel": "jump",
+              "stay": false,
+              "x": 476.44999999999993,
+              "sourceBody": 7,
+              "peerY": 639.05,
+              "y": 562,
+              "sourceAnimOff": false,
+              "peerX": 411.6,
+              "t": 9002,
+              "dy": -9
+            },
+            "after": {
+              "body": 3,
+              "dt": 1182,
+              "sourceLabel": "jump",
+              "stay": false,
+              "x": 488.15,
+              "sourceBody": 8,
+              "peerY": 640,
+              "y": 554,
+              "sourceAnimOff": false,
+              "peerX": 399.9,
+              "t": 10184,
+              "dy": -8
+            }
+          },
+          {
+            "ms": 96,
+            "indices": [
+              261,
+              262
+            ],
+            "before": {
+              "body": 6,
+              "dt": 48,
+              "sourceLabel": "jump",
+              "stay": false,
+              "x": 475.75000000000006,
+              "sourceBody": 27,
+              "peerY": 561.75,
+              "y": 592,
+              "sourceAnimOff": false,
+              "peerX": 283,
+              "t": 14969,
+              "dy": 11
+            },
+            "after": {
+              "body": 9,
+              "dt": 96,
+              "sourceLabel": "jump",
+              "stay": false,
+              "x": 472.25000000000006,
+              "sourceBody": 28,
+              "peerY": 544.95,
+              "y": 604,
+              "sourceAnimOff": false,
+              "peerX": 254.35,
+              "t": 15065,
+              "dy": 12
+            }
+          }
+        ]
+      },
+      "repeats": {
+        "repeated_pairs": 5,
+        "ratio_per_sample": 0.015432098765432098,
+        "longest": {
+          "pairs": 2,
+          "ms": 88,
+          "indices": [
+            66,
+            68
+          ],
+          "before": {
+            "body": 14,
+            "dt": 47,
+            "sourceLabel": "jump",
+            "stay": false,
+            "x": 300,
+            "sourceBody": 22,
+            "peerY": 527,
+            "y": 547,
+            "sourceAnimOff": false,
+            "peerX": 380,
+            "t": 4310,
+            "dy": 6
+          },
+          "after": {
+            "body": 14,
+            "dt": 53,
+            "sourceLabel": "jump",
+            "stay": false,
+            "x": 300,
+            "sourceBody": 24,
+            "peerY": 527,
+            "y": 562,
+            "sourceAnimOff": false,
+            "peerX": 380,
+            "t": 4398,
+            "dy": 8
+          }
+        }
+      },
+      "dt_matches_trace_times": true,
+      "screenshot_call_frame_starts": [
+        {
+          "index": 64,
+          "frame_start": 3042,
+          "next_frame_start": 4263,
+          "gap_ms": 1221
+        },
+        {
+          "index": 165,
+          "frame_start": 9002,
+          "next_frame_start": 10184,
+          "gap_ms": 1182
+        }
+      ],
+      "largest_gap_excluding_exact_picture_following_intervals": 96,
+      "timestamp_scope": "ENTER_FRAME begin; coordinates later read in deduped final RENDER"
+    },
+    "join": {
+      "original": {
+        "airborneRepeatedPositions": 10,
+        "frames": 304,
+        "diagnosticOnly": true,
+        "pulses": 7,
+        "role": "join"
+      },
+      "frame_start_gaps": {
+        "stats": {
+          "n": 303,
+          "minimum": 32,
+          "median": 49,
+          "p95_nearest_rank": 71,
+          "maximum": 1231
+        },
+        "largest": [
+          {
+            "ms": 1231,
+            "indices": [
+              57,
+              58
+            ],
+            "before": {
+              "body": 15,
+              "sourceBody": 13,
+              "dt": 54,
+              "sourceAnimOff": false,
+              "peerX": 300,
+              "x": 380,
+              "sourceLabel": "jump",
+              "stay": false,
+              "y": 529,
+              "t": 3009,
+              "dy": -3,
+              "peerY": 526.3
+            },
+            "after": {
+              "body": 20,
+              "sourceBody": 14,
+              "dt": 1231,
+              "sourceAnimOff": false,
+              "peerX": 300,
+              "x": 380,
+              "sourceLabel": "jump",
+              "stay": false,
+              "y": 527,
+              "t": 4240,
+              "dy": -2,
+              "peerY": 536
+            }
+          },
+          {
+            "ms": 1200,
+            "indices": [
+              155,
+              156
+            ],
+            "before": {
+              "body": 4,
+              "sourceBody": 3,
+              "dt": 48,
+              "sourceAnimOff": false,
+              "peerX": 445.7,
+              "x": 388.7499999999999,
+              "sourceLabel": "run",
+              "stay": true,
+              "y": 640,
+              "t": 9017,
+              "dy": 0,
+              "peerY": 586.35
+            },
+            "after": {
+              "body": 8,
+              "sourceBody": 4,
+              "dt": 1200,
+              "sourceAnimOff": false,
+              "peerX": 488.15,
+              "x": 374.7499999999999,
+              "sourceLabel": "run",
+              "stay": true,
+              "y": 640,
+              "t": 10217,
+              "dy": 0,
+              "peerY": 554
+            }
+          },
+          {
+            "ms": 205,
+            "indices": [
+              25,
+              26
+            ],
+            "before": {
+              "body": 4,
+              "sourceBody": 19,
+              "dt": 58,
+              "sourceAnimOff": false,
+              "peerX": 300,
+              "x": 380,
+              "sourceLabel": "jump",
+              "stay": false,
+              "y": 532,
+              "t": 1206,
+              "dy": 3,
+              "peerY": 601.4
+            },
+            "after": {
+              "body": 9,
+              "sourceBody": 20,
+              "dt": 205,
+              "sourceAnimOff": false,
+              "peerX": 300,
+              "x": 380,
+              "sourceLabel": "jump",
+              "stay": false,
+              "y": 536,
+              "t": 1411,
+              "dy": 4,
+              "peerY": 540.8
+            }
+          }
+        ]
+      },
+      "repeats": {
+        "repeated_pairs": 10,
+        "ratio_per_sample": 0.03289473684210526,
+        "longest": {
+          "pairs": 2,
+          "ms": 89,
+          "indices": [
+            60,
+            62
+          ],
+          "before": {
+            "body": 21,
+            "sourceBody": 16,
+            "dt": 45,
+            "sourceAnimOff": false,
+            "peerX": 300,
+            "x": 380,
+            "sourceLabel": "jump",
+            "stay": false,
+            "y": 526,
+            "t": 4332,
+            "dy": 0,
+            "peerY": 541
+          },
+          "after": {
+            "body": 21,
+            "sourceBody": 18,
+            "dt": 48,
+            "sourceAnimOff": false,
+            "peerX": 300,
+            "x": 380,
+            "sourceLabel": "jump",
+            "stay": false,
+            "y": 529,
+            "t": 4421,
+            "dy": 2,
+            "peerY": 541
+          }
+        }
+      },
+      "dt_matches_trace_times": true,
+      "screenshot_call_frame_starts": [
+        {
+          "index": 57,
+          "frame_start": 3009,
+          "next_frame_start": 4240,
+          "gap_ms": 1231
+        },
+        {
+          "index": 155,
+          "frame_start": 9017,
+          "next_frame_start": 10217,
+          "gap_ms": 1200
+        }
+      ],
+      "largest_gap_excluding_exact_picture_following_intervals": 205,
+      "timestamp_scope": "ENTER_FRAME begin; coordinates later read in deduped final RENDER"
+    }
+  }
+}

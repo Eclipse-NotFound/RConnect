@@ -1,0 +1,212 @@
+{
+  "read_only": true,
+  "production_changed": false,
+  "compiled": false,
+  "air_started": false,
+  "performance_qualified": false,
+  "source_equality": {
+    "rconnect/game/GameBridge.as": {
+      "20_equals_21": true,
+      "sha256": "260cebd0f89e348979d05d00338f7e444a1abf2c0bbe4d03350475b05e01142d"
+    },
+    "rconnect/game/UnitPresentation.as": {
+      "20_equals_21": true,
+      "sha256": "d67dbcbed8d3ef67771eb10e41516102dabb34aad3a7065ab71ec7822ff53178"
+    },
+    "fe/unit/RConnectAnimationAccess.as": {
+      "20_equals_21": true,
+      "sha256": "2a0020f3a442c0d8b717e12d6a31ce26b51530e0a361930cb9035a68a2c41af7"
+    },
+    "rconnect/game/RemoteMotion.as": {
+      "20_equals_21": true,
+      "sha256": "5f0d0ba3b8de5ec1a08d392b4147f04a4d318c0bcdd0a2f7bbf236a5d28fc877"
+    }
+  },
+  "fixture": {
+    "host": {
+      "log_sha256": "7182d3a422266fff4ef3388185c506b893e5637d9bef3da208d34f9d706db12f",
+      "viewport": [
+        1280,
+        800,
+        30,
+        "HIGH"
+      ],
+      "camera": {
+        "camera": {
+          "X": 107,
+          "Y": 640,
+          "camRun": false,
+          "isZoom": 2,
+          "otryv": 0,
+          "scaleV": 0.6666666666666666,
+          "showOn": false,
+          "vx": 0,
+          "vy": 66
+        },
+        "visual": {
+          "scaleX": 0.6666666666666665,
+          "scaleY": 0.6666666666666665,
+          "x": 0,
+          "y": 66
+        }
+      },
+      "location": {
+        "backwall": "tBackWall",
+        "black": true,
+        "darkness": -20,
+        "homeStable": false,
+        "id": "loc0_4",
+        "lightOn": 0,
+        "spaceX": 48,
+        "spaceY": 25,
+        "transpFon": false
+      },
+      "actor_count": 80,
+      "actor_xy_counts": [
+        {
+          "x": 251.8,
+          "y": 960,
+          "count": 1
+        },
+        {
+          "x": 321.8,
+          "y": 960,
+          "count": 78
+        },
+        {
+          "x": 331.8,
+          "y": 960,
+          "count": 1
+        }
+      ],
+      "center_stage_x_range": [
+        167.86666666666665,
+        221.19999999999996
+      ],
+      "center_stage_y_range": [
+        705.9999999999999,
+        705.9999999999999
+      ],
+      "room_projected_rect": [
+        0,
+        66,
+        1279.9999999999998,
+        732.6666666666665
+      ],
+      "all_centers_inside_at_preparation": true,
+      "actual_sprite_rect_per_frame_measured": false
+    },
+    "join": {
+      "log_sha256": "2b9575e9f3ef4c66a1e7c85a30aa8019468320963bb7a45f7e46c1cd2aab5ef7",
+      "viewport": [
+        1280,
+        800,
+        30,
+        "HIGH"
+      ],
+      "camera": {
+        "camera": {
+          "X": 107,
+          "Y": 640,
+          "camRun": false,
+          "isZoom": 2,
+          "otryv": 0,
+          "scaleV": 0.6666666666666666,
+          "showOn": false,
+          "vx": 0,
+          "vy": 66
+        },
+        "visual": {
+          "scaleX": 0.6666666666666665,
+          "scaleY": 0.6666666666666665,
+          "x": 0,
+          "y": 66
+        }
+      },
+      "location": {
+        "backwall": "tBackWall",
+        "black": true,
+        "darkness": -20,
+        "homeStable": false,
+        "id": "loc0_4",
+        "lightOn": 0,
+        "spaceX": 48,
+        "spaceY": 25,
+        "transpFon": false
+      },
+      "actor_count": 80,
+      "actor_xy_counts": [
+        {
+          "x": 251.8,
+          "y": 960,
+          "count": 1
+        },
+        {
+          "x": 321.8,
+          "y": 960,
+          "count": 78
+        },
+        {
+          "x": 331.8,
+          "y": 960,
+          "count": 1
+        }
+      ],
+      "center_stage_x_range": [
+        167.86666666666665,
+        221.19999999999996
+      ],
+      "center_stage_y_range": [
+        705.9999999999999,
+        705.9999999999999
+      ],
+      "room_projected_rect": [
+        0,
+        66,
+        1279.9999999999998,
+        732.6666666666665
+      ],
+      "all_centers_inside_at_preparation": true,
+      "actual_sprite_rect_per_frame_measured": false
+    }
+  },
+  "cpu": {
+    "043b72eaec": {
+      "log_sha256": "e1a07d9379a9a0ade5f3ebde7467f84496235971be002ac60295c416ae233aa1",
+      "profile_summary_sha256": "a45c3abb3f309632ca864a8a16d766104c20108769f246b9688deba2fbe40eab",
+      "cpu_samples": 958,
+      "sampled_windows": 24,
+      "inclusive_contains": {
+        "RConnectAnimationAccess$/tick": 1,
+        "RConnectAnimationAccess$/receive": 5,
+        "UnitPresentation/animateBody": 4,
+        "Unit/blit": 0,
+        "copyPixels": 0,
+        "[render]": 1
+      },
+      "scope": "ENTER_FRAME through final RENDER only; inclusive rows overlap; no allocation stacks; sampling overhead excluded from qualification",
+      "does_not_measure_offscreen_uploads": true
+    },
+    "b3d7b8558b": {
+      "log_sha256": "2b9575e9f3ef4c66a1e7c85a30aa8019468320963bb7a45f7e46c1cd2aab5ef7",
+      "profile_summary_sha256": "4a93606310c5f0919d0261ca66fbc7dd102761b49e5ce5fcfa1facdc864b1049",
+      "cpu_samples": 1614,
+      "sampled_windows": 24,
+      "inclusive_contains": {
+        "RConnectAnimationAccess$/tick": 0,
+        "RConnectAnimationAccess$/receive": 0,
+        "UnitPresentation/animateBody": 0,
+        "Unit/blit": 0,
+        "copyPixels": 0,
+        "[render]": 410
+      },
+      "scope": "Original stage RENDER -1000000 through next stage ENTER +1000000; collector is paused; native/global broadcast order not certified",
+      "does_not_measure_offscreen_uploads": true
+    }
+  },
+  "fixture_source_sha256": {
+    "mods/RConnect/build/m52/recovery-after-render-sampler-drivers-01/tests/SustainedDensityTestDoc.as": "d8a0cc014ace80377fe042b056efa4da5cdfd2e90ec700ff0ba27092126c5b06",
+    "mods/RConnect/build/m52/recovery-after-render-sampler-drivers-01/tests/DensityFixture.as": "9291ef603230e0ae98df0283a5c73a43abaee53e829052e8abeae86555ffb062",
+    "mods/RConnect/build/m52/recovery-after-render-sampler-drivers-01/tests/CorridorFixture.as": "a49af20d77b5a17976c4bf0fb4c3c296618e59037a8b3427309db15489afdf50"
+  }
+}

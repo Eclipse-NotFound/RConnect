@@ -1,0 +1,29 @@
+{
+  "baseline": "recovery-21",
+  "status": "blocked_by_mutable_nested_inputs",
+  "expected_counterexample_assertions": 8,
+  "expected_semantic_failures": 2,
+  "production_overlay": false,
+  "candidate_sha256_from_root": "9ac7ede757c253bbf61e0c44334870b4a95112f976c1b40f2f390822a8b7e7ba",
+  "source_pins": {
+    "RemoteMotion.as": "5f0d0ba3b8de5ec1a08d392b4147f04a4d318c0bcdd0a2f7bbf236a5d28fc877",
+    "GameBridge.as": "260cebd0f89e348979d05d00338f7e444a1abf2c0bbe4d03350475b05e01142d",
+    "WeaponDisplay.as": "c76a6b157992398dbb8d8620de2482375594423226cd64b90e13e8fee96066f2",
+    "TeleportVisuals.as": "ec323ce52b1926e6cb1c98e722c78544cd396fa5b3661ba257111b4b703c272c"
+  },
+  "files": {
+    "components/PositionAliasCounterexample.as": "36e5cb0b9a0a8a162298e999031f105f29198c32fe58d08d3bf479984afb9f00",
+    "components/rconnect/game/MotionPositionAccess.as": "63e415347a7d40b266f79c2233cfadb3c93bb1d87deccc2894067eb22fdd384f",
+    "components/rconnect/game/RemoteMotionAfter.as": "a672a7d4232b653809981dd0c7536274f82a95262dc7063fab0872b1a643c27c",
+    "components/rconnect/game/RemoteMotionBefore.as": "aebbc2535cccbac4fdabfb75c998c47d1a71ca8544ab22b09dec5c2537840bfd",
+    "components/rconnect/game/TeleportVisuals.as": "8e625526994614514b135c4878cdc32a2ee663440dcb253bd1b886ee1e2520e1",
+    "components/rconnect/game/WeaponDisplay.as": "8a5e069cde6b9ace1cbb317cedad3b423596bd968a66b74763b719691f4f7bac",
+    "prepare.py": "7b4ad27aaf4d4f327c5b43713024bd4bb7b0947628ff16b0f454a8fb95926839",
+    "README.md": "b066eb44cd2c53607314ddc9ac9cfe503e2c38caad9fe0bad14067c5e04547bd",
+    "rejected-defer.diff": "b9acb4eb97aa43e18470e08096438c2848bd495372e97cbaba48e15fb330f276"
+  },
+  "compiled": false,
+  "air_started": false,
+  "native_qualified": false,
+  "performance_qualified": false
+}

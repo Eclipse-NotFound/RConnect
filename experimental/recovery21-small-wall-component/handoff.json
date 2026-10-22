@@ -1,0 +1,26 @@
+{
+  "kind": "accurate21-small-wall-color-component",
+  "expected_checks": 85,
+  "compiled": false,
+  "air_started": false,
+  "full_candidate_created": false,
+  "files": {
+    "components/fe/graph/Grafon.as": "83e379f86d2978c28ad49177d13b3601d05957ab741a89c3e811d92b13889950",
+    "components/rconnect/core/Log.as": "1c707679e5ca9262f78aea27fc7dbe7802d39706ca4e88f5ad46a4ccad67a0b4",
+    "components/rconnect/game/GameBridge.as": "f0d9a9dcc7c6c640acc19d82103fd60d726117e72973cf3b2b273363dfe491a6",
+    "components/rconnect/game/NativeWallColor.as": "0f7160457f21d46759cc3b43d9defd17a8d921007521407365d906988dcfa842",
+    "components/rconnect/game/WallBefore.as": "dcf1c20e9275134c902ed55be1b3cc4a9ccf3b660f504dbbf3f648db0769e18f",
+    "components/rconnect/game/WallImpactVisuals.as": "224c4b58b2997891c017e3ac10b396e07e3fd5b2cefe883fb6543a2896827f6e",
+    "components/rconnect/game/WallSurfaceBridge.as": "b7f58ccb994f30f86041249c56730831345e95742127814e1afa77bd44d69ad1",
+    "components/rconnect/net/RoomCodec.as": "296ee4d8d94f77faa62dcc17a39cb1e2492c756d3027311713c33935ca6b6b4a",
+    "components/rconnect/net/WallCellCodec.as": "28e069808e93edcf479bd1fc977fe226036d5f030b65532a3ff15c564527b1f3",
+    "components/WallSurfaceChecks.as": "5db5ce231cccd1a02fafbcb3395f6fea2697cee393d2b59eea1fbe648e6cb724",
+    "components-inputs.json": "c6d98ac7da821d743a081a3ffb8b1d5a2f8dd720c79556facc995c92292635dc",
+    "inputs.json": "47d73401d54a221b0a9fcd597071c6d9cbc3797616a4a99e7dc28f6040777d8f",
+    "prepare.py": "7a20607916971374ab6672599e50b5e0717b02d72337751129ee8b00dc631f0d",
+    "README.md": "8e7beff9c6e0f8ec85ac50376f09879e0b9c4db13d2b6635eea744f9970b22e6",
+    "src/rconnect/game/WallImpactVisuals.as": "224c4b58b2997891c017e3ac10b396e07e3fd5b2cefe883fb6543a2896827f6e",
+    "static-checks.json": "0e8aa0b3ea23d4713f07f0ff54301d3f099289af46c73d017df1ca3070d4e2f8",
+    "two-setters.patch": "e95855067e29b43bd924c4a0235a85ce1253683c2e233ce004c3e8173695c884"
+  }
+}

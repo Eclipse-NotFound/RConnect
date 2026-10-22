@@ -1,0 +1,186 @@
+{
+  "read_only": true,
+  "production_changed": false,
+  "compiled": false,
+  "air_started": false,
+  "performance_qualified": false,
+  "source_equality": {
+    "rconnect/game/GameBridge.as": {
+      "20_equals_21": true,
+      "sha256": "260cebd0f89e348979d05d00338f7e444a1abf2c0bbe4d03350475b05e01142d"
+    },
+    "rconnect/game/UnitPresentation.as": {
+      "20_equals_21": true,
+      "sha256": "d67dbcbed8d3ef67771eb10e41516102dabb34aad3a7065ab71ec7822ff53178"
+    },
+    "fe/unit/RConnectAnimationAccess.as": {
+      "20_equals_21": true,
+      "sha256": "2a0020f3a442c0d8b717e12d6a31ce26b51530e0a361930cb9035a68a2c41af7"
+    },
+    "rconnect/game/RemoteMotion.as": {
+      "20_equals_21": true,
+      "sha256": "5f0d0ba3b8de5ec1a08d392b4147f04a4d318c0bcdd0a2f7bbf236a5d28fc877"
+    }
+  },
+  "source_log_sha256": "2b9575e9f3ef4c66a1e7c85a30aa8019468320963bb7a45f7e46c1cd2aab5ef7",
+  "rows_by_phase": [
+    {
+      "phase": 0,
+      "enter_frames": 65,
+      "motion_calls": 65,
+      "view_calls": 128,
+      "original_cumulative": {
+        "viewMs": 333,
+        "motionCalls": 65,
+        "viewCalls": 128,
+        "motionMs": 456
+      }
+    },
+    {
+      "phase": 1,
+      "enter_frames": 76,
+      "motion_calls": 76,
+      "view_calls": 152,
+      "original_cumulative": {
+        "viewMs": 734,
+        "motionCalls": 141,
+        "viewCalls": 280,
+        "motionMs": 1108
+      }
+    },
+    {
+      "phase": 2,
+      "enter_frames": 78,
+      "motion_calls": 78,
+      "view_calls": 156,
+      "original_cumulative": {
+        "viewMs": 1150,
+        "motionCalls": 219,
+        "viewCalls": 436,
+        "motionMs": 1800
+      }
+    },
+    {
+      "phase": 3,
+      "enter_frames": 76,
+      "motion_calls": 76,
+      "view_calls": 152,
+      "original_cumulative": {
+        "viewMs": 1576,
+        "motionCalls": 295,
+        "viewCalls": 588,
+        "motionMs": 2472
+      }
+    },
+    {
+      "phase": 4,
+      "enter_frames": 73,
+      "motion_calls": 73,
+      "view_calls": 146,
+      "original_cumulative": {
+        "viewMs": 1966,
+        "motionCalls": 368,
+        "viewCalls": 734,
+        "motionMs": 3085
+      }
+    },
+    {
+      "phase": 5,
+      "enter_frames": 70,
+      "motion_calls": 70,
+      "view_calls": 140,
+      "original_cumulative": {
+        "viewMs": 2345,
+        "motionCalls": 438,
+        "viewCalls": 874,
+        "motionMs": 3680
+      }
+    },
+    {
+      "phase": 6,
+      "enter_frames": 75,
+      "motion_calls": 75,
+      "view_calls": 150,
+      "original_cumulative": {
+        "viewMs": 2740,
+        "motionCalls": 513,
+        "viewCalls": 1024,
+        "motionMs": 4307
+      }
+    }
+  ],
+  "extra_renders_hist": {
+    "1": 506,
+    "0": 7
+  },
+  "sampled_windows": 24,
+  "sampled_windows_with_extra_render": 24,
+  "cpu_samples": 1614,
+  "inclusive_contains": {
+    "tickFrozenAnims": 0,
+    "onMirrorFrame": 0,
+    "onVisForceFrame": 64,
+    "UnitPresentation/tick@": 0,
+    "UnitPresentation/animateBody@": 0,
+    "RConnectAnimationAccess$/tick@": 0,
+    "RConnectAnimationAccess$/receive@": 0,
+    "fe.unit::Unit/step@": 0,
+    "fe.weapon::Weapon/step@": 0,
+    "fe::MainMenu/mainStep@": 0,
+    "[render]": 410
+  },
+  "onVisForceFrame_inclusive": [
+    [
+      "rconnect.game::GameBridge/onVisForceFrame",
+      64
+    ],
+    [
+      "rconnect.game::PlayerBodyEffects/apply",
+      21
+    ],
+    [
+      "rconnect.game::GameBridge$/probe",
+      19
+    ],
+    [
+      "rconnect.game::MirrorMasks/capture",
+      19
+    ],
+    [
+      "[reap]",
+      8
+    ],
+    [
+      "rconnect.game::PlayerBodyEffects$/tint",
+      8
+    ],
+    [
+      "rconnect.game::PlayerBodyEffects$/colorOnly",
+      7
+    ],
+    [
+      "rconnect.game::GameBridge$/probeOptional",
+      7
+    ],
+    [
+      "rconnect.game::MirrorMasks/register",
+      7
+    ],
+    [
+      "rconnect.game::MirrorMasks/prepare",
+      7
+    ],
+    [
+      "[activation-object]",
+      6
+    ],
+    [
+      "rconnect.game::PlayerBodyEffects/presentPart",
+      6
+    ]
+  ],
+  "init_lines": [
+    "RConnectMod: v0.2.24-recovery20 initialized"
+  ],
+  "native_reference_only": true
+}

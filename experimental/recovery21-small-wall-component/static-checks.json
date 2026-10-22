@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "baseline_version": "0.2.24-recovery21",
+  "overlay_files": 1,
+  "exact_final_setter_changes": 2,
+  "unchanged_test_assertions": 85,
+  "decode_optimizations_preserved": true,
+  "dependency_classes_byte_exact": true,
+  "complete_candidate_created": false,
+  "compiled": false,
+  "air_started": false,
+  "performance_qualified": false
+}

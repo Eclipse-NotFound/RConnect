@@ -1,0 +1,120 @@
+--- recovery-21/RemoteMotion.as
++++ TEST-ONLY-REJECTED/RemoteMotion.as
+@@ -13,6 +13,13 @@
+       public function releaseRate(owner:Object):void {delete rateOwners[owner];}
+       private function rateHeld():Boolean {for(var owner:Object in rateOwners)return true;return false;}
+       private var state:Object;
++      // Only queueUnitMotion's position-only result may remain private. Once
++      // sample/settle/currentSample publishes this Object, preserve its live
++      // alias semantics by updating its complete pose on every later sample.
++      private var stateExposed:Boolean=false;
++      private var posePending:Boolean=false;
++      private var poseA:Object,poseB:Object;
++      private var poseT:Number=0,poseSpan:Number=0;
+       private var origin:Object;
+       private var target:Object;
+       private var at:int;
+@@ -82,6 +89,7 @@
+          }
+          duration=Math.max(50,Math.min(250,now-at));
+          origin={};target={};state={};
++         stateExposed=false;posePending=false;poseA=poseB=null;
+          for(var key:String in snap) state[key]=snap[key];
+          for each(key in FIELDS)
+          {
+@@ -94,18 +102,35 @@
+ 
+       public function sample(now:int):Object
+       {
+-         if(frames.length>0)return sampleTimed(now);
++         if(frames.length>0) {
++            sampleTimed(now);stateExposed=true;return state;
++         }
+          if(state==null) return null;
+          var t:Number=Math.max(0,Math.min(1,(now-at)/duration));
+          for each(var key:String in FIELDS)
+             if(isFinite(target[key])) state[key]=origin[key]+(target[key]-origin[key])*t;
+-         return state;
++         stateExposed=true;return state;
++      }
++
++      /** REJECTED TEST DESIGN: output ownership alone does not protect the
++       * caller's mutable nested input. This component demonstrates that gap. */
++      internal function samplePosition(now:int):Object {
++         return frames.length>0?sampleTimed(now,true):sample(now);
+       }
+ 
+       /** Shared display cursor for this avatar's weapon and projectile frames. */
+       public function get sourceTime():Number {return frames.length>0?cursor:NaN;}
+       public function get latestSampleTime():Number {return frames.length>0?Number(frames[frames.length-1].at):NaN;}
+-      public function get currentSample():Object {return state;}
++      public function get currentSample():Object {
++         if(posePending) {
++            posePending=false;
++            if(poseA.weapons is Array && poseB.weapons is Array)
++               state.weapons=blendWeapons(poseA.weapons as Array,poseB.weapons as Array,poseT);
++            state.bodyPose=blendBodyPose(poseA.visual,poseB.visual,poseT,poseSpan);
++            poseA=poseB=null;
++         }
++         stateExposed=true;return state;
++      }
+ 
+       /** Simulation input may need the last received location, not the older
+        * display cursor. Return a fresh value without seeking or sampling it. */
+@@ -123,7 +148,7 @@
+          if(frames.length>0) {
+             playbackRate=1;
+             cursor=Number(frames[frames.length-1].at);
+-            return sampleTimed(now);
++            sampleTimed(now);stateExposed=true;return state;
+          }
+          if(state==null)return null;
+          at=now-duration;
+@@ -141,6 +166,7 @@
+          if(last==null || now-arrivedAt>1000 || stamp-Number(last.at)>1000
+             || clockOffset<offset-Math.max(250,interval*2) || (!port && dx*dx+dy*dy>600*600)) {
+             frames=[];gaps=[];selected=null;state=null;preceding=null;firstSample=true;dropDelay=0;
++            stateExposed=false;posePending=false;poseA=poseB=null;
+             playbackRate=1;clearCalibration();
+             offset=clockOffset;cursor=stamp-(immediateStart?0:delay());sampledAt=now;
+          } else {
+@@ -179,7 +205,7 @@
+          return Math.min(bufferLimit>0?bufferLimit:Math.max(250,interval*3),value);
+       }
+ 
+-      private function sampleTimed(now:int):Object {
++      private function sampleTimed(now:int,positionOnly:Boolean=false):Object {
+          // Retain the first received arc instead of consuming a coalesced batch.
+          if(firstSample && immediateStart)dropDelay=Math.min(500,Math.max(dropDelay,Number(frames[frames.length-1].at)-Number(frames[0].at)));
+          firstSample=false;
+@@ -232,8 +258,10 @@
+          var chosen:Object=crossing==null?a.snap:crossing.snapshot;
+          if(selected!==chosen) {
+             selected=chosen;state={};for(var key:String in selected)state[key]=selected[key];
++            stateExposed=false;
+          }
+          if(crossing!=null) {
++            posePending=false;poseA=poseB=null;
+             state.x=crossing.x;state.y=crossing.y;
+             // Native teleport changes world position immediately. Weapon and
+             // body poses come from the matching side of that discontinuity.
+@@ -248,9 +276,16 @@
+             if(isFinite(first) && isFinite(last))state[key]=interval<=50 && span>0
+                ? curve(key,a,b,t,span) : first+(last-first)*t;
+          }
+-         if(a.snap.weapons is Array && b.snap.weapons is Array)
+-            state.weapons=blendWeapons(a.snap.weapons as Array,b.snap.weapons as Array,t);
+-         state.bodyPose=blendBodyPose(a.snap.visual,b.snap.visual,t,span);
++         if(positionOnly && !stateExposed) {
++            // Capture snap identities, not mutable frame.snap slots: a later
++            // same-stamp push may replace those slots without resampling.
++            poseA=a.snap;poseB=b.snap;poseT=t;poseSpan=span;posePending=true;
++         } else {
++            posePending=false;poseA=poseB=null;
++            if(a.snap.weapons is Array && b.snap.weapons is Array)
++               state.weapons=blendWeapons(a.snap.weapons as Array,b.snap.weapons as Array,t);
++            state.bodyPose=blendBodyPose(a.snap.visual,b.snap.visual,t,span);
++         }
+          return state;
+       }
+ 
