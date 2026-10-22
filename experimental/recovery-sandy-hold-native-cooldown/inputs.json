@@ -1,0 +1,47 @@
+{
+  "sources": {
+    "check.py": "55f225bca143567002f641f7ca5e79b3dcafb7fc69deb286becd5592f3608f2e",
+    "cooldown.patch": "584d622d135088aebe14f2bdfee23932a10fc07c4801305b4a1242b1338e2fa6",
+    "native_inputs.py": "f362855f7462194a346e87f946b8dc6a86c8f73e806adb4817e2542767a5d67f",
+    "native_runner.py": "edf3d6b7e6ba26de2160c42f50acbbf4786e339411dd9f2a8d6267bdf0d1cf1e",
+    "prepare.py": "299a40c6a80d180da2e261342f989f86065b60f17d576bef4debefa94fc1003c",
+    "README.md": "643ab803c7687ee1b6485ecccb8fe8b5a33e9cfb11bff5f7103cac2f1f7465fa",
+    "run.py": "e94d5af17828f0b58eb81e875f8e6f7a02d4d81fdef779db84449429454ed387",
+    "tests/SandyHoldNativeTestDoc.as": "0bc81bba670a4d49abcf015be05f7431606fa49faa88c0cc0ab0835d7115870e"
+  },
+  "originals": {
+    "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/experimental/recovery-early-sandy-native/handoff.json": "05e80c1c74b1130aaa7412e231f16d043cd9fac5f1176373db5d2dad81ee9089",
+    "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/experimental/recovery-early-sandy-native/inputs.json": "ff05616e886daeea343671727c7884ae97f686fe6a022cbc3f0c8c318ee16e6f",
+    "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/experimental/recovery-early-sandy-native/native_inputs.py": "eca038c87599e56b702c2bb09c7aeb77dcef97398ecbfa7a478ca8638b7381b4",
+    "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/experimental/recovery-early-sandy-native/native_runner.py": "1edce14e852df24036bf4330afe0d99ae9b78dd1ada5d8c6162a8c12b678f83a",
+    "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/tools/validation/runtime_memory.py": "d4894962771929b5b88f1d123c3603221dab06294657d33bc6229a2282fbf8f6",
+    "D:/Program Files/Steam/steamapps/common/Remains/mods/ModLoader/tools/test_registry.py": "58db3a594f34e9906d55992f769b3e154970d8fa37fda1c2f43ae1f6751b0033",
+    "D:/Program Files/Steam/steamapps/common/Remains/mods/Sandevistan/release/config.txt": "d91c4c2889aba19b1bcfb356885921b0605a50188b270a9e7619d2116e7ebdc3",
+    "C:/Users/hello/Documents/_sandevistan_dev/jdk-11.0.32.1+1-jre/bin/java.exe": "9fcc7d5d43918e389df240d44601c98a4d3aa9e7d0cbbd6d208304e0b574c7e2",
+    "D:/Program Files/Steam/steamapps/common/Remains/mods/Sandevistan/build/tools/flexsdk/lib/mxmlc.jar": "cc07d749e376715e650271a9875289e49d94234902fff5e5fae287c478c8557b",
+    "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/build/m52/room-travel-driver-12/ProductionDeclarations.swc": "598d39851de4299046148815f2b2b7b1a88379faa2981a114565f111408882a7",
+    "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/build/m52/coop-bundle-04/build/GameCombatStubs.swc": "8aa240ed77522ded5236440b29b48d90f65b1c0bc971f21984b81ec1cd0ba61a",
+    "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/build/m52/room-travel-driver-12/scene/EffectsHarness.swf": "d52ef4300c7d472ee05884d7b4709f4abf80b3e6ff935b695a9ed986db021086",
+    "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/experimental/recovery-sandy-hold-native-lifecycle/prepare.py": "accc48963c0fb9aefd837c0044f504384c0ddf18d4cf83ca21223d93788fc062",
+    "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/experimental/recovery-sandy-hold-native-lifecycle/run.py": "73204601e09ccf070cc39544479837a8b1495463c82f739f010aa895a879003c",
+    "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/experimental/recovery-sandy-hold-native-lifecycle/tests/SandyHoldNativeTestDoc.as": "d40aa7c2ed2bfabaedb33641f3f106022479b83f2ca8b994aab44e84ba88c877",
+    "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/experimental/recovery-paint-native-cpu-rv83-v2/baseline.py": "89321d66502193e11816501e1d56329015846180a6fe2dea330fa6380eab3b81",
+    "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/experimental/recovery-early-revisit-frozen-rv/native_runner.py": "d311e5f5104095492949057184725a789a80c811bc9d9780383951281ac005f2"
+  },
+  "external": {
+    "external/ProductionDeclarations.swc": "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/build/m52/room-travel-driver-12/ProductionDeclarations.swc",
+    "external/GameCombatStubs.swc": "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/build/m52/coop-bundle-04/build/GameCombatStubs.swc",
+    "lifecycle/EffectsHarness.swf": "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/build/m52/room-travel-driver-12/scene/EffectsHarness.swf"
+  },
+  "toolchain": {
+    "java": "C:/Users/hello/Documents/_sandevistan_dev/jdk-11.0.32.1+1-jre/bin/java.exe",
+    "sdk": "D:/Program Files/Steam/steamapps/common/Remains/mods/Sandevistan/build/tools/flexsdk"
+  },
+  "compiled": false,
+  "air_started": false,
+  "kind": "sandy-hold-native-cooldown-driver",
+  "expected_checks": 43,
+  "original_native_checks": 41,
+  "cooldown_frames": 120,
+  "enemy_manual_step_qualified": false
+}

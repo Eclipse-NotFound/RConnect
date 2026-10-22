@@ -1,0 +1,59 @@
+--- original/SandyHoldNativeTestDoc.as
++++ cooldown/SandyHoldNativeTestDoc.as
+@@ -8,7 +8,7 @@
+    import flash.utils.getTimer;
+    import rconnect.core.Log;
+ 
+-   /** Actual 003 Sandevistan + early1 MapGeneration, unique native AIR world.
++   /** Actual 003 Sandevistan + early2 MapGeneration; isolated cooldown=120, unique native AIR world.
+     * No private Sand fields, test-state injection, clock/physics writes or direct startSandy. */
+    public final class SandyHoldNativeTestDoc extends Sprite {
+       public static const MOD_CLASS:Class=RConnectMod;
+@@ -21,6 +21,7 @@
+       private var activeStart:Number=0,replaySeen:Boolean=false,secondActive:Boolean=false;
+       private var directOwner:Object={},directId:String="",leaseId:String="native-sandy-lifecycle";
+       private var leaseHeld:Boolean=false;
++      private var cooldownPrevious:Number=0,cooldownAdvanced:Boolean=false;
+ 
+       public function SandyHoldNativeTestDoc() {
+          if(NativeApplication.nativeApplication.applicationID.indexOf("pfe-modsettings-rconnect-coop-host-")!=0)return;
+@@ -135,7 +136,7 @@
+                replaySeen=true;denyDuring("replay");change("replay");
+             }else if(phase=="replay") {
+                if(state.phase!=="idle")return;
+-               ensure(state.held===false && state.cooldownLeft<=0,"real replay naturally finishes under pinned zero cooldown");
++               ensure(state.held===false && state.cooldownLeft>0 && state.cooldownLeft<=120,"real replay naturally finishes with the pinned nonzero cooldown");
+                holdControls=controls();
+                leaseHeld=map.acquireEarly(leaseId)===true;
+                ensure(leaseHeld,"real MapGeneration acquires idle carrier");
+@@ -155,7 +156,20 @@
+                leaseHeld=false;state=query();
+                ensure(state.held===false && state.phase==="idle" && sameCounters(holdState,state)
+                   && equalControls(holdControls,controls()),"release does not rewrite gameplay state");
+-               tap();state=query();
++               cooldownPrevious=state.cooldownLeft;change("cooldown");
++            }else if(phase=="cooldown") {
++               if(state.phase!=="idle" || state.held!==false || state.cooldownLeft<0 || state.cooldownLeft>cooldownPrevious)
++                  throw new Error("Released cooldown changed phase, held state or monotonic direction");
++               cooldownPrevious=state.cooldownLeft;
++               if(frames==8) {
++                  ensure(state.cooldownLeft>0 && state.cooldownLeft<holdState.cooldownLeft,
++                     "real nonzero cooldown decreases after release under native ENTER callbacks");
++                  cooldownAdvanced=true;note("cooldown-progress",state);
++               }
++               if(state.cooldownLeft>0)return;
++               ensure(cooldownAdvanced && equalControls(holdControls,controls()),
++                  "real cooldown naturally reaches zero with unchanged native controls");
++               note("cooldown-zero",state);tap();state=query();
+                ensure(state.phase==="active" && state.sandyLeft>0,"same native key activates after held KEY_UP and release");
+                secondActive=true;activeStart=state.sandyLeft;change("active-after-release");
+             }else if(phase=="active-after-release") {
+@@ -191,7 +205,7 @@
+          Log.d("SANDY HOLD RESULT "+JSON.stringify({passed:failed==0,checks:checks,failed:failed,
+             observations:observations,keyEvents:keyEvents,cleanup:cleanup,holdFrames:HOLD_FRAMES,keyboardCode:KEY,
+             functionOnly:true,performanceQualified:false,travelFallbackQualified:false,
+-            enemyManualStepQualified:false,cooldownFreezeQualified:false}));
++            enemyManualStepQualified:false,cooldownFreezeQualified:failed==0 && cooldownAdvanced,cooldownAdvanced:cooldownAdvanced}));
+          Log.d("COOP EFFECTS DONE sandy-native");
+       }
+    }
