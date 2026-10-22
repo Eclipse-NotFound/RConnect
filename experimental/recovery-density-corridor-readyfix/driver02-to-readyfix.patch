@@ -1,0 +1,66 @@
+--- driver02/tests/SustainedDensityTestDoc.as
++++ readyfix/tests/SustainedDensityTestDoc.as
+@@ -329,13 +329,14 @@
+                   // Match the workload across builds instead of comparing two
+                   // randomly armed crowds. Twelve LMGs fire; the rest only aim.
+                   var gun:Object=factory.create(u,firing?"lmg":"p308c",0);u.currentWeapon=gun;u.childObjs=[gun];gun.addVisual();
+-                  gun.hold=10000;gun.damage=1;gun.destroy=0;gun.damageExpl=0;gun.precision=0;gun.deviation=0;gun.critCh=0;
++                  DensityWeaponPreparation.configure(gun);
+                   if(firing)loadGuns.push(gun);
+                }
+             }
+ 
+          for each(var fixed:Object in loadActors){fixed.hp=fixed.maxhp=2000;fixed.storona=1;fixed.dx=3;fixed.dy=0;fixed.setVisPos();}
+          CorridorFixture.apply(mod,loadActors,loadGuns,true);
++         DensityWeaponPreparation.bindHost(loadActors);
+          mod.game.readUnitsSnapshot();arenaKeys=[];arenaExpected=[];
+          for each(var actor:Object in loadActors){
+             var key:String=mod.game.unitKey(actor);if(key==null || key=="")throw new Error("density fixture has no native key");
+@@ -367,22 +368,26 @@
+       }
+       private function arenaIdentity(u:Object):Object {
+          return {cls:getQualifiedClassName(u),id:String(u.id),tr:GameBridge.probe(u,"tr"),x:Number(u.X),y:Number(u.Y),
+-            direction:Number(u.storona),hp:Number(u.hp),weapon:u.currentWeapon==null?null:String(u.currentWeapon.id)};
++            direction:Number(u.storona),hp:Number(u.hp),weapon:DensityWeaponPreparation.identity(u)};
+       }
+       private function arenaReadiness():Object {
+          var objects:Array=[],actual:Array=[],extras:Array=[],identityOK:Boolean=true;
+          for(var i:int=0;i<arenaKeys.length;i++) {
+             var u:Object=mod.game.unitForKey(String(arenaKeys[i]));
+             if(u==null || !u.in_chain || objects.indexOf(u)>=0){identityOK=false;continue;}
+-            objects.push(u);var row:Object=arenaIdentity(u);actual.push(row);
+-            if(DensityFixture.canonical(row)!=DensityFixture.canonical(arenaExpected[i]))identityOK=false;
+-         }
+-         if(!host && objects.length==80 && !arenaCleaned) {
++            objects.push(u);
++         }
++         if(!host && objects.length==80 && !arenaCleaned && DensityWeaponPreparation.modelsMatch(objects,arenaExpected)) {
+             // Snapshot omission does not unlink native mirror bodies in either
+             // A implementation. Setup cleans only recognized native enemies
+             // not present in the explicit 80-body roster, on both instances.
+-            arenaRemoved=DensityFixture.removeExtras(mod,objects);arenaCleaned=true;loadActors=objects;
++            arenaRemoved=DensityFixture.removeExtras(mod,objects);loadActors=objects;
+             CorridorFixture.apply(mod,loadActors,loadGuns,false);
++            DensityWeaponPreparation.prepareMirrors(objects,arenaExpected);arenaCleaned=true;
++         }
++         for(i=0;i<objects.length;i++) {
++            var row:Object=arenaIdentity(objects[i]);actual.push(row);
++            if(DensityFixture.canonical(row)!=DensityFixture.canonical(arenaExpected[i]))identityOK=false;
+          }
+          for each(u in mod.game.loc.units)if(DensityFixture.nativeEnemy(u) && objects.indexOf(u)<0)extras.push(DensityFixture.actor(u));
+          var ghosts:Array=[],peerIds:Array=host?[]:[0];
+@@ -396,12 +401,12 @@
+             && Math.abs(Number(ghosts[0].Y)-DensityFixture.Y)<.01 && Number(ghosts[0].storona)==1;
+          var types:Object={},weapons:Object={};
+          for each(var identity:Object in actual){types[identity.cls]=int(types[identity.cls])+1;
+-            if(identity.weapon!=null)weapons[identity.weapon]=int(weapons[identity.weapon])+1;}
++            if(identity.weapon!=null)weapons[identity.weapon.id]=int(weapons[identity.weapon.id])+1;}
+          var rosterOK:Boolean=int(types["fe.unit::UnitZombie"])==1 && int(types["fe.unit::UnitBat"])==40
+             && int(types["fe.unit::UnitSlaver"])==39 && int(weapons.lmg)==12 && int(weapons.p308c)==27;
+          var corridor:Object=CorridorFixture.status(mod,objects);
+          var common:Object={player:DensityFixture.player(mod),camera:DensityFixture.camera(mod),actors:DensityFixture.sorted(actual),corridor:corridor.common};
+-         return {ok:objects.length==80 && identityOK && arenaCleaned && extras.length==0
++         return {ok:objects.length==80 && identityOK && arenaCleaned && DensityWeaponPreparation.bound(objects) && extras.length==0
+             && rosterOK && DensityFixture.atPoint(mod.game.gg) && peerOK && corridor.ok,common:common,bodyCount:objects.length,corridorBad:corridor.bad,
+             extras:extras,peer:ghosts.length==1?DensityFixture.fields(ghosts[0],["X","Y","storona"]):null};
+       }

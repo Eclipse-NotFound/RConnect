@@ -1,0 +1,504 @@
+{
+  "kind": "recovery18-19-density-overall-review",
+  "performance_qualified": false,
+  "full_release_qualified": false,
+  "input_comparable": false,
+  "attribution_allowed": false,
+  "runs": [
+    {
+      "directory": "mods\\RConnect\\build\\m52\\recovery18-density-base64-control-01",
+      "run": "a003e96ac1",
+      "candidate_sha256": "11b795d0d6681caa4edfcc2d1c0df73cb38f6d706a1fb3c26518163f738fe4d3",
+      "version": "0.2.24-recovery18",
+      "files": {
+        "build\\m52\\recovery18-density-base64-control-01\\result.json": "16ca3b84d445f21964728cc3b7ad9a401dfb577c229321b7ddb07303e4cd0a07",
+        "build\\m52\\recovery18-density-base64-control-01\\fixture-audit.json": "3d56bb124e095b2d62f5a76d026a2274a8185f176374b84f5133384ee11a1a76",
+        "build\\m52\\recovery18-density-base64-control-01\\intent.json": "ce3293b2b2793ae4de3eb2eeaadd305deccb53f5ccf04b5e36ee6929991707ad",
+        "build\\cooperation\\a003e96ac1\\run.json": "9fed5fd7a446a57da95db48e1f19728b54ae42683cf3a8d930fcdb8531bfdcb6",
+        "build\\cooperation\\a003e96ac1\\host.log": "de1108e578f3dd09bd6156748fdad2ddd2319f4bede3aae8b2ada0d79fb7dd7f",
+        "build\\cooperation\\a003e96ac1\\join.log": "2397fa5ba66dd55b823e38b2f88780f255d8e8f27a3b6d655bf7c1b069639ace"
+      },
+      "result": {
+        "exit_code": 1,
+        "run": "a003e96ac1",
+        "installation_unchanged": true,
+        "runner_unchanged": true,
+        "air_inventory_unchanged": true,
+        "exclusive_air_confirmed": true,
+        "invalid_reason": null,
+        "passed": false,
+        "performance_qualified": false,
+        "full_release_qualified": false,
+        "same_runtime_as_reference": true,
+        "roles": {
+          "host": {
+            "checks": 29,
+            "errors": [],
+            "done": true,
+            "version": true,
+            "frame_intervals": null,
+            "metrics": [
+              "COOP PROBE host-window phase=0 frames=131 elapsedMs=11490",
+              "COOP PROBE host-window phase=1 frames=78 elapsedMs=8415",
+              "COOP PROBE host-window phase=2 frames=70 elapsedMs=8020",
+              "COOP PROBE host-window phase=3 frames=72 elapsedMs=8029",
+              "COOP PROBE host-window phase=4 frames=78 elapsedMs=8206",
+              "COOP PROBE host-window phase=5 frames=78 elapsedMs=8141",
+              "COOP PROBE host-final frames=72 elapsedMs=8077 memory=370946048"
+            ],
+            "log_sha256": "de1108e578f3dd09bd6156748fdad2ddd2319f4bede3aae8b2ada0d79fb7dd7f",
+            "all_assertions": [
+              "COOP PASS network-state fixture uses recorded native map seed",
+              "COOP PASS network-state fixture enters with a living player",
+              "COOP PASS network-state fixture window is visible",
+              "COOP PASS network-state native ghoul damage reference=45",
+              "COOP PASS network-state TCP host settles exactly one LMG hit loss=45 hp=1955",
+              "COOP PASS network-state turret 0 has remote target",
+              "COOP PASS network-state turret 0 native perception selects joiner",
+              "COOP PASS network-state turret 0 native weapon creates projectile",
+              "COOP PASS network-state turret 0 native projectile hits remote collision body",
+              "COOP PASS network-state turret 1 has remote target",
+              "COOP PASS network-state turret 1 native perception selects joiner",
+              "COOP PASS network-state turret 1 native weapon creates projectile",
+              "COOP PASS network-state turret 1 native projectile hits remote collision body",
+              "COOP PASS network-state turret 2 has remote target",
+              "COOP PASS network-state turret 2 native perception selects joiner",
+              "COOP PASS network-state turret 2 native weapon creates projectile",
+              "COOP PASS network-state turret 2 native projectile hits remote collision body",
+              "COOP PASS network-state turret 3 has remote target",
+              "COOP PASS network-state turret 3 native perception selects joiner",
+              "COOP PASS network-state turret 3 native weapon creates projectile",
+              "COOP PASS network-state turret 3 native projectile hits remote collision body",
+              "COOP PASS network-state turret 4 has remote target",
+              "COOP PASS network-state turret 4 native perception selects joiner",
+              "COOP PASS network-state turret 4 native weapon creates projectile",
+              "COOP PASS network-state turret 4 native projectile hits remote collision body",
+              "COOP PASS network-state density fixed 80 native bodies, weapon roster, player spawn and peer position verified",
+              "COOP PASS network-state density actual camera/player/roster stable before timing",
+              "COOP PASS network-state density open corridor native collision and zero optional static objects verified",
+              "COOP PASS network-state density both actual spawn/direction/camera/80-body rosters agree"
+            ]
+          },
+          "join": {
+            "checks": 40,
+            "errors": [
+              "COOP FAIL network-state 80 enemies keep stage frames progressing",
+              "COOP FAIL network-state weapon aim advances between snapshots",
+              "COOP FAIL network-state 80 enemies keep stage frames progressing",
+              "COOP FAIL network-state weapon aim advances between snapshots",
+              "COOP FAIL network-state 80 enemies keep stage frames progressing",
+              "COOP FAIL network-state weapon aim advances between snapshots",
+              "COOP FAIL network-state 80 enemies keep stage frames progressing",
+              "COOP FAIL network-state weapon aim advances between snapshots",
+              "COOP FAIL network-state 80 enemies keep stage frames progressing",
+              "COOP FAIL network-state weapon aim advances between snapshots",
+              "COOP FAIL network-state 80 enemies keep stage frames progressing",
+              "COOP FAIL network-state weapon aim advances between snapshots",
+              "COOP FAIL network-state 80 enemies keep stage frames progressing",
+              "COOP FAIL network-state weapon aim advances between snapshots"
+            ],
+            "done": true,
+            "version": true,
+            "frame_intervals": null,
+            "metrics": [
+              "COOP METRIC baseline-state frames=189 elapsedMs=8884 p95ms=64",
+              "COOP METRIC network-state frames=35 p95ms=368 maxms=392 packets=46 maxPacketMs=600 aimSamples=31",
+              "COOP METRIC event-cost cpuMs=883 cpuMax=54 netMs=84136 netMax=82475",
+              "COOP METRIC timing {\"motionMs\":251,\"viewMs\":155,\"motionCalls\":35,\"viewCalls\":68}",
+              "COOP METRIC network-state frames=39 p95ms=379 maxms=388 packets=34 maxPacketMs=586 aimSamples=28",
+              "COOP METRIC event-cost cpuMs=1896 cpuMax=54 netMs=85646 netMax=82475",
+              "COOP METRIC timing {\"motionMs\":602,\"viewMs\":362,\"motionCalls\":74,\"viewCalls\":146}",
+              "COOP METRIC network-state frames=37 p95ms=406 maxms=451 packets=31 maxPacketMs=656 aimSamples=30",
+              "COOP METRIC event-cost cpuMs=3005 cpuMax=115 netMs=87039 netMax=82475",
+              "COOP METRIC timing {\"motionMs\":979,\"viewMs\":579,\"motionCalls\":111,\"viewCalls\":220}",
+              "COOP METRIC network-state frames=38 p95ms=374 maxms=392 packets=32 maxPacketMs=631 aimSamples=29",
+              "COOP METRIC event-cost cpuMs=4008 cpuMax=115 netMs=88517 netMax=82475",
+              "COOP METRIC timing {\"motionMs\":1329,\"viewMs\":801,\"motionCalls\":149,\"viewCalls\":296}",
+              "COOP METRIC network-state frames=40 p95ms=367 maxms=375 packets=33 maxPacketMs=581 aimSamples=29",
+              "COOP METRIC event-cost cpuMs=5064 cpuMax=115 netMs=90005 netMax=82475",
+              "COOP METRIC timing {\"motionMs\":1692,\"viewMs\":1015,\"motionCalls\":189,\"viewCalls\":376}",
+              "COOP METRIC network-state frames=41 p95ms=356 maxms=358 packets=32 maxPacketMs=576 aimSamples=30",
+              "COOP METRIC event-cost cpuMs=6130 cpuMax=115 netMs=91434 netMax=82475",
+              "COOP METRIC timing {\"motionMs\":2076,\"viewMs\":1223,\"motionCalls\":230,\"viewCalls\":458}",
+              "COOP METRIC network-state frames=37 p95ms=438 maxms=477 packets=33 maxPacketMs=635 aimSamples=26",
+              "COOP METRIC event-cost cpuMs=7219 cpuMax=115 netMs=92958 netMax=82475",
+              "COOP METRIC timing {\"motionMs\":2435,\"viewMs\":1435,\"motionCalls\":267,\"viewCalls\":532}"
+            ],
+            "log_sha256": "2397fa5ba66dd55b823e38b2f88780f255d8e8f27a3b6d655bf7c1b069639ace",
+            "all_assertions": [
+              "COOP PASS network-state fixture uses recorded native map seed",
+              "COOP PASS network-state fixture enters with a living player",
+              "COOP PASS network-state fixture window is visible",
+              "COOP PASS network-state TCP ghoul appears",
+              "COOP PASS network-state TCP join LMG matches native ghoul damage expected=45 actual=45 height=70",
+              "COOP PASS network-state TCP bloodwing displays flying pose",
+              "COOP PASS network-state turret 0 TCP damage equals native player calculation expected=52 actual=52",
+              "COOP PASS network-state turret 1 TCP damage equals native player calculation expected=22 actual=22",
+              "COOP PASS network-state turret 2 TCP damage equals native player calculation expected=7 actual=7",
+              "COOP PASS network-state turret 3 TCP damage equals native player calculation expected=52 actual=52",
+              "COOP PASS network-state turret 4 TCP damage equals native player calculation expected=22 actual=22",
+              "COOP PASS network-state density fixed 80 native bodies, weapon roster, player spawn and peer position verified",
+              "COOP PASS network-state density actual camera/player/roster stable before timing",
+              "COOP PASS network-state density open corridor native collision and zero optional static objects verified",
+              "COOP PASS network-state density commit still matches actual roster/spawn/camera",
+              "COOP FAIL network-state 80 enemies keep stage frames progressing",
+              "COOP PASS network-state 80 enemies keep current world snapshots arriving",
+              "COOP FAIL network-state weapon aim advances between snapshots",
+              "COOP FAIL network-state 80 enemies keep stage frames progressing",
+              "COOP PASS network-state 80 enemies keep current world snapshots arriving",
+              "COOP FAIL network-state weapon aim advances between snapshots",
+              "COOP PASS network-state dense firing transports native trajectories events=459 trajectories=459 recordedFrames=2415",
+              "COOP PASS network-state dense firing renders moving projectile displays visible=516 moving=93",
+              "COOP PASS network-state ended projectiles stop adding hidden poses samples=0",
+              "COOP FAIL network-state 80 enemies keep stage frames progressing",
+              "COOP PASS network-state 80 enemies keep current world snapshots arriving",
+              "COOP FAIL network-state weapon aim advances between snapshots",
+              "COOP PASS network-state dense firing transports native trajectories events=473 trajectories=473 recordedFrames=2583",
+              "COOP PASS network-state dense firing renders moving projectile displays visible=564 moving=122",
+              "COOP PASS network-state ended projectiles stop adding hidden poses samples=0",
+              "COOP FAIL network-state 80 enemies keep stage frames progressing",
+              "COOP PASS network-state 80 enemies keep current world snapshots arriving",
+              "COOP FAIL network-state weapon aim advances between snapshots",
+              "COOP PASS network-state dense firing transports native trajectories events=490 trajectories=490 recordedFrames=2698",
+              "COOP PASS network-state dense firing renders moving projectile displays visible=582 moving=110",
+              "COOP PASS network-state ended projectiles stop adding hidden poses samples=0",
+              "COOP FAIL network-state 80 enemies keep stage frames progressing",
+              "COOP PASS network-state 80 enemies keep current world snapshots arriving",
+              "COOP FAIL network-state weapon aim advances between snapshots",
+              "COOP PASS network-state dense firing transports native trajectories events=512 trajectories=512 recordedFrames=2789",
+              "COOP PASS network-state dense firing renders moving projectile displays visible=598 moving=113",
+              "COOP PASS network-state ended projectiles stop adding hidden poses samples=0",
+              "COOP FAIL network-state 80 enemies keep stage frames progressing",
+              "COOP PASS network-state 80 enemies keep current world snapshots arriving",
+              "COOP FAIL network-state weapon aim advances between snapshots",
+              "COOP PASS network-state dense firing transports native trajectories events=495 trajectories=495 recordedFrames=2687",
+              "COOP PASS network-state dense firing renders moving projectile displays visible=604 moving=121",
+              "COOP PASS network-state ended projectiles stop adding hidden poses samples=0",
+              "COOP FAIL network-state 80 enemies keep stage frames progressing",
+              "COOP PASS network-state 80 enemies keep current world snapshots arriving",
+              "COOP FAIL network-state weapon aim advances between snapshots",
+              "COOP PASS network-state dense firing transports native trajectories events=508 trajectories=508 recordedFrames=2773",
+              "COOP PASS network-state dense firing renders moving projectile displays visible=556 moving=102",
+              "COOP PASS network-state ended projectiles stop adding hidden poses samples=0"
+            ]
+          }
+        }
+      },
+      "audit": {
+        "performance_qualified": false,
+        "original_failures_preserved": true,
+        "input_comparable": false,
+        "attribution_allowed": false,
+        "passed": false,
+        "module_errors": [],
+        "native_passed": false,
+        "diagnostic_only": false,
+        "corridor_static_prepared": true,
+        "original_result_unchanged": true,
+        "recipe_and_driver_unchanged": true,
+        "differences": []
+      },
+      "same_runtime_signature": true,
+      "runtime": {
+        "host": {
+          "game": "befcf0509e11fac9fef7afb834708b8b93752a14ae3d5cd72b42aa6d42f9b82a",
+          "driver": "965f637321962a8122efc56e3dc29ecec3e9c0d94b6a6f4e0d815e31d8edbfd9",
+          "harness": "d52ef4300c7d472ee05884d7b4709f4abf80b3e6ff935b695a9ed986db021086"
+        },
+        "join": {
+          "game": "befcf0509e11fac9fef7afb834708b8b93752a14ae3d5cd72b42aa6d42f9b82a",
+          "driver": "965f637321962a8122efc56e3dc29ecec3e9c0d94b6a6f4e0d815e31d8edbfd9",
+          "harness": "d52ef4300c7d472ee05884d7b4709f4abf80b3e6ff935b695a9ed986db021086"
+        }
+      },
+      "memory": {
+        "stopped_for_pressure": false,
+        "stopped_for_overlap": false,
+        "minimum_commit_bytes": 536870912,
+        "reader_sha256": "d4894962771929b5b88f1d123c3603221dab06294657d33bc6229a2282fbf8f6"
+      },
+      "weapon_hold_counts": {
+        "host": [
+          {
+            "weapon": "lmg",
+            "hold": 10000,
+            "count": 12
+          },
+          {
+            "weapon": "p308c",
+            "hold": 10000,
+            "count": 27
+          }
+        ],
+        "join": [
+          {
+            "weapon": "lmg",
+            "hold": 0,
+            "count": 12
+          },
+          {
+            "weapon": "p308c",
+            "hold": 0,
+            "count": 24
+          },
+          {
+            "weapon": "p308c",
+            "hold": 12,
+            "count": 3
+          }
+        ]
+      }
+    },
+    {
+      "directory": "mods\\RConnect\\build\\m52\\recovery19-density-base64-native-01",
+      "run": "ce7ffb6f89",
+      "candidate_sha256": "b9cd3f4800f2e875439b19f9d18969fd195ed039c992df3b0625cf0cf2dfeea5",
+      "version": "0.2.24-recovery19",
+      "files": {
+        "build\\m52\\recovery19-density-base64-native-01\\result.json": "d8b6a82f2d0c90fd2fc868c47443d43e29fd9806e57b15b466cf319017d0c449",
+        "build\\m52\\recovery19-density-base64-native-01\\fixture-audit.json": "06614d2eec3f7769369bdab93d0f83555fc9e5aa35d25fb5624ebfc5e1da3faf",
+        "build\\m52\\recovery19-density-base64-native-01\\intent.json": "03e82ee729d587324eb93e090d00306a34f195a51cfb366296f60d59f9133a04",
+        "build\\cooperation\\ce7ffb6f89\\run.json": "561028e5d5000bfcb1029539d693cc12cfe05fa0f74af822db1950d0873a30eb",
+        "build\\cooperation\\ce7ffb6f89\\host.log": "7b369d06e054217db6604d5d28072d00541517acb069c22e3ab0b9ff20b6272b",
+        "build\\cooperation\\ce7ffb6f89\\join.log": "f8d18433da8f1cee20b0e6eedd61a7c5c97e6f2008025699393f87d74de33574"
+      },
+      "result": {
+        "exit_code": 1,
+        "run": "ce7ffb6f89",
+        "installation_unchanged": true,
+        "runner_unchanged": true,
+        "air_inventory_unchanged": true,
+        "exclusive_air_confirmed": true,
+        "invalid_reason": null,
+        "passed": false,
+        "performance_qualified": false,
+        "full_release_qualified": false,
+        "same_runtime_as_reference": true,
+        "roles": {
+          "host": {
+            "checks": 29,
+            "errors": [],
+            "done": true,
+            "version": true,
+            "frame_intervals": null,
+            "metrics": [
+              "COOP PROBE host-window phase=0 frames=142 elapsedMs=12723",
+              "COOP PROBE host-window phase=1 frames=82 elapsedMs=8279",
+              "COOP PROBE host-window phase=2 frames=78 elapsedMs=8048",
+              "COOP PROBE host-window phase=3 frames=80 elapsedMs=8211",
+              "COOP PROBE host-window phase=4 frames=80 elapsedMs=8162",
+              "COOP PROBE host-window phase=5 frames=73 elapsedMs=8107",
+              "COOP PROBE host-final frames=77 elapsedMs=7997 memory=347525120"
+            ],
+            "log_sha256": "7b369d06e054217db6604d5d28072d00541517acb069c22e3ab0b9ff20b6272b",
+            "all_assertions": [
+              "COOP PASS network-state fixture uses recorded native map seed",
+              "COOP PASS network-state fixture enters with a living player",
+              "COOP PASS network-state fixture window is visible",
+              "COOP PASS network-state native ghoul damage reference=45",
+              "COOP PASS network-state TCP host settles exactly one LMG hit loss=45 hp=1955",
+              "COOP PASS network-state turret 0 has remote target",
+              "COOP PASS network-state turret 0 native perception selects joiner",
+              "COOP PASS network-state turret 0 native weapon creates projectile",
+              "COOP PASS network-state turret 0 native projectile hits remote collision body",
+              "COOP PASS network-state turret 1 has remote target",
+              "COOP PASS network-state turret 1 native perception selects joiner",
+              "COOP PASS network-state turret 1 native weapon creates projectile",
+              "COOP PASS network-state turret 1 native projectile hits remote collision body",
+              "COOP PASS network-state turret 2 has remote target",
+              "COOP PASS network-state turret 2 native perception selects joiner",
+              "COOP PASS network-state turret 2 native weapon creates projectile",
+              "COOP PASS network-state turret 2 native projectile hits remote collision body",
+              "COOP PASS network-state turret 3 has remote target",
+              "COOP PASS network-state turret 3 native perception selects joiner",
+              "COOP PASS network-state turret 3 native weapon creates projectile",
+              "COOP PASS network-state turret 3 native projectile hits remote collision body",
+              "COOP PASS network-state turret 4 has remote target",
+              "COOP PASS network-state turret 4 native perception selects joiner",
+              "COOP PASS network-state turret 4 native weapon creates projectile",
+              "COOP PASS network-state turret 4 native projectile hits remote collision body",
+              "COOP PASS network-state density fixed 80 native bodies, weapon roster, player spawn and peer position verified",
+              "COOP PASS network-state density actual camera/player/roster stable before timing",
+              "COOP PASS network-state density open corridor native collision and zero optional static objects verified",
+              "COOP PASS network-state density both actual spawn/direction/camera/80-body rosters agree"
+            ]
+          },
+          "join": {
+            "checks": 40,
+            "errors": [
+              "COOP FAIL network-state 80 enemies keep stage frames progressing",
+              "COOP FAIL network-state weapon aim advances between snapshots",
+              "COOP FAIL network-state 80 enemies keep stage frames progressing",
+              "COOP FAIL network-state weapon aim advances between snapshots",
+              "COOP FAIL network-state 80 enemies keep stage frames progressing",
+              "COOP FAIL network-state weapon aim advances between snapshots",
+              "COOP FAIL network-state 80 enemies keep stage frames progressing",
+              "COOP FAIL network-state weapon aim advances between snapshots",
+              "COOP FAIL network-state 80 enemies keep stage frames progressing",
+              "COOP FAIL network-state weapon aim advances between snapshots",
+              "COOP FAIL network-state 80 enemies keep stage frames progressing",
+              "COOP FAIL network-state weapon aim advances between snapshots",
+              "COOP FAIL network-state 80 enemies keep stage frames progressing",
+              "COOP FAIL network-state weapon aim advances between snapshots"
+            ],
+            "done": true,
+            "version": true,
+            "frame_intervals": null,
+            "metrics": [
+              "COOP METRIC baseline-state frames=188 elapsedMs=9069 p95ms=71",
+              "COOP METRIC network-state frames=33 p95ms=336 maxms=382 packets=52 maxPacketMs=721 aimSamples=31",
+              "COOP METRIC event-cost cpuMs=841 cpuMax=60 netMs=84153 netMax=82221",
+              "COOP METRIC timing {\"motionCalls\":33,\"motionMs\":235,\"viewMs\":160,\"viewCalls\":64}",
+              "COOP METRIC network-state frames=41 p95ms=367 maxms=429 packets=32 maxPacketMs=550 aimSamples=30",
+              "COOP METRIC event-cost cpuMs=1792 cpuMax=60 netMs=85674 netMax=82221",
+              "COOP METRIC timing {\"motionCalls\":74,\"motionMs\":599,\"viewMs\":383,\"viewCalls\":146}",
+              "COOP METRIC network-state frames=40 p95ms=388 maxms=445 packets=30 maxPacketMs=563 aimSamples=29",
+              "COOP METRIC event-cost cpuMs=2869 cpuMax=60 netMs=87114 netMax=82221",
+              "COOP METRIC timing {\"motionCalls\":114,\"motionMs\":984,\"viewMs\":598,\"viewCalls\":226}",
+              "COOP METRIC network-state frames=40 p95ms=384 maxms=391 packets=34 maxPacketMs=558 aimSamples=29",
+              "COOP METRIC event-cost cpuMs=3960 cpuMax=92 netMs=88652 netMax=82221",
+              "COOP METRIC timing {\"motionCalls\":154,\"motionMs\":1355,\"viewMs\":821,\"viewCalls\":306}",
+              "COOP METRIC network-state frames=41 p95ms=381 maxms=432 packets=32 maxPacketMs=584 aimSamples=30",
+              "COOP METRIC event-cost cpuMs=4968 cpuMax=92 netMs=90141 netMax=82221",
+              "COOP METRIC timing {\"motionCalls\":195,\"motionMs\":1735,\"viewMs\":1035,\"viewCalls\":388}",
+              "COOP METRIC network-state frames=38 p95ms=413 maxms=449 packets=33 maxPacketMs=695 aimSamples=27",
+              "COOP METRIC event-cost cpuMs=5979 cpuMax=92 netMs=91607 netMax=82221",
+              "COOP METRIC timing {\"motionCalls\":233,\"motionMs\":2081,\"viewMs\":1241,\"viewCalls\":464}",
+              "COOP METRIC network-state frames=40 p95ms=370 maxms=439 packets=32 maxPacketMs=640 aimSamples=28",
+              "COOP METRIC event-cost cpuMs=6945 cpuMax=92 netMs=93034 netMax=82221",
+              "COOP METRIC timing {\"motionCalls\":273,\"motionMs\":2452,\"viewMs\":1443,\"viewCalls\":544}"
+            ],
+            "log_sha256": "f8d18433da8f1cee20b0e6eedd61a7c5c97e6f2008025699393f87d74de33574",
+            "all_assertions": [
+              "COOP PASS network-state fixture uses recorded native map seed",
+              "COOP PASS network-state fixture enters with a living player",
+              "COOP PASS network-state fixture window is visible",
+              "COOP PASS network-state TCP ghoul appears",
+              "COOP PASS network-state TCP join LMG matches native ghoul damage expected=45 actual=45 height=70",
+              "COOP PASS network-state TCP bloodwing displays flying pose",
+              "COOP PASS network-state turret 0 TCP damage equals native player calculation expected=52 actual=52",
+              "COOP PASS network-state turret 1 TCP damage equals native player calculation expected=22 actual=22",
+              "COOP PASS network-state turret 2 TCP damage equals native player calculation expected=7 actual=7",
+              "COOP PASS network-state turret 3 TCP damage equals native player calculation expected=52 actual=52",
+              "COOP PASS network-state turret 4 TCP damage equals native player calculation expected=22 actual=22",
+              "COOP PASS network-state density fixed 80 native bodies, weapon roster, player spawn and peer position verified",
+              "COOP PASS network-state density actual camera/player/roster stable before timing",
+              "COOP PASS network-state density open corridor native collision and zero optional static objects verified",
+              "COOP PASS network-state density commit still matches actual roster/spawn/camera",
+              "COOP FAIL network-state 80 enemies keep stage frames progressing",
+              "COOP PASS network-state 80 enemies keep current world snapshots arriving",
+              "COOP FAIL network-state weapon aim advances between snapshots",
+              "COOP FAIL network-state 80 enemies keep stage frames progressing",
+              "COOP PASS network-state 80 enemies keep current world snapshots arriving",
+              "COOP FAIL network-state weapon aim advances between snapshots",
+              "COOP PASS network-state dense firing transports native trajectories events=451 trajectories=451 recordedFrames=2407",
+              "COOP PASS network-state dense firing renders moving projectile displays visible=538 moving=105",
+              "COOP PASS network-state ended projectiles stop adding hidden poses samples=0",
+              "COOP FAIL network-state 80 enemies keep stage frames progressing",
+              "COOP PASS network-state 80 enemies keep current world snapshots arriving",
+              "COOP FAIL network-state weapon aim advances between snapshots",
+              "COOP PASS network-state dense firing transports native trajectories events=476 trajectories=476 recordedFrames=2627",
+              "COOP PASS network-state dense firing renders moving projectile displays visible=596 moving=112",
+              "COOP PASS network-state ended projectiles stop adding hidden poses samples=0",
+              "COOP FAIL network-state 80 enemies keep stage frames progressing",
+              "COOP PASS network-state 80 enemies keep current world snapshots arriving",
+              "COOP FAIL network-state weapon aim advances between snapshots",
+              "COOP PASS network-state dense firing transports native trajectories events=538 trajectories=538 recordedFrames=2992",
+              "COOP PASS network-state dense firing renders moving projectile displays visible=616 moving=117",
+              "COOP PASS network-state ended projectiles stop adding hidden poses samples=0",
+              "COOP FAIL network-state 80 enemies keep stage frames progressing",
+              "COOP PASS network-state 80 enemies keep current world snapshots arriving",
+              "COOP FAIL network-state weapon aim advances between snapshots",
+              "COOP PASS network-state dense firing transports native trajectories events=498 trajectories=498 recordedFrames=2694",
+              "COOP PASS network-state dense firing renders moving projectile displays visible=600 moving=115",
+              "COOP PASS network-state ended projectiles stop adding hidden poses samples=0",
+              "COOP FAIL network-state 80 enemies keep stage frames progressing",
+              "COOP PASS network-state 80 enemies keep current world snapshots arriving",
+              "COOP FAIL network-state weapon aim advances between snapshots",
+              "COOP PASS network-state dense firing transports native trajectories events=509 trajectories=509 recordedFrames=2788",
+              "COOP PASS network-state dense firing renders moving projectile displays visible=570 moving=107",
+              "COOP PASS network-state ended projectiles stop adding hidden poses samples=0",
+              "COOP FAIL network-state 80 enemies keep stage frames progressing",
+              "COOP PASS network-state 80 enemies keep current world snapshots arriving",
+              "COOP FAIL network-state weapon aim advances between snapshots",
+              "COOP PASS network-state dense firing transports native trajectories events=494 trajectories=494 recordedFrames=2726",
+              "COOP PASS network-state dense firing renders moving projectile displays visible=592 moving=106",
+              "COOP PASS network-state ended projectiles stop adding hidden poses samples=0"
+            ]
+          }
+        }
+      },
+      "audit": {
+        "performance_qualified": false,
+        "original_failures_preserved": true,
+        "input_comparable": false,
+        "attribution_allowed": false,
+        "passed": false,
+        "module_errors": [],
+        "native_passed": false,
+        "diagnostic_only": false,
+        "corridor_static_prepared": true,
+        "original_result_unchanged": true,
+        "recipe_and_driver_unchanged": true,
+        "differences": [
+          "/join/actors/70/weapon/hold: 0 / 12",
+          "/join/actors/71/weapon/hold: 0 / 12",
+          "/join/actors/72/weapon/hold: 0 / 12",
+          "/join/actors/73/weapon/hold: 0 / 12",
+          "/join/actors/74/weapon/hold: 0 / 12",
+          "/join/actors/75/weapon/hold: 0 / 12"
+        ]
+      },
+      "same_runtime_signature": true,
+      "runtime": {
+        "host": {
+          "game": "befcf0509e11fac9fef7afb834708b8b93752a14ae3d5cd72b42aa6d42f9b82a",
+          "driver": "965f637321962a8122efc56e3dc29ecec3e9c0d94b6a6f4e0d815e31d8edbfd9",
+          "harness": "d52ef4300c7d472ee05884d7b4709f4abf80b3e6ff935b695a9ed986db021086"
+        },
+        "join": {
+          "game": "befcf0509e11fac9fef7afb834708b8b93752a14ae3d5cd72b42aa6d42f9b82a",
+          "driver": "965f637321962a8122efc56e3dc29ecec3e9c0d94b6a6f4e0d815e31d8edbfd9",
+          "harness": "d52ef4300c7d472ee05884d7b4709f4abf80b3e6ff935b695a9ed986db021086"
+        }
+      },
+      "memory": {
+        "stopped_for_pressure": false,
+        "stopped_for_overlap": false,
+        "minimum_commit_bytes": 536870912,
+        "reader_sha256": "d4894962771929b5b88f1d123c3603221dab06294657d33bc6229a2282fbf8f6"
+      },
+      "weapon_hold_counts": {
+        "host": [
+          {
+            "weapon": "lmg",
+            "hold": 10000,
+            "count": 12
+          },
+          {
+            "weapon": "p308c",
+            "hold": 10000,
+            "count": 27
+          }
+        ],
+        "join": [
+          {
+            "weapon": "lmg",
+            "hold": 0,
+            "count": 12
+          },
+          {
+            "weapon": "p308c",
+            "hold": 0,
+            "count": 18
+          },
+          {
+            "weapon": "p308c",
+            "hold": 12,
+            "count": 9
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "completed": false,
+  "wrote_source": false,
+  "reason": "Pre-write full-byte proposal check rejected LF sparse overlay versus CRLF frozen19. No AS output or integration manifest existed yet.",
+  "resolution": "Compare the proposal's normalized text delta, then apply only its table using frozen19 original line endings; all other source bytes must remain unchanged.",
+  "compiled": false,
+  "air_started": false
+}

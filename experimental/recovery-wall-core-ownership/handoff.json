@@ -1,0 +1,61 @@
+{
+  "kind": "source-only-wall-core-counterexamples",
+  "base_candidate": "recovery18",
+  "base_host": "ACC336B5",
+  "input_sources": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-wall-core-ownership\\prepare_checks.py": "3217194701908f813f88efda1359877327080a501d0e4d0c2db8265c3b0560e8",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-wall-core-ownership\\ownership-checks.inc": "43157b5c52e5fb2e0bb0ddf64d2dfed44472314c5c380450f3556acd2ea2bf7b",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-wall-core-ownership\\ownership-methods.inc": "4aedba5f6ef1e876c2de0918b18d8e580cabca6532550952a56dc51afe35f428",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-wall-core-ownership\\README.md": "fec73836361866a8a1154e7dd3187b60f2afc47c832e87323a0eaf49bc02fd2c",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-wall-core-ownership\\interface-risk.md": "0a1427e3dcbed74736ac3162bab02ba8dcedda3a52eefbc7c37fa39a2784e7bc",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\tools\\validation\\run_recovery_component.py": "9952aeeaa37f6eead636cceff9f25fabff3045671d3c4cbb60c326909d1e572d",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-wall-color-integration-component-01\\component-result.json": "fd12ec475b8f47645969b4cff4fb7a18a01f3c5affb8da5f8c531a6d3835316d",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-wall-surfaces-host-01\\after\\scripts\\fe\\graph\\Grafon.as": "e6b4142462c1187388c4bb9c8151dd6c2605ce4e4b9fedd421cf4749c54bd7a0",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-wall-color-buildsrc\\components\\WallSurfaceChecks.as": "01d9f3ea50a6b6d99d05d46d35548f2126cbbbcbfc301f31cda18fd0e234f41b",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-wall-color-buildsrc\\components\\fe\\graph\\Grafon.as": "83e379f86d2978c28ad49177d13b3601d05957ab741a89c3e811d92b13889950",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-wall-color-buildsrc\\components\\rconnect\\core\\Log.as": "1c707679e5ca9262f78aea27fc7dbe7802d39706ca4e88f5ad46a4ccad67a0b4",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-wall-color-buildsrc\\components\\rconnect\\game\\GameBridge.as": "f0d9a9dcc7c6c640acc19d82103fd60d726117e72973cf3b2b273363dfe491a6",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-wall-color-buildsrc\\components\\rconnect\\game\\NativeWallColor.as": "0f7160457f21d46759cc3b43d9defd17a8d921007521407365d906988dcfa842",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-wall-color-buildsrc\\components\\rconnect\\game\\WallBefore.as": "dcf1c20e9275134c902ed55be1b3cc4a9ccf3b660f504dbbf3f648db0769e18f",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-wall-color-buildsrc\\components\\rconnect\\game\\WallImpactVisuals.as": "d8a88d98331aa8ab62b093ed36066f8ca5eb3d348a4f863474580e7fddb7d7bd",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-wall-color-buildsrc\\components\\rconnect\\game\\WallSurfaceBridge.as": "b7f58ccb994f30f86041249c56730831345e95742127814e1afa77bd44d69ad1",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-wall-color-buildsrc\\components\\rconnect\\net\\RoomCodec.as": "296ee4d8d94f77faa62dcc17a39cb1e2492c756d3027311713c33935ca6b6b4a",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-wall-color-buildsrc\\components\\rconnect\\net\\WallCellCodec.as": "4d0bb10dbe60227f167fad2d0c48fa3e6dd22b114f496084ba651ca84761dc8c",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-18\\src\\rconnect\\game\\WallSurfaceBridge.as": "b7f58ccb994f30f86041249c56730831345e95742127814e1afa77bd44d69ad1",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-18\\src\\rconnect\\game\\WallImpactVisuals.as": "d8a88d98331aa8ab62b093ed36066f8ca5eb3d348a4f863474580e7fddb7d7bd",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-18\\src\\rconnect\\game\\NativeWallColor.as": "0f7160457f21d46759cc3b43d9defd17a8d921007521407365d906988dcfa842",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-18\\src\\rconnect\\net\\RoomCodec.as": "296ee4d8d94f77faa62dcc17a39cb1e2492c756d3027311713c33935ca6b6b4a",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-18\\src\\rconnect\\net\\WallCellCodec.as": "4d0bb10dbe60227f167fad2d0c48fa3e6dd22b114f496084ba651ca84761dc8c"
+  },
+  "sources": {
+    "fe/graph/Grafon.as": "83e379f86d2978c28ad49177d13b3601d05957ab741a89c3e811d92b13889950",
+    "rconnect/core/Log.as": "1c707679e5ca9262f78aea27fc7dbe7802d39706ca4e88f5ad46a4ccad67a0b4",
+    "rconnect/game/GameBridge.as": "f0d9a9dcc7c6c640acc19d82103fd60d726117e72973cf3b2b273363dfe491a6",
+    "rconnect/game/NativeWallColor.as": "0f7160457f21d46759cc3b43d9defd17a8d921007521407365d906988dcfa842",
+    "rconnect/game/WallBefore.as": "dcf1c20e9275134c902ed55be1b3cc4a9ccf3b660f504dbbf3f648db0769e18f",
+    "rconnect/game/WallImpactVisuals.as": "d8a88d98331aa8ab62b093ed36066f8ca5eb3d348a4f863474580e7fddb7d7bd",
+    "rconnect/game/WallSurfaceBridge.as": "b7f58ccb994f30f86041249c56730831345e95742127814e1afa77bd44d69ad1",
+    "rconnect/net/RoomCodec.as": "296ee4d8d94f77faa62dcc17a39cb1e2492c756d3027311713c33935ca6b6b4a",
+    "rconnect/net/WallCellCodec.as": "4d0bb10dbe60227f167fad2d0c48fa3e6dd22b114f496084ba651ca84761dc8c",
+    "WallSurfaceChecks.as": "d6e1a8427831816a8bbe8e28d74645d436ec3a66cec1628dc000ac1d1d481172"
+  },
+  "checks": {
+    "passed": true,
+    "old_checks_preserved": 69,
+    "added_checks": 8,
+    "expected_checks": 77,
+    "predicted_failed_labels": [
+      "ownership desired: observed differing core survives replay and becomes logical color",
+      "ownership desired: core unchanged from native baseline survives replay and becomes logical color"
+    ],
+    "counterchecks_executed": false,
+    "production_classes_byte_exact": true,
+    "native_painter_is_existing_fixture": true,
+    "native_game_test": false,
+    "performance_qualified": false
+  },
+  "production_overlay": false,
+  "host_overlay": false,
+  "blocked_by": "design cost and safety responsibility, not permission",
+  "next": "Stop production expansion. Parent may run this exact control component."
+}

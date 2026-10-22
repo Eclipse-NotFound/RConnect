@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "old_checks_preserved": 69,
+  "added_checks": 8,
+  "expected_checks": 77,
+  "predicted_failed_labels": [
+    "ownership desired: observed differing core survives replay and becomes logical color",
+    "ownership desired: core unchanged from native baseline survives replay and becomes logical color"
+  ],
+  "counterchecks_executed": false,
+  "production_classes_byte_exact": true,
+  "native_painter_is_existing_fixture": true,
+  "native_game_test": false,
+  "performance_qualified": false
+}

@@ -1,0 +1,26 @@
+--- accurate18/GameBridge.as
++++ unit-defense-read/GameBridge.as
+@@ -5588,7 +5588,7 @@
+                   bodyEffects: _bodyEffects.capture(u),
+                   weapons: _presentation.capture(u),
+                   aura: TelekinesisVisuals.captureObject(u),
+-                  defense: unitFields(u, MirrorHitUnit.DEFENSE),
++                  defense: unitFields(u, MirrorHitUnit.DEFENSE, u is Unit),
+                   // M19：外观帧（小马类 osn.pon 帧=配色/皮肤）与瞄准点
+                   // （celX/celY=敌人当前目标方向，仇恨可视化一致）
+                   vf: unitVisualFrame(u),
+@@ -5853,12 +5853,12 @@
+          hit.dmg += dmg; hit.armorLoss += armorLoss; hit.shieldLoss += shieldLoss;
+       }
+ 
+-      private static function unitFields(u:Object,names:Array):Object
++      private static function unitFields(u:Object,names:Array,nativeSlots:Boolean=false):Object
+       {
+          var out:Object = {};
+          for each(var name:String in names)
+          {
+-            var value:* = probe(u,name);
++            var value:* = nativeSlots ? u[name] : probe(u,name);
+             // Unit loads this untyped limit directly from an XML attribute.
+             // JSON.stringify(XMLList) produces "XMLList", not its numeric value.
+             if(name=="levit_max" && value!=null)value=Number(value);

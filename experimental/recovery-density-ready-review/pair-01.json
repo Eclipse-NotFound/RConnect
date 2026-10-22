@@ -1,0 +1,282 @@
+{
+  "kind": "independent-read-only-density-ready-pair",
+  "performance_qualified": false,
+  "performance_percentage_claimed": false,
+  "runs": {
+    "18": {
+      "run": "9d69429997",
+      "candidate": "11b795d0d6681caa4edfcc2d1c0df73cb38f6d706a1fb3c26518163f738fe4d3",
+      "result_sha256": "94586acad689328b514ba8f4dc30ed07197e705a21104192367c12bdc19e710f",
+      "framework_passed": false,
+      "roles": {
+        "host": {
+          "log_sha256": "a7b5370f4d66164fcc408e4c43c734d8f3379a12a3bf5919349920eba8eff8de",
+          "pass": 29,
+          "fail": 0,
+          "failure_categories": {},
+          "windows": [],
+          "weapon_cooldowns_all_zero": true,
+          "actual_weapon_rows_sha256": "e7448ac3644163982c9273d1b03db666a1e22addf58cdeb84c933179db445be0",
+          "visual_counts": {
+            "actorWeapons": 39,
+            "actors": 80,
+            "localPlayer": 1,
+            "remotePlayer": 1
+          },
+          "visuals_ok": true
+        },
+        "join": {
+          "log_sha256": "beb995f657326bcaa4d73ecf98564be6932200ffc18d9bfed1179315017ca854",
+          "pass": 39,
+          "fail": 15,
+          "failure_categories": {
+            "80 enemies keep stage frames progressing": 7,
+            "80 enemies keep current world snapshots arriving": 1,
+            "weapon aim advances between snapshots": 7
+          },
+          "windows": [
+            {
+              "frames": 35,
+              "p95ms": 373,
+              "maxms": 592,
+              "packets": 46,
+              "maxPacketMs": 1083,
+              "aimSamples": 27
+            },
+            {
+              "frames": 38,
+              "p95ms": 425,
+              "maxms": 441,
+              "packets": 33,
+              "maxPacketMs": 640,
+              "aimSamples": 31
+            },
+            {
+              "frames": 39,
+              "p95ms": 374,
+              "maxms": 390,
+              "packets": 32,
+              "maxPacketMs": 560,
+              "aimSamples": 29
+            },
+            {
+              "frames": 36,
+              "p95ms": 378,
+              "maxms": 538,
+              "packets": 33,
+              "maxPacketMs": 802,
+              "aimSamples": 26
+            },
+            {
+              "frames": 39,
+              "p95ms": 396,
+              "maxms": 410,
+              "packets": 35,
+              "maxPacketMs": 595,
+              "aimSamples": 28
+            },
+            {
+              "frames": 37,
+              "p95ms": 381,
+              "maxms": 383,
+              "packets": 33,
+              "maxPacketMs": 619,
+              "aimSamples": 29
+            },
+            {
+              "frames": 35,
+              "p95ms": 417,
+              "maxms": 514,
+              "packets": 34,
+              "maxPacketMs": 714,
+              "aimSamples": 28
+            }
+          ],
+          "weapon_cooldowns_all_zero": true,
+          "actual_weapon_rows_sha256": "836e7d83f9992d25783daf860a3ab9bba2b47f1551bac30ece84366017dcd12b",
+          "visual_counts": {
+            "actorWeapons": 39,
+            "actors": 80,
+            "localPlayer": 1,
+            "remotePlayer": 1
+          },
+          "visuals_ok": true
+        }
+      },
+      "guards": {
+        "installation_unchanged": true,
+        "runner_unchanged": true,
+        "air_inventory_unchanged": true,
+        "exclusive_air_confirmed": true,
+        "same_runtime_as_reference": true,
+        "invalid_reason": null
+      },
+      "audit_sha256": "8c922e83c4b97f6c63bef2f360cbb6d5954c09a3fd496510ddb2d7169e434238",
+      "reported_audit": {
+        "passed": false,
+        "input_comparable": false,
+        "attribution_allowed": false,
+        "difference_count": null,
+        "differences": null,
+        "same_driver": null,
+        "same_runtime": null,
+        "corridor_static_equal": null
+      }
+    },
+    "19": {
+      "run": "cb78be831e",
+      "candidate": "b9cd3f4800f2e875439b19f9d18969fd195ed039c992df3b0625cf0cf2dfeea5",
+      "result_sha256": "fd4f0a2944c4555ee31b9e9faf1d7d1f7969c8c52a18f6d692a4499b63335d64",
+      "framework_passed": false,
+      "roles": {
+        "host": {
+          "log_sha256": "2d852ed82c5edf55191118b61cacbbd00d453bc1e859d2e13402b5e26513625b",
+          "pass": 29,
+          "fail": 0,
+          "failure_categories": {},
+          "windows": [],
+          "weapon_cooldowns_all_zero": true,
+          "actual_weapon_rows_sha256": "e7448ac3644163982c9273d1b03db666a1e22addf58cdeb84c933179db445be0",
+          "visual_counts": {
+            "actorWeapons": 39,
+            "actors": 80,
+            "localPlayer": 1,
+            "remotePlayer": 1
+          },
+          "visuals_ok": true
+        },
+        "join": {
+          "log_sha256": "0cf3aa16e435b8358227897bb142b58ff6dc4ac2b88a2f2a0294ad5e0561c48a",
+          "pass": 40,
+          "fail": 14,
+          "failure_categories": {
+            "80 enemies keep stage frames progressing": 7,
+            "weapon aim advances between snapshots": 7
+          },
+          "windows": [
+            {
+              "frames": 34,
+              "p95ms": 302,
+              "maxms": 309,
+              "packets": 59,
+              "maxPacketMs": 709,
+              "aimSamples": 22
+            },
+            {
+              "frames": 38,
+              "p95ms": 395,
+              "maxms": 434,
+              "packets": 34,
+              "maxPacketMs": 618,
+              "aimSamples": 30
+            },
+            {
+              "frames": 41,
+              "p95ms": 340,
+              "maxms": 428,
+              "packets": 34,
+              "maxPacketMs": 597,
+              "aimSamples": 28
+            },
+            {
+              "frames": 40,
+              "p95ms": 409,
+              "maxms": 493,
+              "packets": 32,
+              "maxPacketMs": 585,
+              "aimSamples": 28
+            },
+            {
+              "frames": 40,
+              "p95ms": 379,
+              "maxms": 380,
+              "packets": 32,
+              "maxPacketMs": 660,
+              "aimSamples": 28
+            },
+            {
+              "frames": 42,
+              "p95ms": 357,
+              "maxms": 389,
+              "packets": 32,
+              "maxPacketMs": 545,
+              "aimSamples": 30
+            },
+            {
+              "frames": 40,
+              "p95ms": 371,
+              "maxms": 417,
+              "packets": 34,
+              "maxPacketMs": 580,
+              "aimSamples": 29
+            }
+          ],
+          "weapon_cooldowns_all_zero": true,
+          "actual_weapon_rows_sha256": "836e7d83f9992d25783daf860a3ab9bba2b47f1551bac30ece84366017dcd12b",
+          "visual_counts": {
+            "actorWeapons": 39,
+            "actors": 80,
+            "localPlayer": 1,
+            "remotePlayer": 1
+          },
+          "visuals_ok": true
+        }
+      },
+      "guards": {
+        "installation_unchanged": true,
+        "runner_unchanged": true,
+        "air_inventory_unchanged": true,
+        "exclusive_air_confirmed": true,
+        "same_runtime_as_reference": true,
+        "invalid_reason": null
+      },
+      "audit_sha256": "308014e0d1351693298be54ebdb396426faefea212c1f1b3e5542ecd6178ffd8",
+      "reported_audit": {
+        "passed": false,
+        "input_comparable": true,
+        "attribution_allowed": true,
+        "difference_count": 0,
+        "differences": [],
+        "same_driver": true,
+        "same_runtime": true,
+        "corridor_static_equal": true
+      }
+    }
+  },
+  "independent_comparison": {
+    "same_driver": true,
+    "installation_22_exact": true,
+    "runtime_signature_exact": true,
+    "prepared_difference_count": 0,
+    "prepared_differences": [],
+    "corridor_difference_count": 0,
+    "raw_inputs_difference_count": 1,
+    "raw_inputs_differences": [
+      "/join/units/5/dx: 4.187604177743197 / 3.5021123837213963"
+    ],
+    "only_raw_native_frame_diff": false,
+    "actual_weapon_rows_equal": true,
+    "both_seven_windows": true,
+    "raw_difference_context": {
+      "role": "join",
+      "unit_index": 5,
+      "cls": "rconnect.game::MirrorHitUnit",
+      "id": "zombie1",
+      "fixture": false,
+      "in_chain": false,
+      "weapon": null,
+      "source_evidence": "MirrorHitUnit.MOTION excludes dx/dy; it never enters firstObj and syncMotion copies target position; GameBridge.tickFrozenAnims calls syncMotion/tickFeedback, not native step.",
+      "likely_origin": "Prior native ghoul shot has randomized Unit.otbros; this is an inference, not recorded per-hit tracing.",
+      "effect_boundary": "No display-motion integration of this proxy dx found in inspected candidate path; do not claim all raw input fields identical or infer a performance percentage."
+    }
+  },
+  "source_delta": {
+    "files18": 90,
+    "files19": 90,
+    "unchanged": 88,
+    "changed": [
+      "RConnectMod.as",
+      "rconnect/net/WallCellCodec.as"
+    ]
+  }
+}

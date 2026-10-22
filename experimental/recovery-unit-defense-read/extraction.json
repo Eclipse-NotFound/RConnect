@@ -1,0 +1,74 @@
+{
+  "baseline": "build/m52/recovery-18/src",
+  "bridge_sha256": "3fe9bb83a16a57300e733806cddbe74ce55bcaf323bec15554814f4714eba967",
+  "change": "only 18 verified public variable names appended to existing NATIVE_UNIT_FIELDS",
+  "added_fields": [
+    "skin",
+    "armor",
+    "marmor",
+    "armor_maxhp",
+    "armor_qual",
+    "shitArmor",
+    "allVulnerMult",
+    "vulner",
+    "dexter",
+    "dexterPlus",
+    "dodge",
+    "transp",
+    "opt",
+    "mech",
+    "blood",
+    "mat",
+    "maxShok",
+    "showNumbs"
+  ],
+  "native_evidence": {
+    "host_sha256": "befcf0509e11fac9fef7afb834708b8b93752a14ae3d5cd72b42aa6d42f9b82a",
+    "source": "existing audit_native_slots.inspect_swf, read-only stdout, 2026-10-22",
+    "parent": "fe::Obj",
+    "namespace": "",
+    "namespace_kind": 22,
+    "trait_kind": 0,
+    "fields": {
+      "maxhp": "Number",
+      "skin": "Number",
+      "armor": "Number",
+      "marmor": "Number",
+      "armor_hp": "Number",
+      "armor_maxhp": "Number",
+      "armor_qual": "Number",
+      "shithp": "Number",
+      "shitArmor": "Number",
+      "allVulnerMult": "Number",
+      "vulner": "Array",
+      "dexter": "Number",
+      "dexterPlus": "Number",
+      "dodge": "Number",
+      "invulner": "Boolean",
+      "transp": "Boolean",
+      "opt": "Object",
+      "mech": "Boolean",
+      "blood": "int",
+      "mat": "int",
+      "maxShok": "int",
+      "showNumbs": "Boolean"
+    }
+  },
+  "exact_functions": {
+    "before": {
+      "probe": "7b62fd471a881ba41b0b95cc55f11a2331fccb3ef57e0588f3a1d37f4223c538",
+      "probeOptional": "269f06aa4251b5219081228b97205713087f2f4134ce09707ef9f06ab270956c",
+      "unitFields": "eecf904921d0801c5256fbc29bc2a5376dc68e7496af5adcee32d7037fc08d54"
+    },
+    "after": {
+      "probe": "7b62fd471a881ba41b0b95cc55f11a2331fccb3ef57e0588f3a1d37f4223c538",
+      "probeOptional": "269f06aa4251b5219081228b97205713087f2f4134ce09707ef9f06ab270956c",
+      "unitFields": "eecf904921d0801c5256fbc29bc2a5376dc68e7496af5adcee32d7037fc08d54"
+    }
+  },
+  "numbers_sha256": "ef70d563242860565a8961ad9a3e32d789015a249c36405b529bba366cb2d469",
+  "production_compiled": false,
+  "component_executed": false,
+  "performance_qualified": false,
+  "runtime_stub_limit": "Only public slot kinds/hierarchy used by this test; no native world/constructors/third-party modules"
+}

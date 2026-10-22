@@ -1,0 +1,214 @@
+{
+  "passed": 49,
+  "failed": 0,
+  "checks": [
+    {
+      "passed": true,
+      "label": "accurate18 baseline unchanged"
+    },
+    {
+      "passed": true,
+      "label": "full production class has only native Unit table additions"
+    },
+    {
+      "passed": true,
+      "label": "exactly 18 verified variables appended without changing existing entries"
+    },
+    {
+      "passed": true,
+      "label": "entire unitFields and snapshot call sites unchanged"
+    },
+    {
+      "passed": true,
+      "label": "high frequency capture unchanged"
+    },
+    {
+      "passed": true,
+      "label": "global probe and protected fallback unchanged"
+    },
+    {
+      "passed": true,
+      "label": "exact actual function Before probe"
+    },
+    {
+      "passed": true,
+      "label": "exact actual function Before probeOptional"
+    },
+    {
+      "passed": true,
+      "label": "exact actual function Before unitFields"
+    },
+    {
+      "passed": true,
+      "label": "exact original table Before NATIVE_UNIT_FIELDS"
+    },
+    {
+      "passed": true,
+      "label": "exact original table Before NATIVE_POINT_FIELDS"
+    },
+    {
+      "passed": true,
+      "label": "exact original table Before NATIVE_INTERACT_FIELDS"
+    },
+    {
+      "passed": true,
+      "label": "exact 22 defense field order Before"
+    },
+    {
+      "passed": true,
+      "label": "exact actual function After probe"
+    },
+    {
+      "passed": true,
+      "label": "exact actual function After probeOptional"
+    },
+    {
+      "passed": true,
+      "label": "exact actual function After unitFields"
+    },
+    {
+      "passed": true,
+      "label": "exact original table After NATIVE_UNIT_FIELDS"
+    },
+    {
+      "passed": true,
+      "label": "exact original table After NATIVE_POINT_FIELDS"
+    },
+    {
+      "passed": true,
+      "label": "exact original table After NATIVE_INTERACT_FIELDS"
+    },
+    {
+      "passed": true,
+      "label": "exact 22 defense field order After"
+    },
+    {
+      "passed": true,
+      "label": "native public declaration maxhp"
+    },
+    {
+      "passed": true,
+      "label": "native public declaration skin"
+    },
+    {
+      "passed": true,
+      "label": "native public declaration armor"
+    },
+    {
+      "passed": true,
+      "label": "native public declaration marmor"
+    },
+    {
+      "passed": true,
+      "label": "native public declaration armor_hp"
+    },
+    {
+      "passed": true,
+      "label": "native public declaration armor_maxhp"
+    },
+    {
+      "passed": true,
+      "label": "native public declaration armor_qual"
+    },
+    {
+      "passed": true,
+      "label": "native public declaration shithp"
+    },
+    {
+      "passed": true,
+      "label": "native public declaration shitArmor"
+    },
+    {
+      "passed": true,
+      "label": "native public declaration allVulnerMult"
+    },
+    {
+      "passed": true,
+      "label": "native public declaration vulner"
+    },
+    {
+      "passed": true,
+      "label": "native public declaration dexter"
+    },
+    {
+      "passed": true,
+      "label": "native public declaration dexterPlus"
+    },
+    {
+      "passed": true,
+      "label": "native public declaration dodge"
+    },
+    {
+      "passed": true,
+      "label": "native public declaration invulner"
+    },
+    {
+      "passed": true,
+      "label": "native public declaration transp"
+    },
+    {
+      "passed": true,
+      "label": "native public declaration opt"
+    },
+    {
+      "passed": true,
+      "label": "native public declaration mech"
+    },
+    {
+      "passed": true,
+      "label": "native public declaration blood"
+    },
+    {
+      "passed": true,
+      "label": "native public declaration mat"
+    },
+    {
+      "passed": true,
+      "label": "native public declaration maxShok"
+    },
+    {
+      "passed": true,
+      "label": "native public declaration showNumbs"
+    },
+    {
+      "passed": true,
+      "label": "full native numbers conversion extracted exactly"
+    },
+    {
+      "passed": true,
+      "label": "planned 81 runtime assertions, not an execution claim"
+    },
+    {
+      "passed": true,
+      "label": "timed loop is complete capture without setup/assertion/encoding"
+    },
+    {
+      "passed": true,
+      "label": "explicit ABBA sequence retained"
+    },
+    {
+      "passed": true,
+      "label": "valueOf read-order and exception counterexamples present"
+    },
+    {
+      "passed": true,
+      "label": "component cannot claim native/performance pass"
+    },
+    {
+      "passed": true,
+      "label": "public mutable field list retains unknown getter fallback"
+    }
+  ],
+  "expected_runtime_assertions": 81,
+  "assertion_plan": {
+    "basic": 32,
+    "edgeValues": 10,
+    "fallbacks": 18,
+    "ordering": 7,
+    "otherGroups": 4,
+    "mutableNames": 6,
+    "verifyBench": 4
+  },
+  "compiled": false,
+  "runtime_tested": false
+}

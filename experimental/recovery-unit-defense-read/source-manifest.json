@@ -1,0 +1,32 @@
+{
+  "baseline_sha256": "3fe9bb83a16a57300e733806cddbe74ce55bcaf323bec15554814f4714eba967",
+  "expected_runtime_assertions": 81,
+  "compiled": false,
+  "runtime_tested": false,
+  "files": {
+    "check_sources.py": "c1f87cc39ec69ff210777fd6074dc9d7709552e7e001224692548223f4d06e68",
+    "components/defensecheck/DefenseAfter.as": "85842d79c5b222205a8eefb685848c2ebbfd9b9f23508611d5f312a2c831df03",
+    "components/defensecheck/DefenseBefore.as": "bb21f4126d5c80c49a50807f596f0f197e9c2e41f5ded7eb9453ef9ae568fef8",
+    "components/defensecheck/DynamicUnit.as": "eb87a4834c6af86c4b8769c077a709bb11f0691ffa3ffaa38cd24c8f8836b36e",
+    "components/defensecheck/GetterFixture.as": "c4f4853aac065a5f4a359f8ef8526f6b20ac01c18e27092455162ce4685123b4",
+    "components/defensecheck/PointGetter.as": "6c9bae9f5377c519ccdb9a82d81c1b917962c40acbca4904b1ed544d1c8399af",
+    "components/defensecheck/ReadProxy.as": "5e1ed6fa1a15bb29595b5381646c5e209ca9b60edc9df05930aec064e8d45379",
+    "components/DefenseReadChecks.as": "1a32c8f97d1320aa9383bed3ea4f3111c03ecd17f1d4bdc8979dce6081e7a021",
+    "components/fe/Obj.as": "20f7067bf8de5e14d7af474660fa72c2dff977130dfe32412b03ac26cff1572c",
+    "components/fe/Pt.as": "6adf0032cd9df14feed727e7eb313d38e0ca2462eb5ff3847ceab8ee993d1207",
+    "components/fe/serv/Interact.as": "05b1016dbde967d3969ba1abd915cfc3698ec9e3169b87059feac4a7181b9b8f",
+    "components/fe/unit/Unit.as": "e77da027cd750da6dfe8c28129da668e6e830cf298b018be575fdab0ff5f5ab6",
+    "components/rconnect/game/NativeRoomState.as": "12eae348ea4417fc4d5be0d1f97fcc098d6ac292330b0fe1b84179f083d38d89",
+    "draft-rejected-single-type/DefenseAfter.as.txt": "046299959192389702ca73cab9fe52ee18d52f30fe2b3a73cf9da756936618c7",
+    "draft-rejected-single-type/extraction.json": "756bcb69e19b323c6a71ec25e10b7cef151a10102dfd835a43fbab9d6405d1a8",
+    "draft-rejected-single-type/proposal.patch": "dbbed7ae7c321c9c6d12f825a5696eaad8870bd407f48da70b450578d71756a8",
+    "draft-rejected-single-type/README.md": "9c1ff40e8b5fba72b80626b3b3fd92755606ed7de643b7de77fde4536da274e9",
+    "draft-rejected-single-type/static-checks.json": "5d0f35ac709b1b370269520b07c45ec5f16b0d1074ed0c4cce17d180aa49bd28",
+    "extraction.json": "be320f6045aa212d0a45d9ad29e6fab27f83ceed0f6aa4bdbacbba9e515ca451",
+    "prepare_sources.py": "1c95c766d1fd8be1ad878f10a74aa96490ba13e88ee3c2c93ef9d73b9ff431ae",
+    "proposal.patch": "f055bb91096d5c35f3d72c2e843ff501347eb4f19e184a2571624752d401a444",
+    "README.md": "36a4f951d4438b4dd73ec86aef90ffa24f11508c0eef1cc8b29a8e1c6e937348",
+    "src/rconnect/game/GameBridge.as": "a1d12650073d1f57736f80323a0403a6e04f9ea91fb31767dacc499e8e5724bb",
+    "static-checks.json": "f4362ccd728a7ad099c26d35520b9b64b2e5b39a00c56c19e26c8beae1c459e0"
+  }
+}

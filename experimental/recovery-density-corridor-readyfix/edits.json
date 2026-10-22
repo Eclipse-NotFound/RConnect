@@ -1,0 +1,34 @@
+[
+  [
+    "                  gun.hold=10000;gun.damage=1;gun.destroy=0;gun.damageExpl=0;gun.precision=0;gun.deviation=0;gun.critCh=0;",
+    "                  DensityWeaponPreparation.configure(gun);"
+  ],
+  [
+    "         CorridorFixture.apply(mod,loadActors,loadGuns,true);",
+    "         CorridorFixture.apply(mod,loadActors,loadGuns,true);\n         DensityWeaponPreparation.bindHost(loadActors);"
+  ],
+  [
+    "direction:Number(u.storona),hp:Number(u.hp),weapon:u.currentWeapon==null?null:String(u.currentWeapon.id)};",
+    "direction:Number(u.storona),hp:Number(u.hp),weapon:DensityWeaponPreparation.identity(u)};"
+  ],
+  [
+    "            objects.push(u);var row:Object=arenaIdentity(u);actual.push(row);\n            if(DensityFixture.canonical(row)!=DensityFixture.canonical(arenaExpected[i]))identityOK=false;",
+    "            objects.push(u);"
+  ],
+  [
+    "         if(!host && objects.length==80 && !arenaCleaned) {",
+    "         if(!host && objects.length==80 && !arenaCleaned && DensityWeaponPreparation.modelsMatch(objects,arenaExpected)) {"
+  ],
+  [
+    "            arenaRemoved=DensityFixture.removeExtras(mod,objects);arenaCleaned=true;loadActors=objects;\n            CorridorFixture.apply(mod,loadActors,loadGuns,false);\n         }",
+    "            arenaRemoved=DensityFixture.removeExtras(mod,objects);loadActors=objects;\n            CorridorFixture.apply(mod,loadActors,loadGuns,false);\n            DensityWeaponPreparation.prepareMirrors(objects,arenaExpected);arenaCleaned=true;\n         }\n         for(i=0;i<objects.length;i++) {\n            var row:Object=arenaIdentity(objects[i]);actual.push(row);\n            if(DensityFixture.canonical(row)!=DensityFixture.canonical(arenaExpected[i]))identityOK=false;\n         }"
+  ],
+  [
+    "            if(identity.weapon!=null)weapons[identity.weapon]=int(weapons[identity.weapon])+1;}",
+    "            if(identity.weapon!=null)weapons[identity.weapon.id]=int(weapons[identity.weapon.id])+1;}"
+  ],
+  [
+    "         return {ok:objects.length==80 && identityOK && arenaCleaned && extras.length==0",
+    "         return {ok:objects.length==80 && identityOK && arenaCleaned && DensityWeaponPreparation.bound(objects) && extras.length==0"
+  ]
+]

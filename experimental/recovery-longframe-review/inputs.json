@@ -1,0 +1,127 @@
+{
+  "read_only_review": true,
+  "runtime_run": false,
+  "profile_run": "a6a7e27789",
+  "profile_sha256": "fa3e6894b934e67da345eed746ca2e8ece90b457414fdf4652103725d03c2c77",
+  "source": "build/m52/recovery-19/src",
+  "methods": [
+    {
+      "file": "rconnect/core/Session.as",
+      "method": "onTick",
+      "line": 745,
+      "body_sha256": "d39d492e80efa4eee80c32a164191a766825a4882816eed177567e4c7fa54a0a",
+      "identical_14_19": true
+    },
+    {
+      "file": "rconnect/core/Session.as",
+      "method": "broadcastWorldState",
+      "line": 1204,
+      "body_sha256": "34fd52820a532952c4a421b00f1d195da298bf4fe3f6b9c8d271f15878c72a7c",
+      "identical_14_19": true
+    },
+    {
+      "file": "rconnect/game/GameBridge.as",
+      "method": "readEnemyMotion",
+      "line": 5502,
+      "body_sha256": "67e53a5542e10627d2d5dd61c192ae59119a86cc33c4952e0315cd42c80f4d89",
+      "identical_14_19": true
+    },
+    {
+      "file": "rconnect/game/GameBridge.as",
+      "method": "readUnitsSnapshot",
+      "line": 5534,
+      "body_sha256": "9c9b13d90eee2fe575b58105570303c6782294c6f15f0018b2ef1d94c2f7eee9",
+      "identical_14_19": true
+    },
+    {
+      "file": "rconnect/game/GameBridge.as",
+      "method": "onMirrorFrame",
+      "line": 340,
+      "body_sha256": "7ef5d2e9280d6bd1dbdd3185f476f6c80a80574479a951029c512e8b3a611ae8",
+      "identical_14_19": true
+    },
+    {
+      "file": "rconnect/game/GameBridge.as",
+      "method": "onVisForceFrame",
+      "line": 242,
+      "body_sha256": "a4576cd992c14afb45d870fca032fd53528a0d3c17a1ac24e427266ca7b54065",
+      "identical_14_19": true
+    },
+    {
+      "file": "rconnect/game/GameBridge.as",
+      "method": "tickFrozenAnims",
+      "line": 6389,
+      "body_sha256": "5db2ccfb1dca07a92c2789cae567efe009357289dd0276ef321dfe21ad79d47d",
+      "identical_14_19": true
+    },
+    {
+      "file": "rconnect/game/UnitPresentation.as",
+      "method": "capture",
+      "line": 189,
+      "body_sha256": "2e471449f5d987e12c989d05ee3f9ad4b7c98f8cdcb2b07c7535bad9b2e4e7b2",
+      "identical_14_19": true
+    },
+    {
+      "file": "rconnect/game/UnitPresentation.as",
+      "method": "captureEffects",
+      "line": 253,
+      "body_sha256": "bdb22e330b50fffc16dfc2ec5fe35c5acbaa9210b1897886d94672f67b431b43",
+      "identical_14_19": true
+    },
+    {
+      "file": "rconnect/game/UnitPresentation.as",
+      "method": "beginCaptureBatch",
+      "line": 36,
+      "body_sha256": "1130e85f744e4bdab07ab245d4735dee0eef01e2040bff29df5c7c658ccd5168",
+      "identical_14_19": true
+    },
+    {
+      "file": "rconnect/game/UnitPresentation.as",
+      "method": "scanBullets",
+      "line": 77,
+      "body_sha256": "e73757806e4d60d986b521bddf73eda40bbb5c18d0afad436afb5f42af7a7f09",
+      "identical_14_19": true
+    },
+    {
+      "file": "rconnect/net/BinaryMessageCodec.as",
+      "method": "pack",
+      "line": 17,
+      "body_sha256": "039927ee73521d46c57774be89363905bcb6a7e6460d4e24554a6c6c2ce2b836",
+      "identical_14_19": true
+    },
+    {
+      "file": "rconnect/net/BinaryMessageCodec.as",
+      "method": "copy",
+      "line": 26,
+      "body_sha256": "d0a2eb49f7e0d66957fc6d676a4cda69835ec8c11f86fb7ad70b034e516adb16",
+      "identical_14_19": true
+    },
+    {
+      "file": "rconnect/net/TcpLink.as",
+      "method": "send",
+      "line": 65,
+      "body_sha256": "6720960f6c291e822a349b071a4c7ed481474d77f361628e5376870352cddd5f",
+      "identical_14_19": true
+    },
+    {
+      "file": "rconnect/net/TcpLink.as",
+      "method": "onData",
+      "line": 161,
+      "body_sha256": "13a5bf43c1cf6acb711229d0538cff040ae39acbcd56c58d8c94e4f5989137c6",
+      "identical_14_19": true
+    }
+  ],
+  "files": {
+    "rconnect/core/Session.as": "e699b9c5a02799367bba8afd924d450d064cab3f0a5e9a36ea7d400b378b10ba",
+    "rconnect/game/GameBridge.as": "3fe9bb83a16a57300e733806cddbe74ce55bcaf323bec15554814f4714eba967",
+    "rconnect/game/UnitPresentation.as": "d67dbcbed8d3ef67771eb10e41516102dabb34aad3a7065ab71ec7822ff53178",
+    "rconnect/net/BinaryMessageCodec.as": "001479db144318320669ce3d89e6c275c210a7d81b9e6f116cdb58e6091376f1",
+    "rconnect/net/TcpLink.as": "93aafc0aad7a410107f2eea2cee288d9366c6cacce289c5b2552dc95140e350c"
+  },
+  "cpu_samples": {
+    "host": 2318,
+    "join": 1259
+  },
+  "host_log_sha256": "35d83e706a362c9d81eef9cbfc675276a215ac0cacc85fe6a480be2ab94fb3e7",
+  "join_log_sha256": "b4c465dea51c78218e1dadc64ab292b44a814aac4d76152e720e8362037326d6"
+}

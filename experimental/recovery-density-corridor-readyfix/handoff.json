@@ -1,0 +1,56 @@
+{
+  "kind": "recovery-density-corridor-readyfix-source-only",
+  "source_base": "mods\\RConnect\\build\\m52\\recovery-density-corridor-drivers-02",
+  "source_manifest_sha256": "d014852ab877dcb750c9bfcf4fe03d2b78080f23c5af639eb5db0933c690bcb3",
+  "compiled": false,
+  "air_started": false,
+  "native_ready_verified": false,
+  "production_parameter_sync_verified": false,
+  "performance_qualified": false,
+  "static_assertions": 23,
+  "static_failed": 0,
+  "changed_old_as": [
+    "tests/SustainedDensityTestDoc.as"
+  ],
+  "added_as": [
+    "tests/DensityWeaponPreparation.as"
+  ],
+  "unchanged_old_as": [
+    "tests/BeforeIntegerMessageCodec.as",
+    "tests/CorridorFixture.as",
+    "tests/DensityFixture.as",
+    "tests/DensityTotalsTestDoc.as",
+    "tests/DensityTrajectoryTotals.as",
+    "tests/fe/unit/CombatStateProbe.as",
+    "tests/NativeTestGun.as",
+    "tests/ProjectileLoadTestDoc.as",
+    "tests/ProjectileProfileTestDoc.as"
+  ],
+  "source_files": {
+    "audit.py": "eaa386f674d94a2400bbb5fc6eb527a580111a991ac64c3a87cc23f89a73b932",
+    "check.py": "53ae57ebec7ad43946f7a6b49f4424b9a8a00b6227d78185bab04f7f78067df8",
+    "driver02-to-readyfix.patch": "305c448ea67f07bf4a11d2ce8f54eaac7fe9a5a0c3d1f3aae40b00b36754ad6e",
+    "edits.json": "7f6e7bbe72ac68ca76b039c235a2d50a963d66fb7c3e856842c93e30eb688073",
+    "generate.py": "731c4852be78a28b818daf3c3c8e2e30a3adcdf47f63115afaa783627ac9889e",
+    "prepare.py": "418b9bd1d6d0aea6890c4f5437aeb99f052206a80a70896d7eb7bb8f2a081a6a",
+    "README.md": "f042467c0d125e443ba5e76363ce07c553939e7498cc83747af323b4e933c129",
+    "run.py": "228e4311cfe12e6080a3aeabe6f0ad5cc775852c442ae609369effa2a3847447",
+    "static-check.json": "b830d544c7247817b74c05e4848f23c6238081c2c41e754f6cefbb65461617cb",
+    "tests/BeforeIntegerMessageCodec.as": "dadbc00256dc50314e43153589aed5ae8f1c921bb17330f940dd0151091aefbe",
+    "tests/CorridorFixture.as": "a49af20d77b5a17976c4bf0fb4c3c296618e59037a8b3427309db15489afdf50",
+    "tests/DensityFixture.as": "9291ef603230e0ae98df0283a5c73a43abaee53e829052e8abeae86555ffb062",
+    "tests/DensityTotalsTestDoc.as": "d9304dea6cb606c42759b5881a841f481a09ec9cee54808a1667ffe41f5a2fca",
+    "tests/DensityTrajectoryTotals.as": "fec11d73fe8da3a72d9fbe8c03a45dbf2cec4ef4ff47246d499f9b3bdbd72ad9",
+    "tests/DensityWeaponPreparation.as": "e8f5a803fbd7c2b55565522bb8d0e52189590e85b2dd7007bf8c26a21071eda3",
+    "tests/fe/unit/CombatStateProbe.as": "788d05b3cfc7a6eee18a098aaa4c7e0e1ff93a17764f01ddd05ddce2b7f13771",
+    "tests/NativeTestGun.as": "19adfccfbff6027d8aa4758c6964fb4f5b68667d24d9c8cf18c3f21193fc9d69",
+    "tests/ProjectileLoadTestDoc.as": "95e742b45c3b8163364451da8730ff15c8345e5b65e60e8260ce9d64c784290f",
+    "tests/ProjectileProfileTestDoc.as": "b79d62bd3dfc93e0064c88999508122fed1ba0d46f34d6acb801c2a9d05c2b36",
+    "tests/SustainedDensityTestDoc.as": "c8785beede69d5b09700885a2559fca698193c0c662662ca061ed63fa59fa843"
+  },
+  "old_results_preserved": [
+    "a003e96ac1",
+    "ce7ffb6f89"
+  ],
+  "do_not_mix_old_new_driver_results": true
+}

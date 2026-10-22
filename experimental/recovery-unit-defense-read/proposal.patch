@@ -1,0 +1,14 @@
+--- accurate18/GameBridge.as
++++ unit-defense-read/GameBridge.as
+@@ -607,7 +607,10 @@
+          inter:true,trigDis:true,armor_hp:true,demask:true,isSit:true,noise:true,overLook:true,
+          stealthMult:true,visibility:true,scrDie:true,scrAlarm:true,questId:true,
+          massa:true,massaMove:true,levit_max:true,levit_r:true,t_throw:true,isFly:true,isLaz:true,
+-         nazv:true,level:true,npc:true,noAgro:true};
++         nazv:true,level:true,npc:true,noAgro:true,
++         skin:true,armor:true,marmor:true,armor_maxhp:true,armor_qual:true,shitArmor:true,
++         allVulnerMult:true,vulner:true,dexter:true,dexterPlus:true,dodge:true,transp:true,
++         opt:true,mech:true,blood:true,mat:true,maxShok:true,showNumbs:true};
+       private static const NATIVE_POINT_FIELDS:Object={loc:true,nobj:true,pobj:true,in_chain:true,
+          stay:true,X:true,Y:true,sloy:true,dx:true,dy:true,vis:true};
+       private static const NATIVE_INTERACT_FIELDS:Object={owner:true,action:true,prob:true,allact:true,

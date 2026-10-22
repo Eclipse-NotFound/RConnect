@@ -1,0 +1,148 @@
+{
+  "kind": "independent-read-only-ready-density-review",
+  "driver_manifest_sha256": "5a8dbb9395c8dba8b6e980c49b112c6df3ae2e19e2f4950769d29756f8e1735c",
+  "driver_inputs_count": 23,
+  "driver_inputs_exact": true,
+  "runs": {
+    "18": {
+      "status": "completed",
+      "run": "9d69429997",
+      "result_sha256": "94586acad689328b514ba8f4dc30ed07197e705a21104192367c12bdc19e710f",
+      "candidate_sha256": "11b795d0d6681caa4edfcc2d1c0df73cb38f6d706a1fb3c26518163f738fe4d3",
+      "framework_passed": false,
+      "installation_count": 22,
+      "driver_manifest_matches": true,
+      "guards": {
+        "installation_unchanged": true,
+        "runner_unchanged": true,
+        "air_inventory_unchanged": true,
+        "exclusive_air_confirmed": true,
+        "same_runtime_as_reference": true,
+        "invalid_reason": null
+      },
+      "roles": {
+        "host": {
+          "log_sha256": "a7b5370f4d66164fcc408e4c43c734d8f3379a12a3bf5919349920eba8eff8de",
+          "passed_checks": 29,
+          "failed_checks": 0,
+          "failure_categories": {},
+          "windows": [],
+          "prepared_weapon_count": 39,
+          "prepared_hold_counts": {
+            "10000": 39
+          },
+          "gun_setup_parameters_all_exact": true,
+          "prepare_records": 0,
+          "native_visual_counts": {
+            "actorWeapons": 39,
+            "actors": 80,
+            "localPlayer": 1,
+            "remotePlayer": 1
+          },
+          "native_visuals_ok": true
+        },
+        "join": {
+          "log_sha256": "beb995f657326bcaa4d73ecf98564be6932200ffc18d9bfed1179315017ca854",
+          "passed_checks": 39,
+          "failed_checks": 15,
+          "failure_categories": {
+            "80 enemies keep stage frames progressing": 7,
+            "80 enemies keep current world snapshots arriving": 1,
+            "weapon aim advances between snapshots": 7
+          },
+          "windows": [
+            {
+              "frames": 35,
+              "p95ms": 373,
+              "maxms": 592,
+              "packets": 46,
+              "maxPacketMs": 1083,
+              "aimSamples": 27
+            },
+            {
+              "frames": 38,
+              "p95ms": 425,
+              "maxms": 441,
+              "packets": 33,
+              "maxPacketMs": 640,
+              "aimSamples": 31
+            },
+            {
+              "frames": 39,
+              "p95ms": 374,
+              "maxms": 390,
+              "packets": 32,
+              "maxPacketMs": 560,
+              "aimSamples": 29
+            },
+            {
+              "frames": 36,
+              "p95ms": 378,
+              "maxms": 538,
+              "packets": 33,
+              "maxPacketMs": 802,
+              "aimSamples": 26
+            },
+            {
+              "frames": 39,
+              "p95ms": 396,
+              "maxms": 410,
+              "packets": 35,
+              "maxPacketMs": 595,
+              "aimSamples": 28
+            },
+            {
+              "frames": 37,
+              "p95ms": 381,
+              "maxms": 383,
+              "packets": 33,
+              "maxPacketMs": 619,
+              "aimSamples": 29
+            },
+            {
+              "frames": 35,
+              "p95ms": 417,
+              "maxms": 514,
+              "packets": 34,
+              "maxPacketMs": 714,
+              "aimSamples": 28
+            }
+          ],
+          "prepared_weapon_count": 39,
+          "prepared_hold_counts": {
+            "10000": 39
+          },
+          "gun_setup_parameters_all_exact": true,
+          "prepare_records": 1,
+          "native_visual_counts": {
+            "actorWeapons": 39,
+            "actors": 80,
+            "localPlayer": 1,
+            "remotePlayer": 1
+          },
+          "native_visuals_ok": true,
+          "native_hold_before_fixture": {
+            "0": 27,
+            "12": 12
+          }
+        }
+      },
+      "audit": {
+        "passed": false,
+        "input_comparable": false,
+        "attribution_allowed": false,
+        "difference_count": null,
+        "same_driver": null,
+        "same_runtime": null,
+        "corridor_static_equal": null,
+        "error": null
+      }
+    },
+    "19": {
+      "status": "pending",
+      "result_missing_is_failure": false
+    }
+  },
+  "comparison": null,
+  "performance_qualified": false
+}
