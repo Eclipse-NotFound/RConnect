@@ -1,0 +1,346 @@
+{
+  "read_only": true,
+  "production_changed": false,
+  "candidate_created": false,
+  "performance_qualified": false,
+  "shared_sources": {
+    "rconnect/core/Session.as": {
+      "20": "e699b9c5a02799367bba8afd924d450d064cab3f0a5e9a36ea7d400b378b10ba",
+      "21": "e699b9c5a02799367bba8afd924d450d064cab3f0a5e9a36ea7d400b378b10ba"
+    },
+    "rconnect/game/GameBridge.as": {
+      "20": "260cebd0f89e348979d05d00338f7e444a1abf2c0bbe4d03350475b05e01142d",
+      "21": "260cebd0f89e348979d05d00338f7e444a1abf2c0bbe4d03350475b05e01142d"
+    },
+    "rconnect/game/RemoteMotion.as": {
+      "20": "5f0d0ba3b8de5ec1a08d392b4147f04a4d318c0bcdd0a2f7bbf236a5d28fc877",
+      "21": "5f0d0ba3b8de5ec1a08d392b4147f04a4d318c0bcdd0a2f7bbf236a5d28fc877"
+    },
+    "rconnect/game/WeaponDisplay.as": {
+      "20": "c76a6b157992398dbb8d8620de2482375594423226cd64b90e13e8fee96066f2",
+      "21": "c76a6b157992398dbb8d8620de2482375594423226cd64b90e13e8fee96066f2"
+    },
+    "rconnect/game/ObjectIdentity.as": {
+      "20": "0bc4cc3429f78f0e43164dea4af4481e4230fdf335bd0eed6e7090baf0937774",
+      "21": "0bc4cc3429f78f0e43164dea4af4481e4230fdf335bd0eed6e7090baf0937774"
+    },
+    "rconnect/game/ProjectileVisuals.as": {
+      "20": "17a65244a2d7283e37b699ade9d45eeef7a19e132b0b1a0a49e50da4fa0d85fd",
+      "21": "17a65244a2d7283e37b699ade9d45eeef7a19e132b0b1a0a49e50da4fa0d85fd"
+    },
+    "rconnect/game/ProjectileFrameStream.as": {
+      "20": "a7039e20094c9df3f9e7a7ee2f22e1f1262d067c0e7f0356cb994743fbfc30d9",
+      "21": "a7039e20094c9df3f9e7a7ee2f22e1f1262d067c0e7f0356cb994743fbfc30d9"
+    }
+  },
+  "fingerprints": {
+    "experimental\\recovery-socket-batch-review\\summary.json": "ad3f9b5f936186ea2e895a49a092497273b5d8938600cb2d638712fcbe337510",
+    "build\\m52\\recovery-after-render-sampler-20-01\\cpu-profile.json": "4a93606310c5f0919d0261ca66fbc7dd102761b49e5ce5fcfa1facdc864b1049",
+    "build\\cooperation\\b3d7b8558b\\join.log": "2b9575e9f3ef4c66a1e7c85a30aa8019468320963bb7a45f7e46c1cd2aab5ef7",
+    "build\\m52\\recovery-20\\prepared.json": "842874fe563de894d56215bdba7538c9c1476ba82f99b43d5eeaa77e665c776f",
+    "build\\m52\\recovery-21\\prepared.json": "c161564df59916db2ccd35ab5c92ed64e02b1cf66eab176c55d7e59c5e0331c2"
+  },
+  "socket_run": "e53cb3730a",
+  "socket_longest": {
+    "id": 636,
+    "phase": 1,
+    "frame": 3,
+    "duration": 117,
+    "messages": 5,
+    "full": 0,
+    "fast": 3,
+    "dispatch_ms": 105,
+    "metadata_ms": 0,
+    "rows": [
+      {
+        "type": "worldstate",
+        "dispatchMs": 3,
+        "units": 80,
+        "wallCells": 0,
+        "wallChars": 0,
+        "tick": 1292,
+        "sampleMin": 125262,
+        "sampleMax": 125262
+      },
+      {
+        "type": "player-mines",
+        "dispatchMs": 0,
+        "units": 0,
+        "wallCells": 0,
+        "wallChars": 0,
+        "tick": null,
+        "sampleMin": null,
+        "sampleMax": null
+      },
+      {
+        "type": "coop-pause",
+        "dispatchMs": 0,
+        "units": 0,
+        "wallCells": 0,
+        "wallChars": 0,
+        "tick": null,
+        "sampleMin": null,
+        "sampleMax": null
+      },
+      {
+        "type": "worldstate",
+        "dispatchMs": 2,
+        "units": 80,
+        "wallCells": 0,
+        "wallChars": 0,
+        "tick": 1293,
+        "sampleMin": 125351,
+        "sampleMax": 125351
+      },
+      {
+        "type": "worldstate",
+        "dispatchMs": 100,
+        "units": 80,
+        "wallCells": 0,
+        "wallChars": 0,
+        "tick": 1294,
+        "sampleMin": 125432,
+        "sampleMax": 125432
+      }
+    ]
+  },
+  "cpu_run": "b3d7b8558b",
+  "complete_windows": 24,
+  "cpu_samples": 1614,
+  "all_inclusive": {
+    "applyEnemyMotion": 116,
+    "queueUnitMotion": 112,
+    "RemoteMotion/sample@": 76,
+    "RemoteMotion/sampleTimed": 75,
+    "RemoteMotion/pushTimed": 23,
+    "blendWeapons": 34,
+    "blendBodyPose": 16,
+    "WeaponDisplay$/interpolate": 6,
+    "validLandPos": 18,
+    "applyWorldState": 18,
+    "updateRemote": 18,
+    "driveGhost": 8,
+    "applyLootSync": 0,
+    "ProjectileVisuals/receive": 21,
+    "ProjectileFrameStream$/merge": 2,
+    "[reap]": 96
+  },
+  "within_applyEnemyMotion_inclusive": {
+    "applyEnemyMotion": 116,
+    "queueUnitMotion": 79,
+    "RemoteMotion/sample@": 53,
+    "RemoteMotion/sampleTimed": 52,
+    "RemoteMotion/pushTimed": 15,
+    "blendWeapons": 24,
+    "blendBodyPose": 10,
+    "WeaponDisplay$/interpolate": 3,
+    "validLandPos": 13,
+    "applyWorldState": 0,
+    "updateRemote": 0,
+    "driveGhost": 0,
+    "applyLootSync": 0,
+    "ProjectileVisuals/receive": 3,
+    "ProjectileFrameStream$/merge": 1,
+    "[reap]": 11
+  },
+  "fast_leaf": [
+    [
+      "rconnect.game::RemoteMotion$/blendWeapons@null:0",
+      20
+    ],
+    [
+      "rconnect.game::GameBridge$/applyUnitFields@null:0",
+      17
+    ],
+    [
+      "[reap]@null:0",
+      11
+    ],
+    [
+      "rconnect.game::RemoteMotion$/blendBodyPose@null:0",
+      10
+    ],
+    [
+      "rconnect.game::GameBridge/queueUnitMotion@null:0",
+      9
+    ],
+    [
+      "rconnect.game::RemoteMotion/sampleTimed@null:0",
+      9
+    ],
+    [
+      "rconnect.game::RemoteMotion/pushTimed@null:0",
+      9
+    ],
+    [
+      "rconnect.game::RemoteMotion/curve@null:0",
+      5
+    ],
+    [
+      "[activation-object]@null:0",
+      4
+    ],
+    [
+      "Array/http://adobe.com/AS3/2006/builtin::push@null:0",
+      3
+    ],
+    [
+      "rconnect.game::GameBridge$/probe@null:0",
+      3
+    ],
+    [
+      "rconnect.game::GameBridge/applyEnemyMotion@null:0",
+      3
+    ],
+    [
+      "rconnect.game::GameBridge/validLandPos@null:0",
+      2
+    ],
+    [
+      "rconnect.game::WeaponDisplay$/interpolate@null:0",
+      2
+    ],
+    [
+      "rconnect.game::GameBridge$/probeOptional@null:0",
+      2
+    ],
+    [
+      "rconnect.game::ProjectileVisuals/receive@null:0",
+      2
+    ],
+    [
+      "rconnect.game::RemoteMotion/rateHeld@null:0",
+      1
+    ],
+    [
+      "rconnect.game::RemoteMotion/delay@null:0",
+      1
+    ],
+    [
+      "rconnect.game::RemoteMotion/sample@null:0",
+      1
+    ],
+    [
+      "rconnect.core::EnemyGrip/preserveLocal@null:0",
+      1
+    ],
+    [
+      "Array/http://adobe.com/AS3/2006/builtin::concat@null:0",
+      1
+    ]
+  ],
+  "fast_representative_stacks": [
+    [
+      "rconnect.game::RemoteMotion$/blendWeapons@null:0 <- rconnect.game::RemoteMotion/sampleTimed@null:0 <- rconnect.game::RemoteMotion/sample@null:0 <- rconnect.game::GameBridge/queueUnitMotion@null:0 <- rconnect.game::GameBridge/applyEnemyMotion@null:0 <- rconnect.core::Session/handleMessage@null:0 <- rconnect.core::Session/onLinkMessage@null:0 <- flash.events::EventDispatcher/dispatchEventFunction@null:0 <- flash.events::EventDispatcher/dispatchEvent@null:0 <- rconnect.net::TcpLink/onData@null:0",
+      20
+    ],
+    [
+      "rconnect.game::GameBridge$/applyUnitFields@null:0 <- rconnect.game::GameBridge/applyEnemyMotion@null:0 <- rconnect.core::Session/handleMessage@null:0 <- rconnect.core::Session/onLinkMessage@null:0 <- flash.events::EventDispatcher/dispatchEventFunction@null:0 <- flash.events::EventDispatcher/dispatchEvent@null:0 <- rconnect.net::TcpLink/onData@null:0",
+      17
+    ],
+    [
+      "rconnect.game::RemoteMotion$/blendBodyPose@null:0 <- rconnect.game::RemoteMotion/sampleTimed@null:0 <- rconnect.game::RemoteMotion/sample@null:0 <- rconnect.game::GameBridge/queueUnitMotion@null:0 <- rconnect.game::GameBridge/applyEnemyMotion@null:0 <- rconnect.core::Session/handleMessage@null:0 <- rconnect.core::Session/onLinkMessage@null:0 <- flash.events::EventDispatcher/dispatchEventFunction@null:0 <- flash.events::EventDispatcher/dispatchEvent@null:0 <- rconnect.net::TcpLink/onData@null:0",
+      10
+    ],
+    [
+      "rconnect.game::GameBridge/queueUnitMotion@null:0 <- rconnect.game::GameBridge/applyEnemyMotion@null:0 <- rconnect.core::Session/handleMessage@null:0 <- rconnect.core::Session/onLinkMessage@null:0 <- flash.events::EventDispatcher/dispatchEventFunction@null:0 <- flash.events::EventDispatcher/dispatchEvent@null:0 <- rconnect.net::TcpLink/onData@null:0",
+      9
+    ],
+    [
+      "rconnect.game::RemoteMotion/sampleTimed@null:0 <- rconnect.game::RemoteMotion/sample@null:0 <- rconnect.game::GameBridge/queueUnitMotion@null:0 <- rconnect.game::GameBridge/applyEnemyMotion@null:0 <- rconnect.core::Session/handleMessage@null:0 <- rconnect.core::Session/onLinkMessage@null:0 <- flash.events::EventDispatcher/dispatchEventFunction@null:0 <- flash.events::EventDispatcher/dispatchEvent@null:0 <- rconnect.net::TcpLink/onData@null:0",
+      9
+    ]
+  ],
+  "longest_five_windows": [
+    {
+      "phase": 6,
+      "frame": 11,
+      "render_to_stop_ms": 182,
+      "cpu": 198,
+      "fast_chain": {
+        "applyEnemyMotion": 21,
+        "queueUnitMotion": 14,
+        "RemoteMotion/sample@": 10,
+        "RemoteMotion/sampleTimed": 10,
+        "RemoteMotion/pushTimed": 4,
+        "blendWeapons": 4,
+        "blendBodyPose": 4,
+        "validLandPos": 5,
+        "ProjectileVisuals/receive": 1,
+        "[reap]": 2
+      }
+    },
+    {
+      "phase": 5,
+      "frame": 21,
+      "render_to_stop_ms": 162,
+      "cpu": 156,
+      "fast_chain": {
+        "applyEnemyMotion": 16,
+        "queueUnitMotion": 7,
+        "RemoteMotion/sample@": 6,
+        "RemoteMotion/sampleTimed": 6,
+        "RemoteMotion/pushTimed": 1,
+        "blendWeapons": 1,
+        "blendBodyPose": 1,
+        "validLandPos": 2,
+        "ProjectileVisuals/receive": 2,
+        "ProjectileFrameStream$/merge": 1,
+        "[reap]": 2
+      }
+    },
+    {
+      "phase": 6,
+      "frame": 21,
+      "render_to_stop_ms": 157,
+      "cpu": 151,
+      "fast_chain": {
+        "applyEnemyMotion": 18,
+        "queueUnitMotion": 13,
+        "RemoteMotion/sample@": 7,
+        "RemoteMotion/sampleTimed": 7,
+        "RemoteMotion/pushTimed": 1,
+        "blendWeapons": 3,
+        "blendBodyPose": 2,
+        "WeaponDisplay$/interpolate": 1,
+        "[reap]": 2
+      }
+    },
+    {
+      "phase": 1,
+      "frame": 21,
+      "render_to_stop_ms": 142,
+      "cpu": 130,
+      "fast_chain": {
+        "applyEnemyMotion": 9,
+        "queueUnitMotion": 8,
+        "RemoteMotion/sample@": 5,
+        "RemoteMotion/sampleTimed": 5,
+        "RemoteMotion/pushTimed": 1,
+        "blendWeapons": 4,
+        "WeaponDisplay$/interpolate": 1,
+        "[reap]": 1
+      }
+    },
+    {
+      "phase": 5,
+      "frame": 1,
+      "render_to_stop_ms": 131,
+      "cpu": 109,
+      "fast_chain": {
+        "applyEnemyMotion": 11,
+        "queueUnitMotion": 7,
+        "RemoteMotion/sample@": 7,
+        "RemoteMotion/sampleTimed": 6,
+        "blendWeapons": 3,
+        "blendBodyPose": 1,
+        "WeaponDisplay$/interpolate": 1,
+        "validLandPos": 3,
+        "[reap]": 2
+      }
+    }
+  ],
+  "different_runs_not_correlated": true,
+  "sole_provable_container_redundancy": "RemoteMotion.blendWeapons second output Array after non-null WeaponDisplay.interpolate result",
+  "measured_saving": null
+}

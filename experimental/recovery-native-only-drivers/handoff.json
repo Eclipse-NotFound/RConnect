@@ -1,0 +1,20 @@
+{
+  "kind": "recovery-native-only-prepare-adapter",
+  "change": "Import unchanged prepare; set COMPONENTS={} only; invoke original main",
+  "files": {
+    "native_only.py": "889c42ea1d89c309326e8336e836f590f5827b32838f9e43153318096853c35e",
+    "README.md": "8e16a4696aa9a93ff89f1aff357d38339f9c2d6d58c773e7bd37c43558053888"
+  },
+  "original_prepare_sha256": "57adca102a8ecbb0c1996dcee405782eced622fea63917d27238d27e81539ac3",
+  "unchanged_run_sha256": "1beca86ca91f5346f56136afd58e071646a57506570ed4b58d857c48270301da",
+  "source": "build/m52/recovery-21/src",
+  "candidate_sha256_from_failed_manifest": "9ac7ede757c253bbf61e0c44334870b4a95112f976c1b40f2f390822a8b7e7ba",
+  "preserved_failed_manifest_sha256": "c493558caa640e010762d46e4be0829bd6ff2bd36bd1d616f7be7381deaeeb05",
+  "checked_original_as_py": 127,
+  "changed_original_as_py": [],
+  "static_syntax_passed": true,
+  "compiled": false,
+  "air_started": false,
+  "native_qualified": false,
+  "note": "Combined metadata writer containing a binary-read path was rejected by the local hook. No command ran. Binary digest above is attributed to the existing failed manifest; only source syntax/read-only hashes and this JSON were completed. Original prepare will recheck candidate bytes during freeze/build."
+}
