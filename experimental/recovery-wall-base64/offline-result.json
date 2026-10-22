@@ -1,0 +1,78 @@
+{
+  "assertions": [
+    {
+      "passed": true,
+      "label": "All Python parses; no process launch"
+    },
+    {
+      "passed": true,
+      "label": "Only alphabet constant and Base64 tail change in exact18 codec"
+    },
+    {
+      "passed": true,
+      "label": "Complete receiving validation and decoding remain exact source bytes"
+    },
+    {
+      "passed": true,
+      "label": "Enumeration/key/color checks, Number coercion, sort, uint serialization are unchanged"
+    },
+    {
+      "passed": true,
+      "label": "Native zlib call and compressed bound remain before Base64 conversion"
+    },
+    {
+      "passed": true,
+      "label": "All 64 literal ASCII codes match existing alphabet"
+    },
+    {
+      "passed": true,
+      "label": "Bounded Python bit-layout oracle: all 1/2-byte tails and 17760 triple probes"
+    },
+    {
+      "passed": true,
+      "label": "Natural corpus remains exactly 82 payloads/1276 recorded decode misses"
+    },
+    {
+      "passed": true,
+      "label": "Natural fixture bytes preserved"
+    },
+    {
+      "passed": true,
+      "label": "Python grouping oracle is byte-identical for all 82 naturally sourced maps; not AIR zlib execution"
+    },
+    {
+      "passed": true,
+      "label": "All 49 original whole-WallImpactVisuals semantic checks retained on exact18 classes"
+    },
+    {
+      "passed": true,
+      "label": "14 additional exact-byte/padding/coercion/rejection checks prepared"
+    },
+    {
+      "passed": true,
+      "label": "Six ABBA groups measure full uncached production packed, not just Base64"
+    },
+    {
+      "passed": true,
+      "label": "Recorded host profile confirms 499 inclusive pack CPU samples"
+    }
+  ],
+  "checks": 14,
+  "failed": 0,
+  "prepared_AS_checks": 63,
+  "AS_executed": false,
+  "JVM_AIR_started": false,
+  "python_grouping_probes": 83552,
+  "natural_pixels": {
+    "min": 4,
+    "max": 1600
+  },
+  "python_zlib_remainders": [
+    0,
+    1,
+    2
+  ],
+  "python_compressed_byte_coverage": 256,
+  "performance_qualified": false,
+  "inputs_manifest_sha256": "ad4a7aa91526f9a759de740a1505ff977eb5b7f0e710bcaa17c3fefb2a249474"
+}

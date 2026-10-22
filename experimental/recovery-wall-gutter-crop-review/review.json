@@ -1,0 +1,1488 @@
+{
+  "diagnostic_only": true,
+  "gameplay_qualified": false,
+  "performance_qualified": false,
+  "inputs": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01\\wall-proof\\host\\round-2-proof.json": "58777c36a01629820264a68d890f302022ea2d3e5b859f6e75e411bed1cba3d3",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01\\wall-proof\\join\\round-2-proof.json": "30d29964b912897a27480dd28e72f1b373aa8176d76be4ca862cf5ffe5af3a4d",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01\\result.json": "3e80bb3677bcb63af653f6ebd4d6940e9c736648a23a98dbdca492a746ecad88",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01\\gutter-diagnostic-result.json": "6873ef59f4b7b0a8599d6ebd3216307c57c363ba643e2ef4e332f8c998747c55",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01\\wall-surface-result.json": "fa33acf286cd024ba648528a60979d517996a734a5ec5754695a9b5d1502622d",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-wall-gutter-crop-diagnostic\\analyze_diagnostic.py": "895695ca587a27444e16b3dc6d7859b210cd2c34ddf26e3001417fd8d77a95c3",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-18\\src\\rconnect\\game\\WallSurfaceBridge.as": "b7f58ccb994f30f86041249c56730831345e95742127814e1afa77bd44d69ad1",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-wall-surfaces-host-01\\after\\scripts\\fe\\graph\\Grafon.as": "e6b4142462c1187388c4bb9c8151dd6c2605ce4e4b9fedd421cf4749c54bd7a0"
+  },
+  "input_bytes_unchanged": true,
+  "source_snapshots": [
+    {
+      "seq": 0,
+      "kind": "baseline",
+      "wall": 1792631736700,
+      "core_pixels": 16384,
+      "sampled_pixels": 43264,
+      "differences": []
+    },
+    {
+      "seq": 1,
+      "kind": "native-after-hits",
+      "wall": 1792631737656,
+      "core_pixels": 16384,
+      "sampled_pixels": 43264,
+      "differences": []
+    },
+    {
+      "seq": 2,
+      "kind": "native-after-hits",
+      "wall": 1792631738219,
+      "core_pixels": 16384,
+      "sampled_pixels": 43264,
+      "differences": []
+    },
+    {
+      "seq": 3,
+      "kind": "native-after-hits",
+      "wall": 1792631738935,
+      "core_pixels": 16384,
+      "sampled_pixels": 43264,
+      "differences": []
+    },
+    {
+      "seq": 4,
+      "kind": "native-after-hits",
+      "wall": 1792631739519,
+      "core_pixels": 16384,
+      "sampled_pixels": 43264,
+      "differences": []
+    },
+    {
+      "seq": 5,
+      "kind": "native-after-hits",
+      "wall": 1792631740230,
+      "core_pixels": 16384,
+      "sampled_pixels": 43264,
+      "differences": []
+    },
+    {
+      "seq": 6,
+      "kind": "native-after-hits",
+      "wall": 1792631740877,
+      "core_pixels": 16384,
+      "sampled_pixels": 43264,
+      "differences": []
+    },
+    {
+      "seq": 7,
+      "kind": "native-after-hits",
+      "wall": 1792631741459,
+      "core_pixels": 16384,
+      "sampled_pixels": 43264,
+      "differences": [
+        {
+          "x": 664,
+          "y": 4463,
+          "order": 55,
+          "origin": [
+            280,
+            4440
+          ],
+          "gutter": "ff676861",
+          "core": "ff666861"
+        },
+        {
+          "x": 664,
+          "y": 4463,
+          "order": 58,
+          "origin": [
+            280,
+            4120
+          ],
+          "gutter": "ff676861",
+          "core": "ff666861"
+        }
+      ]
+    },
+    {
+      "seq": 8,
+      "kind": "native-after-hits",
+      "wall": 1792631742164,
+      "core_pixels": 16384,
+      "sampled_pixels": 43264,
+      "differences": [
+        {
+          "x": 664,
+          "y": 4463,
+          "order": 55,
+          "origin": [
+            280,
+            4440
+          ],
+          "gutter": "ff676761",
+          "core": "ff656761"
+        },
+        {
+          "x": 664,
+          "y": 4463,
+          "order": 58,
+          "origin": [
+            280,
+            4120
+          ],
+          "gutter": "ff676761",
+          "core": "ff656761"
+        }
+      ]
+    }
+  ],
+  "actual_packets": 43,
+  "actual_cells": 127,
+  "unique_versions": [
+    {
+      "cell": [
+        16,
+        110
+      ],
+      "version": 5,
+      "pixels": 75,
+      "exact_source_snapshots": [
+        1
+      ]
+    },
+    {
+      "cell": [
+        16,
+        111
+      ],
+      "version": 3,
+      "pixels": 1005,
+      "exact_source_snapshots": [
+        1
+      ]
+    },
+    {
+      "cell": [
+        16,
+        112
+      ],
+      "version": 4,
+      "pixels": 11,
+      "exact_source_snapshots": [
+        1
+      ]
+    },
+    {
+      "cell": [
+        16,
+        110
+      ],
+      "version": 8,
+      "pixels": 87,
+      "exact_source_snapshots": [
+        2
+      ]
+    },
+    {
+      "cell": [
+        16,
+        111
+      ],
+      "version": 6,
+      "pixels": 1005,
+      "exact_source_snapshots": [
+        2
+      ]
+    },
+    {
+      "cell": [
+        16,
+        112
+      ],
+      "version": 7,
+      "pixels": 29,
+      "exact_source_snapshots": [
+        2
+      ]
+    },
+    {
+      "cell": [
+        16,
+        110
+      ],
+      "version": 11,
+      "pixels": 101,
+      "exact_source_snapshots": [
+        3
+      ]
+    },
+    {
+      "cell": [
+        16,
+        111
+      ],
+      "version": 9,
+      "pixels": 1005,
+      "exact_source_snapshots": [
+        3
+      ]
+    },
+    {
+      "cell": [
+        16,
+        112
+      ],
+      "version": 10,
+      "pixels": 29,
+      "exact_source_snapshots": [
+        3
+      ]
+    },
+    {
+      "cell": [
+        16,
+        110
+      ],
+      "version": 14,
+      "pixels": 113,
+      "exact_source_snapshots": [
+        4,
+        5
+      ]
+    },
+    {
+      "cell": [
+        16,
+        111
+      ],
+      "version": 12,
+      "pixels": 1010,
+      "exact_source_snapshots": [
+        4
+      ]
+    },
+    {
+      "cell": [
+        16,
+        112
+      ],
+      "version": 13,
+      "pixels": 52,
+      "exact_source_snapshots": [
+        4,
+        5
+      ]
+    },
+    {
+      "cell": [
+        16,
+        111
+      ],
+      "version": 15,
+      "pixels": 1010,
+      "exact_source_snapshots": [
+        5
+      ]
+    },
+    {
+      "cell": [
+        16,
+        110
+      ],
+      "version": 18,
+      "pixels": 171,
+      "exact_source_snapshots": [
+        6
+      ]
+    },
+    {
+      "cell": [
+        16,
+        111
+      ],
+      "version": 16,
+      "pixels": 1188,
+      "exact_source_snapshots": [
+        6
+      ]
+    },
+    {
+      "cell": [
+        16,
+        112
+      ],
+      "version": 17,
+      "pixels": 102,
+      "exact_source_snapshots": [
+        6
+      ]
+    },
+    {
+      "cell": [
+        16,
+        110
+      ],
+      "version": 21,
+      "pixels": 171,
+      "exact_source_snapshots": [
+        7
+      ]
+    },
+    {
+      "cell": [
+        16,
+        111
+      ],
+      "version": 19,
+      "pixels": 1188,
+      "exact_source_snapshots": [
+        7
+      ]
+    },
+    {
+      "cell": [
+        16,
+        112
+      ],
+      "version": 20,
+      "pixels": 102,
+      "exact_source_snapshots": [
+        7
+      ]
+    },
+    {
+      "cell": [
+        16,
+        110
+      ],
+      "version": 24,
+      "pixels": 171,
+      "exact_source_snapshots": [
+        8
+      ]
+    },
+    {
+      "cell": [
+        16,
+        111
+      ],
+      "version": 22,
+      "pixels": 1188,
+      "exact_source_snapshots": [
+        8
+      ]
+    },
+    {
+      "cell": [
+        16,
+        112
+      ],
+      "version": 23,
+      "pixels": 102,
+      "exact_source_snapshots": [
+        8
+      ]
+    }
+  ],
+  "receiver_comparisons": 216832,
+  "receiver_wrong": [],
+  "observed_divergent_point": {
+    "x": 664,
+    "y": 4463,
+    "source": [
+      {
+        "seq": 0,
+        "kind": "baseline",
+        "at": 116787,
+        "wall": 1792631736700,
+        "frame": 0,
+        "sameFrameHitOrderUnknown": false,
+        "values": [
+          {
+            "order": 24,
+            "x": 600,
+            "y": 4440,
+            "core": false,
+            "revision": 0,
+            "argb": "ff898b81"
+          },
+          {
+            "order": 31,
+            "x": 600,
+            "y": 4120,
+            "core": true,
+            "revision": 1,
+            "argb": "ff898b81"
+          },
+          {
+            "order": 53,
+            "x": 280,
+            "y": 4440,
+            "core": false,
+            "revision": 0,
+            "argb": "ff898b81"
+          },
+          {
+            "order": 56,
+            "x": 280,
+            "y": 4120,
+            "core": false,
+            "revision": 1,
+            "argb": "ff898b81"
+          }
+        ]
+      },
+      {
+        "seq": 1,
+        "kind": "native-after-hits",
+        "at": 117743,
+        "wall": 1792631737656,
+        "frame": 7,
+        "sameFrameHitOrderUnknown": false,
+        "values": [
+          {
+            "order": 24,
+            "x": 600,
+            "y": 4440,
+            "core": false,
+            "revision": 1,
+            "argb": "ff7f8177"
+          },
+          {
+            "order": 31,
+            "x": 600,
+            "y": 4120,
+            "core": true,
+            "revision": 2,
+            "argb": "ff7f8177"
+          },
+          {
+            "order": 53,
+            "x": 280,
+            "y": 4440,
+            "core": false,
+            "revision": 1,
+            "argb": "ff7f8177"
+          },
+          {
+            "order": 56,
+            "x": 280,
+            "y": 4120,
+            "core": false,
+            "revision": 2,
+            "argb": "ff7f8177"
+          }
+        ]
+      },
+      {
+        "seq": 2,
+        "kind": "native-after-hits",
+        "at": 118306,
+        "wall": 1792631738219,
+        "frame": 11,
+        "sameFrameHitOrderUnknown": false,
+        "values": [
+          {
+            "order": 24,
+            "x": 600,
+            "y": 4440,
+            "core": false,
+            "revision": 2,
+            "argb": "ff7c7d74"
+          },
+          {
+            "order": 31,
+            "x": 600,
+            "y": 4120,
+            "core": true,
+            "revision": 3,
+            "argb": "ff7c7d74"
+          },
+          {
+            "order": 53,
+            "x": 280,
+            "y": 4440,
+            "core": false,
+            "revision": 2,
+            "argb": "ff7c7d74"
+          },
+          {
+            "order": 56,
+            "x": 280,
+            "y": 4120,
+            "core": false,
+            "revision": 3,
+            "argb": "ff7c7d74"
+          }
+        ]
+      },
+      {
+        "seq": 3,
+        "kind": "native-after-hits",
+        "at": 119022,
+        "wall": 1792631738935,
+        "frame": 15,
+        "sameFrameHitOrderUnknown": false,
+        "values": [
+          {
+            "order": 25,
+            "x": 600,
+            "y": 4440,
+            "core": false,
+            "revision": 3,
+            "argb": "ff7c7d74"
+          },
+          {
+            "order": 32,
+            "x": 600,
+            "y": 4120,
+            "core": true,
+            "revision": 4,
+            "argb": "ff7c7d74"
+          },
+          {
+            "order": 54,
+            "x": 280,
+            "y": 4440,
+            "core": false,
+            "revision": 3,
+            "argb": "ff7c7d74"
+          },
+          {
+            "order": 57,
+            "x": 280,
+            "y": 4120,
+            "core": false,
+            "revision": 4,
+            "argb": "ff7c7d74"
+          }
+        ]
+      },
+      {
+        "seq": 4,
+        "kind": "native-after-hits",
+        "at": 119606,
+        "wall": 1792631739519,
+        "frame": 19,
+        "sameFrameHitOrderUnknown": false,
+        "values": [
+          {
+            "order": 25,
+            "x": 600,
+            "y": 4440,
+            "core": false,
+            "revision": 4,
+            "argb": "ff75766e"
+          },
+          {
+            "order": 32,
+            "x": 600,
+            "y": 4120,
+            "core": true,
+            "revision": 5,
+            "argb": "ff75766e"
+          },
+          {
+            "order": 54,
+            "x": 280,
+            "y": 4440,
+            "core": false,
+            "revision": 4,
+            "argb": "ff75766e"
+          },
+          {
+            "order": 57,
+            "x": 280,
+            "y": 4120,
+            "core": false,
+            "revision": 5,
+            "argb": "ff75766e"
+          }
+        ]
+      },
+      {
+        "seq": 5,
+        "kind": "native-after-hits",
+        "at": 120317,
+        "wall": 1792631740230,
+        "frame": 23,
+        "sameFrameHitOrderUnknown": false,
+        "values": [
+          {
+            "order": 25,
+            "x": 600,
+            "y": 4440,
+            "core": false,
+            "revision": 5,
+            "argb": "ff75766e"
+          },
+          {
+            "order": 32,
+            "x": 600,
+            "y": 4120,
+            "core": true,
+            "revision": 6,
+            "argb": "ff75766e"
+          },
+          {
+            "order": 54,
+            "x": 280,
+            "y": 4440,
+            "core": false,
+            "revision": 5,
+            "argb": "ff75766e"
+          },
+          {
+            "order": 57,
+            "x": 280,
+            "y": 4120,
+            "core": false,
+            "revision": 6,
+            "argb": "ff75766e"
+          }
+        ]
+      },
+      {
+        "seq": 6,
+        "kind": "native-after-hits",
+        "at": 120964,
+        "wall": 1792631740877,
+        "frame": 28,
+        "sameFrameHitOrderUnknown": false,
+        "values": [
+          {
+            "order": 25,
+            "x": 600,
+            "y": 4440,
+            "core": false,
+            "revision": 6,
+            "argb": "ff686962"
+          },
+          {
+            "order": 32,
+            "x": 600,
+            "y": 4120,
+            "core": true,
+            "revision": 7,
+            "argb": "ff686962"
+          },
+          {
+            "order": 54,
+            "x": 280,
+            "y": 4440,
+            "core": false,
+            "revision": 6,
+            "argb": "ff686962"
+          },
+          {
+            "order": 57,
+            "x": 280,
+            "y": 4120,
+            "core": false,
+            "revision": 7,
+            "argb": "ff686962"
+          }
+        ]
+      },
+      {
+        "seq": 7,
+        "kind": "native-after-hits",
+        "at": 121546,
+        "wall": 1792631741459,
+        "frame": 31,
+        "sameFrameHitOrderUnknown": false,
+        "values": [
+          {
+            "order": 25,
+            "x": 600,
+            "y": 4440,
+            "core": false,
+            "revision": 7,
+            "argb": "ff666861"
+          },
+          {
+            "order": 33,
+            "x": 600,
+            "y": 4120,
+            "core": true,
+            "revision": 8,
+            "argb": "ff666861"
+          },
+          {
+            "order": 55,
+            "x": 280,
+            "y": 4440,
+            "core": false,
+            "revision": 7,
+            "argb": "ff676861"
+          },
+          {
+            "order": 58,
+            "x": 280,
+            "y": 4120,
+            "core": false,
+            "revision": 8,
+            "argb": "ff676861"
+          }
+        ]
+      },
+      {
+        "seq": 8,
+        "kind": "native-after-hits",
+        "at": 122251,
+        "wall": 1792631742164,
+        "frame": 35,
+        "sameFrameHitOrderUnknown": false,
+        "values": [
+          {
+            "order": 25,
+            "x": 600,
+            "y": 4440,
+            "core": false,
+            "revision": 8,
+            "argb": "ff656761"
+          },
+          {
+            "order": 33,
+            "x": 600,
+            "y": 4120,
+            "core": true,
+            "revision": 9,
+            "argb": "ff656761"
+          },
+          {
+            "order": 55,
+            "x": 280,
+            "y": 4440,
+            "core": false,
+            "revision": 8,
+            "argb": "ff676761"
+          },
+          {
+            "order": 58,
+            "x": 280,
+            "y": 4120,
+            "core": false,
+            "revision": 9,
+            "argb": "ff676761"
+          }
+        ]
+      }
+    ],
+    "wire": [
+      {
+        "wall": 1792631738028,
+        "version": 3,
+        "argb": "ff7f8177",
+        "before": {
+          "seq": 1,
+          "kind": "wire-before",
+          "at": 81476,
+          "wall": 1792631738028,
+          "frame": 6,
+          "sameFrameHitOrderUnknown": false,
+          "values": [
+            {
+              "order": 42,
+              "x": 280,
+              "y": 4440,
+              "core": false,
+              "revision": 0,
+              "argb": "ff898b81"
+            },
+            {
+              "order": 43,
+              "x": 600,
+              "y": 4440,
+              "core": false,
+              "revision": 0,
+              "argb": "ff898b81"
+            },
+            {
+              "order": 60,
+              "x": 600,
+              "y": 4120,
+              "core": true,
+              "revision": 1,
+              "argb": "ff898b81"
+            },
+            {
+              "order": 64,
+              "x": 280,
+              "y": 4120,
+              "core": false,
+              "revision": 1,
+              "argb": "ff898b81"
+            }
+          ]
+        },
+        "after": {
+          "seq": 2,
+          "kind": "wire-after",
+          "at": 81487,
+          "wall": 1792631738039,
+          "frame": 6,
+          "sameFrameHitOrderUnknown": false,
+          "values": [
+            {
+              "order": 42,
+              "x": 280,
+              "y": 4440,
+              "core": false,
+              "revision": 1,
+              "argb": "ff7f8177"
+            },
+            {
+              "order": 43,
+              "x": 600,
+              "y": 4440,
+              "core": false,
+              "revision": 1,
+              "argb": "ff7f8177"
+            },
+            {
+              "order": 60,
+              "x": 600,
+              "y": 4120,
+              "core": true,
+              "revision": 2,
+              "argb": "ff7f8177"
+            },
+            {
+              "order": 64,
+              "x": 280,
+              "y": 4120,
+              "core": false,
+              "revision": 2,
+              "argb": "ff7f8177"
+            }
+          ]
+        }
+      },
+      {
+        "wall": 1792631738609,
+        "version": 6,
+        "argb": "ff7c7d74",
+        "before": {
+          "seq": 7,
+          "kind": "wire-before",
+          "at": 82058,
+          "wall": 1792631738609,
+          "frame": 9,
+          "sameFrameHitOrderUnknown": false,
+          "values": [
+            {
+              "order": 42,
+              "x": 280,
+              "y": 4440,
+              "core": false,
+              "revision": 1,
+              "argb": "ff7f8177"
+            },
+            {
+              "order": 43,
+              "x": 600,
+              "y": 4440,
+              "core": false,
+              "revision": 1,
+              "argb": "ff7f8177"
+            },
+            {
+              "order": 60,
+              "x": 600,
+              "y": 4120,
+              "core": true,
+              "revision": 2,
+              "argb": "ff7f8177"
+            },
+            {
+              "order": 64,
+              "x": 280,
+              "y": 4120,
+              "core": false,
+              "revision": 2,
+              "argb": "ff7f8177"
+            }
+          ]
+        },
+        "after": {
+          "seq": 8,
+          "kind": "wire-after",
+          "at": 82070,
+          "wall": 1792631738622,
+          "frame": 9,
+          "sameFrameHitOrderUnknown": false,
+          "values": [
+            {
+              "order": 42,
+              "x": 280,
+              "y": 4440,
+              "core": false,
+              "revision": 2,
+              "argb": "ff7c7d74"
+            },
+            {
+              "order": 43,
+              "x": 600,
+              "y": 4440,
+              "core": false,
+              "revision": 2,
+              "argb": "ff7c7d74"
+            },
+            {
+              "order": 60,
+              "x": 600,
+              "y": 4120,
+              "core": true,
+              "revision": 3,
+              "argb": "ff7c7d74"
+            },
+            {
+              "order": 64,
+              "x": 280,
+              "y": 4120,
+              "core": false,
+              "revision": 3,
+              "argb": "ff7c7d74"
+            }
+          ]
+        }
+      },
+      {
+        "wall": 1792631739243,
+        "version": 9,
+        "argb": "ff7c7d74",
+        "before": {
+          "seq": 15,
+          "kind": "wire-before",
+          "at": 82692,
+          "wall": 1792631739243,
+          "frame": 12,
+          "sameFrameHitOrderUnknown": false,
+          "values": [
+            {
+              "order": 42,
+              "x": 280,
+              "y": 4440,
+              "core": false,
+              "revision": 2,
+              "argb": "ff7c7d74"
+            },
+            {
+              "order": 43,
+              "x": 600,
+              "y": 4440,
+              "core": false,
+              "revision": 2,
+              "argb": "ff7c7d74"
+            },
+            {
+              "order": 60,
+              "x": 600,
+              "y": 4120,
+              "core": true,
+              "revision": 3,
+              "argb": "ff7c7d74"
+            },
+            {
+              "order": 64,
+              "x": 280,
+              "y": 4120,
+              "core": false,
+              "revision": 3,
+              "argb": "ff7c7d74"
+            }
+          ]
+        },
+        "after": {
+          "seq": 16,
+          "kind": "wire-after",
+          "at": 82702,
+          "wall": 1792631739254,
+          "frame": 12,
+          "sameFrameHitOrderUnknown": false,
+          "values": [
+            {
+              "order": 42,
+              "x": 280,
+              "y": 4440,
+              "core": false,
+              "revision": 3,
+              "argb": "ff7c7d74"
+            },
+            {
+              "order": 43,
+              "x": 600,
+              "y": 4440,
+              "core": false,
+              "revision": 3,
+              "argb": "ff7c7d74"
+            },
+            {
+              "order": 60,
+              "x": 600,
+              "y": 4120,
+              "core": true,
+              "revision": 4,
+              "argb": "ff7c7d74"
+            },
+            {
+              "order": 64,
+              "x": 280,
+              "y": 4120,
+              "core": false,
+              "revision": 4,
+              "argb": "ff7c7d74"
+            }
+          ]
+        }
+      },
+      {
+        "wall": 1792631739792,
+        "version": 12,
+        "argb": "ff75766e",
+        "before": {
+          "seq": 21,
+          "kind": "wire-before",
+          "at": 83240,
+          "wall": 1792631739792,
+          "frame": 14,
+          "sameFrameHitOrderUnknown": false,
+          "values": [
+            {
+              "order": 43,
+              "x": 280,
+              "y": 4440,
+              "core": false,
+              "revision": 3,
+              "argb": "ff7c7d74"
+            },
+            {
+              "order": 44,
+              "x": 600,
+              "y": 4440,
+              "core": false,
+              "revision": 3,
+              "argb": "ff7c7d74"
+            },
+            {
+              "order": 61,
+              "x": 600,
+              "y": 4120,
+              "core": true,
+              "revision": 4,
+              "argb": "ff7c7d74"
+            },
+            {
+              "order": 65,
+              "x": 280,
+              "y": 4120,
+              "core": false,
+              "revision": 4,
+              "argb": "ff7c7d74"
+            }
+          ]
+        },
+        "after": {
+          "seq": 22,
+          "kind": "wire-after",
+          "at": 83252,
+          "wall": 1792631739804,
+          "frame": 14,
+          "sameFrameHitOrderUnknown": false,
+          "values": [
+            {
+              "order": 43,
+              "x": 280,
+              "y": 4440,
+              "core": false,
+              "revision": 4,
+              "argb": "ff75766e"
+            },
+            {
+              "order": 44,
+              "x": 600,
+              "y": 4440,
+              "core": false,
+              "revision": 4,
+              "argb": "ff75766e"
+            },
+            {
+              "order": 61,
+              "x": 600,
+              "y": 4120,
+              "core": true,
+              "revision": 5,
+              "argb": "ff75766e"
+            },
+            {
+              "order": 65,
+              "x": 280,
+              "y": 4120,
+              "core": false,
+              "revision": 5,
+              "argb": "ff75766e"
+            }
+          ]
+        }
+      },
+      {
+        "wall": 1792631740439,
+        "version": 15,
+        "argb": "ff75766e",
+        "before": {
+          "seq": 29,
+          "kind": "wire-before",
+          "at": 83888,
+          "wall": 1792631740439,
+          "frame": 17,
+          "sameFrameHitOrderUnknown": false,
+          "values": [
+            {
+              "order": 43,
+              "x": 280,
+              "y": 4440,
+              "core": false,
+              "revision": 4,
+              "argb": "ff75766e"
+            },
+            {
+              "order": 44,
+              "x": 600,
+              "y": 4440,
+              "core": false,
+              "revision": 4,
+              "argb": "ff75766e"
+            },
+            {
+              "order": 61,
+              "x": 600,
+              "y": 4120,
+              "core": true,
+              "revision": 5,
+              "argb": "ff75766e"
+            },
+            {
+              "order": 65,
+              "x": 280,
+              "y": 4120,
+              "core": false,
+              "revision": 5,
+              "argb": "ff75766e"
+            }
+          ]
+        },
+        "after": {
+          "seq": 30,
+          "kind": "wire-after",
+          "at": 83898,
+          "wall": 1792631740450,
+          "frame": 17,
+          "sameFrameHitOrderUnknown": false,
+          "values": [
+            {
+              "order": 43,
+              "x": 280,
+              "y": 4440,
+              "core": false,
+              "revision": 5,
+              "argb": "ff75766e"
+            },
+            {
+              "order": 44,
+              "x": 600,
+              "y": 4440,
+              "core": false,
+              "revision": 5,
+              "argb": "ff75766e"
+            },
+            {
+              "order": 61,
+              "x": 600,
+              "y": 4120,
+              "core": true,
+              "revision": 6,
+              "argb": "ff75766e"
+            },
+            {
+              "order": 65,
+              "x": 280,
+              "y": 4120,
+              "core": false,
+              "revision": 6,
+              "argb": "ff75766e"
+            }
+          ]
+        }
+      },
+      {
+        "wall": 1792631741033,
+        "version": 16,
+        "argb": "ff686962",
+        "before": {
+          "seq": 35,
+          "kind": "wire-before",
+          "at": 84481,
+          "wall": 1792631741033,
+          "frame": 20,
+          "sameFrameHitOrderUnknown": false,
+          "values": [
+            {
+              "order": 43,
+              "x": 280,
+              "y": 4440,
+              "core": false,
+              "revision": 5,
+              "argb": "ff75766e"
+            },
+            {
+              "order": 44,
+              "x": 600,
+              "y": 4440,
+              "core": false,
+              "revision": 5,
+              "argb": "ff75766e"
+            },
+            {
+              "order": 61,
+              "x": 600,
+              "y": 4120,
+              "core": true,
+              "revision": 6,
+              "argb": "ff75766e"
+            },
+            {
+              "order": 65,
+              "x": 280,
+              "y": 4120,
+              "core": false,
+              "revision": 6,
+              "argb": "ff75766e"
+            }
+          ]
+        },
+        "after": {
+          "seq": 36,
+          "kind": "wire-after",
+          "at": 84491,
+          "wall": 1792631741042,
+          "frame": 20,
+          "sameFrameHitOrderUnknown": false,
+          "values": [
+            {
+              "order": 43,
+              "x": 280,
+              "y": 4440,
+              "core": false,
+              "revision": 6,
+              "argb": "ff686962"
+            },
+            {
+              "order": 44,
+              "x": 600,
+              "y": 4440,
+              "core": false,
+              "revision": 6,
+              "argb": "ff686962"
+            },
+            {
+              "order": 61,
+              "x": 600,
+              "y": 4120,
+              "core": true,
+              "revision": 7,
+              "argb": "ff686962"
+            },
+            {
+              "order": 65,
+              "x": 280,
+              "y": 4120,
+              "core": false,
+              "revision": 7,
+              "argb": "ff686962"
+            }
+          ]
+        }
+      },
+      {
+        "wall": 1792631741671,
+        "version": 19,
+        "argb": "ff666861",
+        "before": {
+          "seq": 41,
+          "kind": "wire-before",
+          "at": 85119,
+          "wall": 1792631741671,
+          "frame": 23,
+          "sameFrameHitOrderUnknown": false,
+          "values": [
+            {
+              "order": 43,
+              "x": 280,
+              "y": 4440,
+              "core": false,
+              "revision": 6,
+              "argb": "ff686962"
+            },
+            {
+              "order": 44,
+              "x": 600,
+              "y": 4440,
+              "core": false,
+              "revision": 6,
+              "argb": "ff686962"
+            },
+            {
+              "order": 61,
+              "x": 600,
+              "y": 4120,
+              "core": true,
+              "revision": 7,
+              "argb": "ff686962"
+            },
+            {
+              "order": 65,
+              "x": 280,
+              "y": 4120,
+              "core": false,
+              "revision": 7,
+              "argb": "ff686962"
+            }
+          ]
+        },
+        "after": {
+          "seq": 42,
+          "kind": "wire-after",
+          "at": 85137,
+          "wall": 1792631741689,
+          "frame": 23,
+          "sameFrameHitOrderUnknown": false,
+          "values": [
+            {
+              "order": 43,
+              "x": 280,
+              "y": 4440,
+              "core": false,
+              "revision": 7,
+              "argb": "ff666861"
+            },
+            {
+              "order": 44,
+              "x": 600,
+              "y": 4440,
+              "core": false,
+              "revision": 7,
+              "argb": "ff666861"
+            },
+            {
+              "order": 61,
+              "x": 600,
+              "y": 4120,
+              "core": true,
+              "revision": 8,
+              "argb": "ff666861"
+            },
+            {
+              "order": 65,
+              "x": 280,
+              "y": 4120,
+              "core": false,
+              "revision": 8,
+              "argb": "ff666861"
+            }
+          ]
+        }
+      },
+      {
+        "wall": 1792631742365,
+        "version": 22,
+        "argb": "ff656761",
+        "before": {
+          "seq": 49,
+          "kind": "wire-before",
+          "at": 85814,
+          "wall": 1792631742365,
+          "frame": 26,
+          "sameFrameHitOrderUnknown": false,
+          "values": [
+            {
+              "order": 43,
+              "x": 280,
+              "y": 4440,
+              "core": false,
+              "revision": 7,
+              "argb": "ff666861"
+            },
+            {
+              "order": 44,
+              "x": 600,
+              "y": 4440,
+              "core": false,
+              "revision": 7,
+              "argb": "ff666861"
+            },
+            {
+              "order": 61,
+              "x": 600,
+              "y": 4120,
+              "core": true,
+              "revision": 8,
+              "argb": "ff666861"
+            },
+            {
+              "order": 65,
+              "x": 280,
+              "y": 4120,
+              "core": false,
+              "revision": 8,
+              "argb": "ff666861"
+            }
+          ]
+        },
+        "after": {
+          "seq": 50,
+          "kind": "wire-after",
+          "at": 85827,
+          "wall": 1792631742378,
+          "frame": 26,
+          "sameFrameHitOrderUnknown": false,
+          "values": [
+            {
+              "order": 43,
+              "x": 280,
+              "y": 4440,
+              "core": false,
+              "revision": 8,
+              "argb": "ff656761"
+            },
+            {
+              "order": 44,
+              "x": 600,
+              "y": 4440,
+              "core": false,
+              "revision": 8,
+              "argb": "ff656761"
+            },
+            {
+              "order": 61,
+              "x": 600,
+              "y": 4120,
+              "core": true,
+              "revision": 9,
+              "argb": "ff656761"
+            },
+            {
+              "order": 65,
+              "x": 280,
+              "y": 4120,
+              "core": false,
+              "revision": 9,
+              "argb": "ff656761"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "prior_failure_root_cause_confirmed": false,
+  "current_wire_or_write_failure_reproduced": false,
+  "first_cover_invariant_disproved": true,
+  "limitation": "Observed native source buffers can disagree. This run transmitted the core-equal first buffer. Exact native callback ordering was not instrumented; earlier failed pixels remain untraced."
+}

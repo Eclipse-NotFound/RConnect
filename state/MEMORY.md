@@ -25,6 +25,7 @@ Remains 1.02 双人合作模组，入口 release/RConnectMod.swf。A 是普通�
 - 独立 recovery15：`build/m52/recovery-15` / `6fbb2d6cb8be8e454d875d7661714e2d879d8d92c1a96b8206f55e3e76ea1d72`，14仅叠武器姿态回退算术消重及版本。完整源码 `experimental/recovery-actor-pose-buildsrc`。e2ecb96939同场密集仍主29/0、加40/14失败，加入七段37–40帧、p95 339–395ms；没有足够整体改善，未部署。
 - 独立 recovery16：`build/m52/recovery-16` / `a1519b39f27b6c073186a4581234de9bad656592ec6c17bb4a3eb494ade5a31c`，14仅叠真实大图墙面桥，89AS。独立 recovery17：`build/m52/recovery-17` / `a5d05ea89a5b689b44a0530832d288827d4f9261487fccad77af55c0be36673e`，14仅叠TerrainSync采集，88AS。两者已编译、互未合并，不含15；均未部署。
 - 独立 recovery18：`build/m52/recovery-18` / `11b795d0d6681caa4edfcc2d1c0df73cb38f6d706a1fb3c26518163f738fe4d3`，准确16仅叠大图最后写色的原生反查表，90AS、完整69项组件通过。小房对应两处写色另有完整85项组件通过，尚未合入18。新候选均不替换574D。
+- 独立 recovery19：`build/m52/recovery-19` / `b9cd3f4800f2e875439b19f9d18969fd195ed039c992df3b0625cf0cf2dfeea5`，准确18仅将WallCellCodec的Base64尾段改为ASCII ByteArray，90AS不增类，88类原字节与入口版本之外均不变；63项实际等价检查通过，完整编码ABBA均值少24.83%仅是组件结论。BEFC普通走廊18/19两轮均主29/0、加40/14失败，且准备弹匣不同，不能视为整体/大图/加载或发布资格。
 - 活动 `experimental/recovery-integrated` 仍是13；14独立源码，勿用旧根src覆盖。新增正式 `prepare_recovery.py --source` 复用完整源码清单与编译流程，减少复制构建脚本；默认来源不变。
 - 气体时钟诊断 `recovery-gas-clock-01` / `2142fe…b4759` 仅诊断，不是生产候选。原版13的3类插桩剥除后逐字节相同；输出 `recovery-gas-clock-native-01`。版本号相同不等于相同二进制。
 
@@ -38,6 +39,7 @@ Remains 1.02 双人合作模组，入口 release/RConnectMod.swf。A 是普通�
 - **密集采样**：3b8269a9a7诊断主2689CPU样本，WallImpactVisuals.packed包含797（29.6%），实际开火期updates也占大头；不是只有初始快照。JSON分配表中的ReferenceError类名触发包装器正则误判，原失败未改。含调用关系的百分比不可相加或推算FPS。见 `experimental/recovery13-density-review`。
 - **14密集采样**：a6a7e27789主2318样本、packed500，加入1259样本、tickFrozenAnims278/RV236/WB187，包含式计数不能相加或换算收益。确认武器位置先按旧回退计算再被clockSample覆盖的小冗余，正在独立等价修改；射击重启是原生所需，不删动画。RV以本体/命中代理两次处理同一vis属结构成本，不能移除命中代理或MirrorMasks规避。见 `recovery-join-animation-review`。
 - **姿态小修正**：`recovery-actor-pose-fast-component-01`实际54/0，组件0316e899…753a2d，安装/输入未变；完整旧新类的边界调用、姿态和射击队列一致。已编译独立15并完成原生密集，仍失败，不把它称为整机性能改善。BinaryMessageCodec只读审查未找到安全且明确有益的微优化，停止重复尝试该方向。
+- **19编码整体对照**：18基线a003e96ac1与19 ce7ffb6f89均未过密集原门槛；加入七段帧数35/39/37/38/40/41/37→33/41/40/40/41/38/40。driver/宿主/22安装项相同，但6个加入侧p308c弹匣hold为0→12，严格input_comparable=false，未计算帧率收益。已定位不是计时内开火：镜像原生构造随机初始枪，同型号保留原枪满弹12，不同型号换枪默认0；准备只核id。正在只修准备期参数与ready，原七段刺激/阈值不变。hold是弹匣而非冷却，口头早先误称已纠正。
 - **大图弹痕实质缺口**：准确14只读Grafon.frontBmp，sceneLarge时它是scratch，真实显示另在sceneSurfaces的nativeBuffers[0]；解码还限1920×1000。既有210项普通枪火星原生记录全部largeScene=false，不能证明大图持久弹痕正确。`recovery-wall-surface-review`已查明坐标/绘制/重建路径；正在独立宿主局部绘制回调及真实大图反例，未改CS源码或安装版。
 - **加载CPU采样失效**：825a566b2a再次在首轮加入侧1000ms基线失败，出现1597ms整帧空档。采样原始序号3→0、0 CPU、callbackDrains0，冻结collector拒绝非单调记录；`recovery-input-cpu-invalid-01`保存原JSON与无效说明，不作函数归因。不得把38项静态检查当作原生采样成功。
 - **逐帧采样取得局部证据**：398cddcf6b仍首轮输入基线失败；逐帧driver C8D1…C456、profile F824…62F共345 CPU样本。窗0无CPU、窗1超原生枚举上限，无效；窗2/3完整、窗4为输入失败前有效半窗。collector核验通过但完整六窗/性能资格均false；扫描自身213/137/79ms也计入原失败，不能拿诊断时长替代普通运行。精确记录 `recovery-input-cpu-frames-partial-review-01`。
@@ -47,6 +49,7 @@ Remains 1.02 双人合作模组，入口 release/RConnectMod.swf。A 是普通�
 - **18实际大图颜色验证**：9927d091b8同driver04/ACC框架通过；独立严格uint复核四轮中0/1/3完全一致，case2两点仍错（world655,4465及654,4466，均opaque）。源实际变化109/68/1186/953像素；首显474/182/855/1892ms，没有性能资格。原PNG误拒记录保留，`recovery-wall-surfaces-native-proof-review/recovery18-reanalysis-01.json`只修截图表示校验。继续同帧core/gutter/真实wire的独立小范围诊断，禁止猜测改绿。
 - **上述“首显”用词纠正**：原分析器first_frame找的是首次匹配最终源颜色，连续开火中不是首个墙痕。只读时序复核给出16实际首变888/444/739/237ms、18为474/182/855/253ms（相对native sourceFirst）；八轮都匹配当时或此前真实源色，不表示追平。18 round0观察空档536ms，round3为110ms，不作为纯网络延迟。原功能失败/最终色指标原样保留；见`recovery-wall-latency-review`。
 - **gutter诊断01**：7855df2737框架和观测完整性通过，准确18/ACC；原两个点本轮没复现，唯一opaque错(651,4431)位于选定cell16,111之外，所以尚未定位根因。继续准备覆盖原验证crop的受限诊断，不凭正确点推断故障已修；该轮始终没有性能资格。
+- **完整crop诊断02**：386a671a97同18/ACC，诊断完整且独立uint复核四轮精确通过，原PNG表示误拒保留。源(664,4463)第7/8击的core与左gutter真实差1，但首个枚举副本本轮恰与core一致，43包/127格/22版本对应core且接收后216832次比较零误差。这证明副本不能默认同色，未精确追溯旧错点。暂缓生产扩展：单一publish-core仍受raster先重放临时色、自身ACK提升paintOrder两条责任阻碍；为极少1级色差新增回滚协议不划算。保留负例/风险，未改精确门槛或宣布修复，优先主要加载/长帧。
 - **普通房同源写色问题**：`recovery-wall-small-color-component-01`实际85/0 / FF968…583B；完整旧类精确复现5例损失，新类只改WallImpactVisuals.put/replay两个最终setter，六色接收/回访及原69项全过，尚无完整游戏候选。
 - **时停加载边界**：准确安装CEC6源AD931…4492D存在独立敌人补步和热键启动，World暂停不足以冻结。已在RConnect内准备A版独立hold接口22行+载体，闲置原子准入；B授权不复用，已一次向用户申请新A接口授权，尚待回复。无接口不得把早交付视为完整组合通过；未写其它模组。提案见`recovery-sandy-travel-hold-proposal`。
 - **早交付组件**：最终切片gate20/0、room36/0、旧room回归109/0、准确World方法16/0、外部许可替身22/0、真实地形序列化14/0，共217项实际通过。external01的ASC尾返回编译失败与tile01的替身回调#1063保留。根审核修正无票据exit同步改onPause时序、整个World替换许可清理、controlOff抛错后的责任标记；未运行真实Sand接口或完整原生加载，不把旧109通过混同历史seed108/1边界修复。

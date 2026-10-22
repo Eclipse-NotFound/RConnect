@@ -1,0 +1,106 @@
+{
+  "run": "a6a7e27789",
+  "host_log_sha256": "35d83e706a362c9d81eef9cbfc675276a215ac0cacc85fe6a480be2ab94fb3e7",
+  "pack_inclusive_samples": 499,
+  "reap_below_pack_samples": 186,
+  "sample_stack_counts": [
+    [
+      "rconnect.net::WallCellCodec$/pack@null:0 <- rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/updates@null:0 <- rconnect.game::GameBridge/readWallPaintUpdates@null:0 <- rconnect.core::Session/broadcastWorldState@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+      185
+    ],
+    [
+      "[reap]@null:0 <- rconnect.net::WallCellCodec$/pack@null:0 <- rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/updates@null:0 <- rconnect.game::GameBridge/readWallPaintUpdates@null:0 <- rconnect.core::Session/broadcastWorldState@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+      126
+    ],
+    [
+      "[reap]@null:0 <- Array$/_join@null:0 <- Array/http://adobe.com/AS3/2006/builtin::join@null:0 <- rconnect.net::WallCellCodec$/pack@null:0 <- rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/updates@null:0 <- rconnect.game::GameBridge/readWallPaintUpdates@null:0 <- rconnect.core::Session/broadcastWorldState@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+      31
+    ],
+    [
+      "rconnect.net::WallCellCodec$/pack@null:0 <- rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/snapshot@null:0 <- rconnect.game::GameBridge/readWallPaint@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+      27
+    ],
+    [
+      "Array$/_join@null:0 <- Array/http://adobe.com/AS3/2006/builtin::join@null:0 <- rconnect.net::WallCellCodec$/pack@null:0 <- rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/updates@null:0 <- rconnect.game::GameBridge/readWallPaintUpdates@null:0 <- rconnect.core::Session/broadcastWorldState@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+      27
+    ],
+    [
+      "[reap]@null:0 <- rconnect.net::WallCellCodec$/pack@null:0 <- rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/snapshot@null:0 <- rconnect.game::GameBridge/readWallPaint@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+      25
+    ],
+    [
+      "[mark]@null:0 <- rconnect.net::WallCellCodec$/pack@null:0 <- rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/updates@null:0 <- rconnect.game::GameBridge/readWallPaintUpdates@null:0 <- rconnect.core::Session/broadcastWorldState@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+      20
+    ],
+    [
+      "flash.utils::ByteArray/_compress@null:0 <- flash.utils::ByteArray/compress@null:0 <- rconnect.net::WallCellCodec$/pack@null:0 <- rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/updates@null:0 <- rconnect.game::GameBridge/readWallPaintUpdates@null:0 <- rconnect.core::Session/broadcastWorldState@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+      10
+    ],
+    [
+      "flash.utils::ByteArray/writeShort@null:0 <- rconnect.net::WallCellCodec$/pack@null:0 <- rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/updates@null:0 <- rconnect.game::GameBridge/readWallPaintUpdates@null:0 <- rconnect.core::Session/broadcastWorldState@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+      6
+    ],
+    [
+      "String/http://adobe.com/AS3/2006/builtin::charAt@null:0 <- rconnect.net::WallCellCodec$/pack@null:0 <- rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/updates@null:0 <- rconnect.game::GameBridge/readWallPaintUpdates@null:0 <- rconnect.core::Session/broadcastWorldState@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+      5
+    ],
+    [
+      "Array/http://adobe.com/AS3/2006/builtin::push@null:0 <- rconnect.net::WallCellCodec$/pack@null:0 <- rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/updates@null:0 <- rconnect.game::GameBridge/readWallPaintUpdates@null:0 <- rconnect.core::Session/broadcastWorldState@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+      5
+    ],
+    [
+      "[mark]@null:0 <- Array$/_join@null:0 <- Array/http://adobe.com/AS3/2006/builtin::join@null:0 <- rconnect.net::WallCellCodec$/pack@null:0 <- rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/updates@null:0 <- rconnect.game::GameBridge/readWallPaintUpdates@null:0 <- rconnect.core::Session/broadcastWorldState@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+      5
+    ],
+    [
+      "[reap]@null:0 <- Array$/_join@null:0 <- Array/http://adobe.com/AS3/2006/builtin::join@null:0 <- rconnect.net::WallCellCodec$/pack@null:0 <- rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/snapshot@null:0 <- rconnect.game::GameBridge/readWallPaint@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+      4
+    ],
+    [
+      "Array$/_join@null:0 <- Array/http://adobe.com/AS3/2006/builtin::join@null:0 <- rconnect.net::WallCellCodec$/pack@null:0 <- rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/snapshot@null:0 <- rconnect.game::GameBridge/readWallPaint@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+      4
+    ],
+    [
+      "flash.utils::ByteArray/readUnsignedByte@null:0 <- rconnect.net::WallCellCodec$/pack@null:0 <- rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/updates@null:0 <- rconnect.game::GameBridge/readWallPaintUpdates@null:0 <- rconnect.core::Session/broadcastWorldState@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+      4
+    ],
+    [
+      "flash.utils::ByteArray/get bytesAvailable@null:0 <- rconnect.net::WallCellCodec$/pack@null:0 <- rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/updates@null:0 <- rconnect.game::GameBridge/readWallPaintUpdates@null:0 <- rconnect.core::Session/broadcastWorldState@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+      3
+    ],
+    [
+      "flash.utils::ByteArray/writeUnsignedInt@null:0 <- rconnect.net::WallCellCodec$/pack@null:0 <- rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/updates@null:0 <- rconnect.game::GameBridge/readWallPaintUpdates@null:0 <- rconnect.core::Session/broadcastWorldState@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+      3
+    ],
+    [
+      "flash.utils::ByteArray/readUnsignedByte@null:0 <- rconnect.net::WallCellCodec$/pack@null:0 <- rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/snapshot@null:0 <- rconnect.game::GameBridge/readWallPaint@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+      2
+    ],
+    [
+      "Array$/_sort@null:0 <- Array/http://adobe.com/AS3/2006/builtin::sort@null:0 <- rconnect.net::WallCellCodec$/pack@null:0 <- rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/updates@null:0 <- rconnect.game::GameBridge/readWallPaintUpdates@null:0 <- rconnect.core::Session/broadcastWorldState@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+      2
+    ],
+    [
+      "Array$/_sort@null:0 <- Array/http://adobe.com/AS3/2006/builtin::sort@null:0 <- rconnect.net::WallCellCodec$/pack@null:0 <- rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/snapshot@null:0 <- rconnect.game::GameBridge/readWallPaint@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+      1
+    ],
+    [
+      "Math$/floor@null:0 <- rconnect.net::WallCellCodec$/pack@null:0 <- rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/updates@null:0 <- rconnect.game::GameBridge/readWallPaintUpdates@null:0 <- rconnect.core::Session/broadcastWorldState@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+      1
+    ],
+    [
+      "flash.utils::ByteArray/set position@null:0 <- rconnect.net::WallCellCodec$/pack@null:0 <- rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/updates@null:0 <- rconnect.game::GameBridge/readWallPaintUpdates@null:0 <- rconnect.core::Session/broadcastWorldState@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+      1
+    ],
+    [
+      "Array/http://adobe.com/AS3/2006/builtin::sort@null:0 <- rconnect.net::WallCellCodec$/pack@null:0 <- rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/updates@null:0 <- rconnect.game::GameBridge/readWallPaintUpdates@null:0 <- rconnect.core::Session/broadcastWorldState@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+      1
+    ],
+    [
+      "global/isFinite@null:0 <- rconnect.net::WallCellCodec$/pack@null:0 <- rconnect.game::WallImpactVisuals/packed@null:0 <- rconnect.game::WallImpactVisuals/updates@null:0 <- rconnect.game::GameBridge/readWallPaintUpdates@null:0 <- rconnect.core::Session/broadcastWorldState@null:0 <- rconnect.core::Session/onTick@null:0 <- flash.utils::Timer/_timerDispatch@null:0 <- flash.utils::Timer/tick@null:0",
+      1
+    ]
+  ],
+  "predicted_cpu_saving": null,
+  "native_performance_claim": false
+}

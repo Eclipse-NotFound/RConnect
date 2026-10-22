@@ -1,0 +1,50 @@
+{
+  "status": "source-frozen-awaiting-component-run",
+  "baseline": "build/m52/recovery-18",
+  "baseline_sha256_from_formal_receipt": "11b795d0d6681caa4edfcc2d1c0df73cb38f6d706a1fb3c26518163f738fe4d3",
+  "production_files": [
+    "src/rconnect/net/WallCellCodec.as"
+  ],
+  "files": {
+    "base64-checks.inc": "e15c5c96e04be8f54522ef555fc755770f98a3112dd2ff88b727efde74edd453",
+    "base64-only.patch": "751f638737e94f4c46c7cc92fcc9127e8e804e495799439dfdc6abca049fee9e",
+    "check_offline.py": "4ac00d12de29a6a32077aaab34afaa4c934ecaaf70dc29c55e05b104a5f2cb6c",
+    "components/fe/weapon/Bullet.as": "013887d103cdeadf2e4fc327a424d5f5fe5db00de9e137b37b8fcea4cfa597ae",
+    "components/natural-payloads.json": "6a3054ebef1d39bac535f87dbcd8ec62a160ed29a6db510cf06c23450af96f2b",
+    "components/rconnect/core/Log.as": "d81f766636e0baf8153d1ebc172fa15c5ce7d491974f9b028110f26eb8a737a7",
+    "components/rconnect/game/GameBridge.as": "f0d9a9dcc7c6c640acc19d82103fd60d726117e72973cf3b2b273363dfe491a6",
+    "components/rconnect/game/NativeWallColor.as": "0f7160457f21d46759cc3b43d9defd17a8d921007521407365d906988dcfa842",
+    "components/rconnect/game/WallAfter.as": "ebf4d3c9cfc474298ffde1e1d0df6bfcc538526841d3c301760fdc067be7a447",
+    "components/rconnect/game/WallBefore.as": "39ffad4889bbb14859b5e9c1476741217809b1b7056caffc90cc3721e2ce5ac3",
+    "components/rconnect/game/WallSurfaceBridge.as": "b7f58ccb994f30f86041249c56730831345e95742127814e1afa77bd44d69ad1",
+    "components/rconnect/net/RoomCodec.as": "296ee4d8d94f77faa62dcc17a39cb1e2492c756d3027311713c33935ca6b6b4a",
+    "components/rconnect/net/WallCellBefore.as": "acaac769dc253ee1b4b4029a9cf19299c0fa2d8c0d8754cf655af216bb707e5a",
+    "components/rconnect/net/WallCellCodec.as": "7c44893e61a53ac7d125a4aea5f8425e821e60ff596d49b254b61944075f027c",
+    "components/WallBase64Checks.as": "c617874b53e6e0531c5b3fc9d2d672a20c4ecdaec05b1a40abb839e1e401f6cd",
+    "inputs.json": "ad4a7aa91526f9a759de740a1505ff977eb5b7f0e710bcaa17c3fefb2a249474",
+    "offline-result.json": "c142dcc7ee5ca75556cfb4b2064e68f37bfc6b5fe84b4576c87c12639e7dae3d",
+    "prepare.py": "61280153083ac293b9c2f72452c46ca4119a41f9a0db22b3a3576ea88125c68b",
+    "profile-review.json": "7bce9da557604a0a1606c03c594b2123235013f192b3d880b7f659ac4389c3f9",
+    "README.md": "203bb0c3314dc02421c3193afe056f06c8369c510392a15e9cbb24463c63e2a9",
+    "run_component.py": "7e77e045f38fb1b1cc86665005ee86dcc80eb50d7690a3a327ac06037f0f885d",
+    "src/rconnect/net/WallCellCodec.as": "7c44893e61a53ac7d125a4aea5f8425e821e60ff596d49b254b61944075f027c"
+  },
+  "source_checks": 14,
+  "source_failed": 0,
+  "component_assertions_prepared": 63,
+  "component_assertions_executed": false,
+  "whole_classes": [
+    "WallCellBefore",
+    "WallCellCodec",
+    "WallBefore",
+    "WallAfter"
+  ],
+  "benchmark": "Six ABBA groups, 24 blocks, 246 full production packed calls each; data setup outside timer; no forced GC",
+  "protocol_characters_expected_identical": true,
+  "decode_source_unchanged": true,
+  "native_game_test": false,
+  "performance_qualified": false,
+  "compiled": false,
+  "JVM_AIR_started": false,
+  "command": "python -B -X utf8 experimental/recovery-wall-base64/run_component.py --source experimental/recovery-wall-base64/components --entry WallBase64Checks.as --expected 63 --output build/m52/recovery-wall-base64-component-01"
+}

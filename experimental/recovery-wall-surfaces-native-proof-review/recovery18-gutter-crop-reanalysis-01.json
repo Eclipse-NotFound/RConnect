@@ -1,0 +1,1170 @@
+{
+  "passed": true,
+  "functional_only": true,
+  "performance_qualified": false,
+  "rows": [
+    {
+      "round": 0,
+      "weapon": "lmg",
+      "source": "host",
+      "target": {
+        "hp": 1000,
+        "sx": 400,
+        "mat": 2,
+        "y": 2820,
+        "x": 640,
+        "ty": 70,
+        "sy": 2860,
+        "tx": 16
+      },
+      "native_equal": true,
+      "display_equal": true,
+      "native_expected": 78,
+      "native_wrong": 0,
+      "native_extra": 0,
+      "display_expected": 78,
+      "source_native_observed_wall": 1792631706848,
+      "remote_native_first_wall": 1792631707562,
+      "source_native_interval_before_wall": 1792631706792,
+      "remote_display_first_wall": 1792631707562,
+      "remote_native_complete_wall": 1792631707562,
+      "remote_display_complete_wall": 1792631707562,
+      "native_first_delay_ms": 714,
+      "display_first_delay_ms": 714,
+      "capture_max_ms": {
+        "host": 13,
+        "join": 8
+      },
+      "maximum_observation_gap_ms": {
+        "host": 281,
+        "join": 607
+      },
+      "functional_pass": true,
+      "performance_qualified": false
+    },
+    {
+      "round": 1,
+      "weapon": "lmg",
+      "source": "join",
+      "target": {
+        "hp": 1000,
+        "y": 4140,
+        "mat": 2,
+        "sx": 400,
+        "sy": 4180,
+        "x": 640,
+        "ty": 103,
+        "tx": 16
+      },
+      "native_equal": true,
+      "display_equal": true,
+      "native_expected": 50,
+      "native_wrong": 0,
+      "native_extra": 0,
+      "display_expected": 50,
+      "source_native_observed_wall": 1792631722892,
+      "remote_native_first_wall": 1792631723314,
+      "source_native_interval_before_wall": 1792631722831,
+      "remote_display_first_wall": 1792631723314,
+      "remote_native_complete_wall": 1792631723314,
+      "remote_display_complete_wall": 1792631723314,
+      "native_first_delay_ms": 422,
+      "display_first_delay_ms": 422,
+      "capture_max_ms": {
+        "join": 11,
+        "host": 9
+      },
+      "maximum_observation_gap_ms": {
+        "join": 528,
+        "host": 247
+      },
+      "functional_pass": true,
+      "performance_qualified": false
+    },
+    {
+      "round": 2,
+      "weapon": "plamg",
+      "source": "host",
+      "target": {
+        "hp": 1000,
+        "sx": 400,
+        "mat": 2,
+        "y": 4460,
+        "x": 640,
+        "ty": 111,
+        "sy": 4500,
+        "tx": 16
+      },
+      "native_equal": true,
+      "display_equal": true,
+      "native_expected": 1461,
+      "native_wrong": 0,
+      "native_extra": 0,
+      "display_expected": 1461,
+      "source_native_observed_wall": 1792631737656,
+      "remote_native_first_wall": 1792631738311,
+      "source_native_interval_before_wall": 1792631737602,
+      "remote_display_first_wall": 1792631738311,
+      "remote_native_complete_wall": 1792631742620,
+      "remote_display_complete_wall": 1792631742620,
+      "native_first_delay_ms": 655,
+      "display_first_delay_ms": 655,
+      "capture_max_ms": {
+        "host": 9,
+        "join": 10
+      },
+      "maximum_observation_gap_ms": {
+        "host": 276,
+        "join": 485
+      },
+      "functional_pass": true,
+      "performance_qualified": false
+    },
+    {
+      "round": 3,
+      "weapon": "plamg",
+      "source": "join",
+      "target": {
+        "hp": 1000,
+        "y": 4660,
+        "mat": 2,
+        "sx": 400,
+        "sy": 4700,
+        "x": 640,
+        "ty": 116,
+        "tx": 16
+      },
+      "native_equal": true,
+      "display_equal": true,
+      "native_expected": 1143,
+      "native_wrong": 0,
+      "native_extra": 0,
+      "display_expected": 1143,
+      "source_native_observed_wall": 1792631757090,
+      "remote_native_first_wall": 1792631757378,
+      "source_native_interval_before_wall": 1792631756955,
+      "remote_display_first_wall": 1792631757378,
+      "remote_native_complete_wall": 1792631763260,
+      "remote_display_complete_wall": 1792631763260,
+      "native_first_delay_ms": 288,
+      "display_first_delay_ms": 288,
+      "capture_max_ms": {
+        "join": 10,
+        "host": 9
+      },
+      "maximum_observation_gap_ms": {
+        "join": 456,
+        "host": 204
+      },
+      "functional_pass": true,
+      "performance_qualified": false
+    }
+  ],
+  "errors": [],
+  "artifacts": {
+    "host\\round-0-proof.json": "b05f74d2441d30abe98afb2fe97f267628d98c33bedaada330d59e331c5a0b6c",
+    "host\\round-0-before-native.png": "b532e5916fddcf73e02042bb20cd33eab84d7814acb97589b48c815776b1ef9e",
+    "host\\round-0-after-native.png": "7eef6397f30424ea4b68ca34aad0c2a91e81cabffd738664e14fded34d2d5b91",
+    "host\\round-0-before-display.png": "b532e5916fddcf73e02042bb20cd33eab84d7814acb97589b48c815776b1ef9e",
+    "host\\round-0-after-display.png": "7eef6397f30424ea4b68ca34aad0c2a91e81cabffd738664e14fded34d2d5b91",
+    "host\\round-1-proof.json": "854186bd15c43e2f4d268a8af2cf2caa5aba765154d55c7eab01bf2de5be41e9",
+    "host\\round-1-before-native.png": "ee726b60c6c571194d330faa02e2a82b04dac3a651696f404f98a569dbef9a79",
+    "host\\round-1-after-native.png": "4f1a51d2939a9136765c7328a3e8ed60dde1924039a435967b3746ff959621dc",
+    "host\\round-1-before-display.png": "ee726b60c6c571194d330faa02e2a82b04dac3a651696f404f98a569dbef9a79",
+    "host\\round-1-after-display.png": "4f1a51d2939a9136765c7328a3e8ed60dde1924039a435967b3746ff959621dc",
+    "host\\round-2-proof.json": "58777c36a01629820264a68d890f302022ea2d3e5b859f6e75e411bed1cba3d3",
+    "host\\round-2-before-native.png": "c29a2eb953226c25f815164d7b5ffe53523b5112bb49c550466111f820565378",
+    "host\\round-2-after-native.png": "85401fd8e524ecfd3a3422fb5240213934043a1944a69bbe3cdb8d97b298be08",
+    "host\\round-2-before-display.png": "b5f8d1760dcf95f7d85f797a5686c22da9309a0a7a758fbf3fd9f3cd5970188b",
+    "host\\round-2-after-display.png": "bc5958b53f2f1e4ca8b2c770d3e7a4ce4321eb36f5841c06351bc30958986d06",
+    "host\\round-3-proof.json": "99c32fea48fa10133a4d96dee4779768b34ad3378234ffb914daeb90dbb0b2aa",
+    "host\\round-3-before-native.png": "dc8170cd8763910bfb4e56a813c51ec04422aa335d2dc75783b8523bda8ab681",
+    "host\\round-3-after-native.png": "1aaf9edec14d7640e17fb264b170e5207830ed33a8e404ee9b96eeaf35245ded",
+    "host\\round-3-before-display.png": "8eecdd8254e2a3f96947708b76893d7a0bf5e8507d735a3f48568d92714709e0",
+    "host\\round-3-after-display.png": "1d07e508647a33ef9a204f5419528d289db7ba15a5e2e96dbfdbe7ba175739d3",
+    "join\\round-0-proof.json": "8a7b59f9f35ca6aae3b55434a03575b9d96c8d1de0a9fbd7ddcff0f327d70364",
+    "join\\round-0-before-native.png": "b532e5916fddcf73e02042bb20cd33eab84d7814acb97589b48c815776b1ef9e",
+    "join\\round-0-after-native.png": "7eef6397f30424ea4b68ca34aad0c2a91e81cabffd738664e14fded34d2d5b91",
+    "join\\round-0-before-display.png": "b532e5916fddcf73e02042bb20cd33eab84d7814acb97589b48c815776b1ef9e",
+    "join\\round-0-after-display.png": "7eef6397f30424ea4b68ca34aad0c2a91e81cabffd738664e14fded34d2d5b91",
+    "join\\round-1-proof.json": "27ce4d376b1ab0bab0b09459d9ec89dccfe70fed091f26fedac5bbcafb96c0ba",
+    "join\\round-1-before-native.png": "ee726b60c6c571194d330faa02e2a82b04dac3a651696f404f98a569dbef9a79",
+    "join\\round-1-after-native.png": "4f1a51d2939a9136765c7328a3e8ed60dde1924039a435967b3746ff959621dc",
+    "join\\round-1-before-display.png": "ee726b60c6c571194d330faa02e2a82b04dac3a651696f404f98a569dbef9a79",
+    "join\\round-1-after-display.png": "4f1a51d2939a9136765c7328a3e8ed60dde1924039a435967b3746ff959621dc",
+    "join\\round-2-proof.json": "30d29964b912897a27480dd28e72f1b373aa8176d76be4ca862cf5ffe5af3a4d",
+    "join\\round-2-before-native.png": "c29a2eb953226c25f815164d7b5ffe53523b5112bb49c550466111f820565378",
+    "join\\round-2-after-native.png": "85401fd8e524ecfd3a3422fb5240213934043a1944a69bbe3cdb8d97b298be08",
+    "join\\round-2-before-display.png": "b5f8d1760dcf95f7d85f797a5686c22da9309a0a7a758fbf3fd9f3cd5970188b",
+    "join\\round-2-after-display.png": "bc5958b53f2f1e4ca8b2c770d3e7a4ce4321eb36f5841c06351bc30958986d06",
+    "join\\round-3-proof.json": "47615141365b49198d85ceefa4aad9cd93e3237988788d3952230c0766fbe48f",
+    "join\\round-3-before-native.png": "dc8170cd8763910bfb4e56a813c51ec04422aa335d2dc75783b8523bda8ab681",
+    "join\\round-3-after-native.png": "1aaf9edec14d7640e17fb264b170e5207830ed33a8e404ee9b96eeaf35245ded",
+    "join\\round-3-before-display.png": "8eecdd8254e2a3f96947708b76893d7a0bf5e8507d735a3f48568d92714709e0",
+    "join\\round-3-after-display.png": "1d07e508647a33ef9a204f5419528d289db7ba15a5e2e96dbfdbe7ba175739d3"
+  },
+  "png_audit": {
+    "host\\round-0-before-native.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 31,
+      "rounding_channels": 41,
+      "examples": [
+        {
+          "index": 6338,
+          "json_argb": "387f7f76",
+          "png_argb": "38808076"
+        },
+        {
+          "index": 8129,
+          "json_argb": "6c86847b",
+          "png_argb": "6c87847b"
+        },
+        {
+          "index": 8513,
+          "json_argb": "6c7f7d71",
+          "png_argb": "6c807d71"
+        },
+        {
+          "index": 8641,
+          "json_argb": "387f7b76",
+          "png_argb": "38807b76"
+        }
+      ]
+    },
+    "host\\round-0-after-native.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 32,
+      "rounding_channels": 42,
+      "examples": [
+        {
+          "index": 6338,
+          "json_argb": "387f7f76",
+          "png_argb": "38808076"
+        },
+        {
+          "index": 7873,
+          "json_argb": "6c7f7b76",
+          "png_argb": "6c807b76"
+        },
+        {
+          "index": 8129,
+          "json_argb": "6c89867d",
+          "png_argb": "6c89877d"
+        },
+        {
+          "index": 8513,
+          "json_argb": "6c7f7d71",
+          "png_argb": "6c807d71"
+        }
+      ]
+    },
+    "host\\round-0-before-display.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 31,
+      "rounding_channels": 41,
+      "examples": [
+        {
+          "index": 6338,
+          "json_argb": "387f7f76",
+          "png_argb": "38808076"
+        },
+        {
+          "index": 8129,
+          "json_argb": "6c86847b",
+          "png_argb": "6c87847b"
+        },
+        {
+          "index": 8513,
+          "json_argb": "6c7f7d71",
+          "png_argb": "6c807d71"
+        },
+        {
+          "index": 8641,
+          "json_argb": "387f7b76",
+          "png_argb": "38807b76"
+        }
+      ]
+    },
+    "host\\round-0-after-display.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 32,
+      "rounding_channels": 42,
+      "examples": [
+        {
+          "index": 6338,
+          "json_argb": "387f7f76",
+          "png_argb": "38808076"
+        },
+        {
+          "index": 7873,
+          "json_argb": "6c7f7b76",
+          "png_argb": "6c807b76"
+        },
+        {
+          "index": 8129,
+          "json_argb": "6c89867d",
+          "png_argb": "6c89877d"
+        },
+        {
+          "index": 8513,
+          "json_argb": "6c7f7d71",
+          "png_argb": "6c807d71"
+        }
+      ]
+    },
+    "host\\round-1-before-native.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 31,
+      "rounding_channels": 41,
+      "examples": [
+        {
+          "index": 65,
+          "json_argb": "daa9aba5",
+          "png_argb": "daaaaba5"
+        },
+        {
+          "index": 2370,
+          "json_argb": "387f7f76",
+          "png_argb": "38808076"
+        },
+        {
+          "index": 2881,
+          "json_argb": "6c868982",
+          "png_argb": "6c878982"
+        },
+        {
+          "index": 3393,
+          "json_argb": "6c999792",
+          "png_argb": "6c9a9792"
+        }
+      ]
+    },
+    "host\\round-1-after-native.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 31,
+      "rounding_channels": 37,
+      "examples": [
+        {
+          "index": 65,
+          "json_argb": "daa9aba5",
+          "png_argb": "daaaaba5"
+        },
+        {
+          "index": 2370,
+          "json_argb": "387f7f76",
+          "png_argb": "38808076"
+        },
+        {
+          "index": 2881,
+          "json_argb": "6c868982",
+          "png_argb": "6c878982"
+        },
+        {
+          "index": 3393,
+          "json_argb": "6c999792",
+          "png_argb": "6c9a9792"
+        }
+      ]
+    },
+    "host\\round-1-before-display.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 31,
+      "rounding_channels": 41,
+      "examples": [
+        {
+          "index": 65,
+          "json_argb": "daa9aba5",
+          "png_argb": "daaaaba5"
+        },
+        {
+          "index": 2370,
+          "json_argb": "387f7f76",
+          "png_argb": "38808076"
+        },
+        {
+          "index": 2881,
+          "json_argb": "6c868982",
+          "png_argb": "6c878982"
+        },
+        {
+          "index": 3393,
+          "json_argb": "6c999792",
+          "png_argb": "6c9a9792"
+        }
+      ]
+    },
+    "host\\round-1-after-display.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 31,
+      "rounding_channels": 37,
+      "examples": [
+        {
+          "index": 65,
+          "json_argb": "daa9aba5",
+          "png_argb": "daaaaba5"
+        },
+        {
+          "index": 2370,
+          "json_argb": "387f7f76",
+          "png_argb": "38808076"
+        },
+        {
+          "index": 2881,
+          "json_argb": "6c868982",
+          "png_argb": "6c878982"
+        },
+        {
+          "index": 3393,
+          "json_argb": "6c999792",
+          "png_argb": "6c9a9792"
+        }
+      ]
+    },
+    "host\\round-2-before-native.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 27,
+      "rounding_channels": 46,
+      "examples": [
+        {
+          "index": 138,
+          "json_argb": "da1a1b19",
+          "png_argb": "da191b18"
+        },
+        {
+          "index": 165,
+          "json_argb": "da121312",
+          "png_argb": "da111211"
+        },
+        {
+          "index": 177,
+          "json_argb": "84232321",
+          "png_argb": "84222220"
+        },
+        {
+          "index": 263,
+          "json_argb": "ee282a28",
+          "png_argb": "ee272927"
+        }
+      ]
+    },
+    "host\\round-2-after-native.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 32,
+      "rounding_channels": 62,
+      "examples": [
+        {
+          "index": 138,
+          "json_argb": "da1a1b19",
+          "png_argb": "da191b18"
+        },
+        {
+          "index": 165,
+          "json_argb": "da121312",
+          "png_argb": "da111211"
+        },
+        {
+          "index": 177,
+          "json_argb": "84232321",
+          "png_argb": "84222220"
+        },
+        {
+          "index": 263,
+          "json_argb": "ee282a28",
+          "png_argb": "ee272927"
+        }
+      ]
+    },
+    "host\\round-2-before-display.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 27,
+      "rounding_channels": 46,
+      "examples": [
+        {
+          "index": 138,
+          "json_argb": "da1a1b19",
+          "png_argb": "da191b18"
+        },
+        {
+          "index": 165,
+          "json_argb": "da121312",
+          "png_argb": "da111211"
+        },
+        {
+          "index": 177,
+          "json_argb": "84232321",
+          "png_argb": "84222220"
+        },
+        {
+          "index": 263,
+          "json_argb": "ee282a28",
+          "png_argb": "ee272927"
+        }
+      ]
+    },
+    "host\\round-2-after-display.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 32,
+      "rounding_channels": 62,
+      "examples": [
+        {
+          "index": 138,
+          "json_argb": "da1a1b19",
+          "png_argb": "da191b18"
+        },
+        {
+          "index": 165,
+          "json_argb": "da121312",
+          "png_argb": "da111211"
+        },
+        {
+          "index": 177,
+          "json_argb": "84232321",
+          "png_argb": "84222220"
+        },
+        {
+          "index": 263,
+          "json_argb": "ee282a28",
+          "png_argb": "ee272927"
+        }
+      ]
+    },
+    "host\\round-3-before-native.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 28,
+      "rounding_channels": 36,
+      "examples": [
+        {
+          "index": 5611,
+          "json_argb": "1e999990",
+          "png_argb": "1e999991"
+        },
+        {
+          "index": 6338,
+          "json_argb": "387f7f7b",
+          "png_argb": "3880807b"
+        },
+        {
+          "index": 7106,
+          "json_argb": "f67f7e78",
+          "png_argb": "f6807e78"
+        },
+        {
+          "index": 7234,
+          "json_argb": "bd818078",
+          "png_argb": "bd828078"
+        }
+      ]
+    },
+    "host\\round-3-after-native.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 24,
+      "rounding_channels": 37,
+      "examples": [
+        {
+          "index": 5611,
+          "json_argb": "1e999990",
+          "png_argb": "1e999991"
+        },
+        {
+          "index": 5696,
+          "json_argb": "ee363634",
+          "png_argb": "ee353534"
+        },
+        {
+          "index": 5824,
+          "json_argb": "be2a2a27",
+          "png_argb": "be292927"
+        },
+        {
+          "index": 6081,
+          "json_argb": "e6282723",
+          "png_argb": "e6282623"
+        }
+      ]
+    },
+    "host\\round-3-before-display.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 28,
+      "rounding_channels": 36,
+      "examples": [
+        {
+          "index": 5611,
+          "json_argb": "1e999990",
+          "png_argb": "1e999991"
+        },
+        {
+          "index": 6338,
+          "json_argb": "387f7f7b",
+          "png_argb": "3880807b"
+        },
+        {
+          "index": 7106,
+          "json_argb": "f67f7e78",
+          "png_argb": "f6807e78"
+        },
+        {
+          "index": 7234,
+          "json_argb": "bd818078",
+          "png_argb": "bd828078"
+        }
+      ]
+    },
+    "host\\round-3-after-display.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 24,
+      "rounding_channels": 37,
+      "examples": [
+        {
+          "index": 5611,
+          "json_argb": "1e999990",
+          "png_argb": "1e999991"
+        },
+        {
+          "index": 5696,
+          "json_argb": "ee363634",
+          "png_argb": "ee353534"
+        },
+        {
+          "index": 5824,
+          "json_argb": "be2a2a27",
+          "png_argb": "be292927"
+        },
+        {
+          "index": 6081,
+          "json_argb": "e6282723",
+          "png_argb": "e6282623"
+        }
+      ]
+    },
+    "join\\round-0-before-native.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 31,
+      "rounding_channels": 41,
+      "examples": [
+        {
+          "index": 6338,
+          "json_argb": "387f7f76",
+          "png_argb": "38808076"
+        },
+        {
+          "index": 8129,
+          "json_argb": "6c86847b",
+          "png_argb": "6c87847b"
+        },
+        {
+          "index": 8513,
+          "json_argb": "6c7f7d71",
+          "png_argb": "6c807d71"
+        },
+        {
+          "index": 8641,
+          "json_argb": "387f7b76",
+          "png_argb": "38807b76"
+        }
+      ]
+    },
+    "join\\round-0-after-native.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 32,
+      "rounding_channels": 42,
+      "examples": [
+        {
+          "index": 6338,
+          "json_argb": "387f7f76",
+          "png_argb": "38808076"
+        },
+        {
+          "index": 7873,
+          "json_argb": "6c7f7b76",
+          "png_argb": "6c807b76"
+        },
+        {
+          "index": 8129,
+          "json_argb": "6c89867d",
+          "png_argb": "6c89877d"
+        },
+        {
+          "index": 8513,
+          "json_argb": "6c7f7d71",
+          "png_argb": "6c807d71"
+        }
+      ]
+    },
+    "join\\round-0-before-display.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 31,
+      "rounding_channels": 41,
+      "examples": [
+        {
+          "index": 6338,
+          "json_argb": "387f7f76",
+          "png_argb": "38808076"
+        },
+        {
+          "index": 8129,
+          "json_argb": "6c86847b",
+          "png_argb": "6c87847b"
+        },
+        {
+          "index": 8513,
+          "json_argb": "6c7f7d71",
+          "png_argb": "6c807d71"
+        },
+        {
+          "index": 8641,
+          "json_argb": "387f7b76",
+          "png_argb": "38807b76"
+        }
+      ]
+    },
+    "join\\round-0-after-display.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 32,
+      "rounding_channels": 42,
+      "examples": [
+        {
+          "index": 6338,
+          "json_argb": "387f7f76",
+          "png_argb": "38808076"
+        },
+        {
+          "index": 7873,
+          "json_argb": "6c7f7b76",
+          "png_argb": "6c807b76"
+        },
+        {
+          "index": 8129,
+          "json_argb": "6c89867d",
+          "png_argb": "6c89877d"
+        },
+        {
+          "index": 8513,
+          "json_argb": "6c7f7d71",
+          "png_argb": "6c807d71"
+        }
+      ]
+    },
+    "join\\round-1-before-native.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 31,
+      "rounding_channels": 41,
+      "examples": [
+        {
+          "index": 65,
+          "json_argb": "daa9aba5",
+          "png_argb": "daaaaba5"
+        },
+        {
+          "index": 2370,
+          "json_argb": "387f7f76",
+          "png_argb": "38808076"
+        },
+        {
+          "index": 2881,
+          "json_argb": "6c868982",
+          "png_argb": "6c878982"
+        },
+        {
+          "index": 3393,
+          "json_argb": "6c999792",
+          "png_argb": "6c9a9792"
+        }
+      ]
+    },
+    "join\\round-1-after-native.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 31,
+      "rounding_channels": 37,
+      "examples": [
+        {
+          "index": 65,
+          "json_argb": "daa9aba5",
+          "png_argb": "daaaaba5"
+        },
+        {
+          "index": 2370,
+          "json_argb": "387f7f76",
+          "png_argb": "38808076"
+        },
+        {
+          "index": 2881,
+          "json_argb": "6c868982",
+          "png_argb": "6c878982"
+        },
+        {
+          "index": 3393,
+          "json_argb": "6c999792",
+          "png_argb": "6c9a9792"
+        }
+      ]
+    },
+    "join\\round-1-before-display.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 31,
+      "rounding_channels": 41,
+      "examples": [
+        {
+          "index": 65,
+          "json_argb": "daa9aba5",
+          "png_argb": "daaaaba5"
+        },
+        {
+          "index": 2370,
+          "json_argb": "387f7f76",
+          "png_argb": "38808076"
+        },
+        {
+          "index": 2881,
+          "json_argb": "6c868982",
+          "png_argb": "6c878982"
+        },
+        {
+          "index": 3393,
+          "json_argb": "6c999792",
+          "png_argb": "6c9a9792"
+        }
+      ]
+    },
+    "join\\round-1-after-display.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 31,
+      "rounding_channels": 37,
+      "examples": [
+        {
+          "index": 65,
+          "json_argb": "daa9aba5",
+          "png_argb": "daaaaba5"
+        },
+        {
+          "index": 2370,
+          "json_argb": "387f7f76",
+          "png_argb": "38808076"
+        },
+        {
+          "index": 2881,
+          "json_argb": "6c868982",
+          "png_argb": "6c878982"
+        },
+        {
+          "index": 3393,
+          "json_argb": "6c999792",
+          "png_argb": "6c9a9792"
+        }
+      ]
+    },
+    "join\\round-2-before-native.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 27,
+      "rounding_channels": 46,
+      "examples": [
+        {
+          "index": 138,
+          "json_argb": "da1a1b19",
+          "png_argb": "da191b18"
+        },
+        {
+          "index": 165,
+          "json_argb": "da121312",
+          "png_argb": "da111211"
+        },
+        {
+          "index": 177,
+          "json_argb": "84232321",
+          "png_argb": "84222220"
+        },
+        {
+          "index": 263,
+          "json_argb": "ee282a28",
+          "png_argb": "ee272927"
+        }
+      ]
+    },
+    "join\\round-2-after-native.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 32,
+      "rounding_channels": 62,
+      "examples": [
+        {
+          "index": 138,
+          "json_argb": "da1a1b19",
+          "png_argb": "da191b18"
+        },
+        {
+          "index": 165,
+          "json_argb": "da121312",
+          "png_argb": "da111211"
+        },
+        {
+          "index": 177,
+          "json_argb": "84232321",
+          "png_argb": "84222220"
+        },
+        {
+          "index": 263,
+          "json_argb": "ee282a28",
+          "png_argb": "ee272927"
+        }
+      ]
+    },
+    "join\\round-2-before-display.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 27,
+      "rounding_channels": 46,
+      "examples": [
+        {
+          "index": 138,
+          "json_argb": "da1a1b19",
+          "png_argb": "da191b18"
+        },
+        {
+          "index": 165,
+          "json_argb": "da121312",
+          "png_argb": "da111211"
+        },
+        {
+          "index": 177,
+          "json_argb": "84232321",
+          "png_argb": "84222220"
+        },
+        {
+          "index": 263,
+          "json_argb": "ee282a28",
+          "png_argb": "ee272927"
+        }
+      ]
+    },
+    "join\\round-2-after-display.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 32,
+      "rounding_channels": 62,
+      "examples": [
+        {
+          "index": 138,
+          "json_argb": "da1a1b19",
+          "png_argb": "da191b18"
+        },
+        {
+          "index": 165,
+          "json_argb": "da121312",
+          "png_argb": "da111211"
+        },
+        {
+          "index": 177,
+          "json_argb": "84232321",
+          "png_argb": "84222220"
+        },
+        {
+          "index": 263,
+          "json_argb": "ee282a28",
+          "png_argb": "ee272927"
+        }
+      ]
+    },
+    "join\\round-3-before-native.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 28,
+      "rounding_channels": 36,
+      "examples": [
+        {
+          "index": 5611,
+          "json_argb": "1e999990",
+          "png_argb": "1e999991"
+        },
+        {
+          "index": 6338,
+          "json_argb": "387f7f7b",
+          "png_argb": "3880807b"
+        },
+        {
+          "index": 7106,
+          "json_argb": "f67f7e78",
+          "png_argb": "f6807e78"
+        },
+        {
+          "index": 7234,
+          "json_argb": "bd818078",
+          "png_argb": "bd828078"
+        }
+      ]
+    },
+    "join\\round-3-after-native.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 24,
+      "rounding_channels": 37,
+      "examples": [
+        {
+          "index": 5611,
+          "json_argb": "1e999990",
+          "png_argb": "1e999991"
+        },
+        {
+          "index": 5696,
+          "json_argb": "ee363634",
+          "png_argb": "ee353534"
+        },
+        {
+          "index": 5824,
+          "json_argb": "be2a2a27",
+          "png_argb": "be292927"
+        },
+        {
+          "index": 6081,
+          "json_argb": "e6282723",
+          "png_argb": "e6282623"
+        }
+      ]
+    },
+    "join\\round-3-before-display.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 28,
+      "rounding_channels": 36,
+      "examples": [
+        {
+          "index": 5611,
+          "json_argb": "1e999990",
+          "png_argb": "1e999991"
+        },
+        {
+          "index": 6338,
+          "json_argb": "387f7f7b",
+          "png_argb": "3880807b"
+        },
+        {
+          "index": 7106,
+          "json_argb": "f67f7e78",
+          "png_argb": "f6807e78"
+        },
+        {
+          "index": 7234,
+          "json_argb": "bd818078",
+          "png_argb": "bd828078"
+        }
+      ]
+    },
+    "join\\round-3-after-display.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 24,
+      "rounding_channels": 37,
+      "examples": [
+        {
+          "index": 5611,
+          "json_argb": "1e999990",
+          "png_argb": "1e999991"
+        },
+        {
+          "index": 5696,
+          "json_argb": "ee363634",
+          "png_argb": "ee353534"
+        },
+        {
+          "index": 5824,
+          "json_argb": "be2a2a27",
+          "png_argb": "be292927"
+        },
+        {
+          "index": 6081,
+          "json_argb": "e6282723",
+          "png_argb": "e6282623"
+        }
+      ]
+    }
+  },
+  "png_exact_argb": false,
+  "png_representation_compatible": true,
+  "source_remote_comparison": "exact uint equality; no tolerance",
+  "frozen_analyzer_sha256": "a3e8d886772d8facada4363331e79b6277c582b316f05c00e360e7edd247e874",
+  "modified_rule": "PNG straight-color floor/ceil compatibility only; no gameplay pixel tolerance",
+  "rounding_engine_microtest_performed": false,
+  "evidence": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01",
+  "native_run": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\386a671a97",
+  "framework_passed": true,
+  "original_result_preserved": true,
+  "original_result_sha256": "fa33acf286cd024ba648528a60979d517996a734a5ec5754695a9b5d1502622d",
+  "framework_sha256": "3e80bb3677bcb63af653f6ebd4d6940e9c736648a23a98dbdca492a746ecad88",
+  "input_sha256": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01\\wall-surface-result.json": "fa33acf286cd024ba648528a60979d517996a734a5ec5754695a9b5d1502622d",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01\\result.json": "3e80bb3677bcb63af653f6ebd4d6940e9c736648a23a98dbdca492a746ecad88",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-wall-surfaces-driver-04\\inputs\\large-wall\\verify_results.py": "a3e8d886772d8facada4363331e79b6277c582b316f05c00e360e7edd247e874",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\386a671a97\\host.log": "a2e0ce312fb4dd59b6a5b48cae5810a374f74cfce2bb8b6c96bfe451da38c5de",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\386a671a97\\join.log": "592e2cd8b42a8fa2a591910f2672ad5c1e12e2f55ef6288ddbe1a956991cde6c",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01\\wall-proof\\host\\round-0-after-display.png": "7eef6397f30424ea4b68ca34aad0c2a91e81cabffd738664e14fded34d2d5b91",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01\\wall-proof\\host\\round-0-after-native.png": "7eef6397f30424ea4b68ca34aad0c2a91e81cabffd738664e14fded34d2d5b91",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01\\wall-proof\\host\\round-0-before-display.png": "b532e5916fddcf73e02042bb20cd33eab84d7814acb97589b48c815776b1ef9e",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01\\wall-proof\\host\\round-0-before-native.png": "b532e5916fddcf73e02042bb20cd33eab84d7814acb97589b48c815776b1ef9e",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01\\wall-proof\\host\\round-0-proof.json": "b05f74d2441d30abe98afb2fe97f267628d98c33bedaada330d59e331c5a0b6c",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01\\wall-proof\\host\\round-1-after-display.png": "4f1a51d2939a9136765c7328a3e8ed60dde1924039a435967b3746ff959621dc",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01\\wall-proof\\host\\round-1-after-native.png": "4f1a51d2939a9136765c7328a3e8ed60dde1924039a435967b3746ff959621dc",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01\\wall-proof\\host\\round-1-before-display.png": "ee726b60c6c571194d330faa02e2a82b04dac3a651696f404f98a569dbef9a79",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01\\wall-proof\\host\\round-1-before-native.png": "ee726b60c6c571194d330faa02e2a82b04dac3a651696f404f98a569dbef9a79",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01\\wall-proof\\host\\round-1-proof.json": "854186bd15c43e2f4d268a8af2cf2caa5aba765154d55c7eab01bf2de5be41e9",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01\\wall-proof\\host\\round-2-after-display.png": "bc5958b53f2f1e4ca8b2c770d3e7a4ce4321eb36f5841c06351bc30958986d06",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01\\wall-proof\\host\\round-2-after-native.png": "85401fd8e524ecfd3a3422fb5240213934043a1944a69bbe3cdb8d97b298be08",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01\\wall-proof\\host\\round-2-before-display.png": "b5f8d1760dcf95f7d85f797a5686c22da9309a0a7a758fbf3fd9f3cd5970188b",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01\\wall-proof\\host\\round-2-before-native.png": "c29a2eb953226c25f815164d7b5ffe53523b5112bb49c550466111f820565378",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01\\wall-proof\\host\\round-2-proof.json": "58777c36a01629820264a68d890f302022ea2d3e5b859f6e75e411bed1cba3d3",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01\\wall-proof\\host\\round-3-after-display.png": "1d07e508647a33ef9a204f5419528d289db7ba15a5e2e96dbfdbe7ba175739d3",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01\\wall-proof\\host\\round-3-after-native.png": "1aaf9edec14d7640e17fb264b170e5207830ed33a8e404ee9b96eeaf35245ded",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01\\wall-proof\\host\\round-3-before-display.png": "8eecdd8254e2a3f96947708b76893d7a0bf5e8507d735a3f48568d92714709e0",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01\\wall-proof\\host\\round-3-before-native.png": "dc8170cd8763910bfb4e56a813c51ec04422aa335d2dc75783b8523bda8ab681",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01\\wall-proof\\host\\round-3-proof.json": "99c32fea48fa10133a4d96dee4779768b34ad3378234ffb914daeb90dbb0b2aa",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01\\wall-proof\\join\\round-0-after-display.png": "7eef6397f30424ea4b68ca34aad0c2a91e81cabffd738664e14fded34d2d5b91",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01\\wall-proof\\join\\round-0-after-native.png": "7eef6397f30424ea4b68ca34aad0c2a91e81cabffd738664e14fded34d2d5b91",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01\\wall-proof\\join\\round-0-before-display.png": "b532e5916fddcf73e02042bb20cd33eab84d7814acb97589b48c815776b1ef9e",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01\\wall-proof\\join\\round-0-before-native.png": "b532e5916fddcf73e02042bb20cd33eab84d7814acb97589b48c815776b1ef9e",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01\\wall-proof\\join\\round-0-proof.json": "8a7b59f9f35ca6aae3b55434a03575b9d96c8d1de0a9fbd7ddcff0f327d70364",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01\\wall-proof\\join\\round-1-after-display.png": "4f1a51d2939a9136765c7328a3e8ed60dde1924039a435967b3746ff959621dc",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01\\wall-proof\\join\\round-1-after-native.png": "4f1a51d2939a9136765c7328a3e8ed60dde1924039a435967b3746ff959621dc",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01\\wall-proof\\join\\round-1-before-display.png": "ee726b60c6c571194d330faa02e2a82b04dac3a651696f404f98a569dbef9a79",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01\\wall-proof\\join\\round-1-before-native.png": "ee726b60c6c571194d330faa02e2a82b04dac3a651696f404f98a569dbef9a79",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01\\wall-proof\\join\\round-1-proof.json": "27ce4d376b1ab0bab0b09459d9ec89dccfe70fed091f26fedac5bbcafb96c0ba",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01\\wall-proof\\join\\round-2-after-display.png": "bc5958b53f2f1e4ca8b2c770d3e7a4ce4321eb36f5841c06351bc30958986d06",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01\\wall-proof\\join\\round-2-after-native.png": "85401fd8e524ecfd3a3422fb5240213934043a1944a69bbe3cdb8d97b298be08",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01\\wall-proof\\join\\round-2-before-display.png": "b5f8d1760dcf95f7d85f797a5686c22da9309a0a7a758fbf3fd9f3cd5970188b",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01\\wall-proof\\join\\round-2-before-native.png": "c29a2eb953226c25f815164d7b5ffe53523b5112bb49c550466111f820565378",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01\\wall-proof\\join\\round-2-proof.json": "30d29964b912897a27480dd28e72f1b373aa8176d76be4ca862cf5ffe5af3a4d",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01\\wall-proof\\join\\round-3-after-display.png": "1d07e508647a33ef9a204f5419528d289db7ba15a5e2e96dbfdbe7ba175739d3",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01\\wall-proof\\join\\round-3-after-native.png": "1aaf9edec14d7640e17fb264b170e5207830ed33a8e404ee9b96eeaf35245ded",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01\\wall-proof\\join\\round-3-before-display.png": "8eecdd8254e2a3f96947708b76893d7a0bf5e8507d735a3f48568d92714709e0",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01\\wall-proof\\join\\round-3-before-native.png": "dc8170cd8763910bfb4e56a813c51ec04422aa335d2dc75783b8523bda8ab681",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-gutter-crop-native-01\\wall-proof\\join\\round-3-proof.json": "47615141365b49198d85ceefa4aad9cd93e3237988788d3952230c0766fbe48f"
+  },
+  "source_unchanged": true,
+  "candidate_sha256": "11b795d0d6681caa4edfcc2d1c0df73cb38f6d706a1fb3c26518163f738fe4d3",
+  "native_host_sha256": "acc336b5f28012a5f0d2ef57d0a3bf46be46f72f1e4c3a69a2f063cae0535dfd",
+  "independent_reanalysis": true,
+  "jvm_started": false,
+  "air_started": false,
+  "installed": false
+}

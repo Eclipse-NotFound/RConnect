@@ -1,0 +1,35 @@
+--- recovery18/rconnect/net/WallCellCodec.as
++++ wall-base64/rconnect/net/WallCellCodec.as
+@@ -6,6 +6,11 @@
+    public final class WallCellCodec {
+       public static const PREFIX:String="!W1:";
+       private static const DIGITS:String="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
++      // One bounded ASCII alphabet; no per-group temporary strings.
++      private static const ASCII:Vector.<uint> = new <uint>[
++         65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,
++         97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,
++         48,49,50,51,52,53,54,55,56,57,43,47];
+       private static const MAX_RAW:int=9602; // 2 + 1600*(2+4)
+       private static const MAX_COMPRESSED:int=10000; // includes conservative zlib overhead
+       private static const MAX_TEXT:int=13340;
+@@ -29,14 +34,16 @@
+          }
+          bytes.compress();bytes.position=0;
+          if(bytes.length>MAX_COMPRESSED)throw new Error("Wall cell exceeds encoded limit");
+-         var out:Array=[];
++         var out:ByteArray=new ByteArray();
++         out.length=int((bytes.length+2)/3)*4; // MAX_COMPRESSED already enforced.
+          while(bytes.bytesAvailable) {
+             var left:int=bytes.bytesAvailable,a:int=bytes.readUnsignedByte();
+             var b:int=left>1?bytes.readUnsignedByte():0,c:int=left>2?bytes.readUnsignedByte():0;
+-            out.push(DIGITS.charAt(a>>2)+DIGITS.charAt(((a&3)<<4)|(b>>4))+
+-               (left>1?DIGITS.charAt(((b&15)<<2)|(c>>6)):"=")+(left>2?DIGITS.charAt(c&63):"="));
++            // ByteArray's default big endian writes these four ASCII bytes.
++            out.writeUnsignedInt((ASCII[a>>2]<<24)|(ASCII[((a&3)<<4)|(b>>4)]<<16)|
++               ((left>1?ASCII[((b&15)<<2)|(c>>6)]:61)<<8)|(left>2?ASCII[c&63]:61));
+          }
+-         return PREFIX+out.join("");
++         out.position=0;return PREFIX+out.readUTFBytes(out.length);
+       }
+       public static function unpack(data:String):Array {
+          if(!isCell(data) || data.length>MAX_TEXT)return null;

@@ -1,0 +1,760 @@
+{
+  "run": "build\\m52\\recovery-wall-base64-component-01",
+  "formal_receipt": {
+    "passed": true,
+    "compiled": true,
+    "air_started": true,
+    "native_game_test": false,
+    "performance_qualified": false,
+    "compile_exit": 0,
+    "component_sha256": "75f5837b09cf197d7a685f0fa9c9721d2481037e4d5a1adf8f1d73095a33446a",
+    "pid": 104628,
+    "appid": "rconnect-recovery-component-dd3776fe1b0949eda608f30fc405a1d2",
+    "desktop": "RemainsTest-4c38979a99c54f11a66c882df87ed6db",
+    "exit_code": 0,
+    "observed_checks": 63,
+    "checks_failed": 0,
+    "failures": [],
+    "installation_unchanged": true,
+    "source_unchanged": true
+  },
+  "receipt_sha256": "890b6d2d9c8c151a1e27b95a8d080726a6af3e18ed5c2dc8eb5ff09e575b4032",
+  "component_result_sha256": "cf74be7ce917a2ed1c5b7eba32c8a7f3b13d9868654f9f4f33f167973ae873f1",
+  "all_24_blocks": [
+    {
+      "coldDecode": {
+        "ms": 306,
+        "calls": 246,
+        "resetOutsideTiming": true,
+        "checksum": 2240691086,
+        "words": 297180
+      },
+      "side": "old",
+      "ms": 559,
+      "block": 0,
+      "calls": 246,
+      "checksum": 19128,
+      "chars": 743736
+    },
+    {
+      "coldDecode": {
+        "ms": 278,
+        "calls": 246,
+        "resetOutsideTiming": true,
+        "checksum": 2240691086,
+        "words": 297180
+      },
+      "side": "new",
+      "ms": 396,
+      "block": 1,
+      "calls": 246,
+      "checksum": 19128,
+      "chars": 743736
+    },
+    {
+      "coldDecode": {
+        "ms": 295,
+        "calls": 246,
+        "resetOutsideTiming": true,
+        "checksum": 2240691086,
+        "words": 297180
+      },
+      "side": "new",
+      "ms": 410,
+      "block": 2,
+      "calls": 246,
+      "checksum": 19128,
+      "chars": 743736
+    },
+    {
+      "coldDecode": {
+        "ms": 291,
+        "calls": 246,
+        "resetOutsideTiming": true,
+        "checksum": 2240691086,
+        "words": 297180
+      },
+      "side": "old",
+      "ms": 535,
+      "block": 3,
+      "calls": 246,
+      "checksum": 19128,
+      "chars": 743736
+    },
+    {
+      "coldDecode": {
+        "ms": 291,
+        "calls": 246,
+        "resetOutsideTiming": true,
+        "checksum": 2240691086,
+        "words": 297180
+      },
+      "side": "old",
+      "ms": 513,
+      "block": 4,
+      "calls": 246,
+      "checksum": 19128,
+      "chars": 743736
+    },
+    {
+      "coldDecode": {
+        "ms": 264,
+        "calls": 246,
+        "resetOutsideTiming": true,
+        "checksum": 2240691086,
+        "words": 297180
+      },
+      "side": "new",
+      "ms": 400,
+      "block": 5,
+      "calls": 246,
+      "checksum": 19128,
+      "chars": 743736
+    },
+    {
+      "coldDecode": {
+        "ms": 289,
+        "calls": 246,
+        "resetOutsideTiming": true,
+        "checksum": 2240691086,
+        "words": 297180
+      },
+      "side": "new",
+      "ms": 393,
+      "block": 6,
+      "calls": 246,
+      "checksum": 19128,
+      "chars": 743736
+    },
+    {
+      "coldDecode": {
+        "ms": 288,
+        "calls": 246,
+        "resetOutsideTiming": true,
+        "checksum": 2240691086,
+        "words": 297180
+      },
+      "side": "old",
+      "ms": 536,
+      "block": 7,
+      "calls": 246,
+      "checksum": 19128,
+      "chars": 743736
+    },
+    {
+      "coldDecode": {
+        "ms": 276,
+        "calls": 246,
+        "resetOutsideTiming": true,
+        "checksum": 2240691086,
+        "words": 297180
+      },
+      "side": "old",
+      "ms": 517,
+      "block": 8,
+      "calls": 246,
+      "checksum": 19128,
+      "chars": 743736
+    },
+    {
+      "coldDecode": {
+        "ms": 322,
+        "calls": 246,
+        "resetOutsideTiming": true,
+        "checksum": 2240691086,
+        "words": 297180
+      },
+      "side": "new",
+      "ms": 400,
+      "block": 9,
+      "calls": 246,
+      "checksum": 19128,
+      "chars": 743736
+    },
+    {
+      "coldDecode": {
+        "ms": 285,
+        "calls": 246,
+        "resetOutsideTiming": true,
+        "checksum": 2240691086,
+        "words": 297180
+      },
+      "side": "new",
+      "ms": 406,
+      "block": 10,
+      "calls": 246,
+      "checksum": 19128,
+      "chars": 743736
+    },
+    {
+      "coldDecode": {
+        "ms": 304,
+        "calls": 246,
+        "resetOutsideTiming": true,
+        "checksum": 2240691086,
+        "words": 297180
+      },
+      "side": "old",
+      "ms": 502,
+      "block": 11,
+      "calls": 246,
+      "checksum": 19128,
+      "chars": 743736
+    },
+    {
+      "coldDecode": {
+        "ms": 295,
+        "calls": 246,
+        "resetOutsideTiming": true,
+        "checksum": 2240691086,
+        "words": 297180
+      },
+      "side": "old",
+      "ms": 509,
+      "block": 12,
+      "calls": 246,
+      "checksum": 19128,
+      "chars": 743736
+    },
+    {
+      "coldDecode": {
+        "ms": 300,
+        "calls": 246,
+        "resetOutsideTiming": true,
+        "checksum": 2240691086,
+        "words": 297180
+      },
+      "side": "new",
+      "ms": 408,
+      "block": 13,
+      "calls": 246,
+      "checksum": 19128,
+      "chars": 743736
+    },
+    {
+      "coldDecode": {
+        "ms": 292,
+        "calls": 246,
+        "resetOutsideTiming": true,
+        "checksum": 2240691086,
+        "words": 297180
+      },
+      "side": "new",
+      "ms": 432,
+      "block": 14,
+      "calls": 246,
+      "checksum": 19128,
+      "chars": 743736
+    },
+    {
+      "coldDecode": {
+        "ms": 317,
+        "calls": 246,
+        "resetOutsideTiming": true,
+        "checksum": 2240691086,
+        "words": 297180
+      },
+      "side": "old",
+      "ms": 529,
+      "block": 15,
+      "calls": 246,
+      "checksum": 19128,
+      "chars": 743736
+    },
+    {
+      "coldDecode": {
+        "ms": 304,
+        "calls": 246,
+        "resetOutsideTiming": true,
+        "checksum": 2240691086,
+        "words": 297180
+      },
+      "side": "old",
+      "ms": 549,
+      "block": 16,
+      "calls": 246,
+      "checksum": 19128,
+      "chars": 743736
+    },
+    {
+      "coldDecode": {
+        "ms": 291,
+        "calls": 246,
+        "resetOutsideTiming": true,
+        "checksum": 2240691086,
+        "words": 297180
+      },
+      "side": "new",
+      "ms": 362,
+      "block": 17,
+      "calls": 246,
+      "checksum": 19128,
+      "chars": 743736
+    },
+    {
+      "coldDecode": {
+        "ms": 276,
+        "calls": 246,
+        "resetOutsideTiming": true,
+        "checksum": 2240691086,
+        "words": 297180
+      },
+      "side": "new",
+      "ms": 371,
+      "block": 18,
+      "calls": 246,
+      "checksum": 19128,
+      "chars": 743736
+    },
+    {
+      "coldDecode": {
+        "ms": 277,
+        "calls": 246,
+        "resetOutsideTiming": true,
+        "checksum": 2240691086,
+        "words": 297180
+      },
+      "side": "old",
+      "ms": 519,
+      "block": 19,
+      "calls": 246,
+      "checksum": 19128,
+      "chars": 743736
+    },
+    {
+      "coldDecode": {
+        "ms": 306,
+        "calls": 246,
+        "resetOutsideTiming": true,
+        "checksum": 2240691086,
+        "words": 297180
+      },
+      "side": "old",
+      "ms": 512,
+      "block": 20,
+      "calls": 246,
+      "checksum": 19128,
+      "chars": 743736
+    },
+    {
+      "coldDecode": {
+        "ms": 294,
+        "calls": 246,
+        "resetOutsideTiming": true,
+        "checksum": 2240691086,
+        "words": 297180
+      },
+      "side": "new",
+      "ms": 386,
+      "block": 21,
+      "calls": 246,
+      "checksum": 19128,
+      "chars": 743736
+    },
+    {
+      "coldDecode": {
+        "ms": 314,
+        "calls": 246,
+        "resetOutsideTiming": true,
+        "checksum": 2240691086,
+        "words": 297180
+      },
+      "side": "new",
+      "ms": 415,
+      "block": 22,
+      "calls": 246,
+      "checksum": 19128,
+      "chars": 743736
+    },
+    {
+      "coldDecode": {
+        "ms": 301,
+        "calls": 246,
+        "resetOutsideTiming": true,
+        "checksum": 2240691086,
+        "words": 297180
+      },
+      "side": "old",
+      "ms": 578,
+      "block": 23,
+      "calls": 246,
+      "checksum": 19128,
+      "chars": 743736
+    }
+  ],
+  "summaries": {
+    "old": {
+      "pack": {
+        "blocks": 12,
+        "min_ms": 502,
+        "max_ms": 578,
+        "sum_ms": 6358,
+        "mean_ms": 529.8333333333334,
+        "median_ms": 524.0
+      },
+      "cold_decode": {
+        "blocks": 12,
+        "min_ms": 276,
+        "max_ms": 317,
+        "sum_ms": 3556,
+        "mean_ms": 296.3333333333333,
+        "median_ms": 298.0
+      }
+    },
+    "new": {
+      "pack": {
+        "blocks": 12,
+        "min_ms": 362,
+        "max_ms": 432,
+        "sum_ms": 4779,
+        "mean_ms": 398.25,
+        "median_ms": 400.0
+      },
+      "cold_decode": {
+        "blocks": 12,
+        "min_ms": 264,
+        "max_ms": 322,
+        "sum_ms": 3500,
+        "mean_ms": 291.6666666666667,
+        "median_ms": 291.5
+      }
+    }
+  },
+  "paired_ABBA_groups": [
+    {
+      "group": 1,
+      "blocks": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "old_mean_ms": 547.0,
+      "new_mean_ms": 403.0,
+      "reduction_percent": 26.3254113345521
+    },
+    {
+      "group": 2,
+      "blocks": [
+        4,
+        5,
+        6,
+        7
+      ],
+      "old_mean_ms": 524.5,
+      "new_mean_ms": 396.5,
+      "reduction_percent": 24.40419447092469
+    },
+    {
+      "group": 3,
+      "blocks": [
+        8,
+        9,
+        10,
+        11
+      ],
+      "old_mean_ms": 509.5,
+      "new_mean_ms": 403.0,
+      "reduction_percent": 20.902845927379783
+    },
+    {
+      "group": 4,
+      "blocks": [
+        12,
+        13,
+        14,
+        15
+      ],
+      "old_mean_ms": 519.0,
+      "new_mean_ms": 420.0,
+      "reduction_percent": 19.07514450867052
+    },
+    {
+      "group": 5,
+      "blocks": [
+        16,
+        17,
+        18,
+        19
+      ],
+      "old_mean_ms": 534.0,
+      "new_mean_ms": 366.5,
+      "reduction_percent": 31.367041198501873
+    },
+    {
+      "group": 6,
+      "blocks": [
+        20,
+        21,
+        22,
+        23
+      ],
+      "old_mean_ms": 545.0,
+      "new_mean_ms": 400.5,
+      "reduction_percent": 26.513761467889907
+    }
+  ],
+  "pack_mean_reduction_percent": 24.834853727587298,
+  "pack_ms_saved_per_call_on_this_corpus": 0.5348915989159894,
+  "component_assertions": [
+    {
+      "label": "historical natural fixture is exactly 82 payloads/1276 observed decode misses",
+      "passed": true
+    },
+    {
+      "label": "candidate reads every original natural payload without value/order change",
+      "passed": true
+    },
+    {
+      "label": "new natural encoding preserves every offset/uint/envelope/version",
+      "passed": true
+    },
+    {
+      "label": "all 82 natural 40x40 ARGB rasters compare pixel-exact",
+      "passed": true
+    },
+    {
+      "label": "new and legacy cache hits return independent arrays after caller mutation",
+      "passed": true
+    },
+    {
+      "label": "natural fixture arrays remain unchanged",
+      "passed": true
+    },
+    {
+      "label": "exact historical 1276 observed order re-encodes without loss (not current encode frequency)",
+      "passed": true
+    },
+    {
+      "label": "unchanged version returns same encoded cache object in both classes",
+      "passed": true
+    },
+    {
+      "label": "real invalidation re-encodes changed values and revision",
+      "passed": true
+    },
+    {
+      "label": "queued cells without v never inherit a stale packed cache",
+      "passed": true
+    },
+    {
+      "label": "empty sparse cell is exactly represented",
+      "passed": true
+    },
+    {
+      "label": "full 1600 pixels preserve transparent and maximum uint boundaries",
+      "passed": true
+    },
+    {
+      "label": "cell coordinates and version stay outside pixel codec",
+      "passed": true
+    },
+    {
+      "label": "malformed base64/padding/order/count/offset/trailing/size binary inputs are rejected before paint",
+      "passed": true
+    },
+    {
+      "label": "legacy malformed numeric payload rejection remains unchanged",
+      "passed": true
+    },
+    {
+      "label": "legacy unusual Number coercion and returned types remain unchanged",
+      "passed": true
+    },
+    {
+      "label": "duplicate cell coordinates remain rejected",
+      "passed": true
+    },
+    {
+      "label": "native map/bitmap/fractional coordinate bounds remain enforced",
+      "passed": true
+    },
+    {
+      "label": "network maximum remains 64 cells",
+      "passed": true
+    },
+    {
+      "label": "network maximum remains 48000 text characters",
+      "passed": true
+    },
+    {
+      "label": "actual BitmapData/contact observation creates pending reports in both full classes",
+      "passed": true
+    },
+    {
+      "label": "report semantic pixels and versions match despite different encoded bytes",
+      "passed": true
+    },
+    {
+      "label": "unchanged real snapshots reuse encoded cache objects",
+      "passed": true
+    },
+    {
+      "label": "pending local pixels protected while disjoint authoritative pixels merge",
+      "passed": true
+    },
+    {
+      "label": "wrong ACK sequence cannot release prediction protection",
+      "passed": true
+    },
+    {
+      "label": "valid ACK releases prediction and permits same authoritative revision after skip",
+      "passed": true
+    },
+    {
+      "label": "changed authoritative pixel invalidates only that encoded revision",
+      "passed": true
+    },
+    {
+      "label": "old revisions cannot overwrite pixels after ACK",
+      "passed": true
+    },
+    {
+      "label": "invalid second cell rejects complete batch before first pixel paint",
+      "passed": true
+    },
+    {
+      "label": "destroyed walls discard old coatings without filling removed pixels",
+      "passed": true
+    },
+    {
+      "label": "side 0 read-only updates preserve unsent batch and 64-cell limit",
+      "passed": true
+    },
+    {
+      "label": "side 0 actual sent cursor drains remaining cells without loss",
+      "passed": true
+    },
+    {
+      "label": "side 0 cumulative snapshot rotation covers all 70 cells",
+      "passed": true
+    },
+    {
+      "label": "side 0 ownership change reopens transport cursors without dropping paint",
+      "passed": true
+    },
+    {
+      "label": "side 0 checkpoint restore/redraw preserves every actual pixel",
+      "passed": true
+    },
+    {
+      "label": "side 1 read-only updates preserve unsent batch and 64-cell limit",
+      "passed": true
+    },
+    {
+      "label": "side 1 actual sent cursor drains remaining cells without loss",
+      "passed": true
+    },
+    {
+      "label": "side 1 cumulative snapshot rotation covers all 70 cells",
+      "passed": true
+    },
+    {
+      "label": "side 1 ownership change reopens transport cursors without dropping paint",
+      "passed": true
+    },
+    {
+      "label": "side 1 checkpoint restore/redraw preserves every actual pixel",
+      "passed": true
+    },
+    {
+      "label": "side 0 dense batch splits respect 48k and preserve all six cells",
+      "passed": true
+    },
+    {
+      "label": "side 0 accepted wire batch has idempotent exact ACK receipt",
+      "passed": true
+    },
+    {
+      "label": "side 0 invalid sequence cannot alter settled receipt",
+      "passed": true
+    },
+    {
+      "label": "side 1 dense batch splits respect 48k and preserve all six cells",
+      "passed": true
+    },
+    {
+      "label": "side 1 accepted wire batch has idempotent exact ACK receipt",
+      "passed": true
+    },
+    {
+      "label": "side 1 invalid sequence cannot alter settled receipt",
+      "passed": true
+    },
+    {
+      "label": "all 82 natural encoded strings are character-for-character identical",
+      "passed": true
+    },
+    {
+      "label": "both complete codecs read each other's exact natural bytes",
+      "passed": true
+    },
+    {
+      "label": "full WallImpactVisuals envelopes are byte-identical on all 82 natural cells",
+      "passed": true
+    },
+    {
+      "label": "property insertion order still sorts to exactly the same wire bytes",
+      "passed": true
+    },
+    {
+      "label": "128 deterministic empty/sparse/full maps produce exact old/new wire bytes",
+      "passed": true
+    },
+    {
+      "label": "native compressed lengths actually exercise all three Base64 remainders",
+      "passed": true
+    },
+    {
+      "label": "zero/one/two byte tail padding is exact for every observed compressed remainder",
+      "passed": true
+    },
+    {
+      "label": "ASCII output has exact bounded length and contains no unwritten zeros or extra bytes",
+      "passed": true
+    },
+    {
+      "label": "compressed fixture bytes exercise every unsigned input value including high bits",
+      "passed": true
+    },
+    {
+      "label": "transparent/maximum uint and both offset endpoints retain exact bytes",
+      "passed": true
+    },
+    {
+      "label": "noncanonical/out-of-range indices reject with unchanged error type/message",
+      "passed": true
+    },
+    {
+      "label": "invalid numeric colors reject before encoding with unchanged error type/message",
+      "passed": true
+    },
+    {
+      "label": "existing valid Number coercion stays byte-identical",
+      "passed": true
+    },
+    {
+      "label": "repeated pack does not mutate caller input",
+      "passed": true
+    },
+    {
+      "label": "ABBA measures 24 nonempty equal-work 246-encode blocks",
+      "passed": true
+    },
+    {
+      "label": "all 24 old/new ABBA outputs have identical characters/checksums independent of order",
+      "passed": true
+    },
+    {
+      "label": "all 24 cold decode blocks consume identical complete pixel words",
+      "passed": true
+    }
+  ],
+  "native_game_tested": false,
+  "performance_qualified": false,
+  "encoding_bytes_unchanged": true,
+  "cold_decode_code_unchanged": true,
+  "corpus_is_current_dense_encode_distribution": false,
+  "next_comparison": "same frozen density driver02/runner and thresholds, ordinary corridor, installed BEFC host, recovery18 then19; not large-surface/early-loading qualification",
+  "integration_sha256": "2d0c3009f7b5582a2aa09148bafe1563409a6fef88972e1bd6a301c50d52218e"
+}
