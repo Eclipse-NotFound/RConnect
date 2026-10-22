@@ -1,0 +1,11 @@
+--- original/tests/RoomTravelTimingTestDoc.as
++++ adapter/tests/RoomTravelTimingTestDoc.as
+@@ -60,7 +60,7 @@
+       }
+       private function begin(wall:Number=0):void {
+          requestedWall=wall>0?wall:new Date().time;
+-         rasterProbe.begin(SceneRasterBuildConfig.REQUIRE_SEED_TICKET && !solo && !host && target=="random_mane");
++         rasterProbe.begin(!solo && target=="random_mane" && (SceneRasterBuildConfig.EXPECT_EARLY || !host));
+          phase="travel";at=getTimer();lastFrame=at;exitAt=exitDone=-1;coverMs=pausedMs=0;
+          localResult=null;reported=false;peer=null;
+          Log.d("TRAVEL CLOCK "+JSON.stringify({started:at,round:round,target:target}));

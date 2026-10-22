@@ -1,0 +1,11 @@
+{
+  "sources": {
+    "A22RoomMetrics.as": "314823fd0fcd04e71277dcd3e8ee1a647317e611c5ff7b8fb0e7058c25179d6e",
+    "FirstRasterSceneProbe.as": "785e63b0c315941a81fccb5fc17832a10543fe83545435905ef9ff6ce7f7c789",
+    "RoomTravelSceneTestDoc.as": "55e2caa583fc5f14c1844e10fd46506b9d681b889fb9b94ab82053b02df2547b",
+    "RoomTravelTimingTestDoc.as": "3e0887496e62b7cd9cb2f041bb4629748277a1d96887e8216f1147cb8a10fa6b"
+  },
+  "original_scene_checks_retained": true,
+  "compiled": false,
+  "runtime_tested": false
+}

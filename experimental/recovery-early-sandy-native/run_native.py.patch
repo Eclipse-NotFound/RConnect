@@ -1,0 +1,65 @@
+--- original/run_native.py
++++ adapter/run_native.py
+@@ -10,7 +10,7 @@
+ import sys
+ from check_coop_bundle import ROOT, M52, read, save, sha
+ from run_security_terminals import installation, test_port
+-from native_inputs import audit,host_input,verify_host_intent,verify_driver
++from native_inputs import audit,host_input,verify_host_intent,verify_driver,sandy_input
+ 
+ 
+ def main():
+@@ -21,13 +21,16 @@
+     ap.add_argument('--game-candidate',required=True,help='Verified isolated native-travel host directory; never installs it')
+     ap.add_argument('--scenario',choices=['scene','entry-room'],default='scene')
+     ap.add_argument('--solo',action='store_true')
++    ap.add_argument('--sand-mode',choices=['bridge','legacy'],default='bridge')
+     ap.add_argument('--registry-wait',type=float,default=300)
+     a=ap.parse_args()
+     candidate=(ROOT/a.candidate).resolve();drivers=(ROOT/a.drivers).resolve();out=(ROOT/a.output).resolve()
+     assert candidate.parent==M52 and drivers.parent==M52 and out.parent==M52 and not out.exists()
+     audit(candidate)
++    sand=sandy_input(a.sand_mode)
+     meta=read(drivers/'prepared.json')
+     verify_driver(drivers,meta,a.scenario)
++    if a.scenario=="scene":assert meta["sand_mode"]==a.sand_mode
+     assert not (a.solo and meta.get('diagnostic_only')), 'First resumed mirror frame profiling requires a peer'
+     for n,h in meta['files'].items():assert sha(drivers/n)==h,n
+     binary=candidate/'RConnectMod.swf';digest=sha(binary)
+@@ -44,14 +47,15 @@
+     save(binding/'driver-input.json',dict(candidate_sha256=digest,identical_driver=sha(binding/'EffectsDriver.swf')))
+     save(out/'intent.json',dict(candidate=str(candidate),candidate_sha256=digest,driver_manifest=sha(drivers/'prepared.json'),
+         scenario=a.scenario,solo=a.solo,diagnostic_only=bool(meta.get('diagnostic_only',False)),installation=before,
+-        runner_sha256=sha(ROOT/'tools/run_coop_regression.py'),wrapper_sha256=sha(__file__),native_host=host_intent))
++        runner_sha256=sha(Path(__file__).with_name('native_runner.py')),wrapper_sha256=sha(__file__),native_host=host_intent,sandy=sand))
+     timed=a.scenario in ('timing','scene')
+-    cmd=[sys.executable,'-B','-X','utf8',str(ROOT/'tools/run_coop_regression.py'),'--candidate',str(binary),
++    cmd=[sys.executable,'-B','-X','utf8',str(Path(__file__).with_name('native_runner.py')),'--candidate',str(binary),
+         '--effects','--effects-driver',str(binding),'--all-mods','--land','random_mane' if a.scenario=='entry-room' else 'rbl','--seconds','600',
+         '--expected-version',version,'--port',str(test_port()),'--private-desktop','--defer-visible','--wait-host-world','--require-exclusive-air']
+     cmd+=['--registry-wait',str(a.registry_wait)]
+     if host_candidate:cmd+=['--game-candidate',str(host_candidate/'pfe.swf')]
+     if a.solo:cmd+=['--solo']
++    if a.sand_mode=='bridge':cmd+=['--sandy-candidate',sand['candidate']]
+     with (out/'runner.log').open('w',encoding='utf-8') as log:
+         process=subprocess.run(cmd,cwd=ROOT,stdout=log,stderr=subprocess.STDOUT)
+     raw=(out/'runner.log').read_text(encoding='utf-8',errors='replace')
+@@ -66,6 +70,8 @@
+             expected_host=host_intent['candidate_sha256'] if host_intent else before['pfe.swf']
+             assert inp['game']==expected_host and inp['production']==digest
+             assert inp['driver']==sha(binding/'EffectsDriver.swf')
++            modules={k.replace(chr(92),'/').lower():v for k,v in inp['modules'].items()}
++            assert modules['mods/sandevistan/release/sandevistanmod.swf']==sand['candidate_sha256']
+             path=run/(role+'.log');text=path.read_text(encoding='utf-8-sig',errors='replace') if path.exists() else ''
+             stdout=run/(role+'.stdout.log');all_text=text+'\n'+(stdout.read_text(encoding='utf-8',errors='replace') if stdout.exists() else '')
+             module_logs=run/'module-logs'/role
+@@ -112,6 +118,9 @@
+         result['native_host']=host_intent
+     verify_driver(drivers,meta,a.scenario)
+     assert sha(drivers/'prepared.json')==read(out/'intent.json')['driver_manifest']
++    assert sandy_input(a.sand_mode)==sand
++    result['sandy']=sand
++    result['early_performance_qualified']=False
+     save(out/'result.json',result)
+     # Keep complete phase/input/source evidence on disk, not in every progress
+     # item. This only shortens console output; qualification above is unchanged.

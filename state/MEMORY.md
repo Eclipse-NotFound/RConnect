@@ -32,7 +32,7 @@ Remains 1.02 双人合作。A 是普通入口现用同步架构；B 是独立主
 | 21 / 9ac7ede757c253bbf61e0c44334870b4a95112f976c1b40f2f390822a8b7e7ba | `recovery-wall-decode-buildsrc`，准确20仅两解码类+版本，87类字节不变 | 67/0组件、编译；密集前两段仍失败，未部署 |
 | 22 / 746eef5713985f23fe13a57792516789bebd37a5e4142639ba8cc8b6590b3e93 | `recovery-small-color-buildsrc`，准确21仅两处普通房最终写色+版本，88类字节不变 | ACC大图四例最终uint一致；普通房加入plamg漏掉22个墙沿像素，其余三例过，未部署 |
 | 23 / 87fafd6646b5fa07fd8fa280ed7e82f7e69631850e67b0748d9cad22de2f0b6c | `recovery-pause-flush`，22仅CoopPause/Session暂停边沿补发+版本，87类不变 | 50/0组件，八轮功能过但首次暂停观测对齐无改善；不作为已验证优化合入下一版 |
-| early / 10B249…1FAE6 | `recovery-early-buildsrc`，16+并行早交付，单独分支 | 217组件、编译及宿主独立回读通过；缺真实A Sand接口 |
+| early / 10B249…1FAE6 | `recovery-early-buildsrc`，16+并行早交付，单独分支 | A Sand003已接入隔离测试；首进/基地过，缓存重访超时，未达单人耗时 |
 
 20不含15姿态、17地形、小房反查色修正或early。19→20另外88类逐字相同，GameBridge只合表项，没有旧整类覆盖。完整清单见各integration/prepared，不能凭版本名混用。
 
@@ -69,7 +69,8 @@ Remains 1.02 双人合作。A 是普通入口现用同步架构；B 是独立主
 
 - 2026-10-22用户已明确授权A独立Sand加载接口及隔离合格后部署；不再等待或重复询问。基于准确CEC6的`recovery-sandy-travel-hold-proposal/README.md`：22行+独立载体，闲置才准入，时停/回放继续旧加载，不混入B源。用户也回复释放内存后继续实测，仍需实测启动余量。
 - A Sand准确CEC6兼容候选已在`mods/Sandevistan/build/out/a-travel-hold-20261022-003`编译，3e220b595f54249c82fcad36e1b13364c0456c4e8b5f4e20f876c3964c7d331c；原10文件中9不变，entry只加22行，新增helper只补两个ASC末返回，未混B。独立94方法静态复核通过。真实helper组件03为76/0；01夹具多定义编译失败，02后台桌面权限失败未AIR、登记已核对释放，原记录保留。不是完整游戏时停或加载资格。入口`recovery-sandy-hold-build`及`recovery-sandy-hold-components-v2`。
-- early217组件通过不代替真实Sand/原生加载。独立宿主2D415D…DD29原回读因init2变量声明移位失败；严格独立recheck通过，原失败保留。新的原生薄适配在`recovery-early-sandy-native`准备，根串行编译/运行。
+- early217组件通过不代替真实Sand/原生加载。独立宿主2D415D…DD29原回读因init2变量声明移位失败；严格独立recheck通过，原失败保留。原生薄适配`recovery-early-sandy-native`已编译并实测：双人3b3c31c5f5首进/基地完成，缓存重访双方exit=0却未ready，主侧45秒交接超时，原95秒驱动失败。单人925d5f32df三段通过，elapsed 7178/2018/3290ms；双人首两段主10366/2438、加10508/2917ms。尚无绘制区间重叠证据，票据释放/完成的轮询样本不能代替真实绘制计时。正在独立有界诊断，不部署。
+- A时停真实单实例9180342e9d完成41/0：原生Stage热键启动active/replay、两阶段真实载体及MapGeneration均拒绝加载持有，空闲持有12回调保持状态并拒绝热键启动，释放后再次启动/回放正常结束，无许可泄漏，22安装不变。当前配置cooldown=0、enemyEnabled=false，不授非零冷却/敌人补步冻结或完整旅行回退资格。证据`build/m52/recovery-sandy-hold-native-01`，仅功能通过。
 - 所有最终目标必须在同一准确候选重测；组件/握手/祖先局部通过均不替代最终画面和性能。没有新部署资格。
 - B195及旧独立候选遗留不在当前恢复轮混合处理。历史大量明细已移至[证据快照](recovery-evidence-before-profile-settings-2026-10-22.md)，并有journal和git原记录。
 

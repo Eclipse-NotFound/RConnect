@@ -1,0 +1,68 @@
+"""Freeze/optionally compile the external scene12 + native-input driver."""
+import argparse,hashlib,json,os,shutil,subprocess,sys
+from pathlib import Path
+HERE=Path(__file__).resolve().parent;ROOT=HERE.parents[1];M52=ROOT/'build/m52'
+BASE=M52/'room-travel-driver-12'
+def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+def save(p,v):p.write_text(json.dumps(v,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+def main():
+    ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('output');ap.add_argument('--compile',action='store_true')
+    ap.add_argument('--sand-mode',choices=['bridge','legacy'],required=True)
+    ap.add_argument('--registry-wait',type=float,default=900);a=ap.parse_args();out=(ROOT/a.output).resolve()
+    assert out.parent==M52 and not out.exists(),'Use a fresh direct build/m52 folder'
+    base=json.loads((BASE/'prepared.json').read_text(encoding='utf-8-sig'))
+    assert sha(BASE/'prepared.json')=='3106b031b97743e2a0fda30e26ab735a387b201683339ab4335a998b0d25b784'
+    for n,h in base['files'].items():assert sha(BASE/n)==h,n
+    from native_inputs import verify_tools,sandy_input
+    verify_tools();sandy_input(a.sand_mode)
+    inputs=json.loads((HERE/'driver-inputs.json').read_text(encoding='utf-8'))
+    for name,h in inputs['sources'].items():assert sha(HERE/'tests'/name)==h,name
+    stub=M52/'coop-bundle-04/build/GameCombatStubs.swc'
+    originals=[Path(__file__),HERE/'generate.py',HERE/'driver-inputs.json',BASE/'prepared.json',stub,
+        BASE/'ProductionDeclarations.swc',BASE/'scene/EffectsHarness.swf',HERE/'inputs.json',HERE/'native_inputs.py',
+        HERE/'native_runner.py',HERE/'run_native.py',HERE/'check.py',*sorted((HERE/'tests').glob('*.as'))]
+    pinned={str(p):sha(p) for p in originals}
+    sys.path.insert(0,str(ROOT/'tools/validation'));from run_security_terminals import installation
+    installed=installation();assert len(installed)==22
+    (out/'tests').mkdir(parents=True);(out/'scene').mkdir()
+    for source in (HERE/'tests').glob('*.as'):shutil.copyfile(source,out/'tests'/source.name)
+    (out/'tests/SceneRasterBuildConfig.as').write_text('package { public final class SceneRasterBuildConfig { public static const EXPECT_EARLY:Boolean='+str(a.sand_mode=='bridge').lower()+'; } }\n',encoding='utf-8')
+    for source,target in ((stub,out/'GameCombatStubs.swc'),(BASE/'ProductionDeclarations.swc',out/'ProductionDeclarations.swc'),
+        (BASE/'scene/EffectsHarness.swf',out/'scene/EffectsHarness.swf'),(Path(__file__),out/'prepare-recipe.py'),(HERE/'driver-inputs.json',out/'driver-inputs.json')):
+        shutil.copyfile(source,target)
+    frozen={str(p):sha(p) for p in out.rglob('*') if p.is_file()}
+    def verify():
+        for n,h in {**pinned,**frozen}.items():assert sha(Path(n))==h,n
+        assert installation()==installed
+    compiled=False
+    if a.compile:
+        sys.path.insert(0,str(ROOT/'tools/host_authority'));from common import JAVA,SDK
+        from runtime_memory import snapshot,wait_owned
+        sys.path.insert(0,str(ROOT.parent/'ModLoader/tools'));from test_registry import Registration
+        command=[str(JAVA),'-Xmx384m','-jar',str(SDK/'lib/mxmlc.jar'),'+configname=air','+flexlib='+str(SDK/'frameworks'),
+            '-swf-version=38','-debug=false','-optimize=true','-source-path='+str(out/'tests'),
+            '-external-library-path+='+str(out/'ProductionDeclarations.swc'),'-external-library-path+='+str(out/'GameCombatStubs.swc'),
+            '-output='+str(out/'scene/EffectsDriver.swf'),str(out/'tests/RoomTravelSceneTestDoc.as')]
+        save(out/'compile-command.json',command)
+        with Registration(owner='RConnect / 大图原生按键旅行驱动',resource='game',purpose='Compile external scene12 input driver; no AIR',
+            run_dir=out,evidence=out/'prepared.json',wait=a.registry_wait) as record:
+            verify();process=None
+            try:
+                with (out/'compile.log').open('x',encoding='utf-8') as log:
+                    assert snapshot()['free_commit_bytes']>=1024**3,'Less than 1 GiB before compiler'
+                    record.before_launch('Scene native input driver compile')
+                    process=subprocess.Popen(command,cwd=ROOT,stdout=log,stderr=subprocess.STDOUT,env=dict(os.environ,AIR_HOME=str(SDK)),creationflags=subprocess.CREATE_NO_WINDOW)
+                    record.child(process.pid);code=wait_owned(process,240,out/'compile-memory.json');assert code==0,code
+            finally:
+                if process is not None and process.poll() is None:process.kill();process.wait()
+                record.child_stopped()
+            verify();compiled=(out/'scene/EffectsDriver.swf').is_file();assert compiled
+            record.outcome='passed';record.note='Compile only; no runtime qualification'
+    verify()
+    save(out/'prepared.json',dict(kind='scene-native-input-early-sandy-driver',compiled=compiled,external=True,
+        sand_mode=a.sand_mode,diagnostic_only=False,installation_before=installed,installation_unchanged=True,
+        source_inputs=pinned,original_scene_driver_manifest=sha(BASE/'prepared.json'),runtime_tested=False,
+        files={p.relative_to(out).as_posix():sha(p) for p in sorted(out.rglob('*')) if p.is_file()}))
+    print(out)
+if __name__=='__main__':main()
+

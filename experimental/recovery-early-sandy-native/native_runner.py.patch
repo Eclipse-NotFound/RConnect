@@ -1,0 +1,42 @@
+--- original/native_runner.py
++++ adapter/native_runner.py
+@@ -19,10 +19,11 @@
+ import sys
+ import time
+ import uuid
++sys.path.insert(0,str(Path(__file__).resolve().parents[2]/"tools"))
+ from validation.native_runtime_assets import native_runtime_files, asset_hashes
+ from validation.runtime_memory import snapshot as memory_snapshot
+ from validation.air_test_inventory import air_processes
+-ROOT = Path(__file__).resolve().parents[1]
++ROOT = Path(__file__).resolve().parents[2]
+ GAME = ROOT.parents[1]
+ 
+ class RunCancelled(Exception):
+@@ -52,6 +53,7 @@
+ def main():
+     ap=argparse.ArgumentParser()
+     ap.add_argument('--candidate',type=Path,required=True)
++    ap.add_argument('--sandy-candidate',type=Path,help='Pinned A travel-hold candidate; isolated copies only')
+     ap.add_argument('--game-root',type=Path,default=GAME)
+     ap.add_argument('--game-candidate',type=Path,help='Diagnostic-only game SWF copied into isolated instances; installation stays read-only')
+     ap.add_argument('--seconds',type=int,default=115)
+@@ -88,6 +90,9 @@
+     if args.private_desktop and args.visible_windows:ap.error('Private desktop and visible windows are mutually exclusive')
+     if args.solo and (args.connect_after_load or args.join_save_template or args.presentation):
+         ap.error('--solo cannot use a join save, deferred connection or paired presentation test')
++    if args.sandy_candidate:
++        from native_inputs import sandy_input
++        assert args.all_mods and args.sandy_candidate.resolve()==Path(sandy_input('bridge')['candidate']).resolve()
+     roles=('host',) if args.solo else ('host','join')
+     if args.all_mods and not (args.presentation or args.effects or args.smoke): ap.error('--all-mods requires --presentation, --effects or --smoke')
+     if args.msw_candidate:
+@@ -237,6 +242,8 @@
+                     path=args.fa_candidate.resolve()
+                 if name.lower()=='wallblend' and filename==entry+'.swf' and args.wallblend_candidate:
+                     path=args.wallblend_candidate.resolve()
++                if name.lower()=='sandevistan' and filename==entry+'.swf' and args.sandy_candidate:
++                    path=args.sandy_candidate.resolve()
+                 if path.exists(): shutil.copy2(path,destination/filename)
+         (frozen/'mods'/'loader-manifest.txt').write_text('\n'.join(lines)+'\n',encoding='utf-8')
+     elif args.with_vision:

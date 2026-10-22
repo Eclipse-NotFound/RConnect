@@ -1,0 +1,20 @@
+{
+  "kind": "sandy-hold-native-lifecycle-source",
+  "frozen": true,
+  "compiled": false,
+  "air_started": false,
+  "static_checks": 34,
+  "expected_native_assertions": 41,
+  "function_only": true,
+  "performance_qualified": false,
+  "files": {
+    "check.py": "647e671f58a5f3c09b70dad38649fbe8bf64f1a0c373973c894237f440bb69e5",
+    "inputs.json": "8e6d9f0483005bc419196dd39372508028d4ae9940e0ef3cf32be174bb161360",
+    "prepare.py": "accc48963c0fb9aefd837c0044f504384c0ddf18d4cf83ca21223d93788fc062",
+    "README.md": "a1c4efc199df0ed452e168c746ded323fa0cd96e165ea269a08e34e17ea3cb49",
+    "run.py": "73204601e09ccf070cc39544479837a8b1495463c82f739f010aa895a879003c",
+    "static-result.json": "410fdec299b10f677c88be12e55ae9aa4f5b7c518d01a18a6908c3e17314961a",
+    "tests/SandyHoldNativeTestDoc.as": "d40aa7c2ed2bfabaedb33641f3f106022479b83f2ca8b994aab44e84ba88c877"
+  },
+  "guard_note": "One combined manifest-generation command was rejected as binary-swf-use-release-pipeline; no binary changed. Source fingerprints were obtained with a read-only command, then the verified JSON was written separately. No authorization table or guard was altered."
+}
