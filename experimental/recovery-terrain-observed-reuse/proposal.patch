@@ -1,0 +1,14 @@
+--- early2-D356/rconnect/game/TerrainSync.as
++++ observed-reuse/rconnect/game/TerrainSync.as
+@@ -37,7 +37,10 @@
+       {
+          reset();enter(loc);
+          if(snapshot!=null && !(snapshot is Array) && (snapshot.nativeTileTable===1 || snapshot.nativeTileTable===2)) {
+-            NativeTileState.restore(loc,snapshot,function(t:Object,x:int,y:int):void {observed[key(x,y)]=state(t,x,y);});
++            NativeTileState.restore(loc,snapshot,function(t:Object,x:int,y:int):void {
++               var k:String=key(x,y);
++               if(!matchesTile(t,observed[k]))observed[k]=state(t,x,y);
++            });
+             dirty=true;return;
+          }
+          var list:Array=snapshot as Array;

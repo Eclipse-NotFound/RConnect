@@ -1,0 +1,37 @@
+{
+  "kind": "terrain-observed-reuse-proposal",
+  "base_swf_sha256": "d356483f927c608b5973982558127ce4feb0873a36676909ed3b3d6ac8b7acb3",
+  "input_sources": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-exit-authorization\\src\\rconnect\\game\\TerrainSync.as": "317c9658b0632f3bb8333c11cd302c68ef45e7a9f2f54ed6b6c631b6c1b92b44",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-exit-authorization\\src\\rconnect\\game\\NativeTileState.as": "eec001f4de8bdfc5ad892c2de2e892c07cceac15ebe7c5cf10fda4a1047592dc",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-exit-authorization\\src\\rconnect\\game\\NativeRoomState.as": "1e91028348b29dc1bd00dc55cf4d5df5d5ee40469ef9ea0f7e9626d30a601938",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-early-exit-compile-01\\prepared.json": "a59473631fb28dcddfbd2dd96d795c98d61b2776ba33d91e3efa9e5ffe8922fe",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-terrain-loop\\components\\fe\\loc\\Tile.as": "a5267e18c3479c50d8b4eb5881690566e297d168bf3191fd36fb281e513c370a",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-terrain-loop\\components\\fe\\unit\\Unit.as": "413999d9d8d9a001b125eaf7c140f70a49b23f44ac07e31629f9780bd5fcaaf2",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-terrain-loop\\components\\fe\\unit\\RConnectUnitAccess.as": "4dca64ac4410ed30997830ad2e092cf4bc9dbdee6204a2d8f1cfd1578d818806",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-terrain-loop\\components\\rconnect\\game\\GameBridge.as": "ef48de47fbd27f843edeceea4c87acfc0320811de7ac581fc5b46b324840e85a",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-terrain-loop\\components\\rconnect\\game\\TurretDisplay.as": "a0a2e0f98b82a3d00bdd21b7abf21a24dbe830d112878103da38eda63ed9f53d"
+  },
+  "outputs": {
+    "components/fe/loc/Tile.as": "a5267e18c3479c50d8b4eb5881690566e297d168bf3191fd36fb281e513c370a",
+    "components/fe/unit/RConnectUnitAccess.as": "4dca64ac4410ed30997830ad2e092cf4bc9dbdee6204a2d8f1cfd1578d818806",
+    "components/fe/unit/Unit.as": "413999d9d8d9a001b125eaf7c140f70a49b23f44ac07e31629f9780bd5fcaaf2",
+    "components/rconnect/game/ControlTerrainSync.as": "bbe93cc9a8c268208148e65db7661179a27bdb9e65132c6bfeb88b91bb417a34",
+    "components/rconnect/game/GameBridge.as": "ef48de47fbd27f843edeceea4c87acfc0320811de7ac581fc5b46b324840e85a",
+    "components/rconnect/game/NativeRoomState.as": "1e91028348b29dc1bd00dc55cf4d5df5d5ee40469ef9ea0f7e9626d30a601938",
+    "components/rconnect/game/NativeTileState.as": "eec001f4de8bdfc5ad892c2de2e892c07cceac15ebe7c5cf10fda4a1047592dc",
+    "components/rconnect/game/TerrainSync.as": "6552e7a7ace57a3168e356ed56dbb2db474cb28583207e4eef0b93c93c60860f",
+    "components/rconnect/game/TurretDisplay.as": "a0a2e0f98b82a3d00bdd21b7abf21a24dbe830d112878103da38eda63ed9f53d",
+    "components/TerrainObservedReuseChecks.as": "adbeb85d597f363a455fff8d1827cf07803f1cb6f7030af3a8aca3a5496a81ca",
+    "prepare.py": "b938d4b38689308ef4c6b8d860c3829766a1f4c75e974f2db781d029e51320eb",
+    "proposal.patch": "cd313938575a17793ed7cd3eec7b9d67eeafd02cfc17395e8f88b44cfbc7026a",
+    "README.md": "904b33fa0a2686acbc90acdc36239950a783cb5fe99caced0272e86c75da82d4",
+    "src/rconnect/game/TerrainSync.as": "6552e7a7ace57a3168e356ed56dbb2db474cb28583207e4eef0b93c93c60860f"
+  },
+  "expected_assertions": 50,
+  "production_overlays": 1,
+  "actual_complete_old_new": true,
+  "compiled": false,
+  "air_started": false,
+  "performance_qualified": false
+}

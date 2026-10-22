@@ -55,4 +55,10 @@
 
 ## 下一步边界
 
-等待根已经准备的细分 Stage 标记；先按 **-80 回调组（LAD+PI）**、**-100 回调组（WB+FA）**、**-200（CS）**解释，不预先定因，不把组间隔直接当单个函数时间。若 -100 组占主要成本，再以单个 WB sceneCache.update 起止作为最小下一次验证。这里没有发起新的测试或探针。
+细分标记已经由根在64bb6b4030完成，完整结果见`../recovery-paint-enter-modules/RESULTS.md`：-100组2733/2505ms，-80组4/4ms，-200组0/0ms。停止继续扩单人分段探针；不能把组间隔直接当单个函数时间。
+
+准确FA归档的`Runtime.after:160`中，战斗更新需要帧前记录的`wasPlaying`（包括allStat=1、t_exit=0）及原生stamp推进，meleeStep另需meleeSpec；本轮加载日志gun为空、saved assemblies=0，没有实际全单位扫描证据。无条件drawAttachments在缺held/heldId/held.vis时返回。这更支持先检查WB初始化，但没有计时证明FA严格为零。
+
+WB已有surface身份/revision、sceneViewport、scenePending/sceneDeadline续作和paintMaterials共享缓存。优先核对makePasses时与更新时两次refreshView，以及延期判定前已建立pass的开销；没有证据要求再缓存材料。beforeRasterClear会清所有pass/材料，重访重建本身不等于同一轮重复建立35块。不能简单等loc.active再跑，这会把阻塞移到恢复操作后。
+
+根已向准确WB负责会话`smoothconnect`（01a11bd2-fd9e-7d10-bc64-ca32e8625ed3）交付限定证据、请求只读核查最小方案，不要求停测或改正式版。FA B330部署负责会话为`改枪 (3)`（01a13b7b-fe67-7a00-a10f-dd2df045fad9），不是后来0.4.0未部署分支`改枪 (主)`。本次没有修改其他模组。
