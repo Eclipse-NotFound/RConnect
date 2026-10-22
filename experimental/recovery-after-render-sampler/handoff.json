@@ -1,0 +1,39 @@
+{
+  "kind": "bounded-after-original-render-cpu-sampler",
+  "compiled": false,
+  "air_started": false,
+  "as_runtime_verified": false,
+  "performance_qualified": false,
+  "static_and_python_model_assertions": 61,
+  "failed": 0,
+  "unchanged_original_as": 10,
+  "changed_diagnostic_as": [
+    "tests/SustainedDensityTestDoc.as"
+  ],
+  "added_entry": "tests/AfterRenderProfileTestDoc.as",
+  "render_priority": -1000000,
+  "next_enter_priority": 1000000,
+  "sample_limit_per_phase": 6,
+  "sample_phases": [
+    0,
+    1,
+    5,
+    6
+  ],
+  "files": {
+    "analyze.py": "89b78d98d3ef324def013f4efd228550f8ff10c98ab535174e04a2d9848435d3",
+    "as-edits.json": "689bd5518168371964ad4d9ce2906bf2e5c680a4cacc79a43262d73d8eed18e1",
+    "check.py": "e5e363dcf5c5a5502ea90b5a88b42f3bbcd9f05348739b833b7bd3d96ca59a06",
+    "diagnostic.patch": "2e8e16f811b7d5ee85e4a813056a9de8c495882630dbbd1fbbc3037f8f4f362a",
+    "inputs.json": "3ec4109d347db2bc3ea902d9f996b4a2bfd893439c98eac5ec01f6095ea1c308",
+    "README.md": "35c3a6fff7cbbd88ee290c7e82750eab9a7b7cdbebc753559a568cbbbef044d4",
+    "run-edits.json": "d24016d9fb0de026e1c67fb8709db73f5cc2a298fa71aca549e8ba489118bbf5",
+    "run.patch": "e6753e6a9acdbbee6a7193e7309631265d0fbec4af415116072913157a90e657",
+    "run.py": "3262ef76234f39b631ecb6f5761e1a55d385e820c6cea7e9198a31376571bfe6",
+    "sampler.patch": "101be5ec31ab17b57a35277582998f7754a0350243433810ddab0085a12b40c8",
+    "sampler.py": "196607f8d2cf62e5ba314e04c125e17e41ef6b762c76d432833c8718f5552382",
+    "static-check.json": "b65c80c2e0d22bf8ac39be639678701281c9522aba428c9e3657ae634b974e23",
+    "tests/AfterRenderProfileTestDoc.as": "b03daab9b16e7f9cc8e4bac30062926d7dc9ebc68ce175b67144e554a4cf4597",
+    "tests/SustainedDensityTestDoc.as": "d8a0cc014ace80377fe042b056efa4da5cdfd2e90ec700ff0ba27092126c5b06"
+  }
+}

@@ -1,0 +1,74 @@
+--- current-profile-sampler/sampler.py
++++ after-render-sampler/sampler.py
+@@ -1,4 +1,4 @@
+-"""Switch only the frozen driver03 entry; reuse its registered build unchanged."""
++"""Overlay only the declared diagnostics and entry; reuse driver03's registered build."""
+ import argparse
+ import importlib.util
+ import json
+@@ -31,11 +31,13 @@
+ def verify_sampler(out):
+     inputs = frozen_sources()
+     meta = original.verify(out)
+-    assert meta['entry'] == 'ProjectileProfileTestDoc' and meta['diagnostic_only'] is True
++    assert meta['entry'] == 'AfterRenderProfileTestDoc' and meta['diagnostic_only'] is True
+     assert meta.get('sampler_driver03_sha256') == sha(SOURCE/'prepared.json')
+     assert meta.get('sampler_profile_sha256') == sha(PROFILE/'handoff.json')
+     actual = {p.relative_to(out).as_posix(): sha(p) for p in sorted((out/'tests').rglob('*.as'))}
+-    assert actual == inputs['tests'], 'Sampler must retain every driver03 source byte'
++    expected = dict(inputs['tests'])
++    expected.update({p.relative_to(HERE).as_posix(): sha(p) for p in sorted((HERE/'tests').rglob('*.as'))})
++    assert actual == expected, 'Only declared diagnostic overlay and entry may differ from driver03'
+     return meta
+ 
+ 
+@@ -43,12 +45,19 @@
+     frozen_sources()
+     assert out.parent == M52.resolve() and not out.exists()
+     meta = original.freeze(out, True)
++    for source in sorted((HERE/'tests').rglob('*.as')):
++        name = source.relative_to(HERE).as_posix()
++        target = out/name
++        target.parent.mkdir(parents=True, exist_ok=True)
++        shutil.copyfile(source, target)
++        meta['inputs'][name] = sha(target)
++        meta['originals'][str(source)] = sha(source)
+     # The existing diagnostic flag otherwise chooses trajectory totals.
+-    # This is only a build-entry switch: all eleven AS sources stay unchanged.
+-    meta.update(entry='ProjectileProfileTestDoc', diagnostic_only=True,
++    # The overlay changes only diagnostic methods/hooks, plus the explicit entry.
++    meta.update(entry='AfterRenderProfileTestDoc', diagnostic_only=True,
+         performance_qualified=False, sampler_driver03_sha256=sha(SOURCE/'prepared.json'),
+         sampler_profile_sha256=sha(PROFILE/'handoff.json'),
+-        purpose='Existing CPU sampler; exact driver03 preparation/stimulus and frozen current RV settings')
++        purpose='Post-RENDER CPU sampler; same driver03 preparation/stimulus, counts and frozen current RV settings')
+     for source in sorted(HERE.iterdir()):
+         if not source.is_file():
+             continue
+@@ -66,12 +75,12 @@
+ def runtime_errors(text, role):
+     errors = []
+     for line in text.splitlines():
+-        if line.startswith('PROJECTILE PROFILE '):
++        if line.startswith('AFTER RENDER CPU PROFILE '):
+             try:
+-                data = json.loads(line[len('PROJECTILE PROFILE '):])
++                data = json.loads(line[len('AFTER RENDER CPU PROFILE '):])
+                 assert data['role'] == role and isinstance(data['frames'], list)
+             except (AssertionError, KeyError, ValueError, TypeError):
+-                errors.append('Malformed PROJECTILE PROFILE data for '+role)
++                errors.append('Malformed AFTER RENDER CPU PROFILE data for '+role)
+             continue
+         if 'COOP FAIL' in line or re.search(
+             r'\b(?:Error\s*#\d+|TypeError|ArgumentError|ReferenceError|VerifyError|RangeError|SecurityError|out of memory)\b', line, re.I):
+@@ -80,8 +89,8 @@
+ 
+ 
+ def write_diagnostic(out):
+-    # Reuse the existing frozen-profile reader; no new sampler or sample limit.
+-    path = ROOT/'experimental/recovery13-density-review/analyze.py'
++    # Read only the declared post-RENDER windows; never qualify FPS from profiling.
++    path = HERE/'analyze.py'
+     spec = importlib.util.spec_from_file_location('current_profile_analysis', path)
+     module = importlib.util.module_from_spec(spec)
+     spec.loader.exec_module(module)

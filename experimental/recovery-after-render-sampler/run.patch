@@ -1,0 +1,11 @@
+--- current-profile-sampler/run.py
++++ after-render-sampler/run.py
+@@ -29,7 +29,7 @@
+     p = argparse.ArgumentParser(description=__doc__)
+     for name in ('candidate', 'output'):
+         p.add_argument('--'+name, type=Path, required=True)
+-    p.add_argument('--drivers', type=Path, default=Path('build/m52/recovery-current-profile-sampler-drivers-01'))
++    p.add_argument('--drivers', type=Path, default=Path('build/m52/recovery-after-render-sampler-drivers-01'))
+     p.add_argument('--reference', type=Path)
+     p.add_argument('--registry-wait', type=int, default=900)
+     a = p.parse_args()
