@@ -1,0 +1,17 @@
+--- recovery-14/rconnect/game/TerrainSync.as
++++ capture-only/rconnect/game/TerrainSync.as
+@@ -139,7 +139,13 @@
+          for(var k:String in observed)
+          {
+             var old:Object=observed[k],t:Object=tile(old.x,old.y);
+-            if(t==null || matchesTile(t,old)) continue;
++            if(t==null) continue;
++            // This local-damage observer only consumes the old collision state
++            // and HP. Full host patches still compare all presentation fields.
++            var native:Tile=t as Tile;
++            if(native!=null) {
++               if(old.p===native.phis && old.h===native.hp) continue;
++            } else if(matchesTile(t,old)) continue;
+             var now:Object=state(t,old.x,old.y);
+             // Door objects have their own authoritative protocol. Only damage
+             // that the native tile accepted may become a terrain request.

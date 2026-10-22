@@ -1,0 +1,32 @@
+{
+  "kind": "wall-surfaces-host-source-recipe",
+  "frozen": true,
+  "files": {
+    "check_offline.py": "64b8e484786f946ce91ad5bf860d654639c4c8ed70a465c019b4c7d0640cc0b5",
+    "offline-result.json": "3c3158fedf9f3d75b0397abc94402d1b7f53779e908fc6da120e554e633ff537",
+    "prepare_host.py": "262195b9bb698806de8a47f0b127e59e50dbd692bf98fa305642841984521c5d",
+    "README.md": "abf42dc7055545a8cf60c6ce45e07b0bcc73d1aca3f146903e1ebdf409da0e33"
+  },
+  "source_handoff_sha256": "74fb4fa581be26f7f56710ab692c2158a1d65016c7cae6d16fa97356ff6fe0f1",
+  "grafon_import_sha256": "625db5c71c4319f4c942e581e039b7419dc070065dc3fb148e23003b715abb04",
+  "baseline": "build/m52/recovery-first-raster-host-03",
+  "baseline_sha256": "fd92fbd5ae92b5c8d4cbf8151d11796a140810f34988b7031e258c747d86734e",
+  "exact_baseline_export": "build/m52/recovery-first-raster-host-03/after/scripts/fe/graph/Grafon.as",
+  "exact_baseline_export_sha256": "405db96290d7a5cc3df1cab45cb4ec42657ce37a54bb774e25042d38dda6e88a",
+  "original_failed_baseline_receipt_sha256": "1dfa42c494c33eafb0cab1ca5b6ad43f5a6ae73419ce657827e952a4dfd74312",
+  "independent_baseline_recheck_sha256": "56f07ae744a8dfffc8276178e3e89a375118794a97b4de3e6862664d817d2755",
+  "reused_recipe_sha256": "d233ac3d770e15f4a15d43e7290edac139c26c8c38fa52545853c97611ced16d",
+  "new_candidate_kind": "isolated-wall-surfaces-host",
+  "source_only": true,
+  "compiled": false,
+  "air_started": false,
+  "jvm_started": false,
+  "installed": false,
+  "offline_checks": 11,
+  "offline_passed": true,
+  "native_qualified": false,
+  "performance_qualified": false,
+  "scope": "Only Grafon import; retained first-raster and new wall anchors; seven representatives, class list, header, non-code tags, all 22 installation inputs; not complete ABC semantic audit",
+  "root_command": "python -B -X utf8 experimental/recovery-wall-surfaces-host/prepare_host.py build/m52/recovery-wall-surfaces-host-01 --build",
+  "gate_command": "python -B -X utf8 experimental/recovery-wall-surfaces-host/prepare_host.py verify build/m52/recovery-wall-surfaces-host-01"
+}

@@ -1,0 +1,24 @@
+{
+  "passed": true,
+  "base_files": 88,
+  "output_files": 89,
+  "unchanged_base_files": 85,
+  "changed": [
+    "RConnectMod.as",
+    "rconnect/game/GameBridge.as",
+    "rconnect/game/WallImpactVisuals.as",
+    "rconnect/game/WallSurfaceBridge.as"
+  ],
+  "class_overlay_byte_exact": true,
+  "version_only_entry_change": true,
+  "UnitPresentation_unchanged": true,
+  "no_recovery15_input": true,
+  "formal_source_contract": true,
+  "JVMStarted": false,
+  "AIRStarted": false,
+  "compiled": false,
+  "native_game_tested": false,
+  "host_patch_required": true,
+  "host_patch_qualified": false,
+  "performance_qualified": false
+}

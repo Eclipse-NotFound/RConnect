@@ -1,0 +1,19 @@
+{
+  "base": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-14",
+  "host_source": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-first-raster-host-03\\import\\fe\\graph\\Grafon.as",
+  "originals": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-14\\RConnectMod.swf": "225a794040c71f2a55ff433366a7969201ac3a58ffaab0a655cee1e4eefbe5f7",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-14\\src\\rconnect\\game\\WallImpactVisuals.as": "0c0917eac6c417814612183f4951d2d0a37cad5ab2743945b6313d941532d3f5",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-14\\src\\rconnect\\game\\GameBridge.as": "26bb0f7cd4da7c74c83bd2657575823247196c41a861babf23bb40c17fc3cbf7",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-first-raster-host-03\\import\\fe\\graph\\Grafon.as": "976526e741392904bb2575c7e6c73055cdb589ae177e033ad9fdebcc6faa850d"
+  },
+  "overlays": {
+    "src\\rconnect\\game\\GameBridge.as": "3fe9bb83a16a57300e733806cddbe74ce55bcaf323bec15554814f4714eba967",
+    "src\\rconnect\\game\\WallImpactVisuals.as": "d8a88d98331aa8ab62b093ed36066f8ca5eb3d348a4f863474580e7fddb7d7bd",
+    "src\\rconnect\\game\\WallSurfaceBridge.as": "527e045129068f2c1153e9d843add5bddde07554dfef33a450937512bfa21b99",
+    "native\\fe\\graph\\Grafon.as": "625db5c71c4319f4c942e581e039b7419dc070065dc3fb148e23003b715abb04"
+  },
+  "recipe_sha256": "72d06c407f25ed56c372a00c8c843af9773d45765b64ce68cbbe1cedf5ccdfff",
+  "compiled": false,
+  "air_started": false
+}

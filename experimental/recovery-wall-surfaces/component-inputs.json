@@ -1,0 +1,35 @@
+{
+  "sources": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-wall-surfaces\\src\\rconnect\\game\\WallImpactVisuals.as": "d8a88d98331aa8ab62b093ed36066f8ca5eb3d348a4f863474580e7fddb7d7bd",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-wall-surfaces\\src\\rconnect\\game\\WallSurfaceBridge.as": "527e045129068f2c1153e9d843add5bddde07554dfef33a450937512bfa21b99",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-wall-surfaces\\src\\rconnect\\game\\GameBridge.as": "3fe9bb83a16a57300e733806cddbe74ce55bcaf323bec15554814f4714eba967",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-wall-surfaces\\native\\fe\\graph\\Grafon.as": "625db5c71c4319f4c942e581e039b7419dc070065dc3fb148e23003b715abb04",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-14\\src\\rconnect\\game\\WallImpactVisuals.as": "0c0917eac6c417814612183f4951d2d0a37cad5ab2743945b6313d941532d3f5"
+  },
+  "files": {
+    "fe\\graph\\Grafon.as": "83e379f86d2978c28ad49177d13b3601d05957ab741a89c3e811d92b13889950",
+    "rconnect\\core\\Log.as": "1c707679e5ca9262f78aea27fc7dbe7802d39706ca4e88f5ad46a4ccad67a0b4",
+    "rconnect\\game\\GameBridge.as": "f0d9a9dcc7c6c640acc19d82103fd60d726117e72973cf3b2b273363dfe491a6",
+    "rconnect\\game\\WallBefore.as": "dcf1c20e9275134c902ed55be1b3cc4a9ccf3b660f504dbbf3f648db0769e18f",
+    "rconnect\\game\\WallImpactVisuals.as": "d8a88d98331aa8ab62b093ed36066f8ca5eb3d348a4f863474580e7fddb7d7bd",
+    "rconnect\\game\\WallSurfaceBridge.as": "527e045129068f2c1153e9d843add5bddde07554dfef33a450937512bfa21b99",
+    "rconnect\\net\\RoomCodec.as": "296ee4d8d94f77faa62dcc17a39cb1e2492c756d3027311713c33935ca6b6b4a",
+    "rconnect\\net\\WallCellCodec.as": "4d0bb10dbe60227f167fad2d0c48fa3e6dd22b114f496084ba651ca84761dc8c",
+    "WallSurfaceChecks.as": "f0fbd4fb70d29173f75635c6dfbc35780bc6a0b84c0edebba67bd463887cfb87"
+  },
+  "native_methods": {
+    "sceneSurfaces": "13b4c6c4d4c96ebd8b44a3131a01f181596c7678c38656e39373c18feb5ec5a5",
+    "sceneApply": "02360e03d90fffeb9f39dfe1526a00a0f1de57ee672ce39de89a22d43af3161e",
+    "sceneRestoreMarks": "95552fe550d701ea2329401bd2d18aa373e9836fdcd4688799b0896800c8fe48",
+    "rconnectWallNotify": "fe8cb8b9f05526e259cd251e424c0387b2e43b989a4d78afd0de27b13b3f980f",
+    "rconnectWallBaseClips": "76843538994a1b47219f5d7481c16164445dbd3b6b8243ade0cf94d4c26d89b4"
+  },
+  "boundaries": [
+    "Real complete before/after WallImpactVisuals, new bridge, RoomCodec/WallCellCodec",
+    "Real modified Grafon sceneApply/sceneRestoreMarks and bridge helpers extracted verbatim",
+    "Native drawing/art, chunk scheduling, Location and GameBridge.probe are explicit fixtures",
+    "No real TCP, world rendering, timing or memory/FPS qualification"
+  ],
+  "compiled": false,
+  "air_started": false
+}

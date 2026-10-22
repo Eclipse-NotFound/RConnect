@@ -1,0 +1,712 @@
+{
+  "read_only": true,
+  "diagnostic_only": true,
+  "performance_qualified": false,
+  "dense": {
+    "run": "a6a7e27789",
+    "sha256": "b4c465dea51c78218e1dadc64ab292b44a814aac4d76152e720e8362037326d6",
+    "cpu": 1259,
+    "methods": {
+      "tickFrozenAnims": {
+        "inclusive": 278,
+        "reap_leaf": 67,
+        "direct_leaf": 3
+      },
+      "RemoteMotion/sampleTimed": {
+        "inclusive": 72,
+        "reap_leaf": 19,
+        "direct_leaf": 21
+      },
+      "RemoteMotion$/blendWeapons": {
+        "inclusive": 18,
+        "reap_leaf": 8,
+        "direct_leaf": 6
+      },
+      "WeaponDisplay$/interpolate": {
+        "inclusive": 11,
+        "reap_leaf": 7,
+        "direct_leaf": 4
+      },
+      "RemoteMotion$/blendBodyPose": {
+        "inclusive": 14,
+        "reap_leaf": 4,
+        "direct_leaf": 10
+      },
+      "UnitPresentation/tick": {
+        "inclusive": 111,
+        "reap_leaf": 30,
+        "direct_leaf": 8
+      },
+      "UnitPresentation/play": {
+        "inclusive": 71,
+        "reap_leaf": 14,
+        "direct_leaf": 0
+      },
+      "MirrorMasks/": {
+        "inclusive": 42,
+        "reap_leaf": 3,
+        "direct_leaf": 21
+      },
+      "MirrorMasks/maskReferences": {
+        "inclusive": 0,
+        "reap_leaf": 0,
+        "direct_leaf": 0
+      },
+      "MirrorHitUnit/syncMotion": {
+        "inclusive": 29,
+        "reap_leaf": 0,
+        "direct_leaf": 11
+      },
+      "RConnectAnimationAccess": {
+        "inclusive": 10,
+        "reap_leaf": 0,
+        "direct_leaf": 9
+      },
+      "TelekinesisVisuals$/paint": {
+        "inclusive": 10,
+        "reap_leaf": 4,
+        "direct_leaf": 0
+      }
+    },
+    "phases": {
+      "0": {
+        "tickFrozenAnims": {
+          "inclusive": 71,
+          "reap_leaf": 19,
+          "direct_leaf": 0
+        },
+        "RemoteMotion/sampleTimed": {
+          "inclusive": 23,
+          "reap_leaf": 6,
+          "direct_leaf": 6
+        },
+        "RemoteMotion$/blendWeapons": {
+          "inclusive": 5,
+          "reap_leaf": 3,
+          "direct_leaf": 1
+        },
+        "WeaponDisplay$/interpolate": {
+          "inclusive": 3,
+          "reap_leaf": 2,
+          "direct_leaf": 1
+        },
+        "RemoteMotion$/blendBodyPose": {
+          "inclusive": 1,
+          "reap_leaf": 0,
+          "direct_leaf": 1
+        },
+        "UnitPresentation/tick": {
+          "inclusive": 17,
+          "reap_leaf": 6,
+          "direct_leaf": 3
+        },
+        "UnitPresentation/play": {
+          "inclusive": 0,
+          "reap_leaf": 0,
+          "direct_leaf": 0
+        },
+        "MirrorMasks/": {
+          "inclusive": 3,
+          "reap_leaf": 0,
+          "direct_leaf": 2
+        },
+        "MirrorMasks/maskReferences": {
+          "inclusive": 0,
+          "reap_leaf": 0,
+          "direct_leaf": 0
+        },
+        "MirrorHitUnit/syncMotion": {
+          "inclusive": 11,
+          "reap_leaf": 0,
+          "direct_leaf": 4
+        },
+        "RConnectAnimationAccess": {
+          "inclusive": 3,
+          "reap_leaf": 0,
+          "direct_leaf": 2
+        },
+        "TelekinesisVisuals$/paint": {
+          "inclusive": 3,
+          "reap_leaf": 0,
+          "direct_leaf": 0
+        }
+      },
+      "1": {
+        "tickFrozenAnims": {
+          "inclusive": 78,
+          "reap_leaf": 21,
+          "direct_leaf": 1
+        },
+        "RemoteMotion/sampleTimed": {
+          "inclusive": 27,
+          "reap_leaf": 12,
+          "direct_leaf": 7
+        },
+        "RemoteMotion$/blendWeapons": {
+          "inclusive": 7,
+          "reap_leaf": 5,
+          "direct_leaf": 1
+        },
+        "WeaponDisplay$/interpolate": {
+          "inclusive": 6,
+          "reap_leaf": 5,
+          "direct_leaf": 1
+        },
+        "RemoteMotion$/blendBodyPose": {
+          "inclusive": 8,
+          "reap_leaf": 4,
+          "direct_leaf": 4
+        },
+        "UnitPresentation/tick": {
+          "inclusive": 28,
+          "reap_leaf": 3,
+          "direct_leaf": 2
+        },
+        "UnitPresentation/play": {
+          "inclusive": 21,
+          "reap_leaf": 1,
+          "direct_leaf": 0
+        },
+        "MirrorMasks/": {
+          "inclusive": 14,
+          "reap_leaf": 2,
+          "direct_leaf": 7
+        },
+        "MirrorMasks/maskReferences": {
+          "inclusive": 0,
+          "reap_leaf": 0,
+          "direct_leaf": 0
+        },
+        "MirrorHitUnit/syncMotion": {
+          "inclusive": 7,
+          "reap_leaf": 0,
+          "direct_leaf": 3
+        },
+        "RConnectAnimationAccess": {
+          "inclusive": 4,
+          "reap_leaf": 0,
+          "direct_leaf": 4
+        },
+        "TelekinesisVisuals$/paint": {
+          "inclusive": 1,
+          "reap_leaf": 0,
+          "direct_leaf": 0
+        }
+      },
+      "5": {
+        "tickFrozenAnims": {
+          "inclusive": 64,
+          "reap_leaf": 16,
+          "direct_leaf": 1
+        },
+        "RemoteMotion/sampleTimed": {
+          "inclusive": 12,
+          "reap_leaf": 1,
+          "direct_leaf": 3
+        },
+        "RemoteMotion$/blendWeapons": {
+          "inclusive": 2,
+          "reap_leaf": 0,
+          "direct_leaf": 2
+        },
+        "WeaponDisplay$/interpolate": {
+          "inclusive": 0,
+          "reap_leaf": 0,
+          "direct_leaf": 0
+        },
+        "RemoteMotion$/blendBodyPose": {
+          "inclusive": 4,
+          "reap_leaf": 0,
+          "direct_leaf": 4
+        },
+        "UnitPresentation/tick": {
+          "inclusive": 28,
+          "reap_leaf": 13,
+          "direct_leaf": 1
+        },
+        "UnitPresentation/play": {
+          "inclusive": 18,
+          "reap_leaf": 6,
+          "direct_leaf": 0
+        },
+        "MirrorMasks/": {
+          "inclusive": 13,
+          "reap_leaf": 0,
+          "direct_leaf": 5
+        },
+        "MirrorMasks/maskReferences": {
+          "inclusive": 0,
+          "reap_leaf": 0,
+          "direct_leaf": 0
+        },
+        "MirrorHitUnit/syncMotion": {
+          "inclusive": 7,
+          "reap_leaf": 0,
+          "direct_leaf": 2
+        },
+        "RConnectAnimationAccess": {
+          "inclusive": 2,
+          "reap_leaf": 0,
+          "direct_leaf": 2
+        },
+        "TelekinesisVisuals$/paint": {
+          "inclusive": 5,
+          "reap_leaf": 4,
+          "direct_leaf": 0
+        }
+      },
+      "6": {
+        "tickFrozenAnims": {
+          "inclusive": 65,
+          "reap_leaf": 11,
+          "direct_leaf": 1
+        },
+        "RemoteMotion/sampleTimed": {
+          "inclusive": 10,
+          "reap_leaf": 0,
+          "direct_leaf": 5
+        },
+        "RemoteMotion$/blendWeapons": {
+          "inclusive": 4,
+          "reap_leaf": 0,
+          "direct_leaf": 2
+        },
+        "WeaponDisplay$/interpolate": {
+          "inclusive": 2,
+          "reap_leaf": 0,
+          "direct_leaf": 2
+        },
+        "RemoteMotion$/blendBodyPose": {
+          "inclusive": 1,
+          "reap_leaf": 0,
+          "direct_leaf": 1
+        },
+        "UnitPresentation/tick": {
+          "inclusive": 38,
+          "reap_leaf": 8,
+          "direct_leaf": 2
+        },
+        "UnitPresentation/play": {
+          "inclusive": 32,
+          "reap_leaf": 7,
+          "direct_leaf": 0
+        },
+        "MirrorMasks/": {
+          "inclusive": 12,
+          "reap_leaf": 1,
+          "direct_leaf": 7
+        },
+        "MirrorMasks/maskReferences": {
+          "inclusive": 0,
+          "reap_leaf": 0,
+          "direct_leaf": 0
+        },
+        "MirrorHitUnit/syncMotion": {
+          "inclusive": 4,
+          "reap_leaf": 0,
+          "direct_leaf": 2
+        },
+        "RConnectAnimationAccess": {
+          "inclusive": 1,
+          "reap_leaf": 0,
+          "direct_leaf": 1
+        },
+        "TelekinesisVisuals$/paint": {
+          "inclusive": 1,
+          "reap_leaf": 0,
+          "direct_leaf": 0
+        }
+      }
+    },
+    "focused_stacks": [
+      [
+        "rconnect.game::RemoteMotion/sampleTimed@null:0 <- rconnect.game::RemoteMotion/sample@null:0 <- rconnect.game::GameBridge/tickFrozenAnims@null:0 <- rconnect.game::GameBridge/onMirrorFrame@null:0 <- [enterFrameEvent]@null:0",
+        21
+      ],
+      [
+        "rconnect.game::RemoteMotion$/blendBodyPose@null:0 <- rconnect.game::RemoteMotion/sampleTimed@null:0 <- rconnect.game::RemoteMotion/sample@null:0 <- rconnect.game::GameBridge/tickFrozenAnims@null:0 <- rconnect.game::GameBridge/onMirrorFrame@null:0 <- [enterFrameEvent]@null:0",
+        10
+      ],
+      [
+        "[reap]@null:0 <- rconnect.game::WeaponDisplay$/interpolate@null:0 <- rconnect.game::RemoteMotion$/blendWeapons@null:0 <- rconnect.game::RemoteMotion/sampleTimed@null:0 <- rconnect.game::RemoteMotion/sample@null:0 <- rconnect.game::GameBridge/tickFrozenAnims@null:0 <- rconnect.game::GameBridge/onMirrorFrame@null:0 <- [enterFrameEvent]@null:0",
+        7
+      ],
+      [
+        "rconnect.game::RemoteMotion$/blendWeapons@null:0 <- rconnect.game::RemoteMotion/sampleTimed@null:0 <- rconnect.game::RemoteMotion/sample@null:0 <- rconnect.game::GameBridge/tickFrozenAnims@null:0 <- rconnect.game::GameBridge/onMirrorFrame@null:0 <- [enterFrameEvent]@null:0",
+        6
+      ],
+      [
+        "rconnect.game::WeaponDisplay$/interpolate@null:0 <- rconnect.game::RemoteMotion$/blendWeapons@null:0 <- rconnect.game::RemoteMotion/sampleTimed@null:0 <- rconnect.game::RemoteMotion/sample@null:0 <- rconnect.game::GameBridge/tickFrozenAnims@null:0 <- rconnect.game::GameBridge/onMirrorFrame@null:0 <- [enterFrameEvent]@null:0",
+        4
+      ],
+      [
+        "rconnect.game::RemoteMotion/curve@null:0 <- rconnect.game::RemoteMotion/sampleTimed@null:0 <- rconnect.game::RemoteMotion/sample@null:0 <- rconnect.game::GameBridge/tickFrozenAnims@null:0 <- rconnect.game::GameBridge/onMirrorFrame@null:0 <- [enterFrameEvent]@null:0",
+        4
+      ],
+      [
+        "[reap]@null:0 <- rconnect.game::RemoteMotion/curve@null:0 <- rconnect.game::RemoteMotion/sampleTimed@null:0 <- rconnect.game::RemoteMotion/sample@null:0 <- rconnect.game::GameBridge/tickFrozenAnims@null:0 <- rconnect.game::GameBridge/onMirrorFrame@null:0 <- [enterFrameEvent]@null:0",
+        4
+      ],
+      [
+        "[reap]@null:0 <- rconnect.game::RemoteMotion$/blendBodyPose@null:0 <- rconnect.game::RemoteMotion/sampleTimed@null:0 <- rconnect.game::RemoteMotion/sample@null:0 <- rconnect.game::GameBridge/tickFrozenAnims@null:0 <- rconnect.game::GameBridge/onMirrorFrame@null:0 <- [enterFrameEvent]@null:0",
+        4
+      ],
+      [
+        "[reap]@null:0 <- rconnect.game::RemoteMotion/sampleTimed@null:0 <- rconnect.game::RemoteMotion/sample@null:0 <- rconnect.game::GameBridge/tickFrozenAnims@null:0 <- rconnect.game::GameBridge/onMirrorFrame@null:0 <- [enterFrameEvent]@null:0",
+        3
+      ],
+      [
+        "global/isFinite@null:0 <- rconnect.game::RemoteMotion/curve@null:0 <- rconnect.game::RemoteMotion/sampleTimed@null:0 <- rconnect.game::RemoteMotion/sample@null:0 <- rconnect.game::GameBridge/tickFrozenAnims@null:0 <- rconnect.game::GameBridge/onMirrorFrame@null:0 <- [enterFrameEvent]@null:0",
+        2
+      ],
+      [
+        "rconnect.game::RemoteMotion/delay@null:0 <- rconnect.game::RemoteMotion/sampleTimed@null:0 <- rconnect.game::RemoteMotion/sample@null:0 <- rconnect.game::GameBridge/tickFrozenAnims@null:0 <- rconnect.game::GameBridge/onMirrorFrame@null:0 <- [enterFrameEvent]@null:0",
+        2
+      ],
+      [
+        "Array$/_indexOf@null:0 <- Array/http://adobe.com/AS3/2006/builtin::indexOf@null:0 <- rconnect.game::RemoteMotion/curve@null:0 <- rconnect.game::RemoteMotion/sampleTimed@null:0 <- rconnect.game::RemoteMotion/sample@null:0 <- rconnect.game::GameBridge/tickFrozenAnims@null:0 <- rconnect.game::GameBridge/onMirrorFrame@null:0 <- [enterFrameEvent]@null:0",
+        1
+      ],
+      [
+        "Array/get length@null:0 <- rconnect.game::RemoteMotion/sampleTimed@null:0 <- rconnect.game::RemoteMotion/sample@null:0 <- rconnect.game::GameBridge/tickFrozenAnims@null:0 <- rconnect.game::GameBridge/onMirrorFrame@null:0 <- [enterFrameEvent]@null:0",
+        1
+      ],
+      [
+        "[reap]@null:0 <- rconnect.game::RemoteMotion$/blendWeapons@null:0 <- rconnect.game::RemoteMotion/sampleTimed@null:0 <- rconnect.game::RemoteMotion/sample@null:0 <- rconnect.game::GameBridge/tickFrozenAnims@null:0 <- rconnect.game::GameBridge/onMirrorFrame@null:0 <- [enterFrameEvent]@null:0",
+        1
+      ],
+      [
+        "rconnect.game::RemoteMotion/rateHeld@null:0 <- rconnect.game::RemoteMotion/sampleTimed@null:0 <- rconnect.game::RemoteMotion/sample@null:0 <- rconnect.game::GameBridge/tickFrozenAnims@null:0 <- rconnect.game::GameBridge/onMirrorFrame@null:0 <- [enterFrameEvent]@null:0",
+        1
+      ],
+      [
+        "Math$/_min@null:0 <- rconnect.game::RemoteMotion/sampleTimed@null:0 <- rconnect.game::RemoteMotion/sample@null:0 <- rconnect.game::GameBridge/tickFrozenAnims@null:0 <- rconnect.game::GameBridge/onMirrorFrame@null:0 <- [enterFrameEvent]@null:0",
+        1
+      ]
+    ]
+  },
+  "partial": {
+    "run": "398cddcf6b",
+    "sha256": "f824bd2bf8ec01b2aa463382830bbf18b771ed0443f2776184149641276b762f",
+    "cpu": 345,
+    "methods": {
+      "tickFrozenAnims": {
+        "inclusive": 79,
+        "reap_leaf": 34,
+        "direct_leaf": 4
+      },
+      "RemoteMotion/sampleTimed": {
+        "inclusive": 45,
+        "reap_leaf": 24,
+        "direct_leaf": 3
+      },
+      "RemoteMotion$/blendWeapons": {
+        "inclusive": 9,
+        "reap_leaf": 3,
+        "direct_leaf": 2
+      },
+      "WeaponDisplay$/interpolate": {
+        "inclusive": 4,
+        "reap_leaf": 0,
+        "direct_leaf": 4
+      },
+      "RemoteMotion$/blendBodyPose": {
+        "inclusive": 2,
+        "reap_leaf": 0,
+        "direct_leaf": 2
+      },
+      "UnitPresentation/tick": {
+        "inclusive": 9,
+        "reap_leaf": 4,
+        "direct_leaf": 1
+      },
+      "UnitPresentation/play": {
+        "inclusive": 0,
+        "reap_leaf": 0,
+        "direct_leaf": 0
+      },
+      "MirrorMasks/": {
+        "inclusive": 7,
+        "reap_leaf": 2,
+        "direct_leaf": 3
+      },
+      "MirrorMasks/maskReferences": {
+        "inclusive": 0,
+        "reap_leaf": 0,
+        "direct_leaf": 0
+      },
+      "MirrorHitUnit/syncMotion": {
+        "inclusive": 10,
+        "reap_leaf": 0,
+        "direct_leaf": 3
+      },
+      "RConnectAnimationAccess": {
+        "inclusive": 0,
+        "reap_leaf": 0,
+        "direct_leaf": 0
+      },
+      "TelekinesisVisuals$/paint": {
+        "inclusive": 6,
+        "reap_leaf": 4,
+        "direct_leaf": 0
+      }
+    },
+    "windows": [
+      {
+        "id": 0,
+        "valid": false,
+        "reasons": [
+          "no-cpu-samples"
+        ]
+      },
+      {
+        "id": 1,
+        "valid": false,
+        "reasons": [
+          "native-scan-cap",
+          "no-cpu-samples"
+        ]
+      },
+      {
+        "id": 2,
+        "valid": true,
+        "cpu": 134,
+        "partial": false,
+        "start": 44658,
+        "end": 44778,
+        "methods": {
+          "tickFrozenAnims": {
+            "inclusive": 30,
+            "reap_leaf": 15,
+            "direct_leaf": 0
+          },
+          "RemoteMotion/sampleTimed": {
+            "inclusive": 21,
+            "reap_leaf": 11,
+            "direct_leaf": 1
+          },
+          "RemoteMotion$/blendWeapons": {
+            "inclusive": 7,
+            "reap_leaf": 3,
+            "direct_leaf": 2
+          },
+          "WeaponDisplay$/interpolate": {
+            "inclusive": 2,
+            "reap_leaf": 0,
+            "direct_leaf": 2
+          },
+          "RemoteMotion$/blendBodyPose": {
+            "inclusive": 0,
+            "reap_leaf": 0,
+            "direct_leaf": 0
+          },
+          "UnitPresentation/tick": {
+            "inclusive": 4,
+            "reap_leaf": 4,
+            "direct_leaf": 0
+          },
+          "UnitPresentation/play": {
+            "inclusive": 0,
+            "reap_leaf": 0,
+            "direct_leaf": 0
+          },
+          "MirrorMasks/": {
+            "inclusive": 3,
+            "reap_leaf": 0,
+            "direct_leaf": 1
+          },
+          "MirrorMasks/maskReferences": {
+            "inclusive": 0,
+            "reap_leaf": 0,
+            "direct_leaf": 0
+          },
+          "MirrorHitUnit/syncMotion": {
+            "inclusive": 2,
+            "reap_leaf": 0,
+            "direct_leaf": 1
+          },
+          "RConnectAnimationAccess": {
+            "inclusive": 0,
+            "reap_leaf": 0,
+            "direct_leaf": 0
+          },
+          "TelekinesisVisuals$/paint": {
+            "inclusive": 4,
+            "reap_leaf": 4,
+            "direct_leaf": 0
+          }
+        }
+      },
+      {
+        "id": 3,
+        "valid": true,
+        "cpu": 136,
+        "partial": false,
+        "start": 45027,
+        "end": 45153,
+        "methods": {
+          "tickFrozenAnims": {
+            "inclusive": 25,
+            "reap_leaf": 10,
+            "direct_leaf": 3
+          },
+          "RemoteMotion/sampleTimed": {
+            "inclusive": 11,
+            "reap_leaf": 5,
+            "direct_leaf": 1
+          },
+          "RemoteMotion$/blendWeapons": {
+            "inclusive": 0,
+            "reap_leaf": 0,
+            "direct_leaf": 0
+          },
+          "WeaponDisplay$/interpolate": {
+            "inclusive": 0,
+            "reap_leaf": 0,
+            "direct_leaf": 0
+          },
+          "RemoteMotion$/blendBodyPose": {
+            "inclusive": 1,
+            "reap_leaf": 0,
+            "direct_leaf": 1
+          },
+          "UnitPresentation/tick": {
+            "inclusive": 1,
+            "reap_leaf": 0,
+            "direct_leaf": 0
+          },
+          "UnitPresentation/play": {
+            "inclusive": 0,
+            "reap_leaf": 0,
+            "direct_leaf": 0
+          },
+          "MirrorMasks/": {
+            "inclusive": 3,
+            "reap_leaf": 1,
+            "direct_leaf": 2
+          },
+          "MirrorMasks/maskReferences": {
+            "inclusive": 0,
+            "reap_leaf": 0,
+            "direct_leaf": 0
+          },
+          "MirrorHitUnit/syncMotion": {
+            "inclusive": 5,
+            "reap_leaf": 0,
+            "direct_leaf": 1
+          },
+          "RConnectAnimationAccess": {
+            "inclusive": 0,
+            "reap_leaf": 0,
+            "direct_leaf": 0
+          },
+          "TelekinesisVisuals$/paint": {
+            "inclusive": 0,
+            "reap_leaf": 0,
+            "direct_leaf": 0
+          }
+        }
+      },
+      {
+        "id": 4,
+        "valid": true,
+        "cpu": 75,
+        "partial": true,
+        "start": 45662,
+        "end": 45730,
+        "methods": {
+          "tickFrozenAnims": {
+            "inclusive": 24,
+            "reap_leaf": 9,
+            "direct_leaf": 1
+          },
+          "RemoteMotion/sampleTimed": {
+            "inclusive": 13,
+            "reap_leaf": 8,
+            "direct_leaf": 1
+          },
+          "RemoteMotion$/blendWeapons": {
+            "inclusive": 2,
+            "reap_leaf": 0,
+            "direct_leaf": 0
+          },
+          "WeaponDisplay$/interpolate": {
+            "inclusive": 2,
+            "reap_leaf": 0,
+            "direct_leaf": 2
+          },
+          "RemoteMotion$/blendBodyPose": {
+            "inclusive": 1,
+            "reap_leaf": 0,
+            "direct_leaf": 1
+          },
+          "UnitPresentation/tick": {
+            "inclusive": 4,
+            "reap_leaf": 0,
+            "direct_leaf": 1
+          },
+          "UnitPresentation/play": {
+            "inclusive": 0,
+            "reap_leaf": 0,
+            "direct_leaf": 0
+          },
+          "MirrorMasks/": {
+            "inclusive": 1,
+            "reap_leaf": 1,
+            "direct_leaf": 0
+          },
+          "MirrorMasks/maskReferences": {
+            "inclusive": 0,
+            "reap_leaf": 0,
+            "direct_leaf": 0
+          },
+          "MirrorHitUnit/syncMotion": {
+            "inclusive": 3,
+            "reap_leaf": 0,
+            "direct_leaf": 1
+          },
+          "RConnectAnimationAccess": {
+            "inclusive": 0,
+            "reap_leaf": 0,
+            "direct_leaf": 0
+          },
+          "TelekinesisVisuals$/paint": {
+            "inclusive": 2,
+            "reap_leaf": 0,
+            "direct_leaf": 0
+          }
+        }
+      }
+    ]
+  },
+  "sources": {
+    "rconnect/game/GameBridge.as": {
+      "sha256": "26bb0f7cd4da7c74c83bd2657575823247196c41a861babf23bb40c17fc3cbf7",
+      "same_in_partial13": true
+    },
+    "rconnect/game/RemoteMotion.as": {
+      "sha256": "5f0d0ba3b8de5ec1a08d392b4147f04a4d318c0bcdd0a2f7bbf236a5d28fc877",
+      "same_in_partial13": true
+    },
+    "rconnect/game/UnitPresentation.as": {
+      "sha256": "d67dbcbed8d3ef67771eb10e41516102dabb34aad3a7065ab71ec7822ff53178",
+      "same_in_partial13": true
+    },
+    "rconnect/game/WeaponDisplay.as": {
+      "sha256": "c76a6b157992398dbb8d8620de2482375594423226cd64b90e13e8fee96066f2",
+      "same_in_partial13": true
+    },
+    "rconnect/game/MirrorMasks.as": {
+      "sha256": "b4283cf68870010c4d454a6c7d511f00dbc5c3540e1839f878dfe680084f5e24",
+      "same_in_partial13": true
+    },
+    "rconnect/game/MirrorHitUnit.as": {
+      "sha256": "e5339ba7481c4e14d90171939e4a8729a4b8812dddf27bce1a006dd65de79147",
+      "same_in_partial13": true
+    },
+    "fe/unit/RConnectAnimationAccess.as": {
+      "sha256": "2a0020f3a442c0d8b717e12d6a31ce26b51530e0a361930cb9035a68a2c41af7",
+      "same_in_partial13": true
+    }
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "passed": true,
+  "checks": 11,
+  "assertions": [
+    {
+      "label": "frozen entire proposal and exact native input pinned",
+      "passed": true
+    },
+    {
+      "label": "FD92 original first-raster behavior accepted",
+      "passed": true
+    },
+    {
+      "label": "FD92 does not pretend to contain new wall bridge",
+      "passed": true
+    },
+    {
+      "label": "new source passes old and new behavior anchors",
+      "passed": true
+    },
+    {
+      "label": "reject old raster completion regression",
+      "passed": true
+    },
+    {
+      "label": "reject missing wall callback",
+      "passed": true
+    },
+    {
+      "label": "reject missing revision advance",
+      "passed": true
+    },
+    {
+      "label": "reject lost original random draws",
+      "passed": true
+    },
+    {
+      "label": "reject lost source callback error isolation",
+      "passed": true
+    },
+    {
+      "label": "ten exact adaptations preserve registry/launch/cleanup/whole class list/header/tags/seven representatives/22 inputs",
+      "passed": true
+    },
+    {
+      "label": "source-only and compiled-but-failed receipts never unlock native runs",
+      "passed": true
+    }
+  ],
+  "jvm_started": false,
+  "air_started": false,
+  "compiled": false,
+  "native_qualified": false
+}

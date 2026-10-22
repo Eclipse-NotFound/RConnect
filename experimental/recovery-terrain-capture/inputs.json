@@ -1,0 +1,35 @@
+{
+  "base_candidate_sha256": "225a794040c71f2a55ff433366a7969201ac3a58ffaab0a655cee1e4eefbe5f7",
+  "base_source_sha256": "317c9658b0632f3bb8333c11cd302c68ef45e7a9f2f54ed6b6c631b6c1b92b44",
+  "inputs": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-14\\prepared.json": "cbc7d3dd962100d90865aa6b05dd85b61d0b794708dc97ccf46a38dc3aab8001",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-14\\src\\rconnect\\game\\TerrainSync.as": "317c9658b0632f3bb8333c11cd302c68ef45e7a9f2f54ed6b6c631b6c1b92b44",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\game-reference\\decompiled\\1.02\\src102\\scripts\\fe\\loc\\Tile.as": "ce77b312880301eba59c82f72d81dba92d51bba5d0c9929345c5ea743f601cc1",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-14\\src\\rconnect\\game\\NativeTileState.as": "eec001f4de8bdfc5ad892c2de2e892c07cceac15ebe7c5cf10fda4a1047592dc",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-14\\src\\rconnect\\game\\NativeRoomState.as": "1e91028348b29dc1bd00dc55cf4d5df5d5ee40469ef9ea0f7e9626d30a601938",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-terrain-loop\\components\\fe\\unit\\Unit.as": "413999d9d8d9a001b125eaf7c140f70a49b23f44ac07e31629f9780bd5fcaaf2",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-terrain-loop\\components\\fe\\unit\\RConnectUnitAccess.as": "4dca64ac4410ed30997830ad2e092cf4bc9dbdee6204a2d8f1cfd1578d818806",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-terrain-loop\\components\\rconnect\\game\\GameBridge.as": "ef48de47fbd27f843edeceea4c87acfc0320811de7ac581fc5b46b324840e85a",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-terrain-loop\\components\\rconnect\\game\\TurretDisplay.as": "a0a2e0f98b82a3d00bdd21b7abf21a24dbe830d112878103da38eda63ed9f53d"
+  },
+  "compiled": false,
+  "runtime_tested": false,
+  "sources": {
+    "components/fe/loc/Box.as": "3dbb9d8c6caee1391ddec84d5df5783b5d7f8a17449034c970793592d12d4cf7",
+    "components/fe/loc/Form.as": "625a3680cacc367830775f723b8d80b9abf0e606e31fa8a3c09b574d0f0dc30f",
+    "components/fe/loc/Tile.as": "ce77b312880301eba59c82f72d81dba92d51bba5d0c9929345c5ea743f601cc1",
+    "components/fe/Obj.as": "50b84bac3d0b76c4520f8f6e45974224419c88baca0271be11a506991e98bd44",
+    "components/fe/unit/RConnectUnitAccess.as": "4dca64ac4410ed30997830ad2e092cf4bc9dbdee6204a2d8f1cfd1578d818806",
+    "components/fe/unit/Unit.as": "413999d9d8d9a001b125eaf7c140f70a49b23f44ac07e31629f9780bd5fcaaf2",
+    "components/GetterTile.as": "901a5d897178c64aa849b0fde6758c95bb520861093a9e50dfaafbc738f477e0",
+    "components/rconnect/game/ControlTerrainSync.as": "bbe93cc9a8c268208148e65db7661179a27bdb9e65132c6bfeb88b91bb417a34",
+    "components/rconnect/game/GameBridge.as": "ef48de47fbd27f843edeceea4c87acfc0320811de7ac581fc5b46b324840e85a",
+    "components/rconnect/game/NativeRoomState.as": "1e91028348b29dc1bd00dc55cf4d5df5d5ee40469ef9ea0f7e9626d30a601938",
+    "components/rconnect/game/NativeTileState.as": "eec001f4de8bdfc5ad892c2de2e892c07cceac15ebe7c5cf10fda4a1047592dc",
+    "components/rconnect/game/TerrainSync.as": "3bb4ac4a9ab4ca6a045d2376e3b18025d48db409bc6ad72cb62cdece02f5ebfa",
+    "components/rconnect/game/TurretDisplay.as": "a0a2e0f98b82a3d00bdd21b7abf21a24dbe830d112878103da38eda63ed9f53d",
+    "components/TerrainCaptureChecks.as": "249712c99be73338875dccc90f3990aa281d534a10b0c7e2893386caf9583bbc",
+    "components/TerrainCaptureRoom.as": "3f603e6c3fe9ad4bb08491c6cbd5561b3284ee71c5847447e4694d5b63d7a7bc",
+    "src/rconnect/game/TerrainSync.as": "3bb4ac4a9ab4ca6a045d2376e3b18025d48db409bc6ad72cb62cdece02f5ebfa"
+  }
+}

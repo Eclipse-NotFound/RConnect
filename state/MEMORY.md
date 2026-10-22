@@ -23,6 +23,7 @@ Remains 1.02 双人合作模组，入口 release/RConnectMod.swf。A 是普通�
 - 准确 recovery13：`build/m52/recovery-13` / `1177eb1a…fddb1`，87AS。包含原版加载UI/首绘、念力光晕、击墙/气体/酸液与运动修正，但加载与密集性能仍失败，**未部署**。随机图首绘配套隔离宿主 `recovery-first-raster-host-03` / FD92；安装宿主未改。
 - 新 recovery14：`build/m52/recovery-14` / `225a794040c71f2a55ff433366a7969201ac3a58ffaab0a655cee1e4eefbe5f7`，88AS，只在13叠墙痕专用编码及版本字符串。完整源码 `experimental/recovery-wall-encode-buildsrc`；其它85类原字节不变。4277cc066e同driver02密集仍失败：主29/0、加40/14；加入七段36–42帧、p95 306–405ms。原生高速6e154179bd完成8组，主63/0、加76/2，接触显示帧数及闪电95ms间隔未达标。
 - 独立 recovery15：`build/m52/recovery-15` / `6fbb2d6cb8be8e454d875d7661714e2d879d8d92c1a96b8206f55e3e76ea1d72`，14仅叠武器姿态回退算术消重及版本。完整源码 `experimental/recovery-actor-pose-buildsrc`。e2ecb96939同场密集仍主29/0、加40/14失败，加入七段37–40帧、p95 339–395ms；没有足够整体改善，未部署。
+- 独立 recovery16：`build/m52/recovery-16` / `a1519b39f27b6c073186a4581234de9bad656592ec6c17bb4a3eb494ade5a31c`，14仅叠真实大图墙面桥，89AS。独立 recovery17：`build/m52/recovery-17` / `a5d05ea89a5b689b44a0530832d288827d4f9261487fccad77af55c0be36673e`，14仅叠TerrainSync采集，88AS。两者已编译、互未合并，不含15；均未部署。
 - 活动 `experimental/recovery-integrated` 仍是13；14独立源码，勿用旧根src覆盖。新增正式 `prepare_recovery.py --source` 复用完整源码清单与编译流程，减少复制构建脚本；默认来源不变。
 - 气体时钟诊断 `recovery-gas-clock-01` / `2142fe…b4759` 仅诊断，不是生产候选。原版13的3类插桩剥除后逐字节相同；输出 `recovery-gas-clock-native-01`。版本号相同不等于相同二进制。
 
@@ -39,6 +40,9 @@ Remains 1.02 双人合作模组，入口 release/RConnectMod.swf。A 是普通�
 - **大图弹痕实质缺口**：准确14只读Grafon.frontBmp，sceneLarge时它是scratch，真实显示另在sceneSurfaces的nativeBuffers[0]；解码还限1920×1000。既有210项普通枪火星原生记录全部largeScene=false，不能证明大图持久弹痕正确。`recovery-wall-surface-review`已查明坐标/绘制/重建路径；正在独立宿主局部绘制回调及真实大图反例，未改CS源码或安装版。
 - **加载CPU采样失效**：825a566b2a再次在首轮加入侧1000ms基线失败，出现1597ms整帧空档。采样原始序号3→0、0 CPU、callbackDrains0，冻结collector拒绝非单调记录；`recovery-input-cpu-invalid-01`保存原JSON与无效说明，不作函数归因。不得把38项静态检查当作原生采样成功。
 - **逐帧采样取得局部证据**：398cddcf6b仍首轮输入基线失败；逐帧driver C8D1…C456、profile F824…62F共345 CPU样本。窗0无CPU、窗1超原生枚举上限，无效；窗2/3完整、窗4为输入失败前有效半窗。collector核验通过但完整六窗/性能资格均false；扫描自身213/137/79ms也计入原失败，不能拿诊断时长替代普通运行。精确记录 `recovery-input-cpu-frames-partial-review-01`。
+- **大图墙面桥组件/宿主**：完整实际组件54/0，`recovery-wall-surfaces-component-01` / 8D45…CBA8。新宿主ACC336…35DFD实际编译；原host-01回读因全局禁FFDec伪表达式失败，独立recheck证明两处都在与FD92完整相同的sceneDrawSteps，所有改动方法、首绘、7类、header/非代码tags/类表及22安装项通过。原失败保留于host-01，新证据为`recovery-wall-surfaces-host-recheck-01`，不是原生资格。现存1200墙格检查点上限未放宽。
+- **大图原生夹具仍未建立负例**：31d33c03c7选点失败；df0cb3dad0选四点成功但双方四个源端均shots=0。原生武器技能限制拒绝新角色（缺旧成功夹具的lvl/perslvl=0），正在最小修正准备路径；另有FA after异常须处理测试装备。旧失败保留，不能据零射击称同步失败或通过。
+- **地形采集组件/原生**：`recovery-terrain-capture-component-01`实际154/0，B9B6…8BED。真实Tile无变化快速判断只比phis/hp，动态getter及其它路径不变。30,000格×5旧171/199ms、新113/114ms。17同driver02密集78a808f81c仍主29/0、加40/14，七段36–39帧、p95 295–424ms，未取得整体改善。场地/driver/安装相同但准备快照有一把枪hold12/0差异，严格input_comparable=false；不计算版本收益百分比。详见recovery17-native-01.json。
 - **14高速复核**：case4数据提前到达，23ms是同一gameFrame两次RENDER（含22ms像素读回），下一真实帧晚80ms；确定失败为只有1个接触帧，不能断言提前删尾。case6闪电95ms空档前已有足够轨迹，缺的是中间最终游戏帧，不是缺下一位置包。详见 `recovery-flight14-review`，原阈值/失败均保持。
 - **墙痕编码**：真实组件 `recovery-wall-encode-component-01` 49/0；82份历史自然数据像素/uint/旧格式、原子拒绝、预测ACK/毁墙/复访/批次界限通过。两次ABBA旧编码740/739/771/773ms，新475/499/510/517ms；冷解旧314/312/318/304，新290/280/277/282。只是独立完整类成本，原生频率和整机收益待验。第二次原生接触触发缓存失效没有直接组件断言，失效逻辑本身未改。
 - **气体v2**：b15c17f816主37/0、加33/0及24PNG/JSON通过；严格轨迹13错：10条漏末姿态+3条派生一一对应错。9条漏1末采样、1条漏2；没有有序歧义或terminal收到前删除。源/线/显示四轮12/12/23/23。首轮80–158ms，旧4733dbf4b4秒级首显未再现，不归功于仅修夹具。见 `experimental/recovery-gas-v2-review`。

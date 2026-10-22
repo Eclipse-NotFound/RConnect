@@ -1,0 +1,346 @@
+--- recovery14/src/rconnect/game/WallImpactVisuals.as
++++ recovery16/src/rconnect/game/WallImpactVisuals.as
+@@ -37,6 +37,8 @@
+       private var wordCount:int=0,wordChars:int=0;
+       private var rooms:Dictionary=new Dictionary(true);
+       private var active:Object,shadow:BitmapData,bitmap:BitmapData;
++      private var surfaces:WallSurfaceBridge;
++      private var surfaceOrder:Number=0;
+       private var scratchA:BitmapData=new BitmapData(CELL,CELL,true,0);
+       private var scratchB:BitmapData=new BitmapData(CELL,CELL,true,0);
+       private var tracked:Array=[];
+@@ -49,7 +51,39 @@
+       public var dirty:Boolean=false;
+ 
+       public function WallImpactVisuals(main:Object=null)
+-      {if(main!=null)domain=main.loaderInfo.applicationDomain;}
++      {
++         if(main!=null)domain=main.loaderInfo.applicationDomain;
++         surfaces=new WallSurfaceBridge(surfaceChanges,surfaceRaster,surfaceBorn,main);
++      }
++      public function set networkActive(value:Boolean):void {surfaces.networkActive=value;}
++      private function surfaceBorn():Number {return ++surfaceOrder;}
++      private function surfaceChanges(loc:Object,list:Object,order:Number):void
++      {
++         var s:Object=state(loc);
++         for(var k:String in list) {
++            var incoming:Object=list[k];
++            if(!solid(loc,int(incoming.x),int(incoming.y))){discard(loc,k);continue;}
++            var cell:Object=s.cells[k],q:Object=s.queued[k],wrote:Boolean=false;
++            if(cell==null)cell=s.cells[k]={x:incoming.x,y:incoming.y,values:{},v:0,wire:null};
++            if(cell.paintOrder==null)cell.paintOrder={};
++            for(var index:String in incoming.values) {
++               // A mark can first rasterize long after its native birth. Its
++               // old pixels must not supersede a newer accepted local/peer ink.
++               // This local-only order never changes wire versions or ACKs.
++               if(Number(cell.paintOrder[index])>order)continue;
++               cell.paintOrder[index]=order;
++               var color:uint=uint(incoming.values[index]);
++               if(cell.values[index]===color)continue;
++               if(q==null)q=s.queued[k]={x:incoming.x,y:incoming.y,values:{}};
++               cell.values[index]=color;q.values[index]=color;wrote=true;
++            }
++            if(wrote){cell.v=++revision;cell.wire=null;}
++         }
++      }
++      private function surfaceRaster(loc:Object,b:BitmapData,x:int,y:int,clips:Array):void
++      {
++         if(surfaces.replay(loc,b,x,y,state(loc).cells,clips))dirty=true;
++      }
+ 
+       /** Actual native asset bounds include random variant frames and the
+        * largest native scale. No assumption that every weapon's notch is tiny. */
+@@ -102,7 +136,7 @@
+          var g:Object=get(loc,"grafon");
+          // Grafon is shared by rooms. inRoom(oldRoom) must never paint the new
+          // room's bitmap while settling reports on the old-room TCP barrier.
+-         return loc!=null && get(g,"loc")===loc && get(g,"rconnectRasterPending")!==true
++         return loc!=null && get(g,"loc")===loc && get(g,"sceneLarge")!==true && get(g,"rconnectRasterPending")!==true
+             ?get(g,"frontBmp") as BitmapData:null;
+       }
+       private function solid(loc:Object,x:int,y:int):Boolean
+@@ -115,6 +149,12 @@
+ 
+       public function before(loc:Object):void
+       {
++         // Large scenes have no persistent full-surface shadow. Their actual
++         // paint passes report bounded changed regions through the host bridge.
++         if(get(get(loc,"grafon"),"sceneLarge")===true) {
++            if(shadow!=null){shadow.dispose();shadow=null;}
++            active=loc;bitmap=null;return;
++         }
+          var b:BitmapData=front(loc);
+          if(b==null)return;
+          if(active!==loc || bitmap!==b || shadow==null)
+@@ -286,7 +326,7 @@
+                if(c==null || !(c.d is String) || !isFinite(Number(c.x)) || !isFinite(Number(c.y)))return null;
+                var x:int=int(c.x),y:int=int(c.y),k:String=id(x,y);
+                if(x!=Number(c.x) || y!=Number(c.y) || x<0 || y<0 || x>=int(loc.spaceX) || y>=int(loc.spaceY) ||
+-                  x*CELL>=1920 || y*CELL>=1000 || seen[k])return null;
++                  seen[k])return null;
+                if((bytes+=String(c.d).length)>MAX_WIRE && limit)return null;
+                // One 40x40 sparse cell has at most 3200 numeric words. Reject
+                // expanded data before touching any pixels or accepting a seq.
+@@ -353,6 +393,7 @@
+       private function put(loc:Object,list:Array,protect:Boolean,versions:Boolean):void
+       {
+          var s:Object=state(loc),b:BitmapData=front(loc),skip:Object=protect?protectedPixels(s):{};
++         var large:Boolean=get(get(loc,"grafon"),"sceneLarge")===true,painted:Array=large?[]:null;
+          if(b!=null)b.lock();
+          try
+          {
+@@ -363,16 +404,26 @@
+                if(versions && s.incoming[k]!=null && int(c.v)<=int(s.incoming[k]))continue;
+                var cell:Object=s.cells[k];
+                if(cell==null)cell=s.cells[k]={x:c.x,y:c.y,values:{},v:0,wire:null};
+-               var wrote:Boolean=false;
++               var wrote:Boolean=false;var visible:Array=large?[]:null;
+                for(var i:int=0;i<c.words.length;i+=2)
+                {
+                   var index:int=int(c.words[i]),key:String=String(index);
+                   if(skip[k]!=null && skip[k][key]!==undefined)continue;
+                   var color:uint=uint(c.words[i+1]),x:int=int(c.x)*CELL+index%CELL,y:int=int(c.y)*CELL+int(index/CELL);
+-                  if(cell.values[key]!==color) {cell.values[key]=color;wrote=true;}
++                  if(visible!=null)visible.push(index,color);
++                  // Accepted equal-color writes still establish a newer local
++                  // order; stale versions and protected pixels already skipped.
++                  if(large) {
++                     if(cell.paintOrder==null)cell.paintOrder={};
++                     cell.paintOrder[key]=++surfaceOrder;
++                  }
++                  if(cell.values[key]!==color) {
++                     cell.values[key]=color;wrote=true;
++                  }
+                   if(b!=null && x<b.width && y<b.height && b.getPixel32(x,y)!=color)
+                   {b.setPixel32(x,y,color);dirty=true;}
+                }
++               if(visible!=null && visible.length)painted.push({x:c.x,y:c.y,words:visible});
+                if(wrote) {cell.v=++revision;cell.wire=null;}
+                // A skipped predicted pixel needs the same authoritative cell
+                // again after ack. Only advance its cursor if nothing was skipped.
+@@ -381,6 +432,7 @@
+             }
+          }
+          finally {if(b!=null)b.unlock();}
++         if(painted!=null && painted.length && surfaces.paint(loc,painted))dirty=true;
+       }
+       public function receive(loc:Object,list:Array,predict:Boolean=true):void
+       {
+@@ -481,6 +533,7 @@
+       {
+          var decoded:Array=decode(loc,list || [],false);
+          if(decoded==null)throw new Error("Invalid wall appearance checkpoint");
++         surfaces.restored(loc);
+          rooms[loc]={cells:{},queued:{},pending:null,receipts:{},incoming:{},sent:{},cursor:0};
+          put(loc,decoded,false,false);redraw(loc);
+       }
+@@ -504,6 +557,14 @@
+       /** Immediately after native redrawLoc, before final RENDER/SATS capture. */
+       public function redraw(loc:Object):void
+       {
++         if(get(get(loc,"grafon"),"sceneLarge")===true) {
++            var resident:Array=surfaces.surfaces(loc);
++            if(resident!=null)for each(var entry:Object in resident) {
++               if(surfaces.replay(loc,entry.nativeBuffers[0],int(entry.x),int(entry.y),state(loc).cells,null))
++                  {entry.revision=int(entry.revision)+1;dirty=true;}
++            }
++            return;
++         }
+          var b:BitmapData=front(loc);if(b==null)return;
+          replay(loc,b);
+          if(active===loc) {if(shadow!=null)shadow.dispose();bitmap=b;shadow=copyFront(loc,b,"redraw");}
+@@ -516,6 +577,7 @@
+       }
+       public function reset():void
+       {
++         surfaces.reset();surfaceOrder=0;
+          if(shadow!=null)shadow.dispose();shadow=null;bitmap=null;active=null;
+          rooms=new Dictionary(true);tracked=[];contacts=new Dictionary(true);tileState={};dirty=false;
+          wordCache=new Dictionary();wordOrder=[];wordCount=0;wordChars=0;
+--- recovery14/src/rconnect/game/GameBridge.as
++++ recovery16/src/rconnect/game/GameBridge.as
+@@ -65,7 +65,7 @@
+       public var mapGeneration:rconnect.core.MapGeneration;
+       /** Session owns connection state; this flag only bounds ephemeral history. */
+       public function get presentationNetworkActive():Boolean {return _presentation.retainUnsent;}
+-      public function set presentationNetworkActive(value:Boolean):void {_presentation.retainUnsent=value;}
++      public function set presentationNetworkActive(value:Boolean):void {_presentation.retainUnsent=value;_wall.networkActive=value;}
+       private var _coopPauseAt:int=-1;
+       public function get coopPaused():Boolean {return _coopPauseAt>=0;}
+       public function setCoopPaused(value:Boolean):void {
+--- recovery14/src/rconnect/game/WallSurfaceBridge.as
++++ recovery16/src/rconnect/game/WallSurfaceBridge.as
+@@ -0,0 +1,173 @@
++package rconnect.game
++{
++   import flash.display.BitmapData;
++   import flash.geom.Rectangle;
++   import flash.utils.Dictionary;
++
++   /** Local native paint observations, never a room/chunk-sized persistent shadow.
++    * The host supplies the ACTUAL composited pass clips. Native mark identity
++    * prevents a reconstructed older local decal from undoing a peer's newer ink. */
++   public final class WallSurfaceBridge
++   {
++      private var changed:Function, raster:Function, born:Function;
++      private var marks:Dictionary=new Dictionary(true);
++      private var lifetimes:Dictionary=new Dictionary(true);
++      private var generation:uint=0;
++      private var hostType:Object,listener:Function,enabled:Boolean=false;
++      public function WallSurfaceBridge(changed:Function,raster:Function,born:Function,main:Object=null)
++      {
++         this.changed=changed;this.raster=raster;this.born=born;
++         listener=onNative;
++         if(main!=null)try {
++            var type:Object=main.loaderInfo.applicationDomain.getDefinition("fe.graph.Grafon");
++            if("rconnectWallBridge" in type)hostType=type;
++         }catch(unavailable:*) {} // Older hosts retain ordinary-room support.
++      }
++      private static function get(o:Object,k:String):* {return GameBridge.probe(o,k);}
++      public function set networkActive(value:Boolean):void
++      {
++         if(enabled==value)return;
++         enabled=value;reset();
++         if(hostType==null)return;
++         // Disabling an older bridge must never clear a later owner's callback.
++         if(value)hostType.rconnectWallBridge=listener;
++         else if(hostType.rconnectWallBridge===listener)hostType.rconnectWallBridge=null;
++      }
++      public function reset():void {marks=new Dictionary(true);lifetimes=new Dictionary(true);generation++;}
++      public function restored(loc:Object):void {lifetimes[loc]={};}
++      private static function cut(source:Array,r:Rectangle):Array
++      {
++         var out:Array=[];
++         for each(var a:Rectangle in source) {
++            var i:Rectangle=a.intersection(r);
++            if(i.isEmpty()){out.push(a);continue;}
++            if(i.top>a.top)out.push(new Rectangle(a.x,a.y,a.width,i.top-a.top));
++            if(i.bottom<a.bottom)out.push(new Rectangle(a.x,i.bottom,a.width,a.bottom-i.bottom));
++            if(i.left>a.left)out.push(new Rectangle(a.x,i.y,i.left-a.left,i.height));
++            if(i.right<a.right)out.push(new Rectangle(i.right,i.y,a.right-i.right,i.height));
++         }
++         return out;
++      }
++      private static function areas(b:BitmapData,ox:int,oy:int,affected:Rectangle,clips:Array):Array
++      {
++         var bounds:Rectangle=new Rectangle(ox,oy,b.width,b.height);
++         if(affected!=null)bounds=bounds.intersection(affected);
++         if(bounds.isEmpty())return [];
++         bounds=new Rectangle(Math.floor(bounds.x),Math.floor(bounds.y),Math.ceil(bounds.right)-Math.floor(bounds.x),Math.ceil(bounds.bottom)-Math.floor(bounds.y));
++         if(clips==null)return [bounds];
++         var result:Array=[];
++         for each(var clip:Rectangle in clips) {
++            var r:Rectangle=bounds.intersection(clip);
++            if(!r.isEmpty())result.push(r);
++         }
++         return result;
++      }
++      /** Signature is private to the isolated Grafon bridge; no wire changes. */
++      private function onNative(kind:String,g:Object,loc:Object,b:BitmapData,ox:int,oy:int,
++         affected:Rectangle,mark:Object,token:Object,clips:Array):Object
++      {
++         if(!enabled || g==null || loc==null || get(g,"loc")!==loc || get(g,"sceneLarge")!==true)return null;
++         if(kind=="mark") {
++            if(lifetimes[loc]==null)lifetimes[loc]={};
++            // No loc/mark reference in the weak value: loc -> native history
++            // -> mark would otherwise keep the supposedly weak key alive.
++            if(mark!=null && marks[mark]==null)marks[mark]={life:lifetimes[loc],covered:[],order:born()};
++            return null;
++         }
++         if(kind=="raster") {
++            if(b!=null)raster(loc,b,ox,oy,clips);
++            return null;
++         }
++         if(kind=="before") {
++            var entry:Object=marks[mark];
++            // Only marks born while this bridge was active are local changes.
++            // Unknown saved/native history is baseline, not a new network hit.
++            if(entry==null || entry.life!==lifetimes[loc] || b==null || affected==null)return null;
++            var pieces:Array=[],regions:Array=areas(b,ox,oy,affected,clips);
++            for each(var r:Rectangle in regions) {
++               var pending:Array=[r];
++               for each(var covered:Rectangle in entry.covered)pending=cut(pending,covered);
++               for each(var part:Rectangle in pending) {
++                  var local:Rectangle=part.clone();local.offset(-ox,-oy);
++                  pieces.push({world:part,local:local,words:b.getVector(local)});
++               }
++            }
++            return pieces.length?{epoch:generation,loc:loc,bitmap:b,entry:entry,pieces:pieces}:null;
++         }
++         if(kind=="after") {
++            if(token==null || token.epoch!==generation || token.loc!==loc || token.bitmap!==b || token.entry.life!==lifetimes[loc])return null;
++            var cells:Object={};
++            for each(var piece:Object in token.pieces) {
++               var fresh:Vector.<uint>=b.getVector(piece.local),old:Vector.<uint>=piece.words;
++               var width:int=int(piece.world.width);
++               for(var i:int=0;i<fresh.length;i++)if(fresh[i]!=old[i]) {
++                  var x:int=int(piece.world.x)+i%width,y:int=int(piece.world.y)+int(i/width);
++                  if(x<0 || y<0 || x>=int(loc.spaceX)*40 || y>=int(loc.spaceY)*40)continue;
++                  var tx:int=int(x/40),ty:int=int(y/40),key:String=tx+","+ty;
++                  var c:Object=cells[key];if(c==null)c=cells[key]={x:tx,y:ty,values:{}};
++                  c.values[String((y%40)*40+x%40)]=fresh[i];
++               }
++               token.entry.covered.push(piece.world);
++               piece.words=null;
++            }
++            changed(loc,cells,Number(token.entry.order));
++         }
++         return null;
++      }
++      public function surfaces(loc:Object):Array
++      {
++         var g:Object=get(loc,"grafon");
++         if(loc==null || get(g,"loc")!==loc || get(g,"sceneLarge")!==true || get(g,"rconnectRasterPending")===true)return null;
++         try{return g.sceneSurfaces() as Array;}catch(unavailable:*){}return null;
++      }
++      /** Each cell carries only accepted sparse pixels (prediction mask applied).
++       * A gutter pixel is written to every overlapping resident buffer. */
++      public function paint(loc:Object,list:Array):Boolean
++      {
++         var resident:Array=surfaces(loc);if(resident==null)return false;
++         var any:Boolean=false;
++         for each(var s:Object in resident) {
++            var b:BitmapData=s.nativeBuffers[0] as BitmapData;if(b==null)continue;
++            var wrote:Boolean=false; b.lock();
++            try {
++               for each(var c:Object in list) {
++                  var cx:int=int(c.x)*40-int(s.x),cy:int=int(c.y)*40-int(s.y);
++                  if(cx>=b.width || cy>=b.height || cx+40<=0 || cy+40<=0)continue;
++                  for(var i:int=0;i<c.words.length;i+=2) {
++                     var index:int=int(c.words[i]),x:int=cx+index%40,y:int=cy+int(index/40);
++                     if(x<0 || y<0 || x>=b.width || y>=b.height)continue;
++                     var color:uint=uint(c.words[i+1]);
++                     if(b.getPixel32(x,y)!=color){b.setPixel32(x,y,color);wrote=true;}
++                  }
++               }
++            }finally{b.unlock();}
++            if(wrote){s.revision=int(s.revision)+1;any=true;}
++         }
++         return any;
++      }
++      /** Reapply retained logical pixels to the actual raster pass BEFORE its
++       * output is copied/cloned into a new chunk, including async warm groups. */
++      public function replay(loc:Object,b:BitmapData,ox:int,oy:int,cells:Object,clips:Array):Boolean
++      {
++         var regions:Array=areas(b,ox,oy,null,clips),wrote:Boolean=false;
++         b.lock();
++         try {
++            for each(var c:Object in cells) {
++               if(int(c.x)<0 || int(c.y)<0 || int(c.x)>=int(loc.spaceX) || int(c.y)>=int(loc.spaceY))continue;
++               if(Number(loc.space[c.x][c.y].phis)<1)continue;
++               var world:Rectangle=new Rectangle(int(c.x)*40,int(c.y)*40,40,40);
++               for each(var r:Rectangle in regions) {
++                  if(!r.intersects(world))continue;
++                  for(var key:String in c.values) {
++                     var index:int=int(key),x:int=int(world.x)+index%40,y:int=int(world.y)+int(index/40);
++                     if(!r.contains(x,y))continue;
++                     var color:uint=uint(c.values[key]);x-=ox;y-=oy;
++                     if(b.getPixel32(x,y)!=color){b.setPixel32(x,y,color);wrote=true;}
++                  }
++               }
++            }
++         }finally{b.unlock();}
++         return wrote;
++      }
++   }
++}

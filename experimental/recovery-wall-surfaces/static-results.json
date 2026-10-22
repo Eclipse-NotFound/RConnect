@@ -1,0 +1,121 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "label": "pinned originals unchanged",
+      "passed": true
+    },
+    {
+      "label": "overlay hashes unchanged",
+      "passed": true
+    },
+    {
+      "label": "generator matches manifest",
+      "passed": true
+    },
+    {
+      "label": "wall changes are exact listed replacements",
+      "passed": true
+    },
+    {
+      "label": "host changes are exact listed replacements",
+      "passed": true
+    },
+    {
+      "label": "GameBridge only changes one setter",
+      "passed": true
+    },
+    {
+      "label": "component production sources exact",
+      "passed": true
+    },
+    {
+      "label": "component freeze exact",
+      "passed": true
+    },
+    {
+      "label": "real native method sceneSurfaces",
+      "passed": true
+    },
+    {
+      "label": "real native method sceneApply",
+      "passed": true
+    },
+    {
+      "label": "real native method sceneRestoreMarks",
+      "passed": true
+    },
+    {
+      "label": "real native method rconnectWallNotify",
+      "passed": true
+    },
+    {
+      "label": "real native method rconnectWallBaseClips",
+      "passed": true
+    },
+    {
+      "label": "positive generated host readback anchors",
+      "passed": true
+    },
+    {
+      "label": "negative mutation exists: before callback missing",
+      "passed": true
+    },
+    {
+      "label": "negative host rejected: before callback missing",
+      "passed": true
+    },
+    {
+      "label": "negative mutation exists: after callback missing",
+      "passed": true
+    },
+    {
+      "label": "negative host rejected: after callback missing",
+      "passed": true
+    },
+    {
+      "label": "negative mutation exists: scratch origin not restored",
+      "passed": true
+    },
+    {
+      "label": "negative host rejected: scratch origin not restored",
+      "passed": true
+    },
+    {
+      "label": "negative mutation exists: extra random draw",
+      "passed": true
+    },
+    {
+      "label": "negative host rejected: extra random draw",
+      "passed": true
+    },
+    {
+      "label": "negative mutation exists: selected clips missing",
+      "passed": true
+    },
+    {
+      "label": "negative host rejected: selected clips missing",
+      "passed": true
+    },
+    {
+      "label": "native mark weak values do not retain room/history/key",
+      "passed": true
+    },
+    {
+      "label": "existing safety limits retained",
+      "passed": true
+    },
+    {
+      "label": "runner result has boolean passed",
+      "passed": true
+    },
+    {
+      "label": "planned runtime 54 checks, including four base rectangles; not executed",
+      "passed": true
+    }
+  ],
+  "count": 28,
+  "compiled": false,
+  "air_started": false,
+  "runtime_qualification": false
+}

@@ -1,0 +1,364 @@
+--- recovery14/rconnect/game/WallImpactVisuals.as
++++ wall-surfaces/rconnect/game/WallImpactVisuals.as
+@@ -37,6 +37,8 @@
+       private var wordCount:int=0,wordChars:int=0;
+       private var rooms:Dictionary=new Dictionary(true);
+       private var active:Object,shadow:BitmapData,bitmap:BitmapData;
++      private var surfaces:WallSurfaceBridge;
++      private var surfaceOrder:Number=0;
+       private var scratchA:BitmapData=new BitmapData(CELL,CELL,true,0);
+       private var scratchB:BitmapData=new BitmapData(CELL,CELL,true,0);
+       private var tracked:Array=[];
+@@ -49,7 +51,39 @@
+       public var dirty:Boolean=false;
+ 
+       public function WallImpactVisuals(main:Object=null)
+-      {if(main!=null)domain=main.loaderInfo.applicationDomain;}
++      {
++         if(main!=null)domain=main.loaderInfo.applicationDomain;
++         surfaces=new WallSurfaceBridge(surfaceChanges,surfaceRaster,surfaceBorn,main);
++      }
++      public function set networkActive(value:Boolean):void {surfaces.networkActive=value;}
++      private function surfaceBorn():Number {return ++surfaceOrder;}
++      private function surfaceChanges(loc:Object,list:Object,order:Number):void
++      {
++         var s:Object=state(loc);
++         for(var k:String in list) {
++            var incoming:Object=list[k];
++            if(!solid(loc,int(incoming.x),int(incoming.y))){discard(loc,k);continue;}
++            var cell:Object=s.cells[k],q:Object=s.queued[k],wrote:Boolean=false;
++            if(cell==null)cell=s.cells[k]={x:incoming.x,y:incoming.y,values:{},v:0,wire:null};
++            if(cell.paintOrder==null)cell.paintOrder={};
++            for(var index:String in incoming.values) {
++               // A mark can first rasterize long after its native birth. Its
++               // old pixels must not supersede a newer accepted local/peer ink.
++               // This local-only order never changes wire versions or ACKs.
++               if(Number(cell.paintOrder[index])>order)continue;
++               cell.paintOrder[index]=order;
++               var color:uint=uint(incoming.values[index]);
++               if(cell.values[index]===color)continue;
++               if(q==null)q=s.queued[k]={x:incoming.x,y:incoming.y,values:{}};
++               cell.values[index]=color;q.values[index]=color;wrote=true;
++            }
++            if(wrote){cell.v=++revision;cell.wire=null;}
++         }
++      }
++      private function surfaceRaster(loc:Object,b:BitmapData,x:int,y:int,clips:Array):void
++      {
++         if(surfaces.replay(loc,b,x,y,state(loc).cells,clips))dirty=true;
++      }
+ 
+       /** Actual native asset bounds include random variant frames and the
+        * largest native scale. No assumption that every weapon's notch is tiny. */
+@@ -102,7 +136,7 @@
+          var g:Object=get(loc,"grafon");
+          // Grafon is shared by rooms. inRoom(oldRoom) must never paint the new
+          // room's bitmap while settling reports on the old-room TCP barrier.
+-         return loc!=null && get(g,"loc")===loc && get(g,"rconnectRasterPending")!==true
++         return loc!=null && get(g,"loc")===loc && get(g,"sceneLarge")!==true && get(g,"rconnectRasterPending")!==true
+             ?get(g,"frontBmp") as BitmapData:null;
+       }
+       private function solid(loc:Object,x:int,y:int):Boolean
+@@ -115,6 +149,12 @@
+ 
+       public function before(loc:Object):void
+       {
++         // Large scenes have no persistent full-surface shadow. Their actual
++         // paint passes report bounded changed regions through the host bridge.
++         if(get(get(loc,"grafon"),"sceneLarge")===true) {
++            if(shadow!=null){shadow.dispose();shadow=null;}
++            active=loc;bitmap=null;return;
++         }
+          var b:BitmapData=front(loc);
+          if(b==null)return;
+          if(active!==loc || bitmap!==b || shadow==null)
+@@ -286,7 +326,7 @@
+                if(c==null || !(c.d is String) || !isFinite(Number(c.x)) || !isFinite(Number(c.y)))return null;
+                var x:int=int(c.x),y:int=int(c.y),k:String=id(x,y);
+                if(x!=Number(c.x) || y!=Number(c.y) || x<0 || y<0 || x>=int(loc.spaceX) || y>=int(loc.spaceY) ||
+-                  x*CELL>=1920 || y*CELL>=1000 || seen[k])return null;
++                  seen[k])return null;
+                if((bytes+=String(c.d).length)>MAX_WIRE && limit)return null;
+                // One 40x40 sparse cell has at most 3200 numeric words. Reject
+                // expanded data before touching any pixels or accepting a seq.
+@@ -353,6 +393,7 @@
+       private function put(loc:Object,list:Array,protect:Boolean,versions:Boolean):void
+       {
+          var s:Object=state(loc),b:BitmapData=front(loc),skip:Object=protect?protectedPixels(s):{};
++         var large:Boolean=get(get(loc,"grafon"),"sceneLarge")===true,painted:Array=large?[]:null;
+          if(b!=null)b.lock();
+          try
+          {
+@@ -363,16 +404,26 @@
+                if(versions && s.incoming[k]!=null && int(c.v)<=int(s.incoming[k]))continue;
+                var cell:Object=s.cells[k];
+                if(cell==null)cell=s.cells[k]={x:c.x,y:c.y,values:{},v:0,wire:null};
+-               var wrote:Boolean=false;
++               var wrote:Boolean=false;var visible:Array=large?[]:null;
+                for(var i:int=0;i<c.words.length;i+=2)
+                {
+                   var index:int=int(c.words[i]),key:String=String(index);
+                   if(skip[k]!=null && skip[k][key]!==undefined)continue;
+                   var color:uint=uint(c.words[i+1]),x:int=int(c.x)*CELL+index%CELL,y:int=int(c.y)*CELL+int(index/CELL);
+-                  if(cell.values[key]!==color) {cell.values[key]=color;wrote=true;}
++                  if(visible!=null)visible.push(index,color);
++                  // Accepted equal-color writes still establish a newer local
++                  // order; stale versions and protected pixels already skipped.
++                  if(large) {
++                     if(cell.paintOrder==null)cell.paintOrder={};
++                     cell.paintOrder[key]=++surfaceOrder;
++                  }
++                  if(cell.values[key]!==color) {
++                     cell.values[key]=color;wrote=true;
++                  }
+                   if(b!=null && x<b.width && y<b.height && b.getPixel32(x,y)!=color)
+                   {b.setPixel32(x,y,color);dirty=true;}
+                }
++               if(visible!=null && visible.length)painted.push({x:c.x,y:c.y,words:visible});
+                if(wrote) {cell.v=++revision;cell.wire=null;}
+                // A skipped predicted pixel needs the same authoritative cell
+                // again after ack. Only advance its cursor if nothing was skipped.
+@@ -381,6 +432,7 @@
+             }
+          }
+          finally {if(b!=null)b.unlock();}
++         if(painted!=null && painted.length && surfaces.paint(loc,painted))dirty=true;
+       }
+       public function receive(loc:Object,list:Array,predict:Boolean=true):void
+       {
+@@ -481,6 +533,7 @@
+       {
+          var decoded:Array=decode(loc,list || [],false);
+          if(decoded==null)throw new Error("Invalid wall appearance checkpoint");
++         surfaces.restored(loc);
+          rooms[loc]={cells:{},queued:{},pending:null,receipts:{},incoming:{},sent:{},cursor:0};
+          put(loc,decoded,false,false);redraw(loc);
+       }
+@@ -504,6 +557,14 @@
+       /** Immediately after native redrawLoc, before final RENDER/SATS capture. */
+       public function redraw(loc:Object):void
+       {
++         if(get(get(loc,"grafon"),"sceneLarge")===true) {
++            var resident:Array=surfaces.surfaces(loc);
++            if(resident!=null)for each(var entry:Object in resident) {
++               if(surfaces.replay(loc,entry.nativeBuffers[0],int(entry.x),int(entry.y),state(loc).cells,null))
++                  {entry.revision=int(entry.revision)+1;dirty=true;}
++            }
++            return;
++         }
+          var b:BitmapData=front(loc);if(b==null)return;
+          replay(loc,b);
+          if(active===loc) {if(shadow!=null)shadow.dispose();bitmap=b;shadow=copyFront(loc,b,"redraw");}
+@@ -516,6 +577,7 @@
+       }
+       public function reset():void
+       {
++         surfaces.reset();surfaceOrder=0;
+          if(shadow!=null)shadow.dispose();shadow=null;bitmap=null;active=null;
+          rooms=new Dictionary(true);tracked=[];contacts=new Dictionary(true);tileState={};dirty=false;
+          wordCache=new Dictionary();wordOrder=[];wordCount=0;wordChars=0;
+--- FD92/fe/graph/Grafon.as
++++ wall-surfaces/fe/graph/Grafon.as
+@@ -293,7 +293,7 @@
+       
+       private var sceneWarmBuffers:Array;
+       
+-      private const sceneWarmFields:Array = ["frontBmp","backBmp","backBmp2","vodaBmp","satsBmp","colorBmp","shadBmp","rectX","rectY","allRect","sceneX","sceneY","sceneScratch","sceneRasterizing","sceneRepaint","sceneRegionPassActive","sceneRasterRegion","sceneMaskCursor","m"];
++      private const sceneWarmFields:Array = ["frontBmp","backBmp","backBmp2","vodaBmp","satsBmp","colorBmp","shadBmp","rectX","rectY","allRect","sceneX","sceneY","sceneScratch","sceneRasterizing","sceneRepaint","sceneRegionPassActive","sceneRasterRegion","sceneMaskCursor","m","rconnectWallClips"];
+       
+       private const sceneWarmStyleFields:Array = ["backwall","color","cTransform","darkness","backform","transpFon","tipWater","gas","homeStable"];
+       
+@@ -691,6 +691,38 @@
+       
+       // Optional local loading optimization. Older/no RConnect returns null;
+       // the native initialization and every ordinary render path stay intact.
++      // RConnect wall bridge: null means no allocation or callback work.
++      public static var rconnectWallBridge:Function = null;
++      private var rconnectWallClips:Array = null;
++      private var rconnectWallErrors:int = 0;
++      private function rconnectWallNotify(kind:String,mark:Object = null,affected:Rectangle = null,token:Object = null) : Object
++      {
++         if(rconnectWallBridge == null)return null;
++         try {return rconnectWallBridge(kind,this,this.loc,this.frontBmp,this.sceneX,this.sceneY,affected,mark,token,this.rconnectWallClips);}
++         catch(error:*) {if(this.rconnectWallErrors++ < 4)trace("RConnect wall bridge: " + error);}
++         return null;
++      }
++      /** Clips selected from the original-style pass in a mixed-style chunk. */
++      private function rconnectWallBaseClips(bounds:Rectangle,groups:Array) : Array
++      {
++         var result:Array = [bounds];
++         for each(var group:Object in groups)for each(var cut:Rectangle in group.clips)
++         {
++            var next:Array = [];
++            for each(var rect:Rectangle in result)
++            {
++               var hit:Rectangle = rect.intersection(cut);
++               if(hit.isEmpty()){next.push(rect);continue;}
++               if(hit.top > rect.top)next.push(new Rectangle(rect.x,rect.y,rect.width,hit.top-rect.top));
++               if(hit.bottom < rect.bottom)next.push(new Rectangle(rect.x,hit.bottom,rect.width,rect.bottom-hit.bottom));
++               if(hit.left > rect.left)next.push(new Rectangle(rect.x,hit.y,hit.left-rect.left,hit.height));
++               if(hit.right < rect.right)next.push(new Rectangle(hit.right,hit.y,rect.right-hit.right,hit.height));
++            }
++            result = next;
++         }
++         return result;
++      }
++
+       public static var rconnectRasterBridge:Function = null;
+       private var rconnectRasterTicket:Object;
+       public function get rconnectRasterPending() : Boolean
+@@ -1086,6 +1118,8 @@
+       
+       private function sceneApply(kind:String, args:Array) : void
+       {
++         var wallMark:Array = null;
++         var wallToken:Object = null;
+          var stamp:Array;
+          var ox:int;
+          var oy:int;
+@@ -1118,7 +1152,9 @@
+          this.sceneCancelWarm(affected);
+          if(kind == "decal" || kind == "paint" || kind == "gwall")
+          {
+-            this.sceneMarks.push([kind,args,stamp,affected]);
++            wallMark = [kind,args,stamp,affected];
++            this.sceneMarks.push(wallMark);
++            if(rconnectWallBridge != null)this.rconnectWallNotify("mark",wallMark,affected);
+          }
+          this.sceneRasterizing = true;
+          this.sceneStamp = stamp;
+@@ -1134,14 +1170,19 @@
+                   this.vodaBmp = entry.nativeBuffers[3];
+                   this.sceneX = entry.x;
+                   this.sceneY = entry.y;
+-                  if(kind == "decal")
++                  wallToken = rconnectWallBridge != null && wallMark != null ? this.rconnectWallNotify("before",wallMark,affected) : null;
++                  try
+                   {
+-                     this.sceneApplyCompactDecal(args,affected);
++                     if(kind == "decal")
++                     {
++                        this.sceneApplyCompactDecal(args,affected);
++                     }
++                     else
++                     {
++                        this.sceneApplyRegionAction(kind,args,affected);
++                     }
+                   }
+-                  else
+-                  {
+-                     this.sceneApplyRegionAction(kind,args,affected);
+-                  }
++                  finally {if(wallToken != null)this.rconnectWallNotify("after",wallMark,affected,wallToken);}
+                   ++entry.revision;
+                   ++this.sceneLastDirtyCount;
+                }
+@@ -1162,6 +1203,7 @@
+       
+       private function sceneRestoreMarks() : void
+       {
++         var wallToken:Object;
+          var item:Array;
+          if(!this.sceneLarge)
+          {
+@@ -1183,13 +1225,16 @@
+                      continue;
+                   }
+                }
+-               this.sceneApplyRegionAction(String(item[0]),item[1],item.length > 3 ? item[3] as Rectangle : null);
++               wallToken = rconnectWallBridge != null ? this.rconnectWallNotify("before",item,item.length > 3 ? item[3] as Rectangle : null) : null;
++               try {this.sceneApplyRegionAction(String(item[0]),item[1],item.length > 3 ? item[3] as Rectangle : null);}
++               finally {if(wallToken != null)this.rconnectWallNotify("after",item,item.length > 3 ? item[3] as Rectangle : null,wallToken);}
+             }
+          }
+          finally
+          {
+             this.sceneStamp = null;
+          }
++         if(rconnectWallBridge != null)this.rconnectWallNotify("raster");
+       }
+       
+       private function sceneSats() : void
+@@ -1531,8 +1576,9 @@
+          this.sceneRegionComposite = null;
+       }
+       
+-      private function sceneRegionDrawPass(style:Object) : void
+-      {
++      private function sceneRegionDrawPass(style:Object,wallClips:Array = null) : void
++      {
++         var savedWallClips:Array = this.rconnectWallClips;
+          var prior:Boolean;
+          this.loc.backwall = style.backwall;
+          this.loc.color = style.color;
+@@ -1548,6 +1594,7 @@
+          ++this.sceneRegionPasses;
+          prior = this.sceneRegionPassActive;
+          this.sceneRegionPassActive = true;
++         this.rconnectWallClips = wallClips;
+          try
+          {
+             this.drawLoc(this.loc);
+@@ -1556,6 +1603,7 @@
+          {
+             this.sceneRegionPassActive = prior;
+             this.sceneRasterRegion = null;
++            this.rconnectWallClips = savedWallClips;
+          }
+       }
+       
+@@ -1771,7 +1819,7 @@
+                return;
+             }
+             firstGroup = styledArea == inWorld.width * inWorld.height ? 1 : 0;
+-            this.sceneRegionDrawPass(firstGroup ? groups[0].style : original);
++            this.sceneRegionDrawPass(firstGroup ? groups[0].style : original,rconnectWallBridge != null ? (firstGroup ? groups[0].clips : this.rconnectWallBaseClips(viewport,groups)) : null);
+             buffers = [this.frontBmp,this.backBmp,this.backBmp2,this.vodaBmp];
+             origin = new Point(0,0);
+             this.sceneRegionEnsureScratch();
+@@ -1785,7 +1833,7 @@
+             while(gi < groups.length)
+             {
+                group = groups[gi];
+-               this.sceneRegionDrawPass(group.style);
++               this.sceneRegionDrawPass(group.style,rconnectWallBridge != null ? group.clips : null);
+                for each(worldClip in group.clips)
+                {
+                   localClip = worldClip.clone();
+@@ -2141,7 +2189,7 @@
+                this.scenePreloadWidth = draw.width;
+                this.scenePreloadHeight = draw.height;
+                this.scenePrepare(this.loc);
+-               this.sceneRegionDrawPass(style);
++               this.sceneRegionDrawPass(style,rconnectWallBridge != null ? [clip] : null);
+                buffers = [this.frontBmp,this.backBmp,this.backBmp2,this.vodaBmp];
+                for each(surface in this.sceneChunks)
+                {
+@@ -2614,7 +2662,7 @@
+                   this.scenePreloadWidth = draw.width;
+                   this.scenePreloadHeight = draw.height;
+                   this.scenePrepare(this.loc);
+-                  this.sceneRegionDrawPass(style);
++                  this.sceneRegionDrawPass(style,rconnectWallBridge != null ? [clip] : null);
+                   buffers = [this.frontBmp,this.backBmp,this.backBmp2,this.vodaBmp];
+                   for each(surface in made)
+                   {
+@@ -3253,6 +3301,7 @@
+             while(force || getTimer() - start < this.sceneWarmBudget)
+             {
+                group = job.groups[job.group];
++               this.rconnectWallClips = rconnectWallBridge != null ? group.clips : null;
+                for each(field in this.sceneWarmStyleFields)
+                {
+                   this.loc[field] = group.style[field];
+--- recovery14/rconnect/game/GameBridge.as
++++ wall-surfaces/rconnect/game/GameBridge.as
+@@ -65,7 +65,7 @@
+       public var mapGeneration:rconnect.core.MapGeneration;
+       /** Session owns connection state; this flag only bounds ephemeral history. */
+       public function get presentationNetworkActive():Boolean {return _presentation.retainUnsent;}
+-      public function set presentationNetworkActive(value:Boolean):void {_presentation.retainUnsent=value;}
++      public function set presentationNetworkActive(value:Boolean):void {_presentation.retainUnsent=value;_wall.networkActive=value;}
+       private var _coopPauseAt:int=-1;
+       public function get coopPaused():Boolean {return _coopPauseAt>=0;}
+       public function setCoopPaused(value:Boolean):void {

@@ -1,0 +1,97 @@
+{
+  "run": "78a808f81c",
+  "candidate": "a5d05ea89a5b689b44a0530832d288827d4f9261487fccad77af55c0be36673e",
+  "passed": false,
+  "performance_qualified": false,
+  "installation_unchanged": true,
+  "same_runtime_as_reference": true,
+  "checks": {
+    "host": 29,
+    "join": 40
+  },
+  "errors": {
+    "host": [],
+    "join": [
+      "COOP FAIL network-state 80 enemies keep stage frames progressing",
+      "COOP FAIL network-state weapon aim advances between snapshots",
+      "COOP FAIL network-state 80 enemies keep stage frames progressing",
+      "COOP FAIL network-state weapon aim advances between snapshots",
+      "COOP FAIL network-state 80 enemies keep stage frames progressing",
+      "COOP FAIL network-state weapon aim advances between snapshots",
+      "COOP FAIL network-state 80 enemies keep stage frames progressing",
+      "COOP FAIL network-state weapon aim advances between snapshots",
+      "COOP FAIL network-state 80 enemies keep stage frames progressing",
+      "COOP FAIL network-state weapon aim advances between snapshots",
+      "COOP FAIL network-state 80 enemies keep stage frames progressing",
+      "COOP FAIL network-state weapon aim advances between snapshots",
+      "COOP FAIL network-state 80 enemies keep stage frames progressing",
+      "COOP FAIL network-state weapon aim advances between snapshots"
+    ]
+  },
+  "windows": [
+    {
+      "frames": 37,
+      "p95ms": 295,
+      "maxms": 311,
+      "packets": 43,
+      "maxPacketMs": 596,
+      "aimSamples": 31
+    },
+    {
+      "frames": 37,
+      "p95ms": 424,
+      "maxms": 432,
+      "packets": 32,
+      "maxPacketMs": 693,
+      "aimSamples": 29
+    },
+    {
+      "frames": 39,
+      "p95ms": 392,
+      "maxms": 413,
+      "packets": 32,
+      "maxPacketMs": 589,
+      "aimSamples": 26
+    },
+    {
+      "frames": 38,
+      "p95ms": 374,
+      "maxms": 459,
+      "packets": 32,
+      "maxPacketMs": 674,
+      "aimSamples": 27
+    },
+    {
+      "frames": 38,
+      "p95ms": 402,
+      "maxms": 406,
+      "packets": 34,
+      "maxPacketMs": 602,
+      "aimSamples": 26
+    },
+    {
+      "frames": 36,
+      "p95ms": 409,
+      "maxms": 416,
+      "packets": 31,
+      "maxPacketMs": 641,
+      "aimSamples": 24
+    },
+    {
+      "frames": 39,
+      "p95ms": 391,
+      "maxms": 408,
+      "packets": 32,
+      "maxPacketMs": 632,
+      "aimSamples": 28
+    }
+  ],
+  "fixture_audit": {
+    "passed": false,
+    "attribution_allowed": false,
+    "input_comparable": false,
+    "corridor_static_equal": true,
+    "recipe_and_driver_unchanged": true
+  },
+  "conclusion": "Component scan cost improved, but same native density gate still fails; no demonstrated overall performance benefit or release qualification."
+}

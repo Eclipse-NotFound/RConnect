@@ -1,0 +1,162 @@
+{
+  "passed": 35,
+  "failed": 0,
+  "checks": [
+    {
+      "passed": true,
+      "label": "exact generated src/rconnect/game/TerrainSync.as"
+    },
+    {
+      "passed": true,
+      "label": "exact generated components/rconnect/game/TerrainSync.as"
+    },
+    {
+      "passed": true,
+      "label": "exact generated components/rconnect/game/ControlTerrainSync.as"
+    },
+    {
+      "passed": true,
+      "label": "exact generated components/fe/loc/Tile.as"
+    },
+    {
+      "passed": true,
+      "label": "exact generated proposal.patch"
+    },
+    {
+      "passed": true,
+      "label": "exact generated components/rconnect/game/NativeTileState.as"
+    },
+    {
+      "passed": true,
+      "label": "exact generated components/rconnect/game/NativeRoomState.as"
+    },
+    {
+      "passed": true,
+      "label": "exact generated components/fe/unit/Unit.as"
+    },
+    {
+      "passed": true,
+      "label": "exact generated components/fe/unit/RConnectUnitAccess.as"
+    },
+    {
+      "passed": true,
+      "label": "exact generated components/rconnect/game/GameBridge.as"
+    },
+    {
+      "passed": true,
+      "label": "exact generated components/rconnect/game/TurretDisplay.as"
+    },
+    {
+      "passed": true,
+      "label": "only capture guard differs in full production class"
+    },
+    {
+      "passed": true,
+      "label": "unchanged entire matchesTile"
+    },
+    {
+      "passed": true,
+      "label": "unchanged entire matchesDynamicTile"
+    },
+    {
+      "passed": true,
+      "label": "unchanged entire state"
+    },
+    {
+      "passed": true,
+      "label": "unchanged entire dynamicState"
+    },
+    {
+      "passed": true,
+      "label": "unchanged entire enter"
+    },
+    {
+      "passed": true,
+      "label": "unchanged entire hostPatch"
+    },
+    {
+      "passed": true,
+      "label": "unchanged entire report"
+    },
+    {
+      "passed": true,
+      "label": "unchanged entire finishReports"
+    },
+    {
+      "passed": true,
+      "label": "unchanged entire apply"
+    },
+    {
+      "passed": true,
+      "label": "unchanged entire settle"
+    },
+    {
+      "passed": true,
+      "label": "unchanged entire acknowledge"
+    },
+    {
+      "passed": true,
+      "label": "unchanged entire checkpoint"
+    },
+    {
+      "passed": true,
+      "label": "unchanged entire restoreCheckpoint"
+    },
+    {
+      "passed": true,
+      "label": "native-only strict two-field damage observer"
+    },
+    {
+      "passed": true,
+      "label": "dynamic fallback keeps old comparison"
+    },
+    {
+      "passed": true,
+      "label": "capture damage accumulation and observed assignment unchanged"
+    },
+    {
+      "passed": true,
+      "label": "planned 154 runtime assertions including 11 visual fields and ABBA"
+    },
+    {
+      "passed": true,
+      "label": "complete checkpoint and native scalar comparison present"
+    },
+    {
+      "passed": true,
+      "label": "getter order, side effects, NaN counterexamples present"
+    },
+    {
+      "passed": true,
+      "label": "timed loop excludes setup/assertions/serialization"
+    },
+    {
+      "passed": true,
+      "label": "30000 identical native cells and five scans per slot"
+    },
+    {
+      "passed": true,
+      "label": "component explicitly not native game or performance qualification"
+    },
+    {
+      "passed": true,
+      "label": "all recorded AS inputs match"
+    }
+  ],
+  "expected_runtime_assertions": 154,
+  "assertion_plan": {
+    "basic": 15,
+    "visualFields": 50,
+    "permissions": 16,
+    "prediction": 9,
+    "closing": 7,
+    "settlement": 12,
+    "checkpoint": 11,
+    "dynamicFallback": 23,
+    "largeSetup": 3,
+    "measure": 4,
+    "largeVerify": 4
+  },
+  "compiled": false,
+  "runtime_tested": false
+}
