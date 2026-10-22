@@ -1,0 +1,113 @@
+--- frozen-paint-v2/Grafon.as
++++ paint-v3/Grafon.as
+@@ -941,57 +941,66 @@
+             }
+          }
+          var paintCompleted:Boolean = false;
++         var paintFailed:Boolean = false;
++         var paintFailure:*;
+          try
+          {
+             if(this.scenePreload)
+             {
+                this.scenePreloadAll();
+-               paintCompleted = true;
+-               return;
+-            }
+-            this.sceneEnsureUpcoming(left,top,width,height);
++            }
++            else
++            {
++               this.sceneEnsureUpcoming(left,top,width,height);
++            }
+             paintCompleted = true;
+          }
+-         finally
+-         {
+-            if(paintObserver != null)
+-            {
+-               // Both end clocks precede allocation and the external callback.
+-               // Catch the entire observer path so it cannot replace an error
+-               // thrown by either original drawing branch.
+-               try
+-               {
+-                  var paintFinished:int = int(getTimer());
+-                  var paintFinishedWall:Number = new Date().time;
+-                  paintObserver(this,paintWorld,paintGame,paintLoc,{
+-                     phase:"ensure-work",
+-                     preload:paintPreload,
+-                     initial:initial,
+-                     left:left,
+-                     top:top,
+-                     width:width,
+-                     height:height,
+-                     started:paintStarted,
+-                     finished:paintFinished,
+-                     startedWall:paintStartedWall,
+-                     finishedWall:paintFinishedWall,
+-                     residentBefore:paintResident,
+-                     residentAfter:this.sceneResident,
+-                     completed:paintCompleted,
+-                     sameWorld:World.w === paintWorld,
+-                     sameGame:World.w != null && World.w.game === paintGame,
+-                     sameLoc:this.loc === paintLoc,
+-                     worldRendererAtStart:paintWorldRenderer,
+-                     worldRendererAtEnd:World.w != null && World.w.grafon === this,
+-                     worldLocAtStart:paintWorldLoc,
+-                     worldLocAtEnd:World.w != null && World.w.loc === paintLoc
+-                  });
+-               }
+-               catch(paintObserverError:*)
+-               {
+-                  ++rconnectPaintTimingFaults;
+-               }
+-            }
++         catch(paintNativeError:*)
++         {
++            paintFailed = true;
++            paintFailure = paintNativeError;
++         }
++         if(paintObserver != null)
++         {
++            // Both end clocks precede allocation and the external callback.
++            // Catch the entire observer path so it cannot replace an error
++            // thrown by either original drawing branch.
++            try
++            {
++               var paintFinished:int = int(getTimer());
++               var paintFinishedWall:Number = new Date().time;
++               paintObserver(this,paintWorld,paintGame,paintLoc,{
++                  phase:"ensure-work",
++                  preload:paintPreload,
++                  initial:initial,
++                  left:left,
++                  top:top,
++                  width:width,
++                  height:height,
++                  started:paintStarted,
++                  finished:paintFinished,
++                  startedWall:paintStartedWall,
++                  finishedWall:paintFinishedWall,
++                  residentBefore:paintResident,
++                  residentAfter:this.sceneResident,
++                  completed:paintCompleted,
++                  sameWorld:World.w === paintWorld,
++                  sameGame:World.w != null && World.w.game === paintGame,
++                  sameLoc:this.loc === paintLoc,
++                  worldRendererAtStart:paintWorldRenderer,
++                  worldRendererAtEnd:World.w != null && World.w.grafon === this,
++                  worldLocAtStart:paintWorldLoc,
++                  worldLocAtEnd:World.w != null && World.w.loc === paintLoc
++               });
++            }
++            catch(paintObserverError:*)
++            {
++               ++rconnectPaintTimingFaults;
++            }
++         }
++         if(paintFailed)
++         {
++            throw paintFailure;
+          }
+       }
+       

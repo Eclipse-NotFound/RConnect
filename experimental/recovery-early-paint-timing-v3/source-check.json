@@ -1,0 +1,39 @@
+{
+  "methods": 91,
+  "unchanged_import_methods": 89,
+  "changed_logic_methods": [
+    "sceneEnsure"
+  ],
+  "restored_import_methods": [
+    "sceneDrawSteps"
+  ],
+  "pseudo_instructions_remaining": 0,
+  "source_sha256": "eb487597d89073d61e1dffc7789c46130379c45276a9fde5f180008d87e0f960",
+  "source_mutations_rejected": [
+    "waiting-return",
+    "preload-shortcut",
+    "duplicate-native-call",
+    "swallowed-native-error",
+    "null-or-undefined-swallowed",
+    "replaced-native-error",
+    "timer-after-observer",
+    "missing-fault-signal",
+    "observer-not-captured",
+    "wrong-world-identity",
+    "unrelated-scene-tick",
+    "wrong-water-j-increment",
+    "pseudo-reintroduced"
+  ],
+  "readback_mutations_rejected": [
+    "wrong-pseudo-addend",
+    "wrong-pseudo-target",
+    "extra-pseudo-elsewhere",
+    "changed-water-body",
+    "changed-water-closure-scope",
+    "changed-hoisted-type",
+    "changed-hoisted-initializer"
+  ],
+  "compiled": false,
+  "runtime_qualified": false,
+  "performance_qualified": false
+}

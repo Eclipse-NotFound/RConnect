@@ -9,6 +9,7 @@
 - `GameBridge` SHA256 `3fe9bb83a16a57300e733806cddbe74ce55bcaf323bec15554814f4714eba967`；`NativeRoomState` `1e91028348b29dc1bd00dc55cf4d5df5d5ee40469ef9ea0f7e9626d30a601938`；`ObjectIdentity` `0bc4cc3429f78f0e43164dea4af4481e4230fdf335bd0eed6e7090baf0937774`。
 - `timing.units - timing.terrain` 对应 GameBridge **6262–6298**：权威侧 boxTrackReset、可选旧单位清理、单位匹配/构造/完整恢复、清掉未出现的旧单位。角色清理在此前 `role` 段；后续 `applyUnitsSync`、命中代理、掉落物、玩家地雷在 `effects` 段，不能都算进 units。
 - 旧 early1 实测 units 区间 **719 ms** 来自累计值 1536−817；其 GameBridge 实现与当前相同，但这不是当前 early2 新测量。出处：`experimental/recovery-early-first-load-review/README.md`。也不能把它称为纯敌人动画或纯构造耗时。
+- 准确 early2 无诊断双人 `build/cooperation/6b322acc0f/join.log` 已直接回读：首进第54行 total1676，role65 / objects305 / terrain784 / units1582 / effects1629 / redraw1676，**units 段798 ms**；重访第131行 total1469，role64 / objects279 / terrain706 / units1357 / effects1403 / redraw1469，**units 段651 ms**。两条均 foreign=true、authority=false。它们证明当前版本此段持续有较大开销，仍未拆分到匹配、构造或恢复子调用。
 
 ## 已由源码确认的调用链
 

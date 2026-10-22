@@ -1,0 +1,30 @@
+{
+  "diagnostic_only": true,
+  "compiled": false,
+  "air_started": false,
+  "runtime_qualified": false,
+  "performance_qualified": false,
+  "original_host_sha256": "2d415dd373236fff3c7a691db4eff8327a6de97b91c23d8a818ec77082b3dd29",
+  "original_source_sha256": "e6b4142462c1187388c4bb9c8151dd6c2605ce4e4b9fedd421cf4749c54bd7a0",
+  "prior_diagnostic_source_sha256": "3bdc70d8c81d7ca2cdda070cb16421e3d7b412bb34a54d6b7d4aae2446e7ad07",
+  "prepared_source_sha256": "eb487597d89073d61e1dffc7789c46130379c45276a9fde5f180008d87e0f960",
+  "rejected_host_sha256": "701562a9306ea15dfd4a1722b79626651f26b55e13d586a0fb0260db6678d560",
+  "rejected_receipt_sha256": "55c5ff7488144c14208c6375e29ca46dad248a34d5b15a4d9c8c6af3bb588ab4",
+  "old_failure_preserved": true,
+  "modified_logic_methods": [
+    "sceneEnsure"
+  ],
+  "import_only_restoration": {
+    "sceneDrawSteps": [
+      "j++;",
+      "i++;"
+    ]
+  },
+  "pseudo_instructions_remaining": 0,
+  "contract_changed": false,
+  "imports_changed": false,
+  "uses_finally": false,
+  "failed_flag_separate_from_thrown_value": true,
+  "original_wildcard_import_preserved": true,
+  "exception_semantics_review_required": true
+}

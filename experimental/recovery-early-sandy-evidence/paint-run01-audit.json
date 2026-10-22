@@ -1,0 +1,378 @@
+{
+  "run": "84ff2d9da3",
+  "passed": false,
+  "profile_valid": false,
+  "performance_qualified": false,
+  "installation_unchanged": true,
+  "roles": {
+    "host": {
+      "log_sha256": "a3f481a894d534270cb585a25143c68f31069b8bd74d2587e9c794a23911094e",
+      "checks": 8,
+      "errors": [
+        "COOP FAIL travel-timing no-input baseline exceeded original 1000ms input window round=0"
+      ],
+      "completed_travel_rows": 0,
+      "paint_profile_line": 57,
+      "profile": {
+        "observedCalls": 33,
+        "positiveMsCalls": 33,
+        "targetRows": 32,
+        "overflow": true,
+        "observationComplete": false,
+        "faults": 0,
+        "nativeFaults": 0,
+        "ownershipPreserved": true,
+        "inclusiveTotalMs": 1554
+      },
+      "first_ensure": {
+        "started": 71169,
+        "finished": 72447,
+        "startedWall": 1792672086384,
+        "finishedWall": 1792672087662,
+        "residentBefore": 0,
+        "residentAfter": 35
+      },
+      "first_ensure_identity_flags_valid": true,
+      "wall_offset": 1792672015215,
+      "observed_clock_drift_max_ms": 1,
+      "request_local_ms": 65636,
+      "request_wall_estimate": 1792672080851,
+      "early_events": {
+        "constructed": {
+          "line": 37,
+          "local_ms": 69566,
+          "wall_estimate": 1792672084781
+        },
+        "activated": {
+          "line": 50,
+          "local_ms": 76391,
+          "wall_estimate": 1792672091606
+        }
+      },
+      "receives": [
+        {
+          "line": 43,
+          "operation": "ready",
+          "start": 70195,
+          "end": 71126,
+          "duration": 931,
+          "wall_start_estimate": 1792672085410,
+          "wall_end_estimate": 1792672086341
+        },
+        {
+          "line": 51,
+          "operation": "ack",
+          "start": 76388,
+          "end": 76392,
+          "duration": 4,
+          "wall_start_estimate": 1792672091603,
+          "wall_end_estimate": 1792672091607
+        }
+      ],
+      "frame_gaps": [
+        {
+          "line": 39,
+          "start": 65759,
+          "end": 69831,
+          "duration": 4072
+        },
+        {
+          "line": 45,
+          "start": 70153,
+          "end": 71167,
+          "duration": 1014
+        },
+        {
+          "line": 46,
+          "start": 71167,
+          "end": 74605,
+          "duration": 3438
+        },
+        {
+          "line": 128,
+          "start": 76641,
+          "end": 76941,
+          "duration": 300
+        },
+        {
+          "line": 129,
+          "start": 76941,
+          "end": 77267,
+          "duration": 326
+        },
+        {
+          "line": 130,
+          "start": 77267,
+          "end": 77553,
+          "duration": 286
+        }
+      ],
+      "checkpoint_cumulative_ms": {
+        "terrain": 546,
+        "objects": 114,
+        "units": 81,
+        "total": 547,
+        "key": "random_mane//0,0,0",
+        "tiles": 30000
+      },
+      "checkpoint_stage_differences_ms": {
+        "units": 81,
+        "objects": 33,
+        "terrain": 432,
+        "total": 1
+      },
+      "gaps_ms": {
+        "request_to_constructed": 3930,
+        "ensure_duration": 1278,
+        "ensure_finish_to_activated": 3944,
+        "constructed_to_ready_handler": 629,
+        "ready_handler_to_ensure": 43,
+        "first_ensure_finish_to_next_logged_frame": 2158,
+        "next_logged_frame_to_activated": 1786,
+        "activated_to_baseline_start": 102
+      },
+      "baseline_samples": [
+        {
+          "kind": "baseline-start",
+          "ctrActiveObservedOnly": false,
+          "wallMs": 1792672091708,
+          "sameActor": true,
+          "dx": 1,
+          "walk": 0,
+          "x": 1161,
+          "sameCtr": true,
+          "dy": 1,
+          "y": 4800,
+          "keyLeft": false,
+          "t": 76493,
+          "keyRight": false
+        },
+        {
+          "kind": "baseline-frame",
+          "ctrActiveObservedOnly": false,
+          "wallMs": 1792672091999,
+          "sameActor": true,
+          "dx": 0.8,
+          "walk": 0,
+          "x": 1161.8,
+          "sameCtr": true,
+          "dy": 0,
+          "y": 4800,
+          "keyLeft": false,
+          "t": 76784,
+          "keyRight": false
+        },
+        {
+          "kind": "baseline-frame",
+          "ctrActiveObservedOnly": false,
+          "wallMs": 1792672092260,
+          "sameActor": true,
+          "dx": 0,
+          "walk": 0,
+          "x": 1161.8,
+          "sameCtr": true,
+          "dy": 0,
+          "y": 4800,
+          "keyLeft": false,
+          "t": 77045,
+          "keyRight": false
+        },
+        {
+          "kind": "baseline-frame",
+          "ctrActiveObservedOnly": false,
+          "wallMs": 1792672092620,
+          "sameActor": true,
+          "dx": 0,
+          "walk": 0,
+          "x": 1161.8,
+          "sameCtr": true,
+          "dy": 0,
+          "y": 4800,
+          "keyLeft": false,
+          "t": 77405,
+          "keyRight": false
+        },
+        {
+          "kind": "baseline-frame",
+          "ctrActiveObservedOnly": false,
+          "wallMs": 1792672092867,
+          "sameActor": true,
+          "dx": 0,
+          "walk": 0,
+          "x": 1161.8,
+          "sameCtr": true,
+          "dy": 0,
+          "y": 4800,
+          "keyLeft": false,
+          "t": 77652,
+          "keyRight": false
+        }
+      ],
+      "baseline_ms": 1159
+    },
+    "join": {
+      "log_sha256": "1af3b4ef9134317b6fa0a884ef66af4e1e34c6a15d8a7fc801266ea4f56e0d93",
+      "checks": 15,
+      "errors": [],
+      "completed_travel_rows": 1,
+      "paint_profile_line": 66,
+      "profile": {
+        "observedCalls": 4,
+        "positiveMsCalls": 4,
+        "targetRows": 4,
+        "overflow": false,
+        "observationComplete": true,
+        "faults": 0,
+        "nativeFaults": 0,
+        "ownershipPreserved": true,
+        "inclusiveTotalMs": 1205
+      },
+      "first_ensure": {
+        "started": 35088,
+        "finished": 36284,
+        "startedWall": 1792672088311,
+        "finishedWall": 1792672089508,
+        "residentBefore": 0,
+        "residentAfter": 35
+      },
+      "first_ensure_identity_flags_valid": true,
+      "wall_offset": 1792672053223,
+      "observed_clock_drift_max_ms": 1,
+      "request_local_ms": 27650,
+      "request_wall_estimate": 1792672080873,
+      "early_events": {
+        "constructed": {
+          "line": 37,
+          "local_ms": 31706,
+          "wall_estimate": 1792672084929
+        },
+        "ready": {
+          "line": 57,
+          "local_ms": 38319,
+          "wall_estimate": 1792672091542
+        },
+        "activated": {
+          "line": 59,
+          "local_ms": 38428,
+          "wall_estimate": 1792672091651
+        }
+      },
+      "receives": [
+        {
+          "line": 39,
+          "operation": "seal",
+          "start": 32098,
+          "end": 32100,
+          "duration": 2,
+          "wall_start_estimate": 1792672085321,
+          "wall_end_estimate": 1792672085323
+        },
+        {
+          "line": 55,
+          "operation": "grant",
+          "start": 33181,
+          "end": 35068,
+          "duration": 1887,
+          "wall_start_estimate": 1792672086404,
+          "wall_end_estimate": 1792672088291
+        },
+        {
+          "line": 60,
+          "operation": "activate",
+          "start": 38427,
+          "end": 38429,
+          "duration": 2,
+          "wall_start_estimate": 1792672091650,
+          "wall_end_estimate": 1792672091652
+        }
+      ],
+      "frame_gaps": [
+        {
+          "line": 38,
+          "start": 27840,
+          "end": 31899,
+          "duration": 4059
+        },
+        {
+          "line": 56,
+          "start": 33144,
+          "end": 35081,
+          "duration": 1937
+        },
+        {
+          "line": 58,
+          "start": 35081,
+          "end": 38358,
+          "duration": 3277
+        },
+        {
+          "line": 77,
+          "start": 39019,
+          "end": 39361,
+          "duration": 342
+        }
+      ],
+      "checkpoint_cumulative_ms": {
+        "effects": 1539,
+        "foreign": true,
+        "total": 1593,
+        "terrain": 902,
+        "key": "random_mane//0,0,0",
+        "objects": 347,
+        "authority": false,
+        "retained": false,
+        "redraw": 1593,
+        "role": 67,
+        "units": 1495
+      },
+      "checkpoint_stage_differences_ms": {
+        "role": 67,
+        "objects": 280,
+        "terrain": 555,
+        "units": 593,
+        "effects": 44,
+        "redraw": 54
+      },
+      "gaps_ms": {
+        "request_to_constructed": 4056,
+        "ensure_duration": 1196,
+        "ensure_finish_to_activated": 2144,
+        "constructed_to_grant_handler": 1475,
+        "grant_handler_to_ensure": 20,
+        "grant_handler_outside_restore": 294,
+        "ensure_finish_to_ticket_first_painted_observation": 2032,
+        "ensure_finish_to_ready": 2035,
+        "ready_to_activated": 109,
+        "activated_to_flags_ready": 96
+      },
+      "travel": {
+        "elapsed": 10874,
+        "requestedWall": 1792672080849,
+        "flagsReadyWall": 1792672091747,
+        "controlResponseElapsed": 11853,
+        "inputResponseMs": 346,
+        "inputReleaseVerifiedWall": 1792672092898,
+        "x": 1160,
+        "y": 4800
+      },
+      "baseline_ms": 605
+    }
+  },
+  "first_ensure_overlap_ms": 0,
+  "between_first_ensure_intervals_ms": 649,
+  "interpretation": [
+    "The two recorded first ensure-work intervals do not overlap. This does not establish non-overlap of all native rendering or other room work.",
+    "Host overflow invalidates the complete observation window; previously stored identity-valid first-row timestamps remain local raw evidence.",
+    "Host input baseline exceeded the unchanged 1000 ms requirement; no host key-down response was measured. Buffer overflow is not proved to cause this failure.",
+    "About two seconds after each first ensure-work completion lie outside that measured method interval. Logs do not identify those costs.",
+    "RoomTiming fields are cumulative boundaries; stage costs are differences, not sums of the fields.",
+    "No whole-run, full-three-segment, solo-comparison or performance admission is justified."
+  ],
+  "inputs": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-early-paint-dual-01\\result.json": "78a190f3c909ddb99284a622938d3b22b3fa81ec7b6bbc8b05e3d281a08999e5",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\84ff2d9da3\\host.log": "a3f481a894d534270cb585a25143c68f31069b8bd74d2587e9c794a23911094e",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\84ff2d9da3\\join.log": "1af3b4ef9134317b6fa0a884ef66af4e1e34c6a15d8a7fc801266ea4f56e0d93",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-early-paint-driver-v2-01\\tests\\PaintTimingBuffer.as": "d4f51ca9341cf1b2d246b43d198cffabbc19da9abc506adce4806660a9edcfa8",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-early-exit-compile-01\\src\\rconnect\\game\\GameBridge.as": "3fe9bb83a16a57300e733806cddbe74ce55bcaf323bec15554814f4714eba967"
+  }
+}

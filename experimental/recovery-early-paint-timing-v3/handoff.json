@@ -1,0 +1,15 @@
+{
+  "status": "source-frozen-awaiting-host03-build-and-independent-CFG-review",
+  "compiled": false,
+  "air_started": false,
+  "files": {
+    "build_host.py": "2ed8cb6e4de56615af71f47efbbc1fdda144258da8c45e2f01f3de8dd9d02b87",
+    "check.py": "3a0d290f5cf1f0a08f7142663c7e063e063a36c6cbba358674ce26b2a754fdda",
+    "prepare.py": "1ac8672988da335c8450b47d5b7e245a1bab9dc65f97da277348155effcf584a",
+    "prepared.json": "0c0e6851510ac6e62e1aa62aa0865436bf393468374ba81f99d614028670b9a3",
+    "README.md": "57edb1db862cc38cec0e5a09b5da1537d5d3b1e8f26838bc696212031fdce857",
+    "source-check.json": "3f6778b2d175f4508107afa9fd936bee4202e18ad72557eee161cc8c0149dade",
+    "src/fe/graph/Grafon.as": "eb487597d89073d61e1dffc7789c46130379c45276a9fde5f180008d87e0f960",
+    "explicit-error-propagation.patch": "fdad5e617ee01eb93a3083b3748a5ca6c29e13e88193ac9b965dd16b8833f24c"
+  }
+}

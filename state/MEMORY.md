@@ -21,7 +21,7 @@ Remains 1.02 双人合作。A 是普通入口现用同步架构；B 是独立主
 
 **安装仍 0.2.23-coop-bundle2 / 574d2b51490ae8b25a1396555600f56a301f8a20ae50104c0e35cf2796441afe。**
 回执 `build/m52/motion2-user-rollback-20261021-215647/rollback.json`；精确授权用毕撤销，勿重做或再问。
-宿主 BEFC，CS7F1F、WB14112、Sand CEC6；每次冻结22项。RV于2026-10-22约18:25由其会话更新为AB461FF3…F23871，之前本轮实测使用7852…E86764。已实读确认其部署备份保留准确旧7852，后续重访诊断将显式注入旧RV到隔离副本并单独核对当前安装；不回退用户RV安装。没有将其它模组回退，不能称整个下午全部安装均恢复。
+宿主 BEFC，CS7F1F、WB14112、Sand CEC6；每次冻结22项。RV在2026-10-22先更新AB461FF3…F23871，现已更新v0.33.4 / 187D287B06FEA10E6057C8E80287352062CFF7577D075181261DDC0D04111272（实读核验）。本轮加载对照运行输入仍是准确旧7852…E86764，后续新入口需显式接受安装RV这一项变化并向隔离副本注入旧RV；不修改旧冻结输入、不回退用户RV。其它模组没有回退，不能称整个下午全部安装均恢复。
 
 | 候选 | 准确来源和用途 | 状态 |
 |---|---|---|
@@ -74,16 +74,17 @@ Remains 1.02 双人合作。A 是普通入口现用同步架构；B 是独立主
 - 同early/2D宿主而旧SandCEC6对照9435e4acd1首进已完成首次绘制，但加入无输入基线超过原1000ms门槛，加入结束后主侧等待超时，没到重访，不能作为重访控制组。原失败保留，不改阈值重跑。源级审查排除了restore drawLoc必然换票据这一简单猜测，真实卡点仍需有界日志。
 - 有界诊断5b404cdea1完整复现且记录有效：运行二进制/资产/非RC配置与3b3c31c5f5一致，两侧旧RV7852、安装仍新AB46。重访加入grant发生exit=10；无条件TravelGuard.endTravel提前清掉同次原生退出许可，下一before.guardTravel把curLandId回写rbl且强制exit0，实际Land仍random_mane。票据false、Grafonready、身份全同，early.destination因地图编号矛盾失败，保持关闭至95秒。不是绘制卡死或换错票据。独立报告`recovery-early-sandy-evidence/revisit-probe01.md`。
 - 精确early2源码`recovery-early-exit-authorization`仅RoomSync两处及版本，88/90类字节不变：early grant不endTravel，completeEarly成功释放外部许可后再endTravel，取消路径不改。319静态检查及完整编译通过，`recovery-early-exit-compile-01` / D356483F…ACB3。真实TravelGuard同夹具旧55项26失败、修正79/0；受影响的原36+109项组件重跑全过，共224项修正版实际AIR通过。24个夹具仅RoomSync不同，额外24检查来自成功ACK后原先到不了的分支。新的准确薄入口`recovery-early-exit-native`已freeze，原生有界重访复验输出`recovery-early-exit-native-01`已提交；不借用旧候选或组件的性能资格。
-- early2实际有界双人f95499e5a7三段通过，主47/0加36/0。重访grant仍exit10，之后exit9→3→0且地图编号保持random_mane，原反例未绕过；六次控制输入与释放过，三段最终Sand held=false，出生距离1/0/1px。与旧5b404仅production10B→D356，实际其它运行输入相同。无诊断双人6b322acc0f三段主47/0加36/0，elapsed主11659/2223/6922、加11934/2469/6861ms；同候选单人981583ffbc三段35/0，elapsed7051/1968/3370ms，control7546/2254/3855ms。安装未变，旧重访卡死已修，但不授性能资格。CS准确7F1F的spawn另用Math.random，布局seed没固定入口，两模式实际入口/单位工作量未证明相同，不能拿上述差值当改版收益。证据与独立审查见`recovery-early-exit-native/RESULTS.md`、`recovery-early-first-load-review`。正在准备隔离Grafon真实ensure-work起止诊断，尚未构建。
+- early2实际有界双人f95499e5a7三段通过，主47/0加36/0。重访grant仍exit10，之后exit9→3→0且地图编号保持random_mane，原反例未绕过；六次控制输入与释放过，三段最终Sand held=false，出生距离1/0/1px。与旧5b404仅production10B→D356，实际其它运行输入相同。无诊断双人6b322acc0f三段主47/0加36/0，elapsed主11659/2223/6922、加11934/2469/6861ms；同候选单人981583ffbc三段35/0，elapsed7051/1968/3370ms，control7546/2254/3855ms。安装未变，旧重访卡死已修，但不授性能资格。CS准确7F1F的spawn另用Math.random，布局seed没固定入口，两模式实际入口/单位工作量未证明相同，不能拿上述差值当改版收益。证据与独立审查见`recovery-early-exit-native/RESULTS.md`、`recovery-early-first-load-review`。隔离Grafon真实计时已完成首轮，失败及后续见下。
 - 所有最终目标必须在同一准确候选重测；组件/握手/祖先局部通过均不替代最终画面和性能。没有新部署资格。
 - B195及旧独立候选遗留不在当前恢复轮混合处理。历史大量明细已移至[证据快照](recovery-evidence-before-profile-settings-2026-10-22.md)，并有journal和git原记录。
 
-- 绘图观察器实际组件 `recovery-early-paint-buffer-component-01` 25/0 通过，SWF F3A52024…C752；原场景驱动 AS 未改断言，v2 适配已编译。诊断宿主01因旧 `§§findproperty` 导入失败；v2按准确ACC原输入恢复两个自增后，host02编译产物701562…78D560生成，但严格回读失败。独立实际P-code审查又发现 finally 内观察器 catch 入口会丢失栈上的分派令牌，不能准入；02没有启动AIR。正准备显式保存原异常、观察后重抛的独立v3，旧失败保留。不把诊断工具编译成功当加载通过。根无新部署。
+- 绘图观察器实际组件25/0。宿主01旧匿名循环导入失败；host02真实P-code的finally分派令牌丢失被拒绝、未AIR。v3改为显式保存/重抛原异常，实际host03 / 29D36CDD…01EF7编译、严格回读及独立382指令/219异常边控制流核查通过，诊断准入回执`recovery-early-paint-host-recheck-03`；没有产品或性能资格。
+- **首个真实绘图诊断84ff2d9da3失败**：准确early2/host03/Sand003/旧RV，主8过1败、加入首段15/0，未完成三段。主侧33次正耗时调用使旧32行缓冲溢出，整窗口profile无效；原无输入基线1159ms超过1000ms，恢复后仍有300/326/286ms长帧，不能归咎于溢出。第一条身份/时钟有效的真实ensure主1278ms、加1196ms，两段不重叠、相隔649ms；随后各约2秒方法外耗时尚未归因。完整审查`recovery-early-sandy-evidence/paint-run01-review.md`。新`recovery-early-paint-aggregate`只汇总成功且resident稳定的重复调用，仍保留32条重要行及全部耗时；不改原断言、不重判旧失败。
 
 ## 6. 下一步
 
 1. 22+ACC大图最终像素已过；普通房漏掉真实墙沿原因已定位，但首个alpha保护方案被136项中的同像素反例否决。先明确原生结构擦除与跨端最终颜色的最小契约，再实现及同一原生驱动复验；不直接合当前wall-edge。23暂停补发及容器微优化未见稳定收益，保留实验，不合入后继；没有完整24。不删采样、改时钟或降频凑结果。
-2. A Sand独立接口已完成76组件与41原生生命周期检查。early2已用224受影响组件、准确诊断双人和无诊断双人/单人三段证实重访卡死修正。剩余串行状态恢复与真实绘制耗时需分开测量，且单人/双人入口随机差异需明确工作量；准备隔离Grafon计时，不根据旧约49%表观差值宣称性能变化。保留当前574D安装，合格前不部署。
+2. A Sand独立接口76组件与41原生生命周期检查、early2重访死锁224组件及实际三段已过。真实绘制首轮仍失败；先修观察器重复记录挤满上限，保留全部耗时和原1000ms控制恢复断言，再核方法外约2秒与激活后长帧。单人/双人入口随机差异仍需明确工作量。保留574D安装，合格前不部署。
 3. 依据完整运动过程的实际空档选择瓶颈，补足只看重复位置/最终端点的验收缺口；停止无整机收益的微优化。新有界掉落诊断未复现旧空中长空档，先核查所有RENDER与落地分段，不重跑碰运气。念力/密集/加载仍未合格。
 4. 准备同一候选的完整光晕、击墙、高速/念力/掉落、加载及性能复验。未通过保持574D，合格后备份部署及安装路径复测。
 
