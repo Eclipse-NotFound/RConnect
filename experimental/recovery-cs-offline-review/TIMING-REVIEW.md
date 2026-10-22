@@ -39,3 +39,15 @@ CS完成 `mods/ContinuousScene/knowledge/experiments/evidence/rc-offline-2026102
 文件SHA256：result `4ef03c2c9abd312beee8f3877ea5dbf66a19667f5ef0586292bae77c7c8b4e5e`；summary `2c6904fe2c04283df473f7138b01569a29345b9608feadcec14e53759d07ec03`；probe-build `0a0c8801c0f632277b501bc52539774de2a68838297693248c4168f37bb6e825`；runner-inputs `77301fc84fffcbe9df1572cc6da08f0778c44b081282f1db81be78375cb1f1da`。
 
 源审及上述限定证据已集中反馈CS。正式产品不得携带诊断载体/ABBA开关；即便内部收益复验成立，仍需对未改574D及联网生命周期验证。根没有批准合并或部署。
+
+## r2 连续间隔读回
+
+随后收到 `rc-offline-20261023-native-abba-r2`。根重新核验84份冻结探针、SWF和配置，逐项核对1200个时间戳差等于对应continuousFramesMs，总和 **79498ms = 162072 - 82574**。90项检查通过，原r1保留。
+
+连续间隔A/B均值 **71.645/60.8517ms**，中位67/56，P95 97/83；五块中位差14/7/10.5/8/14ms。第4块B最大286ms高于A的197ms，没有删去该长帧。旧重置口径的均值71.03/60.0433ms另存，不能混淆。
+
+连续样本覆盖首个起点至最后采样点，包含段界前面的整理成本；跨界间隔归入结束样本所属组，不能把其全部成本归因于新组。最后一个样本之后的最终统计、保存、清理没有后续间隔，仍被明确排除。实验继续限定为关闭LAD/WB/RV显示且无网络尝试；不能称正式候选、正常完整视觉设置或双人性能已经合格。
+
+证据SHA256：result `ec55b103d9d7c1aaf62068f2ef127af8bdf948ebd6d1409a368a76d124aa3795`；summary `811e1e5625392671a57a14f92b0020e446ba73cb119246f71d2aed3c388c219e`；probe-build `252b9b03f9ab16a72b54e737c866f1d395ec73b75c4ffa961533d93dfec9dfd4`；runner-inputs `43a5cf90790e189534e648a5abe54c9aa1372ffef0e054cf9b4d2a01e6f9c80c`。
+
+两轮同向离线线索支持进入生产形态候选验证。CS已提供去掉诊断载体/开关/计数的三类源码提案，独立审核见 `PRODUCTION-REVIEW.md`。根将保持574D安装、隔离构建0.2.24-offline1；其功能与未改574D性能比较另行验证，不继承88CC的通过结论。
