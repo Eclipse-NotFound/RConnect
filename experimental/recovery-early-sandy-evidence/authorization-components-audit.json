@@ -1,0 +1,43 @@
+{
+  "candidate_sha256": "d356483f927c608b5973982558127ce4feb0873a36676909ed3b3d6ac8b7acb3",
+  "same_fixture_sha256": "0bf61047f3b7a3e996e4591d9d603c97f0f4f4f5a1cd33a94f2bceb901053fa3",
+  "component_source_changes": [
+    "rconnect/core/RoomSync.as"
+  ],
+  "production_source_changes": [
+    "RConnectMod.as",
+    "rconnect/core/RoomSync.as"
+  ],
+  "actual_component_results": {
+    "baseline": {
+      "observed": 55,
+      "failed": 26,
+      "component_sha256": "81be970035fb21965245af51f11c3fb45507b3b3c344ed028d403b2f7d2a9e92",
+      "result_sha256": "a2cf18c218487a66c5555b70ad1a1123d03d3ae0f345587653839487b5410aff"
+    },
+    "fixed": {
+      "observed": 79,
+      "failed": 0,
+      "component_sha256": "f175c7352a3871fd81eac32605853af23a60619199bc73e1b483cd03e1b9b0dc",
+      "result_sha256": "81f6601e09dba83bfb8ddbde028ad722f43b1aa3e1d8d50f94952aee066a1889"
+    }
+  },
+  "baseline_failed_labels": {
+    "grant retains authorization for remaining native exit": 6,
+    "duplicate grant neither imports twice nor revokes exit": 6,
+    "actual RoomSync before/TravelGuard chain preserves every decreasing native counter": 6,
+    "native exit zero becomes ready on the intended map": 6,
+    "postrestore cancellation remains fail-closed without undoing destination": 1,
+    "disconnect reset removes old exit authorization": 1
+  },
+  "new_rows_from_later_lifecycle_branches": 24,
+  "wrapper_differences_only_runner_path_and_solo_guard": true,
+  "native_runtime_qualified": false,
+  "limitations": [
+    "Native world/countdown and network are fixtures; not actual generation or rendering.",
+    "MapGeneration/Sand permit access is a stub; release failure is not exercised in this fixture.",
+    "Host and join share one component process; native multi-process runtime remains necessary.",
+    "Cached preparation is a flag in this component, not a cached native Land construction.",
+    "Old six component entry assertions are retained but not re-executed by this 79-check result."
+  ]
+}

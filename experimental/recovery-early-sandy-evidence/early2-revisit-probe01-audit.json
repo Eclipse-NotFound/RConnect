@@ -1,0 +1,3103 @@
+{
+  "run": "f95499e5a7",
+  "wrapper": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-early-exit-native-01",
+  "wrapper_passed": true,
+  "wrapper_exit_code": 0,
+  "installation_unchanged": true,
+  "wrapper_result_sha256": "7023cbc9c937173287aef570a38e3d54148bd43ca0bfb877cdfbc4905e5991b0",
+  "run_manifest_sha256": "62df046bf9504ae25efa64c5c4dae95e240f104de8f0f61ea81347091feb6223",
+  "baseline_run": "5b404cdea1",
+  "roles": {
+    "host": {
+      "log_sha256": "62ff48254137bea94c16730a2e7796784023b3f7f1a5a91ffb673f8535ab69cf",
+      "same_runtime_inputs_as_baseline": {
+        "game": true,
+        "assets": true,
+        "production": false,
+        "harness": true,
+        "modules": true,
+        "mod_assets": true
+      },
+      "actual_production": "d356483f927c608b5973982558127ce4feb0873a36676909ed3b3d6ac8b7acb3",
+      "actual_driver": "0fc37f54ce99440e37624f0ef82c305abe6ecdb01e01765ac1f9f3bce0b44c84",
+      "actual_rv": "7852f61e083993e69431d5d8ca2fdf3c07d4068715946d04b3e796cecbe86764",
+      "actual_rv_is_frozen_old": true,
+      "non_rconnect_config_equal": {
+        "mods/continuousscene/release/scene.xml": true,
+        "mods/permanentinjury/release/config.json": true,
+        "mods/realisticvision/release/config.txt": true,
+        "mods/sandevistan/release/config.txt": true,
+        "mods/wallblend/release/config.json": true
+      },
+      "segments": {
+        "0": {
+          "row_count": 4,
+          "reasons": [
+            "state-change",
+            "state-change",
+            "after-8000ms",
+            "state-change"
+          ],
+          "last_elapsed": 10669,
+          "last_visible_blockers": [],
+          "last_renderer": {
+            "preload": false,
+            "cull": true,
+            "locMatchesWorld": true,
+            "pending": false,
+            "sceneViewReady": true
+          },
+          "last_native": {
+            "t_die": 0,
+            "playerX": 1161,
+            "paused": false,
+            "ng_wait": 0,
+            "playerY": 4800,
+            "landId": "random_mane",
+            "curLandId": "random_mane",
+            "seed": 1380142925,
+            "exit": 0,
+            "allStat": 1,
+            "comLoad": -1
+          },
+          "last_rooms": {
+            "busy": false,
+            "entryPending": false,
+            "earlyPending": false,
+            "ready": true
+          },
+          "last_permit": {
+            "phase": "idle",
+            "held": false,
+            "debugTest": false,
+            "cooldownLeft": 0,
+            "contract": "sandy-travel-hold/1",
+            "version": 1,
+            "replayIndex": 0,
+            "enemyEnabled": false,
+            "sandyLeft": 0
+          },
+          "last_tickets": [
+            {
+              "firstReleased": 73101,
+              "createdAt": 68315,
+              "currentIdentity": {
+                "game": true,
+                "grafon": true,
+                "loc": true,
+                "land": true,
+                "gg": true,
+                "world": true
+              },
+              "firstPainted": 73101,
+              "unpainted": false,
+              "waiting": false
+            }
+          ],
+          "bridge_calls": 1,
+          "bridge_nulls": 0,
+          "all_snapshots_have_no_fault": true,
+          "rows": [
+            {
+              "bridgeNulls": 0,
+              "elapsed": 27,
+              "at": 64476,
+              "rooms": {
+                "busy": false,
+                "entryPending": false,
+                "earlyPending": false,
+                "ready": true
+              },
+              "permit": {
+                "phase": "idle",
+                "held": false,
+                "debugTest": false,
+                "cooldownLeft": 0,
+                "contract": "sandy-travel-hold/1",
+                "version": 1,
+                "replayIndex": 0,
+                "enemyEnabled": false,
+                "sandyLeft": 0
+              },
+              "renderer": {
+                "preload": false,
+                "cull": true,
+                "locMatchesWorld": true,
+                "pending": false,
+                "sceneViewReady": true
+              },
+              "faults": [],
+              "readOnly": true,
+              "nativeState": {
+                "t_die": 0,
+                "playerX": 841.8,
+                "paused": false,
+                "ng_wait": 0,
+                "playerY": 800,
+                "landId": "rbl",
+                "curLandId": "random_mane",
+                "seed": 0,
+                "exit": 99,
+                "allStat": 1,
+                "comLoad": -1
+              },
+              "beginIdentity": {
+                "game": true,
+                "grafon": true,
+                "loc": true,
+                "land": true,
+                "gg": true,
+                "world": true
+              },
+              "diagnosticOnly": true,
+              "segment": 0,
+              "wall": 1792667107047,
+              "tickets": [],
+              "reason": "state-change",
+              "bridgeCalls": 0,
+              "bridgeCallbacks": [],
+              "sequence": 1
+            },
+            {
+              "bridgeNulls": 0,
+              "elapsed": 4197,
+              "at": 68646,
+              "rooms": {
+                "busy": true,
+                "entryPending": true,
+                "earlyPending": true,
+                "ready": false
+              },
+              "permit": {
+                "phase": "idle",
+                "held": true,
+                "debugTest": false,
+                "cooldownLeft": 0,
+                "contract": "sandy-travel-hold/1",
+                "version": 1,
+                "replayIndex": 0,
+                "enemyEnabled": false,
+                "sandyLeft": 0
+              },
+              "renderer": {
+                "preload": false,
+                "cull": true,
+                "locMatchesWorld": true,
+                "pending": true,
+                "sceneViewReady": false
+              },
+              "faults": [],
+              "readOnly": true,
+              "nativeState": {
+                "t_die": 0,
+                "playerX": 1160,
+                "paused": true,
+                "ng_wait": 0,
+                "playerY": 4799,
+                "landId": "random_mane",
+                "curLandId": "random_mane",
+                "seed": 1380142925,
+                "exit": 19,
+                "allStat": 1,
+                "comLoad": -1
+              },
+              "beginIdentity": {
+                "game": true,
+                "grafon": true,
+                "loc": false,
+                "land": false,
+                "gg": true,
+                "world": true
+              },
+              "diagnosticOnly": true,
+              "segment": 0,
+              "wall": 1792667111217,
+              "tickets": [
+                {
+                  "firstReleased": -1,
+                  "createdAt": 68315,
+                  "currentIdentity": {
+                    "game": true,
+                    "grafon": true,
+                    "loc": true,
+                    "land": true,
+                    "gg": true,
+                    "world": true
+                  },
+                  "firstPainted": -1,
+                  "unpainted": true,
+                  "waiting": true
+                }
+              ],
+              "reason": "state-change",
+              "bridgeCalls": 1,
+              "bridgeCallbacks": [
+                {
+                  "beginIdentity": {
+                    "game": true,
+                    "grafon": true,
+                    "loc": false,
+                    "land": false,
+                    "gg": true,
+                    "world": true
+                  },
+                  "locMatchesWorld": true,
+                  "wall": 1792667110886,
+                  "matchesKnownTicket": false,
+                  "call": 1,
+                  "grafonMatchesWorld": true,
+                  "sameAsPrevious": false,
+                  "at": 68314,
+                  "returnedNull": false
+                }
+              ],
+              "sequence": 2
+            },
+            {
+              "bridgeNulls": 0,
+              "elapsed": 8654,
+              "at": 73103,
+              "rooms": {
+                "busy": true,
+                "entryPending": true,
+                "earlyPending": true,
+                "ready": true
+              },
+              "permit": {
+                "phase": "idle",
+                "held": true,
+                "debugTest": false,
+                "cooldownLeft": 0,
+                "contract": "sandy-travel-hold/1",
+                "version": 1,
+                "replayIndex": 0,
+                "enemyEnabled": false,
+                "sandyLeft": 0
+              },
+              "renderer": {
+                "preload": false,
+                "cull": true,
+                "locMatchesWorld": true,
+                "pending": false,
+                "sceneViewReady": true
+              },
+              "faults": [],
+              "readOnly": true,
+              "nativeState": {
+                "t_die": 0,
+                "playerX": 1160,
+                "paused": true,
+                "ng_wait": 0,
+                "playerY": 4799,
+                "landId": "random_mane",
+                "curLandId": "random_mane",
+                "seed": 1380142925,
+                "exit": 0,
+                "allStat": 1,
+                "comLoad": -1
+              },
+              "beginIdentity": {
+                "game": true,
+                "grafon": true,
+                "loc": false,
+                "land": false,
+                "gg": true,
+                "world": true
+              },
+              "diagnosticOnly": true,
+              "segment": 0,
+              "wall": 1792667115674,
+              "tickets": [
+                {
+                  "firstReleased": 73101,
+                  "createdAt": 68315,
+                  "currentIdentity": {
+                    "game": true,
+                    "grafon": true,
+                    "loc": true,
+                    "land": true,
+                    "gg": true,
+                    "world": true
+                  },
+                  "firstPainted": 73101,
+                  "unpainted": false,
+                  "waiting": false
+                }
+              ],
+              "reason": "after-8000ms",
+              "bridgeCalls": 1,
+              "bridgeCallbacks": [
+                {
+                  "beginIdentity": {
+                    "game": true,
+                    "grafon": true,
+                    "loc": false,
+                    "land": false,
+                    "gg": true,
+                    "world": true
+                  },
+                  "locMatchesWorld": true,
+                  "wall": 1792667110886,
+                  "matchesKnownTicket": false,
+                  "call": 1,
+                  "grafonMatchesWorld": true,
+                  "sameAsPrevious": false,
+                  "at": 68314,
+                  "returnedNull": false
+                }
+              ],
+              "sequence": 3
+            },
+            {
+              "bridgeNulls": 0,
+              "elapsed": 10669,
+              "at": 75118,
+              "rooms": {
+                "busy": false,
+                "entryPending": false,
+                "earlyPending": false,
+                "ready": true
+              },
+              "permit": {
+                "phase": "idle",
+                "held": false,
+                "debugTest": false,
+                "cooldownLeft": 0,
+                "contract": "sandy-travel-hold/1",
+                "version": 1,
+                "replayIndex": 0,
+                "enemyEnabled": false,
+                "sandyLeft": 0
+              },
+              "renderer": {
+                "preload": false,
+                "cull": true,
+                "locMatchesWorld": true,
+                "pending": false,
+                "sceneViewReady": true
+              },
+              "faults": [],
+              "readOnly": true,
+              "nativeState": {
+                "t_die": 0,
+                "playerX": 1161,
+                "paused": false,
+                "ng_wait": 0,
+                "playerY": 4800,
+                "landId": "random_mane",
+                "curLandId": "random_mane",
+                "seed": 1380142925,
+                "exit": 0,
+                "allStat": 1,
+                "comLoad": -1
+              },
+              "beginIdentity": {
+                "game": true,
+                "grafon": true,
+                "loc": false,
+                "land": false,
+                "gg": true,
+                "world": true
+              },
+              "diagnosticOnly": true,
+              "segment": 0,
+              "wall": 1792667117689,
+              "tickets": [
+                {
+                  "firstReleased": 73101,
+                  "createdAt": 68315,
+                  "currentIdentity": {
+                    "game": true,
+                    "grafon": true,
+                    "loc": true,
+                    "land": true,
+                    "gg": true,
+                    "world": true
+                  },
+                  "firstPainted": 73101,
+                  "unpainted": false,
+                  "waiting": false
+                }
+              ],
+              "reason": "state-change",
+              "bridgeCalls": 1,
+              "bridgeCallbacks": [
+                {
+                  "beginIdentity": {
+                    "game": true,
+                    "grafon": true,
+                    "loc": false,
+                    "land": false,
+                    "gg": true,
+                    "world": true
+                  },
+                  "locMatchesWorld": true,
+                  "wall": 1792667110886,
+                  "matchesKnownTicket": false,
+                  "call": 1,
+                  "grafonMatchesWorld": true,
+                  "sameAsPrevious": false,
+                  "at": 68314,
+                  "returnedNull": false
+                }
+              ],
+              "sequence": 4
+            }
+          ]
+        },
+        "1": {
+          "row_count": 4,
+          "reasons": [
+            "state-change",
+            "state-change",
+            "state-change",
+            "state-change"
+          ],
+          "last_elapsed": 2694,
+          "last_visible_blockers": [],
+          "last_renderer": {
+            "preload": false,
+            "cull": true,
+            "locMatchesWorld": true,
+            "pending": false,
+            "sceneViewReady": true
+          },
+          "last_native": {
+            "t_die": 0,
+            "playerX": 961.8,
+            "paused": false,
+            "ng_wait": 0,
+            "playerY": 800,
+            "landId": "rbl",
+            "curLandId": "rbl",
+            "seed": 0,
+            "exit": 0,
+            "allStat": 1,
+            "comLoad": -1
+          },
+          "last_rooms": {
+            "busy": false,
+            "entryPending": false,
+            "earlyPending": false,
+            "ready": true
+          },
+          "last_permit": {
+            "phase": "idle",
+            "held": false,
+            "debugTest": false,
+            "cooldownLeft": 0,
+            "contract": "sandy-travel-hold/1",
+            "version": 1,
+            "replayIndex": 0,
+            "enemyEnabled": false,
+            "sandyLeft": 0
+          },
+          "last_tickets": [],
+          "bridge_calls": 0,
+          "bridge_nulls": 0,
+          "all_snapshots_have_no_fault": true,
+          "rows": [
+            {
+              "bridgeNulls": 0,
+              "elapsed": 125,
+              "at": 78468,
+              "rooms": {
+                "busy": false,
+                "entryPending": false,
+                "earlyPending": false,
+                "ready": true
+              },
+              "permit": {
+                "phase": "idle",
+                "held": false,
+                "debugTest": false,
+                "cooldownLeft": 0,
+                "contract": "sandy-travel-hold/1",
+                "version": 1,
+                "replayIndex": 0,
+                "enemyEnabled": false,
+                "sandyLeft": 0
+              },
+              "renderer": {
+                "preload": false,
+                "cull": true,
+                "locMatchesWorld": true,
+                "pending": false,
+                "sceneViewReady": true
+              },
+              "faults": [],
+              "readOnly": true,
+              "nativeState": {
+                "t_die": 0,
+                "playerX": 1153.3,
+                "paused": false,
+                "ng_wait": 0,
+                "playerY": 4800,
+                "landId": "random_mane",
+                "curLandId": "rbl",
+                "seed": 1380142925,
+                "exit": 99,
+                "allStat": 1,
+                "comLoad": -1
+              },
+              "beginIdentity": {
+                "game": true,
+                "grafon": true,
+                "loc": true,
+                "land": true,
+                "gg": true,
+                "world": true
+              },
+              "diagnosticOnly": true,
+              "segment": 1,
+              "wall": 1792667121040,
+              "tickets": [],
+              "reason": "state-change",
+              "bridgeCalls": 0,
+              "bridgeCallbacks": [],
+              "sequence": 1
+            },
+            {
+              "bridgeNulls": 0,
+              "elapsed": 1888,
+              "at": 80231,
+              "rooms": {
+                "busy": false,
+                "entryPending": true,
+                "earlyPending": false,
+                "ready": true
+              },
+              "permit": {
+                "phase": "idle",
+                "held": false,
+                "debugTest": false,
+                "cooldownLeft": 0,
+                "contract": "sandy-travel-hold/1",
+                "version": 1,
+                "replayIndex": 0,
+                "enemyEnabled": false,
+                "sandyLeft": 0
+              },
+              "renderer": {
+                "preload": false,
+                "cull": true,
+                "locMatchesWorld": true,
+                "pending": false,
+                "sceneViewReady": true
+              },
+              "faults": [],
+              "readOnly": true,
+              "nativeState": {
+                "t_die": 0,
+                "playerX": 961,
+                "paused": false,
+                "ng_wait": 0,
+                "playerY": 800,
+                "landId": "rbl",
+                "curLandId": "rbl",
+                "seed": 0,
+                "exit": 19,
+                "allStat": 1,
+                "comLoad": -1
+              },
+              "beginIdentity": {
+                "game": true,
+                "grafon": true,
+                "loc": false,
+                "land": false,
+                "gg": true,
+                "world": true
+              },
+              "diagnosticOnly": true,
+              "segment": 1,
+              "wall": 1792667122802,
+              "tickets": [],
+              "reason": "state-change",
+              "bridgeCalls": 0,
+              "bridgeCallbacks": [],
+              "sequence": 2
+            },
+            {
+              "bridgeNulls": 0,
+              "elapsed": 2165,
+              "at": 80508,
+              "rooms": {
+                "busy": true,
+                "entryPending": true,
+                "earlyPending": false,
+                "ready": false
+              },
+              "permit": {
+                "phase": "idle",
+                "held": false,
+                "debugTest": false,
+                "cooldownLeft": 0,
+                "contract": "sandy-travel-hold/1",
+                "version": 1,
+                "replayIndex": 0,
+                "enemyEnabled": false,
+                "sandyLeft": 0
+              },
+              "renderer": {
+                "preload": false,
+                "cull": true,
+                "locMatchesWorld": true,
+                "pending": false,
+                "sceneViewReady": true
+              },
+              "faults": [],
+              "readOnly": true,
+              "nativeState": {
+                "t_die": 0,
+                "playerX": 961.8,
+                "paused": true,
+                "ng_wait": 0,
+                "playerY": 800,
+                "landId": "rbl",
+                "curLandId": "rbl",
+                "seed": 0,
+                "exit": 0,
+                "allStat": 1,
+                "comLoad": -1
+              },
+              "beginIdentity": {
+                "game": true,
+                "grafon": true,
+                "loc": false,
+                "land": false,
+                "gg": true,
+                "world": true
+              },
+              "diagnosticOnly": true,
+              "segment": 1,
+              "wall": 1792667123079,
+              "tickets": [],
+              "reason": "state-change",
+              "bridgeCalls": 0,
+              "bridgeCallbacks": [],
+              "sequence": 3
+            },
+            {
+              "bridgeNulls": 0,
+              "elapsed": 2694,
+              "at": 81037,
+              "rooms": {
+                "busy": false,
+                "entryPending": false,
+                "earlyPending": false,
+                "ready": true
+              },
+              "permit": {
+                "phase": "idle",
+                "held": false,
+                "debugTest": false,
+                "cooldownLeft": 0,
+                "contract": "sandy-travel-hold/1",
+                "version": 1,
+                "replayIndex": 0,
+                "enemyEnabled": false,
+                "sandyLeft": 0
+              },
+              "renderer": {
+                "preload": false,
+                "cull": true,
+                "locMatchesWorld": true,
+                "pending": false,
+                "sceneViewReady": true
+              },
+              "faults": [],
+              "readOnly": true,
+              "nativeState": {
+                "t_die": 0,
+                "playerX": 961.8,
+                "paused": false,
+                "ng_wait": 0,
+                "playerY": 800,
+                "landId": "rbl",
+                "curLandId": "rbl",
+                "seed": 0,
+                "exit": 0,
+                "allStat": 1,
+                "comLoad": -1
+              },
+              "beginIdentity": {
+                "game": true,
+                "grafon": true,
+                "loc": false,
+                "land": false,
+                "gg": true,
+                "world": true
+              },
+              "diagnosticOnly": true,
+              "segment": 1,
+              "wall": 1792667123609,
+              "tickets": [],
+              "reason": "state-change",
+              "bridgeCalls": 0,
+              "bridgeCallbacks": [],
+              "sequence": 4
+            }
+          ]
+        },
+        "2": {
+          "row_count": 4,
+          "reasons": [
+            "state-change",
+            "state-change",
+            "state-change",
+            "state-change"
+          ],
+          "last_elapsed": 4762,
+          "last_visible_blockers": [],
+          "last_renderer": {
+            "preload": false,
+            "cull": true,
+            "locMatchesWorld": true,
+            "pending": false,
+            "sceneViewReady": true
+          },
+          "last_native": {
+            "t_die": 0,
+            "playerX": 1160,
+            "paused": true,
+            "ng_wait": 0,
+            "playerY": 4799,
+            "landId": "random_mane",
+            "curLandId": "random_mane",
+            "seed": 1380142925,
+            "exit": 0,
+            "allStat": 1,
+            "comLoad": -1
+          },
+          "last_rooms": {
+            "busy": true,
+            "entryPending": true,
+            "earlyPending": true,
+            "ready": true
+          },
+          "last_permit": {
+            "phase": "idle",
+            "held": true,
+            "debugTest": false,
+            "cooldownLeft": 0,
+            "contract": "sandy-travel-hold/1",
+            "version": 1,
+            "replayIndex": 0,
+            "enemyEnabled": false,
+            "sandyLeft": 0
+          },
+          "last_tickets": [
+            {
+              "firstReleased": 87335,
+              "createdAt": 83085,
+              "currentIdentity": {
+                "game": true,
+                "grafon": true,
+                "loc": true,
+                "land": true,
+                "gg": true,
+                "world": true
+              },
+              "firstPainted": 87335,
+              "unpainted": false,
+              "waiting": false
+            }
+          ],
+          "bridge_calls": 1,
+          "bridge_nulls": 0,
+          "all_snapshots_have_no_fault": true,
+          "rows": [
+            {
+              "bridgeNulls": 0,
+              "elapsed": 40,
+              "at": 82915,
+              "rooms": {
+                "busy": false,
+                "entryPending": false,
+                "earlyPending": true,
+                "ready": true
+              },
+              "permit": {
+                "phase": "idle",
+                "held": true,
+                "debugTest": false,
+                "cooldownLeft": 0,
+                "contract": "sandy-travel-hold/1",
+                "version": 1,
+                "replayIndex": 0,
+                "enemyEnabled": false,
+                "sandyLeft": 0
+              },
+              "renderer": {
+                "preload": false,
+                "cull": true,
+                "locMatchesWorld": true,
+                "pending": false,
+                "sceneViewReady": true
+              },
+              "faults": [],
+              "readOnly": true,
+              "nativeState": {
+                "t_die": 0,
+                "playerX": 970.3,
+                "paused": false,
+                "ng_wait": 0,
+                "playerY": 800,
+                "landId": "rbl",
+                "curLandId": "random_mane",
+                "seed": 0,
+                "exit": 99,
+                "allStat": 1,
+                "comLoad": -1
+              },
+              "beginIdentity": {
+                "game": true,
+                "grafon": true,
+                "loc": true,
+                "land": true,
+                "gg": true,
+                "world": true
+              },
+              "diagnosticOnly": true,
+              "segment": 2,
+              "wall": 1792667125486,
+              "tickets": [],
+              "reason": "state-change",
+              "bridgeCalls": 0,
+              "bridgeCallbacks": [],
+              "sequence": 1
+            },
+            {
+              "bridgeNulls": 0,
+              "elapsed": 481,
+              "at": 83356,
+              "rooms": {
+                "busy": true,
+                "entryPending": true,
+                "earlyPending": true,
+                "ready": false
+              },
+              "permit": {
+                "phase": "idle",
+                "held": true,
+                "debugTest": false,
+                "cooldownLeft": 0,
+                "contract": "sandy-travel-hold/1",
+                "version": 1,
+                "replayIndex": 0,
+                "enemyEnabled": false,
+                "sandyLeft": 0
+              },
+              "renderer": {
+                "preload": false,
+                "cull": true,
+                "locMatchesWorld": true,
+                "pending": true,
+                "sceneViewReady": false
+              },
+              "faults": [],
+              "readOnly": true,
+              "nativeState": {
+                "t_die": 0,
+                "playerX": 1160,
+                "paused": true,
+                "ng_wait": 0,
+                "playerY": 4799,
+                "landId": "random_mane",
+                "curLandId": "random_mane",
+                "seed": 1380142925,
+                "exit": 19,
+                "allStat": 1,
+                "comLoad": -1
+              },
+              "beginIdentity": {
+                "game": true,
+                "grafon": true,
+                "loc": false,
+                "land": false,
+                "gg": true,
+                "world": true
+              },
+              "diagnosticOnly": true,
+              "segment": 2,
+              "wall": 1792667125928,
+              "tickets": [
+                {
+                  "firstReleased": -1,
+                  "createdAt": 83085,
+                  "currentIdentity": {
+                    "game": true,
+                    "grafon": true,
+                    "loc": true,
+                    "land": true,
+                    "gg": true,
+                    "world": true
+                  },
+                  "firstPainted": -1,
+                  "unpainted": true,
+                  "waiting": true
+                }
+              ],
+              "reason": "state-change",
+              "bridgeCalls": 1,
+              "bridgeCallbacks": [
+                {
+                  "beginIdentity": {
+                    "game": true,
+                    "grafon": true,
+                    "loc": false,
+                    "land": false,
+                    "gg": true,
+                    "world": true
+                  },
+                  "locMatchesWorld": true,
+                  "wall": 1792667125656,
+                  "matchesKnownTicket": false,
+                  "call": 1,
+                  "grafonMatchesWorld": true,
+                  "sameAsPrevious": false,
+                  "at": 83085,
+                  "returnedNull": false
+                }
+              ],
+              "sequence": 2
+            },
+            {
+              "bridgeNulls": 0,
+              "elapsed": 4460,
+              "at": 87335,
+              "rooms": {
+                "busy": true,
+                "entryPending": true,
+                "earlyPending": true,
+                "ready": true
+              },
+              "permit": {
+                "phase": "idle",
+                "held": true,
+                "debugTest": false,
+                "cooldownLeft": 0,
+                "contract": "sandy-travel-hold/1",
+                "version": 1,
+                "replayIndex": 0,
+                "enemyEnabled": false,
+                "sandyLeft": 0
+              },
+              "renderer": {
+                "preload": false,
+                "cull": true,
+                "locMatchesWorld": true,
+                "pending": false,
+                "sceneViewReady": true
+              },
+              "faults": [],
+              "readOnly": true,
+              "nativeState": {
+                "t_die": 0,
+                "playerX": 1160,
+                "paused": true,
+                "ng_wait": 0,
+                "playerY": 4799,
+                "landId": "random_mane",
+                "curLandId": "random_mane",
+                "seed": 1380142925,
+                "exit": 17,
+                "allStat": 1,
+                "comLoad": -1
+              },
+              "beginIdentity": {
+                "game": true,
+                "grafon": true,
+                "loc": false,
+                "land": false,
+                "gg": true,
+                "world": true
+              },
+              "diagnosticOnly": true,
+              "segment": 2,
+              "wall": 1792667129906,
+              "tickets": [
+                {
+                  "firstReleased": 87335,
+                  "createdAt": 83085,
+                  "currentIdentity": {
+                    "game": true,
+                    "grafon": true,
+                    "loc": true,
+                    "land": true,
+                    "gg": true,
+                    "world": true
+                  },
+                  "firstPainted": 87335,
+                  "unpainted": false,
+                  "waiting": false
+                }
+              ],
+              "reason": "state-change",
+              "bridgeCalls": 1,
+              "bridgeCallbacks": [
+                {
+                  "beginIdentity": {
+                    "game": true,
+                    "grafon": true,
+                    "loc": false,
+                    "land": false,
+                    "gg": true,
+                    "world": true
+                  },
+                  "locMatchesWorld": true,
+                  "wall": 1792667125656,
+                  "matchesKnownTicket": false,
+                  "call": 1,
+                  "grafonMatchesWorld": true,
+                  "sameAsPrevious": false,
+                  "at": 83085,
+                  "returnedNull": false
+                }
+              ],
+              "sequence": 3
+            },
+            {
+              "bridgeNulls": 0,
+              "elapsed": 4762,
+              "at": 87637,
+              "rooms": {
+                "busy": true,
+                "entryPending": true,
+                "earlyPending": true,
+                "ready": true
+              },
+              "permit": {
+                "phase": "idle",
+                "held": true,
+                "debugTest": false,
+                "cooldownLeft": 0,
+                "contract": "sandy-travel-hold/1",
+                "version": 1,
+                "replayIndex": 0,
+                "enemyEnabled": false,
+                "sandyLeft": 0
+              },
+              "renderer": {
+                "preload": false,
+                "cull": true,
+                "locMatchesWorld": true,
+                "pending": false,
+                "sceneViewReady": true
+              },
+              "faults": [],
+              "readOnly": true,
+              "nativeState": {
+                "t_die": 0,
+                "playerX": 1160,
+                "paused": true,
+                "ng_wait": 0,
+                "playerY": 4799,
+                "landId": "random_mane",
+                "curLandId": "random_mane",
+                "seed": 1380142925,
+                "exit": 0,
+                "allStat": 1,
+                "comLoad": -1
+              },
+              "beginIdentity": {
+                "game": true,
+                "grafon": true,
+                "loc": false,
+                "land": false,
+                "gg": true,
+                "world": true
+              },
+              "diagnosticOnly": true,
+              "segment": 2,
+              "wall": 1792667130208,
+              "tickets": [
+                {
+                  "firstReleased": 87335,
+                  "createdAt": 83085,
+                  "currentIdentity": {
+                    "game": true,
+                    "grafon": true,
+                    "loc": true,
+                    "land": true,
+                    "gg": true,
+                    "world": true
+                  },
+                  "firstPainted": 87335,
+                  "unpainted": false,
+                  "waiting": false
+                }
+              ],
+              "reason": "state-change",
+              "bridgeCalls": 1,
+              "bridgeCallbacks": [
+                {
+                  "beginIdentity": {
+                    "game": true,
+                    "grafon": true,
+                    "loc": false,
+                    "land": false,
+                    "gg": true,
+                    "world": true
+                  },
+                  "locMatchesWorld": true,
+                  "wall": 1792667125656,
+                  "matchesKnownTicket": false,
+                  "call": 1,
+                  "grafonMatchesWorld": true,
+                  "sameAsPrevious": false,
+                  "at": 83085,
+                  "returnedNull": false
+                }
+              ],
+              "sequence": 4
+            }
+          ]
+        }
+      },
+      "framework": 47,
+      "errors": [],
+      "native_phase_lines": [
+        "RConnectEarly: constructed 2fdf-a99af9bf:1 room=random_mane//0,0,0 t=68438",
+        "RConnectEarly: activated 2fdf-a99af9bf:1 t=75006",
+        "RConnectEarly: constructed 2fdf-a99af9bf:2 room=random_mane//0,0,0 t=83192",
+        "RConnectEarly: activated 2fdf-a99af9bf:2 t=89461"
+      ],
+      "completed_rows": 3
+    },
+    "join": {
+      "log_sha256": "50ffe7bef4ba9a34a46a7962e89a6e201a3eb5e190aa46fcb227ab1fee69fb60",
+      "same_runtime_inputs_as_baseline": {
+        "game": true,
+        "assets": true,
+        "production": false,
+        "harness": true,
+        "modules": true,
+        "mod_assets": true
+      },
+      "actual_production": "d356483f927c608b5973982558127ce4feb0873a36676909ed3b3d6ac8b7acb3",
+      "actual_driver": "0fc37f54ce99440e37624f0ef82c305abe6ecdb01e01765ac1f9f3bce0b44c84",
+      "actual_rv": "7852f61e083993e69431d5d8ca2fdf3c07d4068715946d04b3e796cecbe86764",
+      "actual_rv_is_frozen_old": true,
+      "non_rconnect_config_equal": {
+        "mods/continuousscene/release/scene.xml": true,
+        "mods/permanentinjury/release/config.json": true,
+        "mods/realisticvision/release/config.txt": true,
+        "mods/sandevistan/release/config.txt": true,
+        "mods/wallblend/release/config.json": true
+      },
+      "segments": {
+        "0": {
+          "row_count": 7,
+          "reasons": [
+            "state-change",
+            "state-change",
+            "state-change",
+            "state-change",
+            "state-change",
+            "after-8000ms",
+            "state-change"
+          ],
+          "last_elapsed": 10919,
+          "last_visible_blockers": [],
+          "last_renderer": {
+            "pending": false,
+            "locMatchesWorld": true,
+            "preload": false,
+            "sceneViewReady": true,
+            "cull": true
+          },
+          "last_native": {
+            "t_die": 0,
+            "ng_wait": 0,
+            "comLoad": -1,
+            "playerX": 1160,
+            "paused": false,
+            "seed": 1380142925,
+            "curLandId": "random_mane",
+            "playerY": 4800,
+            "exit": 0,
+            "landId": "random_mane",
+            "allStat": 1
+          },
+          "last_rooms": {
+            "busy": false,
+            "earlyPending": false,
+            "entryPending": false,
+            "ready": true
+          },
+          "last_permit": {
+            "sandyLeft": 0,
+            "held": false,
+            "enemyEnabled": false,
+            "debugTest": false,
+            "cooldownLeft": 0,
+            "contract": "sandy-travel-hold/1",
+            "phase": "idle",
+            "version": 1,
+            "replayIndex": 0
+          },
+          "last_tickets": [
+            {
+              "firstReleased": 38122,
+              "createdAt": 31596,
+              "firstPainted": 38122,
+              "unpainted": false,
+              "currentIdentity": {
+                "game": true,
+                "grafon": true,
+                "loc": true,
+                "land": true,
+                "gg": true,
+                "world": true
+              },
+              "waiting": false
+            }
+          ],
+          "bridge_calls": 2,
+          "bridge_nulls": 0,
+          "all_snapshots_have_no_fault": true,
+          "rows": [
+            {
+              "beginIdentity": {
+                "game": true,
+                "grafon": true,
+                "loc": true,
+                "land": true,
+                "gg": true,
+                "world": true
+              },
+              "faults": [],
+              "diagnosticOnly": true,
+              "bridgeCallbacks": [],
+              "at": 27780,
+              "rooms": {
+                "busy": false,
+                "earlyPending": false,
+                "entryPending": false,
+                "ready": true
+              },
+              "renderer": {
+                "pending": false,
+                "locMatchesWorld": true,
+                "preload": false,
+                "sceneViewReady": true,
+                "cull": true
+              },
+              "tickets": [],
+              "elapsed": 17,
+              "sequence": 1,
+              "bridgeCalls": 0,
+              "readOnly": true,
+              "bridgeNulls": 0,
+              "wall": 1792667107075,
+              "permit": {
+                "sandyLeft": 0,
+                "held": false,
+                "enemyEnabled": false,
+                "debugTest": false,
+                "cooldownLeft": 0,
+                "contract": "sandy-travel-hold/1",
+                "phase": "idle",
+                "version": 1,
+                "replayIndex": 0
+              },
+              "nativeState": {
+                "t_die": 0,
+                "ng_wait": 0,
+                "comLoad": -1,
+                "playerX": 841.8,
+                "paused": false,
+                "seed": 0,
+                "curLandId": "rbl",
+                "playerY": 800,
+                "exit": 0,
+                "landId": "rbl",
+                "allStat": 1
+              },
+              "segment": 0,
+              "reason": "state-change"
+            },
+            {
+              "beginIdentity": {
+                "game": true,
+                "grafon": true,
+                "loc": false,
+                "land": false,
+                "gg": true,
+                "world": true
+              },
+              "faults": [],
+              "diagnosticOnly": true,
+              "bridgeCallbacks": [
+                {
+                  "beginIdentity": {
+                    "game": true,
+                    "grafon": true,
+                    "loc": false,
+                    "land": false,
+                    "gg": true,
+                    "world": true
+                  },
+                  "sameAsPrevious": false,
+                  "returnedNull": false,
+                  "at": 31596,
+                  "call": 1,
+                  "grafonMatchesWorld": true,
+                  "locMatchesWorld": true,
+                  "matchesKnownTicket": false,
+                  "wall": 1792667110891
+                }
+              ],
+              "at": 31943,
+              "rooms": {
+                "busy": true,
+                "earlyPending": true,
+                "entryPending": true,
+                "ready": false
+              },
+              "renderer": {
+                "pending": true,
+                "locMatchesWorld": true,
+                "preload": false,
+                "sceneViewReady": false,
+                "cull": true
+              },
+              "tickets": [
+                {
+                  "firstReleased": -1,
+                  "createdAt": 31596,
+                  "firstPainted": -1,
+                  "unpainted": true,
+                  "currentIdentity": {
+                    "game": true,
+                    "grafon": true,
+                    "loc": true,
+                    "land": true,
+                    "gg": true,
+                    "world": true
+                  },
+                  "waiting": true
+                }
+              ],
+              "elapsed": 4180,
+              "sequence": 2,
+              "bridgeCalls": 1,
+              "readOnly": true,
+              "bridgeNulls": 0,
+              "wall": 1792667111239,
+              "permit": {
+                "sandyLeft": 0,
+                "held": true,
+                "enemyEnabled": false,
+                "debugTest": false,
+                "cooldownLeft": 0,
+                "contract": "sandy-travel-hold/1",
+                "phase": "idle",
+                "version": 1,
+                "replayIndex": 0
+              },
+              "nativeState": {
+                "t_die": 0,
+                "ng_wait": 0,
+                "comLoad": -1,
+                "playerX": 1160,
+                "paused": true,
+                "seed": 1380142925,
+                "curLandId": "random_mane",
+                "playerY": 4799,
+                "exit": 19,
+                "landId": "random_mane",
+                "allStat": 1
+              },
+              "segment": 0,
+              "reason": "state-change"
+            },
+            {
+              "beginIdentity": {
+                "game": true,
+                "grafon": true,
+                "loc": false,
+                "land": false,
+                "gg": true,
+                "world": true
+              },
+              "faults": [],
+              "diagnosticOnly": true,
+              "bridgeCallbacks": [
+                {
+                  "beginIdentity": {
+                    "game": true,
+                    "grafon": true,
+                    "loc": false,
+                    "land": false,
+                    "gg": true,
+                    "world": true
+                  },
+                  "sameAsPrevious": false,
+                  "returnedNull": false,
+                  "at": 31596,
+                  "call": 1,
+                  "grafonMatchesWorld": true,
+                  "locMatchesWorld": true,
+                  "matchesKnownTicket": false,
+                  "wall": 1792667110891
+                }
+              ],
+              "at": 32224,
+              "rooms": {
+                "busy": true,
+                "earlyPending": true,
+                "entryPending": true,
+                "ready": false
+              },
+              "renderer": {
+                "pending": true,
+                "locMatchesWorld": true,
+                "preload": false,
+                "sceneViewReady": false,
+                "cull": true
+              },
+              "tickets": [
+                {
+                  "firstReleased": -1,
+                  "createdAt": 31596,
+                  "firstPainted": -1,
+                  "unpainted": true,
+                  "currentIdentity": {
+                    "game": true,
+                    "grafon": true,
+                    "loc": true,
+                    "land": true,
+                    "gg": true,
+                    "world": true
+                  },
+                  "waiting": true
+                }
+              ],
+              "elapsed": 4461,
+              "sequence": 3,
+              "bridgeCalls": 1,
+              "readOnly": true,
+              "bridgeNulls": 0,
+              "wall": 1792667111519,
+              "permit": {
+                "sandyLeft": 0,
+                "held": true,
+                "enemyEnabled": false,
+                "debugTest": false,
+                "cooldownLeft": 0,
+                "contract": "sandy-travel-hold/1",
+                "phase": "idle",
+                "version": 1,
+                "replayIndex": 0
+              },
+              "nativeState": {
+                "t_die": 0,
+                "ng_wait": 0,
+                "comLoad": -1,
+                "playerX": 1160,
+                "paused": true,
+                "seed": 1380142925,
+                "curLandId": "random_mane",
+                "playerY": 4799,
+                "exit": 14,
+                "landId": "random_mane",
+                "allStat": 1
+              },
+              "segment": 0,
+              "reason": "state-change"
+            },
+            {
+              "beginIdentity": {
+                "game": true,
+                "grafon": true,
+                "loc": false,
+                "land": false,
+                "gg": true,
+                "world": true
+              },
+              "faults": [],
+              "diagnosticOnly": true,
+              "bridgeCallbacks": [
+                {
+                  "beginIdentity": {
+                    "game": true,
+                    "grafon": true,
+                    "loc": false,
+                    "land": false,
+                    "gg": true,
+                    "world": true
+                  },
+                  "sameAsPrevious": false,
+                  "returnedNull": false,
+                  "at": 31596,
+                  "call": 1,
+                  "grafonMatchesWorld": true,
+                  "locMatchesWorld": true,
+                  "matchesKnownTicket": false,
+                  "wall": 1792667110891
+                }
+              ],
+              "at": 32484,
+              "rooms": {
+                "busy": true,
+                "earlyPending": true,
+                "entryPending": true,
+                "ready": false
+              },
+              "renderer": {
+                "pending": true,
+                "locMatchesWorld": true,
+                "preload": false,
+                "sceneViewReady": false,
+                "cull": true
+              },
+              "tickets": [
+                {
+                  "firstReleased": -1,
+                  "createdAt": 31596,
+                  "firstPainted": -1,
+                  "unpainted": true,
+                  "currentIdentity": {
+                    "game": true,
+                    "grafon": true,
+                    "loc": true,
+                    "land": true,
+                    "gg": true,
+                    "world": true
+                  },
+                  "waiting": true
+                }
+              ],
+              "elapsed": 4721,
+              "sequence": 4,
+              "bridgeCalls": 1,
+              "readOnly": true,
+              "bridgeNulls": 0,
+              "wall": 1792667111779,
+              "permit": {
+                "sandyLeft": 0,
+                "held": true,
+                "enemyEnabled": false,
+                "debugTest": false,
+                "cooldownLeft": 0,
+                "contract": "sandy-travel-hold/1",
+                "phase": "idle",
+                "version": 1,
+                "replayIndex": 0
+              },
+              "nativeState": {
+                "t_die": 0,
+                "ng_wait": 0,
+                "comLoad": -1,
+                "playerX": 1160,
+                "paused": true,
+                "seed": 1380142925,
+                "curLandId": "random_mane",
+                "playerY": 4799,
+                "exit": 8,
+                "landId": "random_mane",
+                "allStat": 1
+              },
+              "segment": 0,
+              "reason": "state-change"
+            },
+            {
+              "beginIdentity": {
+                "game": true,
+                "grafon": true,
+                "loc": false,
+                "land": false,
+                "gg": true,
+                "world": true
+              },
+              "faults": [],
+              "diagnosticOnly": true,
+              "bridgeCallbacks": [
+                {
+                  "beginIdentity": {
+                    "game": true,
+                    "grafon": true,
+                    "loc": false,
+                    "land": false,
+                    "gg": true,
+                    "world": true
+                  },
+                  "sameAsPrevious": false,
+                  "returnedNull": false,
+                  "at": 31596,
+                  "call": 1,
+                  "grafonMatchesWorld": true,
+                  "locMatchesWorld": true,
+                  "matchesKnownTicket": false,
+                  "wall": 1792667110891
+                }
+              ],
+              "at": 32753,
+              "rooms": {
+                "busy": true,
+                "earlyPending": true,
+                "entryPending": true,
+                "ready": false
+              },
+              "renderer": {
+                "pending": true,
+                "locMatchesWorld": true,
+                "preload": false,
+                "sceneViewReady": false,
+                "cull": true
+              },
+              "tickets": [
+                {
+                  "firstReleased": -1,
+                  "createdAt": 31596,
+                  "firstPainted": -1,
+                  "unpainted": true,
+                  "currentIdentity": {
+                    "game": true,
+                    "grafon": true,
+                    "loc": true,
+                    "land": true,
+                    "gg": true,
+                    "world": true
+                  },
+                  "waiting": true
+                }
+              ],
+              "elapsed": 4990,
+              "sequence": 5,
+              "bridgeCalls": 1,
+              "readOnly": true,
+              "bridgeNulls": 0,
+              "wall": 1792667112048,
+              "permit": {
+                "sandyLeft": 0,
+                "held": true,
+                "enemyEnabled": false,
+                "debugTest": false,
+                "cooldownLeft": 0,
+                "contract": "sandy-travel-hold/1",
+                "phase": "idle",
+                "version": 1,
+                "replayIndex": 0
+              },
+              "nativeState": {
+                "t_die": 0,
+                "ng_wait": 0,
+                "comLoad": -1,
+                "playerX": 1160,
+                "paused": true,
+                "seed": 1380142925,
+                "curLandId": "random_mane",
+                "playerY": 4799,
+                "exit": 0,
+                "landId": "random_mane",
+                "allStat": 1
+              },
+              "segment": 0,
+              "reason": "state-change"
+            },
+            {
+              "beginIdentity": {
+                "game": true,
+                "grafon": true,
+                "loc": false,
+                "land": false,
+                "gg": true,
+                "world": true
+              },
+              "faults": [],
+              "diagnosticOnly": true,
+              "bridgeCallbacks": [
+                {
+                  "beginIdentity": {
+                    "game": true,
+                    "grafon": true,
+                    "loc": false,
+                    "land": false,
+                    "gg": true,
+                    "world": true
+                  },
+                  "sameAsPrevious": false,
+                  "returnedNull": false,
+                  "at": 31596,
+                  "call": 1,
+                  "grafonMatchesWorld": true,
+                  "locMatchesWorld": true,
+                  "matchesKnownTicket": false,
+                  "wall": 1792667110891
+                },
+                {
+                  "beginIdentity": {
+                    "game": true,
+                    "grafon": true,
+                    "loc": false,
+                    "land": false,
+                    "gg": true,
+                    "world": true
+                  },
+                  "sameAsPrevious": true,
+                  "returnedNull": false,
+                  "at": 34923,
+                  "call": 2,
+                  "grafonMatchesWorld": true,
+                  "locMatchesWorld": true,
+                  "matchesKnownTicket": true,
+                  "wall": 1792667114219
+                }
+              ],
+              "at": 38122,
+              "rooms": {
+                "busy": true,
+                "earlyPending": true,
+                "entryPending": true,
+                "ready": true
+              },
+              "renderer": {
+                "pending": false,
+                "locMatchesWorld": true,
+                "preload": false,
+                "sceneViewReady": true,
+                "cull": true
+              },
+              "tickets": [
+                {
+                  "firstReleased": 38122,
+                  "createdAt": 31596,
+                  "firstPainted": 38122,
+                  "unpainted": false,
+                  "currentIdentity": {
+                    "game": true,
+                    "grafon": true,
+                    "loc": true,
+                    "land": true,
+                    "gg": true,
+                    "world": true
+                  },
+                  "waiting": false
+                }
+              ],
+              "elapsed": 10359,
+              "sequence": 6,
+              "bridgeCalls": 2,
+              "readOnly": true,
+              "bridgeNulls": 0,
+              "wall": 1792667117418,
+              "permit": {
+                "sandyLeft": 0,
+                "held": true,
+                "enemyEnabled": false,
+                "debugTest": false,
+                "cooldownLeft": 0,
+                "contract": "sandy-travel-hold/1",
+                "phase": "idle",
+                "version": 1,
+                "replayIndex": 0
+              },
+              "nativeState": {
+                "t_die": 0,
+                "ng_wait": 0,
+                "comLoad": -1,
+                "playerX": 1160,
+                "paused": true,
+                "seed": 1380142925,
+                "curLandId": "random_mane",
+                "playerY": 4799,
+                "exit": 0,
+                "landId": "random_mane",
+                "allStat": 1
+              },
+              "segment": 0,
+              "reason": "after-8000ms"
+            },
+            {
+              "beginIdentity": {
+                "game": true,
+                "grafon": true,
+                "loc": false,
+                "land": false,
+                "gg": true,
+                "world": true
+              },
+              "faults": [],
+              "diagnosticOnly": true,
+              "bridgeCallbacks": [
+                {
+                  "beginIdentity": {
+                    "game": true,
+                    "grafon": true,
+                    "loc": false,
+                    "land": false,
+                    "gg": true,
+                    "world": true
+                  },
+                  "sameAsPrevious": false,
+                  "returnedNull": false,
+                  "at": 31596,
+                  "call": 1,
+                  "grafonMatchesWorld": true,
+                  "locMatchesWorld": true,
+                  "matchesKnownTicket": false,
+                  "wall": 1792667110891
+                },
+                {
+                  "beginIdentity": {
+                    "game": true,
+                    "grafon": true,
+                    "loc": false,
+                    "land": false,
+                    "gg": true,
+                    "world": true
+                  },
+                  "sameAsPrevious": true,
+                  "returnedNull": false,
+                  "at": 34923,
+                  "call": 2,
+                  "grafonMatchesWorld": true,
+                  "locMatchesWorld": true,
+                  "matchesKnownTicket": true,
+                  "wall": 1792667114219
+                }
+              ],
+              "at": 38682,
+              "rooms": {
+                "busy": false,
+                "earlyPending": false,
+                "entryPending": false,
+                "ready": true
+              },
+              "renderer": {
+                "pending": false,
+                "locMatchesWorld": true,
+                "preload": false,
+                "sceneViewReady": true,
+                "cull": true
+              },
+              "tickets": [
+                {
+                  "firstReleased": 38122,
+                  "createdAt": 31596,
+                  "firstPainted": 38122,
+                  "unpainted": false,
+                  "currentIdentity": {
+                    "game": true,
+                    "grafon": true,
+                    "loc": true,
+                    "land": true,
+                    "gg": true,
+                    "world": true
+                  },
+                  "waiting": false
+                }
+              ],
+              "elapsed": 10919,
+              "sequence": 7,
+              "bridgeCalls": 2,
+              "readOnly": true,
+              "bridgeNulls": 0,
+              "wall": 1792667117978,
+              "permit": {
+                "sandyLeft": 0,
+                "held": false,
+                "enemyEnabled": false,
+                "debugTest": false,
+                "cooldownLeft": 0,
+                "contract": "sandy-travel-hold/1",
+                "phase": "idle",
+                "version": 1,
+                "replayIndex": 0
+              },
+              "nativeState": {
+                "t_die": 0,
+                "ng_wait": 0,
+                "comLoad": -1,
+                "playerX": 1160,
+                "paused": false,
+                "seed": 1380142925,
+                "curLandId": "random_mane",
+                "playerY": 4800,
+                "exit": 0,
+                "landId": "random_mane",
+                "allStat": 1
+              },
+              "segment": 0,
+              "reason": "state-change"
+            }
+          ]
+        },
+        "1": {
+          "row_count": 4,
+          "reasons": [
+            "state-change",
+            "state-change",
+            "state-change",
+            "state-change"
+          ],
+          "last_elapsed": 2775,
+          "last_visible_blockers": [],
+          "last_renderer": {
+            "pending": false,
+            "locMatchesWorld": true,
+            "preload": false,
+            "sceneViewReady": true,
+            "cull": true
+          },
+          "last_native": {
+            "t_die": 0,
+            "ng_wait": 0,
+            "comLoad": -1,
+            "playerX": 961.8,
+            "paused": false,
+            "seed": 0,
+            "curLandId": "rbl",
+            "playerY": 800,
+            "exit": 0,
+            "landId": "rbl",
+            "allStat": 1
+          },
+          "last_rooms": {
+            "busy": false,
+            "earlyPending": false,
+            "entryPending": false,
+            "ready": true
+          },
+          "last_permit": {
+            "sandyLeft": 0,
+            "held": false,
+            "enemyEnabled": false,
+            "debugTest": false,
+            "cooldownLeft": 0,
+            "contract": "sandy-travel-hold/1",
+            "phase": "idle",
+            "version": 1,
+            "replayIndex": 0
+          },
+          "last_tickets": [],
+          "bridge_calls": 0,
+          "bridge_nulls": 0,
+          "all_snapshots_have_no_fault": true,
+          "rows": [
+            {
+              "beginIdentity": {
+                "game": true,
+                "grafon": true,
+                "loc": true,
+                "land": true,
+                "gg": true,
+                "world": true
+              },
+              "faults": [],
+              "diagnosticOnly": true,
+              "bridgeCallbacks": [],
+              "at": 42203,
+              "rooms": {
+                "busy": false,
+                "earlyPending": false,
+                "entryPending": true,
+                "ready": false
+              },
+              "renderer": {
+                "pending": false,
+                "locMatchesWorld": true,
+                "preload": false,
+                "sceneViewReady": true,
+                "cull": true
+              },
+              "tickets": [],
+              "elapsed": 121,
+              "sequence": 1,
+              "bridgeCalls": 0,
+              "readOnly": true,
+              "bridgeNulls": 0,
+              "wall": 1792667121499,
+              "permit": {
+                "sandyLeft": 0,
+                "held": false,
+                "enemyEnabled": false,
+                "debugTest": false,
+                "cooldownLeft": 0,
+                "contract": "sandy-travel-hold/1",
+                "phase": "idle",
+                "version": 1,
+                "replayIndex": 0
+              },
+              "nativeState": {
+                "t_die": 0,
+                "ng_wait": 0,
+                "comLoad": -1,
+                "playerX": 1151.5,
+                "paused": false,
+                "seed": 1380142925,
+                "curLandId": "rbl",
+                "playerY": 4800,
+                "exit": 20,
+                "landId": "random_mane",
+                "allStat": 1
+              },
+              "segment": 1,
+              "reason": "state-change"
+            },
+            {
+              "beginIdentity": {
+                "game": true,
+                "grafon": true,
+                "loc": false,
+                "land": false,
+                "gg": true,
+                "world": true
+              },
+              "faults": [],
+              "diagnosticOnly": true,
+              "bridgeCallbacks": [],
+              "at": 43770,
+              "rooms": {
+                "busy": false,
+                "earlyPending": false,
+                "entryPending": true,
+                "ready": false
+              },
+              "renderer": {
+                "pending": false,
+                "locMatchesWorld": true,
+                "preload": false,
+                "sceneViewReady": true,
+                "cull": true
+              },
+              "tickets": [],
+              "elapsed": 1688,
+              "sequence": 2,
+              "bridgeCalls": 0,
+              "readOnly": true,
+              "bridgeNulls": 0,
+              "wall": 1792667123066,
+              "permit": {
+                "sandyLeft": 0,
+                "held": false,
+                "enemyEnabled": false,
+                "debugTest": false,
+                "cooldownLeft": 0,
+                "contract": "sandy-travel-hold/1",
+                "phase": "idle",
+                "version": 1,
+                "replayIndex": 0
+              },
+              "nativeState": {
+                "t_die": 0,
+                "ng_wait": 0,
+                "comLoad": -1,
+                "playerX": 961,
+                "paused": false,
+                "seed": 0,
+                "curLandId": "rbl",
+                "playerY": 800,
+                "exit": 19,
+                "landId": "rbl",
+                "allStat": 1
+              },
+              "segment": 1,
+              "reason": "state-change"
+            },
+            {
+              "beginIdentity": {
+                "game": true,
+                "grafon": true,
+                "loc": false,
+                "land": false,
+                "gg": true,
+                "world": true
+              },
+              "faults": [],
+              "diagnosticOnly": true,
+              "bridgeCallbacks": [],
+              "at": 44049,
+              "rooms": {
+                "busy": false,
+                "earlyPending": false,
+                "entryPending": true,
+                "ready": false
+              },
+              "renderer": {
+                "pending": false,
+                "locMatchesWorld": true,
+                "preload": false,
+                "sceneViewReady": true,
+                "cull": true
+              },
+              "tickets": [],
+              "elapsed": 1967,
+              "sequence": 3,
+              "bridgeCalls": 0,
+              "readOnly": true,
+              "bridgeNulls": 0,
+              "wall": 1792667123345,
+              "permit": {
+                "sandyLeft": 0,
+                "held": false,
+                "enemyEnabled": false,
+                "debugTest": false,
+                "cooldownLeft": 0,
+                "contract": "sandy-travel-hold/1",
+                "phase": "idle",
+                "version": 1,
+                "replayIndex": 0
+              },
+              "nativeState": {
+                "t_die": 0,
+                "ng_wait": 0,
+                "comLoad": -1,
+                "playerX": 961.8,
+                "paused": false,
+                "seed": 0,
+                "curLandId": "rbl",
+                "playerY": 800,
+                "exit": 18,
+                "landId": "rbl",
+                "allStat": 1
+              },
+              "segment": 1,
+              "reason": "state-change"
+            },
+            {
+              "beginIdentity": {
+                "game": true,
+                "grafon": true,
+                "loc": false,
+                "land": false,
+                "gg": true,
+                "world": true
+              },
+              "faults": [],
+              "diagnosticOnly": true,
+              "bridgeCallbacks": [],
+              "at": 44857,
+              "rooms": {
+                "busy": false,
+                "earlyPending": false,
+                "entryPending": false,
+                "ready": true
+              },
+              "renderer": {
+                "pending": false,
+                "locMatchesWorld": true,
+                "preload": false,
+                "sceneViewReady": true,
+                "cull": true
+              },
+              "tickets": [],
+              "elapsed": 2775,
+              "sequence": 4,
+              "bridgeCalls": 0,
+              "readOnly": true,
+              "bridgeNulls": 0,
+              "wall": 1792667124153,
+              "permit": {
+                "sandyLeft": 0,
+                "held": false,
+                "enemyEnabled": false,
+                "debugTest": false,
+                "cooldownLeft": 0,
+                "contract": "sandy-travel-hold/1",
+                "phase": "idle",
+                "version": 1,
+                "replayIndex": 0
+              },
+              "nativeState": {
+                "t_die": 0,
+                "ng_wait": 0,
+                "comLoad": -1,
+                "playerX": 961.8,
+                "paused": false,
+                "seed": 0,
+                "curLandId": "rbl",
+                "playerY": 800,
+                "exit": 0,
+                "landId": "rbl",
+                "allStat": 1
+              },
+              "segment": 1,
+              "reason": "state-change"
+            }
+          ]
+        },
+        "2": {
+          "row_count": 8,
+          "reasons": [
+            "state-change",
+            "state-change",
+            "state-change",
+            "state-change",
+            "state-change",
+            "state-change",
+            "state-change",
+            "state-change"
+          ],
+          "last_elapsed": 6668,
+          "last_visible_blockers": [],
+          "last_renderer": {
+            "pending": false,
+            "locMatchesWorld": true,
+            "preload": false,
+            "sceneViewReady": true,
+            "cull": true
+          },
+          "last_native": {
+            "t_die": 0,
+            "ng_wait": 0,
+            "comLoad": -1,
+            "playerX": 1160,
+            "paused": false,
+            "seed": 1380142925,
+            "curLandId": "random_mane",
+            "playerY": 4800,
+            "exit": 0,
+            "landId": "random_mane",
+            "allStat": 1
+          },
+          "last_rooms": {
+            "busy": false,
+            "earlyPending": false,
+            "entryPending": false,
+            "ready": true
+          },
+          "last_permit": {
+            "sandyLeft": 0,
+            "held": false,
+            "enemyEnabled": false,
+            "debugTest": false,
+            "cooldownLeft": 0,
+            "contract": "sandy-travel-hold/1",
+            "phase": "idle",
+            "version": 1,
+            "replayIndex": 0
+          },
+          "last_tickets": [
+            {
+              "firstReleased": 52278,
+              "createdAt": 46236,
+              "firstPainted": 52278,
+              "unpainted": false,
+              "currentIdentity": {
+                "game": true,
+                "grafon": true,
+                "loc": true,
+                "land": true,
+                "gg": true,
+                "world": true
+              },
+              "waiting": false
+            }
+          ],
+          "bridge_calls": 2,
+          "bridge_nulls": 0,
+          "all_snapshots_have_no_fault": true,
+          "rows": [
+            {
+              "beginIdentity": {
+                "game": true,
+                "grafon": true,
+                "loc": true,
+                "land": true,
+                "gg": true,
+                "world": true
+              },
+              "faults": [],
+              "diagnosticOnly": true,
+              "bridgeCallbacks": [],
+              "at": 46208,
+              "rooms": {
+                "busy": false,
+                "earlyPending": true,
+                "entryPending": true,
+                "ready": false
+              },
+              "renderer": {
+                "pending": false,
+                "locMatchesWorld": true,
+                "preload": false,
+                "sceneViewReady": true,
+                "cull": true
+              },
+              "tickets": [],
+              "elapsed": 23,
+              "sequence": 1,
+              "bridgeCalls": 0,
+              "readOnly": true,
+              "bridgeNulls": 0,
+              "wall": 1792667125503,
+              "permit": {
+                "sandyLeft": 0,
+                "held": true,
+                "enemyEnabled": false,
+                "debugTest": false,
+                "cooldownLeft": 0,
+                "contract": "sandy-travel-hold/1",
+                "phase": "idle",
+                "version": 1,
+                "replayIndex": 0
+              },
+              "nativeState": {
+                "t_die": 0,
+                "ng_wait": 0,
+                "comLoad": -1,
+                "playerX": 970.3,
+                "paused": false,
+                "seed": 0,
+                "curLandId": "random_mane",
+                "playerY": 800,
+                "exit": 20,
+                "landId": "rbl",
+                "allStat": 1
+              },
+              "segment": 2,
+              "reason": "state-change"
+            },
+            {
+              "beginIdentity": {
+                "game": true,
+                "grafon": true,
+                "loc": false,
+                "land": false,
+                "gg": true,
+                "world": true
+              },
+              "faults": [],
+              "diagnosticOnly": true,
+              "bridgeCallbacks": [
+                {
+                  "beginIdentity": {
+                    "game": true,
+                    "grafon": true,
+                    "loc": false,
+                    "land": false,
+                    "gg": true,
+                    "world": true
+                  },
+                  "sameAsPrevious": false,
+                  "returnedNull": false,
+                  "at": 46236,
+                  "call": 1,
+                  "grafonMatchesWorld": true,
+                  "locMatchesWorld": true,
+                  "matchesKnownTicket": false,
+                  "wall": 1792667125531
+                }
+              ],
+              "at": 46516,
+              "rooms": {
+                "busy": true,
+                "earlyPending": true,
+                "entryPending": true,
+                "ready": false
+              },
+              "renderer": {
+                "pending": true,
+                "locMatchesWorld": true,
+                "preload": false,
+                "sceneViewReady": false,
+                "cull": true
+              },
+              "tickets": [
+                {
+                  "firstReleased": -1,
+                  "createdAt": 46236,
+                  "firstPainted": -1,
+                  "unpainted": true,
+                  "currentIdentity": {
+                    "game": true,
+                    "grafon": true,
+                    "loc": true,
+                    "land": true,
+                    "gg": true,
+                    "world": true
+                  },
+                  "waiting": true
+                }
+              ],
+              "elapsed": 331,
+              "sequence": 2,
+              "bridgeCalls": 1,
+              "readOnly": true,
+              "bridgeNulls": 0,
+              "wall": 1792667125811,
+              "permit": {
+                "sandyLeft": 0,
+                "held": true,
+                "enemyEnabled": false,
+                "debugTest": false,
+                "cooldownLeft": 0,
+                "contract": "sandy-travel-hold/1",
+                "phase": "idle",
+                "version": 1,
+                "replayIndex": 0
+              },
+              "nativeState": {
+                "t_die": 0,
+                "ng_wait": 0,
+                "comLoad": -1,
+                "playerX": 1160,
+                "paused": true,
+                "seed": 1380142925,
+                "curLandId": "random_mane",
+                "playerY": 4799,
+                "exit": 19,
+                "landId": "random_mane",
+                "allStat": 1
+              },
+              "segment": 2,
+              "reason": "state-change"
+            },
+            {
+              "beginIdentity": {
+                "game": true,
+                "grafon": true,
+                "loc": false,
+                "land": false,
+                "gg": true,
+                "world": true
+              },
+              "faults": [],
+              "diagnosticOnly": true,
+              "bridgeCallbacks": [
+                {
+                  "beginIdentity": {
+                    "game": true,
+                    "grafon": true,
+                    "loc": false,
+                    "land": false,
+                    "gg": true,
+                    "world": true
+                  },
+                  "sameAsPrevious": false,
+                  "returnedNull": false,
+                  "at": 46236,
+                  "call": 1,
+                  "grafonMatchesWorld": true,
+                  "locMatchesWorld": true,
+                  "matchesKnownTicket": false,
+                  "wall": 1792667125531
+                }
+              ],
+              "at": 46802,
+              "rooms": {
+                "busy": true,
+                "earlyPending": true,
+                "entryPending": true,
+                "ready": false
+              },
+              "renderer": {
+                "pending": true,
+                "locMatchesWorld": true,
+                "preload": false,
+                "sceneViewReady": false,
+                "cull": true
+              },
+              "tickets": [
+                {
+                  "firstReleased": -1,
+                  "createdAt": 46236,
+                  "firstPainted": -1,
+                  "unpainted": true,
+                  "currentIdentity": {
+                    "game": true,
+                    "grafon": true,
+                    "loc": true,
+                    "land": true,
+                    "gg": true,
+                    "world": true
+                  },
+                  "waiting": true
+                }
+              ],
+              "elapsed": 617,
+              "sequence": 3,
+              "bridgeCalls": 1,
+              "readOnly": true,
+              "bridgeNulls": 0,
+              "wall": 1792667126097,
+              "permit": {
+                "sandyLeft": 0,
+                "held": true,
+                "enemyEnabled": false,
+                "debugTest": false,
+                "cooldownLeft": 0,
+                "contract": "sandy-travel-hold/1",
+                "phase": "idle",
+                "version": 1,
+                "replayIndex": 0
+              },
+              "nativeState": {
+                "t_die": 0,
+                "ng_wait": 0,
+                "comLoad": -1,
+                "playerX": 1160,
+                "paused": true,
+                "seed": 1380142925,
+                "curLandId": "random_mane",
+                "playerY": 4799,
+                "exit": 16,
+                "landId": "random_mane",
+                "allStat": 1
+              },
+              "segment": 2,
+              "reason": "state-change"
+            },
+            {
+              "beginIdentity": {
+                "game": true,
+                "grafon": true,
+                "loc": false,
+                "land": false,
+                "gg": true,
+                "world": true
+              },
+              "faults": [],
+              "diagnosticOnly": true,
+              "bridgeCallbacks": [
+                {
+                  "beginIdentity": {
+                    "game": true,
+                    "grafon": true,
+                    "loc": false,
+                    "land": false,
+                    "gg": true,
+                    "world": true
+                  },
+                  "sameAsPrevious": false,
+                  "returnedNull": false,
+                  "at": 46236,
+                  "call": 1,
+                  "grafonMatchesWorld": true,
+                  "locMatchesWorld": true,
+                  "matchesKnownTicket": false,
+                  "wall": 1792667125531
+                }
+              ],
+              "at": 47072,
+              "rooms": {
+                "busy": true,
+                "earlyPending": true,
+                "entryPending": true,
+                "ready": false
+              },
+              "renderer": {
+                "pending": true,
+                "locMatchesWorld": true,
+                "preload": false,
+                "sceneViewReady": false,
+                "cull": true
+              },
+              "tickets": [
+                {
+                  "firstReleased": -1,
+                  "createdAt": 46236,
+                  "firstPainted": -1,
+                  "unpainted": true,
+                  "currentIdentity": {
+                    "game": true,
+                    "grafon": true,
+                    "loc": true,
+                    "land": true,
+                    "gg": true,
+                    "world": true
+                  },
+                  "waiting": true
+                }
+              ],
+              "elapsed": 887,
+              "sequence": 4,
+              "bridgeCalls": 1,
+              "readOnly": true,
+              "bridgeNulls": 0,
+              "wall": 1792667126368,
+              "permit": {
+                "sandyLeft": 0,
+                "held": true,
+                "enemyEnabled": false,
+                "debugTest": false,
+                "cooldownLeft": 0,
+                "contract": "sandy-travel-hold/1",
+                "phase": "idle",
+                "version": 1,
+                "replayIndex": 0
+              },
+              "nativeState": {
+                "t_die": 0,
+                "ng_wait": 0,
+                "comLoad": -1,
+                "playerX": 1160,
+                "paused": true,
+                "seed": 1380142925,
+                "curLandId": "random_mane",
+                "playerY": 4799,
+                "exit": 13,
+                "landId": "random_mane",
+                "allStat": 1
+              },
+              "segment": 2,
+              "reason": "state-change"
+            },
+            {
+              "beginIdentity": {
+                "game": true,
+                "grafon": true,
+                "loc": false,
+                "land": false,
+                "gg": true,
+                "world": true
+              },
+              "faults": [],
+              "diagnosticOnly": true,
+              "bridgeCallbacks": [
+                {
+                  "beginIdentity": {
+                    "game": true,
+                    "grafon": true,
+                    "loc": false,
+                    "land": false,
+                    "gg": true,
+                    "world": true
+                  },
+                  "sameAsPrevious": false,
+                  "returnedNull": false,
+                  "at": 46236,
+                  "call": 1,
+                  "grafonMatchesWorld": true,
+                  "locMatchesWorld": true,
+                  "matchesKnownTicket": false,
+                  "wall": 1792667125531
+                }
+              ],
+              "at": 47339,
+              "rooms": {
+                "busy": true,
+                "earlyPending": true,
+                "entryPending": true,
+                "ready": false
+              },
+              "renderer": {
+                "pending": true,
+                "locMatchesWorld": true,
+                "preload": false,
+                "sceneViewReady": false,
+                "cull": true
+              },
+              "tickets": [
+                {
+                  "firstReleased": -1,
+                  "createdAt": 46236,
+                  "firstPainted": -1,
+                  "unpainted": true,
+                  "currentIdentity": {
+                    "game": true,
+                    "grafon": true,
+                    "loc": true,
+                    "land": true,
+                    "gg": true,
+                    "world": true
+                  },
+                  "waiting": true
+                }
+              ],
+              "elapsed": 1154,
+              "sequence": 5,
+              "bridgeCalls": 1,
+              "readOnly": true,
+              "bridgeNulls": 0,
+              "wall": 1792667126634,
+              "permit": {
+                "sandyLeft": 0,
+                "held": true,
+                "enemyEnabled": false,
+                "debugTest": false,
+                "cooldownLeft": 0,
+                "contract": "sandy-travel-hold/1",
+                "phase": "idle",
+                "version": 1,
+                "replayIndex": 0
+              },
+              "nativeState": {
+                "t_die": 0,
+                "ng_wait": 0,
+                "comLoad": -1,
+                "playerX": 1160,
+                "paused": true,
+                "seed": 1380142925,
+                "curLandId": "random_mane",
+                "playerY": 4799,
+                "exit": 10,
+                "landId": "random_mane",
+                "allStat": 1
+              },
+              "segment": 2,
+              "reason": "state-change"
+            },
+            {
+              "beginIdentity": {
+                "game": true,
+                "grafon": true,
+                "loc": false,
+                "land": false,
+                "gg": true,
+                "world": true
+              },
+              "faults": [],
+              "diagnosticOnly": true,
+              "bridgeCallbacks": [
+                {
+                  "beginIdentity": {
+                    "game": true,
+                    "grafon": true,
+                    "loc": false,
+                    "land": false,
+                    "gg": true,
+                    "world": true
+                  },
+                  "sameAsPrevious": false,
+                  "returnedNull": false,
+                  "at": 46236,
+                  "call": 1,
+                  "grafonMatchesWorld": true,
+                  "locMatchesWorld": true,
+                  "matchesKnownTicket": false,
+                  "wall": 1792667125531
+                },
+                {
+                  "beginIdentity": {
+                    "game": true,
+                    "grafon": true,
+                    "loc": false,
+                    "land": false,
+                    "gg": true,
+                    "world": true
+                  },
+                  "sameAsPrevious": true,
+                  "returnedNull": false,
+                  "at": 49065,
+                  "call": 2,
+                  "grafonMatchesWorld": true,
+                  "locMatchesWorld": true,
+                  "matchesKnownTicket": true,
+                  "wall": 1792667128360
+                }
+              ],
+              "at": 52278,
+              "rooms": {
+                "busy": true,
+                "earlyPending": true,
+                "entryPending": true,
+                "ready": true
+              },
+              "renderer": {
+                "pending": false,
+                "locMatchesWorld": true,
+                "preload": false,
+                "sceneViewReady": true,
+                "cull": true
+              },
+              "tickets": [
+                {
+                  "firstReleased": 52278,
+                  "createdAt": 46236,
+                  "firstPainted": 52278,
+                  "unpainted": false,
+                  "currentIdentity": {
+                    "game": true,
+                    "grafon": true,
+                    "loc": true,
+                    "land": true,
+                    "gg": true,
+                    "world": true
+                  },
+                  "waiting": false
+                }
+              ],
+              "elapsed": 6093,
+              "sequence": 6,
+              "bridgeCalls": 2,
+              "readOnly": true,
+              "bridgeNulls": 0,
+              "wall": 1792667131574,
+              "permit": {
+                "sandyLeft": 0,
+                "held": true,
+                "enemyEnabled": false,
+                "debugTest": false,
+                "cooldownLeft": 0,
+                "contract": "sandy-travel-hold/1",
+                "phase": "idle",
+                "version": 1,
+                "replayIndex": 0
+              },
+              "nativeState": {
+                "t_die": 0,
+                "ng_wait": 0,
+                "comLoad": -1,
+                "playerX": 1160,
+                "paused": true,
+                "seed": 1380142925,
+                "curLandId": "random_mane",
+                "playerY": 4799,
+                "exit": 9,
+                "landId": "random_mane",
+                "allStat": 1
+              },
+              "segment": 2,
+              "reason": "state-change"
+            },
+            {
+              "beginIdentity": {
+                "game": true,
+                "grafon": true,
+                "loc": false,
+                "land": false,
+                "gg": true,
+                "world": true
+              },
+              "faults": [],
+              "diagnosticOnly": true,
+              "bridgeCallbacks": [
+                {
+                  "beginIdentity": {
+                    "game": true,
+                    "grafon": true,
+                    "loc": false,
+                    "land": false,
+                    "gg": true,
+                    "world": true
+                  },
+                  "sameAsPrevious": false,
+                  "returnedNull": false,
+                  "at": 46236,
+                  "call": 1,
+                  "grafonMatchesWorld": true,
+                  "locMatchesWorld": true,
+                  "matchesKnownTicket": false,
+                  "wall": 1792667125531
+                },
+                {
+                  "beginIdentity": {
+                    "game": true,
+                    "grafon": true,
+                    "loc": false,
+                    "land": false,
+                    "gg": true,
+                    "world": true
+                  },
+                  "sameAsPrevious": true,
+                  "returnedNull": false,
+                  "at": 49065,
+                  "call": 2,
+                  "grafonMatchesWorld": true,
+                  "locMatchesWorld": true,
+                  "matchesKnownTicket": true,
+                  "wall": 1792667128360
+                }
+              ],
+              "at": 52539,
+              "rooms": {
+                "busy": true,
+                "earlyPending": true,
+                "entryPending": true,
+                "ready": true
+              },
+              "renderer": {
+                "pending": false,
+                "locMatchesWorld": true,
+                "preload": false,
+                "sceneViewReady": true,
+                "cull": true
+              },
+              "tickets": [
+                {
+                  "firstReleased": 52278,
+                  "createdAt": 46236,
+                  "firstPainted": 52278,
+                  "unpainted": false,
+                  "currentIdentity": {
+                    "game": true,
+                    "grafon": true,
+                    "loc": true,
+                    "land": true,
+                    "gg": true,
+                    "world": true
+                  },
+                  "waiting": false
+                }
+              ],
+              "elapsed": 6354,
+              "sequence": 7,
+              "bridgeCalls": 2,
+              "readOnly": true,
+              "bridgeNulls": 0,
+              "wall": 1792667131834,
+              "permit": {
+                "sandyLeft": 0,
+                "held": true,
+                "enemyEnabled": false,
+                "debugTest": false,
+                "cooldownLeft": 0,
+                "contract": "sandy-travel-hold/1",
+                "phase": "idle",
+                "version": 1,
+                "replayIndex": 0
+              },
+              "nativeState": {
+                "t_die": 0,
+                "ng_wait": 0,
+                "comLoad": -1,
+                "playerX": 1160,
+                "paused": true,
+                "seed": 1380142925,
+                "curLandId": "random_mane",
+                "playerY": 4799,
+                "exit": 3,
+                "landId": "random_mane",
+                "allStat": 1
+              },
+              "segment": 2,
+              "reason": "state-change"
+            },
+            {
+              "beginIdentity": {
+                "game": true,
+                "grafon": true,
+                "loc": false,
+                "land": false,
+                "gg": true,
+                "world": true
+              },
+              "faults": [],
+              "diagnosticOnly": true,
+              "bridgeCallbacks": [
+                {
+                  "beginIdentity": {
+                    "game": true,
+                    "grafon": true,
+                    "loc": false,
+                    "land": false,
+                    "gg": true,
+                    "world": true
+                  },
+                  "sameAsPrevious": false,
+                  "returnedNull": false,
+                  "at": 46236,
+                  "call": 1,
+                  "grafonMatchesWorld": true,
+                  "locMatchesWorld": true,
+                  "matchesKnownTicket": false,
+                  "wall": 1792667125531
+                },
+                {
+                  "beginIdentity": {
+                    "game": true,
+                    "grafon": true,
+                    "loc": false,
+                    "land": false,
+                    "gg": true,
+                    "world": true
+                  },
+                  "sameAsPrevious": true,
+                  "returnedNull": false,
+                  "at": 49065,
+                  "call": 2,
+                  "grafonMatchesWorld": true,
+                  "locMatchesWorld": true,
+                  "matchesKnownTicket": true,
+                  "wall": 1792667128360
+                }
+              ],
+              "at": 52853,
+              "rooms": {
+                "busy": false,
+                "earlyPending": false,
+                "entryPending": false,
+                "ready": true
+              },
+              "renderer": {
+                "pending": false,
+                "locMatchesWorld": true,
+                "preload": false,
+                "sceneViewReady": true,
+                "cull": true
+              },
+              "tickets": [
+                {
+                  "firstReleased": 52278,
+                  "createdAt": 46236,
+                  "firstPainted": 52278,
+                  "unpainted": false,
+                  "currentIdentity": {
+                    "game": true,
+                    "grafon": true,
+                    "loc": true,
+                    "land": true,
+                    "gg": true,
+                    "world": true
+                  },
+                  "waiting": false
+                }
+              ],
+              "elapsed": 6668,
+              "sequence": 8,
+              "bridgeCalls": 2,
+              "readOnly": true,
+              "bridgeNulls": 0,
+              "wall": 1792667132148,
+              "permit": {
+                "sandyLeft": 0,
+                "held": false,
+                "enemyEnabled": false,
+                "debugTest": false,
+                "cooldownLeft": 0,
+                "contract": "sandy-travel-hold/1",
+                "phase": "idle",
+                "version": 1,
+                "replayIndex": 0
+              },
+              "nativeState": {
+                "t_die": 0,
+                "ng_wait": 0,
+                "comLoad": -1,
+                "playerX": 1160,
+                "paused": false,
+                "seed": 1380142925,
+                "curLandId": "random_mane",
+                "playerY": 4800,
+                "exit": 0,
+                "landId": "random_mane",
+                "allStat": 1
+              },
+              "segment": 2,
+              "reason": "state-change"
+            }
+          ]
+        }
+      },
+      "framework": 36,
+      "errors": [],
+      "native_phase_lines": [
+        "RConnectEarly: constructed 2fdf-a99af9bf:1 room=random_mane//0,0,0 t=31757",
+        "RConnectEarly: ready 2fdf-a99af9bf:1 t=38126",
+        "RConnectEarly: activated 2fdf-a99af9bf:1 t=38396",
+        "RConnectEarly: constructed 2fdf-a99af9bf:2 room=random_mane//0,0,0 t=46368",
+        "RConnectEarly: ready 2fdf-a99af9bf:2 t=52649",
+        "RConnectEarly: activated 2fdf-a99af9bf:2 t=52769"
+      ],
+      "completed_rows": 3
+    }
+  },
+  "performance_qualified": false,
+  "expected_candidate": {
+    "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-early-exit-compile-01",
+    "version": "0.2.24-early-travel2",
+    "sha256": "d356483f927c608b5973982558127ce4feb0873a36676909ed3b3d6ac8b7acb3",
+    "manifest_sha256": "a59473631fb28dcddfbd2dd96d795c98d61b2776ba33d91e3efa9e5ffe8922fe"
+  },
+  "private_conditions_not_measured": [
+    "paintAllowed",
+    "paintFrame/nativeFrame",
+    "localReady",
+    "RENDER callback count"
+  ]
+}

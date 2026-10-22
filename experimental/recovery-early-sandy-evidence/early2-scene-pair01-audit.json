@@ -1,0 +1,1514 @@
+{
+  "dual": {
+    "directory": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-early-exit-scene-dual-01",
+    "run": "6b322acc0f",
+    "wrapper_passed": true,
+    "installation_unchanged": true,
+    "result_sha256": "5651c54a1042a64e49c987f6bbbdcc363fdab9fa77d9574f508263df61a90990",
+    "manifest_sha256": "7c178fb33370fbff30164a271099c628961ed09c95b6cee3aa671fd69120998d",
+    "roles": {
+      "host": {
+        "checks": 47,
+        "errors": [],
+        "wrapper_errors": [],
+        "done": true,
+        "rows": [
+          {
+            "round": 0,
+            "target": "random_mane",
+            "elapsed": 11659,
+            "controlResponseElapsed": 12718,
+            "exitStart": 24,
+            "exitEnd": 4840,
+            "cover": 11411,
+            "paused": 11411,
+            "x": 1161,
+            "y": 4800,
+            "key": "random_mane//0,0,0",
+            "width": 240,
+            "height": 125,
+            "seed": 1380142925,
+            "units": 176,
+            "actualMerged": true,
+            "common_clock_ready_ms": 11660,
+            "input": {
+              "passed": true,
+              "checks": {
+                "identities": true,
+                "released_baseline": true,
+                "stationary_tail": true,
+                "pressed_keys": true,
+                "responded": true,
+                "released_native": true,
+                "release_consumed": true,
+                "original_windows": true
+              },
+              "baseline_ms": 791,
+              "response_ms": 265,
+              "release_verified_after_request_ms": 13001
+            },
+            "raster": {
+              "passed": true,
+              "expected": true,
+              "tickets": [
+                {
+                  "created_wall": 1792667384845,
+                  "observed_release_wall": 1792667390420,
+                  "observed_painted_wall": 1792667390420,
+                  "observed_release_paint_same_sample": true,
+                  "initial_waiting": true,
+                  "initial_unpainted": true,
+                  "early_pending": true,
+                  "permit": {
+                    "phase": "idle",
+                    "replayIndex": 0,
+                    "contract": "sandy-travel-hold/1",
+                    "sandyLeft": 0,
+                    "held": true,
+                    "debugTest": false,
+                    "cooldownLeft": 0,
+                    "version": 1,
+                    "enemyEnabled": false
+                  }
+                }
+              ],
+              "start": {
+                "phase": "idle",
+                "replayIndex": 0,
+                "contract": "sandy-travel-hold/1",
+                "sandyLeft": 0,
+                "held": false,
+                "debugTest": false,
+                "cooldownLeft": 0,
+                "version": 1,
+                "enemyEnabled": false
+              },
+              "final": {
+                "phase": "idle",
+                "replayIndex": 0,
+                "contract": "sandy-travel-hold/1",
+                "sandyLeft": 0,
+                "held": false,
+                "debugTest": false,
+                "cooldownLeft": 0,
+                "version": 1,
+                "enemyEnabled": false
+              },
+              "actual_raster_interval_observed": false,
+              "no_simulation_asserted": false
+            }
+          },
+          {
+            "round": 1,
+            "target": "rbl",
+            "elapsed": 2223,
+            "controlResponseElapsed": 2406,
+            "exitStart": 118,
+            "exitEnd": 2065,
+            "cover": 1702,
+            "paused": 37,
+            "x": 961.8,
+            "y": 800,
+            "key": "rbl//0,0,0",
+            "width": 48,
+            "height": 25,
+            "seed": 0,
+            "units": 38,
+            "actualMerged": false,
+            "common_clock_ready_ms": 2223,
+            "input": {
+              "passed": true,
+              "checks": {
+                "identities": true,
+                "released_baseline": true,
+                "stationary_tail": true,
+                "pressed_keys": true,
+                "responded": true,
+                "released_native": true,
+                "release_consumed": true,
+                "original_windows": true
+              },
+              "baseline_ms": 127,
+              "response_ms": 56,
+              "release_verified_after_request_ms": 2460
+            },
+            "raster": {
+              "passed": true,
+              "expected": false,
+              "tickets": [],
+              "start": {
+                "phase": "idle",
+                "replayIndex": 0,
+                "contract": "sandy-travel-hold/1",
+                "sandyLeft": 0,
+                "held": false,
+                "debugTest": false,
+                "cooldownLeft": 0,
+                "version": 1,
+                "enemyEnabled": false
+              },
+              "final": {
+                "phase": "idle",
+                "replayIndex": 0,
+                "contract": "sandy-travel-hold/1",
+                "sandyLeft": 0,
+                "held": false,
+                "debugTest": false,
+                "cooldownLeft": 0,
+                "version": 1,
+                "enemyEnabled": false
+              },
+              "actual_raster_interval_observed": false,
+              "no_simulation_asserted": false
+            }
+          },
+          {
+            "round": 2,
+            "target": "random_mane",
+            "elapsed": 6922,
+            "controlResponseElapsed": 7960,
+            "exitStart": 40,
+            "exitEnd": 4644,
+            "cover": 6597,
+            "paused": 6597,
+            "x": 1161,
+            "y": 4800,
+            "key": "random_mane//0,0,0",
+            "width": 240,
+            "height": 125,
+            "seed": 1380142925,
+            "units": 176,
+            "actualMerged": true,
+            "common_clock_ready_ms": 6922,
+            "input": {
+              "passed": true,
+              "checks": {
+                "identities": true,
+                "released_baseline": true,
+                "stationary_tail": true,
+                "pressed_keys": true,
+                "responded": true,
+                "released_native": true,
+                "release_consumed": true,
+                "original_windows": true
+              },
+              "baseline_ms": 797,
+              "response_ms": 238,
+              "release_verified_after_request_ms": 8213
+            },
+            "raster": {
+              "passed": true,
+              "expected": true,
+              "tickets": [
+                {
+                  "created_wall": 1792667399526,
+                  "observed_release_wall": 1792667403862,
+                  "observed_painted_wall": 1792667403862,
+                  "observed_release_paint_same_sample": true,
+                  "initial_waiting": true,
+                  "initial_unpainted": true,
+                  "early_pending": true,
+                  "permit": {
+                    "phase": "idle",
+                    "replayIndex": 0,
+                    "contract": "sandy-travel-hold/1",
+                    "sandyLeft": 0,
+                    "held": true,
+                    "debugTest": false,
+                    "cooldownLeft": 0,
+                    "version": 1,
+                    "enemyEnabled": false
+                  }
+                }
+              ],
+              "start": {
+                "phase": "idle",
+                "replayIndex": 0,
+                "contract": "sandy-travel-hold/1",
+                "sandyLeft": 0,
+                "held": false,
+                "debugTest": false,
+                "cooldownLeft": 0,
+                "version": 1,
+                "enemyEnabled": false
+              },
+              "final": {
+                "phase": "idle",
+                "replayIndex": 0,
+                "contract": "sandy-travel-hold/1",
+                "sandyLeft": 0,
+                "held": false,
+                "debugTest": false,
+                "cooldownLeft": 0,
+                "version": 1,
+                "enemyEnabled": false
+              },
+              "actual_raster_interval_observed": false,
+              "no_simulation_asserted": false
+            }
+          }
+        ],
+        "requested_rounds": [
+          {
+            "started": 65571,
+            "round": 0,
+            "target": "random_mane"
+          },
+          {
+            "started": 80129,
+            "round": 1,
+            "target": "rbl"
+          },
+          {
+            "started": 84179,
+            "round": 2,
+            "target": "random_mane"
+          }
+        ],
+        "phases": [
+          {
+            "round": 0,
+            "phase": "constructed",
+            "token": "2369-7118c145:1",
+            "local_t": 69909,
+            "text": "RConnectEarly: constructed 2369-7118c145:1 room=random_mane//0,0,0 t=69909"
+          },
+          {
+            "round": 0,
+            "phase": "activated",
+            "token": "2369-7118c145:1",
+            "local_t": 77136,
+            "text": "RConnectEarly: activated 2369-7118c145:1 t=77136"
+          },
+          {
+            "round": 2,
+            "phase": "constructed",
+            "token": "2369-7118c145:2",
+            "local_t": 84469,
+            "text": "RConnectEarly: constructed 2369-7118c145:2 room=random_mane//0,0,0 t=84469"
+          },
+          {
+            "round": 2,
+            "phase": "activated",
+            "token": "2369-7118c145:2",
+            "local_t": 90947,
+            "text": "RConnectEarly: activated 2369-7118c145:2 t=90947"
+          }
+        ],
+        "receives": [
+          {
+            "round": null,
+            "op": "request",
+            "from": 65117,
+            "at": 65118,
+            "ms": 1,
+            "barrier": null,
+            "context": {
+              "cover": true,
+              "fading": false,
+              "room": "rbl//0,0,0",
+              "term": 0,
+              "ready": false,
+              "peerPhase": "",
+              "epoch": 1,
+              "roomOp": "request",
+              "busy": true,
+              "authority": true,
+              "exit": 0,
+              "nativePause": true
+            }
+          },
+          {
+            "round": null,
+            "op": "ready",
+            "from": 65118,
+            "at": 65201,
+            "ms": 83,
+            "barrier": 1,
+            "context": {
+              "cover": false,
+              "fading": false,
+              "room": "rbl//0,0,0",
+              "term": 1,
+              "ready": true,
+              "peerPhase": "",
+              "epoch": 1,
+              "roomOp": "ready",
+              "busy": false,
+              "authority": true,
+              "exit": 0,
+              "nativePause": false
+            }
+          },
+          {
+            "round": null,
+            "op": "ack",
+            "from": 65451,
+            "at": 65453,
+            "ms": 2,
+            "barrier": 1,
+            "context": {
+              "cover": false,
+              "fading": false,
+              "room": "rbl//0,0,0",
+              "term": 1,
+              "ready": true,
+              "peerPhase": "",
+              "epoch": 1,
+              "roomOp": "ack",
+              "busy": false,
+              "authority": true,
+              "exit": 0,
+              "nativePause": false
+            }
+          },
+          {
+            "round": 0,
+            "op": "ready",
+            "from": 70860,
+            "at": 71739,
+            "ms": 879,
+            "barrier": 2,
+            "context": {
+              "cover": true,
+              "fading": false,
+              "room": "random_mane//0,0,0",
+              "term": 2,
+              "ready": true,
+              "peerPhase": "",
+              "epoch": 2,
+              "roomOp": "ready",
+              "busy": true,
+              "authority": true,
+              "exit": 0,
+              "nativePause": true
+            }
+          },
+          {
+            "round": 0,
+            "op": "ack",
+            "from": 77134,
+            "at": 77138,
+            "ms": 4,
+            "barrier": 2,
+            "context": {
+              "cover": false,
+              "fading": false,
+              "room": "random_mane//0,0,0",
+              "term": 2,
+              "ready": true,
+              "peerPhase": "",
+              "epoch": 2,
+              "roomOp": "ack",
+              "busy": false,
+              "authority": true,
+              "exit": 0,
+              "nativePause": false
+            }
+          },
+          {
+            "round": 1,
+            "op": "request",
+            "from": 82225,
+            "at": 82225,
+            "ms": 0,
+            "barrier": null,
+            "context": {
+              "cover": true,
+              "fading": false,
+              "room": "rbl//0,0,0",
+              "term": 2,
+              "ready": false,
+              "peerPhase": "",
+              "epoch": 3,
+              "roomOp": "request",
+              "busy": true,
+              "authority": true,
+              "exit": 0,
+              "nativePause": true
+            }
+          },
+          {
+            "round": 1,
+            "op": "ready",
+            "from": 82226,
+            "at": 82294,
+            "ms": 68,
+            "barrier": 3,
+            "context": {
+              "cover": false,
+              "fading": false,
+              "room": "rbl//0,0,0",
+              "term": 3,
+              "ready": true,
+              "peerPhase": "",
+              "epoch": 3,
+              "roomOp": "ready",
+              "busy": false,
+              "authority": true,
+              "exit": 0,
+              "nativePause": false
+            }
+          },
+          {
+            "round": 1,
+            "op": "ack",
+            "from": 82880,
+            "at": 82881,
+            "ms": 1,
+            "barrier": 3,
+            "context": {
+              "cover": false,
+              "fading": false,
+              "room": "rbl//0,0,0",
+              "term": 3,
+              "ready": true,
+              "peerPhase": "",
+              "epoch": 3,
+              "roomOp": "ack",
+              "busy": false,
+              "authority": true,
+              "exit": 0,
+              "nativePause": false
+            }
+          },
+          {
+            "round": 2,
+            "op": "ready",
+            "from": 84908,
+            "at": 85632,
+            "ms": 724,
+            "barrier": 4,
+            "context": {
+              "cover": true,
+              "fading": true,
+              "room": "random_mane//0,0,0",
+              "term": 4,
+              "ready": true,
+              "peerPhase": "",
+              "epoch": 4,
+              "roomOp": "ready",
+              "busy": true,
+              "authority": true,
+              "exit": 16,
+              "nativePause": true
+            }
+          },
+          {
+            "round": 2,
+            "op": "ack",
+            "from": 90945,
+            "at": 90948,
+            "ms": 3,
+            "barrier": 4,
+            "context": {
+              "cover": false,
+              "fading": false,
+              "room": "random_mane//0,0,0",
+              "term": 4,
+              "ready": true,
+              "peerPhase": "",
+              "epoch": 4,
+              "roomOp": "ack",
+              "busy": false,
+              "authority": true,
+              "exit": 0,
+              "nativePause": false
+            }
+          }
+        ],
+        "restore_timings": [],
+        "raw_log_sha256": "f83083ad62e011f3bffc50d0bf0ab5e83bf4ae362ec070059f48ce6b2921222b"
+      },
+      "join": {
+        "checks": 36,
+        "errors": [],
+        "wrapper_errors": [],
+        "done": true,
+        "rows": [
+          {
+            "round": 0,
+            "target": "random_mane",
+            "elapsed": 11934,
+            "controlResponseElapsed": 13045,
+            "exitStart": 157,
+            "exitEnd": 5740,
+            "cover": 11515,
+            "paused": 11452,
+            "x": 1160,
+            "y": 4800,
+            "key": "random_mane//0,0,0",
+            "width": 240,
+            "height": 125,
+            "seed": 1380142925,
+            "units": 301,
+            "actualMerged": true,
+            "common_clock_ready_ms": 11982,
+            "input": {
+              "passed": true,
+              "checks": {
+                "identities": true,
+                "released_baseline": true,
+                "stationary_tail": true,
+                "pressed_keys": true,
+                "responded": true,
+                "released_native": true,
+                "release_consumed": true,
+                "original_windows": true
+              },
+              "baseline_ms": 836,
+              "response_ms": 226,
+              "release_verified_after_request_ms": 13227
+            },
+            "raster": {
+              "passed": true,
+              "expected": true,
+              "tickets": [
+                {
+                  "created_wall": 1792667385337,
+                  "observed_release_wall": 1792667392141,
+                  "observed_painted_wall": 1792667392141,
+                  "observed_release_paint_same_sample": true,
+                  "initial_waiting": true,
+                  "initial_unpainted": true,
+                  "early_pending": true,
+                  "permit": {
+                    "debugTest": false,
+                    "phase": "idle",
+                    "held": true,
+                    "replayIndex": 0,
+                    "sandyLeft": 0,
+                    "enemyEnabled": false,
+                    "cooldownLeft": 0,
+                    "contract": "sandy-travel-hold/1",
+                    "version": 1
+                  }
+                }
+              ],
+              "start": {
+                "debugTest": false,
+                "phase": "idle",
+                "held": false,
+                "replayIndex": 0,
+                "sandyLeft": 0,
+                "enemyEnabled": false,
+                "cooldownLeft": 0,
+                "contract": "sandy-travel-hold/1",
+                "version": 1
+              },
+              "final": {
+                "debugTest": false,
+                "phase": "idle",
+                "held": false,
+                "replayIndex": 0,
+                "sandyLeft": 0,
+                "enemyEnabled": false,
+                "cooldownLeft": 0,
+                "contract": "sandy-travel-hold/1",
+                "version": 1
+              },
+              "actual_raster_interval_observed": false,
+              "no_simulation_asserted": false
+            }
+          },
+          {
+            "round": 1,
+            "target": "rbl",
+            "elapsed": 2469,
+            "controlResponseElapsed": 2875,
+            "exitStart": 108,
+            "exitEnd": 1872,
+            "cover": 1929,
+            "paused": 84,
+            "x": 961.8,
+            "y": 800,
+            "key": "rbl//0,0,0",
+            "width": 48,
+            "height": 25,
+            "seed": 0,
+            "units": 47,
+            "actualMerged": false,
+            "common_clock_ready_ms": 2688,
+            "input": {
+              "passed": true,
+              "checks": {
+                "identities": true,
+                "released_baseline": true,
+                "stationary_tail": true,
+                "pressed_keys": true,
+                "responded": true,
+                "released_native": true,
+                "release_consumed": true,
+                "original_windows": true
+              },
+              "baseline_ms": 135,
+              "response_ms": 51,
+              "release_verified_after_request_ms": 2924
+            },
+            "raster": {
+              "passed": true,
+              "expected": false,
+              "tickets": [],
+              "start": {
+                "debugTest": false,
+                "phase": "idle",
+                "held": false,
+                "replayIndex": 0,
+                "sandyLeft": 0,
+                "enemyEnabled": false,
+                "cooldownLeft": 0,
+                "contract": "sandy-travel-hold/1",
+                "version": 1
+              },
+              "final": {
+                "debugTest": false,
+                "phase": "idle",
+                "held": false,
+                "replayIndex": 0,
+                "sandyLeft": 0,
+                "enemyEnabled": false,
+                "cooldownLeft": 0,
+                "contract": "sandy-travel-hold/1",
+                "version": 1
+              },
+              "actual_raster_interval_observed": false,
+              "no_simulation_asserted": false
+            }
+          },
+          {
+            "round": 2,
+            "target": "random_mane",
+            "elapsed": 6861,
+            "controlResponseElapsed": 7667,
+            "exitStart": 23,
+            "exitEnd": 6725,
+            "cover": 6763,
+            "paused": 6740,
+            "x": 1160,
+            "y": 4800,
+            "key": "random_mane//0,0,0",
+            "width": 240,
+            "height": 125,
+            "seed": 1380142925,
+            "units": 301,
+            "actualMerged": true,
+            "common_clock_ready_ms": 6897,
+            "input": {
+              "passed": true,
+              "checks": {
+                "identities": true,
+                "released_baseline": true,
+                "stationary_tail": true,
+                "pressed_keys": true,
+                "responded": true,
+                "released_native": true,
+                "release_consumed": true,
+                "original_windows": true
+              },
+              "baseline_ms": 491,
+              "response_ms": 277,
+              "release_verified_after_request_ms": 8008
+            },
+            "raster": {
+              "passed": true,
+              "expected": true,
+              "tickets": [
+                {
+                  "created_wall": 1792667399419,
+                  "observed_release_wall": 1792667405885,
+                  "observed_painted_wall": 1792667405885,
+                  "observed_release_paint_same_sample": true,
+                  "initial_waiting": true,
+                  "initial_unpainted": true,
+                  "early_pending": true,
+                  "permit": {
+                    "debugTest": false,
+                    "phase": "idle",
+                    "held": true,
+                    "replayIndex": 0,
+                    "sandyLeft": 0,
+                    "enemyEnabled": false,
+                    "cooldownLeft": 0,
+                    "contract": "sandy-travel-hold/1",
+                    "version": 1
+                  }
+                }
+              ],
+              "start": {
+                "debugTest": false,
+                "phase": "idle",
+                "held": false,
+                "replayIndex": 0,
+                "sandyLeft": 0,
+                "enemyEnabled": false,
+                "cooldownLeft": 0,
+                "contract": "sandy-travel-hold/1",
+                "version": 1
+              },
+              "final": {
+                "debugTest": false,
+                "phase": "idle",
+                "held": false,
+                "replayIndex": 0,
+                "sandyLeft": 0,
+                "enemyEnabled": false,
+                "cooldownLeft": 0,
+                "contract": "sandy-travel-hold/1",
+                "version": 1
+              },
+              "actual_raster_interval_observed": false,
+              "no_simulation_asserted": false
+            }
+          }
+        ],
+        "requested_rounds": [
+          {
+            "started": 28652,
+            "round": 0,
+            "target": "random_mane"
+          },
+          {
+            "started": 43382,
+            "round": 1,
+            "target": "rbl"
+          },
+          {
+            "started": 47248,
+            "round": 2,
+            "target": "random_mane"
+          }
+        ],
+        "phases": [
+          {
+            "round": 0,
+            "phase": "constructed",
+            "token": "2369-7118c145:1",
+            "local_t": 33360,
+            "text": "RConnectEarly: constructed 2369-7118c145:1 room=random_mane//0,0,0 t=33360"
+          },
+          {
+            "round": 0,
+            "phase": "ready",
+            "token": "2369-7118c145:1",
+            "local_t": 40011,
+            "text": "RConnectEarly: ready 2369-7118c145:1 t=40011"
+          },
+          {
+            "round": 0,
+            "phase": "activated",
+            "token": "2369-7118c145:1",
+            "local_t": 40277,
+            "text": "RConnectEarly: activated 2369-7118c145:1 t=40277"
+          },
+          {
+            "round": 2,
+            "phase": "constructed",
+            "token": "2369-7118c145:2",
+            "local_t": 47391,
+            "text": "RConnectEarly: constructed 2369-7118c145:2 room=random_mane//0,0,0 t=47391"
+          },
+          {
+            "round": 2,
+            "phase": "ready",
+            "token": "2369-7118c145:2",
+            "local_t": 53979,
+            "text": "RConnectEarly: ready 2369-7118c145:2 t=53979"
+          },
+          {
+            "round": 2,
+            "phase": "activated",
+            "token": "2369-7118c145:2",
+            "local_t": 54026,
+            "text": "RConnectEarly: activated 2369-7118c145:2 t=54026"
+          }
+        ],
+        "receives": [
+          {
+            "round": null,
+            "op": "grant",
+            "from": 28271,
+            "at": 28450,
+            "ms": 179,
+            "barrier": 1,
+            "context": {
+              "nativePause": false,
+              "roomOp": "grant",
+              "ready": true,
+              "authority": false,
+              "fading": false,
+              "term": 1,
+              "busy": false,
+              "room": "rbl//0,0,0",
+              "peerPhase": "",
+              "epoch": 1,
+              "exit": 0,
+              "cover": false
+            }
+          },
+          {
+            "round": 0,
+            "op": "prepare",
+            "from": 28780,
+            "at": 28786,
+            "ms": 6,
+            "barrier": null,
+            "context": {
+              "nativePause": false,
+              "roomOp": "prepare",
+              "ready": false,
+              "authority": false,
+              "fading": false,
+              "term": 1,
+              "busy": false,
+              "room": "rbl//0,0,0",
+              "peerPhase": "",
+              "epoch": 1,
+              "exit": 21,
+              "cover": true
+            }
+          },
+          {
+            "round": 0,
+            "op": "seal",
+            "from": 33836,
+            "at": 33838,
+            "ms": 2,
+            "barrier": 2,
+            "context": {
+              "nativePause": true,
+              "roomOp": "seal",
+              "ready": false,
+              "authority": false,
+              "fading": false,
+              "term": 1,
+              "busy": true,
+              "room": "random_mane//0,0,0",
+              "peerPhase": "",
+              "epoch": 2,
+              "exit": 15,
+              "cover": true
+            }
+          },
+          {
+            "round": 0,
+            "op": "grant",
+            "from": 34793,
+            "at": 36701,
+            "ms": 1908,
+            "barrier": 2,
+            "context": {
+              "nativePause": true,
+              "roomOp": "grant",
+              "ready": true,
+              "authority": false,
+              "fading": false,
+              "term": 2,
+              "busy": true,
+              "room": "random_mane//0,0,0",
+              "peerPhase": "",
+              "epoch": 2,
+              "exit": 0,
+              "cover": true
+            }
+          },
+          {
+            "round": 0,
+            "op": "activate",
+            "from": 40275,
+            "at": 40278,
+            "ms": 3,
+            "barrier": 2,
+            "context": {
+              "nativePause": false,
+              "roomOp": "activate",
+              "ready": true,
+              "authority": false,
+              "fading": false,
+              "term": 2,
+              "busy": false,
+              "room": "random_mane//0,0,0",
+              "peerPhase": "",
+              "epoch": 2,
+              "exit": 0,
+              "cover": false
+            }
+          },
+          {
+            "round": 1,
+            "op": "prepare",
+            "from": 43386,
+            "at": 43386,
+            "ms": 0,
+            "barrier": null,
+            "context": {
+              "nativePause": false,
+              "roomOp": "prepare",
+              "ready": false,
+              "authority": false,
+              "fading": false,
+              "term": 2,
+              "busy": false,
+              "room": "random_mane//0,0,0",
+              "peerPhase": "",
+              "epoch": 2,
+              "exit": 21,
+              "cover": true
+            }
+          },
+          {
+            "round": 1,
+            "op": "seal",
+            "from": 45240,
+            "at": 45240,
+            "ms": 0,
+            "barrier": 3,
+            "context": {
+              "nativePause": false,
+              "roomOp": "seal",
+              "ready": false,
+              "authority": false,
+              "fading": false,
+              "term": 2,
+              "busy": false,
+              "room": "rbl//0,0,0",
+              "peerPhase": "",
+              "epoch": 3,
+              "exit": 1,
+              "cover": true
+            }
+          },
+          {
+            "round": 1,
+            "op": "grant",
+            "from": 45326,
+            "at": 45812,
+            "ms": 486,
+            "barrier": 3,
+            "context": {
+              "nativePause": false,
+              "roomOp": "grant",
+              "ready": true,
+              "authority": false,
+              "fading": false,
+              "term": 3,
+              "busy": false,
+              "room": "rbl//0,0,0",
+              "peerPhase": "",
+              "epoch": 3,
+              "exit": 0,
+              "cover": false
+            }
+          },
+          {
+            "round": 2,
+            "op": "prepare",
+            "from": 47249,
+            "at": 47252,
+            "ms": 3,
+            "barrier": null,
+            "context": {
+              "nativePause": false,
+              "roomOp": "prepare",
+              "ready": false,
+              "authority": false,
+              "fading": false,
+              "term": 3,
+              "busy": false,
+              "room": "rbl//0,0,0",
+              "peerPhase": "",
+              "epoch": 3,
+              "exit": 21,
+              "cover": true
+            }
+          },
+          {
+            "round": 2,
+            "op": "seal",
+            "from": 47553,
+            "at": 47554,
+            "ms": 1,
+            "barrier": 4,
+            "context": {
+              "nativePause": true,
+              "roomOp": "seal",
+              "ready": false,
+              "authority": false,
+              "fading": false,
+              "term": 3,
+              "busy": true,
+              "room": "random_mane//0,0,0",
+              "peerPhase": "",
+              "epoch": 4,
+              "exit": 19,
+              "cover": true
+            }
+          },
+          {
+            "round": 2,
+            "op": "grant",
+            "from": 48690,
+            "at": 50353,
+            "ms": 1663,
+            "barrier": 4,
+            "context": {
+              "nativePause": true,
+              "roomOp": "grant",
+              "ready": true,
+              "authority": false,
+              "fading": false,
+              "term": 4,
+              "busy": true,
+              "room": "random_mane//0,0,0",
+              "peerPhase": "",
+              "epoch": 4,
+              "exit": 6,
+              "cover": true
+            }
+          },
+          {
+            "round": 2,
+            "op": "activate",
+            "from": 54025,
+            "at": 54027,
+            "ms": 2,
+            "barrier": 4,
+            "context": {
+              "nativePause": false,
+              "roomOp": "activate",
+              "ready": true,
+              "authority": false,
+              "fading": false,
+              "term": 4,
+              "busy": false,
+              "room": "random_mane//0,0,0",
+              "peerPhase": "",
+              "epoch": 4,
+              "exit": 0,
+              "cover": false
+            }
+          }
+        ],
+        "restore_timings": [
+          {
+            "round": null,
+            "effects": 131,
+            "total": 152,
+            "units": 111,
+            "terrain": 49,
+            "redraw": 148,
+            "terrainReused": true,
+            "role": 6,
+            "authority": false,
+            "retained": false,
+            "key": "rbl//0,0,0",
+            "objects": 20,
+            "foreign": true
+          },
+          {
+            "round": 0,
+            "retained": false,
+            "effects": 1629,
+            "units": 1582,
+            "redraw": 1676,
+            "total": 1676,
+            "authority": false,
+            "terrain": 784,
+            "objects": 305,
+            "key": "random_mane//0,0,0",
+            "role": 65,
+            "foreign": true
+          },
+          {
+            "round": 1,
+            "effects": 452,
+            "total": 467,
+            "units": 447,
+            "terrain": 424,
+            "redraw": 465,
+            "terrainReused": true,
+            "role": 362,
+            "authority": false,
+            "retained": false,
+            "key": "rbl//0,0,0",
+            "objects": 370,
+            "foreign": true
+          },
+          {
+            "round": 2,
+            "retained": false,
+            "effects": 1403,
+            "units": 1357,
+            "redraw": 1469,
+            "total": 1469,
+            "authority": false,
+            "terrain": 706,
+            "objects": 279,
+            "key": "random_mane//0,0,0",
+            "role": 64,
+            "foreign": true
+          }
+        ],
+        "raw_log_sha256": "4e6734d2212ebb93fc7ad4d8c6e6b284e3aa804affebfce5d29df4f86ea6d134"
+      }
+    },
+    "completed_pairs": [
+      {
+        "round": 0,
+        "complete_pair": true,
+        "spawn_distance_px": 1.0,
+        "spawn_within_original_80px": true,
+        "exact_same_coordinates": false,
+        "same_room": true,
+        "same_dimensions": true,
+        "same_seed": true,
+        "actual_drawing_overlap_measured": false
+      },
+      {
+        "round": 1,
+        "complete_pair": true,
+        "spawn_distance_px": 0.0,
+        "spawn_within_original_80px": true,
+        "exact_same_coordinates": true,
+        "same_room": true,
+        "same_dimensions": true,
+        "same_seed": true,
+        "actual_drawing_overlap_measured": false
+      },
+      {
+        "round": 2,
+        "complete_pair": true,
+        "spawn_distance_px": 1.0,
+        "spawn_within_original_80px": true,
+        "exact_same_coordinates": false,
+        "same_room": true,
+        "same_dimensions": true,
+        "same_seed": true,
+        "actual_drawing_overlap_measured": false
+      }
+    ],
+    "three_flows_complete": true,
+    "performance_qualified": false
+  },
+  "solo": {
+    "directory": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-early-exit-scene-solo-01",
+    "run": "981583ffbc",
+    "wrapper_passed": true,
+    "installation_unchanged": true,
+    "result_sha256": "1e6f7b9349308118f59113304dfd991f8f31a1f5716f6816281a6402426b3a85",
+    "manifest_sha256": "1fb895ee4fa97bb89c94e47dc6df8e00b389e3d1ada6f0026981e8c06b142d15",
+    "roles": {
+      "host": {
+        "checks": 35,
+        "errors": [],
+        "wrapper_errors": [],
+        "done": true,
+        "rows": [
+          {
+            "round": 0,
+            "target": "random_mane",
+            "elapsed": 7051,
+            "controlResponseElapsed": 7546,
+            "exitStart": 38,
+            "exitEnd": 7046,
+            "cover": 0,
+            "paused": 0,
+            "x": 161.8,
+            "y": 4320,
+            "key": "random_mane//0,0,0",
+            "width": 240,
+            "height": 125,
+            "seed": 1380142925,
+            "units": 187,
+            "actualMerged": true,
+            "common_clock_ready_ms": 7052,
+            "input": {
+              "passed": true,
+              "checks": {
+                "identities": true,
+                "released_baseline": true,
+                "stationary_tail": true,
+                "pressed_keys": true,
+                "responded": true,
+                "released_native": true,
+                "release_consumed": true,
+                "original_windows": true
+              },
+              "baseline_ms": 367,
+              "response_ms": 125,
+              "release_verified_after_request_ms": 7663
+            },
+            "raster": {
+              "passed": true,
+              "expected": false,
+              "tickets": [],
+              "start": {
+                "sandyLeft": 0,
+                "phase": "idle",
+                "enemyEnabled": false,
+                "cooldownLeft": 0,
+                "contract": "sandy-travel-hold/1",
+                "version": 1,
+                "debugTest": false,
+                "held": false,
+                "replayIndex": 0
+              },
+              "final": {
+                "sandyLeft": 0,
+                "phase": "idle",
+                "enemyEnabled": false,
+                "cooldownLeft": 0,
+                "contract": "sandy-travel-hold/1",
+                "version": 1,
+                "debugTest": false,
+                "held": false,
+                "replayIndex": 0
+              },
+              "actual_raster_interval_observed": false,
+              "no_simulation_asserted": false
+            }
+          },
+          {
+            "round": 1,
+            "target": "rbl",
+            "elapsed": 1968,
+            "controlResponseElapsed": 2254,
+            "exitStart": 58,
+            "exitEnd": 1967,
+            "cover": 0,
+            "paused": 0,
+            "x": 961.8,
+            "y": 800,
+            "key": "rbl//0,0,0",
+            "width": 48,
+            "height": 25,
+            "seed": 0,
+            "units": 37,
+            "actualMerged": false,
+            "common_clock_ready_ms": 1968,
+            "input": {
+              "passed": true,
+              "checks": {
+                "identities": true,
+                "released_baseline": true,
+                "stationary_tail": true,
+                "pressed_keys": true,
+                "responded": true,
+                "released_native": true,
+                "release_consumed": true,
+                "original_windows": true
+              },
+              "baseline_ms": 237,
+              "response_ms": 48,
+              "release_verified_after_request_ms": 2320
+            },
+            "raster": {
+              "passed": true,
+              "expected": false,
+              "tickets": [],
+              "start": {
+                "sandyLeft": 0,
+                "phase": "idle",
+                "enemyEnabled": false,
+                "cooldownLeft": 0,
+                "contract": "sandy-travel-hold/1",
+                "version": 1,
+                "debugTest": false,
+                "held": false,
+                "replayIndex": 0
+              },
+              "final": {
+                "sandyLeft": 0,
+                "phase": "idle",
+                "enemyEnabled": false,
+                "cooldownLeft": 0,
+                "contract": "sandy-travel-hold/1",
+                "version": 1,
+                "debugTest": false,
+                "held": false,
+                "replayIndex": 0
+              },
+              "actual_raster_interval_observed": false,
+              "no_simulation_asserted": false
+            }
+          },
+          {
+            "round": 2,
+            "target": "random_mane",
+            "elapsed": 3370,
+            "controlResponseElapsed": 3855,
+            "exitStart": 44,
+            "exitEnd": 3367,
+            "cover": 0,
+            "paused": 0,
+            "x": 161.8,
+            "y": 4320,
+            "key": "random_mane//0,0,0",
+            "width": 240,
+            "height": 125,
+            "seed": 1380142925,
+            "units": 187,
+            "actualMerged": true,
+            "common_clock_ready_ms": 3370,
+            "input": {
+              "passed": true,
+              "checks": {
+                "identities": true,
+                "released_baseline": true,
+                "stationary_tail": true,
+                "pressed_keys": true,
+                "responded": true,
+                "released_native": true,
+                "release_consumed": true,
+                "original_windows": true
+              },
+              "baseline_ms": 358,
+              "response_ms": 125,
+              "release_verified_after_request_ms": 3966
+            },
+            "raster": {
+              "passed": true,
+              "expected": false,
+              "tickets": [],
+              "start": {
+                "sandyLeft": 0,
+                "phase": "idle",
+                "enemyEnabled": false,
+                "cooldownLeft": 0,
+                "contract": "sandy-travel-hold/1",
+                "version": 1,
+                "debugTest": false,
+                "held": false,
+                "replayIndex": 0
+              },
+              "final": {
+                "sandyLeft": 0,
+                "phase": "idle",
+                "enemyEnabled": false,
+                "cooldownLeft": 0,
+                "contract": "sandy-travel-hold/1",
+                "version": 1,
+                "debugTest": false,
+                "held": false,
+                "replayIndex": 0
+              },
+              "actual_raster_interval_observed": false,
+              "no_simulation_asserted": false
+            }
+          }
+        ],
+        "requested_rounds": [
+          {
+            "round": 0,
+            "target": "random_mane",
+            "started": 30660
+          },
+          {
+            "round": 1,
+            "target": "rbl",
+            "started": 39341
+          },
+          {
+            "round": 2,
+            "target": "random_mane",
+            "started": 42666
+          }
+        ],
+        "phases": [],
+        "receives": [],
+        "restore_timings": [],
+        "raw_log_sha256": "6ee76d6f765d6413dc9d14200b3af8484eb1ff3fc2f40a632c78cb228d536771"
+      }
+    },
+    "three_flows_complete": true,
+    "performance_qualified": false
+  },
+  "comparisons": [
+    {
+      "role": "host",
+      "round": 0,
+      "target": "random_mane",
+      "elapsed_delta_ms": 4608,
+      "common_clock_ready_delta_ms": 4608,
+      "control_response_delta_ms": 5172,
+      "elapsed_ratio": 1.6535243227910934,
+      "common_clock_ready_ratio": 1.6534316505955757,
+      "control_response_ratio": 1.6853962364166446,
+      "same_dimensions": true,
+      "same_seed": true
+    },
+    {
+      "role": "host",
+      "round": 1,
+      "target": "rbl",
+      "elapsed_delta_ms": 255,
+      "common_clock_ready_delta_ms": 255,
+      "control_response_delta_ms": 152,
+      "elapsed_ratio": 1.1295731707317074,
+      "common_clock_ready_ratio": 1.1295731707317074,
+      "control_response_ratio": 1.067435669920142,
+      "same_dimensions": true,
+      "same_seed": true
+    },
+    {
+      "role": "host",
+      "round": 2,
+      "target": "random_mane",
+      "elapsed_delta_ms": 3552,
+      "common_clock_ready_delta_ms": 3552,
+      "control_response_delta_ms": 4105,
+      "elapsed_ratio": 2.054005934718101,
+      "common_clock_ready_ratio": 2.054005934718101,
+      "control_response_ratio": 2.06485084306096,
+      "same_dimensions": true,
+      "same_seed": true
+    },
+    {
+      "role": "join",
+      "round": 0,
+      "target": "random_mane",
+      "elapsed_delta_ms": 4883,
+      "common_clock_ready_delta_ms": 4930,
+      "control_response_delta_ms": 5499,
+      "elapsed_ratio": 1.692525882853496,
+      "common_clock_ready_ratio": 1.6990924560408396,
+      "control_response_ratio": 1.7287304532202492,
+      "same_dimensions": true,
+      "same_seed": true
+    },
+    {
+      "role": "join",
+      "round": 1,
+      "target": "rbl",
+      "elapsed_delta_ms": 501,
+      "common_clock_ready_delta_ms": 720,
+      "control_response_delta_ms": 621,
+      "elapsed_ratio": 1.2545731707317074,
+      "common_clock_ready_ratio": 1.3658536585365855,
+      "control_response_ratio": 1.2755102040816326,
+      "same_dimensions": true,
+      "same_seed": true
+    },
+    {
+      "role": "join",
+      "round": 2,
+      "target": "random_mane",
+      "elapsed_delta_ms": 3491,
+      "common_clock_ready_delta_ms": 3527,
+      "control_response_delta_ms": 3812,
+      "elapsed_ratio": 2.0359050445103857,
+      "common_clock_ready_ratio": 2.046587537091988,
+      "control_response_ratio": 1.988845654993515,
+      "same_dimensions": true,
+      "same_seed": true
+    }
+  ],
+  "source_audit_boundaries": [
+    "Raster ticket creation/release/poll completion are not measured chunk draw start/end intervals.",
+    "Failed trip lacks rasterProbe.finish output and therefore lacks final permit/ticket fields.",
+    "Permit checked at begin, ticket creation and stable finish; continuous no-step coverage is not measured.",
+    "Spawn comparison permits 80 px distance and observes local readiness, not the exact native spawn frame.",
+    "Native Stage key dispatch and next-frame key-up consumption are covered; physical OS keyboard is not.",
+    "Scene scenario covers shared first entry, base and cached revisit; ordinary split room and active/replay are separate.",
+    "Rows report room readiness plus baseline/key response; no phase-aligned peer FPS or pixel equality qualification."
+  ]
+}

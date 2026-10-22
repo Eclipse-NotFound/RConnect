@@ -50,6 +50,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--wrapper", required=True)
     ap.add_argument("--baseline-run", default="3b3c31c5f5")
+    ap.add_argument("--expected-candidate", help="Optional compiled candidate directory; verifies real production slot")
     ap.add_argument("--output", required=True)
     args = ap.parse_args()
     directory = ROOT / args.wrapper
@@ -63,8 +64,17 @@ def main():
                   wrapper_result_sha256=sha(directory / "result.json"),
                   run_manifest_sha256=sha(run / "run.json"), baseline_run=args.baseline_run,
                   roles={}, performance_qualified=False)
+    if args.expected_candidate:
+        candidate = ROOT / args.expected_candidate
+        candidate_meta = read(candidate / "prepared.json")
+        expected = sha(candidate / "RConnectMod.swf")
+        assert candidate_meta["compiled"] is True and candidate_meta["sha256"] == expected
+        report["expected_candidate"] = dict(path=str(candidate), version=candidate_meta["version"],
+            sha256=expected, manifest_sha256=sha(candidate / "prepared.json"))
     for role, actual_inputs in manifest["inputs"].items():
         baseline_inputs = old["inputs"][role]
+        if args.expected_candidate:
+            assert actual_inputs["production"] == expected, "wrong actual production candidate"
         same_inputs = {key: actual_inputs[key] == baseline_inputs[key]
                        for key in ("game", "assets", "production", "harness", "modules", "mod_assets")}
         modules = canonical(actual_inputs["modules"])
@@ -95,6 +105,7 @@ def main():
                 rows=rows)
         report["roles"][role] = dict(
             log_sha256=sha(run / (role + ".log")), same_runtime_inputs_as_baseline=same_inputs,
+            actual_production=actual_inputs["production"], actual_driver=actual_inputs["driver"],
             actual_rv=modules["mods/realisticvision/release/realisticvisionmod.swf"],
             actual_rv_is_frozen_old=modules["mods/realisticvision/release/realisticvisionmod.swf"] == RV_OLD,
             non_rconnect_config_equal=non_rc_config, segments=summaries,
