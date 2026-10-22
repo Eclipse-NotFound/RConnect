@@ -1,0 +1,20 @@
+{
+  "source": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-paint-tail-sampler-v2",
+  "originals": {
+    "src/PaintTailSampler.as": "3694cfc6a9eab18fa01de0f5e413504b8600c023af3a93de00dbe9fa0b9f1dae",
+    "src/FlashPaintTailSampler.as": "f0706d7fdff62a0aaeebd1e200e8899a3f534a1d1abb76a56d4a2d4ade3f1601",
+    "tests/PaintTailSamplerChecks.as": "333a7b9fc3cbdde12852983dab4c7e42d69b2994162443aa3b70f2b5e9741d14",
+    "tests/FakePaintTailApi.as": "a245de2b78cf11f1411fa7cbb5108726be48ecdf3d2d3c68ccbefa6e1662487b",
+    "tests/PaintTailSamplerComponentDoc.as": "015711eb8f1d53090a038586139d9c6c8cacbd54bc4b71192683331522663eed"
+  },
+  "replacements": [
+    {
+      "old": "         try {value.addEventListener(Event.ENTER_FRAME,onEnter,false,1000000);stage=value;return true;}\n         catch(error:*){globalFaults++;return false;}",
+      "new": "         var attached:Boolean=false;\n         try {value.addEventListener(Event.ENTER_FRAME,onEnter,false,1000000);stage=value;attached=true;}\n         catch(error:*){globalFaults++;}\n         return attached;"
+    },
+    {
+      "old": "         try {return api.owns(token)===true;}catch(error:*){fault(\"ownership-query\",error);return false;}",
+      "new": "         var owned:Boolean=false;\n         try {owned=api.owns(token)===true;}catch(error:*){fault(\"ownership-query\",error);}\n         return owned;"
+    }
+  ]
+}

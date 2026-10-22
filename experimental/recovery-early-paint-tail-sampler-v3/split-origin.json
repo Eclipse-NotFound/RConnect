@@ -1,0 +1,12 @@
+{
+  "source": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-paint-tail-sampler",
+  "originals": {
+    "src\\PaintTailSampler.as": "3694cfc6a9eab18fa01de0f5e413504b8600c023af3a93de00dbe9fa0b9f1dae",
+    "src\\FlashPaintTailSampler.as": "f0706d7fdff62a0aaeebd1e200e8899a3f534a1d1abb76a56d4a2d4ade3f1601",
+    "tests\\PaintTailSamplerChecks.as": "b72319f3c64181cab1a18ac42fd2fb1407d13e926c88cc0f7a0871ec9d1f3c6e",
+    "tests\\PaintTailSamplerComponentDoc.as": "015711eb8f1d53090a038586139d9c6c8cacbd54bc4b71192683331522663eed"
+  },
+  "change": "Only split FakePaintTailApi into its own public class file; helper/real adapter/doc unchanged",
+  "expected": 31,
+  "compiled": false
+}
