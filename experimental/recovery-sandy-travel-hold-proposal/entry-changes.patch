@@ -1,0 +1,49 @@
+--- CEC6/frozen/src/SandevistanMod.as
++++ proposed/src/SandevistanMod.as
+@@ -53,2 +53,3 @@
+       private var keybinds:SandyKeybinds;
++      private var travelHold:SandyTravelHoldBridge;
+       private var world:Object;                         // fe.World.World.w
+@@ -401,1 +402,12 @@
+          inst.cfgHotkey = int(inst.keybinds.binding.code);
++         inst.travelHold = new SandyTravelHoldBridge(
++            function():Object {
++               var wc:Class = ApplicationDomain.currentDomain.getDefinition("fe.World") as Class;
++               return wc != null ? wc["w"] : null;
++            },
++            function():Object {
++               return {phase:inst.sandyActive ? "active" : (inst.replaying ? "replay" : "idle"),
++                  sandyLeft:inst.sandyLeft,cooldownLeft:inst.cooldownLeft,replayIndex:inst.replayIdx,
++                  enemyEnabled:inst.cfgESEnabled,debugTest:inst.debugTest};
++            });
++         main.addChild(inst.travelHold);
+@@ -613,3 +625,4 @@
+       private function onFrame(e:Event):void
+       {
++         if (travelHold != null && travelHold.isHeld()) return;
+          if (keybinds != null) keybinds.step();
+@@ -3892,3 +3905,4 @@
+       private function startSandy():void
+       {
++         if (travelHold != null && travelHold.isHeld()) return;
+          if (sandyActive || replaying) return;
+@@ -6663,3 +6677,4 @@
+       private function onMouseDown(e:MouseEvent):void
+       {
++         if (travelHold != null && travelHold.isHeld()) return;
+          try { mouseAtkDown = true; mouseAtkPulse = true; } catch (err:*) { }
+@@ -6673,3 +6688,9 @@
+       private function onKeyUp(e:KeyboardEvent):void
+       {
+          if (keybinds != null) keybinds.releaseKey(e.keyCode);
++         if (travelHold != null && travelHold.isHeld())
++         {
++            keyDownSeen[e.keyCode] = null;
++            keyPressTime[e.keyCode] = null;
++            return;
++         }
+@@ -6713,3 +6734,4 @@
+       private function onKey(e:KeyboardEvent):void
+       {
++         if (travelHold != null && travelHold.isHeld()) return;
+          if (keybinds != null && keybinds.isCapturingKey()) return;

@@ -1,0 +1,33 @@
+{
+  "kind": "wall-surface-proof-independent-reanalysis",
+  "frozen": true,
+  "air_started": false,
+  "jvm_started": false,
+  "production_modified": false,
+  "original_evidence_unchanged": true,
+  "gameplay_qualified": false,
+  "performance_qualified": false,
+  "offline_checks": {
+    "count": 15,
+    "failed": 0,
+    "result": "offline-result-v2.json"
+  },
+  "files": {
+    "candidate-reanalysis.json": "e31b89b9135662701b66a97b2bac716b2a49be7f60c494e48be078f1eb7124e7",
+    "check_offline.py": "d4eb163200dd4aa6b2c53256a160eb568eb7dffad43d72e573131f33643589c3",
+    "control-reanalysis.json": "6e6fd10ac9f17bc6bbb326e9499231e1dacdf2cb0eaf3d58524e9b5b4790d1e4",
+    "gutter-review.json": "d83b2c1fe90a8ad9ce4f310cbe32a444d2a0ee5c36f78ce27ff4877a52b64df6",
+    "gutter-review.md": "f3b386c352bf707480d98ea606245a7ba68a8e2b713a8505908eef7b636f6958",
+    "inspect_gutter.py": "383f3c103aed8ed43ea07d912480c57e9e699c865136e6efc4b3bd1f7249ee4f",
+    "offline-result-v2.json": "2d46ea68275cb109510a94a845f77f0a2bacb5c4b079260bc7bb3196f8720ae4",
+    "offline-result.json": "b3c7550927c87aa7bf6b7162789606d787099ef63e52d2dcddc6c03cea410c8f",
+    "README.md": "c30d7e8e7c7cf81b35d43b588627522823675a4134951d0dd641b22e4bff00e3",
+    "verify_evidence.py": "1b330ee95266852bcf0c14065de5e40d22231f125a46e12516152a36335d4dad"
+  },
+  "reference_sha256": {
+    "build\\m52\\recovery-wall-surfaces-driver-04\\inputs\\large-wall\\verify_results.py": "a3e8d886772d8facada4363331e79b6277c582b316f05c00e360e7edd247e874",
+    "build\\m52\\recovery-16\\src\\rconnect\\game\\WallSurfaceBridge.as": "527e045129068f2c1153e9d843add5bddde07554dfef33a450937512bfa21b99",
+    "build\\m52\\recovery-wall-surfaces-host-01\\after\\scripts\\fe\\graph\\Grafon.as": "e6b4142462c1187388c4bb9c8151dd6c2605ce4e4b9fedd421cf4749c54bd7a0",
+    "build\\m52\\recovery-wall-color-roundtrip-01\\component-result.json": "2708d86e8a0da4d5e2953a36cf55a76ac84894b7d46028333e190c3b065caf03"
+  }
+}

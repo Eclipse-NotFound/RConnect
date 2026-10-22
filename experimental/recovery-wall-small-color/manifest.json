@@ -1,0 +1,38 @@
+{
+  "kind": "ordinary-wall-color-source-only",
+  "baseline": {
+    "fe/graph/Grafon.as": "83e379f86d2978c28ad49177d13b3601d05957ab741a89c3e811d92b13889950",
+    "rconnect/core/Log.as": "1c707679e5ca9262f78aea27fc7dbe7802d39706ca4e88f5ad46a4ccad67a0b4",
+    "rconnect/game/GameBridge.as": "f0d9a9dcc7c6c640acc19d82103fd60d726117e72973cf3b2b273363dfe491a6",
+    "rconnect/game/NativeWallColor.as": "0f7160457f21d46759cc3b43d9defd17a8d921007521407365d906988dcfa842",
+    "rconnect/game/WallBefore.as": "dcf1c20e9275134c902ed55be1b3cc4a9ccf3b660f504dbbf3f648db0769e18f",
+    "rconnect/game/WallImpactVisuals.as": "d8a88d98331aa8ab62b093ed36066f8ca5eb3d348a4f863474580e7fddb7d7bd",
+    "rconnect/game/WallSurfaceBridge.as": "b7f58ccb994f30f86041249c56730831345e95742127814e1afa77bd44d69ad1",
+    "rconnect/net/RoomCodec.as": "296ee4d8d94f77faa62dcc17a39cb1e2492c756d3027311713c33935ca6b6b4a",
+    "rconnect/net/WallCellCodec.as": "4d0bb10dbe60227f167fad2d0c48fa3e6dd22b114f496084ba651ca84761dc8c",
+    "WallSurfaceChecks.as": "01d9f3ea50a6b6d99d05d46d35548f2126cbbbcbfc301f31cda18fd0e234f41b"
+  },
+  "source": {
+    "rconnect/game/WallImpactVisuals.as": "8e22a443a5cd6986b68215631a4b5d15cfc02f06cd4985f13c40010efbe503fa"
+  },
+  "components": {
+    "fe/graph/Grafon.as": "83e379f86d2978c28ad49177d13b3601d05957ab741a89c3e811d92b13889950",
+    "rconnect/core/Log.as": "1c707679e5ca9262f78aea27fc7dbe7802d39706ca4e88f5ad46a4ccad67a0b4",
+    "rconnect/game/GameBridge.as": "f0d9a9dcc7c6c640acc19d82103fd60d726117e72973cf3b2b273363dfe491a6",
+    "rconnect/game/NativeWallColor.as": "0f7160457f21d46759cc3b43d9defd17a8d921007521407365d906988dcfa842",
+    "rconnect/game/WallBefore.as": "dcf1c20e9275134c902ed55be1b3cc4a9ccf3b660f504dbbf3f648db0769e18f",
+    "rconnect/game/WallImpactVisuals.as": "8e22a443a5cd6986b68215631a4b5d15cfc02f06cd4985f13c40010efbe503fa",
+    "rconnect/game/WallSurfaceBridge.as": "b7f58ccb994f30f86041249c56730831345e95742127814e1afa77bd44d69ad1",
+    "rconnect/net/RoomCodec.as": "296ee4d8d94f77faa62dcc17a39cb1e2492c756d3027311713c33935ca6b6b4a",
+    "rconnect/net/WallCellCodec.as": "4d0bb10dbe60227f167fad2d0c48fa3e6dd22b114f496084ba651ca84761dc8c",
+    "WallSurfaceChecks.as": "5db5ce231cccd1a02fafbcb3395f6fea2697cee393d2b59eea1fbe648e6cb724"
+  },
+  "baseline_component_receipt_sha256": "89d8acccebfd31233daa926412a65d115b684cdd00b148b1faa9029905f12b7a",
+  "expected_checks": 85,
+  "original_checks": 69,
+  "added_checks": 16,
+  "compiled": false,
+  "air_started": false,
+  "installed": false,
+  "performance_qualified": false
+}

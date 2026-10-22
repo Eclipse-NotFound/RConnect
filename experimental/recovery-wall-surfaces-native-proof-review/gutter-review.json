@@ -1,0 +1,211 @@
+{
+  "round": 2,
+  "index": 6737,
+  "source_role": "host",
+  "source_neighbor_pixel_values_recorded": false,
+  "wire_pixel_values_recorded": false,
+  "impact_enumeration_order_observed": false,
+  "production_root_cause_confirmed": false,
+  "air_started": false,
+  "jvm_started": false,
+  "roles": {
+    "host": {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery16-wall-surfaces-native-01\\wall-proof\\host\\round-2-proof.json",
+      "sha256": "4d9a2a72a3e8646858762b3f7b5ba1e24c35a3f3985d59edbb6ae4a8e8a071e6",
+      "source": true,
+      "surfaces_in_recorded_order": [
+        {
+          "order": 0,
+          "x": 600,
+          "y": 4440,
+          "local_x": 57,
+          "local_y": 8,
+          "core": false,
+          "gutter": true,
+          "revision_before": 0
+        },
+        {
+          "order": 1,
+          "x": 600,
+          "y": 4120,
+          "local_x": 57,
+          "local_y": 328,
+          "core": true,
+          "gutter": false,
+          "revision_before": 1
+        },
+        {
+          "order": 2,
+          "x": 280,
+          "y": 4120,
+          "local_x": 377,
+          "local_y": 328,
+          "core": false,
+          "gutter": true,
+          "revision_before": 1
+        },
+        {
+          "order": 3,
+          "x": 280,
+          "y": 4440,
+          "local_x": 377,
+          "local_y": 8,
+          "core": false,
+          "gutter": true,
+          "revision_before": 0
+        }
+      ],
+      "baseline": "ff75756c",
+      "final_native": "ff43433c",
+      "final_display": "ff43433c",
+      "timeline": [
+        {
+          "at": 117588,
+          "wall": 1792627914105,
+          "native": "ff75756b",
+          "display": "ff75756b"
+        },
+        {
+          "at": 118185,
+          "wall": 1792627914702,
+          "native": "ff696960",
+          "display": "ff696960"
+        },
+        {
+          "at": 118754,
+          "wall": 1792627915270,
+          "native": "ff5b5b53",
+          "display": "ff5b5b53"
+        },
+        {
+          "at": 119395,
+          "wall": 1792627915912,
+          "native": "ff51514a",
+          "display": "ff51514a"
+        },
+        {
+          "at": 120642,
+          "wall": 1792627917158,
+          "native": "ff4e4e47",
+          "display": "ff4e4e47"
+        },
+        {
+          "at": 121230,
+          "wall": 1792627917747,
+          "native": "ff4e4e46",
+          "display": "ff4e4e46"
+        },
+        {
+          "at": 121987,
+          "wall": 1792627918503,
+          "native": "ff43433c",
+          "display": "ff43433c"
+        }
+      ],
+      "wire_fields": []
+    },
+    "join": {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery16-wall-surfaces-native-01\\wall-proof\\join\\round-2-proof.json",
+      "sha256": "d8ac750b5bf1e599711b4fddcd2ddd7b967f1564e6b84b2e025b926dd40245f0",
+      "source": false,
+      "surfaces_in_recorded_order": [
+        {
+          "order": 0,
+          "x": 600,
+          "y": 4120,
+          "local_x": 57,
+          "local_y": 328,
+          "core": true,
+          "gutter": false,
+          "revision_before": 1
+        },
+        {
+          "order": 1,
+          "x": 600,
+          "y": 4440,
+          "local_x": 57,
+          "local_y": 8,
+          "core": false,
+          "gutter": true,
+          "revision_before": 0
+        },
+        {
+          "order": 2,
+          "x": 280,
+          "y": 4120,
+          "local_x": 377,
+          "local_y": 328,
+          "core": false,
+          "gutter": true,
+          "revision_before": 1
+        },
+        {
+          "order": 3,
+          "x": 280,
+          "y": 4440,
+          "local_x": 377,
+          "local_y": 8,
+          "core": false,
+          "gutter": true,
+          "revision_before": 0
+        }
+      ],
+      "baseline": "ff75756c",
+      "final_native": "ff42423c",
+      "final_display": "ff42423c",
+      "timeline": [
+        {
+          "at": 81683,
+          "wall": 1792627914747,
+          "native": "ff75756b",
+          "display": "ff75756b"
+        },
+        {
+          "at": 82245,
+          "wall": 1792627915309,
+          "native": "ff696960",
+          "display": "ff696960"
+        },
+        {
+          "at": 82775,
+          "wall": 1792627915839,
+          "native": "ff5b5b53",
+          "display": "ff5b5b53"
+        },
+        {
+          "at": 83108,
+          "wall": 1792627916172,
+          "native": "ff51514a",
+          "display": "ff51514a"
+        },
+        {
+          "at": 84353,
+          "wall": 1792627917417,
+          "native": "ff4e4e47",
+          "display": "ff4e4e47"
+        },
+        {
+          "at": 84907,
+          "wall": 1792627917971,
+          "native": "ff4d4d46",
+          "display": "ff4d4d46"
+        },
+        {
+          "at": 85986,
+          "wall": 1792627919050,
+          "native": "ff42423c",
+          "display": "ff42423c"
+        }
+      ],
+      "wire_fields": [
+        "v",
+        "x",
+        "y"
+      ]
+    }
+  },
+  "world": {
+    "x": 657,
+    "y": 4448
+  }
+}

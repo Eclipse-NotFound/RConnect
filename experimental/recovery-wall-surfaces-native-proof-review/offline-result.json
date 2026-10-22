@@ -1,0 +1,67 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "label": "exact opaque pixels",
+      "passed": true
+    },
+    {
+      "label": "exact transparent pixels",
+      "passed": true
+    },
+    {
+      "label": "observed floor/ceil 0x387f7f76",
+      "passed": true
+    },
+    {
+      "label": "observed floor/ceil 0x6c86847b",
+      "passed": true
+    },
+    {
+      "label": "observed floor/ceil 0xda1a1b19",
+      "passed": true
+    },
+    {
+      "label": "observed floor/ceil 0x1b26261c",
+      "passed": true
+    },
+    {
+      "label": "opaque one-bit RGB error rejected",
+      "passed": true
+    },
+    {
+      "label": "transparent hidden RGB corruption rejected",
+      "passed": true
+    },
+    {
+      "label": "alpha one-bit error rejected",
+      "passed": true
+    },
+    {
+      "label": "translucent two-bit error rejected",
+      "passed": true
+    },
+    {
+      "label": "adjacent but incompatible translucent channel rejected",
+      "passed": true
+    },
+    {
+      "label": "wrong pixel location rejected",
+      "passed": true
+    },
+    {
+      "label": "original gameplay uint comparator still rejects one-bit remote damage pixel",
+      "passed": true
+    },
+    {
+      "label": "all 32 actual control PNGs compatible; four genuine missing-sync cases remain failed",
+      "passed": true
+    }
+  ],
+  "count": 14,
+  "failed": 0,
+  "jvm_started": false,
+  "air_started": false,
+  "gameplay_qualified": false,
+  "performance_qualified": false
+}

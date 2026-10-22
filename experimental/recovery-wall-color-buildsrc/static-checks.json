@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "baseline_files": 89,
+  "output_files": 90,
+  "unchanged_base_files": 87,
+  "changed": [
+    "RConnectMod.as",
+    "rconnect/game/NativeWallColor.as",
+    "rconnect/game/WallSurfaceBridge.as"
+  ],
+  "setPixel32_call_changes": 2,
+  "original_component_checks": 54,
+  "added_component_checks": 15,
+  "expected_component_checks": 69,
+  "helper_exact_tested_bytes": true,
+  "wire_and_logic_unchanged": true,
+  "gutter_selection_unchanged": true,
+  "host_source_unchanged": true,
+  "jvm_started": false,
+  "air_started": false,
+  "performance_qualified": false
+}

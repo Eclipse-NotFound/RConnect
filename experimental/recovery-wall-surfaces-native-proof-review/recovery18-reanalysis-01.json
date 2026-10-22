@@ -1,0 +1,1172 @@
+{
+  "passed": false,
+  "functional_only": true,
+  "performance_qualified": false,
+  "rows": [
+    {
+      "round": 0,
+      "weapon": "lmg",
+      "source": "host",
+      "target": {
+        "hp": 1000,
+        "sx": 400,
+        "mat": 2,
+        "y": 2820,
+        "sy": 2860,
+        "x": 640,
+        "ty": 70,
+        "tx": 16
+      },
+      "native_equal": true,
+      "display_equal": true,
+      "native_expected": 109,
+      "native_wrong": 0,
+      "native_extra": 0,
+      "display_expected": 109,
+      "source_native_observed_wall": 1792629226040,
+      "remote_native_first_wall": 1792629226514,
+      "source_native_interval_before_wall": 1792629225988,
+      "remote_display_first_wall": 1792629226514,
+      "remote_native_complete_wall": 1792629226514,
+      "remote_display_complete_wall": 1792629226514,
+      "native_first_delay_ms": 474,
+      "display_first_delay_ms": 474,
+      "capture_max_ms": {
+        "host": 11,
+        "join": 10
+      },
+      "maximum_observation_gap_ms": {
+        "host": 319,
+        "join": 542
+      },
+      "functional_pass": true,
+      "performance_qualified": false
+    },
+    {
+      "round": 1,
+      "weapon": "lmg",
+      "source": "join",
+      "target": {
+        "hp": 1000,
+        "y": 4140,
+        "mat": 2,
+        "sx": 400,
+        "sy": 4180,
+        "x": 640,
+        "ty": 103,
+        "tx": 16
+      },
+      "native_equal": true,
+      "display_equal": true,
+      "native_expected": 68,
+      "native_wrong": 0,
+      "native_extra": 0,
+      "display_expected": 68,
+      "source_native_observed_wall": 1792629241332,
+      "remote_native_first_wall": 1792629241514,
+      "source_native_interval_before_wall": 1792629241271,
+      "remote_display_first_wall": 1792629241514,
+      "remote_native_complete_wall": 1792629241514,
+      "remote_display_complete_wall": 1792629241514,
+      "native_first_delay_ms": 182,
+      "display_first_delay_ms": 182,
+      "capture_max_ms": {
+        "join": 16,
+        "host": 9
+      },
+      "maximum_observation_gap_ms": {
+        "join": 449,
+        "host": 297
+      },
+      "functional_pass": true,
+      "performance_qualified": false
+    },
+    {
+      "round": 2,
+      "weapon": "plamg",
+      "source": "host",
+      "target": {
+        "hp": 1000,
+        "sx": 400,
+        "mat": 2,
+        "y": 4460,
+        "sy": 4500,
+        "x": 640,
+        "ty": 111,
+        "tx": 16
+      },
+      "native_equal": false,
+      "display_equal": false,
+      "native_expected": 1186,
+      "native_wrong": 2,
+      "native_extra": 0,
+      "display_expected": 1186,
+      "source_native_observed_wall": 1792629256093,
+      "remote_native_first_wall": 1792629256948,
+      "source_native_interval_before_wall": 1792629256026,
+      "remote_display_first_wall": 1792629256948,
+      "remote_native_complete_wall": null,
+      "remote_display_complete_wall": null,
+      "native_first_delay_ms": 855,
+      "display_first_delay_ms": 855,
+      "capture_max_ms": {
+        "host": 9,
+        "join": 11
+      },
+      "maximum_observation_gap_ms": {
+        "host": 271,
+        "join": 534
+      },
+      "functional_pass": false,
+      "performance_qualified": false
+    },
+    {
+      "round": 3,
+      "weapon": "plamg",
+      "source": "join",
+      "target": {
+        "hp": 1000,
+        "y": 4660,
+        "mat": 2,
+        "sx": 400,
+        "sy": 4700,
+        "x": 640,
+        "ty": 116,
+        "tx": 16
+      },
+      "native_equal": true,
+      "display_equal": true,
+      "native_expected": 953,
+      "native_wrong": 0,
+      "native_extra": 0,
+      "display_expected": 953,
+      "source_native_observed_wall": 1792629271908,
+      "remote_native_first_wall": 1792629273800,
+      "source_native_interval_before_wall": 1792629271863,
+      "remote_display_first_wall": 1792629273800,
+      "remote_native_complete_wall": 1792629277615,
+      "remote_display_complete_wall": 1792629277615,
+      "native_first_delay_ms": 1892,
+      "display_first_delay_ms": 1892,
+      "capture_max_ms": {
+        "join": 12,
+        "host": 11
+      },
+      "maximum_observation_gap_ms": {
+        "join": 429,
+        "host": 243
+      },
+      "functional_pass": true,
+      "performance_qualified": false
+    }
+  ],
+  "errors": [
+    "case 2: persistent native/display pixels did not arrive exactly"
+  ],
+  "artifacts": {
+    "host\\round-0-proof.json": "e26474ea781751e5783f08aad18057b5130e3921e9346d12cd134fdf6f43fb03",
+    "host\\round-0-before-native.png": "b532e5916fddcf73e02042bb20cd33eab84d7814acb97589b48c815776b1ef9e",
+    "host\\round-0-after-native.png": "1bf3327ce5d54ade60d9fe58ed4038e3c0d771a953ec1933ced2791af51bc031",
+    "host\\round-0-before-display.png": "b532e5916fddcf73e02042bb20cd33eab84d7814acb97589b48c815776b1ef9e",
+    "host\\round-0-after-display.png": "1bf3327ce5d54ade60d9fe58ed4038e3c0d771a953ec1933ced2791af51bc031",
+    "host\\round-1-proof.json": "4bd424e5ecd6e85bb6480c6a0b17d382d13e6077fec74fa3d9c0c4c080c63202",
+    "host\\round-1-before-native.png": "ee726b60c6c571194d330faa02e2a82b04dac3a651696f404f98a569dbef9a79",
+    "host\\round-1-after-native.png": "672698ab9a55e957b209715a9fe6ea6f4355351f21b1f613b4fa86a5027b6228",
+    "host\\round-1-before-display.png": "ee726b60c6c571194d330faa02e2a82b04dac3a651696f404f98a569dbef9a79",
+    "host\\round-1-after-display.png": "672698ab9a55e957b209715a9fe6ea6f4355351f21b1f613b4fa86a5027b6228",
+    "host\\round-2-proof.json": "f0a8d4b037ef9877e971042db28ccbf6d1f9b6c143d376302f7c7fb8c56e55ed",
+    "host\\round-2-before-native.png": "c29a2eb953226c25f815164d7b5ffe53523b5112bb49c550466111f820565378",
+    "host\\round-2-after-native.png": "c73fccaccb8cba525ddec3e694204a9de382a881c599e6a37f16e27513962d88",
+    "host\\round-2-before-display.png": "b5f8d1760dcf95f7d85f797a5686c22da9309a0a7a758fbf3fd9f3cd5970188b",
+    "host\\round-2-after-display.png": "84fd30c1d415ccb53b81537e3323719dfd39233d16ef5e316b3830e6689abf6d",
+    "host\\round-3-proof.json": "241b9656f4e8f083e4319b924e17b7a505a3b9162d05f70cfebfff0d445f2917",
+    "host\\round-3-before-native.png": "dc8170cd8763910bfb4e56a813c51ec04422aa335d2dc75783b8523bda8ab681",
+    "host\\round-3-after-native.png": "d4eb143e35ab2720d22ee9a9ea3619180c4974f0a10cb61622c1da257b755371",
+    "host\\round-3-before-display.png": "8eecdd8254e2a3f96947708b76893d7a0bf5e8507d735a3f48568d92714709e0",
+    "host\\round-3-after-display.png": "93dd67d395286b9c0c83a759c1cf30a49686f122149614025a5634dda9532779",
+    "join\\round-0-proof.json": "6a760bbc44fa252ae9b0c8cadab4cfb61b9d2da4445fdb44956a52cb862c7229",
+    "join\\round-0-before-native.png": "b532e5916fddcf73e02042bb20cd33eab84d7814acb97589b48c815776b1ef9e",
+    "join\\round-0-after-native.png": "1bf3327ce5d54ade60d9fe58ed4038e3c0d771a953ec1933ced2791af51bc031",
+    "join\\round-0-before-display.png": "b532e5916fddcf73e02042bb20cd33eab84d7814acb97589b48c815776b1ef9e",
+    "join\\round-0-after-display.png": "1bf3327ce5d54ade60d9fe58ed4038e3c0d771a953ec1933ced2791af51bc031",
+    "join\\round-1-proof.json": "c61fcf18a989aa959c7ee1bdb7f31d5b60608cc068d1e3cc7ada0c61fef491fa",
+    "join\\round-1-before-native.png": "ee726b60c6c571194d330faa02e2a82b04dac3a651696f404f98a569dbef9a79",
+    "join\\round-1-after-native.png": "672698ab9a55e957b209715a9fe6ea6f4355351f21b1f613b4fa86a5027b6228",
+    "join\\round-1-before-display.png": "ee726b60c6c571194d330faa02e2a82b04dac3a651696f404f98a569dbef9a79",
+    "join\\round-1-after-display.png": "672698ab9a55e957b209715a9fe6ea6f4355351f21b1f613b4fa86a5027b6228",
+    "join\\round-2-proof.json": "cdc2fd2cc0bf343bffadaea901c270d35ba820391a63f48a2affbc948f52377b",
+    "join\\round-2-before-native.png": "c29a2eb953226c25f815164d7b5ffe53523b5112bb49c550466111f820565378",
+    "join\\round-2-after-native.png": "ab057ea64bb13abbe8e0b74e07f0882d4e8843688799fc8979ab519cc9d4e90a",
+    "join\\round-2-before-display.png": "b5f8d1760dcf95f7d85f797a5686c22da9309a0a7a758fbf3fd9f3cd5970188b",
+    "join\\round-2-after-display.png": "ccbf5463c0527e880810e233bc23fd38133ed04468238dfa0060fe2b71610383",
+    "join\\round-3-proof.json": "07cf3e48b59dba4db04445368a2ea8e314fe83ffd2a05b5c1fe5f800eebab4ca",
+    "join\\round-3-before-native.png": "dc8170cd8763910bfb4e56a813c51ec04422aa335d2dc75783b8523bda8ab681",
+    "join\\round-3-after-native.png": "d4eb143e35ab2720d22ee9a9ea3619180c4974f0a10cb61622c1da257b755371",
+    "join\\round-3-before-display.png": "8eecdd8254e2a3f96947708b76893d7a0bf5e8507d735a3f48568d92714709e0",
+    "join\\round-3-after-display.png": "93dd67d395286b9c0c83a759c1cf30a49686f122149614025a5634dda9532779"
+  },
+  "png_audit": {
+    "host\\round-0-before-native.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 31,
+      "rounding_channels": 41,
+      "examples": [
+        {
+          "index": 6338,
+          "json_argb": "387f7f76",
+          "png_argb": "38808076"
+        },
+        {
+          "index": 8129,
+          "json_argb": "6c86847b",
+          "png_argb": "6c87847b"
+        },
+        {
+          "index": 8513,
+          "json_argb": "6c7f7d71",
+          "png_argb": "6c807d71"
+        },
+        {
+          "index": 8641,
+          "json_argb": "387f7b76",
+          "png_argb": "38807b76"
+        }
+      ]
+    },
+    "host\\round-0-after-native.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 31,
+      "rounding_channels": 41,
+      "examples": [
+        {
+          "index": 6338,
+          "json_argb": "387f7f76",
+          "png_argb": "38808076"
+        },
+        {
+          "index": 8129,
+          "json_argb": "6c86847b",
+          "png_argb": "6c87847b"
+        },
+        {
+          "index": 8513,
+          "json_argb": "6c7f7d71",
+          "png_argb": "6c807d71"
+        },
+        {
+          "index": 8641,
+          "json_argb": "387f7b76",
+          "png_argb": "38807b76"
+        }
+      ]
+    },
+    "host\\round-0-before-display.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 31,
+      "rounding_channels": 41,
+      "examples": [
+        {
+          "index": 6338,
+          "json_argb": "387f7f76",
+          "png_argb": "38808076"
+        },
+        {
+          "index": 8129,
+          "json_argb": "6c86847b",
+          "png_argb": "6c87847b"
+        },
+        {
+          "index": 8513,
+          "json_argb": "6c7f7d71",
+          "png_argb": "6c807d71"
+        },
+        {
+          "index": 8641,
+          "json_argb": "387f7b76",
+          "png_argb": "38807b76"
+        }
+      ]
+    },
+    "host\\round-0-after-display.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 31,
+      "rounding_channels": 41,
+      "examples": [
+        {
+          "index": 6338,
+          "json_argb": "387f7f76",
+          "png_argb": "38808076"
+        },
+        {
+          "index": 8129,
+          "json_argb": "6c86847b",
+          "png_argb": "6c87847b"
+        },
+        {
+          "index": 8513,
+          "json_argb": "6c7f7d71",
+          "png_argb": "6c807d71"
+        },
+        {
+          "index": 8641,
+          "json_argb": "387f7b76",
+          "png_argb": "38807b76"
+        }
+      ]
+    },
+    "host\\round-1-before-native.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 31,
+      "rounding_channels": 41,
+      "examples": [
+        {
+          "index": 65,
+          "json_argb": "daa9aba5",
+          "png_argb": "daaaaba5"
+        },
+        {
+          "index": 2370,
+          "json_argb": "387f7f76",
+          "png_argb": "38808076"
+        },
+        {
+          "index": 2881,
+          "json_argb": "6c868982",
+          "png_argb": "6c878982"
+        },
+        {
+          "index": 3393,
+          "json_argb": "6c999792",
+          "png_argb": "6c9a9792"
+        }
+      ]
+    },
+    "host\\round-1-after-native.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 28,
+      "rounding_channels": 34,
+      "examples": [
+        {
+          "index": 65,
+          "json_argb": "daa9aba5",
+          "png_argb": "daaaaba5"
+        },
+        {
+          "index": 2370,
+          "json_argb": "387f7f76",
+          "png_argb": "38808076"
+        },
+        {
+          "index": 2881,
+          "json_argb": "6c868982",
+          "png_argb": "6c878982"
+        },
+        {
+          "index": 3393,
+          "json_argb": "6c999792",
+          "png_argb": "6c9a9792"
+        }
+      ]
+    },
+    "host\\round-1-before-display.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 31,
+      "rounding_channels": 41,
+      "examples": [
+        {
+          "index": 65,
+          "json_argb": "daa9aba5",
+          "png_argb": "daaaaba5"
+        },
+        {
+          "index": 2370,
+          "json_argb": "387f7f76",
+          "png_argb": "38808076"
+        },
+        {
+          "index": 2881,
+          "json_argb": "6c868982",
+          "png_argb": "6c878982"
+        },
+        {
+          "index": 3393,
+          "json_argb": "6c999792",
+          "png_argb": "6c9a9792"
+        }
+      ]
+    },
+    "host\\round-1-after-display.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 28,
+      "rounding_channels": 34,
+      "examples": [
+        {
+          "index": 65,
+          "json_argb": "daa9aba5",
+          "png_argb": "daaaaba5"
+        },
+        {
+          "index": 2370,
+          "json_argb": "387f7f76",
+          "png_argb": "38808076"
+        },
+        {
+          "index": 2881,
+          "json_argb": "6c868982",
+          "png_argb": "6c878982"
+        },
+        {
+          "index": 3393,
+          "json_argb": "6c999792",
+          "png_argb": "6c9a9792"
+        }
+      ]
+    },
+    "host\\round-2-before-native.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 27,
+      "rounding_channels": 46,
+      "examples": [
+        {
+          "index": 138,
+          "json_argb": "da1a1b19",
+          "png_argb": "da191b18"
+        },
+        {
+          "index": 165,
+          "json_argb": "da121312",
+          "png_argb": "da111211"
+        },
+        {
+          "index": 177,
+          "json_argb": "84232321",
+          "png_argb": "84222220"
+        },
+        {
+          "index": 263,
+          "json_argb": "ee282a28",
+          "png_argb": "ee272927"
+        }
+      ]
+    },
+    "host\\round-2-after-native.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 34,
+      "rounding_channels": 71,
+      "examples": [
+        {
+          "index": 138,
+          "json_argb": "da1a1b19",
+          "png_argb": "da191b18"
+        },
+        {
+          "index": 165,
+          "json_argb": "da121312",
+          "png_argb": "da111211"
+        },
+        {
+          "index": 177,
+          "json_argb": "84232321",
+          "png_argb": "84222220"
+        },
+        {
+          "index": 263,
+          "json_argb": "ee282a28",
+          "png_argb": "ee272927"
+        }
+      ]
+    },
+    "host\\round-2-before-display.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 27,
+      "rounding_channels": 46,
+      "examples": [
+        {
+          "index": 138,
+          "json_argb": "da1a1b19",
+          "png_argb": "da191b18"
+        },
+        {
+          "index": 165,
+          "json_argb": "da121312",
+          "png_argb": "da111211"
+        },
+        {
+          "index": 177,
+          "json_argb": "84232321",
+          "png_argb": "84222220"
+        },
+        {
+          "index": 263,
+          "json_argb": "ee282a28",
+          "png_argb": "ee272927"
+        }
+      ]
+    },
+    "host\\round-2-after-display.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 34,
+      "rounding_channels": 71,
+      "examples": [
+        {
+          "index": 138,
+          "json_argb": "da1a1b19",
+          "png_argb": "da191b18"
+        },
+        {
+          "index": 165,
+          "json_argb": "da121312",
+          "png_argb": "da111211"
+        },
+        {
+          "index": 177,
+          "json_argb": "84232321",
+          "png_argb": "84222220"
+        },
+        {
+          "index": 263,
+          "json_argb": "ee282a28",
+          "png_argb": "ee272927"
+        }
+      ]
+    },
+    "host\\round-3-before-native.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 28,
+      "rounding_channels": 36,
+      "examples": [
+        {
+          "index": 5611,
+          "json_argb": "1e999990",
+          "png_argb": "1e999991"
+        },
+        {
+          "index": 6338,
+          "json_argb": "387f7f7b",
+          "png_argb": "3880807b"
+        },
+        {
+          "index": 7106,
+          "json_argb": "f67f7e78",
+          "png_argb": "f6807e78"
+        },
+        {
+          "index": 7234,
+          "json_argb": "bd818078",
+          "png_argb": "bd828078"
+        }
+      ]
+    },
+    "host\\round-3-after-native.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 23,
+      "rounding_channels": 32,
+      "examples": [
+        {
+          "index": 5611,
+          "json_argb": "1e999990",
+          "png_argb": "1e999991"
+        },
+        {
+          "index": 5952,
+          "json_argb": "8e34342f",
+          "png_argb": "8e34342e"
+        },
+        {
+          "index": 6081,
+          "json_argb": "e63f3f3b",
+          "png_argb": "e63f3f3a"
+        },
+        {
+          "index": 6594,
+          "json_argb": "cd1e1e1d",
+          "png_argb": "cd1d1d1c"
+        }
+      ]
+    },
+    "host\\round-3-before-display.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 28,
+      "rounding_channels": 36,
+      "examples": [
+        {
+          "index": 5611,
+          "json_argb": "1e999990",
+          "png_argb": "1e999991"
+        },
+        {
+          "index": 6338,
+          "json_argb": "387f7f7b",
+          "png_argb": "3880807b"
+        },
+        {
+          "index": 7106,
+          "json_argb": "f67f7e78",
+          "png_argb": "f6807e78"
+        },
+        {
+          "index": 7234,
+          "json_argb": "bd818078",
+          "png_argb": "bd828078"
+        }
+      ]
+    },
+    "host\\round-3-after-display.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 23,
+      "rounding_channels": 32,
+      "examples": [
+        {
+          "index": 5611,
+          "json_argb": "1e999990",
+          "png_argb": "1e999991"
+        },
+        {
+          "index": 5952,
+          "json_argb": "8e34342f",
+          "png_argb": "8e34342e"
+        },
+        {
+          "index": 6081,
+          "json_argb": "e63f3f3b",
+          "png_argb": "e63f3f3a"
+        },
+        {
+          "index": 6594,
+          "json_argb": "cd1e1e1d",
+          "png_argb": "cd1d1d1c"
+        }
+      ]
+    },
+    "join\\round-0-before-native.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 31,
+      "rounding_channels": 41,
+      "examples": [
+        {
+          "index": 6338,
+          "json_argb": "387f7f76",
+          "png_argb": "38808076"
+        },
+        {
+          "index": 8129,
+          "json_argb": "6c86847b",
+          "png_argb": "6c87847b"
+        },
+        {
+          "index": 8513,
+          "json_argb": "6c7f7d71",
+          "png_argb": "6c807d71"
+        },
+        {
+          "index": 8641,
+          "json_argb": "387f7b76",
+          "png_argb": "38807b76"
+        }
+      ]
+    },
+    "join\\round-0-after-native.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 31,
+      "rounding_channels": 41,
+      "examples": [
+        {
+          "index": 6338,
+          "json_argb": "387f7f76",
+          "png_argb": "38808076"
+        },
+        {
+          "index": 8129,
+          "json_argb": "6c86847b",
+          "png_argb": "6c87847b"
+        },
+        {
+          "index": 8513,
+          "json_argb": "6c7f7d71",
+          "png_argb": "6c807d71"
+        },
+        {
+          "index": 8641,
+          "json_argb": "387f7b76",
+          "png_argb": "38807b76"
+        }
+      ]
+    },
+    "join\\round-0-before-display.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 31,
+      "rounding_channels": 41,
+      "examples": [
+        {
+          "index": 6338,
+          "json_argb": "387f7f76",
+          "png_argb": "38808076"
+        },
+        {
+          "index": 8129,
+          "json_argb": "6c86847b",
+          "png_argb": "6c87847b"
+        },
+        {
+          "index": 8513,
+          "json_argb": "6c7f7d71",
+          "png_argb": "6c807d71"
+        },
+        {
+          "index": 8641,
+          "json_argb": "387f7b76",
+          "png_argb": "38807b76"
+        }
+      ]
+    },
+    "join\\round-0-after-display.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 31,
+      "rounding_channels": 41,
+      "examples": [
+        {
+          "index": 6338,
+          "json_argb": "387f7f76",
+          "png_argb": "38808076"
+        },
+        {
+          "index": 8129,
+          "json_argb": "6c86847b",
+          "png_argb": "6c87847b"
+        },
+        {
+          "index": 8513,
+          "json_argb": "6c7f7d71",
+          "png_argb": "6c807d71"
+        },
+        {
+          "index": 8641,
+          "json_argb": "387f7b76",
+          "png_argb": "38807b76"
+        }
+      ]
+    },
+    "join\\round-1-before-native.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 31,
+      "rounding_channels": 41,
+      "examples": [
+        {
+          "index": 65,
+          "json_argb": "daa9aba5",
+          "png_argb": "daaaaba5"
+        },
+        {
+          "index": 2370,
+          "json_argb": "387f7f76",
+          "png_argb": "38808076"
+        },
+        {
+          "index": 2881,
+          "json_argb": "6c868982",
+          "png_argb": "6c878982"
+        },
+        {
+          "index": 3393,
+          "json_argb": "6c999792",
+          "png_argb": "6c9a9792"
+        }
+      ]
+    },
+    "join\\round-1-after-native.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 28,
+      "rounding_channels": 34,
+      "examples": [
+        {
+          "index": 65,
+          "json_argb": "daa9aba5",
+          "png_argb": "daaaaba5"
+        },
+        {
+          "index": 2370,
+          "json_argb": "387f7f76",
+          "png_argb": "38808076"
+        },
+        {
+          "index": 2881,
+          "json_argb": "6c868982",
+          "png_argb": "6c878982"
+        },
+        {
+          "index": 3393,
+          "json_argb": "6c999792",
+          "png_argb": "6c9a9792"
+        }
+      ]
+    },
+    "join\\round-1-before-display.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 31,
+      "rounding_channels": 41,
+      "examples": [
+        {
+          "index": 65,
+          "json_argb": "daa9aba5",
+          "png_argb": "daaaaba5"
+        },
+        {
+          "index": 2370,
+          "json_argb": "387f7f76",
+          "png_argb": "38808076"
+        },
+        {
+          "index": 2881,
+          "json_argb": "6c868982",
+          "png_argb": "6c878982"
+        },
+        {
+          "index": 3393,
+          "json_argb": "6c999792",
+          "png_argb": "6c9a9792"
+        }
+      ]
+    },
+    "join\\round-1-after-display.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 28,
+      "rounding_channels": 34,
+      "examples": [
+        {
+          "index": 65,
+          "json_argb": "daa9aba5",
+          "png_argb": "daaaaba5"
+        },
+        {
+          "index": 2370,
+          "json_argb": "387f7f76",
+          "png_argb": "38808076"
+        },
+        {
+          "index": 2881,
+          "json_argb": "6c868982",
+          "png_argb": "6c878982"
+        },
+        {
+          "index": 3393,
+          "json_argb": "6c999792",
+          "png_argb": "6c9a9792"
+        }
+      ]
+    },
+    "join\\round-2-before-native.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 27,
+      "rounding_channels": 46,
+      "examples": [
+        {
+          "index": 138,
+          "json_argb": "da1a1b19",
+          "png_argb": "da191b18"
+        },
+        {
+          "index": 165,
+          "json_argb": "da121312",
+          "png_argb": "da111211"
+        },
+        {
+          "index": 177,
+          "json_argb": "84232321",
+          "png_argb": "84222220"
+        },
+        {
+          "index": 263,
+          "json_argb": "ee282a28",
+          "png_argb": "ee272927"
+        }
+      ]
+    },
+    "join\\round-2-after-native.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 34,
+      "rounding_channels": 71,
+      "examples": [
+        {
+          "index": 138,
+          "json_argb": "da1a1b19",
+          "png_argb": "da191b18"
+        },
+        {
+          "index": 165,
+          "json_argb": "da121312",
+          "png_argb": "da111211"
+        },
+        {
+          "index": 177,
+          "json_argb": "84232321",
+          "png_argb": "84222220"
+        },
+        {
+          "index": 263,
+          "json_argb": "ee282a28",
+          "png_argb": "ee272927"
+        }
+      ]
+    },
+    "join\\round-2-before-display.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 27,
+      "rounding_channels": 46,
+      "examples": [
+        {
+          "index": 138,
+          "json_argb": "da1a1b19",
+          "png_argb": "da191b18"
+        },
+        {
+          "index": 165,
+          "json_argb": "da121312",
+          "png_argb": "da111211"
+        },
+        {
+          "index": 177,
+          "json_argb": "84232321",
+          "png_argb": "84222220"
+        },
+        {
+          "index": 263,
+          "json_argb": "ee282a28",
+          "png_argb": "ee272927"
+        }
+      ]
+    },
+    "join\\round-2-after-display.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 34,
+      "rounding_channels": 71,
+      "examples": [
+        {
+          "index": 138,
+          "json_argb": "da1a1b19",
+          "png_argb": "da191b18"
+        },
+        {
+          "index": 165,
+          "json_argb": "da121312",
+          "png_argb": "da111211"
+        },
+        {
+          "index": 177,
+          "json_argb": "84232321",
+          "png_argb": "84222220"
+        },
+        {
+          "index": 263,
+          "json_argb": "ee282a28",
+          "png_argb": "ee272927"
+        }
+      ]
+    },
+    "join\\round-3-before-native.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 28,
+      "rounding_channels": 36,
+      "examples": [
+        {
+          "index": 5611,
+          "json_argb": "1e999990",
+          "png_argb": "1e999991"
+        },
+        {
+          "index": 6338,
+          "json_argb": "387f7f7b",
+          "png_argb": "3880807b"
+        },
+        {
+          "index": 7106,
+          "json_argb": "f67f7e78",
+          "png_argb": "f6807e78"
+        },
+        {
+          "index": 7234,
+          "json_argb": "bd818078",
+          "png_argb": "bd828078"
+        }
+      ]
+    },
+    "join\\round-3-after-native.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 23,
+      "rounding_channels": 32,
+      "examples": [
+        {
+          "index": 5611,
+          "json_argb": "1e999990",
+          "png_argb": "1e999991"
+        },
+        {
+          "index": 5952,
+          "json_argb": "8e34342f",
+          "png_argb": "8e34342e"
+        },
+        {
+          "index": 6081,
+          "json_argb": "e63f3f3b",
+          "png_argb": "e63f3f3a"
+        },
+        {
+          "index": 6594,
+          "json_argb": "cd1e1e1d",
+          "png_argb": "cd1d1d1c"
+        }
+      ]
+    },
+    "join\\round-3-before-display.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 28,
+      "rounding_channels": 36,
+      "examples": [
+        {
+          "index": 5611,
+          "json_argb": "1e999990",
+          "png_argb": "1e999991"
+        },
+        {
+          "index": 6338,
+          "json_argb": "387f7f7b",
+          "png_argb": "3880807b"
+        },
+        {
+          "index": 7106,
+          "json_argb": "f67f7e78",
+          "png_argb": "f6807e78"
+        },
+        {
+          "index": 7234,
+          "json_argb": "bd818078",
+          "png_argb": "bd828078"
+        }
+      ]
+    },
+    "join\\round-3-after-display.png": {
+      "exact_argb": false,
+      "representation_compatible": true,
+      "rounding_pixels": 23,
+      "rounding_channels": 32,
+      "examples": [
+        {
+          "index": 5611,
+          "json_argb": "1e999990",
+          "png_argb": "1e999991"
+        },
+        {
+          "index": 5952,
+          "json_argb": "8e34342f",
+          "png_argb": "8e34342e"
+        },
+        {
+          "index": 6081,
+          "json_argb": "e63f3f3b",
+          "png_argb": "e63f3f3a"
+        },
+        {
+          "index": 6594,
+          "json_argb": "cd1e1e1d",
+          "png_argb": "cd1d1d1c"
+        }
+      ]
+    }
+  },
+  "png_exact_argb": false,
+  "png_representation_compatible": true,
+  "source_remote_comparison": "exact uint equality; no tolerance",
+  "frozen_analyzer_sha256": "a3e8d886772d8facada4363331e79b6277c582b316f05c00e360e7edd247e874",
+  "modified_rule": "PNG straight-color floor/ceil compatibility only; no gameplay pixel tolerance",
+  "rounding_engine_microtest_performed": false,
+  "evidence": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01",
+  "native_run": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\9927d091b8",
+  "framework_passed": true,
+  "original_result_preserved": true,
+  "original_result_sha256": "3c522c17defb0479f92c66eb19d8e097ae0d05ca59a9895a0e2c0ef22e5a2588",
+  "framework_sha256": "b412bd7d8e2b795383f03465ebdf07d1b0b162ffe644ed28f15281a506fd91f8",
+  "input_sha256": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-surface-result.json": "3c522c17defb0479f92c66eb19d8e097ae0d05ca59a9895a0e2c0ef22e5a2588",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\result.json": "b412bd7d8e2b795383f03465ebdf07d1b0b162ffe644ed28f15281a506fd91f8",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-wall-surfaces-driver-04\\inputs\\large-wall\\verify_results.py": "a3e8d886772d8facada4363331e79b6277c582b316f05c00e360e7edd247e874",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\9927d091b8\\host.log": "7f528802332a21945b74935068e1461cbc2fbc7b033e19eebbc1718bef6218ce",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\9927d091b8\\join.log": "d00d28f0a33b68d46eb32bbcd43615c164d7c0d7a1b569943f9ef94fac53201a",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\host\\round-0-after-display.png": "1bf3327ce5d54ade60d9fe58ed4038e3c0d771a953ec1933ced2791af51bc031",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\host\\round-0-after-native.png": "1bf3327ce5d54ade60d9fe58ed4038e3c0d771a953ec1933ced2791af51bc031",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\host\\round-0-before-display.png": "b532e5916fddcf73e02042bb20cd33eab84d7814acb97589b48c815776b1ef9e",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\host\\round-0-before-native.png": "b532e5916fddcf73e02042bb20cd33eab84d7814acb97589b48c815776b1ef9e",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\host\\round-0-proof.json": "e26474ea781751e5783f08aad18057b5130e3921e9346d12cd134fdf6f43fb03",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\host\\round-1-after-display.png": "672698ab9a55e957b209715a9fe6ea6f4355351f21b1f613b4fa86a5027b6228",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\host\\round-1-after-native.png": "672698ab9a55e957b209715a9fe6ea6f4355351f21b1f613b4fa86a5027b6228",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\host\\round-1-before-display.png": "ee726b60c6c571194d330faa02e2a82b04dac3a651696f404f98a569dbef9a79",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\host\\round-1-before-native.png": "ee726b60c6c571194d330faa02e2a82b04dac3a651696f404f98a569dbef9a79",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\host\\round-1-proof.json": "4bd424e5ecd6e85bb6480c6a0b17d382d13e6077fec74fa3d9c0c4c080c63202",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\host\\round-2-after-display.png": "84fd30c1d415ccb53b81537e3323719dfd39233d16ef5e316b3830e6689abf6d",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\host\\round-2-after-native.png": "c73fccaccb8cba525ddec3e694204a9de382a881c599e6a37f16e27513962d88",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\host\\round-2-before-display.png": "b5f8d1760dcf95f7d85f797a5686c22da9309a0a7a758fbf3fd9f3cd5970188b",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\host\\round-2-before-native.png": "c29a2eb953226c25f815164d7b5ffe53523b5112bb49c550466111f820565378",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\host\\round-2-proof.json": "f0a8d4b037ef9877e971042db28ccbf6d1f9b6c143d376302f7c7fb8c56e55ed",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\host\\round-3-after-display.png": "93dd67d395286b9c0c83a759c1cf30a49686f122149614025a5634dda9532779",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\host\\round-3-after-native.png": "d4eb143e35ab2720d22ee9a9ea3619180c4974f0a10cb61622c1da257b755371",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\host\\round-3-before-display.png": "8eecdd8254e2a3f96947708b76893d7a0bf5e8507d735a3f48568d92714709e0",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\host\\round-3-before-native.png": "dc8170cd8763910bfb4e56a813c51ec04422aa335d2dc75783b8523bda8ab681",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\host\\round-3-proof.json": "241b9656f4e8f083e4319b924e17b7a505a3b9162d05f70cfebfff0d445f2917",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\join\\round-0-after-display.png": "1bf3327ce5d54ade60d9fe58ed4038e3c0d771a953ec1933ced2791af51bc031",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\join\\round-0-after-native.png": "1bf3327ce5d54ade60d9fe58ed4038e3c0d771a953ec1933ced2791af51bc031",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\join\\round-0-before-display.png": "b532e5916fddcf73e02042bb20cd33eab84d7814acb97589b48c815776b1ef9e",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\join\\round-0-before-native.png": "b532e5916fddcf73e02042bb20cd33eab84d7814acb97589b48c815776b1ef9e",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\join\\round-0-proof.json": "6a760bbc44fa252ae9b0c8cadab4cfb61b9d2da4445fdb44956a52cb862c7229",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\join\\round-1-after-display.png": "672698ab9a55e957b209715a9fe6ea6f4355351f21b1f613b4fa86a5027b6228",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\join\\round-1-after-native.png": "672698ab9a55e957b209715a9fe6ea6f4355351f21b1f613b4fa86a5027b6228",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\join\\round-1-before-display.png": "ee726b60c6c571194d330faa02e2a82b04dac3a651696f404f98a569dbef9a79",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\join\\round-1-before-native.png": "ee726b60c6c571194d330faa02e2a82b04dac3a651696f404f98a569dbef9a79",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\join\\round-1-proof.json": "c61fcf18a989aa959c7ee1bdb7f31d5b60608cc068d1e3cc7ada0c61fef491fa",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\join\\round-2-after-display.png": "ccbf5463c0527e880810e233bc23fd38133ed04468238dfa0060fe2b71610383",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\join\\round-2-after-native.png": "ab057ea64bb13abbe8e0b74e07f0882d4e8843688799fc8979ab519cc9d4e90a",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\join\\round-2-before-display.png": "b5f8d1760dcf95f7d85f797a5686c22da9309a0a7a758fbf3fd9f3cd5970188b",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\join\\round-2-before-native.png": "c29a2eb953226c25f815164d7b5ffe53523b5112bb49c550466111f820565378",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\join\\round-2-proof.json": "cdc2fd2cc0bf343bffadaea901c270d35ba820391a63f48a2affbc948f52377b",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\join\\round-3-after-display.png": "93dd67d395286b9c0c83a759c1cf30a49686f122149614025a5634dda9532779",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\join\\round-3-after-native.png": "d4eb143e35ab2720d22ee9a9ea3619180c4974f0a10cb61622c1da257b755371",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\join\\round-3-before-display.png": "8eecdd8254e2a3f96947708b76893d7a0bf5e8507d735a3f48568d92714709e0",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\join\\round-3-before-native.png": "dc8170cd8763910bfb4e56a813c51ec04422aa335d2dc75783b8523bda8ab681",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\join\\round-3-proof.json": "07cf3e48b59dba4db04445368a2ea8e314fe83ffd2a05b5c1fe5f800eebab4ca"
+  },
+  "source_unchanged": true,
+  "candidate_sha256": "11b795d0d6681caa4edfcc2d1c0df73cb38f6d706a1fb3c26518163f738fe4d3",
+  "native_host_sha256": "acc336b5f28012a5f0d2ef57d0a3bf46be46f72f1e4c3a69a2f063cae0535dfd",
+  "independent_reanalysis": true,
+  "jvm_started": false,
+  "air_started": false,
+  "installed": false
+}
