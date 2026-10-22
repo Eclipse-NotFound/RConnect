@@ -1,0 +1,96 @@
+{
+  "passed": true,
+  "count": 21,
+  "failed": 0,
+  "checks": [
+    {
+      "label": "original driver04 stimulus and assertions recovered exactly; original analyzer preserved",
+      "passed": true
+    },
+    {
+      "label": "bounded full crop read-only snapshots; uint readback/compression only after both samplers stop",
+      "passed": true
+    },
+    {
+      "label": "new boundary covers actual (651,4431) source-baseline false-positive mark",
+      "passed": true
+    },
+    {
+      "label": "same received packet holds multiple cells; outside-old-cell full causal evidence retained",
+      "passed": true
+    },
+    {
+      "label": "non-reproduction is never root-cause or product qualification",
+      "passed": true
+    },
+    {
+      "label": "full16384 exact big-endian uint roundtrip including original opaque/alpha counterexamples",
+      "passed": true
+    },
+    {
+      "label": "missing core for any crop pixel rejected",
+      "passed": true
+    },
+    {
+      "label": "duplicate physical buffer rejected",
+      "passed": true
+    },
+    {
+      "label": "actual raw d/version mutation rejected",
+      "passed": true
+    },
+    {
+      "label": "different event frame rejected",
+      "passed": true
+    },
+    {
+      "label": "missing after callback rejected",
+      "passed": true
+    },
+    {
+      "label": "original crop truncated rejected",
+      "passed": true
+    },
+    {
+      "label": "snapshot or wire capacity error remains failure",
+      "passed": true
+    },
+    {
+      "label": "diagnostic budget cannot be silently raised",
+      "passed": true
+    },
+    {
+      "label": "declared wordcount inconsistent rejected",
+      "passed": true
+    },
+    {
+      "label": "encoded aggregate accounting inconsistent rejected",
+      "passed": true
+    },
+    {
+      "label": "core coverage gap rejected even with valid aggregate bookkeeping",
+      "passed": true
+    },
+    {
+      "label": "duplicate actual cells rejected despite exact before/after and valid byte count",
+      "passed": true
+    },
+    {
+      "label": "wire cells outside original proof crop rejected",
+      "passed": true
+    },
+    {
+      "label": "bounded inflate rejects excess output, trailing bytes, truncation and malformed base64",
+      "passed": true
+    },
+    {
+      "label": "Python syntax",
+      "passed": true
+    }
+  ],
+  "jvm_started": false,
+  "air_started": false,
+  "production_modified": false,
+  "gameplay_qualified": false,
+  "performance_qualified": false
+}

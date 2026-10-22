@@ -1,0 +1,13 @@
+{
+  "kind": "read-only-native-gutter-evidence-review",
+  "frozen": true,
+  "root_cause_confirmed": false,
+  "production_modified": false,
+  "jvm_started": false,
+  "air_started": false,
+  "files": {
+    "README.md": "5e7e62b3ef3a72f4670fd86c94e8e0bb6a5581a88ca0ab70f64f5eaacd8f7c59",
+    "review.json": "ad40060c9cd6bd2a9c5fcd10c506a2f829073535a296f8887d65be52801be00b",
+    "review.py": "4c05a34b62cfefd79c242920f021ea751bad8581f6de70c5bc053480ff18f7cf"
+  }
+}

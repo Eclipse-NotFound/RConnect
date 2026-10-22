@@ -1,0 +1,460 @@
+{
+  "passed": true,
+  "assertions": [
+    {
+      "passed": true,
+      "label": "src/rconnect/core/RoomSync.as matches prepared source"
+    },
+    {
+      "passed": true,
+      "label": "src/rconnect/core/RoomSync.as exact baseline unchanged"
+    },
+    {
+      "passed": true,
+      "label": "src/rconnect/core/MapGeneration.as matches prepared source"
+    },
+    {
+      "passed": true,
+      "label": "src/rconnect/core/MapGeneration.as exact baseline unchanged"
+    },
+    {
+      "passed": true,
+      "label": "src/rconnect/core/Session.as matches prepared source"
+    },
+    {
+      "passed": true,
+      "label": "src/rconnect/core/Session.as exact baseline unchanged"
+    },
+    {
+      "passed": true,
+      "label": "host-import/fe/loc/Game.as matches prepared source"
+    },
+    {
+      "passed": true,
+      "label": "host-import/fe/loc/Game.as exact baseline unchanged"
+    },
+    {
+      "passed": true,
+      "label": "host-import/fe/World.as matches prepared source"
+    },
+    {
+      "passed": true,
+      "label": "host-import/fe/World.as exact baseline unchanged"
+    },
+    {
+      "passed": true,
+      "label": "gate matches source manifest"
+    },
+    {
+      "passed": true,
+      "label": "component input build\\m52\\recovery-seed-first-raster-room-01\\src\\NativeTravelRoomChecks.as"
+    },
+    {
+      "passed": true,
+      "label": "component input build\\m52\\recovery-seed-first-raster-room-01\\src\\RConnectMod.as"
+    },
+    {
+      "passed": true,
+      "label": "component input build\\m52\\recovery-seed-first-raster-room-01\\src\\modlocales\\connect\\RCLocale.as"
+    },
+    {
+      "passed": true,
+      "label": "component input build\\m52\\recovery-seed-first-raster-room-01\\src\\rconnect\\core\\FirstRasterGate.as"
+    },
+    {
+      "passed": true,
+      "label": "component input build\\m52\\recovery-seed-first-raster-room-01\\src\\rconnect\\core\\Log.as"
+    },
+    {
+      "passed": true,
+      "label": "component input build\\m52\\recovery-seed-first-raster-room-01\\src\\rconnect\\core\\MapGeneration.as"
+    },
+    {
+      "passed": true,
+      "label": "component input build\\m52\\recovery-seed-first-raster-room-01\\src\\rconnect\\core\\NativeTravelPlan.as"
+    },
+    {
+      "passed": true,
+      "label": "component input build\\m52\\recovery-seed-first-raster-room-01\\src\\rconnect\\core\\RoomSync.as"
+    },
+    {
+      "passed": true,
+      "label": "component input build\\m52\\recovery-seed-first-raster-room-01\\src\\rconnect\\core\\SeedRasterEntry.as"
+    },
+    {
+      "passed": true,
+      "label": "component input build\\m52\\recovery-seed-first-raster-room-01\\src\\rconnect\\core\\Session.as"
+    },
+    {
+      "passed": true,
+      "label": "component input build\\m52\\recovery-seed-first-raster-room-01\\src\\rconnect\\core\\TravelGuard.as"
+    },
+    {
+      "passed": true,
+      "label": "component input build\\m52\\recovery-seed-first-raster-room-01\\src\\rconnect\\core\\TravelPlacement.as"
+    },
+    {
+      "passed": true,
+      "label": "component input build\\m52\\recovery-seed-first-raster-room-01\\src\\rconnect\\game\\GameBridge.as"
+    },
+    {
+      "passed": true,
+      "label": "component input build\\m52\\recovery-seed-first-raster-room-01\\src\\rconnect\\net\\Protocol.as"
+    },
+    {
+      "passed": true,
+      "label": "component input build\\m52\\recovery-seed-first-raster-room-01\\src\\rconnect\\net\\RoomCodec.as"
+    },
+    {
+      "passed": true,
+      "label": "component input build\\m52\\recovery-seed-first-raster-room-01\\src\\rconnect\\net\\TcpLink.as"
+    },
+    {
+      "passed": true,
+      "label": "component input build\\m52\\recovery-seed-first-raster-room-01\\src\\rconnect\\ui\\RoomEntryView.as"
+    },
+    {
+      "passed": true,
+      "label": "component input experimental\\recovery-early-travel\\src\\rconnect\\core\\RoomSync.as"
+    },
+    {
+      "passed": true,
+      "label": "component input experimental\\recovery-early-travel\\src\\rconnect\\core\\EarlyTravelGate.as"
+    },
+    {
+      "passed": true,
+      "label": "component input build\\m52\\recovery-16\\src\\rconnect\\core\\FirstRasterGate.as"
+    },
+    {
+      "passed": true,
+      "label": "component input build\\m52\\recovery-16\\src\\rconnect\\core\\SeedRasterEntry.as"
+    },
+    {
+      "passed": true,
+      "label": "component input build\\m52\\recovery-16\\src\\rconnect\\core\\NativeTravelPlan.as"
+    },
+    {
+      "passed": true,
+      "label": "component input build\\m52\\recovery-16\\src\\rconnect\\ui\\RoomEntryView.as"
+    },
+    {
+      "passed": true,
+      "label": "component input build\\m52\\recovery-16\\src\\rconnect\\net\\RoomCodec.as"
+    },
+    {
+      "passed": true,
+      "label": "component input build\\m52\\recovery-16\\src\\rconnect\\net\\Protocol.as"
+    },
+    {
+      "passed": true,
+      "label": "component input experimental\\recovery-early-travel\\tests\\EarlyTravelRoomChecks.as"
+    },
+    {
+      "passed": true,
+      "label": "component input experimental\\recovery-early-travel\\tests\\EarlyTravelGateChecks.as"
+    },
+    {
+      "passed": true,
+      "label": "component input build\\m52\\recovery-wall-surfaces-host-01\\after\\scripts\\fe\\World.as"
+    },
+    {
+      "passed": true,
+      "label": "component input experimental\\recovery-early-travel\\host-import\\fe\\World.as"
+    },
+    {
+      "passed": true,
+      "label": "component input experimental\\recovery-early-travel\\tests\\EarlyNativeChecks.as"
+    },
+    {
+      "passed": true,
+      "label": "component input experimental\\recovery-early-travel\\src\\rconnect\\core\\MapGeneration.as"
+    },
+    {
+      "passed": true,
+      "label": "component input experimental\\recovery-early-travel\\tests\\EarlyExternalChecks.as"
+    },
+    {
+      "passed": true,
+      "label": "component input build\\m52\\recovery-16\\src\\rconnect\\game\\NativeTileState.as"
+    },
+    {
+      "passed": true,
+      "label": "component input build\\m52\\recovery-16\\src\\rconnect\\game\\NativeRoomState.as"
+    },
+    {
+      "passed": true,
+      "label": "component input experimental\\recovery-terrain-loop\\components\\fe\\loc\\Tile.as"
+    },
+    {
+      "passed": true,
+      "label": "component input experimental\\recovery-terrain-loop\\components\\fe\\unit\\Unit.as"
+    },
+    {
+      "passed": true,
+      "label": "component input experimental\\recovery-terrain-loop\\components\\fe\\unit\\RConnectUnitAccess.as"
+    },
+    {
+      "passed": true,
+      "label": "component input experimental\\recovery-terrain-loop\\components\\rconnect\\game\\GameBridge.as"
+    },
+    {
+      "passed": true,
+      "label": "component input experimental\\recovery-terrain-loop\\components\\rconnect\\game\\TurretDisplay.as"
+    },
+    {
+      "passed": true,
+      "label": "component input experimental\\recovery-early-travel\\tests\\EarlyTileChecks.as"
+    },
+    {
+      "passed": true,
+      "label": "component room/EarlyTravelRoomChecks.as"
+    },
+    {
+      "passed": true,
+      "label": "component room/modlocales/connect/RCLocale.as"
+    },
+    {
+      "passed": true,
+      "label": "component room/NativeTravelRoomChecks.as"
+    },
+    {
+      "passed": true,
+      "label": "component room/rconnect/core/EarlyTravelGate.as"
+    },
+    {
+      "passed": true,
+      "label": "component room/rconnect/core/FirstRasterGate.as"
+    },
+    {
+      "passed": true,
+      "label": "component room/rconnect/core/Log.as"
+    },
+    {
+      "passed": true,
+      "label": "component room/rconnect/core/MapGeneration.as"
+    },
+    {
+      "passed": true,
+      "label": "component room/rconnect/core/NativeTravelPlan.as"
+    },
+    {
+      "passed": true,
+      "label": "component room/rconnect/core/RoomSync.as"
+    },
+    {
+      "passed": true,
+      "label": "component room/rconnect/core/SeedRasterEntry.as"
+    },
+    {
+      "passed": true,
+      "label": "component room/rconnect/core/Session.as"
+    },
+    {
+      "passed": true,
+      "label": "component room/rconnect/core/TravelGuard.as"
+    },
+    {
+      "passed": true,
+      "label": "component room/rconnect/core/TravelPlacement.as"
+    },
+    {
+      "passed": true,
+      "label": "component room/rconnect/game/GameBridge.as"
+    },
+    {
+      "passed": true,
+      "label": "component room/rconnect/net/Protocol.as"
+    },
+    {
+      "passed": true,
+      "label": "component room/rconnect/net/RoomCodec.as"
+    },
+    {
+      "passed": true,
+      "label": "component room/rconnect/net/TcpLink.as"
+    },
+    {
+      "passed": true,
+      "label": "component room/rconnect/ui/RoomEntryView.as"
+    },
+    {
+      "passed": true,
+      "label": "component room/RConnectMod.as"
+    },
+    {
+      "passed": true,
+      "label": "component gate/EarlyTravelGateChecks.as"
+    },
+    {
+      "passed": true,
+      "label": "component gate/rconnect/core/EarlyTravelGate.as"
+    },
+    {
+      "passed": true,
+      "label": "component native/EarlyNativeChecks.as"
+    },
+    {
+      "passed": true,
+      "label": "component native/Emitter.as"
+    },
+    {
+      "passed": true,
+      "label": "component native/fe/loc/Game.as"
+    },
+    {
+      "passed": true,
+      "label": "component native/NativeWorldAfter.as"
+    },
+    {
+      "passed": true,
+      "label": "component native/NativeWorldBefore.as"
+    },
+    {
+      "passed": true,
+      "label": "component native/Snd.as"
+    },
+    {
+      "passed": true,
+      "label": "component external/EarlyExternalChecks.as"
+    },
+    {
+      "passed": true,
+      "label": "component external/NativeMapLeaseProbe.as"
+    },
+    {
+      "passed": true,
+      "label": "component external/rconnect/core/Log.as"
+    },
+    {
+      "passed": true,
+      "label": "component tile/EarlyTileChecks.as"
+    },
+    {
+      "passed": true,
+      "label": "component tile/fe/loc/Tile.as"
+    },
+    {
+      "passed": true,
+      "label": "component tile/fe/unit/RConnectUnitAccess.as"
+    },
+    {
+      "passed": true,
+      "label": "component tile/fe/unit/Unit.as"
+    },
+    {
+      "passed": true,
+      "label": "component tile/rconnect/game/GameBridge.as"
+    },
+    {
+      "passed": true,
+      "label": "component tile/rconnect/game/NativeRoomState.as"
+    },
+    {
+      "passed": true,
+      "label": "component tile/rconnect/game/NativeTileState.as"
+    },
+    {
+      "passed": true,
+      "label": "component tile/rconnect/game/TurretDisplay.as"
+    },
+    {
+      "passed": true,
+      "label": "constructed callback is after all original Game work"
+    },
+    {
+      "passed": true,
+      "label": "Game contains only version constant and tail callback"
+    },
+    {
+      "passed": true,
+      "label": "same-frame postconstruct simulation is rechecked solely by owned ticket"
+    },
+    {
+      "passed": true,
+      "label": "unowned post-exit pause change retains original same-frame semantics"
+    },
+    {
+      "passed": true,
+      "label": "only owned native hold may advance paused countdown"
+    },
+    {
+      "passed": true,
+      "label": "exit16 control is deferred, not deleted"
+    },
+    {
+      "passed": true,
+      "label": "no forced zero native exit"
+    },
+    {
+      "passed": true,
+      "label": "native required click is not cleared"
+    },
+    {
+      "passed": true,
+      "label": "newGame cancels hold before replacement"
+    },
+    {
+      "passed": true,
+      "label": "loadGame cancels hold before replacement"
+    },
+    {
+      "passed": true,
+      "label": "early path retains full native countdown"
+    },
+    {
+      "passed": true,
+      "label": "early restore does not release old first-raster gate midway"
+    },
+    {
+      "passed": true,
+      "label": "host capture/grant retains simulation hold"
+    },
+    {
+      "passed": true,
+      "label": "activation requires exact external release"
+    },
+    {
+      "passed": true,
+      "label": "postgrant cancellation remains fail-closed"
+    },
+    {
+      "passed": true,
+      "label": "old Game pause is not transplanted into replacement Game"
+    },
+    {
+      "passed": true,
+      "label": "external hold resolves explicit public carrier"
+    },
+    {
+      "passed": true,
+      "label": "release uses retained carrier identity"
+    },
+    {
+      "passed": true,
+      "label": "external contract and idle predicate are explicit"
+    },
+    {
+      "passed": true,
+      "label": "ACC Grafon including wall bridge is unchanged"
+    },
+    {
+      "passed": true,
+      "label": "recovery16 wall/restore GameBridge remains unchanged"
+    },
+    {
+      "passed": true,
+      "label": "NativeTileState is exact full serializer, no field exclusion"
+    },
+    {
+      "passed": true,
+      "label": "NativeRoomState is exact full serializer, no field exclusion"
+    },
+    {
+      "passed": true,
+      "label": "host import has no FFDec pseudo-instructions"
+    }
+  ],
+  "compiled": false,
+  "AIR_started": false,
+  "native_qualified": false
+}

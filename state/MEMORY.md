@@ -50,6 +50,7 @@ Remains 1.02 双人合作模组，入口 release/RConnectMod.swf。A 是普通�
 - **普通房同源写色问题**：`recovery-wall-small-color-component-01`实际85/0 / FF968…583B；完整旧类精确复现5例损失，新类只改WallImpactVisuals.put/replay两个最终setter，六色接收/回访及原69项全过，尚无完整游戏候选。
 - **时停加载边界**：准确安装CEC6源AD931…4492D存在独立敌人补步和热键启动，World暂停不足以冻结。已在RConnect内准备A版独立hold接口22行+载体，闲置原子准入；B授权不复用，已一次向用户申请新A接口授权，尚待回复。无接口不得把早交付视为完整组合通过；未写其它模组。提案见`recovery-sandy-travel-hold-proposal`。
 - **早交付组件**：最终切片gate20/0、room36/0、旧room回归109/0、准确World方法16/0、外部许可替身22/0、真实地形序列化14/0，共217项实际通过。external01的ASC尾返回编译失败与tile01的替身回调#1063保留。根审核修正无票据exit同步改onPause时序、整个World替换许可清理、controlOff抛错后的责任标记；未运行真实Sand接口或完整原生加载，不把旧109通过混同历史seed108/1边界修复。
+- **早交付完整编译**：冻结handoff90c92be5…58b82，90AS的`recovery-early-compile-01`/10b24987…1fae6已编译；宿主`recovery-early-host-01`/2d415dd3…dd29已编译，原回读因init2局部声明提到函数首失败。独立recheck严格仅允许这一无提前读取的声明变形，4个反例拒绝、42/26方法及6代表类/头/非代码tag通过，原失败保留。没有真实加载资格，A Sand授权仍待回复；见recovery-early-host-review。
 - **地形采集组件/原生**：`recovery-terrain-capture-component-01`实际154/0，B9B6…8BED。真实Tile无变化快速判断只比phis/hp，动态getter及其它路径不变。30,000格×5旧171/199ms、新113/114ms。17同driver02密集78a808f81c仍主29/0、加40/14，七段36–39帧、p95 295–424ms，未取得整体改善。场地/driver/安装相同但准备快照有一把枪hold12/0差异，严格input_comparable=false；不计算版本收益百分比。详见recovery17-native-01.json。
 - **14高速复核**：case4数据提前到达，23ms是同一gameFrame两次RENDER（含22ms像素读回），下一真实帧晚80ms；确定失败为只有1个接触帧，不能断言提前删尾。case6闪电95ms空档前已有足够轨迹，缺的是中间最终游戏帧，不是缺下一位置包。详见 `recovery-flight14-review`，原阈值/失败均保持。
 - **墙痕编码**：真实组件 `recovery-wall-encode-component-01` 49/0；82份历史自然数据像素/uint/旧格式、原子拒绝、预测ACK/毁墙/复访/批次界限通过。两次ABBA旧编码740/739/771/773ms，新475/499/510/517ms；冷解旧314/312/318/304，新290/280/277/282。只是独立完整类成本，原生频率和整机收益待验。第二次原生接触触发缓存失效没有直接组件断言，失效逻辑本身未改。
@@ -68,7 +69,7 @@ Remains 1.02 双人合作模组，入口 release/RConnectMod.swf。A 是普通�
 ## 6. 下一步
 
 1. 准确14/15密集仍失败，停止没有整体证据的小修正扩散。禁止跳动画/减同步频率换FPS。
-2. 加载关键路径已确认宿主先绘、完整交付后加入侧再绘；仅延后加入侧首绘没有解决串行。独立early-travel方案正在按逻辑完成/固定出生/权威冻结而原生exit推进/两侧绘图/最终放行实现，尚无组件或原生资格。必须审查Sandevistan独立步进的准确版本边界，不能只凭World冻结就宣称全组合安全。详见recovery-loading-critical-path-review。
+2. 加载关键路径已确认宿主先绘、完整交付后加入侧再绘；仅延后加入侧首绘没有解决串行。独立early-travel方案已有217项组件与完整编译/独立回读，尚无原生资格。Sandevistan独立步进的准确版本已核查，A接口授权待回复；不能只凭World冻结就宣称全组合安全。详见recovery-loading-critical-path-review及recovery-early-host-review。
 3. 18大图三轮精确通过、一轮opaque仍失败；下一步补覆盖实际差异的同帧gutter/core/wire判因。普通房85项修正待合并。只读delta审查确认直接脏像素包破坏预测后的快速补修和大图paintOrder，需独立权威基线，且快慢同tick可能双编码；未证收益，暂不实现。其它三个目标仍须最终候选统一回归。
 4. 所有最终目标与门禁满足后才部署；目前继续保持574D。构建/测试共享登记串行，常规状态不广播外部会话。
 

@@ -1,0 +1,18 @@
+--- build\m52\recovery-wall-surfaces-host-01\after\scripts\fe\loc\Game.as
++++ host-import/fe/loc/Game.as
+@@ -9,6 +9,7 @@
+    {
+       
+       public static var rconnectTravelBridge:Function = null;
++      public static const rconnectEarlyTravelVersion:int = 1;
+       
+       public var lands:Array;
+       
+@@ -450,6 +451,7 @@
+             this.curLand.upStage = false;
+          }
+          World.w.time___metr("Вход в местность");
++         if(rconnectTravelBridge != null)rconnectTravelBridge("constructed",this,null);
+       }
+       
+       internal function Encounter() : *

@@ -1,0 +1,72 @@
+{
+  "assertions": [
+    {
+      "label": "prepare_host.py parses",
+      "passed": true
+    },
+    {
+      "label": "prepare_sources.py parses",
+      "passed": true
+    },
+    {
+      "label": "fe.World exact source accepted",
+      "passed": true
+    },
+    {
+      "label": "FFDec braces on cancel helper accepted",
+      "passed": true
+    },
+    {
+      "label": "reversed hold condition rejected",
+      "passed": true
+    },
+    {
+      "label": "lost deferred native control rejected",
+      "passed": true
+    },
+    {
+      "label": "no-ticket changed pause semantics rejected",
+      "passed": true
+    },
+    {
+      "label": "unrelated native method change rejected",
+      "passed": true
+    },
+    {
+      "label": "fe.loc.Game exact source accepted",
+      "passed": true
+    },
+    {
+      "label": "FFDec braces on constructed tail accepted",
+      "passed": true
+    },
+    {
+      "label": "missing construction callback rejected",
+      "passed": true
+    },
+    {
+      "label": "wrong callback phase rejected",
+      "passed": true
+    },
+    {
+      "label": "incorrect feature version rejected",
+      "passed": true
+    },
+    {
+      "label": "callback moved before final native action rejected",
+      "passed": true
+    }
+  ],
+  "failed": 0,
+  "checks": 14,
+  "jvm_started": false,
+  "air_started": false,
+  "runtime_or_performance_qualification": false,
+  "inputs": {
+    "prepare_host.py": "56a209db360bac4c56d4831681b1348ce1d9c3609d47a53df3ab53ae9e046d9c",
+    "prepare_sources.py": "b378d67198fa42a220e75176917538eed66479c830558fbe79d2da87f143220a",
+    "check_recipe.py": "11556ce84fa3d85d5637f543a3ac0bf902add42679c37686a09a8f0d9ed40bad",
+    "host-import/fe/World.as": "36d98b854969725cb0a934f7dbecfac3e122fda8a77af30da23499cf9e80cb4a",
+    "host-import/fe/loc/Game.as": "f94005e6f343c5739385b8cc17b91cdf8b9872d4a71e2c38c671f329d424437a"
+  }
+}

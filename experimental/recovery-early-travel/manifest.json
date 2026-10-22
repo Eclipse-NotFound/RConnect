@@ -1,0 +1,37 @@
+{
+  "base": "build/m52/recovery-16",
+  "host": "build/m52/recovery-wall-surfaces-host-01",
+  "baseline_grafon_sha256": "e6b4142462c1187388c4bb9c8151dd6c2605ce4e4b9fedd421cf4749c54bd7a0",
+  "grafon_changed": false,
+  "sources": {
+    "src/rconnect/core/RoomSync.as": {
+      "base": "build\\m52\\recovery-16\\src\\rconnect\\core\\RoomSync.as",
+      "base_sha256": "c2e68fe658a81be4b3ceb285daf453ca57b9d4a5895e80720dd629c374e3f85e",
+      "sha256": "2b2f7c0723867f3c73898a2736398ad624e22a19f0eef1e3bc9e37e4f083af18"
+    },
+    "src/rconnect/core/MapGeneration.as": {
+      "base": "build\\m52\\recovery-16\\src\\rconnect\\core\\MapGeneration.as",
+      "base_sha256": "d1cf5413388382bf8517c95326fd5009c7b7510e0cde5dd409e988d4bcd1c774",
+      "sha256": "b248567ae062d08ae66c7ff8ccff40553c86e978a916d048fbcfeab7ab8e9028"
+    },
+    "src/rconnect/core/Session.as": {
+      "base": "build\\m52\\recovery-16\\src\\rconnect\\core\\Session.as",
+      "base_sha256": "e699b9c5a02799367bba8afd924d450d064cab3f0a5e9a36ea7d400b378b10ba",
+      "sha256": "6a2190481ee03449fcfbc5b78b97eb0adf44be9b19de60950b89b3d1a991db50"
+    },
+    "host-import/fe/loc/Game.as": {
+      "base": "build\\m52\\recovery-wall-surfaces-host-01\\after\\scripts\\fe\\loc\\Game.as",
+      "base_sha256": "042c436fcf8c37d8e57e0cbd61a820d440f54b1ecb2b844054fb40cf7feb7688",
+      "sha256": "f94005e6f343c5739385b8cc17b91cdf8b9872d4a71e2c38c671f329d424437a"
+    },
+    "host-import/fe/World.as": {
+      "base": "build\\m52\\recovery-wall-surfaces-host-01\\after\\scripts\\fe\\World.as",
+      "base_sha256": "f9b5d270ad95a223ca37b0e339dcee1380856dff6254a5b1a0d9b12d997aaf16",
+      "sha256": "36d98b854969725cb0a934f7dbecfac3e122fda8a77af30da23499cf9e80cb4a"
+    }
+  },
+  "new_gate_sha256": "544d61b428ca0e3b3daf603eb0a8c8546fc01a64d22834c73f7d90d323f6a814",
+  "compiled": false,
+  "AIR_started": false,
+  "native_qualified": false
+}

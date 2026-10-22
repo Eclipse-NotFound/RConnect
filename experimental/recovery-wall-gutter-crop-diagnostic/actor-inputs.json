@@ -1,0 +1,13 @@
+{
+  "ancestor_sha256": "8b705228e106b32db9fbd2bbe01e2ec495e2f58e829f53b981fe17a63bdc8f36",
+  "probe_sha256": "18efaeda6c265cf33862cdc6cb21f9ede07a55677b3b8df81b29c5bd6092e71f",
+  "changes": 8,
+  "strip_exact": true,
+  "gameplay_assertions_unchanged": true,
+  "production_modified": false,
+  "tests": {
+    "LargeWallSurfaceTestDoc.as": "ec3060457dad0478feb07cf117baf18e79774cb240ae99bd601469047225beaa",
+    "NativeWallColorProbe.as": "1ebe029f68ee9ac2abb399e9b0ca63c02f2b691888f9b51fc0a43ea7e3cc8528",
+    "NativeWallSurfaceProbe.as": "18efaeda6c265cf33862cdc6cb21f9ede07a55677b3b8df81b29c5bd6092e71f"
+  }
+}

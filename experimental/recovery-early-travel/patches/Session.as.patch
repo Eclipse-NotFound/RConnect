@@ -1,0 +1,49 @@
+--- build\m52\recovery-16\src\rconnect\core\Session.as
++++ src/rconnect/core/Session.as
+@@ -39,6 +39,7 @@
+ 
+       /** 宿主维护的 peer 表：{id, name, link, snap} */
+       public var peers:Array = [];
++      public var hostEarlyTravel:int=0;
+       /** 客户端维护的远程状态：{id, name, snap} */
+       public var remotes:Array = [];
+ 
+@@ -264,6 +265,7 @@
+ 
+       private function stop():void
+       {
++         hostEarlyTravel=0;
+          if(mod.enemyGrip!=null)mod.enemyGrip.reset();
+          if(mod.peerGrip!=null)mod.peerGrip.reset();
+          if(mod.playerMines!=null)mod.playerMines.reset();
+@@ -320,7 +322,7 @@
+       private function onLinkConnected(e:Event):void
+       {
+          Log.d("RConnectNet: connected to host, sending hello");
+-         link.send(Protocol.make(Protocol.MSG_HELLO, {name: myName,nativeTravel:mod.game.mapGeneration.nativeTravelSupported?1:0}));
++         link.send(Protocol.make(Protocol.MSG_HELLO, {name: myName,nativeTravel:mod.game.mapGeneration.nativeTravelSupported?1:0,earlyTravel:mod.game.mapGeneration.earlyTravelSupported?1:0}));
+       }
+ 
+       private function onLinkClosed(e:Event):void
+@@ -394,6 +396,7 @@
+          switch(type)
+          {
+             case Protocol.MSG_WELCOME:
++               hostEarlyTravel=int(msg.earlyTravel);
+                myId = int(msg.id);
+                hostName = msg.name != undefined ? String(msg.name) : "";
+                mode = CONNECTED;
+@@ -569,11 +572,11 @@
+             case Protocol.MSG_HELLO:
+                link.id = nextPeerId();
+                link.peerName = msg.name != undefined ? String(msg.name) : "Pony";
+-               peers.push({id: link.id, name: link.peerName, link: link, snap: null,nativeTravel:int(msg.nativeTravel)});
++               peers.push({id: link.id, name: link.peerName, link: link, snap: null,nativeTravel:int(msg.nativeTravel),earlyTravel:int(msg.earlyTravel)});
+                var wInfo:Object = mod.game != null
+                   ? mod.game.readWorldInfo() : null;
+                link.send(Protocol.make(Protocol.MSG_WELCOME,
+-                  {id: link.id, name: myName, worldInfo: wInfo,nativePrepare:int(msg.nativeTravel)==1?rooms.nativePrepare:null}));
++                  {id: link.id, name: myName, worldInfo: wInfo,earlyTravel:mod.game.mapGeneration.earlyTravelSupported?1:0,nativePrepare:int(msg.nativeTravel)==1?rooms.nativePrepare:null}));
+                if(int(msg.nativeTravel)==1)rooms.replayNativePrepare(link);
+                Log.d("RConnectNet: peer #" + link.id + " '" + link.peerName
+                   + "' joined");

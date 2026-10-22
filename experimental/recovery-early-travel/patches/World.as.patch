@@ -1,0 +1,93 @@
+--- build\m52\recovery-wall-surfaces-host-01\after\scripts\fe\World.as
++++ host-import/fe/World.as
+@@ -1131,6 +1131,14 @@
+          }
+       }
+       
++      private function rconnectLoadingHold() : Boolean
++      {
++         return Game.rconnectTravelBridge != null && Game.rconnectTravelBridge("loadingHold",this.game,null) != null;
++      }
++      private function rconnectCancelLoading() : void
++      {
++         if(Game.rconnectTravelBridge != null)Game.rconnectTravelBridge("cancel-load",this.game,null);
++      }
+       internal function exitStep() : *
+       {
+          try
+@@ -1164,8 +1172,11 @@
+                this.vgui.visible = this.vfon.visible = this.visual.visible = true;
+                this.vblack.alpha = 1;
+                this.cam.dblack = -10;
+-               this.gg.controlOn();
+-               this.pip.noAct = false;
++               if(!this.rconnectLoadingHold())
++               {
++                  this.gg.controlOn();
++                  this.pip.noAct = false;
++               }
+             }
+             if(this.t_exit == 1)
+             {
+@@ -1236,6 +1247,7 @@
+             Snd.step();
+             if(this.ng_wait > 0)
+             {
++               this.rconnectCancelLoading();
+                if(this.ng_wait == 1)
+                {
+                   this.newGame1();
+@@ -1253,7 +1265,7 @@
+             {
+                this.swfStage.focus = this.swfStage;
+             }
+-            if(this.allStat == 1 && !this.onPause)
++            if(this.allStat == 1 && (!this.onPause || this.rconnectLoadingHold()))
+             {
+                if(this.t_exit > 0)
+                {
+@@ -1262,6 +1274,9 @@
+                      this.exitStep();
+                   }
+                }
++               // exitStep may have frozen this shared destination in this frame.
++               if(!this.rconnectLoadingHold())
++               {
+                Emitter.kol2 = Emitter.kol1;
+                Emitter.kol1 = 0;
+                if(this.t_exit != 17)
+@@ -1301,9 +1316,11 @@
+                   this.saveGame();
+                }
+                this.checkLoot = false;
++               }
+             }
+             if(this.comLoad >= 0)
+             {
++               this.rconnectCancelLoading();
+                if(this.comLoad >= 100)
+                {
+                   if(this.autoSaveN > 0)
+@@ -1325,6 +1342,8 @@
+                this.gui.step();
+                this.pip.step();
+                this.sats.step();
++               if(!this.rconnectLoadingHold())
++               {
+                if(this.ctr.keyPip)
+                {
+                   if(!this.sats.active)
+@@ -1388,6 +1407,13 @@
+                      this.sats.onoff();
+                   }
+                   this.ctr.keySats = false;
++               }
++               }
++               else
++               {
++                  // Preserve native load-click input; discard menu hotkeys only.
++                  this.ctr.keyPip = this.ctr.keyInvent = this.ctr.keyStatus = this.ctr.keySkills = false;
++                  this.ctr.keyMed = this.ctr.keyMap = this.ctr.keyQuest = this.ctr.keySats = false;
+                }
+                this.allStat = this.pip.active || this.sats.active || this.stand.active || this.gui.guiPause ? 2 : 1;
+                if(Boolean(this.consol) && Boolean(this.consol.visoff))

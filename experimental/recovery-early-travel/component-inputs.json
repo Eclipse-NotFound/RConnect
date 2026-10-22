@@ -1,0 +1,115 @@
+{
+  "sources": {
+    "build\\m52\\recovery-seed-first-raster-room-01\\src\\NativeTravelRoomChecks.as": "21d992b6da7520259634c1544f325821cdf010587b93b8b027259d7b0f5d6e73",
+    "build\\m52\\recovery-seed-first-raster-room-01\\src\\RConnectMod.as": "bdf7dd4b572a52762b2431c7d94d9818af8ef72dd5109f4bb27d807c36748f6a",
+    "build\\m52\\recovery-seed-first-raster-room-01\\src\\modlocales\\connect\\RCLocale.as": "e2e718a5585b7adcb095731ea6bbbf5f7984f777798bea713f4d9551069eabef",
+    "build\\m52\\recovery-seed-first-raster-room-01\\src\\rconnect\\core\\FirstRasterGate.as": "c4db67de41dd3e21d6aa5949f4214cf6b8ef49521c784d85e1e95dc447745821",
+    "build\\m52\\recovery-seed-first-raster-room-01\\src\\rconnect\\core\\Log.as": "cffc3f4b9b4194e507a8488dfd89ad7a55e29d8fdb2519391a43668353a76237",
+    "build\\m52\\recovery-seed-first-raster-room-01\\src\\rconnect\\core\\MapGeneration.as": "88f40023f87e6eaa05d6b7a43ca5d1f1fbd0bb0f8fdc108e328e354644958fa0",
+    "build\\m52\\recovery-seed-first-raster-room-01\\src\\rconnect\\core\\NativeTravelPlan.as": "e40903e83e23996d2aac1bb10984ffedf6de7984e541de1bf15b2fd0aa9309d1",
+    "build\\m52\\recovery-seed-first-raster-room-01\\src\\rconnect\\core\\RoomSync.as": "c2e68fe658a81be4b3ceb285daf453ca57b9d4a5895e80720dd629c374e3f85e",
+    "build\\m52\\recovery-seed-first-raster-room-01\\src\\rconnect\\core\\SeedRasterEntry.as": "9980a528b48051906e5bf4128d304b1687cfde02a99980ddfcbbbf80c8d5972e",
+    "build\\m52\\recovery-seed-first-raster-room-01\\src\\rconnect\\core\\Session.as": "16b8afcc7eda96776c06dd82eebeb6ca30cea92ed2cd5cbd0ce0de3686a498a8",
+    "build\\m52\\recovery-seed-first-raster-room-01\\src\\rconnect\\core\\TravelGuard.as": "d62648d780765839f941667e4ceff096580f53f3dccf18c37312b5b1fc684179",
+    "build\\m52\\recovery-seed-first-raster-room-01\\src\\rconnect\\core\\TravelPlacement.as": "b426e339c592d055f6e396f54aa825681eeae9d8aeea30acdd16be2faeff7c72",
+    "build\\m52\\recovery-seed-first-raster-room-01\\src\\rconnect\\game\\GameBridge.as": "54bc60fa8046357ed35b805e5ae2d8f26f2329e49f4fae4cfec6ad39afc3630b",
+    "build\\m52\\recovery-seed-first-raster-room-01\\src\\rconnect\\net\\Protocol.as": "32f6777591247b93e05e56eced25c1b2d6d4427feacac0aa248f06afd16a0b8e",
+    "build\\m52\\recovery-seed-first-raster-room-01\\src\\rconnect\\net\\RoomCodec.as": "296ee4d8d94f77faa62dcc17a39cb1e2492c756d3027311713c33935ca6b6b4a",
+    "build\\m52\\recovery-seed-first-raster-room-01\\src\\rconnect\\net\\TcpLink.as": "3519958acdd84a1efb590e0956a49e6cc0397ca48ec2ae0d06fd0ecb6aa009ed",
+    "build\\m52\\recovery-seed-first-raster-room-01\\src\\rconnect\\ui\\RoomEntryView.as": "969ffe5824685edb1bdfab3b35f9e77dbcedd4eb14b012495611277d5b7f025c",
+    "experimental\\recovery-early-travel\\src\\rconnect\\core\\RoomSync.as": "2b2f7c0723867f3c73898a2736398ad624e22a19f0eef1e3bc9e37e4f083af18",
+    "experimental\\recovery-early-travel\\src\\rconnect\\core\\EarlyTravelGate.as": "544d61b428ca0e3b3daf603eb0a8c8546fc01a64d22834c73f7d90d323f6a814",
+    "build\\m52\\recovery-16\\src\\rconnect\\core\\FirstRasterGate.as": "c4db67de41dd3e21d6aa5949f4214cf6b8ef49521c784d85e1e95dc447745821",
+    "build\\m52\\recovery-16\\src\\rconnect\\core\\SeedRasterEntry.as": "9980a528b48051906e5bf4128d304b1687cfde02a99980ddfcbbbf80c8d5972e",
+    "build\\m52\\recovery-16\\src\\rconnect\\core\\NativeTravelPlan.as": "e40903e83e23996d2aac1bb10984ffedf6de7984e541de1bf15b2fd0aa9309d1",
+    "build\\m52\\recovery-16\\src\\rconnect\\ui\\RoomEntryView.as": "969ffe5824685edb1bdfab3b35f9e77dbcedd4eb14b012495611277d5b7f025c",
+    "build\\m52\\recovery-16\\src\\rconnect\\net\\RoomCodec.as": "296ee4d8d94f77faa62dcc17a39cb1e2492c756d3027311713c33935ca6b6b4a",
+    "build\\m52\\recovery-16\\src\\rconnect\\net\\Protocol.as": "32f6777591247b93e05e56eced25c1b2d6d4427feacac0aa248f06afd16a0b8e",
+    "experimental\\recovery-early-travel\\tests\\EarlyTravelRoomChecks.as": "84374b053a1454cbb2c257935d3acd017f7c126c3af61d0deb19a713e023ef81",
+    "experimental\\recovery-early-travel\\tests\\EarlyTravelGateChecks.as": "139158475f12c9a1f96f492372e0ef1830150438fe8a015d62cfab08ac4abd8a",
+    "build\\m52\\recovery-wall-surfaces-host-01\\after\\scripts\\fe\\World.as": "f9b5d270ad95a223ca37b0e339dcee1380856dff6254a5b1a0d9b12d997aaf16",
+    "experimental\\recovery-early-travel\\host-import\\fe\\World.as": "36d98b854969725cb0a934f7dbecfac3e122fda8a77af30da23499cf9e80cb4a",
+    "experimental\\recovery-early-travel\\tests\\EarlyNativeChecks.as": "96d85ce6c635fdca800f05e42a8a4568ac02adb1fbbf3f3a6a0da44cedeeaa9e",
+    "experimental\\recovery-early-travel\\src\\rconnect\\core\\MapGeneration.as": "b248567ae062d08ae66c7ff8ccff40553c86e978a916d048fbcfeab7ab8e9028",
+    "experimental\\recovery-early-travel\\tests\\EarlyExternalChecks.as": "506a5a713375c3fc1a4dd4ecce764739f828e68f1071957f99ea4147a8684178",
+    "build\\m52\\recovery-16\\src\\rconnect\\game\\NativeTileState.as": "eec001f4de8bdfc5ad892c2de2e892c07cceac15ebe7c5cf10fda4a1047592dc",
+    "build\\m52\\recovery-16\\src\\rconnect\\game\\NativeRoomState.as": "1e91028348b29dc1bd00dc55cf4d5df5d5ee40469ef9ea0f7e9626d30a601938",
+    "experimental\\recovery-terrain-loop\\components\\fe\\loc\\Tile.as": "a5267e18c3479c50d8b4eb5881690566e297d168bf3191fd36fb281e513c370a",
+    "experimental\\recovery-terrain-loop\\components\\fe\\unit\\Unit.as": "413999d9d8d9a001b125eaf7c140f70a49b23f44ac07e31629f9780bd5fcaaf2",
+    "experimental\\recovery-terrain-loop\\components\\fe\\unit\\RConnectUnitAccess.as": "4dca64ac4410ed30997830ad2e092cf4bc9dbdee6204a2d8f1cfd1578d818806",
+    "experimental\\recovery-terrain-loop\\components\\rconnect\\game\\GameBridge.as": "ef48de47fbd27f843edeceea4c87acfc0320811de7ac581fc5b46b324840e85a",
+    "experimental\\recovery-terrain-loop\\components\\rconnect\\game\\TurretDisplay.as": "a0a2e0f98b82a3d00bdd21b7abf21a24dbe830d112878103da38eda63ed9f53d",
+    "experimental\\recovery-early-travel\\tests\\EarlyTileChecks.as": "88d11707d8c4341df10b4cb532e5e004dcbc0a91aa631414661ef0437dbfc304"
+  },
+  "components": {
+    "room": {
+      "EarlyTravelRoomChecks.as": "84374b053a1454cbb2c257935d3acd017f7c126c3af61d0deb19a713e023ef81",
+      "modlocales/connect/RCLocale.as": "e2e718a5585b7adcb095731ea6bbbf5f7984f777798bea713f4d9551069eabef",
+      "NativeTravelRoomChecks.as": "21d992b6da7520259634c1544f325821cdf010587b93b8b027259d7b0f5d6e73",
+      "rconnect/core/EarlyTravelGate.as": "544d61b428ca0e3b3daf603eb0a8c8546fc01a64d22834c73f7d90d323f6a814",
+      "rconnect/core/FirstRasterGate.as": "c4db67de41dd3e21d6aa5949f4214cf6b8ef49521c784d85e1e95dc447745821",
+      "rconnect/core/Log.as": "cffc3f4b9b4194e507a8488dfd89ad7a55e29d8fdb2519391a43668353a76237",
+      "rconnect/core/MapGeneration.as": "e6b78c857efbd100be8dcb2061e656ad4953da4b4195be10dca97b18ba8eeb4f",
+      "rconnect/core/NativeTravelPlan.as": "e40903e83e23996d2aac1bb10984ffedf6de7984e541de1bf15b2fd0aa9309d1",
+      "rconnect/core/RoomSync.as": "2b2f7c0723867f3c73898a2736398ad624e22a19f0eef1e3bc9e37e4f083af18",
+      "rconnect/core/SeedRasterEntry.as": "9980a528b48051906e5bf4128d304b1687cfde02a99980ddfcbbbf80c8d5972e",
+      "rconnect/core/Session.as": "68322b59a0a25a6b3ad2391c424eb46738ef3c621d37dd97972e3afab514a910",
+      "rconnect/core/TravelGuard.as": "d62648d780765839f941667e4ceff096580f53f3dccf18c37312b5b1fc684179",
+      "rconnect/core/TravelPlacement.as": "b426e339c592d055f6e396f54aa825681eeae9d8aeea30acdd16be2faeff7c72",
+      "rconnect/game/GameBridge.as": "7a603cf72191655ac66c69ba4bafcfbda1e9981343535733da4f41a0576e0200",
+      "rconnect/net/Protocol.as": "32f6777591247b93e05e56eced25c1b2d6d4427feacac0aa248f06afd16a0b8e",
+      "rconnect/net/RoomCodec.as": "296ee4d8d94f77faa62dcc17a39cb1e2492c756d3027311713c33935ca6b6b4a",
+      "rconnect/net/TcpLink.as": "3519958acdd84a1efb590e0956a49e6cc0397ca48ec2ae0d06fd0ecb6aa009ed",
+      "rconnect/ui/RoomEntryView.as": "969ffe5824685edb1bdfab3b35f9e77dbcedd4eb14b012495611277d5b7f025c",
+      "RConnectMod.as": "bdf7dd4b572a52762b2431c7d94d9818af8ef72dd5109f4bb27d807c36748f6a"
+    },
+    "gate": {
+      "EarlyTravelGateChecks.as": "139158475f12c9a1f96f492372e0ef1830150438fe8a015d62cfab08ac4abd8a",
+      "rconnect/core/EarlyTravelGate.as": "544d61b428ca0e3b3daf603eb0a8c8546fc01a64d22834c73f7d90d323f6a814"
+    },
+    "native": {
+      "EarlyNativeChecks.as": "96d85ce6c635fdca800f05e42a8a4568ac02adb1fbbf3f3a6a0da44cedeeaa9e",
+      "Emitter.as": "c9823049a26d98bc48e095e04d5c363a412eb7f3e2ba07e465ae60d907842157",
+      "fe/loc/Game.as": "2ee9d2bc49a104ab2c1d518cf8e3ae040038770114752c74c03ed3d27b04a134",
+      "NativeWorldAfter.as": "7643081b7e2939d868eabcecd3b215e433e9b2c92171dd523b30fbe7b3462cb1",
+      "NativeWorldBefore.as": "ee2399d6d5a4c3b4ffd2274ac42970392b58d4105aae68d4ba875e13c7afce11",
+      "Snd.as": "f62de3c49eedce7d3dd41df6b3b171315cb632a127008f89b58e9f0917b4f319"
+    },
+    "external": {
+      "EarlyExternalChecks.as": "506a5a713375c3fc1a4dd4ecce764739f828e68f1071957f99ea4147a8684178",
+      "NativeMapLeaseProbe.as": "0ac0503eee54bde396a5550bd778691231c29b26883cdc49a78211280dfb743d",
+      "rconnect/core/Log.as": "cffc3f4b9b4194e507a8488dfd89ad7a55e29d8fdb2519391a43668353a76237"
+    },
+    "tile": {
+      "EarlyTileChecks.as": "88d11707d8c4341df10b4cb532e5e004dcbc0a91aa631414661ef0437dbfc304",
+      "fe/loc/Tile.as": "998fa54c8b690276fe336ab9866d645c600d438065b1544c329d3d939def95a4",
+      "fe/unit/RConnectUnitAccess.as": "4ccbab3505fe8456bc1568466ba47bfc3f2bb9fd2eca41db0cf445ebe7e148b6",
+      "fe/unit/Unit.as": "fa2433974712c34eea245b3aa502a26ee34e21ce956acd131c3e71ec0c016b16",
+      "rconnect/game/GameBridge.as": "ef48de47fbd27f843edeceea4c87acfc0320811de7ac581fc5b46b324840e85a",
+      "rconnect/game/NativeRoomState.as": "1e91028348b29dc1bd00dc55cf4d5df5d5ee40469ef9ea0f7e9626d30a601938",
+      "rconnect/game/NativeTileState.as": "eec001f4de8bdfc5ad892c2de2e892c07cceac15ebe7c5cf10fda4a1047592dc",
+      "rconnect/game/TurretDisplay.as": "ebc8a4c8989d105191f7aca2afe715259a05ee7c081bf9e4470f3db6735e44c0"
+    }
+  },
+  "entries": {
+    "room": [
+      "EarlyTravelRoomChecks",
+      "NativeTravelRoomChecks"
+    ],
+    "gate": [
+      "EarlyTravelGateChecks"
+    ],
+    "native": [
+      "EarlyNativeChecks"
+    ],
+    "external": [
+      "EarlyExternalChecks"
+    ],
+    "tile": [
+      "EarlyTileChecks"
+    ]
+  },
+  "legacy_expected_assertions": 109,
+  "compiled": false,
+  "AIR_started": false
+}
