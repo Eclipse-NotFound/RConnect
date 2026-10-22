@@ -1,0 +1,26 @@
+{
+  "originals": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-sandy-native\\inputs.json": "ff05616e886daeea343671727c7884ae97f686fe6a022cbc3f0c8c318ee16e6f",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-sandy-native\\prepare_scene.py": "642a4e9d8719b0073a12b272aea8b89495d8a349460140609ccb9028e63425ce",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-sandy-native\\run_native.py": "a1018a9587d081ae92aab5834dcbc398de7cf6f3841dc95f959eaeb0141e621b",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-sandy-native\\native_inputs.py": "eca038c87599e56b702c2bb09c7aeb77dcef97398ecbfa7a478ca8638b7381b4",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-sandy-native\\native_runner.py": "1edce14e852df24036bf4330afe0d99ae9b78dd1ada5d8c6162a8c12b678f83a",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-sandy-native\\tests\\A22RoomMetrics.as": "314823fd0fcd04e71277dcd3e8ee1a647317e611c5ff7b8fb0e7058c25179d6e",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-sandy-native\\tests\\FirstRasterSceneProbe.as": "785e63b0c315941a81fccb5fc17832a10543fe83545435905ef9ff6ce7f7c789",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-sandy-native\\tests\\RoomTravelSceneTestDoc.as": "55e2caa583fc5f14c1844e10fd46506b9d681b889fb9b94ab82053b02df2547b",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-sandy-native\\tests\\RoomTravelTimingTestDoc.as": "3e0887496e62b7cd9cb2f041bb4629748277a1d96887e8216f1147cb8a10fa6b"
+  },
+  "sources": {
+    "check.py": "3948e1252592b4e30f11800af8ee9fec41d40a10db3a90b11851c8cf00396de4",
+    "fields.txt": "114bab640f0640c95a7cb5eeeb54ffddd137cf658551d82a3118efe4cb5037da",
+    "generate.py": "cd680f94e93631a99871a707f1afb3fc54d497a5afff1ad4bc7d6ba14adefac2",
+    "methods.txt": "914aaa3282c73e4437b1862495c391c70b43094993fc8da112ae25ee8b064096",
+    "native_inputs.py": "45fcc03d89c66777d64b4b0cbf3ea74eed2481effcb8b7aa8f9f62d4f79cb85f",
+    "prepare.py": "9afc8ec5213984fce9a4fbccad304191f5ef2b3771030b00776806ca7cb16ee1",
+    "probe.patch": "de96aacbdb333dfb8e6de712a02f25427627ee03b380271c599d702ccddfe7a4",
+    "README.md": "0981b4f352fc150cda488cb9cf9ef0534e0263ef762d1dcfc35a9e2f8131f703",
+    "run_native.py": "1b870e526b0712849521c230f91d7229a4aa958fef7958ac7b4eeb00cd3967d5",
+    "runner.patch": "765911395165d4306a92cc2144fc16bb1c7c5e05bbd49faea277c3a1f6aa7357",
+    "tests/FirstRasterSceneProbe.as": "d1af4b6c8bc4134b7fff3de1b557bf0c829d9f47f5743293d1973c35898c7159"
+  }
+}

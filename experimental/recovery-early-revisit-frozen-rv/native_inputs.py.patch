@@ -1,0 +1,77 @@
+--- frozen-original/native_inputs.py
++++ explicit-rv-transition/native_inputs.py
+@@ -6,6 +6,7 @@
+ sys.path.insert(0,str(ROOT/'tools/validation'))
+ from audit_room_entry_candidate import audit as original_audit
+ from run_security_terminals import installation
++from baseline import assert_current,frozen_vision,RV_KEY,RV_OLD,RV_NEW
+ 
+ CANDIDATE=M52/'recovery-early-compile-01'
+ RC_SHA='10b249871b6d6189f4fab4705dd8d4dae4db619d9b3159972010e8e24791fae6'
+@@ -32,7 +33,8 @@
+     assert receipt['compiled'] is True and receipt['exit_code']==0 and receipt['inputs_unchanged'] is True
+     assert receipt['candidate_sha256']==sha(SAND/'SandevistanMod.swf')==SAND_SHA
+     assert Path(receipt['candidate']).resolve()==(SAND/'SandevistanMod.swf').resolve()
+-    assert intent['installation_before']==installed
++    assert_current(installed,intent['installation_before'])
++    frozen_vision()
+     for name,digest in intent['inputs'].items():assert sha(name)==digest,name
+     for name,digest in intent['sources'].items():assert sha(SAND/'frozen'/name)==digest,name
+     path=SAND/'SandevistanMod.swf' if mode=='bridge' else ROOT.parent/'Sandevistan/release/SandevistanMod.swf'
+@@ -47,11 +49,14 @@
+     return meta
+ def host_input(candidate,installed):
+     verify_tools();assert candidate.resolve()==HOST.resolve()
+-    recipe=ROOT/'experimental/recovery-early-host-review/recheck.py'
++    recipe=HERE/'host_recheck.py'
+     spec=importlib.util.spec_from_file_location('early_native_host_check',recipe)
+     module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+     actual=module.verify();receipt=M52/'recovery-early-host-recheck-01/receipt.json'
+-    assert actual==read(receipt) and actual['validated'] is True
++    prior=read(receipt)
++    assert prior['recipe_sha256']==sha(ROOT/'experimental/recovery-early-host-review/recheck.py')
++    prior=dict(prior);prior['recipe_sha256']=sha(recipe)
++    assert actual==prior and actual['validated'] is True
+     assert actual['candidate_sha256']==sha(HOST/'pfe.swf')==HOST_SHA
+     assert installation()==installed and len(installed)==22
+     return dict(directory=str(HOST),candidate_sha256=HOST_SHA,
+@@ -60,14 +65,29 @@
+ def verify_host_intent(candidate,intent,installed):
+     assert host_input(candidate,installed)==intent
+     audit(CANDIDATE)
++def verify_original_driver():
++    path=M52/'recovery-early-sandy-scene-driver-01'
++    pins=read(HERE/'inputs.json');assert sha(path/'prepared.json')==pins['driver_manifest']
++    meta=read(path/'prepared.json')
++    assert meta['kind']=='scene-native-input-early-sandy-driver' and meta['compiled'] is True
++    assert meta['sand_mode']=='bridge' and meta['diagnostic_only'] is False
++    assert_current(installation(),meta['installation_before'])
++    for n,h in meta['source_inputs'].items():assert sha(n)==h,n
++    for n,h in meta['files'].items():assert sha(path/n)==h,n
++    return path,meta
++
+ def verify_driver(path,meta,scenario):
+-    verify_tools()
+-    if scenario=='entry-room':
+-        assert path.resolve()==DRIVER12.resolve() and sha(path/'prepared.json')==DRIVER12_MANIFEST
+-    else:
+-        assert scenario=='scene' and meta['kind']=='scene-native-input-early-sandy-driver'
+-        assert meta['compiled'] is True and meta['external'] is True and meta['diagnostic_only'] is False
+-        assert meta['sand_mode'] in ('bridge','legacy') and meta['installation_unchanged'] is True
+-        assert meta['original_scene_driver_manifest']==DRIVER12_MANIFEST
+-        for name,digest in meta['source_inputs'].items():assert sha(name)==digest,name
+-    for name,digest in meta['files'].items():assert sha(path/name)==digest,name
++    verify_tools();base,old=verify_original_driver()
++    assert scenario=='scene' and meta['kind']=='scene-native-input-early-revisit-frozen-rv-driver'
++    assert meta['compiled'] is True and meta['external'] is True and meta['diagnostic_only'] is True
++    assert meta['diagnostic_kind']=='early-revisit' and meta['sand_mode']=='bridge'
++    assert meta['installation_unchanged'] is True and installation()==meta['installation_before']
++    assert meta['original_scene_driver_manifest']==DRIVER12_MANIFEST
++    assert meta['original_early_driver_manifest']==sha(base/'prepared.json')
++    for n,h in meta['source_inputs'].items():assert sha(n)==h,n
++    for n,h in meta['files'].items():assert sha(path/n)==h,n
++    assert read(path/'original-prepared.json')==old
++    for n in meta['copied_original_files']:
++        assert n!='tests/FirstRasterSceneProbe.as' and sha(path/n)==old['files'][n],n
++    probe=HERE.parent/'recovery-early-revisit-probe/tests/FirstRasterSceneProbe.as'
++    assert sha(path/'tests/FirstRasterSceneProbe.as')==sha(probe)

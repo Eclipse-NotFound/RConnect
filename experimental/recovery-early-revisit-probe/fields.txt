@@ -1,0 +1,7 @@
+      private var ticketRefs:Dictionary=new Dictionary(),baseline:Object;
+      private var segment:int=-1,diagnosticStart:int=0,diagnosticCount:int=0,changeCount:int=0;
+      private var lastSignature:String="",lastPoll:int=-1,checkpoint:int=0;
+      private var bridgeCalls:int=0,bridgeNulls:int=0,bridgeRows:Array=[],previousTicket:Object;
+      private static const MAX_DIAGNOSTICS:int=20;
+      private static const MAX_CHANGES:int=13;
+      private static const CHECKPOINTS:Array=[8000,15000,30000,44000,60000,90000];

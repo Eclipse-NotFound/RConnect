@@ -1,0 +1,16 @@
+{
+  "candidate": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-early-exit-compile-01",
+  "candidate_manifest": "a59473631fb28dcddfbd2dd96d795c98d61b2776ba33d91e3efa9e5ffe8922fe",
+  "candidate_sha256": "d356483f927c608b5973982558127ce4feb0873a36676909ed3b3d6ac8b7acb3",
+  "sources": {
+    "freeze.py": "2e7a75ad3896b38f4e6ed3f65a0bf21661acdf2d07a362b2f843d8f21e0dfb5d",
+    "native_inputs.py": "530550fe5ab85dabe033081012452d727324832e4d3a052b9540bc6f26263c93",
+    "run_native.py": "d8de0e59510b406cce932f80a0a7729c653e3ed47cb8b2febd5b63246e35a75a"
+  },
+  "originals": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-revisit-frozen-rv\\inputs.json": "dc134212a69b9d983265819c256cbd9d435bb8f049688686ec684a78c23a273c",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-revisit-frozen-rv\\run_native.py": "28b919adaa20afa5cd6126717d6e31e7fc58b2280216fa236ffa63a24959c712",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-revisit-frozen-rv\\native_inputs.py": "c7ce9e09d74972e2d07c3fce1893f30a3c6263498a83e616f5a6084d081b7ebe",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-revisit-frozen-rv\\native_runner.py": "d311e5f5104095492949057184725a789a80c811bc9d9780383951281ac005f2"
+  }
+}

@@ -1,0 +1,19 @@
+--- early1/RoomSync.as
++++ early2/RoomSync.as
+@@ -191,6 +191,7 @@
+             throw new Error("Early activation is not ready");
+          var id:String=early.id;
+          if(!game.mapGeneration.releaseEarly(id))throw new Error("External travel hold did not release");
++         TravelGuard.endTravel();
+          if(nativeTravel.current!=null)nativeTravel.finish(nativeTravel.id);
+          firstRaster.cancel();seedRaster.clear();seedDeadline=0;clearNativeEntry();nativeDeadline=0;
+          game.activeTravelId="";preparing=null;pending=0;readySent=false;
+@@ -874,7 +875,7 @@
+                   TravelPlacement.place(game.gg,Number(hostInfo.x),Number(hostInfo.y));
+                authority=Boolean(msg.owner);ready=true;term=int(msg.term);settledRoom=game.loc;settledKey=game.roomKey();
+                initial=false;game.independentRooms=true;nativeRoom=game.loc;
+-               TravelGuard.endTravel();
++               if(!completingEarly)TravelGuard.endTravel();
+                if(completingEarly) {
+                   early.allowPaint(game.world,nativeFrame);mod.stage.invalidate();return true;
+                }

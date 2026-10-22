@@ -1,0 +1,157 @@
+from pathlib import Path
+import sys
+sys.path.insert(0,str(Path(__file__).resolve().parents[2]/"tools/validation"))
+"""Run identical external native travel checks against pinned A binaries."""
+import argparse
+import json
+import re
+import shutil
+import subprocess
+import sys
+from check_coop_bundle import ROOT, M52, read, save, sha
+from run_security_terminals import installation, test_port
+from native_inputs import audit,host_input,verify_host_intent,verify_driver,sandy_input,frozen_vision,RV_KEY,RV_OLD,RV_NEW
+RUNNER=Path(__file__).resolve().parent.parent/"recovery-early-revisit-frozen-rv/native_runner.py"
+
+
+def valid_probe(rows):
+    if not rows:return False
+    groups={}
+    for row in rows:
+        group=groups.setdefault(row["segment"],[]);group.append(row)
+        if row.get("faults") or row["sequence"]>20:return False
+    return all(len(group)<=20 and len({r["sequence"] for r in group})==len(group) for group in groups.values())
+
+
+def main():
+    ap=argparse.ArgumentParser()
+    ap.add_argument('--candidate',required=True)
+    ap.add_argument('--drivers',required=True)
+    ap.add_argument('--output',required=True)
+    ap.add_argument('--game-candidate',required=True,help='Verified isolated native-travel host directory; never installs it')
+    ap.add_argument('--scenario',choices=['scene','entry-room'],default='scene')
+    ap.add_argument('--solo',action='store_true')
+    ap.add_argument('--sand-mode',choices=['bridge','legacy'],default='bridge')
+    ap.add_argument('--registry-wait',type=float,default=300)
+    a=ap.parse_args()
+    candidate=(ROOT/a.candidate).resolve();drivers=(ROOT/a.drivers).resolve();out=(ROOT/a.output).resolve()
+    assert candidate.parent==M52 and drivers.parent==M52 and out.parent==M52 and not out.exists()
+    audit(candidate)
+    sand=sandy_input(a.sand_mode)
+    assert a.sand_mode=="bridge"
+    rv=frozen_vision()
+    meta=read(drivers/'prepared.json')
+    verify_driver(drivers,meta,a.scenario)
+    if a.scenario=="scene":assert meta["sand_mode"]==a.sand_mode
+    assert not (a.solo and meta.get('diagnostic_only')), 'First resumed mirror frame profiling requires a peer'
+    for n,h in meta['files'].items():assert sha(drivers/n)==h,n
+    binary=candidate/'RConnectMod.swf';digest=sha(binary)
+    version=re.search(r'VERSION:String\s*=\s*"([^"]+)"',(candidate/'src/RConnectMod.as').read_text(encoding='utf-8')).group(1)
+    before=installation()
+    host_candidate=None
+    host_intent=None
+    if a.game_candidate:
+        host_candidate=(ROOT/a.game_candidate).resolve()
+        assert host_candidate.parent==M52
+        host_intent=host_input(host_candidate,before)
+    out.mkdir();binding=out/'driver';binding.mkdir()
+    for n in ('EffectsDriver.swf','EffectsHarness.swf'):shutil.copyfile(drivers/a.scenario/n,binding/n)
+    save(binding/'driver-input.json',dict(candidate_sha256=digest,identical_driver=sha(binding/'EffectsDriver.swf')))
+    save(out/'intent.json',dict(candidate=str(candidate),candidate_sha256=digest,driver_manifest=sha(drivers/'prepared.json'),
+        scenario=a.scenario,solo=a.solo,diagnostic_only=bool(meta.get('diagnostic_only',False)),installation=before,
+        runner_sha256=sha(RUNNER),wrapper_sha256=sha(__file__),native_host=host_intent,sandy=sand,rv_candidate=str(rv),rv_sha256=RV_OLD,installed_rv_sha256=RV_NEW))
+    timed=a.scenario in ('timing','scene')
+    cmd=[sys.executable,'-B','-X','utf8',str(RUNNER),'--candidate',str(binary),
+        '--effects','--effects-driver',str(binding),'--all-mods','--land','random_mane' if a.scenario=='entry-room' else 'rbl','--seconds','600',
+        '--expected-version',version,'--port',str(test_port()),'--private-desktop','--defer-visible','--wait-host-world','--require-exclusive-air']
+    cmd+=['--registry-wait',str(a.registry_wait)]
+    if host_candidate:cmd+=['--game-candidate',str(host_candidate/'pfe.swf')]
+    if a.solo:cmd+=['--solo']
+    if a.sand_mode=='bridge':cmd+=['--sandy-candidate',sand['candidate']]
+    cmd+=['--vision-candidate',str(rv)]
+    with (out/'runner.log').open('w',encoding='utf-8') as log:
+        process=subprocess.run(cmd,cwd=ROOT,stdout=log,stderr=subprocess.STDOUT)
+    raw=(out/'runner.log').read_text(encoding='utf-8',errors='replace')
+    found=re.search(r'^OUTPUT .*?([0-9a-f]{10})\s*$',raw,re.M)
+    after=installation()
+    result=dict(exit_code=process.returncode,run=found[1] if found else None,installation_unchanged=before==after,
+        diagnostic_only=bool(meta.get('diagnostic_only',False)),passed=False)
+    if found:
+        run=ROOT/'build/cooperation'/found[1];manifest=read(run/'run.json');result['roles']={}
+        for role in (('host',) if a.solo else ('host','join')):
+            inp=manifest['inputs'][role]
+            expected_host=host_intent['candidate_sha256'] if host_intent else before['pfe.swf']
+            assert inp['game']==expected_host and inp['production']==digest
+            assert inp['driver']==sha(binding/'EffectsDriver.swf')
+            modules={k.replace(chr(92),'/').lower():v for k,v in inp['modules'].items()}
+            assert modules['mods/sandevistan/release/sandevistanmod.swf']==sand['candidate_sha256']
+            assert modules[RV_KEY.lower()]==RV_OLD and inp['vision']==RV_OLD
+            assert before[RV_KEY]==after[RV_KEY]==RV_NEW
+            path=run/(role+'.log');text=path.read_text(encoding='utf-8-sig',errors='replace') if path.exists() else ''
+            stdout=run/(role+'.stdout.log');all_text=text+'\n'+(stdout.read_text(encoding='utf-8',errors='replace') if stdout.exists() else '')
+            module_logs=run/'module-logs'/role
+            for module_log in sorted(module_logs.glob('*.log')):
+                if module_log.name!='RConnect.log':all_text+='\n'+module_log.read_text(encoding='utf-8',errors='replace')
+            errors=[line for line in all_text.splitlines() if 'COOP FAIL' in line
+                or 'handoff timed out' in line or 'game error dialog' in line
+                or ('obj spawn' in line and 'failed' in line)
+                or ('RConnect' in line and (' failed:' in line or ' ERROR' in line))
+                or re.search(r'\bERROR\b',line)
+                or re.search(r'\b(?:Error\s*#\d+|TypeError|ArgumentError|ReferenceError|VerifyError|RangeError|SecurityError|out of memory)\b',line,re.I)]
+            scene_log=module_logs/'ContinuousScene.log'
+            scene_text=scene_log.read_text(encoding='utf-8',errors='replace') if scene_log.exists() else ''
+            if '[ContinuousScene] registered ' not in scene_text:errors.append('ContinuousScene initialization was not confirmed')
+            scene_asset='mods/ContinuousScene/release/scene.xml'
+            if inp.get('mod_assets',{}).get(scene_asset)!=before.get(scene_asset):errors.append('ContinuousScene scene asset differs or is missing')
+            errors=list(dict.fromkeys(errors))
+            rows=[json.loads(s.split('TRAVEL RESULT ',1)[1]) for s in text.splitlines() if s.startswith('TRAVEL RESULT ')]
+            result['roles'][role]=dict(checks=len(re.findall(r'^COOP PASS ',text,re.M)),errors=errors,
+                done='COOP EFFECTS DONE' in text,version='v'+version+' initialized' in text,rows=rows,log_sha256=sha(path) if path.exists() else None)
+            result['roles'][role]['revisit_probe']=[json.loads(s.split('EARLY REVISIT PROBE ',1)[1]) for s in text.splitlines() if s.startswith('EARLY REVISIT PROBE ')]
+            if result['diagnostic_only']:
+                result['roles'][role]['profile']=[json.loads(s.split('A22 ROOM FIRST FRAME TIMING ',1)[1])
+                    for s in text.splitlines() if s.startswith('A22 ROOM FIRST FRAME TIMING ')]
+                result['roles'][role]['terrain_diff']=[json.loads(s.split('ROOM TERRAIN DIFF ',1)[1])
+                    for s in text.splitlines() if s.startswith('ROOM TERRAIN DIFF ')]
+                result['roles'][role]['raster_parity']=[json.loads(s.split('ROOM RASTER PARITY ',1)[1])
+                    for s in text.splitlines() if s.startswith('ROOM RASTER PARITY ')]
+        result['passed']=process.returncode==0 and before==after and all(r['done'] and r['version'] and not r['errors'] and (len(r['rows'])==3 if timed else r['checks']>0) for r in result['roles'].values())
+        if result['diagnostic_only']:
+            if meta.get('diagnostic_kind')=='early-revisit':
+                result['profile_valid']=all(valid_probe(value['revisit_probe']) for value in result['roles'].values())
+            elif meta.get('diagnostic_kind')=='raster':
+                rows=result['roles'].get('join',{}).get('raster_parity',[])
+                result['profile_valid']=len(rows)==2 and all(r.get('valid') and r.get('comparedLayers',0)>0 for r in rows)
+            else:
+                profiles=result['roles'].get('join',{}).get('profile',[])
+                result['profile_valid']=len(profiles)==2 and all(
+                    len(p.get('markers',[]))>=8 and p.get('presentation',{}).get('motionCalls',0)>0 for p in profiles)
+                if 'tests/RoomTerrainDiff.as' in meta['files']:
+                    diffs=result['roles']['join']['terrain_diff']
+                    result['profile_valid']=result['profile_valid'] and len(diffs)==2 and all(d.get('valid') for d in diffs)
+            result['passed']=result['passed'] and result['profile_valid']
+        result['memory']=read(run/'memory-timeline.json')
+    if host_candidate:
+        verify_host_intent(host_candidate,host_intent,after)
+        result['native_host']=host_intent
+    verify_driver(drivers,meta,a.scenario)
+    assert sha(drivers/'prepared.json')==read(out/'intent.json')['driver_manifest']
+    assert sandy_input(a.sand_mode)==sand
+    result['sandy']=sand
+    result['rv_candidate_sha256']=RV_OLD;result['installed_rv_sha256']=RV_NEW
+    assert frozen_vision()==rv
+    result['early_performance_qualified']=False
+    save(out/'result.json',result)
+    # Keep complete phase/input/source evidence on disk, not in every progress
+    # item. This only shortens console output; qualification above is unchanged.
+    shown={k:v for k,v in result.items() if k not in ('memory','roles','native_host')}
+    if 'roles' in result:
+        shown['roles']={role:dict(checks=value['checks'],errors=value['errors'],done=value['done'],
+            rows=[{key:row.get(key) for key in ('round','target','elapsed','controlResponseElapsed')}
+                  for row in value['rows']]) for role,value in result['roles'].items()}
+    if host_intent:shown['native_host_sha256']=host_intent['candidate_sha256']
+    print(json.dumps(shown,ensure_ascii=False),flush=True)
+    if not result['passed']:raise SystemExit(1)
+
+
+if __name__=='__main__':main()

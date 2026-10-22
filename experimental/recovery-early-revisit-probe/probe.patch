@@ -1,0 +1,145 @@
+--- original/FirstRasterSceneProbe.as
++++ diagnostic/FirstRasterSceneProbe.as
+@@ -1,17 +1,27 @@
+ package {
+    import flash.utils.Dictionary;
++   import rconnect.core.Log;
+    import flash.utils.getTimer;
+    /** Read-only raster/permit evidence. No production receive/acquire calls. */
+    public final class FirstRasterSceneProbe {
+       private var mod:Object,cls:Object,original:Function,wrapper:Function,active:Boolean=false;
+       private var tickets:Dictionary=new Dictionary(),rows:Array=[],expected:Boolean=false;
+       private var startPermit:Object,heldSeen:Boolean=false;
++      private var ticketRefs:Dictionary=new Dictionary(),baseline:Object;
++      private var segment:int=-1,diagnosticStart:int=0,diagnosticCount:int=0,changeCount:int=0;
++      private var lastSignature:String="",lastPoll:int=-1,checkpoint:int=0;
++      private var bridgeCalls:int=0,bridgeNulls:int=0,bridgeRows:Array=[],previousTicket:Object;
++      private static const MAX_DIAGNOSTICS:int=20;
++      private static const MAX_CHANGES:int=13;
++      private static const CHECKPOINTS:Array=[8000,15000,30000,44000,60000,90000];
++
+       public function FirstRasterSceneProbe(value:Object) {
+          mod=value;cls=mod.game.main.loaderInfo.applicationDomain.getDefinition("fe.graph.Grafon");
+          if(!("rconnectRasterBridge" in cls) || !(cls.rconnectRasterBridge is Function))return;
+          original=cls.rconnectRasterBridge;
+          wrapper=function(w:Object,l:Object,g:Object):Object {
+             var ticket:Object=original(w,l,g);
++            if(active)recordBridge(w,l,g,ticket);
+             if(active && ticket!=null && tickets[ticket]==null) {
+                var permit:Object=query();
+                var row:Object={at:getTimer(),wall:new Date().time,initialWaiting:ticket.waiting,
+@@ -19,6 +29,7 @@
+                   firstReleased:-1,firstPainted:-1,permit:permit,
+                   earlyPending:Boolean(mod.session.rooms.earlyTravelPending)};
+                tickets[ticket]=row;rows.push(row);
++               ticketRefs[ticket]={world:w,game:w.game,gg:w.gg,land:w.land,loc:l,grafon:g};
+                if(permit!=null && permit.held===true)heldSeen=true;
+             }
+             return ticket;
+@@ -34,6 +45,7 @@
+       }
+       public function begin(required:Boolean):void {
+          active=true;expected=required;tickets=new Dictionary();rows=[];heldSeen=false;startPermit=query();
++         beginDiagnostic();
+       }
+       public function sample():void {
+          if(!active)return;
+@@ -42,7 +54,88 @@
+             if(ticket.waiting===false && row.firstReleased<0)row.firstReleased=getTimer();
+             if(ticket.unpainted===false && row.firstPainted<0)row.firstPainted=getTimer();
+          }
++         sampleDiagnostic();
+       }
++      private function beginDiagnostic():void {
++         segment++;diagnosticStart=getTimer();diagnosticCount=changeCount=checkpoint=0;
++         lastSignature="";lastPoll=-1;ticketRefs=new Dictionary();
++         bridgeCalls=bridgeNulls=0;bridgeRows=[];previousTicket=null;
++         var w:Object=mod.game.world;
++         baseline={world:w,game:w.game,gg:w.gg,land:w.land,loc:w.loc,grafon:w.grafon};
++      }
++      private function recordBridge(w:Object,l:Object,g:Object,ticket:Object):void {
++         bridgeCalls++;if(ticket==null)bridgeNulls++;
++         if(bridgeRows.length>=6)bridgeRows.splice(3,1);
++         bridgeRows.push({call:bridgeCalls,at:getTimer(),wall:new Date().time,returnedNull:ticket==null,
++            sameAsPrevious:ticket!=null && ticket===previousTicket,
++            matchesKnownTicket:ticket!=null && tickets[ticket]!=null,
++            grafonMatchesWorld:g===w.grafon,locMatchesWorld:l===w.loc,
++            beginIdentity:identities(w,baseline)});
++         previousTicket=ticket;
++      }
++      private function identities(w:Object,ref:Object):Object {
++         return {world:w===ref.world,game:w!=null && w.game===ref.game,
++            gg:w!=null && w.gg===ref.gg,land:w!=null && w.land===ref.land,
++            loc:w!=null && w.loc===ref.loc,grafon:w!=null && w.grafon===ref.grafon};
++      }
++      private function diagnosticState():Object {
++         var out:Object={faults:[],tickets:[],bridgeCalls:bridgeCalls,bridgeNulls:bridgeNulls,bridgeCallbacks:bridgeRows},w:Object,g:Object,r:Object;
++         try {
++            w=mod.game.world;g=w.grafon;r=mod.session.rooms;
++            out.beginIdentity=identities(w,baseline);
++            out.nativeState={exit:w.t_exit,comLoad:w.comLoad,t_die:w.t_die,ng_wait:w.ng_wait,
++               paused:w.onPause,allStat:w.allStat,curLandId:String(w.game.curLandId),
++               landId:w.land==null?null:String(w.land.act.id),seed:w.land==null?null:w.land.rconnectLayoutSeed,
++               playerX:w.gg==null?null:w.gg.X,playerY:w.gg==null?null:w.gg.Y};
++            out.rooms={earlyPending:Boolean(r.earlyTravelPending),ready:r.ready,busy:r.busy,entryPending:r.entryPending};
++         }catch(stateError:*){out.faults.push("state: "+String(stateError));}
++         try {
++            out.renderer={pending:g.rconnectRasterPending,sceneViewReady:g.sceneViewReady(),
++               locMatchesWorld:g.loc===w.loc,preload:g.scenePreload,cull:g.sceneCullRender};
++         }catch(renderError:*){out.faults.push("renderer: "+String(renderError));}
++         try {out.permit=query();}catch(permitError:*){out.faults.push("permit: "+String(permitError));}
++         for(var ticket:Object in tickets) {
++            var row:Object=tickets[ticket];
++            try {
++               out.tickets.push({createdAt:row.at,waiting:ticket.waiting,unpainted:ticket.unpainted,
++                  firstReleased:row.firstReleased,firstPainted:row.firstPainted,
++                  currentIdentity:identities(w,ticketRefs[ticket])});
++            }catch(ticketError:*){out.faults.push("ticket: "+String(ticketError));}
++         }
++         return out;
++      }
++      private function sampleDiagnostic():void {
++         if(diagnosticCount>=MAX_DIAGNOSTICS)return;
++         var now:int=getTimer();
++         // Read at most once per 250 ms, not on every production frame.
++         if(lastPoll>=0 && now-lastPoll<250)return;
++         lastPoll=now;
++         var state:Object=diagnosticState(),signature:String=signatureOf(state);
++         var due:Boolean=checkpoint<CHECKPOINTS.length && now-diagnosticStart>=CHECKPOINTS[checkpoint];
++         if(due) {
++            var label:String="after-"+CHECKPOINTS[checkpoint]+"ms";
++            while(checkpoint<CHECKPOINTS.length && now-diagnosticStart>=CHECKPOINTS[checkpoint])checkpoint++;
++            emitDiagnostic(label,state);lastSignature=signature;
++         }else if(signature!=lastSignature && changeCount<MAX_CHANGES) {
++            changeCount++;lastSignature=signature;emitDiagnostic("state-change",state);
++         }
++      }
++      private function signatureOf(state:Object):String {
++         // Position is useful evidence but must not turn movement into log spam.
++         var n:Object=state.nativeState;
++         return JSON.stringify({faults:state.faults,tickets:state.tickets,renderer:state.renderer,
++            rooms:state.rooms,identity:state.beginIdentity,permit:state.permit,bridgeCalls:bridgeCalls,
++            nativeFlags:n==null?null:[n.exit,n.comLoad,n.t_die,n.ng_wait,n.paused,n.allStat,n.curLandId,n.landId,n.seed]});
++      }
++      private function emitDiagnostic(reason:String,state:Object=null):void {
++         if(diagnosticCount>=MAX_DIAGNOSTICS)return;
++         if(state==null)state=diagnosticState();
++         state.segment=segment;state.sequence=++diagnosticCount;state.reason=reason;
++         state.at=getTimer();state.wall=new Date().time;state.elapsed=state.at-diagnosticStart;
++         state.readOnly=true;state.diagnosticOnly=true;
++         Log.d("EARLY REVISIT PROBE "+JSON.stringify(state));
++      }
++
+       public function finish():Object {
+          sample();active=false;var permit:Object=query();
+          var ok:Boolean=expected?(original!=null && rows.length==1):rows.length==0;
+@@ -66,7 +159,8 @@
+       }
+       public function dispose():void {
+          if(cls!=null && cls.rconnectRasterBridge===wrapper)cls.rconnectRasterBridge=original;
+-         active=false;tickets=new Dictionary();
++         if(active)emitDiagnostic("dispose");
++         active=false;tickets=new Dictionary();ticketRefs=new Dictionary();baseline=null;
+       }
+    }
+ }

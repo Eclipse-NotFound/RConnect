@@ -1,0 +1,19 @@
+--- frozen-original/host_recheck.py
++++ explicit-rv-transition/host_recheck.py
+@@ -10,6 +10,7 @@
+ import json
+ from pathlib import Path
+ import sys
++from baseline import assert_current
+ 
+ HERE = Path(__file__).resolve().parent
+ ROOT = HERE.parents[1]
+@@ -78,7 +79,7 @@
+     sys.path.insert(0, str(ROOT / 'tools/host_authority'))
+     from patch_native import swf_tags
+     installed = installation()
+-    assert len(installed) == 22 and installed == meta['installation_before']
++    assert_current(installed,meta['installation_before'])
+     checked = {}
+     for cls in h.PATCHED:
+         rel = Path(*cls.split('.')).with_suffix('.as')

@@ -1,0 +1,377 @@
+{
+  "dual": {
+    "directory": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-early-legacy-scene-dual-01",
+    "run": "9435e4acd1",
+    "wrapper_passed": false,
+    "installation_unchanged": true,
+    "result_sha256": "0d7b89dacfd4424107c825df6647997afd7db24028607a978ed594d6fbbf40a2",
+    "manifest_sha256": "508db213a21819567ab296ec07f7710544ae9db8fdc9359171ae749cca6bc2e8",
+    "roles": {
+      "host": {
+        "checks": 14,
+        "errors": [
+          {
+            "round": 0,
+            "text": "COOP FAIL travel-timing timeout phase=wait round=0"
+          }
+        ],
+        "wrapper_errors": [
+          "COOP FAIL travel-timing timeout phase=wait round=0"
+        ],
+        "done": true,
+        "rows": [
+          {
+            "round": 0,
+            "target": "random_mane",
+            "elapsed": 8741,
+            "controlResponseElapsed": 9480,
+            "exitStart": 17,
+            "exitEnd": 7344,
+            "cover": 7528,
+            "paused": 411,
+            "x": 161.8,
+            "y": 4320,
+            "key": "random_mane//0,0,0",
+            "width": 240,
+            "height": 125,
+            "seed": 1380142925,
+            "units": 190,
+            "actualMerged": true,
+            "common_clock_ready_ms": 8742,
+            "input": {
+              "passed": true,
+              "checks": {
+                "identities": true,
+                "released_baseline": true,
+                "stationary_tail": true,
+                "pressed_keys": true,
+                "responded": true,
+                "released_native": true,
+                "release_consumed": true,
+                "original_windows": true
+              },
+              "baseline_ms": 546,
+              "response_ms": 190,
+              "release_verified_after_request_ms": 9604
+            },
+            "raster": {
+              "passed": true,
+              "expected": false,
+              "tickets": [],
+              "start": null,
+              "final": null,
+              "actual_raster_interval_observed": false,
+              "no_simulation_asserted": false
+            }
+          }
+        ],
+        "requested_rounds": [
+          {
+            "started": 63778,
+            "round": 0,
+            "target": "random_mane"
+          }
+        ],
+        "phases": [],
+        "receives": [
+          {
+            "round": null,
+            "op": "request",
+            "from": 63458,
+            "at": 63458,
+            "ms": 0,
+            "barrier": null,
+            "context": {
+              "cover": true,
+              "fading": false,
+              "authority": true,
+              "epoch": 1,
+              "roomOp": "request",
+              "ready": false,
+              "peerPhase": "",
+              "term": 0,
+              "room": "rbl//0,0,0",
+              "busy": true,
+              "nativePause": true,
+              "exit": 0
+            }
+          },
+          {
+            "round": null,
+            "op": "ready",
+            "from": 63459,
+            "at": 63541,
+            "ms": 82,
+            "barrier": 1,
+            "context": {
+              "cover": false,
+              "fading": false,
+              "authority": true,
+              "epoch": 1,
+              "roomOp": "ready",
+              "ready": true,
+              "peerPhase": "",
+              "term": 1,
+              "room": "rbl//0,0,0",
+              "busy": false,
+              "nativePause": false,
+              "exit": 0
+            }
+          },
+          {
+            "round": null,
+            "op": "ack",
+            "from": 63737,
+            "at": 63738,
+            "ms": 1,
+            "barrier": 1,
+            "context": {
+              "cover": false,
+              "fading": false,
+              "authority": true,
+              "epoch": 1,
+              "roomOp": "ack",
+              "ready": true,
+              "peerPhase": "",
+              "term": 1,
+              "room": "rbl//0,0,0",
+              "busy": false,
+              "nativePause": false,
+              "exit": 0
+            }
+          },
+          {
+            "round": 0,
+            "op": "ready",
+            "from": 71428,
+            "at": 72380,
+            "ms": 952,
+            "barrier": 2,
+            "context": {
+              "cover": false,
+              "fading": false,
+              "authority": true,
+              "epoch": 2,
+              "roomOp": "ready",
+              "ready": true,
+              "peerPhase": "",
+              "term": 2,
+              "room": "random_mane//0,0,0",
+              "busy": false,
+              "nativePause": false,
+              "exit": 0
+            }
+          },
+          {
+            "round": 0,
+            "op": "request",
+            "from": 72382,
+            "at": 72382,
+            "ms": 0,
+            "barrier": null,
+            "context": {
+              "cover": false,
+              "fading": false,
+              "authority": true,
+              "epoch": 2,
+              "roomOp": "request",
+              "ready": true,
+              "peerPhase": "",
+              "term": 2,
+              "room": "random_mane//0,0,0",
+              "busy": false,
+              "nativePause": false,
+              "exit": 0
+            }
+          },
+          {
+            "round": 0,
+            "op": "ack",
+            "from": 77076,
+            "at": 77078,
+            "ms": 2,
+            "barrier": 2,
+            "context": {
+              "cover": false,
+              "fading": false,
+              "authority": true,
+              "epoch": 2,
+              "roomOp": "ack",
+              "ready": true,
+              "peerPhase": "",
+              "term": 2,
+              "room": "random_mane//0,0,0",
+              "busy": false,
+              "nativePause": false,
+              "exit": 0
+            }
+          }
+        ],
+        "restore_timings": [],
+        "raw_log_sha256": "1989549411bb88eff40ccc2e32c439fdd84656314398f0917671827b4bc0719b"
+      },
+      "join": {
+        "checks": 9,
+        "errors": [
+          {
+            "round": 0,
+            "text": "COOP FAIL travel-timing no-input baseline exceeded original 1000ms input window round=0"
+          }
+        ],
+        "wrapper_errors": [
+          "COOP FAIL travel-timing no-input baseline exceeded original 1000ms input window round=0"
+        ],
+        "done": true,
+        "rows": [],
+        "requested_rounds": [
+          {
+            "started": 27591,
+            "round": 0,
+            "target": "random_mane"
+          }
+        ],
+        "phases": [],
+        "receives": [
+          {
+            "round": null,
+            "op": "grant",
+            "from": 27311,
+            "at": 27464,
+            "ms": 153,
+            "barrier": 1,
+            "context": {
+              "roomOp": "grant",
+              "cover": false,
+              "nativePause": false,
+              "ready": true,
+              "fading": false,
+              "busy": false,
+              "room": "rbl//0,0,0",
+              "authority": false,
+              "epoch": 1,
+              "term": 1,
+              "exit": 0,
+              "peerPhase": ""
+            }
+          },
+          {
+            "round": 0,
+            "op": "prepare",
+            "from": 27674,
+            "at": 27675,
+            "ms": 1,
+            "barrier": null,
+            "context": {
+              "roomOp": "prepare",
+              "cover": true,
+              "nativePause": false,
+              "ready": false,
+              "fading": false,
+              "busy": false,
+              "room": "rbl//0,0,0",
+              "authority": false,
+              "epoch": 1,
+              "term": 1,
+              "exit": 21,
+              "peerPhase": ""
+            }
+          },
+          {
+            "round": 0,
+            "op": "seal",
+            "from": 34893,
+            "at": 34896,
+            "ms": 3,
+            "barrier": 2,
+            "context": {
+              "roomOp": "seal",
+              "cover": true,
+              "nativePause": true,
+              "ready": false,
+              "fading": false,
+              "busy": true,
+              "room": "random_mane//0,0,0",
+              "authority": false,
+              "epoch": 2,
+              "term": 1,
+              "exit": 0,
+              "peerPhase": ""
+            }
+          },
+          {
+            "round": 0,
+            "op": "grant",
+            "from": 36210,
+            "at": 37972,
+            "ms": 1762,
+            "barrier": 2,
+            "context": {
+              "roomOp": "grant",
+              "cover": true,
+              "nativePause": true,
+              "ready": true,
+              "fading": false,
+              "busy": true,
+              "room": "random_mane//0,0,0",
+              "authority": false,
+              "epoch": 2,
+              "term": 2,
+              "exit": 0,
+              "peerPhase": ""
+            }
+          }
+        ],
+        "restore_timings": [
+          {
+            "round": null,
+            "terrain": 41,
+            "total": 127,
+            "units": 91,
+            "effects": 108,
+            "redraw": 124,
+            "role": 8,
+            "retained": false,
+            "foreign": true,
+            "terrainReused": true,
+            "key": "rbl//0,0,0",
+            "authority": false,
+            "objects": 20
+          },
+          {
+            "round": 0,
+            "retained": false,
+            "terrain": 768,
+            "redraw": 1575,
+            "total": 1575,
+            "effects": 1525,
+            "units": 1480,
+            "foreign": true,
+            "authority": false,
+            "objects": 281,
+            "key": "random_mane//0,0,0",
+            "role": 29
+          }
+        ],
+        "raw_log_sha256": "d45dec437a7d089326b149321d066f07efb0531300747a9b2a709e5daaa145e0"
+      }
+    },
+    "completed_pairs": [
+      {
+        "round": 0,
+        "complete_pair": false,
+        "reason": "join has no completed TRAVEL RESULT for this round"
+      }
+    ],
+    "three_flows_complete": false,
+    "performance_qualified": false
+  },
+  "source_audit_boundaries": [
+    "Raster ticket creation/release/poll completion are not measured chunk draw start/end intervals.",
+    "Failed trip lacks rasterProbe.finish output and therefore lacks final permit/ticket fields.",
+    "Permit checked at begin, ticket creation and stable finish; continuous no-step coverage is not measured.",
+    "Spawn comparison permits 80 px distance and observes local readiness, not the exact native spawn frame.",
+    "Native Stage key dispatch and next-frame key-up consumption are covered; physical OS keyboard is not.",
+    "Scene scenario covers shared first entry, base and cached revisit; ordinary split room and active/replay are separate.",
+    "Rows report room readiness plus baseline/key response; no phase-aligned peer FPS or pixel equality qualification."
+  ]
+}

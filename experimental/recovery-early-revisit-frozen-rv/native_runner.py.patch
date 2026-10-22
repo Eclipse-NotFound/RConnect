@@ -1,0 +1,14 @@
+--- frozen-original/native_runner.py
++++ explicit-rv-transition/native_runner.py
+@@ -90,8 +90,10 @@
+     if args.private_desktop and args.visible_windows:ap.error('Private desktop and visible windows are mutually exclusive')
+     if args.solo and (args.connect_after_load or args.join_save_template or args.presentation):
+         ap.error('--solo cannot use a join save, deferred connection or paired presentation test')
++    from native_inputs import frozen_vision,sandy_input
++    assert args.sandy_candidate and args.vision_candidate
++    assert args.vision_candidate.resolve()==frozen_vision().resolve()
+     if args.sandy_candidate:
+-        from native_inputs import sandy_input
+         assert args.all_mods and args.sandy_candidate.resolve()==Path(sandy_input('bridge')['candidate']).resolve()
+     roles=('host',) if args.solo else ('host','join')
+     if args.all_mods and not (args.presentation or args.effects or args.smoke): ap.error('--all-mods requires --presentation, --effects or --smoke')

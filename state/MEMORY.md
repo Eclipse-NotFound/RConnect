@@ -21,7 +21,7 @@ Remains 1.02 双人合作。A 是普通入口现用同步架构；B 是独立主
 
 **安装仍 0.2.23-coop-bundle2 / 574d2b51490ae8b25a1396555600f56a301f8a20ae50104c0e35cf2796441afe。**
 回执 `build/m52/motion2-user-rollback-20261021-215647/rollback.json`；精确授权用毕撤销，勿重做或再问。
-宿主 BEFC，RV7852、CS7F1F、WB14112、Sand CEC6；每次冻结22项。没有将其它模组回退，不能称整个下午全部安装均恢复。
+宿主 BEFC，CS7F1F、WB14112、Sand CEC6；每次冻结22项。RV于2026-10-22约18:25由其会话更新为AB461FF3…F23871，之前本轮实测使用7852…E86764。已实读确认其部署备份保留准确旧7852，后续重访诊断将显式注入旧RV到隔离副本并单独核对当前安装；不回退用户RV安装。没有将其它模组回退，不能称整个下午全部安装均恢复。
 
 | 候选 | 准确来源和用途 | 状态 |
 |---|---|---|
@@ -71,13 +71,16 @@ Remains 1.02 双人合作。A 是普通入口现用同步架构；B 是独立主
 - A Sand准确CEC6兼容候选已在`mods/Sandevistan/build/out/a-travel-hold-20261022-003`编译，3e220b595f54249c82fcad36e1b13364c0456c4e8b5f4e20f876c3964c7d331c；原10文件中9不变，entry只加22行，新增helper只补两个ASC末返回，未混B。独立94方法静态复核通过。真实helper组件03为76/0；01夹具多定义编译失败，02后台桌面权限失败未AIR、登记已核对释放，原记录保留。不是完整游戏时停或加载资格。入口`recovery-sandy-hold-build`及`recovery-sandy-hold-components-v2`。
 - early217组件通过不代替真实Sand/原生加载。独立宿主2D415D…DD29原回读因init2变量声明移位失败；严格独立recheck通过，原失败保留。原生薄适配`recovery-early-sandy-native`已编译并实测：双人3b3c31c5f5首进/基地完成，缓存重访双方exit=0却未ready，主侧45秒交接超时，原95秒驱动失败。单人925d5f32df三段通过，elapsed 7178/2018/3290ms；双人首两段主10366/2438、加10508/2917ms。尚无绘制区间重叠证据，票据释放/完成的轮询样本不能代替真实绘制计时。正在独立有界诊断，不部署。
 - A时停真实单实例9180342e9d完成41/0：原生Stage热键启动active/replay、两阶段真实载体及MapGeneration均拒绝加载持有，空闲持有12回调保持状态并拒绝热键启动，释放后再次启动/回放正常结束，无许可泄漏，22安装不变。当前配置cooldown=0、enemyEnabled=false，不授非零冷却/敌人补步冻结或完整旅行回退资格。证据`build/m52/recovery-sandy-hold-native-01`，仅功能通过。
+- 同early/2D宿主而旧SandCEC6对照9435e4acd1首进已完成首次绘制，但加入无输入基线超过原1000ms门槛，加入结束后主侧等待超时，没到重访，不能作为重访控制组。原失败保留，不改阈值重跑。源级审查排除了restore drawLoc必然换票据这一简单猜测，真实卡点仍需有界日志。
+- 有界诊断5b404cdea1完整复现且记录有效：运行二进制/资产/非RC配置与3b3c31c5f5一致，两侧旧RV7852、安装仍新AB46。重访加入grant发生exit=10；无条件TravelGuard.endTravel提前清掉同次原生退出许可，下一before.guardTravel把curLandId回写rbl且强制exit0，实际Land仍random_mane。票据false、Grafonready、身份全同，early.destination因地图编号矛盾失败，保持关闭至95秒。不是绘制卡死或换错票据。独立报告`recovery-early-sandy-evidence/revisit-probe01.md`。
+- 精确early2源码`recovery-early-exit-authorization`仅RoomSync两处及版本，88/90类字节不变：early grant不endTravel，completeEarly成功释放外部许可后再endTravel，取消路径不改。319项静态来源检查，真实TravelGuard+RoomSync新旧回归及旧217组件待实际运行；完整编译已提交共享队列，输出`build/m52/recovery-early-exit-compile-01`。新的准确运行薄入口`recovery-early-exit-native`待编译产物freeze，不借用旧候选资格。
 - 所有最终目标必须在同一准确候选重测；组件/握手/祖先局部通过均不替代最终画面和性能。没有新部署资格。
 - B195及旧独立候选遗留不在当前恢复轮混合处理。历史大量明细已移至[证据快照](recovery-evidence-before-profile-settings-2026-10-22.md)，并有journal和git原记录。
 
 ## 6. 下一步
 
 1. 22+ACC大图最终像素已过；普通房漏掉真实墙沿原因已定位，但首个alpha保护方案被136项中的同像素反例否决。先明确原生结构擦除与跨端最终颜色的最小契约，再实现及同一原生驱动复验；不直接合当前wall-edge。23暂停补发及容器微优化未见稳定收益，保留实验，不合入后继；没有完整24。不删采样、改时钟或降频凑结果。
-2. A Sand授权已到：构建准确CEC6独立接口，组件/原生生命周期核对后，与early宿主做双人/单人加载对照；保留当前574D安装，合格前不部署。
+2. A Sand独立接口已完成76组件与41原生生命周期检查。early实际三段对照暴露缓存重访卡死、首进约慢49%；先用有界票据/视口就绪观察定位重访，修正后再做同组合双人/单人对照。保留当前574D安装，合格前不部署。
 3. 依据完整运动过程的实际空档选择瓶颈，补足只看重复位置/最终端点的验收缺口；停止无整机收益的微优化。新有界掉落诊断未复现旧空中长空档，先核查所有RENDER与落地分段，不重跑碰运气。念力/密集/加载仍未合格。
 4. 准备同一候选的完整光晕、击墙、高速/念力/掉落、加载及性能复验。未通过保持574D，合格后备份部署及安装路径复测。
 

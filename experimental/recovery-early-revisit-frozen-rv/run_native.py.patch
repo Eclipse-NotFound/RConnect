@@ -1,0 +1,57 @@
+--- frozen-original/run_native.py
++++ explicit-rv-transition/run_native.py
+@@ -10,8 +10,8 @@
+ import sys
+ from check_coop_bundle import ROOT, M52, read, save, sha
+ from run_security_terminals import installation, test_port
+-from native_inputs import audit,host_input,verify_host_intent,verify_driver,sandy_input
+-RUNNER=Path(__file__).resolve().parent.parent/"recovery-early-sandy-native/native_runner.py"
++from native_inputs import audit,host_input,verify_host_intent,verify_driver,sandy_input,frozen_vision,RV_KEY,RV_OLD,RV_NEW
++RUNNER=Path(__file__).with_name("native_runner.py")
+ 
+ 
+ def valid_probe(rows):
+@@ -38,6 +38,8 @@
+     assert candidate.parent==M52 and drivers.parent==M52 and out.parent==M52 and not out.exists()
+     audit(candidate)
+     sand=sandy_input(a.sand_mode)
++    assert a.sand_mode=="bridge" and not a.solo
++    rv=frozen_vision()
+     meta=read(drivers/'prepared.json')
+     verify_driver(drivers,meta,a.scenario)
+     if a.scenario=="scene":assert meta["sand_mode"]==a.sand_mode
+@@ -57,7 +59,7 @@
+     save(binding/'driver-input.json',dict(candidate_sha256=digest,identical_driver=sha(binding/'EffectsDriver.swf')))
+     save(out/'intent.json',dict(candidate=str(candidate),candidate_sha256=digest,driver_manifest=sha(drivers/'prepared.json'),
+         scenario=a.scenario,solo=a.solo,diagnostic_only=bool(meta.get('diagnostic_only',False)),installation=before,
+-        runner_sha256=sha(RUNNER),wrapper_sha256=sha(__file__),native_host=host_intent,sandy=sand))
++        runner_sha256=sha(RUNNER),wrapper_sha256=sha(__file__),native_host=host_intent,sandy=sand,rv_candidate=str(rv),rv_sha256=RV_OLD,installed_rv_sha256=RV_NEW))
+     timed=a.scenario in ('timing','scene')
+     cmd=[sys.executable,'-B','-X','utf8',str(RUNNER),'--candidate',str(binary),
+         '--effects','--effects-driver',str(binding),'--all-mods','--land','random_mane' if a.scenario=='entry-room' else 'rbl','--seconds','600',
+@@ -66,6 +68,7 @@
+     if host_candidate:cmd+=['--game-candidate',str(host_candidate/'pfe.swf')]
+     if a.solo:cmd+=['--solo']
+     if a.sand_mode=='bridge':cmd+=['--sandy-candidate',sand['candidate']]
++    cmd+=['--vision-candidate',str(rv)]
+     with (out/'runner.log').open('w',encoding='utf-8') as log:
+         process=subprocess.run(cmd,cwd=ROOT,stdout=log,stderr=subprocess.STDOUT)
+     raw=(out/'runner.log').read_text(encoding='utf-8',errors='replace')
+@@ -82,6 +85,8 @@
+             assert inp['driver']==sha(binding/'EffectsDriver.swf')
+             modules={k.replace(chr(92),'/').lower():v for k,v in inp['modules'].items()}
+             assert modules['mods/sandevistan/release/sandevistanmod.swf']==sand['candidate_sha256']
++            assert modules[RV_KEY.lower()]==RV_OLD and inp['vision']==RV_OLD
++            assert before[RV_KEY]==after[RV_KEY]==RV_NEW
+             path=run/(role+'.log');text=path.read_text(encoding='utf-8-sig',errors='replace') if path.exists() else ''
+             stdout=run/(role+'.stdout.log');all_text=text+'\n'+(stdout.read_text(encoding='utf-8',errors='replace') if stdout.exists() else '')
+             module_logs=run/'module-logs'/role
+@@ -133,6 +138,8 @@
+     assert sha(drivers/'prepared.json')==read(out/'intent.json')['driver_manifest']
+     assert sandy_input(a.sand_mode)==sand
+     result['sandy']=sand
++    result['rv_candidate_sha256']=RV_OLD;result['installed_rv_sha256']=RV_NEW
++    assert frozen_vision()==rv
+     result['early_performance_qualified']=False
+     save(out/'result.json',result)
+     # Keep complete phase/input/source evidence on disk, not in every progress

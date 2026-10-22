@@ -1,0 +1,79 @@
+      private function beginDiagnostic():void {
+         segment++;diagnosticStart=getTimer();diagnosticCount=changeCount=checkpoint=0;
+         lastSignature="";lastPoll=-1;ticketRefs=new Dictionary();
+         bridgeCalls=bridgeNulls=0;bridgeRows=[];previousTicket=null;
+         var w:Object=mod.game.world;
+         baseline={world:w,game:w.game,gg:w.gg,land:w.land,loc:w.loc,grafon:w.grafon};
+      }
+      private function recordBridge(w:Object,l:Object,g:Object,ticket:Object):void {
+         bridgeCalls++;if(ticket==null)bridgeNulls++;
+         if(bridgeRows.length>=6)bridgeRows.splice(3,1);
+         bridgeRows.push({call:bridgeCalls,at:getTimer(),wall:new Date().time,returnedNull:ticket==null,
+            sameAsPrevious:ticket!=null && ticket===previousTicket,
+            matchesKnownTicket:ticket!=null && tickets[ticket]!=null,
+            grafonMatchesWorld:g===w.grafon,locMatchesWorld:l===w.loc,
+            beginIdentity:identities(w,baseline)});
+         previousTicket=ticket;
+      }
+      private function identities(w:Object,ref:Object):Object {
+         return {world:w===ref.world,game:w!=null && w.game===ref.game,
+            gg:w!=null && w.gg===ref.gg,land:w!=null && w.land===ref.land,
+            loc:w!=null && w.loc===ref.loc,grafon:w!=null && w.grafon===ref.grafon};
+      }
+      private function diagnosticState():Object {
+         var out:Object={faults:[],tickets:[],bridgeCalls:bridgeCalls,bridgeNulls:bridgeNulls,bridgeCallbacks:bridgeRows},w:Object,g:Object,r:Object;
+         try {
+            w=mod.game.world;g=w.grafon;r=mod.session.rooms;
+            out.beginIdentity=identities(w,baseline);
+            out.nativeState={exit:w.t_exit,comLoad:w.comLoad,t_die:w.t_die,ng_wait:w.ng_wait,
+               paused:w.onPause,allStat:w.allStat,curLandId:String(w.game.curLandId),
+               landId:w.land==null?null:String(w.land.act.id),seed:w.land==null?null:w.land.rconnectLayoutSeed,
+               playerX:w.gg==null?null:w.gg.X,playerY:w.gg==null?null:w.gg.Y};
+            out.rooms={earlyPending:Boolean(r.earlyTravelPending),ready:r.ready,busy:r.busy,entryPending:r.entryPending};
+         }catch(stateError:*){out.faults.push("state: "+String(stateError));}
+         try {
+            out.renderer={pending:g.rconnectRasterPending,sceneViewReady:g.sceneViewReady(),
+               locMatchesWorld:g.loc===w.loc,preload:g.scenePreload,cull:g.sceneCullRender};
+         }catch(renderError:*){out.faults.push("renderer: "+String(renderError));}
+         try {out.permit=query();}catch(permitError:*){out.faults.push("permit: "+String(permitError));}
+         for(var ticket:Object in tickets) {
+            var row:Object=tickets[ticket];
+            try {
+               out.tickets.push({createdAt:row.at,waiting:ticket.waiting,unpainted:ticket.unpainted,
+                  firstReleased:row.firstReleased,firstPainted:row.firstPainted,
+                  currentIdentity:identities(w,ticketRefs[ticket])});
+            }catch(ticketError:*){out.faults.push("ticket: "+String(ticketError));}
+         }
+         return out;
+      }
+      private function sampleDiagnostic():void {
+         if(diagnosticCount>=MAX_DIAGNOSTICS)return;
+         var now:int=getTimer();
+         // Read at most once per 250 ms, not on every production frame.
+         if(lastPoll>=0 && now-lastPoll<250)return;
+         lastPoll=now;
+         var state:Object=diagnosticState(),signature:String=signatureOf(state);
+         var due:Boolean=checkpoint<CHECKPOINTS.length && now-diagnosticStart>=CHECKPOINTS[checkpoint];
+         if(due) {
+            var label:String="after-"+CHECKPOINTS[checkpoint]+"ms";
+            while(checkpoint<CHECKPOINTS.length && now-diagnosticStart>=CHECKPOINTS[checkpoint])checkpoint++;
+            emitDiagnostic(label,state);lastSignature=signature;
+         }else if(signature!=lastSignature && changeCount<MAX_CHANGES) {
+            changeCount++;lastSignature=signature;emitDiagnostic("state-change",state);
+         }
+      }
+      private function signatureOf(state:Object):String {
+         // Position is useful evidence but must not turn movement into log spam.
+         var n:Object=state.nativeState;
+         return JSON.stringify({faults:state.faults,tickets:state.tickets,renderer:state.renderer,
+            rooms:state.rooms,identity:state.beginIdentity,permit:state.permit,bridgeCalls:bridgeCalls,
+            nativeFlags:n==null?null:[n.exit,n.comLoad,n.t_die,n.ng_wait,n.paused,n.allStat,n.curLandId,n.landId,n.seed]});
+      }
+      private function emitDiagnostic(reason:String,state:Object=null):void {
+         if(diagnosticCount>=MAX_DIAGNOSTICS)return;
+         if(state==null)state=diagnosticState();
+         state.segment=segment;state.sequence=++diagnosticCount;state.reason=reason;
+         state.at=getTimer();state.wall=new Date().time;state.elapsed=state.at-diagnosticStart;
+         state.readOnly=true;state.diagnosticOnly=true;
+         Log.d("EARLY REVISIT PROBE "+JSON.stringify(state));
+      }
