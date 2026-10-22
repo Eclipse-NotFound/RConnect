@@ -1,0 +1,41 @@
+{
+  "sources": {
+    "generate.py": "90baef4cceb15e4e925bca8b09ac92fe843bb13e60d0cb42fb22a22f68568297",
+    "binding.py": "0bb8bdb7e8139c48425cadc2351fc15bc2eec6dd0101d28c7d0b90765dcb414c",
+    "prepare.py": "008cfeccb872241dfaad3ee69dfc7700610cda49b3ac58e14c2491cd4cae5df5",
+    "audit_profile.py": "779a2128172034242c89ee3c2c41ff3c785c8ec3aefa1cd37810ff957653538a",
+    "check.py": "28efd68ec177eb31419f14ec9f61b0802e996f89c51bad455e0670667fde2139",
+    "audit_checks.py": "18d209310c438342324105a0009f73c025eddd34df410325802e6241b1854f4f",
+    "component_static.py": "08660b4395b41c9a433298e05b9d964d2baf392946f0f8dac7d27b34bb992f6a",
+    "freeze_sources.py": "1ddb1941eeca2b5b0329b9f72bd07c17763ca220bf60b5e6bf7ffe76ca1e8667",
+    "README.md": "6a266a15b5bea18f24d169fbf56df5da24550375679578cfd89ca8c5b4353648",
+    "baseline.py": "e7671db78f696c0988a1031e7332677fe2bdace400f4b1f6337e22b2869ee19a",
+    "tests/FirstRasterSceneProbe.as": "a1e5298292f33aa30dee4f827eb89d39270b1ae181c086ae3ff67b8c83f593e7",
+    "tests/PaintTimingBuffer.as": "b8684081e88fccba936ab987710e22bf735ef7daf1297357e791d91b9c8ce56e",
+    "tests/PaintTimingBufferChecks.as": "5e7610ac7dfb98668522c60d12c5b5672d79c56749a6e575dba2bb52d2533f3e"
+  },
+  "originals": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-early-sandy-scene-driver-01\\prepared.json": "71b52bc512526ca714038e594d32b729ebaa4216164d70bf75197c7125a0079a",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-paint-driver\\inputs.json": "34bbabd1ef0759e8a126fbf1b926ff39be523fce83470ae5544bbe5d1c32cceb",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-paint-driver\\prepare.py": "61feb85e3f35cea151337cb5a62521e797b5a83ef22cbc4b9b22e2d473759040",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-paint-driver\\tests\\FirstRasterSceneProbe.as": "a1e5298292f33aa30dee4f827eb89d39270b1ae181c086ae3ff67b8c83f593e7",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-paint-timing-v3\\handoff.json": "62cadd555b1ea0f9bc218aa2e4767d965dcb8b27d24d1e57c46886c81ec63632",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-paint-timing-v3\\build_host.py": "2ed8cb6e4de56615af71f47efbbc1fdda144258da8c45e2f01f3de8dd9d02b87",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-paint-timing-v3\\check.py": "3a0d290f5cf1f0a08f7142663c7e063e063a36c6cbba358674ce26b2a754fdda",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-paint-timing-v3\\prepare.py": "1ac8672988da335c8450b47d5b7e245a1bab9dc65f97da277348155effcf584a",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-paint-timing-v3\\prepared.json": "0c0e6851510ac6e62e1aa62aa0865436bf393468374ba81f99d614028670b9a3",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-paint-timing-v3\\README.md": "57edb1db862cc38cec0e5a09b5da1537d5d3b1e8f26838bc696212031fdce857",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-paint-timing-v3\\source-check.json": "3f6778b2d175f4508107afa9fd936bee4202e18ad72557eee161cc8c0149dade",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-paint-timing-v3\\src\\fe\\graph\\Grafon.as": "eb487597d89073d61e1dffc7789c46130379c45276a9fde5f180008d87e0f960",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-paint-timing-v3\\explicit-error-propagation.patch": "fdad5e617ee01eb93a3083b3748a5ca6c29e13e88193ac9b965dd16b8833f24c",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-early-sandy-scene-driver-01\\tests\\FirstRasterSceneProbe.as": "785e63b0c315941a81fccb5fc17832a10543fe83545435905ef9ff6ce7f7c789",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-early-sandy-scene-driver-01\\tests\\RoomTravelTimingTestDoc.as": "3e0887496e62b7cd9cb2f041bb4629748277a1d96887e8216f1147cb8a10fa6b",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-early-sandy-scene-driver-01\\tests\\RoomTravelSceneTestDoc.as": "55e2caa583fc5f14c1844e10fd46506b9d681b889fb9b94ab82053b02df2547b",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-early-sandy-scene-driver-01\\tests\\A22RoomMetrics.as": "314823fd0fcd04e71277dcd3e8ee1a647317e611c5ff7b8fb0e7058c25179d6e"
+  },
+  "paint_contract": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-paint-timing-v3\\prepared.json",
+  "paint_source": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-paint-timing-v3\\src\\fe\\graph\\Grafon.as",
+  "diagnostic_only": true,
+  "compiled": false,
+  "performance_qualified": false
+}
