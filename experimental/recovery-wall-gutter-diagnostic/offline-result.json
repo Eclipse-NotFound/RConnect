@@ -1,0 +1,63 @@
+{
+  "passed": true,
+  "count": 13,
+  "failed": 0,
+  "checks": [
+    {
+      "label": "all eight observation insertions strip to exact driver04 stimulus/assertions",
+      "passed": true
+    },
+    {
+      "label": "passive bounded same-event snapshots; no hot decode/readback/network mutation",
+      "passed": true
+    },
+    {
+      "label": "diagnostic cell actually covers both remaining 18 opaque differences",
+      "passed": true
+    },
+    {
+      "label": "real-message colors remain separate from core/gutter observations and ambiguous hit order",
+      "passed": true
+    },
+    {
+      "label": "non-reproduction never becomes an automatic root-cause claim",
+      "passed": true
+    },
+    {
+      "label": "raw d/version mutation rejected",
+      "passed": true
+    },
+    {
+      "label": "different event frame binding rejected",
+      "passed": true
+    },
+    {
+      "label": "missing after callback rejected",
+      "passed": true
+    },
+    {
+      "label": "truncated final comparison rejected",
+      "passed": true
+    },
+    {
+      "label": "capacity or observation error remains failure",
+      "passed": true
+    },
+    {
+      "label": "duplicate selected cells cannot yield causal certainty",
+      "passed": true
+    },
+    {
+      "label": "exact big-endian sparse codec; duplicate/offset/base64 negatives",
+      "passed": true
+    },
+    {
+      "label": "Python source syntax",
+      "passed": true
+    }
+  ],
+  "jvm_started": false,
+  "air_started": false,
+  "gameplay_qualified": false,
+  "performance_qualified": false
+}

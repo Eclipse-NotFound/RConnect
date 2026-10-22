@@ -1,0 +1,70 @@
+--- driver04/LargeWallSurfaceTestDoc.as
++++ gutter-diagnostic/LargeWallSurfaceTestDoc.as
+@@ -38,6 +38,7 @@
+       private var sampleCaptureMax:int=0,prepareWait:String="";
+       private var attackAttempts:int=0,attackAccepted:int=0,firstAttack:Object,firstRejected:Object,weaponPreparation:Object;
+       private var allRows:Array=[],proofs:Array=[],failed:int=0;
++      private var colorProbe:NativeWallColorProbe=new NativeWallColorProbe();
+ 
+       public function LargeWallSurfaceTestDoc() {
+          var id:String=NativeApplication.nativeApplication.applicationID;if(id.indexOf("rconnect-coop-")<0)return;
+@@ -54,7 +55,7 @@
+          if(mod==null || mod.session==null)return;p=p||{};p.type="large-wall-test";p.op=op;p.round=round;
+          if(host)mod.session.server.broadcast(p);else if(mod.session.link)mod.session.link.send(p);
+       }
+-      private function watch(link:TcpLink):void {if(link!=null&&!links[link]){links[link]=true;link.addEventListener(TcpLink.MESSAGE,receive);}}
++      private function watch(link:TcpLink):void {if(link!=null&&!links[link]){links[link]=true;link.addEventListener(TcpLink.MESSAGE,receive);colorProbe.attach(link);}}
+       private function stable(land:String):Boolean {
+          var w:Object=mod.game.world;return w!=null && w.loc!=null && w.land!=null && String(w.game.curLandId)==land
+             && !mod.game.isTransitioning() && mod.session.rooms.ready && !mod.session.rooms.busy
+@@ -154,7 +155,7 @@
+       }
+       private function before(e:Event):void {
+          if(target==null || phase=="done" || phase=="boot" || phase=="travel")return;
+-         pose();
++         pose();colorProbe.nextFrame();
+          if(phase=="sample" && source) {
+             NativeWallSurfaceProbe.dispose(pre);pre=NativeWallSurfaceProbe.capture(mod.game.world.grafon,area);
+             sampleCaptureMax=Math.max(sampleCaptureMax,pre.cost);
+@@ -181,6 +182,7 @@
+                contacts[o]=true;fresh++;hits.push({at:getTimer(),wall:new Date().time,x:Number(o.X),y:Number(o.Y),begx:Number(o.begx),begy:Number(o.begy)});
+             }
+             if(fresh>0 && pre!=null) {
++               colorProbe.observe("native-after-hits",hits.slice(hits.length-fresh));
+                var a:int=getTimer(),wall:Number=new Date().time;
+                var post:Object=NativeWallSurfaceProbe.capture(mod.game.world.grafon,area);
+                sampleCaptureMax=Math.max(sampleCaptureMax,post.cost);
+@@ -191,6 +193,7 @@
+       }
+       private function begin():void {
+          baseline=NativeWallSurfaceProbe.capture(mod.game.world.grafon,area);
++         colorProbe.begin(round,target,mod.game.world.grafon,source,host?"host":"join");
+          check(mod.game.world.grafon.sceneLarge===true && (mod.game.loc.spaceX>48 || mod.game.loc.spaceY>25),"native merged large scene admitted");
+          check(Number(mod.game.readWorldInfo().layoutSeed)==SEED,"native generation uses the same isolated comparison seed");
+          check(target.x>1920 || target.y>1000,"actual target lies beyond old small-room limits");
+@@ -212,7 +215,7 @@
+          var value:Object=NativeWallSurfaceProbe.capture(mod.game.world.grafon,area);
+          samples.push({at:start,wall:wall,cost:getTimer()-start,value:value});
+          if(start-sampleStart>=SAMPLE_MS) {
+-            sampleEnd=getTimer();phase="sampled";sampledSent=true;send("sampled");
++            sampleEnd=getTimer();phase="sampled";colorProbe.stopSampling();sampledSent=true;send("sampled");
+             if(host && peerSampled){send("analyze");analyze();}
+          }
+       }
+@@ -252,6 +255,7 @@
+          check(!source || (shots>=int(CASES[round].shots) && hits.length>0 && nativeOracle.length>0),"native bullets and native collision interval produce persistent world pixels");
+          savePNG("before-native",baseline.native);savePNG("after-native",end.native);
+          savePNG("before-display",baseline.display);savePNG("after-display",end.display);
++         local.gutterDiagnostic=colorProbe.exportEvidence();
+          var payload:String=JSON.stringify(local),file:File=File.applicationStorageDirectory.resolvePath("large-wall-proof/round-"+round+"-proof.json");
+          var fs:FileStream=new FileStream();fs.open(file,FileMode.WRITE);try{fs.writeUTFBytes(payload);}finally{fs.close();}
+          Log.d("LARGE WALL PROOF "+JSON.stringify({round:round,role:local.role,bytes:payload.length,target:target,source:source,shots:shots,hits:hits.length,
+@@ -336,7 +340,7 @@
+       private function finish():void {
+          if(phase=="done")return;phase="done";removeEventListener(Event.ENTER_FRAME,tick);
+          if(mod!=null){mod.stage.removeEventListener(Event.ENTER_FRAME,before);mod.stage.removeEventListener(Event.ENTER_FRAME,after);mod.stage.removeEventListener(Event.RENDER,render);}
+-         release();if(landClass!=null && landClass.rconnectSeedSource===newSeed)landClass.rconnectSeedSource=oldSeed;
++         colorProbe.close();release();if(landClass!=null && landClass.rconnectSeedSource===newSeed)landClass.rconnectSeedSource=oldSeed;
+          Log.d("COOP EFFECTS DONE large-wall-surfaces "+(host?"host":"join"));
+       }
+    }

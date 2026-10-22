@@ -1,0 +1,1832 @@
+{
+  "purpose": "correct metric names; not a new gameplay test or qualification",
+  "air_started": false,
+  "jvm_started": false,
+  "performance_qualified": false,
+  "original_results_preserved": true,
+  "rows": [
+    {
+      "version": 16,
+      "round": 0,
+      "source": "host",
+      "weapon": "lmg",
+      "candidate_sha256": "a1519b39f27b6c073186a4581234de9bad656592ec6c17bb4a3eb494ade5a31c",
+      "native_host_sha256": "acc336b5f28012a5f0d2ef57d0a3bf46be46f72f1e4c3a69a2f063cae0535dfd",
+      "original_metrics_unmodified": {
+        "round": 0,
+        "weapon": "lmg",
+        "source": "host",
+        "target": {
+          "hp": 1000,
+          "sx": 400,
+          "mat": 2,
+          "y": 2820,
+          "sy": 2860,
+          "x": 640,
+          "ty": 70,
+          "tx": 16
+        },
+        "native_equal": false,
+        "display_equal": false,
+        "native_expected": 104,
+        "native_wrong": 1,
+        "native_extra": 0,
+        "display_expected": 104,
+        "source_native_observed_wall": 1792627883444,
+        "remote_native_first_wall": 1792627884332,
+        "source_native_interval_before_wall": 1792627883392,
+        "remote_display_first_wall": 1792627884332,
+        "remote_native_complete_wall": null,
+        "remote_display_complete_wall": null,
+        "native_first_delay_ms": 888,
+        "display_first_delay_ms": 888,
+        "capture_max_ms": {
+          "host": 9,
+          "join": 8
+        },
+        "maximum_observation_gap_ms": {
+          "host": 267,
+          "join": 424
+        },
+        "functional_pass": false,
+        "performance_qualified": false
+      },
+      "source_native_contact_interval": {
+        "before": 1792627883392,
+        "after": 1792627883444,
+        "width_ms": 52
+      },
+      "native": {
+        "source_first_render_change": {
+          "ordinal": 12,
+          "wall": 1792627883539,
+          "at": 87023,
+          "capture_cost_ms": 2,
+          "changed_pixels": 104,
+          "preceding_sample_wall": 1792627883354,
+          "preceding_sample_gap_ms": 185,
+          "prior_sample_count": 12,
+          "lower_bound_kind": "previous RENDER sample"
+        },
+        "remote_first_render_change": {
+          "ordinal": 12,
+          "wall": 1792627884332,
+          "at": 51268,
+          "capture_cost_ms": 4,
+          "changed_pixels": 104,
+          "preceding_sample_wall": 1792627883926,
+          "preceding_sample_gap_ms": 406,
+          "prior_sample_count": 12,
+          "lower_bound_kind": "previous RENDER sample"
+        },
+        "remote_first_prior_source_match": {
+          "ordinal": 12,
+          "wall": 1792627884332,
+          "at": 51268,
+          "capture_cost_ms": 4,
+          "changed_pixels": 104,
+          "preceding_sample_wall": 1792627883926,
+          "preceding_sample_gap_ms": 406,
+          "prior_sample_count": 12,
+          "lower_bound_kind": "previous RENDER sample",
+          "exact_prior_source_matches": 103,
+          "latest_observed_source_matches": 103,
+          "eligible_source_samples": 24,
+          "latest_source_sample_wall": 1792627884283,
+          "examples": [
+            {
+              "index": 7109,
+              "argb": "ff66625a",
+              "source_first_observed": 1792627883539,
+              "source_sample_ordinal": 12
+            },
+            {
+              "index": 7110,
+              "argb": "ff454139",
+              "source_first_observed": 1792627883539,
+              "source_sample_ordinal": 12
+            },
+            {
+              "index": 7235,
+              "argb": "ff706f69",
+              "source_first_observed": 1792627883539,
+              "source_sample_ordinal": 12
+            },
+            {
+              "index": 7236,
+              "argb": "ff76776f",
+              "source_first_observed": 1792627883539,
+              "source_sample_ordinal": 12
+            }
+          ]
+        },
+        "observed_first_change_difference_ms": 793,
+        "remote_first_change_minus_native_contact_end_ms": 888,
+        "observed_prior_match_difference_ms": 793,
+        "source_observation_gaps": {
+          "samples": 140,
+          "maximum_ms": 267,
+          "p95_ms": 189,
+          "over_100_ms": 41,
+          "max_capture_ms": 9
+        },
+        "remote_observation_gaps": {
+          "samples": 101,
+          "maximum_ms": 424,
+          "p95_ms": 347,
+          "over_100_ms": 39,
+          "max_capture_ms": 8
+        }
+      },
+      "display": {
+        "source_first_render_change": {
+          "ordinal": 12,
+          "wall": 1792627883539,
+          "at": 87023,
+          "capture_cost_ms": 2,
+          "changed_pixels": 104,
+          "preceding_sample_wall": 1792627883354,
+          "preceding_sample_gap_ms": 185,
+          "prior_sample_count": 12,
+          "lower_bound_kind": "previous RENDER sample"
+        },
+        "remote_first_render_change": {
+          "ordinal": 12,
+          "wall": 1792627884332,
+          "at": 51268,
+          "capture_cost_ms": 4,
+          "changed_pixels": 104,
+          "preceding_sample_wall": 1792627883926,
+          "preceding_sample_gap_ms": 406,
+          "prior_sample_count": 12,
+          "lower_bound_kind": "previous RENDER sample"
+        },
+        "remote_first_prior_source_match": {
+          "ordinal": 12,
+          "wall": 1792627884332,
+          "at": 51268,
+          "capture_cost_ms": 4,
+          "changed_pixels": 104,
+          "preceding_sample_wall": 1792627883926,
+          "preceding_sample_gap_ms": 406,
+          "prior_sample_count": 12,
+          "lower_bound_kind": "previous RENDER sample",
+          "exact_prior_source_matches": 103,
+          "latest_observed_source_matches": 103,
+          "eligible_source_samples": 24,
+          "latest_source_sample_wall": 1792627884283,
+          "examples": [
+            {
+              "index": 7109,
+              "argb": "ff66625a",
+              "source_first_observed": 1792627883539,
+              "source_sample_ordinal": 12
+            },
+            {
+              "index": 7110,
+              "argb": "ff454139",
+              "source_first_observed": 1792627883539,
+              "source_sample_ordinal": 12
+            },
+            {
+              "index": 7235,
+              "argb": "ff706f69",
+              "source_first_observed": 1792627883539,
+              "source_sample_ordinal": 12
+            },
+            {
+              "index": 7236,
+              "argb": "ff76776f",
+              "source_first_observed": 1792627883539,
+              "source_sample_ordinal": 12
+            }
+          ]
+        },
+        "observed_first_change_difference_ms": 793,
+        "remote_first_change_minus_native_contact_end_ms": 888,
+        "observed_prior_match_difference_ms": 793,
+        "source_observation_gaps": {
+          "samples": 140,
+          "maximum_ms": 267,
+          "p95_ms": 189,
+          "over_100_ms": 41,
+          "max_capture_ms": 9
+        },
+        "remote_observation_gaps": {
+          "samples": 101,
+          "maximum_ms": 424,
+          "p95_ms": 347,
+          "over_100_ms": 39,
+          "max_capture_ms": 8
+        }
+      }
+    },
+    {
+      "version": 16,
+      "round": 1,
+      "source": "join",
+      "weapon": "lmg",
+      "candidate_sha256": "a1519b39f27b6c073186a4581234de9bad656592ec6c17bb4a3eb494ade5a31c",
+      "native_host_sha256": "acc336b5f28012a5f0d2ef57d0a3bf46be46f72f1e4c3a69a2f063cae0535dfd",
+      "original_metrics_unmodified": {
+        "round": 1,
+        "weapon": "lmg",
+        "source": "join",
+        "target": {
+          "hp": 1000,
+          "y": 4140,
+          "mat": 2,
+          "sx": 400,
+          "sy": 4180,
+          "x": 640,
+          "ty": 103,
+          "tx": 16
+        },
+        "native_equal": false,
+        "display_equal": false,
+        "native_expected": 53,
+        "native_wrong": 1,
+        "native_extra": 0,
+        "display_expected": 53,
+        "source_native_observed_wall": 1792627898766,
+        "remote_native_first_wall": 1792627899210,
+        "source_native_interval_before_wall": 1792627898636,
+        "remote_display_first_wall": 1792627899210,
+        "remote_native_complete_wall": null,
+        "remote_display_complete_wall": null,
+        "native_first_delay_ms": 444,
+        "display_first_delay_ms": 444,
+        "capture_max_ms": {
+          "join": 9,
+          "host": 11
+        },
+        "maximum_observation_gap_ms": {
+          "join": 449,
+          "host": 276
+        },
+        "functional_pass": false,
+        "performance_qualified": false
+      },
+      "source_native_contact_interval": {
+        "before": 1792627898636,
+        "after": 1792627898766,
+        "width_ms": 130
+      },
+      "native": {
+        "source_first_render_change": {
+          "ordinal": 10,
+          "wall": 1792627898830,
+          "at": 65766,
+          "capture_cost_ms": 3,
+          "changed_pixels": 53,
+          "preceding_sample_wall": 1792627898600,
+          "preceding_sample_gap_ms": 230,
+          "prior_sample_count": 10,
+          "lower_bound_kind": "previous RENDER sample"
+        },
+        "remote_first_render_change": {
+          "ordinal": 22,
+          "wall": 1792627899210,
+          "at": 102694,
+          "capture_cost_ms": 2,
+          "changed_pixels": 53,
+          "preceding_sample_wall": 1792627899033,
+          "preceding_sample_gap_ms": 177,
+          "prior_sample_count": 22,
+          "lower_bound_kind": "previous RENDER sample"
+        },
+        "remote_first_prior_source_match": {
+          "ordinal": 22,
+          "wall": 1792627899210,
+          "at": 102694,
+          "capture_cost_ms": 2,
+          "changed_pixels": 53,
+          "preceding_sample_wall": 1792627899033,
+          "preceding_sample_gap_ms": 177,
+          "prior_sample_count": 22,
+          "lower_bound_kind": "previous RENDER sample",
+          "exact_prior_source_matches": 52,
+          "latest_observed_source_matches": 52,
+          "eligible_source_samples": 12,
+          "latest_source_sample_wall": 1792627898838,
+          "examples": [
+            {
+              "index": 7234,
+              "argb": "bd93938e",
+              "source_first_observed": 1792627898830,
+              "source_sample_ordinal": 10
+            },
+            {
+              "index": 7235,
+              "argb": "ff8c8c88",
+              "source_first_observed": 1792627898830,
+              "source_sample_ordinal": 10
+            },
+            {
+              "index": 7236,
+              "argb": "ff94948f",
+              "source_first_observed": 1792627898830,
+              "source_sample_ordinal": 10
+            },
+            {
+              "index": 7362,
+              "argb": "538a8a81",
+              "source_first_observed": 1792627898830,
+              "source_sample_ordinal": 10
+            }
+          ]
+        },
+        "observed_first_change_difference_ms": 380,
+        "remote_first_change_minus_native_contact_end_ms": 444,
+        "observed_prior_match_difference_ms": 380,
+        "source_observation_gaps": {
+          "samples": 101,
+          "maximum_ms": 449,
+          "p95_ms": 384,
+          "over_100_ms": 40,
+          "max_capture_ms": 9
+        },
+        "remote_observation_gaps": {
+          "samples": 141,
+          "maximum_ms": 276,
+          "p95_ms": 188,
+          "over_100_ms": 43,
+          "max_capture_ms": 11
+        }
+      },
+      "display": {
+        "source_first_render_change": {
+          "ordinal": 10,
+          "wall": 1792627898830,
+          "at": 65766,
+          "capture_cost_ms": 3,
+          "changed_pixels": 53,
+          "preceding_sample_wall": 1792627898600,
+          "preceding_sample_gap_ms": 230,
+          "prior_sample_count": 10,
+          "lower_bound_kind": "previous RENDER sample"
+        },
+        "remote_first_render_change": {
+          "ordinal": 22,
+          "wall": 1792627899210,
+          "at": 102694,
+          "capture_cost_ms": 2,
+          "changed_pixels": 53,
+          "preceding_sample_wall": 1792627899033,
+          "preceding_sample_gap_ms": 177,
+          "prior_sample_count": 22,
+          "lower_bound_kind": "previous RENDER sample"
+        },
+        "remote_first_prior_source_match": {
+          "ordinal": 22,
+          "wall": 1792627899210,
+          "at": 102694,
+          "capture_cost_ms": 2,
+          "changed_pixels": 53,
+          "preceding_sample_wall": 1792627899033,
+          "preceding_sample_gap_ms": 177,
+          "prior_sample_count": 22,
+          "lower_bound_kind": "previous RENDER sample",
+          "exact_prior_source_matches": 52,
+          "latest_observed_source_matches": 52,
+          "eligible_source_samples": 12,
+          "latest_source_sample_wall": 1792627898838,
+          "examples": [
+            {
+              "index": 7234,
+              "argb": "bd93938e",
+              "source_first_observed": 1792627898830,
+              "source_sample_ordinal": 10
+            },
+            {
+              "index": 7235,
+              "argb": "ff8c8c88",
+              "source_first_observed": 1792627898830,
+              "source_sample_ordinal": 10
+            },
+            {
+              "index": 7236,
+              "argb": "ff94948f",
+              "source_first_observed": 1792627898830,
+              "source_sample_ordinal": 10
+            },
+            {
+              "index": 7362,
+              "argb": "538a8a81",
+              "source_first_observed": 1792627898830,
+              "source_sample_ordinal": 10
+            }
+          ]
+        },
+        "observed_first_change_difference_ms": 380,
+        "remote_first_change_minus_native_contact_end_ms": 444,
+        "observed_prior_match_difference_ms": 380,
+        "source_observation_gaps": {
+          "samples": 101,
+          "maximum_ms": 449,
+          "p95_ms": 384,
+          "over_100_ms": 40,
+          "max_capture_ms": 9
+        },
+        "remote_observation_gaps": {
+          "samples": 141,
+          "maximum_ms": 276,
+          "p95_ms": 188,
+          "over_100_ms": 43,
+          "max_capture_ms": 11
+        }
+      }
+    },
+    {
+      "version": 16,
+      "round": 2,
+      "source": "host",
+      "weapon": "plamg",
+      "candidate_sha256": "a1519b39f27b6c073186a4581234de9bad656592ec6c17bb4a3eb494ade5a31c",
+      "native_host_sha256": "acc336b5f28012a5f0d2ef57d0a3bf46be46f72f1e4c3a69a2f063cae0535dfd",
+      "original_metrics_unmodified": {
+        "round": 2,
+        "weapon": "plamg",
+        "source": "host",
+        "target": {
+          "hp": 1000,
+          "sx": 400,
+          "mat": 2,
+          "y": 4460,
+          "sy": 4500,
+          "x": 640,
+          "ty": 111,
+          "tx": 16
+        },
+        "native_equal": false,
+        "display_equal": false,
+        "native_expected": 1327,
+        "native_wrong": 3,
+        "native_extra": 0,
+        "display_expected": 1327,
+        "source_native_observed_wall": 1792627914008,
+        "remote_native_first_wall": 1792627914747,
+        "source_native_interval_before_wall": 1792627913958,
+        "remote_display_first_wall": 1792627914747,
+        "remote_native_complete_wall": null,
+        "remote_display_complete_wall": null,
+        "native_first_delay_ms": 739,
+        "display_first_delay_ms": 739,
+        "capture_max_ms": {
+          "host": 13,
+          "join": 9
+        },
+        "maximum_observation_gap_ms": {
+          "host": 232,
+          "join": 417
+        },
+        "functional_pass": false,
+        "performance_qualified": false
+      },
+      "source_native_contact_interval": {
+        "before": 1792627913958,
+        "after": 1792627914008,
+        "width_ms": 50
+      },
+      "native": {
+        "source_first_render_change": {
+          "ordinal": 14,
+          "wall": 1792627914105,
+          "at": 117588,
+          "capture_cost_ms": 3,
+          "changed_pixels": 549,
+          "preceding_sample_wall": 1792627913918,
+          "preceding_sample_gap_ms": 187,
+          "prior_sample_count": 14,
+          "lower_bound_kind": "previous RENDER sample"
+        },
+        "remote_first_render_change": {
+          "ordinal": 12,
+          "wall": 1792627914747,
+          "at": 81683,
+          "capture_cost_ms": 3,
+          "changed_pixels": 549,
+          "preceding_sample_wall": 1792627914366,
+          "preceding_sample_gap_ms": 381,
+          "prior_sample_count": 12,
+          "lower_bound_kind": "previous RENDER sample"
+        },
+        "remote_first_prior_source_match": {
+          "ordinal": 12,
+          "wall": 1792627914747,
+          "at": 81683,
+          "capture_cost_ms": 3,
+          "changed_pixels": 549,
+          "preceding_sample_wall": 1792627914366,
+          "preceding_sample_gap_ms": 381,
+          "prior_sample_count": 12,
+          "lower_bound_kind": "previous RENDER sample",
+          "exact_prior_source_matches": 547,
+          "latest_observed_source_matches": 1,
+          "eligible_source_samples": 24,
+          "latest_source_sample_wall": 1792627914706,
+          "examples": [
+            {
+              "index": 5440,
+              "argb": "ee767770",
+              "source_first_observed": 1792627914105,
+              "source_sample_ordinal": 14
+            },
+            {
+              "index": 5697,
+              "argb": "ff646462",
+              "source_first_observed": 1792627914105,
+              "source_sample_ordinal": 14
+            },
+            {
+              "index": 5698,
+              "argb": "ff595954",
+              "source_first_observed": 1792627914105,
+              "source_sample_ordinal": 14
+            },
+            {
+              "index": 5699,
+              "argb": "ff666662",
+              "source_first_observed": 1792627914105,
+              "source_sample_ordinal": 14
+            }
+          ]
+        },
+        "observed_first_change_difference_ms": 642,
+        "remote_first_change_minus_native_contact_end_ms": 739,
+        "observed_prior_match_difference_ms": 642,
+        "source_observation_gaps": {
+          "samples": 135,
+          "maximum_ms": 232,
+          "p95_ms": 192,
+          "over_100_ms": 49,
+          "max_capture_ms": 13
+        },
+        "remote_observation_gaps": {
+          "samples": 101,
+          "maximum_ms": 417,
+          "p95_ms": 355,
+          "over_100_ms": 40,
+          "max_capture_ms": 9
+        }
+      },
+      "display": {
+        "source_first_render_change": {
+          "ordinal": 14,
+          "wall": 1792627914105,
+          "at": 117588,
+          "capture_cost_ms": 3,
+          "changed_pixels": 549,
+          "preceding_sample_wall": 1792627913918,
+          "preceding_sample_gap_ms": 187,
+          "prior_sample_count": 14,
+          "lower_bound_kind": "previous RENDER sample"
+        },
+        "remote_first_render_change": {
+          "ordinal": 12,
+          "wall": 1792627914747,
+          "at": 81683,
+          "capture_cost_ms": 3,
+          "changed_pixels": 549,
+          "preceding_sample_wall": 1792627914366,
+          "preceding_sample_gap_ms": 381,
+          "prior_sample_count": 12,
+          "lower_bound_kind": "previous RENDER sample"
+        },
+        "remote_first_prior_source_match": {
+          "ordinal": 12,
+          "wall": 1792627914747,
+          "at": 81683,
+          "capture_cost_ms": 3,
+          "changed_pixels": 549,
+          "preceding_sample_wall": 1792627914366,
+          "preceding_sample_gap_ms": 381,
+          "prior_sample_count": 12,
+          "lower_bound_kind": "previous RENDER sample",
+          "exact_prior_source_matches": 547,
+          "latest_observed_source_matches": 1,
+          "eligible_source_samples": 24,
+          "latest_source_sample_wall": 1792627914706,
+          "examples": [
+            {
+              "index": 5440,
+              "argb": "ee767770",
+              "source_first_observed": 1792627914105,
+              "source_sample_ordinal": 14
+            },
+            {
+              "index": 5697,
+              "argb": "ff646462",
+              "source_first_observed": 1792627914105,
+              "source_sample_ordinal": 14
+            },
+            {
+              "index": 5698,
+              "argb": "ff595954",
+              "source_first_observed": 1792627914105,
+              "source_sample_ordinal": 14
+            },
+            {
+              "index": 5699,
+              "argb": "ff666662",
+              "source_first_observed": 1792627914105,
+              "source_sample_ordinal": 14
+            }
+          ]
+        },
+        "observed_first_change_difference_ms": 642,
+        "remote_first_change_minus_native_contact_end_ms": 739,
+        "observed_prior_match_difference_ms": 642,
+        "source_observation_gaps": {
+          "samples": 135,
+          "maximum_ms": 232,
+          "p95_ms": 192,
+          "over_100_ms": 49,
+          "max_capture_ms": 13
+        },
+        "remote_observation_gaps": {
+          "samples": 101,
+          "maximum_ms": 417,
+          "p95_ms": 355,
+          "over_100_ms": 40,
+          "max_capture_ms": 9
+        }
+      }
+    },
+    {
+      "version": 16,
+      "round": 3,
+      "source": "join",
+      "weapon": "plamg",
+      "candidate_sha256": "a1519b39f27b6c073186a4581234de9bad656592ec6c17bb4a3eb494ade5a31c",
+      "native_host_sha256": "acc336b5f28012a5f0d2ef57d0a3bf46be46f72f1e4c3a69a2f063cae0535dfd",
+      "original_metrics_unmodified": {
+        "round": 3,
+        "weapon": "plamg",
+        "source": "join",
+        "target": {
+          "hp": 1000,
+          "y": 4660,
+          "mat": 2,
+          "sx": 400,
+          "sy": 4700,
+          "x": 640,
+          "ty": 116,
+          "tx": 16
+        },
+        "native_equal": false,
+        "display_equal": false,
+        "native_expected": 731,
+        "native_wrong": 1,
+        "native_extra": 0,
+        "display_expected": 731,
+        "source_native_observed_wall": 1792627929819,
+        "remote_native_first_wall": 1792627930882,
+        "source_native_interval_before_wall": 1792627929770,
+        "remote_display_first_wall": 1792627930882,
+        "remote_native_complete_wall": null,
+        "remote_display_complete_wall": null,
+        "native_first_delay_ms": 1063,
+        "display_first_delay_ms": 1063,
+        "capture_max_ms": {
+          "join": 92,
+          "host": 10
+        },
+        "maximum_observation_gap_ms": {
+          "join": 462,
+          "host": 202
+        },
+        "functional_pass": false,
+        "performance_qualified": false
+      },
+      "source_native_contact_interval": {
+        "before": 1792627929770,
+        "after": 1792627929819,
+        "width_ms": 49
+      },
+      "native": {
+        "source_first_render_change": {
+          "ordinal": 12,
+          "wall": 1792627929888,
+          "at": 96824,
+          "capture_cost_ms": 3,
+          "changed_pixels": 468,
+          "preceding_sample_wall": 1792627929555,
+          "preceding_sample_gap_ms": 333,
+          "prior_sample_count": 12,
+          "lower_bound_kind": "previous RENDER sample"
+        },
+        "remote_first_render_change": {
+          "ordinal": 24,
+          "wall": 1792627930056,
+          "at": 133540,
+          "capture_cost_ms": 5,
+          "changed_pixels": 468,
+          "preceding_sample_wall": 1792627929892,
+          "preceding_sample_gap_ms": 164,
+          "prior_sample_count": 24,
+          "lower_bound_kind": "previous RENDER sample"
+        },
+        "remote_first_prior_source_match": {
+          "ordinal": 24,
+          "wall": 1792627930056,
+          "at": 133540,
+          "capture_cost_ms": 5,
+          "changed_pixels": 468,
+          "preceding_sample_wall": 1792627929892,
+          "preceding_sample_gap_ms": 164,
+          "prior_sample_count": 24,
+          "lower_bound_kind": "previous RENDER sample",
+          "exact_prior_source_matches": 467,
+          "latest_observed_source_matches": 467,
+          "eligible_source_samples": 16,
+          "latest_source_sample_wall": 1792627929994,
+          "examples": [
+            {
+              "index": 6080,
+              "argb": "0e5b5b5b",
+              "source_first_observed": 1792627929888,
+              "source_sample_ordinal": 12
+            },
+            {
+              "index": 6081,
+              "argb": "e67c7a73",
+              "source_first_observed": 1792627929888,
+              "source_sample_ordinal": 12
+            },
+            {
+              "index": 6082,
+              "argb": "ff74746c",
+              "source_first_observed": 1792627929888,
+              "source_sample_ordinal": 12
+            },
+            {
+              "index": 6083,
+              "argb": "ff7c7a74",
+              "source_first_observed": 1792627929888,
+              "source_sample_ordinal": 12
+            }
+          ]
+        },
+        "observed_first_change_difference_ms": 168,
+        "remote_first_change_minus_native_contact_end_ms": 237,
+        "observed_prior_match_difference_ms": 168,
+        "source_observation_gaps": {
+          "samples": 103,
+          "maximum_ms": 462,
+          "p95_ms": 316,
+          "over_100_ms": 40,
+          "max_capture_ms": 92
+        },
+        "remote_observation_gaps": {
+          "samples": 147,
+          "maximum_ms": 202,
+          "p95_ms": 173,
+          "over_100_ms": 42,
+          "max_capture_ms": 10
+        }
+      },
+      "display": {
+        "source_first_render_change": {
+          "ordinal": 12,
+          "wall": 1792627929888,
+          "at": 96824,
+          "capture_cost_ms": 3,
+          "changed_pixels": 468,
+          "preceding_sample_wall": 1792627929555,
+          "preceding_sample_gap_ms": 333,
+          "prior_sample_count": 12,
+          "lower_bound_kind": "previous RENDER sample"
+        },
+        "remote_first_render_change": {
+          "ordinal": 24,
+          "wall": 1792627930056,
+          "at": 133540,
+          "capture_cost_ms": 5,
+          "changed_pixels": 468,
+          "preceding_sample_wall": 1792627929892,
+          "preceding_sample_gap_ms": 164,
+          "prior_sample_count": 24,
+          "lower_bound_kind": "previous RENDER sample"
+        },
+        "remote_first_prior_source_match": {
+          "ordinal": 24,
+          "wall": 1792627930056,
+          "at": 133540,
+          "capture_cost_ms": 5,
+          "changed_pixels": 468,
+          "preceding_sample_wall": 1792627929892,
+          "preceding_sample_gap_ms": 164,
+          "prior_sample_count": 24,
+          "lower_bound_kind": "previous RENDER sample",
+          "exact_prior_source_matches": 467,
+          "latest_observed_source_matches": 467,
+          "eligible_source_samples": 16,
+          "latest_source_sample_wall": 1792627929994,
+          "examples": [
+            {
+              "index": 6080,
+              "argb": "0e5b5b5b",
+              "source_first_observed": 1792627929888,
+              "source_sample_ordinal": 12
+            },
+            {
+              "index": 6081,
+              "argb": "e67c7a73",
+              "source_first_observed": 1792627929888,
+              "source_sample_ordinal": 12
+            },
+            {
+              "index": 6082,
+              "argb": "ff74746c",
+              "source_first_observed": 1792627929888,
+              "source_sample_ordinal": 12
+            },
+            {
+              "index": 6083,
+              "argb": "ff7c7a74",
+              "source_first_observed": 1792627929888,
+              "source_sample_ordinal": 12
+            }
+          ]
+        },
+        "observed_first_change_difference_ms": 168,
+        "remote_first_change_minus_native_contact_end_ms": 237,
+        "observed_prior_match_difference_ms": 168,
+        "source_observation_gaps": {
+          "samples": 103,
+          "maximum_ms": 462,
+          "p95_ms": 316,
+          "over_100_ms": 40,
+          "max_capture_ms": 92
+        },
+        "remote_observation_gaps": {
+          "samples": 147,
+          "maximum_ms": 202,
+          "p95_ms": 173,
+          "over_100_ms": 42,
+          "max_capture_ms": 10
+        }
+      }
+    },
+    {
+      "version": 18,
+      "round": 0,
+      "source": "host",
+      "weapon": "lmg",
+      "candidate_sha256": "11b795d0d6681caa4edfcc2d1c0df73cb38f6d706a1fb3c26518163f738fe4d3",
+      "native_host_sha256": "acc336b5f28012a5f0d2ef57d0a3bf46be46f72f1e4c3a69a2f063cae0535dfd",
+      "original_metrics_unmodified": {
+        "round": 0,
+        "weapon": "lmg",
+        "source": "host",
+        "target": {
+          "hp": 1000,
+          "sx": 400,
+          "mat": 2,
+          "y": 2820,
+          "sy": 2860,
+          "x": 640,
+          "ty": 70,
+          "tx": 16
+        },
+        "native_equal": true,
+        "display_equal": true,
+        "native_expected": 109,
+        "native_wrong": 0,
+        "native_extra": 0,
+        "display_expected": 109,
+        "source_native_observed_wall": 1792629226040,
+        "remote_native_first_wall": 1792629226514,
+        "source_native_interval_before_wall": 1792629225988,
+        "remote_display_first_wall": 1792629226514,
+        "remote_native_complete_wall": 1792629226514,
+        "remote_display_complete_wall": 1792629226514,
+        "native_first_delay_ms": 474,
+        "display_first_delay_ms": 474,
+        "capture_max_ms": {
+          "host": 11,
+          "join": 10
+        },
+        "maximum_observation_gap_ms": {
+          "host": 319,
+          "join": 542
+        },
+        "functional_pass": true,
+        "performance_qualified": false
+      },
+      "source_native_contact_interval": {
+        "before": 1792629225988,
+        "after": 1792629226040,
+        "width_ms": 52
+      },
+      "native": {
+        "source_first_render_change": {
+          "ordinal": 10,
+          "wall": 1792629226066,
+          "at": 87071,
+          "capture_cost_ms": 4,
+          "changed_pixels": 109,
+          "preceding_sample_wall": 1792629225953,
+          "preceding_sample_gap_ms": 113,
+          "prior_sample_count": 10,
+          "lower_bound_kind": "previous RENDER sample"
+        },
+        "remote_first_render_change": {
+          "ordinal": 6,
+          "wall": 1792629226514,
+          "at": 50844,
+          "capture_cost_ms": 3,
+          "changed_pixels": 109,
+          "preceding_sample_wall": 1792629225978,
+          "preceding_sample_gap_ms": 536,
+          "prior_sample_count": 6,
+          "lower_bound_kind": "previous RENDER sample"
+        },
+        "remote_first_prior_source_match": {
+          "ordinal": 6,
+          "wall": 1792629226514,
+          "at": 50844,
+          "capture_cost_ms": 3,
+          "changed_pixels": 109,
+          "preceding_sample_wall": 1792629225978,
+          "preceding_sample_gap_ms": 536,
+          "prior_sample_count": 6,
+          "lower_bound_kind": "previous RENDER sample",
+          "exact_prior_source_matches": 109,
+          "latest_observed_source_matches": 109,
+          "eligible_source_samples": 16,
+          "latest_source_sample_wall": 1792629226364,
+          "examples": [
+            {
+              "index": 7106,
+              "argb": "f664625b",
+              "source_first_observed": 1792629226066,
+              "source_sample_ordinal": 10
+            },
+            {
+              "index": 7110,
+              "argb": "ff444139",
+              "source_first_observed": 1792629226066,
+              "source_sample_ordinal": 10
+            },
+            {
+              "index": 7237,
+              "argb": "ff77766f",
+              "source_first_observed": 1792629226066,
+              "source_sample_ordinal": 10
+            },
+            {
+              "index": 7238,
+              "argb": "ff68645d",
+              "source_first_observed": 1792629226066,
+              "source_sample_ordinal": 10
+            }
+          ]
+        },
+        "observed_first_change_difference_ms": 448,
+        "remote_first_change_minus_native_contact_end_ms": 474,
+        "observed_prior_match_difference_ms": 448,
+        "source_observation_gaps": {
+          "samples": 135,
+          "maximum_ms": 319,
+          "p95_ms": 200,
+          "over_100_ms": 44,
+          "max_capture_ms": 10
+        },
+        "remote_observation_gaps": {
+          "samples": 97,
+          "maximum_ms": 542,
+          "p95_ms": 346,
+          "over_100_ms": 35,
+          "max_capture_ms": 10
+        }
+      },
+      "display": {
+        "source_first_render_change": {
+          "ordinal": 10,
+          "wall": 1792629226066,
+          "at": 87071,
+          "capture_cost_ms": 4,
+          "changed_pixels": 109,
+          "preceding_sample_wall": 1792629225953,
+          "preceding_sample_gap_ms": 113,
+          "prior_sample_count": 10,
+          "lower_bound_kind": "previous RENDER sample"
+        },
+        "remote_first_render_change": {
+          "ordinal": 6,
+          "wall": 1792629226514,
+          "at": 50844,
+          "capture_cost_ms": 3,
+          "changed_pixels": 109,
+          "preceding_sample_wall": 1792629225978,
+          "preceding_sample_gap_ms": 536,
+          "prior_sample_count": 6,
+          "lower_bound_kind": "previous RENDER sample"
+        },
+        "remote_first_prior_source_match": {
+          "ordinal": 6,
+          "wall": 1792629226514,
+          "at": 50844,
+          "capture_cost_ms": 3,
+          "changed_pixels": 109,
+          "preceding_sample_wall": 1792629225978,
+          "preceding_sample_gap_ms": 536,
+          "prior_sample_count": 6,
+          "lower_bound_kind": "previous RENDER sample",
+          "exact_prior_source_matches": 109,
+          "latest_observed_source_matches": 109,
+          "eligible_source_samples": 16,
+          "latest_source_sample_wall": 1792629226364,
+          "examples": [
+            {
+              "index": 7106,
+              "argb": "f664625b",
+              "source_first_observed": 1792629226066,
+              "source_sample_ordinal": 10
+            },
+            {
+              "index": 7110,
+              "argb": "ff444139",
+              "source_first_observed": 1792629226066,
+              "source_sample_ordinal": 10
+            },
+            {
+              "index": 7237,
+              "argb": "ff77766f",
+              "source_first_observed": 1792629226066,
+              "source_sample_ordinal": 10
+            },
+            {
+              "index": 7238,
+              "argb": "ff68645d",
+              "source_first_observed": 1792629226066,
+              "source_sample_ordinal": 10
+            }
+          ]
+        },
+        "observed_first_change_difference_ms": 448,
+        "remote_first_change_minus_native_contact_end_ms": 474,
+        "observed_prior_match_difference_ms": 448,
+        "source_observation_gaps": {
+          "samples": 135,
+          "maximum_ms": 319,
+          "p95_ms": 200,
+          "over_100_ms": 44,
+          "max_capture_ms": 10
+        },
+        "remote_observation_gaps": {
+          "samples": 97,
+          "maximum_ms": 542,
+          "p95_ms": 346,
+          "over_100_ms": 35,
+          "max_capture_ms": 10
+        }
+      }
+    },
+    {
+      "version": 18,
+      "round": 1,
+      "source": "join",
+      "weapon": "lmg",
+      "candidate_sha256": "11b795d0d6681caa4edfcc2d1c0df73cb38f6d706a1fb3c26518163f738fe4d3",
+      "native_host_sha256": "acc336b5f28012a5f0d2ef57d0a3bf46be46f72f1e4c3a69a2f063cae0535dfd",
+      "original_metrics_unmodified": {
+        "round": 1,
+        "weapon": "lmg",
+        "source": "join",
+        "target": {
+          "hp": 1000,
+          "y": 4140,
+          "mat": 2,
+          "sx": 400,
+          "sy": 4180,
+          "x": 640,
+          "ty": 103,
+          "tx": 16
+        },
+        "native_equal": true,
+        "display_equal": true,
+        "native_expected": 68,
+        "native_wrong": 0,
+        "native_extra": 0,
+        "display_expected": 68,
+        "source_native_observed_wall": 1792629241332,
+        "remote_native_first_wall": 1792629241514,
+        "source_native_interval_before_wall": 1792629241271,
+        "remote_display_first_wall": 1792629241514,
+        "remote_native_complete_wall": 1792629241514,
+        "remote_display_complete_wall": 1792629241514,
+        "native_first_delay_ms": 182,
+        "display_first_delay_ms": 182,
+        "capture_max_ms": {
+          "join": 16,
+          "host": 9
+        },
+        "maximum_observation_gap_ms": {
+          "join": 449,
+          "host": 297
+        },
+        "functional_pass": true,
+        "performance_qualified": false
+      },
+      "source_native_contact_interval": {
+        "before": 1792629241271,
+        "after": 1792629241332,
+        "width_ms": 61
+      },
+      "native": {
+        "source_first_render_change": {
+          "ordinal": 8,
+          "wall": 1792629241360,
+          "at": 65690,
+          "capture_cost_ms": 4,
+          "changed_pixels": 68,
+          "preceding_sample_wall": 1792629241237,
+          "preceding_sample_gap_ms": 123,
+          "prior_sample_count": 8,
+          "lower_bound_kind": "previous RENDER sample"
+        },
+        "remote_first_render_change": {
+          "ordinal": 18,
+          "wall": 1792629241514,
+          "at": 102519,
+          "capture_cost_ms": 3,
+          "changed_pixels": 68,
+          "preceding_sample_wall": 1792629241407,
+          "preceding_sample_gap_ms": 107,
+          "prior_sample_count": 18,
+          "lower_bound_kind": "previous RENDER sample"
+        },
+        "remote_first_prior_source_match": {
+          "ordinal": 18,
+          "wall": 1792629241514,
+          "at": 102519,
+          "capture_cost_ms": 3,
+          "changed_pixels": 68,
+          "preceding_sample_wall": 1792629241407,
+          "preceding_sample_gap_ms": 107,
+          "prior_sample_count": 18,
+          "lower_bound_kind": "previous RENDER sample",
+          "exact_prior_source_matches": 68,
+          "latest_observed_source_matches": 68,
+          "eligible_source_samples": 11,
+          "latest_source_sample_wall": 1792629241510,
+          "examples": [
+            {
+              "index": 6722,
+              "argb": "f6817f77",
+              "source_first_observed": 1792629241360,
+              "source_sample_ordinal": 8
+            },
+            {
+              "index": 6977,
+              "argb": "38898d84",
+              "source_first_observed": 1792629241360,
+              "source_sample_ordinal": 8
+            },
+            {
+              "index": 6978,
+              "argb": "ff75746e",
+              "source_first_observed": 1792629241360,
+              "source_sample_ordinal": 8
+            },
+            {
+              "index": 6979,
+              "argb": "ff92928d",
+              "source_first_observed": 1792629241360,
+              "source_sample_ordinal": 8
+            }
+          ]
+        },
+        "observed_first_change_difference_ms": 154,
+        "remote_first_change_minus_native_contact_end_ms": 182,
+        "observed_prior_match_difference_ms": 154,
+        "source_observation_gaps": {
+          "samples": 101,
+          "maximum_ms": 449,
+          "p95_ms": 317,
+          "over_100_ms": 39,
+          "max_capture_ms": 16
+        },
+        "remote_observation_gaps": {
+          "samples": 141,
+          "maximum_ms": 297,
+          "p95_ms": 190,
+          "over_100_ms": 44,
+          "max_capture_ms": 9
+        }
+      },
+      "display": {
+        "source_first_render_change": {
+          "ordinal": 8,
+          "wall": 1792629241360,
+          "at": 65690,
+          "capture_cost_ms": 4,
+          "changed_pixels": 68,
+          "preceding_sample_wall": 1792629241237,
+          "preceding_sample_gap_ms": 123,
+          "prior_sample_count": 8,
+          "lower_bound_kind": "previous RENDER sample"
+        },
+        "remote_first_render_change": {
+          "ordinal": 18,
+          "wall": 1792629241514,
+          "at": 102519,
+          "capture_cost_ms": 3,
+          "changed_pixels": 68,
+          "preceding_sample_wall": 1792629241407,
+          "preceding_sample_gap_ms": 107,
+          "prior_sample_count": 18,
+          "lower_bound_kind": "previous RENDER sample"
+        },
+        "remote_first_prior_source_match": {
+          "ordinal": 18,
+          "wall": 1792629241514,
+          "at": 102519,
+          "capture_cost_ms": 3,
+          "changed_pixels": 68,
+          "preceding_sample_wall": 1792629241407,
+          "preceding_sample_gap_ms": 107,
+          "prior_sample_count": 18,
+          "lower_bound_kind": "previous RENDER sample",
+          "exact_prior_source_matches": 68,
+          "latest_observed_source_matches": 68,
+          "eligible_source_samples": 11,
+          "latest_source_sample_wall": 1792629241510,
+          "examples": [
+            {
+              "index": 6722,
+              "argb": "f6817f77",
+              "source_first_observed": 1792629241360,
+              "source_sample_ordinal": 8
+            },
+            {
+              "index": 6977,
+              "argb": "38898d84",
+              "source_first_observed": 1792629241360,
+              "source_sample_ordinal": 8
+            },
+            {
+              "index": 6978,
+              "argb": "ff75746e",
+              "source_first_observed": 1792629241360,
+              "source_sample_ordinal": 8
+            },
+            {
+              "index": 6979,
+              "argb": "ff92928d",
+              "source_first_observed": 1792629241360,
+              "source_sample_ordinal": 8
+            }
+          ]
+        },
+        "observed_first_change_difference_ms": 154,
+        "remote_first_change_minus_native_contact_end_ms": 182,
+        "observed_prior_match_difference_ms": 154,
+        "source_observation_gaps": {
+          "samples": 101,
+          "maximum_ms": 449,
+          "p95_ms": 317,
+          "over_100_ms": 39,
+          "max_capture_ms": 16
+        },
+        "remote_observation_gaps": {
+          "samples": 141,
+          "maximum_ms": 297,
+          "p95_ms": 190,
+          "over_100_ms": 44,
+          "max_capture_ms": 9
+        }
+      }
+    },
+    {
+      "version": 18,
+      "round": 2,
+      "source": "host",
+      "weapon": "plamg",
+      "candidate_sha256": "11b795d0d6681caa4edfcc2d1c0df73cb38f6d706a1fb3c26518163f738fe4d3",
+      "native_host_sha256": "acc336b5f28012a5f0d2ef57d0a3bf46be46f72f1e4c3a69a2f063cae0535dfd",
+      "original_metrics_unmodified": {
+        "round": 2,
+        "weapon": "plamg",
+        "source": "host",
+        "target": {
+          "hp": 1000,
+          "sx": 400,
+          "mat": 2,
+          "y": 4460,
+          "sy": 4500,
+          "x": 640,
+          "ty": 111,
+          "tx": 16
+        },
+        "native_equal": false,
+        "display_equal": false,
+        "native_expected": 1186,
+        "native_wrong": 2,
+        "native_extra": 0,
+        "display_expected": 1186,
+        "source_native_observed_wall": 1792629256093,
+        "remote_native_first_wall": 1792629256948,
+        "source_native_interval_before_wall": 1792629256026,
+        "remote_display_first_wall": 1792629256948,
+        "remote_native_complete_wall": null,
+        "remote_display_complete_wall": null,
+        "native_first_delay_ms": 855,
+        "display_first_delay_ms": 855,
+        "capture_max_ms": {
+          "host": 9,
+          "join": 11
+        },
+        "maximum_observation_gap_ms": {
+          "host": 271,
+          "join": 534
+        },
+        "functional_pass": false,
+        "performance_qualified": false
+      },
+      "source_native_contact_interval": {
+        "before": 1792629256026,
+        "after": 1792629256093,
+        "width_ms": 67
+      },
+      "native": {
+        "source_first_render_change": {
+          "ordinal": 18,
+          "wall": 1792629256188,
+          "at": 117193,
+          "capture_cost_ms": 2,
+          "changed_pixels": 636,
+          "preceding_sample_wall": 1792629255988,
+          "preceding_sample_gap_ms": 200,
+          "prior_sample_count": 18,
+          "lower_bound_kind": "previous RENDER sample"
+        },
+        "remote_first_render_change": {
+          "ordinal": 16,
+          "wall": 1792629256948,
+          "at": 81278,
+          "capture_cost_ms": 4,
+          "changed_pixels": 1186,
+          "preceding_sample_wall": 1792629256523,
+          "preceding_sample_gap_ms": 425,
+          "prior_sample_count": 16,
+          "lower_bound_kind": "previous RENDER sample"
+        },
+        "remote_first_prior_source_match": {
+          "ordinal": 16,
+          "wall": 1792629256948,
+          "at": 81278,
+          "capture_cost_ms": 4,
+          "changed_pixels": 1186,
+          "preceding_sample_wall": 1792629256523,
+          "preceding_sample_gap_ms": 425,
+          "prior_sample_count": 16,
+          "lower_bound_kind": "previous RENDER sample",
+          "exact_prior_source_matches": 1184,
+          "latest_observed_source_matches": 1184,
+          "eligible_source_samples": 30,
+          "latest_source_sample_wall": 1792629256948,
+          "examples": [
+            {
+              "index": 4931,
+              "argb": "ff434341",
+              "source_first_observed": 1792629256680,
+              "source_sample_ordinal": 24
+            },
+            {
+              "index": 4932,
+              "argb": "ff3e3e3c",
+              "source_first_observed": 1792629256680,
+              "source_sample_ordinal": 24
+            },
+            {
+              "index": 4933,
+              "argb": "ff383834",
+              "source_first_observed": 1792629256680,
+              "source_sample_ordinal": 24
+            },
+            {
+              "index": 4935,
+              "argb": "ff403d39",
+              "source_first_observed": 1792629256680,
+              "source_sample_ordinal": 24
+            }
+          ]
+        },
+        "observed_first_change_difference_ms": 760,
+        "remote_first_change_minus_native_contact_end_ms": 855,
+        "observed_prior_match_difference_ms": 760,
+        "source_observation_gaps": {
+          "samples": 129,
+          "maximum_ms": 271,
+          "p95_ms": 201,
+          "over_100_ms": 48,
+          "max_capture_ms": 9
+        },
+        "remote_observation_gaps": {
+          "samples": 101,
+          "maximum_ms": 534,
+          "p95_ms": 351,
+          "over_100_ms": 39,
+          "max_capture_ms": 11
+        }
+      },
+      "display": {
+        "source_first_render_change": {
+          "ordinal": 18,
+          "wall": 1792629256188,
+          "at": 117193,
+          "capture_cost_ms": 2,
+          "changed_pixels": 636,
+          "preceding_sample_wall": 1792629255988,
+          "preceding_sample_gap_ms": 200,
+          "prior_sample_count": 18,
+          "lower_bound_kind": "previous RENDER sample"
+        },
+        "remote_first_render_change": {
+          "ordinal": 16,
+          "wall": 1792629256948,
+          "at": 81278,
+          "capture_cost_ms": 4,
+          "changed_pixels": 1186,
+          "preceding_sample_wall": 1792629256523,
+          "preceding_sample_gap_ms": 425,
+          "prior_sample_count": 16,
+          "lower_bound_kind": "previous RENDER sample"
+        },
+        "remote_first_prior_source_match": {
+          "ordinal": 16,
+          "wall": 1792629256948,
+          "at": 81278,
+          "capture_cost_ms": 4,
+          "changed_pixels": 1186,
+          "preceding_sample_wall": 1792629256523,
+          "preceding_sample_gap_ms": 425,
+          "prior_sample_count": 16,
+          "lower_bound_kind": "previous RENDER sample",
+          "exact_prior_source_matches": 1184,
+          "latest_observed_source_matches": 1184,
+          "eligible_source_samples": 30,
+          "latest_source_sample_wall": 1792629256948,
+          "examples": [
+            {
+              "index": 4931,
+              "argb": "ff434341",
+              "source_first_observed": 1792629256680,
+              "source_sample_ordinal": 24
+            },
+            {
+              "index": 4932,
+              "argb": "ff3e3e3c",
+              "source_first_observed": 1792629256680,
+              "source_sample_ordinal": 24
+            },
+            {
+              "index": 4933,
+              "argb": "ff383834",
+              "source_first_observed": 1792629256680,
+              "source_sample_ordinal": 24
+            },
+            {
+              "index": 4935,
+              "argb": "ff403d39",
+              "source_first_observed": 1792629256680,
+              "source_sample_ordinal": 24
+            }
+          ]
+        },
+        "observed_first_change_difference_ms": 760,
+        "remote_first_change_minus_native_contact_end_ms": 855,
+        "observed_prior_match_difference_ms": 760,
+        "source_observation_gaps": {
+          "samples": 129,
+          "maximum_ms": 271,
+          "p95_ms": 201,
+          "over_100_ms": 48,
+          "max_capture_ms": 9
+        },
+        "remote_observation_gaps": {
+          "samples": 101,
+          "maximum_ms": 534,
+          "p95_ms": 351,
+          "over_100_ms": 39,
+          "max_capture_ms": 11
+        }
+      }
+    },
+    {
+      "version": 18,
+      "round": 3,
+      "source": "join",
+      "weapon": "plamg",
+      "candidate_sha256": "11b795d0d6681caa4edfcc2d1c0df73cb38f6d706a1fb3c26518163f738fe4d3",
+      "native_host_sha256": "acc336b5f28012a5f0d2ef57d0a3bf46be46f72f1e4c3a69a2f063cae0535dfd",
+      "original_metrics_unmodified": {
+        "round": 3,
+        "weapon": "plamg",
+        "source": "join",
+        "target": {
+          "hp": 1000,
+          "y": 4660,
+          "mat": 2,
+          "sx": 400,
+          "sy": 4700,
+          "x": 640,
+          "ty": 116,
+          "tx": 16
+        },
+        "native_equal": true,
+        "display_equal": true,
+        "native_expected": 953,
+        "native_wrong": 0,
+        "native_extra": 0,
+        "display_expected": 953,
+        "source_native_observed_wall": 1792629271908,
+        "remote_native_first_wall": 1792629273800,
+        "source_native_interval_before_wall": 1792629271863,
+        "remote_display_first_wall": 1792629273800,
+        "remote_native_complete_wall": 1792629277615,
+        "remote_display_complete_wall": 1792629277615,
+        "native_first_delay_ms": 1892,
+        "display_first_delay_ms": 1892,
+        "capture_max_ms": {
+          "join": 12,
+          "host": 11
+        },
+        "maximum_observation_gap_ms": {
+          "join": 429,
+          "host": 243
+        },
+        "functional_pass": true,
+        "performance_qualified": false
+      },
+      "source_native_contact_interval": {
+        "before": 1792629271863,
+        "after": 1792629271908,
+        "width_ms": 45
+      },
+      "native": {
+        "source_first_render_change": {
+          "ordinal": 12,
+          "wall": 1792629271969,
+          "at": 96300,
+          "capture_cost_ms": 4,
+          "changed_pixels": 791,
+          "preceding_sample_wall": 1792629271602,
+          "preceding_sample_gap_ms": 367,
+          "prior_sample_count": 12,
+          "lower_bound_kind": "previous RENDER sample"
+        },
+        "remote_first_render_change": {
+          "ordinal": 30,
+          "wall": 1792629272161,
+          "at": 133166,
+          "capture_cost_ms": 4,
+          "changed_pixels": 791,
+          "preceding_sample_wall": 1792629272051,
+          "preceding_sample_gap_ms": 110,
+          "prior_sample_count": 30,
+          "lower_bound_kind": "previous RENDER sample"
+        },
+        "remote_first_prior_source_match": {
+          "ordinal": 30,
+          "wall": 1792629272161,
+          "at": 133166,
+          "capture_cost_ms": 4,
+          "changed_pixels": 791,
+          "preceding_sample_wall": 1792629272051,
+          "preceding_sample_gap_ms": 110,
+          "prior_sample_count": 30,
+          "lower_bound_kind": "previous RENDER sample",
+          "exact_prior_source_matches": 791,
+          "latest_observed_source_matches": 791,
+          "eligible_source_samples": 16,
+          "latest_source_sample_wall": 1792629272103,
+          "examples": [
+            {
+              "index": 5696,
+              "argb": "ee6c6b65",
+              "source_first_observed": 1792629271969,
+              "source_sample_ordinal": 12
+            },
+            {
+              "index": 5697,
+              "argb": "ff6b6a63",
+              "source_first_observed": 1792629271969,
+              "source_sample_ordinal": 12
+            },
+            {
+              "index": 5698,
+              "argb": "ff6f6e67",
+              "source_first_observed": 1792629271969,
+              "source_sample_ordinal": 12
+            },
+            {
+              "index": 5699,
+              "argb": "ff6a6963",
+              "source_first_observed": 1792629271969,
+              "source_sample_ordinal": 12
+            }
+          ]
+        },
+        "observed_first_change_difference_ms": 192,
+        "remote_first_change_minus_native_contact_end_ms": 253,
+        "observed_prior_match_difference_ms": 192,
+        "source_observation_gaps": {
+          "samples": 101,
+          "maximum_ms": 429,
+          "p95_ms": 309,
+          "over_100_ms": 46,
+          "max_capture_ms": 12
+        },
+        "remote_observation_gaps": {
+          "samples": 143,
+          "maximum_ms": 243,
+          "p95_ms": 182,
+          "over_100_ms": 44,
+          "max_capture_ms": 11
+        }
+      },
+      "display": {
+        "source_first_render_change": {
+          "ordinal": 12,
+          "wall": 1792629271969,
+          "at": 96300,
+          "capture_cost_ms": 4,
+          "changed_pixels": 791,
+          "preceding_sample_wall": 1792629271602,
+          "preceding_sample_gap_ms": 367,
+          "prior_sample_count": 12,
+          "lower_bound_kind": "previous RENDER sample"
+        },
+        "remote_first_render_change": {
+          "ordinal": 30,
+          "wall": 1792629272161,
+          "at": 133166,
+          "capture_cost_ms": 4,
+          "changed_pixels": 791,
+          "preceding_sample_wall": 1792629272051,
+          "preceding_sample_gap_ms": 110,
+          "prior_sample_count": 30,
+          "lower_bound_kind": "previous RENDER sample"
+        },
+        "remote_first_prior_source_match": {
+          "ordinal": 30,
+          "wall": 1792629272161,
+          "at": 133166,
+          "capture_cost_ms": 4,
+          "changed_pixels": 791,
+          "preceding_sample_wall": 1792629272051,
+          "preceding_sample_gap_ms": 110,
+          "prior_sample_count": 30,
+          "lower_bound_kind": "previous RENDER sample",
+          "exact_prior_source_matches": 791,
+          "latest_observed_source_matches": 791,
+          "eligible_source_samples": 16,
+          "latest_source_sample_wall": 1792629272103,
+          "examples": [
+            {
+              "index": 5696,
+              "argb": "ee6c6b65",
+              "source_first_observed": 1792629271969,
+              "source_sample_ordinal": 12
+            },
+            {
+              "index": 5697,
+              "argb": "ff6b6a63",
+              "source_first_observed": 1792629271969,
+              "source_sample_ordinal": 12
+            },
+            {
+              "index": 5698,
+              "argb": "ff6f6e67",
+              "source_first_observed": 1792629271969,
+              "source_sample_ordinal": 12
+            },
+            {
+              "index": 5699,
+              "argb": "ff6a6963",
+              "source_first_observed": 1792629271969,
+              "source_sample_ordinal": 12
+            }
+          ]
+        },
+        "observed_first_change_difference_ms": 192,
+        "remote_first_change_minus_native_contact_end_ms": 253,
+        "observed_prior_match_difference_ms": 192,
+        "source_observation_gaps": {
+          "samples": 101,
+          "maximum_ms": 429,
+          "p95_ms": 309,
+          "over_100_ms": 46,
+          "max_capture_ms": 12
+        },
+        "remote_observation_gaps": {
+          "samples": 143,
+          "maximum_ms": 243,
+          "p95_ms": 182,
+          "over_100_ms": 44,
+          "max_capture_ms": 11
+        }
+      }
+    }
+  ],
+  "input_sha256": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery16-wall-surfaces-native-01\\wall-surface-result.json": "7b34f991ba7798a0baf7d8166e11433e324d97940073ba4879a301a3e904ebd4",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery16-wall-surfaces-native-01\\result.json": "88a0f631f0e8426544f79d381ccbbea9225adf5e4e891e658189be020b84a89d",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-wall-surfaces-driver-04\\inputs\\large-wall\\verify_results.py": "a3e8d886772d8facada4363331e79b6277c582b316f05c00e360e7edd247e874",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\f80b01a647\\host.log": "d6c13062137bc7b0ef3ea53d0e8b5225ab20b7fc841ee6b6db4ff92e914c4a58",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\f80b01a647\\join.log": "c93305088e5f3c1acb963c3f07f8f05907c48d14702e14a6a16e1a459bc15dca",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery16-wall-surfaces-native-01\\wall-proof\\host\\round-0-after-display.png": "67eaa6108df306b990ec2e6cf350076dba7b2e7abafd34a60ba902ef4f0ef466",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery16-wall-surfaces-native-01\\wall-proof\\host\\round-0-after-native.png": "67eaa6108df306b990ec2e6cf350076dba7b2e7abafd34a60ba902ef4f0ef466",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery16-wall-surfaces-native-01\\wall-proof\\host\\round-0-before-display.png": "b532e5916fddcf73e02042bb20cd33eab84d7814acb97589b48c815776b1ef9e",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery16-wall-surfaces-native-01\\wall-proof\\host\\round-0-before-native.png": "b532e5916fddcf73e02042bb20cd33eab84d7814acb97589b48c815776b1ef9e",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery16-wall-surfaces-native-01\\wall-proof\\host\\round-0-proof.json": "79660248e02750ac862aff4bf0663734e8942ba245e63069bc7383ffab8668de",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery16-wall-surfaces-native-01\\wall-proof\\host\\round-1-after-display.png": "4effb6eb22cf48ebabcfee1f783fd9af52fd8e6212e7a854a356561717937d53",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery16-wall-surfaces-native-01\\wall-proof\\host\\round-1-after-native.png": "4effb6eb22cf48ebabcfee1f783fd9af52fd8e6212e7a854a356561717937d53",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery16-wall-surfaces-native-01\\wall-proof\\host\\round-1-before-display.png": "ee726b60c6c571194d330faa02e2a82b04dac3a651696f404f98a569dbef9a79",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery16-wall-surfaces-native-01\\wall-proof\\host\\round-1-before-native.png": "ee726b60c6c571194d330faa02e2a82b04dac3a651696f404f98a569dbef9a79",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery16-wall-surfaces-native-01\\wall-proof\\host\\round-1-proof.json": "e1cba70c0c835ea4d769a4ab21ca339ca79b625946bae5ffb95a94f6d7751f27",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery16-wall-surfaces-native-01\\wall-proof\\host\\round-2-after-display.png": "eb3bca706f606db4c96d5a8c45a6addd80e5c502835c21d1f36551cc4f153e59",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery16-wall-surfaces-native-01\\wall-proof\\host\\round-2-after-native.png": "e33ec4d823c10be3078b8c4714afc1291e0a07b22210fc1e5d29494f4d8e22ce",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery16-wall-surfaces-native-01\\wall-proof\\host\\round-2-before-display.png": "b5f8d1760dcf95f7d85f797a5686c22da9309a0a7a758fbf3fd9f3cd5970188b",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery16-wall-surfaces-native-01\\wall-proof\\host\\round-2-before-native.png": "c29a2eb953226c25f815164d7b5ffe53523b5112bb49c550466111f820565378",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery16-wall-surfaces-native-01\\wall-proof\\host\\round-2-proof.json": "4d9a2a72a3e8646858762b3f7b5ba1e24c35a3f3985d59edbb6ae4a8e8a071e6",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery16-wall-surfaces-native-01\\wall-proof\\host\\round-3-after-display.png": "e32f75d0f398e5b47bd534479058e713e01e5bc429dcd0d5f8126e7e52956f68",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery16-wall-surfaces-native-01\\wall-proof\\host\\round-3-after-native.png": "9ae5139ca0fe40b226dae96c6946078641ae3d916c22eed9c83c86310820b228",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery16-wall-surfaces-native-01\\wall-proof\\host\\round-3-before-display.png": "8eecdd8254e2a3f96947708b76893d7a0bf5e8507d735a3f48568d92714709e0",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery16-wall-surfaces-native-01\\wall-proof\\host\\round-3-before-native.png": "dc8170cd8763910bfb4e56a813c51ec04422aa335d2dc75783b8523bda8ab681",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery16-wall-surfaces-native-01\\wall-proof\\host\\round-3-proof.json": "5922d11116779d5c7f4041e481fa3dc25cd5a8553a4ca7e0f30a5d0565f5048f",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery16-wall-surfaces-native-01\\wall-proof\\join\\round-0-after-display.png": "a020987daa1e453e7b21bf280cad25ded3a0f55e90e288169eed74c566fb3471",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery16-wall-surfaces-native-01\\wall-proof\\join\\round-0-after-native.png": "a020987daa1e453e7b21bf280cad25ded3a0f55e90e288169eed74c566fb3471",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery16-wall-surfaces-native-01\\wall-proof\\join\\round-0-before-display.png": "b532e5916fddcf73e02042bb20cd33eab84d7814acb97589b48c815776b1ef9e",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery16-wall-surfaces-native-01\\wall-proof\\join\\round-0-before-native.png": "b532e5916fddcf73e02042bb20cd33eab84d7814acb97589b48c815776b1ef9e",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery16-wall-surfaces-native-01\\wall-proof\\join\\round-0-proof.json": "c146a296d5b2555e1662764e89edd371e0702266078f73501b5ba46734586935",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery16-wall-surfaces-native-01\\wall-proof\\join\\round-1-after-display.png": "f9afa9f2afed61137000e6787b08d2bb15e56ad19545f9d808d2c28107bffaf9",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery16-wall-surfaces-native-01\\wall-proof\\join\\round-1-after-native.png": "f9afa9f2afed61137000e6787b08d2bb15e56ad19545f9d808d2c28107bffaf9",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery16-wall-surfaces-native-01\\wall-proof\\join\\round-1-before-display.png": "ee726b60c6c571194d330faa02e2a82b04dac3a651696f404f98a569dbef9a79",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery16-wall-surfaces-native-01\\wall-proof\\join\\round-1-before-native.png": "ee726b60c6c571194d330faa02e2a82b04dac3a651696f404f98a569dbef9a79",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery16-wall-surfaces-native-01\\wall-proof\\join\\round-1-proof.json": "174029839cf9634646fb79e05abd748fd9cc5baf0ec8343f230a4c45450ad7de",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery16-wall-surfaces-native-01\\wall-proof\\join\\round-2-after-display.png": "4f3a3231617d715370dd918f5bac076a1df015923b7e165a960eacfde5356268",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery16-wall-surfaces-native-01\\wall-proof\\join\\round-2-after-native.png": "69f1d06064df1fe48290a07ac4dc75ca5ee3129589bdb4baff8fa41ea47a35e5",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery16-wall-surfaces-native-01\\wall-proof\\join\\round-2-before-display.png": "b5f8d1760dcf95f7d85f797a5686c22da9309a0a7a758fbf3fd9f3cd5970188b",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery16-wall-surfaces-native-01\\wall-proof\\join\\round-2-before-native.png": "c29a2eb953226c25f815164d7b5ffe53523b5112bb49c550466111f820565378",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery16-wall-surfaces-native-01\\wall-proof\\join\\round-2-proof.json": "d8ac750b5bf1e599711b4fddcd2ddd7b967f1564e6b84b2e025b926dd40245f0",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery16-wall-surfaces-native-01\\wall-proof\\join\\round-3-after-display.png": "cecd7c6be62cb5b6fe1057b584de01d5de611d19d8458e3be79891be84313157",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery16-wall-surfaces-native-01\\wall-proof\\join\\round-3-after-native.png": "14a9820947f28f1d1538f69b713390b4ed079ef00d29452f295788d2719bfce1",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery16-wall-surfaces-native-01\\wall-proof\\join\\round-3-before-display.png": "8eecdd8254e2a3f96947708b76893d7a0bf5e8507d735a3f48568d92714709e0",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery16-wall-surfaces-native-01\\wall-proof\\join\\round-3-before-native.png": "dc8170cd8763910bfb4e56a813c51ec04422aa335d2dc75783b8523bda8ab681",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery16-wall-surfaces-native-01\\wall-proof\\join\\round-3-proof.json": "1c3de8a7e73c69e09b9db540795b61cbf861f39ec2fcf90ca92f16cfa1b8e956",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-wall-surfaces-native-proof-review\\candidate-reanalysis.json": "e31b89b9135662701b66a97b2bac716b2a49be7f60c494e48be078f1eb7124e7",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-wall-latency-review\\analyze.py": "3d364fa3f5264f695aac5a1193b8845fdf711dd258d881d1c9c891dd5c40d16d",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-surface-result.json": "3c522c17defb0479f92c66eb19d8e097ae0d05ca59a9895a0e2c0ef22e5a2588",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\result.json": "b412bd7d8e2b795383f03465ebdf07d1b0b162ffe644ed28f15281a506fd91f8",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\9927d091b8\\host.log": "7f528802332a21945b74935068e1461cbc2fbc7b033e19eebbc1718bef6218ce",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\9927d091b8\\join.log": "d00d28f0a33b68d46eb32bbcd43615c164d7c0d7a1b569943f9ef94fac53201a",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\host\\round-0-after-display.png": "1bf3327ce5d54ade60d9fe58ed4038e3c0d771a953ec1933ced2791af51bc031",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\host\\round-0-after-native.png": "1bf3327ce5d54ade60d9fe58ed4038e3c0d771a953ec1933ced2791af51bc031",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\host\\round-0-before-display.png": "b532e5916fddcf73e02042bb20cd33eab84d7814acb97589b48c815776b1ef9e",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\host\\round-0-before-native.png": "b532e5916fddcf73e02042bb20cd33eab84d7814acb97589b48c815776b1ef9e",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\host\\round-0-proof.json": "e26474ea781751e5783f08aad18057b5130e3921e9346d12cd134fdf6f43fb03",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\host\\round-1-after-display.png": "672698ab9a55e957b209715a9fe6ea6f4355351f21b1f613b4fa86a5027b6228",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\host\\round-1-after-native.png": "672698ab9a55e957b209715a9fe6ea6f4355351f21b1f613b4fa86a5027b6228",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\host\\round-1-before-display.png": "ee726b60c6c571194d330faa02e2a82b04dac3a651696f404f98a569dbef9a79",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\host\\round-1-before-native.png": "ee726b60c6c571194d330faa02e2a82b04dac3a651696f404f98a569dbef9a79",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\host\\round-1-proof.json": "4bd424e5ecd6e85bb6480c6a0b17d382d13e6077fec74fa3d9c0c4c080c63202",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\host\\round-2-after-display.png": "84fd30c1d415ccb53b81537e3323719dfd39233d16ef5e316b3830e6689abf6d",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\host\\round-2-after-native.png": "c73fccaccb8cba525ddec3e694204a9de382a881c599e6a37f16e27513962d88",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\host\\round-2-before-display.png": "b5f8d1760dcf95f7d85f797a5686c22da9309a0a7a758fbf3fd9f3cd5970188b",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\host\\round-2-before-native.png": "c29a2eb953226c25f815164d7b5ffe53523b5112bb49c550466111f820565378",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\host\\round-2-proof.json": "f0a8d4b037ef9877e971042db28ccbf6d1f9b6c143d376302f7c7fb8c56e55ed",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\host\\round-3-after-display.png": "93dd67d395286b9c0c83a759c1cf30a49686f122149614025a5634dda9532779",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\host\\round-3-after-native.png": "d4eb143e35ab2720d22ee9a9ea3619180c4974f0a10cb61622c1da257b755371",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\host\\round-3-before-display.png": "8eecdd8254e2a3f96947708b76893d7a0bf5e8507d735a3f48568d92714709e0",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\host\\round-3-before-native.png": "dc8170cd8763910bfb4e56a813c51ec04422aa335d2dc75783b8523bda8ab681",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\host\\round-3-proof.json": "241b9656f4e8f083e4319b924e17b7a505a3b9162d05f70cfebfff0d445f2917",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\join\\round-0-after-display.png": "1bf3327ce5d54ade60d9fe58ed4038e3c0d771a953ec1933ced2791af51bc031",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\join\\round-0-after-native.png": "1bf3327ce5d54ade60d9fe58ed4038e3c0d771a953ec1933ced2791af51bc031",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\join\\round-0-before-display.png": "b532e5916fddcf73e02042bb20cd33eab84d7814acb97589b48c815776b1ef9e",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\join\\round-0-before-native.png": "b532e5916fddcf73e02042bb20cd33eab84d7814acb97589b48c815776b1ef9e",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\join\\round-0-proof.json": "6a760bbc44fa252ae9b0c8cadab4cfb61b9d2da4445fdb44956a52cb862c7229",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\join\\round-1-after-display.png": "672698ab9a55e957b209715a9fe6ea6f4355351f21b1f613b4fa86a5027b6228",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\join\\round-1-after-native.png": "672698ab9a55e957b209715a9fe6ea6f4355351f21b1f613b4fa86a5027b6228",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\join\\round-1-before-display.png": "ee726b60c6c571194d330faa02e2a82b04dac3a651696f404f98a569dbef9a79",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\join\\round-1-before-native.png": "ee726b60c6c571194d330faa02e2a82b04dac3a651696f404f98a569dbef9a79",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\join\\round-1-proof.json": "c61fcf18a989aa959c7ee1bdb7f31d5b60608cc068d1e3cc7ada0c61fef491fa",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\join\\round-2-after-display.png": "ccbf5463c0527e880810e233bc23fd38133ed04468238dfa0060fe2b71610383",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\join\\round-2-after-native.png": "ab057ea64bb13abbe8e0b74e07f0882d4e8843688799fc8979ab519cc9d4e90a",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\join\\round-2-before-display.png": "b5f8d1760dcf95f7d85f797a5686c22da9309a0a7a758fbf3fd9f3cd5970188b",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\join\\round-2-before-native.png": "c29a2eb953226c25f815164d7b5ffe53523b5112bb49c550466111f820565378",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\join\\round-2-proof.json": "cdc2fd2cc0bf343bffadaea901c270d35ba820391a63f48a2affbc948f52377b",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\join\\round-3-after-display.png": "93dd67d395286b9c0c83a759c1cf30a49686f122149614025a5634dda9532779",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\join\\round-3-after-native.png": "d4eb143e35ab2720d22ee9a9ea3619180c4974f0a10cb61622c1da257b755371",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\join\\round-3-before-display.png": "8eecdd8254e2a3f96947708b76893d7a0bf5e8507d735a3f48568d92714709e0",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\join\\round-3-before-native.png": "dc8170cd8763910bfb4e56a813c51ec04422aa335d2dc75783b8523bda8ab681",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery18-wall-surfaces-native-01\\wall-proof\\join\\round-3-proof.json": "07cf3e48b59dba4db04445368a2ea8e314fe83ffd2a05b5c1fe5f800eebab4ca",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-wall-surfaces-native-proof-review\\recovery18-reanalysis-01.json": "0c73a4513e066c303055818d4718d1a2c22c01032e2dfe7ea2c74b48835d7b13"
+  },
+  "inputs_unchanged_after_analysis": true
+}

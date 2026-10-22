@@ -1,0 +1,12 @@
+{
+  "candidate_sha256": "11b795d0d6681caa4edfcc2d1c0df73cb38f6d706a1fb3c26518163f738fe4d3",
+  "inputs": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-18\\prepared.json": "b0848317d4b0533da769d2f9b28d8d3a3be60ee382f2986501833fcb847a63cd",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-18\\src\\rconnect\\game\\WallSurfaceBridge.as": "b7f58ccb994f30f86041249c56730831345e95742127814e1afa77bd44d69ad1",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-18\\src\\rconnect\\net\\TcpLink.as": "93aafc0aad7a410107f2eea2cee288d9366c6cacce289c5b2552dc95140e350c",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-18\\src\\rconnect\\core\\Session.as": "e699b9c5a02799367bba8afd924d450d064cab3f0a5e9a36ea7d400b378b10ba",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-wall-surfaces-native-proof-review\\recovery18-reanalysis-01.json": "0c73a4513e066c303055818d4718d1a2c22c01032e2dfe7ea2c74b48835d7b13"
+  },
+  "jvm_started": false,
+  "air_started": false
+}

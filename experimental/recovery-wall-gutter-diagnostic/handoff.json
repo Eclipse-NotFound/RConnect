@@ -1,0 +1,31 @@
+{
+  "kind": "read-only-gutter-wire-external-diagnostic",
+  "frozen": true,
+  "diagnostic_only": true,
+  "gameplay_qualified": false,
+  "performance_qualified": false,
+  "jvm_started": false,
+  "air_started": false,
+  "offline_checks": 13,
+  "files": {
+    "actor-inputs.json": "cce8727e22726b17dcd47da263af9416c2221320c1e338a1219c0a83ddbfb073",
+    "analyze_diagnostic.py": "67bc3eba1ddddd4bb1044db423554d31e77bc36ef1e6c3c71d81c795eff9ded9",
+    "check_offline.py": "efebc5b2c3bda36c039bdd00f4bec6b1cb8c86fea84ff95fbeaed401b43754bd",
+    "diagnostic-inputs.json": "1cf4d4bdd805ce3fd94e9773892fa37296511c17a41d1b9a2cf3be6ef00bdc30",
+    "driver-observations.patch": "581711b355a53028326f9c339e5776ff50ce026d4137cf43229717c283ddd7e8",
+    "generate.py": "361cff7a39928da05ad01094c0fc36eeca5eae4aa0556e95e08cfd40d4d290a7",
+    "native_tool.py": "1fe7b418f4d93b61eeea5e08597b99c889da7c6b9b72bec688d1b3122c4fd3aa",
+    "offline-result.json": "3cd8a5d069552d3d69fe1abbf219a97f4fd3404945cebe7f268d133b1a9af2ee",
+    "README.md": "b6646781f91ebeb16a7bd420ad01b594956f487e911405f0e6668ff614c76e8b",
+    "tests/LargeWallSurfaceTestDoc.as": "ec3060457dad0478feb07cf117baf18e79774cb240ae99bd601469047225beaa",
+    "tests/NativeWallColorProbe.as": "3778ef54b89fba8248d8f0914128de1e0abd77f029aee1a53db5bcb2a1970d7e",
+    "tests/NativeWallSurfaceProbe.as": "18efaeda6c265cf33862cdc6cb21f9ede07a55677b3b8df81b29c5bd6092e71f",
+    "verify_results.py": "a3e8d886772d8facada4363331e79b6277c582b316f05c00e360e7edd247e874"
+  },
+  "references": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-wall-surfaces-native\\native_tool.py": "3516f0a9a1daa1290391908b74d91ba9cad159bcd049ff5cdb6d2a461984cb5f",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-wall-surfaces-driver-04\\tests\\LargeWallSurfaceTestDoc.as": "8b705228e106b32db9fbd2bbe01e2ec495e2f58e829f53b981fe17a63bdc8f36",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-wall-surfaces-driver-04\\tests\\NativeWallSurfaceProbe.as": "18efaeda6c265cf33862cdc6cb21f9ede07a55677b3b8df81b29c5bd6092e71f",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-wall-surfaces-driver-04\\inputs\\large-wall\\verify_results.py": "a3e8d886772d8facada4363331e79b6277c582b316f05c00e360e7edd247e874"
+  }
+}
