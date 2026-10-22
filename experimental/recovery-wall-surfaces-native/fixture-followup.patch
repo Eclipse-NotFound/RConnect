@@ -1,0 +1,133 @@
+--- driver03/LargeWallSurfaceTestDoc.as
++++ driver04/LargeWallSurfaceTestDoc.as
+@@ -31,11 +31,12 @@
+       private var mod:RConnectMod,host:Boolean,source:Boolean,phase:String="boot",at:int=getTimer(),round:int=0;
+       private var links:Dictionary=new Dictionary(),configured:Boolean=false,peerReady:Boolean=false,readySent:Boolean=false;
+       private var sceneClass:Object,landClass:Object,oldSeed:Function,newSeed:Function;
+-      private var target:Object,targets:Array,area:Rectangle,gun:Object,oldGun:Object,oldChildren:Object,oldDisabled:Boolean;
++      private var target:Object,targets:Array,area:Rectangle,gun:Object,oldGun:Object,oldChildren:Object,oldDisabled:Boolean,oldInventory:Object;
+       private var bullets:Dictionary,contacts:Dictionary,shots:int=0,hits:Array=[],samples:Array=[],nativePairs:Array=[];
+       private var baseline:Object,pre:Object,local:Object,peer:Object,peerSampled:Boolean=false,sampledSent:Boolean=false;
+       private var sampleStart:int=0,sampleStartWall:Number=0,sampleEnd:int=0,wire:Array=[],lastReady:int=0;
+       private var sampleCaptureMax:int=0,prepareWait:String="";
++      private var attackAttempts:int=0,attackAccepted:int=0,firstAttack:Object,firstRejected:Object,weaponPreparation:Object;
+       private var allRows:Array=[],proofs:Array=[],failed:int=0;
+ 
+       public function LargeWallSurfaceTestDoc() {
+@@ -105,20 +106,42 @@
+          source=CASES[n].role==(host?"host":"join");phase="prepare";at=getTimer();readySent=peerReady=false;
+          peerSampled=sampledSent=false;local=peer=null;shots=0;hits=[];wire=[];samples=[];nativePairs=[];
+          sampleCaptureMax=0;prepareWait="";
++         attackAttempts=attackAccepted=0;firstAttack=firstRejected=weaponPreparation=null;
+          bullets=new Dictionary(true);contacts=new Dictionary(true);oldGun=mod.game.gg.currentWeapon;oldChildren=mod.game.gg.childObjs;
+          oldDisabled=Boolean(mod.game.gg.disabled);
+          if(source) {
+-            var factory:Object=mod.main.loaderInfo.applicationDomain.getDefinition("fe.weapon.Weapon");
+-            gun=factory.create(mod.game.gg,String(CASES[n].weapon),0);gun.setPers(mod.game.gg,mod.game.gg.pers);
+-            mod.game.gg.currentWeapon=gun;mod.game.gg.childObjs=[gun];
+-            var disabled:Boolean=mod.game.gg.disabled;mod.game.gg.disabled=false;try{gun.addVisual();}finally{mod.game.gg.disabled=disabled;}
+-            gun.hold=10000;gun.t_reload=0;gun.precision=0;gun.deviation=0;gun.recoil=0;gun.recoilUp=0;
++            // FA's native before/after loop snapshots owned inventory weapons.
++            // Use the same real inventory/equip path as the successful MSW
++            // native fixture, rather than an orphan currentWeapon reference.
++            var g:Object=mod.game.gg,id:String=String(CASES[n].weapon);
++            oldInventory={weapons:g.invent.weapons,fav:g.invent.fav,favIds:g.invent.favIds};
++            g.invent.weapons=copyArray(g.invent.weapons);g.invent.fav=copyArray(g.invent.fav);g.invent.favIds=copyArray(g.invent.favIds);
++            g.childObjs=g.childObjs.concat();g.changeWeapon("not",true);g.invent.weapons[id]=null;
++            gun=g.invent.addWeapon(id);
++            var disabled:Boolean=g.disabled;g.disabled=false;try{g.changeWeapon(id,true);}finally{g.disabled=disabled;}
++            weaponPreparation=attackState();
++            // Match the proven WallImpactTestDoc fixture: these fresh isolated
++            // characters otherwise fail native checkAvail (LMG 5 / plamg 4).
++            // Apply AFTER setPers, preserving its native damage/skill values.
++            gun.lvl=gun.perslvl=0;
++            gun.hold=gun.holder;gun.t_reload=0;gun.precision=0;gun.deviation=0;gun.recoil=0;gun.recoilUp=0;
+             // Accuracy/low terrain damage isolate native visual output. Keep
+             // native projectile, speed, decal, cooldown, ammo and burst rules.
+             gun.destroy=1;gun.damageExpl=0;gun.critCh=0;gun.dopCh=0;
+          }
+          Log.d("LARGE WALL PREPARE "+JSON.stringify({round:round,role:host?"host":"join",source:source,target:p,weapon:CASES[n].weapon,
+-            land:String(mod.game.world.game.curLandId),key:mod.game.roomKey(),seed:mod.game.readWorldInfo().layoutSeed}));
++            land:String(mod.game.world.game.curLandId),key:mod.game.roomKey(),seed:mod.game.readWorldInfo().layoutSeed,
++            weaponBeforeFixture:weaponPreparation,weaponAfterFixture:source?attackState():null}));
++      }
++      private static function copyArray(a:Array):Array {var out:Array=[];for(var key:String in a)out[key]=a[key];return out;}
++      private function attackState():Object {
++         var g:Object=mod.game.gg,p:Object=g.pers;
++         return {at:getTimer(),wall:new Date().time,lvl:int(gun.lvl),perslvl:int(gun.perslvl),skill:int(gun.skill),
++            skillLevel:int(p.getWeapLevel(gun.skill)),playerLevel:int(p.level),hp:Number(gun.hp),maxhp:Number(gun.maxhp),
++            hold:int(gun.hold),holder:int(gun.holder),rashod:int(gun.rashod),ammo:String(gun.ammo),
++            jammed:Boolean(gun.jammed),respect:int(gun.respect),alicorn:Boolean(gun.alicorn),worldAlicorn:Boolean(mod.game.world.alicorn),
++            t_attack:int(gun.t_attack),t_reload:int(gun.t_reload),t_prep:int(gun.t_prep),prep:int(gun.prep),rapid:int(gun.rapid),
++            current:g.currentWeapon===gun,owner:gun.owner===g,owned:g.invent.weapons[gun.id]===gun,ownerDisabled:Boolean(g.disabled)};
+       }
+       private function pose():void {
+          var g:Object=mod.game.gg,w:Object=mod.game.world;
+@@ -135,7 +158,13 @@
+          if(phase=="sample" && source) {
+             NativeWallSurfaceProbe.dispose(pre);pre=NativeWallSurfaceProbe.capture(mod.game.world.grafon,area);
+             sampleCaptureMax=Math.max(sampleCaptureMax,pre.cost);
+-            if(getTimer()-sampleStart>=500 && shots<int(CASES[round].shots))gun.attack();
++            if(getTimer()-sampleStart>=500 && shots<int(CASES[round].shots)) {
++               // At most two diagnostic snapshots; no per-attempt disk IO.
++               var initial:Object=attackAttempts==0?attackState():null;
++               attackAttempts++;var accepted:Boolean=gun.attack();if(accepted)attackAccepted++;
++               if(initial!=null){initial.accepted=accepted;initial.afterAttack=int(gun.t_attack);firstAttack=initial;}
++               if(!accepted && firstRejected==null)firstRejected=initial!=null?initial:attackState();
++            }
+          }
+       }
+       private function remember(o:Object):void {
+@@ -167,6 +196,13 @@
+          check(target.x>1920 || target.y>1000,"actual target lies beyond old small-room limits");
+          check(baseline.surfaces.length>0,"independent nativeBuffers and staged chunk cores cover world crop");
+          check(!source || (gun!=null && gun.vis!=null && gun.vis.stage!=null),"native weapon staged when firing");
++         if(source) {
++            var state:Object=attackState();
++            check(state.owner && state.current && state.owned && state.hp>0 && state.lvl-state.skillLevel<=2 &&
++               (state.perslvl==0 || state.playerLevel>=state.perslvl) && state.respect!=1 &&
++               (!state.alicorn || state.worldAlicorn) && !state.jammed &&
++               (state.holder<=0 || state.hold>=state.rashod),"native weapon eligibility and loaded ammunition prepared");
++         }
+          sampleStart=getTimer();sampleStartWall=new Date().time;phase="sample";at=sampleStart;
+       }
+       private function render(e:Event):void {
+@@ -208,15 +244,18 @@
+          }
+          local={round:round,role:host?"host":"join",source:source,weapon:CASES[round].weapon,target:target,area:{x:area.x,y:area.y,w:area.width,h:area.height},
+             start:sampleStart,startWall:sampleStartWall,end:sampleEnd,shots:shots,hits:hits,sourceFirst:sourceFirst,sourceFirstBefore:sourceFirstBefore,nativeOracle:nativeOracle,
++            attackAttempts:attackAttempts,attackAccepted:attackAccepted,firstAttack:firstAttack,firstRejected:firstRejected,weaponPreparation:weaponPreparation,
+             baseline:base,baselineDisplay:baseDisplay,finalNative:finalNative,finalDisplay:finalDisplay,frames:frames,wire:wire,
+             surfaces:baseline.surfaces,finalSurfaces:end.surfaces,maxCaptureMs:maxCost,readbackMs:getTimer()-started};
+          check(samples.length>1,"bounded RENDER observations retained before pixel readback");
++         check(!source || (attackAttempts>0 && attackAccepted>0 && firstAttack!=null && firstAttack.accepted===true),"native attack accepts first source attempt");
+          check(!source || (shots>=int(CASES[round].shots) && hits.length>0 && nativeOracle.length>0),"native bullets and native collision interval produce persistent world pixels");
+          savePNG("before-native",baseline.native);savePNG("after-native",end.native);
+          savePNG("before-display",baseline.display);savePNG("after-display",end.display);
+          var payload:String=JSON.stringify(local),file:File=File.applicationStorageDirectory.resolvePath("large-wall-proof/round-"+round+"-proof.json");
+          var fs:FileStream=new FileStream();fs.open(file,FileMode.WRITE);try{fs.writeUTFBytes(payload);}finally{fs.close();}
+          Log.d("LARGE WALL PROOF "+JSON.stringify({round:round,role:local.role,bytes:payload.length,target:target,source:source,shots:shots,hits:hits.length,
++            attackAttempts:attackAttempts,attackAccepted:attackAccepted,firstAttack:firstAttack,firstRejected:firstRejected,
+             sourceFirst:sourceFirst,samples:samples.length,nativePixels:nativeOracle.length/2,maxCaptureMs:maxCost,readbackMs:local.readbackMs,files:proofs.slice(-4)}));
+          // Send only round completion, never expected pixels to production.
+          phase="analyzed";send("analyzed");if(host && peerReady)advance();
+@@ -278,8 +317,17 @@
+          }catch(err:Error){fail(err.getStackTrace());}
+       }
+       private function release():void {
+-         if(gun!=null){gun.remVisual();gun=null;}
+-         if(oldGun!=null && mod!=null){mod.game.gg.currentWeapon=oldGun;mod.game.gg.childObjs=oldChildren;mod.game.gg.disabled=oldDisabled;oldGun=null;}
++         if(oldInventory!=null && mod!=null) {
++            var g:Object=mod.game.gg;g.changeWeapon("not",true);
++            g.invent.weapons=oldInventory.weapons;g.invent.fav=oldInventory.fav;g.invent.favIds=oldInventory.favIds;
++            g.currentWeapon=oldGun;g.childObjs=oldChildren;g.disabled=oldDisabled;
++            if(oldGun!=null){g.disabled=false;try{oldGun.addVisual();}finally{g.disabled=oldDisabled;}}
++            oldInventory=null;
++         }else {
++            if(gun!=null)gun.remVisual();
++            if(oldChildren!=null && mod!=null){mod.game.gg.currentWeapon=oldGun;mod.game.gg.childObjs=oldChildren;mod.game.gg.disabled=oldDisabled;}
++         }
++         gun=oldGun=null;oldChildren=null;
+          NativeWallSurfaceProbe.dispose(pre);pre=null;NativeWallSurfaceProbe.dispose(baseline);baseline=null;
+          for each(var s:Object in samples)NativeWallSurfaceProbe.dispose(s.value);
+          for each(var pair:Object in nativePairs){NativeWallSurfaceProbe.dispose(pair.before);NativeWallSurfaceProbe.dispose(pair.after);}

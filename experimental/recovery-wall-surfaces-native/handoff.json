@@ -1,0 +1,140 @@
+{
+  "kind": "large-native-wall-surfaces-external-source",
+  "frozen": true,
+  "files": {
+    "check_offline.py": "f8eca8ed0c7df34766db404b33d733c5a4bf068c34fd685b304ecc30cb831629",
+    "native_tool.py": "3516f0a9a1daa1290391908b74d91ba9cad159bcd049ff5cdb6d2a461984cb5f",
+    "offline-result.json": "0f67bf02aba3f4b163595755c69106bbc7cd10e0ed426eb193ff3d3693a8c367",
+    "README.md": "4bc4ec95e662caaaa96517687357dbfec13246ef3d0de0868f84913605e7f293",
+    "tests/LargeWallSurfaceTestDoc.as": "8b705228e106b32db9fbd2bbe01e2ec495e2f58e829f53b981fe17a63bdc8f36",
+    "tests/NativeWallSurfaceProbe.as": "18efaeda6c265cf33862cdc6cb21f9ede07a55677b3b8df81b29c5bd6092e71f",
+    "verify_results.py": "a3e8d886772d8facada4363331e79b6277c582b316f05c00e360e7edd247e874",
+    "fixture-followup.patch": "c8845f442823945cde34954568d0e2c3e410468e56d281c1d1d91b71f9ceb47f"
+  },
+  "sources": {
+    "tests/WallImpactTestDoc.as": "2ae12500d04ac64620dadcf6d0944c204e735481442173a68038a43ce9357578",
+    "tests/RoomTravelTimingTestDoc.as": "140a71baa980bcced42d152dbb6fc2e8a8502a418ea7676c9705fee06da093d6",
+    "experimental/recovery-tests/prepare.py": "57adca102a8ecbb0c1996dcee405782eced622fea63917d27238d27e81539ac3",
+    "experimental/recovery-tests/run.py": "1beca86ca91f5346f56136afd58e071646a57506570ed4b58d857c48270301da",
+    "experimental/recovery-first-raster-native/reverify_host.py": "47ce9c10e256d56554ea3ab1704b7db2833cc5dbb242e03a285ea2149e4472a6",
+    "build/m52/recovery-first-raster-host-03/prepared.json": "1dfa42c494c33eafb0cab1ca5b6ad43f5a6ae73419ce657827e952a4dfd74312",
+    "build/m52/recovery-first-raster-host-03/import/fe/graph/Grafon.as": "976526e741392904bb2575c7e6c73055cdb589ae177e033ad9fdebcc6faa850d",
+    "build/m52/recovery-first-raster-host-recheck-03/receipt.json": "56f07ae744a8dfffc8276178e3e89a375118794a97b4de3e6862664d817d2755",
+    "experimental/recovery-wall-surface-review/review.md": "b6cc6f2f05570fe78ffecf45f77f99272e97af391bfe8dd0858f1ae1a52359cf",
+    "build/cooperation/df0cb3dad0/host.log": "a2523251d1ee0a8df7df6feefd837cc06d5079e99061192eb46b015d3c67751a",
+    "build/cooperation/df0cb3dad0/join.log": "f15ac7cd3a6b6dee66594379226c75a88e0c4f082c657a6c097654067bed5a7a",
+    "build/cooperation/df0cb3dad0/module-logs/host/FirearmAttachments.log": "87f7de990d68956be632cc499dc725e6858dedef386498a78acd4b0c8bb751dc",
+    "build/cooperation/df0cb3dad0/module-logs/join/FirearmAttachments.log": "b8bd2af67bde2019a71a87d261496cc4ccd7c6f8fccd04497c3c2c37fb0b10b9",
+    "build/m52/recovery-wall-surfaces-driver-03/tests/LargeWallSurfaceTestDoc.as": "8c1180bbe8fedc7546ae9cd1ff3e2fc5f434ed9e89cd268d6d69bcef29ffe7f4",
+    "experimental/recovery-special-native-followup/tests/MSWNoVisualExplosionTestDoc.as": "bf42054816a8e322c49ab523495535e710ee694b3e7d6bf49bca37004a31a3f2",
+    "experimental/recovery-wall-surfaces-host/recheck.py": "0588cc64c73934f5237e520afd99997e9b3b45bb1f8c9ff1c16bd9561bf131f4",
+    "build/m52/recovery-wall-surfaces-host-01/prepared.json": "9214ed94353f883bb01a9cd50d195c95cb05fb637213ff23112abc4907fb5ffd",
+    "build/m52/recovery-wall-surfaces-host-01/native-input.json": "29d6ad659140d3b40ad7a2fa381a18419e05581ce9e4f3c4cc4e6ed11f087fb5",
+    "build/m52/recovery-wall-surfaces-host-recheck-01/receipt.json": "888d19485ea8e9d70f92188e7e61de5cffad8dcfa7a88499b00c88d6bedb3e49",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\game-reference\\decompiled\\1.02\\src102\\scripts\\fe\\weapon\\Weapon.as": "3e5cf1dc01d7304d5824c7dfd08f0f4de73d2d107ff2b30d2abfb3d6f770b4e4",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\game-reference\\decompiled\\1.02\\src102\\scripts\\fe\\unit\\Pers.as": "1b9a554ef50ecb2fac27aaf2bb1cf68d62f89ac15cab57196eeef553908932c8",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\game-reference\\decompiled\\1.02\\src102\\scripts\\fe\\unit\\Invent.as": "5200152fa4925360938d348eff5efe49e61d7294874457c37e0c7849d06c20e6",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\game-reference\\decompiled\\1.02\\src102\\scripts\\fe\\unit\\UnitPlayer.as": "5c2681339af9b0f6125dea08ba089c8436ed5980acf83155606c7e2af6f1cc51",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\game-reference\\decompiled\\1.02\\src102\\scripts\\fe\\AllData.as": "975b0d0e68059a288549805c960c4402b34cc88740a8309007f75b6f0e2763e2"
+  },
+  "baseline_candidate": "build/m52/recovery-14",
+  "baseline_candidate_sha256": "225a794040c71f2a55ff433366a7969201ac3a58ffaab0a655cee1e4eefbe5f7",
+  "native_host": "build/m52/recovery-first-raster-host-03",
+  "native_host_sha256": "fd92fbd5ae92b5c8d4cbf8151d11796a140810f34988b7031e258c747d86734e",
+  "original_failed_host_receipt_preserved": true,
+  "independent_host_recheck": "build/m52/recovery-first-raster-host-recheck-03/receipt.json",
+  "offline_checks": 28,
+  "offline_failed": 0,
+  "compiled": false,
+  "air_started": false,
+  "jvm_started": false,
+  "production_changed": false,
+  "installed": false,
+  "native_qualified": false,
+  "performance_qualified": false,
+  "new_wall_bridge_host_accepted": true,
+  "scenarios": [
+    "host lmg single native shot",
+    "join lmg single native shot",
+    "host plamg eight native shots",
+    "join plamg eight native shots"
+  ],
+  "observation": "Canonical world nativeBuffers[0] core crops plus real visFront display layer, genuine native collision interval oracle. Both roles stop timing before readback and PNG.",
+  "limitations": [
+    "Current AS preparation revision not yet compiled or run",
+    "Prior runs failed before actual source bullets, not product counterexamples",
+    "visFront evidence is not a full final-stage equality claim",
+    "No performance qualification; capture cost and first-display latency reported",
+    "FA null-reference absence requires actual next run confirmation"
+  ],
+  "compile_failure_followup": {
+    "original_build": "build/m52/recovery-wall-surfaces-driver-01",
+    "original_handoff_sha256": "dc3fe5e180e4f15b9cd3f67908b68ff4b4a4beade5b15f0104729d7baa211019",
+    "original_probe_sha256": "f9fc526bdd7e4fdeaf4d211572d48bba0507edce5f94d9dff0826a8718144e20",
+    "compile_log_sha256": "434cefaab450c9971cf0cfafabd476eab6abb24f9f375029548500678e04a868",
+    "fix": "Unreachable return null after capture try/catch only; ASC explicit return-path requirement",
+    "source_only_change_verified": true,
+    "next_build": "build/m52/recovery-wall-surfaces-driver-02",
+    "jvm_started_by_this_followup": false,
+    "air_started": false
+  },
+  "target_selection_followup": {
+    "original_run": "31d33c03c7",
+    "original_driver": "build/m52/recovery-wall-surfaces-driver-02",
+    "original_handoff_sha256": "74c2bd3403c4b72c8f4e0e021f9d4b61896eaeaf1d485e09faa02e290f668b1d",
+    "reason": "Native hitTile draws marks even when indestruct/thre rejects HP damage; preserve real-pixel assertions",
+    "next_driver": "build/m52/recovery-wall-surfaces-driver-03",
+    "native_tested": false
+  },
+  "native_preparation_followup": {
+    "original_run": "df0cb3dad0",
+    "original_driver": "build/m52/recovery-wall-surfaces-driver-03",
+    "original_handoff_sha256": "6b886685c650862b0ba306953003305bd707731e71425ad87fa2639433a3f450",
+    "actual_source_rows": [
+      {
+        "round": 0,
+        "role": "host",
+        "shots": 0,
+        "hits": 0,
+        "nativePixels": 0
+      },
+      {
+        "round": 1,
+        "role": "join",
+        "shots": 0,
+        "hits": 0,
+        "nativePixels": 0
+      },
+      {
+        "round": 2,
+        "role": "host",
+        "shots": 0,
+        "hits": 0,
+        "nativePixels": 0
+      },
+      {
+        "round": 3,
+        "role": "join",
+        "shots": 0,
+        "hits": 0,
+        "nativePixels": 0
+      }
+    ],
+    "fix": "Native owned inventory/equip; native setPers then lvl/perslvl=0 as proven WallImpactTestDoc; native full magazine; bounded first attack diagnostics",
+    "next_driver": "build/m52/recovery-wall-surfaces-driver-04",
+    "native_tested": false,
+    "fa_release_commit": "fa2afee4f7d35fccbf84f803c3c97fe6286295b4",
+    "fa_committed_runtime_sha256": "0b933e11b77f23163997d527ed02e92fa49566edd9bf68316a2aae42a9da642a",
+    "fa_installed_sha256": "b3304596eb7e08796f9de2cf02e1e7cccff10e188d26fedfa960aa6370d2a4b9",
+    "old_failure_preserved": true,
+    "no_production_changes": true
+  },
+  "new_wall_bridge_host": {
+    "directory": "build/m52/recovery-wall-surfaces-host-01",
+    "sha256": "acc336b5f28012a5f0d2ef57d0a3bf46be46f72f1e4c3a69a2f063cae0535dfd",
+    "recheck": "build/m52/recovery-wall-surfaces-host-recheck-01/receipt.json",
+    "explicit_parameter_required": true,
+    "original_failed_receipt_preserved": true,
+    "native_qualified": false
+  }
+}
