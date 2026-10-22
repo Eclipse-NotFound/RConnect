@@ -1,0 +1,145 @@
+{
+  "kind": "read_only_source_cost_review",
+  "candidate": "0.2.24-early-travel2",
+  "production_candidate_sha256": "d356483f927c608b5973982558127ce4feb0873a36676909ed3b3d6ac8b7acb3",
+  "source_hashes": {
+    "rconnect\\game\\GameBridge.as": {
+      "reviewed": "3fe9bb83a16a57300e733806cddbe74ce55bcaf323bec15554814f4714eba967",
+      "compiled_source": "3fe9bb83a16a57300e733806cddbe74ce55bcaf323bec15554814f4714eba967",
+      "early1_source": "3fe9bb83a16a57300e733806cddbe74ce55bcaf323bec15554814f4714eba967"
+    },
+    "rconnect\\game\\ObjectIdentity.as": {
+      "reviewed": "0bc4cc3429f78f0e43164dea4af4481e4230fdf335bd0eed6e7090baf0937774",
+      "compiled_source": "0bc4cc3429f78f0e43164dea4af4481e4230fdf335bd0eed6e7090baf0937774",
+      "early1_source": "0bc4cc3429f78f0e43164dea4af4481e4230fdf335bd0eed6e7090baf0937774"
+    },
+    "rconnect\\game\\TerrainSync.as": {
+      "reviewed": "317c9658b0632f3bb8333c11cd302c68ef45e7a9f2f54ed6b6c631b6c1b92b44",
+      "compiled_source": "317c9658b0632f3bb8333c11cd302c68ef45e7a9f2f54ed6b6c631b6c1b92b44",
+      "early1_source": "317c9658b0632f3bb8333c11cd302c68ef45e7a9f2f54ed6b6c631b6c1b92b44"
+    },
+    "rconnect\\game\\NativeTileState.as": {
+      "reviewed": "eec001f4de8bdfc5ad892c2de2e892c07cceac15ebe7c5cf10fda4a1047592dc",
+      "compiled_source": "eec001f4de8bdfc5ad892c2de2e892c07cceac15ebe7c5cf10fda4a1047592dc",
+      "early1_source": "eec001f4de8bdfc5ad892c2de2e892c07cceac15ebe7c5cf10fda4a1047592dc"
+    },
+    "rconnect\\game\\NativeRoomState.as": {
+      "reviewed": "1e91028348b29dc1bd00dc55cf4d5df5d5ee40469ef9ea0f7e9626d30a601938",
+      "compiled_source": "1e91028348b29dc1bd00dc55cf4d5df5d5ee40469ef9ea0f7e9626d30a601938",
+      "early1_source": "1e91028348b29dc1bd00dc55cf4d5df5d5ee40469ef9ea0f7e9626d30a601938"
+    },
+    "rconnect\\game\\RoomTerrainView.as": {
+      "reviewed": "a2eb59b8536414d26daa39a82c71c414009c5d4b29a7a24539e025d1b852877f",
+      "compiled_source": "a2eb59b8536414d26daa39a82c71c414009c5d4b29a7a24539e025d1b852877f",
+      "early1_source": "a2eb59b8536414d26daa39a82c71c414009c5d4b29a7a24539e025d1b852877f"
+    }
+  },
+  "first_load_review_sha256": "48107bb57ad1e28868ef2f2b4602a79b7c08609075c498f7967e619727bc663b",
+  "logs": {
+    "host": {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\3b3c31c5f5\\host.log",
+      "sha256": "9bae028b516b085eef8c97f49c1c65b0bef96f8a062941a247124e9cac5068df",
+      "first_load_timings": [
+        {
+          "line": 40,
+          "kind": "capture",
+          "record": {
+            "total": 425,
+            "terrain": 424,
+            "tiles": 30000,
+            "objects": 115,
+            "key": "random_mane//0,0,0",
+            "units": 86
+          }
+        }
+      ]
+    },
+    "join": {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\3b3c31c5f5\\join.log",
+      "sha256": "fc2568f2542b9e3365f49683df49835f99e52039a755a7a9767d95611bc70bd3",
+      "first_load_timings": [
+        {
+          "line": 53,
+          "kind": "restore",
+          "record": {
+            "retained": false,
+            "effects": 1586,
+            "redraw": 1634,
+            "total": 1634,
+            "units": 1536,
+            "terrain": 817,
+            "foreign": true,
+            "objects": 286,
+            "key": "random_mane//0,0,0",
+            "role": 55,
+            "authority": false
+          }
+        }
+      ]
+    }
+  },
+  "all_explicit_gamebridge_identity_calls": {
+    "units": [
+      [
+        5647,
+        "var target:Object = _units.resolve(e, units as Array, used);"
+      ],
+      [
+        6004,
+        "if(_units.resolve(e, units as Array, claimed) != null)"
+      ],
+      [
+        6169,
+        "var u:Object=_units.resolve(s,loc.units,used);"
+      ],
+      [
+        6279,
+        "var unit:Object=_units.resolve(us,loc.units,used);"
+      ]
+    ],
+    "objects": [
+      [
+        3009,
+        "var lb:Object = _objects.resolve(h, objs as Array, consumed);"
+      ],
+      [
+        3024,
+        "lb = _objects.resolve(h, objs as Array, consumed);"
+      ],
+      [
+        4877,
+        "var sceneObj:Object = _objects.resolve(scene, probe(loc, \"objs\") as Array, new Dictionary());"
+      ],
+      [
+        4885,
+        "var mb:Object = _objects.resolve(m, probe(loc, \"objs\") as Array, new Dictionary());"
+      ],
+      [
+        4902,
+        "var target:Object = _objects.resolve(is2, probe(loc, \"objs\") as Array, used);"
+      ],
+      [
+        6176,
+        "var b:Object=_objects.resolve(s,loc.objs,used);"
+      ],
+      [
+        6253,
+        "var box:Object=_objects.resolve(os,loc.objs,used);"
+      ]
+    ]
+  },
+  "completed_call_bounds_without_reentrant_callbacks": {
+    "checkpoint": "N + M",
+    "join_full_restore": "N_keep + N + 2*M + I <= 2*N + 3*M",
+    "single_resolve_logical_elements": "<= 2*L_at_call (indexOf + fallback)",
+    "N": "checkpoint unit-entry count; NOT log timing.units or post-load loc.units.length",
+    "M": "checkpoint object-entry count; NOT log timing.objects",
+    "N_keep": "unit-entry count after isSceneHitClass skip, <= N",
+    "I": "second resolve after successful Box construction, <= M"
+  },
+  "actual_first_load_N_M_and_resolve_count_observed": false,
+  "resolver_runtime_share_observed": false,
+  "no_candidate_implementation": true,
+  "optimization_selected": false,
+  "performance_qualified": false
+}

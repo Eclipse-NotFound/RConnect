@@ -1,0 +1,28 @@
+{
+  "sources": {
+    "audit_profile.py": "3391f352382752cd0f8c733284afce0ec348b76e55d0e527578454b5d40d4309",
+    "binding.py": "f27d25544dafbc0172e71fc84a3f7899929334f6c7f09de6024a1d0d4a079aba",
+    "check.py": "ac6a543efcbb25fff8649032fec7b6158b59edd29a6ed640e25f98216a751b12",
+    "freeze.py": "b3c6f85bc2478d2d73802d5332b60d99ad27a7206e15af5590f6a8c4c129ce3c",
+    "prepare.py": "8b1660170cff3047f2506ff73740975e1b178bd29671d393f3d1b7d36762c800",
+    "README.md": "7f35d38681f801e95cd134dbb2fe2c62b509d07721631bd55cbea1b14e8f0484"
+  },
+  "originals": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-paint-driver\\inputs.json": "34bbabd1ef0759e8a126fbf1b926ff39be523fce83470ae5544bbe5d1c32cceb",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-paint-timing-v2\\handoff.json": "8b57fef9e24331e896975a56ed7846d96117eee4e92c4d145517a4d6b8bf4d50",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-paint-timing-v2\\build_host.py": "c63d3c51749e10e5fd38cabe5014cf4cb13951a0ac218c453718c96eeade209c",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-paint-timing-v2\\check.py": "8c0806bb98c220b1d8dbdaebeb7463735d70b2aa8d4b2de19033b97ae051243f",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-paint-timing-v2\\prepare.py": "d9eb6b27994bb9a8efbcf024c096726b7e86493e2295f506fab2f12509afecb7",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-paint-timing-v2\\prepared.json": "0c77022a97100bb516949a41a719fd1b0ccd61472f087bc58bdc46a8dff1c41e",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-paint-timing-v2\\README.md": "827eaed4058dd8b9511f2304cf7fec5f8f9eeb4c263265b53049747978026604",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-paint-timing-v2\\source-check.json": "53346c2f1b8a8d5f0997fd5cb3553456e8857ab596c11b2aef6c294be3f5d960",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-paint-timing-v2\\src\\fe\\graph\\Grafon.as": "3bdc70d8c81d7ca2cdda070cb16421e3d7b412bb34a54d6b7d4aae2446e7ad07",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-paint-timing-v2\\water-loop-import-repair.patch": "47d9a07417d3762709ad72531bdb297b1a03b8876c3e16beba3e5cdefcd32333"
+  },
+  "paint_contract": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-paint-timing-v2\\prepared.json",
+  "paint_source": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-paint-timing-v2\\src\\fe\\graph\\Grafon.as",
+  "observer_sources": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-paint-driver\\inputs.json",
+  "diagnostic_only": true,
+  "compiled": false,
+  "performance_qualified": false
+}

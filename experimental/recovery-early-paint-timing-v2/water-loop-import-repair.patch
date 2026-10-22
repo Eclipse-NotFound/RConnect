@@ -1,0 +1,19 @@
+--- frozen-paint-v1/Grafon.as
++++ paint-v2/Grafon.as
+@@ -3000,13 +3000,9 @@
+                      tile.y = j * Tile.tileY;
+                      voda.addChild(tile);
+                   }
+-                  var _loc1_:* = §§findproperty(j);
+-                  var _loc2_:Number = Number(_loc1_.j) + 1;
+-                  _loc1_.j = _loc2_;
+-               }
+-               _loc1_ = §§findproperty(i);
+-               _loc2_ = Number(_loc1_.i) + 1;
+-               _loc1_.i = _loc2_;
++                  j++;
++               }
++               i++;
+             }
+          });
+          steps.push(function():void

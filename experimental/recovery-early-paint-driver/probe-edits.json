@@ -1,0 +1,30 @@
+[
+  [
+    "   import flash.utils.getTimer;",
+    "   import flash.utils.getTimer;\n   import rconnect.core.Log;"
+  ],
+  [
+    "      private var startPermit:Object,heldSeen:Boolean=false;",
+    "      private var startPermit:Object,heldSeen:Boolean=false;\n      private var paintProbe:PaintTimingBuffer;"
+  ],
+  [
+    "         mod=value;cls=mod.game.main.loaderInfo.applicationDomain.getDefinition(\"fe.graph.Grafon\");",
+    "         mod=value;cls=mod.game.main.loaderInfo.applicationDomain.getDefinition(\"fe.graph.Grafon\");\n         paintProbe=new PaintTimingBuffer(cls);"
+  ],
+  [
+    "            var ticket:Object=original(w,l,g);",
+    "            var ticket:Object=original(w,l,g);\n            paintProbe.bind(w,l,g);"
+  ],
+  [
+    "         active=true;expected=required;tickets=new Dictionary();rows=[];heldSeen=false;startPermit=query();",
+    "         active=true;expected=required;tickets=new Dictionary();rows=[];heldSeen=false;startPermit=query();\n         paintProbe.begin(mod.game.world);"
+  ],
+  [
+    "         return {passed:ok,expected:expected,expectedEarly:SceneRasterBuildConfig.EXPECT_EARLY,",
+    "         var paintEvidence:Object=finishPaint(\"finish\");\n         return {passed:ok,expected:expected,expectedEarly:SceneRasterBuildConfig.EXPECT_EARLY,paintEvidence:paintEvidence,"
+  ],
+  [
+    "      public function dispose():void {",
+    "      private function finishPaint(reason:String):Object {\n         var result:Object=paintProbe.finish(reason);\n         if(result!=null)Log.d(\"EARLY PAINT PROFILE \"+JSON.stringify(result));\n         return result;\n      }\n      public function dispose():void {\n         finishPaint(\"dispose\");"
+  ]
+]

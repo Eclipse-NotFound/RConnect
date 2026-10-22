@@ -1,0 +1,111 @@
+--- 2D415D/Grafon.as
++++ diagnostic/Grafon.as
+@@ -43,6 +43,10 @@
+       public static var rconnectWallBridge:Function = null;
+       
+       public static var rconnectRasterBridge:Function = null;
++      
++      public static var rconnectPaintTimingBridge:Function = null;
++      
++      public static var rconnectPaintTimingFaults:uint = 0;
+       
+       public var loc:Location;
+       
+@@ -904,12 +908,91 @@
+          {
+             return;
+          }
+-         if(this.scenePreload)
+-         {
+-            this.scenePreloadAll();
+-            return;
+-         }
+-         this.sceneEnsureUpcoming(left,top,width,height);
++         // Diagnostic host only: retain the subscriber and identities for this
++         // exact invocation. Nothing is allocated when there is no subscriber.
++         var paintObserver:Function = rconnectPaintTimingBridge;
++         var paintWorld:Object;
++         var paintGame:Object;
++         var paintLoc:Location;
++         var paintStarted:int;
++         var paintStartedWall:Number;
++         var paintResident:int;
++         var paintPreload:Boolean;
++         var paintWorldRenderer:Boolean;
++         var paintWorldLoc:Boolean;
++         if(paintObserver != null)
++         {
++            try
++            {
++               paintWorld = World.w;
++               paintGame = paintWorld != null ? paintWorld.game : null;
++               paintLoc = this.loc;
++               paintWorldRenderer = paintWorld != null && paintWorld.grafon === this;
++               paintWorldLoc = paintWorld != null && paintWorld.loc === paintLoc;
++               paintResident = this.sceneResident;
++               paintPreload = this.scenePreload;
++               paintStartedWall = new Date().time;
++               paintStarted = int(getTimer());
++            }
++            catch(paintCaptureError:*)
++            {
++               ++rconnectPaintTimingFaults;
++               paintObserver = null;
++            }
++         }
++         var paintCompleted:Boolean = false;
++         try
++         {
++            if(this.scenePreload)
++            {
++               this.scenePreloadAll();
++               paintCompleted = true;
++               return;
++            }
++            this.sceneEnsureUpcoming(left,top,width,height);
++            paintCompleted = true;
++         }
++         finally
++         {
++            if(paintObserver != null)
++            {
++               // Both end clocks precede allocation and the external callback.
++               // Catch the entire observer path so it cannot replace an error
++               // thrown by either original drawing branch.
++               try
++               {
++                  var paintFinished:int = int(getTimer());
++                  var paintFinishedWall:Number = new Date().time;
++                  paintObserver(this,paintWorld,paintGame,paintLoc,{
++                     phase:"ensure-work",
++                     preload:paintPreload,
++                     initial:initial,
++                     left:left,
++                     top:top,
++                     width:width,
++                     height:height,
++                     started:paintStarted,
++                     finished:paintFinished,
++                     startedWall:paintStartedWall,
++                     finishedWall:paintFinishedWall,
++                     residentBefore:paintResident,
++                     residentAfter:this.sceneResident,
++                     completed:paintCompleted,
++                     sameWorld:World.w === paintWorld,
++                     sameGame:World.w != null && World.w.game === paintGame,
++                     sameLoc:this.loc === paintLoc,
++                     worldRendererAtStart:paintWorldRenderer,
++                     worldRendererAtEnd:World.w != null && World.w.grafon === this,
++                     worldLocAtStart:paintWorldLoc,
++                     worldLocAtEnd:World.w != null && World.w.loc === paintLoc
++                  });
++               }
++               catch(paintObserverError:*)
++               {
++                  ++rconnectPaintTimingFaults;
++               }
++            }
++         }
+       }
+       
+       public function sceneTick() : void

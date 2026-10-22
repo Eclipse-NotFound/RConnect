@@ -1,0 +1,47 @@
+{
+  "kind": "source-only first-load followup",
+  "passed": true,
+  "checks": [
+    "CS 7F1F source-manifest matches NativeSceneAdapter.as",
+    "CS 7F1F source-manifest matches ContinuousSceneMod.as",
+    "preserved CS binary is exact 7F1F",
+    "actual run input contains CS 7F1F: 3b3c31c5f5",
+    "actual run input contains CS 7F1F: 925d5f32df",
+    "continuous-map spawn uses separate Math.random",
+    "round0 invokes native beginMission",
+    "only host sends prepare; same layout seed returned",
+    "beginMission forces new native mission",
+    "native new-Land branch includes crea",
+    "ordinary native spawn also uses Math.random",
+    "Grafon is not a dynamic JS-style method container",
+    "private renderer boundary: sceneEnsure",
+    "private renderer boundary: sceneRegionDrawPass",
+    "private renderer boundary: sceneDrawRegionChunk",
+    "private renderer boundary: scenePreloadAll",
+    "raster bridge is an explicit writable Function slot",
+    "nativeAPI true receiver is null in actual native caller",
+    "wall bridge cleanup depends on exact owner function identity",
+    "original first-load evidence unchanged"
+  ],
+  "sources": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\ContinuousScene\\src\\NativeSceneAdapter.as": "6541c722618dec9bb637ba6082a950cc4a01029b1eb01b65d992516d1d7b90c3",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\ContinuousScene\\src\\ContinuousSceneMod.as": "d97c62521892dbf46dbac9d38bfe6cb721fb49d0f8fea5cfea4b5e796851c450",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\ContinuousScene\\build\\large-map\\source-manifest.json": "832319a1e57b5eefeab25818ddb07f726d6fa0a46b8cfddf68dfc8927f426a95",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\ContinuousScene\\state\\deployment-v090.json": "592e788bad01d49dc58a6eba570eef7f4032b32d208084581b6849552141eab8",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-sandy-native\\tests\\RoomTravelTimingTestDoc.as": "3e0887496e62b7cd9cb2f041bb4629748277a1d96887e8216f1147cb8a10fa6b",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-exit-authorization\\src\\rconnect\\core\\RoomSync.as": "b2b6a3785cd60f9cb08fb48d52e3cce3a757d474dde35d4f0903d47fe7bac51e",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-exit-authorization\\src\\rconnect\\core\\MapGeneration.as": "b248567ae062d08ae66c7ff8ccff40553c86e978a916d048fbcfeab7ab8e9028",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-exit-authorization\\src\\rconnect\\game\\WallSurfaceBridge.as": "527e045129068f2c1153e9d843add5bddde07554dfef33a450937512bfa21b99",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-early-host-01\\after\\scripts\\fe\\loc\\Game.as": "538d5d0439ba6d5bfc6ddc147725a894dd7c0664a2bbce46cd4582144b8ca40a",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-early-host-01\\after\\scripts\\fe\\loc\\Land.as": "34433cb2c248bfbb58513c29b7d958627f35b493ec7dc1fa96f5ae8c8888f40f",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-early-host-01\\after\\scripts\\fe\\graph\\Grafon.as": "e6b4142462c1187388c4bb9c8151dd6c2605ce4e4b9fedd421cf4749c54bd7a0"
+  },
+  "binary": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\ContinuousScene\\build\\large-map\\ContinuousSceneMod.swf": "7f1f2961c6e299d949423591f3c65c610c2eaefa7fc72e8a583a402770d6b51f"
+  },
+  "compiled": false,
+  "air_run": false,
+  "wrapper_runtime_verified": false,
+  "diagnostic_implemented": false,
+  "performance_qualified": false
+}

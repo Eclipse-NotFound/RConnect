@@ -1,0 +1,52 @@
+--- original/FirstRasterSceneProbe.as
++++ paint/FirstRasterSceneProbe.as
+@@ -1,17 +1,21 @@
+ package {
+    import flash.utils.Dictionary;
+    import flash.utils.getTimer;
++   import rconnect.core.Log;
+    /** Read-only raster/permit evidence. No production receive/acquire calls. */
+    public final class FirstRasterSceneProbe {
+       private var mod:Object,cls:Object,original:Function,wrapper:Function,active:Boolean=false;
+       private var tickets:Dictionary=new Dictionary(),rows:Array=[],expected:Boolean=false;
+       private var startPermit:Object,heldSeen:Boolean=false;
++      private var paintProbe:PaintTimingBuffer;
+       public function FirstRasterSceneProbe(value:Object) {
+          mod=value;cls=mod.game.main.loaderInfo.applicationDomain.getDefinition("fe.graph.Grafon");
++         paintProbe=new PaintTimingBuffer(cls);
+          if(!("rconnectRasterBridge" in cls) || !(cls.rconnectRasterBridge is Function))return;
+          original=cls.rconnectRasterBridge;
+          wrapper=function(w:Object,l:Object,g:Object):Object {
+             var ticket:Object=original(w,l,g);
++            paintProbe.bind(w,l,g);
+             if(active && ticket!=null && tickets[ticket]==null) {
+                var permit:Object=query();
+                var row:Object={at:getTimer(),wall:new Date().time,initialWaiting:ticket.waiting,
+@@ -34,6 +38,7 @@
+       }
+       public function begin(required:Boolean):void {
+          active=true;expected=required;tickets=new Dictionary();rows=[];heldSeen=false;startPermit=query();
++         paintProbe.begin(mod.game.world);
+       }
+       public function sample():void {
+          if(!active)return;
+@@ -60,11 +65,18 @@
+                && permit!=null && permit.held===false && permit.phase==="idle"
+                && !mod.session.rooms.earlyTravelPending && (!expected || heldSeen);
+          }else ok=ok && startPermit==null && permit==null && !mod.session.rooms.earlyTravelPending;
+-         return {passed:ok,expected:expected,expectedEarly:SceneRasterBuildConfig.EXPECT_EARLY,
++         var paintEvidence:Object=finishPaint("finish");
++         return {passed:ok,expected:expected,expectedEarly:SceneRasterBuildConfig.EXPECT_EARLY,paintEvidence:paintEvidence,
+             callbackAvailable:original!=null,tickets:rows,startPermit:startPermit,finalPermit:permit,heldSeen:heldSeen,
+             readbackOnly:true,pixelEquality:false,fullModFreezeQualified:false};
+       }
++      private function finishPaint(reason:String):Object {
++         var result:Object=paintProbe.finish(reason);
++         if(result!=null)Log.d("EARLY PAINT PROFILE "+JSON.stringify(result));
++         return result;
++      }
+       public function dispose():void {
++         finishPaint("dispose");
+          if(cls!=null && cls.rconnectRasterBridge===wrapper)cls.rconnectRasterBridge=original;
+          active=false;tickets=new Dictionary();
+       }

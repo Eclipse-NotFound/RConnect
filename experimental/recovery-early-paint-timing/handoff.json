@@ -1,0 +1,16 @@
+{
+  "status": "source-frozen-awaiting-actual-host-build-and-exception-review",
+  "compiled": false,
+  "air_started": false,
+  "files": {
+    "build_host.py": "dd5ffd8a31a0d8c613ce56cfced52a561baf7ab91ae6d6285e538bb5507d906c",
+    "check.py": "c78f419c8b94aecc9eafadfe6a019a1105d53726d425df8f69530a617ccb6ea5",
+    "Grafon.patch": "db7b0668d7bb582dc4eb6e8378f96f6a25e2966113561ec9a8d9120d79923780",
+    "PaintTimingBuffer.as": "37f594be529988f7197ee4434e0880f3bb79d6ed6ae22e1795c966c1dd7041d8",
+    "prepare.py": "52c1e3ebde94f52ab270f8771a5987898d79738248045a816066a5abc859ae2f",
+    "prepared.json": "748fd57879a7e7ec60449ff63fdc99ed3e1b5ba69be83109ac6ee583b47afba2",
+    "README.md": "aaa42c13ed00f034d5bfaf931f499e874ba6f5f64dc45a9aee4ff84cbd68d101",
+    "source-check.json": "32903a991028bc8a4c3b4f7e5538b20d2d5e53301cd3a01e0e8213b2c4c9e2f0",
+    "src/fe/graph/Grafon.as": "2d4471015916e38973ba63e75e15a86514be3236118528b5d58f98b2a6e73b0d"
+  }
+}

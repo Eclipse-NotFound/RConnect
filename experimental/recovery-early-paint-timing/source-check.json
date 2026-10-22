@@ -1,0 +1,22 @@
+{
+  "methods": 91,
+  "unchanged_methods": 90,
+  "changed_methods": [
+    "sceneEnsure"
+  ],
+  "source_sha256": "2d4471015916e38973ba63e75e15a86514be3236118528b5d58f98b2a6e73b0d",
+  "source_mutations_rejected": [
+    "waiting-return",
+    "preload-shortcut",
+    "duplicate-native-call",
+    "swallowed-native-error",
+    "timer-after-observer",
+    "missing-fault-signal",
+    "observer-not-captured",
+    "wrong-world-identity",
+    "unrelated-scene-tick"
+  ],
+  "compiled": false,
+  "runtime_qualified": false,
+  "performance_qualified": false
+}

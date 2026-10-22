@@ -1,0 +1,19 @@
+{
+  "diagnostic_only": true,
+  "compiled": false,
+  "runtime_qualified": false,
+  "performance_qualified": false,
+  "original_host": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-early-host-01\\pfe.swf",
+  "original_host_sha256": "2d415dd373236fff3c7a691db4eff8327a6de97b91c23d8a818ec77082b3dd29",
+  "original_source": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-early-host-01\\after\\scripts\\fe\\graph\\Grafon.as",
+  "original_source_sha256": "e6b4142462c1187388c4bb9c8151dd6c2605ce4e4b9fedd421cf4749c54bd7a0",
+  "prepared_source_sha256": "2d4471015916e38973ba63e75e15a86514be3236118528b5d58f98b2a6e73b0d",
+  "changed_methods": [
+    "sceneEnsure"
+  ],
+  "added_fields": [
+    "rconnectPaintTimingBridge",
+    "rconnectPaintTimingFaults"
+  ],
+  "production_files_changed": false
+}
