@@ -96,6 +96,9 @@ Remains 1.02 双人合作。A 是普通入口现用同步架构；B 是独立主
 - **早交付没有等待宿主绘完**：493c841d14 的加入grant分别1865/1771ms，开始比宿主ensure早33/32ms，grant结束15/16ms后即本机ensure。restore总1587/1580ms，其中地形493/488、单位634/668；原有日志已足够，不新增同层探针。foreign清除重建不能直接跳过：原生createUnit及Land.preStep已运行，且loadObj、inter/mapxml、炮塔osnova/aRot等未完整传输。详见 recovery-early-restore-review。
 - **地形observed复用已停止**：真实组件01 / 77185FFE…53B584A，50/0，六轮各30000格/45标量及对象身份/表行全检。旧/新完整restore毫秒依次474/494、554/437、484/519、571/459、544/568、503/482，方向随顺序翻转，没有稳定收益；不合入完整候选、不据此追加整机试跑。源与22安装不变，32.264秒完成、自有AIR退出；结果见 recovery-terrain-observed-reuse/RESULTS.md。
 - 已向CS回传准确正式574D的78/78冻结源及离线回调路径：-10000仍做墙面/敌人/武器观察，574D没有D356的大场景墙面早退；未测其独立耗时，不借D356的4/6ms为574D背书。协作只交付具体证据，不要求其他会话停测。
+- **CS离线候选已独立源码核对**：88CC639E…D0E968/proof0BE07E23…EC81C，准确574D仅3类变更、75源及71构建输入不变。只跳mirror/final的presentation/body观察，保留wall/ports/invalidate/onPerception/实际呈现；首次host/join在stop前永久撤销资格，正常endSession清历史。未发现直接改本地念力/护盾显示的路径，但首次联机、失败/leave后完整采集仍需实测。ABBA恢复采集继承旧记录，不能称无状态对照。根另发现段末now→caseBegin被重置last排除在row.frames之外，已一次性反馈；CS确认r1冻结在跑且保留，后续加连续时间戳，不能称现汇总覆盖全程墙钟。详见recovery-cs-offline-review；尚无本会话验收的收益或部署资格。
+
+- **CS离线r1已收到并读回**：84份冻结探针/SWF/config及实际88CC输入一致，90/0、1200分段样本、计时中0强制定位；根重算均值A/B66.648/57.582ms，五块中位差7/10/6/10/11ms。玩家射击200/200、敌射403/396，mirror/final跳过600/1200。这是关闭LAD/WB/RV显示条件下的离线线索；冻结源仍有段末计时缺口，CS保留r1准备连续时间戳r2。没有完整视觉配置、首次联网或双人资格，未批准合并。具体指纹和边界见recovery-cs-offline-review/TIMING-REVIEW.md。
 
 ## 6. 下一步
 
