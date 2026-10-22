@@ -1,3 +1,11 @@
+## 2026-10-23 原生弹丸采集回退实测通过
+
+- 准确EB365 / offline1，外部driver3DF94，单实例f6eece7606完成86项、六阶段、零失败。每阶段原生flamer在三个不同ENTER实际移动，驱动仅读取一次；virgin历史0，null/抛预定字符串/false/字符串true/实际首次主持后各有3个真实时间位置匹配。根重新按原始坐标计算，未把单次capture产生的事件当多帧采集。第六阶段产品自行capture的边界已记录。
+- 产品未改；原共享runner及错误过滤未改。wrapper退出0、RESULT PASS、DONE、22安装不变；自有PID50656及副本按原流程清理，恢复标志完整。原枪null，不能宣称覆盖非空原枪完整状态；不证明身体效果、真正双人显示或性能。证据在experimental/recovery-offline-collector/RESULTS.md，冻结README保留准备时状态。
+- 可提交余量约4.8GiB，未降低双人6GiB门槛。针对性首次双人验证在查现有可复用驱动，墙沿修正继续只读厘清结构支持；不重复离线性能轮，不新增跨会话状态打断，安装保持574D。
+- 后续独立复核完整通过，9文件/8工具/22安装一致；原始JSON与汇总逐字段相同，自有PID及host/join/frozen副本不存在，私有日志保留。首次双人入口已查明可复用现有短前置/双向LMG/冻结效果，旧驱动不绑定本候选，不冒称已有资格。收尾内存3545227264 bytes约3.30GiB，双人仍未启动。
+- 普通墙沿权威支持方案只读复核记录在recovery-ordinary-edge-review/authority-support-contract.md，明确两端不同破坏变体、结构/快wall/旧ACK次序、重绘/换权威、已有弹孔初始化缺口；未改宿主或生产、未新增测试。MEMORY从37050字节精简至约10KB/70行，原文完整保留state/recovery-evidence-through-offline-collector-2026-10-23.md，减少后续接手全读历史和重复通知。
+
 ## 2026-10-23 离线采集候选构建、限定性能与原生会话生命周期
 
 - CS提供去诊断API的准确574D三类提案；根冻结75份不变源及71构建输入，只另改版本，完成EB365 / 0.2.24-offline1编译。prepared/compile分别保留冻结与实际成功状态；产品未混入恢复分支，正式仍574D。工具、源码、22安装独立核验，见experimental/recovery-offline-production。
