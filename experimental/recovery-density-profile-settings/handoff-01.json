@@ -1,0 +1,26 @@
+{
+  "kind": "frozen-density-current-profile-wrapper",
+  "compiled": false,
+  "air_started": false,
+  "runtime_qualified": false,
+  "driver": "build/m52/recovery-density-corridor-drivers-03",
+  "driver_manifest_sha256": "5a8dbb9395c8dba8b6e980c49b112c6df3ae2e19e2f4950769d29756f8e1735c",
+  "static_assertions": 39,
+  "static_failed": 0,
+  "configuration_only": true,
+  "user_settings_written": false,
+  "original_tools_unchanged": true,
+  "wrapper_exact_edit_sites": 11,
+  "files": {
+    "check.py": "9e18a24751559f81bf5bde4474564ae3b0881a8a347f6524e443d99c52f4d95b",
+    "configs/host-RealisticVision_config.txt": "24a0162f565dfa9a04e42bd64ca6fb688d556d50d99a528dbfa703d680eaba0c",
+    "configs/join-RealisticVision_config.txt": "f3c7dfe712a836188d712f70b7d30fd83b8bb70435de28757196b3f926bf23f8",
+    "inputs.json": "12cbf0e24ec65871fcea5197da56b6b89e7b58778ff638a2f88e16596d201f30",
+    "README.md": "9530d930f16a3c8b2afa97d5ed5d0914667bba5397b80d20cc089d24d6650603",
+    "run.py": "e23d2897163ce1473d8a90598a133888e244333708ad4e1b904a9b7b9cd5bb24",
+    "run_motion_comparison.py": "8341976f9c0828fd1965ad61510668c39b8c78d59dfe997bdc11622b46cc8bc8",
+    "static-check.json": "e998d69392010e077966af93e4616156b233061a7f7dfa0e8d7074c20c762c51",
+    "wrapper-edits.json": "979c2202ca0c011d9fcff31b845d8af2d4e0a95347abec2c5fa25faaca0c3731",
+    "wrapper.patch": "10cfe8313dd21ef28ab024f40aacd7567cd902feb6fc3a78f966fc184eeb377c"
+  }
+}

@@ -1,0 +1,54 @@
+[
+  {
+    "before": "from prepare import M52, verify, sha, save",
+    "after": "from sampler import M52, PROFILE, frozen_sources, verify_sampler, sha, save, write_diagnostic"
+  },
+  {
+    "before": "    meta = json.loads((HERE/'inputs.json').read_text(encoding='utf-8'))\n    handoff = json.loads((HERE/'handoff.json').read_text(encoding='utf-8'))",
+    "after": "    frozen_sources()\n    meta = json.loads((PROFILE/'inputs.json').read_text(encoding='utf-8'))\n    handoff = json.loads((PROFILE/'handoff.json').read_text(encoding='utf-8'))"
+  },
+  {
+    "before": "assert sha(HERE/name) == digest",
+    "after": "assert sha(PROFILE/name) == digest"
+  },
+  {
+    "before": "assert sha(HERE/row['frozen']) == row['sha256']",
+    "after": "assert sha(PROFILE/row['frozen']) == row['sha256']"
+  },
+  {
+    "before": "default=Path('build/m52/recovery-density-corridor-drivers-03')",
+    "after": "default=Path('build/m52/recovery-current-profile-sampler-drivers-01')"
+  },
+  {
+    "before": "    assert drivers == (ROOT/profile['driver']).resolve(), 'Use exact frozen driver03'\n    meta = verify(drivers)",
+    "after": "    meta = verify_sampler(drivers)"
+  },
+  {
+    "before": "    wrapper = HERE/'run_motion_comparison.py'",
+    "after": "    wrapper = PROFILE/'run_motion_comparison.py'"
+  },
+  {
+    "before": "str(HERE/row['frozen'])",
+    "after": "str(PROFILE/row['frozen'])"
+  },
+  {
+    "before": "    process = subprocess.run(command, cwd=ROOT)",
+    "after": "    process = subprocess.run(command, cwd=ROOT, capture_output=True, encoding='utf-8', errors='replace')\n    if not out.exists() and process.stderr:\n        print(process.stderr[-4000:], file=sys.stderr)"
+  },
+  {
+    "before": "    report = audit(out, ref)",
+    "after": "    (out/'profile-wrapper.stdout.log').write_text(process.stdout, encoding='utf-8')\n    (out/'profile-wrapper.stderr.log').write_text(process.stderr, encoding='utf-8')\n    report = audit(out, ref)"
+  },
+  {
+    "before": "        settings_profile='frozen-current-player-rv-settings', user_settings_before=user_before)",
+    "after": "        settings_profile='frozen-current-player-rv-settings', user_settings_before=user_before,\n        diagnostic_only=True, performance_qualified=False, release_qualified=False)"
+  },
+  {
+    "before": "        verify(drivers)",
+    "after": "        verify_sampler(drivers)"
+  },
+  {
+    "before": "    save(target, report)\n",
+    "after": "    save(target, report)\n    if (out/'result.json').exists():\n        write_diagnostic(out)\n"
+  }
+]

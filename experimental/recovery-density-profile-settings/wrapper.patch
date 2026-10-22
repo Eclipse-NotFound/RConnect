@@ -1,0 +1,106 @@
+--- official/run_motion_comparison.py
++++ profile-settings/run_motion_comparison.py
+@@ -11,6 +11,8 @@
+ import subprocess
+ import sys
+ 
++sys.dont_write_bytecode = True
++sys.path.insert(0, str(Path(__file__).resolve().parents[2] / 'tools/validation'))
+ from prepare_motion_transport import ROOT, sha
+ from run_security_terminals import installation, test_port
+ 
+@@ -54,16 +56,25 @@
+     return bool(monitored) and all(isinstance(foreign, list) and not foreign for foreign in monitored)
+ 
+ 
++def vision_signature_matches(run, run_input, expected):
++    return run.get('vision_config_templates') == expected and run_input.get('vision_config_templates') == expected
++
++
+ def main():
+     ap = argparse.ArgumentParser(description=__doc__)
+     for name in ('candidate', 'drivers', 'output'):
+         ap.add_argument('--'+name, type=Path, required=True)
+     ap.add_argument('--case', choices=CASES, required=True)
+     ap.add_argument('--reference', type=Path)
++    ap.add_argument('--host-vision-config-template', type=Path, required=True)
++    ap.add_argument('--join-vision-config-template', type=Path, required=True)
+     ap.add_argument('--registry-wait', type=int, default=300)
+     args = ap.parse_args()
+     candidate, drivers, out = [(ROOT / p).resolve() for p in (args.candidate, args.drivers, args.output)]
+     assert candidate.parent == drivers.parent == out.parent == M52 and not out.exists()
++    vision_sources = {role: (ROOT / getattr(args, role+'_vision_config_template')).resolve()
++                      for role in ('host', 'join')}
++    vision_hashes = {role: sha(path) for role, path in vision_sources.items()}
+     cm, dm = read(candidate/'prepared.json'), read(drivers/'prepared.json')
+     if cm['kind'] == 'isolated-recovery':
+         from audit_room_entry_candidate import audit
+@@ -85,10 +96,20 @@
+         assert reference.parent == M52
+         previous = read(reference/'intent.json')
+         assert previous['installation'] == before, 'Installation changed between controls'
++        assert previous.get('vision_config_templates') == vision_hashes, 'RV templates differ from reference'
++        assert previous.get('wrapper_sha256') == sha(Path(__file__)), 'Profile wrapper differs from reference'
+         assert previous.get('require_exclusive_air') is True, 'Start a new baseline with overlap detection enabled'
+         assert previous['runner_sha256']==runner_digest and previous['air_inventory_sha256']==helper_digest, \
+             'Runner or overlap detector changed between controls'
+     out.mkdir()
++    vision_folder = out/'vision-config'
++    vision_folder.mkdir()
++    vision_copies = {}
++    for role, source in vision_sources.items():
++        target = vision_folder/(role+'.txt')
++        shutil.copyfile(source, target)
++        assert sha(source) == sha(target) == vision_hashes[role]
++        vision_copies[role] = target
+     binding = out/'driver'
+     binding.mkdir()
+     for name in ('EffectsDriver.swf', 'EffectsHarness.swf'):
+@@ -106,7 +127,9 @@
+                   driver_manifest=sha(drivers/'prepared.json'), case=args.case, installation=before,
+                   reference=str(reference) if reference else None, runner_sha256=runner_digest,
+                   require_exclusive_air=True, air_inventory_sha256=helper_digest,
+-                  wrapper_sha256=sha(Path(__file__)))
++                  wrapper_sha256=sha(Path(__file__)),
++                  vision_config_templates=vision_hashes,
++                  vision_template_sources={role: str(path) for role, path in vision_sources.items()})
+     save(out/'intent.json', intent)
+     # Read-only launcher inventory. The existing paired runner preserves the
+     # entire selected manifest, with isolated storage and all native assets.
+@@ -119,7 +142,9 @@
+         '--effects', '--effects-driver', str(binding), '--all-mods', '--land', land,
+         '--seconds', str(seconds), '--expected-version', cm['version'], '--port', str(test_port()),
+         '--private-desktop', '--defer-visible', '--wait-host-world', '--require-exclusive-air',
+-        '--registry-wait', str(args.registry_wait)]
++        '--registry-wait', str(args.registry_wait),
++        '--host-vision-config-template', str(vision_copies['host']),
++        '--join-vision-config-template', str(vision_copies['join'])]
+     with (out/'runner.log').open('w', encoding='utf-8') as log:
+         process = subprocess.run(command, cwd=ROOT, stdout=log, stderr=subprocess.STDOUT)
+     raw = (out/'runner.log').read_text(encoding='utf-8', errors='replace')
+@@ -128,7 +153,10 @@
+         installation_unchanged=before == installation(), runner_unchanged=intent['runner_sha256']==sha(runner),
+         air_inventory_unchanged=helper_digest==sha(helper), exclusive_air_confirmed=False,
+         invalid_reason='foreign AIR before start' if 'Other AIR processes exist; timing run not started' in raw else None,
+-        passed=False, performance_qualified=False, full_release_qualified=False)
++        passed=False, performance_qualified=False, full_release_qualified=False,
++        vision_config_templates=vision_hashes, vision_templates_confirmed=False,
++        vision_templates_unchanged=all(sha(vision_sources[r]) == sha(vision_copies[r]) == vision_hashes[r]
++                                      for r in ('host', 'join')))
+     if not found and 'commit headroom; no AIR instance started' in raw:
+         result['invalid_reason'] = 'insufficient commit headroom before start'
+     if found:
+@@ -157,11 +185,13 @@
+                 log_sha256=sha(log) if log.exists() else None)
+         result['memory'] = read(folder/'memory-timeline.json')
+         run_input = read(folder/'input.json')
++        result['vision_templates_confirmed'] = vision_signature_matches(run, run_input, vision_hashes)
+         result['exclusive_air_confirmed'] = exclusive_air_evidence(run_input, result['memory'], helper_digest)
+         if not result['exclusive_air_confirmed']:
+             result['invalid_reason'] = 'overlap detected or complete overlap evidence absent'
+         result['passed'] = process.returncode==0 and result['installation_unchanged'] and result['runner_unchanged'] \
+             and result['air_inventory_unchanged'] and result['exclusive_air_confirmed'] \
++            and result['vision_templates_unchanged'] and result['vision_templates_confirmed'] \
+             and result['same_runtime_as_reference'] and all(r['done'] and r['version'] and r['checks']>0 and not r['errors']
+                                                           for r in result['roles'].values())
+     save(out/'result.json', result)

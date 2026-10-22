@@ -1,0 +1,28 @@
+{
+  "kind": "current-player-settings-existing-cpu-sampler",
+  "compiled": false,
+  "air_started": false,
+  "performance_qualified": false,
+  "static_assertions": 57,
+  "static_failed": 0,
+  "driver03_sources_count": 11,
+  "as_source_changes": [],
+  "only_entry_change": {
+    "before": "ProjectileLoadTestDoc",
+    "after": "ProjectileProfileTestDoc"
+  },
+  "sampling_windows_and_amount_unchanged": true,
+  "formal_profile_wrapper_unchanged": true,
+  "original_false_error_arrays_preserved": true,
+  "runtime_errors_separately_classified": true,
+  "files": {
+    "check.py": "278cb5cd8a81448b0dc35d1762d856c17a97b4f4d7e607b7e487f5da3a520fbb",
+    "inputs.json": "afcb102141d40a24e6879c5c09947040f2cff1d1fe1471eda17918c55bfd9139",
+    "README.md": "04462c96211030e093177a796e63f470230567d1d1920aa5dc1ec4d634551486",
+    "run-edits.json": "ed5d9ec043c07b70b926356518f337f65a2ea82c49b65cd7b0adb74c4c0fdc8c",
+    "run.patch": "0461b19661a11d647611f504bd524eecdc5bc61e9cc3d5faebd1adfb16a9955e",
+    "run.py": "4969f20954c47c793cefbcc38e1178b42d3019b15b20a04173b36a7d92953ac7",
+    "sampler.py": "5e58b6b9eaf611312100ec9d1efc5175f019f7f84fe3b03e69d7d610fa511523",
+    "static-check.json": "0575f205c686c8f5cd604ce3a6fd82b488cab212457acd61e90d06b3ec0552c9"
+  }
+}

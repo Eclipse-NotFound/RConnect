@@ -1,0 +1,371 @@
+{
+  "schema": 1,
+  "read_only": true,
+  "performance_qualified": false,
+  "log": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\043b72eaec\\join.log",
+  "sha256": "e1a07d9379a9a0ade5f3ebde7467f84496235971be002ac60295c416ae233aa1",
+  "profile_line": 249,
+  "role": "join",
+  "done_markers": [
+    {
+      "line": 250,
+      "text": "COOP EFFECTS DONE network-state join"
+    }
+  ],
+  "row_index_base": 0,
+  "rows": 498,
+  "same_phase_pairs": 491,
+  "rows_with_samples": 24,
+  "cpu_samples": 958,
+  "recorded_window_ms": {
+    "count": 498,
+    "min": 17,
+    "median": 27.0,
+    "p95_nearest_rank": 37,
+    "max": 99
+  },
+  "sampled_window_ms": {
+    "count": 24,
+    "min": 27,
+    "median": 34.0,
+    "p95_nearest_rank": 45,
+    "max": 91
+  },
+  "pair_sample_categories": {
+    "previous=True,next=False": 24,
+    "previous=False,next=False": 444,
+    "previous=False,next=True": 23
+  },
+  "all_pairs": {
+    "at_delta_ms": {
+      "count": 491,
+      "min": 59,
+      "median": 86,
+      "p95_nearest_rank": 222,
+      "max": 382
+    },
+    "previous_window_ms": {
+      "count": 491,
+      "min": 17,
+      "median": 27,
+      "p95_nearest_rank": 37,
+      "max": 99
+    },
+    "window_after_gap_ms": {
+      "count": 491,
+      "min": 36,
+      "median": 56,
+      "p95_nearest_rank": 192,
+      "max": 293
+    }
+  },
+  "by_phase": {
+    "0": {
+      "at_delta_ms": {
+        "count": 57,
+        "min": 67,
+        "median": 87,
+        "p95_nearest_rank": 293,
+        "max": 382
+      },
+      "previous_window_ms": {
+        "count": 57,
+        "min": 21,
+        "median": 28,
+        "p95_nearest_rank": 37,
+        "max": 91
+      },
+      "window_after_gap_ms": {
+        "count": 57,
+        "min": 41,
+        "median": 57,
+        "p95_nearest_rank": 265,
+        "max": 291
+      }
+    },
+    "1": {
+      "at_delta_ms": {
+        "count": 67,
+        "min": 68,
+        "median": 96,
+        "p95_nearest_rank": 242,
+        "max": 281
+      },
+      "previous_window_ms": {
+        "count": 67,
+        "min": 19,
+        "median": 28,
+        "p95_nearest_rank": 41,
+        "max": 45
+      },
+      "window_after_gap_ms": {
+        "count": 67,
+        "min": 42,
+        "median": 63,
+        "p95_nearest_rank": 216,
+        "max": 240
+      }
+    },
+    "2": {
+      "at_delta_ms": {
+        "count": 75,
+        "min": 61,
+        "median": 82,
+        "p95_nearest_rank": 196,
+        "max": 258
+      },
+      "previous_window_ms": {
+        "count": 75,
+        "min": 17,
+        "median": 26,
+        "p95_nearest_rank": 33,
+        "max": 96
+      },
+      "window_after_gap_ms": {
+        "count": 75,
+        "min": 37,
+        "median": 52,
+        "p95_nearest_rank": 161,
+        "max": 200
+      }
+    },
+    "3": {
+      "at_delta_ms": {
+        "count": 75,
+        "min": 64,
+        "median": 83,
+        "p95_nearest_rank": 184,
+        "max": 258
+      },
+      "previous_window_ms": {
+        "count": 75,
+        "min": 18,
+        "median": 26,
+        "p95_nearest_rank": 38,
+        "max": 89
+      },
+      "window_after_gap_ms": {
+        "count": 75,
+        "min": 41,
+        "median": 51,
+        "p95_nearest_rank": 160,
+        "max": 223
+      }
+    },
+    "4": {
+      "at_delta_ms": {
+        "count": 78,
+        "min": 63,
+        "median": 82.0,
+        "p95_nearest_rank": 188,
+        "max": 272
+      },
+      "previous_window_ms": {
+        "count": 78,
+        "min": 17,
+        "median": 26.0,
+        "p95_nearest_rank": 36,
+        "max": 99
+      },
+      "window_after_gap_ms": {
+        "count": 78,
+        "min": 40,
+        "median": 52.0,
+        "p95_nearest_rank": 170,
+        "max": 176
+      }
+    },
+    "5": {
+      "at_delta_ms": {
+        "count": 70,
+        "min": 67,
+        "median": 84.0,
+        "p95_nearest_rank": 231,
+        "max": 320
+      },
+      "previous_window_ms": {
+        "count": 70,
+        "min": 20,
+        "median": 27.0,
+        "p95_nearest_rank": 41,
+        "max": 45
+      },
+      "window_after_gap_ms": {
+        "count": 70,
+        "min": 42,
+        "median": 54.0,
+        "p95_nearest_rank": 199,
+        "max": 293
+      }
+    },
+    "6": {
+      "at_delta_ms": {
+        "count": 69,
+        "min": 59,
+        "median": 94,
+        "p95_nearest_rank": 224,
+        "max": 294
+      },
+      "previous_window_ms": {
+        "count": 69,
+        "min": 20,
+        "median": 28,
+        "p95_nearest_rank": 37,
+        "max": 42
+      },
+      "window_after_gap_ms": {
+        "count": 69,
+        "min": 36,
+        "median": 59,
+        "p95_nearest_rank": 197,
+        "max": 264
+      }
+    }
+  },
+  "longest_pairs": [
+    {
+      "phase": 0,
+      "previous_index": 0,
+      "next_index": 1,
+      "previous_at": 79481,
+      "previous_end": 79572,
+      "next_at": 79863,
+      "at_delta_ms": 382,
+      "previous_window_ms": 91,
+      "window_after_gap_ms": 291,
+      "previous_has_samples": true,
+      "next_has_samples": false,
+      "previous_samples": 101523,
+      "next_samples": 0,
+      "previous_cpu": 98,
+      "next_cpu": 0
+    },
+    {
+      "phase": 5,
+      "previous_index": 380,
+      "next_index": 381,
+      "previous_at": 121828,
+      "previous_end": 121855,
+      "next_at": 122148,
+      "at_delta_ms": 320,
+      "previous_window_ms": 27,
+      "window_after_gap_ms": 293,
+      "previous_has_samples": false,
+      "next_has_samples": false,
+      "previous_samples": 0,
+      "next_samples": 0,
+      "previous_cpu": 0,
+      "next_cpu": 0
+    },
+    {
+      "phase": 0,
+      "previous_index": 25,
+      "next_index": 26,
+      "previous_at": 82646,
+      "previous_end": 82679,
+      "next_at": 82957,
+      "at_delta_ms": 311,
+      "previous_window_ms": 33,
+      "window_after_gap_ms": 278,
+      "previous_has_samples": true,
+      "next_has_samples": false,
+      "previous_samples": 32713,
+      "next_samples": 0,
+      "previous_cpu": 34,
+      "next_cpu": 0
+    },
+    {
+      "phase": 6,
+      "previous_index": 478,
+      "next_index": 479,
+      "previous_at": 132863,
+      "previous_end": 132893,
+      "next_at": 133157,
+      "at_delta_ms": 294,
+      "previous_window_ms": 30,
+      "window_after_gap_ms": 264,
+      "previous_has_samples": false,
+      "next_has_samples": false,
+      "previous_samples": 0,
+      "next_samples": 0,
+      "previous_cpu": 0,
+      "next_cpu": 0
+    },
+    {
+      "phase": 0,
+      "previous_index": 45,
+      "next_index": 46,
+      "previous_at": 84988,
+      "previous_end": 85016,
+      "next_at": 85281,
+      "at_delta_ms": 293,
+      "previous_window_ms": 28,
+      "window_after_gap_ms": 265,
+      "previous_has_samples": false,
+      "next_has_samples": false,
+      "previous_samples": 0,
+      "next_samples": 0,
+      "previous_cpu": 0,
+      "next_cpu": 0
+    },
+    {
+      "phase": 1,
+      "previous_index": 84,
+      "next_index": 85,
+      "previous_at": 90015,
+      "previous_end": 90056,
+      "next_at": 90296,
+      "at_delta_ms": 281,
+      "previous_window_ms": 41,
+      "window_after_gap_ms": 240,
+      "previous_has_samples": true,
+      "next_has_samples": false,
+      "previous_samples": 33278,
+      "next_samples": 0,
+      "previous_cpu": 44,
+      "next_cpu": 0
+    },
+    {
+      "phase": 4,
+      "previous_index": 316,
+      "next_index": 317,
+      "previous_at": 114669,
+      "previous_end": 114768,
+      "next_at": 114941,
+      "at_delta_ms": 272,
+      "previous_window_ms": 99,
+      "window_after_gap_ms": 173,
+      "previous_has_samples": false,
+      "next_has_samples": false,
+      "previous_samples": 0,
+      "next_samples": 0,
+      "previous_cpu": 0,
+      "next_cpu": 0
+    },
+    {
+      "phase": 0,
+      "previous_index": 42,
+      "next_index": 43,
+      "previous_at": 84521,
+      "previous_end": 84545,
+      "next_at": 84788,
+      "at_delta_ms": 267,
+      "previous_window_ms": 24,
+      "window_after_gap_ms": 243,
+      "previous_has_samples": false,
+      "next_has_samples": false,
+      "previous_samples": 0,
+      "next_samples": 0,
+      "previous_cpu": 0,
+      "next_cpu": 0
+    }
+  ],
+  "limits": [
+    "end is diagEnd entry before sample enumeration, not screen submission",
+    "has_samples reports recorded samples, not an independent sampler-enabled flag",
+    "gap is unaccounted wall time; it is not assigned to network, GC, rendering, or waiting",
+    "negative window_after_gap_ms, if present, is retained rather than clamped",
+    "done marker is reported; caller must select a completed run"
+  ],
+  "analysis_script_sha256": "03125b1531bca9efb4fe3ae243e535227f67d16f441c886855a5ad89a5aec35d"
+}

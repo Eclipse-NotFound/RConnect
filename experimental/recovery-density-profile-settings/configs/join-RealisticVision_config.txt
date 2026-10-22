@@ -1,0 +1,16 @@
+enabled=0
+mode=current
+wallbright=0
+dim=0.35
+viewscale=1
+soft_current=20
+soft_classic=0
+doordim=0.5
+litmin=0.6
+fadestep=0.1
+maskblur_classic=6
+maskblur_current=4
+telegrace=3
+base_rooms=
+debug=0
+autotest=0

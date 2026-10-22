@@ -1,0 +1,34 @@
+{
+  "kind": "frozen-current-player-rv-settings",
+  "captured_date": "2026-10-22",
+  "driver": "build/m52/recovery-density-corridor-drivers-03",
+  "templates": {
+    "host": {
+      "source": "C:\\Users\\hello\\AppData\\Roaming\\pfe\\Local Store\\RealisticVision_config.txt",
+      "frozen": "configs/host-RealisticVision_config.txt",
+      "sha256": "24a0162f565dfa9a04e42bd64ca6fb688d556d50d99a528dbfa703d680eaba0c",
+      "source_unchanged_after_copy": true,
+      "bytes": 219
+    },
+    "join": {
+      "source": "C:\\Users\\hello\\AppData\\Roaming\\pfe-modsettings-rconnect-player2\\Local Store\\RealisticVision_config.txt",
+      "frozen": "configs/join-RealisticVision_config.txt",
+      "sha256": "f3c7dfe712a836188d712f70b7d30fd83b8bb70435de28757196b3f926bf23f8",
+      "source_unchanged_after_copy": true,
+      "bytes": 205
+    }
+  },
+  "dependencies": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\tools\\validation\\run_motion_comparison.py": "5cdf11696f6e839336ebf812145640ea74cc55630eb791ee7234e7cd583f922b",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\tools\\run_coop_regression.py": "7eca453b13480140da5f36bb33d2319739a927562ccafdbb61a8b20cdb5ae4d3",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\tools\\validation\\air_test_inventory.py": "3d4c6160cfb8ee766ad77463da9e5e7a67b10af30170b4ca5a876af1d4a9cd4c",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-density-corridor-readyfix\\prepare.py": "418b9bd1d6d0aea6890c4f5437aeb99f052206a80a70896d7eb7bb8f2a081a6a",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-density-corridor-readyfix\\audit.py": "eaa386f674d94a2400bbb5fc6eb527a580111a991ac64c3a87cc23f89a73b932",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-density-fixture\\prepare.py": "99249ad83c9adc2d4073d614e0dc4952c22ec647b228c363c5bcbd4220dd7cad",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-density-fixture\\audit.py": "293d8e60c53e47dc946c03726bb4ea5cf57ec3e785a1413a00ee840e83545abe",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-density-corridor-drivers-03\\prepared.json": "5a8dbb9395c8dba8b6e980c49b112c6df3ae2e19e2f4950769d29756f8e1735c"
+  },
+  "air_started": false,
+  "user_settings_written": false,
+  "runtime_qualified": false
+}

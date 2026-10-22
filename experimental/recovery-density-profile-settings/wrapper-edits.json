@@ -1,0 +1,46 @@
+[
+  {
+    "before": "from prepare_motion_transport import ROOT, sha",
+    "after": "sys.dont_write_bytecode = True\nsys.path.insert(0, str(Path(__file__).resolve().parents[2] / 'tools/validation'))\nfrom prepare_motion_transport import ROOT, sha"
+  },
+  {
+    "before": "def main():\n",
+    "after": "def vision_signature_matches(run, run_input, expected):\n    return run.get('vision_config_templates') == expected and run_input.get('vision_config_templates') == expected\n\n\ndef main():\n"
+  },
+  {
+    "before": "    ap.add_argument('--reference', type=Path)\n",
+    "after": "    ap.add_argument('--reference', type=Path)\n    ap.add_argument('--host-vision-config-template', type=Path, required=True)\n    ap.add_argument('--join-vision-config-template', type=Path, required=True)\n"
+  },
+  {
+    "before": "    cm, dm = read(candidate/'prepared.json'), read(drivers/'prepared.json')",
+    "after": "    vision_sources = {role: (ROOT / getattr(args, role+'_vision_config_template')).resolve()\n                      for role in ('host', 'join')}\n    vision_hashes = {role: sha(path) for role, path in vision_sources.items()}\n    cm, dm = read(candidate/'prepared.json'), read(drivers/'prepared.json')"
+  },
+  {
+    "before": "        assert previous['installation'] == before, 'Installation changed between controls'",
+    "after": "        assert previous['installation'] == before, 'Installation changed between controls'\n        assert previous.get('vision_config_templates') == vision_hashes, 'RV templates differ from reference'\n        assert previous.get('wrapper_sha256') == sha(Path(__file__)), 'Profile wrapper differs from reference'"
+  },
+  {
+    "before": "    out.mkdir()\n    binding",
+    "after": "    out.mkdir()\n    vision_folder = out/'vision-config'\n    vision_folder.mkdir()\n    vision_copies = {}\n    for role, source in vision_sources.items():\n        target = vision_folder/(role+'.txt')\n        shutil.copyfile(source, target)\n        assert sha(source) == sha(target) == vision_hashes[role]\n        vision_copies[role] = target\n    binding"
+  },
+  {
+    "before": "                  wrapper_sha256=sha(Path(__file__)))",
+    "after": "                  wrapper_sha256=sha(Path(__file__)),\n                  vision_config_templates=vision_hashes,\n                  vision_template_sources={role: str(path) for role, path in vision_sources.items()})"
+  },
+  {
+    "before": "        '--registry-wait', str(args.registry_wait)]",
+    "after": "        '--registry-wait', str(args.registry_wait),\n        '--host-vision-config-template', str(vision_copies['host']),\n        '--join-vision-config-template', str(vision_copies['join'])]"
+  },
+  {
+    "before": "        passed=False, performance_qualified=False, full_release_qualified=False)",
+    "after": "        passed=False, performance_qualified=False, full_release_qualified=False,\n        vision_config_templates=vision_hashes, vision_templates_confirmed=False,\n        vision_templates_unchanged=all(sha(vision_sources[r]) == sha(vision_copies[r]) == vision_hashes[r]\n                                      for r in ('host', 'join')))"
+  },
+  {
+    "before": "        run_input = read(folder/'input.json')",
+    "after": "        run_input = read(folder/'input.json')\n        result['vision_templates_confirmed'] = vision_signature_matches(run, run_input, vision_hashes)"
+  },
+  {
+    "before": "            and result['same_runtime_as_reference'] and all(r['done']",
+    "after": "            and result['vision_templates_unchanged'] and result['vision_templates_confirmed'] \\\n            and result['same_runtime_as_reference'] and all(r['done']"
+  }
+]

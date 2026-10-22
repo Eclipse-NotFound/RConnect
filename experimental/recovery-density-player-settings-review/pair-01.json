@@ -1,0 +1,888 @@
+{
+  "runs": [
+    {
+      "label": "574d",
+      "output": "recovery-density-player-settings-574d-01",
+      "run": "7575281d1c",
+      "candidate_sha256": "574d2b51490ae8b25a1396555600f56a301f8a20ae50104c0e35cf2796441afe",
+      "version": "0.2.23-coop-bundle2",
+      "hashes": {
+        "result.json": "988c570d477188ec2d9b74cc15da63754203c6e85d3e0eca08d0460940e9ea4d",
+        "fixture-audit.json": "008231c3e7e7d938e164ebb94ade26924b7a4ae7a97a130b8e5f3b38e85480f5",
+        "intent.json": "85318b969ffac2f1cabefcae93b82bccb8e8de012134ece31be760e9a21aa933"
+      },
+      "run_sha256": "57ea9e0bc5f605b0488f6f063e2d33abd00f54f6a3042ca0372bde81f4f46c74",
+      "input_sha256": "97a72ffbe7ce8fff6c4e075fb0b48148fd8e81a1cbb42c02b22e6d4ed75cd1ae",
+      "input_manifest_matches": true,
+      "installation_count": 22,
+      "installation_fingerprint": "dd2c8bb5f238032930e790661757bc4a943b01ae0fb777c9ac2ebfe365722733",
+      "runtime_signature_fingerprint": "c505515c9ebd64c39affe1629deb68f8077e3882d28b104bcbd4037a2c30aac6",
+      "driver_manifest": "5a8dbb9395c8dba8b6e980c49b112c6df3ae2e19e2f4950769d29756f8e1735c",
+      "wrapper_sha256": "8341976f9c0828fd1965ad61510668c39b8c78d59dfe997bdc11622b46cc8bc8",
+      "runner_sha256": "7eca453b13480140da5f36bb33d2319739a927562ccafdbb61a8b20cdb5ae4d3",
+      "air_inventory_sha256": "3d4c6160cfb8ee766ad77463da9e5e7a67b10af30170b4ca5a876af1d4a9cd4c",
+      "result_flags": {
+        "exit_code": 1,
+        "passed": false,
+        "performance_qualified": false,
+        "full_release_qualified": false,
+        "installation_unchanged": true,
+        "runner_unchanged": true,
+        "air_inventory_unchanged": true,
+        "exclusive_air_confirmed": true,
+        "invalid_reason": null,
+        "vision_templates_confirmed": true,
+        "vision_templates_unchanged": true
+      },
+      "audit_flags": {
+        "input_comparable": false,
+        "attribution_allowed": false,
+        "passed": false,
+        "differences": null,
+        "corridor_static_equal": null,
+        "corridor_static_differences": null,
+        "module_errors": [],
+        "original_result_unchanged": true,
+        "recipe_and_driver_unchanged": true,
+        "user_settings_unchanged": true
+      },
+      "original_result_matches_audit": true,
+      "port": 23779,
+      "minimum_start_gib": 6,
+      "roles": {
+        "host": {
+          "pass_count": 29,
+          "fail_count": 0,
+          "failures": [],
+          "log_sha256": "98cc7199611cd710441c4ae083132228b94ed9ac703af32eee2341bbe74545cd",
+          "log_matches_result_and_audit": true,
+          "done": true,
+          "version_confirmed": true,
+          "windows": [],
+          "projectiles": [],
+          "host_window_lines": [
+            "COOP PROBE host-window phase=0 frames=149 elapsedMs=12808",
+            "COOP PROBE host-window phase=1 frames=68 elapsedMs=8046",
+            "COOP PROBE host-window phase=2 frames=69 elapsedMs=7923",
+            "COOP PROBE host-window phase=3 frames=66 elapsedMs=8176",
+            "COOP PROBE host-window phase=4 frames=71 elapsedMs=8384",
+            "COOP PROBE host-window phase=5 frames=65 elapsedMs=7925",
+            "COOP PROBE host-final frames=73 elapsedMs=8289 memory=351944704"
+          ],
+          "baseline_lines": [],
+          "prepared_fingerprint": "b6a742f12aa3124151c08e173d68db6b924b3e410237c6a1f36102bbc7762e3e",
+          "raw_prepared_equals_normalized_audit": false,
+          "corridor_ok": true,
+          "corridor_visual_counts": {
+            "actorWeapons": 39,
+            "actors": 80,
+            "localPlayer": 1,
+            "remotePlayer": 1
+          },
+          "prepared_body_count": 80,
+          "prepared_weapon_ids": {
+            "lmg": 12,
+            "p308c": 27
+          }
+        },
+        "join": {
+          "pass_count": 46,
+          "fail_count": 8,
+          "failures": [
+            "COOP FAIL network-state 80 enemies keep stage frames progressing",
+            "COOP FAIL network-state weapon aim advances between snapshots",
+            "COOP FAIL network-state 80 enemies keep stage frames progressing",
+            "COOP FAIL network-state 80 enemies keep stage frames progressing",
+            "COOP FAIL network-state 80 enemies keep stage frames progressing",
+            "COOP FAIL network-state 80 enemies keep stage frames progressing",
+            "COOP FAIL network-state 80 enemies keep stage frames progressing",
+            "COOP FAIL network-state 80 enemies keep stage frames progressing"
+          ],
+          "log_sha256": "19a43c78ba19aa95934b57e3c4b8b7ea29b6f0970812baf65dbf8db1e02fe57d",
+          "log_matches_result_and_audit": true,
+          "done": true,
+          "version_confirmed": true,
+          "windows": [
+            {
+              "frames": 59,
+              "p95ms": 208,
+              "maxms": 279,
+              "packets": 50,
+              "maxPacketMs": 368,
+              "aimSamples": 40,
+              "phase": 0,
+              "frame_gate": false,
+              "snapshot_gate": true,
+              "aim_gate": false
+            },
+            {
+              "frames": 74,
+              "p95ms": 225,
+              "maxms": 291,
+              "packets": 33,
+              "maxPacketMs": 419,
+              "aimSamples": 49,
+              "phase": 1,
+              "frame_gate": false,
+              "snapshot_gate": true,
+              "aim_gate": true
+            },
+            {
+              "frames": 74,
+              "p95ms": 210,
+              "maxms": 334,
+              "packets": 33,
+              "maxPacketMs": 393,
+              "aimSamples": 53,
+              "phase": 2,
+              "frame_gate": false,
+              "snapshot_gate": true,
+              "aim_gate": true
+            },
+            {
+              "frames": 74,
+              "p95ms": 222,
+              "maxms": 320,
+              "packets": 31,
+              "maxPacketMs": 392,
+              "aimSamples": 52,
+              "phase": 3,
+              "frame_gate": false,
+              "snapshot_gate": true,
+              "aim_gate": true
+            },
+            {
+              "frames": 73,
+              "p95ms": 251,
+              "maxms": 297,
+              "packets": 33,
+              "maxPacketMs": 370,
+              "aimSamples": 50,
+              "phase": 4,
+              "frame_gate": false,
+              "snapshot_gate": true,
+              "aim_gate": true
+            },
+            {
+              "frames": 74,
+              "p95ms": 210,
+              "maxms": 272,
+              "packets": 33,
+              "maxPacketMs": 353,
+              "aimSamples": 51,
+              "phase": 5,
+              "frame_gate": false,
+              "snapshot_gate": true,
+              "aim_gate": true
+            },
+            {
+              "frames": 76,
+              "p95ms": 238,
+              "maxms": 280,
+              "packets": 31,
+              "maxPacketMs": 545,
+              "aimSamples": 53,
+              "phase": 6,
+              "frame_gate": false,
+              "snapshot_gate": true,
+              "aim_gate": true
+            }
+          ],
+          "projectiles": [
+            {
+              "phase": 1,
+              "events": 187,
+              "trajectories": 187,
+              "recordedFrames": 0,
+              "visible": 2282,
+              "moving": 1078,
+              "samples": 0
+            },
+            {
+              "phase": 2,
+              "events": 207,
+              "trajectories": 207,
+              "recordedFrames": 0,
+              "visible": 3038,
+              "moving": 1432,
+              "samples": 0
+            },
+            {
+              "phase": 3,
+              "events": 183,
+              "trajectories": 183,
+              "recordedFrames": 0,
+              "visible": 2816,
+              "moving": 1322,
+              "samples": 0
+            },
+            {
+              "phase": 4,
+              "events": 199,
+              "trajectories": 199,
+              "recordedFrames": 0,
+              "visible": 2552,
+              "moving": 1192,
+              "samples": 0
+            },
+            {
+              "phase": 5,
+              "events": 198,
+              "trajectories": 198,
+              "recordedFrames": 0,
+              "visible": 2776,
+              "moving": 1306,
+              "samples": 0
+            },
+            {
+              "phase": 6,
+              "events": 194,
+              "trajectories": 194,
+              "recordedFrames": 0,
+              "visible": 2950,
+              "moving": 1387,
+              "samples": 0
+            }
+          ],
+          "host_window_lines": [],
+          "baseline_lines": [
+            "COOP METRIC baseline-state frames=205 elapsedMs=9021 p95ms=63"
+          ],
+          "prepared_fingerprint": "53112649ffd1d4895eb04a825bebf2e977adb5ce32576037f763c73d8b957711",
+          "raw_prepared_equals_normalized_audit": false,
+          "corridor_ok": true,
+          "corridor_visual_counts": {
+            "actorWeapons": 39,
+            "actors": 80,
+            "localPlayer": 1,
+            "remotePlayer": 1
+          },
+          "prepared_body_count": 80,
+          "prepared_weapon_ids": {
+            "lmg": 12,
+            "p308c": 27
+          }
+        }
+      }
+    },
+    {
+      "label": "20",
+      "output": "recovery-density-player-settings-20-01",
+      "run": "bd9a4b01e7",
+      "candidate_sha256": "0674019c4aeea22900aef3e2390a31aed4fafc7850e0f3a74bc5ebb2facce9f5",
+      "version": "0.2.24-recovery20",
+      "hashes": {
+        "result.json": "85d7147eb3af2c6b467ef9bda0654aad5873be8abaae177eea37ba2f8731b678",
+        "fixture-audit.json": "de9fd1bafb7b0419c040d40cb0e1495766fbf51bd20f128cd1677bdd5997416a",
+        "intent.json": "7c612c20a605162d8fc56e01c42de6b9df7216a8478ccbebfd12909132f0077b"
+      },
+      "run_sha256": "ef0515fca299a9cbe5f5cfd75ddd9f228fa240fcbc187b1acf2632959494d90b",
+      "input_sha256": "ca3b421ebdd474ecd5708e0ded220fc9b653078688385fd9173a4f794330ca2f",
+      "input_manifest_matches": true,
+      "installation_count": 22,
+      "installation_fingerprint": "dd2c8bb5f238032930e790661757bc4a943b01ae0fb777c9ac2ebfe365722733",
+      "runtime_signature_fingerprint": "c505515c9ebd64c39affe1629deb68f8077e3882d28b104bcbd4037a2c30aac6",
+      "driver_manifest": "5a8dbb9395c8dba8b6e980c49b112c6df3ae2e19e2f4950769d29756f8e1735c",
+      "wrapper_sha256": "8341976f9c0828fd1965ad61510668c39b8c78d59dfe997bdc11622b46cc8bc8",
+      "runner_sha256": "7eca453b13480140da5f36bb33d2319739a927562ccafdbb61a8b20cdb5ae4d3",
+      "air_inventory_sha256": "3d4c6160cfb8ee766ad77463da9e5e7a67b10af30170b4ca5a876af1d4a9cd4c",
+      "result_flags": {
+        "exit_code": 1,
+        "passed": false,
+        "performance_qualified": false,
+        "full_release_qualified": false,
+        "installation_unchanged": true,
+        "runner_unchanged": true,
+        "air_inventory_unchanged": true,
+        "exclusive_air_confirmed": true,
+        "invalid_reason": null,
+        "vision_templates_confirmed": true,
+        "vision_templates_unchanged": true
+      },
+      "audit_flags": {
+        "input_comparable": true,
+        "attribution_allowed": true,
+        "passed": false,
+        "differences": [],
+        "corridor_static_equal": true,
+        "corridor_static_differences": [],
+        "module_errors": [],
+        "original_result_unchanged": true,
+        "recipe_and_driver_unchanged": true,
+        "user_settings_unchanged": true
+      },
+      "original_result_matches_audit": true,
+      "port": 21286,
+      "minimum_start_gib": 6,
+      "roles": {
+        "host": {
+          "pass_count": 29,
+          "fail_count": 0,
+          "failures": [],
+          "log_sha256": "467fa41446b7f3e099213e5a6d9a1ee91f25ea8ce1d99f48936cc75feab94c84",
+          "log_matches_result_and_audit": true,
+          "done": true,
+          "version_confirmed": true,
+          "windows": [],
+          "projectiles": [],
+          "host_window_lines": [
+            "COOP PROBE host-window phase=0 frames=144 elapsedMs=11381",
+            "COOP PROBE host-window phase=1 frames=88 elapsedMs=8187",
+            "COOP PROBE host-window phase=2 frames=88 elapsedMs=8228",
+            "COOP PROBE host-window phase=3 frames=87 elapsedMs=8136",
+            "COOP PROBE host-window phase=4 frames=86 elapsedMs=8024",
+            "COOP PROBE host-window phase=5 frames=80 elapsedMs=8006",
+            "COOP PROBE host-final frames=86 elapsedMs=8019 memory=365953024"
+          ],
+          "baseline_lines": [],
+          "prepared_fingerprint": "b6a742f12aa3124151c08e173d68db6b924b3e410237c6a1f36102bbc7762e3e",
+          "raw_prepared_equals_normalized_audit": false,
+          "corridor_ok": true,
+          "corridor_visual_counts": {
+            "actorWeapons": 39,
+            "actors": 80,
+            "localPlayer": 1,
+            "remotePlayer": 1
+          },
+          "prepared_body_count": 80,
+          "prepared_weapon_ids": {
+            "lmg": 12,
+            "p308c": 27
+          }
+        },
+        "join": {
+          "pass_count": 49,
+          "fail_count": 5,
+          "failures": [
+            "COOP FAIL network-state 80 enemies keep stage frames progressing",
+            "COOP FAIL network-state 80 enemies keep stage frames progressing",
+            "COOP FAIL network-state 80 enemies keep stage frames progressing",
+            "COOP FAIL network-state 80 enemies keep stage frames progressing",
+            "COOP FAIL network-state 80 enemies keep stage frames progressing"
+          ],
+          "log_sha256": "6da0597b17956f501fc18305a97abebd15f505ca81ab95ab202ecea8424fe697",
+          "log_matches_result_and_audit": true,
+          "done": true,
+          "version_confirmed": true,
+          "windows": [
+            {
+              "frames": 73,
+              "p95ms": 178,
+              "maxms": 237,
+              "packets": 48,
+              "maxPacketMs": 342,
+              "aimSamples": 66,
+              "phase": 0,
+              "frame_gate": false,
+              "snapshot_gate": true,
+              "aim_gate": true
+            },
+            {
+              "frames": 79,
+              "p95ms": 196,
+              "maxms": 213,
+              "packets": 32,
+              "maxPacketMs": 383,
+              "aimSamples": 56,
+              "phase": 1,
+              "frame_gate": false,
+              "snapshot_gate": true,
+              "aim_gate": true
+            },
+            {
+              "frames": 80,
+              "p95ms": 194,
+              "maxms": 265,
+              "packets": 31,
+              "maxPacketMs": 512,
+              "aimSamples": 60,
+              "phase": 2,
+              "frame_gate": true,
+              "snapshot_gate": true,
+              "aim_gate": true
+            },
+            {
+              "frames": 81,
+              "p95ms": 175,
+              "maxms": 272,
+              "packets": 31,
+              "maxPacketMs": 377,
+              "aimSamples": 58,
+              "phase": 3,
+              "frame_gate": true,
+              "snapshot_gate": true,
+              "aim_gate": true
+            },
+            {
+              "frames": 79,
+              "p95ms": 196,
+              "maxms": 226,
+              "packets": 31,
+              "maxPacketMs": 366,
+              "aimSamples": 56,
+              "phase": 4,
+              "frame_gate": false,
+              "snapshot_gate": true,
+              "aim_gate": true
+            },
+            {
+              "frames": 76,
+              "p95ms": 202,
+              "maxms": 270,
+              "packets": 32,
+              "maxPacketMs": 371,
+              "aimSamples": 56,
+              "phase": 5,
+              "frame_gate": false,
+              "snapshot_gate": true,
+              "aim_gate": true
+            },
+            {
+              "frames": 78,
+              "p95ms": 180,
+              "maxms": 252,
+              "packets": 32,
+              "maxPacketMs": 371,
+              "aimSamples": 56,
+              "phase": 6,
+              "frame_gate": false,
+              "snapshot_gate": true,
+              "aim_gate": true
+            }
+          ],
+          "projectiles": [
+            {
+              "phase": 1,
+              "events": 471,
+              "trajectories": 471,
+              "recordedFrames": 2584,
+              "visible": 1090,
+              "moving": 240,
+              "samples": 0
+            },
+            {
+              "phase": 2,
+              "events": 504,
+              "trajectories": 504,
+              "recordedFrames": 2792,
+              "visible": 1208,
+              "moving": 267,
+              "samples": 0
+            },
+            {
+              "phase": 3,
+              "events": 501,
+              "trajectories": 501,
+              "recordedFrames": 2736,
+              "visible": 1182,
+              "moving": 244,
+              "samples": 0
+            },
+            {
+              "phase": 4,
+              "events": 501,
+              "trajectories": 501,
+              "recordedFrames": 2768,
+              "visible": 1176,
+              "moving": 247,
+              "samples": 0
+            },
+            {
+              "phase": 5,
+              "events": 509,
+              "trajectories": 509,
+              "recordedFrames": 2775,
+              "visible": 1124,
+              "moving": 239,
+              "samples": 0
+            },
+            {
+              "phase": 6,
+              "events": 517,
+              "trajectories": 517,
+              "recordedFrames": 2832,
+              "visible": 1146,
+              "moving": 253,
+              "samples": 0
+            }
+          ],
+          "host_window_lines": [],
+          "baseline_lines": [
+            "COOP METRIC baseline-state frames=227 elapsedMs=8795 p95ms=53"
+          ],
+          "prepared_fingerprint": "53112649ffd1d4895eb04a825bebf2e977adb5ce32576037f763c73d8b957711",
+          "raw_prepared_equals_normalized_audit": false,
+          "corridor_ok": true,
+          "corridor_visual_counts": {
+            "actorWeapons": 39,
+            "actors": 80,
+            "localPlayer": 1,
+            "remotePlayer": 1
+          },
+          "prepared_body_count": 80,
+          "prepared_weapon_ids": {
+            "lmg": 12,
+            "p308c": 27
+          }
+        }
+      }
+    }
+  ],
+  "comparison": {
+    "installation_differences": [],
+    "driver_manifest_differences": [],
+    "runner_sha256_differences": [],
+    "wrapper_sha256_differences": [],
+    "air_inventory_sha256_differences": [],
+    "vision_config_templates_differences": [],
+    "runtime_signature_differences": [],
+    "raw_runtime_input_differences": [
+      {
+        "path": "/host/production",
+        "a": "574d2b51490ae8b25a1396555600f56a301f8a20ae50104c0e35cf2796441afe",
+        "b": "0674019c4aeea22900aef3e2390a31aed4fafc7850e0f3a74bc5ebb2facce9f5"
+      },
+      {
+        "path": "/join/production",
+        "a": "574d2b51490ae8b25a1396555600f56a301f8a20ae50104c0e35cf2796441afe",
+        "b": "0674019c4aeea22900aef3e2390a31aed4fafc7850e0f3a74bc5ebb2facce9f5"
+      }
+    ],
+    "roles": {
+      "host": {
+        "prepared_differences": [],
+        "raw_input_differences": [],
+        "raw_spawn_differences": [
+          {
+            "path": "/X",
+            "a": 1441.8,
+            "b": 161.8
+          },
+          {
+            "path": "/Y",
+            "a": 320,
+            "b": 960
+          }
+        ],
+        "removed_original_counts": [
+          9,
+          9
+        ],
+        "removed_original_difference_count": 103,
+        "removed_original_fingerprints": [
+          "53699c054e81b13fdc3e36708bace5c0cda406739032744bc63d7ac87909a7c6",
+          "323075146aba885f5a4b95cca08e6db6f70189fd8a4ec6d4c34258bb87716985"
+        ],
+        "corridor_static_differences": [],
+        "corridor_removed_counts": [
+          34,
+          31
+        ],
+        "corridor_removed_fingerprints": [
+          "9fbcbb0a5b9d735d76eb0f37cc92d48b4be4b7794b78940e4a846952be3d8222",
+          "55a595e7837b34084efb51bead6e56df462ff238a4ac688274996521cbcffafb"
+        ],
+        "corridor_prepare_ms": [
+          195,
+          245
+        ]
+      },
+      "join": {
+        "prepared_differences": [],
+        "raw_input_differences": [
+          {
+            "path": "/units/5/dx",
+            "a": 4.011351192835718,
+            "b": 4.425694498931989
+          }
+        ],
+        "raw_spawn_differences": [],
+        "removed_original_counts": [
+          0,
+          0
+        ],
+        "removed_original_difference_count": 0,
+        "removed_original_fingerprints": [
+          "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        ],
+        "corridor_static_differences": [],
+        "corridor_removed_counts": [
+          33,
+          45
+        ],
+        "corridor_removed_fingerprints": [
+          "f5b8e8acd3defce55e2f5892ed53d0232bb25418184f136fef886bb60782f67e",
+          "c7497a60d31b6bd1252462acb865936bffd7795ea0b5d91509f97aa87c6c4acc"
+        ],
+        "corridor_prepare_ms": [
+          127,
+          130
+        ],
+        "differing_proxy_context": [
+          {
+            "weapon": null,
+            "X": 251.8,
+            "fixture": false,
+            "Y": 960,
+            "in_chain": false,
+            "cls": "rconnect.game::MirrorHitUnit",
+            "dx": 4.011351192835718,
+            "id": "zombie1",
+            "dy": 0
+          },
+          {
+            "weapon": null,
+            "X": 251.8,
+            "Y": 960,
+            "in_chain": false,
+            "cls": "rconnect.game::MirrorHitUnit",
+            "dx": 4.425694498931989,
+            "fixture": false,
+            "id": "zombie1",
+            "dy": 0
+          }
+        ]
+      }
+    }
+  },
+  "schema": 1,
+  "prepared_normalization_review": {
+    "7575281d1c": {
+      "host": {
+        "raw_tile_hash_matches": true,
+        "recomputed_tile_sha256": "288406645fc7bebd4bca8d448c683ecda4b98b0514e7c30e2bcfba25640d488b",
+        "prepared_normalized_equals_audit": true,
+        "normalization": "Remove tileHash/tileHashAlgorithm; independently hash normalized raw cell values (excluding visi; referenceClass becomes cls) into tile_sha256, as original auditor."
+      },
+      "join": {
+        "raw_tile_hash_matches": true,
+        "recomputed_tile_sha256": "288406645fc7bebd4bca8d448c683ecda4b98b0514e7c30e2bcfba25640d488b",
+        "prepared_normalized_equals_audit": true,
+        "normalization": "Remove tileHash/tileHashAlgorithm; independently hash normalized raw cell values (excluding visi; referenceClass becomes cls) into tile_sha256, as original auditor."
+      }
+    },
+    "bd9a4b01e7": {
+      "host": {
+        "raw_tile_hash_matches": true,
+        "recomputed_tile_sha256": "288406645fc7bebd4bca8d448c683ecda4b98b0514e7c30e2bcfba25640d488b",
+        "prepared_normalized_equals_audit": true,
+        "normalization": "Remove tileHash/tileHashAlgorithm; independently hash normalized raw cell values (excluding visi; referenceClass becomes cls) into tile_sha256, as original auditor."
+      },
+      "join": {
+        "raw_tile_hash_matches": true,
+        "recomputed_tile_sha256": "288406645fc7bebd4bca8d448c683ecda4b98b0514e7c30e2bcfba25640d488b",
+        "prepared_normalized_equals_audit": true,
+        "normalization": "Remove tileHash/tileHashAlgorithm; independently hash normalized raw cell values (excluding visi; referenceClass becomes cls) into tile_sha256, as original auditor."
+      }
+    }
+  },
+  "kind": "independent-player-settings-density-review",
+  "performance_qualified": false,
+  "full_release_qualified": false,
+  "statistical_regression_passed": false,
+  "configuration_review": {
+    "profile_handoff_sha256": "87d2a0302d9170e4092da91fed833826384a5d2c780021b65332da2e3d828228",
+    "runs": {
+      "7575281d1c": {
+        "host": {
+          "configuration_hash_checks": {
+            "mods/ContinuousScene/release/scene.xml": true,
+            "mods/PermanentInjury/release/config.json": true,
+            "mods/Rconnect/release/config.txt": true,
+            "mods/RealisticVision/release/config.txt": true,
+            "mods/Sandevistan/release/config.txt": true,
+            "mods/WallBlend/release/config.json": true
+          },
+          "descriptor_hash_matches": true,
+          "rv_log_sha256": "dab7b43c9906e82cdb0c6d59f958336a4f3b4f41d4f9e44a4d028b46657fbe99",
+          "rv_enabled_lines": [
+            "startup enter main=true stage=true -> after loadConfig enabled=false",
+            "init ok v0.33.2-settings-performance settings=ModSettings-v1 enabled=false"
+          ],
+          "rv_template_sha256": "24a0162f565dfa9a04e42bd64ca6fb688d556d50d99a528dbfa703d680eaba0c",
+          "rv_template_text": "enabled=0\nmode=classic\nwallbright=0\ndim=0.6000000000000001\nviewscale=1\nsoft_current=25\nsoft_classic=0\ndoordim=0.5\nlitmin=0.6\nfadestep=0.1\nmaskblur_classic=6\nmaskblur_current=4\ntelegrace=3\nbase_rooms=\ndebug=0\nautotest=0\n",
+          "rv_template_identity_matches": true
+        },
+        "join": {
+          "configuration_hash_checks": {
+            "mods/ContinuousScene/release/scene.xml": true,
+            "mods/PermanentInjury/release/config.json": true,
+            "mods/Rconnect/release/config.txt": true,
+            "mods/RealisticVision/release/config.txt": true,
+            "mods/Sandevistan/release/config.txt": true,
+            "mods/WallBlend/release/config.json": true
+          },
+          "descriptor_hash_matches": true,
+          "rv_log_sha256": "f8ae67b6cd4a8f88a6954fdffe6a9158ce02930f7ca2249c5ad42736e48c53c8",
+          "rv_enabled_lines": [
+            "startup enter main=true stage=true -> after loadConfig enabled=false",
+            "init ok v0.33.2-settings-performance settings=ModSettings-v1 enabled=false"
+          ],
+          "rv_template_sha256": "f3c7dfe712a836188d712f70b7d30fd83b8bb70435de28757196b3f926bf23f8",
+          "rv_template_text": "enabled=0\nmode=current\nwallbright=0\ndim=0.35\nviewscale=1\nsoft_current=20\nsoft_classic=0\ndoordim=0.5\nlitmin=0.6\nfadestep=0.1\nmaskblur_classic=6\nmaskblur_current=4\ntelegrace=3\nbase_rooms=\ndebug=0\nautotest=0\n",
+          "rv_template_identity_matches": true
+        }
+      },
+      "bd9a4b01e7": {
+        "host": {
+          "configuration_hash_checks": {
+            "mods/ContinuousScene/release/scene.xml": true,
+            "mods/PermanentInjury/release/config.json": true,
+            "mods/Rconnect/release/config.txt": true,
+            "mods/RealisticVision/release/config.txt": true,
+            "mods/Sandevistan/release/config.txt": true,
+            "mods/WallBlend/release/config.json": true
+          },
+          "descriptor_hash_matches": true,
+          "rv_log_sha256": "b81969c7b6d0a0f477cfbe6c82e8225b683f3b488b4bf907abdda5c9564fc29c",
+          "rv_enabled_lines": [
+            "startup enter main=true stage=true -> after loadConfig enabled=false",
+            "init ok v0.33.2-settings-performance settings=ModSettings-v1 enabled=false"
+          ],
+          "rv_template_sha256": "24a0162f565dfa9a04e42bd64ca6fb688d556d50d99a528dbfa703d680eaba0c",
+          "rv_template_text": "enabled=0\nmode=classic\nwallbright=0\ndim=0.6000000000000001\nviewscale=1\nsoft_current=25\nsoft_classic=0\ndoordim=0.5\nlitmin=0.6\nfadestep=0.1\nmaskblur_classic=6\nmaskblur_current=4\ntelegrace=3\nbase_rooms=\ndebug=0\nautotest=0\n",
+          "rv_template_identity_matches": true
+        },
+        "join": {
+          "configuration_hash_checks": {
+            "mods/ContinuousScene/release/scene.xml": true,
+            "mods/PermanentInjury/release/config.json": true,
+            "mods/Rconnect/release/config.txt": true,
+            "mods/RealisticVision/release/config.txt": true,
+            "mods/Sandevistan/release/config.txt": true,
+            "mods/WallBlend/release/config.json": true
+          },
+          "descriptor_hash_matches": true,
+          "rv_log_sha256": "f8ae67b6cd4a8f88a6954fdffe6a9158ce02930f7ca2249c5ad42736e48c53c8",
+          "rv_enabled_lines": [
+            "startup enter main=true stage=true -> after loadConfig enabled=false",
+            "init ok v0.33.2-settings-performance settings=ModSettings-v1 enabled=false"
+          ],
+          "rv_template_sha256": "f3c7dfe712a836188d712f70b7d30fd83b8bb70435de28757196b3f926bf23f8",
+          "rv_template_text": "enabled=0\nmode=current\nwallbright=0\ndim=0.35\nviewscale=1\nsoft_current=20\nsoft_classic=0\ndoordim=0.5\nlitmin=0.6\nfadestep=0.1\nmaskblur_classic=6\nmaskblur_current=4\ntelegrace=3\nbase_rooms=\ndebug=0\nautotest=0\n",
+          "rv_template_identity_matches": true
+        }
+      }
+    },
+    "configuration_differences": [
+      {
+        "path": "/host/mods/Rconnect/release/config.txt/port",
+        "a": 23779,
+        "b": 21286
+      },
+      {
+        "path": "/join/mods/Rconnect/release/config.txt/port",
+        "a": 23779,
+        "b": 21286
+      }
+    ],
+    "descriptor_differences": [
+      {
+        "path": "/host/id",
+        "a": "pfe-modsettings-rconnect-coop-host-7575281d1c",
+        "b": "pfe-modsettings-rconnect-coop-host-bd9a4b01e7"
+      },
+      {
+        "path": "/join/id",
+        "a": "pfe-modsettings-rconnect-coop-join-7575281d1c",
+        "b": "pfe-modsettings-rconnect-coop-join-bd9a4b01e7"
+      }
+    ]
+  },
+  "verified_binary_hashes": {
+    "driver": "cfca757c22052f0efd29afca1f76fe717e79d436b03a264413add2e4c8c9150a",
+    "harness": "d52ef4300c7d472ee05884d7b4709f4abf80b3e6ff935b695a9ed986db021086",
+    "driver_manifest": "5a8dbb9395c8dba8b6e980c49b112c6df3ae2e19e2f4950769d29756f8e1735c",
+    "control": "574d2b51490ae8b25a1396555600f56a301f8a20ae50104c0e35cf2796441afe",
+    "candidate": "0674019c4aeea22900aef3e2390a31aed4fafc7850e0f3a74bc5ebb2facce9f5",
+    "method": "Read-only Get-FileHash of both retained driver/harness copies, both candidate binaries, and driver03 prepared.json; all match recorded inputs."
+  },
+  "gates": {
+    "windows": 7,
+    "window_trigger_ms": 8000,
+    "bodies": 80,
+    "native_firing_guns": 12,
+    "other_aiming_guns": 27,
+    "frames_min": 80,
+    "p95ms_exclusive_max": 200,
+    "packets_min": 20,
+    "maxPacketMs_exclusive_max": 900,
+    "aim": "aimSamples > packets",
+    "projectiles": "events > 0, trajectories > 0, visible > 0, moving > 0; samples past end == 0"
+  },
+  "limitations": [
+    "One ordered A/B only; no statistical regression conclusion, no FPS percentage, no release qualification.",
+    "This profile aligns frozen current player RealisticVision settings only; save_templates is empty and isolated fixture characters remain. It is not a replay of all real player save/config state.",
+    "All 22 installation entries and runtime signature are equal according to frozen run records; installation remained unchanged per original wrapper. This review did not modify or rerun original results.",
+    "Raw pre-fixture spawn/removal histories differ; post-preparation state and corridor data are equal. Original histories remain in logs and fingerprints.",
+    "One raw join non-chain MirrorHitUnit dx differs; both versions copy target coordinates via syncMotion and MOTION excludes dx/dy. No evidence this changes active 80-body stimulus. Exact source of residual value was not traced.",
+    "Event totals count payload occurrences in unitsync, not unique shots, and omit faster effects messages from that metric. Visible/moving totals count repeated display samples at RENDER, not unique objects.",
+    "574D ordinary NPC bullets use birth/velocity/endpoints; 20 records native frames and displays confirmed segments until source end. The changed counts cannot establish more shots, loss, end correctness or visual latency.",
+    "The driver endedSamples test only rejects recorded frames after native end; 574D has no frame arrays in this LMG workload, so zero is not equivalent to per-projectile lifetime proof.",
+    "P95/max are local frame intervals; maxPacketMs is time between full snapshots, not source-to-display latency. Both runs still fail original performance requirements.",
+    "The previous RV-enabled default-group failures remain separate and are not superseded by these RV-disabled runs."
+  ],
+  "source_evidence": [
+    {
+      "path": "build/m52/recovery-density-corridor-drivers-03/tests/SustainedDensityTestDoc.as",
+      "lines": [
+        199,
+        243,
+        249,
+        259,
+        320,
+        325,
+        331,
+        405,
+        409,
+        431,
+        541,
+        547,
+        548,
+        549,
+        551,
+        552,
+        553
+      ]
+    },
+    {
+      "path": "build/m52/coop-bundle-04/src/rconnect/game/UnitPresentation.as",
+      "lines": [
+        142
+      ]
+    },
+    {
+      "path": "build/m52/recovery-20/src/rconnect/game/UnitPresentation.as",
+      "lines": [
+        147
+      ]
+    },
+    {
+      "path": "build/m52/recovery-20/src/rconnect/game/ProjectileVisuals.as",
+      "lines": [
+        170,
+        174,
+        185,
+        190
+      ]
+    },
+    {
+      "path": "build/m52/recovery-20/src/rconnect/game/MirrorHitUnit.as",
+      "lines": [
+        14,
+        54,
+        58
+      ]
+    },
+    {
+      "path": "experimental/recovery-density-profile-settings/run.py",
+      "lines": [
+        43,
+        44,
+        66,
+        69
+      ]
+    }
+  ]
+}

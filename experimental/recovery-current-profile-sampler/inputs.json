@@ -1,0 +1,40 @@
+{
+  "kind": "current-player-profile-cpu-sampler-source",
+  "source_driver": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-density-corridor-drivers-03",
+  "profile": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-density-profile-settings",
+  "dependencies": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-density-profile-settings\\handoff.json": "87d2a0302d9170e4092da91fed833826384a5d2c780021b65332da2e3d828228",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-density-profile-settings\\inputs.json": "12cbf0e24ec65871fcea5197da56b6b89e7b58778ff638a2f88e16596d201f30",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-density-profile-settings\\run.py": "d52a5316b2404bc1e715499585ece4f3ddc75768548a761297d5e63ede1ff5eb",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-density-profile-settings\\run_motion_comparison.py": "8341976f9c0828fd1965ad61510668c39b8c78d59dfe997bdc11622b46cc8bc8",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-density-profile-settings\\configs\\host-RealisticVision_config.txt": "24a0162f565dfa9a04e42bd64ca6fb688d556d50d99a528dbfa703d680eaba0c",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-density-profile-settings\\configs\\join-RealisticVision_config.txt": "f3c7dfe712a836188d712f70b7d30fd83b8bb70435de28757196b3f926bf23f8",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-density-corridor-readyfix\\prepare.py": "418b9bd1d6d0aea6890c4f5437aeb99f052206a80a70896d7eb7bb8f2a081a6a",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-density-corridor-readyfix\\audit.py": "eaa386f674d94a2400bbb5fc6eb527a580111a991ac64c3a87cc23f89a73b932",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-density-fixture\\prepare.py": "99249ad83c9adc2d4073d614e0dc4952c22ec647b228c363c5bcbd4220dd7cad",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery13-density-review\\analyze.py": "f517e05b9c931782ccca87b6f2f8bd99a24528e0d6da3360f218a1aca36e3156",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\tools\\run_coop_regression.py": "7eca453b13480140da5f36bb33d2319739a927562ccafdbb61a8b20cdb5ae4d3",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\tools\\validation\\run_motion_comparison.py": "5cdf11696f6e839336ebf812145640ea74cc55630eb791ee7234e7cd583f922b",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-density-corridor-drivers-03\\prepared.json": "5a8dbb9395c8dba8b6e980c49b112c6df3ae2e19e2f4950769d29756f8e1735c"
+  },
+  "tests": {
+    "tests/BeforeIntegerMessageCodec.as": "dadbc00256dc50314e43153589aed5ae8f1c921bb17330f940dd0151091aefbe",
+    "tests/CorridorFixture.as": "a49af20d77b5a17976c4bf0fb4c3c296618e59037a8b3427309db15489afdf50",
+    "tests/DensityFixture.as": "9291ef603230e0ae98df0283a5c73a43abaee53e829052e8abeae86555ffb062",
+    "tests/DensityTotalsTestDoc.as": "d9304dea6cb606c42759b5881a841f481a09ec9cee54808a1667ffe41f5a2fca",
+    "tests/DensityTrajectoryTotals.as": "fec11d73fe8da3a72d9fbe8c03a45dbf2cec4ef4ff47246d499f9b3bdbd72ad9",
+    "tests/DensityWeaponPreparation.as": "e8f5a803fbd7c2b55565522bb8d0e52189590e85b2dd7007bf8c26a21071eda3",
+    "tests/fe/unit/CombatStateProbe.as": "788d05b3cfc7a6eee18a098aaa4c7e0e1ff93a17764f01ddd05ddce2b7f13771",
+    "tests/NativeTestGun.as": "19adfccfbff6027d8aa4758c6964fb4f5b68667d24d9c8cf18c3f21193fc9d69",
+    "tests/ProjectileLoadTestDoc.as": "95e742b45c3b8163364451da8730ff15c8345e5b65e60e8260ce9d64c784290f",
+    "tests/ProjectileProfileTestDoc.as": "b79d62bd3dfc93e0064c88999508122fed1ba0d46f34d6acb801c2a9d05c2b36",
+    "tests/SustainedDensityTestDoc.as": "c8785beede69d5b09700885a2559fca698193c0c662662ca061ed63fa59fa843"
+  },
+  "only_build_entry_change": {
+    "before": "ProjectileLoadTestDoc",
+    "after": "ProjectileProfileTestDoc"
+  },
+  "air_started": false,
+  "compiled": false,
+  "performance_qualified": false
+}

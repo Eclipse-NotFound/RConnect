@@ -1,0 +1,88 @@
+--- profile-settings/run.py
++++ current-profile-sampler/run.py
+@@ -8,19 +8,20 @@
+ HERE = Path(__file__).resolve().parent
+ ROOT = HERE.parents[1]
+ sys.path.insert(0, str(ROOT/'experimental/recovery-density-corridor-readyfix'))
+-from prepare import M52, verify, sha, save
++from sampler import M52, PROFILE, frozen_sources, verify_sampler, sha, save, write_diagnostic
+ from audit import audit
+ 
+ 
+ def frozen_inputs():
+-    meta = json.loads((HERE/'inputs.json').read_text(encoding='utf-8'))
+-    handoff = json.loads((HERE/'handoff.json').read_text(encoding='utf-8'))
++    frozen_sources()
++    meta = json.loads((PROFILE/'inputs.json').read_text(encoding='utf-8'))
++    handoff = json.loads((PROFILE/'handoff.json').read_text(encoding='utf-8'))
+     for name, digest in handoff['files'].items():
+-        assert sha(HERE/name) == digest, 'Profile recipe changed: '+name
++        assert sha(PROFILE/name) == digest, 'Profile recipe changed: '+name
+     for name, digest in meta['dependencies'].items():
+         assert sha(Path(name)) == digest, 'Original dependency changed: '+name
+     for row in meta['templates'].values():
+-        assert sha(HERE/row['frozen']) == row['sha256'], 'Frozen RV template changed'
++        assert sha(PROFILE/row['frozen']) == row['sha256'], 'Frozen RV template changed'
+     return meta
+ 
+ 
+@@ -28,7 +29,7 @@
+     p = argparse.ArgumentParser(description=__doc__)
+     for name in ('candidate', 'output'):
+         p.add_argument('--'+name, type=Path, required=True)
+-    p.add_argument('--drivers', type=Path, default=Path('build/m52/recovery-density-corridor-drivers-03'))
++    p.add_argument('--drivers', type=Path, default=Path('build/m52/recovery-current-profile-sampler-drivers-01'))
+     p.add_argument('--reference', type=Path)
+     p.add_argument('--registry-wait', type=int, default=900)
+     a = p.parse_args()
+@@ -37,30 +38,34 @@
+     ref = (ROOT/a.reference).resolve() if a.reference else None
+     assert candidate.parent == drivers.parent == out.parent == M52.resolve() and not out.exists()
+     assert ref is None or ref.parent == M52.resolve()
+-    assert drivers == (ROOT/profile['driver']).resolve(), 'Use exact frozen driver03'
+-    meta = verify(drivers)
++    meta = verify_sampler(drivers)
+     assert meta['compiled'] and meta['compile_exit'] == 0
+     user_before = {role: sha(Path(row['source'])) for role, row in profile['templates'].items()}
+     assert user_before == {role: row['sha256'] for role, row in profile['templates'].items()}, \
+         'Live user settings changed since capture; freeze a new profile before testing'
+-    wrapper = HERE/'run_motion_comparison.py'
++    wrapper = PROFILE/'run_motion_comparison.py'
+     recipe = {str(path): sha(path) for path in [HERE/'handoff.json', HERE/'inputs.json',
+         Path(__file__), wrapper]}
+     command = [sys.executable, '-B', '-X', 'utf8', str(wrapper), '--candidate', str(candidate),
+         '--drivers', str(drivers), '--output', str(out), '--case', 'density', '--registry-wait', str(a.registry_wait)]
+     for role, row in profile['templates'].items():
+-        command += ['--'+role+'-vision-config-template', str(HERE/row['frozen'])]
++        command += ['--'+role+'-vision-config-template', str(PROFILE/row['frozen'])]
+     if ref:
+         command += ['--reference', str(ref)]
+     # Same registered lower runner; no direct AIR launch or global process hook.
+-    process = subprocess.run(command, cwd=ROOT)
++    process = subprocess.run(command, cwd=ROOT, capture_output=True, encoding='utf-8', errors='replace')
++    if not out.exists() and process.stderr:
++        print(process.stderr[-4000:], file=sys.stderr)
+     if not out.exists():
+         raise SystemExit(process.returncode or 1)
++    (out/'profile-wrapper.stdout.log').write_text(process.stdout, encoding='utf-8')
++    (out/'profile-wrapper.stderr.log').write_text(process.stderr, encoding='utf-8')
+     report = audit(out, ref) if (out/'result.json').exists() else dict(passed=False, error='Profile wrapper did not finish')
+     report.update(recipe_sha256=recipe, delegated_exit=process.returncode, original_result_unchanged=True,
+-        settings_profile='frozen-current-player-rv-settings', user_settings_before=user_before)
++        settings_profile='frozen-current-player-rv-settings', user_settings_before=user_before,
++        diagnostic_only=True, performance_qualified=False, release_qualified=False)
+     try:
+-        verify(drivers)
++        verify_sampler(drivers)
+         frozen_inputs()
+         assert all(sha(Path(name)) == digest for name, digest in recipe.items())
+         user_after = {role: sha(Path(row['source'])) for role, row in profile['templates'].items()}
+@@ -73,6 +78,8 @@
+     target = out/'fixture-audit.json'
+     assert not target.exists()
+     save(target, report)
++    if (out/'result.json').exists():
++        write_diagnostic(out)
+     print('FIXTURE_AUDIT '+str(target), flush=True)
+     raise SystemExit(0 if process.returncode == 0 and report['passed'] else 1)
+ 
