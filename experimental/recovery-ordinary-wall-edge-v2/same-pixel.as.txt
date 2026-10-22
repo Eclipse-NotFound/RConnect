@@ -1,0 +1,44 @@
+  private function eraseEdge(w:Object,l:Object):void {
+   // Actual BitmapData erase value, with the same bounded contact carrier used
+   // by the retained component. This is not a claim that a native asset ran.
+   l.grafon.frontBmp.setPixel32(38,0,0);
+   var b:Bullet=new Bullet(l,45,18);b.tilehit=true;l.firstObj=b;w.observe(l);
+  }
+  private function checkpointColor(w:Object,l:Object,index:int):uint {
+   for each(var c:Object in w.checkpoint(l))if(c.x==0&&c.y==0) {
+    var words:Array=rconnect.net.WallCellCodec.unpack(c.d);
+    for(var i:int=0;i<words.length;i+=2)if(words[i]==index)return uint(words[i+1]);
+   }
+   throw new Error("Expected checkpoint pixel was not retained");
+  }
+  private function samePixelChecks():void {
+   // Joining ink was produced against the still-visible background first. The
+   // owner then locally erases that SAME pixel before this report is settled.
+   var j:Object=edgeRoom(),h:Object=edgeRoom();
+   var jw:WallImpactVisuals=new WallImpactVisuals(),hw:WallImpactVisuals=new WallImpactVisuals();jw.before(j);hw.before(h);
+   hitEdge(jw,j,0x7e14140e);var pending:Object=jw.report(j,false);
+   eraseEdge(hw,h);var erased:Boolean=h.grafon.frontBmp.getPixel32(38,0)==0;
+   var ack:Object=hw.settle(h,"joining",pending);jw.acknowledge(j,ack);
+   check(erased&&ack!=null&&ack.cells.length==1&&checkpointColor(hw,h,38)==0x7e14140e&&
+    j.grafon.frontBmp.getPixel32(38,0)==0x7e14140e,
+    "133 same-pixel native erase precedes accepted later ink with unchanged logical ACK");
+   check(h.grafon.frontBmp.getPixel32(38,0)==0x7e14140e&&j.grafon.frontBmp.getPixel32(38,0)==0x7e14140e,
+    "134 same-pixel last-arrival ink converges after earlier native erase");
+   // Existing last-arrival behavior in the complete accurate22 class on a
+   // solid cell: this is the same merge contract the edge extension must keep.
+   var cj:Object=edgeRoom(),ch:Object=edgeRoom();cj.space[0][0].phis=ch.space[0][0].phis=1;
+   var cjw:rconnect.game.WallControl=new rconnect.game.WallControl(),chw:rconnect.game.WallControl=new rconnect.game.WallControl();
+   cjw.before(cj);chw.before(ch);hitEdge(cjw,cj,0x7e14140e);var cp:Object=cjw.report(cj,false);eraseEdge(chw,ch);
+   var ca:Object=chw.settle(ch,"joining",cp);cjw.acknowledge(cj,ca);
+   check(ch.grafon.frontBmp.getPixel32(38,0)==0x7e14140e&&cj.grafon.frontBmp.getPixel32(38,0)==0x7e14140e,
+    "135 full accurate22 solid-cell control retains same-pixel last-arrival contract");
+   // The native structural path may modify the existing bitmap without any
+   // redraw callback. A future support cache must not rely on redraw alone.
+   var broken:Object=edgeRoom(),bw:WallImpactVisuals=new WallImpactVisuals();bw.before(broken);
+   bw.receive(broken,wire(0,0,38,0x7e14140e,800),false);
+   var sameBitmap:BitmapData=broken.grafon.frontBmp;
+   broken.space[1][0].phis=0;sameBitmap.fillRect(sameBitmap.rect,0);
+   bw.settle(broken,"late",pending);
+   check(broken.grafon.frontBmp===sameBitmap&&sameBitmap.getPixel32(38,0)==0,
+    "136 same-bitmap structural clear cannot be resurrected by late ink without a redraw call");
+  }

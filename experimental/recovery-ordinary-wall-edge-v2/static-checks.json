@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "production_unchanged": true,
+  "original_132_assertions_preserved": true,
+  "expected_checks": 136,
+  "expected_product_failure": "134 same-pixel last-arrival ink converges after earlier native erase",
+  "compiled": false,
+  "air_started": false,
+  "python_syntax": true,
+  "added_assertions": 4,
+  "native_product_test": false
+}

@@ -1,0 +1,53 @@
+{
+  "reviewed_source": "4af3569a4670149b72998fb59a2938d109e19c33d9d1103c8588ba4b61a47205",
+  "manifest_consistent": true,
+  "expected_checks": 132,
+  "runtime_checks_run_by_reviewer": false,
+  "production_changed": false,
+  "blocking_findings": 1,
+  "native_alpha_observations": [
+    {
+      "round": 0,
+      "source": "host",
+      "weapon": "lmg",
+      "native_alpha_decreased": 0,
+      "native_nonzero_to_zero": 0
+    },
+    {
+      "round": 1,
+      "source": "join",
+      "weapon": "lmg",
+      "native_alpha_decreased": 0,
+      "native_nonzero_to_zero": 0
+    },
+    {
+      "round": 2,
+      "source": "host",
+      "weapon": "plamg",
+      "native_alpha_decreased": 0,
+      "native_nonzero_to_zero": 0
+    },
+    {
+      "round": 3,
+      "source": "join",
+      "weapon": "plamg",
+      "native_alpha_decreased": 0,
+      "native_nonzero_to_zero": 0
+    }
+  ],
+  "sha256": {
+    "experimental/recovery-ordinary-wall-edge/inputs.json": "7a14b2a23685c74e9ba88f39828061dbedd625bd43199d8bf10efdd6b1b07b98",
+    "experimental/recovery-ordinary-wall-edge/handoff.json": "17c19ab989f3a357d79a01a58a42bcc50d817b2751c165c9dbc026ae95dc4ca3",
+    "experimental/recovery-ordinary-wall-edge/src/rconnect/game/WallImpactVisuals.as": "4af3569a4670149b72998fb59a2938d109e19c33d9d1103c8588ba4b61a47205",
+    "experimental/recovery-ordinary-wall-edge/components/WallSurfaceChecks.as": "b00f09e3a52bb2286e3039912a7f02b2df451664adb67cb7fd288fc59833a732",
+    "experimental/recovery-ordinary-wall-edge/edge-checks.as.txt": "1a29f45e062d26c67898b018cbe8e2dddd2decc20b336790a0dbcda1d602c7ea",
+    "experimental/recovery-ordinary-wall-edge/prepare.py": "20f71a5e8d879be35cf364144859e0011e2c719d710256bf00be756abd0c0684",
+    "build/m52/recovery-wall-surfaces-host-01/import/fe/graph/Grafon.as": "625db5c71c4319f4c942e581e039b7419dc070065dc3fb148e23003b715abb04",
+    "build/m52/recovery-22/src/rconnect/game/WallImpactVisuals.as": "224c4b58b2997891c017e3ac10b396e07e3fd5b2cefe883fb6543a2896827f6e",
+    "build/m52/recovery-22/src/rconnect/game/WallSurfaceBridge.as": "b7f58ccb994f30f86041249c56730831345e95742127814e1afa77bd44d69ad1",
+    "build/m52/recovery22-ordinary-wall-native-01/wall-proof/host/round-0-proof.json": "97b16f788b19375f0277618ef7dcbddfb81b54daa82c690cfc4ddb31fe429e67",
+    "build/m52/recovery22-ordinary-wall-native-01/wall-proof/join/round-1-proof.json": "ba219394598e10442598efb33e27f5e14b4037d0bdbcc3500e13798300ef0f16",
+    "build/m52/recovery22-ordinary-wall-native-01/wall-proof/host/round-2-proof.json": "12f775b0eb69aa3156ba21fa44348d1f2f01aa549b2e519b2417181b6fbc51f2",
+    "build/m52/recovery22-ordinary-wall-native-01/wall-proof/join/round-3-proof.json": "d7cc730670b555cd311fc62ec1ec173ac8d21f426392dd1b9eefe94a35c4d2f7"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "base": "build/m52/recovery-22",
+  "base_source_sha256": {
+    "RemoteMotion.as": "5f0d0ba3b8de5ec1a08d392b4147f04a4d318c0bcdd0a2f7bbf236a5d28fc877",
+    "WeaponDisplay.as": "c76a6b157992398dbb8d8620de2482375594423226cd64b90e13e8fee96066f2",
+    "TeleportVisuals.as": "ec323ce52b1926e6cb1c98e722c78544cd396fa5b3661ba257111b4b703c272c"
+  },
+  "files": {
+    "components/rconnect/core/Log.as": "c00805b46b56cfde1f350b3f7c6b1005fbf7d75e67d0b9212a635ca5e32c1a37",
+    "components/rconnect/game/GameBridge.as": "e132782e025daa4b718a2d1c348afbbc3baf2917f6dded2f446b39c2cddd3631",
+    "components/rconnect/game/MeleeVisuals.as": "5a7e53ca059228f5cc9c83e1ed1c245829172331629019afe488124484607fda",
+    "components/rconnect/game/RemoteMotionAfter.as": "d46ff7807f8280d4cb69e6755f64b25fa1c11c290228091b1c757833004c9b85",
+    "components/rconnect/game/RemoteMotionBefore.as": "991ece8afea6d44ea9dc0e27e560e21102e883863ed1065e82849af64285b7f5",
+    "components/rconnect/game/TeleportVisualsAfter.as": "2c2b89058c6036c904803cb3d6586cb669b44bf238c9f3e233da6d3deb2c27a3",
+    "components/rconnect/game/TeleportVisualsBefore.as": "534b01b93d143affbd56eb34e91eb6c55fb3eddabaa0fdb9b3eb0bcd7d72c043",
+    "components/rconnect/game/WeaponDisplay.as": "c76a6b157992398dbb8d8620de2482375594423226cd64b90e13e8fee96066f2",
+    "components/WeaponContainerChecks.as": "0ac74fba7d62c381b1262517199ed61a22e70008acb5a04d0b1ce9cc18d7f293",
+    "materialize.py": "10694b032ee04a68cbac96126d6dffee3fe89390046c467c2b2dad8dd71a91ed",
+    "proposal.patch": "35423773081b4fd6b827065821113e6d362ef98924f7b9946b2b4912f02772ef",
+    "README.md": "e4c0358e0cf7ffb21dbfe0afee31b43ee851eca3f81ac22591b0cf1a7f1e44c7",
+    "src/rconnect/game/RemoteMotion.as": "8518d6efc918ebd89f650dfd9411eac710a0de92b59504399070ea6d78fa8b4c",
+    "static-checks.json": "f3741ee6810eb355cd91d750da483f50250f69c9234ebf4233a914490a4595ee"
+  },
+  "component_expected": 70,
+  "compiled": false,
+  "native_game_test": false,
+  "performance_qualified": false
+}

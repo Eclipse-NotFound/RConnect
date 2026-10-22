@@ -1,0 +1,32 @@
+{
+  "files": {
+    "prepare.py": "268cb7b1456c23670cd80a46aea995a336e166ec8c28148b240f0261f7d86921",
+    "run_component.py": "6fdd154ba74762753792609a37cf08205725c412a22451d43e919de494b5d994",
+    "inputs.json": "d5739eb0a81e5f039798cadff34f65459d993ced65a9ace0010a59c3f60cc46a",
+    "fixture.patch": "5bc5654eeee2ebba490c86f5fa64164cb6e75dd33621408930fd80a25060db49",
+    "static-checks.json": "d18d7a09fefbd93cefdd0e60a027b9a83ab42306907bb2b67dc296e208b08877",
+    "same-pixel.as.txt": "d6dad98a8785a4aebc39bf105a1c24f4d284d9f1b7f304325846b49e691f6a1d",
+    "README.md": "24d4d7dc29850960511d2e719bf51a6d30287b37aca04ff9c69780272b3e3461",
+    "feasibility.md": "1e764f1023415b5ea2c450b97ea7679fb7d77e11df81af9a82ec6723ca5c2f8d"
+  },
+  "components": {
+    "EdgeObserved.as": "4f5e822d4447284b5ec133870c1c36aee2039362bf9fc254f51bc70ede47b267",
+    "fe/graph/Grafon.as": "c1b7db61e199a1d9887594ad407bbd0d18d52098d017129bb36acdc01fbd0837",
+    "fe/weapon/Bullet.as": "fc9ac5166ce57578219d9913a324c552babb420eb4f8b4c0faa137824b912332",
+    "rconnect/core/Log.as": "1c707679e5ca9262f78aea27fc7dbe7802d39706ca4e88f5ad46a4ccad67a0b4",
+    "rconnect/game/GameBridge.as": "f0d9a9dcc7c6c640acc19d82103fd60d726117e72973cf3b2b273363dfe491a6",
+    "rconnect/game/NativeWallColor.as": "0f7160457f21d46759cc3b43d9defd17a8d921007521407365d906988dcfa842",
+    "rconnect/game/WallBefore.as": "dcf1c20e9275134c902ed55be1b3cc4a9ccf3b660f504dbbf3f648db0769e18f",
+    "rconnect/game/WallControl.as": "e2ba9c3da2640cdee688444d7a1353121a406db331353be667ad61208bc49c71",
+    "rconnect/game/WallImpactVisuals.as": "4af3569a4670149b72998fb59a2938d109e19c33d9d1103c8588ba4b61a47205",
+    "rconnect/game/WallSurfaceBridge.as": "b7f58ccb994f30f86041249c56730831345e95742127814e1afa77bd44d69ad1",
+    "rconnect/net/RoomCodec.as": "296ee4d8d94f77faa62dcc17a39cb1e2492c756d3027311713c33935ca6b6b4a",
+    "rconnect/net/WallCellCodec.as": "28e069808e93edcf479bd1fc977fe226036d5f030b65532a3ff15c564527b1f3",
+    "WallSurfaceChecks.as": "a4936e4e69411ed3aceedb810f420f62bf99e5086a72b03bdc9f3b848b29b295"
+  },
+  "production_unchanged": true,
+  "expected_checks": 136,
+  "expected_failure_label": "134 same-pixel last-arrival ink converges after earlier native erase",
+  "compiled": false,
+  "air_started": false
+}

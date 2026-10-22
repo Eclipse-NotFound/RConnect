@@ -1,0 +1,102 @@
+  private function edgeRoom():Object {
+   var l:Object=loc(2,2);for(var x:int=0;x<2;x++)for(var y:int=0;y<2;y++)l.space[x][y].phis=0;
+   l.space[1][0].phis=1;
+   l.grafon={loc:l,sceneLarge:false,rconnectRasterPending:false,frontBmp:new BitmapData(80,80,true,0)};
+   seedEdges(l,false);return l;
+  }
+  private function seedEdges(l:Object,changed:Boolean):void {
+   for each(var p:Array in EdgeObserved.POINTS)
+    l.grafon.frontBmp.setPixel32(p[0],p[1],rconnect.game.NativeWallColor.setter(uint(p[changed?3:2])));
+  }
+  private function edgeEqual(l:Object,changed:Boolean):Boolean {
+   for each(var p:Array in EdgeObserved.POINTS)if(l.grafon.frontBmp.getPixel32(p[0],p[1])!=uint(p[changed?3:2]))return false;
+   return true;
+  }
+  private function hitEdge(w:Object,l:Object,color:uint=0):void {
+   var b:fe.weapon.Bullet=new fe.weapon.Bullet(l,45,18);l.firstObj=b;
+   if(color)l.grafon.frontBmp.setPixel32(38,0,rconnect.game.NativeWallColor.setter(color));
+   else seedEdges(l,true);
+   b.tilehit=true;w.observe(l);
+  }
+  private function edgeChecks():void {
+   var s:Object=edgeRoom(),d:Object=edgeRoom(),c:Object=edgeRoom();
+   var sw:WallImpactVisuals=new WallImpactVisuals(),dw:WallImpactVisuals=new WallImpactVisuals();
+   var old:rconnect.game.WallControl=new rconnect.game.WallControl();sw.before(s);dw.before(d);old.before(c);
+   check(edgeEqual(s,false)&&edgeEqual(d,false)&&edgeEqual(c,false),"86 exact 22 native observed baseline colors are representable");
+   hitEdge(old,c);check(old.report(c,false)==null&&edgeEqual(c,true),"87 accurate22 full class drops all 22 actual edge changes in passable cell");
+   hitEdge(sw,s);var report:Object=sw.report(s,false),words:Array=report==null?[]:rconnect.net.WallCellCodec.unpack(report.cells[0].d);
+   check(report!=null&&report.cells.length==1&&report.cells[0].x==0&&report.cells[0].y==0&&words.length==44,"88 actual contact capture emits exactly the 22 sparse edge pixels");
+   var receipt:Object=dw.settle(d,"peer",report);
+   check(receipt!=null&&receipt.cells.length==1,"89 passable foreground cell follows existing ACK envelope");
+   for(var i:int=0;i<22;i++) {
+    var p:Array=EdgeObserved.POINTS[i];
+    check(d.grafon.frontBmp.getPixel32(p[0],p[1])==uint(p[3]),"edge observed exact native color "+i);
+   }
+   sw.acknowledge(s,receipt);
+   check(sw.report(s,false)==null&&edgeEqual(s,true),"112 same packet ACK drains pending without changing local native colors");
+   var snap:Array=sw.snapshot(s,false),up:Array=sw.updates(s);
+   check(snap!=null&&snap.length==1&&up!=null&&up.length==1&&same(rconnect.net.WallCellCodec.unpack(snap[0].d),words),"113 fast and cumulative paths retain exact air-cell words");
+   sw.sentUpdates(s,up);check(sw.updates(s)==null,"114 sent revision is not resent on fast path");
+   var saved:Array=sw.checkpoint(s),fresh:BitmapData=new BitmapData(80,80,true,0),oldB:BitmapData=s.grafon.frontBmp;
+   s.grafon.frontBmp=fresh;seedEdges(s,false);sw.before(s);oldB.dispose();
+   check(edgeEqual(s,true)&&s.grafon.frontBmp.getPixel32(37,0)==0,"115 entry redraw restores only supported foreground without painting neighbor air");
+   // One erased pixel and one nonzero coating share one packet. The alpha-zero
+   // value must survive logical storage so a native redraw does not heal it.
+   var erase:Array=[{x:0,y:0,v:500,d:RoomCodec.pack([38,0,39,Number(uint(0xff121212)),0+40,Number(uint(0xff123456))])}];
+   dw.receive(d,erase,false);
+   check(d.grafon.frontBmp.getPixel32(38,0)==0&&d.grafon.frontBmp.getPixel32(39,0)==0xff121212&&d.grafon.frontBmp.getPixel32(0,1)==0,"116 exact transparent erase accepted while unsupported nonzero pixel remains blank");
+   var savedD:Array=dw.checkpoint(d);d.grafon.frontBmp.fillRect(d.grafon.frontBmp.rect,0);seedEdges(d,false);dw.redraw(d);
+   check(d.grafon.frontBmp.getPixel32(38,0)==0&&d.grafon.frontBmp.getPixel32(39,0)==0xff121212&&d.grafon.frontBmp.getPixel32(0,1)==0,"117 replay preserves erase and cannot materialize skipped opaque ink");
+   // Native terrain removal clears the actual support mask. Keep logical state
+   // and ACK semantics, but neither old receive nor any replay can create alpha.
+   d.space[1][0].phis=0;d.grafon.frontBmp.fillRect(d.grafon.frontBmp.rect,0);dw.redraw(d);
+   check(d.grafon.frontBmp.getColorBoundsRect(0xffffffff,0,false).isEmpty(),"118 destroyed supporting wall leaves no replayed foreground");
+   dw.settle(d,"late",report);dw.restore(d,savedD);
+   check(d.grafon.frontBmp.getColorBoundsRect(0xffffffff,0,false).isEmpty(),"119 old report and restored checkpoint cannot revive cleared native mask");
+   // A shared Grafon belongs to another room. Do not use its alpha or sceneLarge
+   // to discard this old room's ordinary logical data or paint the other room.
+   var other:Object=loc(),shared:Object=s.grafon;shared.loc=other;shared.sceneLarge=true;shared.frontBmp=new BitmapData(80,80,true,0xffabcdef);
+   var away:Array=sw.checkpoint(s);sw.receive(s,[{x:0,y:0,v:600,d:RoomCodec.pack([38,Number(uint(0x7e14140e))])}],false);
+   check(away.length==1&&shared.frontBmp.getPixel32(38,0)==0xffabcdef,"120 old-room checkpoint and receive never consult or paint foreign Grafon");
+   shared.loc=s;shared.sceneLarge=false;shared.frontBmp=new BitmapData(80,80,true,0);seedEdges(s,false);sw.before(s);
+   check(edgeEqual(s,true),"121 ordinary room return replays against its own newly rebuilt support");
+   // Newer queued local ink remains protected while acknowledging an older hit.
+   var q:Object=edgeRoom(),qw:WallImpactVisuals=new WallImpactVisuals();qw.before(q);
+   hitEdge(qw,q,0x7e24241e);var first:Object=qw.report(q,false);
+   hitEdge(qw,q,0x7e14140e);qw.acknowledge(q,{seq:first.seq,cells:first.cells});
+   check(q.grafon.frontBmp.getPixel32(38,0)==0x7e14140e,"122 ACK for older edge hit cannot overwrite newer queued prediction");
+   var second:Object=qw.report(q,false);qw.receive(q,wire(0,0,38,0x7e39392f,700),true);
+   check(second!=null&&q.grafon.frontBmp.getPixel32(38,0)==0x7e14140e,"123 pending edge prediction blocks authoritative overwrite");
+   qw.acknowledge(q,{seq:second.seq,cells:second.cells});qw.receive(q,wire(0,0,38,0x7e39392f,701),true);
+   check(q.grafon.frontBmp.getPixel32(38,0)==0x7e39392f,"124 later authoritative edge color applies after ordinary ACK");
+   // The comparison work remains local to actual contact bounds. An unrelated
+   // distant bitmap change cannot become a wall event merely because air is allowed.
+   var far:Object=loc(30,30);for(var xx:int=0;xx<30;xx++)for(var yy:int=0;yy<30;yy++)far.space[xx][yy].phis=0;
+   far.grafon={loc:far,sceneLarge:false,frontBmp:new BitmapData(1200,1200,true,0)};
+   var fw:WallImpactVisuals=new WallImpactVisuals();fw.before(far);far.grafon.frontBmp.setPixel32(1000,1000,0xff123456);
+   var fb:fe.weapon.Bullet=new fe.weapon.Bullet(far,45,18);fb.tilehit=true;far.firstObj=fb;fw.observe(far);
+   check(fw.report(far,false)==null,"125 new air-cell comparisons never scan unrelated far-room changes");
+   var gl:Object=loc(),gg:Grafon=new Grafon(gl),gw:WallImpactVisuals=wall();gg.add(1960,1160);gl.space[50][30].phis=0;
+   gg.hit(new Rectangle(2010,1205,1,1),0xffaabbcc);
+   check(gw.report(gl,false)==null,"126 large-scene air-cell edge behavior remains outside this ordinary-only change");gw.networkActive=false;
+   var incomingBefore:String=JSON.stringify(report);dw.settle(d,"late",report);
+   check(JSON.stringify(report)==incomingBefore,"127 support mask never rewrites ACK or input payload colors");
+   q.grafon.frontBmp.fillRect(q.grafon.frontBmp.rect,0);qw.redraw(q);qw.receive(q,wire(0,0,38,0x7e39392f,699),false);
+   check(q.grafon.frontBmp.getPixel32(38,0)==0,"128 old authoritative version cannot restore opacity after clear");
+   var unknown:Object=loc(2,2),uw:WallImpactVisuals=new WallImpactVisuals();unknown.space[0][0].phis=0;
+   unknown.grafon={loc:other,sceneLarge:true,frontBmp:new BitmapData(80,80,true,0xffaabbcc)};
+   uw.receive(unknown,wire(0,0,38,0xff112233,1),false);
+   check(uw.checkpoint(unknown).length==1&&unknown.grafon.frontBmp.getPixel32(38,0)==0xffaabbcc,"129 unknown inactive room defers logical ink without sampling foreign large canvas");
+   unknown.grafon={loc:unknown,sceneLarge:false,frontBmp:new BitmapData(80,80,true,0)};unknown.grafon.frontBmp.setPixel32(38,0,0xffeeeeee);uw.before(unknown);
+   check(unknown.grafon.frontBmp.getPixel32(38,0)==0xff112233&&unknown.grafon.frontBmp.getPixel32(39,0)==0,"130 unknown room resolves ordinary mask only after actual first backdrop");
+   var edgeBottom:Object=edgeRoom(),edgeDest:Object=edgeRoom(),bw:WallImpactVisuals=new WallImpactVisuals(),bdw:WallImpactVisuals=new WallImpactVisuals();
+   for(var bi:int=0;bi<4;bi++){edgeBottom.grafon.frontBmp.setPixel32(60+bi,47,0xff667788);edgeDest.grafon.frontBmp.setPixel32(60+bi,47,0xff667788);}
+   bw.before(edgeBottom);bdw.before(edgeDest);
+   for(bi=0;bi<4;bi++)edgeBottom.grafon.frontBmp.setPixel32(60+bi,47,0xff112233);
+   var lower:fe.weapon.Bullet=new fe.weapon.Bullet(edgeBottom,60,38);lower.tilehit=true;edgeBottom.firstObj=lower;bw.observe(edgeBottom);
+   var bottomReport:Object=bw.report(edgeBottom,false);
+   check(bottomReport!=null&&bottomReport.cells.length==1&&bottomReport.cells[0].x==1&&bottomReport.cells[0].y==1,"131 native lower foreground edge seven pixels beyond collision cell is captured without fixed padding rule");
+   bdw.settle(edgeDest,"peer",bottomReport);var bottomOK:Boolean=true;
+   for(bi=0;bi<4;bi++)if(edgeDest.grafon.frontBmp.getPixel32(60+bi,47)!=0xff112233)bottomOK=false;
+   check(bottomOK&&edgeDest.grafon.frontBmp.getPixel32(59,47)==0,"132 adjacent lower edge replays only exact existing native support");
+  }

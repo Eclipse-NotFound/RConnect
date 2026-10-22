@@ -1,0 +1,131 @@
+--- recovery22/rconnect/game/WallImpactVisuals.as
++++ ordinary-edge/rconnect/game/WallImpactVisuals.as
+@@ -129,6 +129,13 @@
+       {
+          var s:Object=rooms[loc];
+          if(s==null)s=rooms[loc]={cells:{},queued:{},pending:null,receipts:{},incoming:{},sent:{},cursor:0};
++         // Grafon is shared: learn the backing kind only while it belongs to
++         // this room. Unknown/inactive rooms retain sparse data until real draw.
++         var g:Object=get(loc,"grafon");
++         if(g!=null && get(g,"loc")===loc) {
++            if(get(g,"sceneLarge")===true)s.ordinary=false;
++            else if(get(g,"rconnectRasterPending")!==true && get(g,"frontBmp")!=null)s.ordinary=true;
++         }
+          return s;
+       }
+       private function front(loc:Object):BitmapData
+@@ -143,6 +150,13 @@
+       {
+          if(loc==null || x<0 || y<0 || x>=int(loc.spaceX) || y>=int(loc.spaceY))return false;
+          return Number(loc.space[x][y].phis)>=1;
++      }
++      /** Collision cells do not bound ordinary native foreground art. Large
++       * scenes keep their existing solid-cell contract. No alpha scan here. */
++      private function retainedCell(loc:Object,x:int,y:int):Boolean
++      {
++         return solid(loc,x,y) || (loc!=null && x>=0 && y>=0 && x<int(loc.spaceX)
++            && y<int(loc.spaceY) && state(loc).ordinary!==false);
+       }
+       private function rect(x:int,y:int,b:BitmapData):Rectangle
+       {return new Rectangle(x*CELL,y*CELL,CELL,CELL).intersection(b.rect);}
+@@ -236,9 +250,9 @@
+          for(k in work)
+          {
+             var xy:Array=k.split(",");tx=int(xy[0]);ty=int(xy[1]);
+-            // Entire removed tiles remain TerrainSync's responsibility. In
+-            // particular an old coating must never fill a destroyed wall back in.
+-            if(!solid(loc,tx,ty)) {discard(loc,k);shadow.copyPixels(bitmap,rect(tx,ty,bitmap),new Point(tx*CELL,ty*CELL));continue;}
++            // Compare only this already-bounded real contact/terrain region.
++            // Native foreground edges can extend into phis==0 cells. Their
++            // actual alpha, not collision occupancy, bounds final replay below.
+             captureCell(loc,tx,ty);
+          }
+       }
+@@ -396,18 +410,19 @@
+       private function put(loc:Object,list:Array,protect:Boolean,versions:Boolean):void
+       {
+          var s:Object=state(loc),b:BitmapData=front(loc),skip:Object=protect?protectedPixels(s):{};
+-         var large:Boolean=get(get(loc,"grafon"),"sceneLarge")===true,painted:Array=large?[]:null;
++         var large:Boolean=s.ordinary===false,painted:Array=large?[]:null;
+          if(b!=null)b.lock();
+          try
+          {
+             for each(var c:Object in list)
+             {
+                var k:String=id(c.x,c.y);
+-               if(!solid(loc,c.x,c.y)) {discard(loc,k);continue;}
++               if(!retainedCell(loc,c.x,c.y)) {discard(loc,k);continue;}
+                if(versions && s.incoming[k]!=null && int(c.v)<=int(s.incoming[k]))continue;
+                var cell:Object=s.cells[k];
+                if(cell==null)cell=s.cells[k]={x:c.x,y:c.y,values:{},v:0,wire:null};
+                var wrote:Boolean=false;var visible:Array=large?[]:null;
++               var solidCell:Boolean=solid(loc,c.x,c.y);
+                for(var i:int=0;i<c.words.length;i+=2)
+                {
+                   var index:int=int(c.words[i]),key:String=String(index);
+@@ -423,7 +438,11 @@
+                   if(cell.values[key]!==color) {
+                      cell.values[key]=color;wrote=true;
+                   }
+-                  if(b!=null && x<b.width && y<b.height && b.getPixel32(x,y)!=color)
++                  // Keep logical/ACK data exact, but a received old coating
++                  // must not create opacity where the native air-cell mask is
++                  // now empty (for example after its neighboring wall broke).
++                  if(b!=null && x<b.width && y<b.height && b.getPixel32(x,y)!=color
++                     && (solidCell || (color>>>24)==0 || (b.getPixel32(x,y)>>>24)!=0))
+                   {b.setPixel32(x,y,NativeWallColor.setter(color));dirty=true;}
+                }
+                if(visible!=null && visible.length)painted.push({x:c.x,y:c.y,words:visible});
+@@ -457,7 +476,7 @@
+          // graphics. Disjoint host/client markings merge; last arrival decides
+          // the genuinely overlapping pixels on the room owner.
+          var accepted:Array=[];
+-         for each(var c:Object in request.cells)if(solid(loc,int(c.x),int(c.y)))accepted.push(c);
++         for each(var c:Object in request.cells)if(retainedCell(loc,int(c.x),int(c.y)))accepted.push(c);
+          var receipt:Object={seq:int(request.seq),cells:accepted};s.receipts[peer]=receipt;return receipt;
+       }
+       public function acknowledge(loc:Object,receipt:Object):void
+@@ -478,7 +497,7 @@
+          for(var k:String in s.cells)
+          {
+             var c:Object=s.cells[k];
+-            if(!solid(loc,c.x,c.y))discard(loc,k);
++            if(!retainedCell(loc,c.x,c.y))discard(loc,k);
+             else if(s.sent[k]==null || int(c.v)>int(s.sent[k]))keys.push(k);
+          }
+          keys.sort();
+@@ -510,7 +529,7 @@
+          if(observeNow)observe(loc);var s:Object=state(loc),keys:Array=[],out:Array=[],size:int=0;
+          for(var k:String in s.cells)
+          {
+-            var c:Object=s.cells[k];if(!solid(loc,c.x,c.y))discard(loc,k);else keys.push(k);
++            var c:Object=s.cells[k];if(!retainedCell(loc,c.x,c.y))discard(loc,k);else keys.push(k);
+          }
+          keys.sort();if(!keys.length)return null;
+          var cursor:int=int(s.cursor)%keys.length;
+@@ -528,7 +547,7 @@
+          var s:Object=state(loc),out:Array=[];
+          for(var k:String in s.cells)
+          {
+-            var c:Object=s.cells[k];if(solid(loc,c.x,c.y))out.push(packed(c));else discard(loc,k);
++            var c:Object=s.cells[k];if(retainedCell(loc,c.x,c.y))out.push(packed(c));else discard(loc,k);
+          }
+          return out;
+       }
+@@ -547,11 +566,14 @@
+          {
+             for(var k:String in s.cells)
+             {
+-               var c:Object=s.cells[k];if(!solid(loc,c.x,c.y)) {discard(loc,k);continue;}
++               var c:Object=s.cells[k];if(!retainedCell(loc,c.x,c.y)) {discard(loc,k);continue;}
++               var solidCell:Boolean=solid(loc,c.x,c.y);
+                for(var key:String in c.values)
+                {
+                   var i:int=int(key),x:int=int(c.x)*CELL+i%CELL,y:int=int(c.y)*CELL+int(i/CELL);
+-                  if(x<b.width && y<b.height)b.setPixel32(x,y,NativeWallColor.setter(uint(c.values[key])));
++                  var color:uint=uint(c.values[key]);
++                  if(x<b.width && y<b.height && (solidCell || (color>>>24)==0 || (b.getPixel32(x,y)>>>24)!=0))
++                     b.setPixel32(x,y,NativeWallColor.setter(color));
+                }
+             }
+          }

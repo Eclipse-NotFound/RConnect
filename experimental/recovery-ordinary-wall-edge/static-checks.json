@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "expected_checks": 132,
+  "original_checks_unchanged": 85,
+  "production_overlay_classes": 1,
+  "compiled": false,
+  "air_started": false,
+  "performance_qualified": false,
+  "prepare.py_syntax": true,
+  "run_component.py_syntax": true,
+  "control_is_exact22_rename_only": true,
+  "component_braces_balanced": true,
+  "added_assertions_calculated": 47,
+  "manifest_input_hashes_match": true
+}

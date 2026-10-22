@@ -1,0 +1,14 @@
+{
+  "kind": "read-only native structure notification feasibility",
+  "sha256": {
+    "mods/RConnect/build/m52/recovery-wall-surfaces-host-01/import/fe/graph/Grafon.as": "625db5c71c4319f4c942e581e039b7419dc070065dc3fb148e23003b715abb04",
+    "mods/RConnect/build/m52/recovery-raster-dependencies-01/scripts/fe/loc/Location.as": "9c7e679a4b5b8423355cb3ce07e496caa13415beb1ffdd630f0f2ed7b38c9cab",
+    "mods/RConnect/build/m52/recovery-22/src/rconnect/game/WallSurfaceBridge.as": "b7f58ccb994f30f86041249c56730831345e95742127814e1afa77bd44d69ad1",
+    "mods/RConnect/build/m52/recovery-22/src/rconnect/game/WallImpactVisuals.as": "224c4b58b2997891c017e3ac10b396e07e3fd5b2cefe883fb6543a2896827f6e",
+    "mods/RConnect/build/m52/recovery-22/src/rconnect/game/TerrainSync.as": "317c9658b0632f3bb8333c11cd302c68ef45e7a9f2f54ed6b6c631b6c1b92b44",
+    "mods/RConnect/build/m52/recovery-22/src/rconnect/game/GameBridge.as": "260cebd0f89e348979d05d00338f7e444a1abf2c0bbe4d03350475b05e01142d"
+  },
+  "implemented": false,
+  "compiled": false,
+  "AIR_run": false
+}

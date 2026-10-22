@@ -1,0 +1,336 @@
+package rconnect.game
+{
+   import flash.utils.Dictionary;
+   /** A short source-time buffer absorbs packet jitter without restarting a tween.
+    *  Never extrapolate beyond received positions; teleports settle at once.
+    *  Unstamped room checkpoints/legacy callers retain endpoint interpolation. */
+   public class RemoteMotionAfter
+   {
+      private var rateOwners:Dictionary=new Dictionary();
+      /** A finite native effect must retain its playback duration while using
+       * the same pose clock as the actor and muzzle. Releases are idempotent. */
+      public function retainRate(owner:Object):void {if(owner!=null)rateOwners[owner]=true;}
+      public function releaseRate(owner:Object):void {delete rateOwners[owner];}
+      private function rateHeld():Boolean {for(var owner:Object in rateOwners)return true;return false;}
+      private var state:Object;
+      private var origin:Object;
+      private var target:Object;
+      private var at:int;
+      private var duration:int=50;
+      private var interval:int;
+      private var immediateStart:Boolean;
+      private var bufferLimit:int=0;
+      private var enemyRecovery:Boolean=false;
+      private var playbackRate:Number=1;
+      // Ordinary actor clocks only. Keep calibration debt separate from packet
+      // jitter: a series of small offset corrections must not create seconds
+      // of catch-up at 1.1x. No receive callback seeks this display cursor.
+      private var calibrationDebt:Number=0;
+      private var calibrationRate:Number=1;
+      private var calibrating:Boolean=false;
+      private function actorCalibration():Boolean {return !immediateStart && bufferLimit==0;}
+      private function clearCalibration():void {
+         calibrationDebt=0;calibrationRate=1;calibrating=false;
+      }
+      // Only immediately visible drops use packet-burst buffering. A grab
+      // has a separate low-latency policy, and avatar clocks stay unchanged.
+      private var firstSample:Boolean=true;
+      private var dropDelay:Number=0;
+      private var frames:Array=[];
+      private var gaps:Array=[];
+      private var offset:Number=0;
+      private var cursor:Number=0;
+      private var sampledAt:int=0;
+      private var arrivedAt:int=0;
+      private var selected:Object;
+      private var preceding:Object;
+      private var curveA:Object,curveB:Object;
+      private var curveLeft:Vector.<Number>=new Vector.<Number>(4,true);
+      private var curveRight:Vector.<Number>=new Vector.<Number>(4,true);
+      private static const FIELDS:Array=["x","y","aimX","aimY"];
+
+      public function RemoteMotionAfter(intervalMs:int=50,startImmediately:Boolean=false) {
+         interval=intervalMs;immediateStart=startImmediately;
+      }
+
+      /** High-rate held objects have their own presentation clock. A single
+       * slow native frame must not leave a quarter-second delay on the drag.
+       * This policy still interpolates only received positions, with the same
+       * continuous clock and pause/release behavior as ordinary streams. */
+      public static function held():RemoteMotionAfter {
+         var motion:RemoteMotionAfter=new RemoteMotionAfter(50);motion.bufferLimit=100;return motion;
+      }
+      public static function enemy():RemoteMotionAfter {
+         var motion:RemoteMotionAfter=new RemoteMotionAfter(50);motion.bufferLimit=100;
+         motion.enemyRecovery=true;return motion;
+      }
+
+      public function push(snap:Object, now:int):void
+      {
+         if(snap.sampleTime!=null && isFinite(Number(snap.sampleTime))) {
+            pushTimed(snap,now);return;
+         }
+         var previous:Object=sample(now);
+         frames=[];
+         clearCalibration();
+         preceding=null;
+         var jump:Boolean=previous==null || now-at>1000;
+         if(previous!=null)
+         {
+            var dx:Number=Number(snap.x)-Number(previous.x), dy:Number=Number(snap.y)-Number(previous.y);
+            jump=jump || dx*dx+dy*dy>600*600;
+         }
+         duration=Math.max(50,Math.min(250,now-at));
+         origin={};target={};state={};
+         for(var key:String in snap) state[key]=snap[key];
+         for each(key in FIELDS)
+         {
+            target[key]=Number(snap[key]);
+            origin[key]=jump || previous[key]==null ? target[key] : Number(previous[key]);
+         }
+         at=now;
+         sample(now);
+      }
+
+      public function sample(now:int):Object
+      {
+         if(frames.length>0)return sampleTimed(now);
+         if(state==null) return null;
+         var t:Number=Math.max(0,Math.min(1,(now-at)/duration));
+         for each(var key:String in FIELDS)
+            if(isFinite(target[key])) state[key]=origin[key]+(target[key]-origin[key])*t;
+         return state;
+      }
+
+      /** Shared display cursor for this avatar's weapon and projectile frames. */
+      public function get sourceTime():Number {return frames.length>0?cursor:NaN;}
+      public function get latestSampleTime():Number {return frames.length>0?Number(frames[frames.length-1].at):NaN;}
+      public function get currentSample():Object {return state;}
+
+      /** Simulation input may need the last received location, not the older
+       * display cursor. Return a fresh value without seeking or sampling it. */
+      public function get latestPosition():Object {
+         var latest:Object=frames.length>0?frames[frames.length-1].snap:target;
+         if(latest==null || !isFinite(Number(latest.x)) || !isFinite(Number(latest.y)))return null;
+         return {x:Number(latest.x),y:Number(latest.y)};
+      }
+
+      /** A paused world may still receive its last in-flight snapshots. Close
+       * the display buffer at the received endpoint, without extrapolation.
+       * Retain that cursor so resume cannot replay the pre-pause position. */
+      public function settle(now:int):Object {
+         clearCalibration();
+         if(frames.length>0) {
+            playbackRate=1;
+            cursor=Number(frames[frames.length-1].at);
+            return sampleTimed(now);
+         }
+         if(state==null)return null;
+         at=now-duration;
+         return sample(now);
+      }
+
+      private function pushTimed(snap:Object,now:int):void {
+         var copy:Object={};for(var key:String in snap)copy[key]=snap[key];snap=copy;
+         var stamp:Number=Number(snap.sampleTime),last:Object=frames.length?frames[frames.length-1]:null;
+         var clockOffset:Number=now-stamp;
+         var dx:Number=last==null?0:Number(snap.x)-Number(last.snap.x);
+         var dy:Number=last==null?0:Number(snap.y)-Number(last.snap.y);
+         var port:Boolean=last!=null && last.snap.roomKey==snap.roomKey && last.snap.roomEpoch==snap.roomEpoch
+            && TeleportVisualsAfter.split(last.snap,snap,stamp)!=null;
+         if(last==null || now-arrivedAt>1000 || stamp-Number(last.at)>1000
+            || clockOffset<offset-Math.max(250,interval*2) || (!port && dx*dx+dy*dy>600*600)) {
+            frames=[];gaps=[];selected=null;state=null;preceding=null;firstSample=true;dropDelay=0;
+            playbackRate=1;clearCalibration();
+            offset=clockOffset;cursor=stamp-(immediateStart?0:delay());sampledAt=now;
+         } else {
+            // Host world broadcasts can repeat an unchanged peer snapshot.
+            // They must not restart either movement or the animation clock.
+            if(stamp<Number(last.at))return;
+            if(stamp==Number(last.at)) {last.snap=snap;return;}
+            // Initial room transfer can deliver an old frame first. Calibrate
+            // from fresher arrivals instead of retaining that startup delay.
+            var previousOffset:Number=offset;
+            offset=Math.min(offset,clockOffset);
+            // A newborn drop may receive several native positions in one
+            // socket callback. Seeking its cursor here discards the entire
+            // short arc and leaves it motionless until the next packet batch.
+            var correction:Number=previousOffset-offset;
+            if(actorCalibration()) {
+               // A teleport or room identity boundary ends the old recovery.
+               if(port || last.snap.roomKey!=snap.roomKey || last.snap.roomEpoch!=snap.roomEpoch)
+                  clearCalibration();
+               else calibrationDebt+=correction;
+            } else if(!immediateStart && correction>Math.max(100,interval*2))cursor+=correction;
+            if(immediateStart)dropDelay=Math.min(500,Math.max(dropDelay,(now-arrivedAt)*1.25));
+            gaps.push(stamp-Number(last.at));if(gaps.length>8)gaps.shift();
+         }
+         arrivedAt=now;frames.push({at:stamp,snap:snap});
+         if(frames.length>32)preceding=frames.shift();
+      }
+
+      private function delay():Number {
+         var value:Number=bufferLimit>0?interval*1.5:Math.max(100,interval*1.5);
+         for each(var gap:Number in gaps)value=Math.max(value,gap*1.25);
+         // Automatic falling arcs can absorb a slow delivery burst. The
+         // delay follows observed traffic, capped at half a second; regular
+         // 20 Hz drops retain their usual 100 ms target and never extrapolate.
+         if(immediateStart)return Math.min(500,Math.max(value,dropDelay));
+         return Math.min(bufferLimit>0?bufferLimit:Math.max(250,interval*3),value);
+      }
+
+      private function sampleTimed(now:int):Object {
+         // Retain the first received arc instead of consuming a coalesced batch.
+         if(firstSample && immediateStart)dropDelay=Math.min(500,Math.max(dropDelay,Number(frames[frames.length-1].at)-Number(frames[0].at)));
+         firstSample=false;
+         var elapsed:Number=Math.max(0,now-sampledAt);sampledAt=Math.max(sampledAt,now);
+         var wanted:Number=now-offset-delay(),next:Number=cursor+elapsed;
+         // Adjust buffer depth by slightly changing playback speed, never by
+         // rewinding the avatar when a slower packet interval is observed.
+         var beforeCursor:Number=cursor;
+         if(rateHeld()) {
+            playbackRate=1;calibrationRate=1;calibrating=false;cursor=next;
+         }
+         else if(enemyRecovery) {
+            // A stalled receive buffer must not leave enemies several frames
+            // behind for seconds. Recover by gently changing speed, not by
+            // seeking past animation frames. Finite native effects above keep
+            // their exact playback rate. Other stream policies are unchanged.
+            var desiredRate:Number=1+Math.max(-.1,Math.min(.5,(wanted-next)/Math.max(1,elapsed)));
+            playbackRate+=Math.max(-elapsed*.003,Math.min(elapsed*.003,desiredRate-playbackRate));
+            cursor+=elapsed*playbackRate;
+         } else if(actorCalibration()) {
+            var ordinary:Number=next+Math.max(-elapsed*.1,Math.min(elapsed*.1,wanted-next));
+            // Only real elapsed time may retire debt or change the recovery
+            // speed. Repeated RENDER/sample calls at one timestamp stay inert.
+            if(elapsed>0)calibrationDebt=Math.min(calibrationDebt,Math.max(0,wanted-next));
+            if(!calibrating && calibrationDebt>Math.max(100,interval*2)) {
+               calibrating=true;
+            }
+            if(calibrating && elapsed>0) {
+               var ordinaryRate:Number=(ordinary-beforeCursor)/elapsed;
+               var desiredCalibrationRate:Number=calibrationDebt>0
+                  ?Math.max(ordinaryRate,1+Math.min(.5,calibrationDebt/200)):ordinaryRate;
+               var previousRate:Number=calibrationRate;
+               calibrationRate+=Math.max(-elapsed*.003,Math.min(elapsed*.003,desiredCalibrationRate-calibrationRate));
+               // Integrate a continuous speed ramp, bounded to 0.9--1.5x.
+               cursor+=elapsed*(previousRate+calibrationRate)*.5;
+               if(calibrationDebt==0 && calibrationRate==ordinaryRate)calibrating=false;
+            } else {
+               cursor=ordinary;
+               if(elapsed>0)calibrationRate=(ordinary-beforeCursor)/elapsed;
+            }
+         } else cursor=next+Math.max(-elapsed*.1,Math.min(elapsed*.1,wanted-next));
+         var latest:Object=frames[frames.length-1];
+         cursor=Math.min(cursor,Number(latest.at));
+         if(actorCalibration() && elapsed>0)
+            calibrationDebt=Math.max(0,calibrationDebt-Math.max(0,cursor-beforeCursor-elapsed));
+         while(frames.length>2 && Number(frames[1].at)<=cursor)preceding=frames.shift();
+         var a:Object=frames[0],b:Object=frames.length>1?frames[1]:a;
+         if(cursor>=Number(b.at))a=b;
+         var crossing:Object=TeleportVisualsAfter.split(a.snap,b.snap,cursor);
+         var chosen:Object=crossing==null?a.snap:crossing.snapshot;
+         if(selected!==chosen) {
+            selected=chosen;state={};for(var key:String in selected)state[key]=selected[key];
+         }
+         if(crossing!=null) {
+            state.x=crossing.x;state.y=crossing.y;
+            // Native teleport changes world position immediately. Weapon and
+            // body poses come from the matching side of that discontinuity.
+            state.weapons=chosen.weapons;
+            state.bodyPose=chosen.visual==null?null:chosen.visual.pose;
+            return state;
+         }
+         var span:Number=Number(b.at)-Number(a.at);
+         var t:Number=span>0?Math.max(0,Math.min(1,(cursor-Number(a.at))/span)):0;
+         for each(key in FIELDS) {
+            var first:Number=Number(a.snap[key]),last:Number=Number(b.snap[key]);
+            if(isFinite(first) && isFinite(last))state[key]=interval<=50 && span>0
+               ? curve(key,a,b,t,span) : first+(last-first)*t;
+         }
+         if(a.snap.weapons is Array && b.snap.weapons is Array)
+            state.weapons=blendWeapons(a.snap.weapons as Array,b.snap.weapons as Array,t);
+         state.bodyPose=blendBodyPose(a.snap.visual,b.snap.visual,t,span);
+         return state;
+      }
+
+      /** Blit bodies use the same received timeline as position and aim. A
+       * second local Animation.step clock can run ahead and rewind on receipt. */
+      private static function blendBodyPose(a:Object,b:Object,t:Number,span:Number):Object {
+         if(a==null||a.pose==null||a.pose.blit==null||a.pose.blit.length==null)return null;
+         if(b==null||b.pose==null||b.pose.blit==null||a.anim!=b.anim)return a.pose;
+         var first:Object=a.pose.blit,last:Object=b.pose.blit;
+         if(first.st||first.stab||last.stab||first.length!=last.length)return a.pose;
+         var delta:Number=Number(last.f)-Number(first.f),period:Number=Number(first.first)+Number(first.length)-Number(first.ret);
+         if(delta<0) {
+            if(!first.loop||period<=0)return a.pose;
+            delta+=period;
+            // Same-label explicit restarts are discontinuities, not an entire
+            // loop played in one short packet interval.
+            if(delta>Math.max(4,span*.06*Math.max(1,Math.abs(Number(first.df)))))return a.pose;
+         }
+         var pose:Object={},blit:Object={};
+         for(var key:String in a.pose)pose[key]=a.pose[key];
+         for(key in first)blit[key]=first[key];
+         blit.f=Number(first.f)+delta*t;
+         if(first.loop&&period>0&&blit.f>=Number(first.first)+Number(first.length))blit.f-=period;
+         pose.blit=blit;return pose;
+      }
+
+      // COMPONENT-ONLY ADAPTER; removed before exact source comparison.
+      public static function componentBlend(first:Array,last:Array,t:Number):Array {
+         return blendWeapons(first,last,t);
+      }
+
+      private static function blendWeapons(first:Array,last:Array,t:Number):Array {
+         var blended:Array=WeaponDisplay.interpolate(first,last,t);
+         for(var i:int=0;i<blended.length;i++) {
+            var a:Object=blended[i];
+            if(a.display!=null)continue;
+            var copy:Object={};for(var key:String in a)copy[key]=a[key];
+            for each(var b:Object in last)if(a.slot==b.slot&&a.id==b.id&&a.variant==b.variant&&a.stream==b.stream) {
+               var angle:Number=Number(b.rot)-Number(a.rot);
+               while(angle>Math.PI)angle-=Math.PI*2;while(angle<-Math.PI)angle+=Math.PI*2;
+               copy.ox=Number(a.ox)+(Number(b.ox)-Number(a.ox))*t;
+               copy.oy=Number(a.oy)+(Number(b.oy)-Number(a.oy))*t;copy.rot=Number(a.rot)+angle*t;break;
+            }
+            blended[i]=copy;
+         }
+         return blended;
+      }
+
+      /** Shape-preserving cubic interpolation makes velocity continuous across
+       * high-rate samples. It stays within the two received endpoints, stops
+       * at real direction changes, and adds no prediction or display delay. */
+      private function curve(key:String,a:Object,b:Object,t:Number,h:Number):Number {
+         var first:Number=Number(a.snap[key]),last:Number=Number(b.snap[key]);
+         if(curveA!==a || curveB!==b) {
+            curveA=a;curveB=b;
+            var following:Object=frames.length>2?frames[2]:null;
+            for(var i:int=0;i<FIELDS.length;i++) {
+               var field:String=FIELDS[i],p:Number=Number(a.snap[field]),q:Number=Number(b.snap[field]);
+               var slope:Number=(q-p)/h,left:Number=slope,right:Number=slope;
+               if(preceding!=null && Number(preceding.at)<Number(a.at) && isFinite(Number(preceding.snap[field]))) {
+                  var hp:Number=Number(a.at)-Number(preceding.at);
+                  left=tangent((p-Number(preceding.snap[field]))/hp,slope,hp,h);
+               }
+               if(following!=null && Number(following.at)>Number(b.at) && isFinite(Number(following.snap[field]))) {
+                  var hn:Number=Number(following.at)-Number(b.at);
+                  right=tangent(slope,(Number(following.snap[field])-q)/hn,h,hn);
+               }
+               curveLeft[i]=left;curveRight[i]=right;
+            }
+         }
+         var index:int=FIELDS.indexOf(key);
+         var square:Number=t*t,cube:Number=square*t;
+         var value:Number=(2*cube-3*square+1)*first+(cube-2*square+t)*h*curveLeft[index]
+            +(-2*cube+3*square)*last+(cube-square)*h*curveRight[index];
+         return Math.max(Math.min(first,last),Math.min(Math.max(first,last),value));
+      }
+      private static function tangent(a:Number,b:Number,ha:Number,hb:Number):Number {
+         if(a*b<=0)return 0;
+         var wa:Number=2*hb+ha,wb:Number=hb+2*ha;
+         return (wa+wb)/(wa/a+wb/b);
+      }
+   }
+}

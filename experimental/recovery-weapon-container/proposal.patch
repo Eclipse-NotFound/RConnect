@@ -1,0 +1,29 @@
+--- recovery-22/src/rconnect/game/RemoteMotion.as
++++ recovery-weapon-container/src/rconnect/game/RemoteMotion.as
+@@ -278,9 +278,10 @@
+       }
+ 
+       private static function blendWeapons(first:Array,last:Array,t:Number):Array {
+-         var blended:Array=WeaponDisplay.interpolate(first,last,t),out:Array=[];
+-         for each(var a:Object in blended) {
+-            if(a.display!=null){out.push(a);continue;}
++         var blended:Array=WeaponDisplay.interpolate(first,last,t);
++         for(var i:int=0;i<blended.length;i++) {
++            var a:Object=blended[i];
++            if(a.display!=null)continue;
+             var copy:Object={};for(var key:String in a)copy[key]=a[key];
+             for each(var b:Object in last)if(a.slot==b.slot&&a.id==b.id&&a.variant==b.variant&&a.stream==b.stream) {
+                var angle:Number=Number(b.rot)-Number(a.rot);
+@@ -288,9 +289,9 @@
+                copy.ox=Number(a.ox)+(Number(b.ox)-Number(a.ox))*t;
+                copy.oy=Number(a.oy)+(Number(b.oy)-Number(a.oy))*t;copy.rot=Number(a.rot)+angle*t;break;
+             }
+-            out.push(copy);
+-         }
+-         return out;
++            blended[i]=copy;
++         }
++         return blended;
+       }
+ 
+       /** Shape-preserving cubic interpolation makes velocity continuous across

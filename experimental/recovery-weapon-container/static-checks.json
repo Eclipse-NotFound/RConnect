@@ -1,0 +1,84 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "passed": true,
+      "label": "src/rconnect/game/RemoteMotion.as exact derived bytes"
+    },
+    {
+      "passed": true,
+      "label": "components/rconnect/game/WeaponDisplay.as exact derived bytes"
+    },
+    {
+      "passed": true,
+      "label": "components/rconnect/game/RemoteMotionBefore.as exact derived bytes"
+    },
+    {
+      "passed": true,
+      "label": "components/rconnect/game/TeleportVisualsBefore.as exact derived bytes"
+    },
+    {
+      "passed": true,
+      "label": "components/rconnect/game/RemoteMotionAfter.as exact derived bytes"
+    },
+    {
+      "passed": true,
+      "label": "components/rconnect/game/TeleportVisualsAfter.as exact derived bytes"
+    },
+    {
+      "passed": true,
+      "label": "candidate reverses to accurate 22 byte for byte; only container block changes"
+    },
+    {
+      "passed": true,
+      "label": "Before full class after adapter/name reversal"
+    },
+    {
+      "passed": true,
+      "label": "After full class after adapter/name reversal"
+    },
+    {
+      "passed": true,
+      "label": "one production call site"
+    },
+    {
+      "passed": true,
+      "label": "production caller excludes null and non-Array operands"
+    },
+    {
+      "passed": true,
+      "label": "valid production operands always get a new result Array"
+    },
+    {
+      "passed": true,
+      "label": "interpolate produces dense ordered own indices, without exposing result to source"
+    },
+    {
+      "passed": true,
+      "label": "no infinite angle fixture can enter unchanged wrapping while loop"
+    },
+    {
+      "passed": true,
+      "label": "component expected count agrees with recipe"
+    },
+    {
+      "passed": true,
+      "label": "assertion sites match fixed 10 + 10 + 12 + 12 + (4x4+4) + 6 plan"
+    },
+    {
+      "passed": true,
+      "label": "bounded loops produce exactly 70 planned runtime assertions"
+    },
+    {
+      "passed": true,
+      "label": "only redundant second container is removed, not compatibility copies"
+    },
+    {
+      "passed": true,
+      "label": "one sparse production override"
+    }
+  ],
+  "compiled": false,
+  "air_started": false,
+  "component_expected": 70
+}
