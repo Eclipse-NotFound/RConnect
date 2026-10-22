@@ -1,0 +1,35 @@
+--- frozen-tail-native-runner
++++ native-cpu-observed-runner
+@@ -188,6 +188,8 @@
+             probe.setsockopt(socket.SOL_SOCKET,socket.SO_EXCLUSIVEADDRUSE,1)
+         probe.bind(('0.0.0.0',args.port)); port=probe.getsockname()[1]
+     procs=[]; stdout_files=[]; artifacts=[]; inputs={}
++    from process_times import start_owned,stop_all,save_all
++    cpu_traces=[]
+     # Snapshot all shared inputs once before either process starts. Other mod
+     # tasks may deploy while this pair is running.
+     # Preserve native music playback too. A missing-Music diagnostic captured
+@@ -356,6 +358,7 @@
+                        cwd=folder,stdout=stdout,stderr=subprocess.STDOUT,creationflags=subprocess.CREATE_NO_WINDOW)
+             procs.append(proc)
+             record.child(proc.pid)
++            cpu_traces.append(start_owned(proc,role))
+             if args.responsive:
+                 policy=subprocess.run(['powershell.exe','-NoLogo','-NoProfile','-File',str(folder/'tools/keep_test_responsive.ps1'),
+                     '-OwnedProcessId',str(proc.pid),'-Descriptor',str(desc)],capture_output=True,text=True,check=True)
+@@ -399,6 +402,7 @@
+             time.sleep(2)
+         check_cancel_requested(output,'runtime finished')
+     finally:
++        cpu_results=stop_all(cpu_traces)
+         for p in procs:
+             if p.poll() is None:
+                 if args.private_desktop:p.kill()
+@@ -410,6 +414,7 @@
+             if args.private_desktop:p.close()
+         for stdout in stdout_files:stdout.close()
+         record.child_stopped()
++        save_all(output/'process-cpu.json',cpu_results)
+         (output/'memory-timeline.json').write_text(json.dumps(dict(rows=memory_rows,
+             stopped_for_pressure=memory_stopped,stopped_for_overlap=isolation_stopped,minimum_commit_bytes=512*1024**2,
+             reader_sha256=memory_reader_hash),indent=2))

@@ -1,0 +1,24 @@
+{
+  "files": {
+    "process_times.py": "4fd155d05ccb4118c803b176fb179a75ab17cc7a3ecac86344ad8aeb6897b514",
+    "runtime_adapter.py": "960705150bbdcb40610cac5df74a20d43303986eb404842b7082078962dfa3ab",
+    "run.py": "ac8188dee173abe0e96aab609f050bebecf98a7434ab405c9059cb1a373f027e",
+    "check.py": "54dd981165f80e6ae4c88d1a12093fd4bf21084ecc0c7b2610f34d434c8e8213",
+    "README.md": "5adcdac2099207313e297a60bab3da5f7f3f6ebe870983b3d534e5c0c569f575",
+    "runner.patch": "8e841ce809224ef0ce3ed05d0dae031f115b732d9a1921d4c1da778a71b0fb6b"
+  },
+  "originals": {
+    "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/experimental/recovery-early-paint-tail-native/runtime-inputs.json": "ea8463a2ac080e0074b2738585f32472ee7050ba5d42d9e69920e579e678727b",
+    "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/experimental/recovery-early-paint-tail-native/inputs.json": "156e8ef3e23af97366916d423daf5794fde621ff870d0aaf362688e12e448cbc",
+    "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/experimental/recovery-early-paint-tail-native/runtime_adapter.py": "3f47f608a975faa3e023fd93bf3413d2a1b8fb6aae5577dcd15a08911137ba5e",
+    "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/experimental/recovery-early-paint-tail-native/run_native.py": "b7dc05f1e10cd388bcec328a161461abaa7c2b6c8c154c0e2fd90bf9b51bfb8b",
+    "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/experimental/recovery-early-revisit-frozen-rv/native_runner.py": "d311e5f5104095492949057184725a789a80c811bc9d9780383951281ac005f2",
+    "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/build/m52/recovery-early-paint-tail-driver-01/scene/EffectsDriver.swf": "e6b3f53e1047ff8829b8e3f054b4cff70690c3e27a7aecaa96da66d2475154fe",
+    "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/build/m52/recovery-early-paint-tail-driver-01/prepared.json": "2f699bffe6dfebf42e72a1fca0eda01c887ecde911ed4d19593d4005ffeb94f2",
+    "D:/Program Files/Steam/steamapps/common/Remains/mods/ModLoader/tools/air_test_process.py": "628ffed886db293abe0177fd42c61ac09482e04aee6aae358cf2e3d6deb0d1f9"
+  },
+  "diagnostic_only": true,
+  "performance_qualified": false,
+  "native_api_executed": false,
+  "air_started": false
+}
