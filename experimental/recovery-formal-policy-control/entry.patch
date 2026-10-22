@@ -1,0 +1,14 @@
+--- profile-settings/run.py
++++ formal-policy-control/run.py
+@@ -70,6 +70,11 @@
+         report['recipe_and_driver_unchanged'] = True
+     except (AssertionError, OSError, ValueError) as error:
+         report.update(passed=False, attribution_allowed=False, recipe_and_driver_unchanged=False, error=str(error))
++    policy = json.loads((out/'result.json').read_text(encoding='utf-8-sig')).get('process_policy', {}) if (out/'result.json').exists() else {}
++    report['process_policy_confirmed'] = policy.get('confirmed') is True
++    report['process_policy'] = policy
++    if not report['process_policy_confirmed']:
++        report.update(passed=False, attribution_allowed=False, policy_error='Actual startup readback not verified')
+     target = out/'fixture-audit.json'
+     assert not target.exists()
+     save(target, report)

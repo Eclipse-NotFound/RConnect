@@ -1,0 +1,22 @@
+[
+  {
+    "before": "from sampler import M52, PROFILE, frozen_sources, verify_sampler, sha, save, write_diagnostic",
+    "after": "from probe import M52, PROFILE, frozen_sources, verify_probe, sha, save, write_diagnostic"
+  },
+  {
+    "before": "recovery-current-profile-sampler-drivers-01",
+    "after": "recovery-socket-batch-probe-drivers-01"
+  },
+  {
+    "before": "verify_sampler(drivers)",
+    "after": "verify_probe(drivers)"
+  },
+  {
+    "before": "profile-wrapper.stdout.log",
+    "after": "socket-wrapper.stdout.log"
+  },
+  {
+    "before": "profile-wrapper.stderr.log",
+    "after": "socket-wrapper.stderr.log"
+  }
+]

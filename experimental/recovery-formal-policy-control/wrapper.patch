@@ -1,0 +1,82 @@
+--- profile-settings/run_motion_comparison.py
++++ formal-policy-control/run_motion_comparison.py
+@@ -15,6 +15,7 @@
+ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / 'tools/validation'))
+ from prepare_motion_transport import ROOT, sha
+ from run_security_terminals import installation, test_port
++from policy_evidence import expected_policy, audit_policy
+ 
+ GAME = ROOT.parents[1]
+ M52 = ROOT / 'build/m52'
+@@ -70,6 +71,8 @@
+     ap.add_argument('--join-vision-config-template', type=Path, required=True)
+     ap.add_argument('--registry-wait', type=int, default=300)
+     args = ap.parse_args()
++    policy_expected = expected_policy()
++    reference_policy = None
+     candidate, drivers, out = [(ROOT / p).resolve() for p in (args.candidate, args.drivers, args.output)]
+     assert candidate.parent == drivers.parent == out.parent == M52 and not out.exists()
+     vision_sources = {role: (ROOT / getattr(args, role+'_vision_config_template')).resolve()
+@@ -98,6 +101,14 @@
+         assert previous['installation'] == before, 'Installation changed between controls'
+         assert previous.get('vision_config_templates') == vision_hashes, 'RV templates differ from reference'
+         assert previous.get('wrapper_sha256') == sha(Path(__file__)), 'Profile wrapper differs from reference'
++        previous_result = read(reference/'result.json')
++        previous_folder = ROOT/'build/cooperation'/str(previous_result.get('run'))
++        assert previous_folder.resolve().parent == (ROOT/'build/cooperation').resolve()
++        reference_policy = audit_policy(previous_folder, read(previous_folder/'run.json'),
++            read(previous_folder/'input.json'), policy_expected, reference/'process-policy-source',
++            reference/'runner-source'/runner.name)
++        assert previous_result.get('process_policy_confirmed') is True and reference_policy['confirmed'], \
++            'Reference actual startup readback not verified'
+         assert previous.get('require_exclusive_air') is True, 'Start a new baseline with overlap detection enabled'
+         assert previous['runner_sha256']==runner_digest and previous['air_inventory_sha256']==helper_digest, \
+             'Runner or overlap detector changed between controls'
+@@ -123,11 +134,18 @@
+     for source in (runner, helper):
+         shutil.copyfile(source, evidence/source.name)
+     assert sha(evidence/runner.name)==runner_digest and sha(evidence/helper.name)==helper_digest
++    policy_sources = out/'process-policy-source'
++    policy_sources.mkdir()
++    for name, expected_digest in policy_expected.items():
++        source = ROOT/'tools'/name
++        target = policy_sources/name
++        shutil.copyfile(source, target)
++        assert sha(source) == sha(target) == expected_digest, 'Formal policy helper changed before launch'
+     intent = dict(candidate=str(candidate), candidate_sha256=digest, version=cm['version'],
+                   driver_manifest=sha(drivers/'prepared.json'), case=args.case, installation=before,
+                   reference=str(reference) if reference else None, runner_sha256=runner_digest,
+                   require_exclusive_air=True, air_inventory_sha256=helper_digest,
+-                  wrapper_sha256=sha(Path(__file__)),
++                  wrapper_sha256=sha(Path(__file__)), process_policy_expected=policy_expected,
+                   vision_config_templates=vision_hashes,
+                   vision_template_sources={role: str(path) for role, path in vision_sources.items()})
+     save(out/'intent.json', intent)
+@@ -141,7 +159,7 @@
+     command = [sys.executable, '-B', '-X', 'utf8', str(runner), '--candidate', str(binary),
+         '--effects', '--effects-driver', str(binding), '--all-mods', '--land', land,
+         '--seconds', str(seconds), '--expected-version', cm['version'], '--port', str(test_port()),
+-        '--private-desktop', '--defer-visible', '--wait-host-world', '--require-exclusive-air',
++        '--private-desktop', '--defer-visible', '--wait-host-world', '--require-exclusive-air', '--responsive',
+         '--registry-wait', str(args.registry_wait),
+         '--host-vision-config-template', str(vision_copies['host']),
+         '--join-vision-config-template', str(vision_copies['join'])]
+@@ -154,6 +172,7 @@
+         air_inventory_unchanged=helper_digest==sha(helper), exclusive_air_confirmed=False,
+         invalid_reason='foreign AIR before start' if 'Other AIR processes exist; timing run not started' in raw else None,
+         passed=False, performance_qualified=False, full_release_qualified=False,
++        process_policy_confirmed=False, attribution_allowed=False, reference_process_policy=reference_policy,
+         vision_config_templates=vision_hashes, vision_templates_confirmed=False,
+         vision_templates_unchanged=all(sha(vision_sources[r]) == sha(vision_copies[r]) == vision_hashes[r]
+                                       for r in ('host', 'join')))
+@@ -194,6 +213,10 @@
+             and result['vision_templates_unchanged'] and result['vision_templates_confirmed'] \
+             and result['same_runtime_as_reference'] and all(r['done'] and r['version'] and r['checks']>0 and not r['errors']
+                                                           for r in result['roles'].values())
++        result['process_policy'] = audit_policy(folder, run, run_input, policy_expected, policy_sources, evidence/runner.name)
++        result['process_policy_confirmed'] = result['process_policy']['confirmed']
++        result['passed'] = bool(result['passed'] and result['process_policy_confirmed'])
++        # Scene/comparison attribution remains the original outer fixture audit's job.
+     save(out/'result.json', result)
+     print(json.dumps({k:v for k,v in result.items() if k not in ('runtime_signature','memory')}, ensure_ascii=False), flush=True)
+     raise SystemExit(0 if result['passed'] else 1)

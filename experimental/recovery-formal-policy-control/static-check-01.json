@@ -1,0 +1,9 @@
+{
+  "assertions": 43,
+  "passed": 43,
+  "failed": 0,
+  "air_started": false,
+  "runtime_qualified": false,
+  "superseded": true,
+  "missing_coverage": "Post-run helper copies are normally deleted; initial static cases did not exercise auditor after cleanup."
+}

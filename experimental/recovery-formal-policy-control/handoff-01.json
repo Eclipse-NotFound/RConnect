@@ -1,0 +1,29 @@
+{
+  "kind": "frozen-formal-launch-policy-density-control",
+  "air_started": false,
+  "compiled": false,
+  "runtime_qualified": false,
+  "performance_qualified": false,
+  "original_failures_preserved": true,
+  "original_tools_unchanged": true,
+  "driver": "build/m52/recovery-density-corridor-drivers-03",
+  "driver_manifest_sha256": "5a8dbb9395c8dba8b6e980c49b112c6df3ae2e19e2f4950769d29756f8e1735c",
+  "only_launch_argument_change": "--responsive",
+  "wrapper_exact_edit_sites": 6,
+  "entry_exact_edit_sites": 1,
+  "reference_same_wrapper_required": true,
+  "files": {
+    "check.py": "f11e36aea1b16fd11f0d6cf83a7f341711e726d2791d81467d9f68feb84e4f38",
+    "configs/host-RealisticVision_config.txt": "24a0162f565dfa9a04e42bd64ca6fb688d556d50d99a528dbfa703d680eaba0c",
+    "configs/join-RealisticVision_config.txt": "f3c7dfe712a836188d712f70b7d30fd83b8bb70435de28757196b3f926bf23f8",
+    "entry-edits.json": "740e71f5e458a9d49474a99b245ca7ecc7f6e4fefe52bef1c85390b2ae109356",
+    "entry.patch": "d390afa6cb2a832b6bc5d9bf19decbcb911b483eb81e5d92e3a07746627b41e4",
+    "inputs.json": "5c10de299bb6a6a9de59855b35f70202b15f8fa4c25a51771bee34dedac412b2",
+    "policy_evidence.py": "647707d5045b2a51051760eea830228375af646f1b693b4884f38748db6f8d86",
+    "README.md": "cc4724c50f8afb02f9358827371757a07e7ea03b355c696ab7d4f21848476551",
+    "run.py": "fe97ee6aade8f2368ecd8bcdbc5ee23c60e0bba482630a032a20012e085dfe71",
+    "run_motion_comparison.py": "2e3864c2f74c0b59861b6a5e579e044427e08585876ac533452e8bce1cfd60ec",
+    "wrapper-edits.json": "0fb727c2676de826e26f2b6278017eb9a8b9da4893c445a16f47adeb97514c58",
+    "wrapper.patch": "63eb0dcb3948cd4295de5c8a7c5dd1fd3cfc413529b9762fac030115682da6af"
+  }
+}

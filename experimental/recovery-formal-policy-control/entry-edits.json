@@ -1,0 +1,6 @@
+[
+  {
+    "before": "    target = out/'fixture-audit.json'\n",
+    "after": "    policy = json.loads((out/'result.json').read_text(encoding='utf-8-sig')).get('process_policy', {}) if (out/'result.json').exists() else {}\n    report['process_policy_confirmed'] = policy.get('confirmed') is True\n    report['process_policy'] = policy\n    if not report['process_policy_confirmed']:\n        report.update(passed=False, attribution_allowed=False, policy_error='Actual startup readback not verified')\n    target = out/'fixture-audit.json'\n"
+  }
+]

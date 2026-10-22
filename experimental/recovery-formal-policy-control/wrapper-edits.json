@@ -1,0 +1,34 @@
+[
+  {
+    "before": "from run_security_terminals import installation, test_port\n",
+    "after": "from run_security_terminals import installation, test_port\nfrom policy_evidence import expected_policy, audit_policy\n"
+  },
+  {
+    "before": "    args = ap.parse_args()\n",
+    "after": "    args = ap.parse_args()\n    policy_expected = expected_policy()\n    reference_policy = None\n"
+  },
+  {
+    "before": "                  wrapper_sha256=sha(Path(__file__)),\n",
+    "after": "                  wrapper_sha256=sha(Path(__file__)), process_policy_expected=policy_expected,\n"
+  },
+  {
+    "before": "        assert previous.get('wrapper_sha256') == sha(Path(__file__)), 'Profile wrapper differs from reference'\n",
+    "after": "        assert previous.get('wrapper_sha256') == sha(Path(__file__)), 'Profile wrapper differs from reference'\n        previous_result = read(reference/'result.json')\n        previous_folder = ROOT/'build/cooperation'/str(previous_result.get('run'))\n        assert previous_folder.resolve().parent == (ROOT/'build/cooperation').resolve()\n        reference_policy = audit_policy(previous_folder, read(previous_folder/'run.json'),\n            read(previous_folder/'input.json'), policy_expected, reference/'process-policy-source',\n            reference/'runner-source'/runner.name)\n        assert previous_result.get('process_policy_confirmed') is True and reference_policy['confirmed'], \\\n            'Reference actual startup readback not verified'\n"
+  },
+  {
+    "before": "    assert sha(evidence/runner.name)==runner_digest and sha(evidence/helper.name)==helper_digest\n",
+    "after": "    assert sha(evidence/runner.name)==runner_digest and sha(evidence/helper.name)==helper_digest\n    policy_sources = out/'process-policy-source'\n    policy_sources.mkdir()\n    for name, expected_digest in policy_expected.items():\n        source = ROOT/'tools'/name\n        target = policy_sources/name\n        shutil.copyfile(source, target)\n        assert sha(source) == sha(target) == expected_digest, 'Formal policy helper changed before launch'\n"
+  },
+  {
+    "before": "        '--private-desktop', '--defer-visible', '--wait-host-world', '--require-exclusive-air',\n",
+    "after": "        '--private-desktop', '--defer-visible', '--wait-host-world', '--require-exclusive-air', '--responsive',\n"
+  },
+  {
+    "before": "        passed=False, performance_qualified=False, full_release_qualified=False,\n",
+    "after": "        passed=False, performance_qualified=False, full_release_qualified=False,\n        process_policy_confirmed=False, attribution_allowed=False, reference_process_policy=reference_policy,\n"
+  },
+  {
+    "before": "                                                          for r in result['roles'].values())\n",
+    "after": "                                                          for r in result['roles'].values())\n        result['process_policy'] = audit_policy(folder, run, run_input, policy_expected, policy_sources, evidence/runner.name)\n        result['process_policy_confirmed'] = result['process_policy']['confirmed']\n        result['passed'] = bool(result['passed'] and result['process_policy_confirmed'])\n        # Scene/comparison attribution remains the original outer fixture audit's job.\n"
+  }
+]

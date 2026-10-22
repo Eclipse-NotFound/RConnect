@@ -1,0 +1,14 @@
+{
+  "assertions": 50,
+  "passed": 50,
+  "failed": 0,
+  "check_kind": "pure-Python-counterexamples-and-static-source",
+  "air_started": false,
+  "compiled": false,
+  "runtime_qualified": false,
+  "driver03_original_verification": true,
+  "post_cleanup_auditor_counterexamples": true,
+  "original_strict_reference_guards_preserved": true,
+  "same_policy_reference_receipt_required": true,
+  "original_failures_preserved": true
+}

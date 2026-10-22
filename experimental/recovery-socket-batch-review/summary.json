@@ -1,0 +1,2250 @@
+{
+  "source": "build\\m52\\recovery-socket-batch-probe-20-01\\socket-batches.json",
+  "sha256": "8b10ab949a9d5beecc1ebb79828d16506a748e017dcf47e405373ce73fdb7f7f",
+  "run": "e53cb3730a",
+  "collected": true,
+  "performance_qualified": false,
+  "roles": {
+    "host": {
+      "valid": true,
+      "faults": 0,
+      "orphan_messages": 0,
+      "dropped_rows": 0,
+      "stages": [
+        {
+          "phase": 0,
+          "batches": 37,
+          "messages": 115,
+          "full": 0,
+          "fast": 0,
+          "multiple_full_batches": 0,
+          "batch_ms": 135,
+          "dispatch_ms": 104,
+          "max_batch_ms": 33,
+          "observer_ms": 7,
+          "full_stats": {
+            "packets": 0,
+            "units": 0,
+            "wallCells": 0,
+            "wallChars": 0
+          },
+          "fast_stats": {
+            "packets": 0,
+            "units": 0,
+            "wallCells": 0,
+            "wallChars": 0
+          },
+          "full_histogram": {
+            "0": 37
+          }
+        },
+        {
+          "phase": 1,
+          "batches": 29,
+          "messages": 108,
+          "full": 0,
+          "fast": 0,
+          "multiple_full_batches": 0,
+          "batch_ms": 89,
+          "dispatch_ms": 63,
+          "max_batch_ms": 20,
+          "observer_ms": 1,
+          "full_stats": {
+            "packets": 0,
+            "units": 0,
+            "wallCells": 0,
+            "wallChars": 0
+          },
+          "fast_stats": {
+            "packets": 0,
+            "units": 0,
+            "wallCells": 0,
+            "wallChars": 0
+          },
+          "full_histogram": {
+            "0": 29
+          }
+        },
+        {
+          "phase": 2,
+          "batches": 30,
+          "messages": 112,
+          "full": 0,
+          "fast": 0,
+          "multiple_full_batches": 0,
+          "batch_ms": 91,
+          "dispatch_ms": 66,
+          "max_batch_ms": 13,
+          "observer_ms": 3,
+          "full_stats": {
+            "packets": 0,
+            "units": 0,
+            "wallCells": 0,
+            "wallChars": 0
+          },
+          "fast_stats": {
+            "packets": 0,
+            "units": 0,
+            "wallCells": 0,
+            "wallChars": 0
+          },
+          "full_histogram": {
+            "0": 30
+          }
+        },
+        {
+          "phase": 3,
+          "batches": 31,
+          "messages": 111,
+          "full": 0,
+          "fast": 0,
+          "multiple_full_batches": 0,
+          "batch_ms": 89,
+          "dispatch_ms": 61,
+          "max_batch_ms": 12,
+          "observer_ms": 4,
+          "full_stats": {
+            "packets": 0,
+            "units": 0,
+            "wallCells": 0,
+            "wallChars": 0
+          },
+          "fast_stats": {
+            "packets": 0,
+            "units": 0,
+            "wallCells": 0,
+            "wallChars": 0
+          },
+          "full_histogram": {
+            "0": 31
+          }
+        },
+        {
+          "phase": 4,
+          "batches": 28,
+          "messages": 114,
+          "full": 0,
+          "fast": 0,
+          "multiple_full_batches": 0,
+          "batch_ms": 84,
+          "dispatch_ms": 58,
+          "max_batch_ms": 21,
+          "observer_ms": 1,
+          "full_stats": {
+            "packets": 0,
+            "units": 0,
+            "wallCells": 0,
+            "wallChars": 0
+          },
+          "fast_stats": {
+            "packets": 0,
+            "units": 0,
+            "wallCells": 0,
+            "wallChars": 0
+          },
+          "full_histogram": {
+            "0": 28
+          }
+        },
+        {
+          "phase": 5,
+          "batches": 36,
+          "messages": 114,
+          "full": 0,
+          "fast": 0,
+          "multiple_full_batches": 0,
+          "batch_ms": 95,
+          "dispatch_ms": 58,
+          "max_batch_ms": 12,
+          "observer_ms": 1,
+          "full_stats": {
+            "packets": 0,
+            "units": 0,
+            "wallCells": 0,
+            "wallChars": 0
+          },
+          "fast_stats": {
+            "packets": 0,
+            "units": 0,
+            "wallCells": 0,
+            "wallChars": 0
+          },
+          "full_histogram": {
+            "0": 36
+          }
+        },
+        {
+          "phase": 6,
+          "batches": 31,
+          "messages": 113,
+          "full": 0,
+          "fast": 0,
+          "multiple_full_batches": 0,
+          "batch_ms": 88,
+          "dispatch_ms": 59,
+          "max_batch_ms": 12,
+          "observer_ms": 2,
+          "full_stats": {
+            "packets": 0,
+            "units": 0,
+            "wallCells": 0,
+            "wallChars": 0
+          },
+          "fast_stats": {
+            "packets": 0,
+            "units": 0,
+            "wallCells": 0,
+            "wallChars": 0
+          },
+          "full_histogram": {
+            "0": 31
+          }
+        }
+      ],
+      "longest": [
+        {
+          "id": 531,
+          "phase": 0,
+          "frame": 53,
+          "duration": 33,
+          "messages": 4,
+          "full": 0,
+          "fast": 0,
+          "dispatch_ms": 32,
+          "metadata_ms": 1,
+          "rows": [
+            {
+              "type": "coop-pause",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "terrain",
+              "dispatchMs": 20,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "playerstate",
+              "dispatchMs": 1,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": 79517,
+              "sampleMax": 79517
+            },
+            {
+              "type": "exploration",
+              "dispatchMs": 11,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            }
+          ]
+        },
+        {
+          "id": 672,
+          "phase": 4,
+          "frame": 61,
+          "duration": 21,
+          "messages": 5,
+          "full": 0,
+          "fast": 0,
+          "dispatch_ms": 19,
+          "metadata_ms": 0,
+          "rows": [
+            {
+              "type": "playerstate",
+              "dispatchMs": 1,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": 116186,
+              "sampleMax": 116186
+            },
+            {
+              "type": "exploration",
+              "dispatchMs": 17,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "coop-pause",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "playerstate",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": 116308,
+              "sampleMax": 116308
+            },
+            {
+              "type": "playerstate",
+              "dispatchMs": 1,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": 116385,
+              "sampleMax": 116385
+            }
+          ]
+        },
+        {
+          "id": 581,
+          "phase": 1,
+          "frame": 54,
+          "duration": 20,
+          "messages": 4,
+          "full": 0,
+          "fast": 0,
+          "dispatch_ms": 18,
+          "metadata_ms": 0,
+          "rows": [
+            {
+              "type": "playerstate",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": 91710,
+              "sampleMax": 91710
+            },
+            {
+              "type": "exploration",
+              "dispatchMs": 18,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "coop-pause",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "playerstate",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": 91933,
+              "sampleMax": 91933
+            }
+          ]
+        },
+        {
+          "id": 526,
+          "phase": 0,
+          "frame": 2,
+          "duration": 16,
+          "messages": 7,
+          "full": 0,
+          "fast": 0,
+          "dispatch_ms": 14,
+          "metadata_ms": 0,
+          "rows": [
+            {
+              "type": "coop-pause",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "playerstate",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": 72611,
+              "sampleMax": 72611
+            },
+            {
+              "type": "coop-pause",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "terrain",
+              "dispatchMs": 14,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "playerstate",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": 73557,
+              "sampleMax": 73557
+            },
+            {
+              "type": "coop-pause",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "playerstate",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": 74590,
+              "sampleMax": 74590
+            }
+          ]
+        },
+        {
+          "id": 661,
+          "phase": 4,
+          "frame": 27,
+          "duration": 13,
+          "messages": 6,
+          "full": 0,
+          "fast": 0,
+          "dispatch_ms": 12,
+          "metadata_ms": 0,
+          "rows": [
+            {
+              "type": "coop-pause",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "playerstate",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": 113011,
+              "sampleMax": 113011
+            },
+            {
+              "type": "playerstate",
+              "dispatchMs": 1,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": 113089,
+              "sampleMax": 113089
+            },
+            {
+              "type": "playerstate",
+              "dispatchMs": 1,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": 113157,
+              "sampleMax": 113157
+            },
+            {
+              "type": "exploration",
+              "dispatchMs": 10,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "coop-pause",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            }
+          ]
+        },
+        {
+          "id": 544,
+          "phase": 0,
+          "frame": 88,
+          "duration": 13,
+          "messages": 3,
+          "full": 0,
+          "fast": 0,
+          "dispatch_ms": 10,
+          "metadata_ms": 0,
+          "rows": [
+            {
+              "type": "playerstate",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": 82553,
+              "sampleMax": 82553
+            },
+            {
+              "type": "exploration",
+              "dispatchMs": 10,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "playerstate",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": 82625,
+              "sampleMax": 82625
+            }
+          ]
+        },
+        {
+          "id": 615,
+          "phase": 2,
+          "frame": 67,
+          "duration": 13,
+          "messages": 5,
+          "full": 0,
+          "fast": 0,
+          "dispatch_ms": 11,
+          "metadata_ms": 0,
+          "rows": [
+            {
+              "type": "coop-pause",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "playerstate",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": 100842,
+              "sampleMax": 100842
+            },
+            {
+              "type": "exploration",
+              "dispatchMs": 11,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "playerstate",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": 100920,
+              "sampleMax": 100920
+            },
+            {
+              "type": "playerstate",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": 100989,
+              "sampleMax": 100989
+            }
+          ]
+        },
+        {
+          "id": 569,
+          "phase": 1,
+          "frame": 21,
+          "duration": 13,
+          "messages": 6,
+          "full": 0,
+          "fast": 0,
+          "dispatch_ms": 11,
+          "metadata_ms": 0,
+          "rows": [
+            {
+              "type": "playerstate",
+              "dispatchMs": 1,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": 88547,
+              "sampleMax": 88547
+            },
+            {
+              "type": "playerstate",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": 88620,
+              "sampleMax": 88620
+            },
+            {
+              "type": "coop-pause",
+              "dispatchMs": 1,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "playerstate",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": 88691,
+              "sampleMax": 88691
+            },
+            {
+              "type": "exploration",
+              "dispatchMs": 9,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "playerstate",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": 88807,
+              "sampleMax": 88807
+            }
+          ]
+        },
+        {
+          "id": 592,
+          "phase": 2,
+          "frame": 3,
+          "duration": 12,
+          "messages": 4,
+          "full": 0,
+          "fast": 0,
+          "dispatch_ms": 12,
+          "metadata_ms": 0,
+          "rows": [
+            {
+              "type": "playerstate",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": 94732,
+              "sampleMax": 94732
+            },
+            {
+              "type": "exploration",
+              "dispatchMs": 11,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "coop-pause",
+              "dispatchMs": 1,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "playerstate",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": 94926,
+              "sampleMax": 94926
+            }
+          ]
+        },
+        {
+          "id": 627,
+          "phase": 3,
+          "frame": 15,
+          "duration": 12,
+          "messages": 4,
+          "full": 0,
+          "fast": 0,
+          "dispatch_ms": 11,
+          "metadata_ms": 0,
+          "rows": [
+            {
+              "type": "playerstate",
+              "dispatchMs": 1,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": 103919,
+              "sampleMax": 103919
+            },
+            {
+              "type": "exploration",
+              "dispatchMs": 10,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "coop-pause",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "playerstate",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": 104132,
+              "sampleMax": 104132
+            }
+          ]
+        },
+        {
+          "id": 558,
+          "phase": 0,
+          "frame": 127,
+          "duration": 12,
+          "messages": 4,
+          "full": 0,
+          "fast": 0,
+          "dispatch_ms": 12,
+          "metadata_ms": 0,
+          "rows": [
+            {
+              "type": "playerstate",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": 85473,
+              "sampleMax": 85473
+            },
+            {
+              "type": "playerstate",
+              "dispatchMs": 2,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": 85542,
+              "sampleMax": 85542
+            },
+            {
+              "type": "playerstate",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": 85667,
+              "sampleMax": 85667
+            },
+            {
+              "type": "exploration",
+              "dispatchMs": 10,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            }
+          ]
+        },
+        {
+          "id": 682,
+          "phase": 5,
+          "frame": 6,
+          "duration": 12,
+          "messages": 5,
+          "full": 0,
+          "fast": 0,
+          "dispatch_ms": 10,
+          "metadata_ms": 0,
+          "rows": [
+            {
+              "type": "playerstate",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": 119089,
+              "sampleMax": 119089
+            },
+            {
+              "type": "coop-pause",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "playerstate",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": 119221,
+              "sampleMax": 119221
+            },
+            {
+              "type": "exploration",
+              "dispatchMs": 9,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "playerstate",
+              "dispatchMs": 1,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": 119296,
+              "sampleMax": 119296
+            }
+          ]
+        },
+        {
+          "id": 735,
+          "phase": 6,
+          "frame": 52,
+          "duration": 12,
+          "messages": 5,
+          "full": 0,
+          "fast": 0,
+          "dispatch_ms": 11,
+          "metadata_ms": 0,
+          "rows": [
+            {
+              "type": "coop-pause",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "playerstate",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": 131609,
+              "sampleMax": 131609
+            },
+            {
+              "type": "exploration",
+              "dispatchMs": 10,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "playerstate",
+              "dispatchMs": 1,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": 131691,
+              "sampleMax": 131691
+            },
+            {
+              "type": "playerstate",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": 131754,
+              "sampleMax": 131754
+            }
+          ]
+        },
+        {
+          "id": 746,
+          "phase": 6,
+          "frame": 84,
+          "duration": 12,
+          "messages": 4,
+          "full": 0,
+          "fast": 0,
+          "dispatch_ms": 10,
+          "metadata_ms": 0,
+          "rows": [
+            {
+              "type": "coop-pause",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "playerstate",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": 134677,
+              "sampleMax": 134677
+            },
+            {
+              "type": "exploration",
+              "dispatchMs": 10,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "playerstate",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": 134753,
+              "sampleMax": 134753
+            }
+          ]
+        },
+        {
+          "id": 602,
+          "phase": 2,
+          "frame": 32,
+          "duration": 11,
+          "messages": 5,
+          "full": 0,
+          "fast": 0,
+          "dispatch_ms": 10,
+          "metadata_ms": 0,
+          "rows": [
+            {
+              "type": "playerstate",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": 97523,
+              "sampleMax": 97523
+            },
+            {
+              "type": "playerstate",
+              "dispatchMs": 1,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": 97595,
+              "sampleMax": 97595
+            },
+            {
+              "type": "coop-pause",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "playerstate",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": 97735,
+              "sampleMax": 97735
+            },
+            {
+              "type": "exploration",
+              "dispatchMs": 9,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            }
+          ]
+        },
+        {
+          "id": 639,
+          "phase": 3,
+          "frame": 47,
+          "duration": 11,
+          "messages": 6,
+          "full": 0,
+          "fast": 0,
+          "dispatch_ms": 9,
+          "metadata_ms": 1,
+          "rows": [
+            {
+              "type": "playerstate",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": 106990,
+              "sampleMax": 106990
+            },
+            {
+              "type": "exploration",
+              "dispatchMs": 9,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "playerstate",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": 107073,
+              "sampleMax": 107073
+            },
+            {
+              "type": "playerstate",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": 107138,
+              "sampleMax": 107138
+            },
+            {
+              "type": "coop-pause",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "playerstate",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": 107262,
+              "sampleMax": 107262
+            }
+          ]
+        }
+      ],
+      "runtime_errors": [],
+      "original_failures": []
+    },
+    "join": {
+      "valid": true,
+      "faults": 0,
+      "orphan_messages": 0,
+      "dropped_rows": 0,
+      "stages": [
+        {
+          "phase": 0,
+          "batches": 131,
+          "messages": 324,
+          "full": 47,
+          "fast": 134,
+          "multiple_full_batches": 0,
+          "batch_ms": 2595,
+          "dispatch_ms": 1747,
+          "max_batch_ms": 68,
+          "observer_ms": 56,
+          "full_stats": {
+            "packets": 47,
+            "units": 3760,
+            "wallCells": 251,
+            "wallChars": 2028096
+          },
+          "fast_stats": {
+            "packets": 134,
+            "units": 10720,
+            "wallCells": 26,
+            "wallChars": 214080
+          },
+          "full_histogram": {
+            "0": 84,
+            "1": 47
+          }
+        },
+        {
+          "phase": 1,
+          "batches": 116,
+          "messages": 224,
+          "full": 33,
+          "fast": 86,
+          "multiple_full_batches": 0,
+          "batch_ms": 2316,
+          "dispatch_ms": 1637,
+          "max_batch_ms": 117,
+          "observer_ms": 29,
+          "full_stats": {
+            "packets": 33,
+            "units": 2640,
+            "wallCells": 176,
+            "wallChars": 1428644
+          },
+          "fast_stats": {
+            "packets": 86,
+            "units": 6880,
+            "wallCells": 107,
+            "wallChars": 896460
+          },
+          "full_histogram": {
+            "0": 83,
+            "1": 33
+          }
+        },
+        {
+          "phase": 2,
+          "batches": 116,
+          "messages": 215,
+          "full": 32,
+          "fast": 84,
+          "multiple_full_batches": 0,
+          "batch_ms": 2050,
+          "dispatch_ms": 1454,
+          "max_batch_ms": 101,
+          "observer_ms": 31,
+          "full_stats": {
+            "packets": 32,
+            "units": 2560,
+            "wallCells": 164,
+            "wallChars": 1344060
+          },
+          "fast_stats": {
+            "packets": 84,
+            "units": 6720,
+            "wallCells": 103,
+            "wallChars": 898176
+          },
+          "full_histogram": {
+            "0": 84,
+            "1": 32
+          }
+        },
+        {
+          "phase": 3,
+          "batches": 114,
+          "messages": 217,
+          "full": 31,
+          "fast": 85,
+          "multiple_full_batches": 0,
+          "batch_ms": 2183,
+          "dispatch_ms": 1486,
+          "max_batch_ms": 86,
+          "observer_ms": 27,
+          "full_stats": {
+            "packets": 31,
+            "units": 2480,
+            "wallCells": 159,
+            "wallChars": 1304976
+          },
+          "fast_stats": {
+            "packets": 85,
+            "units": 6800,
+            "wallCells": 107,
+            "wallChars": 936652
+          },
+          "full_histogram": {
+            "0": 83,
+            "1": 31
+          }
+        },
+        {
+          "phase": 4,
+          "batches": 115,
+          "messages": 217,
+          "full": 32,
+          "fast": 84,
+          "multiple_full_batches": 0,
+          "batch_ms": 2137,
+          "dispatch_ms": 1540,
+          "max_batch_ms": 114,
+          "observer_ms": 23,
+          "full_stats": {
+            "packets": 32,
+            "units": 2560,
+            "wallCells": 166,
+            "wallChars": 1360576
+          },
+          "fast_stats": {
+            "packets": 84,
+            "units": 6720,
+            "wallCells": 107,
+            "wallChars": 936844
+          },
+          "full_histogram": {
+            "0": 83,
+            "1": 32
+          }
+        },
+        {
+          "phase": 5,
+          "batches": 115,
+          "messages": 223,
+          "full": 32,
+          "fast": 88,
+          "multiple_full_batches": 0,
+          "batch_ms": 2167,
+          "dispatch_ms": 1475,
+          "max_batch_ms": 102,
+          "observer_ms": 31,
+          "full_stats": {
+            "packets": 32,
+            "units": 2560,
+            "wallCells": 164,
+            "wallChars": 1348788
+          },
+          "fast_stats": {
+            "packets": 88,
+            "units": 7040,
+            "wallCells": 106,
+            "wallChars": 927072
+          },
+          "full_histogram": {
+            "0": 83,
+            "1": 32
+          }
+        },
+        {
+          "phase": 6,
+          "batches": 116,
+          "messages": 220,
+          "full": 33,
+          "fast": 87,
+          "multiple_full_batches": 0,
+          "batch_ms": 2219,
+          "dispatch_ms": 1583,
+          "max_batch_ms": 100,
+          "observer_ms": 29,
+          "full_stats": {
+            "packets": 33,
+            "units": 2640,
+            "wallCells": 169,
+            "wallChars": 1386332
+          },
+          "fast_stats": {
+            "packets": 87,
+            "units": 6960,
+            "wallCells": 105,
+            "wallChars": 914168
+          },
+          "full_histogram": {
+            "0": 83,
+            "1": 33
+          }
+        }
+      ],
+      "longest": [
+        {
+          "id": 636,
+          "phase": 1,
+          "frame": 3,
+          "duration": 117,
+          "messages": 5,
+          "full": 0,
+          "fast": 3,
+          "dispatch_ms": 105,
+          "metadata_ms": 0,
+          "rows": [
+            {
+              "type": "worldstate",
+              "dispatchMs": 3,
+              "units": 80,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": 1292,
+              "sampleMin": 125262,
+              "sampleMax": 125262
+            },
+            {
+              "type": "player-mines",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "coop-pause",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "worldstate",
+              "dispatchMs": 2,
+              "units": 80,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": 1293,
+              "sampleMin": 125351,
+              "sampleMax": 125351
+            },
+            {
+              "type": "worldstate",
+              "dispatchMs": 100,
+              "units": 80,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": 1294,
+              "sampleMin": 125432,
+              "sampleMax": 125432
+            }
+          ]
+        },
+        {
+          "id": 1042,
+          "phase": 4,
+          "frame": 47,
+          "duration": 114,
+          "messages": 6,
+          "full": 1,
+          "fast": 2,
+          "dispatch_ms": 98,
+          "metadata_ms": 0,
+          "rows": [
+            {
+              "type": "unitsync",
+              "dispatchMs": 88,
+              "units": 80,
+              "wallCells": 6,
+              "wallChars": 47844,
+              "tick": 1590,
+              "sampleMin": 153745,
+              "sampleMax": 153745
+            },
+            {
+              "type": "player-mines",
+              "dispatchMs": 1,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "worldstate",
+              "dispatchMs": 2,
+              "units": 80,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": 1591,
+              "sampleMin": 153856,
+              "sampleMax": 153856
+            },
+            {
+              "type": "worldstate",
+              "dispatchMs": 7,
+              "units": 80,
+              "wallCells": 1,
+              "wallChars": 8928,
+              "tick": 1592,
+              "sampleMin": 153928,
+              "sampleMax": 153928
+            },
+            {
+              "type": "friendly-fire",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "player-mines",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            }
+          ]
+        },
+        {
+          "id": 1176,
+          "phase": 5,
+          "frame": 60,
+          "duration": 102,
+          "messages": 4,
+          "full": 1,
+          "fast": 0,
+          "dispatch_ms": 95,
+          "metadata_ms": 0,
+          "rows": [
+            {
+              "type": "unitsync",
+              "dispatchMs": 94,
+              "units": 80,
+              "wallCells": 5,
+              "wallChars": 41600,
+              "tick": 1692,
+              "sampleMin": 163341,
+              "sampleMax": 163341
+            },
+            {
+              "type": "friendly-fire",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "player-mines",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "coop-pause",
+              "dispatchMs": 1,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            }
+          ]
+        },
+        {
+          "id": 773,
+          "phase": 2,
+          "frame": 18,
+          "duration": 101,
+          "messages": 3,
+          "full": 1,
+          "fast": 0,
+          "dispatch_ms": 94,
+          "metadata_ms": 0,
+          "rows": [
+            {
+              "type": "unitsync",
+              "dispatchMs": 94,
+              "units": 80,
+              "wallCells": 5,
+              "wallChars": 41600,
+              "tick": 1393,
+              "sampleMin": 135038,
+              "sampleMax": 135038
+            },
+            {
+              "type": "player-mines",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "coop-pause",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            }
+          ]
+        },
+        {
+          "id": 1245,
+          "phase": 6,
+          "frame": 25,
+          "duration": 100,
+          "messages": 5,
+          "full": 1,
+          "fast": 1,
+          "dispatch_ms": 88,
+          "metadata_ms": 1,
+          "rows": [
+            {
+              "type": "unitsync",
+              "dispatchMs": 85,
+              "units": 80,
+              "wallCells": 5,
+              "wallChars": 39864,
+              "tick": 1741,
+              "sampleMin": 168007,
+              "sampleMax": 168007
+            },
+            {
+              "type": "friendly-fire",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "player-mines",
+              "dispatchMs": 1,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "coop-pause",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "worldstate",
+              "dispatchMs": 2,
+              "units": 80,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": 1742,
+              "sampleMin": 168113,
+              "sampleMax": 168113
+            }
+          ]
+        },
+        {
+          "id": 1108,
+          "phase": 5,
+          "frame": 12,
+          "duration": 92,
+          "messages": 3,
+          "full": 0,
+          "fast": 2,
+          "dispatch_ms": 15,
+          "metadata_ms": 1,
+          "rows": [
+            {
+              "type": "worldstate",
+              "dispatchMs": 7,
+              "units": 80,
+              "wallCells": 1,
+              "wallChars": 8640,
+              "tick": 1641,
+              "sampleMin": 158593,
+              "sampleMax": 158593
+            },
+            {
+              "type": "player-mines",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "worldstate",
+              "dispatchMs": 8,
+              "units": 80,
+              "wallCells": 1,
+              "wallChars": 8660,
+              "tick": 1642,
+              "sampleMin": 158670,
+              "sampleMax": 158670
+            }
+          ]
+        },
+        {
+          "id": 1311,
+          "phase": 6,
+          "frame": 73,
+          "duration": 91,
+          "messages": 3,
+          "full": 1,
+          "fast": 0,
+          "dispatch_ms": 81,
+          "metadata_ms": 1,
+          "rows": [
+            {
+              "type": "unitsync",
+              "dispatchMs": 81,
+              "units": 80,
+              "wallCells": 5,
+              "wallChars": 40316,
+              "tick": 1792,
+              "sampleMin": 172838,
+              "sampleMax": 172838
+            },
+            {
+              "type": "friendly-fire",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "player-mines",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            }
+          ]
+        },
+        {
+          "id": 910,
+          "phase": 3,
+          "frame": 34,
+          "duration": 86,
+          "messages": 2,
+          "full": 0,
+          "fast": 1,
+          "dispatch_ms": 15,
+          "metadata_ms": 0,
+          "rows": [
+            {
+              "type": "coop-pause",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "worldstate",
+              "dispatchMs": 15,
+              "units": 80,
+              "wallCells": 2,
+              "wallChars": 16916,
+              "tick": 1492,
+              "sampleMin": 144527,
+              "sampleMax": 144527
+            }
+          ]
+        },
+        {
+          "id": 704,
+          "phase": 1,
+          "frame": 51,
+          "duration": 82,
+          "messages": 1,
+          "full": 0,
+          "fast": 1,
+          "dispatch_ms": 9,
+          "metadata_ms": 0,
+          "rows": [
+            {
+              "type": "worldstate",
+              "dispatchMs": 9,
+              "units": 80,
+              "wallCells": 1,
+              "wallChars": 8648,
+              "tick": 1343,
+              "sampleMin": 130266,
+              "sampleMax": 130266
+            }
+          ]
+        },
+        {
+          "id": 976,
+          "phase": 3,
+          "frame": 80,
+          "duration": 78,
+          "messages": 1,
+          "full": 0,
+          "fast": 1,
+          "dispatch_ms": 75,
+          "metadata_ms": 0,
+          "rows": [
+            {
+              "type": "worldstate",
+              "dispatchMs": 75,
+              "units": 80,
+              "wallCells": 2,
+              "wallChars": 17004,
+              "tick": 1542,
+              "sampleMin": 149279,
+              "sampleMax": 149279
+            }
+          ]
+        },
+        {
+          "id": 529,
+          "phase": 0,
+          "frame": 0,
+          "duration": 68,
+          "messages": 5,
+          "full": 1,
+          "fast": 2,
+          "dispatch_ms": 48,
+          "metadata_ms": 0,
+          "rows": [
+            {
+              "type": "unitsync",
+              "dispatchMs": 40,
+              "units": 80,
+              "wallCells": 5,
+              "wallChars": 40852,
+              "tick": 1186,
+              "sampleMin": 116584,
+              "sampleMax": 116584
+            },
+            {
+              "type": "player-mines",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "worldstate",
+              "dispatchMs": 4,
+              "units": 80,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": 1187,
+              "sampleMin": 116678,
+              "sampleMax": 116678
+            },
+            {
+              "type": "coop-pause",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "worldstate",
+              "dispatchMs": 4,
+              "units": 80,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": 1188,
+              "sampleMin": 116789,
+              "sampleMax": 116789
+            }
+          ]
+        },
+        {
+          "id": 1083,
+          "phase": 4,
+          "frame": 76,
+          "duration": 63,
+          "messages": 4,
+          "full": 1,
+          "fast": 1,
+          "dispatch_ms": 41,
+          "metadata_ms": 1,
+          "rows": [
+            {
+              "type": "unitsync",
+              "dispatchMs": 34,
+              "units": 80,
+              "wallCells": 5,
+              "wallChars": 40428,
+              "tick": 1621,
+              "sampleMin": 156745,
+              "sampleMax": 156745
+            },
+            {
+              "type": "friendly-fire",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "player-mines",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "worldstate",
+              "dispatchMs": 7,
+              "units": 80,
+              "wallCells": 1,
+              "wallChars": 8476,
+              "tick": 1622,
+              "sampleMin": 156849,
+              "sampleMax": 156849
+            }
+          ]
+        },
+        {
+          "id": 527,
+          "phase": 0,
+          "frame": 0,
+          "duration": 62,
+          "messages": 6,
+          "full": 1,
+          "fast": 2,
+          "dispatch_ms": 45,
+          "metadata_ms": 1,
+          "rows": [
+            {
+              "type": "unitsync",
+              "dispatchMs": 39,
+              "units": 80,
+              "wallCells": 5,
+              "wallChars": 40472,
+              "tick": 1183,
+              "sampleMin": 116352,
+              "sampleMax": 116352
+            },
+            {
+              "type": "coop-pause",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "worldstate",
+              "dispatchMs": 3,
+              "units": 80,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": 1184,
+              "sampleMin": 116436,
+              "sampleMax": 116436
+            },
+            {
+              "type": "friendly-fire",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "player-mines",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "worldstate",
+              "dispatchMs": 3,
+              "units": 80,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": 1185,
+              "sampleMin": 116503,
+              "sampleMax": 116503
+            }
+          ]
+        },
+        {
+          "id": 522,
+          "phase": 0,
+          "frame": 0,
+          "duration": 59,
+          "messages": 5,
+          "full": 1,
+          "fast": 1,
+          "dispatch_ms": 45,
+          "metadata_ms": 0,
+          "rows": [
+            {
+              "type": "unitsync",
+              "dispatchMs": 35,
+              "units": 80,
+              "wallCells": 6,
+              "wallChars": 47380,
+              "tick": 1177,
+              "sampleMin": 115823,
+              "sampleMax": 115823
+            },
+            {
+              "type": "friendly-fire",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "player-mines",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "coop-pause",
+              "dispatchMs": 1,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "worldstate",
+              "dispatchMs": 9,
+              "units": 80,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": 1178,
+              "sampleMin": 115928,
+              "sampleMax": 115928
+            }
+          ]
+        },
+        {
+          "id": 531,
+          "phase": 0,
+          "frame": 0,
+          "duration": 57,
+          "messages": 6,
+          "full": 1,
+          "fast": 2,
+          "dispatch_ms": 37,
+          "metadata_ms": 6,
+          "rows": [
+            {
+              "type": "unitsync",
+              "dispatchMs": 27,
+              "units": 80,
+              "wallCells": 5,
+              "wallChars": 41600,
+              "tick": 1188,
+              "sampleMin": 116789,
+              "sampleMax": 116789
+            },
+            {
+              "type": "player-mines",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "worldstate",
+              "dispatchMs": 3,
+              "units": 80,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": 1189,
+              "sampleMin": 116893,
+              "sampleMax": 116893
+            },
+            {
+              "type": "worldstate",
+              "dispatchMs": 6,
+              "units": 80,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": 1190,
+              "sampleMin": 116957,
+              "sampleMax": 116957
+            },
+            {
+              "type": "friendly-fire",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "player-mines",
+              "dispatchMs": 1,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            }
+          ]
+        },
+        {
+          "id": 786,
+          "phase": 2,
+          "frame": 27,
+          "duration": 57,
+          "messages": 5,
+          "full": 1,
+          "fast": 1,
+          "dispatch_ms": 45,
+          "metadata_ms": 1,
+          "rows": [
+            {
+              "type": "unitsync",
+              "dispatchMs": 21,
+              "units": 80,
+              "wallCells": 6,
+              "wallChars": 47844,
+              "tick": 1401,
+              "sampleMin": 135893,
+              "sampleMax": 135893
+            },
+            {
+              "type": "exploration",
+              "dispatchMs": 12,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "player-mines",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "coop-pause",
+              "dispatchMs": 0,
+              "units": 0,
+              "wallCells": 0,
+              "wallChars": 0,
+              "tick": null,
+              "sampleMin": null,
+              "sampleMax": null
+            },
+            {
+              "type": "worldstate",
+              "dispatchMs": 12,
+              "units": 80,
+              "wallCells": 3,
+              "wallChars": 25800,
+              "tick": 1402,
+              "sampleMin": 135989,
+              "sampleMax": 135989
+            }
+          ]
+        }
+      ],
+      "runtime_errors": [],
+      "original_failures": [
+        "COOP FAIL network-state 80 enemies keep stage frames progressing",
+        "COOP FAIL network-state 80 enemies keep stage frames progressing",
+        "COOP FAIL network-state 80 enemies keep stage frames progressing",
+        "COOP FAIL network-state 80 enemies keep stage frames progressing",
+        "COOP FAIL network-state 80 enemies keep stage frames progressing"
+      ]
+    }
+  }
+}

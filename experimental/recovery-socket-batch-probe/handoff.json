@@ -1,0 +1,23 @@
+{
+  "kind": "external-socket-batch-probe-frozen",
+  "static_assertions": 78,
+  "compiled": false,
+  "air_started": false,
+  "performance_qualified": false,
+  "release_qualified": false,
+  "files": {
+    "analyze.py": "9e96e7459faa5486b10540192aa739a6326bb18059e91f57bef1ab4862b70718",
+    "check.py": "e4cca3211edbb6f4cdab0f72415838827b63c593b4dc43571d50360cfe40e50c",
+    "diagnostic.patch": "7f828fe3f42729467cdc36be1fc7013af691f722e1909e5a9200b0dc586ac8c9",
+    "generate.py": "a87dc8c5fb1496d35a7455dc96a7a8761b8540b0ca886e7123e69608f609d9b6",
+    "inputs.json": "9bd68fc5aefe8f28c8b2c13ea6769b25fc4fcf2af20175f9c5e8b820161961a0",
+    "probe.py": "96ca3ede072c205b180c497256981a85b1a542b98ac1b8f9879ae5e9ddf30197",
+    "README.md": "3793b2392f4655b3fb03245ec937f95a103604879dfcfb202647fc49890ca22a",
+    "run-edits.json": "2cac5c8fccbe5e04efb6b2f3e775db07a2226f99056ad5b4a53dfd97dec1f064",
+    "run.py": "a4e0e02fac941fcc2320f850a20a4b9b55783f4c02e78931eefa2a103b5d9c13",
+    "static-check.json": "d6a7e79a0f935a2fc2fcc9d5b6a60a3302b5671bf541952e2033fbdaa854cc39",
+    "tests/SocketBatchProbe.as": "a67ba6fd71b6a5133aeb635025b26b3c6b8da68863b6ba4f48109805a41aa155",
+    "tests/SocketBatchTestDoc.as": "32f21531e61d75804d6348196f8d788abdd27378632cf2014097d99707e6ab02",
+    "tests/SustainedDensityTestDoc.as": "12a39c8879962ec666b76c8b42c31f10a486da25ae2af4224c8bb6009f3112cf"
+  }
+}
