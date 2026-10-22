@@ -1,0 +1,47 @@
+--- recovery20/src/rconnect/net/WallCellCodec.as
++++ recovery21/src/rconnect/net/WallCellCodec.as
+@@ -11,6 +11,16 @@
+          65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,
+          97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,
+          48,49,50,51,52,53,54,55,56,57,43,47];
++      // Invalid ASCII entries remain -1; non-ASCII is rejected before lookup.
++      private static const REVERSE:Vector.<int> = new <int>[
++         -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
++         -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
++         -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,62,-1,-1,-1,63,
++         52,53,54,55,56,57,58,59,60,61,-1,-1,-1,-1,-1,-1,
++         -1,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,
++         15,16,17,18,19,20,21,22,23,24,25,-1,-1,-1,-1,-1,
++         -1,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,
++         41,42,43,44,45,46,47,48,49,50,51,-1,-1,-1,-1,-1];
+       private static const MAX_RAW:int=9602; // 2 + 1600*(2+4)
+       private static const MAX_COMPRESSED:int=10000; // includes conservative zlib overhead
+       private static const MAX_TEXT:int=13340;
+@@ -51,14 +61,21 @@
+          if(text.length==0 || text.length%4!=0)return null;
+          var bytes:ByteArray=new ByteArray();
+          for(var i:int=0;i<text.length;i+=4) {
+-            var a:int=DIGITS.indexOf(text.charAt(i)),b:int=DIGITS.indexOf(text.charAt(i+1));
+-            var c:int=DIGITS.indexOf(text.charAt(i+2)),d:int=DIGITS.indexOf(text.charAt(i+3));
+-            var padC:Boolean=text.charAt(i+2)=="=",padD:Boolean=text.charAt(i+3)=="=";
++            // Each UTF-16 code unit is checked before the bounded ASCII lookup.
++            // In particular, a non-ASCII character must not wrap into the table.
++            var ca:int=text.charCodeAt(i),cb:int=text.charCodeAt(i+1);
++            var cc:int=text.charCodeAt(i+2),cd:int=text.charCodeAt(i+3);
++            var a:int=ca<128?REVERSE[ca]:-1,b:int=cb<128?REVERSE[cb]:-1;
++            var c:int=cc<128?REVERSE[cc]:-1,d:int=cd<128?REVERSE[cd]:-1;
++            var padC:Boolean=cc==61,padD:Boolean=cd==61;
+             if(a<0 || b<0 || (c<0&&!padC) || (d<0&&!padD) || (padC&&!padD)
+                || ((padC||padD)&&i+4!=text.length) || (padC&&(b&15)!=0) || (padD&&!padC&&(c&3)!=0))return null;
+-            bytes.writeByte((a<<2)|(b>>4));
+-            if(!padC)bytes.writeByte((b<<4)|(c>>2));
+-            if(!padD)bytes.writeByte((c<<6)|d);
++            if(padC)bytes.writeByte((a<<2)|(b>>4));
++            else {
++               // Default big endian writes the same first two decoded bytes.
++               bytes.writeShort((a<<10)|(b<<4)|(c>>2));
++               if(!padD)bytes.writeByte((c<<6)|d);
++            }
+          }
+          if(bytes.length>MAX_COMPRESSED)return null;
+          // AIR's native inflate has no output-size argument. Encoded input is

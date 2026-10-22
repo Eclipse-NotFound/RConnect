@@ -1,0 +1,127 @@
+{
+  "directory": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-wall-decode-fast-component-01",
+  "assertions": 67,
+  "failed": 0,
+  "component_sha256": "c57507991c9d0258735b9df62bc101ed98445c408856f51ca881b9cc7be7909a",
+  "receipt_sha256": "440e6b8dae02e08488007ef8394735662a833147de1660356e57ceb18f6c4890",
+  "result_sha256": "fb123ee9ff6024fe3d8dc105bdeaf402b77ce56392fd51458bfadc8cf150604e",
+  "original_inputs_sha256": "f8568d879ea3095ef72d6e27c52a6d66dba9d848e5efbe869fffc6f5efb6706c",
+  "installation_unchanged": true,
+  "source_unchanged": true,
+  "full_production_classes_compared": true,
+  "abba_full_decode_ms": {
+    "ascii_and_word_write": {
+      "control": [
+        850,
+        864,
+        869,
+        867
+      ],
+      "candidate": [
+        733,
+        727,
+        751,
+        732
+      ]
+    },
+    "validated_W1_only": {
+      "control": [
+        877,
+        874,
+        878,
+        873
+      ],
+      "candidate": [
+        781,
+        767,
+        802,
+        794
+      ]
+    },
+    "combined": {
+      "control": [
+        880,
+        870,
+        845,
+        833
+      ],
+      "candidate": [
+        634,
+        665,
+        648,
+        631
+      ]
+    }
+  },
+  "native_game_test": false,
+  "performance_qualified": false,
+  "assertion_labels": [
+    "historical natural fixture is exactly 82 payloads/1276 observed decode misses",
+    "candidate reads every original natural payload without value/order change",
+    "new natural encoding preserves every offset/uint/envelope/version",
+    "all 82 natural 40x40 ARGB rasters compare pixel-exact",
+    "new and legacy cache hits return independent arrays after caller mutation",
+    "natural fixture arrays remain unchanged",
+    "exact historical 1276 observed order re-encodes without loss (not current encode frequency)",
+    "unchanged version returns same encoded cache object in both classes",
+    "real invalidation re-encodes changed values and revision",
+    "queued cells without v never inherit a stale packed cache",
+    "empty sparse cell is exactly represented",
+    "full 1600 pixels preserve transparent and maximum uint boundaries",
+    "cell coordinates and version stay outside pixel codec",
+    "malformed base64/padding/order/count/offset/trailing/size binary inputs are rejected before paint",
+    "legacy malformed numeric payload rejection remains unchanged",
+    "legacy unusual Number coercion and returned types remain unchanged",
+    "duplicate cell coordinates remain rejected",
+    "native map/bitmap/fractional coordinate bounds remain enforced",
+    "network maximum remains 64 cells",
+    "network maximum remains 48000 text characters",
+    "actual BitmapData/contact observation creates pending reports in both full classes",
+    "report semantic pixels and versions match despite different encoded bytes",
+    "unchanged real snapshots reuse encoded cache objects",
+    "pending local pixels protected while disjoint authoritative pixels merge",
+    "wrong ACK sequence cannot release prediction protection",
+    "valid ACK releases prediction and permits same authoritative revision after skip",
+    "changed authoritative pixel invalidates only that encoded revision",
+    "old revisions cannot overwrite pixels after ACK",
+    "invalid second cell rejects complete batch before first pixel paint",
+    "destroyed walls discard old coatings without filling removed pixels",
+    "side 0 read-only updates preserve unsent batch and 64-cell limit",
+    "side 0 actual sent cursor drains remaining cells without loss",
+    "side 0 cumulative snapshot rotation covers all 70 cells",
+    "side 0 ownership change reopens transport cursors without dropping paint",
+    "side 0 checkpoint restore/redraw preserves every actual pixel",
+    "side 1 read-only updates preserve unsent batch and 64-cell limit",
+    "side 1 actual sent cursor drains remaining cells without loss",
+    "side 1 cumulative snapshot rotation covers all 70 cells",
+    "side 1 ownership change reopens transport cursors without dropping paint",
+    "side 1 checkpoint restore/redraw preserves every actual pixel",
+    "side 0 dense batch splits respect 48k and preserve all six cells",
+    "side 0 accepted wire batch has idempotent exact ACK receipt",
+    "side 0 invalid sequence cannot alter settled receipt",
+    "side 1 dense batch splits respect 48k and preserve all six cells",
+    "side 1 accepted wire batch has idempotent exact ACK receipt",
+    "side 1 invalid sequence cannot alter settled receipt",
+    "96 deterministic empty through full cells decode identically in all four complete variants; encoder bytes unchanged",
+    "valid native zlib payloads exercise zero, one and two Base64 padding characters",
+    "null, prefix and quartet length rejection order is unchanged",
+    "misplaced/interior padding and all noncanonical low pad bits retain exact rejection",
+    "invalid ASCII and non-ASCII UTF-16 code units in each quartet position cannot alias lookup entries",
+    "every truncation of a valid small cell and trailing text remains rejected",
+    "duplicate/descending/out-of-range offsets, count mismatch and raw trailing bytes remain rejected",
+    "inflated data shorter than the two-byte header remains rejected",
+    "bounded compressed expansion past MAX_RAW is rejected before any pixel or ACK operation",
+    "compressed-size and text-size boundaries preserve return-versus-native-inflate-error behavior",
+    "canonical but invalid zlib streams and over-limit text keep exact codec failure outcome",
+    "all four whole classes retain legacy Number coercion and nested returned types",
+    "legacy nested arrays are still decoded afresh rather than retained in the numeric cache",
+    "both cold and repeated W1 returns remain isolated from caller mutations in every variant",
+    "mixed new/legacy invalid second cell rejects the whole batch in every variant",
+    "invalid stale first cell still rejects a valid newer second cell before painting (no version-first bypass)",
+    "matching-sequence malformed ACK cannot release prediction; original valid ACK still releases it in all four classes",
+    "five/six-cell representative packets stay within 48k while spanning actual 40k-plus wall-text scale",
+    "24 full-decode ABBA blocks contain all seven bounded corpora; zero-ms small cases are reported without fabricated precision",
+    "every ABBA block consumes identical complete words and checksums across independent subitems and their combination",
+    "legacy complete-decode workload and result remain identical in all three ABBA comparisons"
+  ]
+}

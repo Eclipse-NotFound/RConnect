@@ -1,0 +1,73 @@
+{
+  "static_checks": [
+    "All 65536 UTF-16 code units retain alphabet classification; table is bounded at 128",
+    "All 262144 first-three-digit combinations retain the exact first two bytes",
+    "13025 deterministic valid/malformed Base64 byte-stream models agree",
+    "Actual seven-stage join counts independently summed: 823 batches, 240 full, zero multiple-full",
+    "Representative binary cell bytes agree: 151",
+    "Representative binary cell bytes agree: 152",
+    "Representative binary cell bytes agree: 153",
+    "Representative binary cell bytes agree: 154",
+    "Representative binary cell bytes agree: 155",
+    "Representative binary cell bytes agree: 121",
+    "Representative binary cell bytes agree: 122",
+    "Representative binary cell bytes agree: 123",
+    "Representative binary cell bytes agree: 124",
+    "Representative binary cell bytes agree: 125",
+    "Representative binary cell bytes agree: 126",
+    "Synthetic five/six-cell packets fit observed scale and unchanged 48k envelope (Python zlib; AS sizes still asserted)",
+    "Source adds 17 semantic checks plus one corpus bound check; successful runtime expected 67, ancestor 49"
+  ],
+  "passed": true,
+  "as_compiled": false,
+  "air_run": false,
+  "expected_runtime_checks": 67,
+  "evidence": {
+    "socket_summary_sha256": "ad3f9b5f936186ea2e895a49a092497273b5d8938600cb2d638712fcbe337510",
+    "run": "e53cb3730a",
+    "totals": {
+      "host": {
+        "batches": 222,
+        "messages": 787,
+        "full": 0,
+        "fast": 0,
+        "multiple_full_batches": 0
+      },
+      "join": {
+        "batches": 823,
+        "messages": 1640,
+        "full": 240,
+        "fast": 648,
+        "multiple_full_batches": 0
+      }
+    },
+    "representative_python_zlib": [
+      {
+        "cells": 5,
+        "pixels_per_cell": 1200,
+        "chars": 46296,
+        "per_cell_chars": [
+          9256,
+          9264,
+          9256,
+          9260,
+          9260
+        ]
+      },
+      {
+        "cells": 6,
+        "pixels_per_cell": 1000,
+        "chars": 46168,
+        "per_cell_chars": [
+          7692,
+          7692,
+          7704,
+          7696,
+          7696,
+          7688
+        ]
+      }
+    ]
+  },
+  "performance_qualified": false
+}

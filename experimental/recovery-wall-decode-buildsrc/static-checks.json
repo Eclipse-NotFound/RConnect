@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "base_files": 90,
+  "output_files": 90,
+  "unchanged_base_files": 87,
+  "changed": [
+    "RConnectMod.as",
+    "rconnect/game/WallImpactVisuals.as",
+    "rconnect/net/WallCellCodec.as"
+  ],
+  "class_overlays_byte_exact": true,
+  "version_only_entry_change": true,
+  "small_room_setters_included": false,
+  "component_assertions": 67,
+  "component_failed": 0,
+  "JVMStarted": false,
+  "AIRStarted": false,
+  "compiled": false,
+  "native_game_tested": false,
+  "performance_qualified": false
+}

@@ -1,0 +1,454 @@
+{
+  "schema": "wall-decode-native-pair-v1",
+  "read_only": true,
+  "runs": {
+    "20": {
+      "run": "7491942feb",
+      "outer": "build/m52/recovery20-decode-control-density-01",
+      "candidate_sha256": "0674019c4aeea22900aef3e2390a31aed4fafc7850e0f3a74bc5ebb2facce9f5",
+      "version": "0.2.24-recovery20",
+      "source_integration_sha256": "2ec4794b43e056201dd532d8776c619480b382aed5facaebacd9d70de512bd20",
+      "evidence_sha256": {
+        "intent.json": "ea52b2f77233c9e69bae692b000f1b81b63c5b8bb6e1051cc034e74b31c8f923",
+        "result.json": "aaf578b50a3bd2d68189e30292eeb9d2b4866c7967da0bcfedd33986124a6852",
+        "fixture-audit.json": "5ac56edcd2e8a2accb86f7dc6a33e6ebd2a59856a554fc234f7367dd7e2d8e5b"
+      },
+      "native_evidence_sha256": {
+        "run.json": "9d6755f8090516750b954c07299873e12be32c800110574efea88382bdf16daf",
+        "input.json": "b4b57796788425913024848a752aac4985b99434d80901da795cb92d6cc01b0c",
+        "host.log": "6d44a0ffb1bdcc2743fcaa83f6dbe9a8458f95638e7b7ce92184a952408adc02",
+        "join.log": "8ba398ddb11c7e5fc10e901befad937a7d50fc77d2fb197eaf334dff2c38b81a"
+      },
+      "roles": {
+        "host": {
+          "pass": 29,
+          "fail": 0,
+          "done": true,
+          "version": true
+        },
+        "join": {
+          "pass": 48,
+          "fail": 6,
+          "done": true,
+          "version": true
+        }
+      },
+      "original_passed": false,
+      "performance_qualified": false,
+      "full_release_qualified": false,
+      "join_phases": [
+        {
+          "phase": 0,
+          "frames": 69,
+          "p95ms": 157,
+          "maxms": 233,
+          "packets": 60,
+          "maxPacketMs": 306,
+          "aimSamples": 38,
+          "failures": [
+            "network-state 80 enemies keep stage frames progressing",
+            "network-state weapon aim advances between snapshots"
+          ]
+        },
+        {
+          "phase": 1,
+          "frames": 78,
+          "p95ms": 195,
+          "maxms": 256,
+          "packets": 32,
+          "maxPacketMs": 371,
+          "aimSamples": 62,
+          "failures": [
+            "network-state 80 enemies keep stage frames progressing"
+          ]
+        },
+        {
+          "phase": 2,
+          "frames": 76,
+          "p95ms": 212,
+          "maxms": 235,
+          "packets": 32,
+          "maxPacketMs": 419,
+          "aimSamples": 56,
+          "failures": [
+            "network-state 80 enemies keep stage frames progressing"
+          ]
+        },
+        {
+          "phase": 3,
+          "frames": 80,
+          "p95ms": 195,
+          "maxms": 246,
+          "packets": 32,
+          "maxPacketMs": 428,
+          "aimSamples": 58,
+          "failures": []
+        },
+        {
+          "phase": 4,
+          "frames": 75,
+          "p95ms": 215,
+          "maxms": 257,
+          "packets": 33,
+          "maxPacketMs": 360,
+          "aimSamples": 54,
+          "failures": [
+            "network-state 80 enemies keep stage frames progressing"
+          ]
+        },
+        {
+          "phase": 5,
+          "frames": 80,
+          "p95ms": 181,
+          "maxms": 253,
+          "packets": 32,
+          "maxPacketMs": 558,
+          "aimSamples": 61,
+          "failures": []
+        },
+        {
+          "phase": 6,
+          "frames": 77,
+          "p95ms": 179,
+          "maxms": 444,
+          "packets": 31,
+          "maxPacketMs": 585,
+          "aimSamples": 57,
+          "failures": [
+            "network-state 80 enemies keep stage frames progressing"
+          ]
+        }
+      ],
+      "guards": {
+        "installation_unchanged": true,
+        "runner_unchanged": true,
+        "air_inventory_unchanged": true,
+        "exclusive_air_confirmed": true,
+        "vision_templates_confirmed": true,
+        "vision_templates_unchanged": true,
+        "process_policy_confirmed": true
+      },
+      "policy_startup_receipts": {
+        "host": {
+          "control": 1,
+          "pid": 31640,
+          "state": 0
+        },
+        "join": {
+          "control": 1,
+          "pid": 64204,
+          "state": 0
+        }
+      },
+      "audit": {
+        "input_comparable": false,
+        "attribution_allowed": false,
+        "reference": null,
+        "difference_count": null,
+        "corridor_static_equal": null,
+        "baseline_only": true,
+        "module_errors": [],
+        "original_result_unchanged": true
+      },
+      "environment": {
+        "start_local": "2026-10-22T12:03:35.643000+08:00",
+        "end_local": "2026-10-22T12:06:41.447000+08:00",
+        "min_free_commit_bytes": 4343214080,
+        "min_available_physical_bytes": 1168195584,
+        "foreign_air_observed": false,
+        "stopped_for_pressure": false,
+        "stopped_for_overlap": false
+      },
+      "corridor_prepare_ms": {
+        "host": 168,
+        "join": 125
+      }
+    },
+    "21": {
+      "run": "ca32e42aaa",
+      "outer": "build/m52/recovery21-decode-density-01",
+      "candidate_sha256": "9ac7ede757c253bbf61e0c44334870b4a95112f976c1b40f2f390822a8b7e7ba",
+      "version": "0.2.24-recovery21",
+      "source_integration_sha256": "0229437a15928638dbea2ef183bfdbf1e9320335127c753dcb4e9a5bf17062b9",
+      "evidence_sha256": {
+        "intent.json": "2b885a7317bbc5cfa769ae27c4f891cb85a0df05ec97f963a9c563703580058d",
+        "result.json": "cc440489412d6ae5ce7329b96be6b46b408457080ef661f9487d940f0b3988ed",
+        "fixture-audit.json": "1d248ab5ac81cdefb4990ad8bbc23ee7f554430b3ce0b3b33c8098b5a943f4a9"
+      },
+      "native_evidence_sha256": {
+        "run.json": "9962b76b441750bdb2d51814a45faf5cb81babce90a07ce1d89c6eadfa90c2a4",
+        "input.json": "e9fb454ec9dc4f2fe45868cba8f41554b53e2e2465cb1d9a76464f67a40ac43e",
+        "host.log": "403e47e36107180caceeac39ef7466f7dac538fdf1aeba7cb8e457eee158e606",
+        "join.log": "b4973975800c143645b6835675f1fc4a6869e5f99cbb46651eae5a2e0d530127"
+      },
+      "roles": {
+        "host": {
+          "pass": 29,
+          "fail": 0,
+          "done": true,
+          "version": true
+        },
+        "join": {
+          "pass": 52,
+          "fail": 2,
+          "done": true,
+          "version": true
+        }
+      },
+      "original_passed": false,
+      "performance_qualified": false,
+      "full_release_qualified": false,
+      "join_phases": [
+        {
+          "phase": 0,
+          "frames": 72,
+          "p95ms": 183,
+          "maxms": 271,
+          "packets": 49,
+          "maxPacketMs": 466,
+          "aimSamples": 64,
+          "failures": [
+            "network-state 80 enemies keep stage frames progressing"
+          ]
+        },
+        {
+          "phase": 1,
+          "frames": 77,
+          "p95ms": 192,
+          "maxms": 214,
+          "packets": 32,
+          "maxPacketMs": 402,
+          "aimSamples": 57,
+          "failures": [
+            "network-state 80 enemies keep stage frames progressing"
+          ]
+        },
+        {
+          "phase": 2,
+          "frames": 83,
+          "p95ms": 172,
+          "maxms": 231,
+          "packets": 32,
+          "maxPacketMs": 334,
+          "aimSamples": 60,
+          "failures": []
+        },
+        {
+          "phase": 3,
+          "frames": 82,
+          "p95ms": 175,
+          "maxms": 254,
+          "packets": 32,
+          "maxPacketMs": 422,
+          "aimSamples": 56,
+          "failures": []
+        },
+        {
+          "phase": 4,
+          "frames": 85,
+          "p95ms": 174,
+          "maxms": 202,
+          "packets": 31,
+          "maxPacketMs": 341,
+          "aimSamples": 61,
+          "failures": []
+        },
+        {
+          "phase": 5,
+          "frames": 83,
+          "p95ms": 156,
+          "maxms": 235,
+          "packets": 33,
+          "maxPacketMs": 499,
+          "aimSamples": 61,
+          "failures": []
+        },
+        {
+          "phase": 6,
+          "frames": 84,
+          "p95ms": 163,
+          "maxms": 244,
+          "packets": 32,
+          "maxPacketMs": 340,
+          "aimSamples": 56,
+          "failures": []
+        }
+      ],
+      "guards": {
+        "installation_unchanged": true,
+        "runner_unchanged": true,
+        "air_inventory_unchanged": true,
+        "exclusive_air_confirmed": true,
+        "vision_templates_confirmed": true,
+        "vision_templates_unchanged": true,
+        "process_policy_confirmed": true
+      },
+      "policy_startup_receipts": {
+        "host": {
+          "control": 1,
+          "pid": 113512,
+          "state": 0
+        },
+        "join": {
+          "control": 1,
+          "pid": 75076,
+          "state": 0
+        }
+      },
+      "audit": {
+        "input_comparable": true,
+        "attribution_allowed": true,
+        "reference": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery20-decode-control-density-01",
+        "difference_count": 0,
+        "corridor_static_equal": true,
+        "baseline_only": null,
+        "module_errors": [],
+        "original_result_unchanged": true
+      },
+      "environment": {
+        "start_local": "2026-10-22T12:08:27.629000+08:00",
+        "end_local": "2026-10-22T12:11:27.552000+08:00",
+        "min_free_commit_bytes": 5228417024,
+        "min_available_physical_bytes": 1942200320,
+        "foreign_air_observed": false,
+        "stopped_for_pressure": false,
+        "stopped_for_overlap": false
+      },
+      "corridor_prepare_ms": {
+        "host": 194,
+        "join": 124
+      }
+    }
+  },
+  "paired_input_equality": {
+    "driver_manifest": true,
+    "runner_sha256": true,
+    "wrapper_sha256": true,
+    "installation": true,
+    "vision_config_templates": true,
+    "air_inventory_sha256": true,
+    "runtime_signature": true
+  },
+  "installation_count": 22,
+  "installation_sha256": "dd2c8bb5f238032930e790661757bc4a943b01ae0fb777c9ac2ebfe365722733",
+  "shared_driver_manifest": "5a8dbb9395c8dba8b6e980c49b112c6df3ae2e19e2f4950769d29756f8e1735c",
+  "shared_driver_sha256": "cfca757c22052f0efd29afca1f76fe717e79d436b03a264413add2e4c8c9150a",
+  "shared_harness_sha256": "d52ef4300c7d472ee05884d7b4709f4abf80b3e6ff935b695a9ed986db021086",
+  "shared_wrapper_sha256": "f593468414493251a8a6525e2371833fa1c6b797fc0b8527a8e2c341b0c74ff9",
+  "shared_runner_sha256": "7eca453b13480140da5f36bb33d2319739a927562ccafdbb61a8b20cdb5ae4d3",
+  "shared_RV_templates": {
+    "host": "24a0162f565dfa9a04e42bd64ca6fb688d556d50d99a528dbfa703d680eaba0c",
+    "join": "f3c7dfe712a836188d712f70b7d30fd83b8bb70435de28757196b3f926bf23f8"
+  },
+  "shared_runtime_signature_sha256": "c505515c9ebd64c39affe1629deb68f8077e3882d28b104bcbd4037a2c30aac6",
+  "scene": {
+    "host": {
+      "prepared_equal": true,
+      "prepared_sha256": "cba1ae34a82608c9babcd8225042ac6e1482356ad03547c176d09b2c1723c200",
+      "corridor_common_equal": true,
+      "corridor_geometry_equal": true,
+      "corridor_visuals_equal": true,
+      "raw_spawn_differences": [
+        [
+          "/X",
+          1441.8,
+          161.8
+        ],
+        [
+          "/Y",
+          320,
+          960
+        ]
+      ],
+      "raw_input_differences": [],
+      "enemy_types": {
+        "fe.unit::UnitZombie": 1,
+        "fe.unit::UnitBat": 40,
+        "fe.unit::UnitSlaver": 39
+      },
+      "weapons": {
+        "lmg": 12,
+        "p308c": 27
+      },
+      "tile_sha256": "288406645fc7bebd4bca8d448c683ecda4b98b0514e7c30e2bcfba25640d488b"
+    },
+    "join": {
+      "prepared_equal": true,
+      "prepared_sha256": "faec61902213a3e29ef9982d4ebabfe28695e14856e92c0c9757bd1381aa9825",
+      "corridor_common_equal": true,
+      "corridor_geometry_equal": true,
+      "corridor_visuals_equal": true,
+      "raw_spawn_differences": [
+        [
+          "/X",
+          1441.8,
+          161.8
+        ],
+        [
+          "/Y",
+          320,
+          960
+        ]
+      ],
+      "raw_input_differences": [
+        [
+          "/units/5/dx",
+          3.70109181990847,
+          4.371128661325202
+        ]
+      ],
+      "enemy_types": {
+        "fe.unit::UnitZombie": 1,
+        "fe.unit::UnitBat": 40,
+        "fe.unit::UnitSlaver": 39
+      },
+      "weapons": {
+        "lmg": 12,
+        "p308c": 27
+      },
+      "tile_sha256": "288406645fc7bebd4bca8d448c683ecda4b98b0514e7c30e2bcfba25640d488b"
+    }
+  },
+  "launch": {
+    "host": {
+      "config_differences": [
+        [
+          "/port",
+          44385,
+          24568
+        ]
+      ],
+      "descriptors_equal_except_runid": true,
+      "actual_role_inputs_differ_only_production": true
+    },
+    "join": {
+      "config_differences": [
+        [
+          "/port",
+          44385,
+          24568
+        ]
+      ],
+      "descriptors_equal_except_runid": true,
+      "actual_role_inputs_differ_only_production": true
+    }
+  },
+  "nonchain_proxy_identity": {
+    "cls": "rconnect.game::MirrorHitUnit",
+    "id": "zombie1",
+    "fixture": false,
+    "in_chain": false,
+    "X": 251.8,
+    "Y": 960,
+    "dy": 0
+  },
+  "boundaries": [
+    "one sequential run per candidate; no repeat distribution or confidence interval",
+    "prepared equality excludes MirrorHitUnit by the existing frozen fixture; raw dx difference retained",
+    "startup policy receipts are not whole-run scheduling measurements",
+    "preparation history, memory availability and times differ; not controlled CPU/GC states",
+    "event-cost netMs/netMax include preparation and are not a pure network latency comparison",
+    "original overall/performance failures retained; attribution_allowed is input-gate status, not proof of stable gain",
+    "this read-only review relies on frozen binary fingerprints, no binary rehash or new execution"
+  ]
+}

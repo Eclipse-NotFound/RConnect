@@ -1,0 +1,18 @@
+--- recovery20/src/rconnect/game/WallImpactVisuals.as
++++ recovery21/src/rconnect/game/WallImpactVisuals.as
+@@ -344,10 +344,13 @@
+       {
+          var cached:Object=wordCache[data];
+          if(cached!=null && cached.data===data)return cached.words.concat();
+-         var words:Array=WallCellCodec.isCell(data)?WallCellCodec.unpack(data):RoomCodec.unpack(data) as Array;
++         var binary:Boolean=WallCellCodec.isCell(data);
++         var words:Array=binary?WallCellCodec.unpack(data):RoomCodec.unpack(data) as Array;
+          if(words==null || words.length>2*CELL*CELL || words.length%2!=0)return null;
+          var previous:int=-1,numeric:Boolean=true;
+-         for(var i:int=0;i<words.length;i+=2)
++         // W1 already validates count, strictly increasing offsets and uint colors.
++         // Keep legacy coercion/type validation unchanged; it is not W1.
++         if(!binary)for(var i:int=0;i<words.length;i+=2)
+          {
+             var index:Number=Number(words[i]),color:Number=Number(words[i+1]);
+             if(!isFinite(index) || index!=int(index) || index<=previous || index>=CELL*CELL ||
