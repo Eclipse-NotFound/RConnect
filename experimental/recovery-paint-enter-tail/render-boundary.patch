@@ -1,0 +1,115 @@
+--- frozen-v3/PaintTailSampler.as
++++ render-boundary/PaintTailSampler.as
+@@ -13,6 +13,9 @@
+       private var row:Object,rows:Array=[],segment:int=-1,enterSequence:int=0;
+       private var pending:Boolean=false,disposed:Boolean=false,blocked:Boolean=false;
+       private var globalFaults:int=0;
++      private static const RENDER_LIMIT:int=16,RENDER_HIGH:int=2147483647,RENDER_LOW:int=-2147483648;
++      private var renderAttached:Boolean=false,renderFaults:int=0,renderSerial:int=0;
++      private var lastRenderT:int=-1,lastRenderWall:Number=NaN,lastRenderPhase:String="";
+ 
+       /** slotOwner must only check the existing observer's exact Function identity.
+        * The real adapter must be admitted as the only sampler in this AIR process. */
+@@ -22,7 +25,71 @@
+          var attached:Boolean=false;
+          try {value.addEventListener(Event.ENTER_FRAME,onEnter,false,1000000);stage=value;attached=true;}
+          catch(error:*){globalFaults++;}
++         if(attached)attachRender(value);
+          return attached;
++      }
++      private function attachRender(value:IEventDispatcher):void {
++         try {
++            value.addEventListener(Event.RENDER,onRenderHigh,false,RENDER_HIGH);
++            value.addEventListener(Event.RENDER,onRenderLow,false,RENDER_LOW);
++            value.addEventListener(Event.ENTER_FRAME,onStageEnterAfterDefault,false,-1);
++            value.addEventListener(Event.ENTER_FRAME,onStageEnterTail,false,RENDER_LOW);
++            renderAttached=true;
++         }catch(error:*) {renderFaults++;detachRender(value);}
++      }
++      private function detachRender(value:IEventDispatcher):void {
++         try {value.removeEventListener(Event.RENDER,onRenderHigh);}catch(error:*){renderFaults++;}
++         try {value.removeEventListener(Event.RENDER,onRenderLow);}catch(error:*){renderFaults++;}
++         try {value.removeEventListener(Event.ENTER_FRAME,onStageEnterAfterDefault);}catch(error:*){renderFaults++;}
++         try {value.removeEventListener(Event.ENTER_FRAME,onStageEnterTail);}catch(error:*){renderFaults++;}
++         renderAttached=false;
++      }
++      private function onStageEnterAfterDefault(event:Event):void {
++         markStageEnter(event,"stageEnterAfterDefault","stageEnterAfterDefaultIncomplete","stageEnterAfterDefaultUnavailable");
++      }
++      private function onStageEnterTail(event:Event):void {
++         markStageEnter(event,"stageEnterTail","stageEnterTailIncomplete","stageEnterTailUnavailable");
++      }
++      private function markStageEnter(event:Event,field:String,invalid:String,unavailable:String):void {
++         if(row==null || row.closed)return;
++         if(!pending) {
++            if(!row.triggered)row[unavailable]="stage-boundary-before-target-ensure";
++            return;
++         }
++         if(row[field]!=null){row[invalid]=true;return;}
++         try {
++            var at:Object=stamp(),start:Object=row.clocks.startReturned;
++            if(event.currentTarget!==stage || start==null || enterSequence!=row.startStage
++               || at.t<start.t || at.wall<start.wall)throw new Error("enter-boundary target/clock mismatch");
++            row[field]={t:at.t,wall:at.wall,enter:enterSequence};
++            row[unavailable]="";
++         }catch(error:*) {
++            row[invalid]=true;row[unavailable]="invalid-target-or-clock";
++         }
++      }
++      private function onRenderHigh(event:Event):void {markRender(event,"high");}
++      private function onRenderLow(event:Event):void {markRender(event,"low");}
++      private function markRender(event:Event,phase:String):void {
++         // Both marks precede actual display-list rendering. Never invalidate here.
++         // No events is unavailable evidence, not proof that rendering did not run.
++         var boundary:Object=row==null?null:row.renderBoundary;
++         try {
++            var at:Object=stamp();
++            if(event.currentTarget!==stage || (lastRenderT>=0 && (at.t<lastRenderT || at.wall<lastRenderWall)))
++               throw new Error("render target/clock mismatch");
++            lastRenderT=at.t;lastRenderWall=at.wall;lastRenderPhase=phase;renderSerial++;
++            if(boundary==null)return;
++            if(pending) {
++               boundary.available=true;boundary.observed++;
++               if(boundary.marks.length>=RENDER_LIMIT){boundary.incomplete=true;boundary.overflow++;return;}
++               boundary.marks.push({phase:phase,t:at.t,wall:at.wall,serial:renderSerial,enter:enterSequence});
++            }else if(row.closed && row.triggered && row.clocks.stop!=null && boundary.afterStop==null) {
++               boundary.afterStop={phase:phase,t:at.t,wall:at.wall,serial:renderSerial,enter:enterSequence};
++            }
++         }catch(error:*) {
++            renderFaults++;
++            if(boundary!=null){boundary.incomplete=true;boundary.faults++;}
++         }
+       }
+       public function begin(w:Object):Boolean {
+          if(disposed || blocked || segment>=SEGMENTS-1){globalFaults++;return false;}
+@@ -37,6 +104,17 @@
+             totalSamples:0,visited:0,cpu:0,allocationsSkipped:0,deletionsSkipped:0,
+             sampleTruncated:false,stackOverflow:0,depthTruncated:0,textTruncated:0,
+             textOverflow:0,stackTextChars:0,uniqueStacks:0,stacks:{},collectMs:0,cleanupMs:0};
++         row.stageEnterAfterDefault=null;row.stageEnterAfterDefaultIncomplete=!renderAttached;
++         row.stageEnterAfterDefaultUnavailable="not-observed-after-sampler-start";
++         row.stageEnterAfterDefaultPriority=-1;
++         row.stageEnterTail=null;row.stageEnterTailIncomplete=!renderAttached;
++         row.stageEnterTailUnavailable="not-observed-after-sampler-start";
++         row.stageEnterTailPriority=RENDER_LOW;
++         row.renderBoundary={attached:renderAttached,limit:RENDER_LIMIT,available:false,
++            incomplete:!renderAttached,overflow:0,observed:0,faults:0,marks:[],afterStop:null,
++            beforeBegin:lastRenderT<0?null:{phase:lastRenderPhase,t:lastRenderT,wall:lastRenderWall,serial:renderSerial},
++            highPriority:RENDER_HIGH,lowPriority:RENDER_LOW,
++            scope:"Same Stage RENDER listeners only; both before native pixel rendering; no forced invalidate"};
+          rows.push(row);world=w;room=null;
+          try {game=w==null?null:w.game;renderer=w==null?null:w.grafon;}
+          catch(error:*){fault("begin-identity",error);game=renderer=null;}
+@@ -221,10 +299,12 @@
+             finish("dispose");
+             if(stage!=null)try {stage.removeEventListener(Event.ENTER_FRAME,onEnter);}
+             catch(error:*){globalFaults++;}
++            if(stage!=null)detachRender(stage);
+             stage=null;disposed=true;
+          }
+          return {kind:"ensure-tail-cpu-source-v1",diagnosticOnly:true,performanceQualified:false,
+             runtimeQualified:false,globalFaults:globalFaults,cleanupBlocked:blocked,rows:rows,
++            renderObserverFaults:renderFaults,renderObserverAttached:renderAttached,
+             segmentLimit:SEGMENTS,sampleLimit:SAMPLE_LIMIT,stackLimit:STACK_LIMIT,
+             depthLimit:DEPTH_LIMIT,textLimit:TEXT_LIMIT,scope:"target resident 0-to-positive ensure observer tail to next stage ENTER +1000000",
+             noCpuMeaning:"No CPU samples do not establish waiting, sleep, GPU or network time"};

@@ -1,0 +1,30 @@
+{
+  "sources": {
+    "entry.py": "ae24289ff7411d00d021db70e8892f8ddb6cffd78580111f7171d11c03af7fde",
+    "src/PaintTailSampler.as": "aaf03874f8776a5ddb2ba5b1f39add744a1219a23a024bb649c5980569a1f982",
+    "render-boundary.patch": "3b081bd812b291e8dcd437618b82d616f68b591627685b98171e98d4d7995677"
+  },
+  "originals": {
+    "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/experimental/recovery-paint-native-cpu-rv83-v2/baseline.py": "89321d66502193e11816501e1d56329015846180a6fe2dea330fa6380eab3b81",
+    "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/experimental/recovery-early-paint-tail-native/inputs.json": "156e8ef3e23af97366916d423daf5794fde621ff870d0aaf362688e12e448cbc",
+    "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/experimental/recovery-early-paint-tail-native/runtime-inputs.json": "ea8463a2ac080e0074b2738585f32472ee7050ba5d42d9e69920e579e678727b",
+    "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/experimental/recovery-early-paint-tail-native/native_inputs.py": "24ec38c24e0bd32c7e2ef390f74330f7775c67e727d289fdee46b27d5e2c3aee",
+    "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/experimental/recovery-early-paint-tail-native/prepare.py": "d7c04a94eb5ef621a45684b1d49148051ab1214324675ef8abac28e2245a93e1",
+    "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/experimental/recovery-early-paint-tail-native/runtime_adapter.py": "3f47f608a975faa3e023fd93bf3413d2a1b8fb6aae5577dcd15a08911137ba5e",
+    "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/experimental/recovery-early-paint-tail-native/run_native.py": "b7dc05f1e10cd388bcec328a161461abaa7c2b6c8c154c0e2fd90bf9b51bfb8b",
+    "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/experimental/recovery-early-paint-aggregate/binding.py": "0bb8bdb7e8139c48425cadc2351fc15bc2eec6dd0101d28c7d0b90765dcb414c",
+    "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/experimental/recovery-early-paint-tail-native/tests/FirstRasterSceneProbe.as": "1a47c4583fe7ff5f910e2b68e26cec2985e33cb8938aea5ff6273ce35216c6ab",
+    "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/experimental/recovery-early-paint-tail-native/tests/PaintTimingBuffer.as": "e2f559529aca21e9bebdd1dc94a69264deb932500a7e3ddb1cff0a4b4f918a70",
+    "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/experimental/recovery-early-paint-tail-native/tests/FlashPaintTailSampler.as": "f0706d7fdff62a0aaeebd1e200e8899a3f534a1d1abb76a56d4a2d4ade3f1601",
+    "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/experimental/recovery-early-paint-tail-sampler-v3/src/PaintTailSampler.as": "1d35215b6a24a1dae4e6d5071ab168b1777c9789d96340931417177448b81c61",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-paint-render-boundary\\entry.py": "828c90cd3abcf50e512202f5fa451857070636c47411dcbf68037815123467e9",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-paint-render-boundary\\src\\PaintTailSampler.as": "7a16d1870ae2188d4cc943612b42d0a08c6627fa815e1d0a361da8c37a32a8aa"
+  },
+  "paint_contract": "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/experimental/recovery-early-paint-timing-v3/prepared.json",
+  "paint_source": "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/experimental/recovery-early-paint-timing-v3/src/fe/graph/Grafon.as",
+  "diagnostic_only": true,
+  "compiled": false,
+  "performance_qualified": false,
+  "baseline_component_proof_only": true,
+  "new_helper_runtime_tested": false
+}
