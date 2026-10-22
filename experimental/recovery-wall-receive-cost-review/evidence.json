@@ -1,0 +1,187 @@
+{
+  "run": "b3d7b8558b",
+  "source_candidate": "0674019c4aeea22900aef3e2390a31aed4fafc7850e0f3a74bc5ebb2facce9f5",
+  "qualified": false,
+  "sampled_complete_windows": 24,
+  "cpu_samples": 1614,
+  "total_inclusive": {
+    "TcpLink/onData": 811,
+    "Session/handleMessage": 585,
+    "GameBridge/applyWallPaint": 178,
+    "WallImpactVisuals/receive": 178,
+    "WallImpactVisuals/decode@": 143,
+    "WallImpactVisuals/decodeWords": 141,
+    "WallCellCodec$/unpack": 110
+  },
+  "decodeWords_leaf": {
+    "flash.utils::ByteArray/_uncompress@null:0": 5,
+    "rconnect.game::WallImpactVisuals/decodeWords@null:0": 21,
+    "Array/get length@null:0": 3,
+    "Math$/floor@null:0": 2,
+    "String/_indexOf@null:0": 18,
+    "String/http://adobe.com/AS3/2006/builtin::charAt@null:0": 11,
+    "rconnect.net::WallCellCodec$/unpack@null:0": 30,
+    "flash.utils::ByteArray/writeByte@null:0": 31,
+    "flash.utils::ByteArray/readUnsignedInt@null:0": 1,
+    "global/isFinite@null:0": 3,
+    "Array/http://adobe.com/AS3/2006/builtin::push@null:0": 4,
+    "rconnect.game::WallImpactVisuals/rememberWords@null:0": 2,
+    "String/get length@null:0": 3,
+    "flash.utils::ByteArray/readUnsignedShort@null:0": 6,
+    "[mark]@null:0": 1
+  },
+  "longest_five_windows": [
+    {
+      "phase": 6,
+      "frame": 11,
+      "renderAt": 126665,
+      "stop": 126847,
+      "window_ms": 182,
+      "frame_to_next_enter_ms": 279,
+      "cpu_samples": 198,
+      "collector_after_stop_ms": 111,
+      "depthTruncated": 0,
+      "stackOverflow": 0,
+      "inclusive": {
+        "TcpLink/onData": 144,
+        "Session/handleMessage": 104,
+        "GameBridge/applyWallPaint": 43,
+        "WallImpactVisuals/receive": 43,
+        "WallImpactVisuals/decode@": 31,
+        "WallImpactVisuals/decodeWords": 29,
+        "WallCellCodec$/unpack": 20
+      },
+      "wall_stacks": [
+        {
+          "samples": 5,
+          "stack": "String/_indexOf@null:0 <- rconnect.net::WallCellCodec$/unpack@null:0 <- rconnect.game::WallImpactVisuals/decodeWords@null:0 <- rconnect.game::WallImpactVisuals/decode@null:0 <- rconnect.game::WallImpactVisuals/receive@null:0 <- rconnect.game::GameBridge/applyWallPaint@null:0 <- rconnect.core::Session/handleMessage@null:0 <- rconnect.core::Session/onLinkMessage@null:0 <- flash.events::EventDispatcher/dispatchEventFunction@null:0 <- flash.events::EventDispatcher/dispatchEvent@null:0 <- rconnect.net::TcpLink/onData@null:0"
+        },
+        {
+          "samples": 5,
+          "stack": "String/http://adobe.com/AS3/2006/builtin::charAt@null:0 <- rconnect.net::WallCellCodec$/unpack@null:0 <- rconnect.game::WallImpactVisuals/decodeWords@null:0 <- rconnect.game::WallImpactVisuals/decode@null:0 <- rconnect.game::WallImpactVisuals/receive@null:0 <- rconnect.game::GameBridge/applyWallPaint@null:0 <- rconnect.core::Session/handleMessage@null:0 <- rconnect.core::Session/onLinkMessage@null:0 <- flash.events::EventDispatcher/dispatchEventFunction@null:0 <- flash.events::EventDispatcher/dispatchEvent@null:0 <- rconnect.net::TcpLink/onData@null:0"
+        },
+        {
+          "samples": 4,
+          "stack": "rconnect.net::WallCellCodec$/unpack@null:0 <- rconnect.game::WallImpactVisuals/decodeWords@null:0 <- rconnect.game::WallImpactVisuals/decode@null:0 <- rconnect.game::WallImpactVisuals/receive@null:0 <- rconnect.game::GameBridge/applyWallPaint@null:0 <- rconnect.core::Session/handleMessage@null:0 <- rconnect.core::Session/onLinkMessage@null:0 <- flash.events::EventDispatcher/dispatchEventFunction@null:0 <- flash.events::EventDispatcher/dispatchEvent@null:0 <- rconnect.net::TcpLink/onData@null:0"
+        },
+        {
+          "samples": 3,
+          "stack": "flash.utils::ByteArray/_uncompress@null:0 <- flash.utils::ByteArray/uncompress@null:0 <- rconnect.net::WallCellCodec$/unpack@null:0 <- rconnect.game::WallImpactVisuals/decodeWords@null:0 <- rconnect.game::WallImpactVisuals/decode@null:0 <- rconnect.game::WallImpactVisuals/receive@null:0 <- rconnect.game::GameBridge/applyWallPaint@null:0 <- rconnect.core::Session/handleMessage@null:0 <- rconnect.core::Session/onLinkMessage@null:0 <- flash.events::EventDispatcher/dispatchEventFunction@null:0 <- flash.events::EventDispatcher/dispatchEvent@null:0 <- rconnect.net::TcpLink/onData@null:0"
+        },
+        {
+          "samples": 3,
+          "stack": "flash.utils::ByteArray/writeByte@null:0 <- rconnect.net::WallCellCodec$/unpack@null:0 <- rconnect.game::WallImpactVisuals/decodeWords@null:0 <- rconnect.game::WallImpactVisuals/decode@null:0 <- rconnect.game::WallImpactVisuals/receive@null:0 <- rconnect.game::GameBridge/applyWallPaint@null:0 <- rconnect.core::Session/handleMessage@null:0 <- rconnect.core::Session/onLinkMessage@null:0 <- flash.events::EventDispatcher/dispatchEventFunction@null:0 <- flash.events::EventDispatcher/dispatchEvent@null:0 <- rconnect.net::TcpLink/onData@null:0"
+        }
+      ]
+    },
+    {
+      "phase": 5,
+      "frame": 21,
+      "renderAt": 119815,
+      "stop": 119977,
+      "window_ms": 162,
+      "frame_to_next_enter_ms": 187,
+      "cpu_samples": 156,
+      "collector_after_stop_ms": 217,
+      "depthTruncated": 0,
+      "stackOverflow": 0,
+      "inclusive": {
+        "TcpLink/onData": 122,
+        "Session/handleMessage": 95,
+        "GameBridge/applyWallPaint": 22,
+        "WallImpactVisuals/receive": 22,
+        "WallImpactVisuals/decode@": 17,
+        "WallImpactVisuals/decodeWords": 17,
+        "WallCellCodec$/unpack": 14
+      }
+    },
+    {
+      "phase": 6,
+      "frame": 21,
+      "renderAt": 127875,
+      "stop": 128032,
+      "window_ms": 157,
+      "frame_to_next_enter_ms": 185,
+      "cpu_samples": 151,
+      "collector_after_stop_ms": 102,
+      "depthTruncated": 0,
+      "stackOverflow": 0,
+      "inclusive": {
+        "TcpLink/onData": 121,
+        "Session/handleMessage": 86,
+        "GameBridge/applyWallPaint": 31,
+        "WallImpactVisuals/receive": 31,
+        "WallImpactVisuals/decode@": 23,
+        "WallImpactVisuals/decodeWords": 23,
+        "WallCellCodec$/unpack": 16
+      }
+    },
+    {
+      "phase": 1,
+      "frame": 21,
+      "renderAt": 87049,
+      "stop": 87191,
+      "window_ms": 142,
+      "frame_to_next_enter_ms": 169,
+      "cpu_samples": 130,
+      "collector_after_stop_ms": 67,
+      "depthTruncated": 0,
+      "stackOverflow": 0,
+      "inclusive": {
+        "TcpLink/onData": 101,
+        "Session/handleMessage": 74,
+        "GameBridge/applyWallPaint": 22,
+        "WallImpactVisuals/receive": 22,
+        "WallImpactVisuals/decode@": 20,
+        "WallImpactVisuals/decodeWords": 20,
+        "WallCellCodec$/unpack": 14
+      }
+    },
+    {
+      "phase": 5,
+      "frame": 1,
+      "renderAt": 117493,
+      "stop": 117624,
+      "window_ms": 131,
+      "frame_to_next_enter_ms": 154,
+      "cpu_samples": 109,
+      "collector_after_stop_ms": 156,
+      "depthTruncated": 0,
+      "stackOverflow": 0,
+      "inclusive": {
+        "TcpLink/onData": 76,
+        "Session/handleMessage": 57,
+        "GameBridge/applyWallPaint": 24,
+        "WallImpactVisuals/receive": 24,
+        "WallImpactVisuals/decode@": 15,
+        "WallImpactVisuals/decodeWords": 15,
+        "WallCellCodec$/unpack": 13
+      }
+    }
+  ],
+  "fingerprints": {
+    "build\\m52\\recovery-after-render-sampler-20-01\\cpu-profile.json": "4a93606310c5f0919d0261ca66fbc7dd102761b49e5ce5fcfa1facdc864b1049",
+    "build\\m52\\recovery-after-render-sampler-20-01\\result.json": "ff35c38dd5bbf6fb9dd2860a0ff96ea8345106b511232979f76950dfef04aa49",
+    "build\\m52\\recovery-after-render-sampler-20-01\\intent.json": "4c0c6ab7b1dbc806ab5781ba99e8000b182b0b50e837518ec0463c2dde289792",
+    "build\\cooperation\\b3d7b8558b\\join.log": "2b9575e9f3ef4c66a1e7c85a30aa8019468320963bb7a45f7e46c1cd2aab5ef7",
+    "build\\m52\\recovery-20\\src\\rconnect\\game\\WallImpactVisuals.as": "d8a88d98331aa8ab62b093ed36066f8ca5eb3d348a4f863474580e7fddb7d7bd",
+    "build\\m52\\recovery-20\\src\\rconnect\\net\\WallCellCodec.as": "7c44893e61a53ac7d125a4aea5f8425e821e60ff596d49b254b61944075f027c",
+    "build\\m52\\recovery-20\\src\\rconnect\\core\\Session.as": "e699b9c5a02799367bba8afd924d450d064cab3f0a5e9a36ea7d400b378b10ba",
+    "build\\m52\\recovery-20\\src\\rconnect\\core\\RoomSync.as": "c2e68fe658a81be4b3ceb285daf453ca57b9d4a5895e80720dd629c374e3f85e"
+  },
+  "profile_log_hash_matches": true,
+  "runtime_errors": [
+    "COOP FAIL network-state 80 enemies keep stage frames progressing",
+    "COOP FAIL network-state 80 enemies keep stage frames progressing",
+    "COOP FAIL network-state 80 enemies keep stage frames progressing",
+    "COOP FAIL network-state 80 enemies keep stage frames progressing",
+    "COOP FAIL network-state 80 enemies keep stage frames progressing",
+    "COOP FAIL network-state 80 enemies keep stage frames progressing",
+    "COOP FAIL network-state 80 enemies keep stage frames progressing"
+  ],
+  "packet_trace_present": false,
+  "finding": "Exact-byte cache already avoids repeated native unpack while resident; per-cell accepted-version check is after decode. No wire v/d trace in this sample establishes hit/miss, stale frequency or duplicated compressed-body counts.",
+  "only_candidate": "For successful !W1 WallCellCodec.unpack only, skip the duplicate scalar validation loop in WallImpactVisuals.decodeWords; keep outer cell/batch validation, null/length checks, legacy RoomCodec validation, existing cache insertion/independent arrays, observe/put/version/ACK ordering unchanged.",
+  "candidate_not_implemented": true,
+  "benefit_unmeasured": true
+}
