@@ -1,0 +1,30 @@
+{
+  "expected": 76,
+  "fixture_change": "Split HoldWorld into its own source file; all original assertions preserved.",
+  "sources": {
+    "HoldWorld.as": "71b904bb4becd9a5d8a2cbbc633a9cce096eed08394f63775f90ad6215f78b48",
+    "SandyTravelHoldBridge.as": "fb4433afa73e5f3f1796e6c42a7f2b435a3ce3e82aee65e24d1f2cf43c1bcbd3",
+    "SandyTravelHoldChecks.as": "0b5e480ee1236ad455e7810a2facda92f062350c0dbda572b23c6cd1e06c8c41"
+  },
+  "inputs": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-sandy-hold-components\\handoff.json": "64d3e373705ebe18be1bf061b819c43e9f6340befb688c267fba15f116557940",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-sandy-hold-components\\prepare.py": "49e65ce66af3e2b33680adf4b28be95cb6eb5c4374962b348577af15d933e022",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-sandy-hold-components\\static-checks.json": "afab9703d2962567d84827664e8f3c89801831971d6988df00c9d11c3b87fac6",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-sandy-hold-components\\components\\SandyTravelHoldChecks.as": "713985be167c3d05425607afbdcbfff19e3631f167cf418c7af68ba7a39dc709",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-sandy-hold-components\\components\\SandyTravelHoldBridge.as": "c5fc7f1c2bdf04b0d2ec51c4ab3ba6c568fa4bce39440ca98544e247137bd199",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\Sandevistan\\build\\out\\a-travel-hold-20261022-003\\frozen\\src\\SandyTravelHoldBridge.as": "fb4433afa73e5f3f1796e6c42a7f2b435a3ce3e82aee65e24d1f2cf43c1bcbd3",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-sandy-hold-components-v2\\prepare.py": "35b0bd34e551b3dd77af7d5ce68aafff46428d8d8513e58be93783fa9dcbd95c"
+  },
+  "original_compile_failure": "build/m52/recovery-sandy-hold-component-01/compile.log",
+  "original_static_checks": {
+    "passed": true,
+    "expected_checks": 76,
+    "methods_count": 94,
+    "actual_bridge": true,
+    "compatibility_only": true,
+    "compiled": false,
+    "air_started": false
+  },
+  "compiled": false,
+  "native_tested": false
+}

@@ -1,0 +1,22 @@
+{
+  "kind": "sandy-travel-hold-exact-bridge-component-handoff",
+  "files": {
+    "README.md": "79ca8456ae26eda1f9961b3d85222e4201cd4c1f19b0f0d80c10c3576d9966e8",
+    "prepare.py": "49e65ce66af3e2b33680adf4b28be95cb6eb5c4374962b348577af15d933e022",
+    "run_component.py": "ba71f49e01f72777c089886ebae2d1b03b253eae9d6f3861cd6464687ea86de7",
+    "inputs.json": "94c40045d8e74ec1917835f397f748d3b0b95bb5315e74ddcbc0bcc1be6b9129",
+    "static-checks.json": "afab9703d2962567d84827664e8f3c89801831971d6988df00c9d11c3b87fac6",
+    "components/SandyTravelHoldBridge.as": "c5fc7f1c2bdf04b0d2ec51c4ab3ba6c568fa4bce39440ca98544e247137bd199",
+    "components/SandyTravelHoldChecks.as": "713985be167c3d05425607afbdcbfff19e3631f167cf418c7af68ba7a39dc709"
+  },
+  "expected_assertions": 76,
+  "static_methods": 94,
+  "static_unchanged_methods": 88,
+  "static_negative_mutations": 6,
+  "compiled": false,
+  "air_started": false,
+  "native_game_test": false,
+  "performance_qualified": false,
+  "source_changes": "exact proposal helper plus two unreachable ASC return tails; proposal untouched",
+  "command": "python -B -X utf8 experimental/recovery-sandy-hold-components/run_component.py --output build/m52/recovery-sandy-hold-component-01"
+}

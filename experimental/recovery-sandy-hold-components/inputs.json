@@ -1,0 +1,21 @@
+{
+  "kind": "sandy-travel-hold-exact-bridge-component",
+  "expected_checks": 76,
+  "inputs": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\Sandevistan\\build\\out\\keybind-20261015-006\\frozen\\src\\SandevistanMod.as": "ad931f4f0cc374f9f084f61227d6b1fd1bf61e7a156cd69e2b0c79141584492d",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\Sandevistan\\build\\out\\keybind-20261015-006\\SandevistanMod.swf": "cec6a3061cb90380579d8a95aa1254e0328bd0dae6e239fc4ca5205d6cccf942",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-sandy-travel-hold-proposal\\SandyTravelHoldBridge.as": "5b195a60fedcd94b416a7f0f3fa82db5cc5423a843ec3d90ef6bcc78037a2890",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-sandy-travel-hold-proposal\\entry-changes.patch": "fd21e2bdf79e61b5b6f0bf8238ed476d88517e120c2f7a12f636b8c7b3e478c3",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\Sandevistan\\build\\out\\keybind-20261015-006\\build-input.json": "0bc75560858ce573ba8d197cc50ac39083e6737d82bb8dcf9595bef93192bcb6",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-sandy-hold-components\\prepare.py": "49e65ce66af3e2b33680adf4b28be95cb6eb5c4374962b348577af15d933e022",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-sandy-hold-components\\run_component.py": "ba71f49e01f72777c089886ebae2d1b03b253eae9d6f3861cd6464687ea86de7",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\tools\\validation\\run_recovery_component.py": "9952aeeaa37f6eead636cceff9f25fabff3045671d3c4cbb60c326909d1e572d"
+  },
+  "components": {
+    "SandyTravelHoldBridge.as": "c5fc7f1c2bdf04b0d2ec51c4ab3ba6c568fa4bce39440ca98544e247137bd199",
+    "SandyTravelHoldChecks.as": "713985be167c3d05425607afbdcbfff19e3631f167cf418c7af68ba7a39dc709"
+  },
+  "bridge_delta": "only unreachable return null/false tails for ASC definite-return compatibility",
+  "native_game_test": false,
+  "performance_qualified": false
+}
