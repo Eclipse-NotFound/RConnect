@@ -1,0 +1,11 @@
+--- recovery22/RConnectMod.as
++++ pause-edge/RConnectMod.as
+@@ -26,7 +26,7 @@
+    public class RConnectMod
+    {
+       // Working M46 core after the separate 0.2.17 compact HUD release.
+-      public static const VERSION:String = "0.2.24-recovery22";
++      public static const VERSION:String = "0.2.24-recovery23";
+ 
+       public static var instance:RConnectMod;
+ 

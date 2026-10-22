@@ -1,0 +1,133 @@
+--- motion2/PresentationContinuityTestDoc.as
++++ drop-observer/PresentationContinuityTestDoc.as
+@@ -50,6 +50,95 @@
+       private var packetRelease:Timer=new Timer(10,1),savedFrameRate:Number=NaN;
+       private var paintReceived:int=0,paintFrame:int=0,repaintChecks:int=0;
+ 
++      // External observation only. A shared cap bounds ENTER, RENDER and wire rows.
++      private var dropObserveRows:Array=[];
++      private var dropObserveStart:int=-1,dropObserveDeadline:int=-1,dropObserveCloseAt:int=-1;
++      private var dropObserveClosed:Boolean=false,dropObserveEmitted:Boolean=false;
++      private var dropObserveOverflow:int=0,dropObserveFault:String="",dropObserveReason:String="not-started";
++      private var dropObserveObject:Object,dropObserveVisual:Object;
++      private var dropObserveKey:String="",dropObserveKeyChanges:int=0,dropObserveVisualChanges:int=0;
++      private static const DROP_OBSERVE_CAP:int=256,DROP_OBSERVE_MS:int=2000;
++
++      private function dropObserveLive(now:int):Boolean {
++         if(dropObserveStart<0||dropObserveClosed)return false;
++         if(now>=dropObserveDeadline) {
++            dropObserveClosed=true;dropObserveCloseAt=now;dropObserveReason="elapsed";return false;
++         }
++         if(round!=0||(phase!="falling"&&phase!="drop-wait")) {
++            dropObserveClosed=true;dropObserveCloseAt=now;dropObserveReason="phase-ended";return false;
++         }
++         return true;
++      }
++      private function dropObserveRoom():Boolean {
++         if(dropObserveRows.length<DROP_OBSERVE_CAP)return true;
++         ++dropObserveOverflow;return false;
++      }
++      private function observeDropEnter():void {
++         if(dropObserveStart<0||dropObserveClosed)return;
++         var now:int=getTimer();
++         if(!dropObserveLive(now)||!dropObserveRoom())return;
++         dropObserveRows.push({kind:"enter",frame:renderFrame,at:now});
++      }
++      private function observeDropRender():void {
++         if(timelineOnly||dropObserveClosed||dropObserveEmitted||round!=0
++            ||(phase!="falling"&&phase!="drop-wait"))return;
++         try {
++            var now:int=getTimer(),o:Object=dropObserveObject;
++            if(dropObserveStart<0) {
++               // Use the original trajectory's attached-display eligibility.
++               // This does not claim final screen pixels or ancestor visibility.
++               o=drop();if(o==null||o.vis==null||o.vis.stage==null)return;
++               dropObserveObject=o;dropObserveVisual=o.vis;
++               dropObserveStart=now;dropObserveDeadline=now+DROP_OBSERVE_MS;
++               dropObserveReason="recording";
++            }
++            if(!dropObserveLive(now)||!dropObserveRoom())return;
++            var v:Object=o.vis,same:Boolean=v===dropObserveVisual;
++            if(!same)++dropObserveVisualChanges;
++            dropObserveRows.push({kind:"render",frame:renderFrame,at:now,
++               alreadyDeduped:lastRender==renderFrame,logicalX:Number(o.X),logicalY:Number(o.Y),
++               x:v==null?null:Number(v.x),y:v==null?null:Number(v.y),
++               attached:v!=null&&v.stage!=null,visible:v!=null&&v.visible,
++               alpha:v==null?null:Number(v.alpha),sameVisual:same,stay:o.stay===true});
++         }catch(error:Error) {
++            dropObserveFault=String(error).substr(0,160);
++            dropObserveClosed=true;dropObserveCloseAt=getTimer();dropObserveReason="observer-error";
++         }
++      }
++      private function observeDropArrival(received:Object,receivedAt:int):void {
++         if(!dropObserveLive(receivedAt)||!dropObserveRoom())return;
++         try {
++            var key:String=String(received.k);
++            if(key.length>64) {
++               dropObserveFault="wire key exceeds 64 characters";
++               dropObserveClosed=true;dropObserveCloseAt=receivedAt;dropObserveReason="observer-error";return;
++            }
++            if(dropObserveKey=="")dropObserveKey=key;
++            else if(key!=dropObserveKey)++dropObserveKeyChanges;
++            dropObserveRows.push({kind:"loot",frame:renderFrame,at:receivedAt,key:key,
++               sampleTime:Number(received.sampleTime),x:Number(received.x),y:Number(received.y),stay:received.stay===true});
++         }catch(error:Error) {
++            dropObserveFault=String(error).substr(0,160);
++            dropObserveClosed=true;dropObserveCloseAt=receivedAt;dropObserveReason="observer-error";
++         }
++      }
++      private function exportDropObserver():void {
++         if(dropObserveEmitted)return;
++         dropObserveEmitted=true;
++         var now:int=getTimer();dropObserveLive(now);
++         if(dropObserveStart>=0&&!dropObserveClosed) {
++            dropObserveClosed=true;dropObserveCloseAt=now;dropObserveReason="finish-before-deadline";
++         }
++         Log.d("DROP RENDER OBSERVER "+JSON.stringify({schema:1,role:host?"host":"join",round:0,
++            diagnostic_only:true,performance_qualified:false,maximum: DROP_OBSERVE_CAP,
++            durationMs:DROP_OBSERVE_MS,start:dropObserveStart,deadline:dropObserveDeadline,
++            closedObservedAt:dropObserveCloseAt,exportAt:now,reason:dropObserveReason,
++            overflow:dropObserveOverflow,fault:dropObserveFault,
++            wireKey:dropObserveKey,wireKeyChanges:dropObserveKeyChanges,visualChanges:dropObserveVisualChanges,
++            complete:dropObserveReason=="elapsed"&&dropObserveOverflow==0&&dropObserveFault==""
++               &&dropObserveKeyChanges==0&&dropObserveVisualChanges==0,rows:dropObserveRows}));
++      }
++
+       public function PresentationContinuityTestDoc(enemyTimeline:Boolean=false,repeatPauses:int=1,latePackets:Boolean=false,betweenFramePackets:Boolean=false) {
+          timelineOnly=enemyTimeline;
+          pauseRounds=Math.max(1,repeatPauses);
+@@ -207,7 +296,10 @@
+          if(!host && p.lootMotion is Array && (phase=="falling" || phase=="drop-wait"))
+             for each(var received:Object in p.lootMotion)
+                if(received.item!=null && received.item.id=="kofe" && int(received.item.kol)==37+round)
++               {
+                   lootArrivals.push({received:getTimer(),sample:received.sampleTime,x:received.x,y:received.y,stay:received.stay});
++                  observeDropArrival(received,int(lootArrivals[lootArrivals.length-1].received));
++               }
+          if(p.type!="continuity-test")return;
+          try {
+             if(p.op=="ready"&&host)ready=true;
+@@ -230,6 +322,7 @@
+       }
+       private function before(e:Event):void {
+          ++renderFrame;if(phase=="done")return;
++         observeDropEnter();
+          pauseStamp("enter-begin");
+          var g:Object=mod.game.gg;g.invulner=true;g.dx=g.dy=0;g.isTake=0;
+          g.setPos(baseX,baseY);g.setVisPos();
+@@ -292,6 +385,7 @@
+          // simulation frame; movement/animation cadence samples stay deduped.
+          if(timelineOnly&&!host&&enemy!=null&&endpointReceived>0&&endpointSettled==0
+             &&Math.abs(Number(enemy.vis.x)-endpoint)<=1)endpointSettled=getTimer();
++         observeDropRender();
+          if(lastRender==renderFrame||phase=="done")return;lastRender=renderFrame;
+          if(phase=="falling"||phase=="drop-wait") {
+             var o:Object=drop();if(o!=null&&o.vis!=null&&o.vis.stage!=null)
+@@ -449,6 +543,7 @@
+             link.removeEventListener(TcpLink.MESSAGE,receive);
+             link.removeEventListener(TcpLink.MESSAGE,deferPacket);
+          }
++         exportDropObserver();
+          Log.d("COOP EFFECTS DONE continuity "+(host?"host":"join"));
+       }
+    }

@@ -1,0 +1,14 @@
+{
+  "source_manifest_sha256": "d51ae3e751e93d1ae9d57b836c57a36e0a6f2d0fbb8bfcd02549247ac6976f31",
+  "source_continuity_run": "60ccbb7140",
+  "source_continuity_mode": "default; not eight-round timing qualification",
+  "entry_sha256": "f20ce2cb227c82b7a6afa5c2580849d364aa5d7b5b8ab1314b27736d36e1ec81",
+  "original_entry_equals_source": true,
+  "old_failed_run": "9a806dee8c",
+  "old_FA_log_sha256": "584e056792957508a945b8237d774b31d3e9ba7b870a0c2b6600e2cda892930a",
+  "old_FA_1009_count": 12,
+  "old_FA_stack": "fa::Runtime/after()",
+  "root_cause_proven": false,
+  "compiled": false,
+  "air_started": false
+}

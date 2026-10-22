@@ -1,0 +1,48 @@
+--- recovery22/rconnect/core/CoopPause.as
++++ pause-edge/rconnect/core/CoopPause.as
+@@ -187,16 +187,21 @@
+                if(!listed)reasons.push({id:session.myId,name:session.myName,mask:filtered});
+             }
+          }
++         var wasPaused:Boolean=_paused;
+          setPaused(playable && reasons.length>0);
+          if(!connected())return;
+          var now:int=getTimer();
+          if(host())
+          {
+             var summary:String=JSON.stringify({epoch:epoch,menus:_menus,sats:_sats,reasons:reasons});
+-            if(now<nextSend && summary==lastSummary)return;
+-            lastSummary=summary;nextSend=now+250;
+-            var state:Object={type:"coop-pause",op:"state",seq:++serial,epoch:epoch,menus:_menus,sats:_sats,reasons:reasons};
+-            for each(p in session.peers)if(p.link!=null && p.link.isOpen)p.link.send(state);
++            if(now>=nextSend || summary!=lastSummary) {
++               lastSummary=summary;nextSend=now+250;
++               var state:Object={type:"coop-pause",op:"state",seq:++serial,epoch:epoch,menus:_menus,sats:_sats,reasons:reasons};
++               for each(p in session.peers)if(p.link!=null && p.link.isOpen)p.link.send(state);
++            }
++            // Notify pause first; capturing a large stopped-world payload must
++            // not delay the existing pause acknowledgement.
++            if(!wasPaused && _paused)session.flushPausedWorldState();
+          }
+          else if(now>=nextSend || mask!=lastMask)
+          {
+--- recovery22/rconnect/core/Session.as
++++ pause-edge/rconnect/core/Session.as
+@@ -1201,6 +1201,17 @@
+ 
+       // ---- 世界状态广播 -------------------------------------------------
+ 
++      /** One stopped-pose flush; normal timer cadence remains unchanged. */
++      public function flushPausedWorldState():void
++      {
++         if(mode!=HOSTING || pause==null || !pause.paused
++            || mod.game==null || !mod.game.coopPaused || !rooms.canSyncWorld
++            || !rooms.authority || mod.game.isTransitioning()
++            || server==null || !server.bound || server.clients.length==0)return;
++         try {broadcastWorldState();}
++         catch(error:*) {Log.d("RConnectNet: pause flush failed "+error);}
++      }
++
+       private function broadcastWorldState():void
+       {
+          if(server == null || !server.bound)

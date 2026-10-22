@@ -1,0 +1,458 @@
+{
+  "run": "c463d3510f",
+  "candidate_sha256": "87fafd6646b5fa07fd8fa280ed7e82f7e69631850e67b0748d9cad22de2f0b6c",
+  "driver_sha256": "382d23a9b182552b64b69c6cf3b40b1207fdaa14e941b7de7de0de13f87d9ea4",
+  "native_functional_pass": true,
+  "checks": {
+    "host": 21,
+    "join": 31
+  },
+  "input_checks": {
+    "installation_unchanged": true,
+    "exclusive_air_confirmed": true,
+    "process_policy_confirmed": true,
+    "vision_templates_confirmed": true
+  },
+  "hashes": {
+    "build\\m52\\recovery-drop-observer-native-01\\result.json": "7b974066fe0b024acdca1112b6a0a451663f724ecf4934887e3552abe10ddac3",
+    "build\\m52\\recovery-drop-observer-native-01\\observer-summary.json": "422fec41d919884746cd36904ac9dd38c6752485f0b9a55b3ebd38996a2843c5",
+    "build\\cooperation\\c463d3510f\\run.json": "515daa32dc509313823b634ca1cbc61be00b7deafc1dee2a3dee65a82bea8123",
+    "build\\cooperation\\c463d3510f\\input.json": "f5dbd0486bc43d13b27ac3568f3be5c21cc6404704235543a5fb881f709b8e37"
+  },
+  "equal_22_23_motion_classes": {
+    "rconnect/game/GameBridge.as": "260cebd0f89e348979d05d00338f7e444a1abf2c0bbe4d03350475b05e01142d",
+    "rconnect/game/RemoteMotion.as": "5f0d0ba3b8de5ec1a08d392b4147f04a4d318c0bcdd0a2f7bbf236a5d28fc877",
+    "rconnect/game/UnitPresentation.as": "d67dbcbed8d3ef67771eb10e41516102dabb34aad3a7065ab71ec7822ff53178",
+    "rconnect/game/RemoteLoot.as": "bbe29cd6b2e97dae4c6fbcfa861d50883963f8dee752acee37cae795b5a6b666"
+  },
+  "roles": {
+    "host": {
+      "role": "host",
+      "log_sha256": "3098a16cce1af0220eda7e752b9ecd895d1af5a62d51b7bfd5d21c66b2e7cd41",
+      "observer_log_line_index": 73,
+      "diagnostic_complete": true,
+      "start": 70614,
+      "deadline": 72614,
+      "closed_at": 72633,
+      "export_at": 84560,
+      "total_rows": 179,
+      "render_count": 120,
+      "enter_count": 59,
+      "wire_count": 0,
+      "air_render_records": 28,
+      "air_game_frames": 14,
+      "first_landed_render": {
+        "sameVisual": true,
+        "logicalY": 319,
+        "x": 214.25,
+        "kind": "render",
+        "stay": true,
+        "y": 319,
+        "alreadyDeduped": false,
+        "attached": true,
+        "visible": true,
+        "at": 71067,
+        "alpha": 1,
+        "logicalX": 214.25140620674938,
+        "frame": 51
+      },
+      "largest_air_to_air_gap": {
+        "ms": 39,
+        "raw_indices": [
+          22,
+          24
+        ],
+        "start": {
+          "sameVisual": true,
+          "logicalY": 287.18776762858033,
+          "x": 221.6,
+          "kind": "render",
+          "stay": false,
+          "y": 287.15,
+          "alreadyDeduped": true,
+          "attached": true,
+          "visible": true,
+          "at": 70825,
+          "alpha": 1,
+          "logicalX": 221.600749976933,
+          "frame": 44
+        },
+        "end": {
+          "sameVisual": true,
+          "logicalY": 289.4612385821529,
+          "x": 220.55,
+          "kind": "render",
+          "stay": false,
+          "y": 289.45,
+          "alreadyDeduped": false,
+          "attached": true,
+          "visible": true,
+          "at": 70864,
+          "alpha": 1,
+          "logicalX": 220.55084372404963,
+          "frame": 45
+        },
+        "inside": [
+          {
+            "raw_index": 23,
+            "at": 70854,
+            "kind": "enter",
+            "frame": 45
+          }
+        ]
+      },
+      "largest_gap_touching_air": {
+        "ms": 39,
+        "raw_indices": [
+          22,
+          24
+        ],
+        "start": {
+          "sameVisual": true,
+          "logicalY": 287.18776762858033,
+          "x": 221.6,
+          "kind": "render",
+          "stay": false,
+          "y": 287.15,
+          "alreadyDeduped": true,
+          "attached": true,
+          "visible": true,
+          "at": 70825,
+          "alpha": 1,
+          "logicalX": 221.600749976933,
+          "frame": 44
+        },
+        "end": {
+          "sameVisual": true,
+          "logicalY": 289.4612385821529,
+          "x": 220.55,
+          "kind": "render",
+          "stay": false,
+          "y": 289.45,
+          "alreadyDeduped": false,
+          "attached": true,
+          "visible": true,
+          "at": 70864,
+          "alpha": 1,
+          "logicalX": 220.55084372404963,
+          "frame": 45
+        },
+        "inside": [
+          {
+            "raw_index": 23,
+            "at": 70854,
+            "kind": "enter",
+            "frame": 45
+          }
+        ]
+      },
+      "largest_landed_gap": {
+        "ms": 47,
+        "raw_indices": [
+          106,
+          108
+        ],
+        "start": {
+          "sameVisual": true,
+          "logicalY": 319,
+          "x": 214.25,
+          "kind": "render",
+          "stay": true,
+          "y": 319,
+          "alreadyDeduped": true,
+          "attached": true,
+          "visible": true,
+          "at": 71800,
+          "alpha": 1,
+          "logicalX": 214.25140620674938,
+          "frame": 72
+        },
+        "end": {
+          "sameVisual": true,
+          "logicalY": 319,
+          "x": 214.25,
+          "kind": "render",
+          "stay": true,
+          "y": 319,
+          "alreadyDeduped": false,
+          "attached": true,
+          "visible": true,
+          "at": 71847,
+          "alpha": 1,
+          "logicalX": 214.25140620674938,
+          "frame": 73
+        },
+        "inside": [
+          {
+            "raw_index": 107,
+            "at": 71828,
+            "kind": "enter",
+            "frame": 73
+          }
+        ]
+      },
+      "extra_same_frame_renders": 60,
+      "extra_renders_with_new_visual": 0,
+      "extra_renders_with_new_logical": 0,
+      "maximum_extra_render_delta_ms": 2,
+      "cross_frame_air_equal_positions": [],
+      "wire": null
+    },
+    "join": {
+      "role": "join",
+      "log_sha256": "5b1539cca5391c339515dc65961113f65c820c1c7897ff41b36aa536cbf57f12",
+      "observer_log_line_index": 104,
+      "diagnostic_complete": true,
+      "start": 32116,
+      "deadline": 34116,
+      "closed_at": 34116,
+      "export_at": 45978,
+      "total_rows": 190,
+      "render_count": 118,
+      "enter_count": 58,
+      "wire_count": 14,
+      "air_render_records": 30,
+      "air_game_frames": 15,
+      "first_landed_render": {
+        "sameVisual": true,
+        "alreadyDeduped": false,
+        "attached": true,
+        "kind": "render",
+        "stay": true,
+        "y": 318.95,
+        "at": 32624,
+        "x": 214.2,
+        "visible": true,
+        "logicalY": 319,
+        "logicalX": 214.25140620674935,
+        "alpha": 1,
+        "frame": 49
+      },
+      "largest_air_to_air_gap": {
+        "ms": 46,
+        "raw_indices": [
+          33,
+          35
+        ],
+        "start": {
+          "sameVisual": true,
+          "alreadyDeduped": true,
+          "attached": true,
+          "kind": "render",
+          "stay": false,
+          "y": 290.9,
+          "at": 32416,
+          "x": 220,
+          "visible": true,
+          "logicalY": 290.9478442686434,
+          "logicalX": 220.03144991913072,
+          "alpha": 1,
+          "frame": 43
+        },
+        "end": {
+          "sameVisual": true,
+          "alreadyDeduped": false,
+          "attached": true,
+          "kind": "render",
+          "stay": false,
+          "y": 295.65,
+          "at": 32462,
+          "x": 218.75,
+          "visible": true,
+          "logicalY": 295.7334534762848,
+          "logicalX": 218.78932263899213,
+          "alpha": 1,
+          "frame": 44
+        },
+        "inside": [
+          {
+            "raw_index": 34,
+            "at": 32447,
+            "kind": "enter",
+            "frame": 44
+          }
+        ]
+      },
+      "largest_gap_touching_air": {
+        "ms": 46,
+        "raw_indices": [
+          33,
+          35
+        ],
+        "start": {
+          "sameVisual": true,
+          "alreadyDeduped": true,
+          "attached": true,
+          "kind": "render",
+          "stay": false,
+          "y": 290.9,
+          "at": 32416,
+          "x": 220,
+          "visible": true,
+          "logicalY": 290.9478442686434,
+          "logicalX": 220.03144991913072,
+          "alpha": 1,
+          "frame": 43
+        },
+        "end": {
+          "sameVisual": true,
+          "alreadyDeduped": false,
+          "attached": true,
+          "kind": "render",
+          "stay": false,
+          "y": 295.65,
+          "at": 32462,
+          "x": 218.75,
+          "visible": true,
+          "logicalY": 295.7334534762848,
+          "logicalX": 218.78932263899213,
+          "alpha": 1,
+          "frame": 44
+        },
+        "inside": [
+          {
+            "raw_index": 34,
+            "at": 32447,
+            "kind": "enter",
+            "frame": 44
+          }
+        ]
+      },
+      "largest_landed_gap": {
+        "ms": 95,
+        "raw_indices": [
+          129,
+          131
+        ],
+        "start": {
+          "sameVisual": true,
+          "alreadyDeduped": true,
+          "attached": true,
+          "kind": "render",
+          "stay": true,
+          "y": 318.95,
+          "at": 33379,
+          "x": 214.2,
+          "visible": true,
+          "logicalY": 319,
+          "logicalX": 214.25140620674935,
+          "alpha": 1,
+          "frame": 72
+        },
+        "end": {
+          "sameVisual": true,
+          "alreadyDeduped": false,
+          "attached": true,
+          "kind": "render",
+          "stay": true,
+          "y": 318.95,
+          "at": 33474,
+          "x": 214.2,
+          "visible": true,
+          "logicalY": 319,
+          "logicalX": 214.25140620674935,
+          "alpha": 1,
+          "frame": 73
+        },
+        "inside": [
+          {
+            "raw_index": 130,
+            "at": 33399,
+            "kind": "enter",
+            "frame": 73
+          }
+        ]
+      },
+      "extra_same_frame_renders": 59,
+      "extra_renders_with_new_visual": 0,
+      "extra_renders_with_new_logical": 0,
+      "maximum_extra_render_delta_ms": 2,
+      "cross_frame_air_equal_positions": [],
+      "wire": {
+        "count": 14,
+        "air_count": 6,
+        "stay_count": 8,
+        "key": "L#2",
+        "first_at": 32134,
+        "last_at": 32976,
+        "arrival_gaps_ms": [
+          58,
+          68,
+          68,
+          71,
+          79,
+          38,
+          62,
+          65,
+          95,
+          65,
+          71,
+          68,
+          34
+        ],
+        "source_sample_gaps_ms": [
+          59,
+          61,
+          65,
+          64,
+          69,
+          67,
+          65,
+          66,
+          66,
+          73,
+          62,
+          66,
+          67
+        ],
+        "maximum_air_to_air_arrival_gap_ms": 79,
+        "first_stay_packet": {
+          "y": 319,
+          "at": 32516,
+          "sampleTime": 71054,
+          "key": "L#2",
+          "frame": 45,
+          "x": 214.25140620674935,
+          "kind": "loot",
+          "stay": true
+        },
+        "first_local_stay_render": {
+          "sameVisual": true,
+          "alreadyDeduped": false,
+          "attached": true,
+          "kind": "render",
+          "stay": true,
+          "y": 318.95,
+          "at": 32624,
+          "x": 214.2,
+          "visible": true,
+          "logicalY": 319,
+          "logicalX": 214.25140620674935,
+          "alpha": 1,
+          "frame": 49
+        },
+        "first_stay_packet_to_local_stay_ms": 108,
+        "arrival_to_next_render_ms": [
+          12,
+          17,
+          18,
+          14,
+          16,
+          18,
+          14,
+          15,
+          12,
+          13,
+          13,
+          13,
+          14,
+          15
+        ]
+      }
+    }
+  },
+  "old_160ms_air_gap_reproduced": false,
+  "smoothness_qualified": false,
+  "fps_qualification": false,
+  "conclusions_limited_to_this_window": true
+}

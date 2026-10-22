@@ -1,0 +1,92 @@
+{
+  "read_only": true,
+  "production_changed": false,
+  "compiled": false,
+  "air_started": false,
+  "performance_qualified": false,
+  "source_equality": {
+    "rconnect/game/GameBridge.as": {
+      "sha256_22": "260cebd0f89e348979d05d00338f7e444a1abf2c0bbe4d03350475b05e01142d",
+      "21_equals_22": true,
+      "20_equals_22": true
+    },
+    "rconnect/game/UnitPresentation.as": {
+      "sha256_22": "d67dbcbed8d3ef67771eb10e41516102dabb34aad3a7065ab71ec7822ff53178",
+      "21_equals_22": true,
+      "20_equals_22": true
+    },
+    "rconnect/game/RemoteMotion.as": {
+      "sha256_22": "5f0d0ba3b8de5ec1a08d392b4147f04a4d318c0bcdd0a2f7bbf236a5d28fc877",
+      "21_equals_22": true,
+      "20_equals_22": true
+    },
+    "rconnect/game/WeaponDisplay.as": {
+      "sha256_22": "c76a6b157992398dbb8d8620de2482375594423226cd64b90e13e8fee96066f2",
+      "21_equals_22": true,
+      "20_equals_22": true
+    },
+    "rconnect/net/TcpLink.as": {
+      "sha256_22": "93aafc0aad7a410107f2eea2cee288d9366c6cacce289c5b2552dc95140e350c",
+      "21_equals_22": true,
+      "20_equals_22": true
+    }
+  },
+  "diagnostics": {
+    "043b72eaec": {
+      "log_sha256": "e1a07d9379a9a0ade5f3ebde7467f84496235971be002ac60295c416ae233aa1",
+      "summary_sha256": "a45c3abb3f309632ca864a8a16d766104c20108769f246b9688deba2fbe40eab",
+      "cpu_samples": 958,
+      "inclusive_contains": {
+        "tickLootMotion": 0,
+        "tickBoxTweens": 0,
+        "receiveHeldMotion": 0,
+        "trackBoxPos": 0,
+        "applyLootSync": 0,
+        "updateRemote": 0,
+        "driveGhost": 13,
+        "RemoteMotion/sampleTimed": 64,
+        "RemoteMotion/curve": 4,
+        "blendWeapons": 16,
+        "blendBodyPose": 7
+      },
+      "scope": "ENTER_FRAME through final RENDER only; inclusive rows overlap; no allocation stacks; sampling overhead excluded from qualification",
+      "same_run_as_160_249_ms": false
+    },
+    "b3d7b8558b": {
+      "log_sha256": "2b9575e9f3ef4c66a1e7c85a30aa8019468320963bb7a45f7e46c1cd2aab5ef7",
+      "summary_sha256": "4a93606310c5f0919d0261ca66fbc7dd102761b49e5ce5fcfa1facdc864b1049",
+      "cpu_samples": 1614,
+      "inclusive_contains": {
+        "tickLootMotion": 0,
+        "tickBoxTweens": 0,
+        "receiveHeldMotion": 0,
+        "trackBoxPos": 0,
+        "applyLootSync": 0,
+        "updateRemote": 18,
+        "driveGhost": 8,
+        "RemoteMotion/sampleTimed": 75,
+        "RemoteMotion/curve": 6,
+        "blendWeapons": 34,
+        "blendBodyPose": 16
+      },
+      "scope": "Original stage RENDER -1000000 through next stage ENTER +1000000; collector is paused; native/global broadcast order not certified",
+      "same_run_as_160_249_ms": false
+    }
+  },
+  "references": {
+    "experimental/recovery21-motion-native-review/README.md": "a86d16a3fd67c760acc5e04eee07f723749874c2e67e857094696d3d290b1fed",
+    "experimental/recovery21-motion-native-review/summary.json": "5bbcf35a6dee1d740a611a22ba42a2135fb5f29b4ede4af810748ccb3dc6e109",
+    "experimental/recovery-socket-batch-review/independent-review.md": "4391525917f861272de3411ab85d121c82073e60de4d6c878b913d99a8c4c180",
+    "build/m52/motion2-continuity-drivers-01/tests/PresentationContinuityTestDoc.as": "2e998334580505028b9fa58d3daa6067e3eaa92d3df313db4ecfeeba26a8e6f9",
+    "build/m52/motion2-native-input-drivers-04/tests/FastHeldTestDoc.as": "0be443b3109d361b1216410116cbffc2e5612ed87a63b4ad198826afcad3bc62"
+  },
+  "proposed_experiment": {
+    "kind": "read-only additional scalar timeline before existing render deduplication",
+    "case": "continuity drop round0",
+    "implemented": false,
+    "maximum_records": 256,
+    "window_ms": 2000,
+    "original_assertions_and_trace_unchanged_required": true,
+    "overflow_is_incomplete": true
+  }
+}

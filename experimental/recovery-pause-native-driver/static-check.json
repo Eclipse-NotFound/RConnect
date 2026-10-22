@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "python_ast_valid": true,
+  "exact_as_sources": 4,
+  "original_fingerprints_verified": 24,
+  "entry_super_true_8": true,
+  "parent_only_original_openSats_delta": true,
+  "native_inventory_identity_assertion_retained": true,
+  "all_original_phases_sampling_assertions_retained": true,
+  "new_native_checks_run": 0,
+  "compiled": false,
+  "air_started": false,
+  "binary_copied": false,
+  "runtime_module_error_ignored": false,
+  "formal_case_layout": "pause-timing"
+}

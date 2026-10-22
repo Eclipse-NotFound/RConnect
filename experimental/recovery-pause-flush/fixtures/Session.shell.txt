@@ -1,0 +1,14 @@
+package rconnect.core {
+   import rconnect.net.TcpLink;
+   import rconnect.net.Protocol;
+   import pausecheck.*;
+   public class Session {
+      public static const HOSTING:String="hosting",CONNECTED:String="connected",OFFLINE:String="offline";
+      public var mod:Object,mode:String=HOSTING,server:FakeServer,link:TcpLink;
+      public var rooms:FakeRooms=new FakeRooms(),pause:Object;
+      public var peers:Array=[],myName:String="Host",myId:int=0;
+      private var _tickCount:int=17;
+@@FLUSH@@
+@@BROADCAST@@
+   }
+}

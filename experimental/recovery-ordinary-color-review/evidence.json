@@ -1,0 +1,1945 @@
+{
+  "kind": "read-only ordinary native pixel arithmetic review",
+  "run": "215270505b",
+  "candidate_sha256": "746eef5713985f23fe13a57792516789bebd37a5e4142639ba8cc8b6590b3e93",
+  "source": "join",
+  "round": 3,
+  "weapon": "plamg",
+  "expected_pixels": 1089,
+  "wrong_pixels": 22,
+  "remote_extra": 0,
+  "all_wrong_equal_baseline": true,
+  "source_observations": 353,
+  "remote_observations": 367,
+  "opaque": 10,
+  "nonopaque_black": 4,
+  "nonopaque_nonblack": 8,
+  "remote_wrong_ever_changed": 0,
+  "input_sha256": {
+    "build/m52/recovery22-ordinary-wall-native-01/wall-proof/join/round-3-proof.json": "d7cc730670b555cd311fc62ec1ec173ac8d21f426392dd1b9eefe94a35c4d2f7",
+    "build/m52/recovery22-ordinary-wall-native-01/wall-proof/host/round-3-proof.json": "f71b4936b22f87a53447cc0e3b05117a5c48e44bbd0a28268926af35607bb241",
+    "build/m52/recovery22-ordinary-wall-native-01/wall-surface-result.json": "f79d7ed194c4a56741b8e778a184c7515eb74e2e45794f44774d46dba1a4860a",
+    "build/m52/recovery22-ordinary-wall-native-01/intent.json": "b289ba3de86274a719499e88d29fcc3c18e97dc984c33f47d1adb2cd946f0bd1",
+    "build/m52/recovery-22/src/rconnect/game/NativeWallColor.as": "0f7160457f21d46759cc3b43d9defd17a8d921007521407365d906988dcfa842",
+    "build/m52/recovery-22/src/rconnect/game/WallImpactVisuals.as": "224c4b58b2997891c017e3ac10b396e07e3fd5b2cefe883fb6543a2896827f6e",
+    "build/m52/recovery-ordinary-wall-driver-01/tests/NativeWallSurfaceProbe.as": "6587c41400e06a234b3d0279f887e9c3ff8990011a9aaa4dab41402c567074a8",
+    "build/m52/recovery-ordinary-wall-driver-01/tests/LargeWallSurfaceTestDoc.as": "4681da5c2540b3031a8361da6ac9a2c8127484c2d4378cb7af9a5c1440d7273e",
+    "experimental/recovery-ordinary-wall-native/verify_results.py": "96bd9a6344011180c6de16940dc03c5e1f5ef67325c84a805d8791611f572dba",
+    "build/m52/recovery-wall-color-roundtrip-01/component-result.json": "2708d86e8a0da4d5e2953a36cf55a76ac84894b7d46028333e190c3b065caf03",
+    "build/m52/recovery-wall-color-component-02/component-result.json": "ba6fee0a2c7d7a54692610e61e5c0c5c689fed53a55b4ded637320b4e30aa46c"
+  },
+  "rows": [
+    {
+      "index": 5694,
+      "x": 1118,
+      "y": 320,
+      "cell": [
+        27,
+        8
+      ],
+      "expected": 2115245070,
+      "actual": 2117679407,
+      "expected_hex": "7E14140E",
+      "actual_hex": "7E39392F",
+      "expected_argb": [
+        126,
+        20,
+        20,
+        14
+      ],
+      "actual_argb": [
+        126,
+        57,
+        57,
+        47
+      ],
+      "argb_delta": [
+        0,
+        37,
+        37,
+        33
+      ],
+      "baseline": 2117679407,
+      "actual_equals_baseline": true,
+      "source_final_equals_oracle": true,
+      "remote_observed_changes": 0,
+      "source_history": [
+        {
+          "at": 86635,
+          "wall": 1792647178108,
+          "value": 2117679407
+        },
+        {
+          "at": 87558,
+          "wall": 1792647179031,
+          "value": 2117021478
+        },
+        {
+          "at": 87778,
+          "wall": 1792647179251,
+          "value": 2116297758
+        },
+        {
+          "at": 88008,
+          "wall": 1792647179482,
+          "value": 2116034586
+        },
+        {
+          "at": 88267,
+          "wall": 1792647179740,
+          "value": 2115903000
+        },
+        {
+          "at": 88495,
+          "wall": 1792647179968,
+          "value": 2115508242
+        },
+        {
+          "at": 88748,
+          "wall": 1792647180221,
+          "value": 2115376656
+        },
+        {
+          "at": 88979,
+          "wall": 1792647180452,
+          "value": 2115245070
+        }
+      ],
+      "remote_history": [
+        {
+          "at": 124192,
+          "wall": 1792647178043,
+          "value": 2117679407
+        }
+      ]
+    },
+    {
+      "index": 5695,
+      "x": 1119,
+      "y": 320,
+      "cell": [
+        27,
+        8
+      ],
+      "expected": 4280756002,
+      "actual": 4282335032,
+      "expected_hex": "FF272722",
+      "actual_hex": "FF3F3F38",
+      "expected_argb": [
+        255,
+        39,
+        39,
+        34
+      ],
+      "actual_argb": [
+        255,
+        63,
+        63,
+        56
+      ],
+      "argb_delta": [
+        0,
+        24,
+        24,
+        22
+      ],
+      "baseline": 4282335032,
+      "actual_equals_baseline": true,
+      "source_final_equals_oracle": true,
+      "remote_observed_changes": 0,
+      "source_history": [
+        {
+          "at": 86635,
+          "wall": 1792647178108,
+          "value": 4282335032
+        },
+        {
+          "at": 87558,
+          "wall": 1792647179031,
+          "value": 4281940275
+        },
+        {
+          "at": 87778,
+          "wall": 1792647179251,
+          "value": 4281545518
+        },
+        {
+          "at": 88008,
+          "wall": 1792647179482,
+          "value": 4281348139
+        },
+        {
+          "at": 88267,
+          "wall": 1792647179740,
+          "value": 4281282346
+        },
+        {
+          "at": 88495,
+          "wall": 1792647179968,
+          "value": 4280953381
+        },
+        {
+          "at": 88748,
+          "wall": 1792647180221,
+          "value": 4280887588
+        },
+        {
+          "at": 88979,
+          "wall": 1792647180452,
+          "value": 4280756002
+        }
+      ],
+      "remote_history": [
+        {
+          "at": 124192,
+          "wall": 1792647178043,
+          "value": 4282335032
+        }
+      ]
+    },
+    {
+      "index": 5822,
+      "x": 1118,
+      "y": 321,
+      "cell": [
+        27,
+        8
+      ],
+      "expected": 2117020968,
+      "actual": 2122152817,
+      "expected_hex": "7E2F2D28",
+      "actual_hex": "7E7D7B71",
+      "expected_argb": [
+        126,
+        47,
+        45,
+        40
+      ],
+      "actual_argb": [
+        126,
+        125,
+        123,
+        113
+      ],
+      "argb_delta": [
+        0,
+        78,
+        78,
+        73
+      ],
+      "baseline": 2122152817,
+      "actual_equals_baseline": true,
+      "source_final_equals_oracle": true,
+      "remote_observed_changes": 0,
+      "source_history": [
+        {
+          "at": 86635,
+          "wall": 1792647178108,
+          "value": 2122152817
+        },
+        {
+          "at": 87558,
+          "wall": 1792647179031,
+          "value": 2120705373
+        },
+        {
+          "at": 87778,
+          "wall": 1792647179251,
+          "value": 2119389513
+        },
+        {
+          "at": 88008,
+          "wall": 1792647179482,
+          "value": 2118731583
+        },
+        {
+          "at": 88267,
+          "wall": 1792647179740,
+          "value": 2118599997
+        },
+        {
+          "at": 88495,
+          "wall": 1792647179968,
+          "value": 2117678897
+        },
+        {
+          "at": 88748,
+          "wall": 1792647180221,
+          "value": 2117415725
+        },
+        {
+          "at": 88979,
+          "wall": 1792647180452,
+          "value": 2117020968
+        }
+      ],
+      "remote_history": [
+        {
+          "at": 124192,
+          "wall": 1792647178043,
+          "value": 2122152817
+        }
+      ]
+    },
+    {
+      "index": 5823,
+      "x": 1119,
+      "y": 321,
+      "cell": [
+        27,
+        8
+      ],
+      "expected": 4283453513,
+      "actual": 4287203712,
+      "expected_hex": "FF505049",
+      "actual_hex": "FF898980",
+      "expected_argb": [
+        255,
+        80,
+        80,
+        73
+      ],
+      "actual_argb": [
+        255,
+        137,
+        137,
+        128
+      ],
+      "argb_delta": [
+        0,
+        57,
+        57,
+        55
+      ],
+      "baseline": 4287203712,
+      "actual_equals_baseline": true,
+      "source_final_equals_oracle": true,
+      "remote_observed_changes": 0,
+      "source_history": [
+        {
+          "at": 86635,
+          "wall": 1792647178108,
+          "value": 4287203712
+        },
+        {
+          "at": 87558,
+          "wall": 1792647179031,
+          "value": 4286348403
+        },
+        {
+          "at": 87778,
+          "wall": 1792647179251,
+          "value": 4285361509
+        },
+        {
+          "at": 88008,
+          "wall": 1792647179482,
+          "value": 4284835165
+        },
+        {
+          "at": 88267,
+          "wall": 1792647179740,
+          "value": 4284637786
+        },
+        {
+          "at": 88495,
+          "wall": 1792647179968,
+          "value": 4283914064
+        },
+        {
+          "at": 88748,
+          "wall": 1792647180221,
+          "value": 4283716685
+        },
+        {
+          "at": 88979,
+          "wall": 1792647180452,
+          "value": 4283453513
+        }
+      ],
+      "remote_history": [
+        {
+          "at": 124192,
+          "wall": 1792647178043,
+          "value": 4287203712
+        }
+      ]
+    },
+    {
+      "index": 5950,
+      "x": 1118,
+      "y": 322,
+      "cell": [
+        27,
+        8
+      ],
+      "expected": 2116559908,
+      "actual": 2123007611,
+      "expected_hex": "7E282424",
+      "actual_hex": "7E8A867B",
+      "expected_argb": [
+        126,
+        40,
+        36,
+        36
+      ],
+      "actual_argb": [
+        126,
+        138,
+        134,
+        123
+      ],
+      "argb_delta": [
+        0,
+        98,
+        98,
+        87
+      ],
+      "baseline": 2123007611,
+      "actual_equals_baseline": true,
+      "source_final_equals_oracle": true,
+      "remote_observed_changes": 0,
+      "source_history": [
+        {
+          "at": 86635,
+          "wall": 1792647178108,
+          "value": 2123007611
+        },
+        {
+          "at": 87558,
+          "wall": 1792647179031,
+          "value": 2121231203
+        },
+        {
+          "at": 87778,
+          "wall": 1792647179251,
+          "value": 2119652175
+        },
+        {
+          "at": 88008,
+          "wall": 1792647179482,
+          "value": 2118731075
+        },
+        {
+          "at": 88267,
+          "wall": 1792647179740,
+          "value": 2118336317
+        },
+        {
+          "at": 88495,
+          "wall": 1792647179968,
+          "value": 2117415215
+        },
+        {
+          "at": 88748,
+          "wall": 1792647180221,
+          "value": 2117020202
+        },
+        {
+          "at": 88979,
+          "wall": 1792647180452,
+          "value": 2116559908
+        }
+      ],
+      "remote_history": [
+        {
+          "at": 124192,
+          "wall": 1792647178043,
+          "value": 2123007611
+        }
+      ]
+    },
+    {
+      "index": 5951,
+      "x": 1119,
+      "y": 322,
+      "cell": [
+        27,
+        8
+      ],
+      "expected": 4283255881,
+      "actual": 4288058763,
+      "expected_hex": "FF4D4C49",
+      "actual_hex": "FF96958B",
+      "expected_argb": [
+        255,
+        77,
+        76,
+        73
+      ],
+      "actual_argb": [
+        255,
+        150,
+        149,
+        139
+      ],
+      "argb_delta": [
+        0,
+        73,
+        73,
+        66
+      ],
+      "baseline": 4288058763,
+      "actual_equals_baseline": true,
+      "source_final_equals_oracle": true,
+      "remote_observed_changes": 0,
+      "source_history": [
+        {
+          "at": 86635,
+          "wall": 1792647178108,
+          "value": 4288058763
+        },
+        {
+          "at": 87331,
+          "wall": 1792647178804,
+          "value": 4287992971
+        },
+        {
+          "at": 87558,
+          "wall": 1792647179031,
+          "value": 4286940284
+        },
+        {
+          "at": 87778,
+          "wall": 1792647179251,
+          "value": 4285821804
+        },
+        {
+          "at": 88008,
+          "wall": 1792647179482,
+          "value": 4285163875
+        },
+        {
+          "at": 88267,
+          "wall": 1792647179740,
+          "value": 4284834910
+        },
+        {
+          "at": 88495,
+          "wall": 1792647179968,
+          "value": 4283979602
+        },
+        {
+          "at": 88748,
+          "wall": 1792647180221,
+          "value": 4283650638
+        },
+        {
+          "at": 88979,
+          "wall": 1792647180452,
+          "value": 4283255881
+        }
+      ],
+      "remote_history": [
+        {
+          "at": 124192,
+          "wall": 1792647178043,
+          "value": 4288058763
+        }
+      ]
+    },
+    {
+      "index": 6078,
+      "x": 1118,
+      "y": 323,
+      "cell": [
+        27,
+        8
+      ],
+      "expected": 2116297758,
+      "actual": 2123533953,
+      "expected_hex": "7E24241E",
+      "actual_hex": "7E928E81",
+      "expected_argb": [
+        126,
+        36,
+        36,
+        30
+      ],
+      "actual_argb": [
+        126,
+        146,
+        142,
+        129
+      ],
+      "argb_delta": [
+        0,
+        110,
+        106,
+        99
+      ],
+      "baseline": 2123533953,
+      "actual_equals_baseline": true,
+      "source_final_equals_oracle": true,
+      "remote_observed_changes": 0,
+      "source_history": [
+        {
+          "at": 86635,
+          "wall": 1792647178108,
+          "value": 2123533953
+        },
+        {
+          "at": 87558,
+          "wall": 1792647179031,
+          "value": 2121494885
+        },
+        {
+          "at": 87778,
+          "wall": 1792647179251,
+          "value": 2119652685
+        },
+        {
+          "at": 88008,
+          "wall": 1792647179482,
+          "value": 2118600511
+        },
+        {
+          "at": 88267,
+          "wall": 1792647179740,
+          "value": 2118205753
+        },
+        {
+          "at": 88495,
+          "wall": 1792647179968,
+          "value": 2117153066
+        },
+        {
+          "at": 88748,
+          "wall": 1792647180221,
+          "value": 2116692516
+        },
+        {
+          "at": 88979,
+          "wall": 1792647180452,
+          "value": 2116297758
+        }
+      ],
+      "remote_history": [
+        {
+          "at": 124192,
+          "wall": 1792647178043,
+          "value": 2123533953
+        }
+      ]
+    },
+    {
+      "index": 6079,
+      "x": 1119,
+      "y": 323,
+      "cell": [
+        27,
+        8
+      ],
+      "expected": 4282926658,
+      "actual": 4288518544,
+      "expected_hex": "FF484642",
+      "actual_hex": "FF9D9990",
+      "expected_argb": [
+        255,
+        72,
+        70,
+        66
+      ],
+      "actual_argb": [
+        255,
+        157,
+        153,
+        144
+      ],
+      "argb_delta": [
+        0,
+        85,
+        83,
+        78
+      ],
+      "baseline": 4288518544,
+      "actual_equals_baseline": true,
+      "source_final_equals_oracle": true,
+      "remote_observed_changes": 0,
+      "source_history": [
+        {
+          "at": 86635,
+          "wall": 1792647178108,
+          "value": 4288518544
+        },
+        {
+          "at": 87331,
+          "wall": 1792647178804,
+          "value": 4288452751
+        },
+        {
+          "at": 87558,
+          "wall": 1792647179031,
+          "value": 4287202942
+        },
+        {
+          "at": 87778,
+          "wall": 1792647179251,
+          "value": 4285952876
+        },
+        {
+          "at": 88008,
+          "wall": 1792647179482,
+          "value": 4285163361
+        },
+        {
+          "at": 88267,
+          "wall": 1792647179740,
+          "value": 4284702811
+        },
+        {
+          "at": 88495,
+          "wall": 1792647179968,
+          "value": 4283781966
+        },
+        {
+          "at": 88748,
+          "wall": 1792647180221,
+          "value": 4283387208
+        },
+        {
+          "at": 88979,
+          "wall": 1792647180452,
+          "value": 4282926658
+        }
+      ],
+      "remote_history": [
+        {
+          "at": 124192,
+          "wall": 1792647178043,
+          "value": 4288518544
+        }
+      ]
+    },
+    {
+      "index": 6206,
+      "x": 1118,
+      "y": 324,
+      "cell": [
+        27,
+        8
+      ],
+      "expected": 2115770902,
+      "actual": 2123664511,
+      "expected_hex": "7E1C1A16",
+      "actual_hex": "7E948C7F",
+      "expected_argb": [
+        126,
+        28,
+        26,
+        22
+      ],
+      "actual_argb": [
+        126,
+        148,
+        140,
+        127
+      ],
+      "argb_delta": [
+        0,
+        120,
+        114,
+        105
+      ],
+      "baseline": 2123664511,
+      "actual_equals_baseline": true,
+      "source_final_equals_oracle": true,
+      "remote_observed_changes": 0,
+      "source_history": [
+        {
+          "at": 86635,
+          "wall": 1792647178108,
+          "value": 2123664511
+        },
+        {
+          "at": 87331,
+          "wall": 1792647178804,
+          "value": 2123269755
+        },
+        {
+          "at": 87558,
+          "wall": 1792647179031,
+          "value": 2121098591
+        },
+        {
+          "at": 87778,
+          "wall": 1792647179251,
+          "value": 2119256903
+        },
+        {
+          "at": 88008,
+          "wall": 1792647179482,
+          "value": 2118204729
+        },
+        {
+          "at": 88267,
+          "wall": 1792647179740,
+          "value": 2117547313
+        },
+        {
+          "at": 88495,
+          "wall": 1792647179968,
+          "value": 2116560418
+        },
+        {
+          "at": 88748,
+          "wall": 1792647180221,
+          "value": 2116165660
+        },
+        {
+          "at": 88979,
+          "wall": 1792647180452,
+          "value": 2115770902
+        }
+      ],
+      "remote_history": [
+        {
+          "at": 124192,
+          "wall": 1792647178043,
+          "value": 2123664511
+        }
+      ]
+    },
+    {
+      "index": 6207,
+      "x": 1119,
+      "y": 324,
+      "cell": [
+        27,
+        8
+      ],
+      "expected": 4282465850,
+      "actual": 4288715410,
+      "expected_hex": "FF413E3A",
+      "actual_hex": "FFA09A92",
+      "expected_argb": [
+        255,
+        65,
+        62,
+        58
+      ],
+      "actual_argb": [
+        255,
+        160,
+        154,
+        146
+      ],
+      "argb_delta": [
+        0,
+        95,
+        92,
+        88
+      ],
+      "baseline": 4288715410,
+      "actual_equals_baseline": true,
+      "source_final_equals_oracle": true,
+      "remote_observed_changes": 0,
+      "source_history": [
+        {
+          "at": 86635,
+          "wall": 1792647178108,
+          "value": 4288715410
+        },
+        {
+          "at": 87331,
+          "wall": 1792647178804,
+          "value": 4288452238
+        },
+        {
+          "at": 87558,
+          "wall": 1792647179031,
+          "value": 4287070843
+        },
+        {
+          "at": 87778,
+          "wall": 1792647179251,
+          "value": 4285689448
+        },
+        {
+          "at": 88008,
+          "wall": 1792647179482,
+          "value": 4284834140
+        },
+        {
+          "at": 88267,
+          "wall": 1792647179740,
+          "value": 4284307797
+        },
+        {
+          "at": 88495,
+          "wall": 1792647179968,
+          "value": 4283386952
+        },
+        {
+          "at": 88748,
+          "wall": 1792647180221,
+          "value": 4282926401
+        },
+        {
+          "at": 88979,
+          "wall": 1792647180452,
+          "value": 4282465850
+        }
+      ],
+      "remote_history": [
+        {
+          "at": 124192,
+          "wall": 1792647178043,
+          "value": 4288715410
+        }
+      ]
+    },
+    {
+      "index": 6334,
+      "x": 1118,
+      "y": 325,
+      "cell": [
+        27,
+        8
+      ],
+      "expected": 2115245074,
+      "actual": 2123796097,
+      "expected_hex": "7E141412",
+      "actual_hex": "7E968E81",
+      "expected_argb": [
+        126,
+        20,
+        20,
+        18
+      ],
+      "actual_argb": [
+        126,
+        150,
+        142,
+        129
+      ],
+      "argb_delta": [
+        0,
+        130,
+        122,
+        111
+      ],
+      "baseline": 2123796097,
+      "actual_equals_baseline": true,
+      "source_final_equals_oracle": true,
+      "remote_observed_changes": 0,
+      "source_history": [
+        {
+          "at": 86635,
+          "wall": 1792647178108,
+          "value": 2123796097
+        },
+        {
+          "at": 87331,
+          "wall": 1792647178804,
+          "value": 2123138167
+        },
+        {
+          "at": 87558,
+          "wall": 1792647179031,
+          "value": 2120835929
+        },
+        {
+          "at": 87778,
+          "wall": 1792647179251,
+          "value": 2118863169
+        },
+        {
+          "at": 88008,
+          "wall": 1792647179482,
+          "value": 2117810483
+        },
+        {
+          "at": 88267,
+          "wall": 1792647179740,
+          "value": 2117152554
+        },
+        {
+          "at": 88495,
+          "wall": 1792647179968,
+          "value": 2116165662
+        },
+        {
+          "at": 88748,
+          "wall": 1792647180221,
+          "value": 2115639832
+        },
+        {
+          "at": 88979,
+          "wall": 1792647180452,
+          "value": 2115245074
+        }
+      ],
+      "remote_history": [
+        {
+          "at": 124192,
+          "wall": 1792647178043,
+          "value": 2123796097
+        }
+      ]
+    },
+    {
+      "index": 6335,
+      "x": 1119,
+      "y": 325,
+      "cell": [
+        27,
+        8
+      ],
+      "expected": 4281808177,
+      "actual": 4288518031,
+      "expected_hex": "FF373531",
+      "actual_hex": "FF9D978F",
+      "expected_argb": [
+        255,
+        55,
+        53,
+        49
+      ],
+      "actual_argb": [
+        255,
+        157,
+        151,
+        143
+      ],
+      "argb_delta": [
+        0,
+        102,
+        98,
+        94
+      ],
+      "baseline": 4288518031,
+      "actual_equals_baseline": true,
+      "source_final_equals_oracle": true,
+      "remote_observed_changes": 0,
+      "source_history": [
+        {
+          "at": 86635,
+          "wall": 1792647178108,
+          "value": 4288518031
+        },
+        {
+          "at": 87331,
+          "wall": 1792647178804,
+          "value": 4288057480
+        },
+        {
+          "at": 87558,
+          "wall": 1792647179031,
+          "value": 4286610292
+        },
+        {
+          "at": 87778,
+          "wall": 1792647179251,
+          "value": 4285163104
+        },
+        {
+          "at": 88008,
+          "wall": 1792647179482,
+          "value": 4284242259
+        },
+        {
+          "at": 88267,
+          "wall": 1792647179740,
+          "value": 4283715915
+        },
+        {
+          "at": 88495,
+          "wall": 1792647179968,
+          "value": 4282795071
+        },
+        {
+          "at": 88748,
+          "wall": 1792647180221,
+          "value": 4282268728
+        },
+        {
+          "at": 88979,
+          "wall": 1792647180452,
+          "value": 4281808177
+        }
+      ],
+      "remote_history": [
+        {
+          "at": 124192,
+          "wall": 1792647178043,
+          "value": 4288518031
+        }
+      ]
+    },
+    {
+      "index": 6462,
+      "x": 1118,
+      "y": 326,
+      "cell": [
+        27,
+        8
+      ],
+      "expected": 2114981390,
+      "actual": 2123533441,
+      "expected_hex": "7E100E0E",
+      "actual_hex": "7E928C81",
+      "expected_argb": [
+        126,
+        16,
+        14,
+        14
+      ],
+      "actual_argb": [
+        126,
+        146,
+        140,
+        129
+      ],
+      "argb_delta": [
+        0,
+        130,
+        126,
+        115
+      ],
+      "baseline": 2123533441,
+      "actual_equals_baseline": true,
+      "source_final_equals_oracle": true,
+      "remote_observed_changes": 0,
+      "source_history": [
+        {
+          "at": 86635,
+          "wall": 1792647178108,
+          "value": 2123533441
+        },
+        {
+          "at": 87331,
+          "wall": 1792647178804,
+          "value": 2122612083
+        },
+        {
+          "at": 87558,
+          "wall": 1792647179031,
+          "value": 2120309589
+        },
+        {
+          "at": 87778,
+          "wall": 1792647179251,
+          "value": 2118336827
+        },
+        {
+          "at": 88008,
+          "wall": 1792647179482,
+          "value": 2117284141
+        },
+        {
+          "at": 88267,
+          "wall": 1792647179740,
+          "value": 2116560420
+        },
+        {
+          "at": 88495,
+          "wall": 1792647179968,
+          "value": 2115770906
+        },
+        {
+          "at": 88748,
+          "wall": 1792647180221,
+          "value": 2115376148
+        },
+        {
+          "at": 88979,
+          "wall": 1792647180452,
+          "value": 2114981390
+        }
+      ],
+      "remote_history": [
+        {
+          "at": 124192,
+          "wall": 1792647178043,
+          "value": 2123533441
+        }
+      ]
+    },
+    {
+      "index": 6463,
+      "x": 1119,
+      "y": 326,
+      "cell": [
+        27,
+        8
+      ],
+      "expected": 4281149993,
+      "actual": 4287992200,
+      "expected_hex": "FF2D2A29",
+      "actual_hex": "FF959188",
+      "expected_argb": [
+        255,
+        45,
+        42,
+        41
+      ],
+      "actual_argb": [
+        255,
+        149,
+        145,
+        136
+      ],
+      "argb_delta": [
+        0,
+        104,
+        103,
+        95
+      ],
+      "baseline": 4287992200,
+      "actual_equals_baseline": true,
+      "source_final_equals_oracle": true,
+      "remote_observed_changes": 0,
+      "source_history": [
+        {
+          "at": 86635,
+          "wall": 1792647178108,
+          "value": 4287992200
+        },
+        {
+          "at": 87331,
+          "wall": 1792647178804,
+          "value": 4287334271
+        },
+        {
+          "at": 87558,
+          "wall": 1792647179031,
+          "value": 4285887083
+        },
+        {
+          "at": 87778,
+          "wall": 1792647179251,
+          "value": 4284505432
+        },
+        {
+          "at": 88008,
+          "wall": 1792647179482,
+          "value": 4283584331
+        },
+        {
+          "at": 88267,
+          "wall": 1792647179740,
+          "value": 4282992195
+        },
+        {
+          "at": 88495,
+          "wall": 1792647179968,
+          "value": 4282136887
+        },
+        {
+          "at": 88748,
+          "wall": 1792647180221,
+          "value": 4281610544
+        },
+        {
+          "at": 88979,
+          "wall": 1792647180452,
+          "value": 4281149993
+        }
+      ],
+      "remote_history": [
+        {
+          "at": 124192,
+          "wall": 1792647178043,
+          "value": 4287992200
+        }
+      ]
+    },
+    {
+      "index": 6590,
+      "x": 1118,
+      "y": 327,
+      "cell": [
+        27,
+        8
+      ],
+      "expected": 2114455046,
+      "actual": 2121757545,
+      "expected_hex": "7E080606",
+      "actual_hex": "7E777369",
+      "expected_argb": [
+        126,
+        8,
+        6,
+        6
+      ],
+      "actual_argb": [
+        126,
+        119,
+        115,
+        105
+      ],
+      "argb_delta": [
+        0,
+        111,
+        109,
+        99
+      ],
+      "baseline": 2121757545,
+      "actual_equals_baseline": true,
+      "source_final_equals_oracle": true,
+      "remote_observed_changes": 0,
+      "source_history": [
+        {
+          "at": 86635,
+          "wall": 1792647178108,
+          "value": 2121757545
+        },
+        {
+          "at": 87331,
+          "wall": 1792647178804,
+          "value": 2120573275
+        },
+        {
+          "at": 87558,
+          "wall": 1792647179031,
+          "value": 2118731585
+        },
+        {
+          "at": 87778,
+          "wall": 1792647179251,
+          "value": 2117284141
+        },
+        {
+          "at": 88008,
+          "wall": 1792647179482,
+          "value": 2116297248
+        },
+        {
+          "at": 88267,
+          "wall": 1792647179740,
+          "value": 2115770906
+        },
+        {
+          "at": 88495,
+          "wall": 1792647179968,
+          "value": 2115112976
+        },
+        {
+          "at": 88748,
+          "wall": 1792647180221,
+          "value": 2114718218
+        },
+        {
+          "at": 88979,
+          "wall": 1792647180452,
+          "value": 2114455046
+        }
+      ],
+      "remote_history": [
+        {
+          "at": 124192,
+          "wall": 1792647178043,
+          "value": 2121757545
+        }
+      ]
+    },
+    {
+      "index": 6591,
+      "x": 1119,
+      "y": 327,
+      "cell": [
+        27,
+        8
+      ],
+      "expected": 4280229662,
+      "actual": 4286150511,
+      "expected_hex": "FF1F1F1E",
+      "actual_hex": "FF79776F",
+      "expected_argb": [
+        255,
+        31,
+        31,
+        30
+      ],
+      "actual_argb": [
+        255,
+        121,
+        119,
+        111
+      ],
+      "argb_delta": [
+        0,
+        90,
+        88,
+        81
+      ],
+      "baseline": 4286150511,
+      "actual_equals_baseline": true,
+      "source_final_equals_oracle": true,
+      "remote_observed_changes": 0,
+      "source_history": [
+        {
+          "at": 86635,
+          "wall": 1792647178108,
+          "value": 4286150511
+        },
+        {
+          "at": 87331,
+          "wall": 1792647178804,
+          "value": 4285492582
+        },
+        {
+          "at": 87558,
+          "wall": 1792647179031,
+          "value": 4284242773
+        },
+        {
+          "at": 87778,
+          "wall": 1792647179251,
+          "value": 4283058501
+        },
+        {
+          "at": 88008,
+          "wall": 1792647179482,
+          "value": 4282268986
+        },
+        {
+          "at": 88267,
+          "wall": 1792647179740,
+          "value": 4281742899
+        },
+        {
+          "at": 88495,
+          "wall": 1792647179968,
+          "value": 4281084969
+        },
+        {
+          "at": 88748,
+          "wall": 1792647180221,
+          "value": 4280624419
+        },
+        {
+          "at": 88979,
+          "wall": 1792647180452,
+          "value": 4280229662
+        }
+      ],
+      "remote_history": [
+        {
+          "at": 124192,
+          "wall": 1792647178043,
+          "value": 4286150511
+        }
+      ]
+    },
+    {
+      "index": 6718,
+      "x": 1118,
+      "y": 328,
+      "cell": [
+        27,
+        8
+      ],
+      "expected": 2113929216,
+      "actual": 2118863685,
+      "expected_hex": "7E000000",
+      "actual_hex": "7E4B4B45",
+      "expected_argb": [
+        126,
+        0,
+        0,
+        0
+      ],
+      "actual_argb": [
+        126,
+        75,
+        75,
+        69
+      ],
+      "argb_delta": [
+        0,
+        75,
+        75,
+        69
+      ],
+      "baseline": 2118863685,
+      "actual_equals_baseline": true,
+      "source_final_equals_oracle": true,
+      "remote_observed_changes": 0,
+      "source_history": [
+        {
+          "at": 86635,
+          "wall": 1792647178108,
+          "value": 2118863685
+        },
+        {
+          "at": 87331,
+          "wall": 1792647178804,
+          "value": 2117942587
+        },
+        {
+          "at": 87558,
+          "wall": 1792647179031,
+          "value": 2116692522
+        },
+        {
+          "at": 87778,
+          "wall": 1792647179251,
+          "value": 2115639834
+        },
+        {
+          "at": 88008,
+          "wall": 1792647179482,
+          "value": 2114981904
+        },
+        {
+          "at": 88267,
+          "wall": 1792647179740,
+          "value": 2114718732
+        },
+        {
+          "at": 88495,
+          "wall": 1792647179968,
+          "value": 2114323974
+        },
+        {
+          "at": 88748,
+          "wall": 1792647180221,
+          "value": 2114060802
+        },
+        {
+          "at": 88979,
+          "wall": 1792647180452,
+          "value": 2113929216
+        }
+      ],
+      "remote_history": [
+        {
+          "at": 124192,
+          "wall": 1792647178043,
+          "value": 2118863685
+        }
+      ]
+    },
+    {
+      "index": 6719,
+      "x": 1119,
+      "y": 328,
+      "cell": [
+        27,
+        8
+      ],
+      "expected": 4279242768,
+      "actual": 4283190087,
+      "expected_hex": "FF101010",
+      "actual_hex": "FF4C4B47",
+      "expected_argb": [
+        255,
+        16,
+        16,
+        16
+      ],
+      "actual_argb": [
+        255,
+        76,
+        75,
+        71
+      ],
+      "argb_delta": [
+        0,
+        60,
+        59,
+        55
+      ],
+      "baseline": 4283190087,
+      "actual_equals_baseline": true,
+      "source_final_equals_oracle": true,
+      "remote_observed_changes": 0,
+      "source_history": [
+        {
+          "at": 86635,
+          "wall": 1792647178108,
+          "value": 4283190087
+        },
+        {
+          "at": 87331,
+          "wall": 1792647178804,
+          "value": 4282663744
+        },
+        {
+          "at": 87558,
+          "wall": 1792647179031,
+          "value": 4281874228
+        },
+        {
+          "at": 87778,
+          "wall": 1792647179251,
+          "value": 4281084969
+        },
+        {
+          "at": 88008,
+          "wall": 1792647179482,
+          "value": 4280558626
+        },
+        {
+          "at": 88267,
+          "wall": 1792647179740,
+          "value": 4280229661
+        },
+        {
+          "at": 88495,
+          "wall": 1792647179968,
+          "value": 4279834903
+        },
+        {
+          "at": 88748,
+          "wall": 1792647180221,
+          "value": 4279505939
+        },
+        {
+          "at": 88979,
+          "wall": 1792647180452,
+          "value": 4279242768
+        }
+      ],
+      "remote_history": [
+        {
+          "at": 124192,
+          "wall": 1792647178043,
+          "value": 4283190087
+        }
+      ]
+    },
+    {
+      "index": 6846,
+      "x": 1118,
+      "y": 329,
+      "cell": [
+        27,
+        8
+      ],
+      "expected": 2113929216,
+      "actual": 2116166174,
+      "expected_hex": "7E000000",
+      "actual_hex": "7E22221E",
+      "expected_argb": [
+        126,
+        0,
+        0,
+        0
+      ],
+      "actual_argb": [
+        126,
+        34,
+        34,
+        30
+      ],
+      "argb_delta": [
+        0,
+        34,
+        34,
+        30
+      ],
+      "baseline": 2116166174,
+      "actual_equals_baseline": true,
+      "source_final_equals_oracle": true,
+      "remote_observed_changes": 0,
+      "source_history": [
+        {
+          "at": 86635,
+          "wall": 1792647178108,
+          "value": 2116166174
+        },
+        {
+          "at": 87331,
+          "wall": 1792647178804,
+          "value": 2115639832
+        },
+        {
+          "at": 87558,
+          "wall": 1792647179031,
+          "value": 2114981902
+        },
+        {
+          "at": 87778,
+          "wall": 1792647179251,
+          "value": 2114587144
+        },
+        {
+          "at": 88008,
+          "wall": 1792647179482,
+          "value": 2114323972
+        },
+        {
+          "at": 88267,
+          "wall": 1792647179740,
+          "value": 2114192386
+        },
+        {
+          "at": 88495,
+          "wall": 1792647179968,
+          "value": 2114060800
+        },
+        {
+          "at": 88748,
+          "wall": 1792647180221,
+          "value": 2113929216
+        }
+      ],
+      "remote_history": [
+        {
+          "at": 124192,
+          "wall": 1792647178043,
+          "value": 2116166174
+        }
+      ]
+    },
+    {
+      "index": 6847,
+      "x": 1119,
+      "y": 329,
+      "cell": [
+        27,
+        8
+      ],
+      "expected": 4278519044,
+      "actual": 4280558880,
+      "expected_hex": "FF050504",
+      "actual_hex": "FF242520",
+      "expected_argb": [
+        255,
+        5,
+        5,
+        4
+      ],
+      "actual_argb": [
+        255,
+        36,
+        37,
+        32
+      ],
+      "argb_delta": [
+        0,
+        31,
+        32,
+        28
+      ],
+      "baseline": 4280558880,
+      "actual_equals_baseline": true,
+      "source_final_equals_oracle": true,
+      "remote_observed_changes": 0,
+      "source_history": [
+        {
+          "at": 86635,
+          "wall": 1792647178108,
+          "value": 4280558880
+        },
+        {
+          "at": 87331,
+          "wall": 1792647178804,
+          "value": 4280229916
+        },
+        {
+          "at": 87558,
+          "wall": 1792647179031,
+          "value": 4279834902
+        },
+        {
+          "at": 87778,
+          "wall": 1792647179251,
+          "value": 4279440145
+        },
+        {
+          "at": 88008,
+          "wall": 1792647179482,
+          "value": 4279176973
+        },
+        {
+          "at": 88267,
+          "wall": 1792647179740,
+          "value": 4278979595
+        },
+        {
+          "at": 88495,
+          "wall": 1792647179968,
+          "value": 4278782216
+        },
+        {
+          "at": 88748,
+          "wall": 1792647180221,
+          "value": 4278650630
+        },
+        {
+          "at": 88979,
+          "wall": 1792647180452,
+          "value": 4278519044
+        }
+      ],
+      "remote_history": [
+        {
+          "at": 124192,
+          "wall": 1792647178043,
+          "value": 4280558880
+        }
+      ]
+    },
+    {
+      "index": 6974,
+      "x": 1118,
+      "y": 330,
+      "cell": [
+        27,
+        8
+      ],
+      "expected": 1040187392,
+      "actual": 1044003373,
+      "expected_hex": "3E000000",
+      "actual_hex": "3E3A3A2D",
+      "expected_argb": [
+        62,
+        0,
+        0,
+        0
+      ],
+      "actual_argb": [
+        62,
+        58,
+        58,
+        45
+      ],
+      "argb_delta": [
+        0,
+        58,
+        58,
+        45
+      ],
+      "baseline": 1044003373,
+      "actual_equals_baseline": true,
+      "source_final_equals_oracle": true,
+      "remote_observed_changes": 0,
+      "source_history": [
+        {
+          "at": 86635,
+          "wall": 1792647178108,
+          "value": 1044003373
+        },
+        {
+          "at": 87331,
+          "wall": 1792647178804,
+          "value": 1042621725
+        },
+        {
+          "at": 87558,
+          "wall": 1792647179031,
+          "value": 1041240076
+        },
+        {
+          "at": 87778,
+          "wall": 1792647179251,
+          "value": 1040713732
+        },
+        {
+          "at": 88008,
+          "wall": 1792647179482,
+          "value": 1040450560
+        },
+        {
+          "at": 88267,
+          "wall": 1792647179740,
+          "value": 1040187392
+        }
+      ],
+      "remote_history": [
+        {
+          "at": 124192,
+          "wall": 1792647178043,
+          "value": 1044003373
+        }
+      ]
+    },
+    {
+      "index": 6975,
+      "x": 1119,
+      "y": 330,
+      "cell": [
+        27,
+        8
+      ],
+      "expected": 2113929216,
+      "actual": 2118074167,
+      "expected_hex": "7E000000",
+      "actual_hex": "7E3F3F37",
+      "expected_argb": [
+        126,
+        0,
+        0,
+        0
+      ],
+      "actual_argb": [
+        126,
+        63,
+        63,
+        55
+      ],
+      "argb_delta": [
+        0,
+        63,
+        63,
+        55
+      ],
+      "baseline": 2118074167,
+      "actual_equals_baseline": true,
+      "source_final_equals_oracle": true,
+      "remote_observed_changes": 0,
+      "source_history": [
+        {
+          "at": 86635,
+          "wall": 1792647178108,
+          "value": 2118074167
+        },
+        {
+          "at": 87331,
+          "wall": 1792647178804,
+          "value": 2117021480
+        },
+        {
+          "at": 87558,
+          "wall": 1792647179031,
+          "value": 2115903002
+        },
+        {
+          "at": 87778,
+          "wall": 1792647179251,
+          "value": 2115113488
+        },
+        {
+          "at": 88008,
+          "wall": 1792647179482,
+          "value": 2114718730
+        },
+        {
+          "at": 88267,
+          "wall": 1792647179740,
+          "value": 2114455558
+        },
+        {
+          "at": 88495,
+          "wall": 1792647179968,
+          "value": 2114192386
+        },
+        {
+          "at": 88748,
+          "wall": 1792647180221,
+          "value": 2114060800
+        },
+        {
+          "at": 88979,
+          "wall": 1792647180452,
+          "value": 2113929216
+        }
+      ],
+      "remote_history": [
+        {
+          "at": 124192,
+          "wall": 1792647178043,
+          "value": 2118074167
+        }
+      ]
+    }
+  ],
+  "production_changed": false,
+  "compiled": false,
+  "AIR_run": false,
+  "performance_qualified": false
+}

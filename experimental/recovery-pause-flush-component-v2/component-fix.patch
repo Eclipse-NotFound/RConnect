@@ -1,0 +1,11 @@
+--- component01/ControlCoopPause.as
++++ component-v2/ControlCoopPause.as
+@@ -208,7 +208,7 @@
+       {
+          if(value==_paused)return;
+          _paused=value;
+-         game.setControlCoopPaused(value);
++         game.setCoopPaused(value);
+          Log.d("RConnectPause: "+(value?"paused":"resumed")+" epoch="+session.rooms.epoch);
+       }
+       public function description():String

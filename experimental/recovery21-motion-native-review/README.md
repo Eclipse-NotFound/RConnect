@@ -84,7 +84,7 @@ SATS 原断言正确证明这次最终端点、真实瞄准覆盖层位置和恢
 
 最小复用的安全边界如下，尚未实现／验证：
 
-- 仅宿主**未暂停→暂停**的边沿调用一次，先完成现有暂停状态广播，不在每个 `refresh` 或每帧重复发；不改常规发送频率和协议。保持边沿／发送忙标记并用 `finally` 释放，避免异常或同步派发导致重入／重复消费。
+- 仅宿主**未暂停→暂停**的边沿调用一次，先完成现有暂停状态广播，不在每个 `refresh` 或每帧重复发；不改常规发送频率和协议。后续精确调用链审查将方案收窄为只保留局部边沿判断，不新增发送忙标记：实际发送失败可同步进入原有 `onClientRemoved→broadcastWorldState`，但它并不经过新增入口，因此新增入口的布尔标记不能保护该旧路径。`_paused` 在补发前已设为 true，重复刷新不再产生新边沿；补发自身异常局部捕获。此处是最终候选顺序的说明，不改变上述实测结果，也不声称完整 Session 的异常重入已由组件验证。
 - 完整保留 `server.bound`、`rooms.canSyncWorld && rooms.authority && !isTransitioning()`、`RoomSync.stamp` 的 settled room／epoch／term；加入端仍走 `sameHostRoom/accepts`。分房且宿主不是该房权威时，该口不会为另一房生产端点，不能绕过此限制承诺全房间收益。
 - 不更改 `_sampleAt`。`GameBridge.readEnemyMotion:5512` 使用真实原帧时间；`Session:502–506` 不按重复 `tick` 丢弃 worldstate，`applyEnemyMotion:5529` 只拒更旧 sample，`RemoteMotion.pushTimed:149–150` 接受同 stamp 并替换末姿态。故无需发明新时间戳来强行让消息被接受，也不能把高优先级暂停回调时的旧帧编号改为“新模拟帧”。
 - 该口不是无副作用的坐标读取：`UnitPresentation.captureEffects:259–280`、`EnergyImpactVisuals.deltaRecords:190–205` 推进效果 fast 游标，`readLootSync(true)` 更新飞行保留状态，发送成功路径的 `wallPaintUpdatesSent` 推进快速墙痕队列。必须复用完整采集→发送→现有记账路径，不能先捕获然后因条件变化丢包，或为探测再读一遍效果；保持累计快照修复。

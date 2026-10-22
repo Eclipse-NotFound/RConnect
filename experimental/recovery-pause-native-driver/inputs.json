@@ -1,0 +1,45 @@
+{
+  "source_root": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\motion2-continuity-drivers-01",
+  "tests": {
+    "tests/A22PauseTimingTestDoc.as": "f20ce2cb227c82b7a6afa5c2580849d364aa5d7b5b8ab1314b27736d36e1ec81",
+    "tests/DropMotionBurstRegression.as": "5b76f1ff70f5771613ce0ab68d46390da7739dbd8b95a13c072e037c0d4b5835",
+    "tests/MotionCadenceRegression.as": "7a852c65be2c89082c8b727d4f90f7e416a097a090c87644bc48063bfce2a366",
+    "tests/PresentationContinuityTestDoc.as": "2e998334580505028b9fa58d3daa6067e3eaa92d3df313db4ecfeeba26a8e6f9"
+  },
+  "external": {
+    "external/ProductionDeclarations.swc": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\coop-bundle-drivers-04\\ProductionDeclarations.swc",
+    "external/GameCombatStubs.swc": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\coop-bundle-04\\build\\GameCombatStubs.swc",
+    "pause-timing/EffectsHarness.swf": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\coop-bundle-drivers-04\\EffectsHarness.swf"
+  },
+  "toolchain": {
+    "java": "C:\\Users\\hello\\Documents\\_sandevistan_dev\\jdk-11.0.32.1+1-jre\\bin\\java.exe",
+    "sdk": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\Sandevistan\\build\\tools\\flexsdk"
+  },
+  "originals": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\motion2-continuity-drivers-01\\prepared.json": "d51ae3e751e93d1ae9d57b836c57a36e0a6f2d0fbb8bfcd02549247ac6976f31",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\coop-bundle-drivers-04\\prepared.json": "4fca8838c40d7e406956b9d350896a7c9e2f7523b7a9a37f1a247f5e934002eb",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-density-corridor-drivers-03\\prepared.json": "5a8dbb9395c8dba8b6e980c49b112c6df3ae2e19e2f4950769d29756f8e1735c",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\coop-bundle-drivers-04\\tests\\PresentationContinuityTestDoc.as": "dd56eca10795a966bbb9a43b560b6fff45f4ac2785c4a227e7d910a2651c6a9b",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\motion2-continuity-drivers-01\\tests\\A22PauseTimingTestDoc.as": "f20ce2cb227c82b7a6afa5c2580849d364aa5d7b5b8ab1314b27736d36e1ec81",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\motion2-continuity-drivers-01\\tests\\DropMotionBurstRegression.as": "5b76f1ff70f5771613ce0ab68d46390da7739dbd8b95a13c072e037c0d4b5835",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\motion2-continuity-drivers-01\\tests\\MotionCadenceRegression.as": "7a852c65be2c89082c8b727d4f90f7e416a097a090c87644bc48063bfce2a366",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\motion2-continuity-drivers-01\\tests\\PresentationContinuityTestDoc.as": "2e998334580505028b9fa58d3daa6067e3eaa92d3df313db4ecfeeba26a8e6f9",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\tools\\validation\\build_motion_supplement.py": "4606a5a8fda4d215ebca3678433b62564cd910a4c83b9271c06060cf1dec9674",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\tools\\validation\\run_motion_comparison.py": "5cdf11696f6e839336ebf812145640ea74cc55630eb791ee7234e7cd583f922b",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\tools\\validation\\runtime_memory.py": "d4894962771929b5b88f1d123c3603221dab06294657d33bc6229a2282fbf8f6",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\tools\\host_authority\\common.py": "4beec61d4df070a9e69919a87ad6b77f3160be9505e5fe6b2cfc84a2ca210c8a",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\ModLoader\\tools\\test_registry.py": "58db3a594f34e9906d55992f769b3e154970d8fa37fda1c2f43ae1f6751b0033",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-density-fixture\\prepare.py": "99249ad83c9adc2d4073d614e0dc4952c22ec647b228c363c5bcbd4220dd7cad",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\coop-bundle-drivers-04\\ProductionDeclarations.swc": "598d39851de4299046148815f2b2b7b1a88379faa2981a114565f111408882a7",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\coop-bundle-04\\build\\GameCombatStubs.swc": "8aa240ed77522ded5236440b29b48d90f65b1c0bc971f21984b81ec1cd0ba61a",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\coop-bundle-drivers-04\\EffectsHarness.swf": "d52ef4300c7d472ee05884d7b4709f4abf80b3e6ff935b695a9ed986db021086",
+    "C:\\Users\\hello\\Documents\\_sandevistan_dev\\jdk-11.0.32.1+1-jre\\bin\\java.exe": "9fcc7d5d43918e389df240d44601c98a4d3aa9e7d0cbbd6d208304e0b574c7e2",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\Sandevistan\\build\\tools\\flexsdk\\lib\\mxmlc.jar": "cc07d749e376715e650271a9875289e49d94234902fff5e5fae287c478c8557b",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\Sandevistan\\build\\tools\\flexsdk\\frameworks\\air-config.xml": "32e0c27a7135fe731e6fbc24152da18195b4738ea6e187ff6d1742ab1fd36680",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\Sandevistan\\build\\tools\\flexsdk\\frameworks\\libs\\air\\airglobal.swc": "e0f81fdb2029d2bb16e6987c8d85d4eba5eedfa3a23ed6e7f780bf6eb67b0546",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-density-profile-settings\\run_motion_comparison.py": "8341976f9c0828fd1965ad61510668c39b8c78d59dfe997bdc11622b46cc8bc8",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-density-profile-settings\\configs\\host-RealisticVision_config.txt": "24a0162f565dfa9a04e42bd64ca6fb688d556d50d99a528dbfa703d680eaba0c",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-density-profile-settings\\configs\\join-RealisticVision_config.txt": "f3c7dfe712a836188d712f70b7d30fd83b8bb70435de28757196b3f926bf23f8"
+  },
+  "binary_hash_source": "Existing compiled manifest receipts; prepare.check/build will verify actual bytes before use"
+}

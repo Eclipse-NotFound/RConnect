@@ -1,0 +1,128 @@
+{
+  "passed": true,
+  "count": 29,
+  "failed": 0,
+  "checks": [
+    {
+      "label": "exact ordinary two-way 0",
+      "passed": true
+    },
+    {
+      "label": "exact ordinary two-way 1",
+      "passed": true
+    },
+    {
+      "label": "exact ordinary two-way 2",
+      "passed": true
+    },
+    {
+      "label": "exact ordinary two-way 3",
+      "passed": true
+    },
+    {
+      "label": "large-mode front scratch rejects",
+      "passed": true
+    },
+    {
+      "label": "chunk-size scratch rejects",
+      "passed": true
+    },
+    {
+      "label": "nonresident or unrelated Bitmap rejects",
+      "passed": true
+    },
+    {
+      "label": "duplicate staged front rejects",
+      "passed": true
+    },
+    {
+      "label": "hidden native Bitmap rejects",
+      "passed": true
+    },
+    {
+      "label": "leftover chunk rejects",
+      "passed": true
+    },
+    {
+      "label": "nonzero scene origin rejects",
+      "passed": true
+    },
+    {
+      "label": "late switch to scratch rejects",
+      "passed": true
+    },
+    {
+      "label": "crop exceeds native front rejects",
+      "passed": true
+    },
+    {
+      "label": "no real wall hit rejects",
+      "passed": true
+    },
+    {
+      "label": "no native source mark rejects",
+      "passed": true
+    },
+    {
+      "label": "first native attack rejected cannot pass",
+      "passed": true
+    },
+    {
+      "label": "particle-only remote display rejects",
+      "passed": true
+    },
+    {
+      "label": "extra remote pixel rejects",
+      "passed": true
+    },
+    {
+      "label": "opaque one-channel one-level difference rejects",
+      "passed": true
+    },
+    {
+      "label": "partial final state rejects",
+      "passed": true
+    },
+    {
+      "label": "different native baseline rejects",
+      "passed": true
+    },
+    {
+      "label": "different displayed baseline rejects",
+      "passed": true
+    },
+    {
+      "label": "short observation rejects",
+      "passed": true
+    },
+    {
+      "label": "no complete intermediate frame rejects",
+      "passed": true
+    },
+    {
+      "label": "persistent mark disappearance before final frame rejects",
+      "passed": true
+    },
+    {
+      "label": "source is exact driver04 narrow adaptation with real weapon and post-sampling readback",
+      "passed": true
+    },
+    {
+      "label": "thin exact22 ACC binding retains existing registry input memory DONE cleanup gates",
+      "passed": true
+    },
+    {
+      "label": "actual22 large evidence all45 hashes and strict four rounds retained",
+      "passed": true
+    },
+    {
+      "label": "32 PNG and8 JSON pipeline rejects forged pixels despite fixed file size and duplicate logs",
+      "passed": true
+    }
+  ],
+  "offline_only": true,
+  "compiled": false,
+  "jvm_started": false,
+  "air_started": false,
+  "native_qualified": false
+}

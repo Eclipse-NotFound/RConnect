@@ -1,0 +1,1156 @@
+{
+  "runs": [
+    {
+      "version": "22",
+      "run": "b09eac8fb3",
+      "candidate_sha256": "746eef5713985f23fe13a57792516789bebd37a5e4142639ba8cc8b6590b3e93",
+      "driver_sha256": "eb6b7d6911f75c337926a0fdb5c976e53282d3d768db488c72ff34735007ba95",
+      "driver_manifest": "a657b58a708a63975571a4e2cc351f206a9f38ecef19511b5d4f643d9a31df1c",
+      "hashes": {
+        "build\\m52\\recovery22-native-pause-control-01\\result.json": "86d19802ac94d62c052040bec16e6d17cdaac182f16a37a88816be3974f1617a",
+        "build\\m52\\recovery22-native-pause-control-01\\intent.json": "286f877d3223fd1c03e282c35383a2f0aa64735584375bee4bba888c7b4bbca5",
+        "build\\cooperation\\b09eac8fb3\\run.json": "96faadc260caedae6fcbf3a068390294d63d768add0b94dbb8919391f8ccf0c9",
+        "build\\cooperation\\b09eac8fb3\\input.json": "30ee6ca7ec7d27abdfb1e436b18a5acde77367285f2ca42e917111600badd526",
+        "build\\cooperation\\b09eac8fb3\\host.log": "de7eee0f1cc54290ef65857f7b369d714b8b16b9dffec6b1a5ef9a9838f97c7c",
+        "build\\cooperation\\b09eac8fb3\\join.log": "7bfbe330fbd8aa7bad8ac567da7c828df10461bfd5df8c3fd800c1caa4eb766d"
+      },
+      "checks": {
+        "host": {
+          "passed": 26,
+          "errors": [],
+          "done": true
+        },
+        "join": {
+          "passed": 137,
+          "errors": [],
+          "done": true
+        }
+      },
+      "wrapper_passed": true,
+      "installation_fingerprint_count": 22,
+      "verified_flags": {
+        "installation_unchanged": true,
+        "runner_unchanged": true,
+        "air_inventory_unchanged": true,
+        "exclusive_air_confirmed": true,
+        "process_policy_confirmed": true,
+        "vision_templates_confirmed": true,
+        "vision_templates_unchanged": true,
+        "same_runtime_as_reference": true
+      },
+      "process_policy": {
+        "host": {
+          "control": 1,
+          "pid": 70392,
+          "state": 0
+        },
+        "join": {
+          "control": 1,
+          "pid": 104324,
+          "state": 0
+        }
+      },
+      "fixture_ambient_removed": 9,
+      "rounds": [
+        {
+          "round": 1,
+          "line_indices": {
+            "timeline": 69,
+            "timing": 70,
+            "ending": 81,
+            "pixels": 75,
+            "pose": 68
+          },
+          "source_moving_frames": 63,
+          "trace_count": 97,
+          "endpoint": 359,
+          "first_paused": {
+            "index": 61,
+            "t": 32526,
+            "logicalX": 353,
+            "x": 353,
+            "sats": true,
+            "paused": true
+          },
+          "first_observed_endpoint": {
+            "t": 32593,
+            "logicalX": 359,
+            "x": 359,
+            "sats": true,
+            "paused": true
+          },
+          "observed_pause_to_endpoint_ms": 67,
+          "initial_visual_gap": 6,
+          "preceding_sample_gap_ms": 90,
+          "confirmed_endpoint_settle_ms": 39,
+          "confirmed_endpoint_initial_gap": 0,
+          "buffered_frames_count": 43,
+          "buffered_frames_p90": 2.3500000000000036,
+          "body_distinct": 25,
+          "body_backsteps": 0,
+          "authority_body_f": 15,
+          "display_body_f": 15,
+          "paused_x": 359,
+          "resume_jump": 0,
+          "bitmap_comparison": 0,
+          "maximum_trace_gap_ms": 120,
+          "retained_pause_timing_start": 32428,
+          "retained_pause_timing_rows": 220,
+          "first_paused_enter_to_render": {
+            "start_at": 32457,
+            "end_at": 32526,
+            "frame": 66,
+            "elapsed_ms": 69,
+            "view_ms": 19,
+            "motion_ms": 2,
+            "view_calls": 1,
+            "motion_calls": 1
+          },
+          "original_metric_checks": {
+            "buffer_coverage": true,
+            "p90_le_4": true,
+            "confirmed_settle_le_100": true,
+            "body_distinct_ge_8": true,
+            "no_body_backsteps": true,
+            "authority_body_phase": true,
+            "paused_position": true,
+            "bitmap_equal": true,
+            "bitmap_bounds_equal": true,
+            "resume_jump_le_4": true
+          }
+        },
+        {
+          "round": 2,
+          "line_indices": {
+            "timeline": 99,
+            "timing": 100,
+            "ending": 113,
+            "pixels": 105,
+            "pose": 98
+          },
+          "source_moving_frames": 64,
+          "trace_count": 102,
+          "endpoint": 362,
+          "first_paused": {
+            "index": 63,
+            "t": 36949,
+            "logicalX": 356,
+            "x": 356,
+            "sats": true,
+            "paused": true
+          },
+          "first_observed_endpoint": {
+            "t": 37016,
+            "logicalX": 362,
+            "x": 362,
+            "sats": true,
+            "paused": true
+          },
+          "observed_pause_to_endpoint_ms": 67,
+          "initial_visual_gap": 6,
+          "preceding_sample_gap_ms": 85,
+          "confirmed_endpoint_settle_ms": 12,
+          "confirmed_endpoint_initial_gap": 0,
+          "buffered_frames_count": 44,
+          "buffered_frames_p90": 2.6333333333333258,
+          "body_distinct": 24,
+          "body_backsteps": 0,
+          "authority_body_f": 7,
+          "display_body_f": 7,
+          "paused_x": 362,
+          "resume_jump": 0,
+          "bitmap_comparison": 0,
+          "maximum_trace_gap_ms": 96,
+          "retained_pause_timing_start": 37050,
+          "retained_pause_timing_rows": 220,
+          "first_paused_enter_to_render": null,
+          "original_metric_checks": {
+            "buffer_coverage": true,
+            "p90_le_4": true,
+            "confirmed_settle_le_100": true,
+            "body_distinct_ge_8": true,
+            "no_body_backsteps": true,
+            "authority_body_phase": true,
+            "paused_position": true,
+            "bitmap_equal": true,
+            "bitmap_bounds_equal": true,
+            "resume_jump_le_4": true
+          }
+        },
+        {
+          "round": 3,
+          "line_indices": {
+            "timeline": 131,
+            "timing": 132,
+            "ending": 142,
+            "pixels": 137,
+            "pose": 130
+          },
+          "source_moving_frames": 64,
+          "trace_count": 100,
+          "endpoint": 362,
+          "first_paused": {
+            "index": 63,
+            "t": 41410,
+            "logicalX": 359,
+            "x": 359,
+            "sats": true,
+            "paused": true
+          },
+          "first_observed_endpoint": {
+            "t": 41475,
+            "logicalX": 362,
+            "x": 362,
+            "sats": true,
+            "paused": true
+          },
+          "observed_pause_to_endpoint_ms": 65,
+          "initial_visual_gap": 3,
+          "preceding_sample_gap_ms": 96,
+          "confirmed_endpoint_settle_ms": 9,
+          "confirmed_endpoint_initial_gap": 0,
+          "buffered_frames_count": 45,
+          "buffered_frames_p90": 2.3833333333333258,
+          "body_distinct": 24,
+          "body_backsteps": 0,
+          "authority_body_f": 23,
+          "display_body_f": 23,
+          "paused_x": 362,
+          "resume_jump": 0,
+          "bitmap_comparison": 0,
+          "maximum_trace_gap_ms": 96,
+          "retained_pause_timing_start": 41381,
+          "retained_pause_timing_rows": 220,
+          "first_paused_enter_to_render": null,
+          "original_metric_checks": {
+            "buffer_coverage": true,
+            "p90_le_4": true,
+            "confirmed_settle_le_100": true,
+            "body_distinct_ge_8": true,
+            "no_body_backsteps": true,
+            "authority_body_phase": true,
+            "paused_position": true,
+            "bitmap_equal": true,
+            "bitmap_bounds_equal": true,
+            "resume_jump_le_4": true
+          }
+        },
+        {
+          "round": 4,
+          "line_indices": {
+            "timeline": 161,
+            "timing": 162,
+            "ending": 172,
+            "pixels": 167,
+            "pose": 160
+          },
+          "source_moving_frames": 59,
+          "trace_count": 99,
+          "endpoint": 347,
+          "first_paused": {
+            "index": 62,
+            "t": 45814,
+            "logicalX": 341,
+            "x": 341,
+            "sats": true,
+            "paused": true
+          },
+          "first_observed_endpoint": {
+            "t": 45884,
+            "logicalX": 347,
+            "x": 347,
+            "sats": true,
+            "paused": true
+          },
+          "observed_pause_to_endpoint_ms": 70,
+          "initial_visual_gap": 6,
+          "preceding_sample_gap_ms": 85,
+          "confirmed_endpoint_settle_ms": 18,
+          "confirmed_endpoint_initial_gap": 0,
+          "buffered_frames_count": 42,
+          "buffered_frames_p90": 1.8833333333333353,
+          "body_distinct": 24,
+          "body_backsteps": 0,
+          "authority_body_f": 10,
+          "display_body_f": 10,
+          "paused_x": 347,
+          "resume_jump": 0,
+          "bitmap_comparison": 0,
+          "maximum_trace_gap_ms": 99,
+          "retained_pause_timing_start": 45789,
+          "retained_pause_timing_rows": 220,
+          "first_paused_enter_to_render": null,
+          "original_metric_checks": {
+            "buffer_coverage": true,
+            "p90_le_4": true,
+            "confirmed_settle_le_100": true,
+            "body_distinct_ge_8": true,
+            "no_body_backsteps": true,
+            "authority_body_phase": true,
+            "paused_position": true,
+            "bitmap_equal": true,
+            "bitmap_bounds_equal": true,
+            "resume_jump_le_4": true
+          }
+        },
+        {
+          "round": 5,
+          "line_indices": {
+            "timeline": 191,
+            "timing": 192,
+            "ending": 203,
+            "pixels": 197,
+            "pose": 190
+          },
+          "source_moving_frames": 60,
+          "trace_count": 96,
+          "endpoint": 350,
+          "first_paused": {
+            "index": 58,
+            "t": 50170,
+            "logicalX": 344,
+            "x": 344,
+            "sats": true,
+            "paused": true
+          },
+          "first_observed_endpoint": {
+            "t": 50234,
+            "logicalX": 350,
+            "x": 350,
+            "sats": true,
+            "paused": true
+          },
+          "observed_pause_to_endpoint_ms": 64,
+          "initial_visual_gap": 6,
+          "preceding_sample_gap_ms": 81,
+          "confirmed_endpoint_settle_ms": 14,
+          "confirmed_endpoint_initial_gap": 0,
+          "buffered_frames_count": 40,
+          "buffered_frames_p90": 2.4833333333333294,
+          "body_distinct": 24,
+          "body_backsteps": 0,
+          "authority_body_f": 22,
+          "display_body_f": 22,
+          "paused_x": 350,
+          "resume_jump": 0,
+          "bitmap_comparison": 0,
+          "maximum_trace_gap_ms": 97,
+          "retained_pause_timing_start": 50207,
+          "retained_pause_timing_rows": 220,
+          "first_paused_enter_to_render": null,
+          "original_metric_checks": {
+            "buffer_coverage": true,
+            "p90_le_4": true,
+            "confirmed_settle_le_100": true,
+            "body_distinct_ge_8": true,
+            "no_body_backsteps": true,
+            "authority_body_phase": true,
+            "paused_position": true,
+            "bitmap_equal": true,
+            "bitmap_bounds_equal": true,
+            "resume_jump_le_4": true
+          }
+        },
+        {
+          "round": 6,
+          "line_indices": {
+            "timeline": 222,
+            "timing": 223,
+            "ending": 233,
+            "pixels": 228,
+            "pose": 221
+          },
+          "source_moving_frames": 61,
+          "trace_count": 94,
+          "endpoint": 353,
+          "first_paused": {
+            "index": 58,
+            "t": 54646,
+            "logicalX": 347,
+            "x": 347,
+            "sats": true,
+            "paused": true
+          },
+          "first_observed_endpoint": {
+            "t": 54719,
+            "logicalX": 353,
+            "x": 353,
+            "sats": true,
+            "paused": true
+          },
+          "observed_pause_to_endpoint_ms": 73,
+          "initial_visual_gap": 6,
+          "preceding_sample_gap_ms": 90,
+          "confirmed_endpoint_settle_ms": 41,
+          "confirmed_endpoint_initial_gap": 0,
+          "buffered_frames_count": 40,
+          "buffered_frames_p90": 2.3500000000000036,
+          "body_distinct": 24,
+          "body_backsteps": 0,
+          "authority_body_f": 11,
+          "display_body_f": 11,
+          "paused_x": 353,
+          "resume_jump": 0,
+          "bitmap_comparison": 0,
+          "maximum_trace_gap_ms": 90,
+          "retained_pause_timing_start": 54544,
+          "retained_pause_timing_rows": 220,
+          "first_paused_enter_to_render": {
+            "start_at": 54584,
+            "end_at": 54646,
+            "frame": 698,
+            "elapsed_ms": 62,
+            "view_ms": 23,
+            "motion_ms": 1,
+            "view_calls": 1,
+            "motion_calls": 1
+          },
+          "original_metric_checks": {
+            "buffer_coverage": true,
+            "p90_le_4": true,
+            "confirmed_settle_le_100": true,
+            "body_distinct_ge_8": true,
+            "no_body_backsteps": true,
+            "authority_body_phase": true,
+            "paused_position": true,
+            "bitmap_equal": true,
+            "bitmap_bounds_equal": true,
+            "resume_jump_le_4": true
+          }
+        },
+        {
+          "round": 7,
+          "line_indices": {
+            "timeline": 252,
+            "timing": 253,
+            "ending": 263,
+            "pixels": 258,
+            "pose": 251
+          },
+          "source_moving_frames": 61,
+          "trace_count": 89,
+          "endpoint": 353,
+          "first_paused": {
+            "index": 53,
+            "t": 59111,
+            "logicalX": 347,
+            "x": 347,
+            "sats": true,
+            "paused": true
+          },
+          "first_observed_endpoint": {
+            "t": 59192,
+            "logicalX": 353,
+            "x": 353,
+            "sats": true,
+            "paused": true
+          },
+          "observed_pause_to_endpoint_ms": 81,
+          "initial_visual_gap": 6,
+          "preceding_sample_gap_ms": 78,
+          "confirmed_endpoint_settle_ms": 37,
+          "confirmed_endpoint_initial_gap": 0,
+          "buffered_frames_count": 37,
+          "buffered_frames_p90": 2.566666666666663,
+          "body_distinct": 24,
+          "body_backsteps": 0,
+          "authority_body_f": 0,
+          "display_body_f": 0,
+          "paused_x": 353,
+          "resume_jump": 0,
+          "bitmap_comparison": 0,
+          "maximum_trace_gap_ms": 102,
+          "retained_pause_timing_start": 59026,
+          "retained_pause_timing_rows": 220,
+          "first_paused_enter_to_render": {
+            "start_at": 59052,
+            "end_at": 59111,
+            "frame": 815,
+            "elapsed_ms": 59,
+            "view_ms": 23,
+            "motion_ms": 0,
+            "view_calls": 1,
+            "motion_calls": 1
+          },
+          "original_metric_checks": {
+            "buffer_coverage": true,
+            "p90_le_4": true,
+            "confirmed_settle_le_100": true,
+            "body_distinct_ge_8": true,
+            "no_body_backsteps": true,
+            "authority_body_phase": true,
+            "paused_position": true,
+            "bitmap_equal": true,
+            "bitmap_bounds_equal": true,
+            "resume_jump_le_4": true
+          }
+        },
+        {
+          "round": 8,
+          "line_indices": {
+            "timeline": 282,
+            "timing": 283,
+            "ending": 293,
+            "pixels": 288,
+            "pose": 281
+          },
+          "source_moving_frames": 64,
+          "trace_count": 96,
+          "endpoint": 362,
+          "first_paused": {
+            "index": 59,
+            "t": 63538,
+            "logicalX": 356,
+            "x": 356,
+            "sats": true,
+            "paused": true
+          },
+          "first_observed_endpoint": {
+            "t": 63596,
+            "logicalX": 362,
+            "x": 362,
+            "sats": true,
+            "paused": true
+          },
+          "observed_pause_to_endpoint_ms": 58,
+          "initial_visual_gap": 6,
+          "preceding_sample_gap_ms": 80,
+          "confirmed_endpoint_settle_ms": 10,
+          "confirmed_endpoint_initial_gap": 0,
+          "buffered_frames_count": 43,
+          "buffered_frames_p90": 2.6000000000000036,
+          "body_distinct": 24,
+          "body_backsteps": 0,
+          "authority_body_f": 16,
+          "display_body_f": 16,
+          "paused_x": 362,
+          "resume_jump": 0,
+          "bitmap_comparison": 0,
+          "maximum_trace_gap_ms": 88,
+          "retained_pause_timing_start": 63512,
+          "retained_pause_timing_rows": 220,
+          "first_paused_enter_to_render": null,
+          "original_metric_checks": {
+            "buffer_coverage": true,
+            "p90_le_4": true,
+            "confirmed_settle_le_100": true,
+            "body_distinct_ge_8": true,
+            "no_body_backsteps": true,
+            "authority_body_phase": true,
+            "paused_position": true,
+            "bitmap_equal": true,
+            "bitmap_bounds_equal": true,
+            "resume_jump_le_4": true
+          }
+        }
+      ],
+      "performance_qualified": false,
+      "attribution_allowed": false,
+      "comparison_inputs": {
+        "driver_manifest": "a657b58a708a63975571a4e2cc351f206a9f38ecef19511b5d4f643d9a31df1c",
+        "wrapper_sha256": "f593468414493251a8a6525e2371833fa1c6b797fc0b8527a8e2c341b0c74ff9",
+        "runner_sha256": "7eca453b13480140da5f36bb33d2319739a927562ccafdbb61a8b20cdb5ae4d3",
+        "air_inventory_sha256": "3d4c6160cfb8ee766ad77463da9e5e7a67b10af30170b4ca5a876af1d4a9cd4c",
+        "vision_config_templates": {
+          "host": "24a0162f565dfa9a04e42bd64ca6fb688d556d50d99a528dbfa703d680eaba0c",
+          "join": "f3c7dfe712a836188d712f70b7d30fd83b8bb70435de28757196b3f926bf23f8"
+        },
+        "process_policy_expected": {
+          "RConnect.Process.ps1": "b3fe91f9544a3a57f45b6f1c3a47fcde207f62524cedea846f45d3d4599be88d",
+          "keep_test_responsive.ps1": "ce125a1d3904fe5b0f29c3ca8df306fb848148057cff8a0bc5f44a33e71b97a3"
+        }
+      }
+    },
+    {
+      "version": "23",
+      "run": "4582357f26",
+      "candidate_sha256": "87fafd6646b5fa07fd8fa280ed7e82f7e69631850e67b0748d9cad22de2f0b6c",
+      "driver_sha256": "eb6b7d6911f75c337926a0fdb5c976e53282d3d768db488c72ff34735007ba95",
+      "driver_manifest": "a657b58a708a63975571a4e2cc351f206a9f38ecef19511b5d4f643d9a31df1c",
+      "hashes": {
+        "build\\m52\\recovery23-native-pause-comparison-01\\result.json": "ae8fb983026dcddbb686e383c880bb108df7b31eebd29a612996d5fe6fe9a4fb",
+        "build\\m52\\recovery23-native-pause-comparison-01\\intent.json": "10d472ef7d64c98cd019023c437f3d67b12858408b464e0b124ae661e432d9d0",
+        "build\\cooperation\\4582357f26\\run.json": "0e50179492c23389324ff9b0cd8fa7405eee075118f698470fc890f352739e74",
+        "build\\cooperation\\4582357f26\\input.json": "3b0a77046e35049e01e94c4f002661db8551c2dadcdd381d83c78a9f77da779a",
+        "build\\cooperation\\4582357f26\\host.log": "d23103b4e343c5b41ed44a37362c820c56ea744662c55026b982fe55d02dd13f",
+        "build\\cooperation\\4582357f26\\join.log": "c47832ba39bbc762e2b6a005a7d22d030c91277009760993d7cecddb1b84676d"
+      },
+      "checks": {
+        "host": {
+          "passed": 26,
+          "errors": [],
+          "done": true
+        },
+        "join": {
+          "passed": 137,
+          "errors": [],
+          "done": true
+        }
+      },
+      "wrapper_passed": true,
+      "installation_fingerprint_count": 22,
+      "verified_flags": {
+        "installation_unchanged": true,
+        "runner_unchanged": true,
+        "air_inventory_unchanged": true,
+        "exclusive_air_confirmed": true,
+        "process_policy_confirmed": true,
+        "vision_templates_confirmed": true,
+        "vision_templates_unchanged": true,
+        "same_runtime_as_reference": true
+      },
+      "process_policy": {
+        "host": {
+          "control": 1,
+          "pid": 83844,
+          "state": 0
+        },
+        "join": {
+          "control": 1,
+          "pid": 71380,
+          "state": 0
+        }
+      },
+      "fixture_ambient_removed": 6,
+      "rounds": [
+        {
+          "round": 1,
+          "line_indices": {
+            "timeline": 69,
+            "timing": 70,
+            "ending": 81,
+            "pixels": 75,
+            "pose": 68
+          },
+          "source_moving_frames": 66,
+          "trace_count": 91,
+          "endpoint": 368,
+          "first_paused": {
+            "index": 56,
+            "t": 32940,
+            "x": 362,
+            "sats": true,
+            "logicalX": 362,
+            "paused": true
+          },
+          "first_observed_endpoint": {
+            "t": 33025,
+            "x": 368,
+            "sats": true,
+            "logicalX": 368,
+            "paused": true
+          },
+          "observed_pause_to_endpoint_ms": 85,
+          "initial_visual_gap": 6,
+          "preceding_sample_gap_ms": 101,
+          "confirmed_endpoint_settle_ms": 16,
+          "confirmed_endpoint_initial_gap": 0,
+          "buffered_frames_count": 38,
+          "buffered_frames_p90": 2.6000000000000036,
+          "body_distinct": 23,
+          "body_backsteps": 0,
+          "authority_body_f": 18,
+          "display_body_f": 18,
+          "paused_x": 368,
+          "resume_jump": 0,
+          "bitmap_comparison": 0,
+          "maximum_trace_gap_ms": 101,
+          "retained_pause_timing_start": 32801,
+          "retained_pause_timing_rows": 220,
+          "first_paused_enter_to_render": {
+            "start_at": 32859,
+            "end_at": 32940,
+            "frame": 64,
+            "elapsed_ms": 81,
+            "view_ms": 27,
+            "motion_ms": 0,
+            "view_calls": 1,
+            "motion_calls": 1
+          },
+          "original_metric_checks": {
+            "buffer_coverage": true,
+            "p90_le_4": true,
+            "confirmed_settle_le_100": true,
+            "body_distinct_ge_8": true,
+            "no_body_backsteps": true,
+            "authority_body_phase": true,
+            "paused_position": true,
+            "bitmap_equal": true,
+            "bitmap_bounds_equal": true,
+            "resume_jump_le_4": true
+          }
+        },
+        {
+          "round": 2,
+          "line_indices": {
+            "timeline": 99,
+            "timing": 100,
+            "ending": 113,
+            "pixels": 105,
+            "pose": 98
+          },
+          "source_moving_frames": 66,
+          "trace_count": 99,
+          "endpoint": 368,
+          "first_paused": {
+            "index": 61,
+            "t": 37357,
+            "x": 362,
+            "sats": true,
+            "logicalX": 362,
+            "paused": true
+          },
+          "first_observed_endpoint": {
+            "t": 37432,
+            "x": 368,
+            "sats": true,
+            "logicalX": 368,
+            "paused": true
+          },
+          "observed_pause_to_endpoint_ms": 75,
+          "initial_visual_gap": 6,
+          "preceding_sample_gap_ms": 82,
+          "confirmed_endpoint_settle_ms": 22,
+          "confirmed_endpoint_initial_gap": 0,
+          "buffered_frames_count": 42,
+          "buffered_frames_p90": 2.3333333333333335,
+          "body_distinct": 24,
+          "body_backsteps": 0,
+          "authority_body_f": 12,
+          "display_body_f": 12,
+          "paused_x": 368,
+          "resume_jump": 0,
+          "bitmap_comparison": 0,
+          "maximum_trace_gap_ms": 100,
+          "retained_pause_timing_start": 37406,
+          "retained_pause_timing_rows": 220,
+          "first_paused_enter_to_render": null,
+          "original_metric_checks": {
+            "buffer_coverage": true,
+            "p90_le_4": true,
+            "confirmed_settle_le_100": true,
+            "body_distinct_ge_8": true,
+            "no_body_backsteps": true,
+            "authority_body_phase": true,
+            "paused_position": true,
+            "bitmap_equal": true,
+            "bitmap_bounds_equal": true,
+            "resume_jump_le_4": true
+          }
+        },
+        {
+          "round": 3,
+          "line_indices": {
+            "timeline": 131,
+            "timing": 132,
+            "ending": 142,
+            "pixels": 137,
+            "pose": 130
+          },
+          "source_moving_frames": 63,
+          "trace_count": 94,
+          "endpoint": 359,
+          "first_paused": {
+            "index": 57,
+            "t": 41901,
+            "x": 353,
+            "sats": true,
+            "logicalX": 353,
+            "paused": true
+          },
+          "first_observed_endpoint": {
+            "t": 41982,
+            "x": 359,
+            "sats": true,
+            "logicalX": 359,
+            "paused": true
+          },
+          "observed_pause_to_endpoint_ms": 81,
+          "initial_visual_gap": 6,
+          "preceding_sample_gap_ms": 110,
+          "confirmed_endpoint_settle_ms": 22,
+          "confirmed_endpoint_initial_gap": 0,
+          "buffered_frames_count": 38,
+          "buffered_frames_p90": 2.4666666666666686,
+          "body_distinct": 24,
+          "body_backsteps": 0,
+          "authority_body_f": 3,
+          "display_body_f": 3,
+          "paused_x": 359,
+          "resume_jump": 0,
+          "bitmap_comparison": 0,
+          "maximum_trace_gap_ms": 110,
+          "retained_pause_timing_start": 41865,
+          "retained_pause_timing_rows": 220,
+          "first_paused_enter_to_render": null,
+          "original_metric_checks": {
+            "buffer_coverage": true,
+            "p90_le_4": true,
+            "confirmed_settle_le_100": true,
+            "body_distinct_ge_8": true,
+            "no_body_backsteps": true,
+            "authority_body_phase": true,
+            "paused_position": true,
+            "bitmap_equal": true,
+            "bitmap_bounds_equal": true,
+            "resume_jump_le_4": true
+          }
+        },
+        {
+          "round": 4,
+          "line_indices": {
+            "timeline": 161,
+            "timing": 162,
+            "ending": 172,
+            "pixels": 167,
+            "pose": 160
+          },
+          "source_moving_frames": 62,
+          "trace_count": 96,
+          "endpoint": 356,
+          "first_paused": {
+            "index": 60,
+            "t": 46346,
+            "x": 347,
+            "sats": true,
+            "logicalX": 347,
+            "paused": true
+          },
+          "first_observed_endpoint": {
+            "t": 46415,
+            "x": 356,
+            "sats": true,
+            "logicalX": 356,
+            "paused": true
+          },
+          "observed_pause_to_endpoint_ms": 69,
+          "initial_visual_gap": 9,
+          "preceding_sample_gap_ms": 80,
+          "confirmed_endpoint_settle_ms": 11,
+          "confirmed_endpoint_initial_gap": 0,
+          "buffered_frames_count": 42,
+          "buffered_frames_p90": 2.2333333333333294,
+          "body_distinct": 24,
+          "body_backsteps": 0,
+          "authority_body_f": 17,
+          "display_body_f": 17,
+          "paused_x": 356,
+          "resume_jump": 0,
+          "bitmap_comparison": 0,
+          "maximum_trace_gap_ms": 80,
+          "retained_pause_timing_start": 46260,
+          "retained_pause_timing_rows": 220,
+          "first_paused_enter_to_render": {
+            "start_at": 46285,
+            "end_at": 46346,
+            "frame": 440,
+            "elapsed_ms": 61,
+            "view_ms": 24,
+            "motion_ms": 0,
+            "view_calls": 1,
+            "motion_calls": 1
+          },
+          "original_metric_checks": {
+            "buffer_coverage": true,
+            "p90_le_4": true,
+            "confirmed_settle_le_100": true,
+            "body_distinct_ge_8": true,
+            "no_body_backsteps": true,
+            "authority_body_phase": true,
+            "paused_position": true,
+            "bitmap_equal": true,
+            "bitmap_bounds_equal": true,
+            "resume_jump_le_4": true
+          }
+        },
+        {
+          "round": 5,
+          "line_indices": {
+            "timeline": 191,
+            "timing": 192,
+            "ending": 202,
+            "pixels": 197,
+            "pose": 190
+          },
+          "source_moving_frames": 63,
+          "trace_count": 99,
+          "endpoint": 359,
+          "first_paused": {
+            "index": 64,
+            "t": 50786,
+            "x": 353,
+            "sats": true,
+            "logicalX": 353,
+            "paused": true
+          },
+          "first_observed_endpoint": {
+            "t": 50854,
+            "x": 359,
+            "sats": true,
+            "logicalX": 359,
+            "paused": true
+          },
+          "observed_pause_to_endpoint_ms": 68,
+          "initial_visual_gap": 6,
+          "preceding_sample_gap_ms": 86,
+          "confirmed_endpoint_settle_ms": 37,
+          "confirmed_endpoint_initial_gap": 0,
+          "buffered_frames_count": 45,
+          "buffered_frames_p90": 2.199999999999998,
+          "body_distinct": 24,
+          "body_backsteps": 0,
+          "authority_body_f": 8,
+          "display_body_f": 8,
+          "paused_x": 359,
+          "resume_jump": 0,
+          "bitmap_comparison": 0,
+          "maximum_trace_gap_ms": 86,
+          "retained_pause_timing_start": 50662,
+          "retained_pause_timing_rows": 220,
+          "first_paused_enter_to_render": {
+            "start_at": 50721,
+            "end_at": 50786,
+            "frame": 568,
+            "elapsed_ms": 65,
+            "view_ms": 27,
+            "motion_ms": 0,
+            "view_calls": 1,
+            "motion_calls": 1
+          },
+          "original_metric_checks": {
+            "buffer_coverage": true,
+            "p90_le_4": true,
+            "confirmed_settle_le_100": true,
+            "body_distinct_ge_8": true,
+            "no_body_backsteps": true,
+            "authority_body_phase": true,
+            "paused_position": true,
+            "bitmap_equal": true,
+            "bitmap_bounds_equal": true,
+            "resume_jump_le_4": true
+          }
+        },
+        {
+          "round": 6,
+          "line_indices": {
+            "timeline": 222,
+            "timing": 223,
+            "ending": 233,
+            "pixels": 228,
+            "pose": 221
+          },
+          "source_moving_frames": 67,
+          "trace_count": 101,
+          "endpoint": 371,
+          "first_paused": {
+            "index": 63,
+            "t": 55158,
+            "x": 365,
+            "sats": true,
+            "logicalX": 365,
+            "paused": true
+          },
+          "first_observed_endpoint": {
+            "t": 55229,
+            "x": 371,
+            "sats": true,
+            "logicalX": 371,
+            "paused": true
+          },
+          "observed_pause_to_endpoint_ms": 71,
+          "initial_visual_gap": 6,
+          "preceding_sample_gap_ms": 92,
+          "confirmed_endpoint_settle_ms": 10,
+          "confirmed_endpoint_initial_gap": 0,
+          "buffered_frames_count": 45,
+          "buffered_frames_p90": 2.6166666666666742,
+          "body_distinct": 24,
+          "body_backsteps": 0,
+          "authority_body_f": 3,
+          "display_body_f": 3,
+          "paused_x": 371,
+          "resume_jump": 0,
+          "bitmap_comparison": 0,
+          "maximum_trace_gap_ms": 92,
+          "retained_pause_timing_start": 55197,
+          "retained_pause_timing_rows": 220,
+          "first_paused_enter_to_render": null,
+          "original_metric_checks": {
+            "buffer_coverage": true,
+            "p90_le_4": true,
+            "confirmed_settle_le_100": true,
+            "body_distinct_ge_8": true,
+            "no_body_backsteps": true,
+            "authority_body_phase": true,
+            "paused_position": true,
+            "bitmap_equal": true,
+            "bitmap_bounds_equal": true,
+            "resume_jump_le_4": true
+          }
+        },
+        {
+          "round": 7,
+          "line_indices": {
+            "timeline": 252,
+            "timing": 253,
+            "ending": 263,
+            "pixels": 258,
+            "pose": 251
+          },
+          "source_moving_frames": 61,
+          "trace_count": 91,
+          "endpoint": 353,
+          "first_paused": {
+            "index": 55,
+            "t": 59563,
+            "x": 347,
+            "sats": true,
+            "logicalX": 347,
+            "paused": true
+          },
+          "first_observed_endpoint": {
+            "t": 59642,
+            "x": 353,
+            "sats": true,
+            "logicalX": 353,
+            "paused": true
+          },
+          "observed_pause_to_endpoint_ms": 79,
+          "initial_visual_gap": 6,
+          "preceding_sample_gap_ms": 88,
+          "confirmed_endpoint_settle_ms": 11,
+          "confirmed_endpoint_initial_gap": 0,
+          "buffered_frames_count": 40,
+          "buffered_frames_p90": 2.4833333333333294,
+          "body_distinct": 23,
+          "body_backsteps": 0,
+          "authority_body_f": 16,
+          "display_body_f": 16,
+          "paused_x": 353,
+          "resume_jump": 0,
+          "bitmap_comparison": 0,
+          "maximum_trace_gap_ms": 93,
+          "retained_pause_timing_start": 59470,
+          "retained_pause_timing_rows": 220,
+          "first_paused_enter_to_render": {
+            "start_at": 59498,
+            "end_at": 59563,
+            "frame": 814,
+            "elapsed_ms": 65,
+            "view_ms": 23,
+            "motion_ms": 0,
+            "view_calls": 1,
+            "motion_calls": 1
+          },
+          "original_metric_checks": {
+            "buffer_coverage": true,
+            "p90_le_4": true,
+            "confirmed_settle_le_100": true,
+            "body_distinct_ge_8": true,
+            "no_body_backsteps": true,
+            "authority_body_phase": true,
+            "paused_position": true,
+            "bitmap_equal": true,
+            "bitmap_bounds_equal": true,
+            "resume_jump_le_4": true
+          }
+        },
+        {
+          "round": 8,
+          "line_indices": {
+            "timeline": 282,
+            "timing": 283,
+            "ending": 293,
+            "pixels": 288,
+            "pose": 281
+          },
+          "source_moving_frames": 62,
+          "trace_count": 95,
+          "endpoint": 356,
+          "first_paused": {
+            "index": 57,
+            "t": 63986,
+            "x": 353,
+            "sats": true,
+            "logicalX": 353,
+            "paused": true
+          },
+          "first_observed_endpoint": {
+            "t": 64057,
+            "x": 356,
+            "sats": true,
+            "logicalX": 356,
+            "paused": true
+          },
+          "observed_pause_to_endpoint_ms": 71,
+          "initial_visual_gap": 3,
+          "preceding_sample_gap_ms": 90,
+          "confirmed_endpoint_settle_ms": 32,
+          "confirmed_endpoint_initial_gap": 0,
+          "buffered_frames_count": 42,
+          "buffered_frames_p90": 2.4666666666666592,
+          "body_distinct": 24,
+          "body_backsteps": 0,
+          "authority_body_f": 6,
+          "display_body_f": 6,
+          "paused_x": 356,
+          "resume_jump": 0,
+          "bitmap_comparison": 0,
+          "maximum_trace_gap_ms": 90,
+          "retained_pause_timing_start": 64027,
+          "retained_pause_timing_rows": 220,
+          "first_paused_enter_to_render": null,
+          "original_metric_checks": {
+            "buffer_coverage": true,
+            "p90_le_4": true,
+            "confirmed_settle_le_100": true,
+            "body_distinct_ge_8": true,
+            "no_body_backsteps": true,
+            "authority_body_phase": true,
+            "paused_position": true,
+            "bitmap_equal": true,
+            "bitmap_bounds_equal": true,
+            "resume_jump_le_4": true
+          }
+        }
+      ],
+      "performance_qualified": false,
+      "attribution_allowed": false,
+      "comparison_inputs": {
+        "driver_manifest": "a657b58a708a63975571a4e2cc351f206a9f38ecef19511b5d4f643d9a31df1c",
+        "wrapper_sha256": "f593468414493251a8a6525e2371833fa1c6b797fc0b8527a8e2c341b0c74ff9",
+        "runner_sha256": "7eca453b13480140da5f36bb33d2319739a927562ccafdbb61a8b20cdb5ae4d3",
+        "air_inventory_sha256": "3d4c6160cfb8ee766ad77463da9e5e7a67b10af30170b4ca5a876af1d4a9cd4c",
+        "vision_config_templates": {
+          "host": "24a0162f565dfa9a04e42bd64ca6fb688d556d50d99a528dbfa703d680eaba0c",
+          "join": "f3c7dfe712a836188d712f70b7d30fd83b8bb70435de28757196b3f926bf23f8"
+        },
+        "process_policy_expected": {
+          "RConnect.Process.ps1": "b3fe91f9544a3a57f45b6f1c3a47fcde207f62524cedea846f45d3d4599be88d",
+          "keep_test_responsive.ps1": "ce125a1d3904fe5b0f29c3ca8df306fb848148057cff8a0bc5f44a33e71b97a3"
+        }
+      }
+    }
+  ],
+  "equal_declared_inputs": true,
+  "equal_runtime_except_production": true,
+  "equal_installation": true,
+  "single_sequential_pair": true,
+  "strict_dynamic_scene_identity": false,
+  "native_functional_pass": true,
+  "smoothness_qualified": false,
+  "global_performance_benefit_proven": false,
+  "legacy": {
+    "run": "9a806dee8c",
+    "wrapper_passed": false,
+    "result_sha256": "0de0293be9599b4e24413eded1f63431fae35c180989f42279045a1200a661b4",
+    "note": "Unowned NativeTestGun fixture; FirearmAttachments #1009 preserved, cause not established."
+  },
+  "limitations": [
+    "First-paused rows are game-frame-deduplicated RENDER observations, not keydown time.",
+    "Confirmed endpoint is a separate test message; not the first worldstate arrival.",
+    "pauseTiming retains only the latest 220 rows; missing onset frames are not reconstructed.",
+    "No host flush duration probe or per-broadcast trace; joining frame spans cannot identify host capture cost.",
+    "All declarations and runtime inputs match except candidate; process scheduling and dynamic preparation differ."
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "kind": "recovery-pause-native-driver-source-handoff",
+  "frozen": true,
+  "files": {
+    "fixture-delta.json": "b27124f0c1c783db94aa91a02194bd86814808dc0ebc94fd7ea46df5a151f9bc",
+    "fixture.patch": "156d51baab77ab7527b8a46fd0c0a7f140a7d7c85a47fad8ee8ab5847ab64d40",
+    "inputs.json": "01c4810a7fa7dd9f576d5aefd243906a299dffe0ca3ac4e4cff974f2be59c474",
+    "prepare.py": "7f82c2eb5d95337ec235c41975a4ee5a36fbadf73d7e763e9fc1df9ad94b1a00",
+    "provenance.json": "18d10aa354e0d1bce5d271e052be041c78ac0bed0117d2a7cc753b74b57f3f3a",
+    "README.md": "17179b6217e70903e2bb687f394ea18f2a04cf96e8fc3076d365cb0ea4563f44",
+    "static-check.json": "c3b46d8b67b642e1e0a5347fc95b42a41ef1cf7489f47717ef34f6ebd78a9d0b",
+    "tests/A22PauseTimingTestDoc.as": "f20ce2cb227c82b7a6afa5c2580849d364aa5d7b5b8ab1314b27736d36e1ec81",
+    "tests/DropMotionBurstRegression.as": "5b76f1ff70f5771613ce0ab68d46390da7739dbd8b95a13c072e037c0d4b5835",
+    "tests/MotionCadenceRegression.as": "7a852c65be2c89082c8b727d4f90f7e416a097a090c87644bc48063bfce2a366",
+    "tests/PresentationContinuityTestDoc.as": "2e998334580505028b9fa58d3daa6067e3eaa92d3df313db4ecfeeba26a8e6f9"
+  },
+  "compiled": false,
+  "air_started": false,
+  "native_qualified": false,
+  "performance_qualified": false,
+  "old_failure_preserved": "9a806dee8c",
+  "source_continuity_pass_does_not_qualify_eight_round_entry": true
+}

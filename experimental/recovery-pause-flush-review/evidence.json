@@ -1,0 +1,43 @@
+{
+  "kind": "read-only-pause-flush-review",
+  "base": "recovery-22",
+  "candidate_version": "0.2.24-recovery23",
+  "inputs_sha256": "098066e6583b59802f3c2a6d91a2223b546c5415a5fc1835a49e562b73b6ec5c",
+  "integration_sha256": "62d16e346668fdd472bff87c5c7d804973d4ad7b5eecbe48c95e41421a7cf119",
+  "checks": {
+    "all_input_hashes_match": true,
+    "source_count_90": true,
+    "only_expected_3_changed": true,
+    "broadcast_unchanged": true,
+    "fixture_broadcast_exact": true,
+    "fixture_flush_exact": true,
+    "fixture_full_pause_exact": true
+  },
+  "changed": [
+    "rconnect/core/CoopPause.as",
+    "rconnect/core/Session.as",
+    "RConnectMod.as"
+  ],
+  "bad_inputs": [],
+  "source_hashes": {
+    "rconnect/core/CoopPause.as": "fc0f0e4ac6a9f71690c179146255b617b7dede9ca61d2a3f4d329e9a63bcd227",
+    "rconnect/core/Session.as": "fa3991b95b03b22076f1b615223ceb47bbbb8bd411f26701aed24e858a6c0d0a",
+    "RConnectMod.as": "b2dec136afbb816e420b569485a2c6cb2e3f29cf842efcd1456f0012252fdb1f"
+  },
+  "actual_component_receipt": "mods\\RConnect\\build\\m52\\recovery-pause-flush-component-01\\receipt.json",
+  "actual_component_receipt_sha256": "d94b22a002fbe0ab753cbcaa8cb83e6c7c9ee48a21de7d42759e1eb4617f4e97",
+  "actual_component_receipt_summary": {
+    "passed": false,
+    "compiled": false,
+    "air_started": false,
+    "native_game_test": false,
+    "performance_qualified": false,
+    "compile_exit": 1,
+    "error": "Component compilation failed; see compile.log",
+    "error_type": "AssertionError",
+    "installation_unchanged": true,
+    "source_unchanged": true
+  },
+  "gameplay_qualified": false,
+  "performance_qualified": false
+}

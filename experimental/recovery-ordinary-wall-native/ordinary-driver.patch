@@ -1,0 +1,72 @@
+--- driver04/LargeWallSurfaceTestDoc.as
++++ ordinary/LargeWallSurfaceTestDoc.as
+@@ -19,7 +19,8 @@
+    import rconnect.net.NetMessageEvent;
+    import rconnect.net.TcpLink;
+ 
+-   /** Four true native Weapon.attack/step -> Bullet.tilehit -> Grafon marks.
++   /** Four ordinary-room native Weapon.attack/step -> Bullet.tilehit -> Grafon marks.
++    * Historical class/log labels stay compatible with the shared driver04 runner.
+     * Never calls production wall receive/capture/tick, Emitter, dyrka, pixel
+     * write APIs or native chunk construction. No synthetic expected marks. */
+    public class LargeWallSurfaceTestDoc extends Sprite {
+@@ -66,9 +67,9 @@
+          for(var k:Object in native.modEntryByLoader) {
+             var loader:Loader=k as Loader;if(loader==null || !loader.contentLoaderInfo.applicationDomain.hasDefinition("ContinuousSceneMod"))continue;
+             sceneClass=loader.contentLoaderInfo.applicationDomain.getDefinition("ContinuousSceneMod");
+-            sceneClass.nativeEnabled=host;break;
+-         }
+-         if(sceneClass==null || Boolean(sceneClass.nativeEnabled)!=host)throw new Error("CS native scene preference unavailable");
++            sceneClass.nativeEnabled=false;break;
++         }
++         if(sceneClass==null || Boolean(sceneClass.nativeEnabled)!=false)throw new Error("CS native scene preference unavailable");
+          landClass=mod.game.main.loaderInfo.applicationDomain.getDefinition("fe.loc.Land");oldSeed=landClass.rconnectSeedSource;
+          newSeed=function(land:Object):uint {if(!host)return oldSeed(land);Object(mod.session.rooms).prepareMap(land,SEED,true);return SEED;};
+          landClass.rconnectSeedSource=newSeed;
+@@ -79,8 +80,8 @@
+       private function choose():Array {
+          // Existing world geometry only. No tile/decor/CS content writes.
+          var loc:Object=mod.game.loc,out:Array=[],counts:Object={beyond:0,solid:0,material:0,lane:0,spaced:0};
+-         for(var x:int=8;x<loc.spaceX-3;x++)for(var y:int=3;y<loc.spaceY-4;y++) {
+-            if(x*40<=1920 && y*40<=1000)continue;
++         for(var x:int=8;x<loc.spaceX;x++)for(var y:int=3;y<loc.spaceY-2;y++) {
++            if(x*40>=1920 || y*40+20>=1000)continue;
+             counts.beyond++;
+             var tile:Object=loc.space[x][y];if(tile==null || tile.phis!=1 || tile.fake || tile.door!=null || tile.water>0
+                || tile.hp<100)continue;
+@@ -99,10 +100,10 @@
+             if(out.length==4){Log.d("LARGE WALL SELECT "+JSON.stringify(counts));return out;}
+          }
+          Log.d("LARGE WALL SELECT "+JSON.stringify(counts));
+-         throw new Error("Native generated large scene has fewer than four separated, dry, solid-wall shot lanes");
++         throw new Error("Native ordinary room has fewer than four separated, dry, solid-wall shot lanes; preparation failure, not synchronization evidence");
+       }
+       private function prepare(n:int,p:Object):void {
+-         release();round=n;target=p;area=new Rectangle(p.x-64,p.y-64,128,128);
++         release();round=n;target=p;area=new Rectangle(Math.max(0,Math.min(1920-128,p.x-64)),Math.max(0,Math.min(1000-128,p.y-64)),128,128);
+          source=CASES[n].role==(host?"host":"join");phase="prepare";at=getTimer();readySent=peerReady=false;
+          peerSampled=sampledSent=false;local=peer=null;shots=0;hits=[];wire=[];samples=[];nativePairs=[];
+          sampleCaptureMax=0;prepareWait="";
+@@ -191,10 +192,10 @@
+       }
+       private function begin():void {
+          baseline=NativeWallSurfaceProbe.capture(mod.game.world.grafon,area);
+-         check(mod.game.world.grafon.sceneLarge===true && (mod.game.loc.spaceX>48 || mod.game.loc.spaceY>25),"native merged large scene admitted");
++         check(mod.game.world.grafon.sceneLarge===false && mod.game.loc.spaceX==48 && mod.game.loc.spaceY==25,"native ordinary 48x25 room admitted");
+          check(Number(mod.game.readWorldInfo().layoutSeed)==SEED,"native generation uses the same isolated comparison seed");
+-         check(target.x>1920 || target.y>1000,"actual target lies beyond old small-room limits");
+-         check(baseline.surfaces.length>0,"independent nativeBuffers and staged chunk cores cover world crop");
++         check(target.x>=0 && target.x<1920 && target.y>=0 && target.y<1000,"actual target lies inside ordinary front bounds");
++         check(baseline.surfaces.length==1 && baseline.surfaces[0].backingIdentity===true,"unique staged ordinary front bitmap covers world crop");
+          check(!source || (gun!=null && gun.vis!=null && gun.vis.stage!=null),"native weapon staged when firing");
+          if(source) {
+             var state:Object=attackState();
+@@ -243,7 +244,7 @@
+             maxCost=Math.max(maxCost,frame.cost);
+          }
+          local={round:round,role:host?"host":"join",source:source,weapon:CASES[round].weapon,target:target,area:{x:area.x,y:area.y,w:area.width,h:area.height},
+-            start:sampleStart,startWall:sampleStartWall,end:sampleEnd,shots:shots,hits:hits,sourceFirst:sourceFirst,sourceFirstBefore:sourceFirstBefore,nativeOracle:nativeOracle,
++            baselineAt:baseline.at,baselineWall:baseline.wall,start:sampleStart,startWall:sampleStartWall,end:sampleEnd,shots:shots,hits:hits,sourceFirst:sourceFirst,sourceFirstBefore:sourceFirstBefore,nativeOracle:nativeOracle,
+             attackAttempts:attackAttempts,attackAccepted:attackAccepted,firstAttack:firstAttack,firstRejected:firstRejected,weaponPreparation:weaponPreparation,
+             baseline:base,baselineDisplay:baseDisplay,finalNative:finalNative,finalDisplay:finalDisplay,frames:frames,wire:wire,
+             surfaces:baseline.surfaces,finalSurfaces:end.surfaces,maxCaptureMs:maxCost,readbackMs:getTimer()-started};
