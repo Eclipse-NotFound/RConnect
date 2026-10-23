@@ -1,0 +1,60 @@
+--- roomfix1/rconnect/core/RoomSync.as
++++ proposal/rconnect/core/RoomSync.as
+@@ -391,10 +391,10 @@
+             game.refreshWorld();
+             if(host())
+             {
+-               if(msg.op=="request") {peerInfo=msg.info;if(pending==0)begin();}
++               if(msg.op=="request") {peerInfo=msg.info;requested=true;if(pending==0)begin();}
+                else if(msg.op=="ready" && int(msg.barrier)==pending && int(msg.epoch)==epoch)commit(msg);
+                else if(msg.op=="ack" && int(msg.barrier)==pending)
+-               {pending=0;release();Log.d("RConnectRoom: resumed "+settledKey+" term="+term+" ms="+(getTimer()-barrierStarted));}
++               {pending=0;release();check();Log.d("RConnectRoom: resumed "+settledKey+" term="+term+" ms="+(getTimer()-barrierStarted));}
+             }
+             else if(msg.op=="prepare") {
+                preparing=msg.info;game.mapGeneration.receive(preparing);startPreparedMap();
+@@ -411,14 +411,23 @@
+             else if(msg.op=="grant" && int(msg.barrier)==pending && int(msg.epoch)==epoch)
+             {
+                var state:Object;
++               var crossedUnchanged:Boolean=false,crossingRequested:Boolean=false;
+                if(msg.fresh===true && msg.owner===true && freshRoom===game.loc && freshWire!=null
+                   && msg.state===freshWire && String(msg.key)==game.roomKey()) {
+                   // The host returned our exact held native state and granted
+                   // us authority. No simulation ran since it was captured.
+                   game.roomRole(true);
+                }else if(msg.unchanged===true) {
+-                  if(!currentSettledRoom() || !ready || !authority || msg.owner!==true || String(msg.key)!=game.roomKey())
++                  if(!ready || !authority || settledRoom==null || msg.owner!==true
++                     || String(msg.key)!=settledKey || game.roomKey(settledRoom)!=settledKey
++                     || game.world==null || game.world.land!==nativeLand || settledRoom.land!==nativeLand)
+                      throw new Error("Invalid unchanged room grant");
++                  // This grant confirms the previously owned room, even if a
++                  // native door was crossed while its unchanged owner ran.
++                  crossedUnchanged=game.loc!==settledRoom;
++                  // check() sends request after recording nativeRoom. That TCP
++                  // request is ahead of the ACK below; do not send it twice.
++                  crossingRequested=crossedUnchanged && nativeRoom===game.loc;
+                }else if(msg.retained===true) {
+                   // Only reuse our own exact checkpoint while this same native
+                   // room remained frozen. Unit/loot authority still changes.
+@@ -441,10 +450,17 @@
+                if(initial && hostInfo!=null && game.roomKey()==String(hostInfo.roomKey)
+                   && isFinite(Number(hostInfo.x)) && isFinite(Number(hostInfo.y)))
+                   TravelPlacement.place(game.gg,Number(hostInfo.x),Number(hostInfo.y));
+-               authority=Boolean(msg.owner);ready=true;term=int(msg.term);settledRoom=game.loc;settledKey=game.roomKey();
+-               initial=false;game.independentRooms=true;nativeRoom=game.loc;
++               authority=Boolean(msg.owner);ready=true;term=int(msg.term);
++               if(!crossedUnchanged){settledRoom=game.loc;settledKey=game.roomKey();nativeRoom=game.loc;}
++               initial=false;game.independentRooms=true;
+                TravelGuard.endTravel();
+                send({op:"ack",barrier:pending});pending=0;readySent=false;release();
++               if(crossedUnchanged) {
++                  // Keep the new room paused within this same socket callback.
++                  // Its owner/term can only come from the following barrier.
++                  hold();
++                  if(!crossingRequested)check();
++               }
+                Log.d("RConnectRoom: grant "+settledKey+" authority="+authority+" term="+term+" ms="+(getTimer()-barrierStarted));
+             }
+          }

@@ -1,0 +1,31 @@
+--- room-travel-driver-12/tests/RoomTravelTimingTestDoc.as
++++ review/tests/RoomTravelTimingTestDoc.as
+@@ -106,8 +106,8 @@
+                   if(loader==null || !loader.contentLoaderInfo.applicationDomain.hasDefinition("ContinuousSceneMod"))continue;
+                   var cls:Object=loader.contentLoaderInfo.applicationDomain.getDefinition("ContinuousSceneMod");
+                   sceneClass=cls;
+-                  cls.nativeEnabled=host&&merged();
+-                  sceneConfigured=Boolean(cls.nativeEnabled)==(host&&merged());break;
++                  cls.nativeEnabled=merged();
++                  sceneConfigured=Boolean(cls.nativeEnabled)==merged();break;
+                }
+             }catch(error:*){Log.d("TRAVEL CONFIG ERROR "+error);}
+             check(sceneConfigured,"native scene preference was explicitly configured");
+@@ -118,7 +118,7 @@
+             originalSeed=landClass.rconnectSeedSource;
+             timingSeed=function(land:Object):uint {
+                if(!solo && !host)return originalSeed(land);
+-               if(!solo && host)Object(mod.session.rooms).prepareMap(land,MAP_SEED,true);
++               if(!solo && host && ("prepareMap" in Object(mod.session.rooms)))Object(mod.session.rooms).prepareMap(land,MAP_SEED,true);
+                return MAP_SEED;
+             };
+             landClass.rconnectSeedSource=timingSeed;
+@@ -156,7 +156,7 @@
+          if(landClass!=null && landClass.rconnectSeedSource===timingSeed)landClass.rconnectSeedSource=originalSeed;
+          if(!host && !solo && sceneClass!=null) {
+             mod.session.leave();
+-            check(sceneClass.nativeEnabled===false,"disconnect restores the joiner's original scene preference");
++            check(sceneClass.nativeEnabled===merged(),"disconnect preserves the configured same scene preference");
+          }
+          Log.d("COOP EFFECTS DONE travel-timing "+(host?"host":"join"));
+       }

@@ -1,0 +1,57 @@
+{
+  "version": "0.2.24-roomfix2",
+  "base": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-aura-offline-01",
+  "base_sha256": "df0fa0e2ca952e77e5132e75d71e73558dc919c7b8cdeba5da05fc9e94dc01e7",
+  "previous_overlay_sha256": "b0e7495427a9b178996cc02eb8bb9be9821c0e475329d4f75ab9075e29fb3209",
+  "review_source_sha256": "0874c604817bdf9e1c8e48fce6e9717effa245e523bb4cd4916f276dafe09cc5",
+  "changes": {
+    "rconnect/core/MapGeneration.as": {
+      "base_sha256": "4fb1bd07b75bb9531e3915ff64abf65723e0e1e783fb17594d9c3e3c20a4489c",
+      "candidate_sha256": "ba5ea9bf85933329759575ce19e8d5260f9218c1e0aacccd1fa956d1e045a3a6"
+    },
+    "rconnect/core/RoomSync.as": {
+      "base_sha256": "536f587088965ee6f38147d11f2a07723e4c78c48062ad618814cd1f40b36163",
+      "candidate_sha256": "0874c604817bdf9e1c8e48fce6e9717effa245e523bb4cd4916f276dafe09cc5"
+    },
+    "rconnect/game/GameBridge.as": {
+      "base_sha256": "df23182fdd362fba529b962220329bd60499efca0ee7c8ea8f2033372e84e192",
+      "candidate_sha256": "f7016bfd096ca3c88ea1214733117758b1998b579ec6f3ca9fc9332b605011a9"
+    },
+    "rconnect/game/NativeRoomState.as": {
+      "base_sha256": "4690d896500c473cb2fce1e9be0b58ace1ef687664fb88d63bb1a8f77211898a",
+      "candidate_sha256": "1e91028348b29dc1bd00dc55cf4d5df5d5ee40469ef9ea0f7e9626d30a601938"
+    },
+    "rconnect/game/NativeTileState.as": {
+      "base_sha256": null,
+      "candidate_sha256": "dab683e9d14e18e8b7e35a917da8a7e237391b602f43d315661fd0d11ce8cae5"
+    },
+    "rconnect/game/RoomTerrainView.as": {
+      "base_sha256": null,
+      "candidate_sha256": "a2eb59b8536414d26daa39a82c71c414009c5d4b29a7a24539e025d1b852877f"
+    },
+    "rconnect/game/TerrainSync.as": {
+      "base_sha256": "f1626ac1b068cca11c3252a142d769f32f864fa5d8050b24eb07d2b11ae904eb",
+      "candidate_sha256": "317c9658b0632f3bb8333c11cd302c68ef45e7a9f2f54ed6b6c631b6c1b92b44"
+    },
+    "rconnect/net/RoomCodec.as": {
+      "base_sha256": "0a5903d409914791323f9775db5a5bb253e67ba583f5d4f4b926ac72b9c8bd48",
+      "candidate_sha256": "549dbffadf05547509a0c2fe8a3637c0ef089305ebe7637322e6a196c471828c"
+    },
+    "rconnect/ui/RoomEntryView.as": {
+      "base_sha256": "b3a287a0b5925dc0b3caa0959e472b53c6b7aa56abd14ed04fe550b1febb8401",
+      "candidate_sha256": "969ffe5824685edb1bdfab3b35f9e77dbcedd4eb14b012495611277d5b7f025c"
+    },
+    "RConnectMod.as": {
+      "base_sha256": "8117aa722d140a428d3eb943ceb9ae1ff60b71112984cd43a54126723926bff0",
+      "candidate_sha256": "3402a4897fc4eff5be878b4f21746b64b7f69e8e64e7c2fb1fc31bfa2188f713"
+    },
+    "RConnectModDomains.as": {
+      "base_sha256": null,
+      "candidate_sha256": "372167c4a32b2ac9b23b7addc7959ba3c70b7f74fea9732cdd1c650112eb9b00"
+    }
+  },
+  "recipe_sha256": "58450e5833e0630a4668a66a7e3d08a593ef3d7a965dd0b36cee98da6921f23f",
+  "compiled": false,
+  "tested": false,
+  "installed": false
+}

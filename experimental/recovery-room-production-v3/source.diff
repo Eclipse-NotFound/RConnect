@@ -1,0 +1,1356 @@
+--- aura1/rconnect/core/MapGeneration.as
++++ 0.2.24-roomfix3/rconnect/core/MapGeneration.as
+@@ -1,11 +1,14 @@
+ package rconnect.core {
++   import RConnectModDomains;
+    import rconnect.game.GameBridge;
+ 
+    /** One seed per actual native Land construction. Cached visits never call
+-    * this hook. The joiner adopts the host's completed expedition before travel. */
++    * this hook. The host announces the seed before either side builds the map. */
+    public final class MapGeneration {
+       private var session:Session;
+       private var remote:Object;
++      private var sceneClass:Object;
++      private var savedSceneMode:*;
+       public var supported:Boolean=false;
+       public function MapGeneration(s:Session) {
+          session=s;
+@@ -15,9 +18,34 @@
+             Log.d("RConnectMap: native expedition seed interface ready");
+          }else Log.d("RConnectMap: legacy fixed-seed Land; native expedition patch required");
+       }
+-      public function reset():void {remote=null;}
++      public function reset():void {
++         remote=null;
++         if(sceneClass!=null && savedSceneMode!==undefined)sceneClass.nativeEnabled=savedSceneMode;
++         savedSceneMode=undefined;
++      }
++      private function scene():Object {
++         if(sceneClass==null)try {
++            var domain:Object=RConnectModDomains.find(session.mod.game.main,"ContinuousSceneMod");
++            if(domain!=null)sceneClass=domain.getDefinition("ContinuousSceneMod");
++         }catch(e:*){}
++         return sceneClass;
++      }
++      /** Report the actual cached world, not the preference for the next trip. */
++      public function sceneMode(land:Object,constructing:Boolean=false):Boolean {
++         if(scene()==null || land==null || String(land.act.tip)=="base")return false;
++         if(constructing)return Boolean(sceneClass.nativeEnabled);
++         try {return session.mod.game.world.grafon.sceneNativeCall("state",[land])!=null;}catch(e:*){}
++         return false;
++      }
+       public function receive(info:Object):void {
+-         if(info!=null && info.worldReady!==false)remote=info;
++         if(info!=null && info.worldReady!==false) {
++            remote=info;
++            if(info.sceneMerged!==undefined && scene()!=null) {
++               if(savedSceneMode===undefined)savedSceneMode=sceneClass.nativeEnabled;
++               // Session-only adoption. Never overwrite the player's settings file.
++               sceneClass.nativeEnabled=Boolean(info.sceneMerged);
++            }
++         }
+       }
+       private function valid(info:Object):Boolean {
+          if(info==null)return false;
+@@ -33,11 +61,14 @@
+          }
+          var seed:uint=1+uint(Math.random()*4294967295);
+          Log.d("RConnectMap: new expedition "+land.act.id+" seed="+seed);
++         if(session.mode==Session.HOSTING && session.peers.length>0)
++            session.rooms.prepareMap(land,seed,true);
+          return seed;
+       }
+       public function differs(info:Object,land:Object):Boolean {
+-         return supported&&valid(info)&&land!=null&&String(info.curLandId)==String(land.act.id)
+-            &&Number(GameBridge.probe(land,"rconnectLayoutSeed"))!=Number(info.layoutSeed);
++         return land!=null&&String(info.curLandId)==String(land.act.id)
++            && ((supported&&valid(info)&&Number(GameBridge.probe(land,"rconnectLayoutSeed"))!=Number(info.layoutSeed))
++               || (info.sceneMerged!==undefined && Boolean(info.sceneMerged)!=sceneMode(land)));
+       }
+       public function adopt(info:Object,act:Object):void {
+          receive(info);
+--- aura1/rconnect/core/RoomSync.as
++++ 0.2.24-roomfix3/rconnect/core/RoomSync.as
+@@ -9,9 +9,9 @@
+    import rconnect.net.TcpLink;
+    import rconnect.ui.RoomEntryView;
+ 
+-   /** Two-player room ownership. Door crossings use an ordered barrier:
+-    * freeze -> flush mirror reports -> capture owners -> grant -> acknowledge.
+-    * The native simulation never advances a new room before its grant. */
++   /** Two-player room ownership. Changed rooms flush reports, capture owners,
++    * receive a grant and acknowledge it. Unchanged owners keep running.
++    * At native transition completion, an unconfirmed room waits for its grant. */
+    public class RoomSync
+    {
+       private var session:Session;
+@@ -26,17 +26,27 @@
+       private var peerInfo:Object;
+       private var serial:int=0;
+       private var pending:int=0;
++      private var barrierRoom:Object,barrierLand:Object;
+       private var savedPause:Boolean=false;
+       private var pauseWorld:Object;
+       private var deadline:int=0;
+       private var readySent:Boolean=false;
+       private var initial:Boolean=true;
++      private var preparing:Object;
++      private var preparedToken:String="";
++      private var restoring:Boolean=false;
++      private var localEntry:Boolean=false;
++      private var barrierStarted:int=0;
++      private var freshRoom:Object;
++      private var freshWire:String;
++      private var heldRoom:Object,heldState:Object,heldWire:String;
+       private var blocked:Boolean=false;
+       private var requested:Boolean=false;
+       private var entryView:RoomEntryView=new RoomEntryView();
+       private var teammate:Object,followPending:Object;
+       private var followSeenAt:int=0,followAttemptAfter:int=0,followFailures:int=0;
+       private var followStarted:Boolean=false;
++      private var followBlockedAt:int=-1;
+       public var busy:Boolean=false;
+       public var ready:Boolean=false;
+       public var authority:Boolean=true;
+@@ -62,6 +72,7 @@
+          ready=false;authority=true;initial=true;epoch=0;term=0;pending=0;hostInfo=null;
+          game.independentRooms=false;game.roomEpoch=0;status="";blocked=false;
+          requested=false;
++         preparing=null;preparedToken="";restoring=false;localEntry=false;barrierRoom=null;barrierLand=null;
+          teammate=null;cancelFollow();
+          TravelGuard.reset();
+          game.mapGeneration.reset();
+@@ -76,12 +87,12 @@
+       public function get entryPending():Boolean
+       {
+          return connected() && game.world!=null && game.world.loc!=null
+-            && (!ready || busy || blocked || !currentSettledRoom());
++            && (!ready || localEntry || restoring || blocked || !currentSettledRoom());
+       }
+       private function present(e:Event=null):void
+       {
+          if(e!=null)game.refreshWorld();
+-         if(entryPending)entryView.show(game.world,mod.stage,blocked?status:"房间交接中…");
++         if(entryPending)entryView.show(game.world,mod.stage,blocked?status:"");
+          else entryView.clear();
+       }
+       private function connected():Boolean
+@@ -92,25 +103,30 @@
+          o.type="room";
+          if(host())session.server.broadcast(o);else if(session.link!=null)session.link.send(o);
+       }
+-      private function hold():void
+-      {
++      private function hold(freeze:Boolean=true):void
++      {
++         if(!busy){busy=true;deadline=getTimer()+45000;barrierStarted=getTimer();}
++         if(!ready || !currentSettledRoom())localEntry=true;
++         if(!freeze)return;
+          // A room checkpoint must never preserve levitation without its caster.
+          if(mod.enemyGrip!=null)mod.enemyGrip.releaseForHandoff();
+          if(mod.peerGrip!=null)mod.peerGrip.reset();
+          game.releaseMovablesForHandoff();
+-         if(!busy)
++         if(pauseWorld==null)
+          {
+             pauseWorld=game.world;savedPause=Boolean(GameBridge.probe(pauseWorld,"onPause"));
+-            busy=true;deadline=getTimer()+45000;
+          }
+          game.roomHold=true;
+          if(pauseWorld!=null)pauseWorld.onPause=true;
+-         status="房间交接中…";
++         status="";
+       }
+       private function release():void
+       {
+-         if(busy && pauseWorld!=null)pauseWorld.onPause=savedPause;
++         if(pauseWorld!=null)pauseWorld.onPause=savedPause;
+          busy=false;game.roomHold=false;pauseWorld=null;
++         localEntry=false;
++         freshRoom=null;freshWire=null;
++         heldRoom=null;heldState=null;heldWire=null;
+          if(ready && session.progress!=null)session.progress.prepare();
+          status=ready?(authority?"分房探索":"共同探索"):"";
+       }
+@@ -126,12 +142,16 @@
+             if(game.world==null || game.loc==null || game.gg==null)return;
+             if(busy && pauseWorld===game.world)game.world.onPause=true;
+             if(!host())TravelGuard.guardTravel(game,this);
++            advanceSharedTravelFade();
++            if(host())prepareCachedMap();
++            else if(preparing!=null && !game.isTransitioning())startPreparedMap();
+             game.world.land.loc_t=0;
+             check();
+             followTeammate();
+             TravelGuard.update(game,!host());
+-            if(busy && getTimer()>deadline && !blocked)
++            if((busy || (host() && pending>0)) && getTimer()>deadline && !blocked)
+             {
++               hold();
+                blocked=true;status="房间交接未完成，请断开后重连";
+                Log.d("RConnectRoom: handoff timed out; simulation remains paused");
+             }
+@@ -149,6 +169,7 @@
+       private function check():void
+       {
+          if(game.loc==null || game.gg==null || game.isTransitioning())return;
++         if(!host() && preparing!=null)return;
+          if(!host() && hostInfo==null)return;
+          if(!host() && String(game.readWorldInfo().curLandId)!=String(hostInfo.curLandId))
+          {observeHost(hostInfo);return;}
+@@ -182,9 +203,11 @@
+          if(pending>0)return;
+          requested=false;
+          session.flushProgress();
+-         hold();pending=++serial;blocked=false;
++         hold(!ready || !currentSettledRoom());pending=++serial;blocked=false;
++         barrierRoom=game.loc;barrierLand=game.world.land;
+          send({op:"seal",barrier:pending,epoch:epoch,info:game.readWorldInfo(),
+-            together:TravelGuard.restricted(game.loc) || TravelGuard.restricted(settledRoom)});
++            together:TravelGuard.restricted(game.loc) || TravelGuard.restricted(settledRoom),
++            peerRoom:peerInfo==null?"":String(peerInfo.roomKey)});
+          Log.d("RConnectRoom: seal "+pending+" room="+game.roomKey());
+       }
+       /** Called for every host world update, including while maps load. */
+@@ -201,31 +224,70 @@
+          if(info==null || host() || info.worldReady===false)return;
+          game.mapGeneration.receive(info);
+          hostInfo=info;
++         preparing=null;
+          if(game.isPlayerDead() || game.isTransitioning())return;
+          game.refreshWorld();var mine:Object=game.readWorldInfo();if(mine==null)return;
+          var mapChange:Boolean=String(mine.curLandId)!=String(info.curLandId);
+-         if(!mapChange && game.mapGeneration.differs(info,game.world.land)) {
+-            // Joining an already-running expedition can have the same map ID
+-            // and room coordinates but a completely different native layout.
+-            // Rebuild only the joiner, before any room checkpoint is applied.
++         if(mapChange || game.mapGeneration.differs(info,game.world.land))
++         {
+             TravelGuard.allowTravel(String(info.curLandId));
+-            game.followMapGeneration(info);
++            if(game.startSharedTravel(info)) {
++               initial=true;game.independentRooms=false;
++               settledRoom=null;settledKey="";ready=false;nativeRoom=null;
++            }
++            return;
++         }
++         if(!mapChange && int(info.roomEpoch)>0 && epoch!=int(info.roomEpoch))
++         {
+             epoch=int(info.roomEpoch);game.roomEpoch=epoch;
+             settledRoom=null;settledKey="";ready=false;nativeRoom=null;
+-            return;
+-         }
+-         if(mapChange || initial)
+-         {
+-            TravelGuard.allowTravel(String(info.curLandId));
++         }
++         if(initial && game.roomKey()!=String(info.roomKey))TravelGuard.follow(game,info,true);
++      }
++      /** Announce a seed as soon as native construction selects it. The peer
++       * can build concurrently instead of waiting for host loading/fade-out. */
++      public function prepareMap(land:Object,seed:uint,constructing:Boolean=false):void {
++         if(!host() || !connected() || land==null)return;
++         var token:String=String(land.act.id)+":"+seed+":"+constructing;
++         if(preparedToken==token)return;
++         preparedToken=token;
++         send({op:"prepare",info:{curLandId:String(land.act.id),layoutSeed:seed,
++            layoutLevel:Number(land.landDifLevel),landStage:Number(land.act.landStage),
++            hostVisited:Boolean(land.act.visited),sceneMerged:game.mapGeneration.sceneMode(land,constructing),worldReady:true}});
++         Log.d("RConnectTravel: prepare "+token+" t="+getTimer());
++      }
++      private function prepareCachedMap():void {
++         var w:Object=game.world;
++         if(int(w.t_exit)<=0){preparedToken="";return;}
++         if(int(w.t_exit)<=20 || w.game.crea)return;
++         var act:Object=w.game.lands[String(w.game.curLandId)];
++         if(act!=null && act.land!=null)prepareMap(act.land,uint(GameBridge.probe(act.land,"rconnectLayoutSeed")));
++      }
++      /** Native quick travel starts at 21. Keep every work-bearing boundary:
++       * 20 loading UI, 19 generation, 18/17 required click, 16 control, 1 HUD.
++       * Only decorative countdown frames are skipped after the fade completes. */
++      private function advanceSharedTravelFade():void {
++         var w:Object=game.world;
++         if(w==null || w.cam==null || w.vblack==null || int(w.t_exit)<=0
++            || int(w.t_die)>0 || int(w.comLoad)>=0)return;
++         if(int(w.t_exit)>21) {
++            if(Number(w.vblack.alpha)>=1)w.t_exit=21;
++            else if(Number(w.cam.dblack)>0)w.cam.dblack=100;
++         }else if(int(w.t_exit)<=16 && int(w.t_exit)>2) {
++            if(Number(w.cam.dblack)<0)w.cam.dblack=-100;
++            if(!w.vblack.visible || Number(w.vblack.alpha)<=0)w.t_exit=2;
++         }
++      }
++      private function startPreparedMap():void {
++         if(preparing==null || game.world==null || game.world.game==null || game.gg==null
++            || game.isTransitioning() || game.isPlayerDead())return;
++         var info:Object=preparing;
++         if(String(game.world.game.curLandId)==String(info.curLandId)
++            && !game.mapGeneration.differs(info,game.world.land))return;
++         TravelGuard.allowTravel(String(info.curLandId));
++         if(game.startSharedTravel(info)) {
++            initial=true;ready=false;settledRoom=null;settledKey="";nativeRoom=null;
+             game.independentRooms=false;
+-            game.followHostWorld(info);
+-            game.refreshWorld();
+-         }
+-         if(!mapChange && int(info.roomEpoch)>0 && epoch!=int(info.roomEpoch))
+-         {
+-            if(epoch>0 && !initial && nativeLand===game.world.land){TravelGuard.allowTravel(String(info.curLandId));game.followMapGeneration(info);}
+-            epoch=int(info.roomEpoch);game.roomEpoch=epoch;
+-            settledRoom=null;settledKey="";ready=false;nativeRoom=null;
+          }
+       }
+       public function stamp(msg:Object):Object
+@@ -262,14 +324,26 @@
+             && Number(a.landStage)==Number(b.landStage);
+       }
+       private function cancelFollow():void {
+-         followPending=null;followSeenAt=0;followAttemptAfter=0;followFailures=0;followStarted=false;
++         followPending=null;followSeenAt=0;followAttemptAfter=0;followFailures=0;followStarted=false;followBlockedAt=-1;
+       }
+       private function followTeammate():void {
+          if(followPending==null)return;
+          var now:int=getTimer();
+-         if(mod.config.getValue("followTeammate")!="1" || now-followSeenAt>3000){cancelFollow();return;}
+-         if(session.pause!=null && session.pause.paused)return;
+-         if(!ready || busy || pending!=0 || game.isTransitioning() || game.isPlayerDead())return;
++         if(mod.config.getValue("followTeammate")!="1"){cancelFollow();return;}
++         if((session.pause!=null && session.pause.paused) || !ready || busy || pending!=0
++            || game.isTransitioning() || game.isPlayerDead()) {
++            if(followBlockedAt<0)followBlockedAt=now;
++            return;
++         }
++         if(followBlockedAt>=0) {
++            // New teammate packets may refresh followSeenAt while blocked.
++            // Exclude only the interval since that packet, without granting
++            // future time twice. Retry backoff also pauses while unplayable.
++            followSeenAt+=now-Math.max(followBlockedAt,followSeenAt);
++            if(followAttemptAfter>0)followAttemptAfter+=now-followBlockedAt;
++            followBlockedAt=-1;
++         }
++         if(now-followSeenAt>3000){cancelFollow();return;}
+          var info:Object=followPending,mine:Object=game.readWorldInfo();
+          if(mine==null)return;
+          if(!sameFollowMap(info,mine) || int(info.roomEpoch)!=epoch
+@@ -332,10 +406,18 @@
+             game.refreshWorld();
+             if(host())
+             {
+-               if(msg.op=="request") {peerInfo=msg.info;if(pending==0)begin();}
+-               else if(msg.op=="ready" && int(msg.barrier)==pending && int(msg.epoch)==epoch)commit(msg);
++               if(msg.op=="request") {peerInfo=msg.info;requested=true;if(pending==0)begin();}
++               else if(msg.op=="ready" && int(msg.barrier)==pending && int(msg.epoch)==epoch) {
++                  // A request already described by this READY adds no new
++                  // work. Preserve a local crossing and a newer destination.
++                  if(requested && game.loc===barrierRoom && sameRequest(peerInfo,msg.info))requested=false;
++                  commit(msg);
++               }
+                else if(msg.op=="ack" && int(msg.barrier)==pending)
+-               {pending=0;release();Log.d("RConnectRoom: resumed "+settledKey+" term="+term);}
++               {pending=0;release();check();Log.d("RConnectRoom: resumed "+settledKey+" term="+term+" ms="+(getTimer()-barrierStarted));}
++            }
++            else if(msg.op=="prepare") {
++               preparing=msg.info;game.mapGeneration.receive(preparing);startPreparedMap();
+             }
+             else if(msg.op=="seal")
+             {
+@@ -344,18 +426,58 @@
+                readySent=false;blocked=false;
+                if(msg.together && game.loc!=null && game.roomKey()!=String(msg.info.roomKey) && !game.isTransitioning())
+                   TravelGuard.follow(game,msg.info,true);
+-               if(game.loc!=null && game.gg!=null && !game.isTransitioning()) {hold();sendReady();}
++               if(game.loc!=null && game.gg!=null && !game.isTransitioning())sendReady();
+             }
+             else if(msg.op=="grant" && int(msg.barrier)==pending && int(msg.epoch)==epoch)
+             {
+-               var state:Object=RoomCodec.unpack(String(msg.state));
+-               if(game.roomKey()!=String(state.key))throw new Error("Room changed during grant");
+-               game.restoreCheckpoint(state,Boolean(msg.owner),msg.fresh!==true && (!authority || settledRoom!==game.loc || !ready));
+-               authority=Boolean(msg.owner);ready=true;term=int(msg.term);settledRoom=game.loc;settledKey=game.roomKey();
+-               initial=false;game.independentRooms=true;nativeRoom=game.loc;
++               var state:Object;
++               var crossedUnchanged:Boolean=false,crossingRequested:Boolean=false;
++               if(msg.fresh===true && msg.owner===true && freshRoom===game.loc && freshWire!=null
++                  && msg.state===freshWire && String(msg.key)==game.roomKey()) {
++                  // The host returned our exact held native state and granted
++                  // us authority. No simulation ran since it was captured.
++                  game.roomRole(true);
++               }else if(msg.unchanged===true) {
++                  if(!ready || !authority || settledRoom==null || msg.owner!==true
++                     || String(msg.key)!=settledKey || game.roomKey(settledRoom)!=settledKey
++                     || game.world==null || game.world.land!==nativeLand || settledRoom.land!==nativeLand)
++                     throw new Error("Invalid unchanged room grant");
++                  crossedUnchanged=game.loc!==settledRoom;
++                  // An already observed crossing sent its request before this
++                  // ACK on the same TCP stream. Do not enqueue it twice.
++                  crossingRequested=crossedUnchanged && nativeRoom===game.loc;
++               }else if(msg.retained===true) {
++                  // Only reuse our own exact checkpoint while this same native
++                  // room remained frozen. Unit/loot authority still changes.
++                  if(!ready || !authority || heldRoom!==game.loc || !game.roomHold || heldState==null
++                     || heldWire==null || msg.state!==heldWire || String(msg.key)!=game.roomKey())
++                     throw new Error("Invalid retained room grant");
++                  restoring=true;
++                  // Retain the exact JSON-decoded numbers used by the new
++                  // authority too; the original capture can differ by one ULP.
++                  state=RoomCodec.unpack(String(msg.state));
++                  game.restoreCheckpoint(state,Boolean(msg.owner),false,true);
++                  restoring=false;
++               }else {
++                  state=RoomCodec.unpack(String(msg.state));
++                  if(game.roomKey()!=String(state.key))throw new Error("Room changed during grant");
++                  restoring=true;
++                  game.restoreCheckpoint(state,Boolean(msg.owner),msg.fresh!==true && (!authority || settledRoom!==game.loc || !ready));
++                  restoring=false;
++               }
++               if(initial && hostInfo!=null && game.roomKey()==String(hostInfo.roomKey)
++                  && isFinite(Number(hostInfo.x)) && isFinite(Number(hostInfo.y)))
++                  TravelPlacement.place(game.gg,Number(hostInfo.x),Number(hostInfo.y));
++               authority=Boolean(msg.owner);ready=true;term=int(msg.term);
++               if(!crossedUnchanged){settledRoom=game.loc;settledKey=game.roomKey();nativeRoom=game.loc;}
++               initial=false;game.independentRooms=true;
+                TravelGuard.endTravel();
+                send({op:"ack",barrier:pending});pending=0;readySent=false;release();
+-               Log.d("RConnectRoom: grant "+settledKey+" authority="+authority+" term="+term);
++               if(crossedUnchanged) {
++                  hold();
++                  if(!crossingRequested)check();
++               }
++               Log.d("RConnectRoom: grant "+settledKey+" authority="+authority+" term="+term+" ms="+(getTimer()-barrierStarted));
+             }
+          }
+          catch(error:Error){fail(error);}
+@@ -365,32 +487,72 @@
+       private function sendReady():void
+       {
+          if(game.isTransitioning() || game.loc==null)return;
+-         hold();flush();session.flushProgress();var own:Object=null;
+-         if(ready && authority && settledRoom!=null)
++         if(initial && hostInfo!=null && game.roomKey()!=String(hostInfo.roomKey)) {
++            if(!TravelGuard.follow(game,hostInfo,true))return;
++            nativeRoom=game.loc;
++         }
++         var keepOwner:Boolean=ready && authority && currentSettledRoom() && hostInfo!=null && String(hostInfo.roomKey)!=settledKey;
++         hold(!keepOwner);flush();session.flushProgress();var own:Object=null;
++         if(ready && authority && settledRoom!=null && !keepOwner)
+             own=game.inRoom(settledRoom,function():Object{return game.checkpoint();});
++         // READY already describes this native destination. Do not let the
++         // next frame rediscover it and enqueue a duplicate ownership barrier.
++         // Keep restricted departures unobserved so check() still returns them.
++         if(!(ready && TravelGuard.restricted(game.loc) && game.roomKey()!=String(hostInfo.roomKey))) {
++            nativeLand=game.world.land;nativeRoom=game.loc;
++         }
+          var info:Object=game.readWorldInfo();
+          var ownPacked:String=own==null?null:RoomCodec.pack(own);
+-         // A checkpoint also discovers mines, binds loot keys and observes wall
+-         // marks/weapon endings. Keep that first capture. When both names refer
+-         // to this same held room, no world step or restore occurs between them;
+-         // share its complete capture instead of repeating those observations.
++         // Owner state remains complete (including mines, loot and wall marks).
++         // Reuse that capture when both fields refer to the same held room.
+          var sameCapture:Boolean=own!=null && settledRoom===game.loc;
+-         var freshState:Object=sameCapture?own:game.checkpoint();
+-         // A granted room remains in the host's records for this epoch. If we
+-         // did not leave it, commit uses that record (or our own update above),
+-         // never fresh. Keep the capture's side effects, omit only its unused
+-         // encoding/payload. Epoch resets clear ready before sendReady runs.
++         heldRoom=sameCapture?game.loc:null;heldState=sameCapture?own:null;heldWire=sameCapture?ownPacked:null;
+          var knownCurrent:Boolean=ready && settledRoom===game.loc && settledKey==game.roomKey();
+-         var freshPacked:String=knownCurrent?null:(sameCapture?ownPacked:RoomCodec.pack(freshState));
++         // For a shared destination the host already owns its complete native
++         // state. A second freshly generated copy is never used by commit.
++         var needFresh:Boolean=!knownCurrent && (hostInfo==null || game.roomKey()!=String(hostInfo.roomKey));
++         var freshState:Object=needFresh?(sameCapture?own:game.checkpoint()):null;
++         // Previously granted rooms are already in the host's records. Fresh
++         // state is required only for a new independently occupied room.
++         var freshPacked:String=needFresh?(sameCapture?ownPacked:RoomCodec.pack(freshState)):null;
++         freshRoom=needFresh?game.loc:null;freshWire=freshPacked;
+          send({op:"ready",barrier:pending,epoch:epoch,info:info,
+             oldKey:settledKey,oldTerm:term,own:ownPacked,fresh:freshPacked});
+          readySent=true;
+       }
++      private function sameRequest(a:Object,b:Object):Boolean {
++         return a!=null && b!=null && String(a.roomKey)==String(b.roomKey)
++            && String(a.curLandId)==String(b.curLandId) && String(a.curCoord)==String(b.curCoord)
++            && Number(a.landStage)==Number(b.landStage);
++      }
+       private function commit(msg:Object):void
++      {
++         // A ready message answers the room announced by its seal. A native
++         // door crossing during an unchanged-owner wait cannot change that room.
++         if(barrierRoom==null || game.world==null || game.world.land!==barrierLand
++            || nativeLand!==barrierLand || barrierRoom.land!==barrierLand)
++            throw new Error("Room barrier changed native Land");
++         if(game.loc!==barrierRoom) {
++            // Only an already settled host was allowed to continue playing.
++            // Never rebuild a formerly frozen destination around a remote gg.
++            var oldRecord:Object=records[settledKey];
++            if(!ready || !authority || settledRoom!==barrierRoom || oldRecord==null
++               || int(oldRecord.owner)!=0 || oldRecord.state==null
++               || String(oldRecord.state.key)!=game.roomKey(barrierRoom))
++               throw new Error("Unsettled room changed during barrier");
++            game.inRoom(barrierRoom,function():void {commitHeld(msg,true);});
++            // inRoom restores native context before the new room is frozen.
++            // check records a just-observed crossing; queued ones remain queued.
++            hold();check();return;
++         }
++         commitHeld(msg);
++      }
++      private function commitHeld(msg:Object,scoped:Boolean=false):void
+       {
+          peerInfo=msg.info;
+          if(ready && authority)session.flushGhostDamage();
+-         if(ready && settledRoom!=null && authority)
++         var myKey:String=game.roomKey(),theirKey:String=String(msg.info.roomKey);
++         if(ready && settledRoom!=null && authority && (settledRoom!==game.loc || theirKey==myKey))
+             records[settledKey]={state:game.inRoom(settledRoom,function():Object{return game.checkpoint();}),owner:0};
+          if(msg.own!=null)
+          {
+@@ -399,15 +561,25 @@
+                throw new Error("Unexpected room owner checkpoint");
+             records[String(msg.oldKey)]={state:RoomCodec.unpack(String(msg.own)),owner:1};
+          }
+-         var myKey:String=game.roomKey(),theirKey:String=String(peerInfo.roomKey);
+          var mine:Object=records[myKey];
++         var nativeFresh:Boolean=mine==null;
++         if(scoped && (nativeFresh || settledRoom!==game.loc || !ready || int(mine.owner)!=0))
++            throw new Error("Scoped commit cannot restore native room state");
+          if(mine==null)mine=records[myKey]={state:game.checkpoint(),owner:0};
+-         if(settledRoom!==game.loc || !ready || int(mine.owner)!=0)
++         // This exact native room has just supplied the snapshot. Importing
++         // it into itself would rebuild live loot and replay object state.
++         if(nativeFresh)game.roomRole(true);
++         else if(settledRoom!==game.loc || !ready || int(mine.owner)!=0)
+             game.restoreCheckpoint(mine.state,true,int(mine.owner)!=0);
+          else game.freezeAI=false;
+          mine.owner=0;mine.term=pending;
+          var theirs:Object=records[theirKey];
++         var unchanged:Boolean=theirs!=null && int(theirs.owner)==1 && theirKey!=myKey
++            && String(msg.oldKey)==theirKey && msg.own==null && msg.fresh==null;
+          var fresh:Boolean=theirs==null;
++         // The former owner is still in the same frozen room. Return its exact
++         // validated bytes, not a newly serialized copy of an equivalent state.
++         var retained:Boolean=msg.own!=null && String(msg.oldKey)==theirKey;
+          var grantPacked:String=null;
+          if(theirs==null)
+          {
+@@ -422,9 +594,16 @@
+          theirs.term=pending;
+          authority=true;ready=true;term=pending;settledRoom=game.loc;settledKey=myKey;
+          game.independentRooms=true;
+-         if(grantPacked==null)grantPacked=RoomCodec.pack(theirs.state);
+-         send({op:"grant",barrier:pending,epoch:epoch,term:pending,owner:theirKey!=myKey,fresh:fresh,state:grantPacked});
++         if(retained)grantPacked=String(msg.own);
++         if(grantPacked==null && !unchanged)grantPacked=RoomCodec.pack(theirs.state);
++         send({op:"grant",barrier:pending,epoch:epoch,term:pending,owner:theirKey!=myKey,fresh:fresh,
++            unchanged:unchanged,retained:retained,key:theirKey,state:grantPacked});
+          Log.d("RConnectRoom: commit "+pending+" host="+myKey+" join="+theirKey);
++         // The host's ownership and native state are now committed. TCP keeps
++         // this grant ahead of subsequent snapshots, so rendering the peer's
++         // copy is not a prerequisite for local simulation. Keep `pending`
++         // until ACK: another handoff still cannot overtake this transaction.
++         release();
+       }
+       private function flush():void
+       {
+--- aura1/rconnect/game/GameBridge.as
++++ 0.2.24-roomfix3/rconnect/game/GameBridge.as
+@@ -1958,6 +1958,7 @@
+             && !isTransitioning();
+          w.layoutSeed=land!=null?numOr(probe(land,"rconnectLayoutSeed"),0):0;
+          w.layoutLevel=land!=null?numOr(probe(land,"landDifLevel"),0):0;
++         if(mapGeneration!=null)w.sceneMerged=mapGeneration.sceneMode(land);
+          w.landX = land != null ? int(probe(land, "locX")) : 0;
+          w.landY = land != null ? int(probe(land, "locY")) : 0;
+          w.landZ = land != null ? int(probe(land, "locZ")) : 0;
+@@ -6157,6 +6158,7 @@
+ 
+       public function checkpoint():Object
+       {
++         var timingStart:int=getTimer(),timing:Object={};
+          rconnect.core.TravelGuard.clear();
+          var list:Array=readUnitsSnapshot() || [],used:Dictionary=new Dictionary();
+          for each(var s:Object in list)
+@@ -6164,6 +6166,7 @@
+             var u:Object=_units.resolve(s,loc.units,used);
+             if(u!=null)s.runtime=NativeRoomState.unit(u);
+          }
++         timing.units=getTimer()-timingStart;
+          var objects:Array=readObjsSnapshot() || [];used=new Dictionary();
+          for each(s in objects)
+          {
+@@ -6172,10 +6175,15 @@
+                if(securityInteraction(probe(b,"inter")))securityTerminals.rememberInteraction(probe(b,"inter"),String(s.k));
+                else {s.inter=NativeRoomState.scalars(probe(b,"inter"));s.interNative=RConnectInteractionAccess.capture(probe(b,"inter"));}}
+          }
+-         return {key:roomKey(),width:loc.spaceX,height:loc.spaceY,roomId:String(probe(loc.room,"id")),
+-            units:list,objs:objects,loots:readLootSync() || [],tiles:_terrain.checkpoint(loc),wallPaint:_wall.checkpoint(loc),
++         timing.objects=getTimer()-timingStart;
++         var terrain:Object=_terrain.checkpoint(loc);timing.terrain=getTimer()-timingStart;
++         var result:Object={key:roomKey(),width:loc.spaceX,height:loc.spaceY,roomId:String(probe(loc.room,"id")),
++            units:list,objs:objects,loots:readLootSync() || [],tiles:terrain,wallPaint:_wall.checkpoint(loc),
+             points:mapProgress==null?null:mapProgress.capture(loc),
+             mines:playerMines==null?[]:playerMines.checkpoint()};
++         timing.total=getTimer()-timingStart;timing.key=result.key;timing.tiles=terrain is Array?terrain.length:terrain.rows.length;
++         Log.d("RConnectRoomTiming capture "+JSON.stringify(timing));
++         return result;
+       }
+ 
+       public function roomRole(authority:Boolean):void
+@@ -6191,30 +6199,60 @@
+          mirrorContainerActions();
+       }
+ 
++      /** A host-confirmed trip uses the native quick exit (21 frames), with
++       * generation already announced. No legacy follow cooldown or early setPos. */
++      public function startSharedTravel(info:Object):Boolean
++      {
++         refreshWorld();
++         if(world==null || gg==null || isPlayerDead() || isTransitioning())return false;
++         var target:String=String(info.curLandId),g:Object=world.game,act:Object=g.lands[target];
++         if(act==null || target=="" || String(g.curLandId)=="")return false;
++         if(mapGeneration!=null)mapGeneration.adopt(info,act);
++         adoptHostLandParams(info);
++         forceCloseOverlays();
++         // Cached visits stay cached. A genuinely different seed/mode was
++         // invalidated by adopt; gotoLand constructs it through normal exitStep.
++         g.crea=false;g.gotoLand(target,null,true);
++         Log.d("RConnectTravel: begin target="+target+" exit="+world.t_exit);
++         return int(world.t_exit)>0;
++      }
++
+       public function followMapGeneration(info:Object):void
+       {
+          adoptHostLandParams(info);regenCurrentLand();
+       }
+ 
+-      public function restoreCheckpoint(s:Object,authority:Boolean,foreign:Boolean):void
+-      {
++      public function restoreCheckpoint(s:Object,authority:Boolean,foreign:Boolean,retained:Boolean=false):void
++      {
++         var timingStart:int=getTimer(),timing:Object={authority:authority,foreign:foreign,retained:retained};
+          if(s==null) {roomRole(authority);return;}
+          if(int(s.width)!=int(loc.spaceX) || int(s.height)!=int(loc.spaceY))
+             throw new Error("Room geometry differs: "+roomKey());
++         // A complete restore is still required. Only the expensive terrain
++         // raster can be retained, and only when no pending/previous paint can
++         // be left behind. Changed/unknown terrain uses the old full redraw.
++         var terrainView:RoomTerrainView;
++         if(!retained && !_terrain.dirty && (s.wallPaint==null || s.wallPaint.length==0)
++            && _wall.checkpoint(loc).length==0)terrainView=new RoomTerrainView(loc);
+          roomRole(authority);
++         timing.role=getTimer()-timingStart;
+          if(mapProgress!=null)mapProgress.restore(s.points);
+-         if(foreign)_objects.clearRoom(loc);
+-         reconcileObjs(s.objs as Array);
+          var used:Dictionary=new Dictionary();
+-         for each(var os:Object in s.objs)
+-         {
+-            var box:Object=_objects.resolve(os,loc.objs,used);
+-            if(box!=null){NativeRoomState.restore(box,os.runtime);
+-               if(securityInteraction(probe(box,"inter")))securityTerminals.restoreInteraction(probe(box,"inter"),String(os.k));
+-               else {NativeRoomState.restore(probe(box,"inter"),os.inter);RConnectInteractionAccess.restore(probe(box,"inter"),os.interNative);}}
+-         }
++         if(!retained) {
++            if(foreign)_objects.clearRoom(loc);
++            reconcileObjs(s.objs as Array);
++            for each(var os:Object in s.objs)
++            {
++               var box:Object=_objects.resolve(os,loc.objs,used);
++               if(box!=null){NativeRoomState.restore(box,os.runtime);
++                  if(securityInteraction(probe(box,"inter")))securityTerminals.restoreInteraction(probe(box,"inter"),String(os.k));
++                  else {NativeRoomState.restore(probe(box,"inter"),os.inter);RConnectInteractionAccess.restore(probe(box,"inter"),os.interNative);}}
++            }
++            timing.objects=getTimer()-timingStart;
++            _terrain.restoreCheckpoint(loc,s.tiles);
++         }
++         timing.terrain=getTimer()-timingStart;
+          if(authority)boxTrackReset(); // Restored owner velocities belong to native physics.
+-         _terrain.restoreCheckpoint(loc,s.tiles as Array);
+          // A mirror is a display surrogate. Reconstruct native units when its
+          // authority changes, with original difficulty, AI and weapons.
+          if(foreign)
+@@ -6250,6 +6288,7 @@
+          for each(unit in (loc.units as Array).concat())
+             if(unit!=gg && !(unit is MirrorHitUnit) && !isSceneHitUnit(unit) && (probeNum(unit,"fraction",0)<100 || securityTurret(unit)) && !used[unit])
+             {loc.remObj(unit);index=loc.units.indexOf(unit);if(index>=0)loc.units.splice(index,1);}
++         timing.units=getTimer()-timingStart;
+          for each(var loot:Array in lootWalk())loc.remObj(loot[0]);
+          lootSyncReset();_lootLoc=loc;applyLootSync(s.loots as Array);
+          for(var lootKey:String in _lootObjOf)
+@@ -6260,8 +6299,17 @@
+          if(!authority)applyUnitsSync(s.units as Array);
+          if(playerMines!=null)playerMines.restore(s.mines as Array,authority,foreign);
+          if(securityTerminals!=null)securityTerminals.worldChanged();
++         timing.effects=getTimer()-timingStart;
++         if(_terrain.dirty && terrainView!=null && terrainView.unchanged(loc)) {
++            terrainView.refresh(world);_terrain.dirty=false;_satsRasterDirty=true;
++            timing.terrainReused=true;
++         }
+          tileRedrawIfDirty();
+-         _wall.restore(loc,s.wallPaint as Array);_satsRasterDirty=true;
++         timing.redraw=getTimer()-timingStart;
++         if(!retained)_wall.restore(loc,s.wallPaint as Array);
++         _satsRasterDirty=true;
++         timing.total=getTimer()-timingStart;timing.key=s.key;
++         Log.d("RConnectRoomTiming restore "+JSON.stringify(timing));
+       }
+ 
+       /** 从游戏全量数据 AllData.d 中取单位 XML（blit 动画定义的数据源）。 */
+--- aura1/rconnect/game/NativeRoomState.as
++++ 0.2.24-roomfix3/rconnect/game/NativeRoomState.as
+@@ -24,7 +24,10 @@
+          }
+          for each(var n:String in names)
+          {
+-            var value:*=GameBridge.probe(o,n);
++            // Names come only from describeType's public variable list, not
++            // arbitrary packet keys or getters. These declared slots cannot
++            // be missing; avoid millions of optional-property probes per map.
++            var value:*=o[n];
+             if(value is Number) {if(isFinite(Number(value)))s[n]=value;}
+             else if(value is String || value is Boolean) s[n]=value;
+             // Native XML attributes remain XMLList entries until arithmetic is
+--- aura1/rconnect/game/NativeTileState.as
++++ 0.2.24-roomfix3/rconnect/game/NativeTileState.as
+@@ -0,0 +1,138 @@
++package rconnect.game {
++   import flash.utils.describeType;
++   import flash.utils.getQualifiedClassName;
++
++   /** A complete native Tile checkpoint in its final transport representation.
++    * No per-tile object graph is built, encoded into a table and expanded again.
++    * Null means an omitted optional scalar, just as NativeRoomState.scalars.
++    * Unsupported native shapes use the existing general checkpoint path. */
++   public class NativeTileState {
++      private static const REQUIRED:Array=["phis","front","back","zad","zForm","water","stair",
++         "hp","opac","vid","vid2","diagon","shelf"];
++      private static function primitive(value:*):Boolean {
++         return value is String || value is Boolean || (value is Number && isFinite(Number(value)));
++      }
++      private static function fieldTypes(tile:Object):Object {
++         var types:Object={};
++         for each(var v:XML in describeType(tile).variable)if(!v.hasOwnProperty("@uri")) {
++            var type:String=String(v.@type);
++            if(type=="int" || type=="uint" || type=="Number" || type=="String" || type=="Boolean")types[String(v.@name)]=type;
++         }
++         return types;
++      }
++      private static function matchesType(value:*,type:String):Boolean {
++         if(value==null)return true;
++         if(type=="String")return value is String;
++         if(type=="Boolean")return value is Boolean;
++         return value is Number && isFinite(Number(value));
++      }
++      private static function coordinate(name:String):int {
++         if(name=="X")return 1;if(name=="Y")return 2;
++         if(name=="phX1" || name=="phX2")return 3;
++         if(name=="phY1" || name=="phY2")return 4;
++         return 0;
++      }
++      private static function gridDefaults(values:Array,base:Array,names:Array,grid:Array,x:int,y:int):void {
++         for each(var slot:int in grid) {
++            var kind:int=coordinate(names[slot]);
++            values[slot]=base[slot]+(kind%2==1?x:y)*(kind<=2?1:40);
++         }
++      }
++      public static function capture(loc:Object):Object {
++         var width:int=int(loc.spaceX),height:int=int(loc.spaceY);
++         if(width<1 || height<1 || width>512 || height>256)return null;
++         var first:Object=loc.space[0][0];
++         if(first==null || getQualifiedClassName(first)!="fe.loc::Tile")return null;
++         var initial:Object=NativeRoomState.scalars(first),names:Array=[],base:Array=[],excluded:Array=[],required:Object={};
++         var types:Object=fieldTypes(first);
++         var name:String;
++         for each(name in REQUIRED){if(!initial.hasOwnProperty(name) || !primitive(initial[name]))return null;required[name]=true;}
++         for(name in initial) {
++            if(!primitive(initial[name]) || !types.hasOwnProperty(name))return null;
++            names.push(name);base.push(initial[name]);
++         }
++         for each(var variable:XML in describeType(first).variable)
++            if(!variable.hasOwnProperty("@uri") && !initial.hasOwnProperty(String(variable.@name)))excluded.push(String(variable.@name));
++         // Coordinates and rectangular bounds normally follow the grid.
++         // Use that as a lossless baseline; nonstandard values still travel in
++         // their row verbatim. Only integral bases qualify, avoiding float
++         // rounding changes when the header passes through JSON.
++         var rows:Array=[],grid:Array=[],defaults:Array=base.concat();
++         for(var slot:int=0;slot<names.length;slot++)
++            if(coordinate(names[slot]) && base[slot] is Number && base[slot]===int(base[slot]))grid.push(slot);
++         for(var x:int=0;x<width;x++)for(var y:int=0;y<height;y++) {
++            var tile:Object=loc.space[x][y];
++            if(tile==null || getQualifiedClassName(tile)!="fe.loc::Tile")return null;
++            // A field absent from the first tile may become a scalar later.
++            // Fall back instead of silently dropping that uncommon state.
++            for each(name in excluded)if(primitive(tile[name]) || tile[name] is Array)return null;
++            var row:Array=[];gridDefaults(defaults,base,names,grid,x,y);
++            for(var i:int=0;i<names.length;i++) {
++               name=names[i];var value:*=tile[name];
++               if(!primitive(value)) {
++                  if(required[name] || value is Array)return null;
++                  value=null;
++               }
++               if(value!==defaults[i])row.push(i,value);
++            }
++            rows.push(row);
++         }
++         return {nativeTileTable:2,width:width,height:height,names:names,base:base,grid:grid,rows:rows};
++      }
++      public static function restore(loc:Object,table:Object,after:Function):void {
++         if(table==null || (table.nativeTileTable!==1 && table.nativeTileTable!==2)
++            || table.width!==loc.spaceX || table.height!==loc.spaceY
++            || !(table.names is Array) || !(table.base is Array) || !(table.rows is Array)
++            || table.names.length<1 || table.names.length>256 || table.base.length!=table.names.length
++            || table.rows.length!=int(loc.spaceX)*int(loc.spaceY))throw new Error("Invalid native terrain table");
++         var allowed:Object=fieldTypes(loc.space[0][0]),required:Object={},slots:Object={},name:String,i:int;
++         for each(name in REQUIRED)required[name]=true;
++         for(i=0;i<table.names.length;i++) {
++            var field:*=table.names[i];
++            if(!(field is String) || !allowed.hasOwnProperty(field) || slots.hasOwnProperty(field)
++               || !matchesType(table.base[i],allowed[field]))throw new Error("Invalid native terrain field");
++            slots[field]=i;
++         }
++         for each(name in REQUIRED)
++            if(!slots.hasOwnProperty(name) || table.base[int(slots[name])]==null)throw new Error("Incomplete native terrain fields");
++         var grid:Array=[],gridSeen:Object={};
++         if(table.nativeTileTable===2) {
++            if(!(table.grid is Array) || table.grid.length>6)throw new Error("Invalid terrain coordinate defaults");
++            for each(var gridSlot:* in table.grid) {
++               if(!(gridSlot is Number) || gridSlot!=int(gridSlot) || gridSlot<0 || gridSlot>=table.names.length
++                  || gridSeen[gridSlot] || !coordinate(table.names[int(gridSlot)])
++                  || !(table.base[int(gridSlot)] is Number) || table.base[int(gridSlot)]!==int(table.base[int(gridSlot)]))
++                  throw new Error("Invalid terrain coordinate field");
++               gridSeen[gridSlot]=true;grid.push(int(gridSlot));
++            }
++         }
++         var height:int=int(loc.spaceY),row:*,tile:Object,slot:*,seen:Object,value:*,index:int=0;
++         // Validate the entire transfer before changing any native tile.
++         for each(row in table.rows) {
++            tile=loc.space[int(index/height)][index%height];index++;
++            if(tile==null || getQualifiedClassName(tile)!="fe.loc::Tile" || !(row is Array) || row.length%2!=0
++               || row.length>table.names.length*2)throw new Error("Invalid native terrain row");
++            seen={};
++            for(i=0;i<row.length;i+=2) {
++               slot=row[i];value=row[i+1];
++               if(!(slot is Number) || slot!=int(slot) || slot<0 || slot>=table.names.length || seen[slot]===true
++                  || !matchesType(value,allowed[table.names[int(slot)]]) || (value==null && required[table.names[int(slot)]]))
++                  throw new Error("Invalid native terrain value");
++               seen[slot]=true;
++            }
++         }
++         var values:Array=table.base.concat();index=0;
++         for each(row in table.rows) {
++            var x:int=int(index/height),y:int=index%height;index++;tile=loc.space[x][y];
++            gridDefaults(values,table.base,table.names,grid,x,y);
++            for(i=0;i<row.length;i+=2)values[int(row[i])]=row[i+1];
++            for(i=0;i<values.length;i++)if(values[i]!=null)tile[table.names[i]]=values[i];
++            // The former restore applies native scalars, then its top-level
++            // zForm and final opacity. Keep that collision-bound side effect.
++            var opacity:Number=Number(tile.opac);tile.setZForm(int(tile.zForm));tile.opac=opacity;
++            after(tile,x,y);
++            for(i=0;i<row.length;i+=2)values[int(row[i])]=table.base[int(row[i])];
++         }
++      }
++   }
++}
+--- aura1/rconnect/game/RoomTerrainView.as
++++ 0.2.24-roomfix3/rconnect/game/RoomTerrainView.as
+@@ -0,0 +1,100 @@
++package rconnect.game {
++   import fe.loc.Tile;
++
++   /** A synchronous checkpoint restore may change HP/vision without changing
++    * the terrain picture. Compare its inputs before object reconciliation,
++    * not after it has already changed doors and supporting tiles. Unsupported
++    * inputs and pending native rebuilds retain the complete redraw path. */
++   public class RoomTerrainView {
++      private var room:Object,renderer:Object;
++      private var width:int,height:int;
++      private var rows:Array=[];
++      private var contours:Array=[];
++      private var style:Array;
++      private var backdrops:Array=[];
++      private var valid:Boolean=false;
++      private static const STYLE:Array=["backwall","backform","darkness","transpFon","tipWater",
++         "gas","homeStable","black","lightOn","limX","limY","color"];
++      private static const BACKDROP:Array=["X","Y","scX","scY","alpha","blend","sloy","er",
++         "vis","erase","light"];
++      private static const CONTOURS:Array=["kont1","kont2","kont3","kont4","pont1","pont2","pont3","pont4"];
++      // HP and vision are deliberately absent: the full checkpoint still
++      // restores them, and refresh() updates the native light map separately.
++      // Contours are derived from phis/back/shelf/door by tileKontur().
++      private static function tileInputs(t:Object):Array {
++         return [t.X,t.Y,t.phis,t.shelf,t.phX1,t.phX2,t.phY1,t.phY2,t.zForm,
++            t.diagon,t.stair,t.water,t.vid,t.vid2,t.front,t.back,t.zad,
++            t.fRear,t.vRear,t.v2Rear,t.opac,t.mat,t.kontur,t.konturRot,t.floor,
++            t.place,t.fake,t.door!=null];
++      }
++      private static function fields(o:Object,names:Array):Array {
++         var out:Array=[];for each(var n:String in names)out.push(o[n]);return out;
++      }
++      private static function same(a:Array,b:Array):Boolean {
++         if(a.length!=b.length)return false;
++         for(var i:int=0;i<a.length;i++)if(a[i]!==b[i])return false;
++         return true;
++      }
++      private static function colors(loc:Object):Array {
++         var out:Array=[];
++         for each(var name:String in ["cTransform","cTransformFon"]) {
++            var c:Object=loc[name];
++            out.push(c==null?null:c.toString());
++         }
++         return out;
++      }
++      public function RoomTerrainView(loc:Object) {
++         try {
++            room=loc;renderer=loc.grafon;width=int(loc.spaceX);height=int(loc.spaceY);
++            if(renderer==null || renderer.loc!==loc || loc.isRebuild || loc.isRecalc
++               || width<1 || height<1 || width>512 || height>256)return;
++            style=fields(loc,STYLE).concat(colors(loc));
++            for each(var b:Object in loc.backobjs)
++               backdrops.push([b,fields(b,BACKDROP)]);
++            for(var x:int=0;x<width;x++)for(var y:int=0;y<height;y++) {
++               var tile:Tile=loc.space[x][y] as Tile;if(tile==null)return;
++               rows.push(tileInputs(tile));
++               contours.push(fields(tile,CONTOURS));
++            }
++            valid=true;
++         } catch(e:*) {valid=false;}
++      }
++      public function unchanged(loc:Object):Boolean {
++         if(!valid || loc!==room || loc.grafon!==renderer || renderer.loc!==room
++            || loc.spaceX!=width || loc.spaceY!=height || loc.isRebuild || loc.isRecalc)return false;
++         try {
++            if(!same(style,fields(loc,STYLE).concat(colors(loc))))return false;
++            var i:int=0;
++            for each(var b:Object in loc.backobjs) {
++               if(i>=backdrops.length || backdrops[i][0]!==b
++                  || !same(backdrops[i][1],fields(b,BACKDROP)))return false;
++               i++;
++            }
++            if(i!=backdrops.length)return false;
++            i=0;
++            for(var x:int=0;x<width;x++)for(var y:int=0;y<height;y++) {
++               var tile:Tile=loc.space[x][y] as Tile;
++               if(tile==null || !same(rows[i++],tileInputs(tile)))return false;
++            }
++            return true;
++         } catch(e:*) {return false;}
++         return false;
++      }
++      /** Keep the non-raster side effects of Grafon.drawLoc. Calling through
++       * native methods preserves the installed renderer's lighting behavior. */
++      public function refresh(world:Object):void {
++         // ContinuousScene can give regions different backwall styles. Keep
++         // the contours used to draw these exact cached pixels, rather than
++         // recomputing every region under the current global room style.
++         var index:int=0;
++         for(var x:int=0;x<width;x++)for(var y:int=0;y<height;y++) {
++            var values:Array=contours[index++],tile:Object=room.space[x][y];
++            for(var slot:int=0;slot<CONTOURS.length;slot++)tile[CONTOURS[slot]]=values[slot];
++         }
++         renderer.lightBmp.fillRect(renderer.lightBmp.rect,0xFF000000);
++         renderer.setLight();renderer.visLight.visible=room.black && world.black;
++         renderer.warShadow();renderer.drawAllObjs();
++         world.cam.setLoc(room);world.gui.setAll();
++      }
++   }
++}
+--- aura1/rconnect/game/TerrainSync.as
++++ 0.2.24-roomfix3/rconnect/game/TerrainSync.as
+@@ -21,9 +21,11 @@
+ 
+       public function reset():void { room=null; base=[]; observed={}; queued={}; pending=null; receipts={}; dirty=false; }
+ 
+-      public function checkpoint(loc:Object):Array
+-      {
+-         enter(loc);var out:Array=[];
++      public function checkpoint(loc:Object):Object
++      {
++         enter(loc);var table:Object=NativeTileState.capture(loc);
++         if(table!=null)return table;
++         var out:Array=[];
+          for(var x:int=0;x<int(loc.spaceX);x++)for(var y:int=0;y<int(loc.spaceY);y++)
+          {
+             var t:Object=tile(x,y),s:Object=state(t,x,y);
+@@ -31,9 +33,15 @@
+          }
+          return out;
+       }
+-      public function restoreCheckpoint(loc:Object,list:Array):void
++      public function restoreCheckpoint(loc:Object,snapshot:Object):void
+       {
+          reset();enter(loc);
++         if(snapshot!=null && !(snapshot is Array) && (snapshot.nativeTileTable===1 || snapshot.nativeTileTable===2)) {
++            NativeTileState.restore(loc,snapshot,function(t:Object,x:int,y:int):void {observed[key(x,y)]=state(t,x,y);});
++            dirty=true;return;
++         }
++         var list:Array=snapshot as Array;
++         if(list==null)throw new Error("Invalid terrain checkpoint");
+          for each(var s:Object in list)NativeRoomState.restore(tile(int(s.x),int(s.y)),s.native);
+          apply(loc,list,false);dirty=true;
+       }
+@@ -62,6 +70,16 @@
+          return room.space[x][y];
+       }
+       private function state(t:Object,x:int,y:int):Object
++      {
++         var native:Tile=t as Tile;
++         if(native!=null)return {x:x,y:y,p:native.phis,f:native.front,b:native.back,z:native.zad,
++            zf:native.zForm,w:native.water,st:native.stair,h:native.hp,o:native.opac,v:native.vid,
++            v2:native.vid2,d:native.diagon,sh:native.shelf};
++         return dynamicState(t,x,y);
++      }
++      // Only fallback objects require optional field access. Keep their
++      // missing/throwing-member behavior outside the native Tile hot path.
++      private function dynamicState(t:Object,x:int,y:int):Object
+       {
+          var s:Object={x:x,y:y};
+          for(var f:String in FIELDS) try {s[f]=t[FIELDS[f]];} catch(e:*) {}
+--- aura1/rconnect/net/RoomCodec.as
++++ 0.2.24-roomfix3/rconnect/net/RoomCodec.as
+@@ -1,13 +1,20 @@
+ package rconnect.net
+ {
+    import flash.utils.ByteArray;
++   import flash.utils.getTimer;
++   import rconnect.core.Log;
+    /** Bounded compressed checkpoints keep full terrain below the TCP frame cap. */
+    public class RoomCodec
+    {
+       private static const DIGITS:String="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+       public static function pack(o:Object):String
+       {
+-         var b:ByteArray=new ByteArray();b.writeUTFBytes(JSON.stringify(o));b.compress();b.position=0;
++         var started:int=getTimer(),timing:Object={};
++         var payload:Object=compact(o);timing.table=getTimer()-started;
++         var json:String=JSON.stringify(payload);timing.json=getTimer()-started;
++         var b:ByteArray=new ByteArray();b.writeUTFBytes(json);timing.utf=getTimer()-started;
++         if(b.length>16000000)throw new Error("Room checkpoint exceeds limit: "+b.length);
++         timing.bytes=b.length;b.compress();b.position=0;timing.compress=getTimer()-started;
+          var out:Array=[];
+          while(b.bytesAvailable)
+          {
+@@ -15,10 +22,16 @@
+             out.push(DIGITS.charAt(a>>2)+DIGITS.charAt(((a&3)<<4)|(c>>4))+
+                (left>1?DIGITS.charAt(((c&15)<<2)|(d>>6)):"=")+(left>2?DIGITS.charAt(d&63):"="));
+          }
+-         return out.join("");
++         var result:String=out.join("");
++         if(result.length>1000000)throw new Error("Compressed room checkpoint exceeds limit: "+result.length);
++         Log.d("RConnectRoomTiming pack key="+o.key+" ms="+(getTimer()-started)+" chars="+result.length);
++         timing.total=getTimer()-started;timing.key=o.key;timing.chars=result.length;
++         Log.d("RConnectRoomTiming encode-stages "+JSON.stringify(timing));
++         return result;
+       }
+       public static function unpack(s:String):Object
+       {
++         var started:int=getTimer(),timing:Object={};
+          if(s==null || s.length>1000000)throw new Error("Invalid room checkpoint");
+          var b:ByteArray=new ByteArray();
+          for(var i:int=0;i<s.length;i+=4)
+@@ -26,9 +39,128 @@
+             var a:int=DIGITS.indexOf(s.charAt(i)),c:int=DIGITS.indexOf(s.charAt(i+1)),d:int=DIGITS.indexOf(s.charAt(i+2)),e:int=DIGITS.indexOf(s.charAt(i+3));
+             b.writeByte((a<<2)|(c>>4));if(d>=0)b.writeByte((c<<4)|(d>>2));if(e>=0)b.writeByte((d<<6)|e);
+          }
+-         b.uncompress();b.position=0;
++         timing.base64=getTimer()-started;b.uncompress();b.position=0;timing.inflate=getTimer()-started;
+          if(b.length>16000000)throw new Error("Room checkpoint exceeds limit");
+-         return JSON.parse(b.readUTFBytes(b.length));
++         var json:String=b.readUTFBytes(b.length);timing.utf=getTimer()-started;
++         var result:Object=JSON.parse(json);timing.json=getTimer()-started;result=expand(result);
++         Log.d("RConnectRoomTiming unpack key="+result.key+" ms="+(getTimer()-started)+" bytes="+b.length);
++         timing.total=getTimer()-started;timing.key=result.key;timing.bytes=b.length;
++         Log.d("RConnectRoomTiming decode-stages "+JSON.stringify(timing));
++         return result;
++      }
++      /** Terrain repeats the same property names tens of thousands of times.
++       * A schema table removes only those names, preserving missing/null fields,
++       * native scalars, arrays and JSON's existing numeric conversion exactly.
++       * The previous JSON format remains readable; byte limits are unchanged. */
++      private static function compact(o:Object):Object {
++         if(o==null || !(o.tiles is Array) || o.tiles.length<8)return o;
++         var width:int=int(o.width),height:int=int(o.height);
++         if(width<1 || height<1 || width>512 || height>256 || o.tiles.length!=width*height)
++            throw new Error("Invalid checkpoint terrain dimensions");
++         var state:Object={},key:String;
++         for(key in o)if(key!="tiles")state[key]=o[key];
++         var shapes:Array=[],rows:Array=[],lookup:Object={},shape:Object;
++         for each(var tile:Object in o.tiles) {
++            if(tile==null || tile.native==null)throw new Error("Missing native tile state");
++            var row:Array=shape==null?null:sparseRow(tile,shape);
++            if(row==null) {
++               var keys:Array=[],nativeKeys:Array=[];
++               for(key in tile)if(key!="native" && tile[key]!==undefined)keys.push(key);
++               for(key in tile.native)if(tile.native[key]!==undefined)nativeKeys.push(key);
++               keys.sort();nativeKeys.sort();
++               var signature:String=JSON.stringify([keys,nativeKeys]);
++               shape=lookup[signature];
++               if(shape==null) {
++                  if(shapes.length>=256)throw new Error("Too many checkpoint tile schemas");
++                  shape={id:shapes.length,keys:keys,native:nativeKeys,topMap:{},nativeMap:{},base:[]};
++                  var value:*;
++                  for each(key in keys) {
++                     shape.topMap[key]=shape.base.length;value=tile[key];
++                     shape.base.push(value is Array || (value!=null && typeof value=="object")?null:value);
++                  }
++                  for each(key in nativeKeys) {
++                     shape.nativeMap[key]=shape.base.length;value=tile.native[key];
++                     shape.base.push(value is Array || (value!=null && typeof value=="object")?null:value);
++                  }
++                  shapes.push({keys:keys,native:nativeKeys,base:shape.base});lookup[signature]=shape;
++               }
++               row=sparseRow(tile,shape);
++            }
++            if(row==null)throw new Error("Unstable checkpoint tile schema");
++            rows.push(row);
++         }
++         return {rconnectRoomTable:2,state:state,schemas:shapes,tiles:rows};
++      }
++      /** Validate names and collect changed values in the same traversal.
++       * Baselines contain only primitives; arrays always belong to their row. */
++      private static function sparseRow(tile:Object,shape:Object):Array {
++         var key:String,n:int=0,slot:*,value:*,row:Array=[shape.id],base:Array=shape.base;
++         for(key in tile)if(key!="native" && tile[key]!==undefined) {
++            slot=shape.topMap[key];if(!(slot is Number))return null;n++;
++            value=tile[key];if(value!==base[int(slot)])row.push(slot,value);
++         }
++         if(n!=shape.keys.length)return null;
++         n=0;
++         for(key in tile.native)if(tile.native[key]!==undefined) {
++            slot=shape.nativeMap[key];if(!(slot is Number))return null;n++;
++            value=tile.native[key];if(value!==base[int(slot)])row.push(slot,value);
++         }
++         return n==shape.native.length?row:null;
++      }
++      private static function expand(o:Object):Object {
++         if(o==null || o.rconnectRoomTable===undefined)return o;
++         var sparse:Boolean=o.rconnectRoomTable===2;
++         if((o.rconnectRoomTable!==1 && !sparse) || o.state==null || !(o.schemas is Array) || !(o.tiles is Array)
++            || o.schemas.length>256)throw new Error("Invalid checkpoint tile table");
++         var state:Object=o.state,width:int=int(state.width),height:int=int(state.height);
++         if(width<1 || height<1 || width>512 || height>256 || o.tiles.length!=width*height)
++            throw new Error("Invalid checkpoint tile table dimensions");
++         for each(var shape:Object in o.schemas) {
++            if(shape==null || !(shape.keys is Array) || !(shape.native is Array)
++               || shape.keys.length+shape.native.length>256)throw new Error("Invalid checkpoint tile schema");
++            var seen:Object={},key:*;
++            for each(key in shape.keys) {
++               if(!(key is String) || key=="native" || seen[key]===true)throw new Error("Invalid checkpoint tile key");
++               seen[key]=true;
++            }
++            seen={};for each(key in shape.native) {
++               if(!(key is String) || seen[key]===true)throw new Error("Invalid checkpoint native tile key");seen[key]=true;
++            }
++            if(sparse) {
++               if(!(shape.base is Array) || shape.base.length!=shape.keys.length+shape.native.length)
++                  throw new Error("Invalid checkpoint tile baseline");
++               for each(var baseline:* in shape.base)
++                  if(baseline!=null && typeof baseline=="object")throw new Error("Mutable checkpoint tile baseline");
++            }
++         }
++         state.tiles=[];
++         for each(var row:* in o.tiles) {
++            if(!(row is Array) || row.length<1 || int(row[0])!=row[0] || row[0]<0 || row[0]>=o.schemas.length)
++               throw new Error("Invalid checkpoint tile row");
++            shape=o.schemas[int(row[0])];
++            var tile:Object={native:{}},i:int=1;
++            if(sparse) {
++               if(row.length%2!=1)throw new Error("Incomplete sparse checkpoint tile row");
++               i=0;
++               for each(key in shape.keys)tile[key]=shape.base[i++];
++               for each(key in shape.native)tile.native[key]=shape.base[i++];
++               seen={};
++               for(i=1;i<row.length;i+=2) {
++                  var slot:*=row[i];
++                  if(!(slot is Number) || int(slot)!=slot || slot<0 || slot>=shape.base.length || seen[slot]===true)
++                     throw new Error("Invalid sparse checkpoint tile slot");
++                  seen[slot]=true;
++                  if(slot<shape.keys.length)tile[shape.keys[int(slot)]]=row[i+1];
++                  else tile.native[shape.native[int(slot)-shape.keys.length]]=row[i+1];
++               }
++            } else {
++               if(row.length!=1+shape.keys.length+shape.native.length)throw new Error("Incomplete checkpoint tile row");
++               for each(key in shape.keys)tile[key]=row[i++];
++               for each(key in shape.native)tile.native[key]=row[i++];
++            }
++            state.tiles.push(tile);
++         }
++         return state;
+       }
+    }
+ }
+--- aura1/rconnect/ui/RoomEntryView.as
++++ 0.2.24-roomfix3/rconnect/ui/RoomEntryView.as
+@@ -1,27 +1,24 @@
+ package rconnect.ui {
+    import flash.display.DisplayObject;
+    import flash.display.DisplayObjectContainer;
++   import flash.display.MovieClip;
+    import flash.display.Sprite;
+    import flash.display.Stage;
++   import flash.geom.Matrix;
+    import flash.geom.Point;
+    import flash.geom.Rectangle;
+-   import flash.text.TextField;
+-   import flash.text.TextFormat;
+-   import modlocales.connect.RCLocale;
+ 
+-   /** Own only a loading cover, never native visibility, alpha or fade state.
+-    * Native redraws and visibility mods may keep working underneath. Menus,
+-    * errors, the HUD and disconnect controls retain their original layers. */
++   /** Extend the game's loading artwork across the network barrier. Never call
++    * setLoadScreen here: it also resets input, story and gameplay visibility.
++    * The native instance remains entirely owned by World; two cheap instances
++    * of its asset cover the scene and, when active, the separate SATS layer. */
+    public final class RoomEntryView {
+       private var scene:Sprite=new Sprite(),sats:Sprite=new Sprite();
+-      private var label:TextField=new TextField();
+       private var sceneBounds:Rectangle,satsBounds:Rectangle;
++      private var source:DisplayObject,sceneWait:DisplayObject,satsWait:DisplayObject;
+       public function RoomEntryView() {
+          scene.name="rconnect-room-entry";sats.name="rconnect-room-entry-sats";
+          scene.mouseEnabled=scene.mouseChildren=sats.mouseEnabled=sats.mouseChildren=false;
+-         label.defaultTextFormat=new TextFormat("_sans",16,0xD2DCCB,false,null,null,null,null,"center");
+-         label.selectable=false;label.mouseEnabled=false;label.multiline=label.wordWrap=true;
+-         scene.addChild(label);
+       }
+       public function clear():void {
+          if(scene.parent!=null)scene.parent.removeChild(scene);
+@@ -31,23 +28,86 @@
+          var visual:DisplayObject=world.visual as DisplayObject;
+          if(visual==null || visual.parent==null || stage==null){clear();return;}
+          var parent:DisplayObjectContainer=visual.parent;
+-         if(scene.parent!==parent || parent.getChildIndex(scene)!=parent.getChildIndex(visual)+1) {
++         // Above native scene/fade, below menus, HUD, errors and mod controls.
++         var anchor:DisplayObject=visual;
++         for each(var n:String in ["vscene","vblack"]) {
++            var d:DisplayObject=world[n] as DisplayObject;
++            if(d!=null && d.parent===parent && parent.getChildIndex(d)>parent.getChildIndex(anchor))anchor=d;
++         }
++         if(scene.parent!==parent || parent.getChildIndex(scene)!=parent.getChildIndex(anchor)+1) {
+             if(scene.parent!=null)scene.parent.removeChild(scene);
+-            parent.addChildAt(scene,parent.getChildIndex(visual)+1);
+-            sceneBounds=null;
++            parent.addChildAt(scene,parent.getChildIndex(anchor)+1);sceneBounds=null;
+          }
+          sceneBounds=paint(scene,parent,stage,sceneBounds);
+-         var text:String=RCLocale.text(status);
+-         if(label.text!=text)label.text=text;
+-         label.width=Math.max(1,sceneBounds.width-32);label.height=60;
+-         label.x=sceneBounds.x+16;label.y=sceneBounds.y+(sceneBounds.height-60)/2;
++         var original:DisplayObject=world.vwait as DisplayObject;
++         if(original!==source) {
++            source=original;
++            sceneWait=replace(scene,sceneWait);
++            if(satsWait!=null && satsWait.parent===sats)sats.removeChild(satsWait);
++            satsWait=null;
++         }
++         var progressText:String=loadingText(world);
++         sync(sceneWait,progressText);
+          var nativeSats:DisplayObjectContainer=world.vsats as DisplayObjectContainer;
+-         if(nativeSats!=null) {
++         // A second native asset is needed only while SATS is actually drawn.
++         // Do not allocate or update an invisible copy during ordinary travel.
++         if(nativeSats!=null && nativeSats.visible) {
++            if(satsWait==null)satsWait=replace(sats,null);
+             if(sats.parent!==nativeSats || nativeSats.getChildIndex(sats)!=nativeSats.numChildren-1) {
+                nativeSats.addChild(sats);satsBounds=null;
+             }
+-            satsBounds=paint(sats,nativeSats,stage,satsBounds);
++            satsBounds=paint(sats,nativeSats,stage,satsBounds);sync(satsWait,progressText);
+          }else if(sats.parent!=null)sats.parent.removeChild(sats);
++      }
++      private function replace(cover:Sprite,old:DisplayObject):DisplayObject {
++         if(old!=null && old.parent===cover)cover.removeChild(old);
++         if(source==null)return null;
++         var factory:Class=Object(source).constructor as Class;
++         var view:DisplayObject=new factory() as DisplayObject;
++         view.name="rconnect-native-loading";cover.addChild(view);return view;
++      }
++      private function loadingText(world:Object):String {
++         if(source==null || !("progres" in source))return null;
++         var text:String=String(Object(source).progres.text);
++         // A join-only room barrier can precede native loading initialization.
++         // Preserve every real progress message and never change native UI state.
++         if(text!="*gui_loading")return text;
++         try {
++            var res:Object=world.main.loaderInfo.applicationDomain.getDefinition("fe.Res");
++            var localized:String=res.guiText("loading");
++            if(localized!=null && localized!="" && localized!="*gui_loading")return localized;
++         }catch(error:*){}
++         return text;
++      }
++      private function sync(view:DisplayObject,progressText:String):void {
++         if(view==null || source==null || view.parent==null)return;
++         var p:DisplayObjectContainer=view.parent;
++         var a:Point=p.globalToLocal(source.localToGlobal(new Point()));
++         var b:Point=p.globalToLocal(source.localToGlobal(new Point(1,0)));
++         var c:Point=p.globalToLocal(source.localToGlobal(new Point(0,1)));
++         view.transform.matrix=new Matrix(b.x-a.x,b.y-a.y,c.x-a.x,c.y-a.y,a.x,a.y);
++         view.transform.colorTransform=source.transform.colorTransform;
++         view.alpha=source.alpha;view.visible=true;
++         // Mirror the native localized text, selected illustration and story
++         // prompt. Do not roll a new random illustration or restart animation.
++         frame(view,source);
++         for each(var key:String in ["skill","progres","story"]) {
++            if(!(key in source) || !(key in view))continue;
++            var src:Object=Object(source)[key],dst:Object=Object(view)[key];
++            dst.visible=src.visible;frame(dst,src);
++            if(key=="progres" && dst.text!=progressText)dst.text=progressText;
++            if(key=="story") {
++               if(dst.txt.htmlText!=src.txt.htmlText)dst.txt.htmlText=src.txt.htmlText;
++               dst.lmb.visible=src.lmb.visible;frame(dst.lmb,src.lmb);
++            }
++         }
++      }
++      private function frame(to:Object,from:Object):void {
++         if(to is MovieClip && from is MovieClip) {
++            var clip:MovieClip=to as MovieClip;
++            if(clip.currentFrame!=from.currentFrame)clip.gotoAndStop(from.currentFrame);
++            else clip.stop();
++         }
+       }
+       private function paint(cover:Sprite,parent:DisplayObjectContainer,stage:Stage,old:Rectangle):Rectangle {
+          var corners:Array=[new Point(0,0),new Point(stage.stageWidth,0),
+@@ -59,7 +119,7 @@
+          }
+          var rect:Rectangle=new Rectangle(left,top,right-left,bottom-top);
+          if(old==null || !old.equals(rect)) {
+-            cover.graphics.clear();cover.graphics.beginFill(0x101510);
++            cover.graphics.clear();cover.graphics.beginFill(0);
+             cover.graphics.drawRect(rect.x,rect.y,rect.width,rect.height);cover.graphics.endFill();
+          }
+          return rect;
+--- aura1/RConnectMod.as
++++ 0.2.24-roomfix3/RConnectMod.as
+@@ -26,7 +26,7 @@
+    public class RConnectMod
+    {
+       // Working M46 core after the separate 0.2.17 compact HUD release.
+-      public static const VERSION:String = "0.2.24-aura1";
++      public static const VERSION:String = "0.2.24-roomfix3";
+ 
+       public static var instance:RConnectMod;
+ 
+--- aura1/RConnectModDomains.as
++++ 0.2.24-roomfix3/RConnectModDomains.as
+@@ -0,0 +1,18 @@
++package {
++   import flash.display.Loader;
++   import flash.system.ApplicationDomain;
++
++   /** One access point for public classes from sibling mod loaders. */
++   public final class RConnectModDomains {
++      public static function find(main:*,entry:String):ApplicationDomain {
++         var nativeMain:MainFE=main as MainFE;
++         if(nativeMain==null||nativeMain.modEntryByLoader==null)return null;
++         for(var key:Object in nativeMain.modEntryByLoader) {
++            var loader:Loader=key as Loader;if(loader==null)continue;
++            var domain:ApplicationDomain=loader.contentLoaderInfo.applicationDomain;
++            if(domain.hasDefinition(entry))return domain;
++         }
++         return null;
++      }
++   }
++}

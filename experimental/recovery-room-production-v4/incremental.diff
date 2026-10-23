@@ -1,0 +1,70 @@
+--- roomfix3/rconnect/net/RoomCodec.as
++++ roomfix4/rconnect/net/RoomCodec.as
+@@ -1,20 +1,17 @@
+ package rconnect.net
+ {
+    import flash.utils.ByteArray;
+-   import flash.utils.getTimer;
+-   import rconnect.core.Log;
+    /** Bounded compressed checkpoints keep full terrain below the TCP frame cap. */
+    public class RoomCodec
+    {
+       private static const DIGITS:String="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+       public static function pack(o:Object):String
+       {
+-         var started:int=getTimer(),timing:Object={};
+-         var payload:Object=compact(o);timing.table=getTimer()-started;
+-         var json:String=JSON.stringify(payload);timing.json=getTimer()-started;
+-         var b:ByteArray=new ByteArray();b.writeUTFBytes(json);timing.utf=getTimer()-started;
++         var payload:Object=compact(o);
++         var json:String=JSON.stringify(payload);
++         var b:ByteArray=new ByteArray();b.writeUTFBytes(json);
+          if(b.length>16000000)throw new Error("Room checkpoint exceeds limit: "+b.length);
+-         timing.bytes=b.length;b.compress();b.position=0;timing.compress=getTimer()-started;
++         b.compress();b.position=0;
+          var out:Array=[];
+          while(b.bytesAvailable)
+          {
+@@ -24,14 +21,10 @@
+          }
+          var result:String=out.join("");
+          if(result.length>1000000)throw new Error("Compressed room checkpoint exceeds limit: "+result.length);
+-         Log.d("RConnectRoomTiming pack key="+o.key+" ms="+(getTimer()-started)+" chars="+result.length);
+-         timing.total=getTimer()-started;timing.key=o.key;timing.chars=result.length;
+-         Log.d("RConnectRoomTiming encode-stages "+JSON.stringify(timing));
+          return result;
+       }
+       public static function unpack(s:String):Object
+       {
+-         var started:int=getTimer(),timing:Object={};
+          if(s==null || s.length>1000000)throw new Error("Invalid room checkpoint");
+          var b:ByteArray=new ByteArray();
+          for(var i:int=0;i<s.length;i+=4)
+@@ -39,13 +32,10 @@
+             var a:int=DIGITS.indexOf(s.charAt(i)),c:int=DIGITS.indexOf(s.charAt(i+1)),d:int=DIGITS.indexOf(s.charAt(i+2)),e:int=DIGITS.indexOf(s.charAt(i+3));
+             b.writeByte((a<<2)|(c>>4));if(d>=0)b.writeByte((c<<4)|(d>>2));if(e>=0)b.writeByte((d<<6)|e);
+          }
+-         timing.base64=getTimer()-started;b.uncompress();b.position=0;timing.inflate=getTimer()-started;
++         b.uncompress();b.position=0;
+          if(b.length>16000000)throw new Error("Room checkpoint exceeds limit");
+-         var json:String=b.readUTFBytes(b.length);timing.utf=getTimer()-started;
+-         var result:Object=JSON.parse(json);timing.json=getTimer()-started;result=expand(result);
+-         Log.d("RConnectRoomTiming unpack key="+result.key+" ms="+(getTimer()-started)+" bytes="+b.length);
+-         timing.total=getTimer()-started;timing.key=result.key;timing.bytes=b.length;
+-         Log.d("RConnectRoomTiming decode-stages "+JSON.stringify(timing));
++         var json:String=b.readUTFBytes(b.length);
++         var result:Object=JSON.parse(json);result=expand(result);
+          return result;
+       }
+       /** Terrain repeats the same property names tens of thousands of times.
+--- roomfix3/RConnectMod.as
++++ roomfix4/RConnectMod.as
+@@ -26,7 +26,7 @@
+    public class RConnectMod
+    {
+       // Working M46 core after the separate 0.2.17 compact HUD release.
+-      public static const VERSION:String = "0.2.24-roomfix3";
++      public static const VERSION:String = "0.2.24-roomfix4";
+ 
+       public static var instance:RConnectMod;
+ 

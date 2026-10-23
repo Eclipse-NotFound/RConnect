@@ -1,0 +1,15 @@
+--- C26B/src/rconnect/core/RoomSync.as
++++ ready-once/src/rconnect/core/RoomSync.as
+@@ -495,6 +495,12 @@
+          hold(!keepOwner);flush();session.flushProgress();var own:Object=null;
+          if(ready && authority && settledRoom!=null && !keepOwner)
+             own=game.inRoom(settledRoom,function():Object{return game.checkpoint();});
++         // READY already describes this native destination. Do not let the
++         // next frame rediscover it and enqueue a duplicate ownership barrier.
++         // Keep restricted departures unobserved so check() still returns them.
++         if(!(ready && TravelGuard.restricted(game.loc) && game.roomKey()!=String(hostInfo.roomKey))) {
++            nativeLand=game.world.land;nativeRoom=game.loc;
++         }
+          var info:Object=game.readWorldInfo();
+          var ownPacked:String=own==null?null:RoomCodec.pack(own);
+          // Owner state remains complete (including mines, loot and wall marks).

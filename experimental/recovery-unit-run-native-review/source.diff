@@ -1,0 +1,317 @@
+--- base/tests/RoomTravelTimingTestDoc.as
++++ diagnostic/tests/RoomTravelTimingTestDoc.as
+@@ -23,7 +23,9 @@
+       private var sceneClass:Object;
+       private var metrics:A22RoomMetrics;
+       private var landClass:Object,originalSeed:Function,timingSeed:Function;
+-      private static const MAP_SEED:uint=1380142925;
++      private static const MAP_SEED:uint=4095208676;
++      private const unitProbe:UnitRunGenerationProbe=new UnitRunGenerationProbe();
++      private var stageBeforeMission:Boolean=false;
+       protected function merged():Boolean{return false;}
+       public function RoomTravelTimingTestDoc() {
+          var id:String=NativeApplication.nativeApplication.applicationID;
+@@ -56,12 +58,18 @@
+       private function begin():void {
+          phase="travel";at=getTimer();lastFrame=at;exitAt=exitDone=-1;coverMs=pausedMs=0;
+          localResult=null;reported=false;peer=null;
++         if(round==0)unitProbe.arm(mod.game.world);
+          Log.d("TRAVEL CLOCK "+JSON.stringify({started:at,round:round,target:target}));
+       }
+       private function depart():void {
+          target=round%2==0?"random_mane":"rbl";
+          send("depart",{target:target});begin();mod.game.forceCloseOverlays();mod.game.world.pers.healAll();
+-         if(round==0)mod.game.world.game.beginMission(target);
++         if(round==0) {
++            if(stageBeforeMission)throw new Error("stageBeforeMission repeated");
++            stageBeforeMission=true;mod.game.world.game.lands[target].landStage=4;
++            check(int(mod.game.world.game.lands[target].landStage)==4,"user stage 4 set before native mission");
++            mod.game.world.game.beginMission(target);
++         }
+          else mod.game.world.game.gotoLand(target);
+       }
+       private function result():Object {
+@@ -94,8 +102,13 @@
+       }
+       private function tick(e:Event):void {
+          mod=RConnectMod.instance;if(mod==null || mod.game.gg==null)return;
++         solo=mod.config.getValue("autoRole")=="";
++         if(unitProbe.observe(mod.game.world,phase,round)) {
++            check(false,"native game error preserved; see unit-run-generation/first-error.json");
++            if(solo || (host && mod.session.server!=null) || (!host && mod.session.link!=null))send("done");
++            finish();return;
++         }
+          if(metrics==null)metrics=new A22RoomMetrics(mod);
+-         solo=mod.config.getValue("autoRole")=="";
+          if(!configured) {
+             configured=true;mod.config.setValue("followTeammate","0");
+             var sceneConfigured:Boolean=false;
+@@ -127,10 +140,14 @@
+          if(host)for each(var p:Object in mod.session.peers)watch(p.link as TcpLink);else watch(mod.session.link);
+          var w:Object=mod.game.world,now:int=getTimer();mod.game.gg.invulner=true;
+          if(w.clickReq==1){mod.stage.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_DOWN,true));mod.stage.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_UP,true));}
+-         // Production autoTravelLand only runs while hosting. The offline
+-         // control therefore performs the same native setup trip explicitly.
+-         if(solo && phase=="boot" && !soloBootTravel && stable("begin")) {
+-            soloBootTravel=true;mod.game.forceCloseOverlays();w.pers.healAll();w.game.gotoLand("rbl");at=now;
++         // Save templates disable runner autoTravelLand. The host/offline side
++         // normally returns the loaded character to base once; the joiner follows.
++         var currentId:String=String(w.game.curLandId);
++         if((solo || host) && phase=="boot" && !soloBootTravel && currentId!="rbl"
++            && int(w.pers.level)==29 && String(w.pers.persName)=="Littlepip" && stable(currentId)) {
++            soloBootTravel=true;
++            check(true,"isolated Littlepip level 29 loaded before native base travel");
++            mod.game.forceCloseOverlays();w.pers.healAll();w.game.gotoLand("rbl");at=now;
+          }
+          if(now-at>(phase=="boot"?240000:95000)){check(false,"timeout phase="+phase);send("done");finish();return;}
+          if(phase=="boot" && stable("rbl")) {
+--- base/prepare.py
++++ diagnostic/prepare.py
+@@ -1,4 +1,4 @@
+-"""Minimal external room12 compatibility driver; no production changes."""
++"""External user-seed Unit.run observation driver; no production changes."""
+ from pathlib import Path
+ import argparse, hashlib, json, os, shutil, subprocess, sys
+ if sys.flags.optimize: raise RuntimeError('Ordinary Python required')
+@@ -11,9 +11,7 @@
+  'mods/RConnect/release/RConnectMod.swf':'df0fa0e2ca952e77e5132e75d71e73558dc919c7b8cdeba5da05fc9e94dc01e7',
+  'mods/RealisticVision/release/RealisticVisionMod.swf':'6dbbae60eb09ff8f42d34e31edc92fb9f83009ba918e9145980c6d289723d8ba',
+  'mods/Sandevistan/release/SandevistanMod.swf':'cec6a3061cb90380579d8a95aa1254e0328bd0dae6e239fc4ca5205d6cccf942'}
+-SOURCES={'RoomTravelTimingTestDoc.as':'226001bfb880363615c98d697ef0b1ea224545f749123b14987160f91e0998e3',
+- 'RoomTravelSceneTestDoc.as':'55e2caa583fc5f14c1844e10fd46506b9d681b889fb9b94ab82053b02df2547b',
+- 'A22RoomMetrics.as':'314823fd0fcd04e71277dcd3e8ee1a647317e611c5ff7b8fb0e7058c25179d6e'}
++SOURCES={'RoomTravelTimingTestDoc.as': '41203e838205bac14ab3f5ba386b47c9707c3708f79833279683a1cb1a6a8edd', 'RoomTravelSceneTestDoc.as': '55e2caa583fc5f14c1844e10fd46506b9d681b889fb9b94ab82053b02df2547b', 'A22RoomMetrics.as': '314823fd0fcd04e71277dcd3e8ee1a647317e611c5ff7b8fb0e7058c25179d6e', 'UnitRunGenerationProbe.as': '02e9a931e9f94f31fea5a6285598d1f5b49e26206912f61f4b1b840bd222e248'}
+ def sha(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+ def read(p): return json.loads(Path(p).read_text(encoding='utf-8-sig'))
+ def save(p,v):
+@@ -35,7 +33,7 @@
+   pins[str(p)]=sha(p)
+  return pins
+ def verify(out):
+- m=read(out/'prepared.json');assert m['kind']=='current-installed-room12-compatible-driver'
++ m=read(out/'prepared.json');assert m['kind']=='user-seed-unit-run-observation-driver'
+  assert m['installation_before']==installation()
+  for n,h in {**inputs(),**m['inputs']}.items():assert sha(n)==h,n
+  for n,h in m['files'].items():assert sha(out/n)==h,n
+@@ -53,7 +51,7 @@
+   sys.path.insert(0,str(ROOT/'tools/host_authority'));from common import JAVA,SDK
+   sys.path.insert(0,str(ROOT/'tools/validation'));from runtime_memory import snapshot,wait_owned
+   sys.path.insert(0,str(GAME/'mods/ModLoader/tools'));from test_registry import Registration
+-  with Registration(owner='RConnect / 当前房间基线驱动',resource='game',purpose='Compile external scene/timing only; no AIR',run_dir=out,evidence=out/'compile.log',wait=a.registry_wait) as record:
++  with Registration(owner='RConnect / 用户地图首错取证驱动',resource='game',purpose='Compile external scene/timing only; no AIR',run_dir=out,evidence=out/'compile.log',wait=a.registry_wait) as record:
+    with (out/'compile.log').open('x',encoding='utf-8') as log:
+     for scenario,entry in [('scene','RoomTravelSceneTestDoc'),('timing','RoomTravelTimingTestDoc')]:
+      target=out/scenario;target.mkdir();shutil.copyfile(BASE/'scene/EffectsHarness.swf',target/'EffectsHarness.swf')
+@@ -76,7 +74,7 @@
+   compiled=True
+  assert installation()==before
+  for n,h in pins.items():assert sha(n)==h,n
+- save(out/'prepared.json',dict(kind='current-installed-room12-compatible-driver',compiled=compiled,external=True,
++ save(out/'prepared.json',dict(kind='user-seed-unit-run-observation-driver',compiled=compiled,external=True,
+   inputs=pins,source_driver_manifest=sha(BASE/'prepared.json'),installation_before=before,
+   commands=commands,air_started=False,installed=False,
+   files={p.relative_to(out).as_posix():sha(p) for p in out.rglob('*') if p.is_file()}))
+--- base/run_native.py
++++ diagnostic/run_native.py
+@@ -1,4 +1,4 @@
+-"""Current installed assets, external room driver, untouched shared runner."""
++"""User-seed observation with immutable copied Littlepip saves; shared runner unchanged."""
+ from pathlib import Path
+ import argparse,json,re,shutil,subprocess,sys,traceback
+ from prepare import ROOT,M52,GAME,RUNNER,PINNED,installation,sha,read,save,verify
+@@ -9,21 +9,12 @@
+  ap=argparse.ArgumentParser(description=__doc__)
+  ap.add_argument('--drivers',type=Path,required=True);ap.add_argument('--output',type=Path,required=True)
+  ap.add_argument('--mode',choices=['dual','solo'],default='dual');ap.add_argument('--scenario',choices=['scene','timing'],default='scene')
+- ap.add_argument('--product',choices=['aura1','roomfix1'],default='aura1')
++ ap.add_argument('--product',choices=['aura1'],default='aura1')
+  ap.add_argument('--registry-wait',type=float,default=900);a=ap.parse_args()
+  drivers=(ROOT/a.drivers).resolve();out=(ROOT/a.output).resolve()
+  assert drivers.parent==M52 and out.parent==M52 and not out.exists() and a.registry_wait>=0
+  meta=verify(drivers);assert meta['compiled'] is True
+  before=installation();binary=GAME/'mods/RConnect/release/RConnectMod.swf';version='0.2.24-aura1';product_inputs={}
+- if a.product=='roomfix1':
+-  product=M52/'recovery-room-production-01';binary=product/'RConnectMod.swf';version='0.2.24-roomfix1'
+-  assert sha(binary)=='4d9f1cbd69d8608df525477b81c9232631cbc0032c4018bc9846e6f3b9c40341'
+-  built=read(product/'compile.json');prepared=read(product/'prepared.json')
+-  assert built['compiled'] is True and all(c['exit_code']==0 for c in built['commands'])
+-  assert prepared['kind']=='room-repair-overlay' and prepared['version']==version
+-  assert built['installation_before']==before and built['installation_after']==before
+-  for n,h in prepared['source'].items():assert sha(product/'src'/n)==h,n
+-  product_inputs={str(p):sha(p) for p in (product/'compile.json',product/'prepared.json',binary)}
+  digest=sha(binary)
+  out.mkdir();binding=out/'driver';binding.mkdir()
+  for n in ('EffectsDriver.swf','EffectsHarness.swf'):shutil.copyfile(drivers/a.scenario/n,binding/n)
+@@ -33,11 +24,19 @@
+   '--all-mods','--land','rbl','--seconds','600','--expected-version',version,'--private-desktop','--defer-visible',
+   '--wait-host-world','--require-exclusive-air','--registry-wait',str(a.registry_wait)]
+  if a.mode=='solo':command+=['--solo']
++ templates={'host':M52/'littlepip-save-replay-01/host/PFEgame0.sol'}
++ if a.mode=='dual':templates['join']=M52/'littlepip-save-replay-01/join/PFEgame0.sol'
++ expected={'host':'2c0fe1d16138797b5914a7e1a0adb12e7438c0b0fba88e594490bba30f42c9f4','join':'8e70021accf93b8b920935666f85e6dc06f863ce5b242d04d6c7e2f38ef1bc3d'}
++ for role,path in templates.items():
++  assert sha(path)==expected[role],role
++  command+=['--'+role+'-save-template',str(path)]
+  pins={str(p):sha(p) for p in [Path(__file__),HERE/'prepare.py',drivers/'prepared.json',RUNNER,binding/'EffectsDriver.swf',binding/'EffectsHarness.swf']}
+  pins.update(product_inputs);pins[str(binary)]=digest
++ pins.update({str(path):sha(path) for path in templates.values()})
+  save(out/'intent.json',dict(command=command,mode=a.mode,scenario=a.scenario,installation=before,inputs=pins,
+-  candidate_sha256=digest,product=a.product,expected_version=version,no_host_override=True,no_other_mod_override=True))
+- result=dict(passed=False,air_started=False,mode=a.mode,scenario=a.scenario,product=a.product,performance_qualified=False,installed=False)
++  candidate_sha256=digest,product=a.product,expected_version=version,no_host_override=True,no_other_mod_override=True,
++  diagnostic_only=True,user_seed=4095208676,stage_before_mission=4,save_templates={role:{'path':str(path),'sha256':sha(path)} for role,path in templates.items()}))
++ result=dict(passed=False,air_started=False,mode=a.mode,scenario=a.scenario,product=a.product,performance_qualified=False,installed=False,diagnostic_only=True,observations={})
+  try:
+   with (out/'runner.log').open('x',encoding='utf-8') as log:p=subprocess.run(command,cwd=ROOT,stdout=log,stderr=subprocess.STDOUT)
+   result['exit_code']=p.returncode
+@@ -50,6 +49,9 @@
+   if not (run/'run.json').is_file():raise RuntimeError('Runner stopped before complete run.json; see preserved runner.log and owned run')
+   native=read(run/'run.json');result.update(air_started=bool(native['pids']),run_sha256=sha(run/'run.json'))
+   assert native['sha256']==digest and native['solo']==(a.mode=='solo')
++  for role,path in templates.items():
++   saved=native['save_templates'][role]
++   assert saved['source_sha256']==sha(path) and saved['slot']==9,role
+   assert native['private_desktop'] is True and native['defer_visible'] is True
+   assert sha(run/'input.json')==native['input_manifest_sha256']
+   expected_roles=['host'] if a.mode=='solo' else ['host','join'];assert set(native['inputs'])==set(expected_roles)
+@@ -63,6 +65,17 @@
+     else:assert h==installed[key],n
+    for n,h in values.get('mod_assets',{}).items():assert h==installed[n.replace('\\','/').lower()],n
+    log=run/(role+'.log');text=log.read_text(encoding='utf-8-sig',errors='replace')
++   observation_rows=[json.loads(line.split('UNIT RUN OBSERVATION ',1)[1]) for line in text.splitlines() if line.startswith('UNIT RUN OBSERVATION ')]
++   observed=[]
++   for row in observation_rows:
++    name=row['kind'];assert name in ('first-error','generation-returned')
++    source=Path(row['path']).resolve()
++    expected_store=Path.home()/'AppData/Roaming'/('pfe-modsettings-rconnect-coop-'+role+'-'+run.name)/'Local Store/unit-run-generation'
++    assert source==expected_store/(name+'.json')
++    content=read(source);assert content['kind']==name and content['applicationId']=='pfe-modsettings-rconnect-coop-'+role+'-'+run.name
++    saved=out/(role+'-'+name+'.json');shutil.copyfile(source,saved)
++    observed.append(dict(kind=name,source=str(source),sha256=sha(saved),complete=content['complete'],error=content['error'],anomaly_count=content['anomalyCount']))
++   result['observations'][role]=observed
+    all_text=text+'\n'+(run/(role+'.stdout.log')).read_text(encoding='utf-8-sig',errors='replace')
+    for f in (run/'module-logs'/role).glob('*.log'):all_text+='\n'+f.read_text(encoding='utf-8-sig',errors='replace')
+    errors=list(dict.fromkeys(line for line in all_text.splitlines() if 'COOP FAIL' in line or 'handoff timed out' in line
+@@ -70,13 +83,16 @@
+    rows=[json.loads(line.split('TRAVEL RESULT ',1)[1]) for line in text.splitlines() if line.startswith('TRAVEL RESULT ')]
+    result['roles'][role]=dict(rows=rows,errors=errors,done='COOP EFFECTS DONE travel-timing '+role in text,
+     version=('v'+version+' initialized') in text,checks=len(re.findall(r'^COOP PASS ',text,re.M)),log_sha256=sha(log))
+-   if rows:assert [r['round'] for r in rows]==[0,1,2]
++   if rows:assert [r['round'] for r in rows]==list(range(len(rows))) and len(rows)<=3
+   memory=read(run/'memory-timeline.json');assert not memory['stopped_for_pressure'] and not memory['stopped_for_overlap']
+   assert memory['minimum_commit_bytes']==512*1024**2
+   assert read(run/'memory-before.json')['free_commit_bytes']>=(3 if a.mode=='solo' else 6)*1024**3
+   assert not read(run/'air-before.json')
+   assert all(not (run/n).exists() for n in ('host','join','frozen')),'Owned runtime copies were not removed'
+-  result['passed']=bool(p.returncode==0 and result['framework_passed'] and all(v['done'] and v['version'] and not v['errors'] and len(v['rows'])==3 for v in result['roles'].values()))
++  result['functional_pass']=bool(p.returncode==0 and result['framework_passed'] and all(v['done'] and v['version'] and not v['errors'] and len(v['rows'])==3 for v in result['roles'].values()))
++  result['observation_ready']=all(any(row['kind']=='generation-returned' and row['complete'] for row in result['observations'][role]) for role in expected_roles)
++  result['native_error_observed']=any(row['kind']=='first-error' for values in result['observations'].values() for row in values)
++  result['passed']=result['functional_pass'] and result['observation_ready'] and not result['native_error_observed']
+  except Exception as e:result.update(passed=False,error=str(e),traceback=traceback.format_exc())
+  finally:
+   try:
+--- /dev/null
++++ diagnostic/tests/UnitRunGenerationProbe.as
+@@ -0,0 +1,101 @@
++package {
++   import flash.desktop.NativeApplication;
++   import flash.filesystem.File;
++   import flash.filesystem.FileMode;
++   import flash.filesystem.FileStream;
++   import flash.utils.Dictionary;
++   import flash.utils.getQualifiedClassName;
++   import flash.utils.getTimer;
++   import rconnect.core.Log;
++
++   /** External, read-only observation after native generation returns. */
++   public final class UnitRunGenerationProbe {
++      private var armed:Boolean=false,generated:Boolean=false,errorSeen:Boolean=false;
++      private var previous:Object;
++      public function arm(world:Object):void {if(!armed){armed=true;previous=world.land;}}
++      public function observe(world:Object,phase:String,round:int):Boolean {
++         if(world==null)return false;
++         if(!errorSeen && world.verror!=null && world.verror.visible) {
++            errorSeen=true;
++            capture(world,"first-error",phase,round,String(world.verror.txt.text));
++            return true;
++         }
++         if(armed && !generated && world.land!=null && world.land!==previous
++            && String(world.land.act.id)=="random_mane") {
++            generated=true;capture(world,"generation-returned",phase,round,"");
++         }
++         return false;
++      }
++      private function capture(world:Object,kind:String,phase:String,round:int,error:String):void {
++         var started:int=getTimer(),land:Object=world.land;
++         var out:Object={kind:kind,applicationId:NativeApplication.nativeApplication.applicationID,
++            at:started,wall:Number(new Date().time),phase:phase,round:round,error:error,
++            observationOnly:true,performanceQualified:false,complete:true,
++            worldLandId:land==null?null:String(land.act.id),curLandId:String(world.game.curLandId),
++            stage:land==null?null:land.act.landStage,seed:land==null?null:land.rconnectLayoutSeed,
++            exit:world.t_exit,rooms:[],unitsVisited:0,anomalyCount:0,anomalies:[],faults:[]};
++         var seen:Dictionary=new Dictionary(),roomCount:int=0;
++         try {
++            if(land==null || land.locs==null)throw new Error("No completed land to inspect");
++            for(var ix:String in land.locs)for(var iy:String in land.locs[ix])for(var iz:String in land.locs[ix][iy]) {
++               var loc:Object=land.locs[ix][iy][iz];
++               if(loc==null || seen[loc])continue;
++               seen[loc]=true;
++               if(++roomCount>512){out.complete=false;throw new Error("Room observation bound exceeded");}
++               var key:String=ix+","+iy+","+iz;
++               var units:Array=loc.units as Array,space:Array=loc.space as Array;
++               out.rooms.push({key:key,id:String(loc.id),width:loc.spaceX,height:loc.spaceY,
++                  limX:loc.limX,limY:loc.limY,columns:space==null?-1:space.length,
++                  landIdentity:loc.land===land,worldLocation:loc===world.loc,sky:Boolean(loc.sky),
++                  unitCount:units==null?-1:units.length});
++               if(units==null){out.complete=false;out.faults.push("Missing units array at "+key);continue;}
++               for(var unitIndex:int=0;unitIndex<units.length;unitIndex++) {
++                  var unit:Object=units[unitIndex];
++                  if(++out.unitsVisited>8192){out.complete=false;throw new Error("Unit observation bound exceeded");}
++                  if(unit==null){out.complete=false;out.faults.push("Null unit at "+key);continue;}
++                  var reasons:Array=[],numbers:Object={},fields:Array=["X","Y","X1","X2","Y1","Y2","scX","scY","dx","dy","osndx","osndy"];
++                  for each(var field:String in fields) {
++                     var value:Number=Number(unit[field]);
++                     numbers[field]=isFinite(value)?value:String(value);
++                     if(!isFinite(value))reasons.push("nonfinite:"+field);
++                  }
++                  if(unit.loc!==loc)reasons.push("unit.loc identity");
++                  if(loc.land!==land)reasons.push("loc.land identity");
++                  var left:Number=Math.floor(Number(unit.X1)/40),right:Number=Math.floor(Number(unit.X2)/40);
++                  var missing:Array=[];
++                  if(isFinite(left) && isFinite(right)) {
++                     if(right<left)reasons.push("inverted horizontal bounds");
++                     if(space==null || space[left]==null)missing.push(left);
++                     if(right!=left && (space==null || space[right]==null))missing.push(right);
++                     if(missing.length>0)reasons.push("missing endpoint column");
++                  }
++                  if(reasons.length>0) {
++                     out.anomalyCount++;
++                     if(out.anomalies.length<100)out.anomalies.push({room:key,index:unitIndex,
++                        cls:getQualifiedClassName(unit),id:String(unit.id),name:String(unit.nazv),
++                        values:numbers,reasons:reasons,missingColumns:missing,
++                        unitLocIdentity:unit.loc===loc,unitLocId:unit.loc==null?null:String(unit.loc.id),
++                        disabled:unit.disabled,sost:unit.sost,inChain:unit.in_chain,mater:unit.mater,
++                        isLaz:unit.isLaz,diagon:"protected-not-read",levit:unit.levit,isFly:unit.isFly});
++                  }
++               }
++            }
++         }catch(fault:*){out.complete=false;out.faults.push(String(fault));}
++         out.anomaliesTruncated=out.anomalyCount>out.anomalies.length;
++         out.scanMs=getTimer()-started;
++         var stream:FileStream=new FileStream();
++         try {
++            var dir:File=File.applicationStorageDirectory.resolvePath("unit-run-generation");dir.createDirectory();
++            var file:File=dir.resolvePath(kind+".json");
++            if(file.exists)throw new Error("Observation output already exists: "+kind);
++            stream.open(file,FileMode.WRITE);stream.writeUTFBytes(JSON.stringify(out));stream.close();
++            Log.d("UNIT RUN OBSERVATION "+JSON.stringify({kind:kind,path:file.nativePath,complete:out.complete,
++               rooms:out.rooms.length,units:out.unitsVisited,anomalies:out.anomalyCount,
++               anomaliesTruncated:out.anomaliesTruncated,scanMs:out.scanMs,errorPresent:error.length>0}));
++         }catch(writeError:*) {
++            try{stream.close();}catch(closeError:*){}
++            Log.d("COOP FAIL travel-timing unit observation output "+String(writeError));
++         }
++      }
++   }
++}

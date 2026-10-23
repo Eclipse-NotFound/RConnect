@@ -1,0 +1,170 @@
+--- roomfix1/rconnect/core/RoomSync.as
++++ proposal-v2/rconnect/core/RoomSync.as
+@@ -26,6 +26,7 @@
+       private var peerInfo:Object;
+       private var serial:int=0;
+       private var pending:int=0;
++      private var barrierRoom:Object,barrierLand:Object;
+       private var savedPause:Boolean=false;
+       private var pauseWorld:Object;
+       private var deadline:int=0;
+@@ -45,6 +46,7 @@
+       private var teammate:Object,followPending:Object;
+       private var followSeenAt:int=0,followAttemptAfter:int=0,followFailures:int=0;
+       private var followStarted:Boolean=false;
++      private var followBlockedAt:int=-1;
+       public var busy:Boolean=false;
+       public var ready:Boolean=false;
+       public var authority:Boolean=true;
+@@ -70,7 +72,7 @@
+          ready=false;authority=true;initial=true;epoch=0;term=0;pending=0;hostInfo=null;
+          game.independentRooms=false;game.roomEpoch=0;status="";blocked=false;
+          requested=false;
+-         preparing=null;preparedToken="";restoring=false;localEntry=false;
++         preparing=null;preparedToken="";restoring=false;localEntry=false;barrierRoom=null;barrierLand=null;
+          teammate=null;cancelFollow();
+          TravelGuard.reset();
+          game.mapGeneration.reset();
+@@ -202,6 +204,7 @@
+          requested=false;
+          session.flushProgress();
+          hold(!ready || !currentSettledRoom());pending=++serial;blocked=false;
++         barrierRoom=game.loc;barrierLand=game.world.land;
+          send({op:"seal",barrier:pending,epoch:epoch,info:game.readWorldInfo(),
+             together:TravelGuard.restricted(game.loc) || TravelGuard.restricted(settledRoom),
+             peerRoom:peerInfo==null?"":String(peerInfo.roomKey)});
+@@ -321,14 +324,26 @@
+             && Number(a.landStage)==Number(b.landStage);
+       }
+       private function cancelFollow():void {
+-         followPending=null;followSeenAt=0;followAttemptAfter=0;followFailures=0;followStarted=false;
++         followPending=null;followSeenAt=0;followAttemptAfter=0;followFailures=0;followStarted=false;followBlockedAt=-1;
+       }
+       private function followTeammate():void {
+          if(followPending==null)return;
+          var now:int=getTimer();
+-         if(mod.config.getValue("followTeammate")!="1" || now-followSeenAt>3000){cancelFollow();return;}
+-         if(session.pause!=null && session.pause.paused)return;
+-         if(!ready || busy || pending!=0 || game.isTransitioning() || game.isPlayerDead())return;
++         if(mod.config.getValue("followTeammate")!="1"){cancelFollow();return;}
++         if((session.pause!=null && session.pause.paused) || !ready || busy || pending!=0
++            || game.isTransitioning() || game.isPlayerDead()) {
++            if(followBlockedAt<0)followBlockedAt=now;
++            return;
++         }
++         if(followBlockedAt>=0) {
++            // New teammate packets may refresh followSeenAt while blocked.
++            // Exclude only the interval since that packet, without granting
++            // future time twice. Retry backoff also pauses while unplayable.
++            followSeenAt+=now-Math.max(followBlockedAt,followSeenAt);
++            if(followAttemptAfter>0)followAttemptAfter+=now-followBlockedAt;
++            followBlockedAt=-1;
++         }
++         if(now-followSeenAt>3000){cancelFollow();return;}
+          var info:Object=followPending,mine:Object=game.readWorldInfo();
+          if(mine==null)return;
+          if(!sameFollowMap(info,mine) || int(info.roomEpoch)!=epoch
+@@ -391,10 +406,15 @@
+             game.refreshWorld();
+             if(host())
+             {
+-               if(msg.op=="request") {peerInfo=msg.info;if(pending==0)begin();}
+-               else if(msg.op=="ready" && int(msg.barrier)==pending && int(msg.epoch)==epoch)commit(msg);
++               if(msg.op=="request") {peerInfo=msg.info;requested=true;if(pending==0)begin();}
++               else if(msg.op=="ready" && int(msg.barrier)==pending && int(msg.epoch)==epoch) {
++                  // A request already described by this READY adds no new
++                  // work. Preserve a local crossing and a newer destination.
++                  if(requested && game.loc===barrierRoom && sameRequest(peerInfo,msg.info))requested=false;
++                  commit(msg);
++               }
+                else if(msg.op=="ack" && int(msg.barrier)==pending)
+-               {pending=0;release();Log.d("RConnectRoom: resumed "+settledKey+" term="+term+" ms="+(getTimer()-barrierStarted));}
++               {pending=0;release();check();Log.d("RConnectRoom: resumed "+settledKey+" term="+term+" ms="+(getTimer()-barrierStarted));}
+             }
+             else if(msg.op=="prepare") {
+                preparing=msg.info;game.mapGeneration.receive(preparing);startPreparedMap();
+@@ -411,14 +431,21 @@
+             else if(msg.op=="grant" && int(msg.barrier)==pending && int(msg.epoch)==epoch)
+             {
+                var state:Object;
++               var crossedUnchanged:Boolean=false,crossingRequested:Boolean=false;
+                if(msg.fresh===true && msg.owner===true && freshRoom===game.loc && freshWire!=null
+                   && msg.state===freshWire && String(msg.key)==game.roomKey()) {
+                   // The host returned our exact held native state and granted
+                   // us authority. No simulation ran since it was captured.
+                   game.roomRole(true);
+                }else if(msg.unchanged===true) {
+-                  if(!currentSettledRoom() || !ready || !authority || msg.owner!==true || String(msg.key)!=game.roomKey())
++                  if(!ready || !authority || settledRoom==null || msg.owner!==true
++                     || String(msg.key)!=settledKey || game.roomKey(settledRoom)!=settledKey
++                     || game.world==null || game.world.land!==nativeLand || settledRoom.land!==nativeLand)
+                      throw new Error("Invalid unchanged room grant");
++                  crossedUnchanged=game.loc!==settledRoom;
++                  // An already observed crossing sent its request before this
++                  // ACK on the same TCP stream. Do not enqueue it twice.
++                  crossingRequested=crossedUnchanged && nativeRoom===game.loc;
+                }else if(msg.retained===true) {
+                   // Only reuse our own exact checkpoint while this same native
+                   // room remained frozen. Unit/loot authority still changes.
+@@ -441,10 +468,15 @@
+                if(initial && hostInfo!=null && game.roomKey()==String(hostInfo.roomKey)
+                   && isFinite(Number(hostInfo.x)) && isFinite(Number(hostInfo.y)))
+                   TravelPlacement.place(game.gg,Number(hostInfo.x),Number(hostInfo.y));
+-               authority=Boolean(msg.owner);ready=true;term=int(msg.term);settledRoom=game.loc;settledKey=game.roomKey();
+-               initial=false;game.independentRooms=true;nativeRoom=game.loc;
++               authority=Boolean(msg.owner);ready=true;term=int(msg.term);
++               if(!crossedUnchanged){settledRoom=game.loc;settledKey=game.roomKey();nativeRoom=game.loc;}
++               initial=false;game.independentRooms=true;
+                TravelGuard.endTravel();
+                send({op:"ack",barrier:pending});pending=0;readySent=false;release();
++               if(crossedUnchanged) {
++                  hold();
++                  if(!crossingRequested)check();
++               }
+                Log.d("RConnectRoom: grant "+settledKey+" authority="+authority+" term="+term+" ms="+(getTimer()-barrierStarted));
+             }
+          }
+@@ -482,7 +514,34 @@
+             oldKey:settledKey,oldTerm:term,own:ownPacked,fresh:freshPacked});
+          readySent=true;
+       }
++      private function sameRequest(a:Object,b:Object):Boolean {
++         return a!=null && b!=null && String(a.roomKey)==String(b.roomKey)
++            && String(a.curLandId)==String(b.curLandId) && String(a.curCoord)==String(b.curCoord)
++            && Number(a.landStage)==Number(b.landStage);
++      }
+       private function commit(msg:Object):void
++      {
++         // A ready message answers the room announced by its seal. A native
++         // door crossing during an unchanged-owner wait cannot change that room.
++         if(barrierRoom==null || game.world==null || game.world.land!==barrierLand
++            || nativeLand!==barrierLand || barrierRoom.land!==barrierLand)
++            throw new Error("Room barrier changed native Land");
++         if(game.loc!==barrierRoom) {
++            // Only an already settled host was allowed to continue playing.
++            // Never rebuild a formerly frozen destination around a remote gg.
++            var oldRecord:Object=records[settledKey];
++            if(!ready || !authority || settledRoom!==barrierRoom || oldRecord==null
++               || int(oldRecord.owner)!=0 || oldRecord.state==null
++               || String(oldRecord.state.key)!=game.roomKey(barrierRoom))
++               throw new Error("Unsettled room changed during barrier");
++            game.inRoom(barrierRoom,function():void {commitHeld(msg,true);});
++            // inRoom restores native context before the new room is frozen.
++            // check records a just-observed crossing; queued ones remain queued.
++            hold();check();return;
++         }
++         commitHeld(msg);
++      }
++      private function commitHeld(msg:Object,scoped:Boolean=false):void
+       {
+          peerInfo=msg.info;
+          if(ready && authority)session.flushGhostDamage();
+@@ -498,6 +557,8 @@
+          }
+          var mine:Object=records[myKey];
+          var nativeFresh:Boolean=mine==null;
++         if(scoped && (nativeFresh || settledRoom!==game.loc || !ready || int(mine.owner)!=0))
++            throw new Error("Scoped commit cannot restore native room state");
+          if(mine==null)mine=records[myKey]={state:game.checkpoint(),owner:0};
+          // This exact native room has just supplied the snapshot. Importing
+          // it into itself would rebuild live loot and replay object state.

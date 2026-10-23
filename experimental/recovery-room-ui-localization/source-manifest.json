@@ -1,0 +1,13 @@
+{
+  "base": "build/m52/recovery-room-production-02",
+  "base_artifact_sha256": "c26b1aa7dccf6e96c4027f551332a2b55d413467b24311426a20c8d341058cc0",
+  "changes": {
+    "rconnect/ui/RoomEntryView.as": {
+      "base_sha256": "969ffe5824685edb1bdfab3b35f9e77dbcedd4eb14b012495611277d5b7f025c",
+      "candidate_sha256": "4cb479f39262f631b834c6290f78fcaec3b3cc102bb56f9886a71791a05efe0b"
+    }
+  },
+  "compiled": false,
+  "tested": false,
+  "installed": false
+}

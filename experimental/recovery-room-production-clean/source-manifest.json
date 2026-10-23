@@ -1,0 +1,38 @@
+{
+  "base": "build/m52/recovery-room-production-03/src",
+  "source_sha256": "549dbffadf05547509a0c2fe8a3637c0ef089305ebe7637322e6a196c471828c",
+  "overlay_sha256": "bd98187fb1201c118f4980a3a93e3a06b0ebed28ba1cfc1be8661dcb33762570",
+  "origins": {
+    "build/m52/recovery-room-production-03/src/rconnect/net/RoomCodec.as": "549dbffadf05547509a0c2fe8a3637c0ef089305ebe7637322e6a196c471828c",
+    "experimental/recovery-codec-diagnostics/components/CodecDiagnosticChecks.as": "95be1da8f16b39cb3776e7c0deb5ab6118ca9fe5a1a29d10de07e174523ca453",
+    "build/m52/recovery-room-production-03/src/rconnect/game/NativeTileState.as": "dab683e9d14e18e8b7e35a917da8a7e237391b602f43d315661fd0d11ce8cae5",
+    "build/m52/recovery-room-production-03/src/rconnect/game/NativeRoomState.as": "1e91028348b29dc1bd00dc55cf4d5df5d5ee40469ef9ea0f7e9626d30a601938",
+    "experimental/recovery-terrain-loop/components/fe/loc/Tile.as": "a5267e18c3479c50d8b4eb5881690566e297d168bf3191fd36fb281e513c370a",
+    "experimental/recovery-terrain-loop/components/fe/unit/Unit.as": "413999d9d8d9a001b125eaf7c140f70a49b23f44ac07e31629f9780bd5fcaaf2",
+    "experimental/recovery-terrain-loop/components/fe/unit/RConnectUnitAccess.as": "4dca64ac4410ed30997830ad2e092cf4bc9dbdee6204a2d8f1cfd1578d818806",
+    "experimental/recovery-terrain-loop/components/rconnect/game/GameBridge.as": "ef48de47fbd27f843edeceea4c87acfc0320811de7ac581fc5b46b324840e85a",
+    "experimental/recovery-terrain-loop/components/rconnect/game/TurretDisplay.as": "a0a2e0f98b82a3d00bdd21b7abf21a24dbe830d112878103da38eda63ed9f53d",
+    "experimental/recovery-codec-diagnostics/components/rconnect/core/Log.as": "df69225c66bf39889306a81f133f3b15a558f72c94fef844377df2bf2d55d217"
+  },
+  "files": {
+    "component.diff": "e5b1999a26aeb68ef62026c316cfe6c4fc332769b2f217c5a120215a4ad7fa14",
+    "components/CodecCleanChecks.as": "ba7af95568d1dac87bd72eabe4f756aaa4c4519ccbc3975dd17f506f16e1bf65",
+    "components/fe/loc/Tile.as": "998fa54c8b690276fe336ab9866d645c600d438065b1544c329d3d939def95a4",
+    "components/fe/unit/RConnectUnitAccess.as": "4ccbab3505fe8456bc1568466ba47bfc3f2bb9fd2eca41db0cf445ebe7e148b6",
+    "components/fe/unit/Unit.as": "fa2433974712c34eea245b3aa502a26ee34e21ce956acd131c3e71ec0c016b16",
+    "components/rconnect/core/Log.as": "df69225c66bf39889306a81f133f3b15a558f72c94fef844377df2bf2d55d217",
+    "components/rconnect/game/GameBridge.as": "ef48de47fbd27f843edeceea4c87acfc0320811de7ac581fc5b46b324840e85a",
+    "components/rconnect/game/NativeRoomState.as": "1e91028348b29dc1bd00dc55cf4d5df5d5ee40469ef9ea0f7e9626d30a601938",
+    "components/rconnect/game/NativeTileState.as": "dab683e9d14e18e8b7e35a917da8a7e237391b602f43d315661fd0d11ce8cae5",
+    "components/rconnect/game/TurretDisplay.as": "ebc8a4c8989d105191f7aca2afe715259a05ee7c081bf9e4470f3db6735e44c0",
+    "components/rconnect/net/CodecBefore.as": "c78e925f2b6367660d1fa90bba397a161bb7bc708a3b3cc38786b09450f9e939",
+    "components/rconnect/net/RoomCodec.as": "bd98187fb1201c118f4980a3a93e3a06b0ebed28ba1cfc1be8661dcb33762570",
+    "prepare.py": "06f42ecaa17f30230f46bdc752fd2a592e10a994ccc19acc3c2dc6b2f533673f",
+    "source.diff": "cede21830ad95d17447fcfdf42b6610831e77f043d072dc00675c5902d30b288",
+    "src/rconnect/net/RoomCodec.as": "bd98187fb1201c118f4980a3a93e3a06b0ebed28ba1cfc1be8661dcb33762570"
+  },
+  "expected_assertions": 211,
+  "compiled": false,
+  "air_started": false,
+  "installed": false
+}

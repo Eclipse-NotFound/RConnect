@@ -1,0 +1,58 @@
+{
+  "kind": "read-only-review-component-proposal",
+  "compiled": false,
+  "executed": false,
+  "roomfix1_sha256": "b26b9bac5cecc6e72eefd7767d0da64bf1bff9aa87649c67c3ac95224b370d69",
+  "stub_sources": {
+    "RConnectMod.as": {
+      "path": "experimental\\recovery-early-travel\\components\\room\\RConnectMod.as",
+      "sha256": "bdf7dd4b572a52762b2431c7d94d9818af8ef72dd5109f4bb27d807c36748f6a"
+    },
+    "rconnect/game/GameBridge.as": {
+      "path": "experimental\\recovery-early-travel\\components\\room\\rconnect\\game\\GameBridge.as",
+      "sha256": "7a603cf72191655ac66c69ba4bafcfbda1e9981343535733da4f41a0576e0200"
+    },
+    "rconnect/core/Session.as": {
+      "path": "experimental\\recovery-early-travel\\components\\room\\rconnect\\core\\Session.as",
+      "sha256": "68322b59a0a25a6b3ad2391c424eb46738ef3c621d37dd97972e3afab514a910"
+    },
+    "rconnect/core/MapGeneration.as": {
+      "path": "experimental\\recovery-early-travel\\components\\room\\rconnect\\core\\MapGeneration.as",
+      "sha256": "e6b78c857efbd100be8dcb2061e656ad4953da4b4195be10dca97b18ba8eeb4f"
+    },
+    "rconnect/core/TravelGuard.as": {
+      "path": "experimental\\recovery-early-travel\\components\\room\\rconnect\\core\\TravelGuard.as",
+      "sha256": "d62648d780765839f941667e4ceff096580f53f3dccf18c37312b5b1fc684179"
+    },
+    "rconnect/core/TravelPlacement.as": {
+      "path": "experimental\\recovery-early-travel\\components\\room\\rconnect\\core\\TravelPlacement.as",
+      "sha256": "b426e339c592d055f6e396f54aa825681eeae9d8aeea30acdd16be2faeff7c72"
+    },
+    "rconnect/core/Log.as": {
+      "path": "experimental\\recovery-early-travel\\components\\room\\rconnect\\core\\Log.as",
+      "sha256": "cffc3f4b9b4194e507a8488dfd89ad7a55e29d8fdb2519391a43668353a76237"
+    },
+    "rconnect/net/TcpLink.as": {
+      "path": "experimental\\recovery-early-travel\\components\\room\\rconnect\\net\\TcpLink.as",
+      "sha256": "3519958acdd84a1efb590e0956a49e6cc0397ca48ec2ae0d06fd0ecb6aa009ed"
+    },
+    "rconnect/net/Protocol.as": {
+      "path": "experimental\\recovery-early-travel\\components\\room\\rconnect\\net\\Protocol.as",
+      "sha256": "32f6777591247b93e05e56eced25c1b2d6d4427feacac0aa248f06afd16a0b8e"
+    },
+    "modlocales/connect/RCLocale.as": {
+      "path": "experimental\\recovery-early-travel\\components\\room\\modlocales\\connect\\RCLocale.as",
+      "sha256": "e2e718a5585b7adcb095731ea6bbbf5f7984f777798bea713f4d9551069eabef"
+    },
+    "rconnect/net/RoomCodec.as": {
+      "path": "experimental\\recovery-room-production\\src\\rconnect\\net\\RoomCodec.as",
+      "sha256": "549dbffadf05547509a0c2fe8a3637c0ef089305ebe7637322e6a196c471828c",
+      "actual_product_source": true
+    },
+    "rconnect/ui/RoomEntryView.as": {
+      "path": "experimental\\recovery-room-production\\src\\rconnect\\ui\\RoomEntryView.as",
+      "sha256": "969ffe5824685edb1bdfab3b35f9e77dbcedd4eb14b012495611277d5b7f025c",
+      "actual_product_source": true
+    }
+  }
+}

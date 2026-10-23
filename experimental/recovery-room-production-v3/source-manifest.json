@@ -1,0 +1,60 @@
+{
+  "version": "0.2.24-roomfix3",
+  "base": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-aura-offline-01",
+  "base_sha256": "df0fa0e2ca952e77e5132e75d71e73558dc919c7b8cdeba5da05fc9e94dc01e7",
+  "previous_overlay_sha256": "94f76df0c8a4e74fa25a27aa8c1aeac10ee513f0c2b6ea128a441ec2bcb47bea",
+  "review_sources": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-room-ready-once\\src\\rconnect\\core\\RoomSync.as": "1c5ac8d9c761c40d0908a2c048062a7b09f604c6b9fa34272cae27e27c52a848",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-room-ui-localization\\src\\rconnect\\ui\\RoomEntryView.as": "4cb479f39262f631b834c6290f78fcaec3b3cc102bb56f9886a71791a05efe0b"
+  },
+  "changes": {
+    "rconnect/core/MapGeneration.as": {
+      "base_sha256": "4fb1bd07b75bb9531e3915ff64abf65723e0e1e783fb17594d9c3e3c20a4489c",
+      "candidate_sha256": "ba5ea9bf85933329759575ce19e8d5260f9218c1e0aacccd1fa956d1e045a3a6"
+    },
+    "rconnect/core/RoomSync.as": {
+      "base_sha256": "536f587088965ee6f38147d11f2a07723e4c78c48062ad618814cd1f40b36163",
+      "candidate_sha256": "1c5ac8d9c761c40d0908a2c048062a7b09f604c6b9fa34272cae27e27c52a848"
+    },
+    "rconnect/game/GameBridge.as": {
+      "base_sha256": "df23182fdd362fba529b962220329bd60499efca0ee7c8ea8f2033372e84e192",
+      "candidate_sha256": "f7016bfd096ca3c88ea1214733117758b1998b579ec6f3ca9fc9332b605011a9"
+    },
+    "rconnect/game/NativeRoomState.as": {
+      "base_sha256": "4690d896500c473cb2fce1e9be0b58ace1ef687664fb88d63bb1a8f77211898a",
+      "candidate_sha256": "1e91028348b29dc1bd00dc55cf4d5df5d5ee40469ef9ea0f7e9626d30a601938"
+    },
+    "rconnect/game/NativeTileState.as": {
+      "base_sha256": null,
+      "candidate_sha256": "dab683e9d14e18e8b7e35a917da8a7e237391b602f43d315661fd0d11ce8cae5"
+    },
+    "rconnect/game/RoomTerrainView.as": {
+      "base_sha256": null,
+      "candidate_sha256": "a2eb59b8536414d26daa39a82c71c414009c5d4b29a7a24539e025d1b852877f"
+    },
+    "rconnect/game/TerrainSync.as": {
+      "base_sha256": "f1626ac1b068cca11c3252a142d769f32f864fa5d8050b24eb07d2b11ae904eb",
+      "candidate_sha256": "317c9658b0632f3bb8333c11cd302c68ef45e7a9f2f54ed6b6c631b6c1b92b44"
+    },
+    "rconnect/net/RoomCodec.as": {
+      "base_sha256": "0a5903d409914791323f9775db5a5bb253e67ba583f5d4f4b926ac72b9c8bd48",
+      "candidate_sha256": "549dbffadf05547509a0c2fe8a3637c0ef089305ebe7637322e6a196c471828c"
+    },
+    "rconnect/ui/RoomEntryView.as": {
+      "base_sha256": "b3a287a0b5925dc0b3caa0959e472b53c6b7aa56abd14ed04fe550b1febb8401",
+      "candidate_sha256": "4cb479f39262f631b834c6290f78fcaec3b3cc102bb56f9886a71791a05efe0b"
+    },
+    "RConnectMod.as": {
+      "base_sha256": "8117aa722d140a428d3eb943ceb9ae1ff60b71112984cd43a54126723926bff0",
+      "candidate_sha256": "164daa074d733263c1f6c5e507db3c880c80663e17be2512535f05e9aa45c6ae"
+    },
+    "RConnectModDomains.as": {
+      "base_sha256": null,
+      "candidate_sha256": "372167c4a32b2ac9b23b7addc7959ba3c70b7f74fea9732cdd1c650112eb9b00"
+    }
+  },
+  "recipe_sha256": "16b68d073742aeddedd536808439a55a2b2f31ba7a3d32b1e8b2e83d59fd41ad",
+  "compiled": false,
+  "tested": false,
+  "installed": false
+}

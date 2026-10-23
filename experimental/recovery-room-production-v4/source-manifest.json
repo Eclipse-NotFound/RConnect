@@ -1,0 +1,73 @@
+{
+  "version": "0.2.24-roomfix4",
+  "base": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-aura-offline-01",
+  "base_sha256": "df0fa0e2ca952e77e5132e75d71e73558dc919c7b8cdeba5da05fc9e94dc01e7",
+  "previous_overlay_sha256": "d765cf5158992f8b425c030b6323e9d052c95b6d578fc6935acfe6d78ef6d625",
+  "previous_compiled_sha256": "43277b92dc5e556702d64754c6976dd10a032008719851b71bbeb566d3104011",
+  "previous_prepared_sha256": "8fcf0337facd5fdb7cf328edc5382c4c32dae3846003ec7b5b3a5ee565ddb1ea",
+  "review_sources": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-room-production-clean\\src\\rconnect\\net\\RoomCodec.as": "bd98187fb1201c118f4980a3a93e3a06b0ebed28ba1cfc1be8661dcb33762570",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-room-production-clean\\source-manifest.json": "38c1f9e9d93b21c2faf7b43823d1c07da47a0bad94bc8408845b8954245c8ad8"
+  },
+  "changes": {
+    "rconnect/core/MapGeneration.as": {
+      "base_sha256": "4fb1bd07b75bb9531e3915ff64abf65723e0e1e783fb17594d9c3e3c20a4489c",
+      "candidate_sha256": "ba5ea9bf85933329759575ce19e8d5260f9218c1e0aacccd1fa956d1e045a3a6"
+    },
+    "rconnect/core/RoomSync.as": {
+      "base_sha256": "536f587088965ee6f38147d11f2a07723e4c78c48062ad618814cd1f40b36163",
+      "candidate_sha256": "1c5ac8d9c761c40d0908a2c048062a7b09f604c6b9fa34272cae27e27c52a848"
+    },
+    "rconnect/game/GameBridge.as": {
+      "base_sha256": "df23182fdd362fba529b962220329bd60499efca0ee7c8ea8f2033372e84e192",
+      "candidate_sha256": "f7016bfd096ca3c88ea1214733117758b1998b579ec6f3ca9fc9332b605011a9"
+    },
+    "rconnect/game/NativeRoomState.as": {
+      "base_sha256": "4690d896500c473cb2fce1e9be0b58ace1ef687664fb88d63bb1a8f77211898a",
+      "candidate_sha256": "1e91028348b29dc1bd00dc55cf4d5df5d5ee40469ef9ea0f7e9626d30a601938"
+    },
+    "rconnect/game/NativeTileState.as": {
+      "base_sha256": null,
+      "candidate_sha256": "dab683e9d14e18e8b7e35a917da8a7e237391b602f43d315661fd0d11ce8cae5"
+    },
+    "rconnect/game/RoomTerrainView.as": {
+      "base_sha256": null,
+      "candidate_sha256": "a2eb59b8536414d26daa39a82c71c414009c5d4b29a7a24539e025d1b852877f"
+    },
+    "rconnect/game/TerrainSync.as": {
+      "base_sha256": "f1626ac1b068cca11c3252a142d769f32f864fa5d8050b24eb07d2b11ae904eb",
+      "candidate_sha256": "317c9658b0632f3bb8333c11cd302c68ef45e7a9f2f54ed6b6c631b6c1b92b44"
+    },
+    "rconnect/net/RoomCodec.as": {
+      "base_sha256": "0a5903d409914791323f9775db5a5bb253e67ba583f5d4f4b926ac72b9c8bd48",
+      "candidate_sha256": "bd98187fb1201c118f4980a3a93e3a06b0ebed28ba1cfc1be8661dcb33762570"
+    },
+    "rconnect/ui/RoomEntryView.as": {
+      "base_sha256": "b3a287a0b5925dc0b3caa0959e472b53c6b7aa56abd14ed04fe550b1febb8401",
+      "candidate_sha256": "4cb479f39262f631b834c6290f78fcaec3b3cc102bb56f9886a71791a05efe0b"
+    },
+    "RConnectMod.as": {
+      "base_sha256": "8117aa722d140a428d3eb943ceb9ae1ff60b71112984cd43a54126723926bff0",
+      "candidate_sha256": "98db31d55b0289ccfe71385f57fdb1509731c1a8c88fa0616723ecc476b20ebf"
+    },
+    "RConnectModDomains.as": {
+      "base_sha256": null,
+      "candidate_sha256": "372167c4a32b2ac9b23b7addc7959ba3c70b7f74fea9732cdd1c650112eb9b00"
+    }
+  },
+  "incremental_changes": {
+    "rconnect/net/RoomCodec.as": {
+      "previous_sha256": "549dbffadf05547509a0c2fe8a3637c0ef089305ebe7637322e6a196c471828c",
+      "candidate_sha256": "bd98187fb1201c118f4980a3a93e3a06b0ebed28ba1cfc1be8661dcb33762570"
+    },
+    "RConnectMod.as": {
+      "previous_sha256": "164daa074d733263c1f6c5e507db3c880c80663e17be2512535f05e9aa45c6ae",
+      "candidate_sha256": "98db31d55b0289ccfe71385f57fdb1509731c1a8c88fa0616723ecc476b20ebf"
+    }
+  },
+  "recipe_sha256": "cbabd416c1ab8650c044869c3a17c8e659781569d26e9f774710284dccd0a286",
+  "build_recipe_sha256": "1889514c5563c5af44ee3e50c4cf08cb3108a1cda0d2904078fcab366ee142b9",
+  "compiled": false,
+  "tested": false,
+  "installed": false
+}

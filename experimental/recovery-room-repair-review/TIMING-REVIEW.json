@@ -1,0 +1,431 @@
+{
+  "kind": "room-repair-three-run-readback",
+  "performance_qualified": false,
+  "runs": {
+    "7848a5610c": {
+      "run_manifest_sha256": "d2dbf2834f0093bfb0487829d599eef3d9b30caa67407fbe8e295da83783e8b2",
+      "candidate": "df0fa0e2ca952e77e5132e75d71e73558dc919c7b8cdeba5da05fc9e94dc01e7",
+      "roles": {
+        "host": {
+          "rows": [
+            {
+              "merged": false,
+              "width": 48,
+              "solo": false,
+              "target": "random_mane",
+              "exitStart": 23,
+              "height": 25,
+              "cover": 20937,
+              "round": 0,
+              "x": 1161.8,
+              "actualMerged": false,
+              "started": 70079,
+              "y": 800,
+              "exitEnd": 12351,
+              "at": 94859,
+              "key": "random_mane//0,4,0",
+              "units": 13,
+              "elapsed": 24780,
+              "seed": 1380142925,
+              "paused": 12439
+            },
+            {
+              "merged": false,
+              "width": 48,
+              "solo": false,
+              "target": "rbl",
+              "exitStart": 59,
+              "height": 25,
+              "cover": 9857,
+              "round": 1,
+              "x": 961.8,
+              "actualMerged": false,
+              "started": 95988,
+              "y": 800,
+              "exitEnd": 5632,
+              "at": 109288,
+              "key": "rbl//0,0,0",
+              "units": 38,
+              "elapsed": 13300,
+              "seed": 0,
+              "paused": 7668
+            },
+            {
+              "merged": false,
+              "width": 48,
+              "solo": false,
+              "target": "random_mane",
+              "exitStart": 46,
+              "height": 25,
+              "cover": 15723,
+              "round": 2,
+              "x": 1161.8,
+              "actualMerged": false,
+              "started": 110346,
+              "y": 800,
+              "exitEnd": 7339,
+              "at": 129467,
+              "key": "random_mane//0,4,0",
+              "units": 13,
+              "elapsed": 19121,
+              "seed": 1380142925,
+              "paused": 11786
+            }
+          ],
+          "errors": [
+            "COOP FAIL travel-timing both arrivals share one entrance, distance=1109.233969908964 round=2"
+          ],
+          "passes": 22,
+          "log_sha256": "7a856286286157c81a42ef5f6eed36e65b01bc38f6f240b7ad10fc8ae34ade9c"
+        },
+        "join": {
+          "rows": [
+            {
+              "width": 48,
+              "merged": false,
+              "target": "random_mane",
+              "solo": false,
+              "height": 25,
+              "elapsed": 24756,
+              "round": 0,
+              "x": 1161.8,
+              "units": 19,
+              "actualMerged": false,
+              "y": 800,
+              "at": 58024,
+              "key": "random_mane//0,4,0",
+              "seed": 1380142925,
+              "started": 33268,
+              "exitEnd": 23223,
+              "exitStart": 12300,
+              "cover": 11739,
+              "paused": 959
+            },
+            {
+              "width": 48,
+              "merged": false,
+              "target": "rbl",
+              "solo": false,
+              "height": 25,
+              "elapsed": 13268,
+              "round": 1,
+              "x": 961.8,
+              "units": 47,
+              "actualMerged": false,
+              "y": 800,
+              "at": 72409,
+              "key": "rbl//0,0,0",
+              "seed": 0,
+              "started": 59141,
+              "exitEnd": 11958,
+              "exitStart": 5686,
+              "cover": 6910,
+              "paused": 757
+            },
+            {
+              "width": 48,
+              "merged": false,
+              "target": "random_mane",
+              "solo": false,
+              "height": 25,
+              "elapsed": 19241,
+              "round": 2,
+              "x": 161.8,
+              "units": 19,
+              "actualMerged": false,
+              "y": 320,
+              "at": 92714,
+              "key": "random_mane//0,4,0",
+              "seed": 1380142925,
+              "started": 73473,
+              "exitEnd": 17481,
+              "exitStart": 7360,
+              "cover": 11030,
+              "paused": 1059
+            }
+          ],
+          "errors": [],
+          "passes": 12,
+          "log_sha256": "af0a110bf3669cbd6b838f7f5712a61c9f702a791ffced8248ffc595ac9f6e3e"
+        }
+      },
+      "runtime_assets_and_driver_identical_except_production": true,
+      "slow_side_ms": [
+        24780,
+        13300,
+        19241
+      ],
+      "arrival_distance_px": [
+        0.0,
+        0.0,
+        1109.233969908964
+      ],
+      "memory_and_cleanup_passed": true,
+      "registry": {
+        "id": "4e5a950b402e40caad76c1a0c6de5ed7",
+        "passed": false,
+        "cancelled": false,
+        "note": "运行器断言及模组日志检查未通过，原始日志保留"
+      }
+    },
+    "5a156c4315": {
+      "run_manifest_sha256": "177d9ec633c6a9f430c58b18ba4d2b344edbb2493f12520b17960089ba37c9e6",
+      "candidate": "df0fa0e2ca952e77e5132e75d71e73558dc919c7b8cdeba5da05fc9e94dc01e7",
+      "roles": {
+        "host": {
+          "rows": [
+            {
+              "width": 48,
+              "round": 0,
+              "target": "random_mane",
+              "at": 41204,
+              "height": 25,
+              "x": 161.8,
+              "actualMerged": false,
+              "seed": 1380142925,
+              "merged": false,
+              "exitStart": 36,
+              "y": 320,
+              "solo": true,
+              "elapsed": 9903,
+              "key": "random_mane//0,4,0",
+              "cover": 0,
+              "units": 12,
+              "started": 31301,
+              "exitEnd": 9898,
+              "paused": 0
+            },
+            {
+              "width": 48,
+              "round": 1,
+              "target": "rbl",
+              "at": 48641,
+              "height": 25,
+              "x": 961.8,
+              "actualMerged": false,
+              "seed": 0,
+              "merged": false,
+              "exitStart": 56,
+              "y": 800,
+              "solo": true,
+              "elapsed": 6386,
+              "key": "rbl//0,0,0",
+              "cover": 0,
+              "units": 37,
+              "started": 42255,
+              "exitEnd": 6385,
+              "paused": 0
+            },
+            {
+              "width": 48,
+              "round": 2,
+              "target": "random_mane",
+              "at": 55939,
+              "height": 25,
+              "x": 161.8,
+              "actualMerged": false,
+              "seed": 1380142925,
+              "merged": false,
+              "exitStart": 33,
+              "y": 320,
+              "solo": true,
+              "elapsed": 6272,
+              "key": "random_mane//0,4,0",
+              "cover": 0,
+              "units": 12,
+              "started": 49667,
+              "exitEnd": 6269,
+              "paused": 0
+            }
+          ],
+          "errors": [],
+          "passes": 11,
+          "log_sha256": "c0eab77599ed968f9d3aa3d477828d4611d7cc9c656516978543a6017da54d4c"
+        }
+      },
+      "runtime_assets_and_driver_identical_except_production": true,
+      "slow_side_ms": [
+        9903,
+        6386,
+        6272
+      ],
+      "memory_and_cleanup_passed": true,
+      "registry": {
+        "id": "f4a5489daef54cb3ad7a56d8b743a321",
+        "passed": true,
+        "cancelled": false,
+        "note": "运行器断言及模组日志检查通过；专项范围见结果"
+      }
+    },
+    "ca57ea10db": {
+      "run_manifest_sha256": "ae3b1fd35b31f4a222784e6b144d8ded2de65ca8347c0f9e741d0a1b6b944fa5",
+      "candidate": "4d9f1cbd69d8608df525477b81c9232631cbc0032c4018bc9846e6f3b9c40341",
+      "roles": {
+        "host": {
+          "rows": [
+            {
+              "exitEnd": 7471,
+              "width": 48,
+              "round": 0,
+              "target": "random_mane",
+              "actualMerged": false,
+              "units": 11,
+              "started": 66365,
+              "elapsed": 7718,
+              "x": 161.8,
+              "seed": 1380142925,
+              "height": 25,
+              "y": 320,
+              "key": "random_mane//0,4,0",
+              "cover": 7447,
+              "at": 74083,
+              "merged": false,
+              "solo": false,
+              "exitStart": 24,
+              "paused": 132
+            },
+            {
+              "exitEnd": 1956,
+              "width": 48,
+              "round": 1,
+              "target": "rbl",
+              "actualMerged": false,
+              "units": 38,
+              "started": 75262,
+              "elapsed": 2089,
+              "x": 961.8,
+              "seed": 0,
+              "height": 25,
+              "y": 800,
+              "key": "rbl//0,0,0",
+              "cover": 1788,
+              "at": 77351,
+              "merged": false,
+              "solo": false,
+              "exitStart": 55,
+              "paused": 52
+            },
+            {
+              "exitEnd": 3492,
+              "width": 48,
+              "round": 2,
+              "target": "random_mane",
+              "actualMerged": false,
+              "units": 11,
+              "started": 78534,
+              "elapsed": 3676,
+              "x": 161.8,
+              "seed": 1380142925,
+              "height": 25,
+              "y": 320,
+              "key": "random_mane//0,4,0",
+              "cover": 3312,
+              "at": 82210,
+              "merged": false,
+              "solo": false,
+              "exitStart": 49,
+              "paused": 63
+            }
+          ],
+          "errors": [],
+          "passes": 23,
+          "log_sha256": "09eb486ffee90337b4cb674555d51edd842f81f8b9b0076e824a71088f021d41"
+        },
+        "join": {
+          "rows": [
+            {
+              "width": 48,
+              "paused": 128,
+              "target": "random_mane",
+              "at": 36128,
+              "solo": false,
+              "units": 15,
+              "started": 28371,
+              "elapsed": 7757,
+              "x": 161.8,
+              "cover": 7519,
+              "height": 25,
+              "y": 320,
+              "exitEnd": 7100,
+              "key": "random_mane//0,4,0",
+              "actualMerged": false,
+              "merged": false,
+              "exitStart": 112,
+              "seed": 1380142925,
+              "round": 0
+            },
+            {
+              "width": 48,
+              "paused": 92,
+              "target": "rbl",
+              "at": 39414,
+              "solo": false,
+              "units": 47,
+              "started": 37253,
+              "elapsed": 2161,
+              "x": 961.8,
+              "cover": 1995,
+              "height": 25,
+              "y": 800,
+              "exitEnd": 1700,
+              "key": "rbl//0,0,0",
+              "actualMerged": false,
+              "merged": false,
+              "exitStart": 25,
+              "seed": 0,
+              "round": 1
+            },
+            {
+              "width": 48,
+              "paused": 157,
+              "target": "random_mane",
+              "at": 44338,
+              "solo": false,
+              "units": 15,
+              "started": 40509,
+              "elapsed": 3829,
+              "x": 161.8,
+              "cover": 3617,
+              "height": 25,
+              "y": 320,
+              "exitEnd": 3150,
+              "key": "random_mane//0,4,0",
+              "actualMerged": false,
+              "merged": false,
+              "exitStart": 64,
+              "seed": 1380142925,
+              "round": 2
+            }
+          ],
+          "errors": [],
+          "passes": 12,
+          "log_sha256": "2119a99b67d41de8f835a980874ef6520df12553420b9be50d3c97750d303645"
+        }
+      },
+      "runtime_assets_and_driver_identical_except_production": true,
+      "slow_side_ms": [
+        7757,
+        2161,
+        3829
+      ],
+      "arrival_distance_px": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "memory_and_cleanup_passed": true,
+      "registry": {
+        "id": "dd51e480a9f34310b394b3c683de7f09",
+        "passed": true,
+        "cancelled": false,
+        "note": "运行器断言及模组日志检查通过；专项范围见结果"
+      }
+    }
+  },
+  "limits": [
+    "One run per combination; sequential cache and scheduling effects are not isolated.",
+    "Same geometry and seed do not prove identical live objects; completion unit counts differ.",
+    "solo keeps the same installed mods, but original runner disables autoRole/autoFollow/freezeAI.",
+    "Ordinary full-map travel only; no background-door or merged-scene qualification."
+  ]
+}

@@ -1,0 +1,1390 @@
+{
+  "kind": "existing-scene-timing-breakdown",
+  "run": "1cbea1016e",
+  "original_result_sha256": "48c8f516a805b2980192c61597cfa7a6545a102bb8bc6835b0e7bbbb1a377921",
+  "original_passed": false,
+  "performance_qualified": false,
+  "no_new_probe": true,
+  "roles": {
+    "host": {
+      "log_sha256": "61a765db2df41b22b56afb5540efff1fc1d8dd47bd154947fdf4ee70f7af5d43",
+      "aggregate_frames": [
+        {
+          "line": 262,
+          "value": {
+            "peerPhaseSource": "last received room-test message, not local fixture phase",
+            "p95": 118,
+            "max": 6942,
+            "frames": 1361,
+            "maxContext": {
+              "after": {
+                "nativePause": false,
+                "epoch": 1,
+                "roomOp": "ack",
+                "fading": false,
+                "busy": false,
+                "authority": true,
+                "room": "random_mane//0,0,0",
+                "ready": true,
+                "term": 1,
+                "cover": true,
+                "exit": 19,
+                "peerPhase": ""
+              },
+              "ms": 6942,
+              "before": {
+                "nativePause": false,
+                "epoch": 1,
+                "roomOp": "ack",
+                "fading": false,
+                "busy": false,
+                "authority": true,
+                "room": "rbl//0,0,0",
+                "ready": true,
+                "term": 1,
+                "cover": false,
+                "exit": 20,
+                "peerPhase": ""
+              },
+              "at": 76454,
+              "from": 69512
+            }
+          }
+        }
+      ],
+      "cases": [
+        {
+          "round": 0,
+          "result": {
+            "line": 57,
+            "value": {
+              "width": 240,
+              "round": 0,
+              "target": "random_mane",
+              "height": 125,
+              "merged": true,
+              "seed": 1380142925,
+              "x": 1161.8,
+              "units": 186,
+              "paused": 428,
+              "y": 4800,
+              "exitEnd": 7676,
+              "at": 78801,
+              "key": "random_mane//0,0,0",
+              "started": 69418,
+              "elapsed": 9383,
+              "actualMerged": true,
+              "cover": 7916,
+              "exitStart": 12,
+              "solo": false
+            }
+          },
+          "post_native_exit_ms": 1707,
+          "relevant_receives": [
+            {
+              "line": 48,
+              "value": {
+                "freshKind": "object",
+                "from": 77466,
+                "freshStateBytes": 0,
+                "barrier": 2,
+                "at": 78443,
+                "freshNull": true,
+                "freshMissing": false,
+                "own": 0,
+                "context": {
+                  "nativePause": false,
+                  "epoch": 2,
+                  "roomOp": "ready",
+                  "fading": false,
+                  "busy": false,
+                  "authority": true,
+                  "room": "random_mane//0,0,0",
+                  "ready": true,
+                  "term": 2,
+                  "cover": false,
+                  "exit": 0,
+                  "peerPhase": ""
+                },
+                "state": 0,
+                "fresh": 0,
+                "ms": 977,
+                "op": "ready"
+              }
+            },
+            {
+              "line": 49,
+              "value": {
+                "freshKind": "undefined",
+                "from": 78446,
+                "freshStateBytes": 0,
+                "at": 78446,
+                "freshNull": false,
+                "freshMissing": true,
+                "own": 0,
+                "context": {
+                  "nativePause": false,
+                  "epoch": 2,
+                  "roomOp": "request",
+                  "fading": false,
+                  "busy": false,
+                  "authority": true,
+                  "room": "random_mane//0,0,0",
+                  "ready": true,
+                  "term": 2,
+                  "cover": false,
+                  "exit": 0,
+                  "peerPhase": ""
+                },
+                "state": 0,
+                "fresh": 0,
+                "ms": 0,
+                "op": "request"
+              }
+            }
+          ],
+          "frame_gaps_250ms": [
+            {
+              "line": 40,
+              "value": {
+                "after": {
+                  "nativePause": false,
+                  "epoch": 1,
+                  "roomOp": "ack",
+                  "fading": false,
+                  "busy": false,
+                  "authority": true,
+                  "room": "random_mane//0,0,0",
+                  "ready": true,
+                  "term": 1,
+                  "cover": true,
+                  "exit": 19,
+                  "peerPhase": ""
+                },
+                "ms": 6942,
+                "before": {
+                  "nativePause": false,
+                  "epoch": 1,
+                  "roomOp": "ack",
+                  "fading": false,
+                  "busy": false,
+                  "authority": true,
+                  "room": "rbl//0,0,0",
+                  "ready": true,
+                  "term": 1,
+                  "cover": false,
+                  "exit": 20,
+                  "peerPhase": ""
+                },
+                "at": 76454,
+                "from": 69512
+              }
+            },
+            {
+              "line": 51,
+              "value": {
+                "after": {
+                  "nativePause": false,
+                  "epoch": 2,
+                  "roomOp": "request",
+                  "fading": false,
+                  "busy": false,
+                  "authority": true,
+                  "room": "random_mane//0,0,0",
+                  "ready": true,
+                  "term": 2,
+                  "cover": false,
+                  "exit": 0,
+                  "peerPhase": ""
+                },
+                "ms": 1350,
+                "before": {
+                  "nativePause": true,
+                  "epoch": 2,
+                  "roomOp": "ack",
+                  "fading": false,
+                  "busy": true,
+                  "authority": true,
+                  "room": "random_mane//0,0,0",
+                  "ready": false,
+                  "term": 1,
+                  "cover": true,
+                  "exit": 0,
+                  "peerPhase": ""
+                },
+                "at": 78675,
+                "from": 77325
+              }
+            }
+          ]
+        },
+        {
+          "round": 1,
+          "result": {
+            "line": 217,
+            "value": {
+              "width": 48,
+              "round": 1,
+              "target": "rbl",
+              "height": 25,
+              "merged": true,
+              "seed": 0,
+              "x": 961.8,
+              "units": 38,
+              "paused": 2613,
+              "y": 800,
+              "exitEnd": 2167,
+              "at": 91689,
+              "key": "rbl//0,0,0",
+              "started": 86776,
+              "elapsed": 4913,
+              "actualMerged": false,
+              "cover": 4473,
+              "exitStart": 63,
+              "solo": false
+            }
+          },
+          "post_native_exit_ms": 2746,
+          "relevant_receives": [
+            {
+              "line": 208,
+              "value": {
+                "freshKind": "undefined",
+                "from": 91537,
+                "freshStateBytes": 0,
+                "at": 91538,
+                "freshNull": false,
+                "freshMissing": true,
+                "own": 0,
+                "context": {
+                  "nativePause": true,
+                  "epoch": 3,
+                  "roomOp": "request",
+                  "fading": false,
+                  "busy": true,
+                  "authority": true,
+                  "room": "rbl//0,0,0",
+                  "ready": false,
+                  "term": 2,
+                  "cover": true,
+                  "exit": 0,
+                  "peerPhase": ""
+                },
+                "state": 0,
+                "fresh": 0,
+                "ms": 1,
+                "op": "request"
+              }
+            },
+            {
+              "line": 214,
+              "value": {
+                "freshKind": "object",
+                "from": 91539,
+                "freshStateBytes": 0,
+                "barrier": 3,
+                "at": 91618,
+                "freshNull": true,
+                "freshMissing": false,
+                "own": 0,
+                "context": {
+                  "nativePause": false,
+                  "epoch": 3,
+                  "roomOp": "ready",
+                  "fading": false,
+                  "busy": false,
+                  "authority": true,
+                  "room": "rbl//0,0,0",
+                  "ready": true,
+                  "term": 3,
+                  "cover": false,
+                  "exit": 0,
+                  "peerPhase": ""
+                },
+                "state": 0,
+                "fresh": 0,
+                "ms": 79,
+                "op": "ready"
+              }
+            }
+          ],
+          "frame_gaps_250ms": [
+            {
+              "line": 204,
+              "value": {
+                "after": {
+                  "nativePause": false,
+                  "epoch": 2,
+                  "roomOp": "ack",
+                  "fading": false,
+                  "busy": false,
+                  "authority": true,
+                  "room": "rbl//0,0,0",
+                  "ready": true,
+                  "term": 2,
+                  "cover": true,
+                  "exit": 19,
+                  "peerPhase": ""
+                },
+                "ms": 1690,
+                "before": {
+                  "nativePause": false,
+                  "epoch": 2,
+                  "roomOp": "ack",
+                  "fading": false,
+                  "busy": false,
+                  "authority": true,
+                  "room": "random_mane//0,0,0",
+                  "ready": true,
+                  "term": 2,
+                  "cover": false,
+                  "exit": 20,
+                  "peerPhase": ""
+                },
+                "at": 88768,
+                "from": 87078
+              }
+            }
+          ]
+        },
+        {
+          "round": 2,
+          "result": {
+            "line": 252,
+            "value": {
+              "width": 240,
+              "round": 2,
+              "target": "random_mane",
+              "height": 125,
+              "merged": true,
+              "seed": 1380142925,
+              "x": 1161.8,
+              "units": 186,
+              "paused": 342,
+              "y": 4800,
+              "exitEnd": 4396,
+              "at": 99247,
+              "key": "random_mane//0,0,0",
+              "started": 93582,
+              "elapsed": 5665,
+              "actualMerged": true,
+              "cover": 4419,
+              "exitStart": 42,
+              "solo": false
+            }
+          },
+          "post_native_exit_ms": 1269,
+          "relevant_receives": [
+            {
+              "line": 243,
+              "value": {
+                "freshKind": "object",
+                "from": 98203,
+                "freshStateBytes": 0,
+                "barrier": 4,
+                "at": 98979,
+                "freshNull": true,
+                "freshMissing": false,
+                "own": 0,
+                "context": {
+                  "nativePause": false,
+                  "epoch": 4,
+                  "roomOp": "ready",
+                  "fading": false,
+                  "busy": false,
+                  "authority": true,
+                  "room": "random_mane//0,0,0",
+                  "ready": true,
+                  "term": 4,
+                  "cover": false,
+                  "exit": 0,
+                  "peerPhase": ""
+                },
+                "state": 0,
+                "fresh": 0,
+                "ms": 776,
+                "op": "ready"
+              }
+            },
+            {
+              "line": 244,
+              "value": {
+                "freshKind": "undefined",
+                "from": 98981,
+                "freshStateBytes": 0,
+                "at": 98981,
+                "freshNull": false,
+                "freshMissing": true,
+                "own": 0,
+                "context": {
+                  "nativePause": false,
+                  "epoch": 4,
+                  "roomOp": "request",
+                  "fading": false,
+                  "busy": false,
+                  "authority": true,
+                  "room": "random_mane//0,0,0",
+                  "ready": true,
+                  "term": 4,
+                  "cover": false,
+                  "exit": 0,
+                  "peerPhase": ""
+                },
+                "state": 0,
+                "fresh": 0,
+                "ms": 0,
+                "op": "request"
+              }
+            }
+          ],
+          "frame_gaps_250ms": [
+            {
+              "line": 230,
+              "value": {
+                "after": {
+                  "nativePause": false,
+                  "epoch": 3,
+                  "roomOp": "ack",
+                  "fading": false,
+                  "busy": false,
+                  "authority": true,
+                  "room": "random_mane//0,0,0",
+                  "ready": true,
+                  "term": 3,
+                  "cover": true,
+                  "exit": 19,
+                  "peerPhase": ""
+                },
+                "ms": 3618,
+                "before": {
+                  "nativePause": false,
+                  "epoch": 3,
+                  "roomOp": "ack",
+                  "fading": false,
+                  "busy": false,
+                  "authority": true,
+                  "room": "rbl//0,0,0",
+                  "ready": true,
+                  "term": 3,
+                  "cover": false,
+                  "exit": 20,
+                  "peerPhase": ""
+                },
+                "at": 97399,
+                "from": 93781
+              }
+            },
+            {
+              "line": 246,
+              "value": {
+                "after": {
+                  "nativePause": false,
+                  "epoch": 4,
+                  "roomOp": "request",
+                  "fading": false,
+                  "busy": false,
+                  "authority": true,
+                  "room": "random_mane//0,0,0",
+                  "ready": true,
+                  "term": 4,
+                  "cover": false,
+                  "exit": 0,
+                  "peerPhase": ""
+                },
+                "ms": 1028,
+                "before": {
+                  "nativePause": true,
+                  "epoch": 4,
+                  "roomOp": "ack",
+                  "fading": false,
+                  "busy": true,
+                  "authority": true,
+                  "room": "random_mane//0,0,0",
+                  "ready": false,
+                  "term": 3,
+                  "cover": true,
+                  "exit": 0,
+                  "peerPhase": ""
+                },
+                "at": 99132,
+                "from": 98104
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "join": {
+      "log_sha256": "da25101be2f8586e805683e5da3cb9cc557454c3efaf00b6615b3c694b344870",
+      "aggregate_frames": [
+        {
+          "line": 133,
+          "value": {
+            "frames": 131,
+            "p95": 2849,
+            "max": 5576,
+            "peerPhaseSource": "last received room-test message, not local fixture phase",
+            "maxContext": {
+              "after": {
+                "authority": false,
+                "roomOp": "prepare",
+                "epoch": 1,
+                "ready": false,
+                "cover": true,
+                "busy": false,
+                "term": 1,
+                "fading": false,
+                "nativePause": false,
+                "room": "random_mane//0,0,0",
+                "peerPhase": "",
+                "exit": 19
+              },
+              "ms": 5576,
+              "from": 32321,
+              "at": 37897,
+              "before": {
+                "authority": false,
+                "roomOp": "prepare",
+                "epoch": 1,
+                "ready": false,
+                "cover": true,
+                "busy": false,
+                "term": 1,
+                "fading": false,
+                "nativePause": false,
+                "room": "rbl//0,0,0",
+                "peerPhase": "",
+                "exit": 20
+              }
+            }
+          }
+        }
+      ],
+      "cases": [
+        {
+          "round": 0,
+          "result": {
+            "line": 67,
+            "value": {
+              "width": 240,
+              "round": 0,
+              "target": "random_mane",
+              "exitStart": 19,
+              "actualMerged": true,
+              "solo": false,
+              "started": 32291,
+              "elapsed": 15818,
+              "x": 1161.8,
+              "seed": 1380142925,
+              "units": 317,
+              "y": 4800,
+              "merged": true,
+              "key": "random_mane//0,0,0",
+              "cover": 9027,
+              "at": 48109,
+              "height": 125,
+              "exitEnd": 6372,
+              "paused": 1320
+            }
+          },
+          "post_native_exit_ms": 9446,
+          "relevant_receives": [
+            {
+              "line": 37,
+              "value": {
+                "ms": 2,
+                "fresh": 0,
+                "at": 32297,
+                "freshMissing": true,
+                "own": 0,
+                "freshNull": false,
+                "freshKind": "undefined",
+                "from": 32295,
+                "context": {
+                  "authority": false,
+                  "roomOp": "prepare",
+                  "epoch": 1,
+                  "ready": false,
+                  "cover": true,
+                  "busy": false,
+                  "term": 1,
+                  "fading": false,
+                  "nativePause": false,
+                  "room": "rbl//0,0,0",
+                  "peerPhase": "",
+                  "exit": 21
+                },
+                "state": 0,
+                "freshStateBytes": 0,
+                "op": "prepare"
+              }
+            },
+            {
+              "line": 42,
+              "value": {
+                "ms": 2,
+                "fresh": 0,
+                "at": 40028,
+                "freshMissing": true,
+                "barrier": 2,
+                "own": 0,
+                "freshNull": false,
+                "freshKind": "undefined",
+                "from": 40026,
+                "context": {
+                  "authority": false,
+                  "roomOp": "seal",
+                  "epoch": 2,
+                  "ready": false,
+                  "cover": true,
+                  "busy": true,
+                  "term": 1,
+                  "fading": false,
+                  "nativePause": true,
+                  "room": "random_mane//0,0,0",
+                  "peerPhase": "",
+                  "exit": 0
+                },
+                "state": 0,
+                "freshStateBytes": 0,
+                "op": "seal"
+              }
+            },
+            {
+              "line": 58,
+              "value": {
+                "ms": 2208,
+                "fresh": 5,
+                "at": 43544,
+                "freshMissing": false,
+                "barrier": 2,
+                "own": 0,
+                "freshNull": false,
+                "freshKind": "boolean",
+                "from": 41336,
+                "context": {
+                  "authority": false,
+                  "roomOp": "grant",
+                  "epoch": 2,
+                  "ready": true,
+                  "cover": false,
+                  "busy": false,
+                  "term": 2,
+                  "fading": false,
+                  "nativePause": false,
+                  "room": "random_mane//0,0,0",
+                  "peerPhase": "",
+                  "exit": 0
+                },
+                "state": 203896,
+                "freshStateBytes": 0,
+                "op": "grant"
+              }
+            }
+          ],
+          "frame_gaps_250ms": [
+            {
+              "line": 39,
+              "value": {
+                "after": {
+                  "authority": false,
+                  "roomOp": "prepare",
+                  "epoch": 1,
+                  "ready": false,
+                  "cover": true,
+                  "busy": false,
+                  "term": 1,
+                  "fading": false,
+                  "nativePause": false,
+                  "room": "random_mane//0,0,0",
+                  "peerPhase": "",
+                  "exit": 19
+                },
+                "ms": 5576,
+                "from": 32321,
+                "at": 37897,
+                "before": {
+                  "authority": false,
+                  "roomOp": "prepare",
+                  "epoch": 1,
+                  "ready": false,
+                  "cover": true,
+                  "busy": false,
+                  "term": 1,
+                  "fading": false,
+                  "nativePause": false,
+                  "room": "rbl//0,0,0",
+                  "peerPhase": "",
+                  "exit": 20
+                }
+              }
+            },
+            {
+              "line": 61,
+              "value": {
+                "after": {
+                  "authority": false,
+                  "roomOp": "grant",
+                  "epoch": 2,
+                  "ready": true,
+                  "cover": false,
+                  "busy": false,
+                  "term": 2,
+                  "fading": false,
+                  "nativePause": false,
+                  "room": "random_mane//0,0,0",
+                  "peerPhase": "",
+                  "exit": 0
+                },
+                "ms": 3505,
+                "from": 41279,
+                "at": 44784,
+                "before": {
+                  "authority": false,
+                  "roomOp": "seal",
+                  "epoch": 2,
+                  "ready": false,
+                  "cover": true,
+                  "busy": true,
+                  "term": 1,
+                  "fading": false,
+                  "nativePause": true,
+                  "room": "random_mane//0,0,0",
+                  "peerPhase": "",
+                  "exit": 0
+                }
+              }
+            },
+            {
+              "line": 69,
+              "value": {
+                "after": {
+                  "authority": false,
+                  "roomOp": "grant",
+                  "epoch": 2,
+                  "ready": true,
+                  "cover": false,
+                  "busy": false,
+                  "term": 2,
+                  "fading": false,
+                  "nativePause": false,
+                  "room": "random_mane//0,0,0",
+                  "peerPhase": "",
+                  "exit": 0
+                },
+                "ms": 3435,
+                "from": 44784,
+                "at": 48219,
+                "before": {
+                  "authority": false,
+                  "roomOp": "grant",
+                  "epoch": 2,
+                  "ready": true,
+                  "cover": false,
+                  "busy": false,
+                  "term": 2,
+                  "fading": false,
+                  "nativePause": false,
+                  "room": "random_mane//0,0,0",
+                  "peerPhase": "",
+                  "exit": 0
+                }
+              }
+            }
+          ],
+          "grant_ms": 2208,
+          "after_grant_to_result_ms": 4565,
+          "restore_cumulative": {
+            "line": 56,
+            "value": {
+              "effects": 1909,
+              "total": 1994,
+              "authority": false,
+              "key": "random_mane//0,0,0",
+              "retained": false,
+              "units": 1852,
+              "foreign": true,
+              "redraw": 1993,
+              "role": 87,
+              "objects": 370,
+              "terrain": 997
+            }
+          },
+          "restore_incremental_ms": {
+            "role": 87,
+            "objects": 283,
+            "terrain": 627,
+            "units": 855,
+            "effects": 57,
+            "redraw": 84,
+            "total": 1
+          }
+        },
+        {
+          "round": 1,
+          "result": {
+            "line": 99,
+            "value": {
+              "width": 48,
+              "round": 1,
+              "target": "rbl",
+              "exitStart": 87,
+              "actualMerged": false,
+              "solo": false,
+              "started": 51736,
+              "elapsed": 3576,
+              "x": 961.8,
+              "seed": 0,
+              "units": 47,
+              "y": 800,
+              "merged": true,
+              "key": "rbl//0,0,0",
+              "cover": 2666,
+              "at": 55312,
+              "height": 25,
+              "exitEnd": 2551,
+              "paused": 144
+            }
+          },
+          "post_native_exit_ms": 1025,
+          "relevant_receives": [
+            {
+              "line": 81,
+              "value": {
+                "ms": 1,
+                "fresh": 0,
+                "at": 51740,
+                "freshMissing": true,
+                "own": 0,
+                "freshNull": false,
+                "freshKind": "undefined",
+                "from": 51739,
+                "context": {
+                  "authority": false,
+                  "roomOp": "prepare",
+                  "epoch": 2,
+                  "ready": false,
+                  "cover": true,
+                  "busy": false,
+                  "term": 2,
+                  "fading": false,
+                  "nativePause": false,
+                  "room": "random_mane//0,0,0",
+                  "peerPhase": "",
+                  "exit": 21
+                },
+                "state": 0,
+                "freshStateBytes": 0,
+                "op": "prepare"
+              }
+            },
+            {
+              "line": 84,
+              "value": {
+                "ms": 0,
+                "fresh": 0,
+                "at": 51775,
+                "freshMissing": true,
+                "barrier": 3,
+                "own": 0,
+                "freshNull": false,
+                "freshKind": "undefined",
+                "from": 51775,
+                "context": {
+                  "authority": false,
+                  "roomOp": "seal",
+                  "epoch": 3,
+                  "ready": false,
+                  "cover": true,
+                  "busy": false,
+                  "term": 2,
+                  "fading": false,
+                  "nativePause": false,
+                  "room": "random_mane//0,0,0",
+                  "peerPhase": "",
+                  "exit": 21
+                },
+                "state": 0,
+                "freshStateBytes": 0,
+                "op": "seal"
+              }
+            },
+            {
+              "line": 95,
+              "value": {
+                "ms": 817,
+                "fresh": 5,
+                "at": 55230,
+                "freshMissing": false,
+                "barrier": 3,
+                "own": 0,
+                "freshNull": false,
+                "freshKind": "boolean",
+                "from": 54413,
+                "context": {
+                  "authority": false,
+                  "roomOp": "grant",
+                  "epoch": 3,
+                  "ready": true,
+                  "cover": false,
+                  "busy": false,
+                  "term": 3,
+                  "fading": false,
+                  "nativePause": false,
+                  "room": "rbl//0,0,0",
+                  "peerPhase": "",
+                  "exit": 0
+                },
+                "state": 18760,
+                "freshStateBytes": 0,
+                "op": "grant"
+              }
+            }
+          ],
+          "frame_gaps_250ms": [
+            {
+              "line": 85,
+              "value": {
+                "after": {
+                  "authority": false,
+                  "roomOp": "seal",
+                  "epoch": 3,
+                  "ready": false,
+                  "cover": true,
+                  "busy": false,
+                  "term": 2,
+                  "fading": false,
+                  "nativePause": false,
+                  "room": "random_mane//0,0,0",
+                  "peerPhase": "",
+                  "exit": 21
+                },
+                "ms": 280,
+                "from": 51501,
+                "at": 51781,
+                "before": {
+                  "authority": false,
+                  "roomOp": "grant",
+                  "epoch": 2,
+                  "ready": true,
+                  "cover": false,
+                  "busy": false,
+                  "term": 2,
+                  "fading": false,
+                  "nativePause": false,
+                  "room": "random_mane//0,0,0",
+                  "peerPhase": "",
+                  "exit": 0
+                }
+              }
+            },
+            {
+              "line": 86,
+              "value": {
+                "after": {
+                  "authority": false,
+                  "roomOp": "seal",
+                  "epoch": 3,
+                  "ready": false,
+                  "cover": true,
+                  "busy": false,
+                  "term": 2,
+                  "fading": false,
+                  "nativePause": false,
+                  "room": "rbl//0,0,0",
+                  "peerPhase": "",
+                  "exit": 19
+                },
+                "ms": 2250,
+                "from": 51865,
+                "at": 54115,
+                "before": {
+                  "authority": false,
+                  "roomOp": "seal",
+                  "epoch": 3,
+                  "ready": false,
+                  "cover": true,
+                  "busy": false,
+                  "term": 2,
+                  "fading": false,
+                  "nativePause": false,
+                  "room": "random_mane//0,0,0",
+                  "peerPhase": "",
+                  "exit": 20
+                }
+              }
+            },
+            {
+              "line": 96,
+              "value": {
+                "after": {
+                  "authority": false,
+                  "roomOp": "grant",
+                  "epoch": 3,
+                  "ready": true,
+                  "cover": false,
+                  "busy": false,
+                  "term": 3,
+                  "fading": false,
+                  "nativePause": false,
+                  "room": "rbl//0,0,0",
+                  "peerPhase": "",
+                  "exit": 0
+                },
+                "ms": 900,
+                "from": 54395,
+                "at": 55295,
+                "before": {
+                  "authority": false,
+                  "roomOp": "seal",
+                  "epoch": 3,
+                  "ready": false,
+                  "cover": true,
+                  "busy": true,
+                  "term": 2,
+                  "fading": false,
+                  "nativePause": true,
+                  "room": "rbl//0,0,0",
+                  "peerPhase": "",
+                  "exit": 0
+                }
+              }
+            }
+          ],
+          "grant_ms": 817,
+          "after_grant_to_result_ms": 82,
+          "restore_cumulative": {
+            "line": 93,
+            "value": {
+              "effects": 773,
+              "authority": false,
+              "total": 792,
+              "units": 767,
+              "key": "rbl//0,0,0",
+              "terrain": 734,
+              "foreign": true,
+              "redraw": 790,
+              "terrainReused": true,
+              "role": 615,
+              "objects": 634,
+              "retained": false
+            }
+          },
+          "restore_incremental_ms": {
+            "role": 615,
+            "objects": 19,
+            "terrain": 100,
+            "units": 33,
+            "effects": 6,
+            "redraw": 17,
+            "total": 2
+          }
+        },
+        {
+          "round": 2,
+          "result": {
+            "line": 130,
+            "value": {
+              "width": 240,
+              "round": 2,
+              "target": "random_mane",
+              "exitStart": 32,
+              "actualMerged": true,
+              "solo": false,
+              "started": 56393,
+              "elapsed": 8966,
+              "x": 1161.8,
+              "seed": 1380142925,
+              "units": 317,
+              "y": 4800,
+              "merged": true,
+              "key": "random_mane//0,0,0",
+              "cover": 5376,
+              "at": 65359,
+              "height": 125,
+              "exitEnd": 3961,
+              "paused": 863
+            }
+          },
+          "post_native_exit_ms": 5005,
+          "relevant_receives": [
+            {
+              "line": 105,
+              "value": {
+                "ms": 1,
+                "fresh": 0,
+                "at": 56398,
+                "freshMissing": true,
+                "own": 0,
+                "freshNull": false,
+                "freshKind": "undefined",
+                "from": 56397,
+                "context": {
+                  "authority": false,
+                  "roomOp": "prepare",
+                  "epoch": 3,
+                  "ready": false,
+                  "cover": true,
+                  "busy": false,
+                  "term": 3,
+                  "fading": false,
+                  "nativePause": false,
+                  "room": "rbl//0,0,0",
+                  "peerPhase": "",
+                  "exit": 21
+                },
+                "state": 0,
+                "freshStateBytes": 0,
+                "op": "prepare"
+              }
+            },
+            {
+              "line": 108,
+              "value": {
+                "ms": 1,
+                "fresh": 0,
+                "at": 60928,
+                "freshMissing": true,
+                "barrier": 4,
+                "own": 0,
+                "freshNull": false,
+                "freshKind": "undefined",
+                "from": 60927,
+                "context": {
+                  "authority": false,
+                  "roomOp": "seal",
+                  "epoch": 4,
+                  "ready": false,
+                  "cover": true,
+                  "busy": true,
+                  "term": 3,
+                  "fading": false,
+                  "nativePause": true,
+                  "room": "random_mane//0,0,0",
+                  "peerPhase": "",
+                  "exit": 0
+                },
+                "state": 0,
+                "freshStateBytes": 0,
+                "op": "seal"
+              }
+            },
+            {
+              "line": 119,
+              "value": {
+                "ms": 2264,
+                "fresh": 5,
+                "at": 64050,
+                "freshMissing": false,
+                "barrier": 4,
+                "own": 0,
+                "freshNull": false,
+                "freshKind": "boolean",
+                "from": 61786,
+                "context": {
+                  "authority": false,
+                  "roomOp": "grant",
+                  "epoch": 4,
+                  "ready": true,
+                  "cover": false,
+                  "busy": false,
+                  "term": 4,
+                  "fading": false,
+                  "nativePause": false,
+                  "room": "random_mane//0,0,0",
+                  "peerPhase": "",
+                  "exit": 0
+                },
+                "state": 204276,
+                "freshStateBytes": 0,
+                "op": "grant"
+              }
+            }
+          ],
+          "frame_gaps_250ms": [
+            {
+              "line": 106,
+              "value": {
+                "after": {
+                  "authority": false,
+                  "roomOp": "prepare",
+                  "epoch": 3,
+                  "ready": false,
+                  "cover": true,
+                  "busy": false,
+                  "term": 3,
+                  "fading": false,
+                  "nativePause": false,
+                  "room": "random_mane//0,0,0",
+                  "peerPhase": "",
+                  "exit": 19
+                },
+                "ms": 3275,
+                "from": 56449,
+                "at": 59724,
+                "before": {
+                  "authority": false,
+                  "roomOp": "prepare",
+                  "epoch": 3,
+                  "ready": false,
+                  "cover": true,
+                  "busy": false,
+                  "term": 3,
+                  "fading": false,
+                  "nativePause": false,
+                  "room": "rbl//0,0,0",
+                  "peerPhase": "",
+                  "exit": 20
+                }
+              }
+            },
+            {
+              "line": 124,
+              "value": {
+                "after": {
+                  "authority": false,
+                  "roomOp": "grant",
+                  "epoch": 4,
+                  "ready": true,
+                  "cover": false,
+                  "busy": false,
+                  "term": 4,
+                  "fading": false,
+                  "nativePause": false,
+                  "room": "random_mane//0,0,0",
+                  "peerPhase": "",
+                  "exit": 0
+                },
+                "ms": 3520,
+                "from": 61741,
+                "at": 65261,
+                "before": {
+                  "authority": false,
+                  "roomOp": "seal",
+                  "epoch": 4,
+                  "ready": false,
+                  "cover": true,
+                  "busy": true,
+                  "term": 3,
+                  "fading": false,
+                  "nativePause": true,
+                  "room": "random_mane//0,0,0",
+                  "peerPhase": "",
+                  "exit": 0
+                }
+              }
+            },
+            {
+              "line": 132,
+              "value": {
+                "after": {
+                  "authority": false,
+                  "roomOp": "grant",
+                  "epoch": 4,
+                  "ready": true,
+                  "cover": false,
+                  "busy": false,
+                  "term": 4,
+                  "fading": false,
+                  "nativePause": false,
+                  "room": "random_mane//0,0,0",
+                  "peerPhase": "",
+                  "exit": 0
+                },
+                "ms": 269,
+                "from": 65261,
+                "at": 65530,
+                "before": {
+                  "authority": false,
+                  "roomOp": "grant",
+                  "epoch": 4,
+                  "ready": true,
+                  "cover": false,
+                  "busy": false,
+                  "term": 4,
+                  "fading": false,
+                  "nativePause": false,
+                  "room": "random_mane//0,0,0",
+                  "peerPhase": "",
+                  "exit": 0
+                }
+              }
+            }
+          ],
+          "grant_ms": 2264,
+          "after_grant_to_result_ms": 1309,
+          "restore_cumulative": {
+            "line": 117,
+            "value": {
+              "effects": 1927,
+              "authority": false,
+              "total": 2051,
+              "units": 1885,
+              "key": "random_mane//0,0,0",
+              "terrain": 836,
+              "foreign": true,
+              "redraw": 2051,
+              "terrainReused": true,
+              "role": 78,
+              "objects": 305,
+              "retained": false
+            }
+          },
+          "restore_incremental_ms": {
+            "role": 78,
+            "objects": 227,
+            "terrain": 531,
+            "units": 1049,
+            "effects": 42,
+            "redraw": 124,
+            "total": 0
+          }
+        }
+      ]
+    }
+  },
+  "first_join_post_exit_segments": [
+    {
+      "start": "native_exit_observed",
+      "end": "seal_handler_start",
+      "from_ms": 38663,
+      "to_ms": 40026,
+      "elapsed_ms": 1363
+    },
+    {
+      "start": "seal_handler_start",
+      "end": "grant_handler_start",
+      "from_ms": 40026,
+      "to_ms": 41336,
+      "elapsed_ms": 1310
+    },
+    {
+      "start": "grant_handler_start",
+      "end": "grant_handler_end",
+      "from_ms": 41336,
+      "to_ms": 43544,
+      "elapsed_ms": 2208
+    },
+    {
+      "start": "grant_handler_end",
+      "end": "first_postgrant_frame_boundary",
+      "from_ms": 43544,
+      "to_ms": 44784,
+      "elapsed_ms": 1240
+    },
+    {
+      "start": "first_postgrant_frame_boundary",
+      "end": "travel_result",
+      "from_ms": 44784,
+      "to_ms": 48109,
+      "elapsed_ms": 3325
+    }
+  ],
+  "limitations": [
+    "Process-local getTimer clocks are not a shared wall clock.",
+    "Aggregate frame distributions include bootstrap and different wait durations.",
+    "Frame gaps and nested handler/restore times overlap; do not add them.",
+    "No function attribution exists for the 4565ms grant-to-result tail.",
+    "loc.units.length includes mirror hit proxies and is not enemy count."
+  ]
+}

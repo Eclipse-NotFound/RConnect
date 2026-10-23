@@ -1,0 +1,42 @@
+{
+  "kind": "room-ready-once-source-proposal",
+  "compiled": false,
+  "executed": false,
+  "source_candidate_sha256": "c26b1aa7dccf6e96c4027f551332a2b55d413467b24311426a20c8d341058cc0",
+  "original_room_sync_sha256": "0874c604817bdf9e1c8e48fce6e9717effa245e523bb4cd4916f276dafe09cc5",
+  "base_component": "mods\\RConnect\\experimental\\recovery-room-repair-review\\components\\crossing-v2",
+  "base_sources": {
+    "RConnectMod.as": "bdf7dd4b572a52762b2431c7d94d9818af8ef72dd5109f4bb27d807c36748f6a",
+    "RoomCrossingChecks.as": "9694c36694214854228e1025a3dd41da876b1151476912ac83f3794bc3070ad9",
+    "modlocales/connect/RCLocale.as": "e2e718a5585b7adcb095731ea6bbbf5f7984f777798bea713f4d9551069eabef",
+    "rconnect/core/Log.as": "cffc3f4b9b4194e507a8488dfd89ad7a55e29d8fdb2519391a43668353a76237",
+    "rconnect/core/MapGeneration.as": "e6b78c857efbd100be8dcb2061e656ad4953da4b4195be10dca97b18ba8eeb4f",
+    "rconnect/core/RoomSync.as": "0874c604817bdf9e1c8e48fce6e9717effa245e523bb4cd4916f276dafe09cc5",
+    "rconnect/core/Session.as": "68322b59a0a25a6b3ad2391c424eb46738ef3c621d37dd97972e3afab514a910",
+    "rconnect/core/TravelGuard.as": "d62648d780765839f941667e4ceff096580f53f3dccf18c37312b5b1fc684179",
+    "rconnect/core/TravelPlacement.as": "b426e339c592d055f6e396f54aa825681eeae9d8aeea30acdd16be2faeff7c72",
+    "rconnect/game/GameBridge.as": "9176ba1a4db5c971afb253d31efbda804fda350d3e2a6dc194d1821e6925092c",
+    "rconnect/net/Protocol.as": "32f6777591247b93e05e56eced25c1b2d6d4427feacac0aa248f06afd16a0b8e",
+    "rconnect/net/RoomCodec.as": "549dbffadf05547509a0c2fe8a3637c0ef089305ebe7637322e6a196c471828c",
+    "rconnect/net/TcpLink.as": "3519958acdd84a1efb590e0956a49e6cc0397ca48ec2ae0d06fd0ecb6aa009ed",
+    "rconnect/ui/RoomEntryView.as": "969ffe5824685edb1bdfab3b35f9e77dbcedd4eb14b012495611277d5b7f025c"
+  },
+  "files": {
+    "RoomSync.patch": "6c306e4535b69f93d212b7ce0fb5d48a3c25938a101bfd192902b6063870404f",
+    "component/RConnectMod.as": "bdf7dd4b572a52762b2431c7d94d9818af8ef72dd5109f4bb27d807c36748f6a",
+    "component/RoomCrossingChecks.as": "98b2a1b41185d20ff12e4d37bf69ffd5899acbc362e50e1a2078c24e61895430",
+    "component/modlocales/connect/RCLocale.as": "e2e718a5585b7adcb095731ea6bbbf5f7984f777798bea713f4d9551069eabef",
+    "component/rconnect/core/Log.as": "cffc3f4b9b4194e507a8488dfd89ad7a55e29d8fdb2519391a43668353a76237",
+    "component/rconnect/core/MapGeneration.as": "e6b78c857efbd100be8dcb2061e656ad4953da4b4195be10dca97b18ba8eeb4f",
+    "component/rconnect/core/RoomSync.as": "1c5ac8d9c761c40d0908a2c048062a7b09f604c6b9fa34272cae27e27c52a848",
+    "component/rconnect/core/Session.as": "68322b59a0a25a6b3ad2391c424eb46738ef3c621d37dd97972e3afab514a910",
+    "component/rconnect/core/TravelGuard.as": "81dd614dd5d8d59a86668925e853d2a627847a1a3e6d11fa6e7b2f6ef8d817b2",
+    "component/rconnect/core/TravelPlacement.as": "b426e339c592d055f6e396f54aa825681eeae9d8aeea30acdd16be2faeff7c72",
+    "component/rconnect/game/GameBridge.as": "9176ba1a4db5c971afb253d31efbda804fda350d3e2a6dc194d1821e6925092c",
+    "component/rconnect/net/Protocol.as": "32f6777591247b93e05e56eced25c1b2d6d4427feacac0aa248f06afd16a0b8e",
+    "component/rconnect/net/RoomCodec.as": "549dbffadf05547509a0c2fe8a3637c0ef089305ebe7637322e6a196c471828c",
+    "component/rconnect/net/TcpLink.as": "3519958acdd84a1efb590e0956a49e6cc0397ca48ec2ae0d06fd0ecb6aa009ed",
+    "component/rconnect/ui/RoomEntryView.as": "969ffe5824685edb1bdfab3b35f9e77dbcedd4eb14b012495611277d5b7f025c",
+    "src/rconnect/core/RoomSync.as": "1c5ac8d9c761c40d0908a2c048062a7b09f604c6b9fa34272cae27e27c52a848"
+  }
+}

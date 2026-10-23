@@ -1,0 +1,9 @@
+{
+  "kind": "same fixture; exact roomfix1 RoomSync replacement only",
+  "source": "experimental\\recovery-room-repair-review\\components\\crossing",
+  "RoomSync_source": "experimental\\recovery-room-production\\src\\rconnect\\core\\RoomSync.as",
+  "RoomSync_sha256": "b26b9bac5cecc6e72eefd7767d0da64bf1bff9aa87649c67c3ac95224b370d69",
+  "compiled": false,
+  "executed": false,
+  "expectation": "nonzero; demonstrates old implementation fails these new cases"
+}
