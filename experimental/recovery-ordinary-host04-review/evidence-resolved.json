@@ -1,0 +1,1994 @@
+{
+  "kind": "independent-static-intermediate-review",
+  "inputs": {
+    "acc": {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-ordinary-wall-sv-host-04\\acc.xml",
+      "sha256": "9b01992ac70cdfab2e2747230780720cb5e24b6d3450eb36e6e91a66a8af0998"
+    },
+    "grafonOnly": {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-ordinary-wall-sv-host-04\\grafon-only.xml",
+      "sha256": "51a6730dd22edddbf83fb87d69b071e0e4931ff85c892b0ad704b7de47f61011"
+    },
+    "donor03": {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-ordinary-wall-sv-host-04\\donor03.xml",
+      "sha256": "4e47c6528fe7518585a5bde6bdea31229b001bb9ee549404c808577d9967ee82"
+    }
+  },
+  "reviewScriptSha256": "235a03d6a44d9d63e029945dc42ed59a55ed1b2c2236dfe552886487bc0283b2",
+  "comparatorSha256": "ac4383a6fa899ee62caa54282ae6f31e5ddb83cebabfc65a920ea5954f0f46de",
+  "stage": [
+    {
+      "abcIndex": 0,
+      "headerExact": true,
+      "classIndicesExact": true,
+      "nonGrafonNamedIndicesExact": true,
+      "methodInfoCounts": [
+        3322,
+        3334
+      ],
+      "bodyCounts": [
+        3291,
+        3303
+      ],
+      "changedOldMethodInfo": [
+        {
+          "index": 3217,
+          "name": "fe.graph.Grafon::0:1:rconnectWallNotify"
+        },
+        {
+          "index": 3218,
+          "name": "fe.graph.Grafon::0:1:rconnectWallBaseClips"
+        },
+        {
+          "index": 3219,
+          "name": "fe.graph.Grafon::0:2:rconnectRasterPending"
+        },
+        {
+          "index": 3220,
+          "name": "fe.graph.Grafon::0:1:rconnectRasterWaiting"
+        },
+        {
+          "index": 3221,
+          "name": "fe.graph.Grafon::0:1:rconnectRasterPainted"
+        },
+        {
+          "index": 3222,
+          "name": "fe.graph.Grafon::0:1:sceneOpen"
+        },
+        {
+          "index": 3223,
+          "name": "fe.graph.Grafon::0:1:sceneRender"
+        },
+        {
+          "index": 3224,
+          "name": "fe.graph.Grafon::0:1:sceneEnsure"
+        },
+        {
+          "index": 3225,
+          "name": "fe.graph.Grafon::0:1:sceneTick"
+        },
+        {
+          "index": 3226,
+          "name": "fe.graph.Grafon::0:1:sceneViewport"
+        },
+        {
+          "index": 3227,
+          "name": "fe.graph.Grafon::0:1:sceneCullSurfaces"
+        },
+        {
+          "index": 3228,
+          "name": "fe.graph.Grafon::0:1:sceneApplyCompactDecal"
+        },
+        {
+          "index": 3229,
+          "name": "fe.graph.Grafon::0:1:sceneDecalBounds"
+        },
+        {
+          "index": 3230,
+          "name": "fe.graph.Grafon::0:1:sceneDecalAlphaBounds"
+        },
+        {
+          "index": 3231,
+          "name": "fe.graph.Grafon::0:1:sceneDecalSourcePixel"
+        },
+        {
+          "index": 3232,
+          "name": "fe.graph.Grafon::0:1:sceneDecalPaint"
+        },
+        {
+          "index": 3233,
+          "name": "fe.graph.Grafon::0:1:sceneDecalArtBounds"
+        },
+        {
+          "index": 3234,
+          "name": "fe.graph.Grafon::0:1:sceneDecalTransformBounds"
+        },
+        {
+          "index": 3235,
+          "name": "fe.graph.Grafon::0:1:sceneApply"
+        },
+        {
+          "index": 3236,
+          "name": "fe.graph.Grafon::0:1:sceneRestoreMarks"
+        },
+        {
+          "index": 3237,
+          "name": "fe.graph.Grafon::0:1:sceneSats"
+        },
+        {
+          "index": 3238,
+          "name": "fe.graph.Grafon::0:1:sceneTrack"
+        },
+        {
+          "index": 3239,
+          "name": "fe.graph.Grafon::0:1:sceneSave"
+        },
+        {
+          "index": 3240,
+          "name": "fe.graph.Grafon::0:1:sceneSetRegions"
+        },
+        {
+          "index": 3241,
+          "name": "fe.graph.Grafon::0:1:sceneSyncRegionLighting"
+        },
+        {
+          "index": 3242,
+          "name": "fe.graph.Grafon::0:1:sceneRegionStyle"
+        },
+        {
+          "index": 3243,
+          "name": "fe.graph.Grafon::0:1:sceneRegionSlices"
+        },
+        {
+          "index": 3244,
+          "name": "fe.graph.Grafon::0:1:sceneRegionStyleKey"
+        },
+        {
+          "index": 3245,
+          "name": "fe.graph.Grafon::0:1:sceneRegionColorKey"
+        },
+        {
+          "index": 3246,
+          "name": "fe.graph.Grafon::0:1:sceneRegionClearScratch"
+        },
+        {
+          "index": 3247,
+          "name": "fe.graph.Grafon::0:1:sceneRegionDrawPass"
+        },
+        {
+          "index": 3248,
+          "name": "fe.graph.Grafon::0:1:sceneRegionEnsureScratch"
+        },
+        {
+          "index": 3249,
+          "name": "fe.graph.Grafon::0:1:sceneApplyRegionAction"
+        },
+        {
+          "index": 3250,
+          "name": "fe.graph.Grafon::0:1:sceneDrawRegionChunk"
+        },
+        {
+          "index": 3251,
+          "name": "fe.graph.Grafon::0:1:sceneUpdateEntityColor"
+        },
+        {
+          "index": 3252,
+          "name": "fe.graph.Grafon::0:1:sceneEntitySameColor"
+        },
+        {
+          "index": 3253,
+          "name": "fe.graph.Grafon::0:1:scenePreloadAll"
+        },
+        {
+          "index": 3254,
+          "name": "fe.graph.Grafon::0:1:sceneFinishBatch"
+        },
+        {
+          "index": 3255,
+          "name": "fe.graph.Grafon::0:1:scenePreloadRegions"
+        },
+        {
+          "index": 3256,
+          "name": "fe.graph.Grafon::0:1:sceneNativeBackwall"
+        },
+        {
+          "index": 3257,
+          "name": "fe.graph.Grafon::0:1:sceneNativeCall"
+        },
+        {
+          "index": 3258,
+          "name": "fe.graph.Grafon::0:1:sceneSetNativeEnvironment"
+        },
+        {
+          "index": 3259,
+          "name": "fe.graph.Grafon::0:1:sceneNativeEnvironment"
+        },
+        {
+          "index": 3260,
+          "name": "fe.graph.Grafon::0:1:sceneForgetLand"
+        },
+        {
+          "index": 3261,
+          "name": "fe.graph.Grafon::0:1:sceneResetGeneration"
+        },
+        {
+          "index": 3262,
+          "name": "fe.graph.Grafon::0:1:sceneMaterialFill"
+        },
+        {
+          "index": 3263,
+          "name": "fe.graph.Grafon::0:1:sceneConfigureBorders"
+        },
+        {
+          "index": 3264,
+          "name": "fe.graph.Grafon::0:1:sceneViewReady"
+        },
+        {
+          "index": 3265,
+          "name": "fe.graph.Grafon::0:1:sceneEnsureUpcoming"
+        },
+        {
+          "index": 3266,
+          "name": "fe.graph.Grafon::0:1:sceneFirstWindow"
+        },
+        {
+          "index": 3267,
+          "name": "fe.graph.Grafon::0:1:sceneDrawSteps"
+        },
+        {
+          "index": 3268,
+          "name": "fe.graph.Grafon::0:1:sceneCancelWarm"
+        },
+        {
+          "index": 3269,
+          "name": "fe.graph.Grafon::0:1:sceneClearWarm"
+        },
+        {
+          "index": 3270,
+          "name": "fe.graph.Grafon::0:1:sceneBeginWarm"
+        },
+        {
+          "index": 3271,
+          "name": "fe.graph.Grafon::0:1:sceneAdvanceWarm"
+        },
+        {
+          "index": 3272,
+          "name": "fe.graph.Grafon::0:1:checkLoaded"
+        },
+        {
+          "index": 3273,
+          "name": "fe.graph.Grafon::0:1:allProgress"
+        },
+        {
+          "index": 3274,
+          "name": "fe.graph.Grafon::0:1:createCursors"
+        },
+        {
+          "index": 3275,
+          "name": "fe.graph.Grafon::0:1:createCursor"
+        },
+        {
+          "index": 3276,
+          "name": "fe.graph.Grafon::0:1:getObj"
+        },
+        {
+          "index": 3277,
+          "name": "fe.graph.Grafon::0:1:drawFon"
+        },
+        {
+          "index": 3278,
+          "name": "fe.graph.Grafon::0:1:setFonSize"
+        },
+        {
+          "index": 3279,
+          "name": "fe.graph.Grafon::0:1:warShadow"
+        },
+        {
+          "index": 3280,
+          "name": "fe.graph.Grafon::0:1:drawLoc"
+        },
+        {
+          "index": 3281,
+          "name": "fe.graph.Grafon::0:1:setLight"
+        },
+        {
+          "index": 3282,
+          "name": "fe.graph.Grafon::0:1:drawAllObjs"
+        },
+        {
+          "index": 3283,
+          "name": "fe.graph.Grafon::0:1:drawBackWall"
+        },
+        {
+          "index": 3284,
+          "name": "fe.graph.Grafon::0:1:setMCT"
+        },
+        {
+          "index": 3285,
+          "name": "fe.graph.Grafon::0:1:drawKusok"
+        },
+        {
+          "index": 3286,
+          "name": "fe.graph.Grafon::0:1:getSpriteList"
+        },
+        {
+          "index": 3287,
+          "name": "fe.graph.Grafon::0:1:drawSats"
+        },
+        {
+          "index": 3288,
+          "name": "fe.graph.Grafon::0:1:onSats"
+        },
+        {
+          "index": 3289,
+          "name": "fe.graph.Grafon::0:1:drawWater"
+        },
+        {
+          "index": 3290,
+          "name": "fe.graph.Grafon::0:1:tileDie"
+        },
+        {
+          "index": 3291,
+          "name": "fe.graph.Grafon::0:1:dyrka"
+        },
+        {
+          "index": 3292,
+          "name": "fe.graph.Grafon::0:1:decal"
+        },
+        {
+          "index": 3293,
+          "name": "fe.graph.Grafon::0:1:gwall"
+        },
+        {
+          "index": 3294,
+          "name": "fe.graph.Grafon::0:1:paint"
+        },
+        {
+          "index": 3295,
+          "name": "fe.graph.Grafon::0:1:specEffect"
+        },
+        {
+          "index": 3296,
+          "name": null
+        },
+        {
+          "index": 3297,
+          "name": null
+        },
+        {
+          "index": 3298,
+          "name": null
+        },
+        {
+          "index": 3299,
+          "name": null
+        },
+        {
+          "index": 3300,
+          "name": null
+        },
+        {
+          "index": 3303,
+          "name": null
+        },
+        {
+          "index": 3304,
+          "name": null
+        },
+        {
+          "index": 3305,
+          "name": null
+        },
+        {
+          "index": 3306,
+          "name": null
+        },
+        {
+          "index": 3308,
+          "name": null
+        },
+        {
+          "index": 3309,
+          "name": null
+        },
+        {
+          "index": 3310,
+          "name": null
+        },
+        {
+          "index": 3311,
+          "name": null
+        },
+        {
+          "index": 3314,
+          "name": null
+        },
+        {
+          "index": 3315,
+          "name": null
+        },
+        {
+          "index": 3316,
+          "name": null
+        },
+        {
+          "index": 3320,
+          "name": "fe.graph.Grafon::<init>"
+        },
+        {
+          "index": 3321,
+          "name": "fe.graph.Grafon::<static>"
+        }
+      ],
+      "changedOldBodies": [
+        {
+          "index": 3217,
+          "name": "fe.graph.Grafon::0:1:rconnectWallNotify"
+        },
+        {
+          "index": 3218,
+          "name": "fe.graph.Grafon::0:1:rconnectWallBaseClips"
+        },
+        {
+          "index": 3219,
+          "name": "fe.graph.Grafon::0:2:rconnectRasterPending"
+        },
+        {
+          "index": 3220,
+          "name": "fe.graph.Grafon::0:1:rconnectRasterWaiting"
+        },
+        {
+          "index": 3221,
+          "name": "fe.graph.Grafon::0:1:rconnectRasterPainted"
+        },
+        {
+          "index": 3222,
+          "name": "fe.graph.Grafon::0:1:sceneOpen"
+        },
+        {
+          "index": 3223,
+          "name": "fe.graph.Grafon::0:1:sceneRender"
+        },
+        {
+          "index": 3224,
+          "name": "fe.graph.Grafon::0:1:sceneEnsure"
+        },
+        {
+          "index": 3225,
+          "name": "fe.graph.Grafon::0:1:sceneTick"
+        },
+        {
+          "index": 3226,
+          "name": "fe.graph.Grafon::0:1:sceneViewport"
+        },
+        {
+          "index": 3227,
+          "name": "fe.graph.Grafon::0:1:sceneCullSurfaces"
+        },
+        {
+          "index": 3228,
+          "name": "fe.graph.Grafon::0:1:sceneApplyCompactDecal"
+        },
+        {
+          "index": 3229,
+          "name": "fe.graph.Grafon::0:1:sceneDecalBounds"
+        },
+        {
+          "index": 3230,
+          "name": "fe.graph.Grafon::0:1:sceneDecalAlphaBounds"
+        },
+        {
+          "index": 3231,
+          "name": "fe.graph.Grafon::0:1:sceneDecalSourcePixel"
+        },
+        {
+          "index": 3232,
+          "name": "fe.graph.Grafon::0:1:sceneDecalPaint"
+        },
+        {
+          "index": 3233,
+          "name": "fe.graph.Grafon::0:1:sceneDecalArtBounds"
+        },
+        {
+          "index": 3234,
+          "name": "fe.graph.Grafon::0:1:sceneDecalTransformBounds"
+        },
+        {
+          "index": 3235,
+          "name": "fe.graph.Grafon::0:1:sceneApply"
+        },
+        {
+          "index": 3236,
+          "name": "fe.graph.Grafon::0:1:sceneRestoreMarks"
+        },
+        {
+          "index": 3237,
+          "name": "fe.graph.Grafon::0:1:sceneSats"
+        },
+        {
+          "index": 3238,
+          "name": "fe.graph.Grafon::0:1:sceneTrack"
+        },
+        {
+          "index": 3239,
+          "name": "fe.graph.Grafon::0:1:sceneSave"
+        },
+        {
+          "index": 3240,
+          "name": "fe.graph.Grafon::0:1:sceneSetRegions"
+        },
+        {
+          "index": 3241,
+          "name": "fe.graph.Grafon::0:1:sceneSyncRegionLighting"
+        },
+        {
+          "index": 3242,
+          "name": "fe.graph.Grafon::0:1:sceneRegionStyle"
+        },
+        {
+          "index": 3243,
+          "name": "fe.graph.Grafon::0:1:sceneRegionSlices"
+        },
+        {
+          "index": 3244,
+          "name": "fe.graph.Grafon::0:1:sceneRegionStyleKey"
+        },
+        {
+          "index": 3245,
+          "name": "fe.graph.Grafon::0:1:sceneRegionColorKey"
+        },
+        {
+          "index": 3246,
+          "name": "fe.graph.Grafon::0:1:sceneRegionClearScratch"
+        },
+        {
+          "index": 3247,
+          "name": "fe.graph.Grafon::0:1:sceneRegionDrawPass"
+        },
+        {
+          "index": 3248,
+          "name": "fe.graph.Grafon::0:1:sceneRegionEnsureScratch"
+        },
+        {
+          "index": 3249,
+          "name": "fe.graph.Grafon::0:1:sceneApplyRegionAction"
+        },
+        {
+          "index": 3250,
+          "name": "fe.graph.Grafon::0:1:sceneDrawRegionChunk"
+        },
+        {
+          "index": 3251,
+          "name": "fe.graph.Grafon::0:1:sceneUpdateEntityColor"
+        },
+        {
+          "index": 3252,
+          "name": "fe.graph.Grafon::0:1:sceneEntitySameColor"
+        },
+        {
+          "index": 3253,
+          "name": "fe.graph.Grafon::0:1:scenePreloadAll"
+        },
+        {
+          "index": 3254,
+          "name": "fe.graph.Grafon::0:1:sceneFinishBatch"
+        },
+        {
+          "index": 3255,
+          "name": "fe.graph.Grafon::0:1:scenePreloadRegions"
+        },
+        {
+          "index": 3256,
+          "name": "fe.graph.Grafon::0:1:sceneNativeBackwall"
+        },
+        {
+          "index": 3257,
+          "name": "fe.graph.Grafon::0:1:sceneNativeCall"
+        },
+        {
+          "index": 3258,
+          "name": "fe.graph.Grafon::0:1:sceneSetNativeEnvironment"
+        },
+        {
+          "index": 3259,
+          "name": "fe.graph.Grafon::0:1:sceneNativeEnvironment"
+        },
+        {
+          "index": 3260,
+          "name": "fe.graph.Grafon::0:1:sceneForgetLand"
+        },
+        {
+          "index": 3261,
+          "name": "fe.graph.Grafon::0:1:sceneResetGeneration"
+        },
+        {
+          "index": 3262,
+          "name": "fe.graph.Grafon::0:1:sceneMaterialFill"
+        },
+        {
+          "index": 3263,
+          "name": "fe.graph.Grafon::0:1:sceneConfigureBorders"
+        },
+        {
+          "index": 3264,
+          "name": "fe.graph.Grafon::0:1:sceneViewReady"
+        },
+        {
+          "index": 3265,
+          "name": "fe.graph.Grafon::0:1:sceneEnsureUpcoming"
+        },
+        {
+          "index": 3266,
+          "name": "fe.graph.Grafon::0:1:sceneFirstWindow"
+        },
+        {
+          "index": 3296,
+          "name": null
+        },
+        {
+          "index": 3297,
+          "name": null
+        },
+        {
+          "index": 3298,
+          "name": null
+        },
+        {
+          "index": 3299,
+          "name": null
+        },
+        {
+          "index": 3300,
+          "name": null
+        },
+        {
+          "index": 3301,
+          "name": null
+        },
+        {
+          "index": 3302,
+          "name": null
+        },
+        {
+          "index": 3303,
+          "name": null
+        },
+        {
+          "index": 3304,
+          "name": null
+        },
+        {
+          "index": 3305,
+          "name": null
+        },
+        {
+          "index": 3306,
+          "name": null
+        },
+        {
+          "index": 3307,
+          "name": null
+        },
+        {
+          "index": 3308,
+          "name": null
+        },
+        {
+          "index": 3309,
+          "name": null
+        },
+        {
+          "index": 3310,
+          "name": null
+        },
+        {
+          "index": 3311,
+          "name": null
+        },
+        {
+          "index": 3312,
+          "name": null
+        },
+        {
+          "index": 3313,
+          "name": null
+        },
+        {
+          "index": 3314,
+          "name": null
+        },
+        {
+          "index": 3315,
+          "name": null
+        },
+        {
+          "index": 3316,
+          "name": null
+        },
+        {
+          "index": 3317,
+          "name": null
+        },
+        {
+          "index": 3318,
+          "name": null
+        },
+        {
+          "index": 3319,
+          "name": null
+        },
+        {
+          "index": 3267,
+          "name": "fe.graph.Grafon::0:1:sceneDrawSteps"
+        },
+        {
+          "index": 3268,
+          "name": "fe.graph.Grafon::0:1:sceneCancelWarm"
+        },
+        {
+          "index": 3269,
+          "name": "fe.graph.Grafon::0:1:sceneClearWarm"
+        },
+        {
+          "index": 3270,
+          "name": "fe.graph.Grafon::0:1:sceneBeginWarm"
+        },
+        {
+          "index": 3271,
+          "name": "fe.graph.Grafon::0:1:sceneAdvanceWarm"
+        },
+        {
+          "index": 3272,
+          "name": "fe.graph.Grafon::0:1:checkLoaded"
+        },
+        {
+          "index": 3273,
+          "name": "fe.graph.Grafon::0:1:allProgress"
+        },
+        {
+          "index": 3274,
+          "name": "fe.graph.Grafon::0:1:createCursors"
+        },
+        {
+          "index": 3275,
+          "name": "fe.graph.Grafon::0:1:createCursor"
+        },
+        {
+          "index": 3276,
+          "name": "fe.graph.Grafon::0:1:getObj"
+        },
+        {
+          "index": 3277,
+          "name": "fe.graph.Grafon::0:1:drawFon"
+        },
+        {
+          "index": 3278,
+          "name": "fe.graph.Grafon::0:1:setFonSize"
+        },
+        {
+          "index": 3279,
+          "name": "fe.graph.Grafon::0:1:warShadow"
+        },
+        {
+          "index": 3280,
+          "name": "fe.graph.Grafon::0:1:drawLoc"
+        },
+        {
+          "index": 3281,
+          "name": "fe.graph.Grafon::0:1:setLight"
+        },
+        {
+          "index": 3282,
+          "name": "fe.graph.Grafon::0:1:drawAllObjs"
+        },
+        {
+          "index": 3283,
+          "name": "fe.graph.Grafon::0:1:drawBackWall"
+        },
+        {
+          "index": 3284,
+          "name": "fe.graph.Grafon::0:1:setMCT"
+        },
+        {
+          "index": 3285,
+          "name": "fe.graph.Grafon::0:1:drawKusok"
+        },
+        {
+          "index": 3286,
+          "name": "fe.graph.Grafon::0:1:getSpriteList"
+        },
+        {
+          "index": 3287,
+          "name": "fe.graph.Grafon::0:1:drawSats"
+        },
+        {
+          "index": 3288,
+          "name": "fe.graph.Grafon::0:1:onSats"
+        },
+        {
+          "index": 3289,
+          "name": "fe.graph.Grafon::0:1:drawWater"
+        },
+        {
+          "index": 3290,
+          "name": "fe.graph.Grafon::0:1:tileDie"
+        },
+        {
+          "index": 3291,
+          "name": "fe.graph.Grafon::0:1:dyrka"
+        },
+        {
+          "index": 3292,
+          "name": "fe.graph.Grafon::0:1:decal"
+        },
+        {
+          "index": 3293,
+          "name": "fe.graph.Grafon::0:1:gwall"
+        },
+        {
+          "index": 3294,
+          "name": "fe.graph.Grafon::0:1:paint"
+        },
+        {
+          "index": 3295,
+          "name": "fe.graph.Grafon::0:1:specEffect"
+        },
+        {
+          "index": 3320,
+          "name": "fe.graph.Grafon::<init>"
+        },
+        {
+          "index": 3321,
+          "name": "fe.graph.Grafon::<static>"
+        }
+      ],
+      "newMethods": [
+        {
+          "index": 3322,
+          "name": null
+        },
+        {
+          "index": 3323,
+          "name": null
+        },
+        {
+          "index": 3324,
+          "name": null
+        },
+        {
+          "index": 3325,
+          "name": "fe.graph.Grafon::1:1:ordinaryRoom"
+        },
+        {
+          "index": 3326,
+          "name": "fe.graph.Grafon::1:1:ordinaryNotify"
+        },
+        {
+          "index": 3327,
+          "name": "fe.graph.Grafon::1:1:ordinaryBitmap"
+        },
+        {
+          "index": 3328,
+          "name": "fe.graph.Grafon::1:1:rconnectOrdinaryPrepare"
+        },
+        {
+          "index": 3329,
+          "name": "fe.graph.Grafon::1:1:rconnectOrdinaryPending"
+        },
+        {
+          "index": 3330,
+          "name": "fe.graph.Grafon::1:1:ordinaryUnion"
+        },
+        {
+          "index": 3331,
+          "name": "fe.graph.Grafon::1:1:ordinaryClip"
+        },
+        {
+          "index": 3332,
+          "name": "fe.graph.Grafon::<init>"
+        },
+        {
+          "index": 3333,
+          "name": "fe.graph.Grafon::<static>"
+        }
+      ],
+      "nonGrafonMethodInfoChanges": [],
+      "nonGrafonBodyChanges": [],
+      "classLayoutChanges": [
+        {
+          "class": "fe.graph.Grafon",
+          "part": "instance"
+        },
+        {
+          "class": "fe.graph.Grafon",
+          "part": "static"
+        }
+      ],
+      "constantPrefix": {
+        "constant_int": {
+          "old": 126,
+          "new": 126,
+          "mismatchedIndices": []
+        },
+        "constant_uint": {
+          "old": 0,
+          "new": 0,
+          "mismatchedIndices": []
+        },
+        "constant_double": {
+          "old": 101,
+          "new": 101,
+          "mismatchedIndices": []
+        },
+        "constant_decimal": {
+          "old": 0,
+          "new": 0,
+          "mismatchedIndices": []
+        },
+        "constant_float": {
+          "old": 0,
+          "new": 0,
+          "mismatchedIndices": []
+        },
+        "constant_float4": {
+          "old": 0,
+          "new": 0,
+          "mismatchedIndices": []
+        },
+        "constant_string": {
+          "old": 8125,
+          "new": 8208,
+          "mismatchedIndices": []
+        },
+        "constant_namespace": {
+          "old": 866,
+          "new": 866,
+          "mismatchedIndices": []
+        },
+        "constant_namespace_set": {
+          "old": 182,
+          "new": 182,
+          "mismatchedIndices": []
+        },
+        "constant_multiname": {
+          "old": 9639,
+          "new": 9718,
+          "mismatchedIndices": []
+        }
+      },
+      "grafonOwnedMethodIds": [
+        3206,
+        3207,
+        3208,
+        3209,
+        3210,
+        3211,
+        3212,
+        3213,
+        3214,
+        3215,
+        3216,
+        3217,
+        3218,
+        3219,
+        3220,
+        3221,
+        3222,
+        3223,
+        3224,
+        3225,
+        3226,
+        3227,
+        3228,
+        3229,
+        3230,
+        3231,
+        3232,
+        3233,
+        3234,
+        3235,
+        3236,
+        3237,
+        3238,
+        3239,
+        3240,
+        3241,
+        3242,
+        3243,
+        3244,
+        3245,
+        3246,
+        3247,
+        3248,
+        3249,
+        3250,
+        3251,
+        3252,
+        3253,
+        3254,
+        3255,
+        3256,
+        3257,
+        3258,
+        3259,
+        3260,
+        3261,
+        3262,
+        3263,
+        3264,
+        3265,
+        3266,
+        3267,
+        3268,
+        3269,
+        3270,
+        3271,
+        3272,
+        3273,
+        3274,
+        3275,
+        3276,
+        3277,
+        3278,
+        3279,
+        3280,
+        3281,
+        3282,
+        3283,
+        3284,
+        3285,
+        3286,
+        3287,
+        3288,
+        3289,
+        3290,
+        3291,
+        3292,
+        3293,
+        3294,
+        3295,
+        3296,
+        3297,
+        3298,
+        3299,
+        3300,
+        3301,
+        3302,
+        3303,
+        3304,
+        3305,
+        3306,
+        3307,
+        3308,
+        3309,
+        3310,
+        3311,
+        3312,
+        3313,
+        3314,
+        3315,
+        3316,
+        3317,
+        3318,
+        3319,
+        3320,
+        3321
+      ],
+      "grafonOwnedClosureEdges": [
+        {
+          "from": 3267,
+          "to": 3296,
+          "offset": 160
+        },
+        {
+          "from": 3267,
+          "to": 3297,
+          "offset": 171
+        },
+        {
+          "from": 3267,
+          "to": 3298,
+          "offset": 182
+        },
+        {
+          "from": 3267,
+          "to": 3299,
+          "offset": 193
+        },
+        {
+          "from": 3267,
+          "to": 3300,
+          "offset": 204
+        },
+        {
+          "from": 3267,
+          "to": 3301,
+          "offset": 215
+        },
+        {
+          "from": 3267,
+          "to": 3302,
+          "offset": 226
+        },
+        {
+          "from": 3267,
+          "to": 3304,
+          "offset": 237
+        },
+        {
+          "from": 3267,
+          "to": 3306,
+          "offset": 251
+        },
+        {
+          "from": 3267,
+          "to": 3307,
+          "offset": 265
+        },
+        {
+          "from": 3267,
+          "to": 3309,
+          "offset": 287
+        },
+        {
+          "from": 3267,
+          "to": 3310,
+          "offset": 324
+        },
+        {
+          "from": 3267,
+          "to": 3311,
+          "offset": 335
+        },
+        {
+          "from": 3267,
+          "to": 3312,
+          "offset": 346
+        },
+        {
+          "from": 3267,
+          "to": 3313,
+          "offset": 357
+        },
+        {
+          "from": 3267,
+          "to": 3314,
+          "offset": 368
+        },
+        {
+          "from": 3267,
+          "to": 3316,
+          "offset": 379
+        },
+        {
+          "from": 3267,
+          "to": 3317,
+          "offset": 393
+        },
+        {
+          "from": 3267,
+          "to": 3318,
+          "offset": 404
+        },
+        {
+          "from": 3267,
+          "to": 3319,
+          "offset": 415
+        },
+        {
+          "from": 3316,
+          "to": 3315,
+          "offset": 23
+        },
+        {
+          "from": 3309,
+          "to": 3308,
+          "offset": 21
+        },
+        {
+          "from": 3306,
+          "to": 3305,
+          "offset": 23
+        },
+        {
+          "from": 3304,
+          "to": 3303,
+          "offset": 23
+        }
+      ],
+      "newGrafonOwnedMethodIds": [
+        3206,
+        3207,
+        3208,
+        3209,
+        3210,
+        3211,
+        3212,
+        3213,
+        3214,
+        3215,
+        3216,
+        3217,
+        3218,
+        3219,
+        3220,
+        3221,
+        3222,
+        3223,
+        3224,
+        3225,
+        3226,
+        3227,
+        3228,
+        3229,
+        3230,
+        3231,
+        3232,
+        3233,
+        3234,
+        3235,
+        3236,
+        3237,
+        3238,
+        3239,
+        3240,
+        3241,
+        3242,
+        3243,
+        3244,
+        3245,
+        3246,
+        3247,
+        3248,
+        3249,
+        3250,
+        3251,
+        3252,
+        3253,
+        3254,
+        3255,
+        3256,
+        3257,
+        3258,
+        3259,
+        3260,
+        3261,
+        3262,
+        3263,
+        3264,
+        3265,
+        3266,
+        3267,
+        3268,
+        3269,
+        3270,
+        3271,
+        3272,
+        3273,
+        3274,
+        3275,
+        3276,
+        3277,
+        3278,
+        3279,
+        3280,
+        3281,
+        3282,
+        3283,
+        3284,
+        3285,
+        3286,
+        3287,
+        3288,
+        3289,
+        3290,
+        3291,
+        3292,
+        3293,
+        3294,
+        3295,
+        3296,
+        3297,
+        3298,
+        3299,
+        3300,
+        3301,
+        3302,
+        3303,
+        3304,
+        3305,
+        3306,
+        3307,
+        3308,
+        3309,
+        3310,
+        3311,
+        3312,
+        3313,
+        3314,
+        3315,
+        3316,
+        3317,
+        3318,
+        3319,
+        3320,
+        3321,
+        3322,
+        3323,
+        3324,
+        3325,
+        3326,
+        3327,
+        3328,
+        3329,
+        3330,
+        3331,
+        3332,
+        3333
+      ],
+      "newGrafonOwnedClosureEdges": [
+        {
+          "from": 3272,
+          "to": 3301,
+          "offset": 160
+        },
+        {
+          "from": 3272,
+          "to": 3302,
+          "offset": 171
+        },
+        {
+          "from": 3272,
+          "to": 3303,
+          "offset": 182
+        },
+        {
+          "from": 3272,
+          "to": 3304,
+          "offset": 193
+        },
+        {
+          "from": 3272,
+          "to": 3305,
+          "offset": 204
+        },
+        {
+          "from": 3272,
+          "to": 3306,
+          "offset": 215
+        },
+        {
+          "from": 3272,
+          "to": 3307,
+          "offset": 226
+        },
+        {
+          "from": 3272,
+          "to": 3309,
+          "offset": 237
+        },
+        {
+          "from": 3272,
+          "to": 3311,
+          "offset": 251
+        },
+        {
+          "from": 3272,
+          "to": 3312,
+          "offset": 265
+        },
+        {
+          "from": 3272,
+          "to": 3314,
+          "offset": 287
+        },
+        {
+          "from": 3272,
+          "to": 3315,
+          "offset": 324
+        },
+        {
+          "from": 3272,
+          "to": 3316,
+          "offset": 335
+        },
+        {
+          "from": 3272,
+          "to": 3317,
+          "offset": 346
+        },
+        {
+          "from": 3272,
+          "to": 3318,
+          "offset": 357
+        },
+        {
+          "from": 3272,
+          "to": 3319,
+          "offset": 368
+        },
+        {
+          "from": 3272,
+          "to": 3321,
+          "offset": 379
+        },
+        {
+          "from": 3272,
+          "to": 3322,
+          "offset": 393
+        },
+        {
+          "from": 3272,
+          "to": 3323,
+          "offset": 404
+        },
+        {
+          "from": 3272,
+          "to": 3324,
+          "offset": 415
+        },
+        {
+          "from": 3321,
+          "to": 3320,
+          "offset": 23
+        },
+        {
+          "from": 3314,
+          "to": 3313,
+          "offset": 21
+        },
+        {
+          "from": 3311,
+          "to": 3310,
+          "offset": 23
+        },
+        {
+          "from": 3309,
+          "to": 3308,
+          "offset": 23
+        }
+      ],
+      "scriptInfoExact": true,
+      "otherMetadataExact": true,
+      "location": {
+        "classIndex": 14,
+        "methodCountIncludingConstructors": 75,
+        "methodInfoExact": true,
+        "completeBodiesExact": true,
+        "instanceTraitsHeaderExact": true,
+        "staticTraitsHeaderExact": true,
+        "constructorMethods": {
+          "fe.loc.Location::<init>": {
+            "index": 192,
+            "codeSha256": "8ae2542320f364d5c9d7456a6dfe63c4df1f059f07d0a1f1f9ec5ca9fac4cbc1"
+          },
+          "fe.loc.Location::<static>": {
+            "index": 191,
+            "codeSha256": "a968960b201420953c59656517f78c74a88e3e2aebf37839d8e70f6e531134c4"
+          }
+        },
+        "unchangedMethodCodeHashes": {
+          "fe.loc.Location::<init>": "8ae2542320f364d5c9d7456a6dfe63c4df1f059f07d0a1f1f9ec5ca9fac4cbc1",
+          "fe.loc.Location::<static>": "a968960b201420953c59656517f78c74a88e3e2aebf37839d8e70f6e531134c4",
+          "fe.loc.Location::0:1:addPlayer": "51cbcdfd59d49ae5a43a97fed0ad88795f3f720ca58c5ed1c1e8e548de2a6aad",
+          "fe.loc.Location::0:1:buildLoc": "d63e8a6acb857a071d9188df8a8530dcd03436432a277d72165f3866802f442e",
+          "fe.loc.Location::0:1:colorFilter": "80dc9e323b55af075f4c64057f4c0fcec97bb48f0e93a65f14bed49f832b5422",
+          "fe.loc.Location::0:1:setDoor": "d9d01352bfb9ff64df1e29856e34efb741bab7c7120359b6b4dab2f688793ec6",
+          "fe.loc.Location::0:1:addSignPost": "2e42b475e6712df057f03fb0a20bf753c615772aee1241e42717b1a97bea6f74",
+          "fe.loc.Location::0:1:addEnSpawn": "13cc312c51bb59f8fdeb9d64a479b4f492080c8ca80aebfec281ba207baf34b4",
+          "fe.loc.Location::0:1:setNoObj": "602566a92a46de537ce54ad2270b949ff6d802bcd3dee31d34157ae5cc3c0ea9",
+          "fe.loc.Location::0:1:mainFrame": "836280fd1d5ad3c9adfad5db14ae402b5a2fab6fe92997696444cd66aef6a789",
+          "fe.loc.Location::0:1:setObjects": "4c2f881dc5517d70137c7d7754a1724f5d08d1030094be3fb5c8044ce4939523",
+          "fe.loc.Location::0:1:setKolEn": "249c2e24bf1e0de43b30589ae93776fe06c7a9edb1af01ae6648b4aef9867760",
+          "fe.loc.Location::0:1:setRandomUnits": "502f4c27b0be3ea75d1676ba6f35913edfcf6127e9412d2579c949a20bce65e2",
+          "fe.loc.Location::0:1:putRandomLoot": "d6d28d40f628719b7a85b0a9ff2e3effe5e455788e1d1468feb2e9043b0d1749",
+          "fe.loc.Location::0:1:createUnit": "d8ce8a9214df9751c7b13d83558e0ee5da0b86bfde6b691ca426f088107833b8",
+          "fe.loc.Location::0:1:createPhoenix": "cbf0d700cb9f8571e1574a5eff172abc7cee4aef44e0c80ddc49c7a9159b3d74",
+          "fe.loc.Location::0:1:createTransmitter": "ddeba17f06655c31afc92f91a309049799001a34d8eb74b20bc5a70885e49c63",
+          "fe.loc.Location::0:1:createSur": "84f08c23875b8b105ff01334b0b4501712783fa700d647b640abbcf911e2ee77",
+          "fe.loc.Location::0:1:createHidden": "974219404059f1d2d041ff58002a3751af8be10dc12d66126d65f7ffe117545a",
+          "fe.loc.Location::0:1:createClouds": "5710373010c75906075f734d7dab3629e61abe756ed15471aa0e19d3295df2a3",
+          "fe.loc.Location::0:1:randomUnit": "b5617b783b673d9ba92426f6f1e5d926f951855450f0de64b15ea363416da629",
+          "fe.loc.Location::0:1:randomCid": "66aeca39a1e5cfee0035c4935d464db32283d3180ea259660f2387f87cff81af",
+          "fe.loc.Location::0:1:createObj": "20885652b5b2704d46ff4a283a0f5e6445a5bab5c26e098f70d53d142154609c",
+          "fe.loc.Location::0:1:createCheck": "c42f87744f80dc8fb6314cfcfe7821d2220f2b423a2dc2c02386f525b6683bb8",
+          "fe.loc.Location::0:1:createExit": "0d3d467d4f81c3a4b23b06e708d5e7e1efdd89f92ed1a86d2535b06f63545314",
+          "fe.loc.Location::0:1:createDoorProb": "cb9e294f1d46741d52e6964aa1bc10849a0f215a8f3e25ae1dde0900bc4d5445",
+          "fe.loc.Location::0:1:createXpBonuses": "e23899e3c8b908349507eb0382f84503799bf756bedc21fbf07b583b753aab16",
+          "fe.loc.Location::0:1:preStep": "a78b35f298c0d5d516172853e3ace29a446fb81a2cd5f53b0dd07380d31c23be",
+          "fe.loc.Location::0:1:reactivate": "bd1a442d8b32a051caaf35dd3721ff51d4b9b409eff703daeeb4fc213e340d22",
+          "fe.loc.Location::0:1:resetUnits": "a61342c2b82c816d83acda35d0ca1ed779d41a521d3a0c13a2f19c2b08642368",
+          "fe.loc.Location::0:1:isAct": "e7cb2b3841bc3ed10f24b6787fc4fd37c5e794dd428c74b2bca38717e1ce620b",
+          "fe.loc.Location::0:1:out": "e1118534f81e12da263dfa4384d172e4c135fd7daeb2cb82c2a9c4041fc3cf04",
+          "fe.loc.Location::0:1:addObj": "6ff25b2440a3849ae85b7172dcb2a6d2d4319a334d94990ef93d6d1dacdd5012",
+          "fe.loc.Location::0:1:remObj": "a4bb4526112e18b39885900972aca5cef47447887130dfca29220b8fade5d191",
+          "fe.loc.Location::0:1:getTile": "e4d280d93f8e5ae0b528936d30b19aa5804534d3268b791d6eb659e25794c1a3",
+          "fe.loc.Location::0:1:getAbsTile": "90a8d5a60331a2ad65890f4f58214e864288fd0a9fd7ee5a4396e70c164dea4f",
+          "fe.loc.Location::0:1:collisionUnit": "52787159e7b242c9e0b421233595fb1b0ce13a5aec75af505d70c34bd995ee86",
+          "fe.loc.Location::0:1:isLine": "103be9ad7196c5da3eb7eadf81755779fcc16bef316e2923c9419e03730616ff",
+          "fe.loc.Location::0:1:tileKontur": "2d4ce2c1991a7649a2c07a37fa4edd6a1585d28e19dbc415bd424dccd722f9a0",
+          "fe.loc.Location::0:1:insKontur": "ef713073d82506da07b81d7215fe574e0bc6047c3b8cf0bbf51e5063ba378396",
+          "fe.loc.Location::0:1:uslKontur": "0a5bb8a114c3e0d012e84f5534a4f973258c337dc0ba9739eb7a105d1e6ad435",
+          "fe.loc.Location::0:1:uslPontur": "de967d5cc60681d8ade89e7ec63513ca2a15a6bd881a1f40ca84c77215c50395",
+          "fe.loc.Location::0:1:uslBontur": "96ecec17b13cfc75e4c6e83920084b9f7385343d40676311af21c36e28b072a0",
+          "fe.loc.Location::0:1:hitTile": "5b3fe9bfff4bf445c75925559871b0b78f892759d890d42dc4898b9f5b2a6063",
+          "fe.loc.Location::0:1:dieTile": "4e6144550650e16b824bf9de719ae22774271aa95221b46890e1f7bd4043513d",
+          "fe.loc.Location::0:1:rebuild": "dfe7cd58e47a2eee198172c97c9b50959375b76cd0d19493f64190de4d9fc9af",
+          "fe.loc.Location::0:1:recalcWater": "6c73e8abd78dc912d7963a33047f6d3103e46621319e4e5b504c90cd3a6d2fa8",
+          "fe.loc.Location::0:1:testTile": "97b61940cc48dc10cfa34a194371000f6d0a7a111c873f3fd10dceb3c94e5a5f",
+          "fe.loc.Location::0:1:drawMap": "e458740daa698766977dab9a24694718af10ea5c20e13ddd015223727e31c378",
+          "fe.loc.Location::0:1:drawMapObj": "150f879c4fc07a2d1439366aa68fb0de7a99b9195ef3109d51ad4d254ca1994a",
+          "fe.loc.Location::0:1:allAct": "3c370b1a22001b2442eec36ca5a54cc7b092c6ae2e34daff47a01228667f4161",
+          "fe.loc.Location::0:1:budilo": "8ec90074fce3f95e34b67779a4dfa1129009b9347529edfbe039b8a77ccd8f53",
+          "fe.loc.Location::0:1:electroCheck": "f2656803656112ecc4a5cb06031824acf9d1c34e0b5faee22ce204f1901294a1",
+          "fe.loc.Location::0:1:robocellActivate": "ec5c0b57bacf70254b53cbaf59a43f5bb826ecb7a9a1978d2b06e2fc56a10d2e",
+          "fe.loc.Location::0:1:signal": "da9612c364dd8c07b710965241bb4df79fddf0f455d75c23c255b84be6cb4d70",
+          "fe.loc.Location::0:1:allon": "fad83020aa1f4d6bd14e6e7870f5f309c7f9f9f789094021ff44c1af6538a2f3",
+          "fe.loc.Location::0:1:alloff": "352b5bbb9a68f8ac6c99baf22cb1059cf36b1c3ba72238a80b84f0bc0770868a",
+          "fe.loc.Location::0:1:enemySpawn": "9662a1688212d6c9f59b66d0c074c0a8ad5b4569c5ce70e7628a237545ae40d8",
+          "fe.loc.Location::0:1:waveSpawn": "b00b4f68439639478dae22a77cc550ba1a3ca7173f1ae0b8dd4b8d3bc4d36269",
+          "fe.loc.Location::0:1:earthQuake": "6ff667a97771b428eed03bed6ee0bbe4419cf3264d94bb7cde321c1c2a03eb1a",
+          "fe.loc.Location::0:1:createHealBonus": "dc1b1e06501925dd9a8814c6a959de4bb53c0f39655b113432f9110588311093",
+          "fe.loc.Location::0:1:gwalls": "56151cec68e43dba3dccc73b8514bd42c1ad4bf569a35428a917c7fc39b75904",
+          "fe.loc.Location::0:1:lightAll": "f4d63396fe6c19178af35248e8da052a934905664465733a39762cfaed71a300",
+          "fe.loc.Location::0:1:lighting": "6d1753e4b00b49c53053134248c2dcc9aa09ac2f35480a2c37fd9fdc54b26bc8",
+          "fe.loc.Location::0:1:lighting2": "a0b6ea69f14c1df2afd7f03ce529d1687777197a52884fc0f30b3efed66da1db",
+          "fe.loc.Location::0:1:takeXP": "4c27a1f83d03217a44c53e0fbedfc7afbdbdc0da3fd2ca0528bd74b557c46b62",
+          "fe.loc.Location::0:1:stepInvis": "c969f68fed857df6e28c445eb220fe3dd22f4d6ad0eec586567f13fac32db340",
+          "fe.loc.Location::0:1:step": "775a6c5607a63e9fb3a10d2a84d13946eaba67d2c54cc878a36d6658141f2d9e",
+          "fe.loc.Location::0:1:getAll": "4039b9f00ce0311823688844124ef03cbca2c54214b6f9eeb079e54538b6c457",
+          "fe.loc.Location::0:1:openAllPrize": "4a0b4e0bcb7eb31df946128a3e196926a439483b63c2250dbc52a1c9aa37d4db",
+          "fe.loc.Location::0:1:getDist": "646db8656d4cac127e27e855df83aa3996f529ffd350af695f13dcd27771d205",
+          "fe.loc.Location::0:1:showSign": "13b4bc50d0c90bf1cc7768666b24da54a1c5937d184f45720b88b3ce52d275bd",
+          "fe.loc.Location::0:1:newGrenade": "45d787e0376967221cac9fdd50ef28d218c7d5ca81dbe785019685f50717aeb3",
+          "fe.loc.Location::0:1:remGrenade": "d2353b773f4ded76ab59f067a48a3c9c1bbb0dc8883d8707e43f3abb27d22b1a",
+          "fe.loc.Location::0:1:saveObjs": "59b69a4e0f890df71b65ee4a666983f0170c43fce8625dace583425daa0efdd1"
+        }
+      },
+      "unchangedNonGrafonBodyCount": 3175,
+      "nonGrafonPreserved": true
+    },
+    {
+      "abcIndex": 1,
+      "headerExact": true,
+      "classIndicesExact": true,
+      "nonGrafonNamedIndicesExact": true,
+      "methodInfoCounts": [
+        2486,
+        2486
+      ],
+      "bodyCounts": [
+        2486,
+        2486
+      ],
+      "changedOldMethodInfo": [],
+      "changedOldBodies": [],
+      "newMethods": [],
+      "nonGrafonMethodInfoChanges": [],
+      "nonGrafonBodyChanges": [],
+      "classLayoutChanges": [],
+      "constantPrefix": {
+        "constant_int": {
+          "old": 0,
+          "new": 0,
+          "mismatchedIndices": []
+        },
+        "constant_uint": {
+          "old": 0,
+          "new": 0,
+          "mismatchedIndices": []
+        },
+        "constant_double": {
+          "old": 4,
+          "new": 4,
+          "mismatchedIndices": []
+        },
+        "constant_decimal": {
+          "old": 0,
+          "new": 0,
+          "mismatchedIndices": []
+        },
+        "constant_float": {
+          "old": 0,
+          "new": 0,
+          "mismatchedIndices": []
+        },
+        "constant_float4": {
+          "old": 0,
+          "new": 0,
+          "mismatchedIndices": []
+        },
+        "constant_string": {
+          "old": 1081,
+          "new": 1081,
+          "mismatchedIndices": []
+        },
+        "constant_namespace": {
+          "old": 795,
+          "new": 795,
+          "mismatchedIndices": []
+        },
+        "constant_namespace_set": {
+          "old": 32,
+          "new": 32,
+          "mismatchedIndices": []
+        },
+        "constant_multiname": {
+          "old": 936,
+          "new": 936,
+          "mismatchedIndices": []
+        }
+      },
+      "grafonOwnedMethodIds": [],
+      "grafonOwnedClosureEdges": [],
+      "newGrafonOwnedMethodIds": [],
+      "newGrafonOwnedClosureEdges": [],
+      "scriptInfoExact": true,
+      "otherMetadataExact": true,
+      "location": null,
+      "unchangedNonGrafonBodyCount": 2486,
+      "nonGrafonPreserved": true
+    }
+  ],
+  "grafonVsDonor03": [
+    {
+      "abcIndex": 0,
+      "methodCount": 104,
+      "sameNamedMethods": true,
+      "exactMethodInfo": [
+        "fe.graph.Grafon::0:1:allProgress",
+        "fe.graph.Grafon::0:1:checkLoaded",
+        "fe.graph.Grafon::0:1:createCursor",
+        "fe.graph.Grafon::0:1:createCursors",
+        "fe.graph.Grafon::0:1:decal",
+        "fe.graph.Grafon::0:1:drawAllObjs",
+        "fe.graph.Grafon::0:1:drawBackWall",
+        "fe.graph.Grafon::0:1:drawFon",
+        "fe.graph.Grafon::0:1:drawKusok",
+        "fe.graph.Grafon::0:1:drawLoc",
+        "fe.graph.Grafon::0:1:drawSats",
+        "fe.graph.Grafon::0:1:drawWater",
+        "fe.graph.Grafon::0:1:dyrka",
+        "fe.graph.Grafon::0:1:getObj",
+        "fe.graph.Grafon::0:1:getSpriteList",
+        "fe.graph.Grafon::0:1:gwall",
+        "fe.graph.Grafon::0:1:onSats",
+        "fe.graph.Grafon::0:1:paint",
+        "fe.graph.Grafon::0:1:rconnectRasterPainted",
+        "fe.graph.Grafon::0:1:rconnectRasterWaiting",
+        "fe.graph.Grafon::0:1:rconnectWallBaseClips",
+        "fe.graph.Grafon::0:1:rconnectWallNotify",
+        "fe.graph.Grafon::0:1:sceneAdvanceWarm",
+        "fe.graph.Grafon::0:1:sceneApply",
+        "fe.graph.Grafon::0:1:sceneApplyCompactDecal",
+        "fe.graph.Grafon::0:1:sceneApplyRegionAction",
+        "fe.graph.Grafon::0:1:sceneBackdropArtBounds",
+        "fe.graph.Grafon::0:1:sceneBackdropObjectBounds",
+        "fe.graph.Grafon::0:1:sceneBackdropObjects",
+        "fe.graph.Grafon::0:1:sceneBackdropTransformBounds",
+        "fe.graph.Grafon::0:1:sceneBeginWarm",
+        "fe.graph.Grafon::0:1:sceneCancelWarm",
+        "fe.graph.Grafon::0:1:sceneClear",
+        "fe.graph.Grafon::0:1:sceneClearWarm",
+        "fe.graph.Grafon::0:1:sceneConfigureBorders",
+        "fe.graph.Grafon::0:1:sceneCullSurfaces",
+        "fe.graph.Grafon::0:1:sceneDecalAlphaBounds",
+        "fe.graph.Grafon::0:1:sceneDecalArtBounds",
+        "fe.graph.Grafon::0:1:sceneDecalBounds",
+        "fe.graph.Grafon::0:1:sceneDecalPaint",
+        "fe.graph.Grafon::0:1:sceneDecalSourcePixel",
+        "fe.graph.Grafon::0:1:sceneDecalTransformBounds",
+        "fe.graph.Grafon::0:1:sceneDrawRegionChunk",
+        "fe.graph.Grafon::0:1:sceneDrawSteps",
+        "fe.graph.Grafon::0:1:sceneDrop",
+        "fe.graph.Grafon::0:1:sceneEnsure",
+        "fe.graph.Grafon::0:1:sceneEnsureUpcoming",
+        "fe.graph.Grafon::0:1:sceneEntitySameColor",
+        "fe.graph.Grafon::0:1:sceneFinishBatch",
+        "fe.graph.Grafon::0:1:sceneFirstWindow",
+        "fe.graph.Grafon::0:1:sceneForgetLand",
+        "fe.graph.Grafon::0:1:sceneIndexBackdrops",
+        "fe.graph.Grafon::0:1:sceneMask",
+        "fe.graph.Grafon::0:1:sceneMaterialFill",
+        "fe.graph.Grafon::0:1:sceneMatrix",
+        "fe.graph.Grafon::0:1:sceneNativeBackwall",
+        "fe.graph.Grafon::0:1:sceneNativeCall",
+        "fe.graph.Grafon::0:1:sceneNativeEnvironment",
+        "fe.graph.Grafon::0:1:sceneOpen",
+        "fe.graph.Grafon::0:1:scenePreloadAll",
+        "fe.graph.Grafon::0:1:scenePreloadRegions",
+        "fe.graph.Grafon::0:1:scenePrepare",
+        "fe.graph.Grafon::0:1:sceneRegionClearScratch",
+        "fe.graph.Grafon::0:1:sceneRegionColorKey",
+        "fe.graph.Grafon::0:1:sceneRegionDrawPass",
+        "fe.graph.Grafon::0:1:sceneRegionEnsureScratch",
+        "fe.graph.Grafon::0:1:sceneRegionSlices",
+        "fe.graph.Grafon::0:1:sceneRegionStyle",
+        "fe.graph.Grafon::0:1:sceneRegionStyleKey",
+        "fe.graph.Grafon::0:1:sceneRender",
+        "fe.graph.Grafon::0:1:sceneResetGeneration",
+        "fe.graph.Grafon::0:1:sceneRestoreMarks",
+        "fe.graph.Grafon::0:1:sceneSats",
+        "fe.graph.Grafon::0:1:sceneSave",
+        "fe.graph.Grafon::0:1:sceneSetNativeEnvironment",
+        "fe.graph.Grafon::0:1:sceneSetRegions",
+        "fe.graph.Grafon::0:1:sceneSurfaces",
+        "fe.graph.Grafon::0:1:sceneSyncRegionLighting",
+        "fe.graph.Grafon::0:1:sceneTick",
+        "fe.graph.Grafon::0:1:sceneTrack",
+        "fe.graph.Grafon::0:1:sceneUpdateEntityColor",
+        "fe.graph.Grafon::0:1:sceneViewReady",
+        "fe.graph.Grafon::0:1:sceneViewport",
+        "fe.graph.Grafon::0:1:setFonSize",
+        "fe.graph.Grafon::0:1:setLight",
+        "fe.graph.Grafon::0:1:setMCT",
+        "fe.graph.Grafon::0:1:specEffect",
+        "fe.graph.Grafon::0:1:tileDie",
+        "fe.graph.Grafon::0:1:warShadow",
+        "fe.graph.Grafon::0:2:rconnectRasterPending",
+        "fe.graph.Grafon::<init>",
+        "fe.graph.Grafon::<static>"
+      ],
+      "differentMethodInfo": [
+        {
+          "name": "fe.graph.Grafon::0:1:ordinaryArtBounds",
+          "semanticallyEqual": true,
+          "indices": [
+            3218,
+            3218
+          ]
+        },
+        {
+          "name": "fe.graph.Grafon::0:1:ordinaryDecal",
+          "semanticallyEqual": true,
+          "indices": [
+            3221,
+            3221
+          ]
+        },
+        {
+          "name": "fe.graph.Grafon::0:1:ordinaryMaskBounds",
+          "semanticallyEqual": true,
+          "indices": [
+            3219,
+            3219
+          ]
+        },
+        {
+          "name": "fe.graph.Grafon::0:1:ordinaryRaster",
+          "semanticallyEqual": true,
+          "indices": [
+            3217,
+            3217
+          ]
+        },
+        {
+          "name": "fe.graph.Grafon::0:1:ordinaryStructureBounds",
+          "semanticallyEqual": true,
+          "indices": [
+            3220,
+            3220
+          ]
+        },
+        {
+          "name": "fe.graph.Grafon::1:1:ordinaryBitmap",
+          "semanticallyEqual": true,
+          "indices": [
+            3327,
+            3327
+          ]
+        },
+        {
+          "name": "fe.graph.Grafon::1:1:ordinaryClip",
+          "semanticallyEqual": true,
+          "indices": [
+            3331,
+            3331
+          ]
+        },
+        {
+          "name": "fe.graph.Grafon::1:1:ordinaryNotify",
+          "semanticallyEqual": true,
+          "indices": [
+            3326,
+            3326
+          ]
+        },
+        {
+          "name": "fe.graph.Grafon::1:1:ordinaryRoom",
+          "semanticallyEqual": true,
+          "indices": [
+            3325,
+            3325
+          ]
+        },
+        {
+          "name": "fe.graph.Grafon::1:1:ordinaryUnion",
+          "semanticallyEqual": true,
+          "indices": [
+            3330,
+            3330
+          ]
+        },
+        {
+          "name": "fe.graph.Grafon::1:1:rconnectOrdinaryPending",
+          "semanticallyEqual": true,
+          "indices": [
+            3329,
+            3329
+          ]
+        },
+        {
+          "name": "fe.graph.Grafon::1:1:rconnectOrdinaryPrepare",
+          "semanticallyEqual": true,
+          "indices": [
+            3328,
+            3328
+          ]
+        }
+      ],
+      "exactBodies": [
+        "fe.graph.Grafon::0:1:allProgress",
+        "fe.graph.Grafon::0:1:checkLoaded",
+        "fe.graph.Grafon::0:1:createCursors",
+        "fe.graph.Grafon::0:1:drawAllObjs",
+        "fe.graph.Grafon::0:1:drawBackWall",
+        "fe.graph.Grafon::0:1:drawFon",
+        "fe.graph.Grafon::0:1:drawKusok",
+        "fe.graph.Grafon::0:1:drawSats",
+        "fe.graph.Grafon::0:1:drawWater",
+        "fe.graph.Grafon::0:1:dyrka",
+        "fe.graph.Grafon::0:1:getObj",
+        "fe.graph.Grafon::0:1:getSpriteList",
+        "fe.graph.Grafon::0:1:gwall",
+        "fe.graph.Grafon::0:1:onSats",
+        "fe.graph.Grafon::0:1:paint",
+        "fe.graph.Grafon::0:1:rconnectRasterPainted",
+        "fe.graph.Grafon::0:1:rconnectRasterWaiting",
+        "fe.graph.Grafon::0:1:rconnectWallBaseClips",
+        "fe.graph.Grafon::0:1:rconnectWallNotify",
+        "fe.graph.Grafon::0:1:sceneApply",
+        "fe.graph.Grafon::0:1:sceneApplyCompactDecal",
+        "fe.graph.Grafon::0:1:sceneApplyRegionAction",
+        "fe.graph.Grafon::0:1:sceneBackdropArtBounds",
+        "fe.graph.Grafon::0:1:sceneBackdropObjectBounds",
+        "fe.graph.Grafon::0:1:sceneBackdropObjects",
+        "fe.graph.Grafon::0:1:sceneBackdropTransformBounds",
+        "fe.graph.Grafon::0:1:sceneBeginWarm",
+        "fe.graph.Grafon::0:1:sceneCancelWarm",
+        "fe.graph.Grafon::0:1:sceneClear",
+        "fe.graph.Grafon::0:1:sceneClearWarm",
+        "fe.graph.Grafon::0:1:sceneConfigureBorders",
+        "fe.graph.Grafon::0:1:sceneCullSurfaces",
+        "fe.graph.Grafon::0:1:sceneDecalAlphaBounds",
+        "fe.graph.Grafon::0:1:sceneDecalArtBounds",
+        "fe.graph.Grafon::0:1:sceneDecalBounds",
+        "fe.graph.Grafon::0:1:sceneDecalPaint",
+        "fe.graph.Grafon::0:1:sceneDecalSourcePixel",
+        "fe.graph.Grafon::0:1:sceneDecalTransformBounds",
+        "fe.graph.Grafon::0:1:sceneDrawRegionChunk",
+        "fe.graph.Grafon::0:1:sceneDrawSteps",
+        "fe.graph.Grafon::0:1:sceneDrop",
+        "fe.graph.Grafon::0:1:sceneEnsure",
+        "fe.graph.Grafon::0:1:sceneEnsureUpcoming",
+        "fe.graph.Grafon::0:1:sceneEntitySameColor",
+        "fe.graph.Grafon::0:1:sceneFinishBatch",
+        "fe.graph.Grafon::0:1:sceneFirstWindow",
+        "fe.graph.Grafon::0:1:sceneForgetLand",
+        "fe.graph.Grafon::0:1:sceneIndexBackdrops",
+        "fe.graph.Grafon::0:1:sceneMask",
+        "fe.graph.Grafon::0:1:sceneMaterialFill",
+        "fe.graph.Grafon::0:1:sceneMatrix",
+        "fe.graph.Grafon::0:1:sceneNativeBackwall",
+        "fe.graph.Grafon::0:1:sceneNativeCall",
+        "fe.graph.Grafon::0:1:sceneNativeEnvironment",
+        "fe.graph.Grafon::0:1:sceneOpen",
+        "fe.graph.Grafon::0:1:scenePreloadAll",
+        "fe.graph.Grafon::0:1:scenePreloadRegions",
+        "fe.graph.Grafon::0:1:scenePrepare",
+        "fe.graph.Grafon::0:1:sceneRegionClearScratch",
+        "fe.graph.Grafon::0:1:sceneRegionColorKey",
+        "fe.graph.Grafon::0:1:sceneRegionDrawPass",
+        "fe.graph.Grafon::0:1:sceneRegionEnsureScratch",
+        "fe.graph.Grafon::0:1:sceneRegionSlices",
+        "fe.graph.Grafon::0:1:sceneRegionStyle",
+        "fe.graph.Grafon::0:1:sceneRegionStyleKey",
+        "fe.graph.Grafon::0:1:sceneRender",
+        "fe.graph.Grafon::0:1:sceneResetGeneration",
+        "fe.graph.Grafon::0:1:sceneRestoreMarks",
+        "fe.graph.Grafon::0:1:sceneSats",
+        "fe.graph.Grafon::0:1:sceneSave",
+        "fe.graph.Grafon::0:1:sceneSetNativeEnvironment",
+        "fe.graph.Grafon::0:1:sceneSetRegions",
+        "fe.graph.Grafon::0:1:sceneSurfaces",
+        "fe.graph.Grafon::0:1:sceneSyncRegionLighting",
+        "fe.graph.Grafon::0:1:sceneTick",
+        "fe.graph.Grafon::0:1:sceneTrack",
+        "fe.graph.Grafon::0:1:sceneUpdateEntityColor",
+        "fe.graph.Grafon::0:1:sceneViewReady",
+        "fe.graph.Grafon::0:1:sceneViewport",
+        "fe.graph.Grafon::0:1:setFonSize",
+        "fe.graph.Grafon::0:1:setLight",
+        "fe.graph.Grafon::0:1:setMCT",
+        "fe.graph.Grafon::0:1:specEffect",
+        "fe.graph.Grafon::0:1:warShadow",
+        "fe.graph.Grafon::0:2:rconnectRasterPending",
+        "fe.graph.Grafon::1:1:ordinaryBitmap",
+        "fe.graph.Grafon::1:1:ordinaryRoom",
+        "fe.graph.Grafon::1:1:ordinaryUnion",
+        "fe.graph.Grafon::<init>"
+      ],
+      "semanticEquivalentBodies": [
+        "fe.graph.Grafon::0:1:createCursor",
+        "fe.graph.Grafon::0:1:decal",
+        "fe.graph.Grafon::0:1:drawLoc",
+        "fe.graph.Grafon::0:1:ordinaryArtBounds",
+        "fe.graph.Grafon::0:1:ordinaryDecal",
+        "fe.graph.Grafon::0:1:ordinaryMaskBounds",
+        "fe.graph.Grafon::0:1:ordinaryRaster",
+        "fe.graph.Grafon::0:1:ordinaryStructureBounds",
+        "fe.graph.Grafon::0:1:sceneAdvanceWarm",
+        "fe.graph.Grafon::0:1:tileDie",
+        "fe.graph.Grafon::1:1:ordinaryClip",
+        "fe.graph.Grafon::1:1:ordinaryNotify",
+        "fe.graph.Grafon::1:1:rconnectOrdinaryPending",
+        "fe.graph.Grafon::1:1:rconnectOrdinaryPrepare",
+        "fe.graph.Grafon::<static>"
+      ],
+      "differentBodies": [],
+      "classLayoutExact": {
+        "instance": true,
+        "static": true
+      },
+      "classLayoutRawExact": {
+        "instance": false,
+        "static": false
+      },
+      "closureEdgesExact": true,
+      "anonymousBodiesExact": [
+        3301,
+        3302,
+        3303,
+        3304,
+        3305,
+        3306,
+        3307,
+        3308,
+        3309,
+        3310,
+        3311,
+        3312,
+        3313,
+        3314,
+        3315,
+        3316,
+        3317,
+        3318,
+        3319,
+        3320,
+        3321,
+        3322,
+        3323,
+        3324
+      ]
+    },
+    {
+      "abcIndex": 1,
+      "methodCount": 0,
+      "sameNamedMethods": true,
+      "exactMethodInfo": [],
+      "differentMethodInfo": [],
+      "exactBodies": [],
+      "semanticEquivalentBodies": [],
+      "differentBodies": [],
+      "classLayoutExact": null
+    }
+  ],
+  "finalHostQualified": false,
+  "gameplayQualified": false,
+  "airStarted": false,
+  "jvmStarted": false,
+  "installed": false,
+  "intermediateNonGrafonPreserved": true,
+  "grafonMatchesReviewedDonor": true
+}

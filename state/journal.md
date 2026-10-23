@@ -1,3 +1,10 @@
+## 2026-10-23 普通墙面宿主完成最小方法保留构建
+
+- 同轮后续：独立准入通过后实际双人76b2f38ec6运行，native01四轮LMG/plamg双方最终原生/显示uint全部一致，旧22点墙沿遗漏不再复现；双方34/0、原框架及像素分析exit0，复制品/进程清理、安装不变。首显示观察73/155/54/328ms，仍不授予性能资格；只覆盖普通mat2/CSnative关闭且低地形伤害。继续已有RoomCooperation交接与延迟证据分析。
+- host03编译后严格回读捕获未改createObj的E4X属性筛选误编；保持失败，不启动游戏或部署。host01/02环境、语法失败均保留，未宽化断言。
+- host04仅导Grafon，Location原码保留；新供体从此中间版生成，旧常量前缀相容。host05只移hitTile/dieTile及必要activation标志，6次Java全部退出0，最终00C7C511…AA48；5,787个非目标方法体、旧常量前缀/类脚本、原资源逐项保留，实际SWF回读通过。独立中间审查追明24个Grafon闭包，无其它类引用。
+- 所有构建走共享登记/原内存保护，无AIR或安装改动。当前正式仍offline1 EB365及宿主BEFC。独立最终准入、四轮普通墙原生像素、结构/晚包/重访与性能尚待，四项恢复未完成。最小入口位于experimental/recovery-ordinary-method-transplant及recovery-ordinary-wall-sv-native。
+
 ## 2026-10-23 offline1 有限部署与实际安装双人冒烟完成
 
 - 首连native08/d0048aff49完整通过：双方39/0、首次尝试一次、十覆盖全true、宿主真实finishAck、全部清理。旧失败未改判，产品EB365及原runner未改；最终显示弹道/枪口/冻结恢复有原始像素证据。详见experimental/recovery-offline-first-connect/RESULTS.md。

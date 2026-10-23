@@ -1,0 +1,31 @@
+{
+  "Grafon": {
+    "original_methods": 90,
+    "changed": [
+      "drawLoc",
+      "tileDie",
+      "decal"
+    ],
+    "unchanged": 87,
+    "sha256": "818b56f1ee0d6d0f92d8a37aaaec15c9748b0023326de900c4bc0c2d2b261da5"
+  },
+  "Location": {
+    "original_methods": 74,
+    "changed": [
+      "hitTile",
+      "dieTile"
+    ],
+    "unchanged": 72,
+    "sha256": "0ecce22f33a215d13f9a29ca1fc62d6a6ef5225981d9e4badb7609812f200267"
+  },
+  "source_only_checks": [
+    "Only 3 Grafon and 2 Location original methods changed",
+    "Original large/gwall/art helpers unchanged",
+    "Exactly 2 explicit native random frame picks in observed decal",
+    "No padding/full-room fallback or finally selector",
+    "Explicit saved-error Boolean and rethrow",
+    "Unknown range remains invalid"
+  ],
+  "compiled": false,
+  "native_pixel_or_rng_equivalence": false
+}

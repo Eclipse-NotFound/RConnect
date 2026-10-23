@@ -31,12 +31,14 @@ Remains 1.02 双人合作，入口 RConnectMod。A 为普通游戏入口现用�
 | early2加载 | recovery-early-exit-compile-01，D356483F…ACB3 | 重访死锁修复，三段出生1/0/1px；耗时仍未达标 |
 | A Sand003 | mods/Sandevistan/build/out/a-travel-hold-20261022-003，3E220…31C | 76组件、41零冷却、43非零冷却功能过；完整旅行/敌方补步缺口 |
 | 独立离线优化 | build/m52/recovery-offline-production-01，EB365353…A5FEE，offline1 | 已部署；56生命周期、86原生弹丸历史、首次双游戏39+39及实际安装smoke通过 |
-| 普通墙面结构代 | recovery-ordinary-wall-sv-production-01，C6A3B113…3496D | 真实类153组件过、完整90类构建过；宿主未编译、游戏/性能未验证，未部署 |
+| 普通墙面结构代 | recovery-ordinary-wall-sv-production-01，C6A3B113…3496D；host05 00C7C511…AA48 | 153组件/90类/host05静态准入过；native01四轮最终像素全一致；显示最迟328ms，结构重访/性能仍待，未部署 |
 
 精确完整SHA、冻结输入和所有失败均见各 prepared/compile/RESULTS；不可仅凭候选号混用。加载诊断使用host03 29D36与旧RV7852，**不是当前安装RV83D8**；准确入口能识别此差别，不回退用户RV。仅offline1有限部署，其余仍为隔离候选。历史验证器若硬锁574D安装会拒绝当前版，应明确记录本次单RC基线变更，不能改写旧回执。
 
 ## 4. 当前实测结论与卡点
 
+- **普通墙面原生四轮已过**：准确C6A3+host05 / native01 / 76b2f38ec6，直接复用旧ordinary驱动，原框架及逐uint分析exit0；两端各34/0，四轮原生前景+最终显示完全一致（118/96/1030/1059像素，错/漏/多余均0）。旧加入等离子墙沿22点不再复现。首显示观察73/155/54/328ms，最大观察间隔190ms，不能称流畅度已过；结尾批量读回2秒非游玩长帧。普通mat2、CSnative关闭、刻意低地形伤害，不代替结构破坏/换权威/重访/全配置密集。共享runner清自有进程及host/join/frozen副本、22安装不变。下一步现有RoomCooperation物理交接回归及本轮328ms时序定位。
+- **墙面宿主编译器风险已处理至回读层**：host03全类import把未改createObj的XML `@id == id` 编为本地id恒真比较，独立pcode确认后严格拒绝；host01日志/环境、02多变量声明解析失败均保留。host04只导入Grafon，9B362254…913F；旧供体常量顺序不相容，另从host04导入Location取得BFC9供体。host05仅保留两方法完整body和必要flags，00C7C511…AA48；6Java退出0，5,787非目标body、旧池前缀/类脚本/原资源精确保留，最终回读通过。独立host04确认24匿名函数归Grafon且无外部引用。最终目标绑定审查和AIR仍待完成，不能凭build_checks_passed授予游戏资格。安装仍EB365/BEFC，详见ordinary-wall-sv/RESULTS、ordinary-host03/04-review。
 - **实际安装冒烟通过**：deploy.py 11ED24DF…B9F04，audit02过，在原runner共享登记内备份并原子替换准确EB365，再从release读取、无外部测试SWF启动两游戏。ae58b8049b双方版本/tick200、加入welcome/unitsync及原错误检查过；exit0、22项仅RC变、两个自有进程与副本回收。纯smoke不支持defer-visible，保留私有桌面、6GiB/512MiB和原runner全部检查。回滚源指纹574D已回读；未改host/config/src。见recovery-offline-production/RELEASE.md。
 - **离线分支最新完成**：CS真实574D/EB365独立进程各1200帧、90项。平均间隔69.615→58.866ms、中位64→54、P95 96→80，最长306→473ms；自然人口147/149、warm工作量不同且LAD/WB/RV显示关闭。只支持限定离线改善，不是完整配置净收益或双人资格。见 `experimental/recovery-cs-offline-review/NATIVE-PRODUCTION-REVIEW.md`。
 - **实际会话生命周期56/0**：7a10b4a47f，driverAD26，12阶段、真实主持/拒连/退出/断开/重试/占端口；6Socket和4ServerSocket清理。v1准备失败、v2清理#2002失败原样保留。预期#2031有严格有界证据，非通用错误豁免。见 `recovery-offline-production/LIFECYCLE-REVIEW.md`。

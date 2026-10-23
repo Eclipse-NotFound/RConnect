@@ -1,0 +1,58 @@
+{
+  "kind": "ffdec-declaration-split-only",
+  "old_source_preserved": true,
+  "declaration_groups": 6,
+  "declarations_before": 6,
+  "declarations_after": 15,
+  "location_byte_identical": true,
+  "grafon_exact_six_replacements": true,
+  "expression_and_statement_order_unchanged": true,
+  "jvm_started": false,
+  "compiled": false,
+  "changes": [
+    {
+      "before": "         var left:Number = Math.floor(bounds.left),top:Number = Math.floor(bounds.top);",
+      "after": "         var left:Number = Math.floor(bounds.left);\n         var top:Number = Math.floor(bounds.top);"
+    },
+    {
+      "before": "         var eraser:MovieClip = null,color:MovieClip = null,alpha:BitmapData = null;",
+      "after": "         var eraser:MovieClip = null;\n         var color:MovieClip = null;\n         var alpha:BitmapData = null;"
+    },
+    {
+      "before": "         var width:int = 0,height:int = 0,dx:Number = 0,dy:Number = 0;",
+      "after": "         var width:int = 0;\n         var height:int = 0;\n         var dx:Number = 0;\n         var dy:Number = 0;"
+    },
+    {
+      "before": "         var rangeValid:Boolean = true,rangeError:String = \"\";",
+      "after": "         var rangeValid:Boolean = true;\n         var rangeError:String = \"\";"
+    },
+    {
+      "before": "         var source:Rectangle,destination:Point;",
+      "after": "         var source:Rectangle;\n         var destination:Point;"
+    },
+    {
+      "before": "         var failed:Boolean = false,failure:*;",
+      "after": "         var failed:Boolean = false;\n         var failure:*;"
+    }
+  ],
+  "old": {
+    "experimental\\recovery-ordinary-wall-sv-host\\prepare.py": "9b7e0ec4b1c056ef2f26af85b1ed77e23491d453a27939cf90cf09550b73cc0f",
+    "experimental\\recovery-ordinary-wall-sv-host\\ordinary-bridge.inc.as": "7d5c8eef7dc4e8510287794a2fdcf130914412f881fa3f38af3969ab7b86e886",
+    "experimental\\recovery-ordinary-wall-sv-host\\src\\fe\\graph\\Grafon.as": "818b56f1ee0d6d0f92d8a37aaaec15c9748b0023326de900c4bc0c2d2b261da5",
+    "experimental\\recovery-ordinary-wall-sv-host\\src\\fe\\loc\\Location.as": "0ecce22f33a215d13f9a29ca1fc62d6a6ef5225981d9e4badb7609812f200267",
+    "experimental\\recovery-ordinary-wall-sv-host\\prepared.json": "56575d9ee2333b0ef00439d6b6e34b8f76ac6644a7076af460d88536eacd88e5",
+    "experimental\\recovery-ordinary-wall-sv-host\\source-review.json": "3f4a229eab32a38d7170145caee22eee79bd18dd6b8700f727a4b0398bdf3f7f"
+  },
+  "new": {
+    "experimental\\recovery-ordinary-wall-sv-host-v2\\prepare.py": "9b7e0ec4b1c056ef2f26af85b1ed77e23491d453a27939cf90cf09550b73cc0f",
+    "experimental\\recovery-ordinary-wall-sv-host-v2\\ordinary-bridge.inc.as": "14c8182c4a6ee2681552bc7ee1d36b5680e4fac4bf94d1ac515a0b2911bf0092",
+    "experimental\\recovery-ordinary-wall-sv-host-v2\\src\\fe\\graph\\Grafon.as": "dd6299fbe5db88b7741c43722f5fbb18b45e36fa9aadb9134b128b464515a085",
+    "experimental\\recovery-ordinary-wall-sv-host-v2\\src\\fe\\loc\\Location.as": "0ecce22f33a215d13f9a29ca1fc62d6a6ef5225981d9e4badb7609812f200267",
+    "experimental\\recovery-ordinary-wall-sv-host-v2\\prepared.json": "12bb00d4b00ba50b2b3d777c0f3ef3f4cd9adf3589a92b1aa51dc139777b5f95",
+    "experimental\\recovery-ordinary-wall-sv-host-v2\\source-review.json": "1f3a8003ab6f6f50db56894728989d73aefa0af249ec6975a47d6133e1c86134"
+  },
+  "failed_host02": {
+    "build\\m52\\recovery-ordinary-wall-sv-host-02\\build.json": "4284e528d2a51b39197fa399667fad9990a26f91ed87e2e393b397643ec7c1e5",
+    "build\\m52\\recovery-ordinary-wall-sv-host-02\\import.log.stderr.log": "f53db21bd25d07db4161be8a088dca225cfa35c2915088e62f5dd31f65799c28"
+  }
+}

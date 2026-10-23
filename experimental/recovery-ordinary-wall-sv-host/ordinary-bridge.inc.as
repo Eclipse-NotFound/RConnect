@@ -1,0 +1,261 @@
+      // Independent event bridge. A null subscriber never enables large-room clipping.
+      public static var rconnectOrdinaryWallBridge:Function = null;
+      public static var rconnectOrdinaryWallErrors:int = 0;
+      private var rconnectOrdinaryStructure:Object = null;
+
+      private static function ordinaryRoom(room:Location) : Boolean
+      {
+         return room != null && room.spaceX <= World.cellsX && room.spaceY <= World.cellsY;
+      }
+
+      private static function ordinaryNotify(event:Object) : Object
+      {
+         if(rconnectOrdinaryWallBridge == null)return null;
+         try {return rconnectOrdinaryWallBridge(event);}
+         catch(observerError:*)
+         {
+            ++rconnectOrdinaryWallErrors;
+            trace("RConnect ordinary wall observer failed: " + observerError);
+         }
+         return null;
+      }
+
+      private static function ordinaryBitmap(g:Grafon,room:Location) : BitmapData
+      {
+         return g != null && g.loc === room && !g.sceneLarge ? g.frontBmp : null;
+      }
+
+      /** Called before Tile.die clears front/vid. No version is committed here. */
+      public static function rconnectOrdinaryPrepare(room:Location,tile:Tile) : Object
+      {
+         if(rconnectOrdinaryWallBridge == null || !ordinaryRoom(room) || tile == null
+            || tile.mat == 7 || tile.door != null)return null;
+         var g:Grafon = room.grafon != null ? room.grafon : World.w.grafon;
+         var event:Object = {kind:"structure-prepare",grafon:g,loc:room,tile:tile,
+            bitmap:room.active ? ordinaryBitmap(g,room) : null,bounds:null,token:null,ordinaryPhysical:true,valid:false,
+            oldFront:tile.front,oldVid:tile.vid,oldVid2:tile.vid2,oldMaterial:tile.mat};
+         try
+         {
+            if(g == null)throw new Error("Missing material provider for ordinary pre-die bounds");
+            event.bounds = g.ordinaryStructureBounds(room,tile);
+            event.valid = true;
+         }
+         catch(rangeError:*) {event.error = String(rangeError);}
+         var reply:Object = ordinaryNotify(event);
+         return reply != null ? reply : event;
+      }
+
+      /** The native Tile.die completed, but this room has no paintable front bitmap. */
+      public static function rconnectOrdinaryPending(room:Location,tile:Tile,prepared:Object) : void
+      {
+         if(rconnectOrdinaryWallBridge == null || !ordinaryRoom(room) || tile == null
+            || tile.mat == 7 || tile.door != null)return;
+         var g:Grafon = room.grafon != null ? room.grafon : World.w.grafon;
+         ordinaryNotify({kind:"structure-pending",grafon:g,loc:room,tile:tile,bitmap:null,
+            bounds:prepared == null ? null : prepared.bounds,prepared:prepared,token:prepared,
+            ordinaryPhysical:true,valid:prepared != null && prepared.valid === true});
+      }
+
+      private function ordinaryRaster(kind:String,room:Location,error:Object = null) : void
+      {
+         if(rconnectOrdinaryWallBridge == null || !ordinaryRoom(room))return;
+         ordinaryNotify({kind:kind,grafon:this,loc:room,bitmap:ordinaryBitmap(this,room),
+            bounds:null,token:null,error:error,valid:kind == "raster"});
+      }
+
+      private static function ordinaryUnion(a:Rectangle,b:Rectangle) : Rectangle
+      {
+         if(b == null || b.isEmpty())return a;
+         return a == null || a.isEmpty() ? b.clone() : a.union(b);
+      }
+
+      /** Same child transforms/filter expansion as sceneDecalArtBounds, independent of active bitmap. */
+      private function ordinaryArtBounds(art:DisplayObject,scratch:BitmapData,depth:int = 0) : Rectangle
+      {
+         if(depth > 32)throw new Error("Unsupported art depth");
+         var bounds:Rectangle = art.getBounds(art);
+         var container:DisplayObjectContainer = art as DisplayObjectContainer;
+         if(container != null)
+         {
+            if(container.numChildren > 256)throw new Error("Unsupported art child count");
+            for(var i:int = 0;i < container.numChildren;i++)
+            {
+               var child:DisplayObject = container.getChildAt(i);
+               var part:Rectangle = ordinaryArtBounds(child,scratch,depth + 1);
+               if(!part.isEmpty())bounds = ordinaryUnion(bounds,this.sceneDecalTransformBounds(part,child.transform.matrix));
+            }
+         }
+         if(bounds != null && !bounds.isEmpty())for each(var filter:BitmapFilter in art.filters)
+            bounds = scratch.generateFilterRect(bounds,filter);
+         return bounds == null ? new Rectangle() : bounds;
+      }
+
+      /** All 0..4 kontur values, using the real native mask classes and their own bounds.
+       * No random frame selection, no rectangular tile/padding surrogate. */
+      private function ordinaryMaskBounds(factory:Class,tile:Tile,floor:Boolean,scratch:BitmapData) : Rectangle
+      {
+         if(factory !== TileMask && factory !== TileMaskDamaged && factory !== TileMaskBare
+            && factory !== BorderMask && factory !== FloorMask && factory !== SkolMask)
+            throw new Error("Unreviewed ordinary material mask class");
+         var art:MovieClip = new factory();
+         var result:Rectangle = null;
+         var count:int = floor ? 2 : 4;
+         if(art.c1)
+         {
+            for(var frame:int = 1;frame <= 5;frame++)
+            {
+               for(var k:int = 1;k <= count;k++)
+               {
+                  var corner:MovieClip = art["c" + k] as MovieClip;
+                  if(corner == null || corner.totalFrames < 5)throw new Error("Unknown native contour timeline");
+                  corner.gotoAndStop(frame);
+               }
+               result = ordinaryUnion(result,ordinaryArtBounds(art,scratch));
+            }
+         }
+         else result = ordinaryArtBounds(art,scratch);
+         var matrix:Matrix = new Matrix();
+         matrix.tx = (tile.X + 0.5) * Tile.tileX;
+         matrix.ty = (tile.Y + 0.5 + (floor ? tile.zForm / 4 : 0)) * Tile.tileY;
+         if(tile.zForm && !floor)
+         {
+            matrix.d = (tile.phY2 - tile.phY1) / Tile.tileY;
+            matrix.ty = (tile.phY2 + tile.phY1) / 2;
+         }
+         return this.sceneDecalTransformBounds(result,matrix);
+      }
+
+      private function ordinaryStructureBounds(room:Location,dead:Tile) : Rectangle
+      {
+         var result:Rectangle = null;
+         var scratch:BitmapData = new BitmapData(1,1,true,0);
+         var failed:Boolean = false;
+         var failure:*;
+         try
+         {
+            // tileKontur reads exactly the eight immediate neighbours. Each affected tile's
+            // complete legal mask envelope is measured; its artwork may extend beyond its cell.
+            for(var x:int = Math.max(0,dead.X - 1);x <= Math.min(room.spaceX - 1,dead.X + 1);x++)
+            for(var y:int = Math.max(0,dead.Y - 1);y <= Math.min(room.spaceY - 1,dead.Y + 1);y++)
+            {
+               var tile:Tile = room.getTile(x,y);
+               var material:Material = this.arrFront[tile.front] as Material;
+               if(tile.front != "" && material == null)throw new Error("Missing ordinary front material " + tile.front);
+               if(material != null && !material.rear)
+               {
+                  var part:Rectangle = ordinaryMaskBounds(material.textureMask,tile,false,scratch);
+                  if(material.border != null && material.borderMask != null)
+                     part = ordinaryUnion(part,ordinaryMaskBounds(material.borderMask,tile,false,scratch));
+                  if(material.floor != null && material.floorMask != null)
+                     part = ordinaryUnion(part,ordinaryMaskBounds(material.floorMask,tile,true,scratch));
+                  if(part != null && material.F != null)for each(var filter:BitmapFilter in material.F)
+                     part = scratch.generateFilterRect(part,filter);
+                  result = ordinaryUnion(result,part);
+               }
+               for(var v:int = 0;v < 2;v++)
+               {
+                  var number:int = v == 0 ? tile.vid : tile.vid2;
+                  var rear:Boolean = v == 0 ? tile.vRear : tile.v2Rear;
+                  if(number <= 0 || rear)continue;
+                  var art:MovieClip = new tileFront();
+                  if(number > art.totalFrames)throw new Error("Unknown tileFront frame");
+                  art.gotoAndStop(number);
+                  var matrix:Matrix = new Matrix(1,0,0,1,x * Tile.tileX,y * Tile.tileY);
+                  result = ordinaryUnion(result,this.sceneDecalTransformBounds(ordinaryArtBounds(art,scratch),matrix));
+               }
+            }
+            result = ordinaryClip(result,room,null);
+         }
+         catch(rangeError:*) {failed = true;failure = rangeError;}
+         scratch.dispose();
+         if(failed)throw failure;
+         return result;
+      }
+
+      private static function ordinaryClip(bounds:Rectangle,room:Location,bitmap:BitmapData) : Rectangle
+      {
+         if(bounds == null)return new Rectangle();
+         if(!isFinite(bounds.x) || !isFinite(bounds.y) || !isFinite(bounds.width) || !isFinite(bounds.height)
+            || bounds.width < 0 || bounds.height < 0)throw new Error("Invalid ordinary artwork bounds");
+         var left:Number = Math.floor(bounds.left),top:Number = Math.floor(bounds.top);
+         var result:Rectangle = new Rectangle(left,top,Math.ceil(bounds.right) - left,Math.ceil(bounds.bottom) - top);
+         result = result.intersection(new Rectangle(0,0,room.spaceX * Tile.tileX,room.spaceY * Tile.tileY));
+         if(bitmap != null)result = result.intersection(bitmap.rect);
+         // A malformed material cannot silently turn this into a room-sized history operation.
+         if(result.width * result.height > 1600 * 256)throw new Error("Ordinary art range exceeds 256 cells of pixels");
+         return result;
+      }
+
+      /** Only used with the independent subscriber in ordinary rooms.
+       * Both native classes/frames are chosen once, in their original RNG order. */
+      private function ordinaryDecal(param1:Class,param2:Class,param3:Number,param4:Number,
+         param5:Number,param6:Number,param7:String) : void
+      {
+         var eraser:MovieClip = null,color:MovieClip = null,alpha:BitmapData = null;
+         var width:int = 0,height:int = 0,dx:Number = 0,dy:Number = 0;
+         var bounds:Rectangle = null;
+         var rangeValid:Boolean = true,rangeError:String = "";
+         var structure:Object = this.rconnectOrdinaryStructure;
+         var prepared:Object = structure == null ? null : structure.prepared;
+         var source:Rectangle,destination:Point;
+         this.m = new Matrix();
+         if(param5 != 1)this.m.scale(param5,param5);
+         if(param6 != 0)this.m.rotate(param6);
+         this.m.tx = param3 - this.sceneX;this.m.ty = param4 - this.sceneY;
+         if(param1 != null)
+         {
+            eraser = new param1();
+            if(eraser.totalFrames > 1)eraser.gotoAndStop(Math.floor((this.sceneStamp != null ? Number(this.sceneStamp[0]) : Math.random()) * eraser.totalFrames + 1));
+         }
+         if(param2 != null)
+         {
+            color = new param2();
+            if(color.totalFrames > 1)color.gotoAndStop(Math.floor((this.sceneStamp != null ? Number(this.sceneStamp[1]) : Math.random()) * color.totalFrames + 1));
+            color.scaleX = color.scaleY = param5;color.rotation = param6;
+            width = Math.round(color.width / 2 + 2) * 2;height = Math.round(color.height / 2 + 2) * 2;
+            dx = Math.max(-(this.m.tx - width / 2),0);dy = Math.max(-(this.m.ty - height / 2),0);
+         }
+         try
+         {
+            if(eraser != null)bounds = ordinaryUnion(bounds,this.sceneDecalTransformBounds(ordinaryArtBounds(eraser,this.frontBmp),this.m));
+            if(color != null)
+            {
+               bounds = ordinaryUnion(bounds,this.sceneDecalTransformBounds(ordinaryArtBounds(color,this.frontBmp),this.m));
+               // Destination of the actual final native copyChannel, including truncation to bitmap pixels.
+               bounds = ordinaryUnion(bounds,this.sceneDecalAlphaBounds(this.m.tx,this.m.ty,width,height));
+            }
+            if(prepared != null && prepared.bounds is Rectangle)bounds = ordinaryUnion(bounds,prepared.bounds);
+            bounds = ordinaryClip(bounds,this.loc,this.frontBmp);
+         }
+         catch(boundsError:*) {rangeValid = false;rangeError = String(boundsError);bounds = null;}
+         var event:Object = {kind:structure == null ? "ink-before" : "structure-before",grafon:this,loc:this.loc,
+            bitmap:this.frontBmp,bounds:bounds,token:prepared,prepared:prepared,tile:structure == null ? null : structure.tile,
+            ordinaryPhysical:structure != null,valid:rangeValid,error:rangeError,eraser:eraser,color:color,matrix:this.m.clone()};
+         var reply:Object = ordinaryNotify(event);
+         var allowed:Boolean = structure == null || reply == null || reply.allow !== false;
+         var failed:Boolean = false,failure:*;
+         try
+         {
+            if(allowed)
+            {
+               if(eraser != null)this.frontBmp.draw(eraser,this.m,null,"erase",null,true);
+               if(color != null)
+               {
+                  alpha = new BitmapData(width,height,false,0);
+                  source = new Rectangle(this.m.tx - width / 2 + dx,this.m.ty - height / 2 + dy,this.m.tx + width / 2 + dx,this.m.ty + height / 2 + dy);
+                  alpha.copyChannel(this.frontBmp,source,new Point(0,0),BitmapDataChannel.ALPHA,BitmapDataChannel.GREEN);
+                  this.frontBmp.draw(color,this.m,param7 == "normal" ? World.w.loc.cTransform : null,param7,null,true);
+                  source = new Rectangle(0,0,width,height);destination = new Point(this.m.tx - width / 2 + dx,this.m.ty - height / 2 + dy);
+                  this.frontBmp.copyChannel(alpha,source,destination,BitmapDataChannel.GREEN,BitmapDataChannel.ALPHA);
+               }
+            }
+         }
+         catch(nativeError:*) {failed = true;failure = nativeError;}
+         // Dispose only the temporary bitmap introduced by this observed ordinary path.
+         if(alpha != null)alpha.dispose();
+         event.kind = structure == null ? (failed ? "ink-failed" : "ink-after") : (failed ? "structure-failed" : "structure-after");
+         event.token = reply == null ? null : reply.token;event.written = allowed && !failed;
+         event.valid = rangeValid && !failed;event.error = failed ? String(failure) : rangeError;
+         ordinaryNotify(event);
+         if(failed)throw failure;
+      }

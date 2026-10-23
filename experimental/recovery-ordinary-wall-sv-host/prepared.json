@@ -1,0 +1,26 @@
+{
+  "kind": "ordinary-wall-native-event-source-only",
+  "compiled": false,
+  "AIR_run": false,
+  "deployed": false,
+  "inputs": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-wall-surfaces-host-01\\import\\fe\\graph\\Grafon.as": "625db5c71c4319f4c942e581e039b7419dc070065dc3fb148e23003b715abb04",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-raster-dependencies-01\\scripts\\fe\\loc\\Location.as": "9c7e679a4b5b8423355cb3ce07e496caa13415beb1ffdd630f0f2ed7b38c9cab"
+  },
+  "generator_sha256": "9b7e0ec4b1c056ef2f26af85b1ed77e23491d453a27939cf90cf09550b73cc0f",
+  "bridge_fragment_sha256": "7d5c8eef7dc4e8510287794a2fdcf130914412f881fa3f38af3969ab7b86e886",
+  "outputs": {
+    "src/fe/graph/Grafon.as": "818b56f1ee0d6d0f92d8a37aaaec15c9748b0023326de900c4bc0c2d2b261da5",
+    "src/fe/loc/Location.as": "0ecce22f33a215d13f9a29ca1fc62d6a6ef5225981d9e4badb7609812f200267",
+    "Grafon.patch": "ca982be3df2a331d440e4951753c471247bacf8b1bc91ca2ce8cb291e90b1099",
+    "Location.patch": "2da31adf619cca4203d702da638f214e1d09a832ec4989997eeb3a618ffb7a32"
+  },
+  "source_contract": "function(event:Object):Object; independent rconnectOrdinaryWallBridge",
+  "runtime_qualification": false,
+  "remaining": [
+    "Actual native asset/timeline bounds and image equivalence require compilation and AIR",
+    "Direct owner tileDie without pre-die token must be rejected as incomplete coverage by RConnect",
+    "mat7/gwall and arbitrary external direct frontBmp writes remain excluded",
+    "RConnect receiver/ownership/version state is implemented in a separate isolated directory"
+  ]
+}

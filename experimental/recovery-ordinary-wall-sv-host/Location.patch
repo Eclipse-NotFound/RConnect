@@ -1,0 +1,38 @@
+--- exact-input/Location.as
++++ src/fe/loc/Location.as
+@@ -2546,6 +2546,7 @@
+                }
+                else if(param1.phis >= 1)
+                {
++                  var ordinaryPrepared:Object = Grafon.rconnectOrdinaryPrepare(this,param1);
+                   param1.die();
+                   try
+                   {
+@@ -2559,8 +2560,9 @@
+                   }
+                   if(this.active)
+                   {
+-                     this.grafon.tileDie(param1,param5);
+-                  }
++                     this.grafon.tileDie(param1,param5,ordinaryPrepared);
++                  }
++                  else Grafon.rconnectOrdinaryPending(this,param1,ordinaryPrepared);
+                }
+             }
+             else if(param1.phis >= 1)
+@@ -2601,11 +2603,13 @@
+          }
+          if(param1.phis >= 1)
+          {
++            var ordinaryPrepared:Object = Grafon.rconnectOrdinaryPrepare(this,param1);
+             param1.die();
+             if(this.active)
+             {
+-               this.grafon.tileDie(param1,4);
+-            }
++               this.grafon.tileDie(param1,4,ordinaryPrepared);
++            }
++            else Grafon.rconnectOrdinaryPending(this,param1,ordinaryPrepared);
+          }
+       }
+       
