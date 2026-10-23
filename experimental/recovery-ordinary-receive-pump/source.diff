@@ -1,0 +1,282 @@
+--- rx/rconnect/core/Session.as
++++ pump/rconnect/core/Session.as
+@@ -751,8 +751,28 @@
+ 
+       private var _syncCount:int = 0;
+ 
++      /** Drain already available input before this tick reads room/session state. */
++      private function pollIncoming():void
++      {
++         if(mode==JOINING || mode==CONNECTED)
++         {
++            var activeLink:TcpLink=link;
++            if(activeLink!=null)activeLink.pollIncoming();
++            return;
++         }
++         if(mode!=HOSTING || server==null)return;
++         var activeServer:HostServer=server;
++         var pending:Array=activeServer.clients.concat();
++         for each(var client:TcpLink in pending)
++         {
++            if(mode!=HOSTING || server!==activeServer || !activeServer.bound)break;
++            if(activeServer.clients.indexOf(client)>=0)client.pollIncoming();
++         }
++      }
++
+       private function onTick(e:TimerEvent):void
+       {
++         pollIncoming();
+          if(mod.game!=null)mod.game.presentationNetworkActive=
+             (mode==CONNECTED && link!=null && link.isOpen)
+             || (mode==HOSTING && server!=null && peers.length>0);
+--- rx/rconnect/net/TcpLink.as
++++ pump/rconnect/net/TcpLink.as
+@@ -34,6 +34,7 @@
+ 
+       private var _rbuf:ByteArray = new ByteArray();
+       private var _closedNotified:Boolean = false;
++      private var _reading:Boolean = false;
+ 
+       // Isolated diagnostic only. No wire fields or transport decisions change.
+       private static var timingEnabled:Boolean=false;
+@@ -48,6 +49,7 @@
+       private static var timingCalls:int=0,timingTotal:int=0,timingMax:int=0;
+       private static var rxNextCallback:int=0;
+       private static var rxProbeCalls:int=0,rxProbeTotal:int=0,rxProbeMax:int=0;
++      private static var rxPollCalls:int=0,rxPollReadCalls:int=0,rxPollReadBytes:int=0;
+ 
+       public static function wallAckTimingConfigure(flag:*,role:String):void
+       {
+@@ -71,12 +73,12 @@
+          rxProbeCalls++;rxProbeTotal+=cost;rxProbeMax=Math.max(rxProbeMax,cost);
+       }
+ 
+-      private static function rxTimingStart(carried:int):Object
++      private static function rxTimingStart(carried:int,reason:String):Object
+       {
+          if(!timingEnabled)return null;
+          var start:int=getTimer();
+          try {
+-            return {callbackId:++rxNextCallback,entryAt:start,entryWall:new Date().time,
++            return {callbackId:++rxNextCallback,entryReason:reason,entryAt:start,entryWall:new Date().time,
+                carriedBytes:carried,frameIndex:0,parsedBytes:0,extractMs:0,codecMs:0,
+                dispatchCount:0,dispatchMs:0};
+          }catch(error:*){timingFault("rx start observer: "+String(error));}
+@@ -128,7 +130,7 @@
+       private static function rxTimingFields(rx:Object):Object
+       {
+          if(rx==null)throw new Error("missing rx callback context");
+-         return {rxCallbackId:int(rx.callbackId),rxCallbackEntryAt:int(rx.entryAt),
++         return {rxCallbackId:int(rx.callbackId),rxEntryReason:String(rx.entryReason),rxCallbackEntryAt:int(rx.entryAt),
+             rxCallbackEntryWall:Number(rx.entryWall),rxCarriedBytes:int(rx.carriedBytes),
+             rxBufferAfterRead:int(rx.bufferAfterRead),rxReadStartAt:int(rx.readStartAt),rxReadDoneAt:int(rx.readDoneAt),
+             rxFrameIndex:int(rx.frameIndex),rxPayloadBytes:int(rx.payloadBytes),rxBinary:rx.binary===true,
+@@ -200,6 +202,7 @@
+             timingRound=round;timingRows=[];timingDropped=0;timingOverflow=false;
+             timingCalls=timingTotal=timingMax=0;timingAck=null;
+             rxProbeCalls=rxProbeTotal=rxProbeMax=0;
++            rxPollCalls=rxPollReadCalls=rxPollReadBytes=0;
+             timingStarted=timingClock();timingLocalSampled=timingPeerSampled=null;timingActive=true;
+          } else if(op=="sampled") {
+             if(!timingActive || round!=timingRound){timingFault("sampled outside active round");return;}
+@@ -327,6 +330,7 @@
+             capacity:256,overflow:timingOverflow,dropped:timingDropped,eventCount:timingRows.length,
+             faultCount:timingFaultCount,faults:timingFaults.concat(),probeCalls:timingCalls,probeTotalMs:timingTotal,probeMaxMs:timingMax,
+             rxProbeCalls:rxProbeCalls,rxProbeTotalMs:rxProbeTotal,rxProbeMaxMs:rxProbeMax,
++            rxPollCalls:rxPollCalls,rxPollReadCalls:rxPollReadCalls,rxPollReadBytes:rxPollReadBytes,
+             events:timingRows};
+          timingActive=false;timingWritten[name]=true;
+          var fs:FileStream=null;
+@@ -364,6 +368,7 @@
+       /** 客户端：主动连接。 */
+       public function connect(host:String, port:int):void
+       {
++         _rbuf = new ByteArray();
+          socket = new Socket();
+          wireEvents();
+          try
+@@ -379,6 +384,7 @@
+       /** 服务端：接管 accept 到的连接。 */
+       public function attach(sock:Socket):void
+       {
++         _rbuf = new ByteArray();
+          socket = sock;
+          isOpen = sock.connected;
+          wireEvents();
+@@ -487,71 +493,116 @@
+ 
+       private function onData(e:ProgressEvent):void
+       {
+-         var rx:Object=timingEnabled?rxTimingStart(_rbuf.length):null;
+-         var rxReadStart:int=rx!=null?getTimer():0;
++         if(e.currentTarget!==socket)return;
++         drainIncoming("socket-data");
++      }
++
++      /** The existing session timer may read bytes before SOCKET_DATA is delivered. */
++      public function pollIncoming():void
++      {
++         if(timingEnabled && timingActive)rxPollCalls++;
++         drainIncoming("tick-poll");
++      }
++
++      private function drainIncoming(reason:String):void
++      {
++         if(_reading || socket==null || !isOpen)return;
++         var readSocket:Socket=socket;
++         var readBuffer:ByteArray=_rbuf;
++         _reading=true;
+          try
+          {
+-            socket.readBytes(_rbuf, _rbuf.length);
+-         }
+-         catch(err:*)
+-         {
+-            fail("read threw: " + err);
+-            return;
+-         }
+-         if(rx!=null)rxTimingRead(rx,rxReadStart,getTimer(),_rbuf.length);
+-         _rbuf.position = 0;
+-         // 循环解帧：长度不足时回退游标，等待更多数据（半包）
+-         while(_rbuf.bytesAvailable >= 4)
+-         {
+-            var headPos:int = _rbuf.position;
+-            var header:int = _rbuf.readInt(), binary:Boolean=header<0;
+-            var len:int=binary?-header:header;
+-            if(len <= 0 || len > BinaryMessageCodec.MAX_BYTES || binary && !binaryEnabled)
+-            {
+-               fail("bad frame length: " + len);
++            try
++            {
++               if(!readSocket.connected || readSocket.bytesAvailable==0)return;
++            }
++            catch(availableError:*)
++            {
++               fail("read threw: " + availableError);
+                return;
+             }
+-            if(_rbuf.bytesAvailable < len)
+-            {
+-               _rbuf.position = headPos;   // 回退，等待剩余字节
+-               break;
+-            }
+-            var msg:Object;
+-            var rxExtract:int=rx!=null?getTimer():0;
+-            var rxCodec:int=0;
+-            if(binary) {
+-               var body:ByteArray=new ByteArray();_rbuf.readBytes(body,0,len);
+-               if(rx!=null)rxCodec=getTimer();
+-               msg=BinaryMessageCodec.unpack(body);
+-               if(rx!=null)rxTimingFrame(rx,len,true,rxExtract,rxCodec,getTimer());
+-               if(msg==null){fail("invalid binary frame");return;}
+-               binaryReceived++;
+-            } else if(rx!=null) {
+-               var encoded:String=_rbuf.readUTFBytes(len);
+-               rxCodec=getTimer();
+-               msg=Protocol.decode(encoded);
+-               rxTimingFrame(rx,len,false,rxExtract,rxCodec,getTimer());
+-               encoded=null;
+-            } else msg=Protocol.decode(_rbuf.readUTFBytes(len));
+-            if(msg != null)
+-            {
+-               if((msg.type==Protocol.MSG_HELLO || msg.type==Protocol.MSG_WELCOME)
+-                  && msg.binary===BinaryMessageCodec.CAPABILITY)binaryEnabled=true;
+-                timingTransport(msg,id,false,rx);
+-               if(rx==null)dispatchEvent(new NetMessageEvent(MESSAGE, msg));
+-               else {
+-                  var rxDispatchStart:int=getTimer();
+-                  try{dispatchEvent(new NetMessageEvent(MESSAGE, msg));}
+-                  finally{rxTimingDispatch(rx,rxDispatchStart,getTimer());}
++            var beforeRead:int=readBuffer.length;
++            var rx:Object=timingEnabled?rxTimingStart(beforeRead,reason):null;
++            var rxReadStart:int=rx!=null?getTimer():0;
++            try
++            {
++               readSocket.readBytes(readBuffer, readBuffer.length);
++            }
++            catch(err:*)
++            {
++               fail("read threw: " + err);
++               return;
++            }
++            if(reason=="tick-poll" && timingEnabled && timingActive)
++            {
++               rxPollReadCalls++;
++               rxPollReadBytes+=readBuffer.length-beforeRead;
++            }
++            if(rx!=null)rxTimingRead(rx,rxReadStart,getTimer(),readBuffer.length);
++            readBuffer.position = 0;
++            // 循环解帧：长度不足时回退游标，等待更多数据（半包）
++            while(readBuffer.bytesAvailable >= 4)
++            {
++               var headPos:int = readBuffer.position;
++               var header:int = readBuffer.readInt(), binary:Boolean=header<0;
++               var len:int=binary?-header:header;
++               if(len <= 0 || len > BinaryMessageCodec.MAX_BYTES || binary && !binaryEnabled)
++               {
++                  fail("bad frame length: " + len);
++                  return;
+                }
+-            }
+-         }
+-         // 丢弃已消费部分，压紧缓冲
+-         if(_rbuf.position > 0)
+-         {
+-            var rest:ByteArray = new ByteArray();
+-            rest.writeBytes(_rbuf, _rbuf.position, _rbuf.bytesAvailable);
+-            _rbuf = rest;
++               if(readBuffer.bytesAvailable < len)
++               {
++                  readBuffer.position = headPos;   // 回退，等待剩余字节
++                  break;
++               }
++               var msg:Object;
++               var rxExtract:int=rx!=null?getTimer():0;
++               var rxCodec:int=0;
++               if(binary) {
++                  var body:ByteArray=new ByteArray();readBuffer.readBytes(body,0,len);
++                  if(rx!=null)rxCodec=getTimer();
++                  msg=BinaryMessageCodec.unpack(body);
++                  if(rx!=null)rxTimingFrame(rx,len,true,rxExtract,rxCodec,getTimer());
++                  if(msg==null){fail("invalid binary frame");return;}
++                  binaryReceived++;
++               } else if(rx!=null) {
++                  var encoded:String=readBuffer.readUTFBytes(len);
++                  rxCodec=getTimer();
++                  msg=Protocol.decode(encoded);
++                  rxTimingFrame(rx,len,false,rxExtract,rxCodec,getTimer());
++                  encoded=null;
++               } else msg=Protocol.decode(readBuffer.readUTFBytes(len));
++               if(msg != null)
++               {
++                  if((msg.type==Protocol.MSG_HELLO || msg.type==Protocol.MSG_WELCOME)
++                     && msg.binary===BinaryMessageCodec.CAPABILITY)binaryEnabled=true;
++                   timingTransport(msg,id,false,rx);
++                  if(rx==null)dispatchEvent(new NetMessageEvent(MESSAGE, msg));
++                  else {
++                     var rxDispatchStart:int=getTimer();
++                     try{dispatchEvent(new NetMessageEvent(MESSAGE, msg));}
++                     finally{rxTimingDispatch(rx,rxDispatchStart,getTimer());}
++                  }
++               }
++               // A synchronous listener may close/replace this link while dispatching.
++               if(socket!==readSocket || _rbuf!==readBuffer || !isOpen || !readSocket.connected)
++               {
++                  if(_rbuf===readBuffer)_rbuf=new ByteArray();
++                  return;
++               }
++            }
++            // 丢弃已消费部分，压紧缓冲
++            if(readBuffer.position > 0)
++            {
++               var rest:ByteArray = new ByteArray();
++               rest.writeBytes(readBuffer, readBuffer.position, readBuffer.bytesAvailable);
++               _rbuf = rest;
++            }
++         }
++         finally
++         {
++            _reading=false;
+          }
+       }
+    }

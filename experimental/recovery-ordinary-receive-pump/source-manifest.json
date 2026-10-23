@@ -1,0 +1,30 @@
+{
+  "kind": "receive-pump-source-freeze",
+  "root_frozen": true,
+  "files": [
+    {
+      "path": "rconnect/core/Config.as",
+      "base_sha256": "33fd878d75f4b354779287c98254a0c73f6e2cce96fe39b378f6d0f80be9219f",
+      "sha256": "33fd878d75f4b354779287c98254a0c73f6e2cce96fe39b378f6d0f80be9219f",
+      "changed": false
+    },
+    {
+      "path": "rconnect/core/Session.as",
+      "base_sha256": "fa03863f6b95fbc3811e96bf4b4d01cbb0f181f75774c594eabe2f0aa45f8369",
+      "sha256": "af832a927a47421590e453af006e0f71938510ad13ff97f4e95b966f6951886d",
+      "changed": true
+    },
+    {
+      "path": "rconnect/game/WallImpactVisuals.as",
+      "base_sha256": "1a1f1b64a3dca66ac1c5ca041f131f2b2731ebc9600af31932c78932b8392289",
+      "sha256": "1a1f1b64a3dca66ac1c5ca041f131f2b2731ebc9600af31932c78932b8392289",
+      "changed": false
+    },
+    {
+      "path": "rconnect/net/TcpLink.as",
+      "base_sha256": "1e954f953782afa5ea977cd1ca3d53b41f49b416cff6a14c5bb7493a62c0827f",
+      "sha256": "ccd29ea37a6895abbb50890e860edfb1cce772e0e264431df9efaaa1f8d9748f",
+      "changed": true
+    }
+  ]
+}

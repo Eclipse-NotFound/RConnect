@@ -1,0 +1,609 @@
+package rconnect.net
+{
+   import rconnect.core.Log;
+   import flash.events.Event;
+   import flash.events.EventDispatcher;
+   import flash.events.IOErrorEvent;
+   import flash.events.ProgressEvent;
+   import flash.events.SecurityErrorEvent;
+   import flash.net.Socket;
+   import flash.utils.ByteArray;
+   import flash.utils.getTimer;
+   import flash.desktop.NativeApplication;
+   import flash.filesystem.File;
+   import flash.filesystem.FileMode;
+   import flash.filesystem.FileStream;
+
+   /**
+    * 单条 TCP 连接：长度前缀、半包/粘包处理，协商后的纯数据二进制或 JSON。
+    * 既可作为客户端主动 connect，也可 attach 服务端 accept 到的 Socket。
+    */
+   public class TcpLink extends EventDispatcher
+   {
+      public static const MESSAGE:String = "message";   // data: 解码后的 Object
+      public static const CONNECTED:String = "connected";
+      public static const CLOSED:String = "closed";
+      public static const FAILED:String = "failed";
+
+      public var id:int = -1;
+      public var peerName:String = "";
+      public var socket:Socket;
+      public var isOpen:Boolean = false;
+      public var binaryEnabled:Boolean = false;
+      public var binarySent:int=0,binaryReceived:int=0;
+
+      private var _rbuf:ByteArray = new ByteArray();
+      private var _closedNotified:Boolean = false;
+      private var _reading:Boolean = false;
+
+      // Isolated diagnostic only. No wire fields or transport decisions change.
+      private static var timingEnabled:Boolean=false;
+      private static var timingRole:String="",timingApp:String="";
+      private static var timingRound:int=-1,timingNext:int=0;
+      private static var timingActive:Boolean=false,timingOverflow:Boolean=false;
+      private static var timingDropped:int=0,timingFaultCount:int=0;
+      private static var timingRows:Array=[],timingFaults:Array=[];
+      private static var timingWritten:Object={};
+      private static var timingStarted:Object,timingLocalSampled:Object,timingPeerSampled:Object;
+      private static var timingAck:Object;
+      private static var timingCalls:int=0,timingTotal:int=0,timingMax:int=0;
+      private static var rxNextCallback:int=0;
+      private static var rxProbeCalls:int=0,rxProbeTotal:int=0,rxProbeMax:int=0;
+      private static var rxPollCalls:int=0,rxPollReadCalls:int=0,rxPollReadBytes:int=0;
+
+      public static function wallAckTimingConfigure(flag:*,role:String):void
+      {
+         if(String(flag)!="1")return;
+         try {
+            var app:String=NativeApplication.nativeApplication.applicationID;
+            var match:Object=/^pfe-modsettings-rconnect-coop-(host|join)-[0-9a-f]{10}$/.exec(app);
+            if(app=="pfe" || match==null || String(match[1])!=role) {
+               Log.d("WALL ACK TIMING DISABLED: isolated application/role required");return;
+            }
+            if(timingEnabled){timingFault("duplicate configure");return;}
+            timingApp=app;timingRole=role;timingEnabled=true;
+         } catch(error:*) {timingFault("configure: "+String(error));}
+      }
+
+      // Diagnostic helpers never receive payloads or alter transport state.
+      private static function rxTimingCost(start:int):void
+      {
+         if(!timingActive)return;
+         var cost:int=getTimer()-start;
+         rxProbeCalls++;rxProbeTotal+=cost;rxProbeMax=Math.max(rxProbeMax,cost);
+      }
+
+      private static function rxTimingStart(carried:int,reason:String):Object
+      {
+         if(!timingEnabled)return null;
+         var start:int=getTimer();
+         try {
+            return {callbackId:++rxNextCallback,entryReason:reason,entryAt:start,entryWall:new Date().time,
+               carriedBytes:carried,frameIndex:0,parsedBytes:0,extractMs:0,codecMs:0,
+               dispatchCount:0,dispatchMs:0};
+         }catch(error:*){timingFault("rx start observer: "+String(error));}
+         finally{rxTimingCost(start);}
+         return null;
+      }
+
+      private static function rxTimingRead(rx:Object,start:int,done:int,after:int):void
+      {
+         if(rx==null)return;
+         var probe:int=getTimer();
+         try {
+            if(start<int(rx.entryAt) || done<start || after<int(rx.carriedBytes))
+               throw new Error("inconsistent rx read interval");
+            rx.readStartAt=start;rx.readDoneAt=done;rx.bufferAfterRead=after;
+         }catch(error:*){timingFault("rx read observer: "+String(error));}
+         finally{rxTimingCost(probe);}
+      }
+
+      private static function rxTimingFrame(rx:Object,bytes:int,binary:Boolean,extract:int,codec:int,done:int):void
+      {
+         if(rx==null)return;
+         var probe:int=getTimer();
+         try {
+            if(extract<int(rx.readDoneAt) || codec<extract || done<codec || bytes<=0)
+               throw new Error("inconsistent rx frame interval");
+            rx.frameIndex++;
+            rx.priorBytes=rx.parsedBytes;rx.priorExtractMs=rx.extractMs;rx.priorCodecMs=rx.codecMs;
+            rx.priorDispatchCount=rx.dispatchCount;rx.priorDispatchMs=rx.dispatchMs;
+            rx.payloadBytes=bytes;rx.binary=binary;
+            rx.extractStartAt=extract;rx.codecStartAt=codec;rx.codecDoneAt=done;
+            rx.parsedBytes+=bytes+4;rx.extractMs+=codec-extract;rx.codecMs+=done-codec;
+         }catch(error:*){timingFault("rx frame observer: "+String(error));}
+         finally{rxTimingCost(probe);}
+      }
+
+      private static function rxTimingDispatch(rx:Object,start:int,done:int):void
+      {
+         var probe:int=getTimer();
+         try {
+            if(rx==null || done<start)throw new Error("inconsistent rx dispatch interval");
+            rx.dispatchCount++;rx.dispatchMs+=done-start;
+         }catch(error:*){timingFault("rx dispatch observer: "+String(error));}
+         finally{rxTimingCost(probe);}
+      }
+
+      // Called inside the existing timingTransportInside observer try/catch.
+      // Every field is copied as a scalar; no mutable callback reference escapes.
+      private static function rxTimingFields(rx:Object):Object
+      {
+         if(rx==null)throw new Error("missing rx callback context");
+         return {rxCallbackId:int(rx.callbackId),rxEntryReason:String(rx.entryReason),rxCallbackEntryAt:int(rx.entryAt),
+            rxCallbackEntryWall:Number(rx.entryWall),rxCarriedBytes:int(rx.carriedBytes),
+            rxBufferAfterRead:int(rx.bufferAfterRead),rxReadStartAt:int(rx.readStartAt),rxReadDoneAt:int(rx.readDoneAt),
+            rxFrameIndex:int(rx.frameIndex),rxPayloadBytes:int(rx.payloadBytes),rxBinary:rx.binary===true,
+            rxCarriedFirstFrame:int(rx.frameIndex)==1 && int(rx.carriedBytes)>0,
+            rxExtractStartAt:int(rx.extractStartAt),rxCodecStartAt:int(rx.codecStartAt),rxCodecDoneAt:int(rx.codecDoneAt),
+            rxPriorFrames:int(rx.frameIndex)-1,rxPriorBytes:int(rx.priorBytes),
+            rxPriorExtractMs:int(rx.priorExtractMs),rxPriorCodecMs:int(rx.priorCodecMs),
+            rxPriorDispatchCount:int(rx.priorDispatchCount),rxPriorDispatchMs:int(rx.priorDispatchMs)};
+      }
+
+      private static function timingFault(reason:String):void
+      {
+         timingFaultCount++;
+         if(timingFaults.length<16)timingFaults.push(reason.substr(0,400));
+      }
+
+      private static function timingClock():Object
+      {return {at:getTimer(),wall:new Date().time};}
+
+      private static function timingMeta(msg:Object,batch:Object,peer:int,paint:Boolean=false):Object
+      {
+         var cells:Array=paint?batch as Array:batch.cells as Array;
+         if(cells==null)throw new Error("missing diagnostic cells");
+         if(!paint && cells.length>3)timingFault("ordinary report/ACK exceeds three cells");
+         var key:String=String(msg.roomKey);
+         if(msg.roomKey==null || msg.roomEpoch==null || msg.roomTerm==null || key.length>256)
+            timingFault("missing/oversized room identity");
+         var seq:*=paint?null:batch.seq;
+         if(!paint && (seq==null || !isFinite(Number(seq)) || Number(seq)<=0 || Number(seq)!=int(seq)))
+            timingFault("invalid wall sequence");
+         var out:Array=[],chars:int=0;
+         for(var i:int=0;i<Math.min(3,cells.length);i++) {
+            var c:Object=cells[i];if(c==null)throw new Error("null diagnostic cell");
+            out.push({x:c.x,y:c.y,v:c.v,sv:c.sv,full:c.full===true,needsNative:c.needsNative===true});
+            if(c.d is String)chars+=String(c.d).length;
+         }
+         return {type:String(msg.type),roomKey:key.substr(0,256),roomEpoch:msg.roomEpoch,roomTerm:msg.roomTerm,
+            seq:seq,tick:msg.tick==null?null:msg.tick,linkId:peer,cellCount:cells.length,
+            sampledCellCount:out.length,metadataPrefixOnly:cells.length>out.length,prefixEncodedChars:chars,cells:out};
+      }
+
+      private static function timingPush(kind:String,clock:Object,meta:Object,extra:Object=null):Object
+      {
+         if(timingRows.length>=256){timingOverflow=true;timingDropped++;return null;}
+         var row:Object={kind:kind,at:clock.at,wall:clock.wall,round:timingRound,role:timingRole,probeMs:0};
+         for(var key:String in meta)row[key]=meta[key];
+         if(extra!=null)for(key in extra)row[key]=extra[key];
+         timingRows.push(row);return row;
+      }
+
+      private static function timingCost(start:int,row:Object):void
+      {
+         var cost:int=getTimer()-start;
+         timingCalls++;timingTotal+=cost;timingMax=Math.max(timingMax,cost);
+         if(row!=null)row.probeMs=cost;
+      }
+
+      private static function timingMarker(msg:Object,outgoing:Boolean):void
+      {
+         var op:String=String(msg.op),round:int=int(msg.round);
+         if((op=="go" || op=="sampled" || op=="analyze") &&
+            (msg.round==null || !isFinite(Number(msg.round)) || Number(msg.round)!=round)) {
+            timingFault("non-integer marker round");return;
+         }
+         if(op=="go") {
+            if((timingRole=="host")!=outgoing || Number(msg.round)!=round || round!=timingNext || round<0 || round>3 || timingActive) {
+               timingFault("unexpected go round/direction");return;
+            }
+            timingRound=round;timingRows=[];timingDropped=0;timingOverflow=false;
+            timingCalls=timingTotal=timingMax=0;timingAck=null;
+            rxProbeCalls=rxProbeTotal=rxProbeMax=0;
+            rxPollCalls=rxPollReadCalls=rxPollReadBytes=0;
+            timingStarted=timingClock();timingLocalSampled=timingPeerSampled=null;timingActive=true;
+         } else if(op=="sampled") {
+            if(!timingActive || round!=timingRound){timingFault("sampled outside active round");return;}
+            if(outgoing) {
+               if(timingLocalSampled!=null)timingFault("duplicate local sampled");
+               else timingLocalSampled=timingClock();
+            } else {
+               if(timingPeerSampled!=null)timingFault("duplicate peer sampled");
+               else timingPeerSampled=timingClock();
+            }
+         } else if(op=="analyze") {
+            if(!timingActive || round!=timingRound || (timingRole=="host")!=outgoing) {
+               timingFault("unexpected analyze round/direction");return;
+            }
+            var both:Boolean=timingLocalSampled!=null && timingPeerSampled!=null;
+            if(!both)timingFault("analyze before both sampled");
+            timingDump("analyze",both);timingNext=round+1;
+         } else if(op=="stop" || op=="done") {
+            if(timingActive){timingFault("test ended during active round");timingDump(op,false);}
+         }
+      }
+
+      /** One narrow entry for successful flush and pre-dispatch observations. */
+      private static function timingTransport(msg:Object,peer:int,outgoing:Boolean,rx:Object=null):void
+      {
+         if(!timingEnabled)return;
+         try{timingTransportInside(msg,peer,outgoing,rx);}
+         catch(error:*){timingFault("transport observer: "+String(error));}
+      }
+
+      private static function timingTransportInside(msg:Object,peer:int,outgoing:Boolean,rx:Object=null):void
+      {
+         if(msg!=null && msg.type=="large-wall-test") {
+            try{timingMarker(msg,outgoing);}catch(markerError:*){timingFault("marker: "+String(markerError));}
+            return;
+         }
+         if(!timingActive || msg==null)return;
+         var batch:Object,paint:Boolean=false,kind:String;
+         if(msg.type==Protocol.MSG_TERRAIN && msg.wall!=null){batch=msg.wall;kind="report";}
+         else if(msg.type==Protocol.MSG_TERRAIN_ACK && msg.wallReceipt!=null){batch=msg.wallReceipt;kind="ack";}
+         else if((msg.type==Protocol.MSG_WORLDSTATE || msg.type==Protocol.MSG_UNITSYNC) && msg.wallPaint is Array)
+         {batch=msg.wallPaint;kind="paint";paint=true;}
+         else return;
+         var clock:Object=timingClock(),row:Object=null;
+         try{row=timingPush((outgoing?"tx-":"rx-")+kind,clock,timingMeta(msg,batch,peer,paint),outgoing?null:rxTimingFields(rx));}
+         catch(probeError:*){timingFault("transport probe: "+String(probeError));}
+         finally{timingCost(int(clock.at),row);}
+      }
+
+      public static function wallAckTimingReceived(msg:Object,accepted:Boolean,peer:int):Object
+      {
+         var previous:Object=timingAck;
+         if(!timingEnabled || !timingActive || msg==null || msg.wallReceipt==null)return previous;
+         var clock:Object=timingClock(),row:Object=null;
+         try {
+            var meta:Object=timingMeta(msg,msg.wallReceipt,peer);
+            timingAck={meta:meta,accepted:accepted};
+            row=timingPush("ack-received",clock,meta,{acceptedRoom:accepted});
+         }catch(error:*){timingFault("ACK received: "+String(error));}
+         finally{timingCost(int(clock.at),row);}
+         return previous;
+      }
+
+      public static function wallAckTimingProcessed(msg:Object,previous:Object,completed:Boolean):void
+      {
+         if(!timingEnabled || !timingActive || msg==null || msg.wallReceipt==null){timingAck=previous;return;}
+         var clock:Object=timingClock(),row:Object=null;
+         try {
+            if(timingActive && msg!=null && msg.wallReceipt!=null) {
+               if(timingAck==null || timingAck.meta.seq!=msg.wallReceipt.seq)timingFault("ACK processed context mismatch");
+               else row=timingPush("ack-processed",clock,timingAck.meta,{acceptedRoom:timingAck.accepted,completed:completed});
+               if(!completed)timingFault("native ACK processing threw");
+            }
+         }catch(error:*){timingFault("ACK processed: "+String(error));}
+         finally{timingAck=previous;timingCost(int(clock.at),row);}
+      }
+
+      public static function wallAckTimingReleaseStart(seq:*):Object
+      {
+         if(!timingEnabled || !timingActive)return null;
+         var start:int=getTimer();
+         try {
+            var clock:Object=timingClock();
+            if(timingAck==null || timingAck.accepted!==true || timingAck.meta.seq!=seq) {
+               timingFault("pending release without matching accepted ACK context");return null;
+            }
+            return clock;
+         }catch(error:*){timingFault("pending release clock: "+String(error));}
+         finally{timingCost(start,null);}
+         return null;
+      }
+
+      public static function wallAckTimingReleased(seq:*,queued:Object,cells:Object,released:Object):void
+      {
+         if(!timingEnabled || !timingActive)return;
+         var clock:Object=timingClock(),row:Object=null;
+         try {
+            if(released==null || timingAck==null || timingAck.accepted!==true || timingAck.meta.seq!=seq) {
+               timingFault("pending release without matching accepted ACK context");return;
+            }
+            var first:Object={found:false,key:null,valid:null,eligible:null};
+            for(var key:String in queued) {
+               var q:Object=queued[key],c:Object=cells[key];
+               first={found:true,key:key.substr(0,80),valid:q!=null && c!=null,
+                  eligible:c==null?false:q==null?null:(!Boolean(c.needsNative) && q.sv==c.sv),
+                  x:q==null?null:q.x,y:q==null?null:q.y,sv:q==null?null:q.sv,
+                  cellSv:c==null?null:c.sv,needsNative:c==null?null:Boolean(c.needsNative)};
+               if(key.length>80)timingFault("oversized queued key");
+               break;
+            }
+            row=timingPush("pending-released",clock,timingAck.meta,{acceptedRoom:true,
+               releaseAt:released.at,releaseWall:released.wall,completedAt:clock.at,completedWall:clock.wall,queuedFirst:first});
+         }catch(error:*){timingFault("pending release: "+String(error));}
+         finally{timingCost(int(clock.at),row);}
+      }
+
+      private static function timingDump(reason:String,normal:Boolean):void
+      {
+         var name:String=timingActive?"round-"+timingRound:"abort";
+         if(timingWritten[name])return;
+         var ended:Object=timingClock(),both:Boolean=timingLocalSampled!=null && timingPeerSampled!=null;
+         var result:Object={kind:"ordinary-wall-ack-timing-v1",appId:timingApp,role:timingRole,round:timingRound,
+            complete:normal && both && !timingOverflow && timingFaultCount==0,termination:reason,
+            started:timingStarted,ended:ended,localSampled:timingLocalSampled,peerSampled:timingPeerSampled,bothSampled:both,
+            capacity:256,overflow:timingOverflow,dropped:timingDropped,eventCount:timingRows.length,
+            faultCount:timingFaultCount,faults:timingFaults.concat(),probeCalls:timingCalls,probeTotalMs:timingTotal,probeMaxMs:timingMax,
+            rxProbeCalls:rxProbeCalls,rxProbeTotalMs:rxProbeTotal,rxProbeMaxMs:rxProbeMax,
+            rxPollCalls:rxPollCalls,rxPollReadCalls:rxPollReadCalls,rxPollReadBytes:rxPollReadBytes,
+            events:timingRows};
+         timingActive=false;timingWritten[name]=true;
+         var fs:FileStream=null;
+         try {
+            var file:File=File.applicationStorageDirectory.resolvePath("wall-ack-timing/"+name+".json");
+            if(file.exists)throw new Error("diagnostic output already exists");
+            file.parent.createDirectory();
+            var text:String=JSON.stringify(result),started:int=getTimer();
+            fs=new FileStream();fs.open(file,FileMode.WRITE);fs.writeUTFBytes(text);fs.close();fs=null;
+            Log.d("WALL ACK TIMING FILE "+JSON.stringify({round:timingRound,file:file.name,complete:result.complete,
+               events:result.eventCount,overflow:result.overflow,faultCount:result.faultCount,writeMs:getTimer()-started}));
+         }catch(error:*) {
+            timingFault("output: "+String(error));
+            Log.d("WALL ACK TIMING OUTPUT FAILED "+String(error));
+         }finally {
+            if(fs!=null)try{fs.close();}catch(closeError:*){timingFault("output close: "+String(closeError));}
+            timingRows=[];timingAck=null;
+         }
+      }
+
+      private static function timingAbort(reason:String):void
+      {
+         if(!timingEnabled || (!timingActive && timingNext==4 && timingFaultCount==0))return;
+         try{timingDump(reason,false);}catch(error:*){timingFault("abort output: "+String(error));}
+      }
+
+      public function TcpLink(sock:Socket = null)
+      {
+         if(sock != null)
+         {
+            attach(sock);
+         }
+      }
+
+      /** 客户端：主动连接。 */
+      public function connect(host:String, port:int):void
+      {
+         _rbuf = new ByteArray();
+         socket = new Socket();
+         wireEvents();
+         try
+         {
+            socket.connect(host, port);
+         }
+         catch(err:*)
+         {
+            fail("connect threw: " + err);
+         }
+      }
+
+      /** 服务端：接管 accept 到的连接。 */
+      public function attach(sock:Socket):void
+      {
+         _rbuf = new ByteArray();
+         socket = sock;
+         isOpen = sock.connected;
+         wireEvents();
+         dispatchEvent(new Event(CONNECTED));
+      }
+
+      public function send(msg:Object):void
+      {
+         if(socket == null || !socket.connected)
+         {
+            return;
+         }
+         try
+         {
+            var handshake:Boolean=msg.type==Protocol.MSG_HELLO || msg.type==Protocol.MSG_WELCOME;
+            if(handshake)msg.binary=BinaryMessageCodec.CAPABILITY;
+            // The greeting stays ordinary JSON. Only peers advertising the
+            // same plain-data codec receive binary frames; others keep JSON.
+            var ba:ByteArray=binaryEnabled && !handshake?BinaryMessageCodec.pack(msg):null;
+            var binary:Boolean=ba!=null;
+            if(!binary) {ba=new ByteArray();ba.writeUTFBytes(Protocol.encode(msg));}
+            if(ba.length>BinaryMessageCodec.MAX_BYTES)throw new Error("Outgoing frame exceeds limit");
+            socket.writeInt(binary?-int(ba.length):int(ba.length));
+            socket.writeBytes(ba, 0, ba.length);
+            socket.flush();
+            timingTransport(msg,id,true);
+            if(binary)binarySent++;
+         }
+         catch(err:*)
+         {
+            Log.d("RConnectNet: send failed: " + err);
+            fail("send threw: " + err);
+         }
+      }
+
+      public function close():void
+      {
+         timingAbort("local-close");
+         try
+         {
+            if(socket != null && socket.connected)
+            {
+               socket.close();
+            }
+         }
+         catch(err:*)
+         {
+         }
+         if(!_closedNotified)
+         {
+            _closedNotified = true;
+            isOpen = false;
+            dispatchEvent(new Event(CLOSED));
+         }
+      }
+
+      private function wireEvents():void
+      {
+         socket.addEventListener(Event.CONNECT, onConnect);
+         socket.addEventListener(Event.CLOSE, onClose);
+         socket.addEventListener(IOErrorEvent.IO_ERROR, onError);
+         socket.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onSecError);
+         socket.addEventListener(ProgressEvent.SOCKET_DATA, onData);
+      }
+
+      private function onConnect(e:Event):void
+      {
+         isOpen = true;
+         Log.d("RConnectNet: link connected");
+         dispatchEvent(new Event(CONNECTED));
+      }
+
+      private function onClose(e:Event):void
+      {
+         timingAbort("remote-close");
+         Log.d("RConnectNet: link closed");
+         if(!_closedNotified)
+         {
+            _closedNotified = true;
+            isOpen = false;
+            dispatchEvent(new Event(CLOSED));
+         }
+      }
+
+      private function onError(e:IOErrorEvent):void
+      {
+         fail("IOError: " + e.text);
+      }
+
+      private function onSecError(e:SecurityErrorEvent):void
+      {
+         fail("SecurityError: " + e.text);
+      }
+
+      private function fail(reason:String):void
+      {
+         timingAbort("link-failed: "+reason.substr(0,240));
+         Log.d("RConnectNet: link failed: " + reason);
+         if(!_closedNotified)
+         {
+            _closedNotified = true;
+            isOpen = false;
+            dispatchEvent(new Event(FAILED));
+         }
+      }
+
+      private function onData(e:ProgressEvent):void
+      {
+         if(e.currentTarget!==socket)return;
+         drainIncoming("socket-data");
+      }
+
+      /** The existing session timer may read bytes before SOCKET_DATA is delivered. */
+      public function pollIncoming():void
+      {
+         if(timingEnabled && timingActive)rxPollCalls++;
+         drainIncoming("tick-poll");
+      }
+
+      private function drainIncoming(reason:String):void
+      {
+         if(_reading || socket==null || !isOpen)return;
+         var readSocket:Socket=socket;
+         var readBuffer:ByteArray=_rbuf;
+         _reading=true;
+         try
+         {
+            try
+            {
+               if(!readSocket.connected || readSocket.bytesAvailable==0)return;
+            }
+            catch(availableError:*)
+            {
+               fail("read threw: " + availableError);
+               return;
+            }
+            var beforeRead:int=readBuffer.length;
+            var rx:Object=timingEnabled?rxTimingStart(beforeRead,reason):null;
+            var rxReadStart:int=rx!=null?getTimer():0;
+            try
+            {
+               readSocket.readBytes(readBuffer, readBuffer.length);
+            }
+            catch(err:*)
+            {
+               fail("read threw: " + err);
+               return;
+            }
+            if(reason=="tick-poll" && timingEnabled && timingActive)
+            {
+               rxPollReadCalls++;
+               rxPollReadBytes+=readBuffer.length-beforeRead;
+            }
+            if(rx!=null)rxTimingRead(rx,rxReadStart,getTimer(),readBuffer.length);
+            readBuffer.position = 0;
+            // 循环解帧：长度不足时回退游标，等待更多数据（半包）
+            while(readBuffer.bytesAvailable >= 4)
+            {
+               var headPos:int = readBuffer.position;
+               var header:int = readBuffer.readInt(), binary:Boolean=header<0;
+               var len:int=binary?-header:header;
+               if(len <= 0 || len > BinaryMessageCodec.MAX_BYTES || binary && !binaryEnabled)
+               {
+                  fail("bad frame length: " + len);
+                  return;
+               }
+               if(readBuffer.bytesAvailable < len)
+               {
+                  readBuffer.position = headPos;   // 回退，等待剩余字节
+                  break;
+               }
+               var msg:Object;
+               var rxExtract:int=rx!=null?getTimer():0;
+               var rxCodec:int=0;
+               if(binary) {
+                  var body:ByteArray=new ByteArray();readBuffer.readBytes(body,0,len);
+                  if(rx!=null)rxCodec=getTimer();
+                  msg=BinaryMessageCodec.unpack(body);
+                  if(rx!=null)rxTimingFrame(rx,len,true,rxExtract,rxCodec,getTimer());
+                  if(msg==null){fail("invalid binary frame");return;}
+                  binaryReceived++;
+               } else if(rx!=null) {
+                  var encoded:String=readBuffer.readUTFBytes(len);
+                  rxCodec=getTimer();
+                  msg=Protocol.decode(encoded);
+                  rxTimingFrame(rx,len,false,rxExtract,rxCodec,getTimer());
+                  encoded=null;
+               } else msg=Protocol.decode(readBuffer.readUTFBytes(len));
+               if(msg != null)
+               {
+                  if((msg.type==Protocol.MSG_HELLO || msg.type==Protocol.MSG_WELCOME)
+                     && msg.binary===BinaryMessageCodec.CAPABILITY)binaryEnabled=true;
+                   timingTransport(msg,id,false,rx);
+                  if(rx==null)dispatchEvent(new NetMessageEvent(MESSAGE, msg));
+                  else {
+                     var rxDispatchStart:int=getTimer();
+                     try{dispatchEvent(new NetMessageEvent(MESSAGE, msg));}
+                     finally{rxTimingDispatch(rx,rxDispatchStart,getTimer());}
+                  }
+               }
+               // A synchronous listener may close/replace this link while dispatching.
+               if(socket!==readSocket || _rbuf!==readBuffer || !isOpen || !readSocket.connected)
+               {
+                  if(_rbuf===readBuffer)_rbuf=new ByteArray();
+                  return;
+               }
+            }
+            // 丢弃已消费部分，压紧缓冲
+            if(readBuffer.position > 0)
+            {
+               var rest:ByteArray = new ByteArray();
+               rest.writeBytes(readBuffer, readBuffer.position, readBuffer.bytesAvailable);
+               _rbuf = rest;
+            }
+         }
+         finally
+         {
+            _reading=false;
+         }
+      }
+   }
+}
