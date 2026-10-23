@@ -1,0 +1,190 @@
+--- ack-timing/src/rconnect/net/TcpLink.as
++++ rx-timing/src/rconnect/net/TcpLink.as
+@@ -46,6 +46,8 @@
+       private static var timingStarted:Object,timingLocalSampled:Object,timingPeerSampled:Object;
+       private static var timingAck:Object;
+       private static var timingCalls:int=0,timingTotal:int=0,timingMax:int=0;
++      private static var rxNextCallback:int=0;
++      private static var rxProbeCalls:int=0,rxProbeTotal:int=0,rxProbeMax:int=0;
+ 
+       public static function wallAckTimingConfigure(flag:*,role:String):void
+       {
+@@ -59,6 +61,82 @@
+             if(timingEnabled){timingFault("duplicate configure");return;}
+             timingApp=app;timingRole=role;timingEnabled=true;
+          } catch(error:*) {timingFault("configure: "+String(error));}
++      }
++
++      // Diagnostic helpers never receive payloads or alter transport state.
++      private static function rxTimingCost(start:int):void
++      {
++         if(!timingActive)return;
++         var cost:int=getTimer()-start;
++         rxProbeCalls++;rxProbeTotal+=cost;rxProbeMax=Math.max(rxProbeMax,cost);
++      }
++
++      private static function rxTimingStart(carried:int):Object
++      {
++         if(!timingEnabled)return null;
++         var start:int=getTimer();
++         try {
++            return {callbackId:++rxNextCallback,entryAt:start,entryWall:new Date().time,
++               carriedBytes:carried,frameIndex:0,parsedBytes:0,extractMs:0,codecMs:0,
++               dispatchCount:0,dispatchMs:0};
++         }catch(error:*){timingFault("rx start observer: "+String(error));}
++         finally{rxTimingCost(start);}
++         return null;
++      }
++
++      private static function rxTimingRead(rx:Object,start:int,done:int,after:int):void
++      {
++         if(rx==null)return;
++         var probe:int=getTimer();
++         try {
++            if(start<int(rx.entryAt) || done<start || after<int(rx.carriedBytes))
++               throw new Error("inconsistent rx read interval");
++            rx.readStartAt=start;rx.readDoneAt=done;rx.bufferAfterRead=after;
++         }catch(error:*){timingFault("rx read observer: "+String(error));}
++         finally{rxTimingCost(probe);}
++      }
++
++      private static function rxTimingFrame(rx:Object,bytes:int,binary:Boolean,extract:int,codec:int,done:int):void
++      {
++         if(rx==null)return;
++         var probe:int=getTimer();
++         try {
++            if(extract<int(rx.readDoneAt) || codec<extract || done<codec || bytes<=0)
++               throw new Error("inconsistent rx frame interval");
++            rx.frameIndex++;
++            rx.priorBytes=rx.parsedBytes;rx.priorExtractMs=rx.extractMs;rx.priorCodecMs=rx.codecMs;
++            rx.priorDispatchCount=rx.dispatchCount;rx.priorDispatchMs=rx.dispatchMs;
++            rx.payloadBytes=bytes;rx.binary=binary;
++            rx.extractStartAt=extract;rx.codecStartAt=codec;rx.codecDoneAt=done;
++            rx.parsedBytes+=bytes+4;rx.extractMs+=codec-extract;rx.codecMs+=done-codec;
++         }catch(error:*){timingFault("rx frame observer: "+String(error));}
++         finally{rxTimingCost(probe);}
++      }
++
++      private static function rxTimingDispatch(rx:Object,start:int,done:int):void
++      {
++         var probe:int=getTimer();
++         try {
++            if(rx==null || done<start)throw new Error("inconsistent rx dispatch interval");
++            rx.dispatchCount++;rx.dispatchMs+=done-start;
++         }catch(error:*){timingFault("rx dispatch observer: "+String(error));}
++         finally{rxTimingCost(probe);}
++      }
++
++      // Called inside the existing timingTransportInside observer try/catch.
++      // Every field is copied as a scalar; no mutable callback reference escapes.
++      private static function rxTimingFields(rx:Object):Object
++      {
++         if(rx==null)throw new Error("missing rx callback context");
++         return {rxCallbackId:int(rx.callbackId),rxCallbackEntryAt:int(rx.entryAt),
++            rxCallbackEntryWall:Number(rx.entryWall),rxCarriedBytes:int(rx.carriedBytes),
++            rxBufferAfterRead:int(rx.bufferAfterRead),rxReadStartAt:int(rx.readStartAt),rxReadDoneAt:int(rx.readDoneAt),
++            rxFrameIndex:int(rx.frameIndex),rxPayloadBytes:int(rx.payloadBytes),rxBinary:rx.binary===true,
++            rxCarriedFirstFrame:int(rx.frameIndex)==1 && int(rx.carriedBytes)>0,
++            rxExtractStartAt:int(rx.extractStartAt),rxCodecStartAt:int(rx.codecStartAt),rxCodecDoneAt:int(rx.codecDoneAt),
++            rxPriorFrames:int(rx.frameIndex)-1,rxPriorBytes:int(rx.priorBytes),
++            rxPriorExtractMs:int(rx.priorExtractMs),rxPriorCodecMs:int(rx.priorCodecMs),
++            rxPriorDispatchCount:int(rx.priorDispatchCount),rxPriorDispatchMs:int(rx.priorDispatchMs)};
+       }
+ 
+       private static function timingFault(reason:String):void
+@@ -121,6 +199,7 @@
+             }
+             timingRound=round;timingRows=[];timingDropped=0;timingOverflow=false;
+             timingCalls=timingTotal=timingMax=0;timingAck=null;
++            rxProbeCalls=rxProbeTotal=rxProbeMax=0;
+             timingStarted=timingClock();timingLocalSampled=timingPeerSampled=null;timingActive=true;
+          } else if(op=="sampled") {
+             if(!timingActive || round!=timingRound){timingFault("sampled outside active round");return;}
+@@ -144,14 +223,14 @@
+       }
+ 
+       /** One narrow entry for successful flush and pre-dispatch observations. */
+-      private static function timingTransport(msg:Object,peer:int,outgoing:Boolean):void
++      private static function timingTransport(msg:Object,peer:int,outgoing:Boolean,rx:Object=null):void
+       {
+          if(!timingEnabled)return;
+-         try{timingTransportInside(msg,peer,outgoing);}
++         try{timingTransportInside(msg,peer,outgoing,rx);}
+          catch(error:*){timingFault("transport observer: "+String(error));}
+       }
+ 
+-      private static function timingTransportInside(msg:Object,peer:int,outgoing:Boolean):void
++      private static function timingTransportInside(msg:Object,peer:int,outgoing:Boolean,rx:Object=null):void
+       {
+          if(msg!=null && msg.type=="large-wall-test") {
+             try{timingMarker(msg,outgoing);}catch(markerError:*){timingFault("marker: "+String(markerError));}
+@@ -165,7 +244,7 @@
+          {batch=msg.wallPaint;kind="paint";paint=true;}
+          else return;
+          var clock:Object=timingClock(),row:Object=null;
+-         try{row=timingPush((outgoing?"tx-":"rx-")+kind,clock,timingMeta(msg,batch,peer,paint));}
++         try{row=timingPush((outgoing?"tx-":"rx-")+kind,clock,timingMeta(msg,batch,peer,paint),outgoing?null:rxTimingFields(rx));}
+          catch(probeError:*){timingFault("transport probe: "+String(probeError));}
+          finally{timingCost(int(clock.at),row);}
+       }
+@@ -247,6 +326,7 @@
+             started:timingStarted,ended:ended,localSampled:timingLocalSampled,peerSampled:timingPeerSampled,bothSampled:both,
+             capacity:256,overflow:timingOverflow,dropped:timingDropped,eventCount:timingRows.length,
+             faultCount:timingFaultCount,faults:timingFaults.concat(),probeCalls:timingCalls,probeTotalMs:timingTotal,probeMaxMs:timingMax,
++            rxProbeCalls:rxProbeCalls,rxProbeTotalMs:rxProbeTotal,rxProbeMaxMs:rxProbeMax,
+             events:timingRows};
+          timingActive=false;timingWritten[name]=true;
+          var fs:FileStream=null;
+@@ -407,6 +487,8 @@
+ 
+       private function onData(e:ProgressEvent):void
+       {
++         var rx:Object=timingEnabled?rxTimingStart(_rbuf.length):null;
++         var rxReadStart:int=rx!=null?getTimer():0;
+          try
+          {
+             socket.readBytes(_rbuf, _rbuf.length);
+@@ -416,6 +498,7 @@
+             fail("read threw: " + err);
+             return;
+          }
++         if(rx!=null)rxTimingRead(rx,rxReadStart,getTimer(),_rbuf.length);
+          _rbuf.position = 0;
+          // 循环解帧：长度不足时回退游标，等待更多数据（半包）
+          while(_rbuf.bytesAvailable >= 4)
+@@ -434,18 +517,33 @@
+                break;
+             }
+             var msg:Object;
++            var rxExtract:int=rx!=null?getTimer():0;
++            var rxCodec:int=0;
+             if(binary) {
+                var body:ByteArray=new ByteArray();_rbuf.readBytes(body,0,len);
++               if(rx!=null)rxCodec=getTimer();
+                msg=BinaryMessageCodec.unpack(body);
++               if(rx!=null)rxTimingFrame(rx,len,true,rxExtract,rxCodec,getTimer());
+                if(msg==null){fail("invalid binary frame");return;}
+                binaryReceived++;
++            } else if(rx!=null) {
++               var encoded:String=_rbuf.readUTFBytes(len);
++               rxCodec=getTimer();
++               msg=Protocol.decode(encoded);
++               rxTimingFrame(rx,len,false,rxExtract,rxCodec,getTimer());
++               encoded=null;
+             } else msg=Protocol.decode(_rbuf.readUTFBytes(len));
+             if(msg != null)
+             {
+                if((msg.type==Protocol.MSG_HELLO || msg.type==Protocol.MSG_WELCOME)
+                   && msg.binary===BinaryMessageCodec.CAPABILITY)binaryEnabled=true;
+-                timingTransport(msg,id,false);
+-               dispatchEvent(new NetMessageEvent(MESSAGE, msg));
++                timingTransport(msg,id,false,rx);
++               if(rx==null)dispatchEvent(new NetMessageEvent(MESSAGE, msg));
++               else {
++                  var rxDispatchStart:int=getTimer();
++                  try{dispatchEvent(new NetMessageEvent(MESSAGE, msg));}
++                  finally{rxTimingDispatch(rx,rxDispatchStart,getTimer());}
++               }
+             }
+          }
+          // 丢弃已消费部分，压紧缓冲

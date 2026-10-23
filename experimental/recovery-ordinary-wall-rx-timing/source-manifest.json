@@ -1,0 +1,59 @@
+{
+  "kind": "ordinary-wall-rx-timing-source-only",
+  "base": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-ordinary-wall-ack-timing",
+  "base_product": "57713116a7f4c70e47bed655d9ed80490fb32ecb75f14e7bf964e75db0122c06",
+  "source": {
+    "rconnect/core/Config.as": "33fd878d75f4b354779287c98254a0c73f6e2cce96fe39b378f6d0f80be9219f",
+    "rconnect/core/Session.as": "fa03863f6b95fbc3811e96bf4b4d01cbb0f181f75774c594eabe2f0aa45f8369",
+    "rconnect/game/WallImpactVisuals.as": "1a1f1b64a3dca66ac1c5ca041f131f2b2731ebc9600af31932c78932b8392289",
+    "rconnect/net/TcpLink.as": "9c4870db51e328a62c215affc7c9c92b4a07a3ff791b59070f89c208bf90d0cb"
+  },
+  "overlay": {
+    "rconnect/core/Config.as": "33fd878d75f4b354779287c98254a0c73f6e2cce96fe39b378f6d0f80be9219f",
+    "rconnect/core/Session.as": "fa03863f6b95fbc3811e96bf4b4d01cbb0f181f75774c594eabe2f0aa45f8369",
+    "rconnect/game/WallImpactVisuals.as": "1a1f1b64a3dca66ac1c5ca041f131f2b2731ebc9600af31932c78932b8392289",
+    "rconnect/net/TcpLink.as": "1e954f953782afa5ea977cd1ca3d53b41f49b416cff6a14c5bb7493a62c0827f"
+  },
+  "changed": [
+    "rconnect/net/TcpLink.as"
+  ],
+  "compiled": false,
+  "air_started": false,
+  "installed": false,
+  "runtime_qualified": false,
+  "performance_qualified": false,
+  "static_checks": {
+    "base_unchanged": true,
+    "three_other_classes_byte_identical": true,
+    "send_identical": true,
+    "unchanged_tcp_methods": [
+      "wallAckTimingConfigure",
+      "timingFault",
+      "timingClock",
+      "timingMeta",
+      "timingPush",
+      "timingCost",
+      "wallAckTimingReceived",
+      "wallAckTimingProcessed",
+      "wallAckTimingReleaseStart",
+      "wallAckTimingReleased",
+      "timingAbort",
+      "TcpLink",
+      "connect",
+      "attach",
+      "send",
+      "close",
+      "wireEvents",
+      "onConnect",
+      "onClose",
+      "onError",
+      "onSecError",
+      "fail"
+    ],
+    "new_apis_or_socket_settings": false,
+    "rx_fields_copy_only_int_number_boolean": true,
+    "original_dispatch_exception_not_caught": true,
+    "new_transport_messages_or_disk_writes": false
+  },
+  "source_receipt_note": "Original LF retained in TcpLink; Config/Session LF and WallImpactVisuals CRLF copied byte for byte."
+}
