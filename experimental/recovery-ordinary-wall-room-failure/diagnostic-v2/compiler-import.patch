@@ -1,0 +1,19 @@
+--- v1/WallSurfaceBridge.as
++++ v2/WallSurfaceBridge.as
+@@ -3,6 +3,7 @@
+    import flash.display.BitmapData;
+    import flash.geom.Rectangle;
+    import flash.utils.Dictionary;
++   import rconnect.core.Log;
+ 
+    /** Local native paint observations, never a room/chunk-sized persistent shadow.
+     * The host supplies the ACTUAL composited pass clips. Native mark identity
+@@ -39,7 +40,7 @@
+             ordinaryFault=true;
+             if(firstOrdinaryFault=="none")try {
+                firstOrdinaryFault=String(event==null?"null":event.kind)+":"+String(error).substr(0,256);
+-               rconnect.core.Log.d("RConnectWall FIRST OBSERVER FAILURE "+firstOrdinaryFault);
++               Log.d("RConnectWall FIRST OBSERVER FAILURE "+firstOrdinaryFault);
+             }catch(diagnosticFaultError:*) {}
+             throw error;
+          }

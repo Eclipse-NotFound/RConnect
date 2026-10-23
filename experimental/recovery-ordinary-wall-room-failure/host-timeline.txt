@@ -1,0 +1,8 @@
+29: ROOM TEST candidates 28
+30: ROOM TEST host find-rooms
+32: ROOM TEST pair {"a":{"landProb":"","landX":0,"landZ":0,"key":"random_mane//0,4,0","landY":4},"b":{"landProb":"","landX":0,"landZ":0,"key":"random_mane//0,0,0","landY":0}}
+33: ROOM TEST host wait-prepared
+54: ROOM TEST host split-hold
+57: ROOM TEST host merge
+60: RConnectRoom: seal 3 room=random_mane//0,0,0
+67: RConnectRoom: handoff timed out; simulation remains paused

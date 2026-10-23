@@ -1,5 +1,19 @@
+## 2026-10-23 房间交接首次原因已复现，独立坏数据检查通过
+
+- EA5691CF诊断03实际双人618e7154ac捕获structure-prepare拒绝原生mask类；nativeFailure=true，raster/bridge=false。首错后走原取消入口，exit130和失败保留、自有进程/副本已回收、22安装不变。前次bede6e0944因内存不足未启动，资源恢复后才实测，不改判。
+- 准确host05素材表显示旧大写六类名单遗漏11种原生前景小写类；A需要maskSimple。已核原资源和角动画，准备只改ordinaryMaskBounds，保留其它方法及资源，重跑原房间/像素流程。
+- ACK草案组件01实际发现坏压缩数据#2058；仅为ordinaryDecode补拒绝，联合ACK返回语义通过原20与153项组件。完整Session快发及实机流畅度未验，不混入当前定位。各失败和源码指纹见recovery-ordinary-wall-ack-decode-checks。
+- 准确EB365聚合探针19FF编译后交“大场景”原夹具；根已回读1200帧/26项结果，稳定场景墙采集每帧约0.37–0.46ms，不是主要开销。没有重建场景或全配置/双人资格；不关掉墙痕历史。见recovery-offline-wall-profile/RESULTS.md。
+
+## 2026-10-23 普通墙面房间交接回归抓到失败
+
+- 真实运行 `recovery-ordinary-wall-sv-rooms-01` / `2e1db25ddc`，C6A3+host05、原BF6C驱动，600秒原流程exit1；主/加仅3/9项通过。加入侧独立房原生破墙通过，汇合seal3读取checkpoint报Unqualified native wall checkpoint，主侧超时保持暂停。未删断言或放行；所有自有进程/运行副本回收，22安装不变。
+- 静态排除普通ready/缺cell文案，收窄为native/raster/observer失败标志。准确原因未被旧事件token保留；新增两类隔离首次失败诊断，不清latch、不改墙记录或原生行为，等待同一流程实测。已有ACK后单次快发草案暂不混入故障定位。
+- 对侧CS请求准确EB365离线墙采集聚合计时，已授权范围内准备诊断入口，仍由根统一编译；对方复用1200帧既有夹具按共享登记排队，安装不动。
+
 ## 2026-10-23 普通墙面宿主完成最小方法保留构建
 
+- 时序复核更正：旧first_frame用最终颜色匹配，加入等离子首发545像素被后发改色而漏计；实际原生命中→主侧首显129ms，首RENDER差121ms，八阶段最大191ms。已向用户更正早先328ms首显说法，旧分析器/回执不改，最终uint通过仍成立，性能仍未通过；缺出站report/ACK证据，暂不归因为网络。
 - 同轮后续：独立准入通过后实际双人76b2f38ec6运行，native01四轮LMG/plamg双方最终原生/显示uint全部一致，旧22点墙沿遗漏不再复现；双方34/0、原框架及像素分析exit0，复制品/进程清理、安装不变。首显示观察73/155/54/328ms，仍不授予性能资格；只覆盖普通mat2/CSnative关闭且低地形伤害。继续已有RoomCooperation交接与延迟证据分析。
 - host03编译后严格回读捕获未改createObj的E4X属性筛选误编；保持失败，不启动游戏或部署。host01/02环境、语法失败均保留，未宽化断言。
 - host04仅导Grafon，Location原码保留；新供体从此中间版生成，旧常量前缀相容。host05只移hitTile/dieTile及必要activation标志，6次Java全部退出0，最终00C7C511…AA48；5,787个非目标方法体、旧常量前缀/类脚本、原资源逐项保留，实际SWF回读通过。独立中间审查追明24个Grafon闭包，无其它类引用。

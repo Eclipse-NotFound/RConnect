@@ -1,0 +1,63 @@
+--- c6a3/rconnect/game/WallImpactVisuals.as
++++ combined/rconnect/game/WallImpactVisuals.as
+@@ -473,14 +473,16 @@
+          for each(var c:Object in request.cells)if(solid(loc,int(c.x),int(c.y)))accepted.push(c);
+          var receipt:Object={seq:int(request.seq),cells:accepted};s.receipts[peer]=receipt;return receipt;
+       }
+-      public function acknowledge(loc:Object,receipt:Object):void
+-      {
+-         if(ordinary(loc)){ordinaryAck(loc,receipt);return;}
++      public function acknowledge(loc:Object,receipt:Object):Boolean
++      {
++         if(ordinary(loc))return ordinaryAck(loc,receipt);
+          var s:Object=state(loc);
+-         if(s.pending==null || receipt==null || int(receipt.seq)!=int(s.pending.seq))return;
++         if(s.pending==null || receipt==null || int(receipt.seq)!=int(s.pending.seq))return false;
+          observe(loc);var decoded:Array=decode(loc,receipt.cells as Array);
+-         if(decoded==null)return;
++         if(decoded==null)return false;
+          s.pending=null;put(loc,decoded,true,false);
++         // Large-scene ACK behavior stays unchanged; no accelerated drain.
++         return false;
+       }
+ 
+       /** Only changed cell revisions enter the fast player-state channel.
+@@ -644,7 +646,12 @@
+                out.push({x:x,y:y,v:int(c.v),sv:int(c.sv),full:false,needsNative:true,rebase:true,words:[]});continue;
+             }
+             if(!(c.d is String) || (!checkpoint && (bytes+=String(c.d).length)>MAX_WIRE))return null;
+-            var words:Array=decodeWords(String(c.d));if(words==null)return null;
++            var words:Array;
++            // A malformed legacy compressed cell is a rejected packet, not
++            // an uncaught exception in the socket message handler.
++            try {words=decodeWords(String(c.d));}
++            catch(decodeError:Error) {return null;}
++            if(words==null)return null;
+             if(!report && int(c.sv)>0 && c.full!==true)return null;
+             if(c.full===true && words.length!=CELL*CELL*2)return null;
+             // Room cell dimensions are native 40 pixels, including alpha-zero.
+@@ -764,18 +771,19 @@
+          ordinaryCompose(loc,touched);
+          var receipt:Object={seq:int(request.seq),cells:accepted};s.receipts[peer]=receipt;return receipt;
+       }
+-      private function ordinaryAck(loc:Object,receipt:Object):void
++      private function ordinaryAck(loc:Object,receipt:Object):Boolean
+       {
+          var s:Object=state(loc);
+-         if(s.pending==null || receipt==null || !integer(receipt.seq) || receipt.seq!=s.pending.seq)return;
+-         var decoded:Array=ordinaryDecode(loc,receipt.cells as Array,"ack");if(decoded==null)return;
+-         if(decoded.length!=s.pending.cells.length)return;
++         if(s.pending==null || receipt==null || !integer(receipt.seq) || receipt.seq!=s.pending.seq)return false;
++         var decoded:Array=ordinaryDecode(loc,receipt.cells as Array,"ack");if(decoded==null)return false;
++         if(decoded.length!=s.pending.cells.length)return false;
+          var touched:Object={};for each(var p:Object in s.pending.cells)touched[id(p.x,p.y)]=true;
+-         for each(var c:Object in decoded)if(touched[id(c.x,c.y)]!==true)return;
++         for each(var c:Object in decoded)if(touched[id(c.x,c.y)]!==true)return false;
+          observe(loc);s.pending=null;ordinaryIngest(loc,decoded);
+          // Even a stale authority v can retire a seq. Always remove its actual
+          // visual overlay, then reapply current confirmed + newer predictions.
+          ordinaryCompose(loc,touched);
++         return true;
+       }
+       private function ordinaryList(loc:Object,kind:String):Array
+       {

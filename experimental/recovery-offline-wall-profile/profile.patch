@@ -1,0 +1,230 @@
+--- EB365/src/rconnect/game/GameBridge.as
++++ wall-profile-r1/src/rconnect/game/GameBridge.as
+@@ -349,7 +349,13 @@
+       {
+          _mirrorMasks.clean(loc,world,main as DisplayObject);
+          if(roomHold)return;
+-         _wall.observe(loc);
++         if(_wall.profileEnabled)
++         {
++            var wallStarted:int=getTimer();
++            try {_wall.observe(loc);}
++            finally {_wall.profileFrameEnd(false,getTimer()-wallStarted);}
++         }
++         else _wall.observe(loc);
+          if(gg!=null)_ports.observe(gg,_sampleAt,roomKey(),roomEpoch);
+          if(!skipOfflinePresentation()) {
+             if(!_mirroring) _presentation.observe(loc,_sampleAt);
+@@ -384,7 +390,16 @@
+          _sampleAt=getTimer();
+          var currentLand:Object=probe(world,"land");
+          if(currentLand!==_wallLand){_wall.reset();_wallLand=currentLand;}
+-         if(!roomHold)_wall.before(loc);
++         if(!roomHold)
++         {
++            if(_wall.profileEnabled)
++            {
++               var wallStarted:int=getTimer();
++               try {_wall.before(loc);}
++               finally {_wall.profileFrameEnd(true,getTimer()-wallStarted);}
++            }
++            else _wall.before(loc);
++         }
+          if(!roomHold)_ports.beforeNativeStep(gg,world,_sampleAt,roomKey(),roomEpoch);
+          // Native findCel only offers the local player. Supply visible teammate
+          // candidates before control can patrol/turn away in the same frame.
+@@ -3472,6 +3487,10 @@
+       private var _terrain:TerrainSync = new TerrainSync();
+       private var _wall:WallImpactVisuals;
+       private var _wallLand:Object;
++      // Diagnostic overlay only. Resetting counters never resets wall history.
++      public function wallProfileStart():void {_wall.profileStart();}
++      public function wallProfileRead():Object {return _wall.profileRead();}
++      public function wallProfileStop():Object {return _wall.profileStop();}
+       private var _projectiles:ProjectileVisuals=new ProjectileVisuals();
+       public function get projectileVisualCount():int {return _projectiles.count;}
+       private var _presentation:UnitPresentation = new UnitPresentation();
+--- EB365/src/rconnect/game/WallImpactVisuals.as
++++ wall-profile-r1/src/rconnect/game/WallImpactVisuals.as
+@@ -5,6 +5,7 @@
+    import flash.geom.Point;
+    import flash.geom.Rectangle;
+    import flash.utils.Dictionary;
++   import flash.utils.getTimer;
+    import flash.utils.getQualifiedClassName;
+    import flash.system.System;
+    import rconnect.core.Log;
+@@ -39,6 +40,56 @@
+       /** Receiver pixels changed; GameBridge can refresh a cached SATS raster. */
+       public var dirty:Boolean=false;
+ 
++      // Opt-in aggregate diagnostics; independent of room/session/wall state.
++      private var _wallProfile:Object=null;
++      private var _wallProfileEnabled:Boolean=false;
++      public function get profileEnabled():Boolean {return _wallProfileEnabled;}
++      public function profileStart():void
++      {
++         _wallProfile={startedAtMs:getTimer(),stoppedAtMs:0,
++            frameBeforeCalls:0,frameBeforeMs:0,frameBeforeMaxMs:0,
++            frameObserveCalls:0,frameObserveMs:0,frameObserveMaxMs:0,
++            beforeCalls:0,beforeNoFront:0,beforeRebuildAttempts:0,beforeRebuildCompleted:0,tileSnapshotCells:0,
++            cloneAttempts:0,cloneSucceeded:0,cloneFailed:0,clonePixels:0,
++            observeCalls:0,observeActive:0,objectChainVisited:0,objectChainLimitHits:0,
++            projectileObjects:0,candidatesAvailable:0,carriedCandidates:0,tilesSupplied:0,
++            workCellsVisited:0,nonSolidWorkCells:0,cellCompareCalls:0,changedCells:0,
++            redrawCalls:0,roleChangedCalls:0,resetCalls:0};
++         _wallProfileEnabled=true;
++      }
++      public function profileRead():Object
++      {
++         var out:Object={schema:"rc-eb365-wall-profile-r1",enabled:_wallProfileEnabled,started:_wallProfile!=null};
++         if(_wallProfile==null)return out;
++         for(var key:String in _wallProfile)out[key]=_wallProfile[key];
++         out.sampledAtMs=getTimer();
++         out.windowMs=(_wallProfileEnabled?out.sampledAtMs:out.stoppedAtMs)-out.startedAtMs;
++         return out;
++      }
++      public function profileStop():Object
++      {
++         if(_wallProfileEnabled)_wallProfile.stoppedAtMs=getTimer();
++         _wallProfileEnabled=false;
++         return profileRead();
++      }
++      // Called after the ending timestamp: accumulation is outside that timer.
++      public function profileFrameEnd(isBefore:Boolean,elapsed:int):void
++      {
++         var p:Object=_wallProfileEnabled?_wallProfile:null;
++         if(p==null)return;
++         if(isBefore)
++         {
++            p.frameBeforeCalls++;p.frameBeforeMs+=elapsed;
++            if(elapsed>p.frameBeforeMaxMs)p.frameBeforeMaxMs=elapsed;
++         }
++         else
++         {
++            p.frameObserveCalls++;p.frameObserveMs+=elapsed;
++            if(elapsed>p.frameObserveMaxMs)p.frameObserveMaxMs=elapsed;
++         }
++      }
++
++
+       public function WallImpactVisuals(main:Object=null)
+       {if(main!=null)domain=main.loaderInfo.applicationDomain;}
+ 
+@@ -105,24 +156,36 @@
+ 
+       public function before(loc:Object):void
+       {
++         var p:Object=_wallProfileEnabled?_wallProfile:null;
++         if(p!=null)p.beforeCalls++;
+          var b:BitmapData=front(loc);
+-         if(b==null)return;
++         if(b==null) {if(p!=null)p.beforeNoFront++;return;}
+          if(active!==loc || bitmap!==b || shadow==null)
+          {
++            if(p!=null)p.beforeRebuildAttempts++;
+             if(shadow!=null)shadow.dispose();
+             active=loc;bitmap=b;tracked=[];contacts=new Dictionary(true);tileState={};
+             // drawLoc has already rebuilt this room before a normal frame.
+             replay(loc,b);shadow=copyFront(loc,b,"before");
+             for(var x:int=0;x<int(loc.spaceX);x++)for(var y:int=0;y<int(loc.spaceY);y++)
+                tileState[id(x,y)]={h:Number(loc.space[x][y].hp),p:Number(loc.space[x][y].phis)};
++            if(p!=null) {p.beforeRebuildCompleted++;p.tileSnapshotCells+=Number(x)*Number(y);}
+          }
+       }
+ 
+       private function copyFront(loc:Object,b:BitmapData,where:String):BitmapData
+       {
+-         try {return b.clone();}
++         var p:Object=_wallProfileEnabled?_wallProfile:null;
++         if(p!=null)p.cloneAttempts++;
++         try
++         {
++            var copy:BitmapData=b.clone();
++            if(p!=null) {p.cloneSucceeded++;p.clonePixels+=Number(copy.width)*Number(copy.height);}
++            return copy;
++         }
+          catch(error:Error)
+          {
++            if(p!=null)p.cloneFailed++;
+             if(bitmapDiagnostics++<4)
+             {
+                var g:Object=get(loc,"grafon"),info:Object={where:where,error:error.toString(),
+@@ -142,19 +205,30 @@
+        * damage which has no persistent linked Bullet to observe. */
+       public function observe(loc:Object,tiles:Array=null):void
+       {
++         var p:Object=_wallProfileEnabled?_wallProfile:null;
++         if(p!=null)p.observeCalls++;
+          before(loc);
+          if(loc!==active || shadow==null || front(loc)!==bitmap)return;
++         if(p!=null) {p.observeActive++;if(tiles!=null)p.tilesSupplied+=tiles.length;}
+          var work:Object={},objects:Array=[],visited:Dictionary=new Dictionary(true);
+          for(var o:Object=get(loc,"firstObj"),guard:int=0;o!=null && guard++<10000;o=get(o,"nobj"))
+          {
+             var cls:String=getQualifiedClassName(o);
+             if(cls=="fe.weapon::Bullet" || cls=="fe.weapon::SmartBullet" || cls=="fe.weapon::PhisBullet")
+             {objects.push(o);visited[o]=true;}
++         }
++         // Count the existing traversal guard, without adding work per object.
++         if(p!=null)
++         {
++            p.objectChainVisited+=guard>10000?10000:guard;
++            if(o!=null && guard>10000)p.objectChainLimitHits++;
++            p.projectileObjects+=objects.length;
+          }
+          // PhisBullet can remove itself in the contact frame. Its real object
+          // still gives the endpoint; do not infer an impact from disappearance.
+          var candidates:Array=objects.concat();
+          for each(o in tracked)if(!visited[o])candidates.push(o);
++         if(p!=null) {p.candidatesAvailable+=candidates.length;p.carriedCandidates+=candidates.length-objects.length;}
+          for each(o in candidates)
+          {
+             if(get(o,"loc")!==loc || Number(get(o,"tipDecal"))<=0)continue;
+@@ -185,10 +259,11 @@
+          }
+          for(k in work)
+          {
++            if(p!=null)p.workCellsVisited++;
+             var xy:Array=k.split(",");tx=int(xy[0]);ty=int(xy[1]);
+             // Entire removed tiles remain TerrainSync's responsibility. In
+             // particular an old coating must never fill a destroyed wall back in.
+-            if(!solid(loc,tx,ty)) {discard(loc,k);shadow.copyPixels(bitmap,rect(tx,ty,bitmap),new Point(tx*CELL,ty*CELL));continue;}
++            if(!solid(loc,tx,ty)) {if(p!=null)p.nonSolidWorkCells++;discard(loc,k);shadow.copyPixels(bitmap,rect(tx,ty,bitmap),new Point(tx*CELL,ty*CELL));continue;}
+             captureCell(loc,tx,ty);
+          }
+       }
+@@ -206,8 +281,11 @@
+          if(r.isEmpty())return;
+          scratchA.fillRect(scratchA.rect,0);scratchB.fillRect(scratchB.rect,0);
+          scratchA.copyPixels(shadow,r,new Point());scratchB.copyPixels(bitmap,r,new Point());
++         var p:Object=_wallProfileEnabled?_wallProfile:null;
++         if(p!=null)p.cellCompareCalls++;
+          var difference:*=scratchA.compare(scratchB);
+          if(!(difference is BitmapData))return;
++         if(p!=null)p.changedCells++;
+          var d:BitmapData=difference as BitmapData;
+          var changed:Rectangle=d.getColorBoundsRect(0xffffffff,0,false);d.dispose();
+          var old:Vector.<uint>=scratchA.getVector(changed),fresh:Vector.<uint>=scratchB.getVector(changed);
+@@ -470,6 +548,7 @@
+       /** Immediately after native redrawLoc, before final RENDER/SATS capture. */
+       public function redraw(loc:Object):void
+       {
++         if(_wallProfileEnabled)_wallProfile.redrawCalls++;
+          var b:BitmapData=front(loc);if(b==null)return;
+          replay(loc,b);
+          if(active===loc) {if(shadow!=null)shadow.dispose();bitmap=b;shadow=copyFront(loc,b,"redraw");}
+@@ -477,11 +556,13 @@
+       /** Ownership changes invalidate only transport cursors, not room marks. */
+       public function roleChanged(loc:Object):void
+       {
++         if(_wallProfileEnabled)_wallProfile.roleChangedCalls++;
+          var s:Object=state(loc);s.queued={};s.pending=null;s.receipts={};s.incoming={};s.sent={};s.cursor=0;
+          tracked=[];contacts=new Dictionary(true);
+       }
+       public function reset():void
+       {
++         if(_wallProfileEnabled)_wallProfile.resetCalls++;
+          if(shadow!=null)shadow.dispose();shadow=null;bitmap=null;active=null;
+          rooms=new Dictionary(true);tracked=[];contacts=new Dictionary(true);tileState={};dirty=false;
+       }

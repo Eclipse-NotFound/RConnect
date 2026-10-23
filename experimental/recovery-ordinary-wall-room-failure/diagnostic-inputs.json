@@ -1,0 +1,20 @@
+{
+  "kind": "first-failure-only-overlay",
+  "product_sha256": "c6a3b1136bde63c32d23c4e555dfc240f3a573384d19c4fe9636a4138193496d",
+  "files": {
+    "rconnect/game/WallImpactVisuals.as": {
+      "source": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-ordinary-wall-sv-production-01\\src\\rconnect\\game\\WallImpactVisuals.as",
+      "source_sha256": "12682bff279d35d3dc2181d4832a9d948f9ee68fcfdcf5188ee53dec2c91ff72",
+      "overlay_sha256": "4c6e69144c3e2316a6085ad071aafea46dbdaa31b1c0b4649089d92e4630199f"
+    },
+    "rconnect/game/WallSurfaceBridge.as": {
+      "source": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-ordinary-wall-sv-production-01\\src\\rconnect\\game\\WallSurfaceBridge.as",
+      "source_sha256": "3ab09a56064de874c869d2900ec936c6f41799f4f0b293a4941d6973c9eda324",
+      "overlay_sha256": "753086000a322d79e6c8845056b58c1e6731025a23c1151f3494774c6682973f"
+    }
+  },
+  "compiled": false,
+  "runtime_validated": false,
+  "prepare_sha256": "7d8d3138cf8d876e5960823539bbde8d84e085f3c0d421ff1e96bbb6c292bd7a",
+  "patch_sha256": "34693e6a79c5c9613304d4166f0eddd55add1382969b69cedc7200ca6737e00a"
+}

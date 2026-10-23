@@ -1,0 +1,16 @@
+--- C6A3/rconnect/game/WallImpactVisuals.as
++++ decode-reject/rconnect/game/WallImpactVisuals.as
+@@ -644,7 +644,12 @@
+                out.push({x:x,y:y,v:int(c.v),sv:int(c.sv),full:false,needsNative:true,rebase:true,words:[]});continue;
+             }
+             if(!(c.d is String) || (!checkpoint && (bytes+=String(c.d).length)>MAX_WIRE))return null;
+-            var words:Array=decodeWords(String(c.d));if(words==null)return null;
++            var words:Array;
++            // A malformed legacy compressed cell is a rejected packet, not
++            // an uncaught exception in the socket message handler.
++            try {words=decodeWords(String(c.d));}
++            catch(decodeError:Error) {return null;}
++            if(words==null)return null;
+             if(!report && int(c.sv)>0 && c.full!==true)return null;
+             if(c.full===true && words.length!=CELL*CELL*2)return null;
+             // Room cell dimensions are native 40 pixels, including alpha-zero.

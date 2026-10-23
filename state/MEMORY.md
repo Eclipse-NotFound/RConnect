@@ -31,21 +31,24 @@ Remains 1.02 双人合作，入口 RConnectMod。A 为普通游戏入口现用�
 | early2加载 | recovery-early-exit-compile-01，D356483F…ACB3 | 重访死锁修复，三段出生1/0/1px；耗时仍未达标 |
 | A Sand003 | mods/Sandevistan/build/out/a-travel-hold-20261022-003，3E220…31C | 76组件、41零冷却、43非零冷却功能过；完整旅行/敌方补步缺口 |
 | 独立离线优化 | build/m52/recovery-offline-production-01，EB365353…A5FEE，offline1 | 已部署；56生命周期、86原生弹丸历史、首次双游戏39+39及实际安装smoke通过 |
-| 普通墙面结构代 | recovery-ordinary-wall-sv-production-01，C6A3B113…3496D；host05 00C7C511…AA48 | 153组件/90类/host05静态准入过；native01四轮最终像素全一致；显示最迟328ms，结构重访/性能仍待，未部署 |
+| 普通墙面结构代 | recovery-ordinary-wall-sv-production-01，C6A3B113…3496D；host05 00C7C511…AA48 | 153组件/90类/host05静态准入过；native01四轮最终像素全一致；rooms01真实破墙后汇合checkpoint失败卡死，未部署 |
 
 精确完整SHA、冻结输入和所有失败均见各 prepared/compile/RESULTS；不可仅凭候选号混用。加载诊断使用host03 29D36与旧RV7852，**不是当前安装RV83D8**；准确入口能识别此差别，不回退用户RV。仅offline1有限部署，其余仍为隔离候选。历史验证器若硬锁574D安装会拒绝当前版，应明确记录本次单RC基线变更，不能改写旧回执。
 
 ## 4. 当前实测结论与卡点
 
-- **普通墙面原生四轮已过**：准确C6A3+host05 / native01 / 76b2f38ec6，直接复用旧ordinary驱动，原框架及逐uint分析exit0；两端各34/0，四轮原生前景+最终显示完全一致（118/96/1030/1059像素，错/漏/多余均0）。旧加入等离子墙沿22点不再复现。首显示观察73/155/54/328ms，最大观察间隔190ms，不能称流畅度已过；结尾批量读回2秒非游玩长帧。普通mat2、CSnative关闭、刻意低地形伤害，不代替结构破坏/换权威/重访/全配置密集。共享runner清自有进程及host/join/frozen副本、22安装不变。下一步现有RoomCooperation物理交接回归及本轮328ms时序定位。
-- **墙面宿主编译器风险已处理至回读层**：host03全类import把未改createObj的XML `@id == id` 编为本地id恒真比较，独立pcode确认后严格拒绝；host01日志/环境、02多变量声明解析失败均保留。host04只导入Grafon，9B362254…913F；旧供体常量顺序不相容，另从host04导入Location取得BFC9供体。host05仅保留两方法完整body和必要flags，00C7C511…AA48；6Java退出0，5,787非目标body、旧池前缀/类脚本/原资源精确保留，最终回读通过。独立host04确认24匿名函数归Grafon且无外部引用。最终目标绑定审查和AIR仍待完成，不能凭build_checks_passed授予游戏资格。安装仍EB365/BEFC，详见ordinary-wall-sv/RESULTS、ordinary-host03/04-review。
+- **房间失败已抓到首因，修正待实机**：rooms01 / `2e1db25ddc` 原BF6驱动、C6A3+host05在真实破墙后汇合checkpoint失败。诊断03 EA5691CF编译通过；diagnostic01因内存不足未启动，资源恢复后diagnostic02 / `618e7154ac` 实际复现 `structure-prepare: Unreviewed ordinary material mask class`，nativeFailure=true、raster/bridge=false。host05仅认六种大写蒙版类，准确宿主AllData前景实际还用11种小写类，A自身就需要maskSimple。首错后按原取消入口退出130；失败、取消和22安装不变均留证，不能记通过。下一步仅替换host05的ordinaryMaskBounds方法补齐审核名单，不接受任意类，重跑原房间/像素测试。证据见 `recovery-ordinary-wall-room-failure/RESULTS.md`。
+- **普通墙面原生四轮已过**：准确C6A3+host05 / native01 / 76b2f38ec6，直接复用旧ordinary驱动，原框架及逐uint分析exit0；两端各34/0，四轮原生前景+最终显示完全一致（118/96/1030/1059像素，错/漏/多余均0）。旧加入等离子墙沿22点不再复现。原分析器73/155/54/328ms匹配最终颜色，连射时会漏掉被后发覆盖的第一发；已向用户纠正：加入等离子实际命中→远端首显129ms，八阶段画面对画面121/50/48/121/191/172/190/113ms，仍未合流畅度。最大观察间隔190ms，结尾批量读回2秒非游玩长帧。普通mat2、CSnative关闭、低地形伤害，不代替结构/重访/全配置密集。共享runner清自有进程及副本、22安装不变。下一步现有RoomCooperation物理交接回归及真实阶段延迟定位；旧结果不改判，现wire缺report出站/ACK，不能直接断言网络分段原因。
+- **墙面宿主编译风险**：host03整类import错误改写原createObj的E4X条件，已拒绝。host04只Grafon；host05仅移植Location两方法及必要flags，00C7C511…AA48，保留5,787非目标body和原资源；独立准入及四轮真实像素已过，后续房间实测发现上述名单缺项。新修正必须继续仅换目标方法，不能重新接纳供体整类。安装仍EB365/BEFC，详见ordinary-wall-sv/RESULTS、ordinary-host03/04-review。
+- **ACK草案与坏压缩数据**：原ACK组件01实际第7项抛#2058，发现ordinaryDecode缺少解码拒绝；最小catch只返回null，不吞其它错误。独立ACK返回语义+decode修正真实组件02为20/0、regression01为153/0，源码及安装未变。三类ACK后立即发送草案仍未完整编译或测Socket/性能；不能用组件通过冒充改善及时性。见 `recovery-ordinary-wall-ack-decode-checks/RESULTS.md`。
+- **CS离线墙面采样已回读**：准确EB365的19FF54A4聚合探针、原240×125持续交火夹具，1200帧/26项通过。四窗外层墙采集0.463/0.450/0.370/0.407ms每帧，重建/克隆/格比较均0；稳定场景不是20ms差额大头，不为此关闭历史。六敌、补弹/低伤/部分显示关闭，未测冷入图/重建，不授予双人或净性能资格。原来源CS dense-rc-wall-20261023-scene-r1，根核SHA和原结果，见 `recovery-offline-wall-profile/RESULTS.md`。
 - **实际安装冒烟通过**：deploy.py 11ED24DF…B9F04，audit02过，在原runner共享登记内备份并原子替换准确EB365，再从release读取、无外部测试SWF启动两游戏。ae58b8049b双方版本/tick200、加入welcome/unitsync及原错误检查过；exit0、22项仅RC变、两个自有进程与副本回收。纯smoke不支持defer-visible，保留私有桌面、6GiB/512MiB和原runner全部检查。回滚源指纹574D已回读；未改host/config/src。见recovery-offline-production/RELEASE.md。
 - **离线分支最新完成**：CS真实574D/EB365独立进程各1200帧、90项。平均间隔69.615→58.866ms、中位64→54、P95 96→80，最长306→473ms；自然人口147/149、warm工作量不同且LAD/WB/RV显示关闭。只支持限定离线改善，不是完整配置净收益或双人资格。见 `experimental/recovery-cs-offline-review/NATIVE-PRODUCTION-REVIEW.md`。
 - **实际会话生命周期56/0**：7a10b4a47f，driverAD26，12阶段、真实主持/拒连/退出/断开/重试/占端口；6Socket和4ServerSocket清理。v1准备失败、v2清理#2002失败原样保留。预期#2031有严格有界证据，非通用错误豁免。见 `recovery-offline-production/LIFECYCLE-REVIEW.md`。
 - **实际弹丸采集86/0**：f6eece7606，driver3DF94，六阶段。每段原生flamer运动三帧后驱动capture一次；virgin历史0，null/throw/false/字符串true/首次主持后各3不同时间位置与原生匹配。共享runner错误规则不变，原枪null，恢复/清理、22安装均核过。只证明玩家弹丸历史，不含body/双人/性能。见 `recovery-offline-collector/RESULTS.md` 及独立 `recovery-offline-collector-review/REVIEW.md`。
 - **首次双人已完整通过**：native08/d0048aff49使用driver07 BD777339…ED2A3、AS F6F006B6…7EB24A。两边39/0、各首次连接一次、十项覆盖全true，宿主真实finishAck、全部清理通过；原runner和wrapper退出0、22安装未变。实际远端弹道移动/枪口及冻结恢复最终像素已核，离线旧事件全窗未重播。独立复核原始日志无错误、进程/副本清理。之前路径、净空、FA弹匣退款基线及收尾竞态失败均保留，产品与原runner始终未改。仅给首次接入功能资格，不给密集性能或四项恢复资格。见recovery-offline-first-connect/RESULTS.md。
 - **资源恢复**：用户通过CS侧告知已退出并要求优先推进；实际可提交余量已到8GiB左右，双实例确实启动，当前不再是内存阻塞。沿用6GiB/512MiB保护；写独立AppData存储需本次系统权限，不能用真实存档回避。根唯一运行与部署，不再接收重复瞬时资源通知。
-- **墙面实际实现/检查**：普通cell结构代sv、权威完整1600像素、预测与确认分离、prepareRestore→原生redraw→finishRestore、房间owner交接已写入隔离源码。独立审查修正两条反例：同cell旧排除写入被ink夹带；continuing owner未就绪时被宿主旧记录回滚。组件01在第79项因已dispose的shadow引用#2015失败；最小清空引用后component02真实153/0，SHA534518C0…E846，生产类12682BFF…FF72。完整产品/宿主资源/真实墙沿22点/流量性能仍未验证。宿主源码生成器--verify已通过，87/90 Grafon、72/74 Location原方法未改，仍需真实资产测试。
+- **墙面实现边界**：普通cell结构代sv、权威完整1600像素、预测与确认分离、prepareRestore→原生redraw→finishRestore、房间owner交接已进入C6A3。组件01 disposed shadow #2015失败保留，清空引用后组件02为153/0；完整构建及原墙沿22点实机已过。结构像素、迟到ACK、分房重访及流量性能仍未合格，房间失败优先处理。
 - **加载真实瓶颈**：early2不再缓存重访死锁；恢复许可要等early成功完成才清。主/加三流程功能过、出生一致，但不达单人时间。加入grant已早于主ensure，不是在等主绘完；restore约1.58s（地形约0.49、单位约0.65s）。Stage -100尾段约2.5s包含WB和FA，不能全归WB。单人分段探针已经够，停止扩大。
 - **高速/念力/掉落**：准确21单发8组最大观察空档52–71ms；密集仍失败。念力85/0、容器/SATS52/0、跳跃12/0只证明旧功能；重算发现念力249ms、掉落空中160ms空档，smoothness不合格。新掉落观察轮空中主39/加46ms但未重现旧故障，不能称已修复。
 - **画面**：准确21玩家光晕591项+8图通过，仍须在最终整合候选复验。22大图四例最终uint一致，普通房加入等离子漏22个碰撞空格中的真实墙沿像素，稳定7.6s仍漏；不属于1级颜色误差。
@@ -60,9 +63,9 @@ Remains 1.02 双人合作，入口 RConnectMod。A 为普通游戏入口现用�
 
 ## 6. 下一步
 
-1. offline1有限部署已完成，勿重复首连或安装冒烟。继续普通墙面宿主编译/回读及原生22点验证；新构建/测试明确绑定当前仅RC=EB365的新安装基线，旧失败和冻结输入不改。
+1. offline1有限部署已完成，勿重复首连或安装冒烟。准确native蒙版名单缺项已经诊断复现；在新 `recovery-ordinary-mask-host-fix` 只修ordinaryMaskBounds，保留其它方法字节及资源，再重跑原entry-room和四轮像素。新构建/测试绑定当前RC=EB365的实际安装，旧失败和冻结输入不改。
 2. 加载优先等WB初始化提案答复，仅删一次无消费者refreshView，合格后才能修改/部署；其余原生加载/Sand验证依现有准确入口，不再扩散单人探针。
-3. 墙面真实类153组件及90类完整构建已过（prepare_product.py，精确22覆盖4类+版本）；下一步独立宿主编译与普通22点、破坏/迟到包/分房/重访/大图回归及密集性能。最短初测宿主基底为ACC，是安装BEFC增加Game/首栅格/墙面桥的后代；不是对BEFC仅两类小补丁，部署需核依赖边界。gwall仍明确未覆盖。
+3. 房间修好后仍需迟到包/结构像素/大图及密集性能。ACK三类草案仍不并入；其返回语义和独立坏数据拒绝已过20+153组件，不等于完整发送链路合格。host05基底ACC是安装BEFC增加Game/首栅格/墙面桥的后代，部署需核依赖边界；gwall未覆盖。CS稳定场景采样已收敛，不再扩大离线墙采集探针。
 4. 依据真实长帧定位再改运动路径；最终恢复候选需同一准确输入验证加载、光晕、击墙、高速/念力/掉落及性能。独立离线优化有自己的有限门禁，不冒称解决上述四项。
 5. 最终整合仍需合格后备份、部署、实际安装复测；当前只交付offline1，不让未合格恢复分支覆盖它。
 

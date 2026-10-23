@@ -1,0 +1,13 @@
+{
+  "purpose": "compiler name binding only",
+  "original_failure": "build/m52/recovery-ordinary-wall-diagnostic-02/compile.json",
+  "source": {
+    "src\\rconnect\\game\\WallImpactVisuals.as": "4c6e69144c3e2316a6085ad071aafea46dbdaa31b1c0b4649089d92e4630199f",
+    "src\\rconnect\\game\\WallSurfaceBridge.as": "753086000a322d79e6c8845056b58c1e6731025a23c1151f3494774c6682973f"
+  },
+  "files": {
+    "rconnect\\game\\WallImpactVisuals.as": "4c6e69144c3e2316a6085ad071aafea46dbdaa31b1c0b4649089d92e4630199f",
+    "rconnect\\game\\WallSurfaceBridge.as": "719c1cb98a567eb43bec855969758e8e903236e5fc4455791b427e47ef9504e1"
+  },
+  "compiled": false
+}

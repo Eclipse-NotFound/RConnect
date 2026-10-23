@@ -1,0 +1,38 @@
+{
+  "base": {
+    "rconnect/game/WallImpactVisuals.as": "12682bff279d35d3dc2181d4832a9d948f9ee68fcfdcf5188ee53dec2c91ff72",
+    "rconnect/game/GameBridge.as": "10d0b43f988d86dc4f2d0fdd5848f451f94aef47eaed49ee42132f356e75e88a",
+    "rconnect/core/Session.as": "e699b9c5a02799367bba8afd924d450d064cab3f0a5e9a36ea7d400b378b10ba"
+  },
+  "dependencies": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-ordinary-wall-sv\\components\\fe\\graph\\Grafon.as": "118da188bed1662e4abb625f35f091409d716c3491d2366d60162426047a53df",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-ordinary-wall-sv\\components\\fe\\weapon\\Bullet.as": "fc9ac5166ce57578219d9913a324c552babb420eb4f8b4c0faa137824b912332",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-ordinary-wall-sv\\components\\rconnect\\core\\Log.as": "1c707679e5ca9262f78aea27fc7dbe7802d39706ca4e88f5ad46a4ccad67a0b4",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-ordinary-wall-sv\\components\\rconnect\\game\\GameBridge.as": "f0d9a9dcc7c6c640acc19d82103fd60d726117e72973cf3b2b273363dfe491a6",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-ordinary-wall-sv\\components\\rconnect\\game\\NativeWallColor.as": "0f7160457f21d46759cc3b43d9defd17a8d921007521407365d906988dcfa842",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-ordinary-wall-sv-production-01\\src\\rconnect\\game\\WallSurfaceBridge.as": "3ab09a56064de874c869d2900ec936c6f41799f4f0b293a4941d6973c9eda324",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-ordinary-wall-sv-production-01\\src\\rconnect\\net\\RoomCodec.as": "296ee4d8d94f77faa62dcc17a39cb1e2492c756d3027311713c33935ca6b6b4a",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-ordinary-wall-sv-production-01\\src\\rconnect\\net\\WallCellCodec.as": "28e069808e93edcf479bd1fc977fe226036d5f030b65532a3ff15c564527b1f3"
+  },
+  "files": {
+    "src/rconnect/game/WallImpactVisuals.as": "2c2b607a94b86922f5fc07021c45337d55bb4856e42d9f8ac2ae4eaae7737c95",
+    "src/rconnect/game/GameBridge.as": "0e6092db2c1b42b7429bca1620ae1534ef4132c097de9e2f6ab1b1a138528233",
+    "src/rconnect/core/Session.as": "65163ee8cb142f7174a583b1d75b5137dcb1f3fbe5aa285e9fbc53d0fcfd032e",
+    "components/fe/graph/Grafon.as": "118da188bed1662e4abb625f35f091409d716c3491d2366d60162426047a53df",
+    "components/fe/weapon/Bullet.as": "fc9ac5166ce57578219d9913a324c552babb420eb4f8b4c0faa137824b912332",
+    "components/rconnect/core/Log.as": "1c707679e5ca9262f78aea27fc7dbe7802d39706ca4e88f5ad46a4ccad67a0b4",
+    "components/rconnect/game/GameBridge.as": "f0d9a9dcc7c6c640acc19d82103fd60d726117e72973cf3b2b273363dfe491a6",
+    "components/rconnect/game/NativeWallColor.as": "0f7160457f21d46759cc3b43d9defd17a8d921007521407365d906988dcfa842",
+    "components/rconnect/game/WallSurfaceBridge.as": "3ab09a56064de874c869d2900ec936c6f41799f4f0b293a4941d6973c9eda324",
+    "components/rconnect/net/RoomCodec.as": "296ee4d8d94f77faa62dcc17a39cb1e2492c756d3027311713c33935ca6b6b4a",
+    "components/rconnect/net/WallCellCodec.as": "28e069808e93edcf479bd1fc977fe226036d5f030b65532a3ff15c564527b1f3",
+    "components/rconnect/game/WallImpactVisuals.as": "2c2b607a94b86922f5fc07021c45337d55bb4856e42d9f8ac2ae4eaae7737c95",
+    "source.diff": "3914a51aceebc161326e29d9e45b1c56d581f4bd29eec2f9478b5a1f638571e1",
+    "prepare.py": "bfe34566ce18b1b09e5b206f3a1e5956d3d51ca0b4dcfb817ac98ff3e9572b08",
+    "components/WallAckChecks.as": "6c172afafca09db05a3d7dc1627b43cbb2e179e5381ef9ec2786d31c7825fb1b",
+    "README.md": "2237244bfc74ee35b99683d9988da9b2d72d67e9507c9376b4b22a9b1071d53f"
+  },
+  "compiled": false,
+  "air_started": false,
+  "performance_qualified": false
+}

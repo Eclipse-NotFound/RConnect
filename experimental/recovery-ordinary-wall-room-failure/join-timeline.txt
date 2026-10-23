@@ -1,0 +1,6 @@
+20: RConnectRoom: grant random_mane//0,4,0 authority=false term=1 ms=232
+24: ROOM TEST join split
+29: RConnectRoom: grant random_mane//0,0,0 authority=true term=2 ms=1768
+37: COOP PASS room native solo join bullet destroys wall
+41: ROOM TEST join wait-merge
+45: RConnectRoom: ERROR Error: Unqualified native wall checkpoint Error: Unqualified native wall checkpoint

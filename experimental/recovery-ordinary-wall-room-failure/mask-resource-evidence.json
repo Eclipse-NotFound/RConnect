@@ -1,0 +1,1479 @@
+{
+  "kind": "host05-native-foreground-mask-resource-review",
+  "runtimeValidated": false,
+  "inputs": {
+    "mods\\RConnect\\build\\m52\\recovery-ordinary-wall-sv-host-05\\pfe.swf": "00c7c511ffa51745cb4932e820365091d2540978eedd6dfe726a5cfd7818aa48",
+    "mods\\RConnect\\build\\m52\\recovery-ordinary-wall-sv-host-05\\final.xml": "42c4a1a5c005e9a6ccf5e71871ad466348727378afb2488bd4a6d532ea5a6ef4",
+    "mods\\RConnect\\build\\m52\\recovery-ordinary-wall-sv-host-05\\after\\scripts\\fe\\graph\\Grafon.as": "66fd57b458d957476a19c3f7173bf564db9d1dd47cf34ae609a05d0b6dcefcb0",
+    "mods\\RConnect\\build\\m52\\recovery-ordinary-wall-sv-host-05\\after\\scripts\\fe\\loc\\Location.as": "fd50c1f69079ff6bc00de45c20ffa084150247c0efa303db814b11553d3a969f"
+  },
+  "material_selection": "AllData exact embedded XML, no vid, ed != 2; Material default main=TileMask",
+  "materials": [
+    {
+      "id": "A",
+      "ed": "1",
+      "masks": {
+        "main": "TileMask",
+        "border": "maskSimple"
+      }
+    },
+    {
+      "id": "B",
+      "ed": "1",
+      "masks": {
+        "main": "maskBare",
+        "border": "maskBorderBare"
+      }
+    },
+    {
+      "id": "C",
+      "ed": "1",
+      "masks": {
+        "main": "maskBare",
+        "border": "maskBorderBare",
+        "floor": "maskFloor"
+      }
+    },
+    {
+      "id": "D",
+      "ed": "1",
+      "masks": {
+        "main": "maskDamaged",
+        "border": "maskSkol"
+      }
+    },
+    {
+      "id": "E",
+      "ed": "1",
+      "masks": {
+        "main": "maskDamaged",
+        "border": "maskSkol"
+      }
+    },
+    {
+      "id": "F",
+      "ed": "1",
+      "masks": {
+        "main": "maskDamaged"
+      }
+    },
+    {
+      "id": "G",
+      "ed": "1",
+      "masks": {
+        "main": "maskStone",
+        "border": "maskStoneBorder"
+      }
+    },
+    {
+      "id": "H",
+      "ed": "1",
+      "masks": {
+        "main": "maskDirt",
+        "border": "maskDirtBorder"
+      }
+    },
+    {
+      "id": "I",
+      "ed": "1",
+      "masks": {
+        "main": "maskBare",
+        "floor": "maskFloor"
+      }
+    },
+    {
+      "id": "J",
+      "ed": "1",
+      "masks": {
+        "main": "TileMask",
+        "border": "maskMetalBorder",
+        "floor": "maskFloor"
+      }
+    },
+    {
+      "id": "K",
+      "ed": "1",
+      "masks": {
+        "main": "TileMask",
+        "floor": "maskFloor"
+      }
+    },
+    {
+      "id": "L",
+      "ed": "1",
+      "masks": {
+        "main": "maskDirt",
+        "border": "maskDirtBorder"
+      }
+    },
+    {
+      "id": "M",
+      "ed": "1",
+      "masks": {
+        "main": "TileMask",
+        "border": "maskSimple"
+      }
+    },
+    {
+      "id": "N",
+      "ed": "1",
+      "masks": {
+        "main": "maskDirt",
+        "border": "maskDirtBorder",
+        "floor": "maskFloor"
+      }
+    },
+    {
+      "id": "O",
+      "ed": "1",
+      "masks": {
+        "main": "TileMask",
+        "border": "maskMetalBorder",
+        "floor": "maskFloor"
+      }
+    },
+    {
+      "id": "P",
+      "ed": "1",
+      "masks": {
+        "main": "maskBare",
+        "floor": "maskFloor"
+      }
+    },
+    {
+      "id": "Q",
+      "ed": "1",
+      "masks": {
+        "main": "maskBare",
+        "border": "maskBorderBare",
+        "floor": "maskFloor"
+      }
+    },
+    {
+      "id": "R",
+      "ed": "1",
+      "masks": {
+        "main": "maskDirt",
+        "floor": "maskFloor"
+      }
+    },
+    {
+      "id": "S",
+      "ed": "1",
+      "masks": {
+        "main": "TileMask",
+        "border": "maskMetalBorder",
+        "floor": "maskFloor"
+      }
+    },
+    {
+      "id": "T",
+      "ed": "1",
+      "masks": {
+        "main": "TileMask",
+        "border": "maskMetalBorder",
+        "floor": "maskFloor"
+      }
+    },
+    {
+      "id": "100",
+      "ed": "0",
+      "masks": {
+        "main": "TileMask",
+        "border": "maskSimple"
+      }
+    },
+    {
+      "id": "-",
+      "ed": "4",
+      "masks": {
+        "main": "TileMask"
+      }
+    },
+    {
+      "id": "Д",
+      "ed": "4",
+      "masks": {
+        "main": "TileMask"
+      }
+    },
+    {
+      "id": "Е",
+      "ed": "4",
+      "masks": {
+        "main": "TileMask"
+      }
+    },
+    {
+      "id": "К",
+      "ed": "4",
+      "masks": {
+        "main": "TileMask"
+      }
+    },
+    {
+      "id": "Н",
+      "ed": "4",
+      "masks": {
+        "main": "TileMask"
+      }
+    },
+    {
+      "id": "Р",
+      "ed": "4",
+      "masks": {
+        "main": "TileMask"
+      }
+    }
+  ],
+  "masks": [
+    {
+      "class": "maskSimple",
+      "symbolId": 4918,
+      "rootFrameCount": 1,
+      "cornerIds": {
+        "c1": 4917,
+        "c2": 4917,
+        "c3": 4917,
+        "c4": 4917
+      },
+      "asset_envelope_pixels": [
+        -20.0,
+        -20.0,
+        20.0,
+        20.0
+      ],
+      "xml_fragment_sha256": "9d02cb181687f206e6ab34c6250bbbab3f1271bef920ce62928e12316845c5df"
+    },
+    {
+      "class": "maskBare",
+      "symbolId": 4964,
+      "rootFrameCount": 1,
+      "cornerIds": {
+        "c1": 4963,
+        "c2": 4963,
+        "c3": 4963,
+        "c4": 4963
+      },
+      "asset_envelope_pixels": [
+        -20.0,
+        -20.0,
+        20.0,
+        20.0
+      ],
+      "xml_fragment_sha256": "5f4844b80c5b13f9c1ae29414207657f7bd551ace2b47535118bdf8e479ee503"
+    },
+    {
+      "class": "maskBorderBare",
+      "symbolId": 4961,
+      "rootFrameCount": 1,
+      "cornerIds": {
+        "c1": 4960,
+        "c2": 4960,
+        "c3": 4960,
+        "c4": 4960
+      },
+      "asset_envelope_pixels": [
+        -20.0,
+        -20.0,
+        20.0,
+        20.0
+      ],
+      "xml_fragment_sha256": "783d92e23dea742a503e09d219589b48b6e16312a122b4db58d3e297cc7aac4b"
+    },
+    {
+      "class": "maskDamaged",
+      "symbolId": 4934,
+      "rootFrameCount": 1,
+      "cornerIds": {
+        "c1": 4933,
+        "c2": 4933,
+        "c3": 4906,
+        "c4": 4906
+      },
+      "asset_envelope_pixels": [
+        -20.0,
+        -20.0,
+        20.0,
+        20.45
+      ],
+      "xml_fragment_sha256": "15db63c645472a9a5adbdfa8cb788bf28cbb40e53334b9bbf508ee4ac6b90b85"
+    },
+    {
+      "class": "maskSkol",
+      "symbolId": 4915,
+      "rootFrameCount": 1,
+      "cornerIds": {
+        "c1": 4910,
+        "c2": 4910,
+        "c3": 4914,
+        "c4": 4914
+      },
+      "asset_envelope_pixels": [
+        -20.0,
+        -20.0,
+        20.0,
+        20.45
+      ],
+      "xml_fragment_sha256": "0733863e1a5ef4ce327d916b7190eb230105a07feadf9e83f6d4f6105d6fa864"
+    },
+    {
+      "class": "maskStone",
+      "symbolId": 4907,
+      "rootFrameCount": 1,
+      "cornerIds": {
+        "c1": 4906,
+        "c2": 4906,
+        "c3": 4906,
+        "c4": 4906
+      },
+      "asset_envelope_pixels": [
+        -20.0,
+        -20.45,
+        20.0,
+        20.45
+      ],
+      "xml_fragment_sha256": "2b768383b54026fca451fe5e3fa6b740945cf0cfdb80d333f0e5e0f2f57fe4df"
+    },
+    {
+      "class": "maskStoneBorder",
+      "symbolId": 4902,
+      "rootFrameCount": 1,
+      "cornerIds": {
+        "c1": 4901,
+        "c2": 4901,
+        "c3": 4901,
+        "c4": 4901
+      },
+      "asset_envelope_pixels": [
+        -20.0,
+        -20.45,
+        20.0,
+        20.45
+      ],
+      "xml_fragment_sha256": "7482f53e9fc505aeded16e1905c83a49ff14887fdae83bc8a4478335f8a78792"
+    },
+    {
+      "class": "maskDirt",
+      "symbolId": 4932,
+      "rootFrameCount": 1,
+      "cornerIds": {
+        "c1": 4931,
+        "c2": 4931,
+        "c3": 4906,
+        "c4": 4906
+      },
+      "asset_envelope_pixels": [
+        -20.0,
+        -20.0,
+        20.0,
+        20.45
+      ],
+      "xml_fragment_sha256": "53e83a20be98de56d54a13dca46d5218ecbefb4c8ba1cb84007da1f70ebbfe98"
+    },
+    {
+      "class": "maskDirtBorder",
+      "symbolId": 4927,
+      "rootFrameCount": 1,
+      "cornerIds": {
+        "c1": 4926,
+        "c2": 4926,
+        "c3": 4901,
+        "c4": 4901
+      },
+      "asset_envelope_pixels": [
+        -20.0,
+        -20.45,
+        20.0,
+        20.45
+      ],
+      "xml_fragment_sha256": "a0416512274d1ac0bdd3d5a8f2b04e43cf393910c863bd2eb2aeb00a26b4d83d"
+    },
+    {
+      "class": "maskFloor",
+      "symbolId": 4923,
+      "rootFrameCount": 1,
+      "cornerIds": {
+        "c1": 4922,
+        "c2": 4922
+      },
+      "asset_envelope_pixels": [
+        -21.5,
+        -20.0,
+        21.5,
+        -9.499512
+      ],
+      "xml_fragment_sha256": "0df77b7908e01cded9f61b2c8758769be7eae61d9808a78dfda88ea2fdf2b52a"
+    },
+    {
+      "class": "maskMetalBorder",
+      "symbolId": 4921,
+      "rootFrameCount": 1,
+      "cornerIds": {
+        "c1": 4920,
+        "c2": 4920,
+        "c3": 4920,
+        "c4": 4920
+      },
+      "asset_envelope_pixels": [
+        -20.0,
+        -20.0,
+        20.0,
+        20.0
+      ],
+      "xml_fragment_sha256": "296950a5c7956e96119f2a75846bcc332b4c8dd3ad000bcbb9c1684cf92c822d"
+    },
+    {
+      "class": "TileMask",
+      "symbolId": 4975,
+      "rootFrameCount": 1,
+      "cornerIds": {},
+      "asset_envelope_pixels": [
+        -20.0,
+        -20.0,
+        20.0,
+        20.0
+      ],
+      "xml_fragment_sha256": "23da699de21075a5fc5c02e5d3bbb38d5d7d157e07f185a03e6622df06e53683"
+    }
+  ],
+  "sprites": {
+    "4917": {
+      "frameCount": 5,
+      "placements": [
+        {
+          "characterId": "4680",
+          "depth": "1"
+        },
+        {
+          "depth": "1"
+        },
+        {
+          "depth": "1"
+        },
+        {
+          "characterId": "4916",
+          "depth": "1"
+        }
+      ],
+      "frameEnvelopeTwips": [
+        null,
+        [
+          0.0,
+          0.0,
+          239.99024000000003,
+          239.99023999999997
+        ],
+        [
+          0.0,
+          0.0,
+          400.0,
+          239.99023999999997
+        ],
+        [
+          0.0,
+          0.0,
+          239.99024000000003,
+          400.0
+        ],
+        [
+          0.0,
+          0.0,
+          400.0,
+          400.0
+        ]
+      ],
+      "xml_fragment_sha256": "d4e47f7bb9166d306d668f0eb8f1e13dd11bab5c83f92e82e8ac763069fbe7d8"
+    },
+    "4918": {
+      "frameCount": 1,
+      "placements": [
+        {
+          "name": "c1",
+          "characterId": "4917",
+          "depth": "1"
+        },
+        {
+          "name": "c2",
+          "characterId": "4917",
+          "depth": "3"
+        },
+        {
+          "name": "c3",
+          "characterId": "4917",
+          "depth": "5"
+        },
+        {
+          "name": "c4",
+          "characterId": "4917",
+          "depth": "7"
+        }
+      ],
+      "frameEnvelopeTwips": [
+        [
+          -400.0,
+          -400.0,
+          400.0,
+          400.0
+        ]
+      ],
+      "xml_fragment_sha256": "9d02cb181687f206e6ab34c6250bbbab3f1271bef920ce62928e12316845c5df"
+    },
+    "4963": {
+      "frameCount": 5,
+      "placements": [
+        {
+          "characterId": "4680",
+          "depth": "1"
+        },
+        {
+          "characterId": "4962",
+          "depth": "1"
+        }
+      ],
+      "frameEnvelopeTwips": [
+        [
+          0.0,
+          0.0,
+          400.0,
+          400.0
+        ],
+        [
+          0.0,
+          0.0,
+          400.0,
+          400.0
+        ],
+        [
+          0.0,
+          0.0,
+          400.0,
+          400.0
+        ],
+        [
+          0.0,
+          0.0,
+          400.0,
+          400.0
+        ],
+        [
+          0.0,
+          0.0,
+          400.0,
+          400.0
+        ]
+      ],
+      "xml_fragment_sha256": "fa54121c708098b70fe1f9a2e083a6a0df1b5f26372e1fa4ede264482f6b0f5b"
+    },
+    "4964": {
+      "frameCount": 1,
+      "placements": [
+        {
+          "name": "c1",
+          "characterId": "4963",
+          "depth": "1"
+        },
+        {
+          "name": "c2",
+          "characterId": "4963",
+          "depth": "3"
+        },
+        {
+          "name": "c3",
+          "characterId": "4963",
+          "depth": "5"
+        },
+        {
+          "name": "c4",
+          "characterId": "4963",
+          "depth": "7"
+        }
+      ],
+      "frameEnvelopeTwips": [
+        [
+          -400.0,
+          -400.0,
+          400.0,
+          400.0
+        ]
+      ],
+      "xml_fragment_sha256": "5f4844b80c5b13f9c1ae29414207657f7bd551ace2b47535118bdf8e479ee503"
+    },
+    "4960": {
+      "frameCount": 5,
+      "placements": [
+        {
+          "characterId": "4956",
+          "depth": "1"
+        },
+        {
+          "characterId": "4957",
+          "depth": "1"
+        },
+        {
+          "characterId": "4958",
+          "depth": "1"
+        },
+        {
+          "characterId": "4959",
+          "depth": "1"
+        }
+      ],
+      "frameEnvelopeTwips": [
+        null,
+        [
+          0.0,
+          0.0,
+          210.0,
+          210.0
+        ],
+        [
+          0.0,
+          0.0,
+          400.0,
+          210.0
+        ],
+        [
+          0.0,
+          0.0,
+          210.0,
+          400.0
+        ],
+        [
+          0.0,
+          0.0,
+          400.0,
+          400.0
+        ]
+      ],
+      "xml_fragment_sha256": "9e912f66abd0b561e96d3ef657226cd3662359a928cd4d7abbedbc86af628449"
+    },
+    "4961": {
+      "frameCount": 1,
+      "placements": [
+        {
+          "name": "c1",
+          "characterId": "4960",
+          "depth": "1"
+        },
+        {
+          "name": "c2",
+          "characterId": "4960",
+          "depth": "3"
+        },
+        {
+          "name": "c3",
+          "characterId": "4960",
+          "depth": "5"
+        },
+        {
+          "name": "c4",
+          "characterId": "4960",
+          "depth": "7"
+        }
+      ],
+      "frameEnvelopeTwips": [
+        [
+          -400.0,
+          -400.0,
+          400.0,
+          400.0
+        ]
+      ],
+      "xml_fragment_sha256": "783d92e23dea742a503e09d219589b48b6e16312a122b4db58d3e297cc7aac4b"
+    },
+    "4933": {
+      "frameCount": 5,
+      "placements": [
+        {
+          "characterId": "4680",
+          "depth": "1"
+        },
+        {
+          "characterId": "4904",
+          "depth": "1"
+        }
+      ],
+      "frameEnvelopeTwips": [
+        [
+          0.0,
+          0.0,
+          400.0,
+          400.0
+        ],
+        [
+          0.0,
+          0.0,
+          400.0,
+          400.0
+        ],
+        [
+          0.0,
+          0.0,
+          400.0,
+          400.0
+        ],
+        [
+          1.0,
+          0.0,
+          400.0,
+          400.0
+        ],
+        [
+          1.0,
+          0.0,
+          400.0,
+          400.0
+        ]
+      ],
+      "xml_fragment_sha256": "d65d7b234d2cc962eb3b548185dfadc1cd14dea940b552a7b5c03dd4e2c364e0"
+    },
+    "4906": {
+      "frameCount": 5,
+      "placements": [
+        {
+          "characterId": "4680",
+          "depth": "1"
+        },
+        {
+          "characterId": "4903",
+          "depth": "1"
+        },
+        {
+          "characterId": "4904",
+          "depth": "1"
+        },
+        {
+          "characterId": "4905",
+          "depth": "1"
+        }
+      ],
+      "frameEnvelopeTwips": [
+        [
+          0.0,
+          0.0,
+          400.0,
+          400.0
+        ],
+        [
+          0.0,
+          0.0,
+          400.0,
+          400.0
+        ],
+        [
+          0.0,
+          -9.0,
+          400.0,
+          400.0
+        ],
+        [
+          1.0,
+          0.0,
+          400.0,
+          400.0
+        ],
+        [
+          29.0,
+          7.0,
+          401.0,
+          402.0
+        ]
+      ],
+      "xml_fragment_sha256": "fd3d8a3f18cdcd29d4907b99effb762014e91fa4ad7598a8ff559f15fad41ac2"
+    },
+    "4934": {
+      "frameCount": 1,
+      "placements": [
+        {
+          "name": "c1",
+          "characterId": "4933",
+          "depth": "1"
+        },
+        {
+          "name": "c2",
+          "characterId": "4933",
+          "depth": "3"
+        },
+        {
+          "name": "c3",
+          "characterId": "4906",
+          "depth": "5"
+        },
+        {
+          "name": "c4",
+          "characterId": "4906",
+          "depth": "7"
+        }
+      ],
+      "frameEnvelopeTwips": [
+        [
+          -400.0,
+          -400.0,
+          400.0,
+          409.0
+        ]
+      ],
+      "xml_fragment_sha256": "15db63c645472a9a5adbdfa8cb788bf28cbb40e53334b9bbf508ee4ac6b90b85"
+    },
+    "4910": {
+      "frameCount": 5,
+      "placements": [
+        {
+          "characterId": "4908",
+          "depth": "1"
+        },
+        {
+          "characterId": "4909",
+          "depth": "1"
+        }
+      ],
+      "frameEnvelopeTwips": [
+        null,
+        null,
+        null,
+        [
+          1.0,
+          0.0,
+          201.0,
+          400.0
+        ],
+        [
+          1.0,
+          0.0,
+          218.0,
+          400.0
+        ]
+      ],
+      "xml_fragment_sha256": "9a4fda81208d33b76c6d11d922c935c81f3aaa05bc4ea531a362c8b465157da4"
+    },
+    "4914": {
+      "frameCount": 5,
+      "placements": [
+        {
+          "characterId": "4911",
+          "depth": "1"
+        },
+        {
+          "characterId": "4912",
+          "depth": "1"
+        },
+        {
+          "characterId": "4908",
+          "depth": "1"
+        },
+        {
+          "characterId": "4913",
+          "depth": "1"
+        }
+      ],
+      "frameEnvelopeTwips": [
+        null,
+        [
+          0.0,
+          0.0,
+          140.0,
+          135.0
+        ],
+        [
+          0.0,
+          -9.0,
+          400.0,
+          218.0
+        ],
+        [
+          1.0,
+          0.0,
+          201.0,
+          400.0
+        ],
+        [
+          29.0,
+          7.0,
+          401.0,
+          402.0
+        ]
+      ],
+      "xml_fragment_sha256": "7314afa612e1a737fb898d61adcea5494b673f87c3325636a5ae32c05504ca8a"
+    },
+    "4915": {
+      "frameCount": 1,
+      "placements": [
+        {
+          "name": "c1",
+          "characterId": "4910",
+          "depth": "1"
+        },
+        {
+          "name": "c2",
+          "characterId": "4910",
+          "depth": "3"
+        },
+        {
+          "name": "c3",
+          "characterId": "4914",
+          "depth": "5"
+        },
+        {
+          "name": "c4",
+          "characterId": "4914",
+          "depth": "7"
+        }
+      ],
+      "frameEnvelopeTwips": [
+        [
+          -400.0,
+          -400.0,
+          400.0,
+          409.0
+        ]
+      ],
+      "xml_fragment_sha256": "0733863e1a5ef4ce327d916b7190eb230105a07feadf9e83f6d4f6105d6fa864"
+    },
+    "4907": {
+      "frameCount": 1,
+      "placements": [
+        {
+          "name": "c1",
+          "characterId": "4906",
+          "depth": "1"
+        },
+        {
+          "name": "c2",
+          "characterId": "4906",
+          "depth": "3"
+        },
+        {
+          "name": "c3",
+          "characterId": "4906",
+          "depth": "5"
+        },
+        {
+          "name": "c4",
+          "characterId": "4906",
+          "depth": "7"
+        }
+      ],
+      "frameEnvelopeTwips": [
+        [
+          -400.0,
+          -409.0,
+          400.0,
+          409.0
+        ]
+      ],
+      "xml_fragment_sha256": "2b768383b54026fca451fe5e3fa6b740945cf0cfdb80d333f0e5e0f2f57fe4df"
+    },
+    "4901": {
+      "frameCount": 5,
+      "placements": [
+        {
+          "characterId": "4897",
+          "depth": "1"
+        },
+        {
+          "characterId": "4898",
+          "depth": "1"
+        },
+        {
+          "characterId": "4899",
+          "depth": "1"
+        },
+        {
+          "characterId": "4900",
+          "depth": "1"
+        }
+      ],
+      "frameEnvelopeTwips": [
+        null,
+        [
+          0.0,
+          0.0,
+          280.0,
+          295.0
+        ],
+        [
+          0.0,
+          -9.0,
+          400.0,
+          350.0
+        ],
+        [
+          1.0,
+          0.0,
+          340.0,
+          400.0
+        ],
+        [
+          29.0,
+          7.0,
+          402.0,
+          403.0
+        ]
+      ],
+      "xml_fragment_sha256": "7c26b00eefb5bc089659bcd6cb19587740a7c1ad28beb1aa21d09b630b5f803b"
+    },
+    "4902": {
+      "frameCount": 1,
+      "placements": [
+        {
+          "name": "c1",
+          "characterId": "4901",
+          "depth": "1"
+        },
+        {
+          "name": "c2",
+          "characterId": "4901",
+          "depth": "3"
+        },
+        {
+          "name": "c3",
+          "characterId": "4901",
+          "depth": "5"
+        },
+        {
+          "name": "c4",
+          "characterId": "4901",
+          "depth": "7"
+        }
+      ],
+      "frameEnvelopeTwips": [
+        [
+          -400.0,
+          -409.0,
+          400.0,
+          409.0
+        ]
+      ],
+      "xml_fragment_sha256": "7482f53e9fc505aeded16e1905c83a49ff14887fdae83bc8a4478335f8a78792"
+    },
+    "4931": {
+      "frameCount": 5,
+      "placements": [
+        {
+          "characterId": "4680",
+          "depth": "1"
+        },
+        {
+          "characterId": "4928",
+          "depth": "1"
+        },
+        {
+          "characterId": "4929",
+          "depth": "1"
+        },
+        {
+          "characterId": "4930",
+          "depth": "1"
+        }
+      ],
+      "frameEnvelopeTwips": [
+        [
+          0.0,
+          0.0,
+          400.0,
+          400.0
+        ],
+        [
+          0.0,
+          0.0,
+          400.0,
+          400.0
+        ],
+        [
+          0.0,
+          4.0,
+          400.0,
+          400.0
+        ],
+        [
+          21.0,
+          0.0,
+          400.0,
+          400.0
+        ],
+        [
+          14.0,
+          7.0,
+          401.0,
+          402.0
+        ]
+      ],
+      "xml_fragment_sha256": "4da9814507d614a980f68332b5e31067285b67c1a537960d8068c32e2b640d7f"
+    },
+    "4932": {
+      "frameCount": 1,
+      "placements": [
+        {
+          "name": "c1",
+          "characterId": "4931",
+          "depth": "1"
+        },
+        {
+          "name": "c2",
+          "characterId": "4931",
+          "depth": "3"
+        },
+        {
+          "name": "c3",
+          "characterId": "4906",
+          "depth": "5"
+        },
+        {
+          "name": "c4",
+          "characterId": "4906",
+          "depth": "7"
+        }
+      ],
+      "frameEnvelopeTwips": [
+        [
+          -400.0,
+          -400.0,
+          400.0,
+          409.0
+        ]
+      ],
+      "xml_fragment_sha256": "53e83a20be98de56d54a13dca46d5218ecbefb4c8ba1cb84007da1f70ebbfe98"
+    },
+    "4926": {
+      "frameCount": 5,
+      "placements": [
+        {
+          "characterId": "4897",
+          "depth": "1"
+        },
+        {
+          "characterId": "4924",
+          "depth": "1"
+        },
+        {
+          "characterId": "4899",
+          "depth": "1"
+        },
+        {
+          "characterId": "4925",
+          "depth": "1"
+        }
+      ],
+      "frameEnvelopeTwips": [
+        null,
+        [
+          0.0,
+          0.0,
+          280.0,
+          295.0
+        ],
+        [
+          0.0,
+          -9.0,
+          400.0,
+          323.0
+        ],
+        [
+          1.0,
+          0.0,
+          340.0,
+          400.0
+        ],
+        [
+          29.0,
+          -5.0,
+          402.0,
+          403.0
+        ]
+      ],
+      "xml_fragment_sha256": "8c42dd1b84ae14e00bdad232f356f211082429d59b1004ba89ff995b5203fc36"
+    },
+    "4927": {
+      "frameCount": 1,
+      "placements": [
+        {
+          "name": "c1",
+          "characterId": "4926",
+          "depth": "1"
+        },
+        {
+          "name": "c2",
+          "characterId": "4926",
+          "depth": "3"
+        },
+        {
+          "name": "c3",
+          "characterId": "4901",
+          "depth": "5"
+        },
+        {
+          "name": "c4",
+          "characterId": "4901",
+          "depth": "7"
+        }
+      ],
+      "frameEnvelopeTwips": [
+        [
+          -400.0,
+          -409.0,
+          400.0,
+          409.0
+        ]
+      ],
+      "xml_fragment_sha256": "a0416512274d1ac0bdd3d5a8f2b04e43cf393910c863bd2eb2aeb00a26b4d83d"
+    },
+    "4922": {
+      "frameCount": 5,
+      "placements": [
+        {
+          "characterId": "4680",
+          "depth": "1"
+        },
+        {
+          "characterId": "4680",
+          "depth": "1"
+        }
+      ],
+      "frameEnvelopeTwips": [
+        null,
+        null,
+        [
+          -30.0,
+          0.0,
+          430.00975999999997,
+          210.00976000000003
+        ],
+        null,
+        [
+          -30.0,
+          0.0,
+          430.00975999999997,
+          210.00976000000003
+        ]
+      ],
+      "xml_fragment_sha256": "328b11e30471819cb458e92d49b8d30ace23310769d58c8d469491dbf5d2c25f"
+    },
+    "4923": {
+      "frameCount": 1,
+      "placements": [
+        {
+          "name": "c1",
+          "characterId": "4922",
+          "depth": "1"
+        },
+        {
+          "name": "c2",
+          "characterId": "4922",
+          "depth": "3"
+        }
+      ],
+      "frameEnvelopeTwips": [
+        [
+          -430.0,
+          -400.0,
+          430.0,
+          -189.99023999999997
+        ]
+      ],
+      "xml_fragment_sha256": "0df77b7908e01cded9f61b2c8758769be7eae61d9808a78dfda88ea2fdf2b52a"
+    },
+    "4920": {
+      "frameCount": 5,
+      "placements": [
+        {
+          "characterId": "4680",
+          "depth": "1"
+        },
+        {
+          "depth": "1"
+        },
+        {
+          "depth": "1"
+        },
+        {
+          "characterId": "4919",
+          "depth": "1"
+        }
+      ],
+      "frameEnvelopeTwips": [
+        null,
+        [
+          0.0,
+          0.0,
+          159.99756,
+          160.0
+        ],
+        [
+          0.0,
+          0.0,
+          400.0,
+          160.0
+        ],
+        [
+          0.0,
+          0.0,
+          160.00976,
+          400.0
+        ],
+        [
+          0.0,
+          0.0,
+          400.0,
+          400.0
+        ]
+      ],
+      "xml_fragment_sha256": "5ff9a14a114d222c57648f37d52bf336c56d351cbac245ff3022717eac0fce1c"
+    },
+    "4921": {
+      "frameCount": 1,
+      "placements": [
+        {
+          "name": "c1",
+          "characterId": "4920",
+          "depth": "1"
+        },
+        {
+          "name": "c2",
+          "characterId": "4920",
+          "depth": "3"
+        },
+        {
+          "name": "c3",
+          "characterId": "4920",
+          "depth": "5"
+        },
+        {
+          "name": "c4",
+          "characterId": "4920",
+          "depth": "7"
+        }
+      ],
+      "frameEnvelopeTwips": [
+        [
+          -400.0,
+          -400.0,
+          400.0,
+          400.0
+        ]
+      ],
+      "xml_fragment_sha256": "296950a5c7956e96119f2a75846bcc332b4c8dd3ad000bcbb9c1684cf92c822d"
+    },
+    "4975": {
+      "frameCount": 1,
+      "placements": [
+        {
+          "characterId": "4680",
+          "depth": "1"
+        }
+      ],
+      "frameEnvelopeTwips": [
+        [
+          -400.0,
+          -400.0,
+          400.0,
+          400.0
+        ]
+      ],
+      "xml_fragment_sha256": "23da699de21075a5fc5c02e5d3bbb38d5d7d157e07f185a03e6622df06e53683"
+    }
+  },
+  "usedResourceIds": [
+    4680,
+    4897,
+    4898,
+    4899,
+    4900,
+    4901,
+    4902,
+    4903,
+    4904,
+    4905,
+    4906,
+    4907,
+    4908,
+    4909,
+    4910,
+    4911,
+    4912,
+    4913,
+    4914,
+    4915,
+    4916,
+    4917,
+    4918,
+    4919,
+    4920,
+    4921,
+    4922,
+    4923,
+    4924,
+    4925,
+    4926,
+    4927,
+    4928,
+    4929,
+    4930,
+    4931,
+    4932,
+    4933,
+    4934,
+    4956,
+    4957,
+    4958,
+    4959,
+    4960,
+    4961,
+    4962,
+    4963,
+    4964,
+    4975
+  ],
+  "allResourceFragmentHashes": {
+    "4680": "4a5f94791cd9c6beb9be263b0967f46b01987fcf07366d4d31e7ced759f157c5",
+    "4897": "922d6fe0e1bc39fb31471a47d8dcf80b0d62543e13c9d4a92541140cc76187da",
+    "4898": "74348bcd8f84494f6c1cff126f7fb306ed614068bb7f03a837ae6b942b8b5eb0",
+    "4899": "fd23fd53a459644bde94e3a9a3186fd634298f3db9d536d7edabf844c3f97462",
+    "4900": "adaeb6f6a7804c65647a0c710f420554b664902ae22a54f5affb3531d3236e15",
+    "4901": "7c26b00eefb5bc089659bcd6cb19587740a7c1ad28beb1aa21d09b630b5f803b",
+    "4902": "7482f53e9fc505aeded16e1905c83a49ff14887fdae83bc8a4478335f8a78792",
+    "4903": "80b846d326200bd126c94ab5837a45589be94a4f5a012d06c7696742925b3640",
+    "4904": "16257f0eca5cc382b91a309a94eebd3369390911e140d0f208f311dc2733c40e",
+    "4905": "5347e1728882a02b40db068b5d41d19a7bd6db03de93da294455a124bb72b229",
+    "4906": "fd3d8a3f18cdcd29d4907b99effb762014e91fa4ad7598a8ff559f15fad41ac2",
+    "4907": "2b768383b54026fca451fe5e3fa6b740945cf0cfdb80d333f0e5e0f2f57fe4df",
+    "4908": "140dae6babf653210c277dd9565c4cb74d290342343ff4d498552cc86f5b11b0",
+    "4909": "884caf63eb3464ae75eeff808d3346f1d90e41a41e9d1e80beeb8d58d0eb7d66",
+    "4910": "9a4fda81208d33b76c6d11d922c935c81f3aaa05bc4ea531a362c8b465157da4",
+    "4911": "af8ca63ad89d94584a8bbbc224c70dfd303a1c94ebd81b2bab6e26d7bfbbc663",
+    "4912": "ef467f3129bf5d88377aa44b4822daddae48826a9c3d6dae96f778ec1e1c93c4",
+    "4913": "6136eea8cb205b58e5a64eadbaa68de12ccc8858ea73292e10bf9e89297c1320",
+    "4914": "7314afa612e1a737fb898d61adcea5494b673f87c3325636a5ae32c05504ca8a",
+    "4915": "0733863e1a5ef4ce327d916b7190eb230105a07feadf9e83f6d4f6105d6fa864",
+    "4916": "a204722ca6f709a775e24f3fe3ff3bd49bfdf06076da253158b8bec67c11189a",
+    "4917": "d4e47f7bb9166d306d668f0eb8f1e13dd11bab5c83f92e82e8ac763069fbe7d8",
+    "4918": "9d02cb181687f206e6ab34c6250bbbab3f1271bef920ce62928e12316845c5df",
+    "4919": "d2c725ddc962cdcee227a5611ae18a51303b59dbdb5d26e6ad57bd103163f9cc",
+    "4920": "5ff9a14a114d222c57648f37d52bf336c56d351cbac245ff3022717eac0fce1c",
+    "4921": "296950a5c7956e96119f2a75846bcc332b4c8dd3ad000bcbb9c1684cf92c822d",
+    "4922": "328b11e30471819cb458e92d49b8d30ace23310769d58c8d469491dbf5d2c25f",
+    "4923": "0df77b7908e01cded9f61b2c8758769be7eae61d9808a78dfda88ea2fdf2b52a",
+    "4924": "6dbeea7e91893368f15b33d10ea74da194185c11d636cbd28ce2101d0e8d281f",
+    "4925": "5af8923562b53dee74d57135f9679f74df43db737be91826dd915aa2a73602ef",
+    "4926": "8c42dd1b84ae14e00bdad232f356f211082429d59b1004ba89ff995b5203fc36",
+    "4927": "a0416512274d1ac0bdd3d5a8f2b04e43cf393910c863bd2eb2aeb00a26b4d83d",
+    "4928": "1fd97532751af34fc481d10823ecd6fcf1b36402ad65b4ca41eb3a4cdb695639",
+    "4929": "59a4813f316918d1a8b90e522a331e870de91e611c350a1c747df9d94c6b4ff8",
+    "4930": "e70173f7a4dc549214430409e24252157df4483d741b597085b85514e33d29b6",
+    "4931": "4da9814507d614a980f68332b5e31067285b67c1a537960d8068c32e2b640d7f",
+    "4932": "53e83a20be98de56d54a13dca46d5218ecbefb4c8ba1cb84007da1f70ebbfe98",
+    "4933": "d65d7b234d2cc962eb3b548185dfadc1cd14dea940b552a7b5c03dd4e2c364e0",
+    "4934": "15db63c645472a9a5adbdfa8cb788bf28cbb40e53334b9bbf508ee4ac6b90b85",
+    "4956": "1aea490ebcd2a02e3f39660ff7bfc6b20d588d6de5e797f0270f37691a94c60d",
+    "4957": "620df1b56f6031b172ca253801050a1b5b5fded32b12c87a2c78b93f88889086",
+    "4958": "e4a82df74527827d3bd077de51755c743f87ac78c8bb694ccba80fdccb3c9046",
+    "4959": "85ce72ed3cdde960de23182ea1237639de472fbb29a2e73023bbeb8ab24e77d5",
+    "4960": "9e912f66abd0b561e96d3ef657226cd3662359a928cd4d7abbedbc86af628449",
+    "4961": "783d92e23dea742a503e09d219589b48b6e16312a122b4db58d3e297cc7aac4b",
+    "4962": "ad18139b0c224c876da2051d4fdb2f5bd9cd3a0727a1719ae755ea3af07ec7e4",
+    "4963": "fa54121c708098b70fe1f9a2e083a6a0df1b5f26372e1fa4ede264482f6b0f5b",
+    "4964": "5f4844b80c5b13f9c1ae29414207657f7bd551ace2b47535118bdf8e479ee503",
+    "4975": "23da699de21075a5fc5c02e5d3bbb38d5d7d157e07f185a03e6622df06e53683"
+  },
+  "boundsMeaning": "Static SWF shapeBounds transformed by exact placement matrices, union of all timeline frames; not raster pixel equality or runtime getBounds measurement."
+}

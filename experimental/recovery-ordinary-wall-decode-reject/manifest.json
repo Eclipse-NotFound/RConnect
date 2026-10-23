@@ -1,0 +1,14 @@
+{
+  "base": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-ordinary-wall-sv-production-01\\src\\rconnect\\game\\WallImpactVisuals.as",
+  "base_sha256": "12682bff279d35d3dc2181d4832a9d948f9ee68fcfdcf5188ee53dec2c91ff72",
+  "files": {
+    "src/rconnect/game/WallImpactVisuals.as": "b87c0584d233dfd806192aca1dcea437e514bb972acda8f9ff669a7cff2f8f2b",
+    "source.diff": "9b37a630fb9833ac36f7dfe1a35a51a4aaab6244463f7e844744a7c0f44751b7",
+    "prepare.py": "279214bf21dab80c33658d79ebfbb204e342b353dc3eb0b8657301273bf9a675",
+    "README.md": "bb2365016ffb7c82c0a1332bb0855b365dee2ccf429d6c200331b035ef8b2155"
+  },
+  "compiled": false,
+  "air_started": false,
+  "combined_with_ack_flush": false,
+  "issue": "ordinaryDecode lets malformed legacy compressed cell exceptions escape the socket listener"
+}

@@ -1,0 +1,11 @@
+{
+  "run": "2e1db25ddc",
+  "inputs": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\2e1db25ddc\\run.json": "5bf3d3746c5782f86e11afce5097ec54725af1cb527c7729ed0d46857c195304",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\2e1db25ddc\\registry-result.json": "68a63d60277b69a1d15f0af44aee0f059e526cde2a3613e2e1d40d79eaea1edd",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\2e1db25ddc\\host.log": "014d0da62e9efa7d7e09e243b6fd5bb591d217c9863bd0237891b37ff4f20161",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\2e1db25ddc\\join.log": "82b67534376d8f2fb1a3c8ca50be57c910f576f9c10e76a2e9729285e97f4fcc",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-ordinary-wall-sv-rooms-01\\result.json": "517f10d70834311d88ec3f705787ad425dbfa00ef47ef8a72e2a3849a8b65e88"
+  },
+  "diagnostic_compiled": false
+}
