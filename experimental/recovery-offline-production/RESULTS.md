@@ -55,3 +55,13 @@ CS已完成准确原574D与本EB365候选的独立进程、同探针/配置对�
 针对性双实例准备已只读核对：现成 runner 的 `--connect-after-load` 能保持双方初始 autoRole 为空，但需两份独立存档副本，并由测试入口在原生控制恢复后首次 startHost/startJoin。启动前置可复用冻结 `coop-bundle-drivers-04/tests/FastHeldTestDoc.as:461`；双向原生LMG与最终显示观察可复用 `recovery-drivers-11/tests/NativeFlightContinuityTestDoc.as` 前两轮；一个身体效果可取 `coop-bundle-drivers-04/tests/BodyEffectsTestDoc.as` 的 freezing/clear，避免借用其旧裸枪准备。
 
 这些旧驱动并未覆盖“离线历史不重播”，也没有绑定本候选。未来独立入口仅补：离线实际开火/效果自然结束→保留同一把枪→首次接入与房间就绪→静默窗没有旧事件/旧画面→双方新开火和身体效果。首次连接尝试次数须记录，不能隐去重试；不得手动清采集器或换枪后宣称旧历史已清理。仍使用原6GiB启动门槛、512MiB运行保护、独占与登记；当前未编写/编译这份新入口，也没有双实例通过结论。
+
+## 后续首次双游戏及有限部署完成
+
+2026-10-23，准确EB365保持未变。新独立入口在 `d0048aff49` 完成两侧各39项、零失败、首次尝试一次、十项覆盖全通过及真实finish-ack；实际远端弹道/枪口/冻结恢复显示与旧事件不重播均有最终显示观察。修正测试准备和收尾时的全部失败均原样保留。详见 `../recovery-offline-first-connect/RESULTS.md`。
+
+有限部署脚本 `deploy.py` SHA256 `11ed24df492ec79ca006f12522361be60ed88be97749239194d26797798b9f04` 经独立窄审与两次只读audit后执行；最新audit02对应最终脚本。`build/m52/recovery-offline-deploy-01` 保存574D备份、意图、22项前后清单及回执。原共享runner取得登记后才替换RC，随后读取实际release进行纯生产双人冒烟，未加载外部效果驱动，保持私有桌面、独占与原内存保护。
+
+`ae58b8049b` 原运行器 `RESULT PASS`、退出0，双方offline1初始化/tick200及加入握手/单位同步通过，原日志错误检查无命中。22项仅RC从574D变EB365，宿主、其他模组和配置不变；两自有实例和host/join/frozen副本清理。正式现为offline1，备份回读准确574D。有限交付和回滚位置见 `RELEASE.md`。
+
+这不是加载/玩家念力光晕/击墙/高速连续性四项问题的完成记录，也没有新增双人密集或全显示配置性能资格。历史prepare.verify会因正式RC已经改变而拒绝旧安装基线，这是预期保护；不改冻结回执让它伪装未部署。
