@@ -1,0 +1,64 @@
+{
+  "kind": "ordinary-socket-nodelay-source-only",
+  "base": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-ordinary-wall-ack-timing",
+  "base_product": "57713116a7f4c70e47bed655d9ed80490fb32ecb75f14e7bf964e75db0122c06",
+  "source": {
+    "rconnect/core/Config.as": "33fd878d75f4b354779287c98254a0c73f6e2cce96fe39b378f6d0f80be9219f",
+    "rconnect/core/Session.as": "fa03863f6b95fbc3811e96bf4b4d01cbb0f181f75774c594eabe2f0aa45f8369",
+    "rconnect/game/WallImpactVisuals.as": "1a1f1b64a3dca66ac1c5ca041f131f2b2731ebc9600af31932c78932b8392289",
+    "rconnect/net/TcpLink.as": "9c4870db51e328a62c215affc7c9c92b4a07a3ff791b59070f89c208bf90d0cb"
+  },
+  "overlay": {
+    "rconnect/core/Config.as": "8d8fa6cb1abbcd4fb98412279f346725b90ed172291ee7e9ebad286a9529e932",
+    "rconnect/core/Session.as": "a78fcd3b4ecbe8595909041393642039b927a336d1e8db28c45f08c244bedc3c",
+    "rconnect/game/WallImpactVisuals.as": "1a1f1b64a3dca66ac1c5ca041f131f2b2731ebc9600af31932c78932b8392289",
+    "rconnect/net/TcpLink.as": "bb17b36bf6859709bd24e19028ef6b4d356e12336f28c7088df9913f5163c7e6"
+  },
+  "changed": [
+    "rconnect/core/Config.as",
+    "rconnect/core/Session.as",
+    "rconnect/net/TcpLink.as"
+  ],
+  "compiled": false,
+  "air_started": false,
+  "installed": false,
+  "scope": "private appID + wallAckTiming=1 + exact socketNoDelayTrial off/on; real connected Socket setter/readback",
+  "runtime_api_qualified": false,
+  "performance_qualified": false,
+  "base_compile_receipt": {
+    "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-ordinary-wall-ack-timing-01\\compile.json",
+    "sha256": "8b1353ab2e6cfbab74e12918c19df906c4cda1fe72f0368d661921142aa37508"
+  },
+  "static_checks": {
+    "base_unchanged": true,
+    "wall_impact_visuals_byte_identical": true,
+    "unchanged_tcp_methods": [
+      "timingFault",
+      "timingClock",
+      "timingMeta",
+      "timingPush",
+      "timingCost",
+      "timingMarker",
+      "timingTransport",
+      "timingTransportInside",
+      "wallAckTimingReceived",
+      "wallAckTimingProcessed",
+      "wallAckTimingReleaseStart",
+      "wallAckTimingReleased",
+      "timingAbort",
+      "TcpLink",
+      "connect",
+      "send",
+      "close",
+      "wireEvents",
+      "onClose",
+      "onError",
+      "onSecError",
+      "fail",
+      "onData"
+    ],
+    "apply_before_connected_dispatch": true,
+    "diagnostic_status_before_complete_calculation": true,
+    "send_and_on_data_identical": true
+  }
+}

@@ -1,0 +1,159 @@
+--- ack-timing/src/rconnect/core/Config.as
++++ socket-nodelay/src/rconnect/core/Config.as
+@@ -18,6 +18,7 @@
+          port: 23456,
+          tickMs: 50,
+          wallAckTiming: "0",
++         socketNoDelayTrial: "",
+          sharedExploration: "1",
+          followTeammate: "0",
+          allowPeerGrip: "0",
+--- ack-timing/src/rconnect/core/Session.as
++++ socket-nodelay/src/rconnect/core/Session.as
+@@ -112,7 +112,7 @@
+          pause=new CoopPause(this);
+          this.myName = mod.config.getValue("nickname");
+          this._autoRole = String(mod.config.getValue("autoRole"));
+-         TcpLink.wallAckTimingConfigure(mod.config.getValue("wallAckTiming"),this._autoRole);
++         TcpLink.wallAckTimingConfigure(mod.config.getValue("wallAckTiming"),this._autoRole,mod.config.getValue("socketNoDelayTrial"));
+          var ag:String = String(mod.config.getValue("autoGame"));
+          this._autoGame = (ag == "1" || ag == "true" || ag == "yes");
+          var am:String = String(mod.config.getValue("autoMove"));
+--- ack-timing/src/rconnect/net/TcpLink.as
++++ socket-nodelay/src/rconnect/net/TcpLink.as
+@@ -46,8 +46,12 @@
+       private static var timingStarted:Object,timingLocalSampled:Object,timingPeerSampled:Object;
+       private static var timingAck:Object;
+       private static var timingCalls:int=0,timingTotal:int=0,timingMax:int=0;
+-
+-      public static function wallAckTimingConfigure(flag:*,role:String):void
++      // One isolated off/on trial. These rows never enter a network packet.
++      private static var socketTrialMode:String="",socketTrialRequested:String="";
++      private static var socketTrialCount:int=0;
++      private static var socketTrialRows:Array=[],socketTrialSockets:Array=[];
++
++      public static function wallAckTimingConfigure(flag:*,role:String,trial:*=""):void
+       {
+          if(String(flag)!="1")return;
+          try {
+@@ -58,7 +62,88 @@
+             }
+             if(timingEnabled){timingFault("duplicate configure");return;}
+             timingApp=app;timingRole=role;timingEnabled=true;
++            if(trial!=="") {
++               socketTrialRequested=String(trial).substr(0,40);
++               if(!(trial is String) || (trial!=="off" && trial!=="on"))
++                  timingFault("socketNoDelayTrial requires exact off/on string");
++               else socketTrialMode=String(trial);
++            }
+          } catch(error:*) {timingFault("configure: "+String(error));}
++      }
++
++      /** Run only on a real CONNECT or accepted Socket, before original dispatch. */
++      private function socketNoDelayApply(direction:String,actual:Socket):void
++      {
++         if(!timingEnabled || socketTrialMode=="")return;
++         var row:Object=null;
++         try {
++            socketTrialCount++;
++            if(socketTrialRows.length>=8)throw new Error("trial connection bound exceeded");
++            if(socketTrialSockets.indexOf(actual)>=0)throw new Error("duplicate trial Socket");
++            row={connection:socketTrialCount,role:timingRole,direction:direction,linkIdAtSet:id,
++               at:getTimer(),wall:new Date().time,expected:socketTrialMode=="on",
++               sameSocket:actual===socket,connectedAtSet:false,setSucceeded:false,readSucceeded:false,
++               readback:null,success:false};
++            socketTrialRows.push(row);socketTrialSockets.push(actual);
++            if(actual==null || actual!==socket || !actual.connected)
++               throw new Error("trial requires the actual connected Socket");
++            row.connectedAtSet=true;
++            row.localAddress=actual.localAddress;row.localPort=actual.localPort;
++            row.remoteAddress=actual.remoteAddress;row.remotePort=actual.remotePort;
++            if(direction!=(timingRole=="host"?"accept":"connect"))
++               throw new Error("trial role/direction mismatch");
++            // Deliberately attempt the real setter, including false in the off arm.
++            // A missing API is failed evidence, never an unavailable-is-success guard.
++            Object(actual)["tcpNoDelay"]=row.expected;
++            row.setSucceeded=true;
++            var value:*=Object(actual)["tcpNoDelay"];
++            row.readSucceeded=true;row.readback=value;
++            row.success=value is Boolean && value===row.expected;
++            if(!row.success)throw new Error("trial setter/readback mismatch");
++         }catch(error:*) {
++            if(row!=null)row.error=String(error).substr(0,400);
++            timingFault("socket trial apply: "+String(error));
++         }
++      }
++
++      /** Recheck after sampling; no mutation or per-packet observations. */
++      private static function socketNoDelayStatus():Object
++      {
++         if(socketTrialMode=="" && socketTrialRequested=="")return null;
++         var result:Object={requested:socketTrialRequested,mode:socketTrialMode,enabled:socketTrialMode!="",
++            expected:socketTrialMode==""?null:socketTrialMode=="on",qualified:false,
++            connectionCount:socketTrialCount,connections:[]};
++         try {
++            var good:Boolean=socketTrialMode!="" && socketTrialCount==1 && socketTrialRows.length==1;
++            if(!good)timingFault("socket trial requires one recorded connection");
++            for(var i:int=0;i<socketTrialRows.length;i++) {
++               var source:Object=socketTrialRows[i],copy:Object={};
++               for(var key:String in source)copy[key]=source[key];
++               result.connections.push(copy);
++               copy.checkedAt=getTimer();copy.checkedWall=new Date().time;
++               copy.connectedAtCheck=false;copy.readSucceededAtCheck=false;copy.readbackAtCheck=null;
++               copy.qualified=false;
++               try {
++                  var actual:Socket=socketTrialSockets[i] as Socket;
++                  copy.connectedAtCheck=actual!=null && actual.connected;
++                  if(source.success!==true || !copy.connectedAtCheck)
++                     throw new Error("trial Socket not successfully set and still connected");
++                  var value:*=Object(actual)["tcpNoDelay"];
++                  copy.readSucceededAtCheck=true;copy.readbackAtCheck=value;
++                  copy.qualified=value is Boolean && value===source.expected;
++                  if(!copy.qualified)throw new Error("trial Socket value changed");
++               }catch(readError:*) {
++                  copy.checkError=String(readError).substr(0,400);
++                  timingFault("socket trial recheck: "+String(readError));
++               }
++               if(copy.qualified!==true)good=false;
++            }
++            result.qualified=good;
++         }catch(error:*) {
++            result.error=String(error).substr(0,400);
++            timingFault("socket trial snapshot: "+String(error));
++         }
++         return result;
+       }
+ 
+       private static function timingFault(reason:String):void
+@@ -241,6 +326,7 @@
+       {
+          var name:String=timingActive?"round-"+timingRound:"abort";
+          if(timingWritten[name])return;
++         var trial:Object=socketNoDelayStatus();
+          var ended:Object=timingClock(),both:Boolean=timingLocalSampled!=null && timingPeerSampled!=null;
+          var result:Object={kind:"ordinary-wall-ack-timing-v1",appId:timingApp,role:timingRole,round:timingRound,
+             complete:normal && both && !timingOverflow && timingFaultCount==0,termination:reason,
+@@ -248,6 +334,7 @@
+             capacity:256,overflow:timingOverflow,dropped:timingDropped,eventCount:timingRows.length,
+             faultCount:timingFaultCount,faults:timingFaults.concat(),probeCalls:timingCalls,probeTotalMs:timingTotal,probeMaxMs:timingMax,
+             events:timingRows};
++         if(trial!=null)result.socketNoDelayTrial=trial;
+          timingActive=false;timingWritten[name]=true;
+          var fs:FileStream=null;
+          try {
+@@ -302,6 +389,7 @@
+          socket = sock;
+          isOpen = sock.connected;
+          wireEvents();
++         socketNoDelayApply("accept",sock);
+          dispatchEvent(new Event(CONNECTED));
+       }
+ 
+@@ -367,6 +455,7 @@
+       private function onConnect(e:Event):void
+       {
+          isOpen = true;
++         socketNoDelayApply("connect",e.currentTarget as Socket);
+          Log.d("RConnectNet: link connected");
+          dispatchEvent(new Event(CONNECTED));
+       }
