@@ -1,0 +1,200 @@
+--- offline1/rconnect/core/PeerGrip.as
++++ aura1/rconnect/core/PeerGrip.as
+@@ -5,6 +5,7 @@
+    import flash.utils.Timer;
+    import flash.utils.getTimer;
+    import rconnect.game.GameBridge;
++   import rconnect.game.TelekinesisVisuals;
+    import rconnect.net.NetMessageEvent;
+    import rconnect.net.TcpLink;
+ 
+@@ -14,11 +15,13 @@
+       private var mod:RConnectMod,timer:Timer=new Timer(50),links:Dictionary=new Dictionary(),retired:Dictionary=new Dictionary();
+       private var outgoing:Object,incoming:Object,keys:Object,beforeMotion:Object;
+       private var throwDamage:PeerThrowDamage;
++      private var aura:TelekinesisVisuals=new TelekinesisVisuals();
+       private var serial:int=0,errors:int=0,lastFrame:int=getTimer(),wasPaused:Boolean=false,manaBefore:Number=0;
+       private static const MOVEMENT:Array=["keyLeft","keyRight","keyBeUp","keySit","keyJump","keyDash","keyDubLeft","keyDubRight"];
+       public function PeerGrip(m:RConnectMod) {
+          mod=m;throwDamage=new PeerThrowDamage(m);m.stage.addEventListener(Event.ENTER_FRAME,before,false,98000);
+          m.stage.addEventListener(Event.ENTER_FRAME,after,false,-8500);
++         m.stage.addEventListener(Event.RENDER,presentAura,false,-11000);
+          timer.addEventListener(TimerEvent.TIMER,sendHeld);timer.start();
+       }
+       private function get game():Object {return mod.game;}
+@@ -72,7 +75,8 @@
+             if(outgoing==null||!ready()||game.gg.teleObj!==outgoing.raw)return;
+             var g:Object=game.gg,p:Object=stamp("hold",outgoing.token);
+             p.input={cx:g.celX,cy:g.celY,speed:g.teleSpeed,accel:g.teleAccel,mana:g.mana,startMana:outgoing.startMana,
+-               mass:g.pers.maxTeleMassa,range:g.pers.teleDist,master:g.pers.telemaster};outgoing.link.send(p);
++               mass:g.pers.maxTeleMassa,range:g.pers.teleDist,master:g.pers.telemaster};
++            p.aura=outgoing.style;outgoing.link.send(p);
+          }catch(e:Error){fault(e);}
+       }
+       private function paused():Boolean {return session.pause!=null&&session.pause.paused;}
+@@ -117,12 +121,19 @@
+       private function after(e:Event):void {
+          try {
+             restoreKeys();throwDamage.afterStep();if(!ready()){reset();return;}
++            presentAura();
+             var g:Object=game.gg,raw:Object=g.teleObj,link:TcpLink=peerFor(raw);
+             if(outgoing!=null&&raw!==outgoing.raw)endOutgoing(true,true);
+             if(link==null||raw==null)return;
+             if(!raw.levitPoss||incoming!=null||game.isPlayerDead()){g.dropTeleObj();return;}
+-            if(outgoing==null){outgoing={raw:raw,link:link,token:++serial,startMana:manaBefore,accepted:false,until:getTimer()+2000};sendHeld();}
++            if(outgoing==null){outgoing={raw:raw,link:link,token:++serial,startMana:manaBefore,accepted:false,
++               style:TelekinesisVisuals.captureObject(raw),until:getTimer()+2000};sendHeld();}
+          }catch(err:Error){throwDamage.reset();fault(err);}
++      }
++      private function presentAura(e:Event=null):void {
++         if(incoming==null)return;
++         aura.object(incoming.player,incoming.aura);
++         aura.tick(game.loc,null,false);
+       }
+       private function safe(p:Object):Boolean {
+          if(p==null)return false;for each(var k:String in ["cx","cy","speed","accel","mana","startMana","mass","range","master"])
+@@ -160,7 +171,7 @@
+             }
+             if(!eligible){retire(l,p);reply(l,p,false,"ineligible");if(incoming!=null&&incoming.token==p.token)endIncoming("ineligible");return;}
+             if(incoming==null){throwDamage.reset();incoming={player:g,link:l,token:p.token,stamp:p};g.levit=2;g.stay=false;reply(l,p,true);}
+-            incoming.input=input;incoming.until=getTimer()+1500;
++            incoming.input=input;incoming.aura=TelekinesisVisuals.validated(p.aura);incoming.until=getTimer()+1500;presentAura();
+          }catch(err:Error){fault(err);}
+       }
+       private function endOutgoing(relay:Boolean,detectThrow:Boolean=false):void {
+@@ -178,6 +189,7 @@
+       }
+       private function endIncoming(reason:String):void {
+          var rec:Object=incoming;incoming=null;if(rec==null)return;
++         aura.reset();
+          restoreKeys();retire(rec.link,rec);if(rec.player!=null&&rec.player.levit==2)rec.player.levit=0;
+          reply(rec.link,rec,false,reason);
+       }
+--- offline1/rconnect/game/TelekinesisVisuals.as
++++ aura1/rconnect/game/TelekinesisVisuals.as
+@@ -27,6 +27,24 @@
+          if(Number(get(o,"levit"))<=0)return null;
+          var v:DisplayObject=get(o,"vis") as DisplayObject,list:Array=glows(v);
+          return v==null || list.length==0?null:{glow:list,ct:colors(v.transform.colorTransform)};
++      }
++      /** A peer grip can decorate the real local player, so accept only the
++       * finite native glow/color channels, never arbitrary filters or objects. */
++      public static function validated(s:Object):Object {
++         if(s==null || !(s.glow is Array) || !(s.ct is Array) || s.ct.length!=8 || s.glow.length>4)return null;
++         var list:Array=[],ct:Array=[],i:int;
++         for each(var a:* in s.glow) {
++            if(!(a is Array) || a.length!=8)return null;
++            for(i=0;i<6;i++)if(!isFinite(Number(a[i])))return null;
++            list.push([uint(a[0])&0xffffff,Math.max(0,Math.min(1,Number(a[1]))),
++               Math.max(0,Math.min(64,Number(a[2]))),Math.max(0,Math.min(64,Number(a[3]))),
++               Math.max(0,Math.min(16,Number(a[4]))),Math.max(1,Math.min(3,int(a[5]))),a[6]===true,a[7]===true]);
++         }
++         for(i=0;i<8;i++) {
++            if(!isFinite(Number(s.ct[i])))return null;
++            ct.push(i<4?Math.max(0,Math.min(4,Number(s.ct[i]))):Math.max(-255,Math.min(255,Number(s.ct[i]))));
++         }
++         return {glow:list,ct:ct};
+       }
+       private static function colors(c:ColorTransform):Array {
+          return [c.redMultiplier,c.greenMultiplier,c.blueMultiplier,c.alphaMultiplier,
+@@ -83,7 +101,10 @@
+             else if(desired[o]==null)release(o);
+          }
+          for(o in desired) {
+-            if(get(o,"loc")!==loc || get(o,"in_chain")!=true || get(o,"dead")==true || Number(get(o,"sost"))>=3) {
++            // The actual UnitPlayer is stepped through Location.gg and is not
++            // in Location.firstObj. A consenting grabbed player is still live.
++            var localPlayer:Boolean=get(loc,"gg")===o && get(o,"player")===true;
++            if(get(o,"loc")!==loc || (!localPlayer && get(o,"in_chain")!=true) || get(o,"dead")==true || Number(get(o,"sost"))>=3) {
+                release(o);delete objects[o];continue;
+             }
+             if(nativeOwns(o,localHeld,authority,remoteOwner)) {
+@@ -116,7 +137,25 @@
+             for each(f in rec.filters)if(f is GlowFilter)filters.push(f);
+             v.filters=filters;
+          }
+-         if(rec.style!=null && equalColors(colors(v.transform.colorTransform),rec.style.ct))v.transform.colorTransform=rec.ct;
++         if(rec.style!=null && rec.style.ct is Array && rec.style.ct.length==8) {
++            // DisplayObject.alpha aliases ColorTransform.alphaMultiplier.
++            // Native stealth/visibility may change only that channel between
++            // our last paint and release. RGB ownership must remain separate;
++            // likewise a newer native tint must not keep our old opacity.
++            var current:ColorTransform=v.transform.colorTransform,original:ColorTransform=rec.ct;
++            var applied:Array=rec.style.ct;
++            var ownRGB:Boolean=current.redMultiplier==applied[0] && current.greenMultiplier==applied[1]
++               && current.blueMultiplier==applied[2] && current.redOffset==applied[4]
++               && current.greenOffset==applied[5] && current.blueOffset==applied[6];
++            var ownAlpha:Boolean=current.alphaMultiplier==applied[3] && current.alphaOffset==applied[7];
++            if(ownRGB) {
++               current.redMultiplier=original.redMultiplier;current.greenMultiplier=original.greenMultiplier;
++               current.blueMultiplier=original.blueMultiplier;current.redOffset=original.redOffset;
++               current.greenOffset=original.greenOffset;current.blueOffset=original.blueOffset;
++            }
++            if(ownAlpha){current.alphaMultiplier=original.alphaMultiplier;current.alphaOffset=original.alphaOffset;}
++            if(ownRGB || ownAlpha)v.transform.colorTransform=current;
++         }
+          delete active[o];
+       }
+       public function reset():void {
+--- offline1/rconnect/game/PlayerBodyEffects.as
++++ aura1/rconnect/game/PlayerBodyEffects.as
+@@ -197,7 +197,7 @@
+        * Use the same delayed/settled snapshot as the body (not the latest packet).
+        * A packet's style must never execute its gameplay effects on the receiver.
+        */
+-      public function apply(u:Object,s:Object,paused:Boolean=false):void {
++      public function apply(u:Object,s:Object,paused:Boolean=false,nativeGrip:Boolean=false):void {
+          // A receiver must never paint over its real, locally controlled pony.
+          if(u==null || get(u,"player")===true)return;
+          if(s==null){forget(u);return;}
+@@ -211,12 +211,15 @@
+          // Keep the existing teammate marking while reflecting native stealth.
+          // Enemy alpha/invis belongs to GameBridge.unitView and is left alone.
+          if(s.player!==true){colorOnly(root,s.c as Array);presentPart(rec,root,"inh",s.inh,paused);return;}
+-         if(s.c is Array && s.c.length==8) {
+-            var marked:Array=s.c.concat();
+-            marked[3]=.75*clamp(s.a,0,1,finite(marked[3],1));
+-            marked[7]=.75*finite(marked[7]);
+-            tint(root,marked);
+-         } else if(s.a!=null)root.alpha=.75*clamp(s.a,0,1,1);
++         // Native Q owns the held teammate root until its authenticated release.
++         if(!nativeGrip) {
++            if(s.c is Array && s.c.length==8) {
++               var marked:Array=s.c.concat();
++               marked[3]=.75*clamp(s.a,0,1,finite(marked[3],1));
++               marked[7]=.75*finite(marked[7]);
++               tint(root,marked);
++            } else if(s.a!=null)root.alpha=.75*clamp(s.a,0,1,1);
++         }
+          var osn:DisplayObject=node(root,"osn");
+          if(osn!=null && s.osn!=null){remember(rec,"osn",osn);applyStyle(osn,s.osn);}
+          for each(var path:String in PARTS)
+--- offline1/rconnect/game/GameBridge.as
++++ aura1/rconnect/game/GameBridge.as
+@@ -280,7 +280,7 @@
+                      if(peerSample!=null)_peerAppearance.apply(rec.ghost,peerSample.wings,coopPaused);
+                      if(rec.snap.ap != null)
+                         RemoteArmor.apply(probe(rec.ghost,"vis") as DisplayObjectContainer,String(rec.snap.ap.armor || ""));
+-                     if(peerSample!=null)_bodyEffects.apply(rec.ghost,peerSample.bodyEffects,coopPaused);
++                     if(peerSample!=null)_bodyEffects.apply(rec.ghost,peerSample.bodyEffects,coopPaused,peerGrip!=null && peerGrip.locallyHeld(rec.ghost));
+                   }
+                }
+                catch(armorError:*) {logViewError("remote-"+remoteId,armorError);}
+@@ -1009,7 +1009,7 @@
+             ghost["setVisPos"]();
+             driveVisAnim(ghost, snap, id);
+             _peerAppearance.apply(ghost,snap.wings,coopPaused);
+-            _bodyEffects.apply(ghost,snap.bodyEffects,coopPaused);
++            _bodyEffects.apply(ghost,snap.bodyEffects,coopPaused,peerGrip!=null && peerGrip.locallyHeld(ghost));
+             if(wvis != null)
+             {
+                _weaponVis[id] = wvis;
+@@ -1689,7 +1689,7 @@
+             }
+             driveVisAnim(ghost, snap, id);
+             _peerAppearance.apply(ghost,snap.wings,coopPaused);
+-            _bodyEffects.apply(ghost,snap.bodyEffects,coopPaused);
++            _bodyEffects.apply(ghost,snap.bodyEffects,coopPaused,peerGrip!=null && peerGrip.locallyHeld(ghost));
+             if(snap.wi != undefined)
+             {
+                // Weapon identity and aura belong to the same presentation

@@ -1,0 +1,49 @@
+{
+  "run": "f871ad9d98",
+  "candidate_sha256": "df0fa0e2ca952e77e5132e75d71e73558dc919c7b8cdeba5da05fc9e94dc01e7",
+  "reviewed": true,
+  "reviewer": "root",
+  "method": "All eight actual images opened with view_image; no generated or altered comparison images.",
+  "images": [
+    {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\f871ad9d98\\host-presentation-peer-aura-1-raster-with.png",
+      "sha256": "ce3178e713b7b999fc5696d83d36b990a8b0bdabb88f836415cbb205e477d1e8",
+      "observed": "Green outline visible around the held player body."
+    },
+    {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\f871ad9d98\\host-presentation-peer-aura-9-raster-with.png",
+      "sha256": "df998b474afc62d94017a7d57a50b3c5da4f8616ed670ebc985b0a082b724dc8",
+      "observed": "Green outline visible around the held player body."
+    },
+    {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\f871ad9d98\\join-presentation-peer-aura-1-raster-with.png",
+      "sha256": "65ee1ca5053f95448a0487e5e8608f2a8d4ab0f93a5cdd7fcd8d9ad2d3992f9a",
+      "observed": "Green outline visible around the held player body."
+    },
+    {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\f871ad9d98\\join-presentation-peer-aura-9-raster-with.png",
+      "sha256": "d264710f1ccae51a104b208fd4755347fc3e58f7340efd9198b8324af46304ad",
+      "observed": "Green outline visible around the held player body."
+    },
+    {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\f871ad9d98\\join-presentation-peer-aura-1-raster-without.png",
+      "sha256": "c2d15b8f10bd7d65f1612d4f0e84a2d61e1b0fbdb3112641d599aa3f7145f569",
+      "observed": "Same held body has no green outline when only the glow is removed."
+    },
+    {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\f871ad9d98\\join-presentation-peer-aura-1-released.png",
+      "sha256": "a8d65ba71ef82a4194850da76e39e826ddb131cc890e368d90a96fb8d449f6dd",
+      "observed": "Released body has no residual green tint or outline."
+    },
+    {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\f871ad9d98\\host-presentation-peer-aura-9-raster-without.png",
+      "sha256": "0119a466bb6ea09651c8d67155bf13cde0e9c7d324b5f4943d3d6efc6c64a219",
+      "observed": "Same held body has no green outline when only the glow is removed."
+    },
+    {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\f871ad9d98\\host-presentation-peer-aura-9-released.png",
+      "sha256": "69374b95639a8a2a23089d01838905c0810ba935b080a9c7c2384da0d2a8dbb8",
+      "observed": "Released body has no residual green tint or outline."
+    }
+  ]
+}

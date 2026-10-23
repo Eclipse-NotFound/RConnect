@@ -1,0 +1,32 @@
+{
+  "base": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-offline-production-01",
+  "donor": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-21",
+  "files": {
+    "rconnect/core/PeerGrip.as": {
+      "base": "2d44e4b2dabec605ff512ebb3319708b5c76b6e62c489bcca9a95f2ee7d9651b",
+      "donor": "e85e81da3c318e9163592ffdaae84e067fda6f8d3af93cd66c7dc043905d8840",
+      "operation": "exact verified aura class",
+      "output": "e85e81da3c318e9163592ffdaae84e067fda6f8d3af93cd66c7dc043905d8840"
+    },
+    "rconnect/game/TelekinesisVisuals.as": {
+      "base": "e3abdaf0892aa284fc5d35fe2bf1f77d1fb2c068ba6f98828fb25b1f825fc169",
+      "donor": "2a98e2d94bf6d0cfcf62f64e830845a3919a9cb461719b81ae5f152031be30b1",
+      "operation": "exact verified aura class",
+      "output": "2a98e2d94bf6d0cfcf62f64e830845a3919a9cb461719b81ae5f152031be30b1"
+    },
+    "rconnect/game/PlayerBodyEffects.as": {
+      "base": "94aaa38d7dac7a8dbfa70d0aaf63002988b4cf26a4435ab9aad09c857339af42",
+      "donor": "11260028854167d8bd0c9f7e806e23081204dd0386902fdf746ba8e10485ccbd",
+      "operation": "exact verified aura class",
+      "output": "11260028854167d8bd0c9f7e806e23081204dd0386902fdf746ba8e10485ccbd"
+    },
+    "rconnect/game/GameBridge.as": {
+      "base": "c6b8aba21735ce4becb9c6ac398f4024b15bb02694386c51159bb667144cb4aa",
+      "operation": "three nativeGrip arguments only; offline collection retained",
+      "output": "df23182fdd362fba529b962220329bd60499efca0ee7c8ea8f2033372e84e192"
+    }
+  },
+  "overlay_recipe_sha256": "fa01bf52a27c9b870d71563d911ad5f875aa5bc865ba6d885e9bed5cb67e2cc1",
+  "prior_evidence_only": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery21-peer-grip-01\\result.json",
+  "current_native_verified": false
+}

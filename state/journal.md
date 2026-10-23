@@ -1,3 +1,17 @@
+## 2026-10-23 aura1光晕有限发布完成
+
+- 精确DF0FA0E2/aura1：59组件、989013e148双向16轮591项、46b56c60e3双向20轮444项及根实际8图通过。生命/能力夹具修正不改生产或原伤害断言；两个旧失败保留。
+- audit02通过642份核查后，deploy02排他备份EB365、原子替换RC；正式release双人smoke 7d45932e01版本/tick200/welcome/unitsync、原错误扫描及共享登记通过。22项只有RC改变，自有AIR与运行副本清理。deploy01因导入路径在替换前失败，原回执保留。
+- 当前aura1/DF0F，宿主BEFC、RV6DBA、CS7F1F、WB14112、SandCEC6不变。备份build/m52/recovery-aura-offline-deploy-02/RConnectMod.before.swf；细节experimental/recovery-aura-offline/RELEASE.md，INSTALL同步准确范围。
+- 加载、击墙及高速/念力/掉落/角色运动和密集性能仍开放。旧运动消费者证据只读重算已归档，不把未合格旧整合流水线套到当前版。
+
+## 2026-10-23 光晕最小移植通过两组591项；抓投验证先修夹具
+
+- aura1/DF0FA0E2仅四类小改动，59真实组件通过。f871ad9d98（RV83D8）与989013e148（新RV6DBA）均双向16轮296+295，根各目检8图；当前生产仍offline1/EB365，尚未部署。
+- 3ebf5d73eb首轮抓取超时不放行。只加观测的16edfc422f第9轮真实首hold抓到质量上限1000→0.6、master1→0和ineligible ACK；旧临时能力夹具被原生重算覆盖。该轮另有HP绝对数失败，原生healAll不清伤级、重算按HP比例恢复上限，不能回判旧失败。
+- 新8FDA8D98夹具使用持久原生技能、公开heal同步器官与伤级，保留原20轮、全部原伤害表达式/容差/真实Q/E/碰墙要求并新增上限稳定检查。编译通过，新46b56c60e3正在运行，结果待回读。
+- RV会话正常更新6DBA；新部署审查显式分离历史构建/无游戏组件和当前原生组合，不回退RV、不改旧收据。共享登记自然错开CS约4分钟测试，本会话没有AIR/编译并行争用。完整记录见experimental/recovery-aura-offline及-review。
+
 ## 2026-10-23 主动读取真实零覆盖，停止无收益传输补丁
 - 隔离receivepump1/AB61C7完成真实Socket组件21/0；三个较早测试驱动失败保留。05fe881aee原四轮双34/0、四轮最终像素一致；1099次主动检查均未读到字节，总体false不改判。
 - 与36C5原基线36画面阶段完整对照，无一致延迟收益；顺序单对、随机碰撞及采样开销不作净性能因果判断。详见experimental/recovery-ordinary-receive-pump/README.md与原first-pair.json。

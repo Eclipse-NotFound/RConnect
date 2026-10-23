@@ -3,7 +3,7 @@
 ## 1. 模组与当前职责
 
 Remains 1.02 双人合作，入口 RConnectMod。A 为普通游戏入口现用同步；B 为独立主侧统一执行架构，本轮不恢复或混入 B。
-本会话 `01a086bb-378c-7f60-b8e1-50d90ffa0996` 统一整合、验证和部署。用户要求回退下午的 motion2 后重做加载、玩家念力光晕、击墙效果、高速运动与性能，并减少跨对话打断。**回退已完成，四项整体尚未解决。**
+本会话 `01a086bb-378c-7f60-b8e1-50d90ffa0996` 统一整合、验证和部署。用户要求回退下午的 motion2 后重做加载、玩家念力光晕、击墙效果、高速运动与性能，并减少跨对话打断。**回退已完成，光晕已有限交付；四项尚未全部解决。**
 
 ## 2. 玩法、授权及协作
 
@@ -20,8 +20,9 @@ Remains 1.02 双人合作，入口 RConnectMod。A 为普通游戏入口现用�
 
 ## 3. 安装与准确候选
 
-**正式 `0.2.24-offline1`，SHA `eb3653533cfb305bcca0b0cfe5e81bc306ea28fa400aae751ab7b5ae1cfa5fee`。** 2026-10-23有限部署成功；回执 `build/m52/recovery-offline-deploy-01/deployment.json`，实际安装双人smoke `ae58b8049b` 通过。仅减少从未联网时的显示采集开销，四项恢复仍未完成。
-旧574D备份为同目录 `RConnectMod.before.swf`。当前宿主 BEFC、CS7F1F、WB14112、SandCEC6、RV83D8；22项安装仅RC变化。回退后的574D是本版准确来源，不混入motion2或恢复22的未合格部分。旧回退回执和授权撤销记录保留，勿重做。
+**正式 `0.2.24-aura1`，SHA `df0fa0e2ca952e77e5132e75d71e73558dc919c7b8cdeba5da05fc9e94dc01e7`，186738字节。** 2026-10-23有限部署成功；回执 `build/m52/recovery-aura-offline-deploy-02/deployment.json`，实际安装双人smoke `7d45932e01` 通过。仅修复队友被念力抓起的身体光晕，继承offline1离线优化；其余加载/击墙/运动性能仍未完成。
+
+本次回滚备份为同部署目录 `RConnectMod.before.swf`（EB365/0.2.24-offline1）。再上一层574D备份仍在 `recovery-offline-deploy-01`，勿混淆。当前宿主BEFC、CS7F1F、WB14112、SandCEC6、RV6DBA；本次22项安装只有RC变化。RV会话先行正式更新v0.33.7，本会话未改它；历史构建和59无游戏组件仍保留真实RV83D8记录，新16/20轮与安装smoke均为RV6DBA。不混入motion2、未合格恢复22或传输实验。
 
 | 分支 | 准确目录/指纹 | 资格与缺口 |
 |---|---|---|
@@ -30,14 +31,17 @@ Remains 1.02 双人合作，入口 RConnectMod。A 为普通游戏入口现用�
 | 暂停23 | recovery-pause-flush，87FAFD…F6C | 50组件、八轮功能过，暂停对齐无改善，不合后继 |
 | early2加载 | recovery-early-exit-compile-01，D356483F…ACB3 | 重访死锁修复，三段出生1/0/1px；耗时仍未达标 |
 | A Sand003 | mods/Sandevistan/build/out/a-travel-hold-20261022-003，3E220…31C | 76组件、41零冷却、43非零冷却功能过；完整旅行/敌方补步缺口 |
-| 独立离线优化 | build/m52/recovery-offline-production-01，EB365353…A5FEE，offline1 | 已部署；56生命周期、86原生弹丸历史、首次双游戏39+39及实际安装smoke通过 |
+| 玩家念力光晕 | build/m52/recovery-aura-offline-01，DF0FA0E2…DC01E7，aura1 | 当前已部署；59组件、591光晕、444抓投、新8图及实际安装smoke通过 |
+| 独立离线优化 | build/m52/recovery-offline-production-01，EB365353…A5FEE，offline1 | 由当前aura1继承；56生命周期、86原生弹丸历史、首次双游戏39+39及实际安装smoke通过 |
 | 普通墙面结构代 | recovery-ordinary-wall-sv-production-01，C6A3B113…3496D；新mask-host-02 6616B1A5…40289B | 153组件/90类；修正遗漏11原生mask后真实rooms01为25+53，pixels01四轮最终像素全同；时序/密集仍未过，未部署 |
 
-精确完整SHA、冻结输入和所有失败均见各 prepared/compile/RESULTS；不可仅凭候选号混用。加载诊断使用host03 29D36与旧RV7852，**不是当前安装RV83D8**；准确入口能识别此差别，不回退用户RV。仅offline1有限部署，其余仍为隔离候选。历史验证器若硬锁574D安装会拒绝当前版，应明确记录本次单RC基线变更，不能改写旧回执。
+精确完整SHA、冻结输入和所有失败均见各 prepared/compile/RESULTS；不可仅凭候选号混用。加载诊断使用host03 29D36与旧RV7852，**不是当前安装RV6DBA**；准确入口能识别此差别，不回退用户RV。offline1优化与aura1光晕已有限部署，其余仍为隔离候选。历史验证器若硬锁574D/EB365安装会拒绝当前版，应明确记录准确RC及RV基线变更，不能改写旧回执。
 
 ## 4. 当前实测结论与卡点
 
-- **主动读取无收益，停止该分支**：准确AB61C7/receivepump1+6616，真实05fe881aee原四轮、双34/0、像素53/50/1147/971全过；主543/加556次检查均零非空读取，新增覆盖与总体passed=false保留。真实Socket组件21/0只证明人为迟通知下正确。原36C5对照主/加等离子画面延迟中位55→130.5、132→146ms，最大147→181、248→313ms；顺序单对及采样开销不支持净性能因果判断，无一致收益，不合入。自有进程/副本已清，22安装不变。见recovery-ordinary-receive-pump/README.md及first-pair.json。下一步最小移植准确21玩家光晕到offline1，独立验证，不带未合格加载/运动/墙面改动。
+- **光晕最小修正正式交付**：准确DF0FA0E2/aura1，仅四类小改动与版本；59组件通过。f871ad9d98（RV83D8）和989013e148（新RV6DBA）均双向16轮296+295，根分别实际目检8图。额外抓投旧3ebf5d73eb首轮超时；仅观测16edfc422f第9轮捕获原生重算把临时质量1000/master1变成0.6/0并真实拒绝hold。另旧生命夹具healAll不清伤级造成不一致。新8FDA8D98外部夹具用原生技能、heal同步伤级，保留所有原绝对HP断言/容差；46b56c60e3双向20轮222+222全过，40份最大HP稳定10280，18次敌弹各40，10正例墙伤48.70–120.57、8禁伤负例零墙伤、2drop零伤。产品未因测试失败修改，旧失败保留。部署01导入路径失误在替换前失败；补路径后audit02/deploy02与实际release 7d45932e01通过，自有实例/副本已清，其他21项安装保持。详见`experimental/recovery-aura-offline/RELEASE.md`。
+- **旧运动消费者证据已缩小**：`recovery-motion-consumer-review/REVIEW.md` 重算旧21/14实际轨迹。闪电95ms跨度内无中间最终RENDER回调，不能认定消费者被调用但卡住；TK249ms/掉落160ms记录按gameFrame去重，不能据此证明无中间RENDER。当前offline1/aura1没有旧ProjectileFrameStream，不把旧流水线推论直接移植到当前版。
+- **主动读取无收益，停止该分支**：准确AB61C7/receivepump1+6616，真实05fe881aee原四轮、双34/0、像素53/50/1147/971全过；主543/加556次检查均零非空读取，新增覆盖与总体passed=false保留。真实Socket组件21/0只证明人为迟通知下正确。原36C5对照主/加等离子画面延迟中位55→130.5、132→146ms，最大147→181、248→313ms；顺序单对及采样开销不支持净性能因果判断，无一致收益，不合入。自有进程/副本已清，22安装不变。见recovery-ordinary-receive-pump/README.md及first-pair.json。其后光晕已最小移植并作为aura1交付；本传输分支不合入。
 - **接收分段证据**：准确36C5AD5C/wallrxtime1+6616/41/ns30，a3ded11cae原四轮像素过；199条配对、半包全0，回调前中位51/最大315ms，回调内2/17ms、codec1/8ms；36条长跨度34条主要已发生在入口前。原新rx方向检查过严而passed=false保留，supplemental-01独立核实际8份方向及全部原标量通过。没有改判历史。见recovery-ordinary-wall-rx-analysis/README.md。
 - **完整游戏低延迟Socket首对没有一致收益**：已冻结产品02/3B6DF6（SWF38）+单字节header51宿主4772/ns51，off5490301650和on02e3b166ed均原四轮/像素/8份Socket证据通过。真实连接setter及每轮getter各自false/true，证明API可用；关闭/开启加入等离子八阶段中位96→150ms、report往返122→204.5ms，四轮paint中位有升有降，不能当修复。两组133个≥100ms区间均有发送方RENDER，132个有接收方，余1采样边界；不能归为整端持续停帧或把flush当底层已发。没有采用/部署NoDelay或升级正式运行上下文。构建01仅因冻结前LF行尾变化被拒，保留；新02真编过。详见recovery-ordinary-socket-native/RESULTS.md、first-pair.json。下一步原SWF41/ns30接收回调/解码/同批前序处理分段，先最小设计，勿增加生产分支。
 - **真实墙传输计时已收敛**：57713116 / wallacktime1 + 6616，22c68450e9原四轮与最终像素全过（150/154/1173/1158，错漏多0）；8份有界诊断完整无溢出/故障。加入等离子报告→ACK往返109–245ms，主处理4–12ms、加处理1–7ms；8次ACK仅1次有可发队列，下一发等32ms，暂不合快发。主要跨度在flush→对侧解码派发，70个≥100ms区间有68个仍见4–6次RENDER回调；另4组相邻包集中派发。不能称纯网络延迟或等同独立显示帧，原像素采样本轮最高131ms也阻止净性能结论。下一步相同51外层/namespace下off/on真实tcpNoDelay对照，核实际主动/accept端读回，旧API-only不够；见recovery-ordinary-wall-ack-timing-native/RESULTS.md。安装未变。
@@ -68,11 +72,11 @@ Remains 1.02 双人合作，入口 RConnectMod。A 为普通游戏入口现用�
 
 ## 6. 下一步
 
-1. offline1有限部署已完成，勿重复首连或安装冒烟。ACK、NoDelay、receive-pump均无一致实测收益，不合入或继续盲调。接续准确21玩家光晕最小移植到offline1；先核真实591项+8图及最终源码，再用同一准确候选验证/门禁后有限交付。安装保持EB365/BEFC，四项整体尚未完成。
+1. aura1光晕有限部署已完成，勿重复59/591/444或已完成的安装冒烟。ACK/NoDelay/receive-pump无一致实测收益，停止盲调。现安装DF0F/BEFC/RV6DBA；继续加载、击墙和运动长帧，先按当前实际源核消费者与最终渲染证据，不导入未合格旧整合分支。
 2. 加载优先等WB初始化提案答复，仅删一次无消费者refreshView，合格后才能修改/部署；其余原生加载/Sand验证依现有准确入口，不再扩散单人探针。
 3. 房间修好后仍需迟到包/结构像素/大图及密集性能。ACK三类草案仍不并入；其返回语义和独立坏数据拒绝已过20+153组件，不等于完整发送链路合格。host05基底ACC是安装BEFC增加Game/首栅格/墙面桥的后代，部署需核依赖边界；gwall未覆盖。CS稳定场景采样已收敛，不再扩大离线墙采集探针。
 4. 依据真实长帧定位再改运动路径；最终恢复候选需同一准确输入验证加载、光晕、击墙、高速/念力/掉落及性能。独立离线优化有自己的有限门禁，不冒称解决上述四项。
-5. 最终整合仍需合格后备份、部署、实际安装复测；当前只交付offline1，不让未合格恢复分支覆盖它。
+5. 最终整合仍需合格后备份、部署、实际安装复测；当前交付aura1（含offline1），不让未合格恢复分支覆盖它。
 
 ## 7. 入口与工具
 
