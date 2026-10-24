@@ -1,0 +1,221 @@
+package {
+   import flash.desktop.NativeApplication;
+   import flash.events.Event;
+   import flash.filesystem.File;
+   import flash.filesystem.FileMode;
+   import flash.filesystem.FileStream;
+   import flash.utils.getTimer;
+   import rconnect.core.Log;
+
+   /** External diagnostic. No game, display, input or random-source writes. */
+   public final class LoadingCpuProbe {
+      public static const SAMPLE_LIMIT:int=32768,STACK_LIMIT:int=1024,DEPTH_LIMIT:int=64;
+      public static const TEXT_LIMIT:int=262144,FRAME_TEXT_LIMIT:int=512;
+      private var mod:RConnectMod,api:FlashPaintTailSampler,token:Object={};
+      private var world:Object,game:Object,row:Object;
+      private var appId:String,role:String,armed:Boolean=false,attempted:Boolean=false;
+      private var sampling:Boolean=false,collectPending:Boolean=false,finished:Boolean=false;
+      private var exclusiveInputConfirmed:Boolean=false;
+      private var faults:Array=[],faultCount:int=0,rounds:Array=[];
+
+      /** The isolated runner must separately confirm this is the only sampler.
+       * The adapter lease cannot detect another SWF or external profiler. */
+      public function LoadingCpuProbe(m:RConnectMod,exclusiveInputConfirmed:Boolean=false) {
+         mod=m;appId=NativeApplication.nativeApplication.applicationID;
+         role=appId.indexOf("-host-")>=0?"host":"join";
+         var admitted:Boolean=exclusiveInputConfirmed && appId.indexOf("pfe-modsettings-rconnect-coop-")==0;
+         this.exclusiveInputConfirmed=admitted;
+         api=new FlashPaintTailSampler(admitted);
+         if(!admitted){fault("unadmitted-isolated-sampler",null);return;}
+         // Pause before the unchanged NativeLoadingProbe (-2147483000).
+         mod.stage.addEventListener(Event.RENDER,beforeRender,false,2147483000);
+         // Start only AFTER that observer has completed its current RENDER.
+         mod.stage.addEventListener(Event.RENDER,afterRender,false,-2147483001);
+         mod.stage.addEventListener(Event.ENTER_FRAME,collectNextEnter,false,1000000);
+      }
+      private function stamp():Object {return {t:getTimer(),wall:new Date().time};}
+      private function finite(value:*):Boolean {return value is Number && isFinite(Number(value));}
+      private function integer(value:*):Boolean {return finite(value) && Number(value)>=0 && Number(value)==int(value);}
+      private function fault(where:String,error:*):void {
+         faultCount++;
+         var detail:String="";
+         try {if(error!=null)detail=String(error).substr(0,256);}catch(ignored:*){detail="<unprintable>";}
+         if(faults.length<16)faults.push({where:where,error:detail});
+      }
+      public function begin(index:int,land:String,at:int):void {
+         if(finished)return;
+         try {
+            if(index!=0) {
+               armed=false;
+               if(sampling)close("round-changed-before-close",-1,false);
+               rounds.push(index);
+               return;
+            }
+            rounds.push(index);
+            if(row!=null){fault("duplicate-round-zero",null);return;}
+            armed=land=="random_mane";
+            row={round:index,target:land,travelStarted:at,triggered:false,claimed:false,started:false,
+               paused:false,closed:false,reason:"not-triggered",complete:false,samplingComplete:false,
+               cpuEvidenceAvailable:false,cpuEvidenceComplete:false,cleanupComplete:true,ownerPreserved:true,
+               identityPreserved:false,startExit:-1,stopExit:-1,wait20Renders:0,clocks:{},
+               totalSamples:0,visited:0,cpu:0,allocationsSkipped:0,deletionsSkipped:0,
+               sampleTruncated:false,stackOverflow:0,depthTruncated:0,textTruncated:0,textOverflow:0,
+               stackTextChars:0,uniqueStacks:0,stacks:{},collectMs:0,cleanupMs:0};
+         }catch(error:*){fault("begin",error);}
+      }
+      private function beforeRender(event:Event):void {
+         if(!sampling)return;
+         var exit:int=-1,same:Boolean=false,readFailed:Boolean=false,readError:*=null;
+         try {
+            var w:Object=mod.game.world;
+            exit=w==null?-1:int(w.t_exit);
+            same=w===world && w!=null && w.game===game;
+            if(same && exit==20)return;
+         }catch(error:*){readFailed=true;readError=error;}
+         // close pauses before any diagnostic aggregation or error formatting.
+         close(readFailed?"boundary-read-error":"first-render-outside-20",exit,same);
+         if(readFailed)fault("boundary-read",readError);
+      }
+      private function afterRender(event:Event):void {
+         if(finished || !armed || attempted || row==null)return;
+         try {
+            var w:Object=mod.game.world;
+            if(w==null || w.game==null || int(w.t_exit)!=20)return;
+            attempted=true;row.triggered=true;row.wait20Renders++;
+            world=w;game=w.game;row.startExit=20;
+            row.clocks.observed=stamp();
+            if(!api.claim(token)){row.ownerPreserved=false;row.reason="sampler-conflict";row.closed=true;return;}
+            row.claimed=true;row.cleanupComplete=false;
+            row.clocks.setupStart=stamp();api.clear(token);api.internalAllocs(token,false);
+            row.clocks.setupEnd=stamp();row.clocks.startCall=stamp();
+            // Cleanup remains owned if start partly succeeds then throws.
+            sampling=true;api.start(token);row.started=true;row.clocks.startReturned=stamp();
+            row.reason="sampling";
+         }catch(error:*) {
+            if(sampling || (row!=null && row.claimed))close("start-error",-1,false);
+            fault("start",error);
+         }
+      }
+      private function close(reason:String,exit:int,same:Boolean):void {
+         if(row==null || row.closed)return;
+         var stopAt:int=getTimer(),pauseAt:int=0,paused:Boolean=false,pauseError:*=null;
+         // No array construction, string formatting, JSON or enumeration here
+         // before the actual pause attempt. getTimer is just the boundary clock.
+         try {
+            if(row.claimed && api.owns(token)){api.pause(token);paused=true;pauseAt=getTimer();}
+            else if(row.claimed)row.ownerPreserved=false;
+         }catch(error:*){pauseError=error;}
+         sampling=false;armed=false;row.closed=true;row.paused=paused;row.reason=reason;
+         row.stopExit=exit;row.identityPreserved=same;
+         row.clocks.stop={t:stopAt};row.clocks.pauseReturned={t:pauseAt,wall:new Date().time};
+         collectPending=row.claimed;
+         if(pauseError!=null)fault("pause",pauseError);
+      }
+      private function collectNextEnter(event:Event):void {
+         if(!collectPending)return;
+         try {finishCollection("next-enter");}
+         catch(error:*){fault("next-enter-collection",error);try{cleanup();}catch(ignored:*){}}
+      }
+      private function finishCollection(origin:String):void {
+         if(!collectPending || row==null)return;
+         collectPending=false;
+         row.clocks.collectStart=stamp();row.collectionOrigin=origin;
+         try {
+            if(!api.owns(token)){row.ownerPreserved=false;fault("sampler-ownership-lost",null);}
+            else if(row.paused && row.started)collect();
+         }catch(error:*){fault("collect",error);}
+         cleanup();
+         row.clocks.collectEnd=stamp();row.collectMs=row.clocks.collectEnd.t-row.clocks.collectStart.t;
+         var c:Object=row.clocks;
+         row.clockOrdered=c.startReturned!=null && c.startCall.t<=c.startReturned.t
+            && c.startReturned.t<=c.stop.t && c.stop.t<=c.pauseReturned.t
+            && c.pauseReturned.t<=c.collectStart.t && c.collectStart.t<=c.collectEnd.t;
+         row.complete=row.reason=="first-render-outside-20" && row.startExit==20 && row.stopExit==19
+            && row.started && row.paused && row.identityPreserved && row.ownerPreserved
+            && row.cleanupComplete && row.clockOrdered && faultCount==0;
+         row.samplingComplete=row.complete && !row.sampleTruncated && row.stackOverflow==0
+            && row.depthTruncated==0 && row.textTruncated==0 && row.textOverflow==0;
+         row.cpuEvidenceAvailable=row.cpu>0;
+         row.cpuEvidenceComplete=row.samplingComplete && row.cpu>0;
+      }
+      private function collect():void {
+         row.totalSamples=api.count(token);
+         if(!integer(row.totalSamples))throw new Error("invalid sample count");
+         for each(var sample:Object in api.samples(token)) {
+            if(row.visited>=SAMPLE_LIMIT){row.sampleTruncated=true;break;}
+            row.visited++;
+            var kind:int=api.kind(token,sample);
+            if(kind==1){row.allocationsSkipped++;continue;}
+            if(kind==2){row.deletionsSkipped++;continue;}
+            if(kind!=0)throw new Error("unknown sample kind");
+            row.cpu++;
+            var names:Array=[],frames:Object=api.stack(token,sample);
+            if(frames!=null)for each(var frame:Object in frames) {
+               if(names.length>=DEPTH_LIMIT){row.depthTruncated++;break;}
+               var text:String=String(frame.name)+"@"+String(frame.file)+":"+String(frame.line);
+               if(text.length>FRAME_TEXT_LIMIT){text=text.substr(0,FRAME_TEXT_LIMIT);row.textTruncated++;}
+               names.push(text);
+            }
+            var key:String=names.length?names.join(" <- "):"<no-stack>";
+            if(!row.stacks.hasOwnProperty(key)) {
+               if(row.uniqueStacks>=STACK_LIMIT){row.stackOverflow++;continue;}
+               if(row.stackTextChars+key.length>TEXT_LIMIT){row.textOverflow++;continue;}
+               row.uniqueStacks++;row.stackTextChars+=key.length;
+            }
+            row.stacks[key]=int(row.stacks[key])+1;
+         }
+         if(row.visited>row.totalSamples || (row.totalSamples>row.visited && row.visited<SAMPLE_LIMIT))
+            throw new Error("paused sample count disagrees with enumeration");
+         if(row.totalSamples>row.visited)row.sampleTruncated=true;
+      }
+      private function cleanup():void {
+         if(row==null || !row.claimed)return;
+         row.clocks.cleanupStart=stamp();
+         var stopped:Boolean=false,cleared:Boolean=false;
+         try {
+            if(!api.owns(token)){row.ownerPreserved=false;row.cleanupComplete=false;return;}
+            try {api.stop(token);stopped=true;}catch(stopError:*){fault("stop",stopError);}
+            if(stopped)try {api.clear(token);cleared=true;}catch(clearError:*){fault("clear",clearError);}
+            if(stopped && cleared)try {api.release(token);}catch(releaseError:*){fault("release",releaseError);}
+            row.cleanupComplete=stopped && cleared && !api.owns(token);
+         }catch(error:*){fault("cleanup",error);row.cleanupComplete=false;}
+         finally {row.clocks.cleanupEnd=stamp();row.cleanupMs=row.clocks.cleanupEnd.t-row.clocks.cleanupStart.t;}
+      }
+      public function finish():void {
+         if(finished)return;finished=true;armed=false;
+         try {
+            if(sampling || (row!=null && !row.closed && row.claimed))close("fixture-finish",-1,false);
+            if(collectPending)finishCollection("fixture-finish");
+            else if(row!=null && row.claimed && !row.cleanupComplete)cleanup();
+         }catch(error:*){fault("finish",error);try{cleanup();}catch(ignored:*){}}
+         finally {
+            mod.stage.removeEventListener(Event.RENDER,beforeRender);
+            mod.stage.removeEventListener(Event.RENDER,afterRender);
+            mod.stage.removeEventListener(Event.ENTER_FRAME,collectNextEnter);
+         }
+         var value:Object={kind:"initial-loading-cpu-v1",appId:appId,role:role,rounds:rounds,window:row,
+            faultCount:faultCount,faults:faults,passed:row!=null && row.cpuEvidenceComplete && faultCount==0,
+            samplerStopped:row==null || !row.claimed || row.cleanupComplete,
+            diagnosticOnly:true,performanceQualified:false,
+            exclusiveInputConfirmed:exclusiveInputConfirmed,
+            scope:"first round-zero final RENDER exit20 tail to first non20 RENDER entry; exact19 required",
+            sampleLimit:SAMPLE_LIMIT,stackLimit:STACK_LIMIT,depthLimit:DEPTH_LIMIT,
+            textLimit:TEXT_LIMIT,frameTextLimit:FRAME_TEXT_LIMIT,nativeBufferMemoryBounded:false,
+            collectionPolicy:"pause at RENDER; enumerate/stop/clear next ENTER; bounded aggregate only retained to finish"};
+         var stream:FileStream=new FileStream(),outputOk:Boolean=false;
+         try {
+            stream.open(File.applicationStorageDirectory.resolvePath("initial-loading-cpu.json"),FileMode.WRITE);
+            stream.writeUTFBytes(JSON.stringify(value));
+            outputOk=true;
+         }catch(outputError:*){Log.d("LOADING CPU PROBE OUTPUT FAILED "+role+" "+String(outputError));}
+         finally {try{stream.close();}catch(closeError:*){outputOk=false;Log.d("LOADING CPU PROBE OUTPUT FAILED "+role+" close "+String(closeError));}}
+         if(outputOk) {
+            Log.d("LOADING CPU PROBE RESULT "+JSON.stringify({role:role,passed:value.passed,
+               file:"initial-loading-cpu.json",faultCount:faultCount,samplerStopped:value.samplerStopped,
+               reason:row==null?"no-round-zero":row.reason,cpu:row==null?0:row.cpu,
+               complete:row!=null && row.complete,cpuEvidenceComplete:row!=null && row.cpuEvidenceComplete}));
+            Log.d("LOADING CPU PROBE DONE "+role);
+         }
+      }
+   }
+}

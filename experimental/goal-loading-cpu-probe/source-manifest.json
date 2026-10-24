@@ -1,0 +1,34 @@
+{
+  "kind": "initial-loading-cpu-source-v1",
+  "base": {
+    "prepared.json": "562bb57f0640eefb4f89fa2799fd52918baec49cdab42c434808a21c36840ca9",
+    "compile.json": "02f8efa0c92a6ee964de0e0c87b360387dedf73c1d03e04b61461bc393875045",
+    "timing/EffectsDriver.swf": "877b05dacfca220f69345c3f83b4d8d2cc7796d6d03ea6389682fef7061d474a"
+  },
+  "original_sources": {
+    "A22RoomMetrics.as": "314823fd0fcd04e71277dcd3e8ee1a647317e611c5ff7b8fb0e7058c25179d6e",
+    "NativeLoadingProbe.as": "0bd3c84f3a48487ae9b9e0d651e2a901873913eba737622c2833edbc2cf64b92",
+    "RoomTravelTimingTestDoc.as": "ebe117b2b391a396eb83c79a616580b07bd7305b601b83acd9ca007e359e592c"
+  },
+  "sampler_sources": {
+    "FlashPaintTailSampler.as": "f0706d7fdff62a0aaeebd1e200e8899a3f534a1d1abb76a56d4a2d4ade3f1601",
+    "PaintTailSampler.as": "1d35215b6a24a1dae4e6d5071ab168b1777c9789d96340931417177448b81c61"
+  },
+  "sources": {
+    "A22RoomMetrics.as": "314823fd0fcd04e71277dcd3e8ee1a647317e611c5ff7b8fb0e7058c25179d6e",
+    "FlashPaintTailSampler.as": "f0706d7fdff62a0aaeebd1e200e8899a3f534a1d1abb76a56d4a2d4ade3f1601",
+    "LoadingCpuProbe.as": "1a5495ff9610a70df6ebf19a70df408d36db255c466d119386dda4a068bd00dc",
+    "NativeLoadingProbe.as": "0bd3c84f3a48487ae9b9e0d651e2a901873913eba737622c2833edbc2cf64b92",
+    "RoomTravelTimingTestDoc.as": "5e0a59d9537fcab8d7d43c54d2356bfd7249376f0fd2a8f869e32dd2b0c40153"
+  },
+  "prepare_sha256": "e10112b0c71ecfc4a1810270457a80d0a2a36beb6ae09a89470972584ac3d11f",
+  "readme_sha256": "bb9c91c85eebbe557a0ec38fb20cc50d42cc5a0907acb173981960917dd21269",
+  "diff_sha256": "8112719cf6520ef83925865466950200753c622a84d01939f4ebd08dea3f826c",
+  "hook_count": 4,
+  "original_assertions_preserved": true,
+  "original_loading_observer_byte_exact": true,
+  "compiled": false,
+  "air_started": false,
+  "diagnosticOnly": true,
+  "performanceQualified": false
+}
