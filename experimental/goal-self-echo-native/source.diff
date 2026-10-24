@@ -1,0 +1,73 @@
+--- original/adapted-run.py.txt
++++ selfecho/adapted-run.py.txt
+@@ -9,8 +9,8 @@
+ import xml.etree.ElementTree as ET
+ if sys.flags.optimize:raise RuntimeError('Ordinary Python required')
+ sys.dont_write_bytecode=True
+-import build
+-from analyze import summarize
++build=CURRENT_BUILD
++summarize=ORIGINAL_SUMMARIZE
+ HERE=Path(__file__).resolve().parent;ROOT=HERE.parents[1];GAME=ROOT.parents[1];M52=ROOT/'build/m52'
+ RUNNER=ROOT/'tools/run_coop_regression.py';TELEMETRY=GAME/'mods/ModLoader/release/telemetry.json'
+ PREFERENCE=b'{"nativeEnabled":false}'
+@@ -18,24 +18,7 @@
+ CASES={'native-jump':dict(seconds=300,done='native-jump',rounds=[0],checks={'host':6,'join':6}),
+  'fast-held':dict(seconds=360,done='tele-motion',rounds=[0,1,2,3],checks={'host':43,'join':42})}
+ def product(path):
+- """Exact baseline or the one compiled RemoteMotion-only comparison."""
+- path=Path(path).resolve()
+- if path==build.PRODUCT:
+-  build.inputs()
+-  return dict(path=str(path),sha256=build.PRODUCT_SHA,version='0.2.24-roomfix5',
+-   pins={str(path/n):sha(path/n) for n in ('RConnectMod.swf','prepared.json','compile.json')})
+- assert path==M52/'goal-remote-motion-current-product-01'
+- recipe=HERE.parent/'goal-remote-motion-current';builder=recipe/'build.py'
+- spec=importlib.util.spec_from_file_location('native_motion_product_verifier',builder)
+- module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+- receipt=module.verify(path)
+- expected='89f1b9235b809c1595559ede873b763dc15f9ca7c393c82231c48981b1d78215'
+- assert receipt['candidate_sha256']==sha(path/'RConnectMod.swf')==expected
+- assert read(path/'prepared.json')['version']=='0.2.24-motionclock1'
+- assert receipt['installation_before']==installed()==receipt['installation_after']
+- files=list(recipe.glob('*.py'))+[recipe/'source-manifest.json']+[path/n for n in ('RConnectMod.swf','prepared.json','compile.json')]
+- return dict(path=str(path),sha256=expected,version='0.2.24-motionclock1',receipt=receipt,
+-  pins={str(p):sha(p) for p in files})
++ return selfecho_product(path)
+ def main():
+  ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--drivers',type=Path,required=True)
+  ap.add_argument('--product',type=Path,required=True)
+@@ -53,7 +36,7 @@
+   assert all(sha(n)==h for n,h in pins.items())
+  if a.check:
+   assert a.output is None;print(json.dumps(dict(checked=True,case=a.case,air_started=False)));return 0
+- assert a.output is not None;out=(ROOT/a.output).resolve();assert out.parent==M52 and not out.exists()
++ assert a.output is not None;out=(ROOT/a.output).resolve();assert out.parent==M52 and out.name.startswith('goal-self-echo-native-') and not out.exists()
+  (out/'driver').mkdir(parents=True)
+  for n in ('EffectsDriver.swf','EffectsHarness.swf'):shutil.copyfile(drivers/a.case/n,out/'driver'/n)
+  save(out/'driver/driver-input.json',dict(candidate_sha256=candidate,driver_sha256=expected,
+--- original/adapted-build.py.txt
++++ selfecho/adapted-build.py.txt
+@@ -1,5 +1,5 @@
+ def inputs():
+- env=read(HERE/'environment.json'); assert installed()==env['installation']
++ env=read(HERE/'environment.json'); verify_environment_change(env['installation'],installed())
+  assert env['installation']['pfe.swf']==HOST_SHA
+  assert env['installation']['mods/Rconnect/release/RConnectMod.swf']==PRODUCT_SHA
+  for n,h in env['files'].items():assert sha(n)==h,n
+@@ -26,7 +26,8 @@
+  assert m['kind']=='native-motion-measurement-v1' and c['compiled'] and c['inputs_unchanged']
+  assert c['prepared_sha256']==sha(out/'prepared.json') and c['error'] is None and c['validation_error'] is None
+  assert m['candidate_sha256']==c['candidate_sha256']==PRODUCT_SHA
+- assert m['inputs']==inputs() and m['installation_before']==c['installation_before']==c['installation_after']==installed()
++ assert m['inputs']==inputs() and m['installation_before']==c['installation_before']==c['installation_after']
++ verify_environment_change(m['installation_before'],installed())
+  assert inventory(out/'tests')==read(HERE/'source-manifest.json')['sources'];copied(out,m['files'])
+  assert len(c['commands'])==2
+  for row,case in zip(c['commands'],CASES):
+@@ -37,4 +38,4 @@
+  for case in CASES:assert c['artifacts'][case+'/EffectsHarness.swf']==ABI_HASHES['scene/EffectsHarness.swf']
+  for v in (m,c):assert v['air_started'] is False and v['installed'] is False and v['smoothnessQualified'] is False
+  return dict(verified=True,candidate_sha256=PRODUCT_SHA,artifacts=c['artifacts'],inputs=m['inputs'],
+-  prepared_sha256=sha(out/'prepared.json'),compile_sha256=sha(out/'compile.json'),installation=installed(),smoothnessQualified=False)
++  prepared_sha256=sha(out/'prepared.json'),compile_sha256=sha(out/'compile.json'),build_environment=m['installation_before'],runtime_environment=installed(),smoothnessQualified=False)

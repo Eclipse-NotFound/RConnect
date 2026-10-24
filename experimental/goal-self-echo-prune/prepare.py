@@ -1,6 +1,7 @@
 """Read-only verification of the 78C self-snapshot envelope candidate.
 
-No current-installation manifest, compiler, network or AIR entry point.
+No current-installation manifest or process launch. build.py binds the
+unchanged bounded compiler and records fresh installation inputs at execution.
 """
 from pathlib import Path
 import argparse
@@ -16,6 +17,8 @@ sys.dont_write_bytecode = True
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
 BASE = ROOT / 'build/m52/recovery-room-production-05'
+DELEGATE = ROOT / 'experimental/recovery-room-production-v5/build.py'
+PRIOR_SHA = '1fdd8c004cb0b46a839ac87a1b0002b93674ae92f88b0cb1d0e766879bef2fe4'
 VERSION = '0.2.24-selfecho1'
 BASE_SHA = '78c052aea963f1689b705ae1e14d274916ae1a1f7e81933390caf8d1a88f4699'
 REL = 'rconnect/core/Session.as'
@@ -91,6 +94,11 @@ def verify():
     m = read(HERE / 'source-manifest.json')
     assert m['base_sha256'] == BASE_SHA and m['version'] == VERSION
     assert m['current_environment_bound'] is False
+    prior_path = HERE / 'provenance/source-manifest-before-build.json'
+    assert sha(prior_path) == PRIOR_SHA == m['prior_manifest_sha256']
+    prior = read(prior_path)
+    for key in ('base_source', 'candidate_source', 'component_source'):
+        assert m[key] == prior[key], 'Build binding changed frozen AS: ' + key
     for name, digest in m['inputs'].items():
         assert sha(ROOT / name) == digest, name
     assert sha(BASE / 'RConnectMod.swf') == BASE_SHA
@@ -99,6 +107,7 @@ def verify():
     original_source = inventory(BASE / 'src')
     assert original_source == m['base_source'] == read(BASE / 'prepared.json')['source']
     assert len(original_source) == 81
+    assert inventory(BASE / 'tools') == read(BASE / 'prepared.json')['inputs']
     files = {p.relative_to(HERE).as_posix(): sha(p) for p in sorted(HERE.rglob('*'))
              if p.is_file() and p.name != 'source-manifest.json'}
     assert files == m['files'], 'Frozen recipe changed'
@@ -113,6 +122,9 @@ def verify():
     expected = dict(original_source)
     expected.update(inventory(HERE / 'src'))
     assert expected == m['candidate_source']
+    changes = {name: dict(base_sha256=original_source[name], candidate_sha256=sha(HERE / 'src' / name))
+               for name in sorted(inventory(HERE / 'src'))}
+    assert m['changes'] == changes
     assert sum(expected[k] == v for k, v in original_source.items()) == 79
     for name, content in [('ControlSessionSlice', original), ('CandidateSessionSlice', candidate)]:
         assert (HERE / 'components/echo' / (name + '.as')).read_text('utf-8') == session_slice(content.decode('utf-8'), name)
@@ -123,7 +135,16 @@ def verify():
     assert (HERE / 'components' / path).read_bytes() == (BASE / 'src' / path).read_bytes()
     assert (HERE / 'source.diff').read_text('utf-8') == source_diff()
     assert inventory(HERE / 'components') == m['component_source']
-    ast.parse(Path(__file__).read_text('utf-8'))
+    component = ROOT / m['component_evidence']
+    intent, result, receipt = [read(component / name) for name in ('intent.json', 'component-result.json', 'receipt.json')]
+    assert intent['sources'] == m['component_source'] and intent['expected'] == 100
+    assert result['passed'] is True and result['failed'] == 0
+    assert len(result['assertions']) == 100 and all(row['passed'] is True for row in result['assertions'])
+    assert all(receipt[key] is True for key in ('passed', 'compiled', 'source_unchanged', 'installation_unchanged'))
+    assert receipt['observed_checks'] == 100 and receipt['checks_failed'] == 0 and receipt['exit_code'] == 0
+    assert sha(component / 'Checks.swf') == receipt['component_sha256']
+    for name in ('prepare.py', 'build.py'):
+        ast.parse((HERE / name).read_text('utf-8'))
     return m
 
 

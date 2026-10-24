@@ -1,5 +1,5 @@
 {
-  "kind": "source-only-self-echo-prune-v1",
+  "kind": "source-and-bounded-build-self-echo-prune-v1",
   "base_sha256": "78c052aea963f1689b705ae1e14d274916ae1a1f7e81933390caf8d1a88f4699",
   "version": "0.2.24-selfecho1",
   "current_environment_bound": false,
@@ -7,7 +7,17 @@
     "build/m52/recovery-room-production-05/prepared.json": "acdc405a6e214531831cbb532178337aaa7fb9f154a91a1f8b543a6480dd6c58",
     "build/m52/recovery-room-production-05/compile.json": "68fcca0717bd9800725822211650c6fd74787a98a839432b5ed0216cb0ae48d4",
     "build/m52/recovery-room-production-05/RConnectMod.swf": "78c052aea963f1689b705ae1e14d274916ae1a1f7e81933390caf8d1a88f4699",
-    "tools/validation/run_recovery_component.py": "9952aeeaa37f6eead636cceff9f25fabff3045671d3c4cbb60c326909d1e572d"
+    "tools/validation/run_recovery_component.py": "9952aeeaa37f6eead636cceff9f25fabff3045671d3c4cbb60c326909d1e572d",
+    "experimental/recovery-room-production-v5/build.py": "1889514c5563c5af44ee3e50c4cf08cb3108a1cda0d2904078fcab366ee142b9",
+    "experimental/goal-exploration-noop/build.py": "e07ea7bff7b81542a6cc05bd8a1f5f20e44e0169c76d1780b1203e3c7bdfe270",
+    "tools/validation/run_security_terminals.py": "4e4ad73dd0f8df69db5c0c11f6c2c1c94c96fb1235dbaa1aad18caaf9877b9cb",
+    "tools/validation/prepare_security_terminals.py": "5d156d663f616baf793b03ca183388951a10375a5d11e561e81c2b81ab7e13b5",
+    "tools/validation/runtime_memory.py": "d4894962771929b5b88f1d123c3603221dab06294657d33bc6229a2282fbf8f6",
+    "build/m52/goal-self-echo-prune-component-01/intent.json": "e253c64ae4ab1123bd332fc721f44bae9e5aab9481f8aa6cabad5675e62fd9f3",
+    "build/m52/goal-self-echo-prune-component-01/receipt.json": "375f26ad42cfbcbbe618a32e15d5827c9ffa6d4d7ae1029496fd364edab426b5",
+    "build/m52/goal-self-echo-prune-component-01/component-result.json": "59515cc32c4b4b129bf6ff1cfdd1fd470cde37c6ea555a1484e0bf4e8c8ad7b9",
+    "build/m52/goal-self-echo-prune-component-01/Checks.swf": "a475776527aba4cc0aa9ee2245fecaa25c045c538c778e9c96c25f7baa917719",
+    "../ModLoader/tools/test_registry.py": "8b35a6d6ca1dd94cfd5cba9a42979ebd14d9ae65497688fa859d084425922049"
   },
   "base_source": {
     "fe/inter/RConnectTravelAccess.as": "ee2fb60621ba8ee21b6d585a284858be01eb6b9aee06cd4fe68e8c867dc1cec8",
@@ -187,6 +197,7 @@
     "SelfEchoComponentDoc.as": "8b92f67ddc8ecc10eae254a98884b6ecde795f738f52da9afb04a86975cd3f29"
   },
   "files": {
+    "build.py": "30bef16cde7de5fc02b4a73b270effc1c6e991f944c57f31922d4b68f06de24d",
     "components/echo/CandidateSessionSlice.as": "e384c36eb796943af531c23e97eaed4286f8699d18106a6318aece40ccb8f1b5",
     "components/echo/ControlSessionSlice.as": "c24c27a2ec739419899ecfb26f74737c91cfd93262904fbf3429b9ffa8f69b87",
     "components/rconnect/core/Log.as": "3863a2136c06c7769483945f3c24456ca8b2ddefe842ca6f696049cf750428f7",
@@ -196,11 +207,24 @@
     "components/rconnect/net/Protocol.as": "9655eb28a4c417750bbbf318a0ce20bd485080051447c0caf0500ce76218b39d",
     "components/rconnect/net/TcpLink.as": "b7ab3b85e9d97a3096c2ceb466515bdade58f705ac8585b96984c435a3359a5a",
     "components/SelfEchoComponentDoc.as": "8b92f67ddc8ecc10eae254a98884b6ecde795f738f52da9afb04a86975cd3f29",
-    "FROZEN.json": "770d609f9dda0763d51a13dbcd586346299aea07b8d6a1f8a3bf2c97e5e353d5",
-    "prepare.py": "3f8f2c0e36010708f35e23826f14915a8a7ee7d7d5f0d60998ab775d82aad441",
-    "README.md": "dbc65dec2c4cdb24501c4946d6c09ac666576d70ed047f551abab9dad8f74453",
+    "FROZEN.json": "6e13951f8b41f446d1b7fcb6c40ff3020163503c3b57375c6587a7885a3fbd44",
+    "prepare.py": "2f7f30a8cdfd175b88777e8beea36e85e955876f8176d86ce77c99cad6f3930b",
+    "provenance/source-manifest-before-build.json": "1fdd8c004cb0b46a839ac87a1b0002b93674ae92f88b0cb1d0e766879bef2fe4",
+    "README.md": "afb8da6b26405b61f8445a5c174ae0bcd28749140890cb3b46c1d9608daa7012",
     "source.diff": "4f5c5b12c7c7fa48d34140e4386ff853adeb6bc14891e78cfb9bc060ee402371",
     "src/rconnect/core/Session.as": "df8622d637f9e0a50a8e596eb452343efd84aec52b42e5ffa96c1f4defd297f9",
     "src/RConnectMod.as": "f02410759c5c6397f54285b08f4558c0d9bb8a1d6e582a5c3813fe2c21b96e40"
-  }
+  },
+  "prior_manifest_sha256": "1fdd8c004cb0b46a839ac87a1b0002b93674ae92f88b0cb1d0e766879bef2fe4",
+  "changes": {
+    "RConnectMod.as": {
+      "base_sha256": "63d3aac2993cb73483981199b4cc376cb379a46236ad66286e2a5abb1eb93299",
+      "candidate_sha256": "f02410759c5c6397f54285b08f4558c0d9bb8a1d6e582a5c3813fe2c21b96e40"
+    },
+    "rconnect/core/Session.as": {
+      "base_sha256": "14aac9a684133740b95a4bbe3cbcec9f03095965496c292b2d9ffeb54d9f453d",
+      "candidate_sha256": "df8622d637f9e0a50a8e596eb452343efd84aec52b42e5ffa96c1f4defd297f9"
+    }
+  },
+  "component_evidence": "build/m52/goal-self-echo-prune-component-01"
 }

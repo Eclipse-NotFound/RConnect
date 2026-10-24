@@ -1,0 +1,20 @@
+{
+  "kind": "native-loading-hidden-only-v1",
+  "adaptations": 7,
+  "files": {
+    "adapted-hidden.py.txt": "14a26281faf1a3eb739491e2585f95952ae0c5b32016bc47d9389cf0ec7b5603",
+    "launcher.py": "b98c06a9e08795dbe90ea540bf26f55cb05e0985ead301ed8d30d241fc1dbd38",
+    "prepare.py": "71f683b09a75dcb5578f584be082d7999c4041238eeabed54a3eef1c7b2a5162",
+    "README.md": "e90a1eb50f87839eb098fcfb91156144aad2978b1e484a072adab0acf3c51e8c",
+    "run.py": "5406a17baa80485be7de409fcc76e4f5022977c36c466d9195b17a342b22ce0a",
+    "source.diff": "10e86a5157b3b75d99815b4e3a680306edb930ce1f4c9c6cb8dc830694516308"
+  },
+  "inputs": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-room-repair-review\\run_hidden_v3.py": "7cf2fcbc2ff8235635cba11e0298d7c8cb23d405f1914042eab30313f5351eef",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-native-loading-native-v2\\run.py": "a5b2ce70fcef52bd5960715fb0d29289f5124acf5139387db92e30aefc1782f3",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-native-loading-native-v2\\source-manifest.json": "7d62b3d6e7f159bdf91427a3543027bab7f5069628364c25ce09d5a4710dc840",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\tools\\run_coop_regression.py": "7eca453b13480140da5f36bb33d2319739a927562ccafdbb61a8b20cdb5ae4d3"
+  },
+  "compiled": false,
+  "air_started": false
+}

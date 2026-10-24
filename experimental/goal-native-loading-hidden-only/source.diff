@@ -1,0 +1,66 @@
+--- original/run_hidden_v3.py
++++ native-ui/hidden-only.py
+@@ -1,35 +1,16 @@
+ """Reuse the exact historical 12-round hidden-room driver with roomfix3/80CF and exact current RV 0DBE."""
+ from pathlib import Path
+ import argparse,json,re,shutil,subprocess,sys,traceback
+-from current_rv_verifier import ROOT,M52,GAME,RUNNER,installation,sha,read,save,evidence
+-import current_rv_verifier as current_runtime
++# Explicit current UI binding supplied by this independent adapter.
+ if sys.flags.optimize:raise RuntimeError('Ordinary Python required')
+ sys.dont_write_bytecode=True
+ HERE=Path(__file__).resolve().parent
+-PRODUCT=M52/'recovery-room-production-03'; OLD=M52/'a22-testpack-15-04'
+-DRIVER=OLD/'build/driver-qualified-hidden'; VERSION='0.2.24-roomfix3'
+-CANDIDATE='43277b92dc5e556702d64754c6976dd10a032008719851b71bbeb566d3104011'
+-HOST='80cfd8cf3138ee59cbf6eda0a1824a9ec960f413bd95e4b90d41dd0322b4fd3d'
++OLD=M52/'a22-testpack-15-04'
++DRIVER=OLD/'build/driver-qualified-hidden'
+ ARTIFACTS={'EffectsDriver.swf':'a2a5c325b87182f02aab51e0dd9808ec46fb367070d4c6f7f0a9bc3488ef0f6f',
+  'EffectsHarness.swf':'cfe342dcf55d4554971d2ac1902b8d50c68b831cfc5e9adcf5aed752df5470d5'}
+ def preflight():
+- assert sha(HERE/'run_hidden.py')=='8c58cf25edcebac3a3197c481b7e9de3fd75cd0ddef9e6526e48b11457c7480e'
+- assert sha(HERE/'current_rv_verifier.py')=='a12bd5788bfb3ddf7634c9115fe9784934bc7880d24748222de1b533b9df4c8b'
+- before=installation();assert before['pfe.swf']==HOST
+- pins={str(Path(__file__)):sha(__file__),str(HERE/'prepare.py'):sha(HERE/'prepare.py')}
+- for path in (HERE/'run_hidden.py',HERE/'current_rv_verifier.py',current_runtime.BASE/'prepared.json',current_runtime.RECEIPT):pins[str(path)]=sha(path)
+- assert sha(RUNNER)=='7eca453b13480140da5f36bb33d2319739a927562ccafdbb61a8b20cdb5ae4d3'
+- pins[str(RUNNER)]=sha(RUNNER)
+- assert sha(PRODUCT/'prepared.json')=='8fcf0337facd5fdb7cf328edc5382c4c32dae3846003ec7b5b3a5ee565ddb1ea'
+- assert sha(PRODUCT/'compile.json')=='9bdc15536e5ae3d0db2206d2f0286a441086cc94023e119b9f99dfaf998ecfa7'
+- prepared=read(PRODUCT/'prepared.json');compiled=read(PRODUCT/'compile.json')
+- assert prepared['kind']=='room-repair-overlay' and prepared['version']==VERSION
+- assert compiled['compiled'] is True and compiled['candidate_sha256']==CANDIDATE==sha(PRODUCT/'RConnectMod.swf')
+- assert all(c['exit_code']==0 for c in compiled['commands'])
+- assert compiled['installation_before']==compiled['installation_after']==prepared['installation_before']==before
+- assert compiled['sources_unchanged'] is True and compiled['installation_unchanged'] is True
+- for name,digest in prepared['source'].items():assert sha(PRODUCT/'src'/name)==digest; pins[str(PRODUCT/'src'/name)]=digest
+- for name,digest in prepared['inputs'].items():assert sha(PRODUCT/'tools'/name)==digest; pins[str(PRODUCT/'tools'/name)]=digest
++ before,pins=hidden_preflight()
+  # Historical proof validates the reused bytes, never impersonates today's installation.
+  assert sha(OLD/'prepared.json')=='ec5400b9f2874030dc19d386a706c22babc692344412ee7910714b21f6cfad88'
+  assert sha(OLD/'qualified-hidden-result.json')=='707ce3c81dddaaaedefb56b16547a65a0514a3c5221e0f851a0cd3df9792f6fb'
+@@ -72,12 +53,13 @@
+  before,pins=preflight()
+  if a.check:print(json.dumps(dict(preflight=True,candidate=CANDIDATE,host=HOST,driver=ARTIFACTS,air_started=False)));return 0
+  assert a.output is not None and a.registry_wait>=0
+- out=(ROOT/a.output).resolve();assert out.parent==M52 and not out.exists();out.mkdir();binding=out/'driver';binding.mkdir()
++ out=(ROOT/a.output).resolve();assert out.parent==M52 and out.name.startswith('goal-native-loading-hidden-') and not out.exists();out.mkdir();binding=out/'driver';binding.mkdir()
+  for name,digest in ARTIFACTS.items():shutil.copyfile(DRIVER/name,binding/name);assert sha(binding/name)==digest
+  save(binding/'driver-input.json',dict(candidate_sha256=CANDIDATE,entry='A22HiddenTimingTestDoc',
+   reused_historical_driver=True,original_candidate_sha256=read(DRIVER/'driver-input.json')['candidate_sha256'],driver_sha256=ARTIFACTS['EffectsDriver.swf'],source_provenance=str(OLD/'prepared.json')))
+  command=[sys.executable,'-B','-X','utf8',str(RUNNER),'--candidate',str(PRODUCT/'RConnectMod.swf'),'--effects','--effects-driver',str(binding),'--all-mods','--land','random_mane','--seconds','600','--expected-version',VERSION,'--private-desktop','--defer-visible','--wait-host-world','--require-exclusive-air','--registry-wait',str(a.registry_wait)]
+- save(out/'intent.json',dict(command=command,inputs=pins,installation=before,candidate_sha256=CANDIDATE,host_sha256=HOST,driver=ARTIFACTS,source='historical unchanged 12-round native background-door fixture',runtime_admission=evidence(),recompiled=False,no_game_override=True,no_other_mod_override=True))
++ command += ['--game-candidate',str(HOST_DIR/'pfe.swf')]
++ save(out/'intent.json',dict(command=command,inputs=pins,installation=before,candidate_sha256=CANDIDATE,host_sha256=HOST,driver=ARTIFACTS,source='historical unchanged 12-round native background-door fixture',runtime_admission=ui_evidence(),recompiled=False,no_game_override=False,no_other_mod_override=True))
+  result=dict(passed=False,air_started=False,roles={},performance_qualified=False,installed=False)
+  try:
+   with (out/'runner.log').open('x',encoding='utf-8') as log:p=subprocess.run(command,cwd=ROOT,stdout=log,stderr=subprocess.STDOUT)
+@@ -95,6 +77,7 @@
+     key=n.replace('\\','/').lower();assert h==(ARTIFACTS['EffectsHarness.swf'] if key=='mods/rconnect/release/rconnectmod.swf' else installed[key]),n
+    for n,h in v.get('mod_assets',{}).items():assert h==installed[n.replace('\\','/').lower()]
+    result['roles'][role]=review_role(run,role)
++  validate_private_settings(run,out)
+   memory=read(run/'memory-timeline.json');assert not memory['stopped_for_pressure'] and not memory['stopped_for_overlap']
+   assert memory['minimum_commit_bytes']==512*1024**2 and read(run/'memory-before.json')['free_commit_bytes']>=6*1024**3
+   assert not read(run/'air-before.json') and all(not (run/n).exists() for n in ('host','join','frozen'))

@@ -12,13 +12,19 @@
 
 结果文件遵循共享运行器合同：`assertions:[{label:String,passed:Boolean}]`、`failed:int`、`passed:Boolean`；运行器独立核对失败数、总状态和 `--expected 100`。本次接口修正只改变报告字段名，不改变任一判定或计数。
 
-源码核验与根会话后续最短组件入口（本次未运行编译或 AIR）：
+根会话已实际完成 `build/m52/goal-self-echo-prune-component-01`：100/100 通过、退出码 0，组件 SHA `A475776527ABA4CC0AA9EE2245FECAA25C045C538C778E9C96C25F7BAA917719`，源码和安装未变。这只证明组件范围，不能当作原生性能结果。
+
+此次只重开构建配方与元数据。原清单 `1FDD8C00…F2FE4` 按原字节保存在 `provenance/source-manifest-before-build.json`；新清单核对原 candidate_source/component_source 完全相同，所有生产和组件 AS 未修改。100 项实际回执、intent、原始结果与组件字节只读引用，未改写旧证据。
+
+源码核验与根会话后续最短产品编译入口（本次子代理未启动编译或 AIR）：
 
 ```text
 python -B -X utf8 experimental/goal-self-echo-prune/prepare.py --check
-python -B -X utf8 tools/validation/run_recovery_component.py --source experimental/goal-self-echo-prune/components --entry SelfEchoComponentDoc.as --output build/m52/goal-self-echo-prune-component-01 --expected 100
+python -B -X utf8 experimental/goal-self-echo-prune/build.py build/m52/goal-self-echo-prune-product-01
 ```
 
-完整产品构建与原生测试入口留给根会话绑定当前安装环境；当前 RV 已变化，**此处没有当前 22 项环境清单、构建器或原生运行器**。source-manifest 的输入仅证明历史基底、组件来源和配方，不能当作当前安装指纹。实际组件合格后可复用既有 drivers-02 的 native-jump 和 fast-held，对当前环境重冻输入；保留原 6/6、43/42 和 160 ms 门槛。100 项预期不等于已经通过。
+`build.py` 按现有探索候选模式接入未改动的 `recovery-room-production-v5/build.py`，沿用共享登记、两条 Java 指令、1 GiB 启动余量、运行中内存保护及自有进程回收。输入是 production-05 的 81 类及原 tools，加这两类覆盖；工具仍使用该有界构建器指定的 Java 和 Flex SDK。新输出必须不存在且位于 `build/m52`。`build.verify(output)` 必须看到真实成功的两条编译回执、准确源码/工具/产物哈希及安装前后不变，不能把准备目录当成产品。
+
+构建启动时读取当时真实的 22 项安装指纹并写入新回执；source-manifest 的历史基底及组件回执不能代替当前安装环境。当前 RV 是 638E，配方没有复制旧 BF4A 环境。**此处没有原生运行器，也不赋予历史原生测试新候选资格。** 后续由根会话将实际编译产物与当前 22 项环境绑定，再复用 drivers-02 的 native-jump 和 fast-held，保留原 6/6、43/42 和 160 ms 门槛。
 
 冻结交付后仅报告审查意见；未经根会话明确重开，不再编辑此目录。

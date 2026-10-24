@@ -1,0 +1,32 @@
+{
+  "kind": "self-echo-native-motion-binding-v1",
+  "run_replacements": 3,
+  "build_replacements": 3,
+  "files": {
+    "adapted-build.py.txt": "18888dd85ed6a75c60d5c86d1700fbb8384718b6fe5f63865416f6707c4e66a3",
+    "adapted-run.py.txt": "3e1087d88fe772f7d5c72262c06e04897263cf499434a7d130ed80f3d043fd9f",
+    "prepare.py": "3df57770203a2b4d2221f6e4f720ab99c61387d212f12bb5cdfa3dcb529f0ee9",
+    "README.md": "6e53ff1b48f5446640144936e83e34d08ba98c682e83bb7af901f8d475db2049",
+    "run.py": "8f0ee63334966456c618aee14f862d3f94ecb75baf8bc65636f3b01f95097c48",
+    "source.diff": "01ac620f6f649fe10367aff12ae5fbe4b8639a65e275a8335ab9df3601d48296"
+  },
+  "inputs": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-three-issues-native\\run.py": "2dc340ab793e95fec7abab6d3061a789255d6b0afe861036b96ee654ac36ed12",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-three-issues-native\\build.py": "8b85f7e63f4b6f4294ef25eef928f21fa5949fb06f521b6e3eaf6d662dc94944",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-three-issues-native\\analyze.py": "ac369d4d4a63607e737a550730df609c328be73792bd0e971468b2427b0c0508",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-three-issues-native\\environment.json": "6f2a70bbe43d6729903a0ba2577d0687206442e684d74b787b96ee2cde8eebd0",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-native-loading-native-v2\\run.py": "a5b2ce70fcef52bd5960715fb0d29289f5124acf5139387db92e30aefc1782f3",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-native-loading-native-v2\\runtime-environment.json": "3214299ed82486102fd118f214825da5ea48f776be1842a4aa74a4db4c104de6",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\goal-three-issues-native-drivers-02\\prepared.json": "f80d5e5520eea127e12ae70744028d254978938d6127d7622a9ade5a5db9acc3",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\goal-three-issues-native-drivers-02\\compile.json": "9d4f654559cf767d626ef3e9089c9790ce41072ff71472b727a586fc63b81f0c",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\goal-three-issues-native-drivers-02\\native-jump\\EffectsDriver.swf": "9ee16fa6ea2db8e0441a49e53f7ac55a4d5980c113706881e5cadd2d6f4c1e84",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\goal-three-issues-native-drivers-02\\fast-held\\EffectsDriver.swf": "fef72ab405e5df894b1e683e40d6171fa9cbd1d543aac6d2a75f5f51402317cb",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-self-echo-prune\\build.py": "30bef16cde7de5fc02b4a73b270effc1c6e991f944c57f31922d4b68f06de24d",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-self-echo-prune\\prepare.py": "2f7f30a8cdfd175b88777e8beea36e85e955876f8176d86ce77c99cad6f3930b",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-self-echo-prune\\source-manifest.json": "318748f65a52039ff7acc2df076e3764a01d663b532b66ad7f62a99ddd89244e",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RealisticVision\\knowledge\\experiments\\combat-render-d44-20261025\\deployment\\receipt.json": "bb713983b87cd23f238774d484480c3582384da56c2fcd0cccb282d3363d379f",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\application.xml": "70dd3b085e5f6c66c03693cf68ce5e93a4e4136dd745d40d1a5b2a49863ba236"
+  },
+  "compiled": false,
+  "air_started": false
+}
