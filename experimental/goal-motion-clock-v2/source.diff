@@ -1,0 +1,117 @@
+--- production05/src/RConnectMod.as
++++ overlay/src/RConnectMod.as
+@@ -26,7 +26,7 @@
+    public class RConnectMod
+    {
+       // Working M46 core after the separate 0.2.17 compact HUD release.
+-      public static const VERSION:String = "0.2.24-roomfix5";
++      public static const VERSION:String = "0.2.24-motionclock2";
+ 
+       public static var instance:RConnectMod;
+ 
+--- production05/src/rconnect/game/RemoteMotion.as
++++ overlay/src/rconnect/game/RemoteMotion.as
+@@ -22,6 +22,8 @@
+       private var bufferLimit:int=0;
+       private var enemyRecovery:Boolean=false;
+       private var playbackRate:Number=1;
++      // Offset improvements are owed source time, repaid only on later frames.
++      private var calibrationDebt:Number=0;
+       // Only immediately visible drops use packet-burst buffering. A grab
+       // has a separate low-latency policy, and avatar clocks stay unchanged.
+       private var firstSample:Boolean=true;
+@@ -59,6 +61,7 @@
+          }
+          var previous:Object=sample(now);
+          frames=[];
++         calibrationDebt=0;
+          preceding=null;
+          var jump:Boolean=previous==null || now-at>1000;
+          if(previous!=null)
+@@ -106,7 +109,7 @@
+        * Retain that cursor so resume cannot replay the pre-pause position. */
+       public function settle(now:int):Object {
+          if(frames.length>0) {
+-            playbackRate=1;
++            playbackRate=1;calibrationDebt=0;
+             cursor=Number(frames[frames.length-1].at);
+             return sampleTimed(now);
+          }
+@@ -126,7 +129,7 @@
+          if(last==null || now-arrivedAt>1000 || stamp-Number(last.at)>1000
+             || clockOffset<offset-Math.max(250,interval*2) || (!port && dx*dx+dy*dy>600*600)) {
+             frames=[];gaps=[];selected=null;state=null;preceding=null;firstSample=true;dropDelay=0;
+-            playbackRate=1;
++            playbackRate=1;calibrationDebt=0;
+             offset=clockOffset;cursor=stamp-(immediateStart?0:delay());sampledAt=now;
+          } else {
+             // Host world broadcasts can repeat an unchanged peer snapshot.
+@@ -140,7 +143,10 @@
+             // A newborn drop may receive several native positions in one
+             // socket callback. Seeking its cursor here discards the entire
+             // short arc and leaves it motionless until the next packet batch.
+-            if(!immediateStart)cursor+=previousOffset-offset;
++            // Do not seek a visible interval inside a packet callback. Small
++            // improvements can add up to seconds, so remember ALL of them;
++            // the next advancing sample repays them at a bounded rate.
++            if(!immediateStart)calibrationDebt+=previousOffset-offset;
+             if(immediateStart)dropDelay=Math.min(500,Math.max(dropDelay,(now-arrivedAt)*1.25));
+             gaps.push(stamp-Number(last.at));if(gaps.length>8)gaps.shift();
+          }
+@@ -167,6 +173,17 @@
+          // Adjust buffer depth by slightly changing playback speed, never by
+          // rewinding the avatar when a slower packet interval is observed.
+          if(rateHeld()) {playbackRate=1;cursor=next;}
++         else if(calibrationDebt>0 && elapsed>0) {
++            // Repay at most one extra elapsed interval (total <= 2x). This
++            // catches cumulative startup calibration without a same-frame
++            // jump or the ordinary 1.1x controller's multi-second tail.
++            // Do not retain debt that the desired buffer/received endpoint
++            // no longer needs. Native finite effects above keep exact 1x.
++            calibrationDebt=Math.min(calibrationDebt,Math.max(0,
++               Math.min(wanted,Number(frames[frames.length-1].at))-next));
++            var repayment:Number=Math.min(elapsed,calibrationDebt);
++            cursor=next+repayment;calibrationDebt-=repayment;playbackRate=1;
++         }
+          else if(enemyRecovery) {
+             // A stalled receive buffer must not leave enemies several frames
+             // behind for seconds. Recover by gently changing speed, not by
+@@ -251,19 +268,27 @@
+        * at real direction changes, and adds no prediction or display delay. */
+       private function curve(key:String,a:Object,b:Object,t:Number,h:Number):Number {
+          var first:Number=Number(a.snap[key]),last:Number=Number(b.snap[key]);
+-         var slope:Number=(last-first)/h,left:Number=slope,right:Number=slope;
+-         if(preceding!=null && Number(preceding.at)<Number(a.at) && isFinite(Number(preceding.snap[key]))) {
+-            var hp:Number=Number(a.at)-Number(preceding.at);
+-            left=tangent((first-Number(preceding.snap[key]))/hp,slope,hp,h);
+-         }
+-         var following:Object=frames.length>2?frames[2]:null;
+-         if(following!=null && Number(following.at)>Number(b.at) && isFinite(Number(following.snap[key]))) {
+-            var hn:Number=Number(following.at)-Number(b.at);
+-            right=tangent(slope,(Number(following.snap[key])-last)/hn,h,hn);
++         // Once an interval is on screen, keep its shape. A later packet may
++         // supply a better tangent for FUTURE intervals, but must not bend a
++         // partly played jump/drag/drop underneath the current display cursor.
++         if(a.curves==null)a.curves={};
++         var shape:Object=a.curves[key];
++         if(shape==null) {
++            var slope:Number=(last-first)/h,left:Number=slope,right:Number=slope;
++            if(preceding!=null && Number(preceding.at)<Number(a.at) && isFinite(Number(preceding.snap[key]))) {
++               var hp:Number=Number(a.at)-Number(preceding.at);
++               left=tangent((first-Number(preceding.snap[key]))/hp,slope,hp,h);
++            }
++            var following:Object=frames.length>2?frames[2]:null;
++            if(following!=null && Number(following.at)>Number(b.at) && isFinite(Number(following.snap[key]))) {
++               var hn:Number=Number(following.at)-Number(b.at);
++               right=tangent(slope,(Number(following.snap[key])-last)/hn,h,hn);
++            }
++            shape=a.curves[key]={left:left,right:right};
+          }
+          var square:Number=t*t,cube:Number=square*t;
+-         var value:Number=(2*cube-3*square+1)*first+(cube-2*square+t)*h*left
+-            +(-2*cube+3*square)*last+(cube-square)*h*right;
++         var value:Number=(2*cube-3*square+1)*first+(cube-2*square+t)*h*Number(shape.left)
++            +(-2*cube+3*square)*last+(cube-square)*h*Number(shape.right);
+          return Math.max(Math.min(first,last),Math.min(Math.max(first,last),value));
+       }
+       private static function tangent(a:Number,b:Number,ha:Number,hb:Number):Number {

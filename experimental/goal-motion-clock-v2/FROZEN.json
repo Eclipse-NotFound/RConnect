@@ -1,0 +1,17 @@
+{
+  "frozen": true,
+  "scope": "goal-motion-clock-v2 only",
+  "parent_compile_only": true,
+  "compiled_here": false,
+  "air_started_here": false,
+  "installed": false,
+  "performance_qualified": false,
+  "source_changes": [
+    "RemoteMotion",
+    "version"
+  ],
+  "old_checks_unchanged": 37,
+  "new_checks": 31,
+  "expected_checks": 68,
+  "rule": "After root receives hashes, report findings without editing. Only explicit root instructions reopen scope."
+}

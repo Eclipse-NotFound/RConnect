@@ -1,0 +1,36 @@
+      // Native fixture operations reproduce only the reviewed display boundary.
+      // They do not emulate the game or qualify native story/SATS execution.
+      public function nativeShow():void {
+         rconnectUiNativeDisplay();nativeShows++;
+         vgui.visible=vfon.visible=visual.visible=vscene.visible=false;
+         vwait.visible=true;catPause=false;clickReq=0;
+      }
+      public function nativeExit16():void {
+         t_exit=16;rconnectUiNativeDisplay();nativeFinishes++;
+         vwait.visible=false;vwait.story.visible=false;clickReq=0;
+         vgui.visible=vfon.visible=visual.visible=true;
+         gg.ggControl=true;pip.noAct=false;
+         rconnectUiAfterExitDisplay();
+      }
+      public function nativeScene():void {
+         rconnectUiNativeDisplay();catPause=true;visual.visible=false;vscene.visible=true;
+      }
+      public function nativeSceneEnd():void {
+         rconnectUiNativeDisplay();catPause=false;visual.visible=true;vscene.visible=false;
+      }
+      public function nativeRoom():void {
+         rconnectUiNativeDisplay();loc={};
+      }
+      public function nativeResize(width:int,height:int):void {
+         rconnectUiNativeDisplay();swfStage.stageWidth=width;swfStage.stageHeight=height;
+         vwait.x=width/2;vwait.y=height/2;
+      }
+      public function nativeNewIdentity():void {
+         rconnectUiNativeDisplay();game={};gg={pers:{dead:false},ggControl:false};
+      }
+      public function nativeMenuNewGame():void {
+         vwait.visible=true;vwait.progres.text="加载中";
+         rconnectUiNativeDisplay(true);allStat=-1;game={};
+      }
+   }
+}

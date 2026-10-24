@@ -1,0 +1,10 @@
+{
+  "frozen": true,
+  "scope": "Only goal-motion-clock-v2-native",
+  "new_driver": false,
+  "new_process_launcher": false,
+  "original_assertions_unchanged": true,
+  "compiled_here": false,
+  "air_started_here": false,
+  "rule": "Report review findings; do not edit after root receives freeze."
+}

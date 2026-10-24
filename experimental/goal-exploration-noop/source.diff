@@ -1,0 +1,26 @@
+--- production05/src/RConnectMod.as
++++ overlay/src/RConnectMod.as
+@@ -26,7 +26,7 @@
+    public class RConnectMod
+    {
+       // Working M46 core after the separate 0.2.17 compact HUD release.
+-      public static const VERSION:String = "0.2.24-roomfix5";
++      public static const VERSION:String = "0.2.24-explorationnoop1";
+ 
+       public static var instance:RConnectMod;
+ 
+--- production05/src/rconnect/game/ExplorationSync.as
++++ overlay/src/rconnect/game/ExplorationSync.as
+@@ -253,7 +253,11 @@
+          if(!enabled || p.to !== epoch) return false;
+          var old:Object = memories[c.loc];
+          var data:Array = unionRows(old != null ? old.data : null, decoded);
+-         memories[c.loc] = {key:c.key, data:data, apiApplied:null};
++         var unchanged:Boolean = old != null && old.key === c.key && old.data.length === data.length;
++         if(unchanged)
++            for(var y:int = 0; y < data.length; y++)
++               if(data[y] !== old.data[y]) { unchanged = false; break; }
++         if(!unchanged) memories[c.loc] = {key:c.key, data:data, apiApplied:null};
+          received++;
+          applyRV(c.loc, memories[c.loc]);
+          return true;

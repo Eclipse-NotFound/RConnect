@@ -1,0 +1,13 @@
+package {
+   public class FakeNativeLoadingWorld {
+      public var game:Object={},gg:Object={pers:{dead:false},ggControl:true},loc:Object={};
+      public var visual:Object={visible:true},vfon:Object={visible:true},vgui:Object={visible:true};
+      public var vblack:Object={visible:true},vscene:Object={visible:false},verror:Object={visible:false};
+      public var vwait:Object={visible:false,x:400,y:300,skill:{visible:true,currentFrame:7},
+         progres:{visible:true,text:"Loading"},story:{visible:false}};
+      public var swfStage:Object={stageWidth:800,stageHeight:600};
+      public var pip:Object={active:false,noAct:false},sats:Object={active:false},stand:Object={active:false},gui:Object={guiPause:false};
+      public var catPause:Boolean=false,onConsol:Boolean=false,onPause:Boolean=false;
+      public var comLoad:int=-1,ng_wait:int=0,t_die:int=0,t_exit:int=0,clickReq:int=0,allStat:int=1;
+      public var nativeShows:int=0,nativeFinishes:int=0;
+

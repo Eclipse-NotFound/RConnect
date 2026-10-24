@@ -1,0 +1,28 @@
+{
+  "kind": "native-jump-official-reduced-v1",
+  "original_wrapper_sha256": "2dc340ab793e95fec7abab6d3061a789255d6b0afe861036b96ee654ac36ed12",
+  "native_replacements": 5,
+  "selector_replacements": 2,
+  "files": {
+    "README.md": "7c00a44198ebfe9df7eabfed94cd89df081cdb86c22c213a18c3b1f4d175d541",
+    "run.py": "a75da3b7b4f97738e481a7fef7835ac48512c443404aac6185086c6f7195c132",
+    "runner.py": "2bb710905140e4493175dd35535cffc7a9ab297ce4daee2fa08c88924babd9b4"
+  },
+  "original": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-three-issues-native\\run.py": "2dc340ab793e95fec7abab6d3061a789255d6b0afe861036b96ee654ac36ed12",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-three-issues-native\\build.py": "8b85f7e63f4b6f4294ef25eef928f21fa5949fb06f521b6e3eaf6d662dc94944",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-three-issues-native\\analyze.py": "ac369d4d4a63607e737a550730df609c328be73792bd0e971468b2427b0c0508",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-three-issues-native\\source-manifest.json": "be49fc9002cd0761efb3f37e9e8cf19b28c110ed2fa5ae6fc1907db900d3df80",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-three-issues-native\\environment.json": "6f2a70bbe43d6729903a0ba2577d0687206442e684d74b787b96ee2cde8eebd0",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-ordinary-reduced\\runner.py": "af59d0a170a82a5f156ac0180203fe16e0cf10dc69e91dd234383139a7b94d8e",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-room-reduced-runtime\\launcher.py": "a5d3a120216c7573a4c26c6c923b821b53dbfeb9608ca3a4d5a93f017ab72601",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\goal-three-issues-native-drivers-02\\prepared.json": "f80d5e5520eea127e12ae70744028d254978938d6127d7622a9ade5a5db9acc3",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\goal-three-issues-native-drivers-02\\compile.json": "9d4f654559cf767d626ef3e9089c9790ce41072ff71472b727a586fc63b81f0c",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\goal-three-issues-native-drivers-02\\native-jump\\EffectsDriver.swf": "9ee16fa6ea2db8e0441a49e53f7ac55a4d5980c113706881e5cadd2d6f4c1e84",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\goal-three-issues-native-drivers-02\\native-jump\\EffectsHarness.swf": "d52ef4300c7d472ee05884d7b4709f4abf80b3e6ff935b695a9ed986db021086",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\loader-manifest.txt": "33de189e1209fdd397e811a52e9ac67ff0dedaeeae5cfeff4b7d15d4536eb133"
+  },
+  "compiled": false,
+  "air_started": false,
+  "installed": false
+}

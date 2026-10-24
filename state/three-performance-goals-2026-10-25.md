@@ -80,3 +80,12 @@
 `goal-local-frame-cpu-drivers-01` 成功编译13A5039C驱动；`goal-local-frame-cpu-native-01` / `c6b41f812f`完成原双侧6/6动作和六窗非零CPU、完整清理检查。私有原始CPU文件与汇总保留。主113样本中pre-render/render77；加131中68，无法由这些原生栈分配到具体视觉模组，亦非GPU耗时。加入ExplorationSync.receive23，其中22继续applyRV→RV.mergeExploration，全部集中第6窗，不能称全程17.6%稳定负担。onData44样本与上述相交，不相加。第6窗暂停后枚举122ms，其余1–11ms，会影响后续帧，不用CPU诊断轮作净性能比较。extraRenders=1表示重复RENDER事件，未证明两次实际GPU绘制。
 
 下一步用原drivers-02关闭LAD/RV/CS的同场景对照，官方选择器仅修改隔离ModLoader.sol，正式保持14组合；运动v2和真正借用World.vwait的UI候选独立准备。旧89F1否决不变，本轮未新增部署。
+
+
+## 第二运动候选与11模组实测
+
+`goal-motion-clock-v2`只替换RemoteMotion/版本；manifest64A73EE0，产品`goal-motion-clock-v2-product-01` B25E477A，195281B。实际68项AS组件全部通过（component-01 /860F69C3），原37保持。`goal-motion-clock-v2-native-jump-01` / e7f61547df原双6/6与完整测量通过，22输入与驱动和原基线一致，仅产品改变。加入初始300,640/stay，无v1旧die；首跳开始上移t439，t489为jump，未出现v1约2秒旧轨迹追播。严格空中同向|dy|≥3且y<620的重复主1/171(31ms)、加0/163；原78C主0/160、加2/152(88ms)。加入每帧最大位移31.35px、无>50px，v1曾382.24px。首个低于604的包t414、画面t587到591.55，仅为接收后观测间隔173ms，不能称绝对网络延迟。起始状态已正确、没有prewindow内部cursor，单轮不能保证所有启动时序。
+
+本机v2主20.65/加20.27fps，加入RENDER最长183ms（ENTER178），小幅较基线不同不授性能收益。其本机掉帧仍存在；快抓取23ba08ed52待执行，不提前宣称念力已修。
+
+`goal-native-reduced-jump-01` / c783ed51d1使用原drivers-02和78C/A796，原6/6、完整测量及实际双端ModLoader.sol11项加载全部通过。18秒同原生跳跃：主ENTER28.83fps/RENDER28.83，加入27.56/27.56；加入RENDER p95 59、最长133ms、>100ms2次。全14原基线主20.20、加18.37，加入p95 79、最长180ms、>100ms6次。两轮全后台、动作按18秒驱动，快帧使原生逻辑推进更多，关闭三者只能作组合归因，不当成RC修正或单模组纯收益。正式14选择未动，所有本轮自有进程/副本已回收。

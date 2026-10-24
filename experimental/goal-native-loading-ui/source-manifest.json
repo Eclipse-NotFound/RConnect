@@ -1,0 +1,39 @@
+{
+  "kind": "native-loading-ui-source-candidate",
+  "version": "0.2.24-nativeui1",
+  "base_product_sha256": "78c052aea963f1689b705ae1e14d274916ae1a1f7e81933390caf8d1a88f4699",
+  "base_host_sha256": "a796827173af7d6fab9885fb66ecc62182ab5335918a30c7cce4c44914a238b7",
+  "baseline_world_source_sha256": "f9b5d270ad95a223ca37b0e339dcee1380856dff6254a5b1a0d9b12d997aaf16",
+  "native_writer_hooks": [
+    "resizeScreen",
+    "loadGame",
+    "ativateLoc",
+    "setLoadScreen",
+    "offLoadScreen",
+    "showScene",
+    "unshowScene",
+    "endgame"
+  ],
+  "native_wait_handoff_hook": "newGame",
+  "compiled": false,
+  "runtime_validated": false,
+  "product_overlay": {
+    "rconnect/ui/RoomEntryView.as": "d4a24f64fffaa3b1620b536c7615d0caea8e7edf2a146feed6c6c0113c81ec2f",
+    "RConnectMod.as": "bbed0b303a584c49e52e1856b7803010b03424ce309796b71afc1a4987f42091"
+  },
+  "host_source_sha256": "62a99505e9467b27a0dff8c0f16323764a6462fbad2c25e1ec56120dad0753f3",
+  "inputs": {
+    "fixtures/FakeNativeLoadingWorld.prefix.txt": "8cb54e3df71f5df94b667092ca7b07b0dd3501b879e826d45d7924756287cd48",
+    "fixtures/FakeNativeLoadingWorld.suffix.txt": "d82822133b5515dd69d7f3ee46ae67227d5d2a821e7b3bb9c177562988bfb0df",
+    "host/fe/World.as": "62a99505e9467b27a0dff8c0f16323764a6462fbad2c25e1ec56120dad0753f3",
+    "prepare.py": "39065b8e02b5141e47cd38b7337f2ca044b19405d32da1155c21c6e7274570d7",
+    "src/rconnect/ui/RoomEntryView.as": "d4a24f64fffaa3b1620b536c7615d0caea8e7edf2a146feed6c6c0113c81ec2f",
+    "src/RConnectMod.as": "bbed0b303a584c49e52e1856b7803010b03424ce309796b71afc1a4987f42091",
+    "tests/FakeNativeLoadingWorld.as": "0bb19f20186dd257d87d4e37df20627fa9073a0299c46c9416c03dfe7b12b633",
+    "tests/NativeLoadingUiChecks.as": "4db06d5b26e99ed34585f9140cf657078569baf34c98e01c85a2350c7f020c78",
+    "tests/rconnect/ui/RoomEntryView.as": "d4a24f64fffaa3b1620b536c7615d0caea8e7edf2a146feed6c6c0113c81ec2f",
+    "tests/Res.as": "9d385a3d508970955a0fe801fe1241340c086f05a430e55b8bfe102987490381",
+    "WorldLoadingLease.fragment.as": "caed03597a962d079dd2a31bcae74fa67ef6146fd20d6acc4bda9d957b6eaf72"
+  },
+  "source_diff_sha256": "b4feb701b91e0d099bc55947fac4435f8cbdaa82a9b67284027fbeb78339f803"
+}
