@@ -1,0 +1,256 @@
+"""Run the existing three-trip fixture against one frozen product and current inputs.
+
+The shared runner owns registration, memory limits, private desktops and cleanup.
+This entry only binds artifacts, copies two missing private settings, and audits
+the unchanged fixture results. It does not grant performance qualification.
+"""
+from pathlib import Path
+import argparse, contextlib, hashlib, importlib.util, json, os, re, shutil, sys, traceback
+import xml.etree.ElementTree as ET
+
+if sys.flags.optimize:
+    raise RuntimeError('Ordinary Python required')
+sys.dont_write_bytecode = True
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[1]
+GAME = ROOT.parents[1]
+M52 = ROOT / 'build/m52'
+DRIVER = M52 / 'recovery-room-scene-driver-02'
+RUNNER = ROOT / 'tools/run_coop_regression.py'
+TELEMETRY = GAME / 'mods/ModLoader/release/telemetry.json'
+PREFERENCE = b'{"nativeEnabled":true}'
+BASELINE = M52 / 'recovery-room-production-05'
+BASELINE_SHA = '78c052aea963f1689b705ae1e14d274916ae1a1f7e81933390caf8d1a88f4699'
+DRIVER_SHA = '218246101949b35df2979011ce056419ff5718a24f2bcc8dd92f4224f7dbf18f'
+HARNESS_SHA = 'd52ef4300c7d472ee05884d7b4709f4abf80b3e6ff935b695a9ed986db021086'
+RUNNER_SHA = '7eca453b13480140da5f36bb33d2319739a927562ccafdbb61a8b20cdb5ae4d3'
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def read(path):
+    return json.loads(Path(path).read_text(encoding='utf-8-sig'))
+
+
+def save(path, value):
+    with Path(path).open('x', encoding='utf-8') as stream:
+        json.dump(value, stream, ensure_ascii=False, indent=2)
+
+
+def inventory(folder):
+    return {p.relative_to(folder).as_posix(): sha(p) for p in sorted(folder.rglob('*')) if p.is_file()}
+
+
+def installed():
+    sys.path.insert(0, str(ROOT / 'tools/validation'))
+    from run_security_terminals import installation
+    return installation()
+
+
+def product(path):
+    assert path.parent == M52 and path.is_dir()
+    meta, built = read(path/'prepared.json'), read(path/'compile.json')
+    assert meta['version'] in ('0.2.24-roomfix5', '0.2.24-roomperf1')
+    assert built['compiled'] and built['sources_unchanged'] and built['installation_unchanged']
+    assert built['installation_before'] == built['installation_after'] == meta['installation_before']
+    assert len(built['commands']) == 2 and all(r['exit_code'] == 0 for r in built['commands'])
+    assert sha(path/'RConnectMod.swf') == built['candidate_sha256']
+    assert inventory(path/'src') == meta['source'] and inventory(path/'tools') == meta['inputs']
+    if meta['version'] == '0.2.24-roomfix5':
+        assert path == BASELINE and built['candidate_sha256'] == BASELINE_SHA
+    else:
+        assert meta['base_sha256'] == BASELINE_SHA
+        manifest = HERE.parent/'recovery-room-perf-current/source-manifest.json'
+        assert meta['overlay_manifest_sha256'] == sha(manifest)
+        expected = dict(read(BASELINE/'prepared.json')['source'])
+        expected.update({n: row['candidate_sha256'] for n, row in read(manifest)['changes'].items()})
+        assert expected == meta['source']
+    return meta, built
+
+
+def inputs(path):
+    meta, built = product(path)
+    driver = read(DRIVER/'prepared.json')
+    assert driver['compiled'] and driver['external'] and driver['ordinary_timing_byte_exact']
+    assert len(driver['commands']) == 1 and driver['commands'][0]['exit_code'] == 0
+    for name, digest in driver['inputs'].items():
+        assert sha(name) == digest, name
+    for name, digest in driver['files'].items():
+        assert sha(DRIVER/name) == digest, name
+    assert sha(DRIVER/'scene/EffectsDriver.swf') == DRIVER_SHA
+    assert sha(DRIVER/'scene/EffectsHarness.swf') == HARNESS_SHA
+    assert sha(RUNNER) == RUNNER_SHA and read(TELEMETRY) == {'enabled': True}
+    files = [Path(__file__), RUNNER, TELEMETRY, DRIVER/'prepared.json',
+             DRIVER/'scene/EffectsDriver.swf', DRIVER/'scene/EffectsHarness.swf',
+             path/'prepared.json', path/'compile.json', path/'RConnectMod.swf',
+             ROOT/'tools/validation/runtime_memory.py', ROOT/'tools/validation/air_test_inventory.py',
+             GAME/'mods/ModLoader/tools/test_registry.py', GAME/'mods/ModLoader/tools/air_test_process.py']
+    return meta, built, {str(p): sha(p) for p in files}
+
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument('--product', required=True, type=Path)
+    ap.add_argument('--output', type=Path)
+    ap.add_argument('--mode', choices=['solo', 'dual'], default='dual')
+    ap.add_argument('--check', action='store_true')
+    ap.add_argument('--registry-wait', type=float, default=900)
+    args = ap.parse_args()
+    path = (ROOT/args.product).resolve()
+    meta, built, pins = inputs(path)
+    before = installed()
+    assert len(before) == 22 and before['mods/Rconnect/release/RConnectMod.swf'] == BASELINE_SHA
+    assert before['pfe.swf'] == 'a796827173af7d6fab9885fb66ecc62182ab5335918a30c7cce4c44914a238b7'
+    assert args.registry_wait >= 0
+    if args.check:
+        assert args.output is None
+        print(json.dumps(dict(checked=True, version=meta['version'], driver=DRIVER_SHA, air_started=False)))
+        return 0
+    assert args.output is not None
+    out = (ROOT/args.output).resolve()
+    assert out.parent == M52 and not out.exists()
+    (out/'driver').mkdir(parents=True)
+    for name in ('EffectsDriver.swf', 'EffectsHarness.swf'):
+        shutil.copyfile(DRIVER/'scene'/name, out/'driver'/name)
+    digest = built['candidate_sha256']
+    save(out/'driver/driver-input.json', dict(candidate_sha256=digest, driver_sha256=DRIVER_SHA,
+        source_manifest_sha256=sha(DRIVER/'prepared.json'), identical_external_driver=True))
+    command = [str(RUNNER), '--candidate', str(path/'RConnectMod.swf'), '--effects', '--effects-driver', str(out/'driver'),
+               '--all-mods', '--land', 'rbl', '--seconds', '600', '--expected-version', meta['version'],
+               '--private-desktop', '--defer-visible', '--wait-host-world', '--require-exclusive-air',
+               '--registry-wait', str(args.registry_wait)]
+    if args.mode == 'solo':
+        command.append('--solo')
+    save(out/'intent.json', dict(command=command, inputs=pins, installation=before,
+        historical_driver_installation=read(DRIVER/'prepared.json')['installation_before'],
+        historical_product_installation=meta['installation_before'], mode=args.mode,
+        candidate_sha256=digest, performance_qualified=False, installed=False))
+    result = dict(passed=False, run=None, performance_qualified=False, installed=False,
+                  mode=args.mode, version=meta['version'], candidate_sha256=digest)
+    sys.path.insert(0, str(ROOT/'tools'))
+    spec = importlib.util.spec_from_file_location('current_room_shared_runner', RUNNER)
+    runner = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(runner)
+    original_run, old_argv = runner.run_registered, sys.argv
+    run_path, settings, extra_errors = None, {}, []
+    roles = ['host'] if args.mode == 'solo' else ['host', 'join']
+
+    def registered(native, parser, output, record):
+        nonlocal run_path
+        run_path = output.resolve()
+        result['run'] = str(run_path)
+        assert run_path.parent == ROOT/'build/cooperation' and re.fullmatch('[0-9a-f]{10}', run_path.name)
+        assert native.private_desktop and native.require_exclusive_air and not native.keep_copies
+        assert native.all_mods and native.effects and native.solo == (args.mode == 'solo')
+        launch, stopped = record.before_launch, record.child_stopped
+
+        def before_launch(detail):
+            if not settings:
+                assert not record.children and not record.launching
+                assert installed() == before and inputs(path)[2] == pins
+                native_input = read(output/'input.json')
+                assert native_input['minimum_start_gib'] == (3 if args.mode == 'solo' else 6)
+                for role in roles:
+                    descriptor = output/role/'coop.xml'
+                    xml = ET.fromstring(descriptor.read_bytes())
+                    ns = '{http://ns.adobe.com/air/application/30.0}'
+                    appid = 'pfe-modsettings-rconnect-coop-'+role+'-'+output.name
+                    assert xml.findtext(ns+'id') == appid and xml.findtext(ns+'initialWindow/'+ns+'content') == 'pfe.swf'
+                    assert sha(descriptor) == native_input['descriptors'][role]
+                    app_root = Path(os.environ['APPDATA']).resolve()/appid
+                    preference = app_root/'Local Store/ContinuousScene.preferences.json'
+                    telemetry = output/role/'mods/ModLoader/release/telemetry.json'
+                    assert preference.resolve().is_relative_to(app_root.resolve()) and not preference.exists()
+                    assert telemetry.resolve().is_relative_to((output/role).resolve()) and not telemetry.exists()
+                    settings[role] = dict(app_id=appid, preference=str(preference), telemetry=str(telemetry))
+                for row in settings.values():
+                    preference, telemetry = Path(row['preference']), Path(row['telemetry'])
+                    preference.parent.mkdir(parents=True, exist_ok=True)
+                    with preference.open('xb') as stream: stream.write(PREFERENCE)
+                    with telemetry.open('xb') as stream: stream.write(TELEMETRY.read_bytes())
+                    row.update(preference_sha256=sha(preference), telemetry_sha256=sha(telemetry))
+                save(out/'supplemental-input.json', dict(roles=settings, before_any_air=True,
+                    original_input_sha256=sha(output/'input.json'), telemetry_source_sha256=sha(TELEMETRY)))
+            launch(detail)
+
+        def after_stopped():
+            try:
+                if settings:
+                    checked = {}
+                    for role, row in settings.items():
+                        checked[role] = dict(preference_sha256=sha(row['preference']), telemetry_sha256=sha(row['telemetry']))
+                        assert Path(row['preference']).read_bytes() == PREFERENCE
+                        assert checked[role]['telemetry_sha256'] == row['telemetry_sha256'] == sha(TELEMETRY)
+                    save(out/'supplemental-after.json', dict(roles=checked, unchanged=True, before_copy_cleanup=True))
+            except Exception as error:
+                extra_errors.append(repr(error))
+            finally:
+                stopped()
+
+        record.before_launch, record.child_stopped = before_launch, after_stopped
+        try:
+            return original_run(native, parser, output, record)
+        finally:
+            record.before_launch, record.child_stopped = launch, stopped
+
+    class Tee:
+        def __init__(self, log, console): self.log, self.console = log, console
+        def write(self, text): self.log.write(text); self.console.write(text); return len(text)
+        def flush(self): self.log.flush(); self.console.flush()
+
+    runner.run_registered, sys.argv = registered, command
+    try:
+        with (out/'runner.log').open('x', encoding='utf-8') as log, contextlib.redirect_stdout(Tee(log, sys.stdout)):
+            try: runner.main()
+            except SystemExit as error: result['exit_code'] = error.code if type(error.code) is int else 1
+        assert result.get('exit_code') == 0, 'Shared runner did not pass'
+        assert run_path is not None and read(run_path/'registry-result.json')['passed'] is True
+        native = read(run_path/'run.json')
+        assert native['sha256'] == digest and native['solo'] == (args.mode == 'solo')
+        assert sha(run_path/'input.json') == native['input_manifest_sha256']
+        assert set(native['inputs']) == set(roles) and not extra_errors
+        assert read(out/'supplemental-after.json')['unchanged'] is True
+        result['roles'] = {}
+        installed_lower = {k.lower(): v for k, v in before.items()}
+        for role in roles:
+            values = native['inputs'][role]
+            assert values['game'] == before['pfe.swf'] and values['production'] == digest
+            assert values['driver'] == DRIVER_SHA and values['harness'] == HARNESS_SHA
+            for name, value in values['modules'].items():
+                name = name.replace('\\', '/').lower()
+                assert value == (HARNESS_SHA if name == 'mods/rconnect/release/rconnectmod.swf' else installed_lower[name])
+            for name, value in values.get('mod_assets', {}).items():
+                assert value == installed_lower[name.replace('\\', '/').lower()]
+            text = (run_path/(role+'.log')).read_text(encoding='utf-8-sig')
+            rows = [json.loads(line.split('TRAVEL RESULT ', 1)[1]) for line in text.splitlines() if line.startswith('TRAVEL RESULT ')]
+            assert [r['round'] for r in rows] == [0, 1, 2]
+            assert all(r['merged'] is True and r['target'] == ('rbl' if r['round'] == 1 else 'random_mane') for r in rows)
+            assert all(r['actualMerged'] is True and r['seed'] == 1380142925 and r['width'] > 48 for r in (rows[0], rows[2]))
+            assert rows[1]['actualMerged'] is False and rows[1]['width'] > 0 and rows[1]['height'] > 0
+            assert 'COOP EFFECTS DONE travel-timing '+role in text and 'v'+meta['version']+' initialized' in text
+            assert not re.search(r'^COOP FAIL |handoff timed out|TRAVEL CONFIG ERROR', text, re.M)
+            result['roles'][role] = dict(rows=rows, checks=len(re.findall(r'^COOP PASS ', text, re.M)), log_sha256=sha(run_path/(role+'.log')))
+        memory = read(run_path/'memory-timeline.json')
+        assert not memory['stopped_for_pressure'] and not memory['stopped_for_overlap']
+        assert memory['minimum_commit_bytes'] == 512*1024**2 and not read(run_path/'air-before.json')
+        assert all(not (run_path/name).exists() for name in ('host', 'join', 'frozen'))
+        result.update(passed=True, run_sha256=sha(run_path/'run.json'), input_sha256=sha(run_path/'input.json'))
+    except BaseException as error:
+        result.update(error=repr(error), traceback=traceback.format_exc())
+    finally:
+        sys.argv, runner.run_registered = old_argv, original_run
+        result['supplemental_errors'] = extra_errors
+        try:
+            assert installed() == before and inputs(path)[2] == pins
+            result.update(installation_unchanged=True, inputs_unchanged=True)
+        except Exception as error:
+            result.update(passed=False, final_error=repr(error))
+        save(out/'result.json', result)
+    print(json.dumps({k: result.get(k) for k in ('passed', 'run', 'version', 'error')}, ensure_ascii=False))
+    return 0 if result['passed'] else 1
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())

@@ -1,0 +1,54 @@
+--- prod05/rconnect/game/GameBridge.as
++++ allocation/rconnect/game/GameBridge.as
+@@ -2996,23 +2996,8 @@
+          if(_boxTrackLoc!==loc) {
+             _boxTrackLoc=loc;boxTrackReset();_istExpectO=new Dictionary();_istPending=new Dictionary();
+          }
+-         var byId:Object = {};
+          // M25：本轮已消费的 Box（同 id 就近匹配用）
+          var consumed:Dictionary = new Dictionary();
+-         try
+-         {
+-            for each(var b:Object in objs as Array)
+-            {
+-               var id:String = String(probe(b, "id"));
+-               if(id != null && id.length > 0 && byId[id] == undefined)
+-               {
+-                  byId[id] = b;
+-               }
+-            }
+-         }
+-         catch(err:*)
+-         {
+-         }
+          var synced:int = 0;
+          for each(var h:Object in list)
+          {
+--- prod05/rconnect/game/RoomTerrainView.as
++++ allocation/rconnect/game/RoomTerrainView.as
+@@ -34,6 +34,16 @@
+          if(a.length!=b.length)return false;
+          for(var i:int=0;i<a.length;i++)if(a[i]!==b[i])return false;
+          return true;
++      }
++      private static function sameTile(a:Array,t:Object):Boolean {
++         return a.length==28 && a[0]===t.X && a[1]===t.Y && a[2]===t.phis
++            && a[3]===t.shelf && a[4]===t.phX1 && a[5]===t.phX2 && a[6]===t.phY1
++            && a[7]===t.phY2 && a[8]===t.zForm && a[9]===t.diagon && a[10]===t.stair
++            && a[11]===t.water && a[12]===t.vid && a[13]===t.vid2 && a[14]===t.front
++            && a[15]===t.back && a[16]===t.zad && a[17]===t.fRear && a[18]===t.vRear
++            && a[19]===t.v2Rear && a[20]===t.opac && a[21]===t.mat && a[22]===t.kontur
++            && a[23]===t.konturRot && a[24]===t.floor && a[25]===t.place && a[26]===t.fake
++            && a[27]===(t.door!=null);
+       }
+       private static function colors(loc:Object):Array {
+          var out:Array=[];
+@@ -74,7 +84,7 @@
+             i=0;
+             for(var x:int=0;x<width;x++)for(var y:int=0;y<height;y++) {
+                var tile:Tile=loc.space[x][y] as Tile;
+-               if(tile==null || !same(rows[i++],tileInputs(tile)))return false;
++               if(tile==null || !sameTile(rows[i++],tile))return false;
+             }
+             return true;
+          } catch(e:*) {return false;}

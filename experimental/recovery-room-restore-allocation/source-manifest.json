@@ -1,0 +1,34 @@
+{
+  "kind": "room-restore-allocation-source-proposal",
+  "base_sha256": "78c052aea963f1689b705ae1e14d274916ae1a1f7e81933390caf8d1a88f4699",
+  "input_sources": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-room-production-05\\prepared.json": "acdc405a6e214531831cbb532178337aaa7fb9f154a91a1f8b543a6480dd6c58",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-room-production-05\\compile.json": "68fcca0717bd9800725822211650c6fd74787a98a839432b5ed0216cb0ae48d4",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-room-production-05\\RConnectMod.swf": "78c052aea963f1689b705ae1e14d274916ae1a1f7e81933390caf8d1a88f4699",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-room-production-05\\src\\rconnect\\game\\GameBridge.as": "f7016bfd096ca3c88ea1214733117758b1998b579ec6f3ca9fc9332b605011a9",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-room-production-05\\src\\rconnect\\game\\RoomTerrainView.as": "a2eb59b8536414d26daa39a82c71c414009c5d4b29a7a24539e025d1b852877f",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-terrain-observed-reuse\\components\\fe\\loc\\Tile.as": "a5267e18c3479c50d8b4eb5881690566e297d168bf3191fd36fb281e513c370a",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\tools\\validation\\run_recovery_component.py": "9952aeeaa37f6eead636cceff9f25fabff3045671d3c4cbb60c326909d1e572d"
+  },
+  "outputs": {
+    "components/fe/loc/Tile.as": "d600fb7b47ea761b4ddecfbc7dd4f7ae63e17a1bdf7c96019c9c06f4d16da338",
+    "components/rconnect/game/ControlRoomTerrainView.as": "9370e1f9d4433a9c34098aa5e44add52cf262bcae8aee4df5dd0b66e9f3638e5",
+    "components/rconnect/game/RoomTerrainView.as": "7cabf8968dc87a992b87da169f5a33f51b1e02eecddc94d7293948debc1332c9",
+    "components/rconnect/test/CountingRoom.as": "531b760f89829cc4f38372fe9a25b7fc02ac38d55ddff57ffb79af3eed26fc64",
+    "components/RoomRestoreAllocationChecks.as": "281f77104a1c11f1cc8fbe8622c203331e3228069a4f2011b00cd6e1deb9736e",
+    "prepare.py": "5206bb39a774c1b5856791b9b849deb869f77e1646cc9efef55fc0ef6d257fe3",
+    "README.md": "f54a4e6b156e16ebf10eb763831ec06528ff91e1276c3aeacceabe0d1d9a4525",
+    "source.diff": "d9981d3764f97515ef5e8ac549678c5dfef38ac665882da89117fbb23fb4dede",
+    "src/rconnect/game/GameBridge.as": "88ad08736ea5e8097b1bd6062084cca6935498580d7085a502616417850755dd",
+    "src/rconnect/game/RoomTerrainView.as": "7cabf8968dc87a992b87da169f5a33f51b1e02eecddc94d7293948debc1332c9"
+  },
+  "production_overlays": 2,
+  "expected_assertions": 55,
+  "actual_complete_old_new_terrain_view": true,
+  "gamebridge_scan_source_proof_only": true,
+  "fixture_front_type_relaxed": true,
+  "compiled": false,
+  "air_started": false,
+  "installed": false,
+  "performance_qualified": false
+}
