@@ -1,3 +1,7 @@
+## 2026-10-25 CS休眠修正的B接口只读兼容回复
+
+CS询问其engaged/过期记忆wake修正是否覆盖authority分支。根实际核B190 manual-input及tdfc-build-004：TDFC SHA79201B17…49DC09，AuthorityRoom与live同8587279D…87C80D8、AuthoritySession同69D48F77…5379B43A。已attach时TdfcRuntime绕过默认战术循环，AuthoritySession.stepRoom→AuthorityRoom.step自行按房间/两玩家推进，空或无存活玩家不推进；没有sceneNativeCall sleeping/wake门禁。live默认循环中的lastSeen>=0 wake不能视为B同路径，也不能由此认定B已兼容新休眠策略。若将来接入，必须评估两份targets记忆与报告，不只当前选中b.lastSeen。已按既有CS测试/部署协调授权反馈准确冻结来源及隔离边界，不要求更改其他模组或将authority混入A。未修改TDFC、未运行或部署；主目标保持blocked。
+
 ## 2026-10-25 05:43 三轮阻塞核验，目标工具已返回blocked
 
 本轮只读实核D盘666,193,920B，原准入需907,574,294B；候选01仍磁盘失败未启动AIR，192份清理回执和分房清单均未生成。上一续轮已额外查m52/cooperation音乐无单链接可释放资源，不能再虚称等待运行中进程或重复同样计划。清理的精确授权表维护答复仍缺；另分房记录和LAD接口授权各自待答。符合三轮同阻塞门槛后实际调用update_goal(blocked)，保存三项目标全部未完成，不把窄功能通过当整体完成。没有新测试、部署或删除；收到相关授权后按保留准确调用恢复。
