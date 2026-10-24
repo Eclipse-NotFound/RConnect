@@ -1,0 +1,11 @@
+--- selfecho/adapted-run.py.txt
++++ jumppose-held/adapted-run.py.txt
+@@ -36,7 +36,7 @@
+   assert all(sha(n)==h for n,h in pins.items())
+  if a.check:
+   assert a.output is None;print(json.dumps(dict(checked=True,case=a.case,air_started=False)));return 0
+- assert a.output is not None;out=(ROOT/a.output).resolve();assert out.parent==M52 and out.name.startswith('goal-self-echo-native-') and not out.exists()
++ assert a.output is not None;out=(ROOT/a.output).resolve();assert out.parent==M52 and out.name.startswith('goal-jump-pose-held-') and not out.exists()
+  (out/'driver').mkdir(parents=True)
+  for n in ('EffectsDriver.swf','EffectsHarness.swf'):shutil.copyfile(drivers/a.case/n,out/'driver'/n)
+  save(out/'driver/driver-input.json',dict(candidate_sha256=candidate,driver_sha256=expected,

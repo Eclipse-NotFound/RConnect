@@ -1,0 +1,26 @@
+{
+  "kind": "jump-pose-held-existing-driver-v1",
+  "run_replacements": 1,
+  "files": {
+    "adapted-run.py.txt": "0cf05763866607c7cb853ac8c05a5caa31339194fd0fe5630f5f8960f01fba0a",
+    "prepare.py": "a39c36f7a8df838c18bc377d19d27173e234d034cf6297d51af0a9d022e75bfb",
+    "README.md": "fdf0757d4848466e619a710d7a383cb5d5dacc27ed959ef717b80bac6bf59775",
+    "run.py": "0a18bbef761340e78e37cfe16a514e33d3522240a403ed7ffec187ddc2e101e6",
+    "source.diff": "4b9e03b196c517ff4b02bf99b39fd7ae2a9270e0a3fe475907cf532edb2d82e7"
+  },
+  "inputs": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-self-echo-native\\run.py": "8f0ee63334966456c618aee14f862d3f94ecb75baf8bc65636f3b01f95097c48",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-self-echo-native\\source-manifest.json": "cfc69dd83d953cf28f732965852bc18f73ed5dfafd469c9556e8caa6d59c7f4d",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-jump-pose-product\\build.py": "ff10e4e5351b559264c58de389068ba9f4e386508afbab8c646c181c08cc7b77",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-jump-pose-product\\source-manifest.json": "394611c2b205e18f307f9586ace201fb30a898f3c47d04ccfe341753d30b23ec"
+  },
+  "candidate_build": {
+    "prepared.json": "bb3c119487bf76d2267b2394324f427ac042f3893735a654a297792ae17de4f0",
+    "compile.json": "2bdc27070ce01eaf9275646d354561b530210c7a22e0a75be2516a1679404750",
+    "RConnectMod.swf": "52d4723c1cf43e9ed2949c2e20debf7beda0b6068767c0bbaf83e83eb6a56e88"
+  },
+  "compiled": false,
+  "air_started": false,
+  "performanceQualified": false,
+  "smoothnessQualified": false
+}
