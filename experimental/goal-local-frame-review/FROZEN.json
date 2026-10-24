@@ -1,0 +1,28 @@
+{
+  "frozen": true,
+  "files": {
+    "adapted-build.py.txt": "c1ed728c9921434115bc3887df888a6dde85ee9d6c6259605bd6f7f0f417eae9",
+    "analyze.py": "14034ceae171b0d3c86f4a6ac2a328b8b1198840f572156f34bf3e0be1ee64ff",
+    "build.py": "27f431b4f94874444aebcfb1dd400f6a6abe7f1b9ed33a421e4118bcf8af70fa",
+    "prepare.py": "68c3a4f374872064125e8019731df35800a77f621a4ce149b8be0af3bd708405",
+    "README.md": "ca9b36397bc0dd8a846a20f6cfe9e7000dba105c07f3ac62579f8c31f4e12a5c",
+    "run.py": "055f405e72590ddccc740dde6ee9e35926b3e5ba542b0f99741561fd603bebae",
+    "source-manifest.json": "e1c3e4f0bbe3381229939fd4cd4a8046d57ee472e5ac13ed972c24d0dd722749",
+    "source.diff": "1013d8ab542fdab96b2c76cafa5c2e0d6d49c69e43ec6dceb41ccb200cc18924",
+    "tests/NativeJumpNetworkTestDoc.as": "69c45eb85e1f7a77c4ca16dabbfd1cc82aee0cc60823ffc02722eb9bdabc3349",
+    "tests/NativeMotionProbe.as": "29b35c80b32cef5ed870e06609b767256c4507292629ca6e63c2ab85cbb5ba78"
+  },
+  "static_checks": [
+    "Exact original native-jump bytes",
+    "Collector methods differ only in authorized selection expression",
+    "Python AST and build --check passed",
+    "run --help only native-jump",
+    "Synthetic CPU qualification accepts valid six windows and rejects zero CPU/early selection/still-running/wrong AppID/sampler error"
+  ],
+  "compiled": false,
+  "air_started": false,
+  "performanceQualified": false,
+  "smoothnessQualified": false,
+  "write_boundary": "Only experimental/goal-local-frame-review",
+  "further_source_changes": "Require explicit root authorization; review comments alone do not unfreeze"
+}

@@ -37,8 +37,9 @@ A 为普通入口的双人联机；B 独立架构本轮不碰。根会话 `01a08
 
 ## 4. 最新实测与卡点
 
+- **10月25日01:30普通双人与CPU已完成**：ordinary-dual-02 / 7eb70d4ed0 原35项通过，主7.488/2.301/3.563秒，加7.519/2.320/3.726秒；三程同房同入口距离0，加入恢复仅67/81/77ms，长段在原生exit20→19（含其间模组工作），不是本轮普通房握手多耗数秒。不同solo人口/淡出流程，不能据此给单人等速资格。local-frame-cpu-native-01 / c6b41f812f原双6/6和六窗诊断通过；主113、加131个样本，pre-render/render分别77/68。加入23样本在ExplorationSync.receive，其中22进RV合并，全部集中第6窗；不是全程稳定占比。帧渲染样本无AS归属，不能指认某模组或“两遍GPU”。无新增部署，所有本轮自有AIR已回收。关闭LAD/RV/CS的同驱动跳跃薄入口在准备。
 - **10月25日三项目标接续**：正式仍78C/A796。实际用户帧记录与最近一次初始化日志已只读冻结于 `build/m52/goal-three-issues-user-session-01`；两端最后版本roomfix5。会话先合并图term2，后普通图term4，不能整段归一种场景；普通term4宿主记录7072ms、加入恢复1271ms。帧记录两个300窗口仅约51秒重叠，前后台差异明显，不能整体对比当同负载，更不能以Y位移证明跳跃。
-- **RemoteMotion最小候选已编译**：`goal-remote-motion-current-product-01`，89F1B923/195230B/0.2.24-motionclock1，仅两函数及版本号，其余79类不变，两Java与源/安装复验通过，未部署。旧类准确对应历史31/6，新类本轮37组件全部通过；真实双人运动尚未跑。本机gg不走该插值，本机掉帧需独立测量，不声称一并修复。
+- **RemoteMotion最小候选已实际否决**：`goal-remote-motion-current-product-01`，89F1B923/0.2.24-motionclock1，37组件通过但真实跳跃99eea9cf09出现追播旧轨迹，严格空中移动的加入侧重复2/152→6/149，不能部署。原6/6只是动作功能通过。审查与缺失的累计校准回放见 `experimental/goal-motion-clock-review`；v2独立候选正在准备，冻结旧源不改。本机gg不走该插值，本机掉帧另测。
 - **玩家已退出后恢复测试**：00:17两B190试玩仍在，随后B会话收到用户保存退出确认，根提升CIM核实退出；不重复提问。沙箱内进程空数组曾是假阴性，运行器在提升上下文核独占。新37组件全部通过；普通solo92ec33a932完成11检查，10.431/5.551/6.897s、首程exit20→19最大6587ms，源/输入不变，无压力或重叠停止。不能与旧合并图混比。普通dual232889205c排到后无其他AIR但仅5.83GiB，未启动，失败保留；3/6GiB门槛不变。
 - **已安装版**78C/roomfix5 的当前全14组合三程双人7cadcc8267与单人fc4111c750均通过；双侧房间/入口/控制一致，但加入大图首入15.068、重访8.208秒，单人6.642/3.101，未达目标。原生“加载中”素材取代自定义交接UI；本轮没有再部署相同字节。
 - **新首绘桥已完成并实跑**：6D/roomload1 + FBA27宿主 + Sand003（3E220）。原驱动384e92463c双41项通过，主10.152/2.545/5.588秒、加10.153/2.423/5.772；两次真实constructed/activated同票据，三程入口差1/0/1px。首入/重访总耗时明显减少，但主侧自身慢了，仍未达到单人速度，未部署。
@@ -63,8 +64,9 @@ A 为普通入口的双人联机；B 独立架构本轮不碰。根会话 `01a08
 ## 6. 下一步入口
 
 0. 当前先执行三项目标入口：`experimental/goal-ordinary-loading`（普通三程）、`goal-three-issues-native`（原生跳跃/抓取测量）、`goal-remote-motion-current`（已冻/已编最小运动候选）。原两B玩家窗口已退出；37组件和普通solo已完成，dual232889205c因5.83GiB未启动，下一新输出仍用原共享队列/内存/独占门槛。详细边界见three-performance-goals记录，不把下面历史合并图路径当成唯一目标。
-   最新：轻量组合 `goal-ordinary-reduced-solo-02` / 7ad109f075实际通过14旅行检查和11模组真实加载核验，8.616/3.968/4.941s；出生/单位数不同，不能量化单模组收益。01为AIR前选择器PID历史兼容失败，原证据保留。之后内存恢复7.3GiB，原生跳跃基线74932502cf已排队等已登记RV测试，尚无结果；不继续沿用低内存结论。
-   测量驱动实际成功目录为 `build/m52/goal-three-issues-native-drivers-02`（跳跃9EE16FA6、抓取FEF72AB4）；01的Flex返回分析编译失败保留。02仅改focused的默认return位置，两Java成功、四种78C/89F1×场景准入通过，未AIR。不要按README首次示例误用01。普通入口只读准入通过，可独立solo/dual。
+   最新：轻量组合 `goal-ordinary-reduced-solo-02` / 7ad109f075实际通过14旅行检查和11模组真实加载核验，8.616/3.968/4.941s；出生/单位数不同，不能量化单模组收益。跳跃基线74932502cf和候选99eea9cf09均已完成动作检查，基线本机主20.20/加18.37fps；全后台、不授前台体验。候选实际追旧轨迹已否决。念力基线ad378fee3a已完成四轮但主侧观察加入抓箱延迟170ms超过原160ms门槛；失败保留，独立failed-measurement-diagnostics保留完整测量而不改判。两侧念力阶段约14–16fps，需CPU定位。
+   测量驱动实际成功目录为 `build/m52/goal-three-issues-native-drivers-02`（跳跃9EE16FA6、抓取FEF72AB4）；01的Flex返回分析编译失败保留。不要按README首次示例误用01。CPU诊断驱动已编 `goal-local-frame-cpu-drivers-01`（13A5039C），真实运行及普通dual02均完成见§4。第6窗枚举耗122ms，会扰动后续帧，CPU轮不授净帧率资格。下一步原驱动轻量组合、运动v2及真实原生加载UI候选，不重复跑已否决89F1的抓取。
+   加载UI核查补正：78C仍是独立黑底+原生素材副本，并未真正只用原版实例；此前“原生加载素材”不等于删除额外UI。`goal-ordinary-loading-review/REVIEW.md`列窄World生命周期桥和普通门边界；`goal-native-loading-ui`独立源码候选在准备，不能停t_exit或反复setLoadScreen。正式仍78C/A796，未新增部署。
 1. 正式仍78C/A796/CEC6，不重复部署或把未达标首绘桥替换安装。加载主线是首次可见区域生成/同帧视觉工作。准确Camera.calc在sceneTick前更新位置，跨房/急移重置，grant先place再allowPaint；正常路径不支持先画旧视口假说。六层backobjs重复查询存在但耗时未量化，不能据此另造微优化候选。下一有意义证据是同最终入口/视口的配对或有界实际首绘成本，不重复排查ACK/t_exit。
 2. 准确首绘产物：build/m52/recovery-room-first-raster-product-01（6D）、recovery-room-first-raster-host-current-03（FBA27）、Sandevistan/build/out/a-travel-hold-20261022-003（3E220）。循环候选loop-product-01（FBFB）已经原驱动验证但无整体收益，勿盲目重跑。两组新solo也已完成，不能当作仍在跑。
 3. 实机复用experimental/recovery-room-current-comparison/run.py，显式--product/--raster-host/--sandy-bridge/--mode；默认原scene-driver02与原run_coop_regression.py（7ECA）不改门槛。--diagnostic-driver只取阶段证据。每次新输出目录，原失败保留，当前输入变化必须准确记录。

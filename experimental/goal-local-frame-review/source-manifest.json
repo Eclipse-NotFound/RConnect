@@ -1,0 +1,17 @@
+{
+  "kind": "ordinary-native-jump-cpu-v1",
+  "prepare_sha256": "68c3a4f374872064125e8019731df35800a77f621a4ce149b8be0af3bd708405",
+  "diff_sha256": "1013d8ab542fdab96b2c76cafa5c2e0d6d49c69e43ec6dceb41ccb200cc18924",
+  "original": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-three-issues-native\\tests\\NativeMotionProbe.as": "4ca25c80d0ebeda696f02ef842b56ea691fdf6dd8c78736e5c18e65b2712a394",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-three-issues-native\\tests\\NativeJumpNetworkTestDoc.as": "69c45eb85e1f7a77c4ca16dabbfd1cc82aee0cc60823ffc02722eb9bdabc3349",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-after-render-sampler\\tests\\SustainedDensityTestDoc.as": "d8a0cc014ace80377fe042b056efa4da5cdfd2e90ec700ff0ba27092126c5b06"
+  },
+  "sources": {
+    "NativeJumpNetworkTestDoc.as": "69c45eb85e1f7a77c4ca16dabbfd1cc82aee0cc60823ffc02722eb9bdabc3349",
+    "NativeMotionProbe.as": "29b35c80b32cef5ed870e06609b767256c4507292629ca6e63c2ab85cbb5ba78"
+  },
+  "compiled": false,
+  "air_started": false,
+  "performanceQualified": false
+}

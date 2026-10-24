@@ -1,0 +1,387 @@
+{
+  "baseline": {
+    "run": "74932502cf",
+    "result_sha256": "df0e7474d16721746db98d85c10c36bab1538cf3dc3984eca3e4005b0b225343",
+    "roles": {
+      "host": {
+        "raw_sha256": "92cfb26aeb5e3e48271e23c5f7499c0f166c332af4c065979e8f5afb60d2b352",
+        "checks": 6,
+        "enter": {
+          "count": 363,
+          "mean": 49.509641873278234,
+          "p50": 47.0,
+          "p95": 72.0,
+          "p99": 96.0,
+          "maximum": 119.0,
+          "over50": 138,
+          "over100": 1,
+          "over200": 0
+        },
+        "render": {
+          "count": 364,
+          "mean": 49.47527472527472,
+          "p50": 46.0,
+          "p95": 69.0,
+          "p99": 95.0,
+          "maximum": 106.0,
+          "over50": 145,
+          "over100": 2,
+          "over200": 0
+        },
+        "fps": 20.19808591141776,
+        "foreground_intervals": 0,
+        "packets": 236,
+        "distinct_stamps": 236,
+        "distinct_arrivals": {
+          "count": 235,
+          "mean": 76.1063829787234,
+          "p95": 130,
+          "maximum": 198
+        },
+        "calibration_minima": [
+          {
+            "at": 78,
+            "offset": 37875,
+            "improvement": 0
+          },
+          {
+            "at": 116,
+            "offset": 37857,
+            "improvement": 18
+          },
+          {
+            "at": 681,
+            "offset": 37853,
+            "improvement": 4
+          },
+          {
+            "at": 16383,
+            "offset": 37851,
+            "improvement": 2
+          }
+        ],
+        "air_motion": {
+          "filter": "Both samples airborne, vy<620 on floor640, same-sign |dy|>=3, no die pose",
+          "pairs": 160,
+          "repeated_pairs": 0,
+          "repeated_ms": 0,
+          "events": [],
+          "qualification": false
+        },
+        "old_pose_count": 0,
+        "old_pose_last_ms": null,
+        "old_pose_first": null
+      },
+      "join": {
+        "raw_sha256": "ec4e3ea043aa6bf7f3d63fb5b2ca0349e667afd8a5ce53509d9541b2253425f5",
+        "checks": 6,
+        "enter": {
+          "count": 330,
+          "mean": 54.445454545454545,
+          "p50": 51.0,
+          "p95": 81.0,
+          "p99": 102.0,
+          "maximum": 170.0,
+          "over50": 179,
+          "over100": 4,
+          "over200": 0
+        },
+        "render": {
+          "count": 331,
+          "mean": 54.46525679758308,
+          "p50": 52.0,
+          "p95": 79.0,
+          "p99": 108.0,
+          "maximum": 180.0,
+          "over50": 183,
+          "over100": 6,
+          "over200": 0
+        },
+        "fps": 18.367006177992987,
+        "foreground_intervals": 0,
+        "packets": 479,
+        "distinct_stamps": 313,
+        "distinct_arrivals": {
+          "count": 312,
+          "mean": 57.592948717948715,
+          "p95": 142,
+          "maximum": 204
+        },
+        "calibration_minima": [
+          {
+            "at": 37,
+            "offset": -37763,
+            "improvement": 0
+          },
+          {
+            "at": 88,
+            "offset": -37789,
+            "improvement": 26
+          },
+          {
+            "at": 141,
+            "offset": -37819,
+            "improvement": 30
+          },
+          {
+            "at": 664,
+            "offset": -37820,
+            "improvement": 1
+          },
+          {
+            "at": 3445,
+            "offset": -37825,
+            "improvement": 5
+          },
+          {
+            "at": 15147,
+            "offset": -37826,
+            "improvement": 1
+          }
+        ],
+        "air_motion": {
+          "filter": "Both samples airborne, vy<620 on floor640, same-sign |dy|>=3, no die pose",
+          "pairs": 152,
+          "repeated_pairs": 2,
+          "repeated_ms": 88,
+          "events": [
+            {
+              "at": 1322,
+              "ms": 34,
+              "dy": 3
+            },
+            {
+              "at": 2894,
+              "ms": 54,
+              "dy": -4
+            }
+          ],
+          "qualification": false
+        },
+        "old_pose_count": 0,
+        "old_pose_last_ms": null,
+        "old_pose_first": null
+      }
+    },
+    "memory": {
+      "minimum_free_commit_gib": 4.701171875,
+      "stopped_for_pressure": false,
+      "stopped_for_overlap": false
+    }
+  },
+  "candidate": {
+    "run": "99eea9cf09",
+    "result_sha256": "aa40cde94daa9279fe26225af38634c19cd8be3fc67e7c857671e1c01dea9a45",
+    "roles": {
+      "host": {
+        "raw_sha256": "197242a2a28ef60baa86b637b2349558c3099c3db628b05cfe2094816198bf55",
+        "checks": 6,
+        "enter": {
+          "count": 352,
+          "mean": 51.01704545454545,
+          "p50": 48.0,
+          "p95": 74.0,
+          "p99": 97.0,
+          "maximum": 118.0,
+          "over50": 142,
+          "over100": 2,
+          "over200": 0
+        },
+        "render": {
+          "count": 353,
+          "mean": 51.08498583569405,
+          "p50": 48.0,
+          "p95": 74.0,
+          "p99": 89.0,
+          "maximum": 124.0,
+          "over50": 154,
+          "over100": 1,
+          "over200": 0
+        },
+        "fps": 19.601291903329994,
+        "foreground_intervals": 0,
+        "packets": 244,
+        "distinct_stamps": 244,
+        "distinct_arrivals": {
+          "count": 243,
+          "mean": 73.60493827160494,
+          "p95": 130,
+          "maximum": 244
+        },
+        "calibration_minima": [
+          {
+            "at": 143,
+            "offset": 36744,
+            "improvement": 0
+          },
+          {
+            "at": 198,
+            "offset": 36729,
+            "improvement": 15
+          },
+          {
+            "at": 278,
+            "offset": 36691,
+            "improvement": 38
+          }
+        ],
+        "air_motion": {
+          "filter": "Both samples airborne, vy<620 on floor640, same-sign |dy|>=3, no die pose",
+          "pairs": 173,
+          "repeated_pairs": 1,
+          "repeated_ms": 51,
+          "events": [
+            {
+              "at": 1684,
+              "ms": 51,
+              "dy": 4
+            }
+          ],
+          "qualification": false
+        },
+        "old_pose_count": 0,
+        "old_pose_last_ms": null,
+        "old_pose_first": null
+      },
+      "join": {
+        "raw_sha256": "7fad6120815962a499b0e48053d3d3c1787171506961e3cdeb1e9a7ad717c951",
+        "checks": 6,
+        "enter": {
+          "count": 343,
+          "mean": 52.28279883381924,
+          "p50": 49.0,
+          "p95": 70.0,
+          "p99": 102.0,
+          "maximum": 188.0,
+          "over50": 149,
+          "over100": 6,
+          "over200": 0
+        },
+        "render": {
+          "count": 344,
+          "mean": 52.36337209302326,
+          "p50": 50.0,
+          "p95": 73.0,
+          "p99": 108.0,
+          "maximum": 188.0,
+          "over50": 167,
+          "over100": 5,
+          "over200": 0
+        },
+        "fps": 19.126749567835834,
+        "foreground_intervals": 0,
+        "packets": 489,
+        "distinct_stamps": 307,
+        "distinct_arrivals": {
+          "count": 306,
+          "mean": 58.39542483660131,
+          "p95": 109,
+          "maximum": 184
+        },
+        "calibration_minima": [
+          {
+            "at": 133,
+            "offset": -36614,
+            "improvement": 0
+          },
+          {
+            "at": 185,
+            "offset": -36633,
+            "improvement": 19
+          },
+          {
+            "at": 305,
+            "offset": -36650,
+            "improvement": 17
+          },
+          {
+            "at": 992,
+            "offset": -36651,
+            "improvement": 1
+          },
+          {
+            "at": 1038,
+            "offset": -36653,
+            "improvement": 2
+          },
+          {
+            "at": 2053,
+            "offset": -36657,
+            "improvement": 4
+          },
+          {
+            "at": 8844,
+            "offset": -36661,
+            "improvement": 4
+          },
+          {
+            "at": 9352,
+            "offset": -36662,
+            "improvement": 1
+          }
+        ],
+        "air_motion": {
+          "filter": "Both samples airborne, vy<620 on floor640, same-sign |dy|>=3, no die pose",
+          "pairs": 149,
+          "repeated_pairs": 6,
+          "repeated_ms": 265,
+          "events": [
+            {
+              "at": 2465,
+              "ms": 43,
+              "dy": -11
+            },
+            {
+              "at": 2518,
+              "ms": 53,
+              "dy": -11
+            },
+            {
+              "at": 2610,
+              "ms": 42,
+              "dy": -9
+            },
+            {
+              "at": 2649,
+              "ms": 39,
+              "dy": -9
+            },
+            {
+              "at": 2738,
+              "ms": 44,
+              "dy": -7
+            },
+            {
+              "at": 2834,
+              "ms": 44,
+              "dy": -6
+            }
+          ],
+          "qualification": false
+        },
+        "old_pose_count": 11,
+        "old_pose_last_ms": 594,
+        "old_pose_first": {
+          "body": 40,
+          "shown": true,
+          "levit": 0,
+          "vy": 800,
+          "x": 841.8,
+          "stay": true,
+          "y": 800,
+          "visible": true,
+          "dx": 0,
+          "dy": 0,
+          "vx": 841.8,
+          "pose": "die"
+        }
+      }
+    },
+    "memory": {
+      "minimum_free_commit_gib": 6.137081146240234,
+      "stopped_for_pressure": false,
+      "stopped_for_overlap": false
+    }
+  },
+  "inference_boundary": "Observed replay of stale first-jump data; pre-window offset/cursor unobserved. A causal account for every millisecond is not proven."
+}
