@@ -1,0 +1,105 @@
+--- frozen/NativeJumpNetworkTestDoc.as
++++ measurement/NativeJumpNetworkTestDoc.as
+@@ -33,6 +33,7 @@
+       private var pulses:int=0,pulseEnd:int=0,grounded:int=0,direction:int=1;
+       private var localDone:Boolean=false,peerDone:Boolean=false;
+       private var pictures:int=0;
++      private var meter:NativeMotionProbe;
+       public function NativeJumpNetworkTestDoc() {
+          var app:String=NativeApplication.nativeApplication.applicationID;
+          if(app.indexOf("rconnect-coop-")<0)return;host=app.indexOf("-host-")>=0;
+@@ -86,7 +87,7 @@
+             width:area.width,clearance:160,removed:count,terrain:"unchanged"}));
+       }
+       private function setup(p:Object):void {
+-         area=p;phase="settle";at=getTimer();
++         area=p;phase="settle";at=getTimer();meter=new NativeMotionProbe(mod,host);
+          var b:Object=mod.game,g:Object=b.gg;
+          clearArena();
+          b.forceCloseOverlays();g.invulner=true;g.hp=g.maxhp;
+@@ -112,7 +113,7 @@
+          g.invulner=true;g.hp=g.maxhp;b.world.ctr.active=true;
+          var remote:Object=b.getRemoteGhost(host?1:0);
+          for each(var u:Object in b.loc.units)if(u!==g&&u!==remote)u.disabled=true;
+-         if(phase=="settle"&&frameAt-at>1500&&g.stay){phase="moving";at=frameAt;}
++         if(phase=="settle"&&frameAt-at>1500&&g.stay){phase="moving";at=frameAt;meter.begin("native-jump",0);}
+          if(phase!="moving")return;
+          var age:int=frameAt-at;
+          // First half: vertical jumps. Second half: native run plus jumps.
+@@ -133,8 +134,9 @@
+             body:p.vis.osn.body.currentFrame,sourceBody:g.vis.osn.body.currentFrame,
+             sourceLabel:g.vis.osn.currentLabel,sourceAnimOff:g.animOff});
+          previous=frameAt;
+-         if(pictures<2&&age>3000+pictures*6000)picture();
++         // Measurement variant: PNG capture stays in the frozen visual driver.
+          if(age<18000)return;
++         meter.end("measurement-complete",true);
+          var localMin:Number=Infinity,localMax:Number=-Infinity,peerMin:Number=Infinity,peerMax:Number=-Infinity;
+          var frames:Object={},sourceFrames:Object={},count:int=0,sourceCount:int=0,locked:int=0,stalls:int=0,last:Object;
+          for each(var r:Object in trace) {
+@@ -168,6 +170,7 @@
+       }
+       private function receive(e:NetMessageEvent):void {
+          var p:Object=e.data,snap:Object=host?p.snap:null;
++         if(meter!=null)meter.receive(p);
+          if(!host&&p.players is Array)for each(var row:Object in p.players)if(row.id==0)snap=row.snap;
+          if(phase=="moving"&&snap!=null)incoming.push({received:getTimer()-at,t:snap.sampleTime,x:snap.x,y:snap.y});
+          if(p.type!="native-jump-test")return;
+@@ -188,6 +191,7 @@
+          if(phase=="done")return;phase="done";timer.stop();
+          if(mod!=null){key(32,false);key(65,false);key(68,false);key(16,false);
+             mod.stage.removeEventListener(Event.ENTER_FRAME,before);mod.stage.removeEventListener(Event.RENDER,render);}
++         if(meter!=null)meter.close();
+          Log.d("COOP EFFECTS DONE native-jump "+(host?"host":"join"));
+       }
+    }
+--- frozen/FastHeldTestDoc.as
++++ measurement/FastHeldTestDoc.as
+@@ -42,6 +42,7 @@
+       private var reference:Array=[],renderTrace:Array=[],sourceOffset:Number=Infinity;
+       private var mercId:String="rconnect_tele_merc_4";
+       private var lifecycle:MovableGripLifecycle;
++      private var meter:NativeMotionProbe;
+       private var beforeNative:Object,heldOnce:Boolean=false,earlyCleared:Boolean=false,releaseArmed:Boolean=false;
+ 
+       public function FastHeldTestDoc() {
+@@ -174,6 +175,7 @@
+             && Math.abs(Number(target.Y)-Number(tile.phY1))<=(kind()=="loot"?1.01:.01);
+       }
+       private function start(n:int):void {
++         if(meter==null)meter=new NativeMotionProbe(mod,host);
+          releaseKey();round=n;phase="settle";at=getTimer();localDone=peerDone=false;
+          target=fixture(kind());if(target==null)throw new Error("missing "+kind());
+          var g:Object=mod.game.gg;if(g.teleObj!=null)g.dropTeleObj();
+@@ -278,6 +280,7 @@
+          if(keyCode>0 && now>keyUntil)releaseKey();
+          if(phase=="settle" && now-at>1600) {
+             phase="holding";at=now;inputAt=now;inputFrame=frame;startY=target.Y;
++            meter.begin("fast-held",round,target,kind()=="box"?boxKey:"");
+             if(holder())press(81); // native Q -> Ctr -> control -> actTele
+          }
+          if(phase=="holding" && !capturedStart && now-at>450) {
+@@ -299,6 +302,7 @@
+          // Movement-only reports must also relay a stationary release edge.
+          var releaseReady:Boolean=holder()?(motionAge()>5100 && Math.abs(target.dx)+Math.abs(target.dy)<.5):nativeReceiptAt>0;
+          if(phase=="holding" && releaseReady) {
++            meter.end("measurement-complete");
+             releaseAt=now;dropY=target.Y;
+             if(throwing())check(holder()?g.teleObj===target:target.levit>0,"throw is attempted during a real active native grab");
+             else {
+@@ -392,6 +396,7 @@
+       }
+       private function receive(e:NetMessageEvent):void {
+          var p:Object=e.data;
++         if(meter!=null)meter.receive(p);
+          if(p.type=="unit-grip" && p.op!="hold" && wire.length<8)wire.push({op:p.op,accept:p.accept,reason:p.reason,k:p.k});
+          if(kind()=="box" && !holder() && (phase=="holding" || phase=="released") && releaseReceiptAt==0) {
+             var positions:Array=host?(p.moved as Array):(p.objs as Array);
+@@ -509,6 +514,7 @@
+       private function finish():void {
+          if(phase=="done")return;releaseKey();phase="done";timer.stop();
+          if(mod!=null){mod.stage.removeEventListener(Event.ENTER_FRAME,before);mod.stage.removeEventListener(Event.ENTER_FRAME,after);mod.stage.removeEventListener(Event.RENDER,render);}
++         if(meter!=null)meter.close();
+          Log.d("COOP EFFECTS DONE tele-motion "+(host?"host":"join"));
+       }
+    }

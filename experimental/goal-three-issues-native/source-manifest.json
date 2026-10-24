@@ -1,0 +1,25 @@
+{
+  "kind": "native-motion-measurement-v1",
+  "original_prepared_sha256": "677fabc0191e7809d588d2ce3b64f02c8de119131e7db46b1624d314bfa22a5b",
+  "generator_sha256": "c630a7884371432f4548a86effb64577fcbf74968edcffda83849b63249474f4",
+  "diff_sha256": "eaee68ee12ddf0b296a0f7951120575f6072e5238729f4208f31cedeb6828e07",
+  "original": {
+    "NativeJumpNetworkTestDoc.as": "8f0ca6315cea9409ca06971039a79d56b63e1fb23184c94527c853ca7a6f30ed",
+    "FastHeldTestDoc.as": "0be443b3109d361b1216410116cbffc2e5612ed87a63b4ad198826afcad3bc62",
+    "RemoteMotionPauseRegression.as": "ae81d9a4db9886423c5291db9f0035bbaa19f43b7ec98efb0733e76902f73844",
+    "HeldMotionBufferRegression.as": "2652adee1af0eb53c96f58473690916d72c8195084649730381bd80d0805f86a",
+    "MovableGripLifecycle.as": "c260090ca8874f004353eed176343eca571bd799f09acdf346c310122154511b",
+    "fe/unit/TelekinesisProbe.as": "698623b8f5442544a7dc90e45105b138d2efc5617a671d92aef6a10d44e494e6"
+  },
+  "sources": {
+    "FastHeldTestDoc.as": "1aa59253ac6d20d0f8dea2a4374d605ebca85a8741bae7a8d3dca0821fb10ba5",
+    "HeldMotionBufferRegression.as": "2652adee1af0eb53c96f58473690916d72c8195084649730381bd80d0805f86a",
+    "MovableGripLifecycle.as": "c260090ca8874f004353eed176343eca571bd799f09acdf346c310122154511b",
+    "NativeJumpNetworkTestDoc.as": "69c45eb85e1f7a77c4ca16dabbfd1cc82aee0cc60823ffc02722eb9bdabc3349",
+    "NativeMotionProbe.as": "4ca25c80d0ebeda696f02ef842b56ea691fdf6dd8c78736e5c18e65b2712a394",
+    "RemoteMotionPauseRegression.as": "ae81d9a4db9886423c5291db9f0035bbaa19f43b7ec98efb0733e76902f73844",
+    "fe/unit/TelekinesisProbe.as": "698623b8f5442544a7dc90e45105b138d2efc5617a671d92aef6a10d44e494e6"
+  },
+  "runtimeValidated": false,
+  "smoothnessQualified": false
+}

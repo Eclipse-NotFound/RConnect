@@ -1,0 +1,34 @@
+{
+  "frozen": true,
+  "files": {
+    "analyze.py": "ac369d4d4a63607e737a550730df609c328be73792bd0e971468b2427b0c0508",
+    "build.py": "8b85f7e63f4b6f4294ef25eef928f21fa5949fb06f521b6e3eaf6d662dc94944",
+    "environment.json": "6f2a70bbe43d6729903a0ba2577d0687206442e684d74b787b96ee2cde8eebd0",
+    "generate.py": "c630a7884371432f4548a86effb64577fcbf74968edcffda83849b63249474f4",
+    "README.md": "cc31ff1e8b0d4fe7234313c545bfa163f4139681bab91ffeadc1cecc4f1ee7cc",
+    "run.py": "2dc340ab793e95fec7abab6d3061a789255d6b0afe861036b96ee654ac36ed12",
+    "source-manifest.json": "be49fc9002cd0761efb3f37e9e8cf19b28c110ed2fa5ae6fc1907db900d3df80",
+    "source.diff": "eaee68ee12ddf0b296a0f7951120575f6072e5238729f4208f31cedeb6828e07",
+    "tests/FastHeldTestDoc.as": "1aa59253ac6d20d0f8dea2a4374d605ebca85a8741bae7a8d3dca0821fb10ba5",
+    "tests/fe/unit/TelekinesisProbe.as": "698623b8f5442544a7dc90e45105b138d2efc5617a671d92aef6a10d44e494e6",
+    "tests/HeldMotionBufferRegression.as": "2652adee1af0eb53c96f58473690916d72c8195084649730381bd80d0805f86a",
+    "tests/MovableGripLifecycle.as": "c260090ca8874f004353eed176343eca571bd799f09acdf346c310122154511b",
+    "tests/NativeJumpNetworkTestDoc.as": "69c45eb85e1f7a77c4ca16dabbfd1cc82aee0cc60823ffc02722eb9bdabc3349",
+    "tests/NativeMotionProbe.as": "4ca25c80d0ebeda696f02ef842b56ea691fdf6dd8c78736e5c18e65b2712a394",
+    "tests/RemoteMotionPauseRegression.as": "ae81d9a4db9886423c5291db9f0035bbaa19f43b7ec98efb0733e76902f73844"
+  },
+  "static_checks": [
+    "Python AST valid",
+    "Original check expressions identical for both fixtures",
+    "No measurement picture() call",
+    "Original ABI hashes match frozen native04 pack",
+    "22 installed byte hashes and telemetry current",
+    "Exact baseline78C and candidate89F1 verify APIs pass",
+    "Focus-stratified interval aggregation checked"
+  ],
+  "compiled": false,
+  "air_started": false,
+  "smoothnessQualified": false,
+  "write_boundary": "Only experimental/goal-three-issues-native",
+  "further_source_changes": "Require explicit root instruction; reviewers report only"
+}

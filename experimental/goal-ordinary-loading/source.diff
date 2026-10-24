@@ -1,0 +1,100 @@
+--- recovery-room-current-comparison/run.py
++++ goal-ordinary-loading/run.py
+@@ -1,4 +1,4 @@
+-"""Run the existing three-trip fixture against one frozen product and current inputs.
++"""Run the frozen ordinary-room three-trip fixture against installed roomfix5 inputs.
+ 
+ The shared runner owns registration, memory limits, private desktops and cleanup.
+ This entry only binds artifacts, copies two missing private settings, and audits
+@@ -12,16 +12,20 @@
+     raise RuntimeError('Ordinary Python required')
+ sys.dont_write_bytecode = True
+ HERE = Path(__file__).resolve().parent
++SHARED = HERE.parent/'recovery-room-current-comparison'
++sys.path.insert(0, str(SHARED))
++ORIGINAL_WRAPPER_SHA = '8cbe85539c0a2fd026198d5cd47948972dd1a13b63a88723be762a8afff93807'
+ ROOT = HERE.parents[1]
+ GAME = ROOT.parents[1]
+ M52 = ROOT / 'build/m52'
+-DRIVER = M52 / 'recovery-room-scene-driver-02'
++DRIVER = M52 / 'recovery-room-current-driver-01'
+ RUNNER = ROOT / 'tools/run_coop_regression.py'
+ TELEMETRY = GAME / 'mods/ModLoader/release/telemetry.json'
+-PREFERENCE = b'{"nativeEnabled":true}'
++PREFERENCE = b'{"nativeEnabled":false}'
+ BASELINE = M52 / 'recovery-room-production-05'
+ BASELINE_SHA = '78c052aea963f1689b705ae1e14d274916ae1a1f7e81933390caf8d1a88f4699'
+-DRIVER_SHA = '218246101949b35df2979011ce056419ff5718a24f2bcc8dd92f4224f7dbf18f'
++DRIVER_SHA = '2d0617be7c9ef315937116573881dc1625b31f32801fce0fecd32d51275ec1f6'
++DRIVER_MANIFEST_SHA = '34364016738c79140b8354769e7e0c1d1980b31368d4e50e7c20e45fa2ba075e'
+ HARNESS_SHA = 'd52ef4300c7d472ee05884d7b4709f4abf80b3e6ff935b695a9ed986db021086'
+ RUNNER_SHA = '7eca453b13480140da5f36bb33d2319739a927562ccafdbb61a8b20cdb5ae4d3'
+ DIAGNOSTIC = None
+@@ -86,11 +90,15 @@
+ 
+ 
+ def inputs(path):
++    assert path == BASELINE and DIAGNOSTIC is None
++    assert sha(SHARED/'run.py') == ORIGINAL_WRAPPER_SHA
+     meta, built = product(path)
+     if DIAGNOSTIC is None:
++        assert sha(DRIVER/'prepared.json') == DRIVER_MANIFEST_SHA
+         driver = read(DRIVER/'prepared.json')
+-        assert driver['compiled'] and driver['external'] and driver['ordinary_timing_byte_exact']
+-        assert len(driver['commands']) == 1 and driver['commands'][0]['exit_code'] == 0
++        assert driver['kind'] == 'current-installed-room12-compatible-driver'
++        assert driver['compiled'] and driver['external']
++        assert len(driver['commands']) == 2 and all(r['exit_code'] == 0 for r in driver['commands'])
+         for name, digest in driver['inputs'].items():
+             assert sha(name) == digest, name
+         for name, digest in driver['files'].items():
+@@ -98,11 +106,11 @@
+     else:
+         proof, diagnostic_builder = diagnostic_driver(DRIVER)
+         assert proof == DIAGNOSTIC and proof['candidate_sha256'] == built['candidate_sha256']
+-    assert sha(DRIVER/'scene/EffectsDriver.swf') == DRIVER_SHA
+-    assert sha(DRIVER/'scene/EffectsHarness.swf') == HARNESS_SHA
++    assert sha(DRIVER/'timing/EffectsDriver.swf') == DRIVER_SHA
++    assert sha(DRIVER/'timing/EffectsHarness.swf') == HARNESS_SHA
+     assert sha(RUNNER) == RUNNER_SHA and read(TELEMETRY) == {'enabled': True}
+-    files = [Path(__file__), HERE/'bridge_inputs.py', RUNNER, TELEMETRY, DRIVER/'prepared.json',
+-             DRIVER/'scene/EffectsDriver.swf', DRIVER/'scene/EffectsHarness.swf',
++    files = [Path(__file__), SHARED/'run.py', SHARED/'bridge_inputs.py', RUNNER, TELEMETRY, DRIVER/'prepared.json',
++             DRIVER/'timing/EffectsDriver.swf', DRIVER/'timing/EffectsHarness.swf',
+              path/'prepared.json', path/'compile.json', path/'RConnectMod.swf',
+              ROOT/'tools/validation/runtime_memory.py', ROOT/'tools/validation/air_test_inventory.py',
+              GAME/'mods/ModLoader/tools/test_registry.py', GAME/'mods/ModLoader/tools/air_test_process.py']
+@@ -122,9 +130,8 @@
+     ap.add_argument('--mode', choices=['solo', 'dual'], default='dual')
+     ap.add_argument('--check', action='store_true')
+     ap.add_argument('--registry-wait', type=float, default=900)
+-    ap.add_argument('--raster-host', type=Path, help='Verified isolated first-raster host build directory')
+-    ap.add_argument('--sandy-bridge', action='store_true', help='Use the exact A-only travel lease in isolated copies')
+-    ap.add_argument('--diagnostic-driver', type=Path, help='Explicit four-node diagnostic; original fixture and thresholds retained')
++    # Retain the borrowed runner branches, but this entry admits only ordinary baseline inputs.
++    ap.set_defaults(raster_host=None, sandy_bridge=False, diagnostic_driver=None)
+     args = ap.parse_args()
+     path = (ROOT/args.product).resolve()
+     if args.diagnostic_driver is not None:
+@@ -158,7 +165,7 @@
+     assert out.parent == M52 and not out.exists()
+     (out/'driver').mkdir(parents=True)
+     for name in ('EffectsDriver.swf', 'EffectsHarness.swf'):
+-        shutil.copyfile(DRIVER/'scene'/name, out/'driver'/name)
++        shutil.copyfile(DRIVER/'timing'/name, out/'driver'/name)
+     digest = built['candidate_sha256']
+     save(out/'driver/driver-input.json', dict(candidate_sha256=digest, driver_sha256=DRIVER_SHA,
+         source_manifest_sha256=sha(DRIVER/'prepared.json'), identical_external_driver=True))
+@@ -295,9 +302,9 @@
+             text = (run_path/(role+'.log')).read_text(encoding='utf-8-sig')
+             rows = [json.loads(line.split('TRAVEL RESULT ', 1)[1]) for line in text.splitlines() if line.startswith('TRAVEL RESULT ')]
+             assert [r['round'] for r in rows] == [0, 1, 2]
+-            assert all(r['merged'] is True and r['target'] == ('rbl' if r['round'] == 1 else 'random_mane') for r in rows)
+-            assert all(r['actualMerged'] is True and r['seed'] == 1380142925 and r['width'] > 48 for r in (rows[0], rows[2]))
+-            assert rows[1]['actualMerged'] is False and rows[1]['width'] > 0 and rows[1]['height'] > 0
++            assert all(r['merged'] is False and r['target'] == ('rbl' if r['round'] == 1 else 'random_mane') for r in rows)
++            assert all(r['actualMerged'] is False and r['width'] == 48 and r['height'] == 25 for r in rows)
++            assert all(r['seed'] == 1380142925 for r in (rows[0], rows[2]))
+             assert 'COOP EFFECTS DONE travel-timing '+role in text and 'v'+meta['version']+' initialized' in text
+             assert not re.search(r'^COOP FAIL |handoff timed out|TRAVEL CONFIG ERROR', text, re.M)
+             if meta['version'] in ('0.2.24-roomload1', '0.2.24-roomload2') and args.mode == 'dual' and bridge is not None and args.sandy_bridge:

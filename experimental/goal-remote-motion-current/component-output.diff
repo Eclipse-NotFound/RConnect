@@ -1,0 +1,16 @@
+--- old/MotionContinuityChecks.as
++++ components/MotionContinuityChecks.as
+@@ -21,11 +21,11 @@
+          } catch(e:Error){check(false,"uncaught "+e.getStackTrace());}
+          var stream:FileStream=new FileStream();
+          stream.open(File.applicationStorageDirectory.resolvePath("result.json"),FileMode.WRITE);
+-         stream.writeUTFBytes(JSON.stringify({checks:checks,fail:failures,pass:checks.length-failures,gameLoaded:false}));
++         stream.writeUTFBytes(JSON.stringify({assertions:checks,failed:failures,passed:failures==0,gameLoaded:false}));
+          stream.close();NativeApplication.nativeApplication.exit(failures?1:0);
+       }
+       private function check(ok:Boolean,label:String):void {
+-         checks.push({pass:ok,label:label});if(!ok)failures++;
++         checks.push({passed:ok,label:label});if(!ok)failures++;
+       }
+       private function calibration(held:Boolean):void {
+          var motion:RemoteMotion=held?RemoteMotion.held():new RemoteMotion();

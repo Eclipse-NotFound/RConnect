@@ -1,0 +1,66 @@
+--- production05/src/RConnectMod.as
++++ overlay/src/RConnectMod.as
+@@ -26,7 +26,7 @@
+    public class RConnectMod
+    {
+       // Working M46 core after the separate 0.2.17 compact HUD release.
+-      public static const VERSION:String = "0.2.24-roomfix5";
++      public static const VERSION:String = "0.2.24-motionclock1";
+ 
+       public static var instance:RConnectMod;
+ 
+--- production05/src/rconnect/game/RemoteMotion.as
++++ overlay/src/rconnect/game/RemoteMotion.as
+@@ -140,7 +140,12 @@
+             // A newborn drop may receive several native positions in one
+             // socket callback. Seeking its cursor here discards the entire
+             // short arc and leaves it motionless until the next packet batch.
+-            if(!immediateStart)cursor+=previousOffset-offset;
++            // Small latency improvements are clock calibration, not movement.
++            // Seeking here moves a rendered actor even when sample(now) is
++            // called twice at the same instant. The existing rate controller
++            // absorbs ordinary jitter; retain large backlog startup recovery.
++            var correction:Number=previousOffset-offset;
++            if(!immediateStart && correction>Math.max(100,interval*2))cursor+=correction;
+             if(immediateStart)dropDelay=Math.min(500,Math.max(dropDelay,(now-arrivedAt)*1.25));
+             gaps.push(stamp-Number(last.at));if(gaps.length>8)gaps.shift();
+          }
+@@ -251,19 +256,27 @@
+        * at real direction changes, and adds no prediction or display delay. */
+       private function curve(key:String,a:Object,b:Object,t:Number,h:Number):Number {
+          var first:Number=Number(a.snap[key]),last:Number=Number(b.snap[key]);
+-         var slope:Number=(last-first)/h,left:Number=slope,right:Number=slope;
+-         if(preceding!=null && Number(preceding.at)<Number(a.at) && isFinite(Number(preceding.snap[key]))) {
+-            var hp:Number=Number(a.at)-Number(preceding.at);
+-            left=tangent((first-Number(preceding.snap[key]))/hp,slope,hp,h);
+-         }
+-         var following:Object=frames.length>2?frames[2]:null;
+-         if(following!=null && Number(following.at)>Number(b.at) && isFinite(Number(following.snap[key]))) {
+-            var hn:Number=Number(following.at)-Number(b.at);
+-            right=tangent(slope,(Number(following.snap[key])-last)/hn,h,hn);
++         // Once an interval is on screen, keep its shape. A later packet may
++         // supply a better tangent for FUTURE intervals, but must not bend a
++         // partly played jump/drag/drop underneath the current display cursor.
++         if(a.curves==null)a.curves={};
++         var shape:Object=a.curves[key];
++         if(shape==null) {
++            var slope:Number=(last-first)/h,left:Number=slope,right:Number=slope;
++            if(preceding!=null && Number(preceding.at)<Number(a.at) && isFinite(Number(preceding.snap[key]))) {
++               var hp:Number=Number(a.at)-Number(preceding.at);
++               left=tangent((first-Number(preceding.snap[key]))/hp,slope,hp,h);
++            }
++            var following:Object=frames.length>2?frames[2]:null;
++            if(following!=null && Number(following.at)>Number(b.at) && isFinite(Number(following.snap[key]))) {
++               var hn:Number=Number(following.at)-Number(b.at);
++               right=tangent(slope,(Number(following.snap[key])-last)/hn,h,hn);
++            }
++            shape=a.curves[key]={left:left,right:right};
+          }
+          var square:Number=t*t,cube:Number=square*t;
+-         var value:Number=(2*cube-3*square+1)*first+(cube-2*square+t)*h*left
+-            +(-2*cube+3*square)*last+(cube-square)*h*right;
++         var value:Number=(2*cube-3*square+1)*first+(cube-2*square+t)*h*Number(shape.left)
++            +(-2*cube+3*square)*last+(cube-square)*h*Number(shape.right);
+          return Math.max(Math.min(first,last),Math.min(Math.max(first,last),value));
+       }
+       private static function tangent(a:Number,b:Number,ha:Number,hb:Number):Number {

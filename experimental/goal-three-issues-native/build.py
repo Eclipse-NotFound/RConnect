@@ -1,0 +1,133 @@
+"""Compile two native measurement fixtures using the existing external ABI.
+
+Only a new build/m52 output is written. Shared registration and memory/reaping
+helpers are reused. No AIR, deployment, source replacement or threshold changes.
+"""
+from pathlib import Path
+import argparse, hashlib, json, os, shutil, subprocess, sys
+if sys.flags.optimize: raise RuntimeError('Ordinary Python required')
+sys.dont_write_bytecode=True
+HERE=Path(__file__).resolve().parent; ROOT=HERE.parents[1]; GAME=ROOT.parents[1]; M52=ROOT/'build/m52'
+PRODUCT=M52/'recovery-room-production-05'; BASE=M52/'motion2-native-input-drivers-04'
+ABI=M52/'recovery-room-scene-driver-02'
+PRODUCT_SHA='78c052aea963f1689b705ae1e14d274916ae1a1f7e81933390caf8d1a88f4699'
+HOST_SHA='a796827173af7d6fab9885fb66ecc62182ab5335918a30c7cce4c44914a238b7'
+JAVA=Path('C:/Users/hello/Documents/_sandevistan_dev/jdk-11.0.32.1+1-jre/bin/java.exe')
+SDK=GAME/'mods/Sandevistan/build/tools/flexsdk'
+CASES={'native-jump':'NativeJumpNetworkTestDoc.as','fast-held':'FastHeldTestDoc.as'}
+ABI_HASHES={'ProductionDeclarations.swc':'598d39851de4299046148815f2b2b7b1a88379faa2981a114565f111408882a7',
+ 'GameCombatStubs.swc':'8aa240ed77522ded5236440b29b48d90f65b1c0bc971f21984b81ec1cd0ba61a',
+ 'scene/EffectsHarness.swf':'d52ef4300c7d472ee05884d7b4709f4abf80b3e6ff935b695a9ed986db021086'}
+def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+def read(p):return json.loads(Path(p).read_text('utf-8-sig'))
+def save(p,v):
+ with Path(p).open('x',encoding='utf8') as f:json.dump(v,f,ensure_ascii=False,indent=2);f.write('\n')
+def inventory(p):return {f.relative_to(p).as_posix():sha(f) for f in sorted(p.rglob('*')) if f.is_file()}
+def installed():
+ names=read(HERE/'environment.json')['installation']; assert len(names)==22
+ assert all(not Path(n).is_absolute() and GAME in (GAME/n).resolve().parents for n in names)
+ return {n:sha(GAME/n) for n in names}
+def inputs():
+ env=read(HERE/'environment.json'); assert installed()==env['installation']
+ assert env['installation']['pfe.swf']==HOST_SHA
+ assert env['installation']['mods/Rconnect/release/RConnectMod.swf']==PRODUCT_SHA
+ for n,h in env['files'].items():assert sha(n)==h,n
+ assert sha(BASE/'prepared.json')=='677fabc0191e7809d588d2ce3b64f02c8de119131e7db46b1624d314bfa22a5b'
+ for n,h in ABI_HASHES.items():assert sha(ABI/n)==h,n
+ pm,pc=read(PRODUCT/'prepared.json'),read(PRODUCT/'compile.json')
+ assert pc['compiled'] and pc['candidate_sha256']==PRODUCT_SHA and sha(PRODUCT/'RConnectMod.swf')==PRODUCT_SHA
+ assert pc['sources_unchanged'] and pc['installation_unchanged']
+ assert pc['installation_before']==pc['installation_after']==pm['installation_before']
+ assert len(pc['commands'])==2 and all(x['exit_code']==0 for x in pc['commands'])
+ assert inventory(PRODUCT/'src')==pm['source'] and inventory(PRODUCT/'tools')==pm['inputs']
+ sm=read(HERE/'source-manifest.json');assert inventory(HERE/'tests')==sm['sources']
+ assert sm['generator_sha256']==sha(HERE/'generate.py') and sm['diff_sha256']==sha(HERE/'source.diff')
+ for n,h in sm['original'].items():assert sha(BASE/'tests'/n)==h,n
+ paths=[HERE/'environment.json',HERE/'source-manifest.json',HERE/'generate.py',HERE/'source.diff',
+  HERE/'build.py',HERE/'run.py',HERE/'analyze.py',PRODUCT/'prepared.json',PRODUCT/'compile.json',PRODUCT/'RConnectMod.swf',
+  JAVA,SDK/'lib/mxmlc.jar',SDK/'frameworks/air-config.xml',SDK/'frameworks/libs/air/airglobal.swc']
+ paths+=list((HERE/'tests').rglob('*.as'))+[ABI/n for n in ABI_HASHES]+[Path(n) for n in env['files']]
+ return {str(p.resolve()):sha(p) for p in sorted(set(paths))}
+def command(out,case):
+ return [str(JAVA),'-Xmx384m','-jar',str(SDK/'lib/mxmlc.jar'),'+configname=air','+flexlib='+str(SDK/'frameworks'),
+  '-swf-version=38','-debug=false','-optimize=true','-source-path='+str(out/'tests'),
+  '-external-library-path+='+str(out/'ProductionDeclarations.swc'),'-external-library-path+='+str(out/'GameCombatStubs.swc'),
+  '-output='+str(out/case/'EffectsDriver.swf'),str(out/'tests'/CASES[case])]
+def copied(out,files):assert all(sha(out/n)==h for n,h in files.items()),'Frozen copied files changed'
+def verify(out):
+ out=Path(out).resolve();assert out.parent==M52
+ m,c=read(out/'prepared.json'),read(out/'compile.json')
+ assert m['kind']=='native-motion-measurement-v1' and c['compiled'] and c['inputs_unchanged']
+ assert c['prepared_sha256']==sha(out/'prepared.json') and c['error'] is None and c['validation_error'] is None
+ assert m['candidate_sha256']==c['candidate_sha256']==PRODUCT_SHA
+ assert m['inputs']==inputs() and m['installation_before']==c['installation_before']==c['installation_after']==installed()
+ assert inventory(out/'tests')==read(HERE/'source-manifest.json')['sources'];copied(out,m['files'])
+ assert len(c['commands'])==2
+ for row,case in zip(c['commands'],CASES):
+  assert row['case']==case and row['command']==command(out,case)
+  assert row['exit_code']==0 and row['reaped'] and isinstance(row['pid'],int) and row['pid']>0
+ assert set(c['artifacts'])=={case+'/'+n for case in CASES for n in ('EffectsDriver.swf','EffectsHarness.swf')}
+ for n,h in c['artifacts'].items():assert sha(out/n)==h,n
+ for case in CASES:assert c['artifacts'][case+'/EffectsHarness.swf']==ABI_HASHES['scene/EffectsHarness.swf']
+ for v in (m,c):assert v['air_started'] is False and v['installed'] is False and v['smoothnessQualified'] is False
+ return dict(verified=True,candidate_sha256=PRODUCT_SHA,artifacts=c['artifacts'],inputs=m['inputs'],
+  prepared_sha256=sha(out/'prepared.json'),compile_sha256=sha(out/'compile.json'),installation=installed(),smoothnessQualified=False)
+def main():
+ ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--check',action='store_true')
+ ap.add_argument('--output',type=Path);ap.add_argument('--build',action='store_true');ap.add_argument('--registry-wait',type=float,default=900)
+ a=ap.parse_args();assert a.registry_wait>=0
+ pins,before=inputs(),installed()
+ if a.check:
+  assert not a.build and a.output is None;print(json.dumps(dict(checked=True,compiled=False,air_started=False)));return
+ assert a.output is not None;out=(ROOT/a.output).resolve();assert out.parent==M52 and not out.exists()
+ (out/'tests').mkdir(parents=True)
+ for n in read(HERE/'source-manifest.json')['sources']:
+  dest=out/'tests'/n;dest.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(HERE/'tests'/n,dest)
+ for n in ('ProductionDeclarations.swc','GameCombatStubs.swc'):shutil.copyfile(ABI/n,out/n)
+ for case in CASES:
+  (out/case).mkdir();shutil.copyfile(ABI/'scene/EffectsHarness.swf',out/case/'EffectsHarness.swf')
+ files=inventory(out);copied(out,files);assert inputs()==pins and installed()==before
+ save(out/'prepared.json',dict(kind='native-motion-measurement-v1',inputs=pins,files=files,installation_before=before,
+  candidate_sha256=PRODUCT_SHA,compiled=False,air_started=False,installed=False,smoothnessQualified=False))
+ prepared=sha(out/'prepared.json')
+ if not a.build:print(out);return
+ sys.path.insert(0,str(ROOT/'tools/validation'));from runtime_memory import snapshot,wait_owned
+ sys.path.insert(0,str(GAME/'mods/ModLoader/tools'));from test_registry import Registration
+ rows=[];success=False;error=None
+ try:
+  with Registration(owner='RConnect / 原生运动测量',resource='game',purpose='Compile two native measurement fixtures; no AIR',
+   run_dir=out,evidence=out/'compile.json',wait=a.registry_wait) as reg:
+   for case in CASES:
+    process=None;row=dict(case=case,command=command(out,case),pid=None,exit_code=None,reaped=False);rows.append(row)
+    try:
+     assert inputs()==pins and installed()==before;copied(out,files)
+     assert snapshot()['free_commit_bytes']>=1024**3,'Compilation requires 1 GiB commit headroom'
+     reg.before_launch('native motion fixture compiler '+case)
+     with (out/(case+'-compile.log')).open('x',encoding='utf8') as log:
+      process=subprocess.Popen(row['command'],cwd=out,stdout=log,stderr=subprocess.STDOUT,
+       env=dict(os.environ,AIR_HOME=str(SDK)),creationflags=subprocess.CREATE_NO_WINDOW)
+      row['pid']=process.pid;reg.child(process.pid);row['exit_code']=wait_owned(process,300,out/(case+'-compile-memory.json'))
+      assert row['exit_code']==0 and (out/case/'EffectsDriver.swf').is_file(),'Driver compilation failed'
+    finally:
+     if process is not None:
+      if process.poll() is None:process.kill()
+      process.wait();row['reaped']=process.poll() is not None
+     reg.child_stopped()
+   assert inputs()==pins and installed()==before;copied(out,files)
+   success=True;reg.outcome='passed';reg.note='Two measurement fixtures compiled; no native/performance qualification'
+ except BaseException as exc:error=repr(exc);raise
+ finally:
+  unchanged=False;after=None;validation_error=None;artifacts={}
+  try:
+   after=installed();unchanged=inputs()==pins and after==before;copied(out,files)
+   assert sha(out/'prepared.json')==prepared and unchanged
+   for case in CASES:
+    for n in ('EffectsDriver.swf','EffectsHarness.swf'):
+     if (out/case/n).exists():artifacts[case+'/'+n]=sha(out/case/n)
+  except BaseException as exc:validation_error=repr(exc)
+  save(out/'compile.json',dict(compiled=success and error is None and validation_error is None,commands=rows,error=error,
+   validation_error=validation_error,inputs_unchanged=unchanged,prepared_sha256=prepared,candidate_sha256=PRODUCT_SHA,
+   installation_before=before,installation_after=after,artifacts=artifacts,air_started=False,installed=False,smoothnessQualified=False))
+  if validation_error is not None and error is None:raise RuntimeError(validation_error)
+ print(out)
+if __name__=='__main__':main()
