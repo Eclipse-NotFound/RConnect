@@ -16,7 +16,7 @@ package {
    import flash.text.TextFormat;
    import flash.utils.getTimer;
    public class RConnectMod {
-      public static const VERSION:String="B3-0.1-experimental";
+      public static const VERSION:String="B3-0.1-startup2";
       public static var instance:RConnectMod;
       public var main:Object,stage:Stage,access:NativeAccess,host:HostSession,replica:ClientReplica;
       public var config:Object,link:Link,probe:Probe;
@@ -307,8 +307,12 @@ package {
             if(intents!=null){intents.dispose();intents=null;}
             if(nativeMenus!=null){nativeMenus.dispose();nativeMenus=null;}
             if(saves!=null){saves.dispose();saves=null;}
-            if(host!=null){host.dispose();host=null;tactics=null;}
-            if(replica!=null){replica.dispose();replica=null;if(tactics!=null){tactics.dispose();tactics=null;}}
+            if(host!=null){host.dispose();host=null;}
+            if(replica!=null){replica.dispose();replica=null;}
+            // We acquire this lease before either side becomes fully active.
+            // A waiting host has no RoomRuntime; a failed replica constructor
+            // has no replica. Both must still release the acquired interface.
+            if(tactics!=null){tactics.dispose();tactics=null;}
             if(restoreJoin && oldReplica!=null)oldReplica.returnToOwnGame();
             access.world.onPause=false;access.world.ctr.clearAll();input=new InputSource();
             welcomed=network=failed=leavingAfterReplay=false;role="";mode=HudModel.OFFLINE;ui.session.rooms.status="";
