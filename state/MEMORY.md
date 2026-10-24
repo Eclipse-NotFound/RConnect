@@ -15,6 +15,7 @@ A 为普通入口的双人联机；B 独立架构本轮不碰。根会话 `01a08
 - 共享ModLoader game登记，JVM/AIR串行；子代理只做独立目录源码/审查。无实质新证据不跨会话发状态消息，不逐个要求停测。普通授权不重复确认。
 - 唯一AIR ID、私有后台桌面、只读复制Littlepip29至测试槽9；不写真实存档、不关闭用户程序、不调用未点名Ghost。AIR写独立AppData需require_escalated；已授权测试范围内执行，不维护新护栏授权表。
 - 启动余量：双6GiB/单3GiB/组件编译1GiB，运行512MiB保护，不降低。用户已答释放内存后继续，不重复提问。测试时读取当前余量，旧内存状态不是现在的结论。
+- 10月24日上午用户允许测试前关闭 LAD、RV、CS：仅用官方启动器改隔离副本，正式选择不变。普通房必须重测同组合solo，不借历史大图基准。用户答会保存退出；其普通实例随后确实退出，不需再问。
 - 省D盘，清自有可再建副本；保留失败、唯一证据及旧版。合格后直接备份部署复验，未合格不得覆盖。公网/多人/重连/其他版本不在本轮。
 
 ## 3. 实际安装与候选
@@ -22,14 +23,21 @@ A 为普通入口的双人联机；B 独立架构本轮不碰。根会话 `01a08
 正式RC：`0.2.24-aura1`，`release/RConnectMod.swf` SHA `df0fa0e2ca952e77e5132e75d71e73558dc919c7b8cdeba5da05fc9e94dc01e7`，186738B。
 回执`build/m52/recovery-aura-offline-deploy-02/deployment.json`，真实安装smoke7d45932e01通过；同目录备份EB365/offline1，再上一层574D/bundle2备份见recovery-offline-deploy-01。已交付仅独立离线采集优化和玩家被抓光晕，没交付房间/运动修正。
 
-当前宿主ABE2：`abe2b65edf3d0e4e0fa8eca76a60e577d40e47f20b9acecebec7730849a2602a`，CS 10月24日00:00独立部署Camera.calc；回执`mods/ContinuousScene/state/vertical-camera-band-deployment-20261023.json`。RV为0DBE (`0dbe0d7a95b8e496fb393d7fcd75f88d60c34a1d0fabb33266b122e3fa04f2bf`)，其余CS7F1F/SandCEC6/WB14112等未变。旧80CF/6DBA历史不改写、不与当前耗时混算。
+当前宿主A796：`a796827173af7d6fab9885fb66ecc62182ab5335918a30c7cce4c44914a238b7`，CS于10月24日上午从ABE2独立更新Grafon两处颜色方法，回执`mods/ContinuousScene/state/scene-tint-deployment-20261024.json`已verified。前一ABE2来自Camera.calc修正，旧回执`vertical-camera-band-deployment-20261023.json`。RV仍0DBE (`0dbe0d7a95b8e496fb393d7fcd75f88d60c34a1d0fabb33266b122e3fa04f2bf`)，其余CS7F1F/SandCEC6/WB14112等未变。旧80CF/ABE2/6DBA的历史不改写、不与新宿主耗时混算。
 
-**当前生产候选roomfix4**：`build/m52/recovery-room-production-04`，SWF `34a17de66e9a89165b4bde75d22ec1dd3d4295bb496b903124687af80422b703`，195145B；prepared093916CF，compile3CDE928E。编译时80CF/0DBE，当前实测ABE2/0DBE须分清。源配方`experimental/recovery-room-production-v4`。
+**房间对照候选roomfix4**：`build/m52/recovery-room-production-04`，SWF `34a17de66e9a89165b4bde75d22ec1dd3d4295bb496b903124687af80422b703`，195145B；prepared093916CF，compile3CDE928E。编译时80CF/0DBE，已完成实测ABE2/0DBE须分清。源配方`experimental/recovery-room-production-v4`。最新待原生验证的roomfix5为78C052，细节见下节；尚未部署。
 来自准确aura1的11类房间修正：并行生成，未换房者不停，当前原房不自恢复，实际入口放置，绑定原生Land/Room交接与连续过门请求，READY观察标记去重、暂停时不耗跟随期限，原生加载素材与文本，地块完整标量表/准确绘制缓存。v4仅比v3删除RoomCodec每次同步文件诊断（候选误留，正式版无此日志）及改版本。房间生成/字段/伤害不删减。
 
 诊断专用roomtime1：`recovery-room-loading-counter-product-02`和`recovery-room-loading-counter-driver-01`已编；来源`experimental/recovery-room-loading-counters`。只测首次grant及随后2帧9函数、14阶段标记、消息累计；原场景/断言不变，不能部署也不给净性能资格。product01因AS try/finally返回分析编译失败，原失败保留。
 
 ## 4. 最新实测与卡点
+
+- **10月24日上午后续**：遮罩单行优化 `recovery-room-mask-component-04` 实际392/392通过，旧新像素/归属/清理一致；前三次因登记视图占用、排队时共享工具更新、组件helper与Flash属性mask重名先后失败，原记录保留。`roomfix5` 已编译至 `recovery-room-production-05`，SWF `78c052aea963f1689b705ae1e14d274916ae1a1f7e81933390caf8d1a88f4699`（195147B），prepared `acdc405a6e214531831cbb532178337aaa7fb9f154a91a1f8b543a6480dd6c58`，compile `68fcca0717bd9800725822211650c6fd74787a98a839432b5ed0216cb0ae48d4`；相对roomfix4仅版本与MirrorMasks一行。真实游戏/速度未验证，未部署。
+- **新环境及两次原生尝试**：roomfix5编译后正式宿主从ABE2变为A796，其余21项未变。drivers-01在Java前拒绝该变化，原失败保留。CS回执verified；新verifier分核旧构建/A796运行，`recovery-room-mask-native-drivers-02`三条编译通过并回收。真实8轮native-01/f9b2ff57f2等待15分钟超时、无AIR；native-02/d9404f3e49于11:51:41取得占用，但freeCommit=4606550016（4.29GiB）且其它AIR为空，在启动前停止。原始失败不改判，当前没有根测试进程；不再因旧答“内存已恢复”假定当前足够。普通游戏确已退出；Java90944是用户Minecraft服务器，不关闭。详情mask-native/RESULTS.md。
+- **定向诊断已编译**：`recovery-room-terrain-reason-product-01` / roomreason1 / SWF `9a128737ce470127db16ff903fe0bcbdd8280daead0f714c983515c52a14b1ef`（197497B），prepared9650B504、compile2402BBCA，两个编译进程成功并回收、源码/安装未变，run预检通过。准确roomfix5只加两类诊断与版本：记录首个复用拒因、复用判断前dirty及beforeRole单计时；原短路、墙痕采集次数和三程驱动不变。未运行AIR，尚无首拒因，不可部署。编译后freeCommit约3.62GiB；先满足资源再按ENTRY运行，不新增重复失败目录。
+- **遥测归因排除**：native04和reduced双/单日志、输入、SWF核实均为ModLoader2.4.0/BD71，没有新版FrameRecorder，不能把这些慢帧归它。旧runner不复制/记账telemetry.json；若将来装2.5，缺文件默认开启将形成新基线缺口，须另加存在性/内容/复制核验，不能改写旧22项历史。当前未改ModLoader。
+- **出生点补核完成**：原生地图种子的LCG不替换Math.random，setGGToSpawnPoint仍独立随机选原生点；双人都在同一最终点。早期161坐标日志是ghost，不证明主侧被搬位。缺原spawnPoints完整值，故保留跨模式性能配对限制；不是已证实新的出生错误。详见reduced-runtime/RESULTS.md追加段。
+- **大图重绘链**：首次恢复触发全图redraw，Grafon重建sceneSurfaces后WB清除旧缓存重建；已有局部paint/water接口不能重绘任意Tile状态，当前没有通用公开分块重绘接口。首次5个门/出口注入可能改变door引用或isRebuild，具体首失配尚未记录，不能直接省略重绘。详见loading-counters/RESULTS.md。
 
 - **git准确归因**：574D→EB365→DF0F的房间/遮罩/旅行源码相同，加载修正从未正式交付。并非“已修又坏”；这是交付缺口。无证据否认用户性能倒退。见`experimental/recovery-room-repair-review/PERFORMANCE-REVIEW.md`。
 - **普通48×25（历史80CF/6DBA）**：旧aura1双24.780/13.300/19.241秒，重访错位1109px；同组合solo9.903/6.386/6.272。roomfix2主7.462/2.121/3.457、加7.520/2.097/3.488，入口一致。仅此样本，不代替大图/最终候选。
@@ -40,12 +48,16 @@ A 为普通入口的双人联机；B 独立架构本轮不碰。根会话 `01a08
 - **组件**：真实RoomSync READY92/0，cross68/0及5条实等；实际UI20/0；最终新旧Codec211/0，交叉解码/地块/墙面字节相同且无文件日志。通过项不盲目重跑。
 - **密集版本对照（ABE2/0DBE）**：旧574D c0657f7dd9对当前aura1 394edfb54d，fixture/dimension/driver/runtime成对可比；加入7窗P95旧456/627/1135/860/936/972/513、新442/587/706/533/512/515/465ms。两版都严重失败，21/18条阈值不合；新版两个同步间隔更差。一对墙钟刺激不能否认用户回退，也不给roomfix4资格。见`recovery-room-density-review/RESULTS.md`。
 - **采样失败不是无开销**：573fe88372原场景功能过，但grant与首帧采样全丢、第二帧截断；不把0CPU样本当0开销，不重复已失效flash.sampler路线。已改有界真实函数计数。
-- **当前阻碍**：计数双人19e66eb57c / `recovery-room-loading-counter-native-01`因可提交余量3.76GiB无AIR；solo结束仍约3.8GiB。30秒7点复查为3.99–4.03GiB，证据`memory-followup.json`。全部根测试和编译均已结束，无活动自有AIR/JVM。内存够6GiB再以新输出native-02运行计数器。现有结果保留，不重复启动失败副本。
+- **三项关闭的普通房**：`recovery-room-reduced-solo-01`/15f9ba06c9，aura1为9.368/4.034/5.124秒；`recovery-room-reduced-dual-01`/a53ab258d9，roomfix4主6.376/1.118/2.275、加6.971/1.256/2.320。双方三程入口距离0、种子/房间/控制恢复通过。真实SOL重新解码确认三端requested=ok=11项、无err；正式22项未变。**跨模式random_mane入口不同**（solo161.8,320、dual1161.8,800），正在追查，不能叫同出生负载或完整性能资格。详见reduced-runtime/RESULTS.md。
+- **全组合计数终于完整**：`recovery-room-loading-counter-native-04`/0c357d93b5，功能与3窗口均通过，counters-result DE183C21，原计数0E7E25C0。首次grant2262ms；返回→首ENTER1105ms，期间14次unitsync520ms、36次worldstate163ms。首帧3236ms，其中priority1→−1为1312、−99→−101为1674；RC mirror150/vis47，MirrorMasks.capture29，不能把主要开销归签名。第二帧234ms。返程role阶段2519/2643ms待查代理退休重复遍历。诊断无性能资格。详情loading-counters/RESULTS.md。
+- **失败与资源已更新**：native-01内存不足；02用户AIR在场未启；03外来AIR中途出现仅启动host；04成功。用户释放后余量已满足，最新根AIR/JVM全已结束，自有副本清理。不要沿用昨夜内存阻塞。共享登记非FIFO，发生真实饥饿后已与RV一次性协调两轮窗口，已结束；CS随后约5分钟实测占用，根先做离线分析，无需再逐个请求用户许可。
 
 ## 5. 未解决与已否决
 
 - 要求仍是实际加载/操作速度，不是隐藏覆盖层。不能把功能通过或旧普通房速度当大图合格。
-- MirrorMasks.capture确有pending×layer枚举，但签名计算已有本次缓存；没有计时前不盲改。索引还须保留多record保存visible的次序、真实引用及首个mask后续成为候选的情况。尚未写性能候选。
+- MirrorMasks.capture实测首帧29ms，不是3.24秒主因，不写复杂索引。restore单行候选仅当attached(nativeMask,v)且v.mask不等于nativeMask时扫描首个refs；后续remaining扫描不变。RV0DBE的active只读已核，组件392项通过并编入roomfix5，真实RV的8轮待队列。目录recovery-room-mask-reference，未部署。
+- 已排除“isRebuild导致第二次全图重绘”：准确宿主Location.rebuild仅重算水体并成功后清标志；active step还有照明，recalcWater还做落脚检查。不能为提速手工清isRebuild/isRecalc。首次画面复用拒绝原因尚待诊断，不把门注入猜测当实证；原timing.role包含RoomTerrainView构造和wall.checkpoint，不能全算成roomRole独占耗时。
+- grant→ACK确实积压；unitsync/worldstate含weapons事件/impacts/melee、port和轮转tilePatch/wallPaint，整包只留最新会漏效果。字段级安全合并需新增较多状态分支，本轮先不实施；不能通过暂停全部网络消除积压。
 - 不复用仅靠U序号/150px近邻的原生敌人；不完整恢复mapxml/interact/脚本引用会破坏炮塔/状态。不删快照/视野/动画或放宽门槛换速度。
 - 当前Sand CEC6活动/回放绕过普通pause；A已授权接口候选未完成整段旅行验证，暂不并入。WB首次刷新提案无答复不动它。
 - 旧墙面结构代C6A3与宿主6616有逐像素/分房功能证据，但等离子延迟和密集未合格；旧ACK/NoDelay/主动收包/暂停23等分支均无完整收益，不合入。详细已否决路径和准确旧证据见归档，不重建。
@@ -53,9 +65,9 @@ A 为普通入口的双人联机；B 独立架构本轮不碰。根会话 `01a08
 
 ## 6. 下一步入口
 
-1. 首先只读查当前余量。足6GiB后运行已编有界计数产品02+driver01：`experimental/recovery-room-loading-counters/run.py --product build/m52/recovery-room-loading-counter-product-02 --drivers build/m52/recovery-room-loading-counter-driver-01 --output build/m52/recovery-room-loading-counter-native-02`；AIR需require_escalated，原共享登记/6GiB/512MiB/600秒/所有断言保留。
-2. 从三个窗口和grant后消息耗时定位主因，再做最小算法修正。网络聚合时长不含外层Tcp解帧/AMF；函数total包含子调用不可相加；Stage区间包括其他监听器。不要把阶段空档全归RC或WB。
-3. 最终准确生产候选用当前ABE2/0DBE与solo8d4cf6e1db对照大图，再核密集；不是不断换环境重跑所有旧套件。当前根唯一AIR/JVM/部署。
+1. 普通房出生来源和遮罩组件已核，不重复。roomfix5及roomreason1均已编译。取得共享占用且可提交余量稳定≥6GiB后，先用已有diagnostic产品与原scene-driver02跑三程取得首拒因；接着真实8轮mask使用drivers-02和新native-03目录。精确命令见两个experimental入口，旧失败不覆盖。根唯一编译/AIR；共享表串行。
+2. 以已捕获首帧和grant积压为依据，避免盲加缓存。网络聚合时长不含外层Tcp解帧/AMF；函数total包含子调用不可相加；Stage区间包括其他监听器。不要把阶段空档全归RC或WB。当前单行候选只减少确实无用的扫描，不承诺消除全图耗时。
+3. 最终准确生产候选需在当前A796/0DBE下取得可比大图与密集证据；旧ABE2 solo8d4cf6e1db仍是历史参考，不重标新组合。不因环境变动盲目重跑所有旧套件。当前根唯一AIR/JVM/部署。
 4. 合格后备份、部署、实际安装复验；否则诚实保留候选，不覆盖已安装DF0F。当前未批准降低速度目标或性能标准。
 
 ## 7. 详细记录

@@ -1,0 +1,45 @@
+{
+  "kind": "roomfix5-mask-native-source-only",
+  "files": {
+    "current_tint_verifier.py": "5be11d45db193e22205ff302a8e94f016b4096eb335cb33d72faea12ea45e988",
+    "harness/RConnectDoc.as": "f6fea5a08ba2e73ae97a5d5bf5f0472862a0b160bed9ce1d7ca58a01684f80ab",
+    "harness/RConnectMod.as": "c60b7e08bb90e3ccb232b7a1eda6ee742c9c963d938176e164a37a298238a4fa",
+    "prepare.py": "f4b2854856d1a5d74ac4d85db73c21413f68f306eb44f967aa2a010d66e33392",
+    "README.md": "9b2dbad99ab88569d2cb20ee89bfaa93f0b9cedccd027daeeae9f9cbe31b63d3",
+    "run.py": "81310dc680df5d47e22de1819116e8979f88ca59323ecbef906fae4c8e938391",
+    "tests/MirrorMaskRestoreTestDoc.as": "fd329d34101137cdbbea91d36a39ab3400a134a18cb56f9fa061b18f1dfb806b",
+    "tests/TestRoomReadiness.as": "7dfc78a64e3c9f2ff76b0f3311a783dcfb24bbd4d13e39da09e469cec2f17e38"
+  },
+  "fixtures": {
+    "tests/MirrorMaskRestoreTestDoc.as": {
+      "source": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\tests\\MirrorMaskRestoreTestDoc.as",
+      "sha256": "fd329d34101137cdbbea91d36a39ab3400a134a18cb56f9fa061b18f1dfb806b"
+    },
+    "tests/TestRoomReadiness.as": {
+      "source": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\tests\\TestRoomReadiness.as",
+      "sha256": "7dfc78a64e3c9f2ff76b0f3311a783dcfb24bbd4d13e39da09e469cec2f17e38"
+    },
+    "harness/RConnectDoc.as": {
+      "source": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\tests\\harness\\RConnectDoc.as",
+      "sha256": "f6fea5a08ba2e73ae97a5d5bf5f0472862a0b160bed9ce1d7ca58a01684f80ab"
+    },
+    "harness/RConnectMod.as": {
+      "source": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\tests\\harness\\RConnectMod.as",
+      "sha256": "c60b7e08bb90e3ccb232b7a1eda6ee742c9c963d938176e164a37a298238a4fa"
+    }
+  },
+  "cases": 8,
+  "leave_images": 14,
+  "sweep_images": 10,
+  "compiled": false,
+  "air_started": false,
+  "installed": false,
+  "shared_registry_not_frozen": true,
+  "runtime_transition": {
+    "old_host": "ABE2",
+    "new_host": "A796",
+    "historical_compile_receipts_preserved": true,
+    "old_failed_drivers_preserved": true,
+    "default_new_drivers": "recovery-room-mask-native-drivers-02"
+  }
+}

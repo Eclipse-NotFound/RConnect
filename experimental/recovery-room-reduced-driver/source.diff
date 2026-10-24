@@ -1,0 +1,46 @@
+--- current-driver-01/RoomTravelTimingTestDoc.as
++++ reduced-driver/RoomTravelTimingTestDoc.as
+@@ -73,6 +73,7 @@
+             check(actual==merged(),"requested scene mode matches the native constructed world");
+             if(merged())check(w.loc.spaceX>48 || w.loc.spaceY>25,"native merged scene is actually larger than one ordinary room");
+          }
++         check(sceneClass==null && !actual,"no ContinuousScene class and no constructed merged scene");
+          check(w.gg.ggControl && !w.pip.noAct,"native player controls are restored");
+          return {round:round,at:getTimer(),started:at,elapsed:getTimer()-at,exitStart:exitAt<0?-1:exitAt-at,
+             exitEnd:exitDone<0?-1:exitDone-at,cover:coverMs,paused:pausedMs,solo:solo,
+@@ -98,19 +99,18 @@
+          solo=mod.config.getValue("autoRole")=="";
+          if(!configured) {
+             configured=true;mod.config.setValue("followTeammate","0");
+-            var sceneConfigured:Boolean=false;
++            var sceneAbsent:Boolean=false;
+             try {
+                var nativeMain:MainFE=mod.game.main as MainFE;
+                for(var key:Object in nativeMain.modEntryByLoader) {
+                   var loader:Loader=key as Loader;
+                   if(loader==null || !loader.contentLoaderInfo.applicationDomain.hasDefinition("ContinuousSceneMod"))continue;
+                   var cls:Object=loader.contentLoaderInfo.applicationDomain.getDefinition("ContinuousSceneMod");
+-                  sceneClass=cls;
+-                  cls.nativeEnabled=merged();
+-                  sceneConfigured=Boolean(cls.nativeEnabled)==merged();break;
++                  sceneClass=cls;break;
+                }
+             }catch(error:*){Log.d("TRAVEL CONFIG ERROR "+error);}
+-            check(sceneConfigured,"native scene preference was explicitly configured");
++            sceneAbsent=sceneClass==null;
++            check(sceneAbsent,"ContinuousScene is explicitly not loaded");
+             // Control only this isolated benchmark's random input. Keep native
+             // generation and the production prepare/adopt path; the separate
+             // map suite still exercises the unmodified random seed policy.
+@@ -154,9 +154,9 @@
+          if(phase=="done")return;phase="done";removeEventListener(Event.ENTER_FRAME,tick);
+          if(metrics!=null)metrics.finish();
+          if(landClass!=null && landClass.rconnectSeedSource===timingSeed)landClass.rconnectSeedSource=originalSeed;
+-         if(!host && !solo && sceneClass!=null) {
++         if(!host && !solo) {
+             mod.session.leave();
+-            check(sceneClass.nativeEnabled===merged(),"disconnect preserves the configured same scene preference");
++            check(sceneClass==null,"disconnect preserves the unloaded ContinuousScene configuration");
+          }
+          Log.d("COOP EFFECTS DONE travel-timing "+(host?"host":"join"));
+       }

@@ -1,0 +1,23 @@
+{
+  "kind": "mirror-mask-native-reference-conditional-proposal",
+  "baseline": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-room-production-04\\src\\rconnect\\game\\MirrorMasks.as",
+  "baseline_sha256": "b4283cf68870010c4d454a6c7d511f00dbc5c3540e1839f878dfe680084f5e24",
+  "changed_statements": 1,
+  "original_reference_change": "Class declaration name only; same package and method bodies",
+  "game_loaded": false,
+  "real_rv_tested": false,
+  "compiled": false,
+  "installed": false,
+  "files": {
+    "component/MaskReferenceComponentDoc.as": "5776078f7d2d493c2436565b59e753f8ba7cd6f598b9d85c930b063b228fb18c",
+    "component/MaskVisionCarrier.as": "b73ed95ea3e6f7a6434a19d945f507a9858b876a30a525cbc9144cf7c5bd9f4a",
+    "component/rconnect/game/GameBridge.as": "202fedfbe5c29a12985596acc7de21c820903ce97e05bd5139053a129794fa7d",
+    "component/rconnect/game/MirrorHitUnit.as": "5d64d16c896eae993b1355894ae2a98c809e04408416d81ff7889eb58aa6118c",
+    "component/rconnect/game/MirrorMasks.as": "540281acb7fddbf4d378a564a591048a0f6437d1bbfc42907f850984685d7264",
+    "component/rconnect/game/MirrorMasksReference.as": "333cb06e2db815b5e003e14f15fa4a5ea49fc51eb1081838f435cece845a0d09",
+    "prepare.py": "1ff65a16bc5443f3b17f2c4a071f81348992493372ead522f5604b168ab89ec6",
+    "README.md": "fc5906ccbe3843ed79007eb1d65fafc0d335f8f6b32cb69d612ec4147242ecde",
+    "source.diff": "60ee5f5cb972cb73adb0e7eba67adad90b9b4ee36908a651f915a7259d7321ca",
+    "src/rconnect/game/MirrorMasks.as": "540281acb7fddbf4d378a564a591048a0f6437d1bbfc42907f850984685d7264"
+  }
+}

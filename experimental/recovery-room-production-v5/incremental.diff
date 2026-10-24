@@ -1,0 +1,22 @@
+--- roomfix4/RConnectMod.as
++++ roomfix5/RConnectMod.as
+@@ -26,7 +26,7 @@
+    public class RConnectMod
+    {
+       // Working M46 core after the separate 0.2.17 compact HUD release.
+-      public static const VERSION:String = "0.2.24-roomfix4";
++      public static const VERSION:String = "0.2.24-roomfix5";
+ 
+       public static var instance:RConnectMod;
+ 
+--- roomfix4/rconnect/game/MirrorMasks.as
++++ roomfix5/rconnect/game/MirrorMasks.as
+@@ -237,7 +237,7 @@
+             // including white bitmap shapes in the same display layer.
+             if(v.mask==null || record.hidden[v.mask]!=null || v.mask===record.nativeMask || v.mask===record.last) {
+                var nativeMask:DisplayObject=record.nativeMask as DisplayObject,refs:Dictionary=new Dictionary(true);
+-               if(rootRef!=null)maskReferences(rootRef,refs);
++               if(rootRef!=null && attached(nativeMask,v) && v.mask!==nativeMask)maskReferences(rootRef,refs);
+                var active:Boolean=visionActive(roomRef,rootRef);
+                // Direct historical ownership is not current use permission:
+                // assigning a Shape can steal it from a real native weapon.
