@@ -1,0 +1,179 @@
+{
+  "kind": "room-first-raster-loop-overlay",
+  "version": "0.2.24-roomload2",
+  "base": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-room-first-raster-product-01",
+  "base_sha256": "6d4655f30bc252e798304bbf99a21458d53eeec1538c6d49eeb04c1a0b655392",
+  "base_prepared_sha256": "d4598712cd5d5457802b16a998136ecc3b30166183f6ac7aa38a48fd6c4bd278",
+  "base_compile_sha256": "5062269f806d92d28190c56bca9c7768d0fe13b8e43929a5699d921468c24695",
+  "installed_rc_sha256": "78c052aea963f1689b705ae1e14d274916ae1a1f7e81933390caf8d1a88f4699",
+  "sources": {
+    "rconnect/game/NativeTileState.as": "eec001f4de8bdfc5ad892c2de2e892c07cceac15ebe7c5cf10fda4a1047592dc",
+    "rconnect/game/TerrainSync.as": "3bb4ac4a9ab4ca6a045d2376e3b18025d48db409bc6ad72cb62cdece02f5ebfa",
+    "RConnectMod.as": "f906cfbfbd230acc05aa28142ed4614238de6d01acf1bec95838b73f0ac68eee"
+  },
+  "candidate_source": {
+    "fe/inter/RConnectTravelAccess.as": "ee2fb60621ba8ee21b6d585a284858be01eb6b9aee06cd4fe68e8c867dc1cec8",
+    "fe/serv/RConnectInteractionAccess.as": "118533088a2d7dadf4cf5016f376a96374e22c539f7732c052598f6211fa4886",
+    "fe/serv/RConnectSecurityInteractionAccess.as": "1d1a89adc3d3a96c1c170e0d8f011deacd12b314ec46bde4e0621f1d6293e8a8",
+    "fe/unit/RConnectAnimationAccess.as": "69ef25e550c29ac38e38e53731f38dd651d05346aea5b8937500bd0ee073f605",
+    "fe/unit/RConnectFeedbackAccess.as": "92f35d760620a1277f21202b77549bafad00f2b3217dfeeadf341d22ef52b123",
+    "fe/unit/RConnectPerceptionAccess.as": "be6ee0a5795addfe0a55573b950b5990441731f9fc3233a39708bca832e967b8",
+    "fe/unit/RConnectSecurityAccess.as": "cb9c12c909bc1fea74bbbfdf06efb1dab57099d94a5498cb1de4a99bc8106318",
+    "fe/unit/RConnectTelekinesisAccess.as": "7498fa3c85f61b759730377bfee8b36d59b674f725670fe47503e5fd34e289f1",
+    "fe/unit/RConnectUnitAccess.as": "1e49291317222540157667c5c2cd0ea6db9538844e74516b1d08a2b27aea47bb",
+    "fe/weapon/RConnectMeleeAccess.as": "2f55938707bc2e0ce0dd72304e4126acad7b958faf712a72fced5d817a27a658",
+    "modlocales/connect/RCLocale.as": "96d80b0f2d21620e08caf93864a77a58e10214a0dc817ea21e6a1e6ce8548ffb",
+    "modlocales/connect/RCLocaleMessages.as": "06ad485dd3e5b174edf7d30c93f715dbd8f15b47af852d95bb5a4cd9566336f7",
+    "rconnect/core/Config.as": "28de8236cf4d8ef66b70db419484be366fb0d7df4400266d15ef089b358d505d",
+    "rconnect/core/CoopPause.as": "1ea5e5a0225d989e0dbfb5076fb00a2e0ee694354d54ed75769b8d4b0606334e",
+    "rconnect/core/EnemyGrip.as": "a05fa1046ec7a2cbb1848ffccb899169b1163d2b239b03e4d92ba849bcc50faf",
+    "rconnect/core/FriendlyFire.as": "592e6790affd4e6037659fcc38dc798b2f5a5a1fcdf4eec1f594c0e56ee4c606",
+    "rconnect/core/Log.as": "3863a2136c06c7769483945f3c24456ca8b2ddefe842ca6f696049cf750428f7",
+    "rconnect/core/ManualStartup.as": "16ed42504c3bb5ccd4211d8cda7c0bb030eafbfe80d46e5ec761d1e40abb010e",
+    "rconnect/core/MapGeneration.as": "874cf31c714dab7ce4ba04f795ead2a6b92b9022181120c17f6b97aa6c62e1e0",
+    "rconnect/core/PeerGrip.as": "e85e81da3c318e9163592ffdaae84e067fda6f8d3af93cd66c7dc043905d8840",
+    "rconnect/core/PeerThrowDamage.as": "8e375c08409d3a886a55278c9e9410002df05c18956e004d8579ffaceecb0097",
+    "rconnect/core/PlayerMines.as": "3744643bf28902f8332d366aa0f6436c2ebd698d496af812286c164a10a0fc3f",
+    "rconnect/core/ProjectileGrip.as": "1af840a99c2f080f13e5a10264fa80e0057934231ce596edf3bdbf4fe31aa700",
+    "rconnect/core/RoomDiagnostics.as": "fabbb2506701b1da9b88f89c81141f7ec3cec06be248c332bfc132b7d68cd175",
+    "rconnect/core/RoomSync.as": "dcf929fb066dc1d807c18176cb4a27485604a1582fc6580c8459d27d697c8ccf",
+    "rconnect/core/SecurityTerminals.as": "4d400bb5e48ec32ef2750849e46dee8c6fcffa205719e5af9ae197ac2cfcaf1b",
+    "rconnect/core/Session.as": "f864b203b8758b64cb0ca485a75553f99d7984c9d4a1a66fac0a8210ffe2e062",
+    "rconnect/core/TeammateNavigation.as": "4697dc1eb4634e6062a78e54ab889819edb25c080098a01a83f27232f69e74dd",
+    "rconnect/core/TravelGuard.as": "76fb5ff44149e8f2d8ae677d16ec0799f4cb75b4a743f235b93176805259a31d",
+    "rconnect/core/TravelPlacement.as": "4b9a37772e2a71305e56ecec7158de7f3549df6bf17341c60e9df7c6d0835e52",
+    "rconnect/game/BurnVisuals.as": "74be601fe5404e70f13440ed15ce5b32950153ae6c5c3bfbab9e902ad2abe070",
+    "rconnect/game/CooperativeBonus.as": "d5de26364ff3b4c571257c6c074be67e8f9d8d5bf0c8767034b91d59bdab7c1f",
+    "rconnect/game/DeathVisuals.as": "16bf7e1903bf72890cdbcb15b3da175e5b8afe268d24e14406f5229bb3fd2f89",
+    "rconnect/game/EnergyImpactVisuals.as": "8f940810a84b3e1ac65a5eb83393da90c6ab66cdc14aace8de69f1aee14d52c2",
+    "rconnect/game/ExplorationSync.as": "1a216868d899a78b9c46125e1d036c76cfe577277eb682ae0ccb68365e0ac757",
+    "rconnect/game/GameBridge.as": "ac575c7ff5b6e0c9b75c69916e587b062bd2916235a5f60f21c063eaf31f5ddc",
+    "rconnect/game/GroundItemState.as": "2667094e8080d95624b92f3afafdf390c04d46664aded3844c919beebf0495e6",
+    "rconnect/game/HitFeedback.as": "72441f9c5c5a5e45328aae78bbd6592dcd6630293e7a785c7b2af1ba47a07a17",
+    "rconnect/game/MeleeVisuals.as": "2a3c82dac17f96614f67d1711be5339056208e3485e38d2d159e0f303c075a00",
+    "rconnect/game/MirrorHitUnit.as": "6f3ea3364734977a8c270108c876afcd60e954f6b26cc771b5ebd34a026f9e05",
+    "rconnect/game/MirrorMasks.as": "540281acb7fddbf4d378a564a591048a0f6437d1bbfc42907f850984685d7264",
+    "rconnect/game/NativeHit.as": "04a3f3f1cc2c2f9331ce2095c04d1bd6cdd2d7f44249fae17b189bf558046f41",
+    "rconnect/game/NativeRoomState.as": "1e91028348b29dc1bd00dc55cf4d5df5d5ee40469ef9ea0f7e9626d30a601938",
+    "rconnect/game/NativeTileState.as": "eec001f4de8bdfc5ad892c2de2e892c07cceac15ebe7c5cf10fda4a1047592dc",
+    "rconnect/game/ObjectIdentity.as": "0bc4cc3429f78f0e43164dea4af4481e4230fdf335bd0eed6e7090baf0937774",
+    "rconnect/game/PeerAppearance.as": "84e4afbc0987aca18efec934e38b210562dc740bc8921ffcfb92558b267b219a",
+    "rconnect/game/PeerHitUnit.as": "3f96545d85d8f2ec23c802201e6794122374efc895796bd2915fed88f3274c5d",
+    "rconnect/game/PlayerBodyEffects.as": "11260028854167d8bd0c9f7e806e23081204dd0386902fdf746ba8e10485ccbd",
+    "rconnect/game/PlayerMineGate.as": "200d5b535441781e3a02e71ec8132a8d923ae84b80f056e51e10f65827d0dd40",
+    "rconnect/game/ProjectileExplosionVisuals.as": "42ca278448b3768c5168c13d03efc9b57602fdc8aea6189990d7a6cd0dab78d2",
+    "rconnect/game/ProjectileVisuals.as": "7837f01edba489fa3bde5deb4ef5adaae32a2297f994993c1f65e1664b13cf7e",
+    "rconnect/game/RemoteArmor.as": "f9de592e2d079cabafcad9625dbb1f2739f8337db8b90aaaf4992cad1fc52249",
+    "rconnect/game/RemoteDamageUnit.as": "c9b22eb3bd0c3cc8abec7c93c1117c2b230a2f7256bd4ddd56f894bd02a44792",
+    "rconnect/game/RemoteLoot.as": "b051ea9a719a135534aa84315064595ad085f75474b080f742d2addb881dce12",
+    "rconnect/game/RemoteMotion.as": "19f035bfccb5a035fdb9df84c364db3a2eb845e2c002d825f8ed0665517174aa",
+    "rconnect/game/RoomTerrainView.as": "a2eb59b8536414d26daa39a82c71c414009c5d4b29a7a24539e025d1b852877f",
+    "rconnect/game/SatsTargetVisuals.as": "36bae920ba10e4b9a2120f4ec897ef2e8b0add047fb6969adf1a76ab1fb7db2c",
+    "rconnect/game/SecurityAccessState.as": "03f116efc293b2287ebd6de0cad8487c9b93f87c814f4611ed70f35e333ed37e",
+    "rconnect/game/TelekinesisVisuals.as": "2a98e2d94bf6d0cfcf62f64e830845a3919a9cb461719b81ae5f152031be30b1",
+    "rconnect/game/TeleportVisuals.as": "ec323ce52b1926e6cb1c98e722c78544cd396fa5b3661ba257111b4b703c272c",
+    "rconnect/game/TerrainSync.as": "3bb4ac4a9ab4ca6a045d2376e3b18025d48db409bc6ad72cb62cdece02f5ebfa",
+    "rconnect/game/TurretDisplay.as": "b9bf6c7be6343d123d4e7d9df91efcf58a09cd69fda0ee55040a8969a9f86cd7",
+    "rconnect/game/UnitPresentation.as": "c93cf23601069a6cd151a03bfd2deab422125fa74c00574e0a3712fd0f2e0f49",
+    "rconnect/game/VersionProbe.as": "b565f16eac1bde5bc036f774cfb9b730ae38b270899aaf0f0adf05e4771f07f1",
+    "rconnect/game/WallImpactVisuals.as": "12eb9457f753373ea67516702d464aa4ac1266f651d2bc20bb7b50d2b4c80a59",
+    "rconnect/game/WeaponDisplay.as": "c76a6b157992398dbb8d8620de2482375594423226cd64b90e13e8fee96066f2",
+    "rconnect/game/WorldProgress.as": "9d1ef52d3710581906c61d23d0daa641b64a66c77db6f812d9001944de723d13",
+    "rconnect/net/BinaryMessageCodec.as": "001479db144318320669ce3d89e6c275c210a7d81b9e6f116cdb58e6091376f1",
+    "rconnect/net/HostServer.as": "db414124b24bf72285c49992d7e4faacecd39b9dae834cf976588d22dcba3ee2",
+    "rconnect/net/NetMessageEvent.as": "45886a1f4c10ca4f1fc831803ff54ccc91c2f8c0d12d4a37f2e2a952ff91db7b",
+    "rconnect/net/Protocol.as": "9655eb28a4c417750bbbf318a0ce20bd485080051447c0caf0500ce76218b39d",
+    "rconnect/net/RoomCodec.as": "bd98187fb1201c118f4980a3a93e3a06b0ebed28ba1cfc1be8661dcb33762570",
+    "rconnect/net/TcpLink.as": "b7ab3b85e9d97a3096c2ceb466515bdade58f705ac8585b96984c435a3359a5a",
+    "rconnect/ui/HudLayout.as": "da332cdfdb1776a8a8666dc6c22754f093cd5dd2652da9d1a22a1536b3ac2ef5",
+    "rconnect/ui/NetHud.as": "5ceba3e5c58937dc7eaa21feb1906d5c2fd4a58a065ace5f4caafdd63f880f43",
+    "rconnect/ui/NetKeybinds.as": "94d0b52a6c9af92f3fa92645415995cefeb7ff27e5f294c04cad448b76b1a233",
+    "rconnect/ui/RoomEntryView.as": "4cb479f39262f631b834c6290f78fcaec3b3cc102bb56f9886a71791a05efe0b",
+    "rconnect/ui/TeammateMap.as": "2043b149453cc710e39163e2cc2c89c8f77abf61c577133b76fb4a8119bba080",
+    "RConnectDoc.as": "764967e351e57e10fbcf1c3136d5170e633c6cd2e750a7427c6a180e3a1e34e1",
+    "RConnectMod.as": "f906cfbfbd230acc05aa28142ed4614238de6d01acf1bec95838b73f0ac68eee",
+    "RConnectModDomains.as": "372167c4a32b2ac9b23b7addc7959ba3c70b7f74fea9732cdd1c650112eb9b00",
+    "rconnect/core/EarlyTravelGate.as": "544d61b428ca0e3b3daf603eb0a8c8546fc01a64d22834c73f7d90d323f6a814"
+  },
+  "changes": {
+    "RConnectMod.as": {
+      "base_sha256": "a5758da701c7f2b256158c97ff3d0bcb99ca6e3dfdb605ecd317042d3e241f4b",
+      "candidate_sha256": "f906cfbfbd230acc05aa28142ed4614238de6d01acf1bec95838b73f0ac68eee"
+    },
+    "rconnect/game/NativeTileState.as": {
+      "base_sha256": "dab683e9d14e18e8b7e35a917da8a7e237391b602f43d315661fd0d11ce8cae5",
+      "candidate_sha256": "eec001f4de8bdfc5ad892c2de2e892c07cceac15ebe7c5cf10fda4a1047592dc"
+    },
+    "rconnect/game/TerrainSync.as": {
+      "base_sha256": "317c9658b0632f3bb8333c11cd302c68ef45e7a9f2f54ed6b6c631b6c1b92b44",
+      "candidate_sha256": "3bb4ac4a9ab4ca6a045d2376e3b18025d48db409bc6ad72cb62cdece02f5ebfa"
+    }
+  },
+  "unchanged_source_count": 79,
+  "inherited_early_sources": {
+    "rconnect/core/RoomSync.as": "dcf929fb066dc1d807c18176cb4a27485604a1582fc6580c8459d27d697c8ccf",
+    "rconnect/core/MapGeneration.as": "874cf31c714dab7ce4ba04f795ead2a6b92b9022181120c17f6b97aa6c62e1e0",
+    "rconnect/core/Session.as": "f864b203b8758b64cb0ca485a75553f99d7984c9d4a1a66fac0a8210ffe2e062",
+    "rconnect/game/GameBridge.as": "ac575c7ff5b6e0c9b75c69916e587b062bd2916235a5f60f21c063eaf31f5ddc",
+    "rconnect/game/WallImpactVisuals.as": "12eb9457f753373ea67516702d464aa4ac1266f651d2bc20bb7b50d2b4c80a59",
+    "rconnect/core/EarlyTravelGate.as": "544d61b428ca0e3b3daf603eb0a8c8546fc01a64d22834c73f7d90d323f6a814"
+  },
+  "source_origins": {
+    "rconnect/game/NativeTileState.as": {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-room-perf-current-01\\src\\rconnect\\game\\NativeTileState.as",
+      "sha256": "eec001f4de8bdfc5ad892c2de2e892c07cceac15ebe7c5cf10fda4a1047592dc"
+    },
+    "rconnect/game/TerrainSync.as": {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-room-perf-current-01\\src\\rconnect\\game\\TerrainSync.as",
+      "sha256": "3bb4ac4a9ab4ca6a045d2376e3b18025d48db409bc6ad72cb62cdece02f5ebfa"
+    }
+  },
+  "pins": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-room-first-raster-product-01\\prepared.json": "d4598712cd5d5457802b16a998136ecc3b30166183f6ac7aa38a48fd6c4bd278",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-room-first-raster-product-01\\compile.json": "5062269f806d92d28190c56bca9c7768d0fe13b8e43929a5699d921468c24695",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-room-first-raster-product-01\\RConnectMod.swf": "6d4655f30bc252e798304bbf99a21458d53eeec1538c6d49eeb04c1a0b655392",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-room-perf-current-01\\prepared.json": "98cefeff04e60302339c79dfa1e2ae96173da9619df9870df43d08a39f7e5ba1",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-room-perf-current-01\\compile.json": "03b9234aa25a952245bb02cb7a400ae9ef6399bd7c02608887bf20600a13f1af",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-room-perf-current-01\\RConnectMod.swf": "1e26bdf38811268234af8e1ef060514388719a5dcaa21a861ff7501ef558ba81",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-room-first-raster-current\\build.py": "74a3466a134bcd78fc06572fcceafba9c64170fbed8afb913e997ec7d0e996ae",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-room-first-raster-current\\manifest.json": "a989a74630b7ff4b3bf750b0922a39d9e8d61ad2bf83f776c82ecc28cfa31b56"
+  },
+  "historical_components": [
+    {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-terrain-loop-component-03",
+      "assertions": 67,
+      "receipt_sha256": "122778424511b8bf6d988a2dac44f93f0cf379129bc4ce31a81fd5a5a2c0d86b",
+      "result_sha256": "8fa17bbccdfdfb42b51cec0d3530ed10853c43fc23845996e02eb61bd51b4d17",
+      "intent_sha256": "370ee7602d38f0cbfb27c43ab47e937d4322fd5c23dffba64d5c782e07bdd622",
+      "component_sha256": "f1e616cb39da1928f06dd2edaa0102ffaa32e43d7214e7c4928c06ffd58d37df"
+    },
+    {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-terrain-capture-component-01",
+      "assertions": 154,
+      "receipt_sha256": "4631c58b540449f75d3ced18a51b705d72f0bfbde343ed851127b7c16966ae71",
+      "result_sha256": "db60fc5e3953b82ddcbdea1fbf390674e17cdc2af7f9a9cb389bd7600973f1db",
+      "intent_sha256": "c8e831088dac012095fce9d624fa9804a0f364b35ffb3139836ef53207424c19",
+      "component_sha256": "b9b6bbd45ae67b9e033e8a4d6c451fc57683c3eb54f098fdc328781e62fc8bed"
+    }
+  ],
+  "outputs": {
+    "src/rconnect/game/NativeTileState.as": "eec001f4de8bdfc5ad892c2de2e892c07cceac15ebe7c5cf10fda4a1047592dc",
+    "src/rconnect/game/TerrainSync.as": "3bb4ac4a9ab4ca6a045d2376e3b18025d48db409bc6ad72cb62cdece02f5ebfa",
+    "src/RConnectMod.as": "f906cfbfbd230acc05aa28142ed4614238de6d01acf1bec95838b73f0ac68eee",
+    "source.diff": "51e54e58d851b82de9acbc6cd8820363b06b81132b0fec41cf7124f4ac61448d",
+    "builder-adaptation.diff": "132695c70db2b6f305bd9f626d911cde9bb170728bc5e0b45dc206d5b98f147d"
+  },
+  "prepare_sha256": "ddd9ff221c704ee8ec26832844f600bc71f4b62fc8d9b324817bbe79f5217c84",
+  "wrapper_sha256": "2309994ab6d68e396210189e1e2981bc1a8935ad439a0d4fcfc8eb9013769054",
+  "readme_sha256": "115e947ba48f3a6f39a4a885f668bcfc99debf26be9a635bf1c984a75574612f",
+  "builder": {
+    "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-room-first-raster-current\\build.py",
+    "source_sha256": "74a3466a134bcd78fc06572fcceafba9c64170fbed8afb913e997ec7d0e996ae",
+    "adapted_sha256": "3fcf68db7eb93a1a0d47aba2cc3f353a5add5da6de8e48f4306d13137bd609c8",
+    "replacements": 1
+  },
+  "compiled": false,
+  "native_tested": false,
+  "installed": false,
+  "performance_qualified": false
+}

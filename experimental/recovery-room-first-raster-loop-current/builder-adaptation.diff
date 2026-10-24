@@ -1,0 +1,11 @@
+--- frozen-first-raster/build.py
++++ bound-roomload2/build.py
+@@ -119,7 +119,7 @@
+     assert out.parent == ROOT/'build/m52' and not out.exists()
+     expected, entry = source_check()
+     pins, before = recipe_inputs(), installation()
+-    assert len(before) == 22 and before['mods/Rconnect/release/RConnectMod.swf'] == BASE_SHA
++    assert len(before) == 22 and before['mods/Rconnect/release/RConnectMod.swf'] == INSTALLED_SHA
+     shutil.copytree(BASE/'src', out/'src')
+     shutil.copytree(BASE/'tools', out/'tools')
+     for rel in read(HERE/'manifest.json')['sources']:

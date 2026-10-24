@@ -63,7 +63,7 @@ def installed():
 def product(path):
     assert path.parent == M52 and path.is_dir()
     meta, built = read(path/'prepared.json'), read(path/'compile.json')
-    if meta['version'] == '0.2.24-roomload1':
+    if meta['version'] in ('0.2.24-roomload1', '0.2.24-roomload2'):
         from bridge_inputs import product as verify_product
         checked, built, _ = verify_product(path)
         return checked, built
@@ -106,8 +106,9 @@ def inputs(path):
              path/'prepared.json', path/'compile.json', path/'RConnectMod.swf',
              ROOT/'tools/validation/runtime_memory.py', ROOT/'tools/validation/air_test_inventory.py',
              GAME/'mods/ModLoader/tools/test_registry.py', GAME/'mods/ModLoader/tools/air_test_process.py']
-    if meta['version'] == '0.2.24-roomload1':
-        files += [ROOT/'experimental/recovery-room-first-raster-current/build.py']
+    if meta['version'] in ('0.2.24-roomload1', '0.2.24-roomload2'):
+        recipe = 'recovery-room-first-raster-current' if meta['version'] == '0.2.24-roomload1' else 'recovery-room-first-raster-loop-current'
+        files += [ROOT/'experimental'/recipe/'build.py']
     if DIAGNOSTIC is not None:
         files += [diagnostic_builder, DRIVER/'compile.json']
     return meta, built, {str(p): sha(p) for p in files}
@@ -266,8 +267,10 @@ def main():
     try:
         with (out/'runner.log').open('x', encoding='utf-8') as log, contextlib.redirect_stdout(Tee(log, sys.stdout)):
             try: runner.main()
-            except SystemExit as error: result['exit_code'] = error.code if type(error.code) is int else 1
-        assert result.get('exit_code') == 0, 'Shared runner did not pass'
+            except SystemExit as error:
+                result['exit_code'] = error.code if type(error.code) is int else 1
+                if not isinstance(error.code, int): result['runner_stop_reason'] = str(error.code)
+        assert result.get('exit_code') == 0, 'Shared runner did not pass: '+result.get('runner_stop_reason', 'see runner.log')
         assert run_path is not None and read(run_path/'registry-result.json')['passed'] is True
         native = read(run_path/'run.json')
         assert native['sha256'] == digest and native['solo'] == (args.mode == 'solo')
@@ -297,7 +300,7 @@ def main():
             assert rows[1]['actualMerged'] is False and rows[1]['width'] > 0 and rows[1]['height'] > 0
             assert 'COOP EFFECTS DONE travel-timing '+role in text and 'v'+meta['version']+' initialized' in text
             assert not re.search(r'^COOP FAIL |handoff timed out|TRAVEL CONFIG ERROR', text, re.M)
-            if meta['version'] == '0.2.24-roomload1' and args.mode == 'dual' and bridge is not None and args.sandy_bridge:
+            if meta['version'] in ('0.2.24-roomload1', '0.2.24-roomload2') and args.mode == 'dual' and bridge is not None and args.sandy_bridge:
                 opened = re.findall(r'RConnectEarly: constructed (\S+)', text)
                 closed = re.findall(r'RConnectEarly: activated (\S+)', text)
                 assert len(opened) == len(closed) == 2 and sorted(opened) == sorted(closed)

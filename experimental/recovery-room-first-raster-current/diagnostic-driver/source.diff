@@ -109,7 +109,7 @@
 +         var value:Object={kind:kind,at:at,wall:new Date().time,identity:identities(),
 +            exit:int(w.t_exit),waiting:ticket.waiting,unpainted:ticket.unpainted,
 +            rasterPending:g.rconnectRasterPending,earlyPending:Boolean(r.earlyTravelPending),
-+            ready:Boolean(r.ready),busy:Boolean(r.busy),roomKey:mod.game.roomKey(),
++            ready:Boolean(r.ready),busy:Boolean(r.busy),roomKey:mod.game.roomKey(refs.loc),
 +            land:String(refs.land.act.id),seed:Number(refs.land.rconnectLayoutSeed),
 +            redraws:Number(g.sceneRedraws),passes:Number(g.sceneRegionPasses),
 +            resident:Number(g.sceneResident),evictions:Number(g.sceneEvictions)};

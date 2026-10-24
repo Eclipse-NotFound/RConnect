@@ -35,56 +35,37 @@ A 为普通入口的双人联机；B 独立架构本轮不碰。根会话 `01a08
 
 ## 4. 最新实测与卡点
 
-- **17:12首绘宿主窄移植完成，真实新桥测试进行中**：host-current-03/v2 只复用02已成功的donor import/export，后4条Java均成功回收；产物`fba27a3d119b25488c18a1ec2955a42cd73eeea4dbb400f9bab5b3d11e6cd36a`。13方法247个activation/catch槽通过来源证明；Game保留原658字节只尾插通知，未改其它原生方法/构造器/资源。02失败原回执保留，03编译资格不代表原生/性能资格。准确6D+原A796（无新桥）的fallback双人c88b78a177已41检查通过，三程同入口/恢复控制；主9.170/2.373/4.529秒、加14.317/2.052/7.468，仅回退功能资格。新桥+Sand003运行384e92463c进行中，正式仍78C/A796/CEC6。
-- **16:05当前组合三程对照完成**：A796/BF4A/2050、全14模组，正式roomfix5双人7cadcc8267主9.040/2.401/5.189秒、加15.068/2.321/8.208；solo fc4111c750为6.642/1.732/3.101秒。局部roomperf1候选1E26BDF3（195459B）双人6f633cee8e主9.531/3.632/5.171、加15.358/2.043/8.259。三轮原驱动检查通过、双侧三程出生距离0、真档/正式22项未改，私有实例已清；telemetry和CS偏好首个AIR前写入两端并核回。**未见明确速度收益，roomperf1不部署**；同布局seed不固定原生敌人数量，单pair不是正式性能判定。详见recovery-room-current-comparison/RESULTS.md。正式仍roomfix5，单人水平未达标。
-- **首次绘制当前移植在做**：RC5类只移旧early2的共同大场景票据与退出许可，保留当前普通分房/READY/返程修复；宿主另在recovery-room-first-raster-host-current准备A796的World/Game/Grafon最小补丁。准确A796导出source02双JVM通过，3类AS/pcode及输入回执齐全；source01仅日志编码后处理失败，原失败留存。尚未编译或实测新桥。不能用旧2D宿主替换A796颜色/相机修正；未改方法保留原字节，新成员另核。旧Sand003仅候选仍未正式安装。
-- **随后roomload1已编译及组件通过**：实际最小移植为6类（另补WallImpactVisuals在rconnectRasterPending时不观察空白/旧frontBmp），完整82源；product-01 SHA`6d4655f30bc252e798304bbf99a21458d53eeec1538c6d49eeb04c1a0b655392`、199879B、双Java成功回收。源码审查发现并补回early2两处分支：成功起步撤旧pending0房间hold；原生拒绝旅行立即取消lease。六组实际AIR组件251/0（20+36+79+92+12+12），准确证据见first-raster-current/COMPONENTS.md及独立审查。Port01因测试辅助类同文件编译失败，拆文件后02通过；不改生产源码。组件非原生/性能资格，正式仍78C。
-- **宿主构建仍未完成**：host-current-01被FFDec AppData日志锁权限挡在import；02升级权限后donor import/export成功，保留器正确拒绝未审查slot操作。准确定位World catch槽及Grafon activation/catch槽，另有sceneOpen scope深度差异；正在窄证/修保留器，不放宽全槽禁令或直接装donor。02失败原回执保留，无finalhost/无AIR。当前current-comparison/run.py已增加显式隔离host+固定Sand003接线，经只读审查及默认--check，尚无新宿主实机。
-- **15:22单实例机制取证通过**：`recovery-room-terrain-solo-native-01` / `19ef6da857`，准确9A诊断、当前A796/BF4A/2050、私有Littlepip槽9，两次原生读档/生成240×125，27检查、种子1380142925及构造参数/新对象身份一致，一次真实codec/foreign restore。beforeRole53/role58/objects308/terrain876/units1578/effects1699/total1778ms（累计诊断，非性能资格）。首拒因tile(11,74).shelf false→true；完整源快照cp(480,2959)脚落11/12,74，源为实墙phis1/backA。仅自然注入alarm/exit，不是旧双侧5门复现。目标原cp坐标未采，不能断定创建/移动分支；真实存档副本字节未变、运行副本清理。新入口只固定准确产品及宿主/正式RC，其他真实输入按本次构建冻结，不继续追逐旧环境适配。旧preflight在新RV出现时先拒绝，无Java/输出，后才按新机制范围运行。
-- **不能直接忽略shelf**：原生轮廓在实墙且背景非空有逻辑等价特例，但准确WB14112的eligible要求!shelf，且大场景revision相同时跳过重查；准确A796的refresh涉及方法不推进surface修订。因此全组合保留full redraw，继续研究原生首次绘制之前应用checkpoint以避免重复绘制。尚无新钩子实现。
-- **历史路线已重新接上，勿重做**：10月22日94d4672d0f已抓到另一shelf拒因；early2/D356已有栅格等待票据、constructed通知、完整restore后首绘，三程f95499e5a7与6b322acc0f功能过，但未达单人耗时。A796没有这些桥，不能直接装旧2D宿主；新目录recovery-room-first-raster-current只核最小移植，不重新写一套协议。旧67项NativeTileState循环优化、154项TerrainSync本地破坏观察优化均未在当前roomfix5；当前控制源逐字相同，后者组件已经包含前者。准备与本轮55项合成roomperf1小候选，用实际当前环境三程对照。
-- **局部简化55项通过**：`experimental/recovery-room-restore-allocation` 已准备两类源：删除从未读取的byId扫描；unchanged改直接严格比较，省去30,000格成功比较时的30,000临时数组。`recovery-room-restore-allocation-component-01` 真实AIR55/55、旧新完整类/每字段/NaN/类型/door/短路与refresh像素和调用顺序一致。GameBridge删除仅源差异核验；尚未编译为完整候选或部署，不授整体性能资格。
+- **已安装版**78C/roomfix5 的当前全14组合三程双人7cadcc8267与单人fc4111c750均通过；双侧房间/入口/控制一致，但加入大图首入15.068、重访8.208秒，单人6.642/3.101，未达目标。原生“加载中”素材取代自定义交接UI；本轮没有再部署相同字节。
+- **新首绘桥已完成并实跑**：6D/roomload1 + FBA27宿主 + Sand003（3E220）。原驱动384e92463c双41项通过，主10.152/2.545/5.588秒、加10.153/2.423/5.772；两次真实constructed/activated同票据，三程入口差1/0/1px。首入/重访总耗时明显减少，但主侧自身慢了，仍未达到单人速度，未部署。
+- **单人退化风险仍在**：原基线三组6.642/1.732/3.101、7.448/2.103/3.021、7.028/1.901/3.154；新组合两组9.223/2.176/3.659、8.086/1.836/3.396秒。旧大图落点161.8,4320，新1161.8,4800，原生人口也不同；三组旧/两组新规律原因尚未解释，不能声称无回退或全是随机。RC离线未启early/改偏好/搬位，但新旧还含不同Sand，非单变量。详细回执见NATIVE.md。
+- **真实四节点诊断通过**：02/cd917646ad为41原检查+20附加检查。授权前及完整恢复内没有地形绘制，绘制后才恢复控制，四块抽样身份保留；非全图仅一次、GPU或逐像素证明。01/9d81因观察器缓存roomKey取旧房失败，原失败保留，唯一修正roomKey(refs.loc)。driver02=4FC274，来源已冻。
+- **2.4秒首次绘制长帧仍是主线**：cd917加入grant-after37483→first-raster-ready39881为2398ms，ready仅再1ms；当时exit0/fadingfalse，排除固定退出动画和ACK延迟。期间图块0→24/regionPass35→40；不能把全部CPU归Grafon，仍包括同帧视觉模组。World.step→cam→Grafon.sceneTick/sceneEnsure/sceneEnsureUpcoming/sceneFirstWindow为优先读点。busy会挡unitsync/地形等新包，玩家worldstate仍可处理，不能照搬旧14次unitsync归因。
+- **两类循环候选也已测，不部署**：roomload2/FBFB8389，product loop-product-01，200069B；仅版本及NativeTileState/TerrainSync，79类不变，实际双Java编译通过。7852f0beae双41检查通过，主10.358/2.464/5.984、加10.414/2.301/5.979，整体未改善。terrain段省79/91ms，但grant→ready多683/719ms；落点/人口不同。52冻结及22正式输入未变，私有副本/PID已清。之前290e8bf987仅5.714GiB启动余量不足，无AIR，失败不改写。
+- **资源状态以当下为准**：7852启动7.845、最低3.073GiB，69采样无压力/重叠停止。根本轮AIR/JVM均已结束；不要继续沿用17:48内存阻塞。编译/测试排队使用共享登记，不发无意义跨会话催促。
+- **冻结协作已收紧**：配方编译后审查方擅改三文件触发预检拒绝；根保留unapplied-loop-builder-review.patch，再按原SHA恢复，SWF/源/编译回执没改。之后7852按准确冻结配方运行。冻结后只报告意见，根明确重开写范围前任何agent不得续改。
 
-- **10月24日上午后续**：遮罩单行优化 `recovery-room-mask-component-04` 实际392/392通过，旧新像素/归属/清理一致；前三次因登记视图占用、排队时共享工具更新、组件helper与Flash属性mask重名先后失败，原记录保留。`roomfix5` 已编译至 `recovery-room-production-05`，SWF `78c052aea963f1689b705ae1e14d274916ae1a1f7e81933390caf8d1a88f4699`（195147B），prepared `acdc405a6e214531831cbb532178337aaa7fb9f154a91a1f8b543a6480dd6c58`，compile `68fcca0717bd9800725822211650c6fd74787a98a839432b5ed0216cb0ae48d4`；相对roomfix4仅版本与MirrorMasks一行。当时真实游戏/速度未验证；随后已按用户明确要求部署，见§3。
-- **新环境及两次原生尝试**：roomfix5编译后正式宿主从ABE2变为A796，其余21项未变。drivers-01在Java前拒绝该变化，原失败保留。CS回执verified；新verifier分核旧构建/A796运行，`recovery-room-mask-native-drivers-02`三条编译通过并回收。真实8轮native-01/f9b2ff57f2等待15分钟超时、无AIR；native-02/d9404f3e49于11:51:41取得占用，但freeCommit=4606550016（4.29GiB）且其它AIR为空，在启动前停止。原始失败不改判，当前没有根测试进程；不再因旧答“内存已恢复”假定当前足够。普通游戏确已退出；Java90944是用户Minecraft服务器，不关闭。详情mask-native/RESULTS.md。
-- **定向诊断已编译**：`recovery-room-terrain-reason-product-01` / roomreason1 / SWF `9a128737ce470127db16ff903fe0bcbdd8280daead0f714c983515c52a14b1ef`（197497B），prepared9650B504、compile2402BBCA，两个编译进程成功并回收、源码/安装未变，run预检通过。准确roomfix5只加两类诊断与版本：记录首个复用拒因、复用判断前dirty及beforeRole单计时；原短路、墙痕采集次数和三程驱动不变。未运行AIR，尚无首拒因，不可部署。编译后freeCommit约3.62GiB；先满足资源再按ENTRY运行，不新增重复失败目录。
-- **遥测归因排除**：native04和reduced双/单日志、输入、SWF核实均为ModLoader2.4.0/BD71，没有新版FrameRecorder，不能把这些慢帧归它。旧runner不复制/记账telemetry.json；若将来装2.5，缺文件默认开启将形成新基线缺口，须另加存在性/内容/复制核验，不能改写旧22项历史。当前未改ModLoader。
-- **出生点补核完成**：原生地图种子的LCG不替换Math.random，setGGToSpawnPoint仍独立随机选原生点；双人都在同一最终点。早期161坐标日志是ghost，不证明主侧被搬位。缺原spawnPoints完整值，故保留跨模式性能配对限制；不是已证实新的出生错误。详见reduced-runtime/RESULTS.md追加段。
-- **大图重绘链**：首次恢复触发全图redraw，Grafon重建sceneSurfaces后WB清除旧缓存重建；已有局部paint/water接口不能重绘任意Tile状态，当前没有通用公开分块重绘接口。首次5个门/出口注入可能改变door引用或isRebuild，具体首失配尚未记录，不能直接省略重绘。详见loading-counters/RESULTS.md。
+## 5. 已知问题和不能省略的语义
 
-- **git准确归因**：574D→EB365→DF0F的房间/遮罩/旅行源码相同，加载修正从未正式交付。并非“已修又坏”；这是交付缺口。无证据否认用户性能倒退。见`experimental/recovery-room-repair-review/PERFORMANCE-REVIEW.md`。
-- **普通48×25（历史80CF/6DBA）**：旧aura1双24.780/13.300/19.241秒，重访错位1109px；同组合solo9.903/6.386/6.272。roomfix2主7.462/2.121/3.457、加7.520/2.097/3.488，入口一致。仅此样本，不代替大图/最终候选。
-- **大240×125（80CF/0DBE同组合）**：solo1f971dc179为7.518/1.916/3.571秒；roomfix3 d86f5d2d22主10.161/2.364/4.640、加15.675/2.844/7.711，种子/房/入口一致、重复seal已消失；仍不达原单人。首次grant2.033秒（解码187、恢复1827ms），之后3.688秒长帧待定位。
-- **当前ABE2/0DBE单人**：8d4cf6e1db，`recovery-room-scene-solo-current-host-02`，7.222/2.115/2.980秒通过原三程；这是之后新双人直接基准。旧solo01/fb00d86688因sandbox拒绝私有AppData，在AIR启动前失败；02升级权限后正常，未改真实存储。
-- **最终roomfix4真实分房**：BF6 0de27b7e59 / `recovery-room-candidate-entry-04`，主25+加53通过；死亡/HP/弹药/墙破坏/容器/唯一掉落/静止同伴保留，22安装不变。根实际目检双方waiting截图，均正确原生Loading动画而非原定制交接字样；无性能资格。
-- **背景门**：roomfix3 2b02103aa3 / `recovery-room-hidden-03`，真实12轮主121+加157；控制/跟随镜头/身体像素/前景死亡保留/返程轻机枪伤害均过。v4同房间源码和等价Codec，尚未另跑v4背景门。
-- **组件**：真实RoomSync READY92/0，cross68/0及5条实等；实际UI20/0；最终新旧Codec211/0，交叉解码/地块/墙面字节相同且无文件日志。通过项不盲目重跑。
-- **密集版本对照（ABE2/0DBE）**：旧574D c0657f7dd9对当前aura1 394edfb54d，fixture/dimension/driver/runtime成对可比；加入7窗P95旧456/627/1135/860/936/972/513、新442/587/706/533/512/515/465ms。两版都严重失败，21/18条阈值不合；新版两个同步间隔更差。一对墙钟刺激不能否认用户回退，也不给roomfix4资格。见`recovery-room-density-review/RESULTS.md`。
-- **采样失败不是无开销**：573fe88372原场景功能过，但grant与首帧采样全丢、第二帧截断；不把0CPU样本当0开销，不重复已失效flash.sampler路线。已改有界真实函数计数。
-- **三项关闭的普通房**：`recovery-room-reduced-solo-01`/15f9ba06c9，aura1为9.368/4.034/5.124秒；`recovery-room-reduced-dual-01`/a53ab258d9，roomfix4主6.376/1.118/2.275、加6.971/1.256/2.320。双方三程入口距离0、种子/房间/控制恢复通过。真实SOL重新解码确认三端requested=ok=11项、无err；正式22项未变。**跨模式random_mane入口不同**（solo161.8,320、dual1161.8,800），正在追查，不能叫同出生负载或完整性能资格。详见reduced-runtime/RESULTS.md。
-- **全组合计数终于完整**：`recovery-room-loading-counter-native-04`/0c357d93b5，功能与3窗口均通过，counters-result DE183C21，原计数0E7E25C0。首次grant2262ms；返回→首ENTER1105ms，期间14次unitsync520ms、36次worldstate163ms。首帧3236ms，其中priority1→−1为1312、−99→−101为1674；RC mirror150/vis47，MirrorMasks.capture29，不能把主要开销归签名。第二帧234ms。返程role阶段2519/2643ms待查代理退休重复遍历。诊断无性能资格。详情loading-counters/RESULTS.md。
-- **失败与资源已更新**：native-01内存不足；02用户AIR在场未启；03外来AIR中途出现仅启动host；04成功。用户释放后余量已满足，最新根AIR/JVM全已结束，自有副本清理。不要沿用昨夜内存阻塞。共享登记非FIFO，发生真实饥饿后已与RV一次性协调两轮窗口，已结束；CS随后约5分钟实测占用，根先做离线分析，无需再逐个请求用户许可。
-
-## 5. 未解决与已否决
-
-- 要求仍是实际加载/操作速度，不是隐藏覆盖层。不能把功能通过或旧普通房速度当大图合格。
-- MirrorMasks.capture实测首帧29ms，不是3.24秒主因，不写复杂索引。restore单行候选仅当attached(nativeMask,v)且v.mask不等于nativeMask时扫描首个refs；后续remaining扫描不变。RV0DBE的active只读已核，组件392项通过并编入roomfix5，真实RV的8轮待队列。目录recovery-room-mask-reference；已随roomfix5按要求部署，但8轮原生遮罩仍待补。
-- 已排除“isRebuild导致第二次全图重绘”：准确宿主Location.rebuild仅重算水体并成功后清标志；active step还有照明，recalcWater还做落脚检查。不能为提速手工清isRebuild/isRecalc。首次画面复用拒绝原因尚待诊断，不把门注入猜测当实证；原timing.role包含RoomTerrainView构造和wall.checkpoint，不能全算成roomRole独占耗时。
-- grant→ACK确实积压；unitsync/worldstate含weapons事件/impacts/melee、port和轮转tilePatch/wallPaint，整包只留最新会漏效果。字段级安全合并需新增较多状态分支，本轮先不实施；不能通过暂停全部网络消除积压。
-- 不复用仅靠U序号/150px近邻的原生敌人；不完整恢复mapxml/interact/脚本引用会破坏炮塔/状态。不删快照/视野/动画或放宽门槛换速度。
-- 当前Sand CEC6活动/回放绕过普通pause；A已授权接口候选未完成整段旅行验证，暂不并入。WB首次刷新提案无答复不动它。
-- 旧墙面结构代C6A3与宿主6616有逐像素/分房功能证据，但等离子延迟和密集未合格；旧ACK/NoDelay/主动收包/暂停23等分支均无完整收益，不合入。详细已否决路径和准确旧证据见归档，不重建。
-- 真实用户Unit.run #1010在Littlepip29隔离中未复现，不称已修。
+- Git已查：574D→EB365→DF0F房间/旅行/遮罩源码相同，旧加载修正当时没有交付；不是“已修又坏”。不能用局部候选或函数等价否认用户性能退化。准确报告见PERFORMANCE-REVIEW.md。
+- 正式roomfix5首改共同旅行/普通分房/同入口/原生加载图，历史普通分房与背景门实际通过；新6D/FBA组合仍需普通分房、背景门和持续游玩最终回归。当前大图速度证据不授密集场景资格。
+- shelf实变使原视图不可复用；WB14112也依赖该字段，不能忽略。首绘桥在完整checkpoint恢复后才允许真正绘制，避免重复栅格化。不能手工清isRebuild/isRecalc省必要水体/照明处理。
+- NativeRoomState单位段含原生外来实体退休/重建，不是纯镜像创建；mapxml、脚本、武器、掉落引用不能凭U序号或150px位置复用。不能删字段/动画/伤害/完整状态换速度。
+- 不整体丢弃worldstate/unitsync只留最新，里面包含冲击、武器、轮转地块等一次性事件。预采集最多可重叠约416ms，但READY前可靠地图奖励包仍会改世界，暂不新增复杂失效缓存。
+- 小循环roomperf1没有真实整段收益；roomload2也没改善。MirrorMasks.capture实测29ms不是3秒主因，不做复杂全局索引。已部署单行mask优化仍待当前准确输入的8轮原生遮罩补测。
+- A Sand003仅候选：允许共享加载冻结，缺桥或活动/回放走现有路径。正式CEC6不变；WB首次初始化删除refreshView提案无答复不动它。
+- 高速弹丸、击墙、念力、掉落及持续性能目标仍未完全完成。真实用户Unit.run #1010在隔离Littlepip29未复现，不称已修。
 
 ## 6. 下一步入口
 
-1. 正式roomfix5已安装且当前三程双人/单人检查完成，勿再部署同一字节或重复查shelf。roomperf1已编译、真实对照未明确改善，不部署。当前重点是recovery-room-first-raster-current与对应host-current实现，准确A796 source02已就绪。根唯一编译/AIR，遵守原6GiB/512MiB及共享登记。
-2. 审核并编译当前RC5类与宿主3类首绘票据最小移植，复用旧early2证据但必须保留当前普通房修复；新增桥/成员和原方法字节保留单独核。配对旧Sand003必要兼容候选，缺桥或活动/回放走当前原流程。roomRole退休有真实平方级遍历，但mask与数组观察顺序有语义，不做复杂索引或删除完整恢复。
-3. 最终准确生产候选需在当前实际组合取得可比大图与密集证据。旧ABE2/0DBE及80CF数据只作历史参考；局部组件通过不等于整体性能合格，三程出生负载仍需实际比对。正式8轮遮罩回归仍待补，原drivers-02需要独立核当前环境，不直接运行过期准入。
-4. 高速运动、击墙、念力、掉落和大图加载目标继续开放；不能隐藏等待或删动画、损伤、完整状态来通过。资源失败不冒充产品失败或通过；出现真实安装功能失败才按精确字节评估回滚。
+1. 正式仍78C/A796/CEC6，不重复部署或把未达标首绘桥替换安装。加载主线是首次可见区域生成/同帧视觉工作；只读审查正在确认最终入口确定前是否画了旧视口，以及同次drawLoc六层backobjs重复扫描。没有证据前不改渲染行为。
+2. 准确首绘产物：build/m52/recovery-room-first-raster-product-01（6D）、recovery-room-first-raster-host-current-03（FBA27）、Sandevistan/build/out/a-travel-hold-20261022-003（3E220）。循环候选loop-product-01（FBFB）已经原驱动验证但无整体收益，勿盲目重跑。两组新solo也已完成，不能当作仍在跑。
+3. 实机复用experimental/recovery-room-current-comparison/run.py，显式--product/--raster-host/--sandy-bridge/--mode；默认原scene-driver02与原run_coop_regression.py（7ECA）不改门槛。--diagnostic-driver只取阶段证据。每次新输出目录，原失败保留，当前输入变化必须准确记录。
+4. 根唯一JVM/AIR；当前无根测试。最终候选须按当前实际组合取得大图/普通分房/背景门/密集证据再部署。用户允许隔离关LAD/RV/CS，但不同组合必须单独配原生solo，不混基准。
 
 ## 7. 详细记录
 
+- 首绘实测总表与最新失败/收益边界：`experimental/recovery-room-first-raster-current/NATIVE.md`；当前桥源码与组件见同目录COMPONENTS/independent-review。循环配方目录冻结不可顺手维护，结果记NATIVE/state。
+- 当前此前详细快照：`state/recovery-evidence-through-first-raster-2026-10-24.md`（归档中“正在进行”均按本快照为准）。
 - 近期完整取证归档：`state/recovery-evidence-through-roomfix4-2026-10-24.md`；更早`state/recovery-evidence-through-offline-collector-2026-10-23.md`。
 - 房间源/配方/测试准确绑定：`experimental/recovery-room-production-v4`、`experimental/recovery-room-repair-review`；旧检查器锁80CF，新`current_host_verifier.py`分别绑定旧构建和当前ABE2，不改历史回执。
 - 现有正式候选发布：`experimental/recovery-room-production-v5/RELEASE.md`；旧aura发布说明保留。历史过程在journal顶部及各experimental/RESULTS；日志只追加，失败不改判。

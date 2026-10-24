@@ -21,10 +21,14 @@ def load(path, name):
     return module
 
 def product(path):
-    builder = ROOT/'experimental/recovery-room-first-raster-current/build.py'
+    version = read(path/'prepared.json')['version']
+    recipes = {'0.2.24-roomload1':'recovery-room-first-raster-current',
+               '0.2.24-roomload2':'recovery-room-first-raster-loop-current'}
+    assert version in recipes
+    builder = ROOT/'experimental'/recipes[version]/'build.py'
     meta = load(builder, 'first_raster_product_verifier').verify(path)
     assert (path/'compile.json').is_file()
-    assert meta['version'] == '0.2.24-roomload1'
+    assert meta['version'] == version
     return meta, read(path/'compile.json'), builder
 
 def verify(host, installed, use_sandy):

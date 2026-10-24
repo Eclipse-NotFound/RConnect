@@ -1,0 +1,34 @@
+--- compiled-recipe/build.py
++++ unapplied-post-build-review/build.py
+@@ -52,7 +52,9 @@
+ def verify(folder):
+     """Read-only: source/base provenance and actual compile receipt; no live-test claim."""
+     prepared, module = bound()
+-    result = module.verify(Path(folder).resolve())
++    folder = Path(folder).resolve()
++    assert (folder/'compile.json').is_file(), 'A successful compile receipt is required'
++    result = module.verify(folder)
+     assert result['installation_before']['mods/Rconnect/release/RConnectMod.swf'] == prepared.INSTALLED_SHA
+     return result
+ 
+--- compiled-recipe/README.md
++++ unapplied-post-build-review/README.md
+@@ -18,4 +18,4 @@
+ python -B -X utf8 experimental/recovery-room-first-raster-loop-current/build.py --verify build/m52/recovery-room-first-raster-loop-product-01
+ ```
+ 
+-只读 API：`build.verify(absolute_output_path)` 返回实际 prepared 记录，并核实际 compile/SWF（若已构建）。无运行器、AIR、宿主修改或部署入口；实际新产物仍须与 roomload1 用同一宿主、驱动及输入对照。
++只读 API：`build.verify(absolute_output_path)` 必须取得成功 compile 回执并核实际 SWF，然后返回 prepared 记录；仅准备目录不能获得产物资格。无运行器、AIR、宿主修改或部署入口；实际新产物仍须与 roomload1 用同一宿主、驱动及输入对照。
+--- compiled-recipe/manifest.json
++++ unapplied-post-build-review/manifest.json
+@@ -164,8 +164,8 @@
+     "builder-adaptation.diff": "132695c70db2b6f305bd9f626d911cde9bb170728bc5e0b45dc206d5b98f147d"
+   },
+   "prepare_sha256": "ddd9ff221c704ee8ec26832844f600bc71f4b62fc8d9b324817bbe79f5217c84",
+-  "wrapper_sha256": "2309994ab6d68e396210189e1e2981bc1a8935ad439a0d4fcfc8eb9013769054",
+-  "readme_sha256": "115e947ba48f3a6f39a4a885f668bcfc99debf26be9a635bf1c984a75574612f",
++  "wrapper_sha256": "c654687d47c3f89b088d33f2d61d0b91fd110f6709017e7f8f1301ba6379d8ba",
++  "readme_sha256": "8cacf6342e89321e999a7f4a6dfe8058b3d54462bac58e4b60bf612cc0657ef3",
+   "builder": {
+     "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-room-first-raster-current\\build.py",
+     "source_sha256": "74a3466a134bcd78fc06572fcceafba9c64170fbed8afb913e997ec7d0e996ae",

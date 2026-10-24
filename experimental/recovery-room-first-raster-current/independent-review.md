@@ -117,3 +117,15 @@ donor() 精确固定 02 的 build.json `660871ac69348fb0f08b43629377f28a34e95345
 新 build 只在共享登记内执行 serialize、final-xml、readback、pcode 四条 FFDec 命令；仍保留 1 GiB 启动门槛、512 MiB Java 上限、wait_owned 的超时/内存控制、隐藏启动及 finally kill/wait/登记释放。每条调用前重新核输入与安装。serialize 后精确拼回原始资源标签，final-xml 后比较完整保留树；readback/pcode 必须产出三类对应文件。回执记录真实四条结果与独立历史两条来源，finally 即便失败也保存前后安装、输入和产物证据。
 
 verify(output) 是正确的只读接口，返回 build.json 内容；它不调用编译，而是拒绝未完成或失败产物，要求四条参数准确且成功回收、原 donor 身份仍相同、实际 pfe 哈希、method-audit/retain/splice 文件及字段吻合、完整保留树往返相等、原始资源保持。它继续拒绝把该静态构建标成 native/gameplay/performance 已通过。新 comparison adapter 必须显式加载这个 v2 verifier，旧六命令 verifier 无需放宽。入口代码与只读 API 未发现开放阻断；四条实际新命令及最终 readback 当时尚未完成，不能用本节替代其结果。
+
+## 显式阶段观测分支复核
+
+当前 `current-comparison/run.py` SHA `fe35fed22c18474303ba1be2930f9f6986cf7260ee981a1029306198f071d192`；诊断 prepare.py SHA `e05269d1f5947c0f4d34f764a5392fd0fcb00d817656ea30b32e00fd62748371`。只读调用真实 `verify()`，driver-02 返回 verified/scene_only=true，核对 108 项源输入，驱动 `4fc27436aba55989c097abb72082e5b63121f9fc980fb9aa3789842d69875b4a`，原 Harness 仍为 D52EF430。未读取运行中的 native-diagnostic-02 结果，未调用构建或 AIR。
+
+新增分支要求明确传入 `--diagnostic-driver`，且必须双人、指定宿主桥和 Sand 桥；产品必须与诊断编译实际产品一致。prepare 的 verify 没有编译副作用，精确核对原 Timing/Scene 源字节、Harness、当前产品及安装、唯一编译命令/回收结果、复制源文件和 SWF 哈希。入口在预检、AIR 前与 finally 再验证这些证据。原共享 runner SHA、3/6 GiB 启动门槛、512 MiB 运行保护、独占、私有设置、三程动作/断言和退出清理保持；新增四节点检查在原检查之后，不能替代或放宽原检查。
+
+沿实际调用核对：观察包装先准确调用原 raster callback 一次，再记录它返回的同一个 ticket；不吞掉原 callback 的异常，不自行释放等待、不执行 checkpoint 或 restore。消息前后取样以同一事件对象配对，只有 waiting 真正解除才记录授权。RENDER 取样读取至多四份 surface 引用，并在事务结束或 finish 中移除监听、恢复自己持有的 callback。准确 host03 回读中的 `sceneViewReady()`、`sceneViewport()`、`sceneSurfaces()` 只检查/返回当前信息，不触发绘制或预热；观察器没有借这些 getter 推进场景。
+
+driver-02 相对 driver-01 仅把快照中的房间身份从 `mod.game.roomKey()` 改为 `mod.game.roomKey(refs.loc)`，避免 ticket 刚建立而模块缓存仍指旧 rbl 时误报。当前 verifier 因这项有意改源拒绝旧 driver-01；这是历史源不再与当前源相同，不等于旧轮运行中发生漂移。主会话说明旧轮已完整结束、原 41 检查通过而额外身份检查失败后才修源重编；旧失败不改判，本节不把它当成成功观测证据。
+
+这项分支未发现阻止当前限定试跑的代码问题。观察器本身会增加少量取样与事件处理成本，输出已明确 `diagnosticOnly=true / performanceQualified=false`；即使阶段检查通过，也只证明本次四个原生边界及抽样缓冲区关系，不证明 GPU 完成、逐像素等价、整张地图只画一次或稳定游玩性能。当前原生及性能结果仍以各轮已结束的独立回执为准。
