@@ -1,0 +1,632 @@
+--- roomfix5/rconnect/core/RoomSync.as
++++ first-raster-current/rconnect/core/RoomSync.as
+@@ -34,6 +34,12 @@
+       private var initial:Boolean=true;
+       private var preparing:Object;
+       private var preparedToken:String="";
++      private var early:EarlyTravelGate=new EarlyTravelGate();
++      // A nonce must not consume the game's Math.random stream.
++      private var earlyNonce:String=getTimer().toString(16)+"-"+new Date().time.toString(16);
++      private var earlySerial:int=0,earlySeal:Object;
++      private var earlyControlHeld:Boolean=false,earlyViewFinished:Boolean=false;
++      private var nativeFrame:int=0,earlyDeadline:int=0;
+       private var restoring:Boolean=false;
+       private var localEntry:Boolean=false;
+       private var barrierStarted:int=0;
+@@ -67,6 +73,7 @@
+       }
+       public function reset():void
+       {
++         cancelEarly(false,true,true);
+          if(mod.peerGrip!=null)mod.peerGrip.reset();
+          release();records={};nativeRoom=null;nativeLand=null;settledRoom=null;settledKey="";
+          ready=false;authority=true;initial=true;epoch=0;term=0;pending=0;hostInfo=null;
+@@ -78,6 +85,138 @@
+          game.mapGeneration.reset();
+          entryView.clear();
+       }
++      public function get earlyTravelPending():Boolean{return early.active;}
++      private function earlySupported():Boolean {
++         if(!connected() || game.mapGeneration==null || !game.mapGeneration.earlyTravelSupported)return false;
++         if(!host())return session.hostEarlyTravel==1;
++         for each(var p:Object in session.peers)if(int(p.earlyTravel)!=1)return false;
++         return session.peers.length>0;
++      }
++      private function offerEarly(info:Object):void {
++         if(!earlySupported() || blocked || pending>0 || early.active || info.sceneMerged!==true || game.world==null)return;
++         var g:Object=game.world.grafon;
++         if(g==null || g.scenePreload!==true && g.sceneCullRender!==true)return;
++         info.earlyId=earlyNonce+":"+(++earlySerial);info.earlyEpoch=epoch;
++         if(!game.mapGeneration.acquireEarly(String(info.earlyId)) || !early.arm(info,game.world,epoch)) {
++            game.mapGeneration.releaseEarly(String(info.earlyId));delete info.earlyId;delete info.earlyEpoch;
++         }else earlyDeadline=getTimer()+45000;
++      }
++      private function armEarly(info:Object):void {
++         if(early.active || info==null || String(info.earlyId || "")=="")return;
++         if(!earlySupported() || blocked || pending>0){send({op:"earlyCancel",earlyId:String(info.earlyId)});return;}
++         if(!game.mapGeneration.acquireEarly(String(info.earlyId))) {
++            send({op:"earlyCancel",earlyId:String(info.earlyId)});return;
++         }
++         if(!early.arm(info,game.world,epoch)) {
++            game.mapGeneration.releaseEarly(String(info.earlyId));throw new Error("Early travel prepare identity differs");
++         }
++         earlyDeadline=getTimer()+45000;
++      }
++      public function nativeConstructed(nativeGame:Object):void {
++         if(!early.active)return;
++         try {
++            game.refreshWorld();
++            if(game.world!=null && game.world.game!==nativeGame)return;
++            if(game.world==null || game.world.game!==nativeGame || !early.finishConstruction(game.world)) {
++               if(!early.constructed){cancelEarly(true,true);return;}
++               throw new Error("Early travel native completion changed");
++            }
++            if(!earlyControlHeld) {
++               hold();earlyControlHeld=true;game.gg.controlOff();
++               Log.d("RConnectEarly: constructed "+early.id+" room="+game.roomKey()+" t="+getTimer());
++            }
++            checkEarly();
++         }catch(error:Error){fail(error);}
++      }
++      public function nativeLoadingHold(nativeGame:Object):Object {
++         if(!early.active || !early.constructed)return null;
++         if(game.world==null || game.world.game!==nativeGame || !early.valid(game.world) || game.isPlayerDead()) {
++            cancelEarly(false,true);return null;
++         }
++         return early.ticket;
++      }
++      public function cancelNativeLoading(nativeGame:Object):void {
++         if(early.active)cancelEarly(false,true);
++      }
++      private function checkEarly():void {
++         if(!early.constructed)return;
++         if(!early.valid(game.world) || game.isPlayerDead()) {cancelEarly(false,true);return;}
++         if(blocked)return;
++         if(host()) {
++            if(nativeLand!==game.world.land) {
++               nativeLand=game.world.land;nativeRoom=game.loc;
++               epoch++;game.roomEpoch=epoch;records={};settledRoom=null;settledKey="";ready=false;
++            }
++            if(pending==0)begin();
++         }else if(earlySeal!=null && !readySent) {
++            var message:Object=earlySeal;earlySeal=null;
++            if(game.roomKey()!=String(early.anchor.roomKey))throw new Error("Early destination room differs");
++            nativeLand=game.world.land;nativeRoom=game.loc;hostInfo=message.info;
++            pending=int(message.barrier);epoch=int(message.epoch);game.roomEpoch=epoch;
++            ready=false;settledRoom=null;settledKey="";readySent=false;preparing=null;
++            sendReady();
++         }
++      }
++      private function finishEarly():void {
++         if(!early.active || !early.constructed || blocked || !early.paintAllowed)return;
++         if(!early.valid(game.world) || game.isPlayerDead()) {cancelEarly(false,true);return;}
++         if(!early.viewReady(game.world,nativeFrame))return;
++         if(!earlyViewFinished){game.finishFirstRaster();earlyViewFinished=true;}
++         if(!host()) {
++            if(!early.ackSent) {
++               early.ackSent=true;send({op:"ack",barrier:pending,epoch:epoch,earlyId:early.id});
++               Log.d("RConnectEarly: ready "+early.id+" t="+getTimer());
++            }
++         }else if(early.peerReady) {
++            send({op:"activate",barrier:pending,epoch:epoch,earlyId:early.id});
++            completeEarly();
++         }
++      }
++      private function completeEarly():void {
++         if(!early.valid(game.world) || !early.localReady || !earlyViewFinished || pending!=early.barrier || epoch!=early.epoch)
++            throw new Error("Early activation is not ready");
++         var id:String=early.id;
++         if(!game.mapGeneration.releaseEarly(id))throw new Error("External travel hold did not release");
++         TravelGuard.endTravel();
++         preparing=null;pending=0;readySent=false;
++         // The matching native player lost exactly one exit16 controlOn.
++         if(earlyControlHeld) {game.gg.controlOn();game.world.pip.noAct=false;}
++         earlyControlHeld=false;early.cancel();earlySeal=null;earlyViewFinished=false;earlyDeadline=0;
++         release();Log.d("RConnectEarly: activated "+id+" t="+getTimer());
++      }
++      private function cancelEarly(notify:Boolean,discard:Boolean,disconnect:Boolean=false):void {
++         if(!early.active)return;
++         var id:String=early.id,constructed:Boolean=early.constructed;
++         var same:Boolean=early.sameWorld(game.world);
++         var resumable:Boolean=same && int(game.world.t_die)<=0 && int(game.world.comLoad)<0
++            && int(game.world.ng_wait)<=0 && !game.isPlayerDead();
++         if(notify && connected())send({op:"earlyCancel",earlyId:id});
++         if(early.paintAllowed && resumable && connected() && !disconnect) {
++            // Keep ownership until disconnect: even a fully restored but not
++            // activated world must not be released by a malformed old packet.
++            blocked=true;hold();status="房间同步失败，请断开连接后重试";return;
++         }
++         if(!game.mapGeneration.releaseEarly(id)) {
++            blocked=true;hold();status="房间同步失败，请断开连接后重试";return;
++         }
++         early.cancel();earlySeal=null;earlyViewFinished=false;earlyDeadline=0;
++         // A native load/death/replacement owns its own control and pause now.
++         // Never transplant the old saved pause into a new Game in this World.
++         if(!resumable && pauseWorld===game.world)pauseWorld=null;
++         if(!resumable){ready=false;settledRoom=null;settledKey="";}
++         if(resumable && earlyControlHeld && (disconnect || int(game.world.t_exit)<=16)) {game.gg.controlOn();game.world.pip.noAct=false;}
++         release();
++         earlyControlHeld=false;
++         if(discard){pending=0;readySent=false;requested=false;nativeRoom=null;}
++      }
++      /** Only the negotiated full-map transaction may defer native pixels. */
++      public function openFirstRaster(w:Object,l:Object,g:Object):Object {
++         if(!early.active || blocked || w!==game.world || !early.safeWorld(w))return null;
++         var ticket:Object=early.open(w,l,g);
++         if(ticket==null)cancelEarly(true,true);
++         return ticket;
++      }
++
+       private function currentSettledRoom():Boolean
+       {
+          return game.world!=null && settledRoom!=null && game.loc===settledRoom
+@@ -91,7 +230,10 @@
+       }
+       private function present(e:Event=null):void
+       {
+-         if(e!=null)game.refreshWorld();
++         if(e!=null) {
++            game.refreshWorld();
++            if(early.active)try {finishEarly();}catch(earlyError:Error){fail(earlyError);}
++         }
+          if(entryPending)entryView.show(game.world,mod.stage,blocked?status:"");
+          else entryView.clear();
+       }
+@@ -134,11 +276,14 @@
+       {
+          // Force a final presentation check even when native children handle
+          // ENTER_FRAME after the Stage listener or turn visibility back on.
++         ++nativeFrame;
+          if(connected())mod.stage.invalidate();
+-         if(!connected()) {if(ready || busy)reset();else entryView.clear();return;}
++         if(!connected()) {if(ready || busy || early.active)reset();else entryView.clear();return;}
+          try
+          {
+             game.refreshWorld();
++            if(early.active && (!early.safeWorld(game.world) || game.isPlayerDead()))cancelEarly(false,true);
++            if(early.active && getTimer()>earlyDeadline && !blocked)throw new Error("Early travel timed out before activation");
+             if(game.world==null || game.loc==null || game.gg==null)return;
+             if(busy && pauseWorld===game.world)game.world.onPause=true;
+             if(!host())TravelGuard.guardTravel(game,this);
+@@ -168,6 +313,7 @@
+       }
+       private function check():void
+       {
++         if(early.active){checkEarly();return;}
+          if(game.loc==null || game.gg==null || game.isTransitioning())return;
+          if(!host() && preparing!=null)return;
+          if(!host() && hostInfo==null)return;
+@@ -199,15 +345,19 @@
+       private function begin():void
+       {
+          requested=true;
+-         if(game.isTransitioning())return;
++         if(game.isTransitioning() && !(early.active && early.valid(game.world)))return;
+          if(pending>0)return;
+          requested=false;
+          session.flushProgress();
+          hold(!ready || !currentSettledRoom());pending=++serial;blocked=false;
+          barrierRoom=game.loc;barrierLand=game.world.land;
+-         send({op:"seal",barrier:pending,epoch:epoch,info:game.readWorldInfo(),
++         var entryInfo:Object=game.readWorldInfo();
++         if(early.active)entryInfo.worldReady=true;
++         var seal:Object={op:"seal",barrier:pending,epoch:epoch,info:entryInfo,
+             together:TravelGuard.restricted(game.loc) || TravelGuard.restricted(settledRoom),
+-            peerRoom:peerInfo==null?"":String(peerInfo.roomKey)});
++            peerRoom:peerInfo==null?"":String(peerInfo.roomKey)};
++         if(early.active){seal.earlyId=early.id;if(!early.acceptSeal(seal))throw new Error("Early host seal differs");}
++         send(seal);
+          Log.d("RConnectRoom: seal "+pending+" room="+game.roomKey());
+       }
+       /** Called for every host world update, including while maps load. */
+@@ -221,7 +371,7 @@
+       }
+       public function observeHost(info:Object):void
+       {
+-         if(info==null || host() || info.worldReady===false)return;
++         if(info==null || host() || info.worldReady===false || early.active)return;
+          game.mapGeneration.receive(info);
+          hostInfo=info;
+          preparing=null;
+@@ -251,9 +401,11 @@
+          var token:String=String(land.act.id)+":"+seed+":"+constructing;
+          if(preparedToken==token)return;
+          preparedToken=token;
+-         send({op:"prepare",info:{curLandId:String(land.act.id),layoutSeed:seed,
++         var info:Object={curLandId:String(land.act.id),layoutSeed:seed,
+             layoutLevel:Number(land.landDifLevel),landStage:Number(land.act.landStage),
+-            hostVisited:Boolean(land.act.visited),sceneMerged:game.mapGeneration.sceneMode(land,constructing),worldReady:true}});
++            hostVisited:Boolean(land.act.visited),sceneMerged:game.mapGeneration.sceneMode(land,constructing),worldReady:true};
++         offerEarly(info);
++         send({op:"prepare",info:info});
+          Log.d("RConnectTravel: prepare "+token+" t="+getTimer());
+       }
+       private function prepareCachedMap():void {
+@@ -286,9 +438,13 @@
+             && !game.mapGeneration.differs(info,game.world.land))return;
+          TravelGuard.allowTravel(String(info.curLandId));
+          if(game.startSharedTravel(info)) {
++            if(early.active && busy && pending==0) {
++               if(pauseWorld!=null)pauseWorld.onPause=savedPause;
++               pauseWorld=null;busy=false;game.roomHold=false;
++            }
+             initial=true;ready=false;settledRoom=null;settledKey="";nativeRoom=null;
+             game.independentRooms=false;
+-         }
++         }else if(early.active)cancelEarly(true,true);
+       }
+       public function stamp(msg:Object):Object
+       {
+@@ -404,6 +560,31 @@
+          try
+          {
+             game.refreshWorld();
++            if(msg.op=="earlyCancel") {
++               if(early.active && String(msg.earlyId)==early.id)cancelEarly(false,true);
++               return true;
++            }
++            if(String(msg.earlyId || "")!="" && (!early.active || String(msg.earlyId)!=early.id))return true;
++            if(early.active) {
++               if(!early.safeWorld(game.world) || game.isPlayerDead()){cancelEarly(false,true);return true;}
++               if(blocked)return true;
++               if(msg.op=="seal" && !host()) {
++                  if(!early.acceptSeal(msg))return true;
++                  if(earlySeal==null && !readySent)earlySeal=msg;
++                  checkEarly();return true;
++               }
++               if(msg.op=="activate" && !host()) {
++                  if(early.accepts(msg) && early.ackSent && early.localReady)completeEarly();
++                  return true;
++               }
++               if(msg.op=="ack" && host()) {
++                  if(early.accepts(msg) && early.paintAllowed){early.peerReady=true;finishEarly();}
++                  return true;
++               }
++               if(msg.op=="request" || msg.op=="prepare")return true;
++               if(msg.op=="ready" && host() && (!early.accepts(msg) || !early.constructed || early.paintAllowed))return true;
++               if(msg.op=="grant" && (!early.accepts(msg) || early.paintAllowed))return true;
++            }
+             if(host())
+             {
+                if(msg.op=="request") {peerInfo=msg.info;requested=true;if(pending==0)begin();}
+@@ -417,7 +598,8 @@
+                {pending=0;release();check();Log.d("RConnectRoom: resumed "+settledKey+" term="+term+" ms="+(getTimer()-barrierStarted));}
+             }
+             else if(msg.op=="prepare") {
+-               preparing=msg.info;game.mapGeneration.receive(preparing);startPreparedMap();
++               preparing=msg.info;game.mapGeneration.receive(preparing);
++               armEarly(preparing);startPreparedMap();
+             }
+             else if(msg.op=="seal")
+             {
+@@ -430,6 +612,7 @@
+             }
+             else if(msg.op=="grant" && int(msg.barrier)==pending && int(msg.epoch)==epoch)
+             {
++               var completingEarly:Boolean=early.active;
+                var state:Object;
+                var crossedUnchanged:Boolean=false,crossingRequested:Boolean=false;
+                if(msg.fresh===true && msg.owner===true && freshRoom===game.loc && freshWire!=null
+@@ -465,12 +648,19 @@
+                   game.restoreCheckpoint(state,Boolean(msg.owner),msg.fresh!==true && (!authority || settledRoom!==game.loc || !ready));
+                   restoring=false;
+                }
+-               if(initial && hostInfo!=null && game.roomKey()==String(hostInfo.roomKey)
++               if(completingEarly) {
++                  if(game.roomKey()!=String(early.anchor.roomKey))throw new Error("Early entry room differs");
++                  TravelPlacement.place(game.gg,Number(early.anchor.x),Number(early.anchor.y));
++               }
++               else if(initial && hostInfo!=null && game.roomKey()==String(hostInfo.roomKey)
+                   && isFinite(Number(hostInfo.x)) && isFinite(Number(hostInfo.y)))
+                   TravelPlacement.place(game.gg,Number(hostInfo.x),Number(hostInfo.y));
+                authority=Boolean(msg.owner);ready=true;term=int(msg.term);
+                if(!crossedUnchanged){settledRoom=game.loc;settledKey=game.roomKey();nativeRoom=game.loc;}
+                initial=false;game.independentRooms=true;
++               if(completingEarly) {
++                  early.allowPaint(game.world,nativeFrame);mod.stage.invalidate();return true;
++               }
+                TravelGuard.endTravel();
+                send({op:"ack",barrier:pending});pending=0;readySent=false;release();
+                if(crossedUnchanged) {
+@@ -486,7 +676,7 @@
+       }
+       private function sendReady():void
+       {
+-         if(game.isTransitioning() || game.loc==null)return;
++         if(game.loc==null || game.isTransitioning() && !(early.active && early.valid(game.world)))return;
+          if(initial && hostInfo!=null && game.roomKey()!=String(hostInfo.roomKey)) {
+             if(!TravelGuard.follow(game,hostInfo,true))return;
+             nativeRoom=game.loc;
+@@ -516,8 +706,10 @@
+          // state is required only for a new independently occupied room.
+          var freshPacked:String=needFresh?(sameCapture?ownPacked:RoomCodec.pack(freshState)):null;
+          freshRoom=needFresh?game.loc:null;freshWire=freshPacked;
+-         send({op:"ready",barrier:pending,epoch:epoch,info:info,
+-            oldKey:settledKey,oldTerm:term,own:ownPacked,fresh:freshPacked});
++         var message:Object={op:"ready",barrier:pending,epoch:epoch,info:info,
++            oldKey:settledKey,oldTerm:term,own:ownPacked,fresh:freshPacked};
++         if(early.active){info.worldReady=true;message.earlyId=early.id;}
++         send(message);
+          readySent=true;
+       }
+       private function sameRequest(a:Object,b:Object):Boolean {
+@@ -596,14 +788,17 @@
+          game.independentRooms=true;
+          if(retained)grantPacked=String(msg.own);
+          if(grantPacked==null && !unchanged)grantPacked=RoomCodec.pack(theirs.state);
+-         send({op:"grant",barrier:pending,epoch:epoch,term:pending,owner:theirKey!=myKey,fresh:fresh,
+-            unchanged:unchanged,retained:retained,key:theirKey,state:grantPacked});
++         var grant:Object={op:"grant",barrier:pending,epoch:epoch,term:pending,owner:theirKey!=myKey,fresh:fresh,
++            unchanged:unchanged,retained:retained,key:theirKey,state:grantPacked};
++         if(early.active)grant.earlyId=early.id;
++         send(grant);
+          Log.d("RConnectRoom: commit "+pending+" host="+myKey+" join="+theirKey);
+          // The host's ownership and native state are now committed. TCP keeps
+          // this grant ahead of subsequent snapshots, so rendering the peer's
+          // copy is not a prerequisite for local simulation. Keep `pending`
+          // until ACK: another handoff still cannot overtake this transaction.
+-         release();
++         if(early.active){early.allowPaint(game.world,nativeFrame);mod.stage.invalidate();}
++         else release();
+       }
+       private function flush():void
+       {
+--- roomfix5/rconnect/core/MapGeneration.as
++++ first-raster-current/rconnect/core/MapGeneration.as
+@@ -10,15 +10,75 @@
+       private var sceneClass:Object;
+       private var savedSceneMode:*;
+       public var supported:Boolean=false;
++      public var earlyTravelSupported:Boolean=false;
++      private var earlyCarrier:Object,earlyWorld:Object,earlyGame:Object;
++      private var earlyOwner:Object={},earlyLeaseId:String="";
+       public function MapGeneration(s:Session) {
+          session=s;
++         var nativeGame:Object=s.mod.game.main.loaderInfo.applicationDomain.getDefinition("fe.loc.Game");
++         var grafon:Object=s.mod.game.main.loaderInfo.applicationDomain.getDefinition("fe.graph.Grafon");
++         // Both exact host contracts are required. Partial/old hosts retain
++         // the current ordinary loading route; there is no API-only success.
++         if("rconnectTravelBridge" in nativeGame && "rconnectEarlyTravelVersion" in nativeGame
++            && int(nativeGame.rconnectEarlyTravelVersion)==1 && "rconnectRasterBridge" in grafon) {
++            if(nativeGame.rconnectTravelBridge!=null || grafon.rconnectRasterBridge!=null)
++               throw new Error("Native early travel hook already owned");
++            nativeGame.rconnectTravelBridge=nativeTravel;
++            grafon.rconnectRasterBridge=firstRaster;
++            earlyTravelSupported=true;
++         }
+          var cls:Object=s.mod.game.main.loaderInfo.applicationDomain.getDefinition("fe.loc.Land");
+          if("rconnectSeedSource" in cls) {
+             cls.rconnectSeedSource=seedFor; supported=true;
+             Log.d("RConnectMap: native expedition seed interface ready");
+          }else Log.d("RConnectMap: legacy fixed-seed Land; native expedition patch required");
+       }
++      private function firstRaster(w:Object,l:Object,g:Object):Object {
++         if(session.rooms==null || !session.rooms.earlyTravelPending)return null;
++         return session.rooms.openFirstRaster(w,l,g);
++      }
++      private function nativeTravel(phase:String,g:Object,info:Object):Object {
++         if(session.rooms==null)return null;
++         if(phase=="loadingHold")return session.rooms.nativeLoadingHold(g);
++         if(phase=="cancel-load"){session.rooms.cancelNativeLoading(g);return null;}
++         if(phase=="constructed") {
++            session.mod.game.refreshWorld();session.rooms.nativeConstructed(g);
++         }
++         return null;
++      }
++      public function acquireEarly(id:String):Boolean {
++         var w:Object=session.mod.game.world;
++         if(id=="" || w==null || w.game==null)return false;
++         if(earlyCarrier!=null)return earlyLeaseId==id && earlyWorld===w && earlyGame===w.game;
++         // A local room hold may account for onPause; any other pause/menu is
++         // not an eligible starting state for this optimization.
++         if(w.onPause && !session.mod.game.roomHold || w.pip!=null && w.pip.active
++            || w.sats!=null && w.sats.active || w.stand!=null && w.stand.active
++            || w.gui!=null && w.gui.guiPause)return false;
++         try {
++            var c:Object=session.mod.game.main.getChildByName("SandevistanTravelHoldV1");
++            if(c==null || int(c.version)!=1 || String(c.contract)!="sandy-travel-hold/1")return false;
++            var state:Object=c.query(w,w.game);
++            if(state==null || state.version!==1 || state.contract!=="sandy-travel-hold/1"
++               || state.phase!=="idle" || state.debugTest===true)return false;
++            if(c.acquire(earlyOwner,w,w.game,id)!==true)return false;
++            earlyCarrier=c;earlyWorld=w;earlyGame=w.game;earlyLeaseId=id;return true;
++         }catch(error:Error){Log.d("RConnectEarly: external acquire unavailable: "+error);return false;}
++         return false; // ASC requires an explicit post-try fallthrough.
++      }
++      public function releaseEarly(id:String):Boolean {
++         if(earlyCarrier==null)return true;
++         if(id!=earlyLeaseId)return false;
++         try {
++            var released:Boolean=earlyCarrier.release(earlyOwner,id)===true;
++            var current:Object=session.mod.game.world;
++            if(!released && (current==null || current===earlyWorld && current.game===earlyGame))return false;
++            earlyCarrier=earlyWorld=earlyGame=null;earlyLeaseId="";return true;
++         }catch(error:Error){Log.d("RConnectEarly: external release failed: "+error);return false;}
++         return false; // ASC requires an explicit post-try fallthrough.
++      }
+       public function reset():void {
++         if(earlyCarrier!=null)releaseEarly(earlyLeaseId);
+          remote=null;
+          if(sceneClass!=null && savedSceneMode!==undefined)sceneClass.nativeEnabled=savedSceneMode;
+          savedSceneMode=undefined;
+--- roomfix5/rconnect/core/Session.as
++++ first-raster-current/rconnect/core/Session.as
+@@ -39,6 +39,7 @@
+       public var myId:int = -1;          // 宿主固定 0
+       public var myName:String = "";
+       public var hostName:String = "";
++      public var hostEarlyTravel:int=0;
+       public var rooms:RoomSync;
+       public var pause:CoopPause;
+       private var travelGuard:TravelGuard;
+@@ -276,6 +277,7 @@
+          if(mod.peerGrip!=null)mod.peerGrip.reset();
+          if(mod.playerMines!=null)mod.playerMines.reset();
+          _nextWorldSnapshot=_nextSceneReport=0;
++         hostEarlyTravel=0;
+          if(pause!=null)pause.reset();
+          if(progress!=null)progress.reset();
+          if(rooms!=null)rooms.reset();TravelGuard.clear();
+@@ -328,7 +330,7 @@
+       private function onLinkConnected(e:Event):void
+       {
+          Log.d("RConnectNet: connected to host, sending hello");
+-         link.send(Protocol.make(Protocol.MSG_HELLO, {name: myName}));
++         link.send(Protocol.make(Protocol.MSG_HELLO, {name: myName,earlyTravel:mod.game.mapGeneration.earlyTravelSupported?1:0}));
+       }
+ 
+       private function onLinkClosed(e:Event):void
+@@ -404,6 +406,7 @@
+             case Protocol.MSG_WELCOME:
+                myId = int(msg.id);
+                hostName = msg.name != undefined ? String(msg.name) : "";
++               hostEarlyTravel=int(msg.earlyTravel);
+                mode = CONNECTED;
+                Log.d("RConnectNet: welcome id=" + myId + " host=" + hostName);
+                compareWorldInfo(msg.worldInfo);
+@@ -577,11 +580,11 @@
+             case Protocol.MSG_HELLO:
+                link.id = nextPeerId();
+                link.peerName = msg.name != undefined ? String(msg.name) : "Pony";
+-               peers.push({id: link.id, name: link.peerName, link: link, snap: null});
++               peers.push({id: link.id, name: link.peerName, link: link, snap: null,earlyTravel:int(msg.earlyTravel)});
+                var wInfo:Object = mod.game != null
+                   ? mod.game.readWorldInfo() : null;
+                link.send(Protocol.make(Protocol.MSG_WELCOME,
+-                  {id: link.id, name: myName, worldInfo: wInfo}));
++                  {id: link.id, name: myName, worldInfo: wInfo,earlyTravel:mod.game.mapGeneration.earlyTravelSupported?1:0}));
+                Log.d("RConnectNet: peer #" + link.id + " '" + link.peerName
+                   + "' joined");
+                broadcastWorldState();
+--- roomfix5/rconnect/game/GameBridge.as
++++ first-raster-current/rconnect/game/GameBridge.as
+@@ -3516,6 +3516,14 @@
+          tileRedrawIfDirty();_wall.receive(loc,list,true);tileRedrawIfDirty();
+       }
+ 
++      /** Replay saved wall pixels only after the exact restored first raster. */
++      public function finishFirstRaster():void
++      {
++         if(probe(probe(loc,"grafon"),"rconnectRasterPending")===true)
++            throw new Error("First raster still unpainted");
++         _wall.redraw(loc);_satsRasterDirty=true;
++      }
++
+       public function tileRedrawIfDirty():void
+       {
+          if(_terrain.dirty && world!=null) {
+@@ -6232,7 +6240,8 @@
+          // raster can be retained, and only when no pending/previous paint can
+          // be left behind. Changed/unknown terrain uses the old full redraw.
+          var terrainView:RoomTerrainView;
+-         if(!retained && !_terrain.dirty && (s.wallPaint==null || s.wallPaint.length==0)
++         if(!retained && probe(probe(loc,"grafon"),"rconnectRasterPending")!==true
++            && !_terrain.dirty && (s.wallPaint==null || s.wallPaint.length==0)
+             && _wall.checkpoint(loc).length==0)terrainView=new RoomTerrainView(loc);
+          roomRole(authority);
+          timing.role=getTimer()-timingStart;
+--- roomfix5/rconnect/game/WallImpactVisuals.as
++++ first-raster-current/rconnect/game/WallImpactVisuals.as
+@@ -93,7 +93,7 @@
+          var g:Object=get(loc,"grafon");
+          // Grafon is shared by rooms. inRoom(oldRoom) must never paint the new
+          // room's bitmap while settling reports on the old-room TCP barrier.
+-         return loc!=null && get(g,"loc")===loc?get(g,"frontBmp") as BitmapData:null;
++         return loc!=null && get(g,"loc")===loc && get(g,"rconnectRasterPending")!==true?get(g,"frontBmp") as BitmapData:null;
+       }
+       private function solid(loc:Object,x:int,y:int):Boolean
+       {
+--- roomfix5/rconnect/core/EarlyTravelGate.as
++++ first-raster-current/rconnect/core/EarlyTravelGate.as
+@@ -0,0 +1,91 @@
++package rconnect.core {
++   /** One negotiated shared-map transaction. No simulation, network or native
++    * control writes here. The renderer owns unpainted; RoomSync owns pause. */
++   public final class EarlyTravelGate {
++      private var w:Object,g:Object,player:Object,oldLand:Object,land:Object,loc:Object,renderer:Object;
++      private var target:String="",seed:Number=0,originEpoch:int=0,token:String="";
++      private var raster:Object,paintFrame:int=-1;
++      public var constructed:Boolean=false,restored:Boolean=false,paintAllowed:Boolean=false;
++      public var localReady:Boolean=false,peerReady:Boolean=false,ackSent:Boolean=false;
++      public var barrier:int=0,epoch:int=0,anchor:Object;
++      public function get active():Boolean{return token!="";}
++      public function get id():String{return token;}
++      public function get ticket():Object{return raster;}
++      public function get ownerWorld():Object{return w;}
++      public function get ownerGame():Object{return g;}
++      public function get ownerPlayer():Object{return player;}
++      public function arm(info:Object,world:Object,fromEpoch:int):Boolean {
++         if(active || info==null || world==null || world.game==null || world.land==null || world.gg==null
++            || !(info.earlyId is String) || info.earlyId=="" || info.earlyId.length>128
++            || Number(info.earlyEpoch)!=fromEpoch || info.sceneMerged!==true
++            || !(info.curLandId is String) || info.curLandId=="")return false;
++         var n:Number=Number(info.layoutSeed),act:Object=world.game.lands[String(info.curLandId)];
++         if(act==null || !isFinite(n) || n<0 || n>4294967295 || n!=Math.floor(n) || act.rnd && n==0)return false;
++         w=world;g=world.game;player=world.gg;oldLand=world.land;target=String(info.curLandId);
++         seed=n;originEpoch=fromEpoch;token=String(info.earlyId);return true;
++      }
++      public function sameWorld(world:Object):Boolean {
++         return active && world===w && world!=null && world.game===g && world.gg===player;
++      }
++      public function safeWorld(world:Object):Boolean {
++         return sameWorld(world) && int(world.t_die)<=0 && int(world.comLoad)<0 && int(world.ng_wait)<=0
++            && int(world.t_exit)>=0 && (!constructed || int(world.t_exit)<=19);
++      }
++      public function matchesInfo(info:Object):Boolean {
++         return active && info!=null && String(info.curLandId)==target && Number(info.layoutSeed)==seed
++            && info.sceneMerged===true;
++      }
++      public function destination(world:Object,room:Object):Boolean {
++         return safeWorld(world) && world.land!=null && world.land!==oldLand && room!=null
++            && world.loc===room && room.land===world.land && String(world.game.curLandId)==target
++            && String(world.land.act.id)==target && Number(world.land.rconnectLayoutSeed || 0)==seed;
++      }
++      public function open(world:Object,room:Object,visual:Object):Object {
++         if(!destination(world,room) || visual==null || visual.scenePreload!==true && visual.sceneCullRender!==true)return null;
++         if(raster!=null)return room===loc && world.land===land && visual===renderer?raster:null;
++         land=world.land;loc=room;renderer=visual;raster={waiting:true,unpainted:true};return raster;
++      }
++      public function finishConstruction(world:Object):Boolean {
++         if(constructed)return valid(world);
++         if(raster==null || !destination(world,loc) || world.grafon!==renderer || int(world.t_exit)!=19)return false;
++         constructed=true;return true;
++      }
++      public function valid(world:Object):Boolean {
++         return constructed && destination(world,loc) && world.land===land && world.grafon===renderer;
++      }
++      public function acceptSeal(msg:Object):Boolean {
++         if(!active || msg==null || String(msg.earlyId || "")!=token || !matchesInfo(msg.info)
++            || Number(msg.epoch)!=originEpoch+1 || Number(msg.barrier)!=int(msg.barrier) || int(msg.barrier)<=0)return false;
++         var a:Object=msg.info;
++         if(!(a.roomKey is String) || a.roomKey=="" || a.x==null || a.y==null
++            || !isFinite(Number(a.x)) || !isFinite(Number(a.y)))throw new Error("Early travel anchor missing");
++         if(anchor!=null) {
++            if(barrier!=int(msg.barrier) || epoch!=int(msg.epoch) || anchor.roomKey!==a.roomKey
++               || anchor.x!==Number(a.x) || anchor.y!==Number(a.y))throw new Error("Early travel seal changed");
++            return true;
++         }
++         barrier=int(msg.barrier);epoch=int(msg.epoch);anchor={roomKey:String(a.roomKey),x:Number(a.x),y:Number(a.y)};return true;
++      }
++      public function accepts(msg:Object):Boolean {
++         return active && anchor!=null && msg!=null && String(msg.earlyId || "")==token
++            && Number(msg.barrier)==barrier && Number(msg.epoch)==epoch;
++      }
++      public function allowPaint(world:Object,frame:int):void {
++         if(!valid(world) || anchor==null || paintAllowed)throw new Error("Invalid early paint release");
++         restored=true;paintAllowed=true;paintFrame=frame;raster.waiting=false;
++      }
++      public function viewReady(world:Object,frame:int):Boolean {
++         if(localReady)return valid(world);
++         if(!valid(world) || !paintAllowed || frame<=paintFrame || raster.unpainted!==false
++            || int(world.t_exit)!=0 || int(world.comLoad)>=0 || int(world.t_die)>0 || int(world.ng_wait)>0)return false;
++         if(renderer.sceneViewReady()!==true)return false;
++         localReady=true;return true;
++      }
++      public function cancel():void {
++         if(raster!=null)raster.waiting=false;
++         w=g=player=oldLand=land=loc=renderer=raster=anchor=null;target=token="";seed=0;
++         originEpoch=barrier=epoch=0;paintFrame=-1;
++         constructed=restored=paintAllowed=localReady=peerReady=ackSent=false;
++      }
++   }
++}

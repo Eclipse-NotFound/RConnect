@@ -5,7 +5,7 @@ This entry only binds artifacts, copies two missing private settings, and audits
 the unchanged fixture results. It does not grant performance qualification.
 """
 from pathlib import Path
-import argparse, contextlib, hashlib, importlib.util, json, os, re, shutil, sys, traceback
+import argparse, contextlib, hashlib, importlib.util, json, os, re, shutil, sys, traceback, types
 import xml.etree.ElementTree as ET
 
 if sys.flags.optimize:
@@ -52,6 +52,10 @@ def installed():
 def product(path):
     assert path.parent == M52 and path.is_dir()
     meta, built = read(path/'prepared.json'), read(path/'compile.json')
+    if meta['version'] == '0.2.24-roomload1':
+        from bridge_inputs import product as verify_product
+        checked, built, _ = verify_product(path)
+        return checked, built
     assert meta['version'] in ('0.2.24-roomfix5', '0.2.24-roomperf1')
     assert built['compiled'] and built['sources_unchanged'] and built['installation_unchanged']
     assert built['installation_before'] == built['installation_after'] == meta['installation_before']
@@ -82,11 +86,13 @@ def inputs(path):
     assert sha(DRIVER/'scene/EffectsDriver.swf') == DRIVER_SHA
     assert sha(DRIVER/'scene/EffectsHarness.swf') == HARNESS_SHA
     assert sha(RUNNER) == RUNNER_SHA and read(TELEMETRY) == {'enabled': True}
-    files = [Path(__file__), RUNNER, TELEMETRY, DRIVER/'prepared.json',
+    files = [Path(__file__), HERE/'bridge_inputs.py', RUNNER, TELEMETRY, DRIVER/'prepared.json',
              DRIVER/'scene/EffectsDriver.swf', DRIVER/'scene/EffectsHarness.swf',
              path/'prepared.json', path/'compile.json', path/'RConnectMod.swf',
              ROOT/'tools/validation/runtime_memory.py', ROOT/'tools/validation/air_test_inventory.py',
              GAME/'mods/ModLoader/tools/test_registry.py', GAME/'mods/ModLoader/tools/air_test_process.py']
+    if meta['version'] == '0.2.24-roomload1':
+        files += [ROOT/'experimental/recovery-room-first-raster-current/build.py']
     return meta, built, {str(p): sha(p) for p in files}
 
 
@@ -97,12 +103,25 @@ def main():
     ap.add_argument('--mode', choices=['solo', 'dual'], default='dual')
     ap.add_argument('--check', action='store_true')
     ap.add_argument('--registry-wait', type=float, default=900)
+    ap.add_argument('--raster-host', type=Path, help='Verified isolated first-raster host build directory')
+    ap.add_argument('--sandy-bridge', action='store_true', help='Use the exact A-only travel lease in isolated copies')
     args = ap.parse_args()
     path = (ROOT/args.product).resolve()
     meta, built, pins = inputs(path)
     before = installed()
     assert len(before) == 22 and before['mods/Rconnect/release/RConnectMod.swf'] == BASELINE_SHA
     assert before['pfe.swf'] == 'a796827173af7d6fab9885fb66ecc62182ab5335918a30c7cce4c44914a238b7'
+    from bridge_inputs import verify as verify_bridge
+    host_path = (ROOT/args.raster_host).resolve() if args.raster_host is not None else None
+    bridge = verify_bridge(host_path, before, args.sandy_bridge)
+    if bridge is not None:
+        pins.update(bridge['pins'])
+    def verify_pins():
+        current = inputs(path)[2]
+        checked_bridge = verify_bridge(host_path, before, args.sandy_bridge)
+        assert checked_bridge == bridge
+        if checked_bridge is not None: current.update(checked_bridge['pins'])
+        assert current == pins
     assert args.registry_wait >= 0
     if args.check:
         assert args.output is None
@@ -123,17 +142,19 @@ def main():
                '--registry-wait', str(args.registry_wait)]
     if args.mode == 'solo':
         command.append('--solo')
+    if bridge is not None:
+        command += ['--game-candidate', bridge['host']]
     save(out/'intent.json', dict(command=command, inputs=pins, installation=before,
         historical_driver_installation=read(DRIVER/'prepared.json')['installation_before'],
         historical_product_installation=meta['installation_before'], mode=args.mode,
-        candidate_sha256=digest, performance_qualified=False, installed=False))
+        candidate_sha256=digest, bridge=bridge, performance_qualified=False, installed=False))
     result = dict(passed=False, run=None, performance_qualified=False, installed=False,
                   mode=args.mode, version=meta['version'], candidate_sha256=digest)
     sys.path.insert(0, str(ROOT/'tools'))
     spec = importlib.util.spec_from_file_location('current_room_shared_runner', RUNNER)
     runner = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(runner)
-    original_run, old_argv = runner.run_registered, sys.argv
+    original_run, old_argv, original_shutil = runner.run_registered, sys.argv, runner.shutil
     run_path, settings, extra_errors = None, {}, []
     roles = ['host'] if args.mode == 'solo' else ['host', 'join']
 
@@ -149,7 +170,8 @@ def main():
         def before_launch(detail):
             if not settings:
                 assert not record.children and not record.launching
-                assert installed() == before and inputs(path)[2] == pins
+                assert installed() == before
+                verify_pins()
                 native_input = read(output/'input.json')
                 assert native_input['minimum_start_gib'] == (3 if args.mode == 'solo' else 6)
                 for role in roles:
@@ -190,10 +212,25 @@ def main():
                 stopped()
 
         record.before_launch, record.child_stopped = before_launch, after_stopped
+        if bridge is not None and bridge['sandy'] is not None:
+            copied = []
+            def copy2(source, destination, *copy_args, **copy_kwargs):
+                source, destination = Path(source), Path(destination)
+                if source.resolve() == GAME/'mods/Sandevistan/release/SandevistanMod.swf':
+                    assert destination.resolve() == output/'frozen/mods/Sandevistan/release/SandevistanMod.swf'
+                    assert not copied
+                    assert sha(source) == before['mods/Sandevistan/release/SandevistanMod.swf']
+                    source = Path(bridge['sandy'])
+                    assert sha(source) == bridge['sandy_sha256']
+                    copied.append(str(destination))
+                return original_shutil.copy2(source, destination, *copy_args, **copy_kwargs)
+            runner.shutil = types.SimpleNamespace(**{name:getattr(original_shutil,name) for name in dir(original_shutil)})
+            runner.shutil.copy2 = copy2
         try:
             return original_run(native, parser, output, record)
         finally:
             record.before_launch, record.child_stopped = launch, stopped
+            runner.shutil = original_shutil
 
     class Tee:
         def __init__(self, log, console): self.log, self.console = log, console
@@ -216,11 +253,15 @@ def main():
         installed_lower = {k.lower(): v for k, v in before.items()}
         for role in roles:
             values = native['inputs'][role]
-            assert values['game'] == before['pfe.swf'] and values['production'] == digest
+            assert values['game'] == (bridge['host_sha256'] if bridge is not None else before['pfe.swf'])
+            assert values['production'] == digest
             assert values['driver'] == DRIVER_SHA and values['harness'] == HARNESS_SHA
             for name, value in values['modules'].items():
                 name = name.replace('\\', '/').lower()
-                assert value == (HARNESS_SHA if name == 'mods/rconnect/release/rconnectmod.swf' else installed_lower[name])
+                expected = HARNESS_SHA if name == 'mods/rconnect/release/rconnectmod.swf' else installed_lower[name]
+                if name == 'mods/sandevistan/release/sandevistanmod.swf' and bridge is not None and bridge['sandy'] is not None:
+                    expected = bridge['sandy_sha256']
+                assert value == expected
             for name, value in values.get('mod_assets', {}).items():
                 assert value == installed_lower[name.replace('\\', '/').lower()]
             text = (run_path/(role+'.log')).read_text(encoding='utf-8-sig')
@@ -231,6 +272,11 @@ def main():
             assert rows[1]['actualMerged'] is False and rows[1]['width'] > 0 and rows[1]['height'] > 0
             assert 'COOP EFFECTS DONE travel-timing '+role in text and 'v'+meta['version']+' initialized' in text
             assert not re.search(r'^COOP FAIL |handoff timed out|TRAVEL CONFIG ERROR', text, re.M)
+            if meta['version'] == '0.2.24-roomload1' and args.mode == 'dual' and bridge is not None and args.sandy_bridge:
+                opened = re.findall(r'RConnectEarly: constructed (\S+)', text)
+                closed = re.findall(r'RConnectEarly: activated (\S+)', text)
+                assert len(opened) == len(closed) == 2 and sorted(opened) == sorted(closed)
+                result.setdefault('early_transactions', {})[role] = opened
             result['roles'][role] = dict(rows=rows, checks=len(re.findall(r'^COOP PASS ', text, re.M)), log_sha256=sha(run_path/(role+'.log')))
         memory = read(run_path/'memory-timeline.json')
         assert not memory['stopped_for_pressure'] and not memory['stopped_for_overlap']
@@ -240,10 +286,11 @@ def main():
     except BaseException as error:
         result.update(error=repr(error), traceback=traceback.format_exc())
     finally:
-        sys.argv, runner.run_registered = old_argv, original_run
+        sys.argv, runner.run_registered, runner.shutil = old_argv, original_run, original_shutil
         result['supplemental_errors'] = extra_errors
         try:
-            assert installed() == before and inputs(path)[2] == pins
+            assert installed() == before
+            verify_pins()
             result.update(installation_unchanged=True, inputs_unchanged=True)
         except Exception as error:
             result.update(passed=False, final_error=repr(error))

@@ -1,0 +1,26 @@
+{
+  "kind": "room-first-raster-current-source",
+  "runtimeValidated": false,
+  "performanceQualified": false,
+  "base": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-room-production-05\\src",
+  "inputs": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-room-production-05\\src\\rconnect\\core\\RoomSync.as": "1c5ac8d9c761c40d0908a2c048062a7b09f604c6b9fa34272cae27e27c52a848",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-room-production-05\\src\\rconnect\\core\\MapGeneration.as": "ba5ea9bf85933329759575ce19e8d5260f9218c1e0aacccd1fa956d1e045a3a6",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-room-production-05\\src\\rconnect\\core\\Session.as": "14aac9a684133740b95a4bbe3cbcec9f03095965496c292b2d9ffeb54d9f453d",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-room-production-05\\src\\rconnect\\game\\GameBridge.as": "f7016bfd096ca3c88ea1214733117758b1998b579ec6f3ca9fc9332b605011a9",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-room-production-05\\src\\rconnect\\game\\WallImpactVisuals.as": "e1125fa1865598705c1753fd8e49ede037cd16936a680a7a078c4cf9b5ac5a34",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-exit-authorization\\src\\rconnect\\core\\RoomSync.as": "b2b6a3785cd60f9cb08fb48d52e3cce3a757d474dde35d4f0903d47fe7bac51e",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-exit-authorization\\src\\rconnect\\core\\MapGeneration.as": "b248567ae062d08ae66c7ff8ccff40553c86e978a916d048fbcfeab7ab8e9028",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-buildsrc\\src\\rconnect\\core\\EarlyTravelGate.as": "544d61b428ca0e3b3daf603eb0a8c8546fc01a64d22834c73f7d90d323f6a814"
+  },
+  "sources": {
+    "rconnect/core/RoomSync.as": "dcf929fb066dc1d807c18176cb4a27485604a1582fc6580c8459d27d697c8ccf",
+    "rconnect/core/MapGeneration.as": "874cf31c714dab7ce4ba04f795ead2a6b92b9022181120c17f6b97aa6c62e1e0",
+    "rconnect/core/Session.as": "f864b203b8758b64cb0ca485a75553f99d7984c9d4a1a66fac0a8210ffe2e062",
+    "rconnect/game/GameBridge.as": "ac575c7ff5b6e0c9b75c69916e587b062bd2916235a5f60f21c063eaf31f5ddc",
+    "rconnect/game/WallImpactVisuals.as": "12eb9457f753373ea67516702d464aa4ac1266f651d2bc20bb7b50d2b4c80a59",
+    "rconnect/core/EarlyTravelGate.as": "544d61b428ca0e3b3daf603eb0a8c8546fc01a64d22834c73f7d90d323f6a814"
+  },
+  "generator_sha256": "d580c4df71f7a59c4f1088c8744a401195796010be472fd54da1029eaaec3526",
+  "source_diff_sha256": "29f3842b1244bd62d0a5eea4a67b7592aac37e4eda05cfa33ab966e66b34968e"
+}
