@@ -1,0 +1,28 @@
+{
+  "kind": "first-raster-current-four-node-v1",
+  "compiled": false,
+  "air_started": false,
+  "diagnosticOnly": true,
+  "performanceQualified": false,
+  "unchanged_stimuli": [
+    "RoomTravelTimingTestDoc.as",
+    "RoomTravelSceneTestDoc.as"
+  ],
+  "sources": {
+    "A22RoomMetrics.as": "4972b7ea977f964fbcb9afc03f9e7b7d08804e67959188270bad06b53ae8fe5a",
+    "FirstRasterSceneProbe.as": "b357da6f2504127e6dbf0cfdb53ba213d745b584f2d467574b2c199d4ee90469",
+    "RoomTravelSceneTestDoc.as": "4192ba6668a9927ab08d8fa931a535106d425e2732d749cccd15cea42ef43d06",
+    "RoomTravelTimingTestDoc.as": "226001bfb880363615c98d697ef0b1ea224545f749123b14987160f91e0998e3"
+  },
+  "inputs": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-room-scene-driver-02\\tests\\RoomTravelTimingTestDoc.as": "226001bfb880363615c98d697ef0b1ea224545f749123b14987160f91e0998e3",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-room-scene-driver-02\\tests\\RoomTravelSceneTestDoc.as": "4192ba6668a9927ab08d8fa931a535106d425e2732d749cccd15cea42ef43d06",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-room-scene-driver-02\\tests\\A22RoomMetrics.as": "314823fd0fcd04e71277dcd3e8ee1a647317e611c5ff7b8fb0e7058c25179d6e",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-early-sandy-native\\tests\\FirstRasterSceneProbe.as": "785e63b0c315941a81fccb5fc17832a10543fe83545435905ef9ff6ce7f7c789",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-room-first-raster-current-source-02\\source\\scripts\\fe\\graph\\Grafon.as": "667d4295f417e67dbc7298a082e5b409cdba5a4c3b61c0104a0840bbd9b12540",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-room-first-raster-product-01\\src\\rconnect\\core\\RoomSync.as": "dcf929fb066dc1d807c18176cb4a27485604a1582fc6580c8459d27d697c8ccf",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-room-first-raster-product-01\\src\\rconnect\\core\\EarlyTravelGate.as": "544d61b428ca0e3b3daf603eb0a8c8546fc01a64d22834c73f7d90d323f6a814"
+  },
+  "generator_sha256": "f34595ee57a590d19293f289ebe575ba4473e71232375162f57d86ea04914182",
+  "source_diff_sha256": "38f7f9f605fee44622d636ae1a5e056d1ea4de2ebf53d921cde5becc0a603d71"
+}

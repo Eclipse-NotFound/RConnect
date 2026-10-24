@@ -1,0 +1,430 @@
+--- A796/fe/World.as
++++ first-raster/fe/World.as
+@@ -1131,6 +1131,19 @@
+          }
+       }
+       
++      private function rconnectLoadingHold() : Boolean
++      {
++         return Game.rconnectTravelBridge != null && Game.rconnectTravelBridge("loadingHold",this.game,null) != null;
++      }
++      
++      private function rconnectCancelLoading() : void
++      {
++         if(Game.rconnectTravelBridge != null)
++         {
++            Game.rconnectTravelBridge("cancel-load",this.game,null);
++         }
++      }
++      
+       internal function exitStep() : *
+       {
+          try
+@@ -1164,8 +1177,11 @@
+                this.vgui.visible = this.vfon.visible = this.visual.visible = true;
+                this.vblack.alpha = 1;
+                this.cam.dblack = -10;
+-               this.gg.controlOn();
+-               this.pip.noAct = false;
++               if(!this.rconnectLoadingHold())
++               {
++                  this.gg.controlOn();
++                  this.pip.noAct = false;
++               }
+             }
+             if(this.t_exit == 1)
+             {
+@@ -1236,6 +1252,7 @@
+             Snd.step();
+             if(this.ng_wait > 0)
+             {
++               this.rconnectCancelLoading();
+                if(this.ng_wait == 1)
+                {
+                   this.newGame1();
+@@ -1253,7 +1270,7 @@
+             {
+                this.swfStage.focus = this.swfStage;
+             }
+-            if(this.allStat == 1 && !this.onPause)
++            if(this.allStat == 1 && (!this.onPause || this.rconnectLoadingHold()))
+             {
+                if(this.t_exit > 0)
+                {
+@@ -1262,48 +1279,52 @@
+                      this.exitStep();
+                   }
+                }
+-               Emitter.kol2 = Emitter.kol1;
+-               Emitter.kol1 = 0;
+-               if(this.t_exit != 17)
++               if(!this.rconnectLoadingHold())
+                {
+-                  if(this.pers != null)
+-                  {
+-                     this.pers.piEvent("tick",1 / fps);
+-                  }
+-                  this.land.step();
+-                  if(this.pers != null)
+-                  {
+-                     this.pers.piEvent("flush");
+-                  }
++                  Emitter.kol2 = Emitter.kol1;
++                  Emitter.kol1 = 0;
++                  if(this.t_exit != 17)
++                  {
++                     if(this.pers != null)
++                     {
++                        this.pers.piEvent("tick",1 / fps);
++                     }
++                     this.land.step();
++                     if(this.pers != null)
++                     {
++                        this.pers.piEvent("flush");
++                     }
++                  }
++                  if(this.t_die > 0)
++                  {
++                     this.ggDieStep();
++                  }
++                  if(this.t_battle > 0)
++                  {
++                     --this.t_battle;
++                  }
++                  this.sats.step2();
++                  if(this.calcMass)
++                  {
++                     this.invent.calcMass();
++                     this.calcMass = false;
++                  }
++                  if(this.calcMassW)
++                  {
++                     this.invent.calcWeaponMass();
++                     this.calcMassW = false;
++                  }
++                  ++this.t_save;
++                  if(this.t_save > 5000 && !this.testMode && !this.alicorn)
++                  {
++                     this.saveGame();
++                  }
++                  this.checkLoot = false;
+                }
+-               if(this.t_die > 0)
+-               {
+-                  this.ggDieStep();
+-               }
+-               if(this.t_battle > 0)
+-               {
+-                  --this.t_battle;
+-               }
+-               this.sats.step2();
+-               if(this.calcMass)
+-               {
+-                  this.invent.calcMass();
+-                  this.calcMass = false;
+-               }
+-               if(this.calcMassW)
+-               {
+-                  this.invent.calcWeaponMass();
+-                  this.calcMassW = false;
+-               }
+-               ++this.t_save;
+-               if(this.t_save > 5000 && !this.testMode && !this.alicorn)
+-               {
+-                  this.saveGame();
+-               }
+-               this.checkLoot = false;
+             }
+             if(this.comLoad >= 0)
+             {
++               this.rconnectCancelLoading();
+                if(this.comLoad >= 100)
+                {
+                   if(this.autoSaveN > 0)
+@@ -1325,69 +1346,77 @@
+                this.gui.step();
+                this.pip.step();
+                this.sats.step();
+-               if(this.ctr.keyPip)
++               if(!this.rconnectLoadingHold())
+                {
+-                  if(!this.sats.active)
+-                  {
+-                     this.pip.onoff();
+-                  }
+-                  this.ctr.keyPip = false;
++                  if(this.ctr.keyPip)
++                  {
++                     if(!this.sats.active)
++                     {
++                        this.pip.onoff();
++                     }
++                     this.ctr.keyPip = false;
++                  }
++                  if(this.ctr.keyInvent)
++                  {
++                     if(!this.sats.active)
++                     {
++                        this.pip.onoff(2);
++                     }
++                     this.ctr.keyInvent = false;
++                  }
++                  if(this.ctr.keyStatus)
++                  {
++                     if(!this.sats.active)
++                     {
++                        this.pip.onoff(1,1);
++                     }
++                     this.ctr.keyStatus = false;
++                  }
++                  if(this.ctr.keySkills)
++                  {
++                     if(!this.sats.active)
++                     {
++                        this.pip.onoff(1,2);
++                     }
++                     this.ctr.keySkills = false;
++                  }
++                  if(this.ctr.keyMed)
++                  {
++                     if(!this.sats.active)
++                     {
++                        this.pip.onoff(1,5);
++                     }
++                     this.ctr.keyMed = false;
++                  }
++                  if(this.ctr.keyMap)
++                  {
++                     if(!this.sats.active)
++                     {
++                        this.pip.onoff(3,1);
++                     }
++                     this.ctr.keyMap = false;
++                  }
++                  if(this.ctr.keyQuest)
++                  {
++                     if(!this.sats.active)
++                     {
++                        this.pip.onoff(3,2);
++                     }
++                     this.ctr.keyQuest = false;
++                  }
++                  if(this.ctr.keySats)
++                  {
++                     if(this.gg.ggControl && !this.pip.active && this.gg && this.gg.pipOff <= 0 && !this.catPause)
++                     {
++                        this.sats.onoff();
++                     }
++                     this.ctr.keySats = false;
++                  }
+                }
+-               if(this.ctr.keyInvent)
++               else
+                {
+-                  if(!this.sats.active)
+-                  {
+-                     this.pip.onoff(2);
+-                  }
+-                  this.ctr.keyInvent = false;
+-               }
+-               if(this.ctr.keyStatus)
+-               {
+-                  if(!this.sats.active)
+-                  {
+-                     this.pip.onoff(1,1);
+-                  }
+-                  this.ctr.keyStatus = false;
+-               }
+-               if(this.ctr.keySkills)
+-               {
+-                  if(!this.sats.active)
+-                  {
+-                     this.pip.onoff(1,2);
+-                  }
+-                  this.ctr.keySkills = false;
+-               }
+-               if(this.ctr.keyMed)
+-               {
+-                  if(!this.sats.active)
+-                  {
+-                     this.pip.onoff(1,5);
+-                  }
+-                  this.ctr.keyMed = false;
+-               }
+-               if(this.ctr.keyMap)
+-               {
+-                  if(!this.sats.active)
+-                  {
+-                     this.pip.onoff(3,1);
+-                  }
+-                  this.ctr.keyMap = false;
+-               }
+-               if(this.ctr.keyQuest)
+-               {
+-                  if(!this.sats.active)
+-                  {
+-                     this.pip.onoff(3,2);
+-                  }
+-                  this.ctr.keyQuest = false;
+-               }
+-               if(this.ctr.keySats)
+-               {
+-                  if(this.gg.ggControl && !this.pip.active && this.gg && this.gg.pipOff <= 0 && !this.catPause)
+-                  {
+-                     this.sats.onoff();
+-                  }
+-                  this.ctr.keySats = false;
++                  this.ctr.keyPip = this.ctr.keyInvent = this.ctr.keyStatus = this.ctr.keySkills = false;
++                  this.ctr.keyMed = this.ctr.keyMap = this.ctr.keyQuest = this.ctr.keySats = false;
+                }
+                this.allStat = this.pip.active || this.sats.active || this.stand.active || this.gui.guiPause ? 2 : 1;
+                if(Boolean(this.consol) && Boolean(this.consol.visoff))
+--- A796/fe/loc/Game.as
++++ first-raster/fe/loc/Game.as
+@@ -7,6 +7,10 @@
+    
+    public class Game
+    {
++      
++      public static var rconnectTravelBridge:Function = null;
++      
++      public static const rconnectEarlyTravelVersion:int = 1;
+       
+       public var lands:Array;
+       
+@@ -406,6 +410,10 @@
+             this.curLand.upStage = false;
+          }
+          World.w.time___metr("Вход в местность");
++         if(rconnectTravelBridge != null)
++         {
++            rconnectTravelBridge("constructed",this,null);
++         }
+       }
+       
+       internal function Encounter() : *
+--- A796/fe/graph/Grafon.as
++++ first-raster/fe/graph/Grafon.as
+@@ -27,6 +27,8 @@
+    public class Grafon
+    {
+       
++      public static var rconnectRasterBridge:Function = null;
++      
+       public static var spriteLists:Array = new Array();
+       
+       public static var texUrl:Array = ["texture.swf","texture1.swf","sprite.swf","sprite1.swf"];
+@@ -296,6 +298,8 @@
+       private const sceneWarmFields:Array = ["frontBmp","backBmp","backBmp2","vodaBmp","satsBmp","colorBmp","shadBmp","rectX","rectY","allRect","sceneX","sceneY","sceneScratch","sceneRasterizing","sceneRepaint","sceneRegionPassActive","sceneRasterRegion","sceneMaskCursor","m"];
+       
+       private const sceneWarmStyleFields:Array = ["backwall","color","cTransform","darkness","backform","transpFon","tipWater","gas","homeStable"];
++      
++      private var rconnectRasterTicket:Object;
+       
+       public function Grafon(param1:Sprite)
+       {
+@@ -689,8 +693,44 @@
+          return new Rectangle(left,top,Math.max(a.x,b.x,c.x,d.x) - left,Math.max(a.y,b.y,c.y,d.y) - top);
+       }
+       
++      public function get rconnectRasterPending() : Boolean
++      {
++         return this.rconnectRasterTicket != null && this.rconnectRasterTicket.unpainted === true;
++      }
++      
++      private function rconnectRasterWaiting() : Boolean
++      {
++         return this.rconnectRasterTicket != null && this.rconnectRasterTicket.waiting === true;
++      }
++      
++      private function rconnectRasterPainted() : void
++      {
++         if(this.rconnectRasterTicket != null && this.rconnectRasterTicket.unpainted === true && !this.rconnectRasterWaiting() && this.sceneResident > 0 && this.sceneViewReady())
++         {
++            this.rconnectRasterTicket.unpainted = false;
++         }
++      }
++      
+       private function sceneOpen(value:Location) : void
+       {
++         var ticket:Object = null;
++         if(rconnectRasterBridge != null)
++         {
++            try
++            {
++               ticket = rconnectRasterBridge(World.w,value,this);
++               if(ticket == null || !(ticket.waiting is Boolean) || !(ticket.unpainted is Boolean))
++               {
++                  ticket = null;
++               }
++            }
++            catch(error:*)
++            {
++               ticket = null;
++               trace("RConnect first raster fallback: " + error);
++            }
++         }
++         this.rconnectRasterTicket = ticket;
+          this.sceneSyncRegionLighting(value);
+          this.sceneClear();
+          this.sceneSide = this.sceneChunkSide == 640 ? 640 : 320;
+@@ -719,6 +759,7 @@
+             this.sceneEnsure(left,top,World.w.swfStage.stageWidth,World.w.swfStage.stageHeight,true);
+          }
+          this.drawAllObjs();
++         this.rconnectRasterPainted();
+       }
+       
+       private function sceneRender(cx:int, cy:int) : void
+@@ -785,6 +826,10 @@
+       
+       private function sceneEnsure(left:Number, top:Number, width:Number, height:Number, initial:Boolean = false) : void
+       {
++         if(this.rconnectRasterWaiting())
++         {
++            return;
++         }
+          if(this.scenePreload && this.sceneResident == Math.ceil(this.loc.limX / this.sceneSide) * Math.ceil(this.loc.limY / this.sceneSide))
+          {
+             return;
+@@ -799,6 +844,10 @@
+       
+       public function sceneTick() : void
+       {
++         if(this.rconnectRasterWaiting())
++         {
++            return;
++         }
+          if(!this.sceneLarge || this.loc == null)
+          {
+             return;
+@@ -807,6 +856,7 @@
+          var scale:Number = Number(camera.scaleV > 0 ? camera.scaleV : 1);
+          this.sceneEnsure((-camera.vx - camera.quakeX) / scale,(-camera.vy - camera.quakeY) / scale,camera.screenX / scale,camera.screenY / scale);
+          this.sceneCullSurfaces();
++         this.rconnectRasterPainted();
+       }
+       
+       public function sceneViewport() : Rectangle
+@@ -2332,6 +2382,10 @@
+       
+       public function sceneViewReady() : Boolean
+       {
++         if(this.rconnectRasterWaiting())
++         {
++            return false;
++         }
+          if(!this.sceneLarge)
+          {
+             return true;
+@@ -3604,6 +3658,10 @@
+             this.sceneOpen(param1);
+             return;
+          }
++         if(!this.sceneRasterizing)
++         {
++            this.rconnectRasterTicket = null;
++         }
+          sceneStarted = int(getTimer());
+          this.scenePrepare(param1);
+          transpFon = false;

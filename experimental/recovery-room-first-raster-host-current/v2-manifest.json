@@ -1,0 +1,16 @@
+{
+  "kind": "first-raster-retainer-v2",
+  "base_source_manifest_sha256": "50d814edc9d6e404c741afd63a1906f25b5f3b42e4b43b92f4f46a3cb2d950b0",
+  "files": {
+    "activation_slots.py": "3d83359870b024faf6761676decd7822bfd4ec06e9df20160ff38887e5ced7e2",
+    "retain_v2.py": "1811657e117327c018536667fbca59a13be9e54448578361adc44ac4e795be55",
+    "build_v2.py": "b53dcaab3e301a9d27940300d4be71807649d060adaf00bbbbc267f081f7a749",
+    "README-v2.md": "5a2d0488ad14a517a0fef746972b8d6f4cc017809615dbaaa48fd2ecb6b6b16f",
+    "donor-provenance-review.json": "0877564b1a8d77cf8dbe81220c3530e98a74d5b3d4f7b1c0140db5aaf5b622f3",
+    "retainer-v2.diff": "13c65787348ae42a7474bc9cb40435a4da3f492432fab3e3528f0a5438c97339",
+    "build-v2.diff": "3fb143b6110d969394cca55f3f99845e016007890c1343ef517ed53fbfc3a947"
+  },
+  "historical_failure_preserved": true,
+  "java_started": false,
+  "air_started": false
+}

@@ -79,3 +79,41 @@
 6. 内层 finally 恢复两个登记回调及 runner.shutil；外层 finally 恢复 sys.argv、run_registered、shutil，复核正式 22 项与所有固定输入，并写 result.json。新 constructed/activated 断言仅在双人、roomload1、新宿主和 Sand 同时启用时要求两次事务完整闭合，没有取消三程尺寸、种子、位置与原日志断言。
 
 异常边界：冻结输入阶段位于共享 runner 原有的进程清理 try 之前；若复制或输入校验此时失败，尚无 AIR，但可能留下本轮 frozen 证据目录。新 adapter 没有扩大删除范围或声称该阶段必然清理；正式文件最终核对和外层失败回执仍会执行。组件回执与本次代码审查均不授予整机性能资格。根会话仍需在新宿主构建完成后执行带两个可选参数的真实预检，再启动原生三程；本次复核未发现新的开放阻断。
+
+## 宿主 donor02：本地槽、作用域与 Game 尾插复核
+
+新宿主 02 的导入和 donor 导出已经完成，旧 retain 随后拒绝未经证明的 slot 指令。此节只读取准确 donor/基底，用 Python 在内存中解码和验证，没有重新启动 JVM、AIR，也没有修改任何 XML、实现或构建证据。
+
+固定输入为 donor02 `7782b131496f38f47ef8ef5e702a504641b1c61603f08a72fdb352923ea9ac4f`、A796 XML `1d2642c7d55d1f97121738e6ae84996a140ebfeff686e6706c88cef82a7338da`、`activation_slots.py` `3d83359870b024faf6761676decd7822bfd4ec06e9df20160ff38887e5ced7e2`、`retain_v2.py` `1811657e117327c018536667fbca59a13be9e54448578361adc44ac4e795be55`。
+
+### 槽接收者确实来自本次调用
+
+独立解码全部 13 个目标及新增方法，当前 CFG 证明逐项通过。World.step / exitStep 各只有 2 次 catch 槽访问；sceneOpen 有 33 次 activation 槽访问及 2 次 catch 槽访问；drawLoc 为 202 次 activation 及 6 次 catch。其余方法没有 getslot/setslot。没有 newfunction、callmethod、callstatic、newclass、getouterscope 或全局槽操作。
+
+指令实际关系为：函数先把 this 压入本地作用域，再 newactivation 保存至局部寄存器并压入本地作用域，所以 getscopeobject 1 得到本次 activation。异常入口重新压入 this 和该 activation，newcatch 后通过 dup/setlocal/dup/pushscope/swap 保存异常对象；这时 getscopeobject 2 得到当前 catch，对其 slot 1 的读写不是游戏实体字段。sceneOpen 的 activation 明确声明 6 槽，drawLoc 明确声明 19 槽；这些 trait 随对应 body 整体保留。
+
+证明器沿真实控制流和异常边追踪对象来源，不确定的合流降为 unknown；只有 activation 中明确声明的槽及本方法 newcatch 的异常槽 1 可以通过。另在内存中构造四项反例：this 替代 activation、读取不存在的第 7 槽、this 替代 catch，以及 getouterscope，均被明确拒绝。原 donor 文件未变。这支持的是当前方法集合，不能据此宽放其他方法的任意 slot。
+
+### scope 数字不是类捕获链的替代品
+
+sceneOpen 由无 activation 的 init/max=4/5 变成有 activation 的 5/10；World 两个新增简单 helper 为 4/5，不能因为同类 step 是 5/10 就强行改成 5。已重新核对 [Adobe MethodInfo 的容量计算](https://github.com/adobe/avmplus/blob/master/core/MethodInfo.cpp#L643-L655)：本地 scope 容量取 max-init。另核对 [Verifier 的本地 scope 访问](https://github.com/adobe/avmplus/blob/master/core/Verifier.cpp#L1989-L2024)和[异常入口重置](https://github.com/adobe/avmplus/blob/master/core/Verifier.cpp#L919-L943)：getscopeobject 使用本地编号，外层捕获由独立链处理，异常入口重置本地 scope。
+
+实际证明得到有 activation 方法本地峰值均为 3，容量为 5（World/sceneOpen）或 9（drawLoc）；简单 helper 峰值 1、容量 1。保留 donor 的 frame、NEED_ACTIVATION、activation traits 和异常表，同时保留原类/脚本声明与捕获流程，有静态依据；单独把 init 数字改回旧值反而没有必要。仍需最终 ABC 回读和当前 AIR 验证。
+
+### Game 只插入准确通知尾部
+
+Game 的 E4X 私有词法集合由 donor 重建，不能仅靠名称猜测旧 165 与新 183 等价。本次因此单独保留 A796 `enterToCurLand` 的原 body 前缀，只从 donor 取准确 9 条 constructed 通知尾部；其他七个旧方法继续上述有边界的 body 移植。
+
+已在内存中调用 game_body 并独立逐条对照：原 body 659 字节，前 658 字节及 277 条指令完全一致；20 条原跳转的最大目标是 646，全部小于插入点 658，原分支无需重定位。原来只有末尾一个 return，无 exception 或 activation 区域。尾部的条件分支从新偏移 662 正确跳到 678 的 return；callback 接收者为明确 public QName，事件字符串为 constructed，参数为事件、this、null。尾部峰值为 4，原 max_stack=6 足够，原 frame 不变。新 body 679 字节，代码 SHA 为 `993fabfe255a1dc29ed8f44cf0f96aef1c39bb49191d63e827f75989bc1f74ac`。
+
+这条尾插不跳过原生成、出生和进入副作用，也不会把异常退出当成成功 constructed。将所有八个方法重改成指令级插入需要额外编辑并重定位 World 条件分支和异常地址，当前没有证据表明这样比已证明接收者的窄移植更稳妥；Game 的特殊词法问题用单独尾插解决即可。此刻 v2 构建入口尚未落盘，其回执/API、最终产物和实际原生运行不在本节通过范围内。
+
+### v2 构建入口完成后的复核
+
+后续入口冻结为 `build_v2.py` SHA `b53dcaab3e301a9d27940300d4be71807649d060adaf00bbbbc267f081f7a749`，`v2-manifest.json` SHA `8e4ac01b04bf0e4a821335134ef5ab22c876fd176b4204fcb003e6e0857143c5`。已只读导入并调用 donor()/pins()，实际返回 58 项固定输入；没有调用 build、prepare 或 verify 未完成产物，也没有启动 JVM/AIR。
+
+donor() 精确固定 02 的 build.json `660871ac69348fb0f08b43629377f28a34e953452dfb9881775837d7a1991383`，要求它是已编译但未 validated 的原 slot 阻断，而非把失败改成通过。两条历史 import/donor-xml 命令的名称、完整参数、0 退出和 reaped、冻结 import 源、prepared 回执、所有实际 artifact 哈希及前后安装一致均核对。真正复用的是这两条已完成命令及准确 donor SWF/XML；后续槽证明独立保存在 v2 输入中。
+
+新 build 只在共享登记内执行 serialize、final-xml、readback、pcode 四条 FFDec 命令；仍保留 1 GiB 启动门槛、512 MiB Java 上限、wait_owned 的超时/内存控制、隐藏启动及 finally kill/wait/登记释放。每条调用前重新核输入与安装。serialize 后精确拼回原始资源标签，final-xml 后比较完整保留树；readback/pcode 必须产出三类对应文件。回执记录真实四条结果与独立历史两条来源，finally 即便失败也保存前后安装、输入和产物证据。
+
+verify(output) 是正确的只读接口，返回 build.json 内容；它不调用编译，而是拒绝未完成或失败产物，要求四条参数准确且成功回收、原 donor 身份仍相同、实际 pfe 哈希、method-audit/retain/splice 文件及字段吻合、完整保留树往返相等、原始资源保持。它继续拒绝把该静态构建标成 native/gameplay/performance 已通过。新 comparison adapter 必须显式加载这个 v2 verifier，旧六命令 verifier 无需放宽。入口代码与只读 API 未发现开放阻断；四条实际新命令及最终 readback 当时尚未完成，不能用本节替代其结果。

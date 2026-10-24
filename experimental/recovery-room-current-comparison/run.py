@@ -24,6 +24,17 @@ BASELINE_SHA = '78c052aea963f1689b705ae1e14d274916ae1a1f7e81933390caf8d1a88f4699
 DRIVER_SHA = '218246101949b35df2979011ce056419ff5718a24f2bcc8dd92f4224f7dbf18f'
 HARNESS_SHA = 'd52ef4300c7d472ee05884d7b4709f4abf80b3e6ff935b695a9ed986db021086'
 RUNNER_SHA = '7eca453b13480140da5f36bb33d2319739a927562ccafdbb61a8b20cdb5ae4d3'
+DIAGNOSTIC = None
+
+
+def diagnostic_driver(path):
+    builder = HERE.parent/'recovery-room-first-raster-current/diagnostic-driver/prepare.py'
+    spec = importlib.util.spec_from_file_location('first_raster_diagnostic_verifier', builder)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    proof = module.verify(path)
+    assert proof['verified'] and proof['scene_only'] and not proof['performanceQualified']
+    return proof, builder
 
 
 def sha(path):
@@ -76,13 +87,17 @@ def product(path):
 
 def inputs(path):
     meta, built = product(path)
-    driver = read(DRIVER/'prepared.json')
-    assert driver['compiled'] and driver['external'] and driver['ordinary_timing_byte_exact']
-    assert len(driver['commands']) == 1 and driver['commands'][0]['exit_code'] == 0
-    for name, digest in driver['inputs'].items():
-        assert sha(name) == digest, name
-    for name, digest in driver['files'].items():
-        assert sha(DRIVER/name) == digest, name
+    if DIAGNOSTIC is None:
+        driver = read(DRIVER/'prepared.json')
+        assert driver['compiled'] and driver['external'] and driver['ordinary_timing_byte_exact']
+        assert len(driver['commands']) == 1 and driver['commands'][0]['exit_code'] == 0
+        for name, digest in driver['inputs'].items():
+            assert sha(name) == digest, name
+        for name, digest in driver['files'].items():
+            assert sha(DRIVER/name) == digest, name
+    else:
+        proof, diagnostic_builder = diagnostic_driver(DRIVER)
+        assert proof == DIAGNOSTIC and proof['candidate_sha256'] == built['candidate_sha256']
     assert sha(DRIVER/'scene/EffectsDriver.swf') == DRIVER_SHA
     assert sha(DRIVER/'scene/EffectsHarness.swf') == HARNESS_SHA
     assert sha(RUNNER) == RUNNER_SHA and read(TELEMETRY) == {'enabled': True}
@@ -93,10 +108,13 @@ def inputs(path):
              GAME/'mods/ModLoader/tools/test_registry.py', GAME/'mods/ModLoader/tools/air_test_process.py']
     if meta['version'] == '0.2.24-roomload1':
         files += [ROOT/'experimental/recovery-room-first-raster-current/build.py']
+    if DIAGNOSTIC is not None:
+        files += [diagnostic_builder, DRIVER/'compile.json']
     return meta, built, {str(p): sha(p) for p in files}
 
 
 def main():
+    global DRIVER, DRIVER_SHA, DIAGNOSTIC
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--product', required=True, type=Path)
     ap.add_argument('--output', type=Path)
@@ -105,8 +123,15 @@ def main():
     ap.add_argument('--registry-wait', type=float, default=900)
     ap.add_argument('--raster-host', type=Path, help='Verified isolated first-raster host build directory')
     ap.add_argument('--sandy-bridge', action='store_true', help='Use the exact A-only travel lease in isolated copies')
+    ap.add_argument('--diagnostic-driver', type=Path, help='Explicit four-node diagnostic; original fixture and thresholds retained')
     args = ap.parse_args()
     path = (ROOT/args.product).resolve()
+    if args.diagnostic_driver is not None:
+        assert args.mode == 'dual' and args.raster_host is not None and args.sandy_bridge
+        DRIVER = (ROOT/args.diagnostic_driver).resolve()
+        DIAGNOSTIC, _ = diagnostic_driver(DRIVER)
+        DRIVER_SHA = DIAGNOSTIC['artifacts']['scene/EffectsDriver.swf']
+        assert DIAGNOSTIC['artifacts']['scene/EffectsHarness.swf'] == HARNESS_SHA
     meta, built, pins = inputs(path)
     before = installed()
     assert len(before) == 22 and before['mods/Rconnect/release/RConnectMod.swf'] == BASELINE_SHA
@@ -277,6 +302,18 @@ def main():
                 closed = re.findall(r'RConnectEarly: activated (\S+)', text)
                 assert len(opened) == len(closed) == 2 and sorted(opened) == sorted(closed)
                 result.setdefault('early_transactions', {})[role] = opened
+            if DIAGNOSTIC is not None:
+                probes = [json.loads(line.split('FIRST RASTER CURRENT RESULT ', 1)[1])
+                          for line in text.splitlines() if line.startswith('FIRST RASTER CURRENT RESULT ')]
+                assert len(probes) == 1
+                probe = probes[0]
+                assert probe['kind'] == 'first-raster-current-four-node-v1' and probe['role'] == role
+                assert probe['passed'] is True and probe['faultCount'] == 0 and probe['faults'] == []
+                assert probe['callbackRestored'] is True and all(c['passed'] for c in probe['checks'])
+                assert [n['kind'] for n in probe['nodes']] == ['ticket-open', 'authorization-before', 'authorization-after', 'first-raster-ready']
+                assert probe['performanceQualified'] is False and probe['diagnosticOnly'] is True
+                save(out/(role+'-first-raster.json'), probe)
+                result.setdefault('first_raster_diagnostics', {})[role] = sha(out/(role+'-first-raster.json'))
             result['roles'][role] = dict(rows=rows, checks=len(re.findall(r'^COOP PASS ', text, re.M)), log_sha256=sha(run_path/(role+'.log')))
         memory = read(run_path/'memory-timeline.json')
         assert not memory['stopped_for_pressure'] and not memory['stopped_for_overlap']

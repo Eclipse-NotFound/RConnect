@@ -34,7 +34,7 @@ def verify(host, installed, use_sandy):
     host = host.resolve()
     assert host.parent == ROOT/'build/m52'
     assert installed['pfe.swf'] == HOST_SHA
-    builder = ROOT/'experimental/recovery-room-first-raster-host-current/build.py'
+    builder = ROOT/'experimental/recovery-room-first-raster-host-current/build_v2.py'
     receipt = load(builder, 'first_raster_host_verifier').verify(host)
     assert receipt['validated'] is True and receipt['base_sha256'] == HOST_SHA
     assert sha(host/'pfe.swf') == receipt['candidate_sha256']

@@ -1,0 +1,97 @@
+--- retain.py
++++ retain_v2.py
+@@ -1,5 +1,6 @@
+ """Bounded A796 three-class transplant; reuse the existing ABC decoder/splicer.
+ 
++V2: activation/catch slot provenance is checked; no class slots are admitted.
+ Only eight named native bodies, five new helpers, four appended traits and two
+ literal static-initializer tails may differ. Never import an entire class.
+ """
+@@ -16,6 +17,7 @@
+ support=load('first_raster_original_ABC_support',SUPPORT)
+ core,canonical=support.core,support.canonical
+ prep=load('first_raster_text_inputs',HERE/'prepare.py')
++slotproof=load('first_raster_local_slot_provenance',HERE/'activation_slots.py')
+ TARGETS=tuple(c+'::0:1:'+n for c in prep.CLASSES for n in prep.CHANGED[c])
+ NEW=(('fe.World','0','1','rconnectLoadingHold'),('fe.World','0','1','rconnectCancelLoading'),
+  ('fe.graph.Grafon','0','2','rconnectRasterPending'),('fe.graph.Grafon','0','1','rconnectRasterWaiting'),
+@@ -26,6 +28,7 @@
+  ('fe.graph.Grafon','1','rconnectRasterBridge','Function','0'),
+  ('fe.graph.Grafon','0','rconnectRasterTicket','Object','0'))
+ CINITS=('fe.loc.Game::<static>','fe.graph.Grafon::<static>')
++GAME_TAIL='fe.loc.Game::0:1:enterToCurLand'
+ IGNORED={'bytes','fileOffset'}
+ def require(ok,message):
+  if not ok:raise AssertionError(message)
+@@ -43,7 +46,7 @@
+ def body_names(abc,index):
+  b=abc.bodies[index];rows,addresses=core.decode(bytes.fromhex(b.get('codeBytes')))
+  # No implicit method/slot relocation; unknown donor shapes must stop.
+- require(not any(r[2] in (0x40,0x43,0x44,0x58,0x6c,0x6d,0x6e,0x6f) or any(k in ('m','c') for k,v in r[3]) for r in rows),'Target requires unreviewed method/class/slot relocation')
++ slotproof.prove(abc,index,core)
+  names={v for r in rows for k,v in r[3] if k=='n'}
+  for e in b.find('exceptions'):
+   names.update(int(e.get(k,'0')) for k in ('type_index','name_index'))
+@@ -80,6 +83,7 @@
+       if ns:oldsets.add(ns)
+   for name in (*TARGETS,*NEW_NAMES):
+    if not name.startswith(cls+'::'):continue
++   if name==GAME_TAIL:continue # Native body retained; appended tail is public QName only.
+    for v in body_names(b,b.named[name]):
+     mn=b.cp['constant_multiname'][v];ns=int(mn.get('namespace_set_index','0'));di=int(mn.get('namespace_index','0'))
+     if ns:newsets.add(ns)
+@@ -129,6 +133,27 @@
+  body=copy.deepcopy(old);body.set('codeBytes',(code[:-1]+extra+b'\x47').hex());body.set('max_stack',str(max(2,int(old.get('max_stack')))))
+  return body,dict(originalCodeSHA256=hashlib.sha256(code).hexdigest(),insertBeforeFinalReturn=extra.hex(),originalInstructionsByteExact=True,
+   maxStackBefore=old.get('max_stack'),maxStackAfter=body.get('max_stack'),onlyNewStaticWrites=[n for n,_ in fields])
++
++def game_body(a,b):
++ old=a.bodies[a.named[GAME_TAIL]];donor=b.bodies[b.named[GAME_TAIL]]
++ code=bytes.fromhex(old.get('codeBytes'));fresh=bytes.fromhex(donor.get('codeBytes'))
++ rows,_=core.decode(code);newrows,_=core.decode(fresh);tail=newrows[-9:]
++ require([r[2] for r in tail]==[0x60,0x20,0x13,0x5d,0x2c,0xd0,0x20,0x4f,0x47],'Unexpected constructed tail')
++ bridge=tail[0][3][0][1];mn=b.cp['constant_multiname'][bridge]
++ require(mn.get('kind')=='7' and b.simple(bridge)=='rconnectTravelBridge','Tail bridge must be direct QName')
++ ns=int(mn.get('namespace_index'));require(b.cp['constant_namespace'][ns].get('kind')=='22' and nsname(b,ns)=='','Tail bridge must be public')
++ require(tail[3][3]==[('n',bridge)] and tail[7][3]==[('n',bridge),('u',3)],'Tail callback binding/arity changed')
++ require(b.string(tail[4][3][0][1])=='constructed' and tail[2][3]==[('target',tail[-1][0])],'Tail event or branch changed')
++ require(code[-1:]==b'\x47' and sum(r[2] in (0x47,0x48) for r in rows)==1,'Native Game must have one terminal return')
++ require(not list(old.find('exceptions')) and not list(old.find('traits/traits')),'Native Game has unexpected protected/activation region')
++ require(all(v<=rows[-1][0] for r in rows for k,v in r[3] if k=='target'),'Native Game branch beyond insertion point')
++ # Old jump targets, instruction offsets and frame are unchanged. A jump to
++ # the old terminal return now enters the appended conditional callback.
++ insert=fresh[tail[0][0]:];result=copy.deepcopy(old);result.set('codeBytes',(code[:-1]+insert).hex())
++ require(int(old.get('max_stack'))>=4,'Tail operand capacity insufficient')
++ return result,dict(original_instructions_byte_exact=True,original_prefix_sha256=hashlib.sha256(code[:-1]).hexdigest(),
++  insertion_offset=len(code)-1,inserted_tail_hex=insert.hex(),public_bridge_multiname=bridge,
++  original_branches_and_frame_preserved=True,no_native_exception_region=True)
+ def retain(base_xml,donor_xml,out_xml):
+  require(sha(base_xml)==prep.PINS[prep.BASE_XML],'Wrong A796 XML');out_xml=Path(out_xml)
+  require(not out_xml.exists() and out_xml.parent.is_relative_to(ROOT/'build/m52'),'New isolated XML required')
+@@ -147,18 +172,20 @@
+   info.set('flags',old_info.get('flags'))
+   # Exact old signature metadata is retained; only NEED_ACTIVATION can follow body.
+   require(canonical(info)==canonical(old_info),name+' signature differs')
+-  require(n.bodies[ni].get('init_scope_depth')==a.bodies[oi].get('init_scope_depth'),name+' captured scope differs')
++  local_proof=slotproof.prove(n,ni,core)
+   old_info.set('flags',str(newflags))
+-  body_names(n,ni);body=copy.deepcopy(n.bodies[ni]);body.set('method_info',str(oi))
++  tail_proof=None
++  if name==GAME_TAIL:
++   require(newflags==oldflags,'Game native flags must not change');body,tail_proof=game_body(a,n)
++  else:body_names(n,ni);body=copy.deepcopy(n.bodies[ni]);body.set('method_info',str(oi))
+   at=list(bodies).index(a.bodies[oi]);bodies.remove(a.bodies[oi]);bodies.insert(at,body)
+-  proof.append(dict(name=name,oldIndex=oi,donorIndex=ni,flagsBefore=oldflags,flagsAfter=newflags,codeSHA256=hashlib.sha256(bytes.fromhex(body.get('codeBytes'))).hexdigest()))
++  proof.append(dict(name=name,oldIndex=oi,donorIndex=ni,flagsBefore=oldflags,flagsAfter=newflags,local_slot_proof=local_proof,native_tail_proof=tail_proof,codeSHA256=hashlib.sha256(bytes.fromhex(body.get('codeBytes'))).hexdigest()))
+  for name in NEW_NAMES:
+   ni=n.named[name];idx=len(infos);new_indices[name]=idx
+   info=copy.deepcopy(n.methods[ni]);infos.append(info);body_names(n,ni)
+-  cls=name.split('::')[0];reference=a.bodies[a.named[cls+'::0:1:'+prep.CHANGED[cls][0]]]
+-  require(n.bodies[ni].get('init_scope_depth')==reference.get('init_scope_depth'),'New helper capture scope differs')
++  local_proof=slotproof.prove(n,ni,core)
+   body=copy.deepcopy(n.bodies[ni]);body.set('method_info',str(idx));bodies.append(body)
+-  proof.append(dict(name=name,newIndex=idx,donorIndex=ni,codeSHA256=hashlib.sha256(bytes.fromhex(body.get('codeBytes'))).hexdigest()))
++  proof.append(dict(name=name,newIndex=idx,donorIndex=ni,local_slot_proof=local_proof,codeSHA256=hashlib.sha256(bytes.fromhex(body.get('codeBytes'))).hexdigest()))
+  added_traits=[];static_fields={c:[] for c in ('fe.loc.Game','fe.graph.Grafon')}
+  for cls,scope,kind,name in NEW:
+   t=copy.deepcopy(table(n,cls,scope)[('TraitMethodGetterSetter',kind,name)])

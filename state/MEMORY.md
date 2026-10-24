@@ -35,6 +35,7 @@ A 为普通入口的双人联机；B 独立架构本轮不碰。根会话 `01a08
 
 ## 4. 最新实测与卡点
 
+- **17:12首绘宿主窄移植完成，真实新桥测试进行中**：host-current-03/v2 只复用02已成功的donor import/export，后4条Java均成功回收；产物`fba27a3d119b25488c18a1ec2955a42cd73eeea4dbb400f9bab5b3d11e6cd36a`。13方法247个activation/catch槽通过来源证明；Game保留原658字节只尾插通知，未改其它原生方法/构造器/资源。02失败原回执保留，03编译资格不代表原生/性能资格。准确6D+原A796（无新桥）的fallback双人c88b78a177已41检查通过，三程同入口/恢复控制；主9.170/2.373/4.529秒、加14.317/2.052/7.468，仅回退功能资格。新桥+Sand003运行384e92463c进行中，正式仍78C/A796/CEC6。
 - **16:05当前组合三程对照完成**：A796/BF4A/2050、全14模组，正式roomfix5双人7cadcc8267主9.040/2.401/5.189秒、加15.068/2.321/8.208；solo fc4111c750为6.642/1.732/3.101秒。局部roomperf1候选1E26BDF3（195459B）双人6f633cee8e主9.531/3.632/5.171、加15.358/2.043/8.259。三轮原驱动检查通过、双侧三程出生距离0、真档/正式22项未改，私有实例已清；telemetry和CS偏好首个AIR前写入两端并核回。**未见明确速度收益，roomperf1不部署**；同布局seed不固定原生敌人数量，单pair不是正式性能判定。详见recovery-room-current-comparison/RESULTS.md。正式仍roomfix5，单人水平未达标。
 - **首次绘制当前移植在做**：RC5类只移旧early2的共同大场景票据与退出许可，保留当前普通分房/READY/返程修复；宿主另在recovery-room-first-raster-host-current准备A796的World/Game/Grafon最小补丁。准确A796导出source02双JVM通过，3类AS/pcode及输入回执齐全；source01仅日志编码后处理失败，原失败留存。尚未编译或实测新桥。不能用旧2D宿主替换A796颜色/相机修正；未改方法保留原字节，新成员另核。旧Sand003仅候选仍未正式安装。
 - **随后roomload1已编译及组件通过**：实际最小移植为6类（另补WallImpactVisuals在rconnectRasterPending时不观察空白/旧frontBmp），完整82源；product-01 SHA`6d4655f30bc252e798304bbf99a21458d53eeec1538c6d49eeb04c1a0b655392`、199879B、双Java成功回收。源码审查发现并补回early2两处分支：成功起步撤旧pending0房间hold；原生拒绝旅行立即取消lease。六组实际AIR组件251/0（20+36+79+92+12+12），准确证据见first-raster-current/COMPONENTS.md及独立审查。Port01因测试辅助类同文件编译失败，拆文件后02通过；不改生产源码。组件非原生/性能资格，正式仍78C。

@@ -1,0 +1,2457 @@
+{
+  "passed": true,
+  "scope": "static donor provenance only",
+  "donor_xml_sha256": "7782b131496f38f47ef8ef5e702a504641b1c61603f08a72fdb352923ea9ac4f",
+  "base_xml_sha256": "1d2642c7d55d1f97121738e6ae84996a140ebfeff686e6706c88cef82a7338da",
+  "methods": {
+    "fe.World::0:1:step": {
+      "passed": true,
+      "slot_accesses": [
+        {
+          "offset": 1188,
+          "opcode": "0x6d",
+          "slot": 1,
+          "receiver": [
+            "catch",
+            0
+          ]
+        },
+        {
+          "offset": 1195,
+          "opcode": "0x6c",
+          "slot": 1,
+          "receiver": [
+            "catch",
+            0
+          ]
+        }
+      ],
+      "activation_slots": [],
+      "exception_count": 1,
+      "all_slot_receivers_local": true,
+      "no_outer_scope": true,
+      "init_scope_depth": 5,
+      "max_scope_depth": 10,
+      "local_scope_capacity": 5,
+      "observed_local_scope_peak": 3,
+      "observed_operand_peak": 6,
+      "visited_instructions": 552
+    },
+    "fe.World::0:1:exitStep": {
+      "passed": true,
+      "slot_accesses": [
+        {
+          "offset": 285,
+          "opcode": "0x6d",
+          "slot": 1,
+          "receiver": [
+            "catch",
+            0
+          ]
+        },
+        {
+          "offset": 292,
+          "opcode": "0x6c",
+          "slot": 1,
+          "receiver": [
+            "catch",
+            0
+          ]
+        }
+      ],
+      "activation_slots": [],
+      "exception_count": 1,
+      "all_slot_receivers_local": true,
+      "no_outer_scope": true,
+      "init_scope_depth": 5,
+      "max_scope_depth": 10,
+      "local_scope_capacity": 5,
+      "observed_local_scope_peak": 3,
+      "observed_operand_peak": 5,
+      "visited_instructions": 143
+    },
+    "fe.loc.Game::0:1:enterToCurLand": {
+      "passed": true,
+      "slot_accesses": [],
+      "activation_slots": [],
+      "exception_count": 0,
+      "all_slot_receivers_local": true,
+      "no_outer_scope": true,
+      "init_scope_depth": 4,
+      "max_scope_depth": 5,
+      "local_scope_capacity": 1,
+      "observed_local_scope_peak": 1,
+      "observed_operand_peak": 6,
+      "visited_instructions": 286
+    },
+    "fe.graph.Grafon::0:1:sceneOpen": {
+      "passed": true,
+      "slot_accesses": [
+        {
+          "offset": 23,
+          "opcode": "0x6d",
+          "slot": 1,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 30,
+          "opcode": "0x6d",
+          "slot": 2,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 52,
+          "opcode": "0x6c",
+          "slot": 1,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 61,
+          "opcode": "0x6d",
+          "slot": 2,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 65,
+          "opcode": "0x6c",
+          "slot": 2,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 77,
+          "opcode": "0x6c",
+          "slot": 2,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 94,
+          "opcode": "0x6c",
+          "slot": 2,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 112,
+          "opcode": "0x6d",
+          "slot": 2,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 129,
+          "opcode": "0x6d",
+          "slot": 1,
+          "receiver": [
+            "catch",
+            0
+          ]
+        },
+        {
+          "offset": 136,
+          "opcode": "0x6d",
+          "slot": 2,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 146,
+          "opcode": "0x6c",
+          "slot": 1,
+          "receiver": [
+            "catch",
+            0
+          ]
+        },
+        {
+          "offset": 159,
+          "opcode": "0x6c",
+          "slot": 2,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 167,
+          "opcode": "0x6c",
+          "slot": 1,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 206,
+          "opcode": "0x6c",
+          "slot": 1,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 213,
+          "opcode": "0x6c",
+          "slot": 1,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 254,
+          "opcode": "0x6c",
+          "slot": 1,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 270,
+          "opcode": "0x6c",
+          "slot": 1,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 284,
+          "opcode": "0x6c",
+          "slot": 1,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 300,
+          "opcode": "0x6c",
+          "slot": 1,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 339,
+          "opcode": "0x6c",
+          "slot": 1,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 353,
+          "opcode": "0x6c",
+          "slot": 1,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 378,
+          "opcode": "0x6c",
+          "slot": 1,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 386,
+          "opcode": "0x6d",
+          "slot": 3,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 392,
+          "opcode": "0x6c",
+          "slot": 1,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 406,
+          "opcode": "0x6c",
+          "slot": 1,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 431,
+          "opcode": "0x6c",
+          "slot": 1,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 439,
+          "opcode": "0x6d",
+          "slot": 4,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 453,
+          "opcode": "0x6c",
+          "slot": 1,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 472,
+          "opcode": "0x6c",
+          "slot": 3,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 498,
+          "opcode": "0x6d",
+          "slot": 5,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 512,
+          "opcode": "0x6c",
+          "slot": 1,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 531,
+          "opcode": "0x6c",
+          "slot": 4,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 560,
+          "opcode": "0x6d",
+          "slot": 6,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 573,
+          "opcode": "0x6c",
+          "slot": 5,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 577,
+          "opcode": "0x6c",
+          "slot": 6,
+          "receiver": [
+            "activation",
+            14
+          ]
+        }
+      ],
+      "activation_slots": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "exception_count": 1,
+      "all_slot_receivers_local": true,
+      "no_outer_scope": true,
+      "init_scope_depth": 5,
+      "max_scope_depth": 10,
+      "local_scope_capacity": 5,
+      "observed_local_scope_peak": 3,
+      "observed_operand_peak": 8,
+      "visited_instructions": 278
+    },
+    "fe.graph.Grafon::0:1:sceneEnsure": {
+      "passed": true,
+      "slot_accesses": [],
+      "activation_slots": [],
+      "exception_count": 0,
+      "all_slot_receivers_local": true,
+      "no_outer_scope": true,
+      "init_scope_depth": 4,
+      "max_scope_depth": 5,
+      "local_scope_capacity": 1,
+      "observed_local_scope_peak": 1,
+      "observed_operand_peak": 5,
+      "visited_instructions": 51
+    },
+    "fe.graph.Grafon::0:1:sceneTick": {
+      "passed": true,
+      "slot_accesses": [],
+      "activation_slots": [],
+      "exception_count": 0,
+      "all_slot_receivers_local": true,
+      "no_outer_scope": true,
+      "init_scope_depth": 4,
+      "max_scope_depth": 5,
+      "local_scope_capacity": 1,
+      "observed_local_scope_peak": 1,
+      "observed_operand_peak": 6,
+      "visited_instructions": 67
+    },
+    "fe.graph.Grafon::0:1:sceneViewReady": {
+      "passed": true,
+      "slot_accesses": [],
+      "activation_slots": [],
+      "exception_count": 0,
+      "all_slot_receivers_local": true,
+      "no_outer_scope": true,
+      "init_scope_depth": 4,
+      "max_scope_depth": 5,
+      "local_scope_capacity": 1,
+      "observed_local_scope_peak": 1,
+      "observed_operand_peak": 5,
+      "visited_instructions": 141
+    },
+    "fe.graph.Grafon::0:1:drawLoc": {
+      "passed": true,
+      "slot_accesses": [
+        {
+          "offset": 23,
+          "opcode": "0x6d",
+          "slot": 1,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 38,
+          "opcode": "0x6c",
+          "slot": 1,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 57,
+          "opcode": "0x6c",
+          "slot": 1,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 75,
+          "opcode": "0x6c",
+          "slot": 1,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 107,
+          "opcode": "0x6d",
+          "slot": 2,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 112,
+          "opcode": "0x6c",
+          "slot": 1,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 122,
+          "opcode": "0x6d",
+          "slot": 3,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 128,
+          "opcode": "0x6d",
+          "slot": 4,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 135,
+          "opcode": "0x6d",
+          "slot": 5,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 142,
+          "opcode": "0x6d",
+          "slot": 6,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 149,
+          "opcode": "0x6d",
+          "slot": 7,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 156,
+          "opcode": "0x6d",
+          "slot": 8,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 163,
+          "opcode": "0x6d",
+          "slot": 9,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 170,
+          "opcode": "0x6d",
+          "slot": 10,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 177,
+          "opcode": "0x6d",
+          "slot": 11,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 183,
+          "opcode": "0x6d",
+          "slot": 12,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 189,
+          "opcode": "0x6d",
+          "slot": 13,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 195,
+          "opcode": "0x6d",
+          "slot": 14,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 201,
+          "opcode": "0x6d",
+          "slot": 15,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 208,
+          "opcode": "0x6d",
+          "slot": 16,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 214,
+          "opcode": "0x6d",
+          "slot": 17,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 222,
+          "opcode": "0x6d",
+          "slot": 18,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 228,
+          "opcode": "0x6c",
+          "slot": 1,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 232,
+          "opcode": "0x6d",
+          "slot": 19,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 247,
+          "opcode": "0x6c",
+          "slot": 19,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 298,
+          "opcode": "0x6c",
+          "slot": 19,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 304,
+          "opcode": "0x6d",
+          "slot": 3,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 308,
+          "opcode": "0x6c",
+          "slot": 19,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 324,
+          "opcode": "0x6d",
+          "slot": 3,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 539,
+          "opcode": "0x6d",
+          "slot": 4,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 543,
+          "opcode": "0x6c",
+          "slot": 4,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 557,
+          "opcode": "0x6d",
+          "slot": 4,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 561,
+          "opcode": "0x6c",
+          "slot": 4,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 573,
+          "opcode": "0x6d",
+          "slot": 4,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 585,
+          "opcode": "0x6c",
+          "slot": 4,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 638,
+          "opcode": "0x6d",
+          "slot": 7,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 649,
+          "opcode": "0x6d",
+          "slot": 8,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 660,
+          "opcode": "0x6d",
+          "slot": 9,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 671,
+          "opcode": "0x6d",
+          "slot": 10,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 696,
+          "opcode": "0x6d",
+          "slot": 11,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 700,
+          "opcode": "0x6c",
+          "slot": 11,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 740,
+          "opcode": "0x6d",
+          "slot": 11,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 744,
+          "opcode": "0x6c",
+          "slot": 11,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 765,
+          "opcode": "0x6d",
+          "slot": 12,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 802,
+          "opcode": "0x6d",
+          "slot": 13,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 834,
+          "opcode": "0x6d",
+          "slot": 17,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 849,
+          "opcode": "0x6c",
+          "slot": 13,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 853,
+          "opcode": "0x6c",
+          "slot": 17,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 861,
+          "opcode": "0x6d",
+          "slot": 6,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 869,
+          "opcode": "0x6c",
+          "slot": 13,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 873,
+          "opcode": "0x6c",
+          "slot": 17,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 877,
+          "opcode": "0x6c",
+          "slot": 6,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 889,
+          "opcode": "0x6c",
+          "slot": 6,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 907,
+          "opcode": "0x6c",
+          "slot": 6,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 925,
+          "opcode": "0x6c",
+          "slot": 6,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 943,
+          "opcode": "0x6c",
+          "slot": 6,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 957,
+          "opcode": "0x6c",
+          "slot": 6,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 979,
+          "opcode": "0x6d",
+          "slot": 5,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 983,
+          "opcode": "0x6c",
+          "slot": 5,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 987,
+          "opcode": "0x6c",
+          "slot": 6,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 998,
+          "opcode": "0x6c",
+          "slot": 6,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1009,
+          "opcode": "0x6c",
+          "slot": 9,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1013,
+          "opcode": "0x6c",
+          "slot": 5,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1025,
+          "opcode": "0x6c",
+          "slot": 7,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1029,
+          "opcode": "0x6c",
+          "slot": 5,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1037,
+          "opcode": "0x6c",
+          "slot": 5,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1041,
+          "opcode": "0x6c",
+          "slot": 13,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1054,
+          "opcode": "0x6c",
+          "slot": 5,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1058,
+          "opcode": "0x6c",
+          "slot": 17,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1071,
+          "opcode": "0x6c",
+          "slot": 6,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1093,
+          "opcode": "0x6d",
+          "slot": 5,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1097,
+          "opcode": "0x6c",
+          "slot": 5,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1101,
+          "opcode": "0x6c",
+          "slot": 6,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1112,
+          "opcode": "0x6c",
+          "slot": 6,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1123,
+          "opcode": "0x6c",
+          "slot": 9,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1127,
+          "opcode": "0x6c",
+          "slot": 5,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1139,
+          "opcode": "0x6c",
+          "slot": 7,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1143,
+          "opcode": "0x6c",
+          "slot": 5,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1151,
+          "opcode": "0x6c",
+          "slot": 5,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1155,
+          "opcode": "0x6c",
+          "slot": 13,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1168,
+          "opcode": "0x6c",
+          "slot": 5,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1172,
+          "opcode": "0x6c",
+          "slot": 17,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1185,
+          "opcode": "0x6c",
+          "slot": 6,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1205,
+          "opcode": "0x6d",
+          "slot": 5,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1209,
+          "opcode": "0x6c",
+          "slot": 5,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1231,
+          "opcode": "0x6c",
+          "slot": 13,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1235,
+          "opcode": "0x6c",
+          "slot": 17,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1262,
+          "opcode": "0x6c",
+          "slot": 13,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1266,
+          "opcode": "0x6c",
+          "slot": 17,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1287,
+          "opcode": "0x6c",
+          "slot": 5,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1300,
+          "opcode": "0x6c",
+          "slot": 5,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1304,
+          "opcode": "0x6c",
+          "slot": 13,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1317,
+          "opcode": "0x6c",
+          "slot": 5,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1321,
+          "opcode": "0x6c",
+          "slot": 17,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1334,
+          "opcode": "0x6c",
+          "slot": 10,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1338,
+          "opcode": "0x6c",
+          "slot": 5,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1348,
+          "opcode": "0x6c",
+          "slot": 17,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1351,
+          "opcode": "0x6d",
+          "slot": 17,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1355,
+          "opcode": "0x6c",
+          "slot": 17,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1397,
+          "opcode": "0x6c",
+          "slot": 13,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1400,
+          "opcode": "0x6d",
+          "slot": 13,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1404,
+          "opcode": "0x6c",
+          "slot": 13,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1458,
+          "opcode": "0x6c",
+          "slot": 10,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1479,
+          "opcode": "0x6c",
+          "slot": 7,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1507,
+          "opcode": "0x6c",
+          "slot": 19,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1514,
+          "opcode": "0x6c",
+          "slot": 19,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1556,
+          "opcode": "0x6d",
+          "slot": 11,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1561,
+          "opcode": "0x6c",
+          "slot": 11,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1584,
+          "opcode": "0x6d",
+          "slot": 1,
+          "receiver": [
+            "catch",
+            0
+          ]
+        },
+        {
+          "offset": 1593,
+          "opcode": "0x6c",
+          "slot": 1,
+          "receiver": [
+            "catch",
+            0
+          ]
+        },
+        {
+          "offset": 1600,
+          "opcode": "0x6c",
+          "slot": 11,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1656,
+          "opcode": "0x6d",
+          "slot": 14,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1665,
+          "opcode": "0x6c",
+          "slot": 14,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1691,
+          "opcode": "0x6d",
+          "slot": 1,
+          "receiver": [
+            "catch",
+            1
+          ]
+        },
+        {
+          "offset": 1700,
+          "opcode": "0x6c",
+          "slot": 1,
+          "receiver": [
+            "catch",
+            1
+          ]
+        },
+        {
+          "offset": 1710,
+          "opcode": "0x6c",
+          "slot": 14,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1798,
+          "opcode": "0x6c",
+          "slot": 4,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1807,
+          "opcode": "0x6d",
+          "slot": 15,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1818,
+          "opcode": "0x6d",
+          "slot": 16,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1835,
+          "opcode": "0x6d",
+          "slot": 17,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1844,
+          "opcode": "0x6c",
+          "slot": 17,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1935,
+          "opcode": "0x6d",
+          "slot": 18,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1939,
+          "opcode": "0x6c",
+          "slot": 18,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1946,
+          "opcode": "0x6c",
+          "slot": 17,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1957,
+          "opcode": "0x6c",
+          "slot": 18,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1971,
+          "opcode": "0x6c",
+          "slot": 17,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 1984,
+          "opcode": "0x6c",
+          "slot": 18,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2010,
+          "opcode": "0x6c",
+          "slot": 18,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2017,
+          "opcode": "0x6c",
+          "slot": 18,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2032,
+          "opcode": "0x6c",
+          "slot": 18,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2046,
+          "opcode": "0x6c",
+          "slot": 18,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2056,
+          "opcode": "0x6c",
+          "slot": 16,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2060,
+          "opcode": "0x6c",
+          "slot": 18,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2070,
+          "opcode": "0x6c",
+          "slot": 18,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2081,
+          "opcode": "0x6c",
+          "slot": 17,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2091,
+          "opcode": "0x6c",
+          "slot": 16,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2095,
+          "opcode": "0x6c",
+          "slot": 16,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2099,
+          "opcode": "0x6c",
+          "slot": 16,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2132,
+          "opcode": "0x6c",
+          "slot": 18,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2148,
+          "opcode": "0x6c",
+          "slot": 16,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2152,
+          "opcode": "0x6c",
+          "slot": 18,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2169,
+          "opcode": "0x6c",
+          "slot": 18,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2180,
+          "opcode": "0x6c",
+          "slot": 15,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2190,
+          "opcode": "0x6c",
+          "slot": 16,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2194,
+          "opcode": "0x6c",
+          "slot": 16,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2198,
+          "opcode": "0x6c",
+          "slot": 16,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2231,
+          "opcode": "0x6c",
+          "slot": 16,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2235,
+          "opcode": "0x6c",
+          "slot": 16,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2239,
+          "opcode": "0x6c",
+          "slot": 16,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2245,
+          "opcode": "0x6c",
+          "slot": 15,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2277,
+          "opcode": "0x6c",
+          "slot": 16,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2281,
+          "opcode": "0x6c",
+          "slot": 16,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2285,
+          "opcode": "0x6c",
+          "slot": 16,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2289,
+          "opcode": "0x6c",
+          "slot": 15,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2320,
+          "opcode": "0x6c",
+          "slot": 18,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2336,
+          "opcode": "0x6c",
+          "slot": 16,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2340,
+          "opcode": "0x6c",
+          "slot": 18,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2353,
+          "opcode": "0x6c",
+          "slot": 18,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2364,
+          "opcode": "0x6c",
+          "slot": 16,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2368,
+          "opcode": "0x6c",
+          "slot": 16,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2372,
+          "opcode": "0x6c",
+          "slot": 16,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2405,
+          "opcode": "0x6c",
+          "slot": 16,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2409,
+          "opcode": "0x6c",
+          "slot": 16,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2413,
+          "opcode": "0x6c",
+          "slot": 16,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2417,
+          "opcode": "0x6c",
+          "slot": 15,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2444,
+          "opcode": "0x6c",
+          "slot": 18,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2459,
+          "opcode": "0x6c",
+          "slot": 18,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2485,
+          "opcode": "0x6c",
+          "slot": 18,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2500,
+          "opcode": "0x6c",
+          "slot": 18,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2516,
+          "opcode": "0x6c",
+          "slot": 16,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2541,
+          "opcode": "0x6c",
+          "slot": 17,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2544,
+          "opcode": "0x6d",
+          "slot": 17,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2548,
+          "opcode": "0x6c",
+          "slot": 17,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2579,
+          "opcode": "0x6c",
+          "slot": 19,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2601,
+          "opcode": "0x6c",
+          "slot": 19,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2623,
+          "opcode": "0x6c",
+          "slot": 19,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2678,
+          "opcode": "0x6c",
+          "slot": 19,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2700,
+          "opcode": "0x6c",
+          "slot": 19,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2718,
+          "opcode": "0x6d",
+          "slot": 16,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2729,
+          "opcode": "0x6c",
+          "slot": 4,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2737,
+          "opcode": "0x6d",
+          "slot": 15,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2741,
+          "opcode": "0x6c",
+          "slot": 16,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2745,
+          "opcode": "0x6c",
+          "slot": 19,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2756,
+          "opcode": "0x6c",
+          "slot": 15,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2766,
+          "opcode": "0x6c",
+          "slot": 16,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2770,
+          "opcode": "0x6c",
+          "slot": 16,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2777,
+          "opcode": "0x6c",
+          "slot": 15,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2785,
+          "opcode": "0x6c",
+          "slot": 16,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2789,
+          "opcode": "0x6c",
+          "slot": 16,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2796,
+          "opcode": "0x6c",
+          "slot": 15,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2804,
+          "opcode": "0x6c",
+          "slot": 16,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2808,
+          "opcode": "0x6c",
+          "slot": 16,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2815,
+          "opcode": "0x6c",
+          "slot": 15,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2834,
+          "opcode": "0x6c",
+          "slot": 16,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2856,
+          "opcode": "0x6c",
+          "slot": 8,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2865,
+          "opcode": "0x6c",
+          "slot": 19,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2889,
+          "opcode": "0x6c",
+          "slot": 3,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 2968,
+          "opcode": "0x6c",
+          "slot": 3,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 3193,
+          "opcode": "0x6d",
+          "slot": 11,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 3198,
+          "opcode": "0x6c",
+          "slot": 11,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 3223,
+          "opcode": "0x6c",
+          "slot": 9,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 3232,
+          "opcode": "0x6c",
+          "slot": 19,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 3288,
+          "opcode": "0x6c",
+          "slot": 19,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 3303,
+          "opcode": "0x6c",
+          "slot": 19,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 3322,
+          "opcode": "0x6c",
+          "slot": 19,
+          "receiver": [
+            "activation",
+            14
+          ]
+        },
+        {
+          "offset": 3381,
+          "opcode": "0x6d",
+          "slot": 1,
+          "receiver": [
+            "catch",
+            2
+          ]
+        },
+        {
+          "offset": 3390,
+          "opcode": "0x6c",
+          "slot": 1,
+          "receiver": [
+            "catch",
+            2
+          ]
+        },
+        {
+          "offset": 3438,
+          "opcode": "0x6c",
+          "slot": 2,
+          "receiver": [
+            "activation",
+            14
+          ]
+        }
+      ],
+      "activation_slots": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "exception_count": 3,
+      "all_slot_receivers_local": true,
+      "no_outer_scope": true,
+      "init_scope_depth": 5,
+      "max_scope_depth": 14,
+      "local_scope_capacity": 9,
+      "observed_local_scope_peak": 3,
+      "observed_operand_peak": 8,
+      "visited_instructions": 1578
+    },
+    "fe.World::0:1:rconnectLoadingHold": {
+      "passed": true,
+      "slot_accesses": [],
+      "activation_slots": [],
+      "exception_count": 0,
+      "all_slot_receivers_local": true,
+      "no_outer_scope": true,
+      "init_scope_depth": 4,
+      "max_scope_depth": 5,
+      "local_scope_capacity": 1,
+      "observed_local_scope_peak": 1,
+      "observed_operand_peak": 4,
+      "visited_instructions": 22
+    },
+    "fe.World::0:1:rconnectCancelLoading": {
+      "passed": true,
+      "slot_accesses": [],
+      "activation_slots": [],
+      "exception_count": 0,
+      "all_slot_receivers_local": true,
+      "no_outer_scope": true,
+      "init_scope_depth": 4,
+      "max_scope_depth": 5,
+      "local_scope_capacity": 1,
+      "observed_local_scope_peak": 1,
+      "observed_operand_peak": 4,
+      "visited_instructions": 13
+    },
+    "fe.graph.Grafon::0:2:rconnectRasterPending": {
+      "passed": true,
+      "slot_accesses": [],
+      "activation_slots": [],
+      "exception_count": 0,
+      "all_slot_receivers_local": true,
+      "no_outer_scope": true,
+      "init_scope_depth": 4,
+      "max_scope_depth": 5,
+      "local_scope_capacity": 1,
+      "observed_local_scope_peak": 1,
+      "observed_operand_peak": 2,
+      "visited_instructions": 18
+    },
+    "fe.graph.Grafon::0:1:rconnectRasterWaiting": {
+      "passed": true,
+      "slot_accesses": [],
+      "activation_slots": [],
+      "exception_count": 0,
+      "all_slot_receivers_local": true,
+      "no_outer_scope": true,
+      "init_scope_depth": 4,
+      "max_scope_depth": 5,
+      "local_scope_capacity": 1,
+      "observed_local_scope_peak": 1,
+      "observed_operand_peak": 2,
+      "visited_instructions": 18
+    },
+    "fe.graph.Grafon::0:1:rconnectRasterPainted": {
+      "passed": true,
+      "slot_accesses": [],
+      "activation_slots": [],
+      "exception_count": 0,
+      "all_slot_receivers_local": true,
+      "no_outer_scope": true,
+      "init_scope_depth": 4,
+      "max_scope_depth": 5,
+      "local_scope_capacity": 1,
+      "observed_local_scope_peak": 1,
+      "observed_operand_peak": 2,
+      "visited_instructions": 39
+    }
+  },
+  "slot_access_count": 247,
+  "game_tail": {
+    "original_instructions_byte_exact": true,
+    "original_prefix_sha256": "a802892d7eeced8f887368947d2c5085d6a59baa9868ba43a860b4ce91065f28",
+    "insertion_offset": 658,
+    "inserted_tail_hex": "60c64c20130c00005dc64c2ca840d0204fc64c0347",
+    "public_bridge_multiname": 9798,
+    "original_branches_and_frame_preserved": true,
+    "no_native_exception_region": true,
+    "body_sha256": "993fabfe255a1dc29ed8f44cf0f96aef1c39bb49191d63e827f75989bc1f74ac"
+  },
+  "java_started": false,
+  "air_started": false
+}
