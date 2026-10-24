@@ -1,0 +1,21 @@
+{
+  "kind": "native-loading-observer-v1",
+  "prepare_sha256": "127b99d31b30a6c0f04b1c70d885afb206b9d4b567e0d96d64258f56b6c76de7",
+  "diff_sha256": "c8f8e60db1296fb03abb630aa49ccf319ee2809fb05b2ba3067267c547a9f533",
+  "original": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-room-current-driver-01\\tests\\RoomTravelTimingTestDoc.as": "226001bfb880363615c98d697ef0b1ea224545f749123b14987160f91e0998e3",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-room-current-driver-01\\tests\\A22RoomMetrics.as": "314823fd0fcd04e71277dcd3e8ee1a647317e611c5ff7b8fb0e7058c25179d6e"
+  },
+  "original_driver_prepared_sha256": "34364016738c79140b8354769e7e0c1d1980b31368d4e50e7c20e45fa2ba075e",
+  "sources": {
+    "A22RoomMetrics.as": "314823fd0fcd04e71277dcd3e8ee1a647317e611c5ff7b8fb0e7058c25179d6e",
+    "NativeLoadingProbe.as": "0bd3c84f3a48487ae9b9e0d651e2a901873913eba737622c2833edbc2cf64b92",
+    "RoomTravelTimingTestDoc.as": "ebe117b2b391a396eb83c79a616580b07bd7305b601b83acd9ca007e359e592c"
+  },
+  "hook_count": 5,
+  "original_assertions_preserved": true,
+  "original_done_preserved": true,
+  "compiled": false,
+  "air_started": false,
+  "performanceQualified": false
+}

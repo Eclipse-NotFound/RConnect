@@ -1,0 +1,713 @@
+--- experimental\recovery-room-first-raster-host-current\activation_slots.py
++++ goal-native-loading-build/activation_slots.py
+@@ -73,14 +73,16 @@
+   elif op in (0x46,0x4a,0x4f):
+    pop(1+runtime_names(args)+operand(-1))
+    if op!=0x4f:stack.append(unknown)
++  elif op==0x55:replace(2*operand())  # newobject: key/value pairs
+   elif op==0x56:replace(operand())
+   elif op in (0x1e,0x23,0xa0,0xa1,0xa2,0xa3,0xab,0xac,0xad,0xae,0xaf,0xb3):replace(2)
+-  elif op in (0x73,0x75,0x76,0x80,0x90,0x91,0x96,0xc0,0xc1):replace(1)
++  elif op in (0x73,0x74,0x75,0x76,0x80,0x85,0x90,0x91,0x96,0xc0,0xc1):replace(1)
+   elif op==0x82:assert stack  # coerce_a preserves the operand itself.
+   elif op==0xc2:registers[operand()]=unknown
+   elif op==0x32:registers[operand()]=registers[operand(1)]=unknown;stack.append(unknown)
+   elif 0x0c<=op<=0x1a:
+    branch=operand();pop(0 if op==0x10 else (1 if op in (0x11,0x12) else 2))
++  elif op==0x03:pop();terminal=True  # throw preserves exception edges above
+   elif op in (0x47,0x48):
+    if op==0x48:pop()
+    terminal=True
+--- experimental\recovery-room-first-raster-host-current\build.py
++++ goal-native-loading-build/build_host.py
+@@ -10,8 +10,8 @@
+ HERE=Path(__file__).resolve().parent;ROOT=HERE.parents[1];GAME=ROOT.parents[1]
+ def load(name,p):
+  s=importlib.util.spec_from_file_location(name,p);m=importlib.util.module_from_spec(s);s.loader.exec_module(m);return m
+-source=load('current_first_raster_prepare',HERE/'prepare.py')
+-retain=load('current_first_raster_retention',HERE/'retain.py')
++source=load('native_ui_inputs',HERE/'inputs.py')
++retain=load('native_ui_retention',HERE/'retain.py')
+ sys.path.insert(0,str(ROOT/'tools/host_authority'))
+ from common import JAVA,FFDEC
+ sys.path.insert(0,str(ROOT/'tools/validation'))
+@@ -19,22 +19,22 @@
+ from run_security_terminals import installation
+ sys.path.insert(0,str(GAME/'mods/ModLoader/tools'))
+ from test_registry import Registration
+-DEFAULT=ROOT/'build/m52/recovery-room-first-raster-host-current-01'
++DEFAULT=ROOT/'build/m52/goal-native-loading-host-01'
+ def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+ def read(p):return json.loads(Path(p).read_text(encoding='utf-8-sig'))
+ def save(p,v):Path(p).write_text(json.dumps(v,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+ def target(p):
+  p=Path(p);p=(p if p.is_absolute() else ROOT/p).resolve()
+- assert p.parent==ROOT/'build/m52' and p.name.startswith('recovery-room-first-raster-host-current-')
++ assert p.parent==ROOT/'build/m52' and p.name.startswith('goal-native-loading-host-')
+  return p
+ def pins():
+- meta=source.verify();result=dict(meta['inputs'])
+- for name in ('prepare.py','retain.py','build.py','source-manifest.json','README.md'):
+-  result[str(HERE/name)]=sha(HERE/name)
+- for name,h in meta['files'].items():result[str(HERE/name)]=h
++ result=source.pins()
+  for p in (JAVA,FFDEC,ROOT/'tools/host_authority/common.py',ROOT/'tools/validation/runtime_memory.py',
+-  ROOT/'tools/validation/run_security_terminals.py',GAME/'mods/ModLoader/tools/test_registry.py',retain.SUPPORT,retain.support.SUPPORT):result[str(p)]=sha(p)
+- assert sha(retain.SUPPORT)=='c422c540490d553e6a21415b9cdb4232f287069b4b1f18a075e51d224a59268e'
++  ROOT/'tools/validation/run_security_terminals.py',GAME/'mods/ModLoader/tools/test_registry.py',
++  source.OLD/'retain_v2.py',source.OLD/'prepare.py',source.OLD/'activation_slots.py',
++  source.OLD/'build.py',retain.legacy.SUPPORT,retain.support.SUPPORT):
++  result[str(p)]=sha(p)
++ assert sha(retain.legacy.SUPPORT)=='c422c540490d553e6a21415b9cdb4232f287069b4b1f18a075e51d224a59268e'
+  return result
+ def commands(out):
+  names=','.join(source.CLASSES)
+@@ -46,12 +46,12 @@
+   ('pcode',['-format','script:pcode','-selectclass',names,'-export','script',out/'pcode',out/'pfe.swf'])]
+  return [dict(name=n,argv=[str(JAVA),'-Dfile.encoding=UTF-8','-Duser.language=en','-Duser.country=US','-Xmx512m','-jar',str(FFDEC),*map(str,a)]) for n,a in rows]
+ def prepare(out):
+- assert not out.exists(),'Preserve prior build evidence';inputs=pins();before=installation()
++ assert not out.exists(),'Preserve prior build evidence';inputs=pins();before=source.current()
+  assert len(before)==22 and before['pfe.swf']==source.HOST_SHA
+  out.mkdir()
+  for cls in source.CLASSES:
+-  rel=source.paths(cls);p=out/'import'/rel;p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes((HERE/'import'/rel).read_bytes())
+- meta=dict(kind='current-first-raster-host',base_sha256=source.HOST_SHA,base_xml_sha256=sha(source.BASE_XML),
++  rel=source.paths(cls);p=out/'import'/rel;p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes((source.UI/'host'/rel).read_bytes())
++ meta=dict(kind='native-loading-ui-host',base_sha256=source.HOST_SHA,base_xml_sha256=sha(source.BASE_XML),
+   inputs=inputs,installation_before=before,imports={source.paths(c).as_posix():sha(out/'import'/source.paths(c)) for c in source.CLASSES},
+   commands=commands(out),compiled=False,validated=False,air_started=False,installed=False,gameplay_qualified=False,performance_qualified=False)
+  save(out/'prepared.json',meta);return meta
+@@ -59,19 +59,19 @@
+  meta=read(out/'prepared.json');assert meta['inputs']==pins()
+  assert meta['base_sha256']==source.HOST_SHA and meta['commands']==commands(out)
+  assert meta['imports']=={source.paths(c).as_posix():sha(out/'import'/source.paths(c)) for c in source.CLASSES}
+- assert len(list((out/'import').rglob('*.as')))==3
++ assert len(list((out/'import').rglob('*.as')))==1
+  return meta
+ def build(out,wait):
+  meta=prepare(out) if not out.exists() else frozen(out)
+  assert not(out/'build.json').exists(),'Do not rerun failed/final build'
+  before=meta['installation_before'];assert installation()==before
+  prepared_sha=sha(out/'prepared.json')
+- result=dict(kind='current-first-raster-host-build',base_sha256=source.HOST_SHA,prepared_sha256=prepared_sha,
++ result=dict(kind='native-loading-ui-host-build',base_sha256=source.HOST_SHA,prepared_sha256=prepared_sha,
+   compiled=False,validated=False,build_checks_passed=False,air_started=False,installed=False,
+   gameplay_qualified=False,performance_qualified=False,installation_before=before,commands=[],inputs=meta['inputs'])
+  failure=None
+  try:
+-  with Registration(owner='RConnect / 当前宿主首绘桥',resource='game',purpose='A796 retained 3-class bridge; no AIR/install',run_dir=out,evidence=out/'prepared.json',wait=wait) as reg:
++  with Registration(owner='RConnect / 原生加载显示',resource='game',purpose='A796 retained World UI lease; no AIR/install',run_dir=out,evidence=out/'prepared.json',wait=wait) as reg:
+    for command in meta['commands']:
+     assert frozen(out)==meta and installation()==before and sha(out/'prepared.json')==prepared_sha
+     memory=snapshot();save(out/(command['name']+'-memory-before.json'),memory)
+@@ -97,10 +97,10 @@
+    for cls in source.CLASSES:
+     for base,suffix in [('readback','.as'),('pcode','.pcode')]:assert (out/base/'scripts'/source.paths(cls).with_suffix(suffix)).is_file()
+    proof=read(out/'method-audit.json');assert proof['passed'] and proof['exact_retained_roundtrip']
+-   result.update(candidate_sha256=sha(out/'pfe.swf'),build_checks_passed=True,validated=True,
+-    validation_scope='Exact bytecode/member/resource preservation and explicit bridge bindings only; native testing remains',
++   result.update(candidate_sha256=sha(out/'pfe.swf'),build_checks_passed=True,validated=False,
++    validation_scope='Structural retention and slot provenance only; independent final source/pcode semantics and native testing remain',
+     method_audit=proof,retain=read(out/'retain.json'),splice=read(out/'splice.json'),readback_path=str(out/'readback/scripts'),pcode_path=str(out/'pcode/scripts'))
+-   reg.outcome='passed';reg.note='Three-class source/retained bytecode audit passed; no AIR or gameplay/performance qualification'
++   reg.outcome='passed';reg.note='World raw-prefix/member/resource checks passed; actual semantic review and AIR remain'
+  except BaseException as e:failure=e;result.update(error_type=type(e).__name__,error=str(e),validated=False,build_checks_passed=False)
+  finally:
+   try:
+@@ -116,7 +116,7 @@
+  """Read-only API. Historic build proof is distinct from native qualification."""
+  out=target(output);meta=frozen(out);r=read(out/'build.json')
+  assert r['base_sha256']==source.HOST_SHA and r['prepared_sha256']==sha(out/'prepared.json') and r['inputs']==meta['inputs']
+- assert r['compiled'] and r['validated'] and r['build_checks_passed'] and r['inputs_unchanged'] and r['installation_unchanged']
++ assert r['compiled'] and not r['validated'] and r['build_checks_passed'] and r['inputs_unchanged'] and r['installation_unchanged']
+  assert r['installation_before']==r['installation_after']==meta['installation_before']
+  assert len(r['commands'])==6 and all(x['exit_code']==0 and x['reaped'] for x in r['commands'])
+  assert all({k:x[k] for k in ('name','argv')}==expected for x,expected in zip(r['commands'],meta['commands']))
+--- experimental\recovery-room-first-raster-host-current\retain_v2.py
++++ goal-native-loading-build/retain.py
+@@ -1,250 +1,163 @@
+-"""Bounded A796 three-class transplant; reuse the existing ABC decoder/splicer.
++"""Nine raw prefixes plus one donor body; use the existing ABC decoder.
+ 
+-V2: activation/catch slot provenance is checked; no class slots are admitted.
+-Only eight named native bodies, five new helpers, four appended traits and two
+-literal static-initializer tails may differ. Never import an entire class.
++No native constructor, static initializer or complex native body is imported.
++All original relative branch bytes remain unchanged in the nine prefixed bodies.
+ """
+ from pathlib import Path
+-import copy, hashlib, importlib.util, json, sys, xml.etree.ElementTree as ET
++import copy, hashlib, sys, types, xml.etree.ElementTree as ET
+ if sys.flags.optimize:raise RuntimeError('Ordinary Python required')
+-sys.dont_write_bytecode=True
+-HERE=Path(__file__).resolve().parent;ROOT=HERE.parents[1]
+-def load(name,p):
+- s=importlib.util.spec_from_file_location(name,p);m=importlib.util.module_from_spec(s);s.loader.exec_module(m);return m
+-def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+-SUPPORT=ROOT/'experimental/recovery-ordinary-method-transplant/method_transplant.py'
+-assert sha(SUPPORT)=='c422c540490d553e6a21415b9cdb4232f287069b4b1f18a075e51d224a59268e'
+-support=load('first_raster_original_ABC_support',SUPPORT)
+-core,canonical=support.core,support.canonical
+-prep=load('first_raster_text_inputs',HERE/'prepare.py')
+-slotproof=load('first_raster_local_slot_provenance',HERE/'activation_slots.py')
+-TARGETS=tuple(c+'::0:1:'+n for c in prep.CLASSES for n in prep.CHANGED[c])
+-NEW=(('fe.World','0','1','rconnectLoadingHold'),('fe.World','0','1','rconnectCancelLoading'),
+- ('fe.graph.Grafon','0','2','rconnectRasterPending'),('fe.graph.Grafon','0','1','rconnectRasterWaiting'),
+- ('fe.graph.Grafon','0','1','rconnectRasterPainted'))
+-NEW_NAMES=tuple(c+'::'+s+':'+k+':'+n for c,s,k,n in NEW)
+-FIELDS=(('fe.loc.Game','1','rconnectTravelBridge','Function','0'),
+- ('fe.loc.Game','1','rconnectEarlyTravelVersion','int','6'),
+- ('fe.graph.Grafon','1','rconnectRasterBridge','Function','0'),
+- ('fe.graph.Grafon','0','rconnectRasterTicket','Object','0'))
+-CINITS=('fe.loc.Game::<static>','fe.graph.Grafon::<static>')
+-GAME_TAIL='fe.loc.Game::0:1:enterToCurLand'
+-IGNORED={'bytes','fileOffset'}
+-def require(ok,message):
+- if not ok:raise AssertionError(message)
+-def traits(abc,cls,scope):
+- i=abc.class_by_name[cls];node=abc.statics[i] if scope=='1' else abc.instances[i]
+- return node.find('static_traits/traits' if scope=='1' else 'instance_traits/traits')
+-def key(abc,t):return (t.get('type'),t.get('kindType'),abc.simple(int(t.get('name_index'))))
+-def table(abc,cls,scope):
+- ts=list(traits(abc,cls,scope));out={key(abc,t):t for t in ts};require(len(out)==len(ts),'Ambiguous original trait');return out
+-def namespace(abc,mn):
+- x=abc.cp['constant_multiname'][mn];require(x.get('kind')=='7','Expected QName trait')
+- return int(x.get('namespace_index'))
+-def nsname(abc,i):return abc.string(int(abc.cp['constant_namespace'][i].get('name_index')))
+-def members(abc,i):return [int(x.text) for x in abc.cp['constant_namespace_set'][i].findall('namespaces/item')]
+-def body_names(abc,index):
+- b=abc.bodies[index];rows,addresses=core.decode(bytes.fromhex(b.get('codeBytes')))
+- # No implicit method/slot relocation; unknown donor shapes must stop.
+- slotproof.prove(abc,index,core)
+- names={v for r in rows for k,v in r[3] if k=='n'}
+- for e in b.find('exceptions'):
+-  names.update(int(e.get(k,'0')) for k in ('type_index','name_index'))
+- for t in b.findall('traits/traits/item'):
+-  require(t.get('type')=='TraitSlotConst','Unreviewed activation function trait')
+-  names.update(int(t.get(k,'0')) for k in ('name_index','type_index'))
+- names.discard(0);core.Compare.exceptions(b,abc,addresses)
+- return names
+-def namespace_map(a,b):
+- mapping={};evidence=[];oldcount=len(a.cp['constant_namespace'])
+- def pair(ni,oi,label):
+-  if ni==oi:return
+-  require(ni>=oldcount and a.cp['constant_namespace'][oi].get('kind')==b.cp['constant_namespace'][ni].get('kind')=='5','Only fresh private namespace may map')
+-  require(nsname(a,oi)==nsname(b,ni),'Private lexical URI changed')
+-  require(mapping.get(ni,oi)==oi,'Private namespace ambiguity');mapping[ni]=oi
+-  evidence.append(dict(source=label,donor=ni,retained=oi,uri=nsname(a,oi)))
+- # Existing declaration identities are primary anchors, not pool-name guesses.
+- for cls in prep.CLASSES:
+-  for scope in ('0','1'):
+-   old,new=table(a,cls,scope),table(b,cls,scope)
+-   for k,t in old.items():
+-    require(k in new,'Original trait missing '+str(k))
+-    pair(namespace(b,int(new[k].get('name_index'))),namespace(a,int(t.get('name_index'))),cls+'/'+str(k))
+- # Match fresh lexical sets only against real scopes already used in this class.
+- for cls in prep.CLASSES:
+-  oldsets=set();newsets=set();direct=set()
+-  for name,index in a.named.items():
+-   if not name.startswith(cls+'::') or index not in a.bodies:continue
+-   rows,_=core.decode(bytes.fromhex(a.bodies[index].get('codeBytes')))
+-   for r in rows:
+-    for k,v in r[3]:
+-     if k=='n':
+-      ns=int(a.cp['constant_multiname'][v].get('namespace_set_index','0'))
+-      if ns:oldsets.add(ns)
+-  for name in (*TARGETS,*NEW_NAMES):
+-   if not name.startswith(cls+'::'):continue
+-   if name==GAME_TAIL:continue # Native body retained; appended tail is public QName only.
+-   for v in body_names(b,b.named[name]):
+-    mn=b.cp['constant_multiname'][v];ns=int(mn.get('namespace_set_index','0'));di=int(mn.get('namespace_index','0'))
+-    if ns:newsets.add(ns)
+-    if di:direct.add(di)
+-  for ns in newsets:
+-   current=members(b,ns)
+-   if all(i<oldcount for i in current):continue
+-   possible=[]
+-   for oldset in oldsets:
+-    original=members(a,oldset)
+-    if len(original)!=len(current):continue
+-    okay=True
+-    for ni,oi in zip(current,original):
+-     if ni==oi:continue
+-     if ni<oldcount or b.cp['constant_namespace'][ni].get('kind')!='5' or a.cp['constant_namespace'][oi].get('kind')!='5' or nsname(b,ni)!=nsname(a,oi) or mapping.get(ni,oi)!=oi:okay=False;break
+-    if okay:possible.append((oldset,original))
+-   require(len(possible)==1,cls+' fresh lexical scope has no unique original anchor')
+-   oldset,original=possible[0]
+-   for ni,oi in zip(current,original):pair(ni,oi,cls+'/lexical '+str(ns)+'->'+str(oldset))
+-   evidence.append(dict(source=cls,donorSet=ns,retainedSet=oldset,donorMembers=current,retainedMembers=original))
+-  for ni in direct:
+-   require(ni<oldcount or b.cp['constant_namespace'][ni].get('kind')!='5' or ni in mapping,'Unbound direct private name')
+- return mapping,evidence
+-def normalized_donor(a,node,b,mapping):
+- out=copy.deepcopy(node);constants=out.find('constants')
+- for n in list(constants.find('constant_multiname'))[len(a.cp['constant_multiname']):]:
+-  i=int(n.get('namespace_index','0'))
+-  if i in mapping:n.set('namespace_index',str(mapping[i]))
+- for n in list(constants.find('constant_namespace_set'))[len(a.cp['constant_namespace_set']):]:
+-  for item in n.findall('namespaces/item'):
+-   i=int(item.text)
+-   if i in mapping:item.text=str(mapping[i])
+- return out,core.ABC(out)
+-def u30(v):
+- out=bytearray()
+- while v>=128:out.append((v&127)|128);v>>=7
+- out.append(v);return bytes(out)
+-def static_body(a,cls,fields):
+- old=a.bodies[a.named[cls+'::<static>']];code=bytes.fromhex(old.get('codeBytes'));rows,_=core.decode(code)
+- require(code[-1:]==b'\x47' and rows[-1][2]==0x47,'Static initializer must end returnvoid')
+- require(not any(k=='target' for r in rows for k,v in r[3]) and sum(r[2] in (0x47,0x48) for r in rows)==1,'Static initializer must be single-path')
+- require(not list(old.find('exceptions')) and not list(old.find('traits/traits')),'Unexpected static catch/activation')
+- extra=b''
+- for name,mn in fields:
+-  # This class object is local0 in the original cinit. Literal-only new writes.
+-  extra+=b'\xd0'+(b'\x24\x01\x68' if name=='rconnectEarlyTravelVersion' else b'\x20\x61')+u30(mn)
+- body=copy.deepcopy(old);body.set('codeBytes',(code[:-1]+extra+b'\x47').hex());body.set('max_stack',str(max(2,int(old.get('max_stack')))))
+- return body,dict(originalCodeSHA256=hashlib.sha256(code).hexdigest(),insertBeforeFinalReturn=extra.hex(),originalInstructionsByteExact=True,
+-  maxStackBefore=old.get('max_stack'),maxStackAfter=body.get('max_stack'),onlyNewStaticWrites=[n for n,_ in fields])
+-
+-def game_body(a,b):
+- old=a.bodies[a.named[GAME_TAIL]];donor=b.bodies[b.named[GAME_TAIL]]
+- code=bytes.fromhex(old.get('codeBytes'));fresh=bytes.fromhex(donor.get('codeBytes'))
+- rows,_=core.decode(code);newrows,_=core.decode(fresh);tail=newrows[-9:]
+- require([r[2] for r in tail]==[0x60,0x20,0x13,0x5d,0x2c,0xd0,0x20,0x4f,0x47],'Unexpected constructed tail')
+- bridge=tail[0][3][0][1];mn=b.cp['constant_multiname'][bridge]
+- require(mn.get('kind')=='7' and b.simple(bridge)=='rconnectTravelBridge','Tail bridge must be direct QName')
+- ns=int(mn.get('namespace_index'));require(b.cp['constant_namespace'][ns].get('kind')=='22' and nsname(b,ns)=='','Tail bridge must be public')
+- require(tail[3][3]==[('n',bridge)] and tail[7][3]==[('n',bridge),('u',3)],'Tail callback binding/arity changed')
+- require(b.string(tail[4][3][0][1])=='constructed' and tail[2][3]==[('target',tail[-1][0])],'Tail event or branch changed')
+- require(code[-1:]==b'\x47' and sum(r[2] in (0x47,0x48) for r in rows)==1,'Native Game must have one terminal return')
+- require(not list(old.find('exceptions')) and not list(old.find('traits/traits')),'Native Game has unexpected protected/activation region')
+- require(all(v<=rows[-1][0] for r in rows for k,v in r[3] if k=='target'),'Native Game branch beyond insertion point')
+- # Old jump targets, instruction offsets and frame are unchanged. A jump to
+- # the old terminal return now enters the appended conditional callback.
+- insert=fresh[tail[0][0]:];result=copy.deepcopy(old);result.set('codeBytes',(code[:-1]+insert).hex())
+- require(int(old.get('max_stack'))>=4,'Tail operand capacity insufficient')
+- return result,dict(original_instructions_byte_exact=True,original_prefix_sha256=hashlib.sha256(code[:-1]).hexdigest(),
+-  insertion_offset=len(code)-1,inserted_tail_hex=insert.hex(),public_bridge_multiname=bridge,
+-  original_branches_and_frame_preserved=True,no_native_exception_region=True)
++sys.path.insert(0,str(Path(__file__).resolve().parent))
++import inputs as source
++ROOT=source.ROOT;sha=source.sha
++legacy=source.load('ui_original_retainer',source.OLD/'retain_v2.py')
++support=legacy.support;core=legacy.core;canonical=legacy.canonical
++slotproof=source.load('ui_activation_provenance',Path(__file__).with_name('activation_slots.py'))
++require=legacy.require;traits=legacy.traits;table=legacy.table;namespace=legacy.namespace;nsname=legacy.nsname;u30=legacy.u30
++PREFIXES=tuple('fe.World::0:1:'+n for n in source.PREFIX_METHODS)
++EXIT='fe.World::0:1:exitStep'
++TARGETS=PREFIXES+(EXIT,)
++NEW=tuple(('fe.World','0','1',n) for n in source.HELPERS)
++NEW_NAMES=tuple('fe.World::0:1:'+n for n in source.HELPERS)
++CINITS=()
++# A private imported module instance supplies only namespace/provenance routines.
++# Prefix donor bodies are deliberately excluded: they will never be imported.
++legacy.prep=types.SimpleNamespace(CLASSES=source.CLASSES)
++legacy.TARGETS=(EXIT,);legacy.NEW_NAMES=NEW_NAMES;legacy.slotproof=slotproof
++body_names=legacy.body_names
++def namespace_map(a,b):return legacy.namespace_map(a,b)
++def normalized_donor(a,node,b,mapping):return legacy.normalized_donor(a,node,b,mapping)
++def binding(abc,name,public=False):
++ t=table(abc,'fe.World','0')[('TraitMethodGetterSetter','1',name)]
++ mn=int(t.get('name_index'));ns=namespace(abc,mn);space=abc.cp['constant_namespace'][ns]
++ require(space.get('kind')==('22' if public else '5'),'Wrong helper namespace '+name)
++ if public:require(nsname(abc,ns)=='','Public helper namespace changed')
++ return mn
++def native_display_signature(abc):
++ info=abc.methods[abc.named['fe.World::0:1:rconnectUiNativeDisplay']]
++ # Copy the complete donor method_info below, including the false default.
++ # The exact optional-value representation is inspected through ABC metadata.
++ params=list(info.find('param_types'))
++ require(len(params)==1 and abc.qualified(int(params[0].text))=='Boolean','Native display helper must take one Boolean')
++ options=list(info.find('optional'))
++ require(len(options)==1,'Native display helper must retain its optional false default')
++ option=options[0]
++ require(option.get('type')=='ValueKind' and int(option.get('value_kind'))==10 and int(option.get('value_index'))==10,
++         'Native display helper optional value is not exact false')
++ require(int(info.get('flags'))&8,'Optional-parameter flag missing')
++ return dict(optional_boolean_false=True,method_info_sha256=support.digest(info))
++def exception_bounds(body,addresses,length):
++ for item in body.find('exceptions'):
++  require(all(k in item.attrib for k in ('start','end','target')),'Unexpected exception XML fields')
++  start,end,target=(int(item.get(k)) for k in ('start','end','target'))
++  require(0<=start<end<=length and 0<=target<length,'Exception range outside code')
++  require(all(v in addresses for v in (start,end,target)),'Exception offset is not an instruction boundary')
++def prefix_body(a,b,name):
++ old=a.bodies[a.named[name]];code=bytes.fromhex(old.get('codeBytes'))
++ mn=binding(b,'rconnectUiNativeDisplay');special=name.endswith(':newGame')
++ prefix=b'\xd0'+(b'\x26' if special else b'')+b'\x4f'+u30(mn)+u30(1 if special else 0)
++ rows,addresses=core.decode(code);delta=len(prefix)
++ require(rows and rows[0][0]==0,'Native body has no entry')
++ core.Compare.exceptions(old,a,addresses)
++ exception_bounds(old,addresses,len(code))
++ result=copy.deepcopy(old);result.set('codeBytes',(prefix+code).hex())
++ result.set('max_stack',str(max(int(old.get('max_stack')),2 if special else 1)))
++ for item in result.find('exceptions'):
++  for field in ('start','end','target'):item.set(field,str(int(item.get(field))+delta))
++ # Check actual instruction boundaries and all relative branch targets shift.
++ after,bounds=core.decode(prefix+code);core.Compare.exceptions(result,b,bounds)
++ exception_bounds(result,bounds,len(prefix+code))
++ expected_prefix=[0xd0,0x26,0x4f] if special else [0xd0,0x4f]
++ require([r[2] for r in after[:len(expected_prefix)]]==expected_prefix,'Wrong prefix instructions')
++ require(after[len(expected_prefix)-1][3]==[('n',mn),('u',1 if special else 0)],'Wrong prefix QName/argc')
++ for before,now in zip(rows,after[len(expected_prefix):]):
++  require(now[0:2]==(before[0]+delta,before[1]+delta) and now[2]==before[2],'Instruction offset/opcode drift')
++  require(now[3]==[(k,v+delta if k=='target' else v) for k,v in before[3]],'Original relative branch/operand drift')
++ require(len(after)==len(rows)+len(expected_prefix),'Instruction count drift')
++ return result,dict(prefix_hex=prefix.hex(),prefix_length=delta,helper_multiname=mn,argc=1 if special else 0,
++  original_code_sha256=hashlib.sha256(code).hexdigest(),original_body_suffix_byte_exact=True,
++  method_metadata_and_locals_unchanged=True,exceptions_uniform_shift=delta,
++  original_max_stack=int(old.get('max_stack')),max_stack=int(result.get('max_stack')))
+ def retain(base_xml,donor_xml,out_xml):
+- require(sha(base_xml)==prep.PINS[prep.BASE_XML],'Wrong A796 XML');out_xml=Path(out_xml)
++ require(sha(base_xml)==source.BASE_XML_SHA,'Wrong A796 XML');out_xml=Path(out_xml)
+  require(not out_xml.exists() and out_xml.parent.is_relative_to(ROOT/'build/m52'),'New isolated XML required')
+  tree,donor=ET.parse(base_xml),ET.parse(donor_xml);aa,bb=tree.findall('.//abc'),donor.findall('.//abc')
+  require(len(aa)==len(bb)==2,'Expected two ABCs');a,b=core.ABC(aa[0]),core.ABC(bb[0]);prefix=support.prefix(a,b)
+- require(canonical(aa[1])==canonical(bb[1]),'Other ABC changed in donor')
++ require(canonical(aa[1])==canonical(bb[1]),'Other donor ABC changed')
+  require(set(a.class_by_name)==set(b.class_by_name),'Class set changed')
+- require(set(b.named)-set(a.named)==set(NEW_NAMES) and set(a.named)<=set(b.named),'Unexpected new/missing method')
++ require(set(b.named)-set(a.named)==set(NEW_NAMES) and set(a.named)<=set(b.named),'Unexpected named method changes')
+  mapping,evidence=namespace_map(a,b);normal,n=normalized_donor(a,bb[0],b,mapping)
+- # Keep the entire original XML skeleton. Only append constants and members.
++ optional=native_display_signature(n)
+  constants=aa[0].find('constants');pos=list(aa[0]).index(constants);aa[0].remove(constants);aa[0].insert(pos,copy.deepcopy(normal.find('constants')))
+  bodies=aa[0].find('bodies');infos=aa[0].find('method_info');proof=[];new_indices={}
+  for name in TARGETS:
+-  oi,ni=a.named[name],n.named[name];old_info=a.methods[oi];info=copy.deepcopy(n.methods[ni]);info.set('name_index',old_info.get('name_index'))
+-  oldflags=int(old_info.get('flags'));newflags=int(info.get('flags'));require((newflags^oldflags)&~2==0,name+' flags changed beyond activation')
+-  info.set('flags',old_info.get('flags'))
+-  # Exact old signature metadata is retained; only NEED_ACTIVATION can follow body.
+-  require(canonical(info)==canonical(old_info),name+' signature differs')
+-  local_proof=slotproof.prove(n,ni,core)
+-  old_info.set('flags',str(newflags))
+-  tail_proof=None
+-  if name==GAME_TAIL:
+-   require(newflags==oldflags,'Game native flags must not change');body,tail_proof=game_body(a,n)
+-  else:body_names(n,ni);body=copy.deepcopy(n.bodies[ni]);body.set('method_info',str(oi))
++  oi=a.named[name]
++  if name in PREFIXES:body,detail=prefix_body(a,n,name);local=None
++  else:
++   ni=n.named[name];info=copy.deepcopy(n.methods[ni]);info.set('name_index',a.methods[oi].get('name_index'))
++   require(canonical(info)==canonical(a.methods[oi]),'exitStep metadata/flags changed')
++   body_names(n,ni);local=slotproof.prove(n,ni,core)
++   body=copy.deepcopy(n.bodies[ni]);body.set('method_info',str(oi));detail=None
+   at=list(bodies).index(a.bodies[oi]);bodies.remove(a.bodies[oi]);bodies.insert(at,body)
+-  proof.append(dict(name=name,oldIndex=oi,donorIndex=ni,flagsBefore=oldflags,flagsAfter=newflags,local_slot_proof=local_proof,native_tail_proof=tail_proof,codeSHA256=hashlib.sha256(bytes.fromhex(body.get('codeBytes'))).hexdigest()))
++  proof.append(dict(name=name,prefix=detail,local_slot_proof=local,code_sha256=hashlib.sha256(bytes.fromhex(body.get('codeBytes'))).hexdigest()))
+  for name in NEW_NAMES:
+-  ni=n.named[name];idx=len(infos);new_indices[name]=idx
+-  info=copy.deepcopy(n.methods[ni]);infos.append(info);body_names(n,ni)
+-  local_proof=slotproof.prove(n,ni,core)
+-  body=copy.deepcopy(n.bodies[ni]);body.set('method_info',str(idx));bodies.append(body)
+-  proof.append(dict(name=name,newIndex=idx,donorIndex=ni,local_slot_proof=local_proof,codeSHA256=hashlib.sha256(bytes.fromhex(body.get('codeBytes'))).hexdigest()))
+- added_traits=[];static_fields={c:[] for c in ('fe.loc.Game','fe.graph.Grafon')}
+- for cls,scope,kind,name in NEW:
+-  t=copy.deepcopy(table(n,cls,scope)[('TraitMethodGetterSetter',kind,name)])
+-  t.set('method_info',str(new_indices[cls+'::'+scope+':'+kind+':'+name]));t.set('disp_id','0')
+-  traits(a,cls,scope).append(t);added_traits.append(dict(cls=cls,scope=scope,name=name,kind=kind))
+- for cls,scope,name,typ,kind in FIELDS:
+-  t=copy.deepcopy(table(n,cls,scope)[('TraitSlotConst',kind,name)])
+-  require(n.qualified(int(t.get('type_index')))==typ,'Wrong new field type')
+-  mn=int(t.get('name_index'));ns=namespace(n,mn);space=n.cp['constant_namespace'][ns]
+-  require((space.get('kind')=='5') if name=='rconnectRasterTicket' else (space.get('kind')=='22' and nsname(n,ns)==''),'Wrong field namespace')
+-  if name!='rconnectEarlyTravelVersion':require(int(t.get('value_index','0'))==0 or n.constant(int(t.get('value_kind')),int(t.get('value_index')))[0:2]==('literal',12),'New reference field has non-null default')
+-  t.set('slot_id','0');traits(a,cls,scope).append(t)
+-  added_traits.append(dict(cls=cls,scope=scope,name=name,kind=kind,type=typ,slot='auto-assigned-after-original-traits',defaultValueIndex=t.get('value_index')))
+-  if scope=='1':static_fields[cls].append((name,mn))
+- static_proof={}
+- for cls,fs in static_fields.items():
+-  body,detail=static_body(a,cls,fs);oi=a.named[cls+'::<static>'];at=list(bodies).index(a.bodies[oi]);bodies.remove(a.bodies[oi]);bodies.insert(at,body);static_proof[cls]=detail
++  ni=n.named[name];idx=len(infos);new_indices[name]=idx;infos.append(copy.deepcopy(n.methods[ni]));body_names(n,ni)
++  local=slotproof.prove(n,ni,core);body=copy.deepcopy(n.bodies[ni]);body.set('method_info',str(idx));bodies.append(body)
++  proof.append(dict(name=name,newIndex=idx,donorIndex=ni,local_slot_proof=local,code_sha256=hashlib.sha256(bytes.fromhex(body.get('codeBytes'))).hexdigest()))
++ added=[]
++ for name in source.HELPERS:
++  binding(n,name,name=='rconnectLoadingView')
++  t=copy.deepcopy(table(n,'fe.World','0')[('TraitMethodGetterSetter','1',name)])
++  t.set('method_info',str(new_indices['fe.World::0:1:'+name]));t.set('disp_id','0');traits(a,'fe.World','0').append(t);added.append(name)
++ for name,typ in source.FIELDS:
++  t=copy.deepcopy(table(n,'fe.World','0')[('TraitSlotConst','0',name)])
++  require(n.qualified(int(t.get('type_index')))==typ,'Wrong field type '+name)
++  require(int(t.get('value_index','0'))==0,'Field must have no explicit initializer '+name)
++  ns=namespace(n,int(t.get('name_index')));kind=n.cp['constant_namespace'][ns].get('kind')
++  require(kind==('22' if name=='rconnectLoadingUiFaults' else '5'),'Wrong field visibility '+name)
++  if name=='rconnectLoadingUiFaults':require(nsname(n,ns)=='','Wrong public field namespace')
++  t.set('slot_id','0');traits(a,'fe.World','0').append(t);added.append(name)
+  tree.write(out_xml,encoding='utf-8',xml_declaration=True)
+- result=dict(passed=True,base_sha256=prep.HOST_SHA,base_xml_sha256=sha(base_xml),donor_xml_sha256=sha(donor_xml),retained_xml_sha256=sha(out_xml),
+-  changed_original_methods=list(TARGETS),new_methods=list(NEW_NAMES),new_traits=added_traits,static_initializers=static_proof,
+-  namespace_mappings=evidence,appended_constants=prefix,method_proof=proof,runtime_validated=False)
+- # Audit the retained tree against original before allowing serialization.
++ result=dict(passed=True,base_sha256=source.HOST_SHA,base_xml_sha256=sha(base_xml),donor_xml_sha256=sha(donor_xml),retained_xml_sha256=sha(out_xml),
++  changed_original_methods=list(TARGETS),new_methods=list(NEW_NAMES),new_traits=added,static_initializers={},namespace_mappings=evidence,
++  appended_constants=prefix,method_proof=proof,native_display_signature=optional,runtime_validated=False)
+  result['preservation']=audit(base_xml,out_xml,out_xml)
+  return result
+ def audit(base_xml,final_xml,retained_xml):
+- require(sha(base_xml)==prep.PINS[prep.BASE_XML],'Wrong audit base')
++ require(sha(base_xml)==source.BASE_XML_SHA,'Wrong audit base')
+  aa=ET.parse(base_xml).findall('.//abc');bb=ET.parse(final_xml).findall('.//abc');cc=ET.parse(retained_xml).findall('.//abc')
+- require(len(aa)==len(bb)==len(cc)==2,'Wrong audit ABC count')
+- require(all(canonical(x)==canonical(y) for x,y in zip(bb,cc)),'Actual round trip differs from retained XML')
++ require(len(aa)==len(bb)==len(cc)==2,'Wrong ABC count')
++ require(all(canonical(x)==canonical(y) for x,y in zip(bb,cc)),'Actual roundtrip differs from retained XML')
+  a,b=core.ABC(aa[0]),core.ABC(bb[0]);support.prefix(a,b)
+  require(canonical(aa[1])==canonical(bb[1]),'Other original ABC changed')
+- require(a.class_by_name==b.class_by_name and all(b.named[n]==i for n,i in a.named.items()),'Old named indices changed')
+- require(set(b.named)-set(a.named)==set(NEW_NAMES) and len(b.methods)==len(a.methods)+5,'Unexpected method additions')
+- modified={a.named[n] for n in (*TARGETS,*CINITS)};count=0
+- for i,old in enumerate(a.methods):
+-  new=copy.deepcopy(b.methods[i])
+-  if i in {a.named[n] for n in TARGETS}:
+-   require((int(new.get('flags'))^int(old.get('flags')))&~2==0,'Unexpected old flags change');new.set('flags',old.get('flags'))
+-  require(canonical(old)==canonical(new),'Old method metadata changed '+str(i))
++ require(a.class_by_name==b.class_by_name and all(b.named[name]==i for name,i in a.named.items()),'Original named indices changed')
++ require(set(b.named)-set(a.named)==set(NEW_NAMES) and len(b.methods)==len(a.methods)+7,'Unexpected method additions')
++ for i,old in enumerate(a.methods):require(canonical(old)==canonical(b.methods[i]),'Old method metadata changed '+str(i))
++ changed={a.named[n] for n in TARGETS};count=0
+  for i,old in a.bodies.items():
+-  if i not in modified:require(canonical(old)==canonical(b.bodies[i]),'Non-target body changed '+str(i));count+=1
+- require(set(b.bodies)==set(a.bodies)|{b.named[n] for n in NEW_NAMES},'Body table shape changed')
++  if i not in changed:require(canonical(old)==canonical(b.bodies[i]),'Non-target body changed '+str(i));count+=1
++ for name in PREFIXES:
++  expected,detail=prefix_body(a,b,name)
++  require(canonical(expected)==canonical(b.bodies[b.named[name]]),'Prefix body changed beyond precise insertion '+name)
++ require(set(b.bodies)==set(a.bodies)|{b.named[n] for n in NEW_NAMES},'Unexpected body table')
+  for cls,index in a.class_by_name.items():
+   for scope,old,new,container in [('0',a.instances[index],b.instances[index],'instance_traits/traits'),('1',a.statics[index],b.statics[index],'static_traits/traits')]:
+-   original=list(old.find(container));actual=list(new.find(container));expected_added=[n for c,s,k,n in NEW if c==cls and s==scope]+[n for c,s,n,t,k in FIELDS if c==cls and s==scope]
+-   require(len(actual)==len(original)+len(expected_added),'Trait count changed '+cls)
++   original=list(old.find(container));actual=list(new.find(container))
++   added=list(source.HELPERS)+[n for n,t in source.FIELDS] if cls=='fe.World' and scope=='0' else []
++   require(len(actual)==len(original)+len(added),'Trait count changed '+cls)
+    require(all(canonical(x)==canonical(y) for x,y in zip(original,actual)),'Old trait changed '+cls)
+-   require([b.simple(int(t.get('name_index'))) for t in actual[len(original):]]==expected_added,'Wrong appended trait order '+cls)
++   require([b.simple(int(t.get('name_index'))) for t in actual[len(original):]]==added,'Wrong appended trait order '+cls)
+    stripped=copy.deepcopy(new);ts=stripped.find(container)
+    for t in list(ts)[len(original):]:ts.remove(t)
+    require(canonical(old)==canonical(stripped),'Original class header/constructor/interface changed '+cls)
+  require(canonical(aa[0].find('script_info'))==canonical(bb[0].find('script_info')),'Script layout changed')
+- for n in aa[0]:
+-  if n.tag not in {'constants','method_info','bodies','instance_info','class_info'}:require(canonical(n)==canonical(bb[0].find(n.tag)),'Other ABC data changed '+n.tag)
++ for node in aa[0]:
++  if node.tag not in {'constants','method_info','bodies','instance_info','class_info'}:require(canonical(node)==canonical(bb[0].find(node.tag)),'Other ABC data changed '+node.tag)
+  return dict(passed=True,exact_retained_roundtrip=True,non_target_bodies_byte_exact=count,old_method_indices_preserved=True,
+-  original_class_script_traits_preserved=True,original_constructors_byte_exact=True,old_constant_prefix_preserved=True,
+-  allowed_changed_bodies=list(TARGETS)+list(CINITS),added_methods=5,added_fields=4,runtime_validated=False)
++  original_method_metadata_exact=True,original_class_script_traits_preserved=True,original_constructors_byte_exact=True,
++  original_static_initializers_byte_exact=True,old_constant_prefix_preserved=True,allowed_changed_bodies=list(TARGETS),
++  prefixed_native_bodies=9,donor_native_bodies=1,added_methods=7,added_fields=6,runtime_validated=False)
+ def splice(base,serialized,out):
+- require(sha(base)==prep.HOST_SHA,'Wrong splice A796')
++ require(sha(base)==source.HOST_SHA,'Wrong splice A796')
+  old=support.BASE_SWF_SHA
+- try:support.BASE_SWF_SHA=prep.HOST_SHA;return support.splice(base,serialized,out)
++ try:support.BASE_SWF_SHA=source.HOST_SHA;return support.splice(base,serialized,out)
+  finally:support.BASE_SWF_SHA=old
+--- experimental\recovery-room-production-v5\build.py
++++ goal-native-loading-build/build_product.py
+@@ -1,100 +1,109 @@
+-"""Freeze and compile the exact room repair with the existing bounded compiler."""
+-import argparse
+-import importlib.util
+-import json
++"""v5's two supervised compiler calls, exact 78C plus two frozen UI sources."""
+ from pathlib import Path
+-import shutil
+-import subprocess
+-import sys
+-import types
+-
+-HERE = Path(__file__).resolve().parent
+-ROOT = HERE.parents[1]
+-sys.path.insert(0, str(HERE))
+-from prepare import BASE, inventory, sha
+-sys.path.insert(0, str(ROOT/'tools/validation'))
++import argparse, json, shutil, subprocess, sys, types
++if sys.flags.optimize:raise RuntimeError('Ordinary Python required')
++sys.dont_write_bytecode=True
++sys.path.insert(0,str(Path(__file__).resolve().parent))
++import inputs as source
++ROOT=source.ROOT;HERE=source.HERE;sha=source.sha;read=source.read;save=source.save;inventory=source.inventory
++sys.path.insert(0,str(ROOT/'tools/validation'))
++from runtime_memory import snapshot,wait_owned
+ from run_security_terminals import installation
+-from runtime_memory import snapshot, wait_owned
+-sys.path.insert(0, str(ROOT.parent/'ModLoader/tools'))
++sys.path.insert(0,str(ROOT.parent/'ModLoader/tools'))
+ from test_registry import Registration
+-
+ JAVA=Path('C:/Users/hello/Documents/_sandevistan_dev/jdk-11.0.32.1+1-jre/bin/java.exe')
+ SDK=ROOT.parent/'Sandevistan/build/tools/flexsdk'
+-
+-
+-def save(p, value):
+-    with p.open('x', encoding='utf-8') as f:
+-        json.dump(value, f, ensure_ascii=False, indent=2)
+-
+-
++DEFAULT=ROOT/'build/m52/goal-native-loading-product-01'
++def target(p):
++ p=Path(p);p=(p if p.is_absolute() else ROOT/p).resolve()
++ assert p.parent==ROOT/'build/m52' and p.name.startswith('goal-native-loading-product-')
++ return p
++def pins():
++ result=source.pins()
++ for p in (JAVA,SDK/'lib/compc.jar',SDK/'lib/mxmlc.jar',ROOT/'experimental/recovery-room-production-v5/build.py',
++           ROOT/'tools/validation/runtime_memory.py',ROOT/'tools/validation/run_security_terminals.py',ROOT.parent/'ModLoader/tools/test_registry.py'):
++  result[str(p)]=sha(p)
++ return result
++def prepare(out):
++ assert not out.exists(),'Preserve old outputs';inputs=pins();before=source.current();receipt=source.reviewed()
++ shutil.copytree(source.BASE/'src',out/'src');shutil.copytree(source.BASE/'tools',out/'tools')
++ for rel in receipt['product_overlay']:shutil.copyfile(source.UI/'src'/rel,out/'src'/rel)
++ meta=dict(kind='native-loading-ui-product',version=receipt['version'],base_sha256=source.PRODUCT_SHA,source=inventory(out/'src'),
++           inputs=inventory(out/'tools'),reviewed_inputs=inputs,installation_before=before,overlay_manifest_sha256=source.MANIFEST_SHA,
++           compiled=False,installed=False,air_started=False)
++ save(out/'prepared.json',meta);return meta
++def frozen(out):
++ meta=read(out/'prepared.json');assert meta['base_sha256']==source.PRODUCT_SHA and meta['reviewed_inputs']==pins()
++ assert meta['source']==inventory(out/'src') and meta['inputs']==inventory(out/'tools')
++ original=read(source.BASE/'prepared.json')['source'];overlay=source.reviewed()['product_overlay']
++ assert meta['source']==original|overlay and len(meta['source'])==len(original)
++ return meta
++def build(out,wait):
++ meta=prepare(out) if not out.exists() else frozen(out)
++ assert not(out/'compile.json').exists(),'Never overwrite final/failed receipt'
++ before=source.current();assert before==meta['installation_before'];prepared_sha=sha(out/'prepared.json')
++ result=dict(compiled=False,commands=[],installation_before=before,prepared_sha256=prepared_sha,air_started=False,installed=False,
++             gameplay_qualified=False,performance_qualified=False);failure=None
++ try:
++  with Registration(owner='RConnect / 原生加载显示',resource='game',purpose='nativeui1 exact 78C product compile',run_dir=out,evidence=out/'prepared.json',wait=wait) as reg:
++   assert source.current()==before and frozen(out)==meta
++   module=source.load('native_ui_product_compiler',out/'tools/build_mod.py')
++   with (out/'compile.log').open('x',encoding='utf-8') as log:
++    def owned(command,env=None,check=False):
++     assert len(result['commands'])<2 and command[0]==str(JAVA) and '-Xmx384m' in command
++     assert snapshot()['free_commit_bytes']>=1024**3
++     assert Path(command[command.index('-jar')+1]).resolve() in ((SDK/'lib/compc.jar').resolve(),(SDK/'lib/mxmlc.jar').resolve())
++     assert installation()==before
++     reg.before_launch('isolated native UI compiler')
++     row=dict(command=command,pid=None,exit_code=None,reaped=False);result['commands'].append(row);process=None
++     try:
++      process=subprocess.Popen(command,cwd=out,env=env,stdout=log,stderr=subprocess.STDOUT,creationflags=subprocess.CREATE_NO_WINDOW)
++      reg.child(process.pid);row['pid']=process.pid
++      row['exit_code']=wait_owned(process,300,out/('memory-'+str(len(result['commands']))+'.json'))
++     finally:
++      if process is not None:
++       if process.poll() is None:process.kill()
++       process.wait();row['reaped']=process.poll() is not None
++      reg.child_stopped()
++     if check and row['exit_code']:raise subprocess.CalledProcessError(row['exit_code'],command)
++     return subprocess.CompletedProcess(command,row['exit_code'])
++    module.subprocess=types.SimpleNamespace(run=owned)
++    old_argv=sys.argv
++    try:
++     sys.argv=[str(out/'tools/build_mod.py'),'--java',str(JAVA),'--amxmlc',str(SDK/'bin/amxmlc.bat'),'--output',str(out/'RConnectMod.swf')]
++     module.main()
++    finally:sys.argv=old_argv
++   assert len(result['commands'])==2 and all(c['exit_code']==0 and c['reaped'] for c in result['commands'])
++   assert frozen(out)==meta and installation()==before
++   result.update(compiled=True,candidate_sha256=sha(out/'RConnectMod.swf'))
++   reg.outcome='passed';reg.note='Isolated product compiled only; native paired host testing remains'
++ except BaseException as e:failure=e;result.update(error_type=type(e).__name__,error=str(e))
++ finally:
++  try:
++   result['installation_after']=installation();result['installation_unchanged']=before==result['installation_after']
++   result['sources_unchanged']=frozen(out)==meta and sha(out/'prepared.json')==prepared_sha
++   assert result['installation_unchanged'] and result['sources_unchanged']
++  except BaseException as e:failure=failure or e;result.update(validation_error=str(e),sources_unchanged=False)
++  result['artifacts']={p.relative_to(out).as_posix():sha(p) for p in out.rglob('*') if p.is_file()}
++  save(out/'compile.json',result)
++ if failure:raise failure
++ return verify(out)
++def verify(output):
++ out=target(output);meta=frozen(out);r=read(out/'compile.json')
++ assert r['compiled'] and r['installation_unchanged'] and r['sources_unchanged']
++ assert r['prepared_sha256']==sha(out/'prepared.json') and r['installation_before']==r['installation_after']==meta['installation_before']
++ assert len(r['commands'])==2 and all(x['exit_code']==0 and x['reaped'] for x in r['commands'])
++ assert r['candidate_sha256']==sha(out/'RConnectMod.swf')
++ for p,h in r['artifacts'].items():assert sha(out/p)==h,p
++ assert not any(r[k] for k in ('air_started','installed','gameplay_qualified','performance_qualified'))
++ return r
+ def main():
+-    ap=argparse.ArgumentParser()
+-    ap.add_argument('output')
+-    ap.add_argument('--registry-wait',type=float,default=900)
+-    args=ap.parse_args()
+-    out=(ROOT/args.output).resolve()
+-    assert out.parent==ROOT/'build/m52' and not out.exists()
+-    receipt=json.loads((HERE/'source-manifest.json').read_text(encoding='utf-8'))
+-    base_meta=json.loads((BASE/'prepared.json').read_text(encoding='utf-8-sig'))
+-    assert inventory(BASE/'src')==base_meta['source'] and inventory(BASE/'tools')==base_meta['inputs']
+-    assert sha(BASE/'RConnectMod.swf')==receipt['base_sha256']
+-    assert inventory(HERE/'src')=={k:v['candidate_sha256'] for k,v in receipt['changes'].items()}
+-    before=installation()
+-    assert before['mods/Rconnect/release/RConnectMod.swf']==receipt['base_sha256']
+-    shutil.copytree(BASE/'src',out/'src')
+-    shutil.copytree(BASE/'tools',out/'tools')
+-    for rel in receipt['changes']:
+-        p=out/'src'/rel
+-        p.parent.mkdir(parents=True,exist_ok=True)
+-        shutil.copyfile(HERE/'src'/rel,p)
+-    meta=dict(kind='room-repair-overlay', version=receipt['version'], base_sha256=receipt['base_sha256'],
+-              source=inventory(out/'src'),inputs=inventory(out/'tools'),installation_before=before,
+-              overlay_manifest_sha256=sha(HERE/'source-manifest.json'),recipe_sha256=sha(Path(__file__)))
+-    save(out/'prepared.json',meta)
+-    result=dict(compiled=False,commands=[],installation_before=before,air_started=False,installed=False)
+-    try:
+-        with Registration(owner='RConnect / 房间修复', purpose=receipt['version']+' isolated compile',
+-                          run_dir=out,evidence=out/'compile.json',wait=args.registry_wait) as reg:
+-            spec=importlib.util.spec_from_file_location('room_repair_compiler',out/'tools/build_mod.py')
+-            module=importlib.util.module_from_spec(spec)
+-            spec.loader.exec_module(module)
+-            with (out/'compile.log').open('x',encoding='utf-8') as log:
+-                def owned(command,env=None,check=False):
+-                    assert len(result['commands'])<2 and command[0]==str(JAVA) and '-Xmx384m' in command
+-                    assert snapshot()['free_commit_bytes']>=1024**3
+-                    assert Path(command[command.index('-jar')+1]).resolve() in ((SDK/'lib/compc.jar').resolve(),(SDK/'lib/mxmlc.jar').resolve())
+-                    reg.before_launch('isolated room compiler')
+-                    row=dict(command=command,pid=None,exit_code=None)
+-                    result['commands'].append(row)
+-                    process=subprocess.Popen(command,cwd=out,env=env,stdout=log,stderr=subprocess.STDOUT,
+-                                             creationflags=subprocess.CREATE_NO_WINDOW)
+-                    reg.child(process.pid)
+-                    row['pid']=process.pid
+-                    try:
+-                        code=wait_owned(process,300,out/('memory-'+str(len(result['commands']))+'.json'))
+-                        row['exit_code']=code
+-                    finally:
+-                        if process.poll() is None:process.kill()
+-                        process.wait()
+-                        reg.child_stopped()
+-                    if check and code:raise subprocess.CalledProcessError(code,command)
+-                    return subprocess.CompletedProcess(command,code)
+-                module.subprocess=types.SimpleNamespace(run=owned)
+-                sys.argv=[str(out/'tools/build_mod.py'),'--java',str(JAVA),'--amxmlc',str(SDK/'bin/amxmlc.bat'),
+-                          '--output',str(out/'RConnectMod.swf')]
+-                module.main()
+-            assert len(result['commands'])==2 and all(c['exit_code']==0 for c in result['commands'])
+-            assert inventory(out/'src')==meta['source'] and inventory(out/'tools')==meta['inputs']
+-            assert installation()==before
+-            result.update(compiled=True,candidate_sha256=sha(out/'RConnectMod.swf'))
+-            reg.outcome='passed'
+-            reg.note='Only isolated compilation; native functionality/performance not yet validated'
+-    finally:
+-        result['installation_after']=installation()
+-        result['installation_unchanged']=before==result['installation_after']
+-        result['sources_unchanged']=inventory(out/'src')==meta['source']
+-        save(out/'compile.json',result)
+-    print(json.dumps({k:v for k,v in result.items() if k not in ('commands','installation_before','installation_after')},ensure_ascii=False))
+-
+-
++ ap=argparse.ArgumentParser();ap.add_argument('--output',type=Path,default=DEFAULT);g=ap.add_mutually_exclusive_group(required=True)
++ for n in ('check','prepare','build','verify'):g.add_argument('--'+n,action='store_true')
++ ap.add_argument('--registry-wait',type=float,default=900);a=ap.parse_args();out=target(a.output)
++ if a.check:value=dict(passed=True,input_count=len(pins()),java_started=False)
++ elif a.prepare:value=prepare(out)
++ elif a.build:value=build(out,a.registry_wait)
++ else:value=verify(out)
++ print(json.dumps({k:v for k,v in value.items() if k in ('passed','input_count','java_started','base_sha256','candidate_sha256','compiled')},ensure_ascii=False))
+ if __name__=='__main__':main()

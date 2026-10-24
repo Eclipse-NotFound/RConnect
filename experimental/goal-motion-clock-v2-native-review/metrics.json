@@ -1,0 +1,1062 @@
+{
+  "runs": {
+    "baseline": {
+      "run": "74932502cf",
+      "output": "goal-three-issues-native-jump-baseline-01",
+      "product_sha256": "78c052aea963f1689b705ae1e14d274916ae1a1f7e81933390caf8d1a88f4699",
+      "result_sha256": "df0e7474d16721746db98d85c10c36bab1538cf3dc3984eca3e4005b0b225343",
+      "input_sha256": "694d4f499aa4e1bb8f1ab0df122a7b9de55f654ee9547079f9a5360a17823c85",
+      "roles": {
+        "host": {
+          "raw_sha256": "92cfb26aeb5e3e48271e23c5f7499c0f166c332af4c065979e8f5afb60d2b352",
+          "summary_sha256": "ffb9c68a081753bed71d9e809d2f3f22a868ba07916faef9e6274da882817a27",
+          "functional_checks": 6,
+          "enter_fps": 20.19808591141776,
+          "enter_intervals": {
+            "count": 363,
+            "mean": 49.509641873278234,
+            "p50": 47.0,
+            "p95": 72.0,
+            "p99": 96.0,
+            "maximum": 119.0,
+            "over50": 138,
+            "over100": 1,
+            "over200": 0
+          },
+          "render_intervals": {
+            "count": 364,
+            "mean": 49.47527472527472,
+            "p50": 46.0,
+            "p95": 69.0,
+            "p99": 95.0,
+            "maximum": 106.0,
+            "over50": 145,
+            "over100": 2,
+            "over200": 0
+          },
+          "initial_peer": {
+            "body": 1,
+            "levit": 0,
+            "vy": 640,
+            "x": 380,
+            "stay": true,
+            "pose": "stay",
+            "y": 640,
+            "visible": true,
+            "dx": 0,
+            "shown": true,
+            "dy": 0,
+            "vx": 380
+          },
+          "old_pose_count": 0,
+          "old_pose_last_ms": null,
+          "strict_air": {
+            "pairs": 160,
+            "repeated_pairs": 0,
+            "repeated_ms": 0
+          },
+          "remote_step": {
+            "count": 364,
+            "mean": 6.444820991980925,
+            "p50": 6.149999999999977,
+            "p95": 16.600000000000023,
+            "p99": 21.769014676829112,
+            "maximum": 42.399292446926566,
+            "over50": 0,
+            "over100": 0,
+            "over200": 0
+          },
+          "local_step": {
+            "count": 364,
+            "mean": 6.726046150690712,
+            "p50": 7.0710678118654755,
+            "p95": 14.602140254086045,
+            "p99": 18.439088914585774,
+            "maximum": 18.439088914585774,
+            "over50": 0,
+            "over100": 0,
+            "over200": 0
+          },
+          "received_snapshots": 236,
+          "distinct_stamps": 236,
+          "repeated_stamps": 0,
+          "unique_receive_intervals": {
+            "count": 235,
+            "mean": 76.1063829787234,
+            "p95": 130,
+            "maximum": 198
+          },
+          "source_intervals": {
+            "count": 235,
+            "mean": 76.06382978723404,
+            "p95": 110,
+            "maximum": 219
+          },
+          "first_jump": {
+            "received_ms": 517,
+            "received_y": 604,
+            "shown_ms": 618,
+            "shown_y": 601.15,
+            "receiver_observed_wait_ms": 101
+          },
+          "render_stalls": [
+            {
+              "at_ms": 11127,
+              "render_gap_ms": 103,
+              "frameAt_gap_ms": 55
+            },
+            {
+              "at_ms": 16928,
+              "render_gap_ms": 106,
+              "frameAt_gap_ms": 51
+            }
+          ],
+          "presentation_timing": {
+            "viewMs": {
+              "total": 201,
+              "per_render_segment": {
+                "count": 366,
+                "mean": 0.5491803278688525,
+                "p50": 0.0,
+                "p95": 2.0,
+                "p99": 3.0,
+                "maximum": 3.0,
+                "over50": 0,
+                "over100": 0,
+                "over200": 0
+              }
+            },
+            "viewCalls": {
+              "total": 729,
+              "per_render_segment": {
+                "count": 366,
+                "mean": 1.9918032786885247,
+                "p50": 2.0,
+                "p95": 2.0,
+                "p99": 2.0,
+                "maximum": 2.0,
+                "over50": 0,
+                "over100": 0,
+                "over200": 0
+              }
+            },
+            "motionMs": {
+              "total": 0,
+              "per_render_segment": {
+                "count": 366,
+                "mean": 0.0,
+                "p50": 0.0,
+                "p95": 0.0,
+                "p99": 0.0,
+                "maximum": 0.0,
+                "over50": 0,
+                "over100": 0,
+                "over200": 0
+              }
+            },
+            "motionCalls": {
+              "total": 0,
+              "per_render_segment": {
+                "count": 366,
+                "mean": 0.0,
+                "p50": 0.0,
+                "p95": 0.0,
+                "p99": 0.0,
+                "maximum": 0.0,
+                "over50": 0,
+                "over100": 0,
+                "over200": 0
+              }
+            }
+          }
+        },
+        "join": {
+          "raw_sha256": "ec4e3ea043aa6bf7f3d63fb5b2ca0349e667afd8a5ce53509d9541b2253425f5",
+          "summary_sha256": "4d44b69471742b8a2055f9f01e46d3ffdb71ed0fe6abd84bd12d193ea363e47a",
+          "functional_checks": 6,
+          "enter_fps": 18.367006177992987,
+          "enter_intervals": {
+            "count": 330,
+            "mean": 54.445454545454545,
+            "p50": 51.0,
+            "p95": 81.0,
+            "p99": 102.0,
+            "maximum": 170.0,
+            "over50": 179,
+            "over100": 4,
+            "over200": 0
+          },
+          "render_intervals": {
+            "count": 331,
+            "mean": 54.46525679758308,
+            "p50": 52.0,
+            "p95": 79.0,
+            "p99": 108.0,
+            "maximum": 180.0,
+            "over50": 183,
+            "over100": 6,
+            "over200": 0
+          },
+          "initial_peer": {
+            "body": 1,
+            "pose": "stay",
+            "levit": 0,
+            "vy": 640,
+            "x": 300,
+            "stay": true,
+            "shown": true,
+            "y": 640,
+            "visible": true,
+            "dx": 0,
+            "dy": 0,
+            "vx": 300
+          },
+          "old_pose_count": 0,
+          "old_pose_last_ms": null,
+          "strict_air": {
+            "pairs": 152,
+            "repeated_pairs": 2,
+            "repeated_ms": 88
+          },
+          "remote_step": {
+            "count": 331,
+            "mean": 7.368464720891268,
+            "p50": 6.850000000000023,
+            "p95": 20.102860492974596,
+            "p99": 29.18218634715363,
+            "maximum": 35.956223383442286,
+            "over50": 0,
+            "over100": 0,
+            "over200": 0
+          },
+          "local_step": {
+            "count": 331,
+            "mean": 7.110146417160636,
+            "p50": 8.0,
+            "p95": 15.811388300841896,
+            "p99": 18.439088914585774,
+            "maximum": 18.439088914585774,
+            "over50": 0,
+            "over100": 0,
+            "over200": 0
+          },
+          "received_snapshots": 479,
+          "distinct_stamps": 313,
+          "repeated_stamps": 166,
+          "unique_receive_intervals": {
+            "count": 312,
+            "mean": 57.592948717948715,
+            "p95": 142,
+            "maximum": 204
+          },
+          "source_intervals": {
+            "count": 312,
+            "mean": 57.71474358974359,
+            "p95": 92,
+            "maximum": 121
+          },
+          "first_jump": {
+            "received_ms": 562,
+            "received_y": 604,
+            "shown_ms": 587,
+            "shown_y": 600.75,
+            "receiver_observed_wait_ms": 25
+          },
+          "render_stalls": [
+            {
+              "at_ms": 1288,
+              "render_gap_ms": 180,
+              "frameAt_gap_ms": 170
+            },
+            {
+              "at_ms": 2329,
+              "render_gap_ms": 101,
+              "frameAt_gap_ms": 98
+            },
+            {
+              "at_ms": 5561,
+              "render_gap_ms": 117,
+              "frameAt_gap_ms": 55
+            },
+            {
+              "at_ms": 8022,
+              "render_gap_ms": 108,
+              "frameAt_gap_ms": 102
+            },
+            {
+              "at_ms": 9462,
+              "render_gap_ms": 134,
+              "frameAt_gap_ms": 134
+            },
+            {
+              "at_ms": 13044,
+              "render_gap_ms": 102,
+              "frameAt_gap_ms": 54
+            }
+          ],
+          "presentation_timing": {
+            "viewMs": {
+              "total": 359,
+              "per_render_segment": {
+                "count": 333,
+                "mean": 1.078078078078078,
+                "p50": 1.0,
+                "p95": 2.0,
+                "p99": 3.0,
+                "maximum": 4.0,
+                "over50": 0,
+                "over100": 0,
+                "over200": 0
+              }
+            },
+            "viewCalls": {
+              "total": 663,
+              "per_render_segment": {
+                "count": 333,
+                "mean": 1.990990990990991,
+                "p50": 2.0,
+                "p95": 2.0,
+                "p99": 2.0,
+                "maximum": 2.0,
+                "over50": 0,
+                "over100": 0,
+                "over200": 0
+              }
+            },
+            "motionMs": {
+              "total": 217,
+              "per_render_segment": {
+                "count": 333,
+                "mean": 0.6516516516516516,
+                "p50": 1.0,
+                "p95": 2.0,
+                "p99": 2.0,
+                "maximum": 2.0,
+                "over50": 0,
+                "over100": 0,
+                "over200": 0
+              }
+            },
+            "motionCalls": {
+              "total": 332,
+              "per_render_segment": {
+                "count": 333,
+                "mean": 0.996996996996997,
+                "p50": 1.0,
+                "p95": 1.0,
+                "p99": 1.0,
+                "maximum": 1.0,
+                "over50": 0,
+                "over100": 0,
+                "over200": 0
+              }
+            }
+          }
+        }
+      },
+      "minimum_commit_gib": 4.701171875,
+      "copies_cleaned": true
+    },
+    "v1_rejected": {
+      "run": "99eea9cf09",
+      "output": "goal-three-issues-native-jump-candidate-01",
+      "product_sha256": "89f1b9235b809c1595559ede873b763dc15f9ca7c393c82231c48981b1d78215",
+      "result_sha256": "aa40cde94daa9279fe26225af38634c19cd8be3fc67e7c857671e1c01dea9a45",
+      "input_sha256": "1d3e139186b0c1be370ae5b22bbe132fcdb33dadfa2b83f4b76c774007b5bfd1",
+      "roles": {
+        "host": {
+          "raw_sha256": "197242a2a28ef60baa86b637b2349558c3099c3db628b05cfe2094816198bf55",
+          "summary_sha256": "b0a2b2c1df6b8c093e4a7a1188a72249cc8ccde4f88293fdeb1c15c3d4d267b9",
+          "functional_checks": 6,
+          "enter_fps": 19.601291903329994,
+          "enter_intervals": {
+            "count": 352,
+            "mean": 51.01704545454545,
+            "p50": 48.0,
+            "p95": 74.0,
+            "p99": 97.0,
+            "maximum": 118.0,
+            "over50": 142,
+            "over100": 2,
+            "over200": 0
+          },
+          "render_intervals": {
+            "count": 353,
+            "mean": 51.08498583569405,
+            "p50": 48.0,
+            "p95": 74.0,
+            "p99": 89.0,
+            "maximum": 124.0,
+            "over50": 154,
+            "over100": 1,
+            "over200": 0
+          },
+          "initial_peer": {
+            "body": 1,
+            "stay": true,
+            "pose": "stay",
+            "vy": 640,
+            "x": 380,
+            "levit": 0,
+            "y": 640,
+            "dx": 0,
+            "shown": true,
+            "visible": true,
+            "vx": 380,
+            "dy": 0
+          },
+          "old_pose_count": 0,
+          "old_pose_last_ms": null,
+          "strict_air": {
+            "pairs": 173,
+            "repeated_pairs": 1,
+            "repeated_ms": 51
+          },
+          "remote_step": {
+            "count": 353,
+            "mean": 7.290220541153037,
+            "p50": 7.240511031688296,
+            "p95": 17.899999999999977,
+            "p99": 23.078669805688563,
+            "maximum": 27.149999999999977,
+            "over50": 0,
+            "over100": 0,
+            "over200": 0
+          },
+          "local_step": {
+            "count": 353,
+            "mean": 7.407563232228063,
+            "p50": 8.043009387039167,
+            "p95": 16.56019323558755,
+            "p99": 18.439088914585774,
+            "maximum": 18.439088914585774,
+            "over50": 0,
+            "over100": 0,
+            "over200": 0
+          },
+          "received_snapshots": 244,
+          "distinct_stamps": 244,
+          "repeated_stamps": 0,
+          "unique_receive_intervals": {
+            "count": 243,
+            "mean": 73.60493827160494,
+            "p95": 130,
+            "maximum": 244
+          },
+          "source_intervals": {
+            "count": 243,
+            "mean": 73.80246913580247,
+            "p95": 104,
+            "maximum": 187
+          },
+          "first_jump": {
+            "received_ms": 563,
+            "received_y": 604,
+            "shown_ms": 695,
+            "shown_y": 601.5,
+            "receiver_observed_wait_ms": 132
+          },
+          "render_stalls": [
+            {
+              "at_ms": 6502,
+              "render_gap_ms": 124,
+              "frameAt_gap_ms": 118
+            }
+          ],
+          "presentation_timing": {
+            "viewMs": {
+              "total": 235,
+              "per_render_segment": {
+                "count": 355,
+                "mean": 0.6619718309859155,
+                "p50": 0.0,
+                "p95": 2.0,
+                "p99": 3.0,
+                "maximum": 11.0,
+                "over50": 0,
+                "over100": 0,
+                "over200": 0
+              }
+            },
+            "viewCalls": {
+              "total": 707,
+              "per_render_segment": {
+                "count": 355,
+                "mean": 1.991549295774648,
+                "p50": 2.0,
+                "p95": 2.0,
+                "p99": 2.0,
+                "maximum": 2.0,
+                "over50": 0,
+                "over100": 0,
+                "over200": 0
+              }
+            },
+            "motionMs": {
+              "total": 0,
+              "per_render_segment": {
+                "count": 355,
+                "mean": 0.0,
+                "p50": 0.0,
+                "p95": 0.0,
+                "p99": 0.0,
+                "maximum": 0.0,
+                "over50": 0,
+                "over100": 0,
+                "over200": 0
+              }
+            },
+            "motionCalls": {
+              "total": 0,
+              "per_render_segment": {
+                "count": 355,
+                "mean": 0.0,
+                "p50": 0.0,
+                "p95": 0.0,
+                "p99": 0.0,
+                "maximum": 0.0,
+                "over50": 0,
+                "over100": 0,
+                "over200": 0
+              }
+            }
+          }
+        },
+        "join": {
+          "raw_sha256": "7fad6120815962a499b0e48053d3d3c1787171506961e3cdeb1e9a7ad717c951",
+          "summary_sha256": "a8866c72ee36f80fbbd5d762b5a16348a8c0aa9af913f652cc70fbf038141bae",
+          "functional_checks": 6,
+          "enter_fps": 19.126749567835834,
+          "enter_intervals": {
+            "count": 343,
+            "mean": 52.28279883381924,
+            "p50": 49.0,
+            "p95": 70.0,
+            "p99": 102.0,
+            "maximum": 188.0,
+            "over50": 149,
+            "over100": 6,
+            "over200": 0
+          },
+          "render_intervals": {
+            "count": 344,
+            "mean": 52.36337209302326,
+            "p50": 50.0,
+            "p95": 73.0,
+            "p99": 108.0,
+            "maximum": 188.0,
+            "over50": 167,
+            "over100": 5,
+            "over200": 0
+          },
+          "initial_peer": {
+            "body": 40,
+            "shown": true,
+            "levit": 0,
+            "vy": 800,
+            "x": 841.8,
+            "stay": true,
+            "y": 800,
+            "visible": true,
+            "dx": 0,
+            "dy": 0,
+            "vx": 841.8,
+            "pose": "die"
+          },
+          "old_pose_count": 11,
+          "old_pose_last_ms": 594,
+          "strict_air": {
+            "pairs": 149,
+            "repeated_pairs": 6,
+            "repeated_ms": 265
+          },
+          "remote_step": {
+            "count": 344,
+            "mean": 9.240036594830654,
+            "p50": 7.443117626371316,
+            "p95": 19.665706191235568,
+            "p99": 28.25,
+            "maximum": 382.24098419714227,
+            "over50": 2,
+            "over100": 2,
+            "over200": 1
+          },
+          "local_step": {
+            "count": 344,
+            "mean": 7.511216795611578,
+            "p50": 8.0,
+            "p95": 16.56019323558755,
+            "p99": 18.439088914585774,
+            "maximum": 18.439088914585774,
+            "over50": 0,
+            "over100": 0,
+            "over200": 0
+          },
+          "received_snapshots": 489,
+          "distinct_stamps": 307,
+          "repeated_stamps": 182,
+          "unique_receive_intervals": {
+            "count": 306,
+            "mean": 58.39542483660131,
+            "p95": 109,
+            "maximum": 184
+          },
+          "source_intervals": {
+            "count": 306,
+            "mean": 58.50326797385621,
+            "p95": 88,
+            "maximum": 118
+          },
+          "first_jump": {
+            "received_ms": 567,
+            "received_y": 604,
+            "shown_ms": 2326,
+            "shown_y": 604,
+            "receiver_observed_wait_ms": 1759
+          },
+          "render_stalls": [
+            {
+              "at_ms": 1676,
+              "render_gap_ms": 188,
+              "frameAt_gap_ms": 47
+            },
+            {
+              "at_ms": 6237,
+              "render_gap_ms": 133,
+              "frameAt_gap_ms": 115
+            },
+            {
+              "at_ms": 6440,
+              "render_gap_ms": 112,
+              "frameAt_gap_ms": 109
+            },
+            {
+              "at_ms": 13940,
+              "render_gap_ms": 108,
+              "frameAt_gap_ms": 101
+            },
+            {
+              "at_ms": 17064,
+              "render_gap_ms": 107,
+              "frameAt_gap_ms": 57
+            }
+          ],
+          "presentation_timing": {
+            "viewMs": {
+              "total": 376,
+              "per_render_segment": {
+                "count": 346,
+                "mean": 1.0867052023121386,
+                "p50": 1.0,
+                "p95": 3.0,
+                "p99": 3.0,
+                "maximum": 3.0,
+                "over50": 0,
+                "over100": 0,
+                "over200": 0
+              }
+            },
+            "viewCalls": {
+              "total": 689,
+              "per_render_segment": {
+                "count": 346,
+                "mean": 1.9913294797687862,
+                "p50": 2.0,
+                "p95": 2.0,
+                "p99": 2.0,
+                "maximum": 2.0,
+                "over50": 0,
+                "over100": 0,
+                "over200": 0
+              }
+            },
+            "motionMs": {
+              "total": 235,
+              "per_render_segment": {
+                "count": 346,
+                "mean": 0.6791907514450867,
+                "p50": 1.0,
+                "p95": 2.0,
+                "p99": 2.0,
+                "maximum": 3.0,
+                "over50": 0,
+                "over100": 0,
+                "over200": 0
+              }
+            },
+            "motionCalls": {
+              "total": 345,
+              "per_render_segment": {
+                "count": 346,
+                "mean": 0.9971098265895953,
+                "p50": 1.0,
+                "p95": 1.0,
+                "p99": 1.0,
+                "maximum": 1.0,
+                "over50": 0,
+                "over100": 0,
+                "over200": 0
+              }
+            }
+          }
+        }
+      },
+      "minimum_commit_gib": 6.137081146240234,
+      "copies_cleaned": true
+    },
+    "v2": {
+      "run": "e7f61547df",
+      "output": "goal-motion-clock-v2-native-jump-01",
+      "product_sha256": "b25e477a58093587da8c734c1b6eedb861433b3336a447f1cc113d5d1d66cbd3",
+      "result_sha256": "05fe3f8d23cc6775f6c8d22dd1c0b6bac4ae2fb6d04106f0ee12d7d3118ea7b7",
+      "input_sha256": "c96e59565a7e9448455fdc35a8b556bb25fa0c161ae1cef59caa4aee9e92bd4f",
+      "roles": {
+        "host": {
+          "raw_sha256": "a61142efc1ca14d24d18c4ed52dbe174b748b93ad9557fd7822fda6497385288",
+          "summary_sha256": "23f645cac7043688cc56fb691318a5dd833d6a6e4f28bf95fd8cca520907e50f",
+          "functional_checks": 6,
+          "enter_fps": 20.65011688745408,
+          "enter_intervals": {
+            "count": 371,
+            "mean": 48.42587601078167,
+            "p50": 46.0,
+            "p95": 72.0,
+            "p99": 95.0,
+            "maximum": 103.0,
+            "over50": 118,
+            "over100": 1,
+            "over200": 0
+          },
+          "render_intervals": {
+            "count": 372,
+            "mean": 48.43010752688172,
+            "p50": 45.0,
+            "p95": 73.0,
+            "p99": 96.0,
+            "maximum": 111.0,
+            "over50": 113,
+            "over100": 3,
+            "over200": 0
+          },
+          "initial_peer": {
+            "body": 12,
+            "levit": 0,
+            "vy": 640,
+            "x": 380,
+            "stay": true,
+            "shown": true,
+            "pose": "free3",
+            "visible": true,
+            "dx": 0,
+            "y": 640,
+            "dy": 0,
+            "vx": 380
+          },
+          "old_pose_count": 0,
+          "old_pose_last_ms": null,
+          "strict_air": {
+            "pairs": 171,
+            "repeated_pairs": 1,
+            "repeated_ms": 31
+          },
+          "remote_step": {
+            "count": 372,
+            "mean": 6.726342010562081,
+            "p50": 5.650000000000091,
+            "p95": 18.44999999999999,
+            "p99": 22.149999999999977,
+            "maximum": 29.597972903562134,
+            "over50": 0,
+            "over100": 0,
+            "over200": 0
+          },
+          "local_step": {
+            "count": 372,
+            "mean": 6.982342046421407,
+            "p50": 7.008744538075276,
+            "p95": 15.811388300841896,
+            "p99": 18.439088914585774,
+            "maximum": 18.439088914585774,
+            "over50": 0,
+            "over100": 0,
+            "over200": 0
+          },
+          "received_snapshots": 235,
+          "distinct_stamps": 235,
+          "repeated_stamps": 0,
+          "unique_receive_intervals": {
+            "count": 234,
+            "mean": 76.78632478632478,
+            "p95": 121,
+            "maximum": 194
+          },
+          "source_intervals": {
+            "count": 234,
+            "mean": 76.93589743589743,
+            "p95": 105,
+            "maximum": 178
+          },
+          "first_jump": {
+            "received_ms": 537,
+            "received_y": 592,
+            "shown_ms": 653,
+            "shown_y": 591.85,
+            "receiver_observed_wait_ms": 116
+          },
+          "render_stalls": [
+            {
+              "at_ms": 762,
+              "render_gap_ms": 109,
+              "frameAt_gap_ms": 51
+            },
+            {
+              "at_ms": 5988,
+              "render_gap_ms": 111,
+              "frameAt_gap_ms": 75
+            },
+            {
+              "at_ms": 7749,
+              "render_gap_ms": 101,
+              "frameAt_gap_ms": 96
+            }
+          ],
+          "presentation_timing": {
+            "viewMs": {
+              "total": 213,
+              "per_render_segment": {
+                "count": 374,
+                "mean": 0.56951871657754,
+                "p50": 0.0,
+                "p95": 2.0,
+                "p99": 3.0,
+                "maximum": 5.0,
+                "over50": 0,
+                "over100": 0,
+                "over200": 0
+              }
+            },
+            "viewCalls": {
+              "total": 745,
+              "per_render_segment": {
+                "count": 374,
+                "mean": 1.9919786096256684,
+                "p50": 2.0,
+                "p95": 2.0,
+                "p99": 2.0,
+                "maximum": 2.0,
+                "over50": 0,
+                "over100": 0,
+                "over200": 0
+              }
+            },
+            "motionMs": {
+              "total": 0,
+              "per_render_segment": {
+                "count": 374,
+                "mean": 0.0,
+                "p50": 0.0,
+                "p95": 0.0,
+                "p99": 0.0,
+                "maximum": 0.0,
+                "over50": 0,
+                "over100": 0,
+                "over200": 0
+              }
+            },
+            "motionCalls": {
+              "total": 0,
+              "per_render_segment": {
+                "count": 374,
+                "mean": 0.0,
+                "p50": 0.0,
+                "p95": 0.0,
+                "p99": 0.0,
+                "maximum": 0.0,
+                "over50": 0,
+                "over100": 0,
+                "over200": 0
+              }
+            }
+          }
+        },
+        "join": {
+          "raw_sha256": "41833b19726b411666b7e3888cce9adb4b723968b984e4bc555457115b22eb19",
+          "summary_sha256": "c1d0068ad9c9a9217ec51ebf9094421270f07d2389900994e010332e2a72640f",
+          "functional_checks": 6,
+          "enter_fps": 20.267260579064587,
+          "enter_intervals": {
+            "count": 364,
+            "mean": 49.34065934065934,
+            "p50": 47.0,
+            "p95": 68.0,
+            "p99": 94.0,
+            "maximum": 178.0,
+            "over50": 121,
+            "over100": 3,
+            "over200": 0
+          },
+          "render_intervals": {
+            "count": 365,
+            "mean": 49.33424657534247,
+            "p50": 46.0,
+            "p95": 70.0,
+            "p99": 98.0,
+            "maximum": 183.0,
+            "over50": 127,
+            "over100": 2,
+            "over200": 0
+          },
+          "initial_peer": {
+            "pose": "stay",
+            "body": 1,
+            "levit": 0,
+            "vy": 640,
+            "shown": true,
+            "x": 300,
+            "stay": true,
+            "y": 640,
+            "visible": true,
+            "dx": 0,
+            "dy": 0,
+            "vx": 300
+          },
+          "old_pose_count": 0,
+          "old_pose_last_ms": null,
+          "strict_air": {
+            "pairs": 163,
+            "repeated_pairs": 0,
+            "repeated_ms": 0
+          },
+          "remote_step": {
+            "count": 365,
+            "mean": 7.097957897876226,
+            "p50": 6.685992820815739,
+            "p95": 17.400000000000006,
+            "p99": 25.75951280595186,
+            "maximum": 31.35414645625043,
+            "over50": 0,
+            "over100": 0,
+            "over200": 0
+          },
+          "local_step": {
+            "count": 365,
+            "mean": 6.891657538586344,
+            "p50": 7.0,
+            "p95": 15.811388300841896,
+            "p99": 18.439088914585774,
+            "maximum": 18.439088914585774,
+            "over50": 0,
+            "over100": 0,
+            "over200": 0
+          },
+          "received_snapshots": 467,
+          "distinct_stamps": 315,
+          "repeated_stamps": 152,
+          "unique_receive_intervals": {
+            "count": 314,
+            "mean": 57.19426751592356,
+            "p95": 106,
+            "maximum": 231
+          },
+          "source_intervals": {
+            "count": 314,
+            "mean": 57.388535031847134,
+            "p95": 92,
+            "maximum": 128
+          },
+          "first_jump": {
+            "received_ms": 414,
+            "received_y": 604,
+            "shown_ms": 587,
+            "shown_y": 591.55,
+            "receiver_observed_wait_ms": 173
+          },
+          "render_stalls": [
+            {
+              "at_ms": 1105,
+              "render_gap_ms": 183,
+              "frameAt_gap_ms": 178
+            },
+            {
+              "at_ms": 5530,
+              "render_gap_ms": 110,
+              "frameAt_gap_ms": 108
+            }
+          ],
+          "presentation_timing": {
+            "viewMs": {
+              "total": 427,
+              "per_render_segment": {
+                "count": 367,
+                "mean": 1.1634877384196185,
+                "p50": 1.0,
+                "p95": 3.0,
+                "p99": 4.0,
+                "maximum": 45.0,
+                "over50": 0,
+                "over100": 0,
+                "over200": 0
+              }
+            },
+            "viewCalls": {
+              "total": 731,
+              "per_render_segment": {
+                "count": 367,
+                "mean": 1.991825613079019,
+                "p50": 2.0,
+                "p95": 2.0,
+                "p99": 2.0,
+                "maximum": 2.0,
+                "over50": 0,
+                "over100": 0,
+                "over200": 0
+              }
+            },
+            "motionMs": {
+              "total": 251,
+              "per_render_segment": {
+                "count": 367,
+                "mean": 0.6839237057220708,
+                "p50": 1.0,
+                "p95": 2.0,
+                "p99": 2.0,
+                "maximum": 6.0,
+                "over50": 0,
+                "over100": 0,
+                "over200": 0
+              }
+            },
+            "motionCalls": {
+              "total": 366,
+              "per_render_segment": {
+                "count": 367,
+                "mean": 0.997275204359673,
+                "p50": 1.0,
+                "p95": 1.0,
+                "p99": 1.0,
+                "maximum": 1.0,
+                "over50": 0,
+                "over100": 0,
+                "over200": 0
+              }
+            }
+          }
+        }
+      },
+      "minimum_commit_gib": 8.806758880615234,
+      "copies_cleaned": true
+    }
+  },
+  "identical_actual_inputs_except_product": true,
+  "actual_module_count": 14,
+  "strict_air_filter": "Both adjacent frames: stay===false, vy<620 on floor640, same sign dy, |dy|>=3, no die pose; repeated if displacement<0.01px.",
+  "limits": [
+    "No pre-window motion queue/cursor/offset; startup histories are not identical.",
+    "Receiver observed threshold interval is not network RTT or cross-process latency.",
+    "One native pair per product; foreground, dense scene and full performance not qualified.",
+    "11-mod baseline c783ed51d1 is a separate configuration, excluded from these comparisons.",
+    "viewMs/motionMs have partial, potentially overlapping coverage; not total CPU."
+  ],
+  "performanceQualified": false,
+  "smoothnessQualified": false
+}

@@ -1,0 +1,853 @@
+{
+  "runs": {
+    "baseline_failed": {
+      "run": "ad378fee3a",
+      "passed": false,
+      "result_sha256": "01a4afcf33981d287b9c9741e11612739cf6685f05697971a3acd41226e87c43",
+      "run_sha256": "f5a58143a90b881560dc2c3f94de78535cefc0e28cad47c620e515af0c1fa30a",
+      "input_sha256": "068c39d77a1fef8af7e640d4012ee4024894c38f74dfd394e4c3ef4cd9f27142",
+      "product_sha256": "78c052aea963f1689b705ae1e14d274916ae1a1f7e81933390caf8d1a88f4699",
+      "roles": {
+        "host": {
+          "log_sha256": "67b39f7e0fa6cffdc9e7777a299fd0c762ef1212324ea8448b0ab9739c3e3d78",
+          "pass_count": 42,
+          "failures": [
+            "COOP FAIL tele-motion fast native held item display delay <=160ms actual=170 rms=2.6603724077513458 n=71 case=box-join"
+          ],
+          "rounds": [
+            {
+              "case": "box-host",
+              "enter_fps": 15.35219747140277,
+              "enter_intervals": {
+                "count": 153,
+                "mean": 65.13725490196079,
+                "p50": 63.0,
+                "p95": 82.0,
+                "p99": 100.0,
+                "maximum": 111.0,
+                "over50": 153,
+                "over100": 1,
+                "over200": 0
+              },
+              "render_intervals": {
+                "count": 153,
+                "mean": 65.23529411764706,
+                "p50": 64.0,
+                "p95": 83.0,
+                "p99": 106.0,
+                "maximum": 106.0,
+                "over50": 153,
+                "over100": 2,
+                "over200": 0
+              },
+              "held_step": {
+                "count": 153,
+                "mean": 1.7175466301556233,
+                "p50": 1.131370849898492,
+                "p95": 4.493606569338261,
+                "p99": 5.179285665031451,
+                "maximum": 5.315072906367325,
+                "over50": 0,
+                "over100": 0,
+                "over200": 0
+              },
+              "final_enter_without_render": 1,
+              "intermediate_enter_without_render": 0,
+              "timing_restored": true,
+              "dropped": 0
+            },
+            {
+              "case": "box-join",
+              "enter_fps": 14.35723056578823,
+              "enter_intervals": {
+                "count": 152,
+                "mean": 69.65131578947368,
+                "p50": 64.0,
+                "p95": 92.0,
+                "p99": 110.0,
+                "maximum": 345.0,
+                "over50": 152,
+                "over100": 6,
+                "over200": 1
+              },
+              "render_intervals": {
+                "count": 152,
+                "mean": 69.63157894736842,
+                "p50": 65.0,
+                "p95": 92.0,
+                "p99": 119.0,
+                "maximum": 350.0,
+                "over50": 151,
+                "over100": 4,
+                "over200": 1
+              },
+              "held_step": {
+                "count": 152,
+                "mean": 1.7274573869815193,
+                "p50": 1.0,
+                "p95": 4.916299421312722,
+                "p99": 7.201388754955568,
+                "maximum": 7.766112283504545,
+                "over50": 0,
+                "over100": 0,
+                "over200": 0
+              },
+              "final_enter_without_render": 1,
+              "intermediate_enter_without_render": 0,
+              "timing_restored": true,
+              "dropped": 0
+            },
+            {
+              "case": "loot-host",
+              "enter_fps": 14.642549526270457,
+              "enter_intervals": {
+                "count": 153,
+                "mean": 68.29411764705883,
+                "p50": 65.0,
+                "p95": 89.0,
+                "p99": 113.0,
+                "maximum": 124.0,
+                "over50": 153,
+                "over100": 4,
+                "over200": 0
+              },
+              "render_intervals": {
+                "count": 153,
+                "mean": 68.30718954248366,
+                "p50": 65.0,
+                "p95": 93.0,
+                "p99": 109.0,
+                "maximum": 130.0,
+                "over50": 153,
+                "over100": 5,
+                "over200": 0
+              },
+              "held_step": {
+                "count": 153,
+                "mean": 1.702779561923501,
+                "p50": 1.1000000000000227,
+                "p95": 4.4116323509558475,
+                "p99": 5.122499389946272,
+                "maximum": 5.179285665031451,
+                "over50": 0,
+                "over100": 0,
+                "over200": 0
+              },
+              "final_enter_without_render": 1,
+              "intermediate_enter_without_render": 0,
+              "timing_restored": true,
+              "dropped": 0
+            },
+            {
+              "case": "loot-join",
+              "enter_fps": 14.787604784779127,
+              "enter_intervals": {
+                "count": 157,
+                "mean": 67.62420382165605,
+                "p50": 64.0,
+                "p95": 87.0,
+                "p99": 109.0,
+                "maximum": 122.0,
+                "over50": 157,
+                "over100": 5,
+                "over200": 0
+              },
+              "render_intervals": {
+                "count": 157,
+                "mean": 67.63057324840764,
+                "p50": 65.0,
+                "p95": 88.0,
+                "p99": 107.0,
+                "maximum": 109.0,
+                "over50": 156,
+                "over100": 6,
+                "over200": 0
+              },
+              "held_step": {
+                "count": 157,
+                "mean": 1.6780443479081761,
+                "p50": 0.9013878188660305,
+                "p95": 5.130789412946151,
+                "p99": 7.000357133746845,
+                "maximum": 7.271863585079104,
+                "over50": 0,
+                "over100": 0,
+                "over200": 0
+              },
+              "final_enter_without_render": 1,
+              "intermediate_enter_without_render": 0,
+              "timing_restored": true,
+              "dropped": 0
+            }
+          ],
+          "release_checks": [
+            "COOP PASS tele-motion box release is stationary before native gravity resumes case=box-host",
+            "COOP PASS tele-motion release reaches both simulations levit=0 frac=0 case=box-host",
+            "COOP PASS tele-motion normal release clears caster pointer case=box-host",
+            "COOP PASS tele-motion air release resumes gravity fall=107.99999999999022 stay=true case=box-host",
+            "COOP PASS tele-motion release lands on supported native floor gap=0 stay=true dy=0 case=box-host",
+            "COOP PASS tele-motion release reaches both simulations levit=0 frac=0 case=box-join",
+            "COOP PASS tele-motion air release resumes gravity fall=104.99999999999511 stay=true case=box-join",
+            "COOP PASS tele-motion release lands on supported native floor gap=0 stay=true dy=0 case=box-join",
+            "COOP PASS tele-motion stationary release reaches peer after actual native release promptly ms=192 case=box-join",
+            "COOP PASS tele-motion release reaches both simulations levit=0 frac=100 case=loot-host",
+            "COOP PASS tele-motion normal release clears caster pointer case=loot-host",
+            "COOP PASS tele-motion air release resumes gravity fall=103.9999999999921 stay=true case=loot-host",
+            "COOP PASS tele-motion release lands on supported native floor gap=1 stay=true dy=0 case=loot-host",
+            "COOP PASS tele-motion release reaches both simulations levit=0 frac=0 case=loot-join",
+            "COOP PASS tele-motion air release resumes gravity fall=100.99999999999605 stay=true case=loot-join",
+            "COOP PASS tele-motion release lands on supported native floor gap=1 stay=true dy=0 case=loot-join"
+          ]
+        },
+        "join": {
+          "log_sha256": "ddd909e4202598c11c19150475322617cbbd1ce3664be3fcf3c335e8de7b84d4",
+          "pass_count": 42,
+          "failures": [],
+          "rounds": [
+            {
+              "case": "box-host",
+              "enter_fps": 15.765989092711948,
+              "enter_intervals": {
+                "count": 159,
+                "mean": 63.42767295597484,
+                "p50": 61.0,
+                "p95": 77.0,
+                "p99": 103.0,
+                "maximum": 115.0,
+                "over50": 159,
+                "over100": 2,
+                "over200": 0
+              },
+              "render_intervals": {
+                "count": 159,
+                "mean": 63.44025157232704,
+                "p50": 62.0,
+                "p95": 77.0,
+                "p99": 104.0,
+                "maximum": 118.0,
+                "over50": 159,
+                "over100": 2,
+                "over200": 0
+              },
+              "held_step": {
+                "count": 159,
+                "mean": 1.652424721985507,
+                "p50": 1.0198039027185548,
+                "p95": 4.849999999999966,
+                "p99": 5.396758286230723,
+                "maximum": 6.278733948814843,
+                "over50": 0,
+                "over100": 0,
+                "over200": 0
+              },
+              "final_enter_without_render": 1,
+              "intermediate_enter_without_render": 0,
+              "timing_restored": true,
+              "dropped": 0
+            },
+            {
+              "case": "box-join",
+              "enter_fps": 14.65236544723233,
+              "enter_intervals": {
+                "count": 153,
+                "mean": 68.2483660130719,
+                "p50": 63.0,
+                "p95": 93.0,
+                "p99": 120.0,
+                "maximum": 341.0,
+                "over50": 153,
+                "over100": 4,
+                "over200": 1
+              },
+              "render_intervals": {
+                "count": 153,
+                "mean": 68.15032679738562,
+                "p50": 64.0,
+                "p95": 93.0,
+                "p99": 107.0,
+                "maximum": 346.0,
+                "over50": 153,
+                "over100": 5,
+                "over200": 1
+              },
+              "held_step": {
+                "count": 153,
+                "mean": 1.7175466301556233,
+                "p50": 1.131370849898492,
+                "p95": 4.493606569338261,
+                "p99": 5.179285665031451,
+                "maximum": 5.315072906367325,
+                "over50": 0,
+                "over100": 0,
+                "over200": 0
+              },
+              "final_enter_without_render": 1,
+              "intermediate_enter_without_render": 0,
+              "timing_restored": true,
+              "dropped": 0
+            },
+            {
+              "case": "loot-host",
+              "enter_fps": 14.91686460807601,
+              "enter_intervals": {
+                "count": 157,
+                "mean": 67.03821656050955,
+                "p50": 63.0,
+                "p95": 98.0,
+                "p99": 112.0,
+                "maximum": 117.0,
+                "over50": 156,
+                "over100": 6,
+                "over200": 0
+              },
+              "render_intervals": {
+                "count": 157,
+                "mean": 66.70700636942675,
+                "p50": 64.0,
+                "p95": 88.0,
+                "p99": 117.0,
+                "maximum": 119.0,
+                "over50": 157,
+                "over100": 4,
+                "over200": 0
+              },
+              "held_step": {
+                "count": 157,
+                "mean": 1.6767546665505926,
+                "p50": 0.9552486587271162,
+                "p95": 5.107837115648843,
+                "p99": 6.337586291325719,
+                "maximum": 6.550190836914612,
+                "over50": 0,
+                "over100": 0,
+                "over200": 0
+              },
+              "final_enter_without_render": 1,
+              "intermediate_enter_without_render": 0,
+              "timing_restored": true,
+              "dropped": 0
+            },
+            {
+              "case": "loot-join",
+              "enter_fps": 14.621559633027523,
+              "enter_intervals": {
+                "count": 153,
+                "mean": 68.3921568627451,
+                "p50": 67.0,
+                "p95": 91.0,
+                "p99": 101.0,
+                "maximum": 111.0,
+                "over50": 153,
+                "over100": 2,
+                "over200": 0
+              },
+              "render_intervals": {
+                "count": 153,
+                "mean": 68.47058823529412,
+                "p50": 66.0,
+                "p95": 93.0,
+                "p99": 106.0,
+                "maximum": 107.0,
+                "over50": 153,
+                "over100": 3,
+                "over200": 0
+              },
+              "held_step": {
+                "count": 153,
+                "mean": 1.703106359309122,
+                "p50": 1.1000000000000227,
+                "p95": 4.4116323509558475,
+                "p99": 5.122499389946272,
+                "maximum": 5.179285665031451,
+                "over50": 0,
+                "over100": 0,
+                "over200": 0
+              },
+              "final_enter_without_render": 1,
+              "intermediate_enter_without_render": 0,
+              "timing_restored": true,
+              "dropped": 0
+            }
+          ],
+          "release_checks": [
+            "COOP PASS tele-motion release reaches both simulations levit=0 frac=0 case=box-host",
+            "COOP PASS tele-motion air release resumes gravity fall=104.99999999999511 stay=true case=box-host",
+            "COOP PASS tele-motion release lands on supported native floor gap=0 stay=true dy=0 case=box-host",
+            "COOP PASS tele-motion stationary release reaches peer after actual native release promptly ms=190 case=box-host",
+            "COOP PASS tele-motion box release is stationary before native gravity resumes case=box-join",
+            "COOP PASS tele-motion release reaches both simulations levit=0 frac=0 case=box-join",
+            "COOP PASS tele-motion normal release clears caster pointer case=box-join",
+            "COOP PASS tele-motion air release resumes gravity fall=107.99999999999022 stay=true case=box-join",
+            "COOP PASS tele-motion release lands on supported native floor gap=0 stay=true dy=0 case=box-join",
+            "COOP PASS tele-motion release reaches both simulations levit=0 frac=0 case=loot-host",
+            "COOP PASS tele-motion air release resumes gravity fall=100.99999999999605 stay=true case=loot-host",
+            "COOP PASS tele-motion release lands on supported native floor gap=1 stay=true dy=0 case=loot-host",
+            "COOP PASS tele-motion release reaches both simulations levit=0 frac=100 case=loot-join",
+            "COOP PASS tele-motion normal release clears caster pointer case=loot-join",
+            "COOP PASS tele-motion air release resumes gravity fall=103.9999999999921 stay=true case=loot-join",
+            "COOP PASS tele-motion release lands on supported native floor gap=1 stay=true dy=0 case=loot-join"
+          ]
+        }
+      },
+      "delay": {
+        "box-join": {
+          "lag_ms": 170,
+          "rms_pixels": 2.6603724077513458,
+          "samples": 71,
+          "original_threshold_ms": 160,
+          "passed": false
+        },
+        "loot-join": {
+          "lag_ms": 110,
+          "rms_pixels": 1.4043937546418577,
+          "samples": 68,
+          "original_threshold_ms": 160,
+          "passed": true
+        },
+        "box-host": {
+          "lag_ms": 110,
+          "rms_pixels": 0.2822412150021875,
+          "samples": 65,
+          "original_threshold_ms": 160,
+          "passed": true
+        },
+        "loot-host": {
+          "lag_ms": 100,
+          "rms_pixels": 1.4576183308088342,
+          "samples": 68,
+          "original_threshold_ms": 160,
+          "passed": true
+        }
+      },
+      "minimum_commit_gib": 6.914653778076172,
+      "copies_cleaned": true
+    },
+    "v2": {
+      "run": "23ba08ed52",
+      "passed": true,
+      "result_sha256": "c554ca0bff04d741c3a4ef4d22c7e15c2e963b4b693151d029ac185cbfecbfd2",
+      "run_sha256": "6a25cd0843c6f839fed9cc5313d3bd2046c3ac2ab1784f210f1a0af042f79ee9",
+      "input_sha256": "3a69b4e89ec2d6bde8de116b78275611b1e2dee125fed809d09991d4996b67d7",
+      "product_sha256": "b25e477a58093587da8c734c1b6eedb861433b3336a447f1cc113d5d1d66cbd3",
+      "roles": {
+        "host": {
+          "log_sha256": "4413acea900aec70888fa98d3381e8524514f2cb6d31a5bf44c6101fcad552f3",
+          "pass_count": 43,
+          "failures": [],
+          "rounds": [
+            {
+              "case": "box-host",
+              "enter_fps": 14.794043705279442,
+              "enter_intervals": {
+                "count": 153,
+                "mean": 67.59477124183006,
+                "p50": 64.0,
+                "p95": 88.0,
+                "p99": 107.0,
+                "maximum": 112.0,
+                "over50": 153,
+                "over100": 4,
+                "over200": 0
+              },
+              "render_intervals": {
+                "count": 153,
+                "mean": 67.6078431372549,
+                "p50": 65.0,
+                "p95": 91.0,
+                "p99": 111.0,
+                "maximum": 121.0,
+                "over50": 152,
+                "over100": 4,
+                "over200": 0
+              },
+              "held_step": {
+                "count": 153,
+                "mean": 1.7175466301556233,
+                "p50": 1.131370849898492,
+                "p95": 4.493606569338261,
+                "p99": 5.179285665031451,
+                "maximum": 5.315072906367325,
+                "over50": 0,
+                "over100": 0,
+                "over200": 0
+              },
+              "final_enter_without_render": 1,
+              "intermediate_enter_without_render": 0,
+              "timing_restored": true,
+              "dropped": 0
+            },
+            {
+              "case": "box-join",
+              "enter_fps": 14.542423119673954,
+              "enter_intervals": {
+                "count": 157,
+                "mean": 68.76433121019109,
+                "p50": 65.0,
+                "p95": 95.0,
+                "p99": 130.0,
+                "maximum": 136.0,
+                "over50": 157,
+                "over100": 5,
+                "over200": 0
+              },
+              "render_intervals": {
+                "count": 157,
+                "mean": 68.70700636942675,
+                "p50": 65.0,
+                "p95": 97.0,
+                "p99": 129.0,
+                "maximum": 133.0,
+                "over50": 157,
+                "over100": 6,
+                "over200": 0
+              },
+              "held_step": {
+                "count": 157,
+                "mean": 1.6723023227550848,
+                "p50": 1.1011357772772568,
+                "p95": 4.600000000000023,
+                "p99": 5.477681991499705,
+                "maximum": 6.095900261651264,
+                "over50": 0,
+                "over100": 0,
+                "over200": 0
+              },
+              "final_enter_without_render": 1,
+              "intermediate_enter_without_render": 0,
+              "timing_restored": true,
+              "dropped": 0
+            },
+            {
+              "case": "loot-host",
+              "enter_fps": 11.877037727061015,
+              "enter_intervals": {
+                "count": 153,
+                "mean": 84.19607843137256,
+                "p50": 80.0,
+                "p95": 120.0,
+                "p99": 141.0,
+                "maximum": 150.0,
+                "over50": 153,
+                "over100": 21,
+                "over200": 0
+              },
+              "render_intervals": {
+                "count": 153,
+                "mean": 84.24183006535948,
+                "p50": 80.0,
+                "p95": 119.0,
+                "p99": 141.0,
+                "maximum": 143.0,
+                "over50": 153,
+                "over100": 26,
+                "over200": 0
+              },
+              "held_step": {
+                "count": 153,
+                "mean": 1.702779561923501,
+                "p50": 1.1000000000000227,
+                "p95": 4.4116323509558475,
+                "p99": 5.122499389946272,
+                "maximum": 5.179285665031451,
+                "over50": 0,
+                "over100": 0,
+                "over200": 0
+              },
+              "final_enter_without_render": 1,
+              "intermediate_enter_without_render": 0,
+              "timing_restored": true,
+              "dropped": 0
+            },
+            {
+              "case": "loot-join",
+              "enter_fps": 11.647123632643424,
+              "enter_intervals": {
+                "count": 148,
+                "mean": 85.85810810810811,
+                "p50": 81.0,
+                "p95": 120.0,
+                "p99": 156.0,
+                "maximum": 177.0,
+                "over50": 148,
+                "over100": 29,
+                "over200": 0
+              },
+              "render_intervals": {
+                "count": 148,
+                "mean": 85.83108108108108,
+                "p50": 80.0,
+                "p95": 128.0,
+                "p99": 147.0,
+                "maximum": 190.0,
+                "over50": 148,
+                "over100": 31,
+                "over200": 0
+              },
+              "held_step": {
+                "count": 148,
+                "mean": 1.7754434438779991,
+                "p50": 1.051189802081387,
+                "p95": 5.062114182829147,
+                "p99": 6.9354163537598685,
+                "maximum": 6.973162840490682,
+                "over50": 0,
+                "over100": 0,
+                "over200": 0
+              },
+              "final_enter_without_render": 1,
+              "intermediate_enter_without_render": 0,
+              "timing_restored": true,
+              "dropped": 0
+            }
+          ],
+          "release_checks": [
+            "COOP PASS tele-motion box release is stationary before native gravity resumes case=box-host",
+            "COOP PASS tele-motion release reaches both simulations levit=0 frac=0 case=box-host",
+            "COOP PASS tele-motion normal release clears caster pointer case=box-host",
+            "COOP PASS tele-motion air release resumes gravity fall=107.99999999999022 stay=true case=box-host",
+            "COOP PASS tele-motion release lands on supported native floor gap=0 stay=true dy=0 case=box-host",
+            "COOP PASS tele-motion release reaches both simulations levit=0 frac=0 case=box-join",
+            "COOP PASS tele-motion air release resumes gravity fall=104.99999999999511 stay=true case=box-join",
+            "COOP PASS tele-motion release lands on supported native floor gap=0 stay=true dy=0 case=box-join",
+            "COOP PASS tele-motion stationary release reaches peer after actual native release promptly ms=176 case=box-join",
+            "COOP PASS tele-motion release reaches both simulations levit=0 frac=100 case=loot-host",
+            "COOP PASS tele-motion normal release clears caster pointer case=loot-host",
+            "COOP PASS tele-motion air release resumes gravity fall=103.9999999999921 stay=true case=loot-host",
+            "COOP PASS tele-motion release lands on supported native floor gap=1 stay=true dy=0 case=loot-host",
+            "COOP PASS tele-motion release reaches both simulations levit=0 frac=0 case=loot-join",
+            "COOP PASS tele-motion air release resumes gravity fall=100.99999999999605 stay=true case=loot-join",
+            "COOP PASS tele-motion release lands on supported native floor gap=1 stay=true dy=0 case=loot-join"
+          ]
+        },
+        "join": {
+          "log_sha256": "051916736a308660d2442ddfb6250fe8d765cda2f05a347a9c50ed8bcd551330",
+          "pass_count": 42,
+          "failures": [],
+          "rounds": [
+            {
+              "case": "box-host",
+              "enter_fps": 14.556598352805976,
+              "enter_intervals": {
+                "count": 152,
+                "mean": 68.69736842105263,
+                "p50": 65.0,
+                "p95": 93.0,
+                "p99": 109.0,
+                "maximum": 142.0,
+                "over50": 152,
+                "over100": 5,
+                "over200": 0
+              },
+              "render_intervals": {
+                "count": 152,
+                "mean": 68.67105263157895,
+                "p50": 66.0,
+                "p95": 92.0,
+                "p99": 117.0,
+                "maximum": 117.0,
+                "over50": 152,
+                "over100": 5,
+                "over200": 0
+              },
+              "held_step": {
+                "count": 152,
+                "mean": 1.7270049980517388,
+                "p50": 0.8500000000000227,
+                "p95": 4.652418725781224,
+                "p99": 5.115173506343642,
+                "maximum": 5.211765535785344,
+                "over50": 0,
+                "over100": 0,
+                "over200": 0
+              },
+              "final_enter_without_render": 1,
+              "intermediate_enter_without_render": 0,
+              "timing_restored": true,
+              "dropped": 0
+            },
+            {
+              "case": "box-join",
+              "enter_fps": 14.558949471881245,
+              "enter_intervals": {
+                "count": 153,
+                "mean": 68.68627450980392,
+                "p50": 65.0,
+                "p95": 89.0,
+                "p99": 113.0,
+                "maximum": 123.0,
+                "over50": 153,
+                "over100": 5,
+                "over200": 0
+              },
+              "render_intervals": {
+                "count": 153,
+                "mean": 68.62745098039215,
+                "p50": 66.0,
+                "p95": 91.0,
+                "p99": 118.0,
+                "maximum": 128.0,
+                "over50": 153,
+                "over100": 4,
+                "over200": 0
+              },
+              "held_step": {
+                "count": 153,
+                "mean": 1.7175466301556233,
+                "p50": 1.131370849898492,
+                "p95": 4.493606569338261,
+                "p99": 5.179285665031451,
+                "maximum": 5.315072906367325,
+                "over50": 0,
+                "over100": 0,
+                "over200": 0
+              },
+              "final_enter_without_render": 1,
+              "intermediate_enter_without_render": 0,
+              "timing_restored": true,
+              "dropped": 0
+            },
+            {
+              "case": "loot-host",
+              "enter_fps": 13.328197226502311,
+              "enter_intervals": {
+                "count": 173,
+                "mean": 75.02890173410404,
+                "p50": 72.0,
+                "p95": 100.0,
+                "p99": 130.0,
+                "maximum": 136.0,
+                "over50": 173,
+                "over100": 8,
+                "over200": 0
+              },
+              "render_intervals": {
+                "count": 173,
+                "mean": 75.03468208092485,
+                "p50": 71.0,
+                "p95": 100.0,
+                "p99": 131.0,
+                "maximum": 135.0,
+                "over50": 173,
+                "over100": 8,
+                "over200": 0
+              },
+              "held_step": {
+                "count": 173,
+                "mean": 1.5263664815951457,
+                "p50": 1.0511898020814425,
+                "p95": 4.400284081738337,
+                "p99": 5.587933428379407,
+                "maximum": 5.90021186060295,
+                "over50": 0,
+                "over100": 0,
+                "over200": 0
+              },
+              "final_enter_without_render": 1,
+              "intermediate_enter_without_render": 0,
+              "timing_restored": true,
+              "dropped": 0
+            },
+            {
+              "case": "loot-join",
+              "enter_fps": 12.197066326530612,
+              "enter_intervals": {
+                "count": 153,
+                "mean": 81.98692810457516,
+                "p50": 78.0,
+                "p95": 122.0,
+                "p99": 143.0,
+                "maximum": 174.0,
+                "over50": 153,
+                "over100": 23,
+                "over200": 0
+              },
+              "render_intervals": {
+                "count": 153,
+                "mean": 81.81045751633987,
+                "p50": 77.0,
+                "p95": 122.0,
+                "p99": 152.0,
+                "maximum": 170.0,
+                "over50": 152,
+                "over100": 27,
+                "over200": 0
+              },
+              "held_step": {
+                "count": 153,
+                "mean": 1.703106359309122,
+                "p50": 1.1000000000000227,
+                "p95": 4.4116323509558475,
+                "p99": 5.122499389946272,
+                "maximum": 5.179285665031451,
+                "over50": 0,
+                "over100": 0,
+                "over200": 0
+              },
+              "final_enter_without_render": 1,
+              "intermediate_enter_without_render": 0,
+              "timing_restored": true,
+              "dropped": 0
+            }
+          ],
+          "release_checks": [
+            "COOP PASS tele-motion release reaches both simulations levit=0 frac=0 case=box-host",
+            "COOP PASS tele-motion air release resumes gravity fall=104.99999999999511 stay=true case=box-host",
+            "COOP PASS tele-motion release lands on supported native floor gap=0 stay=true dy=0 case=box-host",
+            "COOP PASS tele-motion stationary release reaches peer after actual native release promptly ms=7 case=box-host",
+            "COOP PASS tele-motion box release is stationary before native gravity resumes case=box-join",
+            "COOP PASS tele-motion release reaches both simulations levit=0 frac=0 case=box-join",
+            "COOP PASS tele-motion normal release clears caster pointer case=box-join",
+            "COOP PASS tele-motion air release resumes gravity fall=107.99999999999022 stay=true case=box-join",
+            "COOP PASS tele-motion release lands on supported native floor gap=0 stay=true dy=0 case=box-join",
+            "COOP PASS tele-motion release reaches both simulations levit=0 frac=0 case=loot-host",
+            "COOP PASS tele-motion air release resumes gravity fall=103.99999999998991 stay=true case=loot-host",
+            "COOP PASS tele-motion release lands on supported native floor gap=1 stay=true dy=0 case=loot-host",
+            "COOP PASS tele-motion release reaches both simulations levit=0 frac=100 case=loot-join",
+            "COOP PASS tele-motion normal release clears caster pointer case=loot-join",
+            "COOP PASS tele-motion air release resumes gravity fall=103.9999999999921 stay=true case=loot-join",
+            "COOP PASS tele-motion release lands on supported native floor gap=1 stay=true dy=0 case=loot-join"
+          ]
+        }
+      },
+      "delay": {
+        "box-join": {
+          "lag_ms": 110,
+          "rms_pixels": 0.38398867822649185,
+          "samples": 65,
+          "original_threshold_ms": 160,
+          "passed": true
+        },
+        "loot-join": {
+          "lag_ms": 120,
+          "rms_pixels": 1.4159589378595232,
+          "samples": 66,
+          "original_threshold_ms": 160,
+          "passed": true
+        },
+        "box-host": {
+          "lag_ms": 110,
+          "rms_pixels": 0.32277456518715636,
+          "samples": 66,
+          "original_threshold_ms": 160,
+          "passed": true
+        },
+        "loot-host": {
+          "lag_ms": 110,
+          "rms_pixels": 1.6296544540893667,
+          "samples": 67,
+          "original_threshold_ms": 160,
+          "passed": true
+        }
+      },
+      "minimum_commit_gib": 8.79330825805664,
+      "copies_cleaned": true
+    }
+  },
+  "threshold_ms": 160,
+  "source_sha256": "1aa59253ac6d20d0f8dea2a4374d605ebca85a8741bae7a8d3dca0821fb10ba5",
+  "analyzer_sha256": "ac369d4d4a63607e737a550730df609c328be73792bd0e971468b2427b0c0508",
+  "performanceQualified": false,
+  "smoothnessQualified": false,
+  "same_inputs_settings_except_product_and_port": true,
+  "failed_diagnostics_sha256": "9ef3b4580180150b81032b07c1c2ebadb051e90b45669545766fc818d715fd3c"
+}
