@@ -1,0 +1,23 @@
+{
+  "kind": "sampler-retention-component-source-v1",
+  "files": {
+    "run.py": "a316ac8d4abd41cac65d95031f3a6fa30ce675aac6377739a0e7836899d795d5",
+    "check.py": "18267235bf69093e3f5f8ccdeaee277c5920c38dc7bfe93e46647251c77e88d8",
+    "README.md": "17558e4f7dbb9bf6841d3ac94c132006305d07ce5ba0ab0573981af685cdd1a8",
+    "component/SamplerRetentionDoc.as": "13d921ba6002ab54909f43363643630cc5f098ad13f6344af1414e9e03901d43"
+  },
+  "originals": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\tools\\validation\\run_recovery_component.py": "9952aeeaa37f6eead636cceff9f25fabff3045671d3c4cbb60c326909d1e572d",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\adl64.exe": "d851eb9e68d38abd335916dd91e08de3f1660945b49f382691a188adc7c8c295",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\runtimes\\air\\win64\\Adobe AIR\\Versions\\1.0\\Adobe AIR.dll": "fc1586a74045df4a31548a3cf0820e01558db033c2237f81abc4731badc8af01",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\tools\\validation\\runtime_memory.py": "d4894962771929b5b88f1d123c3603221dab06294657d33bc6229a2282fbf8f6",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\ModLoader\\tools\\test_registry.py": "8b35a6d6ca1dd94cfd5cba9a42979ebd14d9ae65497688fa859d084425922049",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\ModLoader\\tools\\air_test_process.py": "628ffed886db293abe0177fd42c61ac09482e04aee6aae358cf2e3d6deb0d1f9"
+  },
+  "source_sha256": "13d921ba6002ab54909f43363643630cc5f098ad13f6344af1414e9e03901d43",
+  "adapted_runner_sha256": "14b569d9d1ef7421dfa2a15a4212575c1b4752c22d305930821a1164d73df15a",
+  "expected": 9,
+  "compiled": false,
+  "air_started": false,
+  "performance_qualified": false
+}
