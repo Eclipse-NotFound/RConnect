@@ -1,0 +1,18 @@
+def verify(out):
+ out=Path(out).resolve();assert out.parent==M52
+ m,c=read(out/'prepared.json'),read(out/'compile.json')
+ assert m['kind']=='native-motion-measurement-v1' and c['compiled'] and c['inputs_unchanged']
+ assert c['prepared_sha256']==sha(out/'prepared.json') and c['error'] is None and c['validation_error'] is None
+ assert m['candidate_sha256']==c['candidate_sha256']==PRODUCT_SHA
+ assert m['inputs']==inputs() and m['installation_before']==c['installation_before']==c['installation_after']==installed()
+ assert inventory(out/'tests')==read(HERE/'source-manifest.json')['sources'];copied(out,m['files'])
+ assert len(c['commands'])==1
+ for row,case in zip(c['commands'],CASES):
+  assert row['case']==case and row['command']==command(out,case)
+  assert row['exit_code']==0 and row['reaped'] and isinstance(row['pid'],int) and row['pid']>0
+ assert set(c['artifacts'])=={case+'/'+n for case in CASES for n in ('EffectsDriver.swf','EffectsHarness.swf')}
+ for n,h in c['artifacts'].items():assert sha(out/n)==h,n
+ for case in CASES:assert c['artifacts'][case+'/EffectsHarness.swf']==ABI_HASHES['scene/EffectsHarness.swf']
+ for v in (m,c):assert v['air_started'] is False and v['installed'] is False and v['smoothnessQualified'] is False
+ return dict(verified=True,candidate_sha256=PRODUCT_SHA,artifacts=c['artifacts'],inputs=m['inputs'],
+  prepared_sha256=sha(out/'prepared.json'),compile_sha256=sha(out/'compile.json'),installation=installed(),smoothnessQualified=False)

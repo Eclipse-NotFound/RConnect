@@ -1,0 +1,69 @@
+--- drivers02/NativeMotionProbe.as
++++ passive/NativeMotionProbe.as
+@@ -13,6 +13,7 @@
+       private var originalTiming:Object,sink:Object,previousTiming:Object;
+       private var frame:int=0,frameAt:int=0,lastRender:int=-1;
+       private static const LIMIT:int=4096;
++      private var observationOrder:int=0;
+       public function NativeMotionProbe(m:RConnectMod,h:Boolean) {mod=m;host=h;}
+       private function value(o:Object,k:String):* {return GameBridge.probe(o,k);}
+       private function focused():Object {
+@@ -24,7 +25,13 @@
+          var v:Object=value(o,"vis"),osn:Object=value(v,"osn"),body:Object=value(osn,"body");
+          return {x:value(o,"X"),y:value(o,"Y"),dx:value(o,"dx"),dy:value(o,"dy"),stay:value(o,"stay"),
+             shown:v!=null&&value(v,"parent")!=null,visible:value(v,"visible"),vx:value(v,"x"),vy:value(v,"y"),
+-            body:value(body,"currentFrame"),pose:value(osn,"currentLabel"),levit:value(o,"levit")};
++            body:value(body,"currentFrame"),pose:value(osn,"currentLabel"),levit:value(o,"levit"),
++            poseFrame:value(osn,"currentFrame"),bodyPlaying:value(body,"isPlaying"),bodyTotal:value(body,"totalFrames"),
++            bodyOnStage:body!=null&&value(body,"stage")===mod.stage,bodyVisible:value(body,"visible"),
++            aJump:value(o,"aJump"),jumpNumb:value(o,"jumpNumb"),animState:value(o,"animState"),
++            animOff:value(o,"animOff"),work:value(o,"t_work"),isFly:value(o,"isFly"),
++            isLaz:value(o,"isLaz"),isPlav:value(o,"isPlav"),t_port:value(o,"t_port"),
++            hp:value(o,"hp"),sost:value(o,"sost")};
+       }
+       private function counters():Object {
+          return {viewMs:sink.viewMs,viewCalls:sink.viewCalls,motionMs:sink.motionMs,motionCalls:sink.motionCalls};
+@@ -37,7 +44,7 @@
+       public function begin(name:String,round:int,o:Object=null,targetKey:String=""):void {
+          if(live!=null)throw new Error("Overlapping native motion observation");
+          if(!("presentationTiming" in Object(mod.game)))throw new Error("Required roomfix5 timing sink absent");
+-         target=o;key=targetKey;frame=0;frameAt=getTimer();lastRender=-1;
++         target=o;key=targetKey;frame=0;frameAt=getTimer();lastRender=-1;observationOrder=0;
+          originalTiming=Object(mod.game)["presentationTiming"];
+          sink={viewMs:0,viewCalls:0,motionMs:0,motionCalls:0};previousTiming=counters();
+          Object(mod.game)["presentationTiming"]=sink;
+@@ -45,7 +52,8 @@
+             room:mod.game.roomKey(),targetKey:key,enter:[],render:[],incoming:[],dropped:0,
+             receiveDefinition:"observer MESSAGE callback after earlier listeners; not socket arrival",
+             clockDefinition:"local getTimer; source sampleTime is a different process clock",
+-            diagnosticOnly:true,smoothnessQualified:false};
++            diagnosticOnly:true,smoothnessQualified:false,poseObservationVersion:1,
++            cursorAvailable:false,poseObservationDefinition:"packet scalars and final MovieClip properties; no private cursor or readSnapshot call"};
+          mod.stage.addEventListener(Event.ENTER_FRAME,onFrame,false,100002);
+          mod.stage.addEventListener(Event.RENDER,onRender,false,-40000);
+       }
+@@ -62,17 +70,22 @@
+          if(live==null||lastRender==frame)return;
+          lastRender=frame;
+          append(live.render,{frame:frame,frameAt:frameAt,at:getTimer(),focused:focused(),
++            order:++observationOrder,roomKey:mod.game.roomKey(),roomEpoch:value(mod.game,"roomEpoch"),
+             local:actor(mod.game.gg),peer:actor(mod.game.getRemoteGhost(host?1:0)),
+             target:actor(target),timing:timingDelta()});
+       }
+       public function receive(p:Object):void {
+          if(live==null||p==null)return;
+          var row:Object={at:getTimer(),type:value(p,"type"),seq:value(p,"seq"),tick:value(p,"tick"),
+-            focused:focused(),snapshots:[],positions:[]};
++            focused:focused(),order:++observationOrder,snapshots:[],positions:[]};
+          var snap:Object=host?value(p,"snap"):null;
+          if(!host&&p.players is Array)for each(var player:Object in p.players)if(player.id==0)snap=player.snap;
+          if(snap!=null)row.snapshots.push({sampleTime:value(snap,"sampleTime"),seq:value(snap,"seq"),
+-            x:value(snap,"x"),y:value(snap,"y"),dx:value(snap,"dx"),dy:value(snap,"dy"),stay:value(snap,"stay")});
++            x:value(snap,"x"),y:value(snap,"y"),dx:value(snap,"dx"),dy:value(snap,"dy"),stay:value(snap,"stay"),
++            nativeJumpRun:value(snap,"nativeJumpRun"),pose:value(snap,"pose"),poseFrame:value(snap,"poseFrame"),
++            bodyFrame:value(snap,"bodyFrame"),bodyPlaying:value(snap,"bodyPlaying"),
++            hp:value(snap,"hp"),sost:value(snap,"sost"),roomKey:value(snap,"roomKey"),
++            roomEpoch:value(snap,"roomEpoch"),landId:value(snap,"landId"),locId:value(snap,"locId")});
+          // The four original box/loot cases share these actual production
+          // streams. Keep identity and collection; do not mistake the separate
+          // native-position diagnostic packet for production movement.

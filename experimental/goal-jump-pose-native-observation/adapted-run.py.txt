@@ -1,0 +1,157 @@
+"""Thin current-input adapter over the unchanged shared dual runner.
+
+The shared runner owns registration, 6 GiB start / 512 MiB runtime guard,
+exclusive AIR, private desktops, all original COOP assertions and cleanup.
+Both private ordinary-room settings and current telemetry are set before AIR.
+"""
+from pathlib import Path
+import argparse,contextlib,importlib.util,json,os,re,shutil,sys,traceback
+import xml.etree.ElementTree as ET
+if sys.flags.optimize:raise RuntimeError('Ordinary Python required')
+sys.dont_write_bytecode=True
+build=CURRENT_BUILD
+summarize=ORIGINAL_SUMMARIZE
+HERE=Path(__file__).resolve().parent;ROOT=HERE.parents[1];GAME=ROOT.parents[1];M52=ROOT/'build/m52'
+RUNNER=ROOT/'tools/run_coop_regression.py';TELEMETRY=GAME/'mods/ModLoader/release/telemetry.json'
+PREFERENCE=b'{"nativeEnabled":false}'
+sha,read,save,installed=build.sha,build.read,build.save,build.installed
+CASES={'native-jump':dict(seconds=300,done='native-jump',rounds=[0],checks={'host':6,'join':6})}
+def product(path):
+ return selected_product(path)
+def main():
+ ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--drivers',type=Path,required=True)
+ ap.add_argument('--product',type=Path,required=True)
+ ap.add_argument('--case',choices=CASES,required=True);ap.add_argument('--output',type=Path)
+ ap.add_argument('--check',action='store_true');ap.add_argument('--registry-wait',type=float,default=900)
+ a=ap.parse_args();assert a.registry_wait>=0
+ drivers=(ROOT/a.drivers).resolve();proof=build.verify(drivers);before=installed();case=CASES[a.case]
+ selected=product((ROOT/a.product).resolve());product_path=Path(selected['path']);candidate=selected['sha256'];version=selected['version']
+ expected=proof['artifacts'][a.case+'/EffectsDriver.swf'];harness=build.ABI_HASHES['scene/EffectsHarness.swf']
+ pins=dict(proof['inputs']);pins.update({str(drivers/n):sha(drivers/n) for n in ('prepared.json','compile.json',a.case+'/EffectsDriver.swf',a.case+'/EffectsHarness.swf')})
+ pins.update(selected['pins'])
+ assert sha(RUNNER)=='7eca453b13480140da5f36bb33d2319739a927562ccafdbb61a8b20cdb5ae4d3'
+ def verify_inputs():
+  assert build.verify(drivers)==proof and installed()==before and product(product_path)==selected
+  assert all(sha(n)==h for n,h in pins.items())
+ if a.check:
+  assert a.output is None;print(json.dumps(dict(checked=True,case=a.case,air_started=False)));return 0
+ assert a.output is not None;out=(ROOT/a.output).resolve();assert out.parent==M52 and out.name.startswith('goal-jump-pose-native-') and not out.exists()
+ (out/'driver').mkdir(parents=True)
+ for n in ('EffectsDriver.swf','EffectsHarness.swf'):shutil.copyfile(drivers/a.case/n,out/'driver'/n)
+ save(out/'driver/driver-input.json',dict(candidate_sha256=candidate,driver_sha256=expected,
+  source_manifest_sha256=sha(drivers/'prepared.json'),measurement_only=True))
+ command=[str(RUNNER),'--candidate',str(product_path/'RConnectMod.swf'),'--effects','--effects-driver',str(out/'driver'),
+  '--all-mods','--land','rbl','--seconds',str(case['seconds']),'--expected-version',version,
+  '--private-desktop','--defer-visible','--wait-host-world','--require-exclusive-air','--registry-wait',str(a.registry_wait)]
+ save(out/'intent.json',dict(command=command,inputs=pins,installation=before,case=a.case,ordinary_rooms=True,
+  mode='dual',product=selected,screenshot=False,solo_supported=False,performanceQualified=False,smoothnessQualified=False))
+ sys.path.insert(0,str(ROOT/'tools'))
+ spec=importlib.util.spec_from_file_location('goal_native_shared_runner',RUNNER);runner=importlib.util.module_from_spec(spec);spec.loader.exec_module(runner)
+ original,old_argv=runner.run_registered,sys.argv
+ result=dict(passed=False,case=a.case,run=None,candidate_sha256=candidate,version=version,performanceQualified=False,smoothnessQualified=False,installed=False)
+ run_path=None;settings={};extra_errors=[];roles=['host','join']
+ def registered(native,parser,output,record):
+  nonlocal run_path
+  run_path=output.resolve();result['run']=str(run_path)
+  assert run_path.parent==ROOT/'build/cooperation' and re.fullmatch('[0-9a-f]{10}',run_path.name)
+  assert native.private_desktop and native.require_exclusive_air and native.all_mods and native.effects
+  assert not native.keep_copies and not native.solo
+  launch,stopped=record.before_launch,record.child_stopped
+  def before_launch(detail):
+   if not settings:
+    assert not record.children and not record.launching;verify_inputs()
+    original_input=read(output/'input.json');assert original_input['minimum_start_gib']==6
+    for role in roles:
+     descriptor=output/role/'coop.xml';xml=ET.fromstring(descriptor.read_bytes());ns='{http://ns.adobe.com/air/application/30.0}'
+     appid='pfe-modsettings-rconnect-coop-'+role+'-'+output.name
+     assert xml.findtext(ns+'id')==appid and xml.findtext(ns+'initialWindow/'+ns+'content')=='pfe.swf'
+     assert sha(descriptor)==original_input['descriptors'][role]
+     app_root=Path(os.environ['APPDATA']).resolve()/appid
+     preference=app_root/'Local Store/ContinuousScene.preferences.json';telemetry=output/role/'mods/ModLoader/release/telemetry.json'
+     assert preference.resolve().is_relative_to(app_root.resolve()) and not preference.exists()
+     assert telemetry.resolve().is_relative_to((output/role).resolve()) and not telemetry.exists()
+     assets={}
+     for name,digest in before.items():
+      if name.lower()=='mods/rconnect/release/config.txt':continue # Shared runner's explicit test configuration.
+      if Path(name).name not in ('config.txt','config.json','scene.xml'):continue
+      asset=output/role/name;assert sha(asset)==digest
+      assets[str(asset)]=digest
+     settings[role]=dict(app_id=appid,preference=str(preference),telemetry=str(telemetry),assets=assets)
+    for row in settings.values():
+     pref,tele=Path(row['preference']),Path(row['telemetry']);pref.parent.mkdir(parents=True,exist_ok=True)
+     with pref.open('xb') as f:f.write(PREFERENCE)
+     with tele.open('xb') as f:f.write(TELEMETRY.read_bytes())
+     row.update(preference_sha256=sha(pref),telemetry_sha256=sha(tele))
+    save(out/'supplemental-input.json',dict(roles=settings,before_any_air=True,
+     original_input_sha256=sha(output/'input.json'),telemetry_source_sha256=sha(TELEMETRY)))
+   launch(detail)
+  def after_stopped():
+   try:
+    if settings:
+     checked={}
+     for role,row in settings.items():
+      checked[role]=dict(preference_sha256=sha(row['preference']),telemetry_sha256=sha(row['telemetry']))
+      assert Path(row['preference']).read_bytes()==PREFERENCE
+      assert checked[role]['telemetry_sha256']==row['telemetry_sha256']==sha(TELEMETRY)
+      assert all(sha(n)==h for n,h in row['assets'].items())
+      checked[role]['assets']=row['assets']
+     save(out/'supplemental-after.json',dict(roles=checked,unchanged=True,before_copy_cleanup=True))
+   except Exception as error:extra_errors.append(repr(error))
+   finally:stopped()
+  record.before_launch,record.child_stopped=before_launch,after_stopped
+  try:return original(native,parser,output,record)
+  finally:record.before_launch,record.child_stopped=launch,stopped
+ class Tee:
+  def __init__(self,log,console):self.log,self.console=log,console
+  def write(self,text):self.log.write(text);self.console.write(text);return len(text)
+  def flush(self):self.log.flush();self.console.flush()
+ runner.run_registered,sys.argv=registered,command
+ try:
+  with (out/'runner.log').open('x',encoding='utf8') as log,contextlib.redirect_stdout(Tee(log,sys.stdout)):
+   try:runner.main()
+   except SystemExit as error:
+    result['exit_code']=error.code if type(error.code) is int else 1
+    if type(error.code) is not int:result['stop_reason']=str(error.code)
+  assert result.get('exit_code')==0,'Shared runner failed: '+result.get('stop_reason','see runner.log')
+  assert run_path is not None and read(run_path/'registry-result.json')['passed'] is True
+  native=read(run_path/'run.json');assert native['sha256']==candidate and native['solo'] is False
+  assert sha(run_path/'input.json')==native['input_manifest_sha256']
+  assert set(native['inputs'])==set(roles) and not extra_errors
+  assert read(out/'supplemental-after.json')['unchanged'] is True
+  lower={k.lower():v for k,v in before.items()};result['roles']={}
+  for role in roles:
+   values=native['inputs'][role]
+   assert values['game']==build.HOST_SHA and values['production']==candidate
+   assert values['driver']==expected and values['harness']==harness
+   assert {n.replace('\\','/').lower() for n in values['modules']}=={n.lower() for n in before if n.lower().startswith('mods/') and n.lower().endswith('.swf')}
+   for n,h in values['modules'].items():
+    n=n.replace('\\','/').lower();assert h==(harness if n=='mods/rconnect/release/rconnectmod.swf' else lower[n])
+   for n,h in values.get('mod_assets',{}).items():assert h==lower[n.replace('\\','/').lower()]
+   text=(run_path/(role+'.log')).read_text('utf-8-sig')
+   assert 'COOP EFFECTS DONE '+case['done']+' '+role in text and 'v'+version+' initialized' in text
+   assert not re.search(r'^COOP FAIL |handoff timed out',text,re.M)
+   checks=len(re.findall(r'^COOP PASS ',text,re.M));assert checks==case['checks'][role],(role,checks)
+   rows=[json.loads(line.split('NATIVE MOTION MEASURE ',1)[1]) for line in text.splitlines() if line.startswith('NATIVE MOTION MEASURE ')]
+   assert [row['round'] for row in rows]==case['rounds']
+   for row in rows:
+    assert row['kind']==a.case and row['role']==role and row['reason']=='measurement-complete'
+    assert row['timingOwned'] and row['timingRestored'] and row['dropped']==0
+    assert row['enter'] and row['render'] and row['incoming']
+   save(out/(role+'-measurements.json'),rows)
+   summaries=[summarize(row) for row in rows];save(out/(role+'-summary.json'),summaries)
+   result['roles'][role]=dict(checks=checks,log_sha256=sha(run_path/(role+'.log')),
+    measurements_sha256=sha(out/(role+'-measurements.json')),summary_sha256=sha(out/(role+'-summary.json')))
+  memory=read(run_path/'memory-timeline.json')
+  assert not memory['stopped_for_pressure'] and not memory['stopped_for_overlap']
+  assert memory['minimum_commit_bytes']==512*1024**2 and not read(run_path/'air-before.json')
+  assert all(not (run_path/n).exists() for n in ('host','join','frozen'))
+  result.update(passed=True,run_sha256=sha(run_path/'run.json'),input_sha256=sha(run_path/'input.json'))
+ except BaseException as error:result.update(error=repr(error),traceback=traceback.format_exc())
+ finally:
+  sys.argv,runner.run_registered=old_argv,original;result['supplemental_errors']=extra_errors
+  try:verify_inputs();result.update(installation_unchanged=True,inputs_unchanged=True)
+  except Exception as error:result.update(passed=False,final_error=repr(error))
+  save(out/'result.json',result)
+ print(json.dumps({k:result.get(k) for k in ('passed','case','run','error')},ensure_ascii=False))
+ return 0 if result['passed'] else 1
+if __name__=='__main__':raise SystemExit(main())

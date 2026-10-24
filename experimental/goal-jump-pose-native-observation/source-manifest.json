@@ -1,0 +1,24 @@
+{
+  "kind": "native-jump-passive-observation-v1",
+  "sources": {
+    "NativeMotionProbe.as": "695bf8ab585c5d2f9bae2f049de51699cb9c3a3e7a29fb9aefdb1b560155d292",
+    "NativeJumpNetworkTestDoc.as": "69c45eb85e1f7a77c4ca16dabbfd1cc82aee0cc60823ffc02722eb9bdabc3349"
+  },
+  "files": {
+    "adapted-build.py.txt": "b45450c5c9dde9de718eff4e490ee533b2673d98842a2f7a761354992ed452ee",
+    "adapted-run.py.txt": "29aa3d970f5975e7d2fecd60caabc6533e7e97845e93f64ca97e35ba4b943324",
+    "analyze_pose.py": "5de623c8056d228c789394ddd5a7d18346ab7f9795bae359040091098a49e654",
+    "build.py": "736ef98b703cbcc21447274850538a910b85a1743f2eef9269a3abe5a7b7acbe",
+    "prepare.py": "8c249dfedf286f732d2c76721426ecdef9daa679ded0c89fafd6b45b3395a98d",
+    "README.md": "d8edc783bdb93343e2f74d9d6aebc2c5596e4965808a508ef5daaccd8af6e45c",
+    "run.py": "527ca47dfd95f6e1e9ced3f0623096f21293a8701f214d8ef6480a205c738b43",
+    "source.diff": "57f3a7e43023158519508dcd20b281ed66bf2c2e032d7a59a33ec5b14fb955c6"
+  },
+  "original": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\goal-three-issues-native-drivers-02\\tests\\NativeMotionProbe.as": "4ca25c80d0ebeda696f02ef842b56ea691fdf6dd8c78736e5c18e65b2712a394",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\goal-three-issues-native-drivers-02\\tests\\NativeJumpNetworkTestDoc.as": "69c45eb85e1f7a77c4ca16dabbfd1cc82aee0cc60823ffc02722eb9bdabc3349"
+  },
+  "compiled": false,
+  "air_started": false,
+  "cursorAvailable": false
+}

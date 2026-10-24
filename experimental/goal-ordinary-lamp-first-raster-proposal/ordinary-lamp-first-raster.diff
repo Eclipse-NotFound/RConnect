@@ -1,0 +1,265 @@
+--- a/lad-proposal/src/lad/LadRuntime.as
++++ b/lad-proposal/src/lad/LadRuntime.as
+@@ -11,6 +11,7 @@
+     import flash.text.TextFieldType;
+     import flash.utils.getDefinitionByName;
+     import flash.utils.getTimer;
++    import flash.utils.Dictionary;
+ 
+     public final class LadRuntime {
+         public var enabled:Boolean=true;
+@@ -61,6 +62,7 @@
+         private var noticeUntil:int=0;
+         private var failedLocation:*=null;
+         private var environmentKey:String="";
++        private var ordinaryRaster:Object;
+         public function LadRuntime(value:*) {
+             main=value;lampLayer.name="LightAndDarknessFixtures";lampLayer.mouseEnabled=false;lampLayer.mouseChildren=false;
+             atmosphere.load();
+@@ -76,6 +78,90 @@
+             main.stage.addEventListener(Event.DEACTIVATE,deactivate);
+             LadLog.write("v0.7.0 loaded");
+         }
++        /** First-pass omission only. Native BackObj fields stay unchanged until normal attach. */
++        public function beginOrdinaryRaster(w:*,g:*,loc:*,firstRaster:Boolean):Object {
++            try {
++                if(!firstRaster || !enabled || !w || int(w.t_exit)!=19 || !loc || !loc.land || !loc.land.act
++                    || !loc.land.act.rnd || loc.spaceX>48 || loc.spaceY>25 || loc.spaceX<=0 || loc.spaceY<=0
++                    || !g || g.sceneLarge || loc===location || loc===failedLocation) return null;
++                var ticket:Object={world:w,game:w.game,player:w.gg,loc:loc,grafon:g,lamps:[],omit:new Dictionary(true),
++                    complete:false,cancelled:false,redrawBefore:int(g.sceneRedraws),redrawComplete:-1};
++                if(!ordinaryRasterIdentity(ticket)) return null;
++                cancelOrdinaryRaster(true);
++                if(ordinaryRaster) return null; // A native draw still owns the pending ticket.
++                for each(var bo:* in loc.backobjs) {
++                    if(!LadLampCatalog.isLamp(String(bo.id)) || bo.vis==null) continue;
++                    if(ticket.omit[bo]) return null;
++                    ticket.lamps.push(bo);ticket.omit[bo]=true;
++                }
++                if(!ticket.lamps.length) return null;
++                ordinaryRaster=ticket;return ticket;
++            } catch(error:*) {LadLog.write("INITIAL_RASTER_PREPARE_FAILED "+error);}
++            return null;
++        }
++        public function completeOrdinaryRaster(ticket:Object,success:Boolean):void {
++            if(ticket==null || ticket!==ordinaryRaster) return;
++            if(!success || int(ticket.grafon.sceneRedraws)!=int(ticket.redrawBefore)+1) {
++                // No native references changed; leave the original draw/error outcome intact.
++                ordinaryRaster=null;return;
++            }
++            ticket.redrawComplete=int(ticket.grafon.sceneRedraws);ticket.complete=true;
++            if(ticket.cancelled || !enabled || !ordinaryRasterIdentity(ticket)) cancelOrdinaryRaster(true);
++        }
++        private function ordinaryRasterIdentity(ticket:Object):Boolean {
++            try {
++                var WorldClass:Class=getDefinitionByName("fe.World") as Class;
++                var w:*=WorldClass["w"],loc:*=ticket.loc,g:*=ticket.grafon;
++                return w===ticket.world && Number(WorldClass["boxDamage"])==0.2 && w.game===ticket.game
++                    && w.game!=null && w.gg===ticket.player && w.gg!=null && w.gg.loc===loc
++                    && loc.gg===w.gg && loc.active && w.loc===loc && w.land===loc.land && w.land.loc===loc
++                    && w.grafon===g && g.loc===loc && loc.grafon===g && !g.sceneLarge && int(w.allStat)==1
++                    && (!w.verror || !w.verror.visible);
++            } catch(ignored:*) {}
++            return false;
++        }
++        private function ordinaryRasterOwnsPixels(ticket:Object):Boolean {
++            try {
++                var WorldClass:Class=getDefinitionByName("fe.World") as Class;
++                var w:*=WorldClass["w"],g:*=ticket.grafon;
++                return ticket.complete && w===ticket.world && w.grafon===g && w.loc===ticket.loc
++                    && g.loc===ticket.loc && !g.sceneLarge && int(g.sceneRedraws)==int(ticket.redrawComplete);
++            } catch(ignored:*) {}
++            return false;
++        }
++        private function restoreOrdinaryRefs(refs:Array):void {
++            for each(var item:Object in refs) {
++                if(item.bo.vis===null) item.bo.vis=item.vis;
++                if(item.bo.light===null) item.bo.light=item.light;
++                if(item.bo.erase===null) item.bo.erase=item.erase;
++            }
++        }
++        private function cancelOrdinaryRaster(redraw:Boolean):void {
++            var ticket:Object=ordinaryRaster;if(ticket==null) return;
++            if(!ticket.complete) {ticket.cancelled=true;return;}
++            ordinaryRaster=null;
++            if(!redraw || !ordinaryRasterOwnsPixels(ticket)) return;
++            var refs:Array=[];
++            for each(var bo:* in ticket.lamps) refs.push({bo:bo,vis:bo.vis,light:bo.light,erase:bo.erase});
++            try {
++                // Strip BEFORE BAKE's clean comparison; restore INSIDE its mutation.
++                for each(var item:Object in refs) {item.bo.vis=null;item.bo.light=null;item.bo.erase=null;}
++                LadSceneBake.change(ticket.grafon,ticket.loc,
++                    function():void {restoreOrdinaryRefs(refs);},ticket.world.cam);
++            } finally {restoreOrdinaryRefs(refs);}
++        }
++        private function canUseOrdinaryRaster(loc:*,found:Array):Boolean {
++            var ticket:Object=ordinaryRaster;if(ticket==null) return false;
++            var same:Boolean=ticket.loc===loc && ordinaryRasterIdentity(ticket) && ordinaryRasterOwnsPixels(ticket)
++                && found.length==ticket.lamps.length;
++            var seen:Dictionary=new Dictionary(true);
++            if(same) for each(var lamp:Object in found) {
++                if(!ticket.omit[lamp.bo] || seen[lamp.bo]) {same=false;break;}
++                seen[lamp.bo]=true;
++            }
++            if(!same) cancelOrdinaryRaster(true);
++            return same;
++        }
+         private function objectAdded(event:Event):void {
+             if(!enabled || !atmosphere.settings.projectiles || !location || !world || world.loc!==location) return;
+             // addObj links the object before addVisual dispatches ADDED. Keep only
+@@ -104,6 +190,7 @@
+                 }
+                 if(!enabled || !game || !world.gg || world.loc!==world.grafon.loc || !world.grafon.sceneLarge
+                     || world.loc===location || world.loc===failedLocation) return;
++                cancelOrdinaryRaster(false);
+                 detach(false);
+                 try {attach(world.loc,true);preparedScenes++;}
+                 catch(error:*) {
+@@ -116,6 +203,7 @@
+             try {
+                 var WorldClass:Class=getDefinitionByName("fe.World") as Class;
+                 world=WorldClass["w"];
++                if(ordinaryRaster && (!enabled || !ordinaryRasterIdentity(ordinaryRaster))) cancelOrdinaryRaster(true);
+                 if(world==null) return;
+                 if(Number(WorldClass["boxDamage"])!=0.2) {hud.visible=false;return;}
+                 registerSettings();
+@@ -171,10 +259,14 @@
+             lamps=LadLampCatalog.discover(loc,world.grafon,store.room(roomKey),atmosphere,roomKey,environment);
+             darkZones=atmosphere.zones(loc,roomKey,environment);
+             targetClass=ApplicationDomain.currentDomain.getDefinition("lad.native.LadLampTarget") as Class;
++            var initialRaster:Boolean=!beforeRaster && canUseOrdinaryRaster(loc,lamps);
+             if(lamps.length) {
+-                if(beforeRaster) LadLampCatalog.strip(lamps);
++                if(beforeRaster || initialRaster) LadLampCatalog.strip(lamps);
+                 else LadSceneBake.change(world.grafon,loc,function():void {LadLampCatalog.strip(lamps);},world.cam);
+             }
++            // Discover succeeded and the exact prepared set has now been stripped.
++            // Original detach can handle later failures using this populated lamps array.
++            if(initialRaster) ordinaryRaster=null;
+             for each(var lamp:Object in lamps) {
+                 lampLayer.addChild(lamp.holder);
+                 lamp.proxy=new targetClass(this,lamp,loc);
+@@ -185,6 +277,7 @@
+             LadLog.write("ATTACH room="+loc.id+" lamps="+lamps.length+" beforeRaster="+beforeRaster+" state="+LadStore.roomKey(loc));
+         }
+         private function detach(redraw:Boolean):void {
++            if(ordinaryRaster && (redraw || ordinaryRaster.loc===location)) cancelOrdinaryRaster(redraw);
+             cancelRepair();
+             if(player && player.childObjs && player.childObjs["LightAndDarknessTick"]===adapter)
+                 delete player.childObjs["LightAndDarknessTick"];
+--- a/host-proposal/fe/graph/Grafon.as
++++ b/host-proposal/fe/graph/Grafon.as
+@@ -3579,9 +3579,53 @@
+          }
+       }
+       
++      private function beginOrdinaryLampRaster(value:Location, firstRaster:Boolean) : Object
++      {
++         if(!firstRaster || this.sceneRasterizing || this.sceneRepaint || this.sceneLarge)
++         {
++            return null;
++         }
++         try
++         {
++            var carrier:Object = World.w.main.getChildByName("LightAndDarknessCarrier");
++            var api:Object = carrier == null ? null : carrier["ladAPI"];
++            var runtime:Object = api == null ? null : api["runtime"];
++            if(runtime == null || !("beginOrdinaryRaster" in runtime) || !("completeOrdinaryRaster" in runtime))
++            {
++               return null;
++            }
++            var ticket:Object = runtime.beginOrdinaryRaster(World.w,this,value,firstRaster);
++            return ticket == null ? null : {runtime:runtime,ticket:ticket};
++         }
++         catch(ignored:*)
++         {
++         }
++         return null;
++      }
++
++      private function completeOrdinaryLampRaster(preparation:Object, completed:Boolean) : void
++      {
++         if(preparation == null)
++         {
++            return;
++         }
++         try
++         {
++            preparation.runtime.completeOrdinaryRaster(preparation.ticket,completed && !World.w.verror.visible);
++         }
++         catch(ignored:*)
++         {
++            World.w.showError(ignored,"LAD ordinary raster completion");
++         }
++      }
++
+       public function drawLoc(param1:Location) : *
+       {
+          var sceneStarted:int;
++         var firstOrdinaryRaster:Boolean = param1.grafon == null && param1.spaceX <= World.cellsX && param1.spaceY <= World.cellsY;
++         var lampPreparation:Object = null;
++         var ordinaryRasterCompleted:Boolean = false;
++         var omitOrdinaryLamp:Boolean = false;
+          var transpFon:Boolean;
+          var darkness:int;
+          var tile:MovieClip;
+@@ -3625,11 +3669,14 @@
+          nloc = param1;
+          try
+          {
++         try
++         {
+             World.w.gr_stage = 1;
+             this.loc = nloc;
+             this.loc.grafon = this;
+             this.resX = this.loc.spaceX * Tile.tileX;
+             this.resY = this.loc.spaceY * Tile.tileY;
++            lampPreparation = this.beginOrdinaryLampRaster(nloc,firstOrdinaryRaster);
+             transpFon = nloc.transpFon;
+             if(nloc.backwall == "sky")
+             {
+@@ -3789,6 +3836,7 @@
+                }
+                for each(bo in this.sceneBackdropObjects(this.sceneX,this.sceneY,this.rectX,this.rectY))
+                {
++                  omitOrdinaryLamp = lampPreparation != null && lampPreparation.ticket.omit[bo] === true;
+                   if(bo.sloy == j && !bo.er || j == -2 && bo.er)
+                   {
+                      this.m = new Matrix();
+@@ -3796,7 +3844,7 @@
+                      this.m.tx = bo.X;
+                      this.m.ty = bo.Y;
+                      ct.alphaMultiplier = bo.alpha;
+-                     if(bo.vis)
++                     if(bo.vis && !omitOrdinaryLamp)
+                      {
+                         if(j <= 0)
+                         {
+@@ -3831,11 +3879,11 @@
+                            }
+                         }
+                      }
+-                     if(bo.erase)
++                     if(bo.erase && !omitOrdinaryLamp)
+                      {
+                         this.satsBmp.draw(bo.erase,this.sceneMatrix(this.m),null,"erase",null,true);
+                      }
+-                     if(bo.light)
++                     if(bo.light && !omitOrdinaryLamp)
+                      {
+                         this.colorBmp.draw(bo.light,this.sceneMatrix(this.m),ct,"normal",null,true);
+                      }
+@@ -3927,7 +3975,13 @@
+             this.sceneMaxDrawMs = Math.max(this.sceneMaxDrawMs,this.sceneDrawMs);
+          }
+          ++this.sceneRedraws;
++         ordinaryRasterCompleted = true;
+          World.w.gr_stage = 0;
++         }
++         finally
++         {
++            this.completeOrdinaryLampRaster(lampPreparation,ordinaryRasterCompleted);
++         }
+       }
+       
+       public function setLight() : *
