@@ -57,7 +57,7 @@ A 为普通入口的双人联机；B 独立架构本轮不碰。根会话 `01a08
 
 ## 6. 下一步入口
 
-1. 正式仍78C/A796/CEC6，不重复部署或把未达标首绘桥替换安装。加载主线是首次可见区域生成/同帧视觉工作；只读审查正在确认最终入口确定前是否画了旧视口，以及同次drawLoc六层backobjs重复扫描。没有证据前不改渲染行为。
+1. 正式仍78C/A796/CEC6，不重复部署或把未达标首绘桥替换安装。加载主线是首次可见区域生成/同帧视觉工作。准确Camera.calc在sceneTick前更新位置，跨房/急移重置，grant先place再allowPaint；正常路径不支持先画旧视口假说。六层backobjs重复查询存在但耗时未量化，不能据此另造微优化候选。下一有意义证据是同最终入口/视口的配对或有界实际首绘成本，不重复排查ACK/t_exit。
 2. 准确首绘产物：build/m52/recovery-room-first-raster-product-01（6D）、recovery-room-first-raster-host-current-03（FBA27）、Sandevistan/build/out/a-travel-hold-20261022-003（3E220）。循环候选loop-product-01（FBFB）已经原驱动验证但无整体收益，勿盲目重跑。两组新solo也已完成，不能当作仍在跑。
 3. 实机复用experimental/recovery-room-current-comparison/run.py，显式--product/--raster-host/--sandy-bridge/--mode；默认原scene-driver02与原run_coop_regression.py（7ECA）不改门槛。--diagnostic-driver只取阶段证据。每次新输出目录，原失败保留，当前输入变化必须准确记录。
 4. 根唯一JVM/AIR；当前无根测试。最终候选须按当前实际组合取得大图/普通分房/背景门/密集证据再部署。用户允许隔离关LAD/RV/CS，但不同组合必须单独配原生solo，不混基准。
