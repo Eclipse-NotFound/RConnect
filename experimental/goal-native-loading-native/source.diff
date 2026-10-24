@@ -1,0 +1,81 @@
+--- D:\Program Files\Steam\steamapps\common\Remains\mods\RConnect\tools\run_coop_regression.py
++++ adapted-runner.py.txt
+@@ -55,6 +55,7 @@
+     ap.add_argument('--game-root',type=Path,default=GAME)
+     ap.add_argument('--game-candidate',type=Path,help='Diagnostic-only game SWF copied into isolated instances; installation stays read-only')
+     ap.add_argument('--seconds',type=int,default=115)
++    ap.add_argument('--done',default=None,help='Additional per-role completion prefix; original DONE still required')
+     ap.add_argument('--port',type=int,default=0,help='Optional isolated test listener port; zero asks the OS')
+     ap.add_argument('--solo',action='store_true',help='Launch one offline instance; never host or connect')
+     ap.add_argument('--keep-copies', action='store_true')
+@@ -375,7 +376,7 @@
+             complete=True
+             for role,path in artifacts:
+                 content=path.read_text(encoding='utf-8',errors='replace') if path.exists() else ''
+-                if args.effects: complete=complete and 'COOP EFFECTS DONE' in content
++                if args.effects: complete=complete and 'COOP EFFECTS DONE' in content and (args.done is None or args.done+role in content)
+                 elif args.presentation: complete=complete and 'COOP PRESENTATION DONE' in content
+                 elif args.smoke: complete=complete and ('v'+args.expected_version+' initialized') in content and 'tick 200' in content
+                 else: complete=complete and 'COOP NETWORK DONE' in content and 'COOP LMG NETWORK DONE' in content and (role!='host' or ('COOP COMBAT DONE' in content and 'COOP APPEARANCE DAMAGE DONE' in content))
+--- D:\Program Files\Steam\steamapps\common\Remains\mods\RConnect\experimental\goal-ordinary-loading\run.py
++++ adapted-ordinary.py.txt
+@@ -131,7 +131,7 @@
+     ap.add_argument('--check', action='store_true')
+     ap.add_argument('--registry-wait', type=float, default=900)
+     # Retain the borrowed runner branches, but this entry admits only ordinary baseline inputs.
+-    ap.set_defaults(raster_host=None, sandy_bridge=False, diagnostic_driver=None)
++    ap.set_defaults(raster_host=str(UI_HOST), sandy_bridge=False, diagnostic_driver=None)
+     args = ap.parse_args()
+     path = (ROOT/args.product).resolve()
+     if args.diagnostic_driver is not None:
+@@ -144,7 +144,7 @@
+     before = installed()
+     assert len(before) == 22 and before['mods/Rconnect/release/RConnectMod.swf'] == BASELINE_SHA
+     assert before['pfe.swf'] == 'a796827173af7d6fab9885fb66ecc62182ab5335918a30c7cce4c44914a238b7'
+-    from bridge_inputs import verify as verify_bridge
++    verify_bridge = ui_bridge
+     host_path = (ROOT/args.raster_host).resolve() if args.raster_host is not None else None
+     bridge = verify_bridge(host_path, before, args.sandy_bridge)
+     if bridge is not None:
+@@ -172,7 +172,7 @@
+     command = [str(RUNNER), '--candidate', str(path/'RConnectMod.swf'), '--effects', '--effects-driver', str(out/'driver'),
+                '--all-mods', '--land', 'rbl', '--seconds', '600', '--expected-version', meta['version'],
+                '--private-desktop', '--defer-visible', '--wait-host-world', '--require-exclusive-air',
+-               '--registry-wait', str(args.registry_wait)]
++               '--registry-wait', str(args.registry_wait), '--done', PROBE_DONE]
+     if args.mode == 'solo':
+         command.append('--solo')
+     if bridge is not None:
+@@ -198,6 +198,7 @@
+         assert run_path.parent == ROOT/'build/cooperation' and re.fullmatch('[0-9a-f]{10}', run_path.name)
+         assert native.private_desktop and native.require_exclusive_air and not native.keep_copies
+         assert native.all_mods and native.effects and native.solo == (args.mode == 'solo')
++        assert not native.solo and native.seconds == 600 and native.done == PROBE_DONE
+         launch, stopped = record.before_launch, record.child_stopped
+ 
+         def before_launch(detail):
+@@ -218,6 +219,7 @@
+                     preference = app_root/'Local Store/ContinuousScene.preferences.json'
+                     telemetry = output/role/'mods/ModLoader/release/telemetry.json'
+                     assert preference.resolve().is_relative_to(app_root.resolve()) and not preference.exists()
++                    assert all(not (preference.parent/name).exists() for name in ("native-loading-observer.json", "native-loading-terminal.png"))
+                     assert telemetry.resolve().is_relative_to((output/role).resolve()) and not telemetry.exists()
+                     settings[role] = dict(app_id=appid, preference=str(preference), telemetry=str(telemetry))
+                 for row in settings.values():
+@@ -232,6 +234,7 @@
+ 
+         def after_stopped():
+             try:
++                collect_observer(output, out, settings, roles)
+                 if settings:
+                     checked = {}
+                     for role, row in settings.items():
+@@ -325,6 +328,8 @@
+                 save(out/(role+'-first-raster.json'), probe)
+                 result.setdefault('first_raster_diagnostics', {})[role] = sha(out/(role+'-first-raster.json'))
+             result['roles'][role] = dict(rows=rows, checks=len(re.findall(r'^COOP PASS ', text, re.M)), log_sha256=sha(run_path/(role+'.log')))
++        assert {role: result['roles'][role]['checks'] for role in roles} == {'host': 23, 'join': 12}
++        validate_observer(out, run_path, roles, settings, result)
+         memory = read(run_path/'memory-timeline.json')
+         assert not memory['stopped_for_pressure'] and not memory['stopped_for_overlap']
+         assert memory['minimum_commit_bytes'] == 512*1024**2 and not read(run_path/'air-before.json')

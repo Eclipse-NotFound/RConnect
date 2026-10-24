@@ -1,0 +1,21 @@
+{
+  "kind": "native-loading-runtime-host-verifier-v2",
+  "replacements": 2,
+  "original_sha256": "6600386fc24dfba7db84512d1d6ec11b44a386a1eb4f4782950f62d69e726c24",
+  "original_manifest_sha256": "346ccb12820fb9b45cc743fbff7ffe2c396db1d46ef746c70bcaf00855169da6",
+  "host_verifier": {
+    "build_host.py": "f9a46da85f45765d8a3a2f481648379c7cbd39e921d0704ab365d771928f2d54",
+    "activation_slots.py": "c8fc48cc206f70f238ac770cd098594debbf9964b160bf84bb32a10224cc280f",
+    "proof.diff": "fcca1bee040ba8fc905fc0e788fc4a2872ef71f1e3bd05fbc6ca615b237c2d7d",
+    "README.md": "bafbf8577caeb300d3f44e2800ba06b62b11928ffba6f0ff79747bcfcf8befc3"
+  },
+  "files": {
+    "adapted-entry.py.txt": "f4d6a69bcc05246be4695e45a37a6dca35c3d9334c1ec369d8467d55783f57b0",
+    "prepare.py": "d1cb52cd505d7ffbb677a041831ce5c075256237317d7cad041060a3faad3b8e",
+    "README.md": "7846ad71590149909601fbe60f06cf2aea1f1814b670a7e26a6fc92a72a136c1",
+    "run.py": "ccdb77959fb64890984d60b28fb99a96a8f9b7015fa3e46729d311d26de3267c",
+    "source.diff": "54e651c625b9fc560587e5bb0a0e8d6ea314436d4238c560506e8b0984d133f2"
+  },
+  "air_started": false,
+  "xml_parsed": false
+}

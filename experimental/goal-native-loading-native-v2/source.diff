@@ -1,0 +1,20 @@
+--- frozen-native/run.py
++++ native-v2/adapted-entry.py.txt
+@@ -44,7 +44,7 @@
+     finally:
+         if prior is None:sys.modules.pop('inputs',None)
+         else:sys.modules['inputs']=prior
+-    return product,load(UI_BUILD/'build_host.py','ui_runtime_host_builder'),load(PROBE_BUILD,'ui_runtime_probe_builder')
++    return product,load(V2_HOST_BUILDER,'ui_runtime_host_builder_v2'),load(PROBE_BUILD,'ui_runtime_probe_builder')
+ 
+ def semantic_admission(host,receipt,path):
+     a=read(path)
+@@ -200,7 +200,7 @@
+     global OPTIONS
+     ap=argparse.ArgumentParser(description=__doc__)
+     ap.add_argument('--product',type=Path,default=Path('build/m52/goal-native-loading-product-01'))
+-    ap.add_argument('--host',type=Path,default=Path('build/m52/goal-native-loading-host-01'))
++    ap.add_argument('--host',type=Path,default=Path('build/m52/goal-native-loading-host-03'))
+     ap.add_argument('--drivers',type=Path,default=Path('build/m52/goal-native-loading-probe-driver-01'))
+     ap.add_argument('--admission',type=Path)
+     ap.add_argument('--output',type=Path);ap.add_argument('--check',action='store_true')

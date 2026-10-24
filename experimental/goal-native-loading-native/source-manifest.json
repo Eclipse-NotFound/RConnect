@@ -1,0 +1,24 @@
+{
+  "kind": "native-loading-observer-runtime-v1",
+  "shared_replacements": 2,
+  "ordinary_replacements": 7,
+  "files": {
+    "adapted-ordinary.py.txt": "89499209c65b4f7056875bd071e0250bffdee5275cd3d366b4d0fc16b863f923",
+    "adapted-runner.py.txt": "bf189630a285261a4e49c185c903301b5a1a378e7b3596a898b6a1d125216210",
+    "private_runner.py": "1faa52d8874a06e017e3ac9fe890fe5b53b82c3962e67d769a3c2068773073d2",
+    "README.md": "8863df1a4e90222cbf2baf360f5cf4265aced4a1a939ffa7ef7785e13b7aed13",
+    "recipe.py": "ac41f5dc716c8b94218bc04e29777f2b830d088e37bb0306b74bf4e56acfffba",
+    "run.py": "6600386fc24dfba7db84512d1d6ec11b44a386a1eb4f4782950f62d69e726c24",
+    "source.diff": "ed5d39a1ca990f5f35378cef6668edb78ec45b6e747e12e70d1ae4618aa423d8"
+  },
+  "original": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-ordinary-loading\\run.py": "5613e8bca191116797bac42af1d7054cfe99516dd5a32d8f1b44168d896b3502",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\tools\\run_coop_regression.py": "7eca453b13480140da5f36bb33d2319739a927562ccafdbb61a8b20cdb5ae4d3",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-native-loading-probe\\build.py": "a909caa2a815253d84212d6191a85d413ecf2c4499f18dcc03d9704e127aa125",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-native-loading-probe\\source-manifest.json": "9bfc73c2f22c4925ae2616f3f4427071f55db55cb5fbff24f20af0a84686c28b",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-native-loading-build\\build_product.py": "69f3f1a303de78387dd243efbeb414ab83f2afe40c4964ccc2f8c01f9aaf3b68",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-native-loading-build\\build_host.py": "807b6acabbeb3c0087a76d2b9e3523de9ad029089461f574131fe019e26418ae"
+  },
+  "air_started": false,
+  "installed": false
+}
