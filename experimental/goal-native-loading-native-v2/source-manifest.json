@@ -1,6 +1,7 @@
 {
   "kind": "native-loading-runtime-host-verifier-v2",
-  "replacements": 2,
+  "replacements": 4,
+  "probe_replacements": 3,
   "original_sha256": "6600386fc24dfba7db84512d1d6ec11b44a386a1eb4f4782950f62d69e726c24",
   "original_manifest_sha256": "346ccb12820fb9b45cc743fbff7ffe2c396db1d46ef746c70bcaf00855169da6",
   "host_verifier": {
@@ -9,12 +10,21 @@
     "proof.diff": "fcca1bee040ba8fc905fc0e788fc4a2872ef71f1e3bd05fbc6ca615b237c2d7d",
     "README.md": "bafbf8577caeb300d3f44e2800ba06b62b11928ffba6f0ff79747bcfcf8befc3"
   },
+  "environment_pins": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-three-issues-native\\build.py": "8b85f7e63f4b6f4294ef25eef928f21fa5949fb06f521b6e3eaf6d662dc94944",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-three-issues-native\\environment.json": "6f2a70bbe43d6729903a0ba2577d0687206442e684d74b787b96ee2cde8eebd0",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-native-loading-probe\\build.py": "a909caa2a815253d84212d6191a85d413ecf2c4499f18dcc03d9704e127aa125",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-native-loading-probe\\adapted-build.py.txt": "409dcedb7e939b4ad7d5986d2b81a0a51f4067fd627c1defd70899b3ee60aeda",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RealisticVision\\knowledge\\experiments\\combat-render-d44-20261025\\deployment\\receipt.json": "bb713983b87cd23f238774d484480c3582384da56c2fcd0cccb282d3363d379f"
+  },
   "files": {
-    "adapted-entry.py.txt": "f4d6a69bcc05246be4695e45a37a6dca35c3d9334c1ec369d8467d55783f57b0",
-    "prepare.py": "d1cb52cd505d7ffbb677a041831ce5c075256237317d7cad041060a3faad3b8e",
-    "README.md": "7846ad71590149909601fbe60f06cf2aea1f1814b670a7e26a6fc92a72a136c1",
-    "run.py": "ccdb77959fb64890984d60b28fb99a96a8f9b7015fa3e46729d311d26de3267c",
-    "source.diff": "54e651c625b9fc560587e5bb0a0e8d6ea314436d4238c560506e8b0984d133f2"
+    "adapted-entry.py.txt": "1ece1712f31a87e1ea067eb0b4aad3bbc9729e968e396299925dc59976fafe35",
+    "adapted-probe.py.txt": "5733155e65b4b6d1695be60bf36eb91214512aaffff59c8d05fdc72dccc52448",
+    "prepare.py": "1f66991c0863d7d8eb36748893d04b997dbf274bb35348710be4a9600c8f63cc",
+    "README.md": "eaab9ac13c4736db31af430fe16c66be1e35fa3b45a01f563805003dc8ff8248",
+    "run.py": "a5b2ce70fcef52bd5960715fb0d29289f5124acf5139387db92e30aefc1782f3",
+    "runtime-environment.json": "3214299ed82486102fd118f214825da5ea48f776be1842a4aa74a4db4c104de6",
+    "source.diff": "0afb7092155eb6ff84864bc2de26414bf876cdecd6dee102f2339b253b9f2ece"
   },
   "air_started": false,
   "xml_parsed": false

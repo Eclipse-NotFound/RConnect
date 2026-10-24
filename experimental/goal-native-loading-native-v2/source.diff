@@ -9,7 +9,27 @@
  
  def semantic_admission(host,receipt,path):
      a=read(path)
-@@ -200,7 +200,7 @@
+@@ -74,7 +74,7 @@
+     missing=[str(p) for p in required if not p.is_file()]
+     if missing:raise NotReady('Missing actual outputs or independent admission: '+json.dumps(missing))
+     pb,hb,db=builders()
+-    pc=pb.verify(product);hc=hb.verify(host);dc=db.verify(driver)
++    pc=pb.verify(product);hc=hb.verify(host);dc=verify_historical_probe(db,driver)
+     pm=read(product/'prepared.json')
+     assert pm['version']=='0.2.24-nativeui1' and pm['base_sha256']==BASE_SHA
+     assert pc['candidate_sha256']!=BASE_SHA
+@@ -86,7 +86,9 @@
+     before=original.installed()
+     assert len(before)==22 and before['pfe.swf']==BASE_HOST and before['mods/Rconnect/release/RConnectMod.swf']==BASE_SHA
+     assert before['mods/Sandevistan/release/SandevistanMod.swf']==SAND
+-    assert before==pm['installation_before']==hc['installation_before']==dc['installation']
++    assert pm['installation_before']==hc['installation_before']==dc['build_environment']
++    assert before==dc['runtime_environment']
++    verify_environment_change(pm['installation_before'],before)
+     a,apins=semantic_admission(host,hc,admission)
+     pins.update(pm['reviewed_inputs']);pins.update(hc['inputs']);pins.update(dc['inputs']);pins.update(apins)
+     own=recipe.check()
+@@ -200,7 +202,7 @@
      global OPTIONS
      ap=argparse.ArgumentParser(description=__doc__)
      ap.add_argument('--product',type=Path,default=Path('build/m52/goal-native-loading-product-01'))
@@ -18,3 +38,30 @@
      ap.add_argument('--drivers',type=Path,default=Path('build/m52/goal-native-loading-probe-driver-01'))
      ap.add_argument('--admission',type=Path)
      ap.add_argument('--output',type=Path);ap.add_argument('--check',action='store_true')
+--- frozen-probe/base-inputs
++++ native-v2/base-inputs
+@@ -1,5 +1,5 @@
+ def inputs():
+- env=read(HERE/'environment.json'); assert installed()==env['installation']
++ env=read(HERE/'environment.json'); verify_environment_change(env['installation'],installed())
+  assert env['installation']['pfe.swf']==HOST_SHA
+  assert env['installation']['mods/Rconnect/release/RConnectMod.swf']==PRODUCT_SHA
+  for n,h in env['files'].items():assert sha(n)==h,n
+--- frozen-probe/probe-verify
++++ native-v2/probe-verify
+@@ -4,7 +4,8 @@
+  assert m['kind']=='native-loading-observer-v1' and c['compiled'] and c['inputs_unchanged']
+  assert c['prepared_sha256']==sha(out/'prepared.json') and c['error'] is None and c['validation_error'] is None
+  assert m['candidate_sha256']==c['candidate_sha256']==PRODUCT_SHA
+- assert m['inputs']==inputs() and m['installation_before']==c['installation_before']==c['installation_after']==installed()
++ assert m['inputs']==inputs() and m['installation_before']==c['installation_before']==c['installation_after']
++ verify_environment_change(m['installation_before'],installed())
+  assert inventory(out/'tests')==read(HERE/'source-manifest.json')['sources'];copied(out,m['files'])
+  assert len(c['commands'])==len(CASES)
+  for row,case in zip(c['commands'],CASES):
+@@ -15,4 +16,4 @@
+  for case in CASES:assert c['artifacts'][case+'/EffectsHarness.swf']==ABI_HASHES['scene/EffectsHarness.swf']
+  for v in (m,c):assert v['air_started'] is False and v['installed'] is False and v['smoothnessQualified'] is False
+  return dict(verified=True,candidate_sha256=PRODUCT_SHA,artifacts=c['artifacts'],inputs=m['inputs'],
+-  prepared_sha256=sha(out/'prepared.json'),compile_sha256=sha(out/'compile.json'),installation=installed(),smoothnessQualified=False)
++  prepared_sha256=sha(out/'prepared.json'),compile_sha256=sha(out/'compile.json'),build_environment=m['installation_before'],runtime_environment=installed(),smoothnessQualified=False)

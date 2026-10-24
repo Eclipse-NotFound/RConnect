@@ -30,6 +30,8 @@ A 为普通入口的双人联机；B 独立架构本轮不碰。根会话 `01a08
 
 当前宿主A796：`a796827173af7d6fab9885fb66ecc62182ab5335918a30c7cce4c44914a238b7`，CS于10月24日上午从ABE2独立更新Grafon两处颜色方法，回执`mods/ContinuousScene/state/scene-tint-deployment-20261024.json`已verified。前一ABE2来自Camera.calc修正，旧回执`vertical-camera-band-deployment-20261023.json`。RV于15:17左右独立部署为BF4AC9CD (`bf4ac9cd87272b03fae7ec22ee67d045f037362f412ee801cad3f9ba9fe3afef`)，其会话回执effect-load-v3-output/deployment；此前0DBE为历史组合，其余CS7F1F/SandCEC6/WB14112等未变。旧80CF/ABE2/6DBA的历史不改写、不与新宿主耗时混算。
 
+**10月25日02:39:37 RV再次独立部署**：正式RV现为 `638e2d408e2cf46683c41114f75773829a1b4417d74bffe9d08855a4fe343710` / v0.33.10-render-cache，回执 `mods/RealisticVision/state/deployment-v03310-2026-10-25.md`。根随后实际核22项仅此一项从BF4A改变，RC78C/宿主A796未改。上文截至02:37的原生测量与host03构建仍属BF4A，不能重标或将新RV速度计入RC收益。原生UI已编译产物可保留，但旧探针验证器强绑历史安装，下一测试入口须准确区分编译时与运行时环境；不伪造installed()、改旧回执或无谓重编宿主。
+
 **房间对照候选roomfix4**：`build/m52/recovery-room-production-04`，SWF `34a17de66e9a89165b4bde75d22ec1dd3d4295bb496b903124687af80422b703`，195145B；prepared093916CF，compile3CDE928E。编译时80CF/0DBE，已完成实测ABE2/0DBE须分清。源配方`experimental/recovery-room-production-v4`。roomfix5为78C052，已按用户要求部署，真实遮罩/性能仍待验证。
 来自准确aura1的11类房间修正：并行生成，未换房者不停，当前原房不自恢复，实际入口放置，绑定原生Land/Room交接与连续过门请求，READY观察标记去重、暂停时不耗跟随期限，原生加载素材与文本，地块完整标量表/准确绘制缓存。v4仅比v3删除RoomCodec每次同步文件诊断（候选误留，正式版无此日志）及改版本。房间生成/字段/伤害不删减。
 
@@ -37,6 +39,8 @@ A 为普通入口的双人联机；B 独立架构本轮不碰。根会话 `01a08
 
 ## 4. 最新实测与卡点
 
+- **03:07停点与独立推进**：原生UI宿主03根语义审查已保存 `root-semantic-review.md`，但写 `runtime-admission.json` 的准确混合命令被护栏误判SWF写入；用户精确授权问题仍待答，不可自行维护表/换工具绕过。`goal-native-loading-native-v2` 已在根明确重开后冻结为A5B2CE70、清单7D62B3D6；保留4dc936f旧形态，原真实installed不改，严格分开历史BF4A和当前638E，21项不变、RV准确回执固定。三份实际产物只读验证通过，根实跑--check仍明确仅缺准入JSON，未启动双人。授权到达后执行原被拒命令、撤销精确grant，然后该v2的--check与原35+11实机入口，不重编宿主。
+- **自身快照裁剪组件实际100/100**：`experimental/goal-self-echo-prune` 冻结清单1FDD8C00；生产只改Session和版本selfecho1，79类不变。唯一开放认证连接与唯一peer精确对应时，仅发送给本人的snap改null，保留id/name/名单、原peer.snap和全部广播时序/事件。原完整两方法+真实编解码/HostServer组件 `goal-self-echo-prune-component-01` / a72f84aecffc4246a88f4c308ed542a3 已通过，SWF A4757765，JVM/AIR退出、源码和当前638E组合22安装未变。非真实TCP/游戏/性能资格，完整产品未编，后续需在新环境做单变量对照。不能合并旧传输提案中的取消收包广播改动。
 - **10月25日02:45最新接续**：78C回测 `goal-three-issues-native-held-baseline-02` / 0bde20bba6 原43/42和四段测量通过，延迟110/110/110/100ms，旧170ms未复现；新运动v2的独有收益不成立，后半掉帧风险保留。独立探索noop产品1B921137、`goal-exploration-noop-native-held-01` / 54916ecb8b 同样43/42通过，延迟110/130/110/110；加入加权fps14.87→15.75，但主15.54→14.53，不能授整体性能或部署资格。两个新运行均完整、无压力/重叠中断，准确14模组/原驱动/22安装不变、已清理。
 - **真正原生加载UI已编译，尚待双人**：产品 `goal-native-loading-product-01` 为9C8536A7，宿主 `goal-native-loading-host-03` 为2DB0B4EB，实际保留审计和根/独立代理P-code核对通过；探针driver01为877B05DA。host01被JPEXS正常日志写权限拒，host02因证明器不认识0xB0拒；host03独立V2只补二元比较的栈语义，未放宽检查。实际原exitStep只加t16尾调用、两个Boolean缺参均false，其余3275方法/资源保留。`goal-native-loading-native-v2`冻结，仅替换宿主验证器/host03，原35+11/600秒检查保持。根语义记录已写，保存runtime-admission.json的混合读哈希/写JSON命令被本机护栏误判SWF部署；精确授权问题待答，不绕过、不改安装。
 - **普通生成已经重叠**：ordinary-dual-02 首程宿主exit20→19为6680ms、加入6766ms，整程仅7488/7519ms；二者不可能串行相加，种子hook在生成主体前发送prepare。缺实际首帧vwait可见证据由新探针补；不要再把普通首入误判为宿主生成完才通知加入。原生生成期间视觉模组仍计入，尚不能归纯地图算法。

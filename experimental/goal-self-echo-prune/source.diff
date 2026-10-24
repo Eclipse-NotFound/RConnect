@@ -1,0 +1,31 @@
+--- production05/src/RConnectMod.as
++++ overlay/src/RConnectMod.as
+@@ -26,7 +26,7 @@
+    public class RConnectMod
+    {
+       // Working M46 core after the separate 0.2.17 compact HUD release.
+-      public static const VERSION:String = "0.2.24-roomfix5";
++      public static const VERSION:String = "0.2.24-selfecho1";
+ 
+       public static var instance:RConnectMod;
+ 
+--- production05/src/rconnect/core/Session.as
++++ overlay/src/rconnect/core/Session.as
+@@ -1208,9 +1208,16 @@
+          var players:Array = [];
+          var selfSnap:Object = mod.game != null ? mod.game.readSnapshot() : null;
+          players.push({id: 0, name: myName, snap: selfSnap});
++         // With one authenticated recipient, its own snapshot is never
++         // consumed. Keep the roster and the host's stored peer state intact.
++         var recipient:TcpLink = peers.length == 1 && server.clients.length == 1
++            ? server.clients[0] as TcpLink : null;
++         var omitOwnSnapshot:Boolean = recipient != null && recipient.isOpen
++            && recipient.id > 0 && peers[0].link === recipient
++            && int(peers[0].id) == recipient.id;
+          for each(var p:Object in peers)
+          {
+-            players.push({id: p.id, name: p.name, snap: p.snap});
++            players.push({id: p.id, name: p.name, snap: omitOwnSnapshot ? null : p.snap});
+          }
+          var ws:Object = Protocol.make(Protocol.MSG_WORLDSTATE,
+             {tick: _tickCount, players: players});

@@ -1,0 +1,13 @@
+{
+  "frozen": true,
+  "scope": "goal-self-echo-prune only",
+  "base_product": "78C052AE",
+  "production_changes": ["Session", "version"],
+  "expected_component_checks": 100,
+  "compiled_here": false,
+  "air_started_here": false,
+  "installed": false,
+  "current_environment_bound": false,
+  "performance_qualified": false,
+  "rule": "After root receives hashes, report findings without editing. Only explicit root instructions reopen scope."
+}

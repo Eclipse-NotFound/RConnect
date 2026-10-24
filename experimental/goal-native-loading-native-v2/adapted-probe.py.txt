@@ -1,0 +1,60 @@
+# base historical inputs
+def inputs():
+ env=read(HERE/'environment.json'); verify_environment_change(env['installation'],installed())
+ assert env['installation']['pfe.swf']==HOST_SHA
+ assert env['installation']['mods/Rconnect/release/RConnectMod.swf']==PRODUCT_SHA
+ for n,h in env['files'].items():assert sha(n)==h,n
+ assert sha(BASE/'prepared.json')=='677fabc0191e7809d588d2ce3b64f02c8de119131e7db46b1624d314bfa22a5b'
+ for n,h in ABI_HASHES.items():assert sha(ABI/n)==h,n
+ pm,pc=read(PRODUCT/'prepared.json'),read(PRODUCT/'compile.json')
+ assert pc['compiled'] and pc['candidate_sha256']==PRODUCT_SHA and sha(PRODUCT/'RConnectMod.swf')==PRODUCT_SHA
+ assert pc['sources_unchanged'] and pc['installation_unchanged']
+ assert pc['installation_before']==pc['installation_after']==pm['installation_before']
+ assert len(pc['commands'])==2 and all(x['exit_code']==0 for x in pc['commands'])
+ assert inventory(PRODUCT/'src')==pm['source'] and inventory(PRODUCT/'tools')==pm['inputs']
+ sm=read(HERE/'source-manifest.json');assert inventory(HERE/'tests')==sm['sources']
+ assert sm['generator_sha256']==sha(HERE/'generate.py') and sm['diff_sha256']==sha(HERE/'source.diff')
+ for n,h in sm['original'].items():assert sha(BASE/'tests'/n)==h,n
+ paths=[HERE/'environment.json',HERE/'source-manifest.json',HERE/'generate.py',HERE/'source.diff',
+  HERE/'build.py',HERE/'run.py',HERE/'analyze.py',PRODUCT/'prepared.json',PRODUCT/'compile.json',PRODUCT/'RConnectMod.swf',
+  JAVA,SDK/'lib/mxmlc.jar',SDK/'frameworks/air-config.xml',SDK/'frameworks/libs/air/airglobal.swc']
+ paths+=list((HERE/'tests').rglob('*.as'))+[ABI/n for n in ABI_HASHES]+[Path(n) for n in env['files']]
+ return {str(p.resolve()):sha(p) for p in sorted(set(paths))}
+
+
+# unchanged probe inputs
+def inputs():
+    pins=base.inputs()
+    prepare.check()
+    assert (HERE/'adapted-build.py.txt').read_text('utf8')==adapted_source()
+    ordinary_path=HERE.parent/'goal-ordinary-loading/run.py'
+    assert sha(ordinary_path)=='5613e8bca191116797bac42af1d7054cfe99516dd5a32d8f1b44168d896b3502'
+    ordinary=load(ordinary_path,'loading_probe_original_ordinary_binding')
+    pins.update(ordinary.inputs(PRODUCT)[2])
+    m=read(HERE/'source-manifest.json')
+    paths=[HERE/n for n in ('build.py','prepare.py','README.md','source-manifest.json','source.diff','adapted-build.py.txt')]
+    paths+=list((HERE/'tests').glob('*.as'))+[Path(p) for p in m['original']]
+    for p in paths:pins[str(p.resolve())]=sha(p)
+    return pins
+
+
+# historical probe verify
+def verify(out):
+ out=Path(out).resolve();assert out.parent==M52
+ m,c=read(out/'prepared.json'),read(out/'compile.json')
+ assert m['kind']=='native-loading-observer-v1' and c['compiled'] and c['inputs_unchanged']
+ assert c['prepared_sha256']==sha(out/'prepared.json') and c['error'] is None and c['validation_error'] is None
+ assert m['candidate_sha256']==c['candidate_sha256']==PRODUCT_SHA
+ assert m['inputs']==inputs() and m['installation_before']==c['installation_before']==c['installation_after']
+ verify_environment_change(m['installation_before'],installed())
+ assert inventory(out/'tests')==read(HERE/'source-manifest.json')['sources'];copied(out,m['files'])
+ assert len(c['commands'])==len(CASES)
+ for row,case in zip(c['commands'],CASES):
+  assert row['case']==case and row['command']==command(out,case)
+  assert row['exit_code']==0 and row['reaped'] and isinstance(row['pid'],int) and row['pid']>0
+ assert set(c['artifacts'])=={case+'/'+n for case in CASES for n in ('EffectsDriver.swf','EffectsHarness.swf')}
+ for n,h in c['artifacts'].items():assert sha(out/n)==h,n
+ for case in CASES:assert c['artifacts'][case+'/EffectsHarness.swf']==ABI_HASHES['scene/EffectsHarness.swf']
+ for v in (m,c):assert v['air_started'] is False and v['installed'] is False and v['smoothnessQualified'] is False
+ return dict(verified=True,candidate_sha256=PRODUCT_SHA,artifacts=c['artifacts'],inputs=m['inputs'],
+  prepared_sha256=sha(out/'prepared.json'),compile_sha256=sha(out/'compile.json'),build_environment=m['installation_before'],runtime_environment=installed(),smoothnessQualified=False)
