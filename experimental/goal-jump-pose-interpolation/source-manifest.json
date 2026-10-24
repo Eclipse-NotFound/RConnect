@@ -1,0 +1,40 @@
+{
+  "kind": "native-jump-pose-source-only",
+  "compiled": false,
+  "native_tested": false,
+  "performance_qualified": false,
+  "expected_component_assertions": 72,
+  "base_product_sha256": "78c052aea963f1689b705ae1e14d274916ae1a1f7e81933390caf8d1a88f4699",
+  "base": {
+    "rconnect/game/GameBridge.as": "f7016bfd096ca3c88ea1214733117758b1998b579ec6f3ca9fc9332b605011a9",
+    "rconnect/game/RemoteMotion.as": "19f035bfccb5a035fdb9df84c364db3a2eb845e2c002d825f8ed0665517174aa"
+  },
+  "read_only_sources": {
+    "rconnect/core/Session.as": "14aac9a684133740b95a4bbe3cbcec9f03095965496c292b2d9ffeb54d9f453d",
+    "rconnect/net/Protocol.as": "9655eb28a4c417750bbbf318a0ce20bd485080051447c0caf0500ce76218b39d",
+    "rconnect/net/BinaryMessageCodec.as": "001479db144318320669ce3d89e6c275c210a7d81b9e6f116cdb58e6091376f1",
+    "rconnect/net/TcpLink.as": "b7ab3b85e9d97a3096c2ceb466515bdade58f705ac8585b96984c435a3359a5a",
+    "rconnect/game/TeleportVisuals.as": "ec323ce52b1926e6cb1c98e722c78544cd396fa5b3661ba257111b4b703c272c"
+  },
+  "weapon_fixture": {
+    "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-motion-clock-v2\\components\\rconnect\\game\\WeaponDisplay.as",
+    "sha256": "0dcf6e87b9ec18737227aa0bbbfc1053bde0cb7e523c7d47e7e62f854f6b0ddc"
+  },
+  "files": {
+    "components/JumpPoseChecks.as": "c91be0a670ee976bac5ef95480e0a3391a392102abe56cb246eae7743a21faf0",
+    "components/rconnect/game/ControlRemoteMotion.as": "1a0b6d80d0ac797cb37b4b5ca3b4419911097354bcfec053aa5a5f43bf63429e",
+    "components/rconnect/game/NativeJumpPose.as": "5dd527322af0041a0f85ee1c728287daa973678201c8bea82abe1372abbc1dc0",
+    "components/rconnect/game/RemoteMotion.as": "0e47f36b77c9d53a3650e4e55a855211d220a6043407207d5af5b9da93155b08",
+    "components/rconnect/game/TeleportVisuals.as": "9efc28c0fccd743cc615ebcaccff57f7ab64679326a301f35bb0cbbb2811f259",
+    "components/rconnect/game/WeaponDisplay.as": "0dcf6e87b9ec18737227aa0bbbfc1053bde0cb7e523c7d47e7e62f854f6b0ddc",
+    "components/rconnect/net/BinaryMessageCodec.as": "001479db144318320669ce3d89e6c275c210a7d81b9e6f116cdb58e6091376f1",
+    "components/rconnect/net/Protocol.as": "9655eb28a4c417750bbbf318a0ce20bd485080051447c0caf0500ce76218b39d",
+    "prepare_sources.py": "c5732f3284db46fb0858a0555e67d5fee4931b365cc8d319d749cd884ea1c83b",
+    "read_trace.py": "d183b088e2802cdea8438efe1450c45d622185786fb711218522585e897d7490",
+    "README.md": "d078351042f0e29ebe74ca9e8df7a3f5c4fdaf10f16e38c379d837e9c5f29942",
+    "source.diff": "1f8508c422f454448f59ed668bd40e7daf0db1c34c760ab963da4d359155a242",
+    "src/rconnect/game/GameBridge.as": "603f0f7b3d3623ef0b4de0d55b5436eec6e2547e771a6a3db059b0420ded9d65",
+    "src/rconnect/game/NativeJumpPose.as": "5dd527322af0041a0f85ee1c728287daa973678201c8bea82abe1372abbc1dc0",
+    "src/rconnect/game/RemoteMotion.as": "0e47f36b77c9d53a3650e4e55a855211d220a6043407207d5af5b9da93155b08"
+  }
+}
