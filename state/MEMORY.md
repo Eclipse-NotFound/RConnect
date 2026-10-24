@@ -20,6 +20,8 @@ A 为普通入口的双人联机；B 独立架构本轮不碰。根会话 `01a08
 
 ## 3. 实际安装与候选
 
+**独立 B 会话补充（2026-10-25）**：原 `build/ab/b3-playable-190` 已更新窄修 `B3-0.1-startup2` / SWF `2c536b5d`，修复大旧档加入失败及取消/失败后 TDFC 接口未释放。49 项专项＋部署后双侧 22 项通过，原 Player-1/2 与存档 ID 保留；普通 A 不受本次更新影响，B195 未晋升，未重跑 B 全套性能。回执 `build/ab/b190-startup2-deploy-20261025-01/deployment.json`；详情及回滚见 `state/b190-startup-repair-2026-10-25.md`。用户已保存退出旧 B 窗口，本次全部自有 AIR/JVM 已结束，测试副本清理约 313 MB；A 后续占用仍以共享登记和当时进程核验为准。
+
 正式RC：`0.2.24-roomfix5`，`release/RConnectMod.swf` SHA `78c052aea963f1689b705ae1e14d274916ae1a1f7e81933390caf8d1a88f4699`，195147B。
 用户要求先部署后继续；回执`build/m52/recovery-room-user-deploy-01/deployment.json` SHA16EF10BA，22项仅RC变化；同目录备份DF0F/aura1。执行脚本原字节冻结deploy-executed.py（639166DB），随后维护源失败路径已加固但未重跑。安装后单实例smoke ed2fa23d99已通过：78C准确字节、14模组初始化、tick200及日志检查；installed-smoke.json SHA BCAD4048，独立副本已清理，仅启动资格。性能资格仍false。准确产品源/编译在recovery-room-production-05，不是历史src/dev版本。
 此前aura1回执recovery-aura-offline-deploy-02，smoke7d45932e01及EB365备份保留；上一层574D见recovery-offline-deploy-01。房间修正本次首次交付，高速运动等尚未全交付。
@@ -36,7 +38,7 @@ A 为普通入口的双人联机；B 独立架构本轮不碰。根会话 `01a08
 ## 4. 最新实测与卡点
 
 - **10月25日三项目标接续**：正式仍78C/A796。实际用户帧记录与最近一次初始化日志已只读冻结于 `build/m52/goal-three-issues-user-session-01`；两端最后版本roomfix5。会话先合并图term2，后普通图term4，不能整段归一种场景；普通term4宿主记录7072ms、加入恢复1271ms。帧记录两个300窗口仅约51秒重叠，前后台差异明显，不能整体对比当同负载，更不能以Y位移证明跳跃。
-- **RemoteMotion最小候选已编译**：`goal-remote-motion-current-product-01`，89F1B923/195230B/0.2.24-motionclock1，仅两函数及版本号，其余79类不变，两Java与源/安装复验通过，未部署。旧类准确对应历史31/6，新类准确对应37/0；本轮组件和真实运动测试尚未跑。本机gg不走该插值，本机掉帧需独立测量，不声称一并修复。
+- **RemoteMotion最小候选已编译**：`goal-remote-motion-current-product-01`，89F1B923/195230B/0.2.24-motionclock1，仅两函数及版本号，其余79类不变，两Java与源/安装复验通过，未部署。旧类准确对应历史31/6，新类本轮37组件全部通过；真实双人运动尚未跑。本机gg不走该插值，本机掉帧需独立测量，不声称一并修复。
 - **玩家已退出后恢复测试**：00:17两B190试玩仍在，随后B会话收到用户保存退出确认，根提升CIM核实退出；不重复提问。沙箱内进程空数组曾是假阴性，运行器在提升上下文核独占。新37组件全部通过；普通solo92ec33a932完成11检查，10.431/5.551/6.897s、首程exit20→19最大6587ms，源/输入不变，无压力或重叠停止。不能与旧合并图混比。普通dual232889205c排到后无其他AIR但仅5.83GiB，未启动，失败保留；3/6GiB门槛不变。
 - **已安装版**78C/roomfix5 的当前全14组合三程双人7cadcc8267与单人fc4111c750均通过；双侧房间/入口/控制一致，但加入大图首入15.068、重访8.208秒，单人6.642/3.101，未达目标。原生“加载中”素材取代自定义交接UI；本轮没有再部署相同字节。
 - **新首绘桥已完成并实跑**：6D/roomload1 + FBA27宿主 + Sand003（3E220）。原驱动384e92463c双41项通过，主10.152/2.545/5.588秒、加10.153/2.423/5.772；两次真实constructed/activated同票据，三程入口差1/0/1px。首入/重访总耗时明显减少，但主侧自身慢了，仍未达到单人速度，未部署。
@@ -61,6 +63,7 @@ A 为普通入口的双人联机；B 独立架构本轮不碰。根会话 `01a08
 ## 6. 下一步入口
 
 0. 当前先执行三项目标入口：`experimental/goal-ordinary-loading`（普通三程）、`goal-three-issues-native`（原生跳跃/抓取测量）、`goal-remote-motion-current`（已冻/已编最小运动候选）。原两B玩家窗口已退出；37组件和普通solo已完成，dual232889205c因5.83GiB未启动，下一新输出仍用原共享队列/内存/独占门槛。详细边界见three-performance-goals记录，不把下面历史合并图路径当成唯一目标。
+   最新：轻量组合 `goal-ordinary-reduced-solo-02` / 7ad109f075实际通过14旅行检查和11模组真实加载核验，8.616/3.968/4.941s；出生/单位数不同，不能量化单模组收益。01为AIR前选择器PID历史兼容失败，原证据保留。之后内存恢复7.3GiB，原生跳跃基线74932502cf已排队等已登记RV测试，尚无结果；不继续沿用低内存结论。
    测量驱动实际成功目录为 `build/m52/goal-three-issues-native-drivers-02`（跳跃9EE16FA6、抓取FEF72AB4）；01的Flex返回分析编译失败保留。02仅改focused的默认return位置，两Java成功、四种78C/89F1×场景准入通过，未AIR。不要按README首次示例误用01。普通入口只读准入通过，可独立solo/dual。
 1. 正式仍78C/A796/CEC6，不重复部署或把未达标首绘桥替换安装。加载主线是首次可见区域生成/同帧视觉工作。准确Camera.calc在sceneTick前更新位置，跨房/急移重置，grant先place再allowPaint；正常路径不支持先画旧视口假说。六层backobjs重复查询存在但耗时未量化，不能据此另造微优化候选。下一有意义证据是同最终入口/视口的配对或有界实际首绘成本，不重复排查ACK/t_exit。
 2. 准确首绘产物：build/m52/recovery-room-first-raster-product-01（6D）、recovery-room-first-raster-host-current-03（FBA27）、Sandevistan/build/out/a-travel-hold-20261022-003（3E220）。循环候选loop-product-01（FBFB）已经原驱动验证但无整体收益，勿盲目重跑。两组新solo也已完成，不能当作仍在跑。
