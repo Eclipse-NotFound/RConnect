@@ -1,0 +1,11 @@
+--- frozen-lamp/adapted-ordinary.py.txt
++++ lamp-diagnostic/adapted-ordinary.py.txt
+@@ -219,7 +219,7 @@
+                     preference = app_root/'Local Store/ContinuousScene.preferences.json'
+                     telemetry = output/role/'mods/ModLoader/release/telemetry.json'
+                     assert preference.resolve().is_relative_to(app_root.resolve()) and not preference.exists()
+-                    assert all(not (preference.parent/name).exists() for name in ("native-loading-observer.json", "native-loading-terminal.png", "LightAndDarkness.log"))
++                    assert all(not (preference.parent/name).exists() for name in ("native-loading-observer.json", "native-loading-terminal.png", "LightAndDarkness.log", "ordinary-lamp"))
+                     assert telemetry.resolve().is_relative_to((output/role).resolve()) and not telemetry.exists()
+                     settings[role] = dict(app_id=appid, preference=str(preference), telemetry=str(telemetry))
+                 for row in settings.values():

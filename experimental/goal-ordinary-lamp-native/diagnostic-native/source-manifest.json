@@ -1,0 +1,23 @@
+{
+  "kind": "ordinary-lamp-diagnostic-native-v1",
+  "replacements": 1,
+  "original": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-ordinary-lamp-native\\run.py": "c3a0a36d2ab28e4dd7200463a21fb37b9924df395697987fa79b0d693d6e3652",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-ordinary-lamp-native\\source-manifest.json": "c20133bbe417eb6bddbfdf6bc2f1afa085b6be71fa0310a0881afeaa241e84af",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-ordinary-lamp-native\\diagnostic-build.py": "74fccc7726f39fabf06b26e178ceb3ba850d7f3f61654d79c07e2cb835fdd307",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-ordinary-lamp-native\\diagnostic-src\\source-manifest.json": "5e92b51563e349b621ed0f5e0da0180993030410e3ddd5a65911b0b1365524d4",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\goal-ordinary-lamp-diagnostic-driver-01\\prepared.json": "95fa79ec94449c1f56cc88f2542ec138f5edcae90b51d60ce5a3b53f8c6cf595",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\goal-ordinary-lamp-diagnostic-driver-01\\compile.json": "52a7637011998eebcc250da79b3cef1e7616956b6dbf5499a85edef372a8c6a8",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\goal-ordinary-lamp-host-03\\runtime-admission.json": "e08a39a170353ffe1acc6a77457aa89f56be7a61c393bdd8b11bbe7f64cfb205"
+  },
+  "files": {
+    "run.py": "3ab7eca38b2c716becd4e8fa1e60cb851614c513c50c8cf7e4d5485b2f3c92ca",
+    "README.md": "986d1d107c61a2a0dde06cfb9a87ce1cb396937665de4294141eec311a2595de",
+    "adapted-ordinary.py.txt": "ddf14f4fbf4af4d824d2625e31ca7ef91508123161a0fb7e8c04420f2b23f5b7",
+    "source.diff": "48d5fcfdd93be9a22bfbb74aa53bb3d0c41b0bf53fe3b2321123fdc41762c3db"
+  },
+  "air_started": false,
+  "installed": false,
+  "diagnosticOnly": true,
+  "performanceQualified": false
+}
