@@ -1,0 +1,24 @@
+--- frozen/v5-build.py
++++ DIAGNOSTIC_ONLY/bounded-build.py
+@@ -40,18 +40,18 @@
+     assert sha(BASE/'RConnectMod.swf')==receipt['base_sha256']
+     assert inventory(HERE/'src')=={k:v['candidate_sha256'] for k,v in receipt['changes'].items()}
+     before=installation()
+-    assert before['mods/Rconnect/release/RConnectMod.swf']==receipt['base_sha256']
++    assert before['mods/Rconnect/release/RConnectMod.swf']==receipt['installed_base_sha256']
+     shutil.copytree(BASE/'src',out/'src')
+     shutil.copytree(BASE/'tools',out/'tools')
+     for rel in receipt['changes']:
+         p=out/'src'/rel
+         p.parent.mkdir(parents=True,exist_ok=True)
+         shutil.copyfile(HERE/'src'/rel,p)
+-    meta=dict(kind='room-repair-overlay', version=receipt['version'], base_sha256=receipt['base_sha256'],
++    meta=dict(kind='terrain-reuse-diagnostic-overlay', diagnostic_only=True, performance_qualified=False, version=receipt['version'], base_sha256=receipt['base_sha256'],
+               source=inventory(out/'src'),inputs=inventory(out/'tools'),installation_before=before,
+               overlay_manifest_sha256=sha(HERE/'source-manifest.json'),recipe_sha256=sha(Path(__file__)))
+     save(out/'prepared.json',meta)
+-    result=dict(compiled=False,commands=[],installation_before=before,air_started=False,installed=False)
++    result=dict(diagnostic_only=True,performance_qualified=False,compiled=False,commands=[],installation_before=before,air_started=False,installed=False)
+     try:
+         with Registration(owner='RConnect / 房间修复', purpose=receipt['version']+' isolated compile',
+                           run_dir=out,evidence=out/'compile.json',wait=args.registry_wait) as reg:

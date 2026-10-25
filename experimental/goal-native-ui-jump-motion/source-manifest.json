@@ -1,0 +1,28 @@
+{
+  "kind": "native-ui-jump-motion-v1",
+  "main_replacements": 3,
+  "run_replacements": 3,
+  "selector_replacements": 1,
+  "files": {
+    "run.py": "5d6acc7c71568bd02c1fc3e8735122cca36de638558ac61e0cc34fb758383cd6",
+    "selector.py": "796734d0b2835026db6b28d36089ea45a6dc2f5d10a773308120ca068c514329",
+    "README.md": "c6e7876a30bd28377b93845f30b3d5dfb527020481f0cc81c192dab2bf9d2caf",
+    "adapted-main.py.txt": "e0503b767b64fb8d20b76725b5c15e81ac643aa0860b2f49d1fc6ca8386b4b6a",
+    "adapted-run.py.txt": "592807a261d776b270be0ae0860a5646410f6ff0e5258c949876e7edc5834805",
+    "adapted-selector.py.txt": "378393005ddb62a09bb17701fe3d2051a313dfd54d7b55ed893b6393736637e8",
+    "source.diff": "f4e957b1bd6568ca57887a27d415cf613803a4565afd2c28263fdad64ef8fbae"
+  },
+  "inputs": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-rconnect-only-motion\\run.py": "48ac67625a3e5d2dd107dda658e6fea66134f5845ccd8038256bf7dedf60f945",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-rconnect-only-motion\\source-manifest.json": "782d19b8f2aa59d8b18968de7c8961c9023ec4d27a7720361a129ca9937f26f5",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-native-ui-jump-loading\\run.py": "2e74195a952852eed6d1008cfb21aa837f8fcbb8d7e4ff863d90a03d8f42d73e",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-native-ui-jump-loading\\runtime-manifest.json": "78860996247a5560257c7dc2c3f8c9051ad268d39716ecf8c8ed6b3d5d43dac1"
+  },
+  "enabled": [
+    "RConnectMod"
+  ],
+  "compiled": false,
+  "air_started": false,
+  "performanceQualified": false,
+  "smoothnessQualified": false
+}

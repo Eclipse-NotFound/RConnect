@@ -1,0 +1,89 @@
+{
+  "kind": "native-ui-jump-loading-source-v1",
+  "source_count": 3,
+  "prepare_sha256": "7afe86f771f0e6909b7f5e9bc52903e514f722b633cbdba3a2c3775f922863d6",
+  "sources": {
+    "RoomTravelTimingTestDoc.as": "df751561210de1fbe93e34873ac6e3fe91f3379869fade9fb9a17b929c4c3719",
+    "NativeLoadingProbe.as": "da08f9fa8dd869fdab9e0326adf85f6a71f6f60b4fb743c75be42c4b7bb3d8a5",
+    "A22RoomMetrics.as": "314823fd0fcd04e71277dcd3e8ee1a647317e611c5ff7b8fb0e7058c25179d6e"
+  },
+  "original_sources": {
+    "RoomTravelTimingTestDoc.as": "ebe117b2b391a396eb83c79a616580b07bd7305b601b83acd9ca007e359e592c",
+    "NativeLoadingProbe.as": "0bd3c84f3a48487ae9b9e0d651e2a901873913eba737622c2833edbc2cf64b92",
+    "A22RoomMetrics.as": "314823fd0fcd04e71277dcd3e8ee1a647317e611c5ff7b8fb0e7058c25179d6e"
+  },
+  "derived_sources": {
+    "RoomTravelTimingTestDoc.as": "df751561210de1fbe93e34873ac6e3fe91f3379869fade9fb9a17b929c4c3719",
+    "NativeLoadingProbe.as": "789df7a19eece9915de31bafbb75cf50b645d9b8b331d07dc195701c76544238",
+    "A22RoomMetrics.as": "314823fd0fcd04e71277dcd3e8ee1a647317e611c5ff7b8fb0e7058c25179d6e"
+  },
+  "derived_driver_inputs": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-rconnect-only-loading\\prepare.py": "f837761c441b28acf7a62b1459476fe96af5f9cc177a176f4dde8430025f7870",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-rconnect-only-loading\\build.py": "09edaf5a150364157a92129f57850283df1040cb6efebc1c906cebeae79c3755",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-rconnect-only-loading\\source-manifest.json": "2b836f0061114bfa73897c7fa1a899afc83d0360964c7ed6cd404727aad7a304",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\goal-rconnect-only-loading-driver-01\\prepared.json": "bf010c1c72d8f298d6fde9ac8020280c22ba52c91064e2ff77707ec316e9ee48",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\goal-rconnect-only-loading-driver-01\\compile.json": "43585b0e7aa9f3970cde0f70cee518a1689563f4346af9a5755458953d01d6e4",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\goal-rconnect-only-loading-driver-01\\timing\\EffectsDriver.swf": "908df50519b96ff1299335bfa4a1da89a6efc193e0c214292eb77314714ee01c",
+    "C:\\Users\\hello\\Documents\\_sandevistan_dev\\jdk-11.0.32.1+1-jre\\bin\\java.exe": "9fcc7d5d43918e389df240d44601c98a4d3aa9e7d0cbbd6d208304e0b574c7e2",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\ModLoader\\tools\\test_registry.py": "8b35a6d6ca1dd94cfd5cba9a42979ebd14d9ae65497688fa859d084425922049",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\goal-native-loading-probe-driver-01\\compile.json": "02f8efa0c92a6ee964de0e0c87b360387dedf73c1d03e04b61461bc393875045",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\goal-native-loading-probe-driver-01\\GameCombatStubs.swc": "8aa240ed77522ded5236440b29b48d90f65b1c0bc971f21984b81ec1cd0ba61a",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\goal-native-loading-probe-driver-01\\prepared.json": "562bb57f0640eefb4f89fa2799fd52918baec49cdab42c434808a21c36840ca9",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\goal-native-loading-probe-driver-01\\ProductionDeclarations.swc": "598d39851de4299046148815f2b2b7b1a88379faa2981a114565f111408882a7",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\goal-native-loading-probe-driver-01\\tests\\A22RoomMetrics.as": "314823fd0fcd04e71277dcd3e8ee1a647317e611c5ff7b8fb0e7058c25179d6e",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\goal-native-loading-probe-driver-01\\tests\\NativeLoadingProbe.as": "0bd3c84f3a48487ae9b9e0d651e2a901873913eba737622c2833edbc2cf64b92",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\goal-native-loading-probe-driver-01\\tests\\RoomTravelTimingTestDoc.as": "ebe117b2b391a396eb83c79a616580b07bd7305b601b83acd9ca007e359e592c",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\goal-native-loading-probe-driver-01\\timing\\EffectsHarness.swf": "d52ef4300c7d472ee05884d7b4709f4abf80b3e6ff935b695a9ed986db021086",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-ordinary-lamp-native\\diagnostic-build.py": "74fccc7726f39fabf06b26e178ceb3ba850d7f3f61654d79c07e2cb835fdd307",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-rconnect-only-loading\\README.md": "5c7dd7cc25ff8cdccf6dde0866fd81c128c69ddab6650b5317a2942f75eae6f6",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-rconnect-only-loading\\source.diff": "e4f9e8e8448e776bd4d35850b25df52512d8ea3f9a9d5d809b9517309a992696",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-rconnect-only-loading\\tests\\A22RoomMetrics.as": "314823fd0fcd04e71277dcd3e8ee1a647317e611c5ff7b8fb0e7058c25179d6e",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-rconnect-only-loading\\tests\\NativeLoadingProbe.as": "789df7a19eece9915de31bafbb75cf50b645d9b8b331d07dc195701c76544238",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-rconnect-only-loading\\tests\\RoomTravelTimingTestDoc.as": "df751561210de1fbe93e34873ac6e3fe91f3379869fade9fb9a17b929c4c3719",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\tools\\validation\\prepare_security_terminals.py": "5d156d663f616baf793b03ca183388951a10375a5d11e561e81c2b81ab7e13b5",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\tools\\validation\\run_security_terminals.py": "4e4ad73dd0f8df69db5c0c11f6c2c1c94c96fb1235dbaa1aad18caaf9877b9cb",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\tools\\validation\\runtime_memory.py": "d4894962771929b5b88f1d123c3603221dab06294657d33bc6229a2282fbf8f6",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\Sandevistan\\build\\tools\\flexsdk\\frameworks\\air-config.xml": "32e0c27a7135fe731e6fbc24152da18195b4738ea6e187ff6d1742ab1fd36680",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\Sandevistan\\build\\tools\\flexsdk\\frameworks\\libs\\air\\airglobal.swc": "e0f81fdb2029d2bb16e6987c8d85d4eba5eedfa3a23ed6e7f780bf6eb67b0546",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\Sandevistan\\build\\tools\\flexsdk\\lib\\mxmlc.jar": "cc07d749e376715e650271a9875289e49d94234902fff5e5fae287c478c8557b",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\goal-rconnect-only-loading-driver-01\\timing\\EffectsHarness.swf": "d52ef4300c7d472ee05884d7b4709f4abf80b3e6ff935b695a9ed986db021086"
+  },
+  "derived_driver_sha256": "908df50519b96ff1299335bfa4a1da89a6efc193e0c214292eb77314714ee01c",
+  "source_diff_sha256": "d905bd0a03b6e3acdbc6e931373ecf6255326838e8f9a762403553c87932cd41",
+  "runtime_environment": {
+    "mods/AddictionSystem/release/AddictionSystemMod.swf": "5a4d9a405777867826061bb50178df931591987ea0737580bd0aa8a89458b9b3",
+    "mods/ContinuousScene/release/ContinuousSceneMod.swf": "7f1f2961c6e299d949423591f3c65c610c2eaefa7fc72e8a583a402770d6b51f",
+    "mods/ContinuousScene/release/scene.xml": "1cea74e218a55894d432e12cdfc544952d37cfff5ff55b256b1b970573eb7a9e",
+    "mods/FirearmAttachments/release/FirearmAttachmentsMod.swf": "b3304596eb7e08796f9de2cf02e1e7cccff10e188d26fedfa960aa6370d2a4b9",
+    "mods/LightAndDarkness/release/LightAndDarknessMod.swf": "8adba6914df5aada4df12a646b6c22df4b95b9630a55dd05ca7f713621c7e3ef",
+    "mods/loader-manifest.txt": "33de189e1209fdd397e811a52e9ac67ff0dedaeeae5cfeff4b7d15d4536eb133",
+    "mods/ModLoader/release/ModLoaderMod.swf": "2050e023205e87fdfdf7fba4b54b9bad7769868e51767d0bfbe1742cdc7542e2",
+    "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.swf": "526a6fd09297fb4f502236076b4252bf97bb50d2f77000b13763cf118546ab71",
+    "mods/PermanentInjury/release/config.json": "f506d9ab772ff81acab7b300da4f8dddafd19dfa44eb08fa9db0c2e815dc64d0",
+    "mods/PermanentInjury/release/PermanentInjuryMod.swf": "d4f6a096ee06f8869fffb316801c6325df26f54260a34666ac17ec24ad8bd083",
+    "mods/RandomRooms/release/RandomRoomsMod.swf": "3f8789c62f9b2ef8efc082597f672a2fea230a0d7fce3be90c04efd9582e5145",
+    "mods/Rconnect/release/config.txt": "5ca72017f1f811b5f8a2b1f18f6cb8b2c24239e2240716c4059cbc073913fc0a",
+    "mods/Rconnect/release/RConnectMod.swf": "78c052aea963f1689b705ae1e14d274916ae1a1f7e81933390caf8d1a88f4699",
+    "mods/RealisticVision/release/config.txt": "5136ee1923a77f5f10eab1b3994b64cbd67b09d687a7e829fb1e81d2e79a3c7f",
+    "mods/RealisticVision/release/RealisticVisionMod.swf": "638e2d408e2cf46683c41114f75773829a1b4417d74bffe9d08855a4fe343710",
+    "mods/RModifier/release/LootEditorMod.swf": "4f1d6cf19979f4ea4960f8ccd8377c1d3cac490bed9949866885357d073c8625",
+    "mods/Sandevistan/release/config.txt": "d91c4c2889aba19b1bcfb356885921b0605a50188b270a9e7619d2116e7ebdc3",
+    "mods/Sandevistan/release/SandevistanMod.swf": "cec6a3061cb90380579d8a95aa1254e0328bd0dae6e239fc4ca5205d6cccf942",
+    "mods/TDFC/release/TDFCMod.swf": "7acd45193109267dbbf875240528048ad6f1d09fa3b8b36baa6f98ebb5fddce5",
+    "mods/WallBlend/release/config.json": "16bb3a56a74195de6d4589cebde88e80c378956c776ffcde1c848f0ed7d48a89",
+    "mods/WallBlend/release/WallBlendMod.swf": "14112da06214bca51c6875d2527e73246dcb4c985caadda719eb4f77f1c0920d",
+    "pfe.swf": "a796827173af7d6fab9885fb66ecc62182ab5335918a30c7cce4c44914a238b7"
+  },
+  "expected_version": "0.2.24-nativeui2",
+  "travelChecksDual": {
+    "host": 23,
+    "join": 12
+  },
+  "travelChecksSolo": {
+    "host": 11
+  },
+  "uiChecksDualCandidate": 11,
+  "observationChecksSolo": 8,
+  "compiled": false,
+  "air_started": false
+}

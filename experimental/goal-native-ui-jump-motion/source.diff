@@ -1,0 +1,68 @@
+--- frozen/only-rc-run.py
++++ nativeui2/only-rc-run.py
+@@ -73,7 +73,7 @@
+  inputs();print('Prepared text only; no Java or AIR')
+ def main():
+  if sys.argv[1:]==['--prepare']:prepare();return 0
+- pins=inputs();parent,original=legacy();text,_=expanded(original)
++ pins=inputs();parent,original=legacy();text,_=bundle_expanded(original)
+  if sys.argv[1:]==['--source-check']:
+   print(json.dumps(dict(source_checked=True,enabled=['RConnectMod'],solo_supported=False,air_started=False)));return 0
+  peek=argparse.ArgumentParser(add_help=False);peek.add_argument('--output',type=Path);peek.add_argument('--check',action='store_true')
+@@ -83,12 +83,12 @@
+   proof=base.verify(out);proof['inputs']=proof['inputs']|inputs();return proof
+  public=dict(vars(base));public['verify']=verify;build=types.SimpleNamespace(**public)
+  def product(path):
+-  value=parent.selected_product(path,original,build,environment);value['pins'].update(inputs());return value
++  value=bundle_product(path,original,build,environment);value['pins'].update(inputs());return value
+  scope={'__file__':str(original.OLD/'run.py'),'__name__':'only_rc_motion_bound_original',
+   'CURRENT_BUILD':build,'ORIGINAL_SUMMARIZE':analyzer.summarize,'selfecho_product':product,
+   'SHARED_RUNNER':SHARED,'only_rc_inputs':inputs,'ONLY_RC_PATHS':{'mods/rconnect/release/rconnectmod.swf'}}
+  exec(compile(text,str(HERE/'expanded-run.py.txt'),'exec'),scope)
+- scope['RUNNER']=HERE/'selector.py'
++ scope['RUNNER']=bundle_selector_path
+  assert scope['CASES']=={'native-jump':dict(seconds=300,done='native-jump',rounds=[0],checks={'host':6,'join':6}),
+   'fast-held':dict(seconds=360,done='tele-motion',rounds=[0,1,2,3],checks={'host':43,'join':42})}
+  if args.check:return scope['main']()
+--- frozen/only-rc-expanded.py
++++ nativeui2/only-rc-expanded.py
+@@ -42,7 +42,7 @@
+  for n in ('EffectsDriver.swf','EffectsHarness.swf'):shutil.copyfile(drivers/a.case/n,out/'driver'/n)
+  save(out/'driver/driver-input.json',dict(candidate_sha256=candidate,driver_sha256=expected,
+   source_manifest_sha256=sha(drivers/'prepared.json'),measurement_only=True))
+- command=[str(RUNNER),'--candidate',str(product_path/'RConnectMod.swf'),'--effects','--effects-driver',str(out/'driver'),
++ command=[str(RUNNER),'--candidate',str(product_path/'RConnectMod.swf'),'--game-candidate',selected['game_path'],'--effects','--effects-driver',str(out/'driver'),
+   '--all-mods','--land','rbl','--seconds',str(case['seconds']),'--expected-version',version,
+   '--private-desktop','--defer-visible','--wait-host-world','--require-exclusive-air','--registry-wait',str(a.registry_wait)]
+  save(out/'intent.json',dict(command=command,inputs=pins,installation=before,case=a.case,ordinary_rooms=True,
+@@ -77,7 +77,9 @@
+      preference=app_root/'Local Store/ContinuousScene.preferences.json';telemetry=output/role/'mods/ModLoader/release/telemetry.json'
+      assert preference.resolve().is_relative_to(app_root.resolve()) and not preference.exists()
+      assert telemetry.resolve().is_relative_to((output/role).resolve()) and not telemetry.exists()
+-     assets={}
++     private_game=output/role/'pfe.swf'
++     assert sha(private_game)==selected['game_sha256']
++     assets={str(private_game):selected['game_sha256']}
+      for name,digest in before.items():
+       if name.lower()=='mods/rconnect/release/config.txt':continue # Shared runner's explicit test configuration.
+       if Path(name).name not in ('config.txt','config.json','scene.xml'):continue
+@@ -128,7 +130,7 @@
+   lower={k.lower():v for k,v in before.items()};result['roles']={}
+   for role in roles:
+    values=native['inputs'][role]
+-   assert values['game']==build.HOST_SHA and values['production']==candidate
++   assert values['game']==selected['game_sha256'] and values['production']==candidate
+    assert values['driver']==expected and values['harness']==harness
+    assert {n.replace('\\','/').lower() for n in values['modules']}==ONLY_RC_PATHS
+    for n,h in values['modules'].items():
+--- frozen/only-rc-selector.py
++++ nativeui2/only-rc-selector.py
+@@ -229,7 +229,7 @@
+     def registered(args, ap, output, record):
+         global ACTIVE
+         assert args.all_mods and args.effects and args.effects_driver and args.private_desktop and args.require_exclusive_air
+-        assert args.seconds in (300,360) and args.game_root.resolve() == GAME.resolve() and args.game_candidate is None
++        assert args.seconds in (300,360) and args.game_root.resolve() == GAME.resolve() and bundle_game_candidate(args.game_candidate)
+         assert not args.with_vision and args.vision_candidate is None and args.vision_smoke_version is None
+         assert args.wallblend_candidate is None and args.msw_candidate is None and args.fa_candidate is None
+         assert args.host_vision_config_template is None and args.join_vision_config_template is None

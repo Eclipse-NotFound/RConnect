@@ -1,0 +1,11 @@
+--- compiled908D/tests/NativeLoadingProbe.as
++++ nativeui2/tests/NativeLoadingProbe.as
+@@ -34,7 +34,7 @@
+          mod=m;began=getTimer();
+          productVersion=String(Object(mod).constructor.VERSION);
+          solo=mod.config.getValue("autoRole")=="";
+-         expectedUi=productVersion=="0.2.24-nativeui1";strictUi=expectedUi&&!solo;
++         expectedUi=productVersion=="0.2.24-nativeui2";strictUi=expectedUi&&!solo;
+          if(!expectedUi && productVersion!="0.2.24-roomfix5")fault("product",productVersion);
+          role=NativeApplication.nativeApplication.applicationID.indexOf("-host-")>=0?"host":"join";
+          // Later than RoomSync.present (-2000000000). Repeated render events

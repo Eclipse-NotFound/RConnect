@@ -1,0 +1,25 @@
+{
+  "kind": "native-ui-jump-loading-runtime-v1",
+  "files": {
+    "adapted-validation.py.txt": "c8ff9fedf5fd190c45bf29e03a2f8047cc3ac85fcb8cac0471c56d08af072598",
+    "build.py": "b0712ab2131b740dfdebfd142c2ea31b9f0ac55c4fca0421ad562fb3ea5f7428",
+    "prepare.py": "7afe86f771f0e6909b7f5e9bc52903e514f722b633cbdba3a2c3775f922863d6",
+    "README.md": "30af52459d3718cba00e39fcbca2dcffc58a0c9cebfa9c69e21dc969516e991d",
+    "run.py": "2e74195a952852eed6d1008cfb21aa837f8fcbb8d7e4ff863d90a03d8f42d73e",
+    "source-manifest.json": "1832571421978b85769144ce24a98faa62ffb7ba0d6580b21d5b9d6fde37e845",
+    "source.diff": "d905bd0a03b6e3acdbc6e931373ecf6255326838e8f9a762403553c87932cd41",
+    "tests/A22RoomMetrics.as": "314823fd0fcd04e71277dcd3e8ee1a647317e611c5ff7b8fb0e7058c25179d6e",
+    "tests/NativeLoadingProbe.as": "da08f9fa8dd869fdab9e0326adf85f6a71f6f60b4fb743c75be42c4b7bb3d8a5",
+    "tests/RoomTravelTimingTestDoc.as": "df751561210de1fbe93e34873ac6e3fe91f3379869fade9fb9a17b929c4c3719"
+  },
+  "product_pins": {
+    "prepare.py": "d830d9732a1b85ca247e63ee43cece7b996b0e9c701430492505dc404466cbf7",
+    "build.py": "2dd9874b35bdd9064b0fc92932680d016d8c54b84afef6c6d2433cd2ebd2c60b",
+    "source-manifest.json": "d8a173e4eecbca19ec64e96db98292cb7f64c9330d9fd763cdeb4ef2f41e9adc"
+  },
+  "enabled": [
+    "RConnectMod"
+  ],
+  "compiled": false,
+  "air_started": false
+}

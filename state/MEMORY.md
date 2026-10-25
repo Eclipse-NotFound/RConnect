@@ -6,6 +6,8 @@ A 为普通入口的双人联机；B 独立架构本轮不碰。根会话 `01a08
 用户最新重点：删除“房间交接中”定制界面，双方加载达到相应原单人流程耗时，解决新房间不同步，并按git核对性能倒退。**10月24日用户明确要求先部署再继续，roomfix5已实际安装；大场景性能目标尚未完成。**
 用户现已建立持续目标：首次场景加载、双向远端角色/念力运动、加入侧本机尤其跳跃掉帧，三项都继续。之前高速弹丸/掉落/击墙动画也尚未全修；不要用局部通过声称全部完成，不扩回B或无关功能。当前三项证据与停点见 `state/three-performance-goals-2026-10-25.md`。
 
+**当前暂停**：10月25日18:21根读取 `get_goal`，实际状态为 `paused`（updatedAt=1792920222），与旧接续摘要的active不符。发现后立即停止新增实施和测试，只保存已完成证据；不能因旧摘要、代理消息或待办自动恢复。以下实测均已结束，诊断候选尚未启动游戏；恢复须以用户后续指令/实际目标状态为准。
+
 ## 2. 玩法、授权和执行约束
 
 - 普通房可分头；无人房暂停保留本次进度；剧情/挑战共同进入；宿主发起整图旅行，同入口。未换房者不应被另一个人的加载暂停。
@@ -40,9 +42,17 @@ A 为普通入口的双人联机；B 独立架构本轮不碰。根会话 `01a08
 
 ## 4. 最新实测与卡点
 
+- **18:21整合候选实测结束，未部署**：`goal-native-ui-jump-product-01`，版本`0.2.24-nativeui2`，5325A3AAEFF65E215D8E01CD6EF5F87FEEA362CE422CE3B93B35A038A5CB4930，195167B；prepared E19BBF8E / compile F764786B。仅原生UI与正常跳跃补帧，77个原类不变、82最终类，配2DB0宿主。新驱动1640137C，加载5045b51c6f原35+双方11通过；jump da4b846568双6、held fffba1414c主43/加42通过，实际仅RC，22安装不变且副本已清。功能通过不授性能或部署资格。
+- **加载仍有疑点**：5325首入主4585/加4985ms，相同入口9C前轮3966/3989ms；加入侧restore63→471ms，effects→redraw5→399ms且未复用地形。9C补轮54722首入4396/4408ms，但入口不同，不能消除差异或归为噪声。源码地形复用逻辑逐字相同；具体拒因未取得。详见`state/nativeui2-loading-review-2026-10-25.md`（929DF00E）。
+- **整合运动证据保留差别**：held四程拟合100/90/90/100ms，移动段重复位置均0/79，双方约30fps、无>100ms绘制间隔；jump远端身体重复主71/347、加67/346，明显优于78C的194/347、141/350，但差于52D单独轮49/349、46/346；保留一次103ms加入侧长帧。52D/5325相关三类及Session/RoomSync完全相同，2DB0未发现正常游玩热路径新增跳跃调用，原因仍不明。详见`state/nativeui2-motion-2026-10-25.md`（2DF5C9FE）；不宣称全部运动修复。
+- **仅诊断已编译，未运行**：`goal-terrain-reuse-diagnostic-product-01`，677644650C93EC7A5CD481E3FF5245ACEF6BB807D15C2C90B15DF4C7DA2C13CB，197430B；两条编译exit0，源/22安装不变，根verify通过。仅5325两类加首拒因日志，其他80类不变，保留原短路/调用次数/返回；独立源码窄审通过。公开版本沿nativeui2以复用驱动，但独立SHA、DIAGNOSTIC_ONLY，不得部署或作净性能对照。`experimental/goal-terrain-reuse-diagnostic/run.py` 5423DACE只读预检已过，真实绑定6776/1640/2DB0；新运行接线尚未独立审查，暂停后未启动AIR。
+- **onlyRC运动两臂已完成**：78C跳跃75ac、念力2673bc6f78；52D跳跃13b3f522be、念力3fb602435d，原双6及43/42、实际双SOL仅RC全部通过，副本回收。正常跳跃远端身体不变帧主194/347→49/349、加141/350→46/346，原地与跑跳均改善，本机仍约30fps；52D加入侧保留一次106ms长帧。念力四程拟合78C为80/100/80/90ms，52D为90/90/90/90ms；52D有一次38ms重复位置，其余移动段0重复，双方无>100ms绘制间隔。不授所有运动/密集战斗或性能统计收益。详见`state/only-rconnect-jump-2026-10-25.md`、`state/only-rconnect-motion-2026-10-25.md`。
+
+- **onlyRC加载四格均完成**：908DF505驱动；78C solo e6e8045625三程6968/3701/3801ms、dual25735bd74f主4549/857/894、加4608/934/979；9C/2DB0 solo6afc7b40c1为7031/3737/3798、dual58d295cd42主3966/857/931、加3989/949/1017。原业务及各自UI检查通过，实际requested=ok仅RC、err空，22安装不变、副本已清。solo/dual淡出路径与首入口不同，不以dual较短授达到单人水平资格。准确分析见`experimental/goal-rconnect-only-loading/SOLO-AND-DUAL-BASELINE-ANALYSIS.md`。
+
 - **16:43 onlyRC首轮已实际完成**：`goal-rconnect-only-motion-jump-baseline-01`/75ac7b113b准确78C/A796，双方MainFE SOL的requested=ok仅RConnectMod，含ModLoaderMod在内其余13项未加载。原18秒/6+6全通过，local ENTER主30.003/加29.998fps、RENDER29.999/29.992fps；ENTER峰81/85ms、RENDER97/99ms，均无>100ms长帧。该普通基地/冻结背景AI窗未重现本机掉帧，不授全部战斗或运动已修复。源/22安装不变，自有29516/40280及副本回收，result3C787D00。host远端源戳均67.665ms（约14.78Hz）；join混合消息534条/166非递增，需按真实路由分析，不能简单丢同戳。当前无根AIR/JVM。
 
-- **下一测试入口已冻结**：onlyRC motion `experimental/goal-rconnect-only-motion`，48AC6762/selector2BBE601D/清单782D19B8，复用原9EE/FEF，支持78C/52D双人jump/held，单人不支持。loading `experimental/goal-rconnect-only-loading`，单编译build09EDAF5A、run8272C4DC、源2B836F00/运行C32CFE9F，原三程/23+12或solo11、UI9C双人原11观察，baseline/solo只8通用且保留11原始结果。根和独立窄审、source/build check实际过；driver-01尚未编，真实run --check应not-ready。用户性能主线仅RC，LAD候选不加入。已答B窗口至16:56不追加AIR/JVM，之后按共享登记先编该唯一小驱动，再同组合单/双及念力；勿把等待写成已运行。
+- **onlyRC入口已冻结并实际使用**：motion `experimental/goal-rconnect-only-motion`，48AC6762/selector2BBE601D/清单782D19B8，复用原9EE/FEF，支持78C/52D双人jump/held，单人不支持。loading `experimental/goal-rconnect-only-loading`，build09EDAF5A/run8272C4DC、源2B836F00/运行C32CFE9F，唯一driver908DF505；原三程23+12或solo11、UI9C双人11观察，baseline/solo只8通用并保留11原始结果。用户性能主线仅RC，LAD候选不加入；入口不重新编译或修改原断言。
 
 - **16:49发送节拍窄查**：准确Session14AAC9是50ms Timer，每回调客户端直接发PLAYERSTATE，没有玩家last=now阈值。75ac的267包seq连续，约67.665ms源戳/67.658ms到包，无缺号；主侧WORLDSTATE同时由Timer与收到客户端包触发。加入534包含166同源戳、无倒退，367正间隔均48.951ms，不能把含零平均33.705ms称有效30Hz。RemoteMotion已对同戳替末点不重置时钟；完整包仍有装备/生命/念力/弹丸及世界数据，不能仅按玩家时间戳丢掉。未新增调度候选，先完成onlyRC基准。
 
@@ -64,10 +74,10 @@ A 为普通入口的双人联机；B 独立架构本轮不碰。根会话 `01a08
 
 ## 6. 下一步入口
 
-1. 先读当前时间；根已给B至2026-10-25 16:56（北京时间）空档，不提前追加JVM/AIR。此后按共享登记执行，不能凭旧锁或旧PID判断仍占用。
-2. 编唯一onlyRC加载驱动：Python `-B -X utf8 experimental/goal-rconnect-only-loading/build.py --build --output build/m52/goal-rconnect-only-loading-driver-01`。实际成功后才 `run.py --arm baseline|ui --mode solo|dual --check`；运行用新输出 `build/m52/goal-rconnect-only-loading-<arm>-<mode>-01`，从原版组solo/dual取得首入与往返同组合基准。入口与视口不同分组记录，不编造严格配对。
-3. 原念力四轮：`experimental/goal-rconnect-only-motion/run.py --drivers build/m52/goal-three-issues-native-drivers-02 --product build/m52/recovery-room-production-05 --case fast-held --output build/m52/goal-rconnect-only-motion-held-baseline-01`。原43/42、160ms、300/360秒及真实捕获保留；不支持solo，不把帧率当所有动画资格。52D为可选候选，需显式换产品并新输出，不重复覆盖。
-4. 原生UI通过onlyRC加载对照后，再决定与已验证跳跃姿态修正如何整合；不能未验证就把灯具/时钟/剪包候选一起堆回正式版。根负责最终发布门禁、备份、部署后复验及源记忆一致。
+1. 目标当前paused；只保存停点，未获恢复前不继续实施、编译或AIR。所有根测试/编译均已结束，旧exec22426/82167/77656/90009等不再有效；不能重复启动已结束轮次。
+2. 恢复后先审查诊断薄接线，再用准确6776/1640/2DB0跑一次原三程，查真实地形复用首拒因。原阈值、onlyRC、22项核验和共享登记不变；不重编既有产物。缺日志/faultCount非零不算取得原因。
+3. 保留52D→5325普通jump重复帧增多的疑点；源码未找到解释，不归为噪声。不重复已完成的四格基准及组合功能轮来凑通过次数；新增测量必须回答具体原因。
+4. 解决当前加载疑点并取得可接受的运行证据后再走发布门禁、准确两文件备份和部署后复验。正式仍78C/A796；只启RC要求适用于测试，正式玩家名单保留。灯具/时钟/剪包/诊断候选不混入部署。
 5. 三项目标仍全部保留。公开网络/多人/稳定重连/其它版本仍不在本轮；B由独立会话负责，自己的当前状态见 `state/B-MEMORY.md`（若已建）及对应回执。
 
 ## 7. 详细记录

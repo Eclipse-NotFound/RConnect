@@ -1,0 +1,100 @@
+"""Freeze and compile the exact room repair with the existing bounded compiler."""
+import argparse
+import importlib.util
+import json
+from pathlib import Path
+import shutil
+import subprocess
+import sys
+import types
+
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[1]
+sys.path.insert(0, str(HERE))
+from prepare import BASE, inventory, sha
+sys.path.insert(0, str(ROOT/'tools/validation'))
+from run_security_terminals import installation
+from runtime_memory import snapshot, wait_owned
+sys.path.insert(0, str(ROOT.parent/'ModLoader/tools'))
+from test_registry import Registration
+
+JAVA=Path('C:/Users/hello/Documents/_sandevistan_dev/jdk-11.0.32.1+1-jre/bin/java.exe')
+SDK=ROOT.parent/'Sandevistan/build/tools/flexsdk'
+
+
+def save(p, value):
+    with p.open('x', encoding='utf-8') as f:
+        json.dump(value, f, ensure_ascii=False, indent=2)
+
+
+def main():
+    ap=argparse.ArgumentParser()
+    ap.add_argument('output')
+    ap.add_argument('--registry-wait',type=float,default=900)
+    args=ap.parse_args()
+    out=(ROOT/args.output).resolve()
+    assert out.parent==ROOT/'build/m52' and not out.exists()
+    receipt=json.loads((HERE/'source-manifest.json').read_text(encoding='utf-8'))
+    base_meta=json.loads((BASE/'prepared.json').read_text(encoding='utf-8-sig'))
+    assert inventory(BASE/'src')==base_meta['source'] and inventory(BASE/'tools')==base_meta['inputs']
+    assert sha(BASE/'RConnectMod.swf')==receipt['base_sha256']
+    assert inventory(HERE/'src')=={k:v['candidate_sha256'] for k,v in receipt['changes'].items()}
+    before=installation()
+    assert before['mods/Rconnect/release/RConnectMod.swf']==receipt['installed_base_sha256']
+    shutil.copytree(BASE/'src',out/'src')
+    shutil.copytree(BASE/'tools',out/'tools')
+    for rel in receipt['changes']:
+        p=out/'src'/rel
+        p.parent.mkdir(parents=True,exist_ok=True)
+        shutil.copyfile(HERE/'src'/rel,p)
+    meta=dict(kind='terrain-reuse-diagnostic-overlay', diagnostic_only=True, performance_qualified=False, version=receipt['version'], base_sha256=receipt['base_sha256'],
+              source=inventory(out/'src'),inputs=inventory(out/'tools'),installation_before=before,
+              overlay_manifest_sha256=sha(HERE/'source-manifest.json'),recipe_sha256=sha(Path(__file__)))
+    save(out/'prepared.json',meta)
+    result=dict(diagnostic_only=True,performance_qualified=False,compiled=False,commands=[],installation_before=before,air_started=False,installed=False)
+    try:
+        with Registration(owner='RConnect / 房间修复', purpose=receipt['version']+' isolated compile',
+                          run_dir=out,evidence=out/'compile.json',wait=args.registry_wait) as reg:
+            spec=importlib.util.spec_from_file_location('room_repair_compiler',out/'tools/build_mod.py')
+            module=importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+            with (out/'compile.log').open('x',encoding='utf-8') as log:
+                def owned(command,env=None,check=False):
+                    assert len(result['commands'])<2 and command[0]==str(JAVA) and '-Xmx384m' in command
+                    assert snapshot()['free_commit_bytes']>=1024**3
+                    assert Path(command[command.index('-jar')+1]).resolve() in ((SDK/'lib/compc.jar').resolve(),(SDK/'lib/mxmlc.jar').resolve())
+                    reg.before_launch('isolated room compiler')
+                    row=dict(command=command,pid=None,exit_code=None)
+                    result['commands'].append(row)
+                    process=subprocess.Popen(command,cwd=out,env=env,stdout=log,stderr=subprocess.STDOUT,
+                                             creationflags=subprocess.CREATE_NO_WINDOW)
+                    reg.child(process.pid)
+                    row['pid']=process.pid
+                    try:
+                        code=wait_owned(process,300,out/('memory-'+str(len(result['commands']))+'.json'))
+                        row['exit_code']=code
+                    finally:
+                        if process.poll() is None:process.kill()
+                        process.wait()
+                        reg.child_stopped()
+                    if check and code:raise subprocess.CalledProcessError(code,command)
+                    return subprocess.CompletedProcess(command,code)
+                module.subprocess=types.SimpleNamespace(run=owned)
+                sys.argv=[str(out/'tools/build_mod.py'),'--java',str(JAVA),'--amxmlc',str(SDK/'bin/amxmlc.bat'),
+                          '--output',str(out/'RConnectMod.swf')]
+                module.main()
+            assert len(result['commands'])==2 and all(c['exit_code']==0 for c in result['commands'])
+            assert inventory(out/'src')==meta['source'] and inventory(out/'tools')==meta['inputs']
+            assert installation()==before
+            result.update(compiled=True,candidate_sha256=sha(out/'RConnectMod.swf'))
+            reg.outcome='passed'
+            reg.note='Only isolated compilation; native functionality/performance not yet validated'
+    finally:
+        result['installation_after']=installation()
+        result['installation_unchanged']=before==result['installation_after']
+        result['sources_unchanged']=inventory(out/'src')==meta['source']
+        save(out/'compile.json',result)
+    print(json.dumps({k:v for k,v in result.items() if k not in ('commands','installation_before','installation_after')},ensure_ascii=False))
+
+
+if __name__=='__main__':main()

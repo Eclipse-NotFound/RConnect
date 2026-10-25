@@ -1,0 +1,74 @@
+def validate_observer(out,run_path,roles,settings,result):
+    evidence=read(out/'observer-collected.json')
+    assert evidence['before_copy_cleanup'] is True and not evidence['errors'] and set(evidence['roles'])==set(roles)
+    proofs={}
+    strict=OPTIONS.arm=='ui' and OPTIONS.mode=='dual'
+    zero=('faultCount','dropped','missingWait','layerLeak','copyCount','identityChanges','parentChanges','bridgeMissing','worldFaultFrames')
+    if not strict:zero=('faultCount','dropped','identityChanges','parentChanges')
+    for role in roles:
+        root=out/'observer'/role
+        doc=read(root/'native-loading-observer.json')
+        assert doc['kind']=='native-loading-observer-v1' and doc['role']==role and doc['appId']==settings[role]['app_id']
+        assert doc['passed'] is True and doc['complete'] is True
+        assert doc['diagnosticOnly'] is True and doc['performanceQualified'] is False and doc['loadingViewCalled'] is False
+        assert doc['productVersion']==('0.2.24-nativeui2' if OPTIONS.arm=='ui' else '0.2.24-roomfix5')
+        assert doc['solo'] is (OPTIONS.mode=='solo') and doc['uiContractRequired'] is strict
+        assert doc['uiContractQualified'] is strict and len(doc['uiChecks'])==11
+        assert len(doc['checks'])==(11 if strict else 8) and all(c['passed'] is True for c in doc['checks'])
+        assert len({c['label'] for c in doc['checks']})==len(doc['checks'])
+        if strict:assert doc['checks']==doc['uiChecks']
+        else:
+            assert doc['checks'][:7]==[doc['uiChecks'][i] for i in (0,1,2,5,8,9,10)]
+            assert doc['checks'][7]['label']=='actual native loading observed without claiming the UI bridge'
+        assert all(doc[n]==0 for n in zero) and doc['faults']==[]
+        rows=doc['rows'];assert 0<len(rows)<=20000 and len(rows)==doc['renderCount']
+        assert all(type(r['at']) is int for r in rows)
+        assert all(b['at']>=a['at'] for a,b in zip(rows,rows[1:]))
+        assert doc['maxRenderGap']==max([b['at']-a['at'] for a,b in zip(rows,rows[1:])]+[0])
+        assert sum(r['eligible'] is True for r in rows)==doc['eligibleCount']
+        if strict:assert doc['eligibleCount']>0
+        assert sum(r['wait']['effective'] is True for r in rows)==doc['waitCount']>0
+        counts={}
+        for row in rows:
+            if strict:assert row['supported'] is True and row['nativeFaults']==0 and not row['copies']
+            assert row['nativeWaitIdentity'] is True and row['nativeParentIdentity'] is True
+            if strict and row['eligible']:
+                assert row['wait']['effective'] is True and all(row[n]['visible'] is False for n in ('visual','vfon','vgui'))
+            item=counts.setdefault(str(row['round']),dict(renders=0,nativeWait=0,eligible=0,pending=0,black=0))
+            item['renders']+=1
+            for name,value in [('nativeWait',row['wait']['effective']),('eligible',row['eligible']),
+                               ('pending',row['entryPending']),('black',row['vblack']['effective'])]:
+                if value:item[name]+=1
+        assert counts==doc['rounds'] and all(counts[str(n)]['renders']>0 for n in range(3))
+        boundaries=doc['boundaries']
+        assert [b['round'] for b in boundaries if b['kind']=='begin']==[0,1,2]
+        assert [b['round'] for b in boundaries if b['kind']=='result']==[0,1,2]
+        finished=[b for b in boundaries if b['kind']=='finish-request']
+        assert len(finished)==1 and finished[0]['at']==doc['finishedAt']
+        last=rows[-1]
+        assert last['phase']=='finished' and last['at']>=doc['finishedAt']
+        assert last['entryPending'] is False and last['busy'] is False
+        assert last['wait']['effective'] is False and last['vblack']['effective'] is False
+        assert all(last[n]['effective'] is True for n in ('visual','vfon','vgui'))
+        assert doc['terminalTree']['visited']>0
+        if strict:assert doc['terminalTree']['copies']==[]
+        assert set(doc['spans'])=={'nativeWait','black','obscured','pending'}
+        assert all(v['start']==-1 and v['total']>=v['max']>=0 for v in doc['spans'].values())
+        png=(root/'native-loading-terminal.png').read_bytes()
+        assert png[:8]==b'\x89PNG\r\n\x1a\n' and png[12:16]==b'IHDR' and png[-12:]==b'\x00\x00\x00\x00IEND\xaeB`\x82'
+        width,height=struct.unpack('>II',png[16:24]);assert width>0 and height>0
+        assert doc['png']['width']==width and doc['png']['height']==height and doc['png']['bytes']==len(png)
+        assert doc['png']['name']=='native-loading-terminal.png' and doc['png']['afterMeasuredTravel'] is True
+        assert doc['png']['at']>=doc['finishedAt']>=max(r['at'] for r in result['roles'][role]['rows'])
+        text=(run_path/(role+'.log')).read_text('utf-8-sig')
+        old='COOP EFFECTS DONE travel-timing '+role;new=recipe.MARKER+role
+        assert text.count(old)==text.count(new)==1 and text.index(old)<text.index(new)
+        assert 'NATIVE LOADING PROBE OUTPUT FAILED' not in text
+        reports=[json.loads(line.split('NATIVE LOADING PROBE RESULT ',1)[1]) for line in text.splitlines() if line.startswith('NATIVE LOADING PROBE RESULT ')]
+        assert len(reports)==1 and reports[0]['passed'] is True and reports[0]['checks']==doc['checks']
+        assert all(reports[0][k]==doc[k] for k in ('renderCount','eligibleCount','faultCount','dropped'))
+        for name,row in evidence['roles'][role]['files'].items():assert sha(root/name)==row['sha256']
+        proofs[role]=dict(json_sha256=sha(root/'native-loading-observer.json'),png_sha256=sha(root/'native-loading-terminal.png'),
+                          checks=len(doc['checks']),uiContractQualified=strict,renderCount=doc['renderCount'],eligibleCount=doc['eligibleCount'],rounds=doc['rounds'],
+                          spans=doc['spans'],maxRenderGap=doc['maxRenderGap'],observationMs=doc['observationMs'],observationMaxMs=doc['observationMaxMs'])
+    result.update(observer_passed=True,observer=proofs,observer_collection_sha256=sha(out/'observer-collected.json'))

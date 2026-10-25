@@ -1,0 +1,71 @@
+"""Thin nativeui2 binding to the unchanged v5 bounded compiler."""
+import importlib.util
+import json
+from pathlib import Path
+import sys
+
+if sys.flags.optimize:
+    raise RuntimeError('Ordinary Python required')
+sys.dont_write_bytecode = True
+HERE = Path(__file__).resolve().parent
+
+
+def load(name, path):
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def verify(output):
+    prepared = load('native_ui2_verify_source', HERE/'prepare.py')
+    manifest = prepared.verify()
+    out = Path(output).resolve()
+    assert out.parent == prepared.ROOT/'build/m52' and (out/'compile.json').is_file()
+    meta, receipt = [prepared.read(out/name) for name in ('prepared.json', 'compile.json')]
+    assert meta['base_sha256'] == manifest['base_sha256'] and meta['version'] == manifest['version']
+    assert meta['overlay_manifest_sha256'] == prepared.sha(HERE/'source-manifest.json')
+    assert meta['recipe_sha256'] == prepared.sha(prepared.DELEGATE)
+    assert meta['source'] == manifest['candidate_source'] == prepared.inventory(out/'src')
+    assert meta['inputs'] == prepared.read(prepared.BASE/'prepared.json')['inputs'] == prepared.inventory(out/'tools')
+    assert all(receipt[k] is True for k in ('compiled', 'installation_unchanged', 'sources_unchanged'))
+    assert receipt['air_started'] is False and receipt['installed'] is False
+    assert len(receipt['commands']) == 2 and all(c['exit_code'] == 0 and type(c['pid']) is int for c in receipt['commands'])
+    assert meta['installation_before'] == receipt['installation_before'] == receipt['installation_after']
+    assert len(receipt['installation_before']) == 22
+    assert receipt['installation_before']['mods/Rconnect/release/RConnectMod.swf'] == manifest['base_sha256']
+    assert prepared.sha(out/'RConnectMod.swf') == receipt['candidate_sha256']
+    return receipt
+
+
+def main():
+    prepared = load('native_ui2_prepare', HERE/'prepare.py')
+    manifest = prepared.verify()
+    absent = object()
+    prior, old_argv, old_path = sys.modules.get('prepare', absent), sys.argv[:], sys.path[:]
+    try:
+        sys.modules['prepare'] = prepared
+        bounded = load('native_ui2_original_bounded_compiler', prepared.DELEGATE)
+        bounded.HERE = HERE
+        assert bounded.BASE == prepared.BASE and bounded.ROOT == prepared.ROOT
+        assert bounded.inventory is prepared.inventory and bounded.sha is prepared.sha
+        current = bounded.installation()
+        assert len(current) == 22 and current['mods/Rconnect/release/RConnectMod.swf'] == manifest['base_sha256']
+        if sys.argv[1:] == ['--check']:
+            print(json.dumps(dict(checked=True, current_inputs=22, base_sha256=manifest['base_sha256'],
+                                 installed_host_sha256=current['pfe.swf'],
+                                 required_runtime_host_sha256=manifest['required_runtime_host_sha256'],
+                                 compiled=False, air_started=False, installed=False)))
+        else:
+            bounded.main()
+    finally:
+        sys.argv, sys.path[:] = old_argv, old_path
+        if prior is absent:
+            sys.modules.pop('prepare', None)
+        else:
+            sys.modules['prepare'] = prior
+        prepared.verify()
+
+
+if __name__ == '__main__':
+    main()
