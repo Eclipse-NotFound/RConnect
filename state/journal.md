@@ -1,3 +1,9 @@
+## 2026-10-25 16:54 接续onlyRC对照，显示时钟无频繁耗尽证据
+
+上一目标轮为实际进展：onlyRC首轮完成、独立加载接线冻结。当前先守已答B至16:56窗口，不重启已结束的18557/73584等执行句柄。onlyRC加载source与build只读检查再次通过，缺真实compile时仍准确not-ready。MEMORY过时运行叙述已移至逐字归档memory-through-only-rc-jump-2026-10-25（SHA DCDE004B，41048B），入口收窄到当前状态与准确命令，原证据不丢；§6不再指向已否决旧时钟候选。
+
+准确源码与75ac轨迹窄查：无新包的移动空中RENDER对主185/185、加92/92仍推进；没有经常追到最新点停住的证据，privatecursor未测不报命中率。GameBridge帧起点采时/Timer重新读状态/ENTER显示推进/RENDER复用的边界已记录three-performance-goals，不先调Timer。加载统计另核每程RENDER遮挡OR须包含78C的copies，restore字段为累计需相减；不得把cover或spans直接冒充完整实际等待。
+
 ## 2026-10-25 16:43 严格仅RConnect跳跃实测通过，加载接线冻结
 
 新onlyRC motion接线真实4种预检通过，根窄审后实际75ac7b113b/正式78C/A796。双方SOL requested=ok只RConnectMod、err空，其余13项含ModLoaderMod均停，物理文件保留；原9EE/D52、18秒和双6不变。主/加ENTER30.0033/29.9983fps、RENDER29.9989/29.9922，峰ENTER81/85、RENDER97/99ms，>100ms皆0。普通基地冻结AI窗没有本机掉帧，不授全部战斗/全组合或远端动画已修复。原空中重复1/2、source与peer身体变化均真实检查。源/22不变，自有29516/40280及副本回收；result3C787D00。host源戳均67.665ms（267包）；join534包含166非递增，交给准确源码窄查调度/混合路由，不能当绝对网络延迟或贸然丢重复包。

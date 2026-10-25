@@ -22,6 +22,10 @@ onlyRC动作接线48AC6762/782D19B8已冻结；加载接线09EDAF5A/8272C4DC也�
 
 **16:49仅源码/原轨迹核对**：准确Session14AAC9、GameBridgeF7016、RemoteMotion19F035匹配78C清单。玩家发送是50ms Timer回调直接发包，没有猜测的last=now节流。host收到267条PLAYERSTATE，266个序号差都1；源戳67.665ms、到包67.658ms，无中途缺号。宿主Timer和接收客户端包均触发WORLDSTATE；join534包中166同源戳、0倒退，正源戳间隔367个平均48.951ms（约20.43Hz），含零平均不能称有效30Hz。99次同host tick源戳推进、166次同tick同源戳，符合两触发路径；只支持节拍不对称事实，不证明Flash Timer内核实现。RemoteMotion同戳已替尾点且保留时钟，完整状态其他数据仍有效，不能按单一玩家戳整包丢弃。未写调度候选，先测onlyRC抓取与加载。
 
+**16:54窄查补充**：GameBridge ENTER+90000更新_sampleAt，readSnapshot重新采状态但带本帧时间；Session独立Timer与ENTER没有固定先后契约。收包push用真实getTimer，sample按presentationTime(_sampleAt)；ENTER-10000每帧推进，RENDER-10000主要复用currentSample。RemoteMotion有相邻点时曲线插值，cursor上限latest.at，无未知位置外推；67ms×1.25仍低于默认100ms缓冲。75ac严格筛出两帧间无任何玩家包、移动且空中的片段，主185/185、加92/92对位置仍推进；较宽样本与最新端点重合仅2/369、1/364，但privatecursor未记录，不能当精确耗尽率。没有频繁到端点停住的证据，先不调Timer；onlyRC held后用既有真实跳跃观察比较52D身体补帧与位置连续性。
+
+onlyRC加载统计沿原日志：elapsed全程；exitEnd-exitStart含原生淡入淡出，不叫生成CPU；RoomTiming restore字段均累计，分段相减且不叠加到grant.ms。等待画面按每程[started,at]裁切相邻RENDER，以前一行状态计算区间交集，合并nativeWait、vblack以及copies.effective；原spans.obscured漏正式78C自定义遮罩，不能直接采用或和elapsed相加。至少先baseline solo/dual，若评UI补ui dual/solo；不同入口/视口只记观察差异，不反复抽快图。
+
 ### 10月25日下午：恢复执行与授权落地
 
 **16:25用户调整测试范围**：后续关闭LAD/CS/RV等，只测试联机本身。性能主线转为官方ModLoader仅启用RConnect的私有副本，正式选择不变；单/双保持同组合、记录入口/视口，保留运动原负载与断言。已启动灯具诊断1c81c558e2收尾：370F/7B3/8A，35+双方11+各8通过，root独立解码10对1920×1000首绘PNG像素全等、检查双方alloff/on截图正常；每端4灯12PNG、无错误、源/22不变、自有5712/46776回收。result0A2A3777，只图像不性能，不部署。B独立会话获16:23:38起约10分钟串行窗口，root期间只准备onlyRC源码接线。
