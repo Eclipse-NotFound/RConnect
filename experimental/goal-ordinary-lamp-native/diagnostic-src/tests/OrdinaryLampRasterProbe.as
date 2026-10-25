@@ -1,0 +1,220 @@
+package {
+   import flash.desktop.NativeApplication;
+   import flash.display.Bitmap;
+   import flash.display.BitmapData;
+   import flash.display.DisplayObjectContainer;
+   import flash.display.PNGEncoderOptions;
+   import flash.events.Event;
+   import flash.filesystem.File;
+   import flash.filesystem.FileMode;
+   import flash.filesystem.FileStream;
+   import flash.geom.Rectangle;
+   import flash.utils.ByteArray;
+   import flash.utils.Dictionary;
+   import flash.utils.getTimer;
+   import rconnect.core.Log;
+
+   /** One native redraw comparison, then native alloff/allon after the old UI
+    * terminal evidence. This changes an isolated world and is never timing evidence. */
+   public final class OrdinaryLampRasterProbe {
+      private var mod:RConnectMod, role:String, round:int=-1, frame:int=0;
+      private var ids:Dictionary=new Dictionary(true),nextId:int=0;
+      private var attempted:Boolean=false,finishing:Boolean=false,written:Boolean=false;
+      private var phase:String="travel",requestedFrame:int=0;
+      private var first:Object,off:Object,on:Object,terminal:Object;
+      private var faults:Array=[],images:Array=[],faultCount:int=0;
+      private var cloneCount:int=0,disposedCount:int=0;
+      private var names:Array=["front","back","back2","water","sats"];
+
+      public function OrdinaryLampRasterProbe(value:RConnectMod) {
+         mod=value;role=NativeApplication.nativeApplication.applicationID.indexOf("-host-")>=0?"host":"join";
+         mod.stage.addEventListener(Event.ENTER_FRAME,tick,false,-81);
+         mod.stage.addEventListener(Event.RENDER,render,false,-2147483500);
+      }
+      public function begin(index:int):void {round=index;}
+      public function finish():void {finishing=true;}
+      private function require(ok:Boolean,message:String):void {if(!ok)throw new Error(message);}
+      private function id(value:Object):int {
+         if(value==null)return 0;if(ids[value]==null)ids[value]=++nextId;return int(ids[value]);
+      }
+      private function fault(where:String,error:*):void {
+         faultCount++;if(faults.length<16)faults.push({where:where,error:String(error),at:getTimer()});
+         Log.d("LAMP RASTER PROBE FAULT "+role+" "+where+" "+String(error));
+      }
+      private function context():Object {
+         var w:Object=mod.game.world,carrier:Object=mod.main.getChildByName("LightAndDarknessCarrier");
+         require(w!=null&&carrier!=null&&carrier.ladAPI!=null,"missing real World or LAD carrier");
+         var rt:Object=carrier.ladAPI.runtime,g:Object=w.grafon,loc:Object=w.loc;
+         require(rt!=null&&rt.enabled===true&&rt.world===w&&rt.location===loc,"LAD not attached to current world");
+         require(g!=null&&g.loc===loc&&loc.grafon===g&&!g.sceneLarge&&loc.spaceX==48&&loc.spaceY==25,"not current ordinary raster");
+         require(w.gg!=null&&w.gg.loc===loc&&loc.gg===w.gg&&!w.verror.visible,"invalid native player/error state");
+         require(rt.lamps is Array&&rt.lamps.length>0,"no lamps: optimization coverage absent");
+         return {w:w,g:g,loc:loc,rt:rt};
+      }
+      private function lamps(c:Object):Array {
+         var result:Array=[],seen:Dictionary=new Dictionary(true),layer:Object=c.g.visual.getChildByName("LightAndDarknessFixtures");
+         require(layer!=null&&layer.parent===c.g.visual,"actual lamp layer missing");
+         for each(var lamp:Object in c.rt.lamps) {
+            require(lamp!=null&&lamp.bo!=null&&!seen[lamp.bo],"duplicate/missing lamp object");seen[lamp.bo]=true;
+            require(lamp.bo.vis==null&&lamp.bo.light==null&&lamp.bo.erase==null,"native lamp references not stripped");
+            require(lamp.holder!=null&&lamp.holder.parent===layer&&lamp.proxy!=null,"lamp visual/proxy missing");
+            var occurrences:int=0;for each(var unit:Object in c.loc.units)if(unit===lamp.proxy)occurrences++;
+            require(occurrences==1,"lamp proxy not present exactly once");
+            result.push({bo:id(lamp.bo),holder:id(lamp.holder),proxy:id(lamp.proxy),layer:id(layer),
+               frame:lamp.bo.frame,nativeFrame:lamp.nativeFrame,on:lamp.state.on,hp:lamp.state.hp,
+               powered:lamp.powered,disabled:lamp.proxy.disabled,proxyHp:lamp.proxy.hp,
+               clipFrame:lamp.clip.currentFrame,visualState:lamp.visualState,
+               holderVisible:lamp.holder.visible,holderAlpha:lamp.holder.alpha});
+         }
+         require(layer.numChildren==result.length,"unexpected extra lamp holders");
+         return result;
+      }
+      private function membership(items:Object):Array {
+         var result:Array=[];
+         for each(var item:Object in items)result.push({id:id(item),x:item==null?null:item.X,y:item==null?null:item.Y,
+            hp:item!=null&&"hp" in item?item.hp:null,sost:item!=null&&"sost" in item?item.sost:null});
+         return result;
+      }
+      private function state(c:Object):Object {
+         var tiles:Array=[];
+         for(var x:int=0;x<c.loc.spaceX;x++)for(var y:int=0;y<c.loc.spaceY;y++) {
+            var tile:Object=c.loc.space[x][y];
+            tiles.push(tile==null?null:[tile.phis,tile.hp,tile.mat,tile.front,tile.back,tile.zad,tile.shelf,tile.zForm,tile.water,tile.stair]);
+         }
+         return {world:id(c.w),game:id(c.w.game),loc:id(c.loc),player:id(c.w.gg),grafon:id(c.g),
+            playerX:c.w.gg.X,playerY:c.w.gg.Y,lightOn:c.loc.lightOn,errorVisible:c.w.verror.visible,lamps:lamps(c),
+            units:membership(c.loc.units),objects:membership(c.loc.objs),backdrops:membership(c.loc.backobjs),tiles:tiles};
+      }
+      private function camera(c:Object):Object {
+         var cam:Object=c.w.cam,v:Object=c.w.visual,s:Object=c.w.sats.vis;
+         return {identity:id(cam),zoom:cam.isZoom,x:cam.X,y:cam.Y,vx:cam.vx,vy:cam.vy,
+            maxvx:cam.maxvx,maxvy:cam.maxvy,scaleV:cam.scaleV,scaleS:cam.scaleS,
+            visual:[v.x,v.y,v.scaleX,v.scaleY],sats:[s.x,s.y,s.scaleX,s.scaleY]};
+      }
+      private function surfaces(c:Object):Array {
+         var result:Array=[],parents:Array=[c.g.visFront,c.g.visBack,c.g.visBack2,c.g.visVoda];
+         for each(var parent:DisplayObjectContainer in parents) {
+            var data:BitmapData=null;
+            for(var n:int=0;n<parent.numChildren;n++) {
+               var bmp:Bitmap=parent.getChildAt(n) as Bitmap;
+               if(bmp!=null&&bmp.bitmapData!=null&&bmp.name.indexOf("WallBlend")!=0){data=bmp.bitmapData;break;}
+            }
+            require(data!=null,"missing actual native bitmap");result.push(data);
+         }
+         require(c.g.satsBmp is BitmapData,"missing actual public sats bitmap");result.push(c.g.satsBmp);
+         return result;
+      }
+      private function png(data:BitmapData,name:String):void {
+         var bytes:ByteArray=data.encode(data.rect,new PNGEncoderOptions()),file:File=File.applicationStorageDirectory.resolvePath("ordinary-lamp/"+name);
+         file.parent.createDirectory();var stream:FileStream=new FileStream();
+         try{stream.open(file,FileMode.WRITE);stream.writeBytes(bytes);}finally{stream.close();}
+         images.push({name:name,width:data.width,height:data.height,bytes:bytes.length,at:getTimer()});
+      }
+      private function stagePng(name:String):void {
+         var data:BitmapData=new BitmapData(mod.stage.stageWidth,mod.stage.stageHeight,false,0);
+         try{data.draw(mod.stage);png(data,name);}finally{data.dispose();}
+      }
+      private function compareFirst(c:Object):void {
+         attempted=true;first={at:getTimer(),round:round,exit:c.w.t_exit,land:String(c.w.game.curLandId),
+            location:String(c.loc.id),comparisons:[],complete:false,color_buffer_directly_observed:false};
+         require(round==0&&c.w.t_exit==19&&String(c.w.game.curLandId)=="random_mane","not first native random-room frame");
+         var before:Object=state(c),cam:Object=camera(c),redraws:int=c.g.sceneRedraws;
+         var live:Array=surfaces(c),copies:Array=[],owned:Array=[],seen:Dictionary=new Dictionary(true),pixels:Number=0;
+         first.lampCount=before.lamps.length;first.before=before;first.cameraBefore=cam;first.surfaceIdentities=[];
+         try {
+            for(var i:int=0;i<live.length;i++) {
+               var original:BitmapData=live[i],copy:BitmapData=seen[original];
+               if(copy==null) {
+                  pixels+=original.width*original.height;require(pixels<=24000000,"snapshot exceeds 24M unique pixels");
+                  copy=original.clone();cloneCount++;owned.push(copy);seen[original]=copy;
+               }
+               copies.push(copy);first.surfaceIdentities.push(id(original));
+            }
+            // Do not step the world, alter RNG, call LAD render, or clear marks.
+            // The native redraw itself may reveal an existing dynamic difference;
+            // preserve that failure instead of manufacturing a matching surface.
+            try{c.g.drawLoc(c.loc);}finally{c.w.cam.setZoom();}
+            first.after=state(c);first.cameraAfter=camera(c);first.redrawDelta=int(c.g.sceneRedraws)-redraws;
+            first.stateUnchanged=JSON.stringify(before)==JSON.stringify(first.after);
+            first.cameraRestored=JSON.stringify(cam)==JSON.stringify(first.cameraAfter);
+            var fresh:Array=surfaces(c);
+            for(i=0;i<copies.length;i++) {
+               var difference:*=BitmapData(copies[i]).compare(BitmapData(fresh[i])),equal:Boolean=difference is Number&&Number(difference)==0;
+               var row:Object={surface:names[i],equal:equal,beforeId:first.surfaceIdentities[i],afterId:id(fresh[i])};
+               if(difference is BitmapData) {
+                  var delta:BitmapData=difference as BitmapData;
+                  try{var bounds:Rectangle=delta.getColorBoundsRect(0xffffffff,0,false);row.changedBounds=[bounds.x,bounds.y,bounds.width,bounds.height];}
+                  finally{delta.dispose();}
+               }else row.compareCode=difference;
+               first.comparisons.push(row);
+               png(copies[i],"first-"+names[i]+"-before.png");png(fresh[i],"first-"+names[i]+"-after.png");
+            }
+            first.complete=true;first.elapsed=getTimer()-int(first.at);
+         }finally {
+            for each(var ownedCopy:BitmapData in owned){ownedCopy.dispose();disposedCount++;}
+         }
+      }
+      private function requestSwitch(c:Object,turnOn:Boolean):void {
+         terminal={world:c.w,loc:c.loc,gg:c.w.gg,runtime:c.rt};requestedFrame=frame;
+         var row:Object={requested:getTimer(),before:lamps(c),location:String(c.loc.id)};
+         if(turnOn){on=row;c.loc.allon();phase="on-wait";}else{off=row;c.loc.alloff();phase="off-wait";}
+      }
+      private function switched(c:Object,turnOn:Boolean):void {
+         require(c.w===terminal.world&&c.loc===terminal.loc&&c.w.gg===terminal.gg&&c.rt===terminal.runtime,"switch changed native identities");
+         require(c.loc.lightOn==(turnOn?1:-1),"native switch state not applied");
+         var actual:Array=lamps(c),row:Object=turnOn?on:off;
+         require(actual.length==row.before.length,"switch changed lamp count");
+         for(var i:int=0;i<actual.length;i++) {
+            require(actual[i].bo==row.before[i].bo&&actual[i].holder==row.before[i].holder&&actual[i].proxy==row.before[i].proxy,"switch replaced lamp identities");
+            require(actual[i].powered===turnOn&&actual[i].nativeFrame==actual[i].frame,"LAD did not observe real native switch");
+            require(actual[i].hp==row.before[i].hp&&actual[i].proxyHp==actual[i].hp,"switch changed damage/proxy health");
+         }
+         row.after=actual;row.complete=true;row.observed=getTimer();phase=turnOn?"on-render":"off-render";
+      }
+      private function tick(e:Event):void {
+         if(written)return;frame++;
+         try {
+            var w:Object=mod.game.world;
+            if(!attempted&&round==0&&w!=null&&w.game!=null&&String(w.game.curLandId)=="random_mane"&&w.t_exit==19)
+               compareFirst(context());
+            if(finishing&&phase=="travel"&&File.applicationStorageDirectory.resolvePath("native-loading-observer.json").exists)
+               requestSwitch(context(),false);
+            else if(phase=="off-wait"&&frame>requestedFrame)switched(context(),false);
+            else if(phase=="on-request")requestSwitch(context(),true);
+            else if(phase=="on-wait"&&frame>requestedFrame)switched(context(),true);
+         }catch(error:*) {fault("enter "+phase,error);if(finishing)phase="failed";else attempted=true;}
+      }
+      private function render(e:Event):void {
+         if(written)return;
+         try {
+            if(phase=="off-render"){stagePng("native-alloff.png");phase="on-request";}
+            else if(phase=="on-render"){stagePng("native-allon.png");phase="complete";}
+            if(phase=="complete"||phase=="failed")output();
+         }catch(error:*) {fault("render "+phase,error);phase="failed";try{output();}catch(last:*){Log.d("LAMP RASTER PROBE OUTPUT FAILED "+role+" "+String(last));}}
+      }
+      private function output():void {
+         if(written)return;written=true;mod.stage.removeEventListener(Event.ENTER_FRAME,tick);mod.stage.removeEventListener(Event.RENDER,render);
+         var checks:Array=[],equal:Boolean=first!=null&&first.complete&&first.comparisons.length==5;
+         if(equal)for each(var row:Object in first.comparisons)if(!row.equal)equal=false;
+         checks.push({label:"nonempty first native random room sampled",passed:first!=null&&first.round==0&&first.exit==19&&first.lampCount>0});
+         checks.push({label:"four native layers and sats exactly match same-event native redraw",passed:equal});
+         checks.push({label:"world room player lamps physics and membership unchanged by redraw",passed:first!=null&&first.stateUnchanged===true});
+         checks.push({label:"exactly one native redraw and original camera restored",passed:first!=null&&first.redrawDelta==1&&first.cameraRestored===true});
+         checks.push({label:"real native alloff observed by subsequent LAD callback",passed:off!=null&&off.complete===true});
+         checks.push({label:"real native allon observed by subsequent LAD callback",passed:on!=null&&on.complete===true});
+         checks.push({label:"only owned bitmap clones disposed and actual images saved",passed:cloneCount>0&&cloneCount==disposedCount&&images.length==12});
+         checks.push({label:"no diagnostic errors",passed:faultCount==0});
+         var passed:Boolean=true;for each(var check:Object in checks)if(!check.passed)passed=false;
+         var result:Object={kind:"ordinary-lamp-native-raster-diagnostic-v1",role:role,appId:NativeApplication.nativeApplication.applicationID,
+            passed:passed,complete:true,diagnosticOnly:true,performanceQualified:false,optimizationPathProven:false,color_buffer_directly_observed:false,
+            colorEvidence:"Only actual hardlight-composited back surface; internal source color buffer is not directly accessed.",
+            checks:checks,faultCount:faultCount,faults:faults,first:first,off:off,on:on,images:images,
+            ownedClones:cloneCount,disposedClones:disposedCount,completedAt:getTimer(),
+            timingMeaning:"Additional native redraw, native switch actions and PNG encoding perturb this run; no net loading performance qualification."};
+         var file:File=File.applicationStorageDirectory.resolvePath("ordinary-lamp/result.json"),stream:FileStream=new FileStream();file.parent.createDirectory();
+         try{stream.open(file,FileMode.WRITE);stream.writeUTFBytes(JSON.stringify(result));}finally{stream.close();}
+         Log.d("LAMP RASTER PROBE RESULT "+JSON.stringify({role:role,passed:passed,checks:checks,faultCount:faultCount,images:images.length}));
+         Log.d("LAMP RASTER PROBE DONE "+role);
+      }
+   }
+}

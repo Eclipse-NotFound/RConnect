@@ -1,0 +1,270 @@
+"""Three-method lamp host build; --check never starts Java or writes a build."""
+from pathlib import Path
+from types import ModuleType, SimpleNamespace
+import argparse, ast, difflib, hashlib, importlib.util, json, sys
+
+if sys.flags.optimize:
+    raise RuntimeError('Ordinary Python required')
+sys.dont_write_bytecode = True
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[1]
+GAME = ROOT.parents[1]
+OLD = HERE.with_name('goal-native-loading-build')
+SOURCE = HERE.with_name('goal-ordinary-lamp-first-raster-candidate')
+BASE = ROOT/'build/m52/goal-native-loading-host-03'
+FAILED = ROOT/'build/m52/goal-ordinary-lamp-host-01'
+REPAIR = HERE.with_name('recovery-room-first-raster-host-current')/'prepare.py'
+EQUIVALENT = GAME/'mods/ContinuousScene/build/generated/scene-compat-20261024/tint/product/source-equivalent.as.inc'
+ENV = HERE.with_name('goal-native-loading-native-v2')/'runtime-environment.json'
+RV_RECEIPT = GAME/'mods/RealisticVision/knowledge/experiments/combat-render-d44-20261025/deployment/receipt.json'
+RV_KEY = 'mods/RealisticVision/release/RealisticVisionMod.swf'
+A796 = 'a796827173af7d6fab9885fb66ecc62182ab5335918a30c7cce4c44914a238b7'
+RC78C = '78c052aea963f1689b705ae1e14d274916ae1a1f7e81933390caf8d1a88f4699'
+HOST_SHA = '2db0b4eb542661c45e5fa0056e7de44e730fee3cf1eac642f6f147f3ce1c2b82'
+PINS = {
+    OLD/'build_host.py': '807b6acabbeb3c0087a76d2b9e3523de9ad029089461f574131fe019e26418ae',
+    SOURCE/'prepare.py': '0aeff76d9c4bfb1ba97af147f7f5392014a559ccbe4f093bf34bf24578597646',
+    SOURCE/'source-manifest.json': '09db44feae814b4c08a0d9153cc52bae03459a2606a7e510b8622cf17e4449c6',
+    SOURCE/'FROZEN.json': '35d4613fe2a0c90430f0df29f86fe068aa68e8e776cb1e7e76f204b42c8fa951',
+    SOURCE/'host/fe/graph/Grafon.as': 'eeedea0363639f1d0fc9471af2422d199a5a00fab3f78f34e7c859a44dc212f2',
+    BASE/'build.json': '29011f30899e9314855f91ed00ec6b1a35193e8934bd2c5023a244dd5a7f2c07',
+    BASE/'prepared.json': '960647ceb565a7efe7bb2d134aa798b4e6e6762a03f1aecd93cf88e65dea3a1d',
+    BASE/'method-audit.json': '16f1e82671b772c46a9b3bf89bfdcc5316c7f5d704f136f21b5b909aa79d5250',
+    BASE/'retain.json': 'ed020b98e6e528cf0169a3b25c19e8e0184f87df5c2dd91f838aefad7b52b717',
+    BASE/'pfe.swf': HOST_SHA,
+    BASE/'final.xml': 'c20f35696ffc284f3c293ec76d4e21f083857303a7cd2fc17916da3868c75fe5',
+    ENV: '3214299ed82486102fd118f214825da5ea48f776be1842a4aa74a4db4c104de6',
+    RV_RECEIPT: 'bb713983b87cd23f238774d484480c3582384da56c2fcd0cccb282d3363d379f',
+    REPAIR: '0885c01911aff1110dc326d6c6f131a309eee82638628d0dc71536cea88d1f89',
+    EQUIVALENT: '57398e9e9a75b287688a02dfb20d3df476291dca92c6f004b58d0c3f34dcdaf5',
+    FAILED/'build.json': 'b5e3bff01881452b4024a8f04eedce6bd0eedbbc429a527f3f7b23d126534a7a',
+    FAILED/'import.log': '15a757e947a4273aabab3506048e6ad8613962654e46f535050861996dc169f2',
+    HERE/'host01-build.py.txt': 'a7bce8b7006cf7b598fc4f630986616c48eaf10c9aeeebafcdef5a2061311902',
+    HERE/'host01-retain.py.txt': 'f34f62f042a977c7036a33d48bed9ff0562d334ef1bd38d8ec5a3ecb409077f0',
+    HERE/'host01-README.md.txt': '03f59e3fa5d82715a88a6dbfa6c4f204c5b2ae2c2bb714089adc09a24d47da59',
+    HERE/'host02-build.py.txt': '5ad0ddbd62ce83394c447a1bee2f6d9339da50fb9f7ac87a4648e7f8a92a19d5',
+    HERE/'host02-retain.py.txt': 'f34f62f042a977c7036a33d48bed9ff0562d334ef1bd38d8ec5a3ecb409077f0',
+    HERE/'host02-README.md.txt': '75165f96c3d3c584bda500961a637e1290f065bd955b465f2262c0c42b776d46',
+    ROOT/'build/m52/goal-ordinary-lamp-host-02/build.json': '6e445ea46c2828411a39fcc371f6dfe360bde8a16e5828b0ac77b992ea1b5722',
+}
+
+
+def sha(path):
+    h = hashlib.sha256()
+    with Path(path).open('rb') as stream:
+        for block in iter(lambda: stream.read(1024*1024), b''):
+            h.update(block)
+    return h.hexdigest()
+
+
+def read(path):
+    return json.loads(Path(path).read_text('utf-8-sig'))
+
+
+def load(name, path):
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+assert sha(OLD/'build_host.py') == PINS[OLD/'build_host.py']
+EDITS = (
+    ("p.name.startswith('goal-native-loading-host-')", "p.name.startswith('goal-ordinary-lamp-host-')"),
+    ("before['pfe.swf']==source.HOST_SHA", "before['pfe.swf']==source.INSTALLED_HOST_SHA"),
+    ("kind='native-loading-ui-host'", "kind='ordinary-lamp-three-method-host'"),
+    ("kind='native-loading-ui-host-build'", "kind='ordinary-lamp-three-method-host-build'"),
+    ("owner='RConnect / 原生加载显示'", "owner='RConnect / 普通灯具首绘宿主'"),
+    ("purpose='A796 retained World UI lease; no AIR/install'", "purpose='2DB0 retained World UI; Grafon drawLoc plus two lamp helpers; no AIR/install'"),
+    ("reg.note='World raw-prefix/member/resource checks passed; actual semantic review and AIR remain'",
+     "reg.note='Grafon three-method retention passed; World/UI preserved; actual semantic review and AIR remain'"),
+    ("p.write_bytes((source.UI/'host'/rel).read_bytes())", "p.write_bytes(source.import_bytes(cls))"),
+    (" meta=dict(kind='ordinary-lamp-three-method-host',base_sha256=source.HOST_SHA,base_xml_sha256=sha(source.BASE_XML),",
+     " save(out/'donor-source.json',source.donor_proof())\n"
+     " (out/'donor-only.diff').write_text(source.donor_diff(),encoding='utf-8',newline='')\n"
+     " meta=dict(kind='ordinary-lamp-three-method-host',base_sha256=source.HOST_SHA,base_xml_sha256=sha(source.BASE_XML),\n"
+     "  donor_only=source.donor_proof(),donor_diff_sha256=sha(out/'donor-only.diff'),"),
+    (" assert len(list((out/'import').rglob('*.as')))==1",
+     " assert len(list((out/'import').rglob('*.as')))==1\n"
+     " assert (out/'import'/source.paths('fe.graph.Grafon')).read_bytes()==source.import_bytes('fe.graph.Grafon')\n"
+     " assert meta['donor_only']==read(out/'donor-source.json')==source.donor_proof()\n"
+     " assert (out/'donor-only.diff').read_text('utf-8')==source.donor_diff()\n"
+     " assert meta['donor_diff_sha256']==sha(out/'donor-only.diff')"),
+)
+original_builder = (OLD/'build_host.py').read_text('utf-8')
+adapted_builder = original_builder
+for old, new in EDITS:
+    assert adapted_builder.count(old) == 1, old
+    adapted_builder = adapted_builder.replace(old, new, 1)
+legacy = ModuleType('ordinary_lamp_private_six_step_builder')
+legacy.__file__ = str(OLD/'build_host.py')
+exec(compile(adapted_builder, legacy.__file__, 'exec'), legacy.__dict__)
+retainer = load('ordinary_lamp_retention', HERE/'retain.py')
+candidate = load('ordinary_lamp_exact_sources', SOURCE/'prepare.py')
+assert sha(REPAIR) == PINS[REPAIR]
+repair = load('ordinary_lamp_exact_donor_repair', REPAIR)
+
+
+def donor_spec():
+    """Reuse the exact A796 import repairs; neither method enters final ABC."""
+    path = SOURCE/'host/fe/graph/Grafon.as'
+    assert sha(path) == PINS[path] and sha(EQUIVALENT) == PINS[EQUIVALENT]
+    before = path.read_bytes().decode('utf-8')
+    ending = '\r\n' if '\r\n' in before else '\n'
+    assert before.count('§§') == 5
+    after = before
+    pairs = (
+        ('                  var _loc1_:* = §§findproperty(j);\n                  var _loc2_:Number = Number(_loc1_.j) + 1;\n                  _loc1_.j = _loc2_;', '                  j++;'),
+        ('               _loc1_ = §§findproperty(i);\n               _loc2_ = Number(_loc1_.i) + 1;\n               _loc1_.i = _loc2_;', '               i++;'),
+    )
+    for old, new in pairs:
+        after = repair.once(after, old.replace('\n', ending), new)
+    equivalent = EQUIVALENT.read_text('utf-8').replace('\n', ending)
+    after = repair.replace_method(after, 'sceneEntitySameColor', repair.methods(equivalent)['sceneEntitySameColor'])
+    assert '§§' not in after
+    a, b = repair.methods(before), repair.methods(after)
+    assert set(a) == set(b)
+    assert {n for n in a if a[n] != b[n]} == {'sceneDrawSteps','sceneEntitySameColor'}
+    targets = ('drawLoc','beginOrdinaryLampRaster','completeOrdinaryLampRaster')
+    assert all(a[n].encode('utf-8') == b[n].encode('utf-8') for n in targets)
+    failed = read(FAILED/'build.json')
+    assert not failed['compiled'] and not failed['build_checks_passed'] and not failed['air_started']
+    assert 'Unknown preprocessor instruction: §§findproperty on line 2794' in (FAILED/'import.log').read_text('utf-8')
+    diff = ''.join(difflib.unified_diff(before.splitlines(True), after.splitlines(True),
+                   fromfile='frozen-candidate/fe/graph/Grafon.as', tofile='donor-only/fe/graph/Grafon.as'))
+    proof = dict(kind='ordinary-lamp-donor-import-repair',
+        original_candidate_sha256=sha(path), donor_sha256=hashlib.sha256(after.encode('utf-8')).hexdigest(),
+        changed_donor_only_methods=['sceneDrawSteps','sceneEntitySameColor'],
+        target_methods_byte_exact={n:hashlib.sha256(a[n].encode('utf-8')).hexdigest() for n in targets},
+        pseudo_instructions_before=5,pseudo_instructions_after=0,
+        failed_build_sha256=sha(FAILED/'build.json'),failed_import_log_sha256=sha(FAILED/'import.log'),
+        repair_source_sha256=sha(REPAIR),equivalent_source_sha256=sha(EQUIVALENT),
+        require_final_non_target_methods_from_base=True,compiled=False,air_started=False)
+    return after.encode('utf-8'), proof, diff
+
+
+def import_bytes(cls):
+    assert cls == 'fe.graph.Grafon'
+    return donor_spec()[0]
+
+
+def donor_proof():
+    return donor_spec()[1]
+
+
+def donor_diff():
+    return donor_spec()[2]
+
+
+def historical():
+    """Immutable 2DB0 build proof; never substitutes for current installation."""
+    r, m = read(BASE/'build.json'), read(BASE/'prepared.json')
+    assert r['base_sha256'] == A796 and r['candidate_sha256'] == HOST_SHA
+    assert r['prepared_sha256'] == sha(BASE/'prepared.json') and r['inputs'] == m['inputs']
+    assert r['compiled'] and r['build_checks_passed'] and r['inputs_unchanged'] and r['installation_unchanged']
+    assert r['installation_before'] == r['installation_after'] == m['installation_before']
+    assert len(r['commands']) == 6 and all(x['exit_code'] == 0 and x['reaped'] for x in r['commands'])
+    assert [{k: x[k] for k in ('name','argv')} for x in r['commands']] == m['commands']
+    for name in ('method-audit', 'retain', 'splice'):
+        assert r[name.replace('-', '_')] == read(BASE/(name+'.json'))
+        assert sha(BASE/(name+'.json')) == r['artifacts'][name+'.json']
+    for name in ('pfe.swf','final.xml','prepared.json'):
+        assert sha(BASE/name) == r['artifacts'][name]
+    a = r['method_audit']
+    assert a['passed'] and a['exact_retained_roundtrip'] and a['non_target_bodies_byte_exact'] == 3275
+    assert a['original_constructors_byte_exact'] and a['original_static_initializers_byte_exact']
+    assert len(a['allowed_changed_bodies']) == 10 and all(n.startswith('fe.World::') for n in a['allowed_changed_bodies'])
+    assert r['splice']['rawResourcesPreserved']
+    return r
+
+
+def current():
+    actual = legacy.installation()
+    env, rv = read(ENV), read(RV_RECEIPT)
+    assert sha(ENV) == PINS[ENV] and sha(RV_RECEIPT) == PINS[RV_RECEIPT]
+    assert actual == env['runtime_environment'] and len(actual) == 22
+    assert actual['pfe.swf'] == A796 and actual['mods/Rconnect/release/RConnectMod.swf'] == RC78C
+    old = read(BASE/'build.json')['installation_before']
+    assert old == env['build_environment'] and set(actual) == set(old)
+    assert {p for p in actual if actual[p] != old[p]} == {RV_KEY}
+    assert rv['old'] == old[RV_KEY] and rv['new'] == actual[RV_KEY] and rv['result'] == 'PASS'
+    return actual
+
+
+def source_pins():
+    for path, digest in PINS.items():
+        assert sha(path) == digest, str(path)
+    candidate.verify()
+    donor_spec()
+    built = historical()
+    result = {str(p): h for p,h in PINS.items()}
+    for path, digest in built['inputs'].items():
+        assert sha(path) == digest, path
+        result[path] = digest
+    for name, digest in read(SOURCE/'FROZEN.json')['files'].items():
+        assert sha(SOURCE/name) == digest
+        result[str(SOURCE/name)] = digest
+    for path in (HERE/'build.py', HERE/'retain.py', HERE/'README.md',
+                 retainer.OLD/'retain_v2.py', retainer.UI/'activation_slots.py', retainer.FFDEC_LIB):
+        result[str(path)] = sha(path)
+    return result
+
+
+legacy.source = SimpleNamespace(HOST=BASE/'pfe.swf', HOST_SHA=HOST_SHA,
+    INSTALLED_HOST_SHA=A796, BASE_XML=BASE/'final.xml',
+    OLD=retainer.OLD, UI=SOURCE, CLASSES=('fe.graph.Grafon',),
+    paths=lambda c: Path(c.replace('.', '/')+'.as'), pins=source_pins, current=current,
+    import_bytes=import_bytes, donor_proof=donor_proof, donor_diff=donor_diff)
+legacy.retain = retainer
+DEFAULT = ROOT/'build/m52/goal-ordinary-lamp-host-03'
+prepare, frozen, commands, target = legacy.prepare, legacy.frozen, legacy.commands, legacy.target
+build = legacy.build
+
+
+def verify(output):
+    r = legacy.verify(output)
+    a = r['method_audit']
+    assert r['base_sha256'] == HOST_SHA and r['installation_before']['pfe.swf'] == A796
+    assert a['allowed_changed_bodies'] == list(retainer.TARGETS)
+    assert a['added_methods'] == 2 and a['added_fields'] == 0
+    assert a['world_ui_bodies_byte_exact'] and a['original_static_initializers_byte_exact']
+    assert a['private_helper_traits_bound']
+    return r
+
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument('--output', type=Path, default=DEFAULT)
+    ap.add_argument('--registry-wait', type=float, default=900)
+    g = ap.add_mutually_exclusive_group(required=True)
+    for name in ('check','prepare','build','verify','print-diff'):
+        g.add_argument('--'+name, action='store_true')
+    args = ap.parse_args()
+    if args.print_diff:
+        print(''.join(difflib.unified_diff(original_builder.splitlines(True), adapted_builder.splitlines(True),
+                     fromfile='frozen/build_host.py', tofile='private/ordinary-lamp-build.py'))+retainer.diff())
+        return
+    out = target(args.output)
+    if args.check:
+        pins = legacy.pins()
+        actual = current()
+        ast.parse(adapted_builder)
+        checks = retainer.switch_checks()
+        value = dict(passed=True, input_count=len(pins), installation_count=len(actual),
+                     base_sha256=HOST_SHA, installed_host_sha256=A796, java_started=False,
+                     switch_checks=checks,
+                     allowed_original_methods=list(retainer.TARGETS), new_methods=list(retainer.NEW_NAMES))
+    elif args.prepare:
+        value = prepare(out)
+    elif args.build:
+        build(out, args.registry_wait)
+        value = verify(out)
+    else:
+        value = verify(out)
+    keys = ('passed','input_count','installation_count','base_sha256','installed_host_sha256','java_started',
+            'candidate_sha256','compiled','validated','build_checks_passed','allowed_original_methods','new_methods','switch_checks')
+    print(json.dumps({k:v for k,v in value.items() if k in keys}, ensure_ascii=False))
+
+
+if __name__ == '__main__':
+    main()

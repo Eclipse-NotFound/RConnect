@@ -1,0 +1,44 @@
+--- original-ordinary.py
++++ lamp-ordinary.py
+@@ -219,7 +219,7 @@
+                     preference = app_root/'Local Store/ContinuousScene.preferences.json'
+                     telemetry = output/role/'mods/ModLoader/release/telemetry.json'
+                     assert preference.resolve().is_relative_to(app_root.resolve()) and not preference.exists()
+-                    assert all(not (preference.parent/name).exists() for name in ("native-loading-observer.json", "native-loading-terminal.png"))
++                    assert all(not (preference.parent/name).exists() for name in ("native-loading-observer.json", "native-loading-terminal.png", "LightAndDarkness.log"))
+                     assert telemetry.resolve().is_relative_to((output/role).resolve()) and not telemetry.exists()
+                     settings[role] = dict(app_id=appid, preference=str(preference), telemetry=str(telemetry))
+                 for row in settings.values():
+@@ -248,16 +248,21 @@
+                 stopped()
+ 
+         record.before_launch, record.child_stopped = before_launch, after_stopped
+-        if bridge is not None and bridge['sandy'] is not None:
++        if bridge is not None and (bridge['sandy'] is not None or bridge.get('lad') is not None):
+             copied = []
+             def copy2(source, destination, *copy_args, **copy_kwargs):
+                 source, destination = Path(source), Path(destination)
+-                if source.resolve() == GAME/'mods/Sandevistan/release/SandevistanMod.swf':
++                if source.resolve() == GAME/'mods/Sandevistan/release/SandevistanMod.swf' and bridge['sandy'] is not None:
+                     assert destination.resolve() == output/'frozen/mods/Sandevistan/release/SandevistanMod.swf'
+                     assert not copied
+                     assert sha(source) == before['mods/Sandevistan/release/SandevistanMod.swf']
+                     source = Path(bridge['sandy'])
+                     assert sha(source) == bridge['sandy_sha256']
++                    copied.append(str(destination))
++                if source.resolve() == GAME/'mods/LightAndDarkness/release/LightAndDarknessMod.swf' and bridge.get('lad') is not None:
++                    assert destination.resolve() == output/'frozen/mods/LightAndDarkness/release/LightAndDarknessMod.swf'
++                    assert not copied and sha(source) == before['mods/LightAndDarkness/release/LightAndDarknessMod.swf']
++                    source = Path(bridge['lad']); assert sha(source) == bridge['lad_sha256']
+                     copied.append(str(destination))
+                 return original_shutil.copy2(source, destination, *copy_args, **copy_kwargs)
+             runner.shutil = types.SimpleNamespace(**{name:getattr(original_shutil,name) for name in dir(original_shutil)})
+@@ -299,6 +304,8 @@
+                 expected = HARNESS_SHA if name == 'mods/rconnect/release/rconnectmod.swf' else installed_lower[name]
+                 if name == 'mods/sandevistan/release/sandevistanmod.swf' and bridge is not None and bridge['sandy'] is not None:
+                     expected = bridge['sandy_sha256']
++                if name == 'mods/lightanddarkness/release/lightanddarknessmod.swf' and bridge.get('lad') is not None:
++                    expected = bridge['lad_sha256']
+                 assert value == expected
+             for name, value in values.get('mod_assets', {}).items():
+                 assert value == installed_lower[name.replace('\\', '/').lower()]

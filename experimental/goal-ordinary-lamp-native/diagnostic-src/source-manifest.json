@@ -1,0 +1,30 @@
+{
+  "kind": "ordinary-lamp-native-raster-diagnostic-source-v1",
+  "prepare_sha256": "75aab9f80b8977ce6eeb9ec4040214f1d828f673673c645fd4d3e1d5e4950ca2",
+  "readme_sha256": "e29259409e8fcdbcf6248175b008faf9a5e9c7c369231b3b114e546235fc6413",
+  "diff_sha256": "921ba8556b4a7633a0cca077b3523a84ac0a13c6df0220d35c75aa81523c3057",
+  "original_sources": {
+    "A22RoomMetrics.as": "314823fd0fcd04e71277dcd3e8ee1a647317e611c5ff7b8fb0e7058c25179d6e",
+    "NativeLoadingProbe.as": "0bd3c84f3a48487ae9b9e0d651e2a901873913eba737622c2833edbc2cf64b92",
+    "RoomTravelTimingTestDoc.as": "ebe117b2b391a396eb83c79a616580b07bd7305b601b83acd9ca007e359e592c"
+  },
+  "original_prepared_sha256": "562bb57f0640eefb4f89fa2799fd52918baec49cdab42c434808a21c36840ca9",
+  "sources": {
+    "A22RoomMetrics.as": "314823fd0fcd04e71277dcd3e8ee1a647317e611c5ff7b8fb0e7058c25179d6e",
+    "NativeLoadingProbe.as": "0bd3c84f3a48487ae9b9e0d651e2a901873913eba737622c2833edbc2cf64b92",
+    "OrdinaryLampRasterProbe.as": "c431e43ef20bf77106b97de074b60b7aee55a6f7ebe3d1a0c0851ddc9200bd74",
+    "RoomTravelTimingTestDoc.as": "4a96b2f7359cee72ca59e0e215dfc19bbe5c17c83440693cc5955755050e52ef"
+  },
+  "entry": "tests/RoomTravelTimingTestDoc.as",
+  "hook_count": 4,
+  "done": "LAMP RASTER PROBE DONE",
+  "result": "ordinary-lamp/result.json",
+  "originalTravelChecks": 35,
+  "originalUiChecksPerRole": 11,
+  "additionalChecksPerRole": 8,
+  "source_count": 4,
+  "diagnosticOnly": true,
+  "performanceQualified": false,
+  "compiled": false,
+  "air_started": false
+}

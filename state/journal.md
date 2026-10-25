@@ -1,3 +1,11 @@
+## 2026-10-25 16:15 灯具宿主与图像驱动实际构建，三份文本授权完成
+
+host02导入成功后因移植器缺0x1b LOOKUPSWITCH证明失败，旧三文件与全部失败证据保留。新构建器7B7AC193/retain97917136只补精确分支栈验证与既有非目标供体语法清理，三目标源不扩。host03六条Java实际成功并回收，宿主7B3CAE6F、build2119854B、prepared31B35886；3291旧非目标体精确、两新helper同原private namespace，World UI及资源不变。实际Grafon AS102AC0CD/P-codeCA7736F0/最终XML独立审查，semantic5B2FADF1；根保存native-test-only runtime-admission，不等于实机合格。
+
+图像诊断4AS实际单编译成功370F9D58，prepared95FA79EC/compile52A76370，22安装/源不变，Java已回收。诊断原35+双方11保留，真实drawLoc同事件5面像素比较及后续alloff/allon另8项/12PNG，不能授净性能，尚需独立运行绑定。旧短CPU采样复核只能定位若干接收/绘制窗口，不能把未采样时间归GPU或断言新的RC主瓶颈，不新增无证据优化。
+
+用户明确批准本次3文本精确授权后，调用按提案更新adapted-ordinary/source.diff/source-manifest；新manifest C20133BB，run C3A0保持。精确grant c2985bb9在8分钟有效窗内执行，完成后立即删除，仅保留原4他方表项。source-check及实际candidate --check通过。根运行普通877B候选fe88288c86/goal-ordinary-lamp-native-candidate-01，当前登记排队exec70467；显式host03。未启动额外诊断或部署，正式78C/A796/LAD8ADBA不变。
+
 ## 2026-10-25 15:30 灯具优化当前基准与首构建失败
 
 既有UIv2入口实际a0b9eef77b（9C85/2DB0/8ADBA/638E）23/12+双方11全过，三次同入口0px；主5724/1698/2922ms，加5679/1774/2905ms。首随机房4灯BAKE796/709ms。自有17480/43736和副本均已回收，源/22安装不变，根查看加入终态PNG正常。仅当前组合基准，不授灯具候选性能。

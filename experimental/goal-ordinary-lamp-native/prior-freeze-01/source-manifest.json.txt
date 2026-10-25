@@ -1,0 +1,30 @@
+{
+  "kind": "ordinary-lamp-native-entry-v1",
+  "ordinary_replacements": 4,
+  "inputs": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-native-loading-native-v2\\run.py": "a5b2ce70fcef52bd5960715fb0d29289f5124acf5139387db92e30aefc1782f3",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-native-loading-native-v2\\source-manifest.json": "7d62b3d6e7f159bdf91427a3543027bab7f5069628364c25ce09d5a4710dc840",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-native-loading-native-v2\\runtime-environment.json": "3214299ed82486102fd118f214825da5ea48f776be1842a4aa74a4db4c104de6",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-native-loading-native\\run.py": "6600386fc24dfba7db84512d1d6ec11b44a386a1eb4f4782950f62d69e726c24",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-native-loading-native\\recipe.py": "ac41f5dc716c8b94218bc04e29777f2b830d088e37bb0306b74bf4e56acfffba",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-native-loading-native\\private_runner.py": "1faa52d8874a06e017e3ac9fe890fe5b53b82c3962e67d769a3c2068773073d2",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-native-loading-native\\source-manifest.json": "346ccb12820fb9b45cc743fbff7ffe2c396db1d46ef746c70bcaf00855169da6",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-ordinary-lamp-product-build\\build.py": "c30377e8d39029e7c4b32fef3cf8a45722d0c006d5d7d66a8b57a5547fb9164b",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-ordinary-lamp-product-build\\recipe.json": "4ceb88d450fd1bcd69ac1086b5abd6a3b6ef49cee4e0c0cc7932e942ee8a8961",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-ordinary-lamp-product-build\\FROZEN.json": "67e0f58a8a388ad9a3e45e5ac1e9f71c526ce296daf5a4fabe960f77fcc27a5c",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-ordinary-lamp-host-build\\build.py": "5ad0ddbd62ce83394c447a1bee2f6d9339da50fb9f7ac87a4648e7f8a92a19d5",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-ordinary-lamp-host-build\\retain.py": "f34f62f042a977c7036a33d48bed9ff0562d334ef1bd38d8ec5a3ecb409077f0",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-ordinary-lamp-host-build\\README.md": "75165f96c3d3c584bda500961a637e1290f065bd955b465f2262c0c42b776d46",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-ordinary-lamp-first-raster-candidate\\FROZEN.json": "35d4613fe2a0c90430f0df29f86fe068aa68e8e776cb1e7e76f204b42c8fa951"
+  },
+  "files": {
+    "adapted-ordinary.py.txt": "1d8b7a892c93ff21f5ca79ce1f34e967d2f711ff3c64e7502cd8f64752c6ef58",
+    "README.md": "30263797dac6d44ab49dc5bbd43748da98897861ad6e0e89f0b6d3961acc913d",
+    "run.py": "06f1eaa65af2ecb4bc134b64e1107763cc918254b59848d3c4075dd4e567d1e5",
+    "source.diff": "7698b661b20021e231de0708bf0737a2bce365e888e342cee9f0d412fa806c52"
+  },
+  "air_started": false,
+  "compiled": false,
+  "installed": false,
+  "lamp_visual_qualified": false
+}

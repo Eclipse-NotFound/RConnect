@@ -1,0 +1,10 @@
+{
+  "scope": "Earlier frozen text only; no execution or artifact changes",
+  "files": {
+    "run.py": "06f1eaa65af2ecb4bc134b64e1107763cc918254b59848d3c4075dd4e567d1e5",
+    "source-manifest.json": "dac9d8701117ea9c88a4bf20d29f1e674076c6e609caff03e3895f0cc9130a72",
+    "source.diff": "7698b661b20021e231de0708bf0737a2bce365e888e342cee9f0d412fa806c52",
+    "adapted-ordinary.py.txt": "1d8b7a892c93ff21f5ca79ce1f34e967d2f711ff3c64e7502cd8f64752c6ef58",
+    "README.md": "30263797dac6d44ab49dc5bbd43748da98897861ad6e0e89f0b6d3961acc913d"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "kind": "requested-text-finalization-only",
+  "reason": "Earlier composite text update was denied by local hook; its verbatim call was not retained. This is a new reviewable exact command, not a purported retry.",
+  "writes": [
+    "adapted-ordinary.py.txt",
+    "source.diff",
+    "source-manifest.json"
+  ],
+  "directory": "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/experimental/goal-ordinary-lamp-native",
+  "run_with_explicit_host": "build/m52/goal-ordinary-lamp-host-03",
+  "call": {
+    "cmd": "@'\nfrom pathlib import Path\nimport hashlib,json,importlib.util,difflib,ast\nbase=Path.cwd(); here=base/'experimental/goal-ordinary-lamp-native'\ndef sha(p): return hashlib.sha256(p.read_bytes()).hexdigest()\nexpected={'run.py':'c3a0a36d2ab28e4dd7200463a21fb37b9924df395697987fa79b0d693d6e3652','README.md':'9c0a683b7a6a1e87f9a4f64fc8104014772edd6266250806f1e54857954c3b62','source-manifest.json':'dac9d8701117ea9c88a4bf20d29f1e674076c6e609caff03e3895f0cc9130a72'}\nfor name,digest in expected.items(): assert sha(here/name)==digest,name\nspec=importlib.util.spec_from_file_location('approved_text_finalization',here/'run.py')\nmodule=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)\nrecipe=module.load(module.OLD/'recipe.py','approved_original_recipe')\nassert len(module.EDITS)==5\noriginal=recipe.ordinary_source(); expanded=module.expanded(recipe);ast.parse(expanded)\ndiff=''.join(difflib.unified_diff(original.splitlines(True),expanded.splitlines(True),fromfile='original-ordinary.py',tofile='lamp-ordinary.py'))\nmanifest=json.loads((here/'source-manifest.json').read_text('utf8'))\nassert manifest['ordinary_replacements']==4\nhost_expected={'build.py':'7b7ac193692c6f7a615326d55643cbc63b3417e41042a1b043c480f8e844d141','retain.py':'97917136114fa94f0e6ae020ebe6a1e28bbc75a15edfbedeacc8fd30d3fcb500','README.md':'2799d96c582985d017128ebcddae23e26fecfcf29db14ecf036ac75492374de0'}\nhost=here.with_name('goal-ordinary-lamp-host-build')\nfor name,digest in host_expected.items():\n p=host/name;assert sha(p)==digest,name\n assert str(p) in manifest['inputs'];manifest['inputs'][str(p)]=digest\nfor path,digest in manifest['inputs'].items(): assert sha(Path(path))==digest,path\npayload={'adapted-ordinary.py.txt':expanded,'source.diff':diff}\nfor name,data in payload.items(): (here/name).write_text(data,encoding='utf8',newline='')\nmanifest['ordinary_replacements']=5\nmanifest['files']={name:sha(here/name) for name in manifest['files']}\n(here/'source-manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\\n',encoding='utf8',newline='')\nprint(json.dumps({'text_files_updated':3,'game_started':False,'binary_written':False,'manifest':sha(here/'source-manifest.json')}))\n'@ | & 'C:/Users/hello/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe' -B -X utf8 -",
+    "workdir": "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect",
+    "max_output_tokens": 1800
+  }
+}
