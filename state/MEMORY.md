@@ -21,7 +21,7 @@ A 为普通入口的双人联机；B 独立架构本轮不碰。根会话 `01a08
 
 ## 3. 实际安装与候选
 
-**独立 B 会话补充（2026-10-25）**：原 `build/ab/b3-playable-190` 已更新窄修 `B3-0.1-startup2` / SWF `2c536b5d`，修复大旧档加入失败及取消/失败后 TDFC 接口未释放。49 项专项＋部署后双侧 22 项通过，原 Player-1/2 与存档 ID 保留；普通 A 不受本次更新影响，B195 未晋升，未重跑 B 全套性能。回执 `build/ab/b190-startup2-deploy-20261025-01/deployment.json`；详情及回滚见 `state/b190-startup-repair-2026-10-25.md`。用户已保存退出旧 B 窗口，本次全部自有 AIR/JVM 已结束，测试副本清理约 313 MB；A 后续占用仍以共享登记和当时进程核验为准。
+**独立 B 会话补充（2026-10-25）**：本会话只负责B，独立记忆入口 `state/B-MEMORY.md`。原 `build/ab/b3-playable-190` 已更新为 `B3-0.1-field3` / SWF `fbaaea1b`，准确源 `b190-field9-build`；修复普通出口无反应和加入侧原生交互提示，减少重复采集与显示计算。功能 boundary33、hover28、敌人主119/加112，部署后实际文件33项均过；四轮对照主侧平均帧耗时改善8–10%，加入密集基本持平、仍未解决卡顿。原Player-1/2、存档ID及冻结原生组合保留，A安装未改，B195未晋升。回执 `build/ab/b190-field3-deploy-20261025-01/deployment.json` 已verified；详情和回滚见 `state/b-field-repair-2026-10-25.md`。自有AIR/JVM均结束，三个运行副本完整归档后净回收938,069,625字节；A后续占用以共享登记和当时进程为准。
 
 正式RC：`0.2.24-roomfix5`，`release/RConnectMod.swf` SHA `78c052aea963f1689b705ae1e14d274916ae1a1f7e81933390caf8d1a88f4699`，195147B。
 用户要求先部署后继续；回执`build/m52/recovery-room-user-deploy-01/deployment.json` SHA16EF10BA，22项仅RC变化；同目录备份DF0F/aura1。执行脚本原字节冻结deploy-executed.py（639166DB），随后维护源失败路径已加固但未重跑。安装后单实例smoke ed2fa23d99已通过：78C准确字节、14模组初始化、tick200及日志检查；installed-smoke.json SHA BCAD4048，独立副本已清理，仅启动资格。性能资格仍false。准确产品源/编译在recovery-room-production-05，不是历史src/dev版本。
