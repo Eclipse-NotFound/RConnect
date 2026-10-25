@@ -1,0 +1,10 @@
+{
+  "kind": "ordinary-lamp-product-builder-freeze-v1",
+  "files": {
+    "build.py": "c30377e8d39029e7c4b32fef3cf8a45722d0c006d5d7d66a8b57a5547fb9164b",
+    "README.md": "478c2f73cb2db44c05869e53d27fe481d2b526cc3b8d67eddeb7d9f33ed89639",
+    "recipe.json": "4ceb88d450fd1bcd69ac1086b5abd6a3b6ef49cee4e0c0cc7932e942ee8a8961"
+  },
+  "root_only_execution": true,
+  "writes_closed": true
+}

@@ -1,0 +1,15 @@
+{
+  "kind": "ordinary-raster-helper-component-v1",
+  "native_game_test": false,
+  "runtime_sha256": "07cb85b230906a2a93d3c01d2d773acc3dbc1c33f70497c97a8ba448f457c8fb",
+  "bake_sha256": "ad0109de08e1ee11b7b2a47c03704df3700a4c4e0aa0fffb4c7ae02e88b90db9",
+  "files": {
+    "fe/World.as": "072c9560ac0dd2f74e4f82a74480a189d4642bfe90394a7c2b2120da25097ce6",
+    "FixtureGrafon.as": "8538ef490bc63c237c1940cac3cfc43d6b61ec5b81b1f9d080659a0c6b2d2ac5",
+    "lad/LadLampCatalog.as": "eb430f3be4cbd9f956e029a09a97b5be739ae1fdbf2c35346260acbd37f58b65",
+    "lad/LadLog.as": "4f6b67e10e8cd03c109b280c57cfc070f1108c1de4eccda7c396abb6ca96cde9",
+    "lad/LadSceneBake.as": "ad0109de08e1ee11b7b2a47c03704df3700a4c4e0aa0fffb4c7ae02e88b90db9",
+    "lad/OrdinaryRasterHarness.as": "6fef6880a0248e9a8a5c7e4e72abf019b38464c02beba5b98e3d09171560617c",
+    "OrdinaryRasterChecks.as": "77ec4365d2d4c0588e63354fe82099d0801c126bb9736041ab8d5440a249e86c"
+  }
+}

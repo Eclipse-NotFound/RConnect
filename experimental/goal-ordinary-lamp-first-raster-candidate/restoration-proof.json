@@ -1,0 +1,46 @@
+{
+  "lad": {
+    "original_methods": 31,
+    "unchanged_methods": 27,
+    "changed_methods": [
+      "attach",
+      "beforeSceneRaster",
+      "detach",
+      "onFrame"
+    ],
+    "added_methods": [
+      "beginOrdinaryRaster",
+      "canUseOrdinaryRaster",
+      "cancelOrdinaryRaster",
+      "completeOrdinaryRaster",
+      "ordinaryRasterIdentity",
+      "ordinaryRasterOwnsPixels",
+      "restoreOrdinaryRefs"
+    ],
+    "constructor_unchanged": true,
+    "changed_original_sha256": {
+      "attach": "9fd70c41bd01df1371af98c5a1c9b17ae85d336b4c48a47e2e82c40eb0389adf",
+      "beforeSceneRaster": "54d745d3b64caf39bf4df989807ce2c3b17aca9fe6bf3ca040284f3e25801ad5",
+      "detach": "f812e173bffcbd536d3b7a8b31e36987c4522ff2386af3cbade031bd59b475c1",
+      "onFrame": "eb40af24d0b3ad40a77e041b7ba1646d2bf3eebd7ce67cd11552e8ff923cf159"
+    }
+  },
+  "host": {
+    "original_methods": 86,
+    "unchanged_methods": 85,
+    "changed_methods": [
+      "drawLoc"
+    ],
+    "added_methods": [
+      "beginOrdinaryLampRaster",
+      "completeOrdinaryLampRaster"
+    ],
+    "constructor_unchanged": true,
+    "changed_original_sha256": {
+      "drawLoc": "2bce05afbbfb23d3fd4e343f41e992c7a2557b253dad21cd92381b1b29da3783"
+    }
+  },
+  "whole_sources_reverse_exact_lf": true,
+  "host_2db0_grafon_bytecode_unchanged_from_a796": true,
+  "scope": "Text restoration and existing host03 bytecode receipt only; new candidate is not compiled."
+}

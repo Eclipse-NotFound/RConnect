@@ -1,3 +1,13 @@
+## 2026-10-25 下午念力回归通过、灯具组件及产品编译通过
+
+8bc18500ea准确52D/原FEF四窗，主43/加42原检查全过，实际综合显示延迟110/130/110/110ms；加权本机16.2237/15.8784fps，长帧10/12、峰137/140ms。只授抓取回归，未证明整体流畅。输入/22安装不变，自有39020/46604和副本清理。goal-ordinary-lamp-component-01实际AIR35/35通过D2784FC0，准确7helper与AD0109 BAKE字节，四面像素/取消/重画/失败finally覆盖；不冒充原生灯具等价。组件39764结束。goal-ordinary-lamp-product-01三条Java完成，8A127C99、恰23类、无fe/test打包，源/安装不变。宿主补丁仍需实际编译和语义回读；不部署未验证候选。
+
+## 2026-10-25 下午恢复：LAD接口获准、重复资源已清、念力回归启动
+
+用户暂缓分房探针清单，不再索要或生成；批准LAD普通房首绘接口/协调/测试/合格部署，以及既有192份资源清单精确授权维护。实际清理2299136596B、192文件，保留并复核frozen原件；回执ended-copy-duplicate-cleanup-20261025-03，实际空闲增加2299293696B。第一精确调用在统计前类型错误退出，无删除；第二仅修类型，未扩清单/授权期限。自动审核误以窗口过期，读时钟证明仍在同一窗口后获准执行，两条grant均执行后撤销，其余表项保持。实际结果而非磁盘外部回收记为本次2.14GiB。
+
+02/4ef6785e3c在AIR前因B190玩家2060/26060停止，未关闭它们。B会话随后核实已退出，根03/8bc18500ea在共享登记启动主39020，exec80860；原四窗/43+42/160ms不改。LAD原23类候选冻结09DB44FE、Runtime07CB85B2、GrafonEEEDEA03，源码双审完成，产品/宿主编译接线与小组件继续。组件只覆盖7helpers与真实BAKE，不能声称完整attach/store/discover或原生画面已测。正式78C/A796保持；goal已恢复active，三项目标未达成。
+
 ## 2026-10-25 CS休眠修正的B接口只读兼容回复
 
 CS询问其engaged/过期记忆wake修正是否覆盖authority分支。根实际核B190 manual-input及tdfc-build-004：TDFC SHA79201B17…49DC09，AuthorityRoom与live同8587279D…87C80D8、AuthoritySession同69D48F77…5379B43A。已attach时TdfcRuntime绕过默认战术循环，AuthoritySession.stepRoom→AuthorityRoom.step自行按房间/两玩家推进，空或无存活玩家不推进；没有sceneNativeCall sleeping/wake门禁。live默认循环中的lastSeen>=0 wake不能视为B同路径，也不能由此认定B已兼容新休眠策略。若将来接入，必须评估两份targets记忆与报告，不只当前选中b.lastSeen。已按既有CS测试/部署协调授权反馈准确冻结来源及隔离边界，不要求更改其他模组或将authority混入A。未修改TDFC、未运行或部署；主目标保持blocked。

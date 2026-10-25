@@ -1,0 +1,116 @@
+--- a/host-proposal/fe/graph/Grafon.as
++++ b/host-proposal/fe/graph/Grafon.as
+@@ -3579,9 +3579,53 @@
+          }
+       }
+       
++      private function beginOrdinaryLampRaster(value:Location, firstRaster:Boolean) : Object
++      {
++         if(!firstRaster || this.sceneRasterizing || this.sceneRepaint || this.sceneLarge)
++         {
++            return null;
++         }
++         try
++         {
++            var carrier:Object = World.w.main.getChildByName("LightAndDarknessCarrier");
++            var api:Object = carrier == null ? null : carrier["ladAPI"];
++            var runtime:Object = api == null ? null : api["runtime"];
++            if(runtime == null || !("beginOrdinaryRaster" in runtime) || !("completeOrdinaryRaster" in runtime))
++            {
++               return null;
++            }
++            var ticket:Object = runtime.beginOrdinaryRaster(World.w,this,value,firstRaster);
++            return ticket == null ? null : {runtime:runtime,ticket:ticket};
++         }
++         catch(ignored:*)
++         {
++         }
++         return null;
++      }
++
++      private function completeOrdinaryLampRaster(preparation:Object, completed:Boolean) : void
++      {
++         if(preparation == null)
++         {
++            return;
++         }
++         try
++         {
++            preparation.runtime.completeOrdinaryRaster(preparation.ticket,completed && !World.w.verror.visible);
++         }
++         catch(ignored:*)
++         {
++            World.w.showError(ignored,"LAD ordinary raster completion");
++         }
++      }
++
+       public function drawLoc(param1:Location) : *
+       {
+          var sceneStarted:int;
++         var firstOrdinaryRaster:Boolean = param1.grafon == null && param1.spaceX <= World.cellsX && param1.spaceY <= World.cellsY;
++         var lampPreparation:Object = null;
++         var ordinaryRasterCompleted:Boolean = false;
++         var omitOrdinaryLamp:Boolean = false;
+          var transpFon:Boolean;
+          var darkness:int;
+          var tile:MovieClip;
+@@ -3625,11 +3669,14 @@
+          nloc = param1;
+          try
+          {
++         try
++         {
+             World.w.gr_stage = 1;
+             this.loc = nloc;
+             this.loc.grafon = this;
+             this.resX = this.loc.spaceX * Tile.tileX;
+             this.resY = this.loc.spaceY * Tile.tileY;
++            lampPreparation = this.beginOrdinaryLampRaster(nloc,firstOrdinaryRaster);
+             transpFon = nloc.transpFon;
+             if(nloc.backwall == "sky")
+             {
+@@ -3789,6 +3836,7 @@
+                }
+                for each(bo in this.sceneBackdropObjects(this.sceneX,this.sceneY,this.rectX,this.rectY))
+                {
++                  omitOrdinaryLamp = lampPreparation != null && lampPreparation.ticket.omit[bo] === true;
+                   if(bo.sloy == j && !bo.er || j == -2 && bo.er)
+                   {
+                      this.m = new Matrix();
+@@ -3796,7 +3844,7 @@
+                      this.m.tx = bo.X;
+                      this.m.ty = bo.Y;
+                      ct.alphaMultiplier = bo.alpha;
+-                     if(bo.vis)
++                     if(bo.vis && !omitOrdinaryLamp)
+                      {
+                         if(j <= 0)
+                         {
+@@ -3831,11 +3879,11 @@
+                            }
+                         }
+                      }
+-                     if(bo.erase)
++                     if(bo.erase && !omitOrdinaryLamp)
+                      {
+                         this.satsBmp.draw(bo.erase,this.sceneMatrix(this.m),null,"erase",null,true);
+                      }
+-                     if(bo.light)
++                     if(bo.light && !omitOrdinaryLamp)
+                      {
+                         this.colorBmp.draw(bo.light,this.sceneMatrix(this.m),ct,"normal",null,true);
+                      }
+@@ -3927,7 +3975,13 @@
+             this.sceneMaxDrawMs = Math.max(this.sceneMaxDrawMs,this.sceneDrawMs);
+          }
+          ++this.sceneRedraws;
++         ordinaryRasterCompleted = true;
+          World.w.gr_stage = 0;
++         }
++         finally
++         {
++            this.completeOrdinaryLampRaster(lampPreparation,ordinaryRasterCompleted);
++         }
+       }
+       
+       public function setLight() : *
