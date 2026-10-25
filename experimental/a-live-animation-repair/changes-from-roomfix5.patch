@@ -1,0 +1,309 @@
+--- 78C/rconnect/game/GameBridge.as
++++ animfix1/rconnect/game/GameBridge.as
+@@ -710,6 +710,12 @@
+          s.poseFrame = numOr(probe(osn, "currentFrame"), 1);
+          s.bodyFrame = numOr(probe(probe(osn, "body"), "currentFrame"), 1);
+          s.bodyPlaying = probe(probe(osn, "body"), "isPlaying") == true;
++         // AIR can retain isPlaying=true after native slope gotoAndStop(1).
++         // Use UnitPlayer's explicit stopped-slope state, not the shared trot label.
++         var nativeAnim:String=String(probe(gg,"animState"));
++         if((nativeAnim=="diag_up" || nativeAnim=="diag_down") && s.dx==0) {
++            s.bodyPlaying=false;s.bodyFrame=1;
++         }
+          s.wings = PeerAppearance.capture(gg);
+          s.burning = BurnVisuals.capture(gg);
+          s.bodyEffects = _bodyEffects.capture(gg);
+@@ -2981,7 +2987,7 @@
+ 
+       /** M16：把宿主的物品状态镜像到本房间（按 id 匹配；缺失/多余跳过，
+        *  破坏/门等状态由字段驱动视觉自动更新）。 */
+-      public function reconcileObjs(list:Array):void
++      public function reconcileObjs(list:Array,live:Boolean=true):void
+       {
+          if(loc == null || list == null)
+          {
+@@ -3062,13 +3068,13 @@
+                      {
+                         // M22：门类 Box 只翻 dead 字段不清瓦片（phis/opac/视觉
+                         // 都在瓦片上）——走 die(-1)，即存档加载恢复同款路径
+-                        lb["die"](-1);
++                        destroySceneObject(lb,live && _sceneExpected[lb]!=null && !_sceneExpected[lb].dead);
+                         Log.d("RConnectGame: door destroyed synced '"
+                            + String(h.id) + "'");
+                      }
+                      else
+                      {
+-                        lb["die"](-1);
++                        destroySceneObject(lb,false);
+                         Log.d("RConnectGame: box destroyed synced '" + String(h.id)
+                            + "'");
+                      }
+@@ -3128,9 +3134,24 @@
+          }
+       }
+ 
+-      private function applySceneState(b:Object, s:Object):void
+-      {
+-         if(s.dead == true && probe(b, "dead") != true) b["die"](-1);
++      /** State restoration must stay silent; a new live break also plays the
++       * native material effect, without rerunning scripts, damage or rewards. */
++      private function destroySceneObject(b:Object,live:Boolean):void
++      {
++         if(probe(b,"dead")==true)return;
++         b["die"](-1);
++         if(!live || probe(b,"dead")!=true || numOr(probe(b,"door"),0)<=0)return;
++         var material:int=int(probe(b,"mat"));
++         var effect:String=material==1?"metal":material==2?"kusok":material==3?"schep":material==5?"steklo":material==7?"pole":"iskr";
++         var domain:Object=main.loaderInfo.applicationDomain;
++         domain.getDefinition("fe.graph.Emitter").emit(effect,b.loc,b.X,b.Y-Number(b.scY)/2,{kol:12,rx:b.scX,ry:b.scY});
++         var sound:String=String(probe(b,"sndDie") || "");
++         if(sound!="")domain.getDefinition("fe.Snd").ps(sound,b.X,b.Y);
++      }
++
++      private function applySceneState(b:Object, s:Object,live:Boolean=false):void
++      {
++         if(s.dead == true && probe(b, "dead") != true) destroySceneObject(b,live);
+          if(probe(b, "dead") != true && s.doorOpen != null
+             && probe(b, "inter") == null && numOr(probe(b, "door"), 0) > 0)
+          {
+@@ -4877,7 +4898,7 @@
+             for each(var scene:Object in o.scene as Array)
+             {
+                var sceneObj:Object = _objects.resolve(scene, probe(loc, "objs") as Array, new Dictionary());
+-               if(sceneObj != null) applySceneState(sceneObj, scene);
++               if(sceneObj != null) applySceneState(sceneObj, scene,true);
+             }
+             var moved:Array = o.moved as Array;
+             if(moved != null)
+@@ -5501,17 +5522,28 @@
+       }
+ 
+       /** M19：采集本世界单位快照（M4：宿主广播，客户端镜像）。 */
++      private var _fastDeaths:Dictionary=new Dictionary(true);
+       public function readEnemyMotion():Array {
+          if(loc==null||_mirroring||roomHold)return null;
+          _units.enter(loc);var result:Array=[];
+-         for each(var u:Object in probe(loc,"units") as Array) {
+-            if(u==gg||u is MirrorHitUnit||isSceneHitUnit(u)||(Number(u.fraction)>=100 && !securityTurret(u))||Number(u.sost)>=3)continue;
++         _presentation.beginCaptureBatch();
++         try {for each(var u:Object in probe(loc,"units") as Array) {
++            if(u==gg||u is MirrorHitUnit||isSceneHitUnit(u)||(Number(u.fraction)>=100 && !securityTurret(u)))continue;
++            var weapons:Array=_presentation.captureMotion(u);
++            if(Number(u.sost)>=3) {
++               var deathKey:String=String(u.sost)+":"+String(u.animState);
++               var flightPending:Boolean=false;
++               for each(var gun:Object in weapons)if(gun.events.length>0){flightPending=true;break;}
++               if(_fastDeaths[u]==deathKey && !flightPending)continue;
++               _fastDeaths[u]=deathKey;
++            } else delete _fastDeaths[u];
+             result.push({k:_units.key(u),id:String(u.id),x:Number(u.X),y:Number(u.Y),sampleTime:_sampleAt,
+                storona:Number(u.storona),sost:Number(u.sost),anim:String(u.animState),pose:RConnectAnimationAccess.capture(u as Unit),
++               death:DeathVisuals.capture(u),
+                body:TurretDisplay.capture(u),burning:BurnVisuals.capture(u),bodyEffects:_bodyEffects.capture(u),
+-               weapons:_presentation.captureMotion(u),motion:unitFields(u,["dx","dy","stay","isFly","isLaz","levit"]),
++               weapons:weapons,motion:unitFields(u,["dx","dy","stay","isFly","isLaz","levit"]),
+                grip:unitFields(u,MirrorHitUnit.GRIP)});
+-         }
++         }} finally {_presentation.endCaptureBatch();}
+          return result;
+       }
+ 
+@@ -5519,12 +5551,21 @@
+          if(!freezeAI||loc==null||roomHold||records==null)return;
+          for each(var e:Object in records) {
+             var u:Object=unitForKey(String(e.k));
+-            if(u==null||u.loc!==loc||Number(u.sost)>=3||!_hostAlive[u]||validLandPos(Number(e.x),Number(e.y))==null)continue;
++            if(u==null||u.loc!==loc||(!(_hostAlive[u]) && Number(u.sost)<3)||validLandPos(Number(e.x),Number(e.y))==null)continue;
++            if(Number(u.sost)>=3 && Number(e.sost)<3)continue;
+             var motion:RemoteMotion=_unitMotion[u] as RemoteMotion;
+             if(motion!=null&&isFinite(motion.latestSampleTime)&&Number(e.sampleTime)<motion.latestSampleTime)continue;
+             applyUnitFields(u,e.motion);applyUnitFields(u,e.grip);
+             if(enemyGrip!=null)enemyGrip.preserveLocal(u);
++            if(Number(e.sost)>=3) {
++               u.sost=int(e.sost);u.setPos(Number(e.x),Number(e.y));u.setVisPos();
++               _presentation.apply(u,e,main,null,coopPaused);
++               delete _unitMotion[u];delete _lastUnitVisual[u];delete _hostAlive[u];removeHitUnit(u);
++               _projectiles.receive(u,e.weapons as Array,main,false,null);
++               continue;
++            }
+             queueUnitMotion(u,Number(e.x),Number(e.y),e.sampleTime,e.bodyEffects,e);
++            _projectiles.receive(u,e.weapons as Array,main,false,_unitMotion[u] as RemoteMotion);
+          }
+       }
+ 
+@@ -5754,7 +5795,7 @@
+                   if(Number(e.sost)>=3) {
+                      // A dead actor must not replay a still-alive buffered pose.
+                      target.setPos(Number(e.x),Number(e.y));target.setVisPos();
+-                     _presentation.apply(target,e,main,_unitMotion[target] as RemoteMotion);
++                     _presentation.apply(target,e,main,null,coopPaused);
+                      delete _unitMotion[target];delete _lastUnitVisual[target];
+                   }
+                   _projectiles.receive(target,e.weapons as Array,main,false,_unitMotion[target] as RemoteMotion);
+@@ -6240,7 +6281,7 @@
+          var used:Dictionary=new Dictionary();
+          if(!retained) {
+             if(foreign)_objects.clearRoom(loc);
+-            reconcileObjs(s.objs as Array);
++            reconcileObjs(s.objs as Array,false);
+             for each(var os:Object in s.objs)
+             {
+                var box:Object=_objects.resolve(os,loc.objs,used);
+--- 78C/rconnect/game/ProjectileVisuals.as
++++ animfix1/rconnect/game/ProjectileVisuals.as
+@@ -64,14 +64,26 @@
+             var channel:Object=slots[key];
+             var now:int=getTimer(),source:Number=Number(gun.sampleTime);
+             if(!isFinite(source))source=now;
+-            if(channel==null)channel=slots[key]={last:0,records:{},offset:now-source};
++            if(channel==null)channel=slots[key]={last:0,records:{},offset:now-source,motion:null,playbackOffset:NaN};
+             channel.offset=Math.min(Number(channel.offset),now-source);
++            // The actor's pose clock is retired at death. In-flight effects
++            // retain its cursor, then continue on elapsed display time.
++            if(motion==null && channel.motion!=null) {
++               var cursor:Number=channel.motion.sourceTime;
++               if(isFinite(cursor))channel.playbackOffset=now-cursor-(player?100:300);
++               for each(var pending:Object in channel.records) {
++                  if(pending.rateHeld){pending.motion.releaseRate(pending);pending.rateHeld=false;}
++                  pending.motion=null;
++                  if(isFinite(Number(channel.playbackOffset)))pending.offset=channel.playbackOffset;
++               }
++            }
++            channel.motion=motion;
+             energyImpacts.receive(channel,gun.impacts as Array,GameBridge.probe(owner,"loc"),main,channel.offset,player?100:300,motion);
+             var last:int=int(channel.last);
+             for each(var event:Object in gun.events) {
+                var existing:Object=channel.records[String(event.seq)];
+                if(int(event.seq)<=last) {
+-                  if(existing!=null && existing.beam && event.flight!=null){existing.s=event.flight;existing.updated=now;}
++                  if(existing!=null && existing.beam && event.flight!=null){existing.s=mergeFlight(existing.s,event.flight);existing.updated=now;}
+                   continue;
+                }
+                last=int(event.seq);var s:Object=event.flight;if(s==null)continue;
+@@ -82,7 +94,8 @@
+                   var layer:DisplayObjectContainer=grafon.visObjs[2] as DisplayObjectContainer;
+                   if(layer==null)continue;
+                   var rec:Object={vis:null,cls:cls,s:s,at:now,loc:world,grafon:grafon,main:main,exploded:false,last:0,
+-                     owner:owner,beam:s.frames is Array,offset:channel.offset,delay:player?100:300,channel:channel,seq:event.seq,motion:motion,updated:now};
++                     owner:owner,beam:s.frames is Array,offset:isFinite(Number(channel.playbackOffset))?channel.playbackOffset:channel.offset,
++                     delay:player?100:300,channel:channel,seq:event.seq,motion:motion,updated:now};
+                   channel.records[String(event.seq)]=rec;
+                   if(!rec.beam)createVisual(rec);
+                   active.push(rec);
+@@ -96,6 +109,22 @@
+             }
+             channel.last=last;
+          }
++      }
++      /** Frequent packets contain a suffix, full snapshots contain history.
++       * Merge by source time, retaining the anchor for the delayed cursor. */
++      private static function mergeFlight(old:Object,fresh:Object):Object {
++         if(!(old.frames is Array) || !(fresh.frames is Array))return fresh;
++         var a:Array=old.frames as Array,b:Array=fresh.frames as Array,out:Array=[],i:int=0,j:int=0;
++         while(i<a.length || j<b.length) {
++            if(j>=b.length || (i<a.length && Number(a[i].at)<Number(b[j].at)))out.push(a[i++]);
++            else {if(i<a.length && Number(a[i].at)==Number(b[j].at))i++;out.push(b[j++]);}
++         }
++         if(out.length>64)out=out.slice(out.length-64);
++         var merged:Object={};for(var key:String in fresh)merged[key]=fresh[key];
++         merged.frames=out;
++         if(int(old.end)>int(merged.end))merged.end=old.end;
++         if(merged.explosion==null)merged.explosion=old.explosion;
++         return merged;
+       }
+       private function createVisual(a:Object):DisplayObject {
+          var cls:Class=a.cls as Class,v:DisplayObject=new cls() as DisplayObject;
+--- 78C/rconnect/game/RemoteMotion.as
++++ animfix1/rconnect/game/RemoteMotion.as
+@@ -149,6 +149,10 @@
+       }
+ 
+       private function delay():Number {
++         // Enemy pose and flight share one cursor. A changing target delay
++         // speeds up/slows down even steady native wing cycles. Keep a fixed
++         // short buffer; existing stall recovery and pause settling remain.
++         if(enemyRecovery)return bufferLimit;
+          var value:Number=bufferLimit>0?interval*1.5:Math.max(100,interval*1.5);
+          for each(var gap:Number in gaps)value=Math.max(value,gap*1.25);
+          // Automatic falling arcs can absorb a slow delivery burst. The
+--- 78C/rconnect/game/UnitPresentation.as
++++ animfix1/rconnect/game/UnitPresentation.as
+@@ -139,14 +139,16 @@
+          for each(var native:Object in bullets)if(!r.seen[native] && get(native,"loc")===get(w,"loc")) {
+             r.seen[native]=true;
+             r.events.push({seq:++r.serial,at:frameTime>0?frameTime:getTimer(),bullet:native,
+-               recorded:player||ProjectileVisuals.usesNativeFrames(native),frames:[],sampled:0,end:0,endSentAt:0,explosion:null});
++               recorded:true,frames:[],sampled:0,end:0,endSentAt:0,explosion:null,motionAt:0,motionEnd:0});
+          }
+          if(stamp>0)for each(var shot:Object in r.events) {
+             if(shot.explosion==null && get(shot.bullet,"isExpl")===true){
+                shot.explosion=ProjectileExplosionVisuals.capture(shot.bullet);
+                if(shot.explosion!=null)shot.explosion.at=stamp;
+             }
+-            if(!shot.recorded)continue;
++            // Removal is terminal. Preserve same-frame final refresh, but do
++            // not resample ended displays throughout their resend retention.
++            if(!shot.recorded || (int(shot.end)>0 && int(shot.end)<stamp))continue;
+             var point:Object=ProjectileVisuals.beamFrame(shot.bullet,stamp);
+             if(point!=null){
+                if(int(shot.sampled)==stamp&&shot.frames.length>0)shot.frames[shot.frames.length-1]=point;
+@@ -201,14 +203,31 @@
+          return result;
+       }
+ 
+-      /** Frequent pose packets exclude projectile histories and impacts. */
++      /** Send only new projectile frames in the frequent pose packet. Full
++       * state still supplies history for newly discovered actors. */
+       public function captureMotion(u:Object):Array {
+-         var result:Array=[],list:Array=get(u,"childObjs") as Array,current:Object=get(u,"currentWeapon");
+-         list=list==null?[]:list.concat();if(current!=null&&list.indexOf(current)<0)list.push(current);
++         var result:Array=[],list:Array=weaponList(u),current:Object=get(u,"currentWeapon");
+          for(var i:int=0;i<list.length;i++) {
+             var w:Object=list[i],r:Object=hostShots[w];
+             if(w==null||r==null)continue;
++            var events:Array=[];
++            for each(var shot:Object in r.events) {
++               var frames:Array=shot.frames as Array;
++               if(frames.length==0)continue;
++               var latestFrame:Number=Number(frames[frames.length-1].at);
++               if(Number(shot.motionAt)>=latestFrame && int(shot.motionEnd)==int(shot.end))continue;
++               var start:int=0;
++               while(start+1<frames.length && Number(frames[start+1].at)<=Number(shot.motionAt))start++;
++               var flight:Object=ProjectileVisuals.capture(shot.bullet);if(flight==null)continue;
++               flight.frames=frames.slice(start);flight.end=shot.end;flight.explosion=shot.explosion;
++               events.push({seq:shot.seq,at:shot.at,flight:flight});
++               shot.motionAt=latestFrame;shot.motionEnd=shot.end;
++               if(int(shot.end)>0 && int(shot.endSentAt)==0)shot.endSentAt=getTimer();
++            }
++            var children:Array=get(u,"childObjs") as Array;
+             result.push({slot:i,id:String(get(w,"id")),variant:int(get(w,"variant")),main:w===current,
++               effectsOnly:w!==current && w!==get(u,"throwWeapon") && w!==get(u,"magicWeapon") && (children==null || children.indexOf(w)<0),
++               sampleTime:frameTime,events:events,
+                stream:r.stream,shots:r.total,ox:Number(get(w,"X"))-Number(u.X),oy:Number(get(w,"Y"))-Number(u.Y),
+                rot:Number(get(w,"rot")),prep:int(get(w,"t_prep")),reload:int(get(w,"t_reload")),
+                cadence:Math.max(16,Number(get(w,"rapid"))*1000/30),aura:TelekinesisVisuals.captureWeapon(w)});
+@@ -343,7 +362,12 @@
+                w.t_reload=Math.max(0,int(s.reload)-int(elapsed*30/1000));
+                if(!paused && gun.queue>0 && getTimer()>=int(gun.next))
+                {
+-                  gun.queue--;gun.next=getTimer()+(s.cadence==null?80:Math.max(16,Math.min(250,Number(s.cadence))));
++                  gun.queue--;
++                  // Re-arming from now rounds every shot up to a display frame,
++                  // accumulating a queue even at steady native fire rates.
++                  var cadence:Number=s.cadence==null?80:Math.max(16,Math.min(250,Number(s.cadence)));
++                  if(int(gun.next)<=0 || getTimer()-int(gun.next)>250)gun.next=getTimer();
++                  gun.next=Number(gun.next)+cadence;
+                   // Native Weapon.shoot does not restart a muzzle clip while
+                   // its previous flash is still above one frame. Under burst
+                   // delivery the mirror could restart it every rendered frame,
+--- 78C/RConnectMod.as
++++ animfix1/RConnectMod.as
+@@ -26,7 +26,7 @@
+    public class RConnectMod
+    {
+       // Working M46 core after the separate 0.2.17 compact HUD release.
+-      public static const VERSION:String = "0.2.24-roomfix5";
++      public static const VERSION:String = "0.2.24-animfix1";
+ 
+       public static var instance:RConnectMod;
+ 
