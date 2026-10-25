@@ -1,3 +1,13 @@
+## 2026-10-25 16:43 严格仅RConnect跳跃实测通过，加载接线冻结
+
+新onlyRC motion接线真实4种预检通过，根窄审后实际75ac7b113b/正式78C/A796。双方SOL requested=ok只RConnectMod、err空，其余13项含ModLoaderMod均停，物理文件保留；原9EE/D52、18秒和双6不变。主/加ENTER30.0033/29.9983fps、RENDER29.9989/29.9922，峰ENTER81/85、RENDER97/99ms，>100ms皆0。普通基地冻结AI窗没有本机掉帧，不授全部战斗/全组合或远端动画已修复。原空中重复1/2、source与peer身体变化均真实检查。源/22不变，自有29516/40280及副本回收；result3C787D00。host源戳均67.665ms（267包）；join534包含166非递增，交给准确源码窄查调度/混合路由，不能当绝对网络延迟或贸然丢重复包。
+
+动作新目录goal-rconnect-only-motion已冻结run48AC6762/selector2BBE601D/manifest782D19B8，不新增AS、不支持solo。加载goal-rconnect-only-loading共用3AS的单编译器09EDAF5A、run8272C4DC、source2B836F00/runtimeC32CFE9F，独立与根审查通过、source/build --check实际过，额外AS清单一致性防护已补。driver-01尚无compile，真实--check准确not-ready，不伪造完成。仅改CS缺席前提、记录视口和baseline/solo诚实观察分支，原旅行35或11/UI双人11不减。
+
+B旧基线及候选战斗排队，根已确认本轮A退出，并答至16:56不追加JVM/AIR；仅做源码审查与记忆。之后按共享登记编唯一加载驱动并继续onlyRC单/双/念力。正式RC78C/宿主A796/LAD8ADBA均未部署新变化，三项目标active未完成。
+
+16:49补充窄查：准确Session50ms Timer回调直接发玩家状态，非last=now阈值。75ac host267包seq连续，源67.665ms/到包67.658ms；join534包166同源戳且无倒退，367正间隔均48.951ms，不能把含零33.705ms叫有效30Hz。主侧Timer与接收客户端包双触发WORLDSTATE符合99次同tick源戳推进/166次同戳记录。RemoteMotion已处理同戳替末点；完整包附带其它实时数据，不新增整包去重或调度候选。根实际loading source-check/build --check通过，仍未编译新驱动。
+
 ## 2026-10-25 16:25 灯具实测收尾，按用户要求转RConnect单模组归因
 
 普通fe88288c86原35+双方11全过，三程同入口0px，主总5282/1691/2952ms、加5671/1752/3052ms，输入/22不变，41132/2952及副本回收。首房4灯ATTACH没有BAKE、随后返程有BAKE，结合准确源码可确认快速分支消费；没有票据三阶段直接计时。加载目标不达，真实RENDER等待跨度主5659→5223ms、加5633→5668ms。此前cover采样少约418ms的汇报已向用户明确纠正：它会漏计状态在长回调结束的间隔，不能代表可见等待。候选join尾段1002ms，grant处理396ms（原58），restore385/重绘383（原48且terrainReused）。无首个失配字段证据；两轮首入位置与自然人口不同，主436ms也不算严格优化收益。

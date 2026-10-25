@@ -1,0 +1,26 @@
+{
+  "kind": "rconnect-only-dual-motion-v1",
+  "run_replacements": 5,
+  "selector_replacements": 4,
+  "files": {
+    "run.py": "48ac67625a3e5d2dd107dda658e6fea66134f5845ccd8038256bf7dedf60f945",
+    "selector.py": "2bbe601d0a09bd33909aba8a0e48ab32fe3aab096dc9bf29f7f84962d176d345",
+    "README.md": "9528b237e4b1398cee4217ecd51502cc3c5ed74030872ff751003309fe3e0f2b",
+    "expanded-run.py.txt": "dfa6503e224823700987ac64d05e0ddd1c8e65b8e6a7da83fd2fff659f801517",
+    "run.diff": "06a8fd605b869a48e58ca8982a2997da43b2414610c4b419551dc92da7f7f24d",
+    "expanded-selector.py.txt": "6d3a44763bf706e5ba729fb92e0f322a9e7cc4b9e654e263fe0f3c07b2fa6c8f",
+    "selector.diff": "7f458bb01172a264c3864797180adb29d8c63792a20bff3d915a5672aedda29e"
+  },
+  "inputs": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-jump-pose-held-regression\\run.py": "0a18bbef761340e78e37cfe16a514e33d3522240a403ed7ffec187ddc2e101e6",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\goal-jump-pose-held-regression\\source-manifest.json": "0ed0714e15f3203ded5be9a5ed5657fcda98e5dfff52f67dcea4eccdd25cb397"
+  },
+  "enabled": [
+    "RConnectMod"
+  ],
+  "compiled": false,
+  "air_started": false,
+  "solo_supported": false,
+  "performanceQualified": false,
+  "smoothnessQualified": false
+}

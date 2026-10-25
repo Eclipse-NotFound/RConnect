@@ -1,0 +1,298 @@
+"""Two explicit isolated-runner adaptations: select modules, then inventory enabled modules."""
+from pathlib import Path
+import difflib, hashlib, importlib.util, json, os, re, shutil, subprocess, sys, time
+import xml.etree.ElementTree as ET
+
+if sys.flags.optimize:
+    raise RuntimeError('Ordinary Python required')
+sys.dont_write_bytecode = True
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[1]
+GAME = ROOT.parents[1]
+ORIGINAL = ROOT/'tools/run_coop_regression.py'
+LAUNCHER = GAME/'mods/ModLoader/RemainsModLauncher.exe'
+CATALOG = GAME/'mods/ModLoader/supported-mods.txt'
+SOL_READER = ROOT/'tools/validation/inspect_native_sol.py'
+PINS = {
+    ORIGINAL: '7eca453b13480140da5f36bb33d2319739a927562ccafdbb61a8b20cdb5ae4d3',
+    LAUNCHER: 'c05b4c231a97ebd740dce64d642f994edbffbc14b74723ab40a1f27fa45f9590',
+    CATALOG: '7fb288494055cb49f20aaef494eadc0405c0b1d55c3fa5ba798cadca890abcfe',
+    SOL_READER: '707e0320e9147374bc9310e3fba9b0d414169f282d2525b958e21d207ebf26fb',
+}
+DISABLED = ['AddictionSystemMod', 'ContinuousSceneMod', 'FirearmAttachmentsMod', 'LightAndDarknessMod', 'LootEditorMod', 'ModLoaderMod', 'MoreSkillsWeaponsMod', 'PermanentInjuryMod', 'RandomRoomsMod', 'RealisticVisionMod', 'SandevistanMod', 'TDFCMod', 'WallBlendMod']
+DISABLED = set(DISABLED)
+FIRST = '    try:\n        for role in roles:\n'
+FIRST_NEW = '    try:\n        reduced_enabled_paths = reduced_prepare_frozen(args, output, frozen)\n        for role in roles:\n'
+SECOND = "                                        for p in (folder/'mods').glob('*/release/*.swf')}"
+SECOND_NEW = "                                        for p in (folder/'mods').glob('*/release/*.swf')\n                                        if p.relative_to(folder).as_posix().lower() in reduced_enabled_paths}"
+ACTIVE = None
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def save(path, value):
+    with Path(path).open('x', encoding='utf-8') as stream:
+        json.dump(value, stream, ensure_ascii=False, indent=2)
+
+
+def read(path):
+    return json.loads(Path(path).read_text(encoding='utf-8-sig'))
+
+
+def source():
+    for path, digest in PINS.items():
+        assert sha(path) == digest, str(path)
+    old = ORIGINAL.read_text(encoding='utf-8')
+    assert old.count(FIRST) == 1 and old.count(SECOND) == 1
+    new = old.replace(FIRST, FIRST_NEW).replace(SECOND, SECOND_NEW)
+    assert new.replace(FIRST_NEW, FIRST).replace(SECOND_NEW, SECOND) == old
+    compile(new, str(ORIGINAL), 'exec')
+    return new, ''.join(difflib.unified_diff(old.splitlines(True), new.splitlines(True),
+                                           fromfile='original/run_coop_regression.py',
+                                           tofile='adapted/run_coop_regression.py'))
+
+
+def manifest_rows(path):
+    rows = {}
+    for raw in Path(path).read_text(encoding='utf-8-sig').splitlines():
+        line = raw.strip()
+        if not line or line.startswith('#'):
+            continue
+        parts = line.split('|')
+        assert len(parts) == 5 and all(v in ('0', '1') for v in parts[2:]), line
+        directory, entry = parts[:2]
+        assert re.fullmatch(r'[A-Za-z0-9_.&-]+', directory) and '..' not in directory
+        assert re.fullmatch(r'[A-Za-z_$][A-Za-z0-9_$]*', entry) and entry not in rows
+        rows[entry] = dict(directory=directory, flags=parts[2:],
+                           path='mods/'+directory+'/release/'+entry+'.swf')
+    assert rows and DISABLED.issubset(rows)
+    return rows
+
+
+def inventory(folder):
+    return {p.relative_to(folder).as_posix(): sha(p)
+            for p in sorted((folder/'mods').glob('*/release/*.swf'))}
+
+
+def reduced_prepare_frozen(args, output, frozen):
+    """Called inside the original try/finally, before role copies and inputs exist."""
+    ctx = ACTIVE
+    assert ctx is not None and ctx['output'] == output and not ctx['launches']
+    assert frozen.resolve() == (output/'frozen').resolve() and not ctx['record'].launching
+    target = frozen/'mods/loader-manifest.txt'
+    before = manifest_rows(target)
+    assert all(before[n]['flags'][0] == '1' for n in DISABLED), 'Unexpected starting selection'
+    enabled = {n for n, row in before.items() if row['flags'][0] == '1'} - DISABLED
+    assert enabled == {'RConnectMod'}
+    full = inventory(frozen)
+    assert {row['path'].lower() for row in before.values()} == {n.lower() for n in full}
+    directory = output/'selection'
+    directory.mkdir()
+    shutil.copyfile(target, directory/'before-loader-manifest.txt')
+    catalog_target = frozen/'mods/ModLoader/supported-mods.txt'
+    assert not catalog_target.exists()
+    shutil.copyfile(CATALOG, catalog_target)
+    report = directory/'launcher-report.json'
+    command = [str(LAUNCHER), '--root', str(frozen), '--version', '1.02',
+               '--only', ','.join(sorted(enabled)), '--no-ui', '--report', str(report)]
+    assert '--launch' not in command
+    proc = None
+    row = dict(command=command, air_launch=False)
+    try:
+        ctx['record'].before_launch('Private module selection only; no AIR')
+        with (directory/'launcher.log').open('x', encoding='utf-8') as log:
+            proc = subprocess.Popen(command, cwd=ROOT, stdout=log, stderr=subprocess.STDOUT,
+                                    creationflags=subprocess.CREATE_NO_WINDOW)
+            ctx['record'].child(proc.pid)
+            row.update(pid=proc.pid, exit_code=proc.wait(timeout=60))
+            assert proc.returncode == 0, 'Official isolated module selection failed'
+    finally:
+        if proc is not None and proc.poll() is None:
+            proc.kill()
+            proc.wait()
+        ctx['record'].child_stopped()
+        save(directory/'launcher-process.json', row)
+    after = manifest_rows(target)
+    assert set(after) == set(before)
+    assert {n for n, r in after.items() if r['flags'][0] == '1'} == enabled
+    for n in before:
+        assert after[n]['path'] == before[n]['path'] and after[n]['flags'][1:] == before[n]['flags'][1:], n
+    selection = read(report)['configuration']
+    assert Path(selection['gameRoot']).resolve() == frozen.resolve()
+    assert Path(selection['manifest']).resolve() == target.resolve()
+    assert selection['gameVersion'] == '1.02' and set(selection['selected']) == enabled
+    assert not selection['warnings'], selection['warnings']
+    reports = {m['entry']: m for m in selection['mods']}
+    assert set(reports) == set(before)
+    for entry, item in reports.items():
+        assert item['installed'] is True and item['enabled'] == (entry in enabled)
+        assert item['sha256'].lower() == full[before[entry]['path']], entry
+    assert inventory(frozen) == full, 'Selection must not alter any SWF'
+    shutil.copyfile(target, directory/'selected-loader-manifest.txt')
+    paths = {after[n]['path'].lower() for n in enabled}
+    ctx['selection'] = dict(enabled=sorted(enabled), disabled=sorted(DISABLED),
+                            enabled_paths=sorted(paths), physical_modules=full,
+                            manifest_sha256=sha(target), report_sha256=sha(report),
+                            physical_files_retained=True, original_runner_sha256=PINS[ORIGINAL])
+    save(directory/'selection-input.json', ctx['selection'])
+    return paths
+
+
+def collect(ctx):
+    out = ctx['output']
+    evidence = dict(kind='reduced-runtime-selection', passed=False,
+                    original_framework_passed=ctx.get('original_ok') is True,
+                    roles={}, failures=[], installed=False)
+    expected_roles = ('host',) if ctx['args'].solo else ('host', 'join')
+    selection = ctx.get('selection')
+    if selection is None:
+        evidence['failures'].append('Official isolated selection did not complete')
+    else:
+        evidence['selection_receipt'] = str(out/'selection/selection-input.json')
+        evidence['selection_receipt_sha256'] = sha(out/'selection/selection-input.json')
+        evidence['enabled'] = selection['enabled']
+        evidence['disabled'] = selection['disabled']
+    if set(ctx['launches']) != set(expected_roles):
+        evidence['failures'].append('Not every expected AIR role was launched')
+    sys.path.insert(0, str(SOL_READER.parent))
+    from inspect_native_sol import decode_sol
+    for role, launch in ctx['launches'].items():
+        row = dict(app_id=launch['app_id'], passed=False, requested=[], ok=[], err=[])
+        evidence['roles'][role] = row
+        try:
+            store = Path(launch['store'])
+            files = list((store/'#SharedObjects').rglob('ModLoader.sol'))
+            assert len(files) == 1, 'Expected one private ModLoader.sol'
+            payload = files[0].read_bytes()
+            name, values = decode_sol(payload)
+            assert name == 'ModLoader' and isinstance(values, dict)
+            destination = out/'selection'/(role+'-ModLoader.sol')
+            with destination.open('xb') as stream:
+                stream.write(payload)
+            save(out/'selection'/(role+'-loader-status.json'), values)
+            now = int(time.time()*1000)
+            session = values.get('session')
+            requested = {k[len('requested_'):] for k in values if k.startswith('requested_')}
+            loaded = {k[3:] for k in values if k.startswith('ok_')}
+            errors = [k for k in values if k.startswith('err_')]
+            row.update(session=session, requested=sorted(requested), ok=sorted(loaded), err=sorted(errors),
+                       status_sha256=sha(destination))
+            match = re.fullmatch(r'run_(\d{13})_\d+', str(session))
+            assert match and launch['before_launch_ms'] <= int(match[1]) <= now, 'Stale loader session'
+            assert all(k in values for k in ('boot_start', 'boot'))
+            assert not errors, 'Loader error status'
+            for key, value in values.items():
+                if key != 'session':
+                    assert isinstance(value, str) and value.startswith(session+'|'), key
+            assert requested == loaded == set(selection['enabled']), 'Actual loader selection mismatch'
+            assert not (requested | loaded) & DISABLED
+            row.update(passed=True, session=session, requested=sorted(requested), ok=sorted(loaded), err=[],
+                       status_sha256=sha(destination), physical_inventory=launch['physical_inventory'])
+        except Exception as error:
+            row['error'] = str(error)
+            evidence['failures'].append(role+': '+str(error))
+    if (out/'input.json').is_file() and selection is not None:
+        inp = read(out/'input.json')
+        evidence['input_manifest_sha256'] = sha(out/'input.json')
+        for role in expected_roles:
+            actual = inp.get('inputs', {}).get(role, {}).get('modules', {})
+            if {p.replace('\\', '/').lower(): h for p, h in actual.items()} != {
+                    p.lower(): h for p, h in selection['physical_modules'].items()
+                    if p.lower() in selection['enabled_paths']}:
+                evidence['failures'].append(role+': enabled input inventory mismatch')
+    else:
+        evidence['failures'].append('Original input manifest unavailable')
+    evidence['passed'] = not evidence['failures'] and evidence['original_framework_passed']
+    save(out/'reduced-selection-result.json', evidence)
+    return evidence['passed']
+
+
+def main():
+    global ACTIVE
+    expanded, diff = source()
+    if sys.argv[1:] == ['--check']:
+        print(json.dumps(dict(passed=True, read_only=True, original_sha256=PINS[ORIGINAL],
+                              adapted_sha256=hashlib.sha256(expanded.encode('utf-8')).hexdigest(),
+                              replacements=2, disabled=sorted(DISABLED), air_started=False)))
+        return
+    self_sha = sha(__file__)
+    sys.path.insert(0, str(ROOT/'tools'))
+    spec = importlib.util.spec_from_loader('reduced_private_coop_runner', loader=None)
+    runner = importlib.util.module_from_spec(spec)
+    runner.__file__ = str(ORIGINAL)
+    runner.reduced_prepare_frozen = reduced_prepare_frozen
+    exec(compile(expanded, str(ORIGINAL), 'exec'), runner.__dict__)
+    original_run = runner.run_registered
+
+    def registered(args, ap, output, record):
+        global ACTIVE
+        assert args.all_mods and args.effects and args.effects_driver and args.private_desktop and args.require_exclusive_air
+        assert args.seconds in (300,360) and args.game_root.resolve() == GAME.resolve() and args.game_candidate is None
+        assert not args.with_vision and args.vision_candidate is None and args.vision_smoke_version is None
+        assert args.wallblend_candidate is None and args.msw_candidate is None and args.fa_candidate is None
+        assert args.host_vision_config_template is None and args.join_vision_config_template is None
+        assert output.resolve().parent == (ROOT/'build/cooperation').resolve() and re.fullmatch('[0-9a-f]{10}', output.name)
+        sys.path.insert(0, str(ROOT/'tools/validation'))
+        from run_security_terminals import installation
+        before = installation()
+        assert len(before) == 22
+        (output/'adapted-runner.py').write_text(expanded, encoding='utf-8')
+        (output/'runner-source.diff').write_text(diff, encoding='utf-8')
+        save(output/'reduced-wrapper-input.json', dict(installation_before=before,
+             inputs={str(p): h for p, h in PINS.items()}, wrapper_sha256=self_sha,
+             adapted_sha256=sha(output/'adapted-runner.py'), replacements=2))
+        ctx = dict(args=args, output=output, record=record, launches={})
+        ACTIVE = ctx
+        original_launch = record.before_launch
+
+        def before_launch(detail):
+            if 'selection' in ctx:
+                role = str(detail).split(' / ', 1)[0]
+                assert role in ('host', 'join') and role not in ctx['launches']
+                folder = output/role
+                desc = folder/'coop.xml'
+                tree = ET.fromstring(desc.read_bytes())
+                ns = '{http://ns.adobe.com/air/application/30.0}'
+                appid = 'pfe-modsettings-rconnect-coop-'+role+'-'+output.name
+                assert tree.tag == ns+'application' and tree.findtext(ns+'id') == appid
+                assert tree.findtext(ns+'initialWindow/'+ns+'content') == 'pfe.swf'
+                assert sha(desc) == read(output/'input.json')['descriptors'][role]
+                assert sha(folder/'mods/loader-manifest.txt') == ctx['selection']['manifest_sha256']
+                full = inventory(folder)
+                assert full == ctx['selection']['physical_modules']
+                store = Path(os.environ['APPDATA'])/appid/'Local Store'
+                assert not list((store/'#SharedObjects').rglob('ModLoader.sol')), 'Loader status already exists'
+                ctx['launches'][role] = dict(app_id=appid, store=str(store),
+                    before_launch_ms=int(time.time()*1000), physical_inventory=full,
+                    descriptor_sha256=sha(desc))
+                save(output/'selection'/(role+'-before-launch.json'), ctx['launches'][role])
+            original_launch(detail)
+
+        record.before_launch = before_launch
+        try:
+            ctx['original_ok'] = original_run(args, ap, output, record)
+        finally:
+            record.before_launch = original_launch
+            ACTIVE = None
+            try:
+                selection_ok = collect(ctx)
+            finally:
+                after = installation()
+                save(output/'reduced-installation-after.json', dict(unchanged=after == before, installation_after=after))
+                assert after == before, 'Installed files changed during reduced run'
+                for path, digest in PINS.items():
+                    assert sha(path) == digest, str(path)
+                assert sha(__file__) == self_sha
+        if not selection_ok:
+            print('RESULT FAIL reduced runtime selection evidence', flush=True)
+        return ctx['original_ok'] and selection_ok
+
+    bind_registered(registered)
+    runner.run_registered = invoke_registered
+    runner.main()
+
+
+if __name__ == '__main__':
+    main()

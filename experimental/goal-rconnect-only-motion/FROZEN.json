@@ -1,0 +1,20 @@
+{
+  "kind": "rconnect-only-dual-motion-frozen-v1",
+  "source_manifest_sha256": "782d19b8f2aa59d8b18968de7c8961c9023ec4d27a7720361a129ca9937f26f5",
+  "run_sha256": "48ac67625a3e5d2dd107dda658e6fea66134f5845ccd8038256bf7dedf60f945",
+  "selector_sha256": "2bbe601d0a09bd33909aba8a0e48ab32fe3aab096dc9bf29f7f84962d176d345",
+  "enabled": ["RConnectMod"],
+  "actual_preflight": [
+    {"product": "78C", "case": "native-jump", "exit_code": 0},
+    {"product": "78C", "case": "fast-held", "exit_code": 0},
+    {"product": "52D", "case": "native-jump", "exit_code": 0},
+    {"product": "52D", "case": "fast-held", "exit_code": 0}
+  ],
+  "solo_supported": false,
+  "java_started": false,
+  "air_started": false,
+  "installed": false,
+  "performanceQualified": false,
+  "smoothnessQualified": false,
+  "frozen": true
+}

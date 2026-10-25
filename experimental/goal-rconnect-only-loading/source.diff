@@ -1,0 +1,79 @@
+--- original877B/tests/RoomTravelTimingTestDoc.as
++++ only-rconnect/tests/RoomTravelTimingTestDoc.as
+@@ -79,7 +79,11 @@
+          return {round:round,at:getTimer(),started:at,elapsed:getTimer()-at,exitStart:exitAt<0?-1:exitAt-at,
+             exitEnd:exitDone<0?-1:exitDone-at,cover:coverMs,paused:pausedMs,solo:solo,
+             x:Number(w.gg.X),y:Number(w.gg.Y),key:mod.game.roomKey(),width:w.loc.spaceX,height:w.loc.spaceY,
+-            seed:info.layoutSeed,units:w.loc.units.length,merged:merged(),actualMerged:actual,target:target};
++            seed:info.layoutSeed,units:w.loc.units.length,merged:merged(),actualMerged:actual,target:target,
++            entranceView:{playerX:Number(w.gg.X),playerY:Number(w.gg.Y),cameraX:Number(w.cam.X),cameraY:Number(w.cam.Y),
++               vx:Number(w.cam.vx),vy:Number(w.cam.vy),zoom:Number(w.cam.isZoom),scaleV:Number(w.cam.scaleV),
++               stageWidth:mod.stage.stageWidth,stageHeight:mod.stage.stageHeight,
++               visualX:Number(w.visual.x),visualY:Number(w.visual.y),visualScaleX:Number(w.visual.scaleX),visualScaleY:Number(w.visual.scaleY)}};
+       }
+       private function compare():void {
+          if(localResult==null || (!solo && peer==null))return;
+@@ -109,11 +113,10 @@
+                   if(loader==null || !loader.contentLoaderInfo.applicationDomain.hasDefinition("ContinuousSceneMod"))continue;
+                   var cls:Object=loader.contentLoaderInfo.applicationDomain.getDefinition("ContinuousSceneMod");
+                   sceneClass=cls;
+-                  cls.nativeEnabled=merged();
+-                  sceneConfigured=Boolean(cls.nativeEnabled)==merged();break;
++                  sceneConfigured=true;break;
+                }
+             }catch(error:*){Log.d("TRAVEL CONFIG ERROR "+error);}
+-            check(sceneConfigured,"native scene preference was explicitly configured");
++            check(!sceneConfigured && sceneClass==null,"ContinuousScene is explicitly not loaded");
+             // Control only this isolated benchmark's random input. Keep native
+             // generation and the production prepare/adopt path; the separate
+             // map suite still exercises the unmodified random seed policy.
+@@ -158,9 +161,9 @@
+          if(phase=="done")return;phase="done";removeEventListener(Event.ENTER_FRAME,tick);
+          if(metrics!=null)metrics.finish();
+          if(landClass!=null && landClass.rconnectSeedSource===timingSeed)landClass.rconnectSeedSource=originalSeed;
+-         if(!host && !solo && sceneClass!=null) {
++         if(!host && !solo) {
+             mod.session.leave();
+-            check(sceneClass.nativeEnabled===merged(),"disconnect preserves the configured same scene preference");
++            check(sceneClass==null,"disconnect preserves ContinuousScene absence");
+          }
+          if(loadingProbe!=null)loadingProbe.finish();
+          Log.d("COOP EFFECTS DONE travel-timing "+(host?"host":"join"));
+--- original877B/tests/NativeLoadingProbe.as
++++ only-rconnect/tests/NativeLoadingProbe.as
+@@ -26,11 +26,16 @@
+       private var rounds:Object={};
+       private var spans:Object={nativeWait:{start:-1,total:0,max:0},black:{start:-1,total:0,max:0},
+          obscured:{start:-1,total:0,max:0},pending:{start:-1,total:0,max:0}};
++      private var solo:Boolean,expectedUi:Boolean,strictUi:Boolean,productVersion:String;
+       private static const LIMIT:int=20000;
+       private static const OLD_NAMES:Array=["rconnect-room-entry","rconnect-room-entry-sats","rconnect-native-loading"];
+ 
+       public function NativeLoadingProbe(m:RConnectMod) {
+          mod=m;began=getTimer();
++         productVersion=String(Object(mod).constructor.VERSION);
++         solo=mod.config.getValue("autoRole")=="";
++         expectedUi=productVersion=="0.2.24-nativeui1";strictUi=expectedUi&&!solo;
++         if(!expectedUi && productVersion!="0.2.24-roomfix5")fault("product",productVersion);
+          role=NativeApplication.nativeApplication.applicationID.indexOf("-host-")>=0?"host":"join";
+          // Later than RoomSync.present (-2000000000). Repeated render events
+          // remain observations; they are not claimed as separate GPU frames.
+@@ -198,9 +203,18 @@
+          check(last!=null&&!last.entryPending&&!last.busy&&!last.wait.effective&&!last.vblack.effective
+             &&last.visual.effective&&last.vfon.effective&&last.vgui.effective,"terminal native layers restored without loading/fade obstruction");
+          check(png!=null&&png.afterMeasuredTravel&&png.bytes>0,"real terminal PNG captured after original timing");
++         // Preserve all 11 original UI assertions as evidence. Only the new UI
++         // dual arm requires them; old host and solo cannot claim this contract.
++         var uiChecks:Array=checks.concat();
++         if(!strictUi) {
++            checks=[uiChecks[0],uiChecks[1],uiChecks[2],uiChecks[5],uiChecks[8],uiChecks[9],uiChecks[10]];
++            check(renderCount>0&&waitCount>0,"actual native loading observed without claiming the UI bridge");
++         }
+          var passed:Boolean=true;for each(var c:Object in checks)if(!c.passed)passed=false;
+          var result:Object={kind:"native-loading-observer-v1",role:role,
+             appId:NativeApplication.nativeApplication.applicationID,passed:passed,complete:true,checks:checks,
++            productVersion:productVersion,solo:solo,uiContractRequired:strictUi,
++            uiContractQualified:strictUi&&passed,uiChecks:uiChecks,
+             startedAt:began,finishedAt:finishedAt,terminalAt:ending,rows:rows,boundaries:boundaries,rounds:rounds,
+             faultCount:faultCount,faults:faults,dropped:dropped,renderCount:renderCount,
+             eligibleCount:eligibleCount,waitCount:waitCount,missingWait:missingWait,layerLeak:layerLeak,

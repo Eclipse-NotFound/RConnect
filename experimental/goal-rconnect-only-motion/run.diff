@@ -1,0 +1,44 @@
+--- frozen/native-motion.py
++++ only-rc/native-motion.py
+@@ -30,13 +30,14 @@
+  expected=proof['artifacts'][a.case+'/EffectsDriver.swf'];harness=build.ABI_HASHES['scene/EffectsHarness.swf']
+  pins=dict(proof['inputs']);pins.update({str(drivers/n):sha(drivers/n) for n in ('prepared.json','compile.json',a.case+'/EffectsDriver.swf',a.case+'/EffectsHarness.swf')})
+  pins.update(selected['pins'])
+- assert sha(RUNNER)=='7eca453b13480140da5f36bb33d2319739a927562ccafdbb61a8b20cdb5ae4d3'
++ assert sha(SHARED_RUNNER)=='7eca453b13480140da5f36bb33d2319739a927562ccafdbb61a8b20cdb5ae4d3'
++ only_rc_inputs()
+  def verify_inputs():
+   assert build.verify(drivers)==proof and installed()==before and product(product_path)==selected
+   assert all(sha(n)==h for n,h in pins.items())
+  if a.check:
+   assert a.output is None;print(json.dumps(dict(checked=True,case=a.case,air_started=False)));return 0
+- assert a.output is not None;out=(ROOT/a.output).resolve();assert out.parent==M52 and out.name.startswith('goal-self-echo-native-') and not out.exists()
++ assert a.output is not None;out=(ROOT/a.output).resolve();assert out.parent==M52 and out.name.startswith('goal-rconnect-only-motion-') and not out.exists()
+  (out/'driver').mkdir(parents=True)
+  for n in ('EffectsDriver.swf','EffectsHarness.swf'):shutil.copyfile(drivers/a.case/n,out/'driver'/n)
+  save(out/'driver/driver-input.json',dict(candidate_sha256=candidate,driver_sha256=expected,
+@@ -59,8 +60,13 @@
+   assert not native.keep_copies and not native.solo
+   launch,stopped=record.before_launch,record.child_stopped
+   def before_launch(detail):
+-   if not settings:
+-    assert not record.children and not record.launching;verify_inputs()
++   if not settings and detail != 'Private module selection only; no AIR':
++    selection_process=read(output/'selection/launcher-process.json')
++    assert selection_process['air_launch'] is False and selection_process['exit_code']==0
++    assert type(selection_process['pid']) is int and selection_process['pid']>0
++    assert len(record.children)==1 and record.children[0]['pid']==selection_process['pid']
++    from test_registry import gone
++    assert not record.launching and gone(record.children[0]);verify_inputs()
+     original_input=read(output/'input.json');assert original_input['minimum_start_gib']==6
+     for role in roles:
+      descriptor=output/role/'coop.xml';xml=ET.fromstring(descriptor.read_bytes());ns='{http://ns.adobe.com/air/application/30.0}'
+@@ -124,7 +130,7 @@
+    values=native['inputs'][role]
+    assert values['game']==build.HOST_SHA and values['production']==candidate
+    assert values['driver']==expected and values['harness']==harness
+-   assert {n.replace('\\','/').lower() for n in values['modules']}=={n.lower() for n in before if n.lower().startswith('mods/') and n.lower().endswith('.swf')}
++   assert {n.replace('\\','/').lower() for n in values['modules']}==ONLY_RC_PATHS
+    for n,h in values['modules'].items():
+     n=n.replace('\\','/').lower();assert h==(harness if n=='mods/rconnect/release/rconnectmod.swf' else lower[n])
+    for n,h in values.get('mod_assets',{}).items():assert h==lower[n.replace('\\','/').lower()]
