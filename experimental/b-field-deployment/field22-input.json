@@ -1,0 +1,25 @@
+{
+  "candidate": "build/ab/b190-field22-build",
+  "performance": "experimental/b-field-sustained-bench/field22-qualification-02.json",
+  "notes": "experimental/b-field-deployment/field22-release-notes.txt",
+  "test": [
+    "ui=build/ab/b-field22-ui-final-03/result.json",
+    "darkteleport=build/ab/b-field22-final-02/darkteleport/result.json",
+    "controls=build/ab/b-field22-final-02/controls/result.json",
+    "security=build/ab/b-field22-final-02/security/result.json",
+    "terrainlive=build/ab/b-field22-final-02/terrainlive/result.json",
+    "rockets=build/ab/b-field22-final-02/rockets/result.json",
+    "enemies=build/ab/b-field22-final-02/enemies/result.json",
+    "textmotion=build/ab/b-field22-final-02/textmotion/result.json"
+  ],
+  "preparation": [
+    "ui=build/ab/b-field2-runtime-01/prepared-v18.json",
+    "darkteleport=build/ab/b-field2-runtime-01/prepared-v15.json",
+    "controls=build/ab/b-field2-runtime-01/prepared-v15.json",
+    "security=build/ab/b-field2-runtime-01/prepared-v15.json",
+    "terrainlive=build/ab/b-field2-runtime-01/prepared-v15.json",
+    "rockets=build/ab/b-field2-runtime-01/prepared-v15.json",
+    "enemies=build/ab/b-field2-runtime-01/prepared-v15.json",
+    "textmotion=build/ab/b-field2-runtime-01/prepared-v15.json"
+  ]
+}
