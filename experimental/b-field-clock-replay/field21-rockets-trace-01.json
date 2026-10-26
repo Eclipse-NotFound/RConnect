@@ -1,0 +1,280 @@
+{
+  "schema": "rconnect-b-clock-diagnostic-1",
+  "valid_structure": true,
+  "complete_history": true,
+  "clean_pairing": true,
+  "quality_notes": [],
+  "build_label": "rockets",
+  "session": "684cab38a22444cbbf0685884b6862f6",
+  "collection_ms": 15303,
+  "counts": {
+    "accepted_arrivals": 1,
+    "rejected_frame_messages": 0,
+    "confirmations": 1,
+    "matched": 1,
+    "unmatched_confirmations": 0,
+    "skipped_captured_arrivals": 0,
+    "tail_arrivals_not_yet_confirmed": 0,
+    "screen_brackets": 118
+  },
+  "waits": {
+    "all": {
+      "entry_to_confirm_ms": {
+        "n": 1,
+        "min": 10242,
+        "mean": 10242,
+        "median": 10242,
+        "p95": 10242,
+        "max": 10242
+      },
+      "return_to_confirm_signed_ms": {
+        "n": 1,
+        "min": -1,
+        "mean": -1,
+        "median": -1,
+        "p95": -1,
+        "max": -1
+      },
+      "push_to_confirm_lower_ms": {
+        "n": 1,
+        "min": 0,
+        "mean": 0,
+        "median": 0,
+        "p95": 0,
+        "max": 0
+      },
+      "push_to_confirm_upper_ms": {
+        "n": 1,
+        "min": 10242,
+        "mean": 10242,
+        "median": 10242,
+        "p95": 10242,
+        "max": 10242
+      }
+    },
+    "screen": {
+      "entry_to_confirm_ms": {
+        "n": 0
+      },
+      "return_to_confirm_signed_ms": {
+        "n": 0
+      },
+      "push_to_confirm_lower_ms": {
+        "n": 0
+      },
+      "push_to_confirm_upper_ms": {
+        "n": 0
+      }
+    },
+    "delivery_flush": {
+      "entry_to_confirm_ms": {
+        "n": 1,
+        "min": 10242,
+        "mean": 10242,
+        "median": 10242,
+        "p95": 10242,
+        "max": 10242
+      },
+      "return_to_confirm_signed_ms": {
+        "n": 1,
+        "min": -1,
+        "mean": -1,
+        "median": -1,
+        "p95": -1,
+        "max": -1
+      },
+      "push_to_confirm_lower_ms": {
+        "n": 1,
+        "min": 0,
+        "mean": 0,
+        "median": 0,
+        "p95": 0,
+        "max": 0
+      },
+      "push_to_confirm_upper_ms": {
+        "n": 1,
+        "min": 10242,
+        "mean": 10242,
+        "median": 10242,
+        "p95": 10242,
+        "max": 10242
+      }
+    },
+    "with_projectile_events": {
+      "entry_to_confirm_ms": {
+        "n": 0
+      },
+      "return_to_confirm_signed_ms": {
+        "n": 0
+      },
+      "push_to_confirm_lower_ms": {
+        "n": 0
+      },
+      "push_to_confirm_upper_ms": {
+        "n": 0
+      }
+    },
+    "terrain_revision_changed": {
+      "entry_to_confirm_ms": {
+        "n": 0
+      },
+      "return_to_confirm_signed_ms": {
+        "n": 0
+      },
+      "push_to_confirm_lower_ms": {
+        "n": 0
+      },
+      "push_to_confirm_upper_ms": {
+        "n": 0
+      }
+    }
+  },
+  "cadence": {
+    "source_gap_all_ms": {
+      "n": 0
+    },
+    "callback_entry_gap_all_ms": {
+      "n": 0
+    },
+    "active_same_epoch_source_gap_ms": {
+      "n": 0
+    },
+    "active_same_epoch_callback_gap_ms": {
+      "n": 0
+    },
+    "excluded_from_estimator": {},
+    "maximum_callback_entries_in_one_ms": 1
+  },
+  "application_callback_ms": {
+    "n": 1,
+    "min": 10243,
+    "mean": 10243,
+    "median": 10243,
+    "p95": 10243,
+    "max": 10243
+  },
+  "screen_bracket_ms": {
+    "n": 118,
+    "min": 0,
+    "mean": 0.6525,
+    "median": 0.0,
+    "p95": 2,
+    "max": 31
+  },
+  "screen_start_gap_ms": {
+    "n": 117,
+    "min": 25,
+    "mean": 128.0427,
+    "median": 38,
+    "p95": 62,
+    "max": 10294
+  },
+  "clock": {
+    "sampled_delay_ms": {
+      "n": 238,
+      "min": 65,
+      "mean": 65,
+      "median": 65.0,
+      "p95": 65,
+      "max": 65
+    },
+    "sampled_queued": {
+      "n": 238,
+      "min": 0,
+      "mean": 0,
+      "median": 0.0,
+      "p95": 0,
+      "max": 0
+    },
+    "underflow_counter_delta": 37,
+    "underflow_in_screen_brackets": 1,
+    "screens_with_underflow_increment": 1,
+    "final_queued": 4
+  },
+  "windows": [
+    {
+      "from_ms": 0,
+      "to_ms": 10000,
+      "matched": 1,
+      "entry_to_confirm_ms": {
+        "n": 1,
+        "min": 10242,
+        "mean": 10242,
+        "median": 10242,
+        "p95": 10242,
+        "max": 10242
+      },
+      "return_to_confirm_signed_ms": {
+        "n": 1,
+        "min": -1,
+        "mean": -1,
+        "median": -1,
+        "p95": -1,
+        "max": -1
+      },
+      "push_to_confirm_lower_ms": {
+        "n": 1,
+        "min": 0,
+        "mean": 0,
+        "median": 0,
+        "p95": 0,
+        "max": 0
+      },
+      "push_to_confirm_upper_ms": {
+        "n": 1,
+        "min": 10242,
+        "mean": 10242,
+        "median": 10242,
+        "p95": 10242,
+        "max": 10242
+      }
+    }
+  ],
+  "slowest_matched": [
+    {
+      "arrival_seq": 118,
+      "confirmation_seq": 119,
+      "arrival_at": 47687,
+      "confirmed_at": 57929,
+      "tick": 0,
+      "source_time": 91830,
+      "mode": "delivery_flush",
+      "entry_to_confirm_ms": 10242,
+      "return_to_confirm_signed_ms": -1,
+      "push_to_confirm_lower_ms": 0,
+      "push_to_confirm_upper_ms": 10242,
+      "receive_callback_ms": 10243,
+      "projectile_events": 0,
+      "projectile_count": 0,
+      "terrain_revision": 1
+    }
+  ],
+  "unmatched_confirmation_examples": [],
+  "skipped_arrival_examples": [],
+  "marks": [],
+  "observer_ms_quantized": 2,
+  "interpretation": [
+    "All arrival/confirmation/screen times use the same join-process getTimer.",
+    "Arrival starts after WireCodec.decode and before the original receive callback; it is not socket byte arrival.",
+    "Entry-to-confirm includes decode, queueing, render and observer overhead; it is not pure buffer or network latency.",
+    "Push-to-confirm values are lower/upper bounds because internal push/take times are not exposed.",
+    "Negative return-to-confirm is normal when a boundary flush confirms before the receive callback returns.",
+    "Underflow is the existing take counter with no next state, including flush cases; it is not a dropped-packet count.",
+    "A pending tail at collection end is censored evidence, not proof of event loss.",
+    "This script neither replays candidate clock algorithms nor grants runtime/performance/deployment qualification."
+  ],
+  "input": {
+    "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\ab\\b-field21-final-02\\rockets\\join-clock-trace.json",
+    "sha256": "5487d7314002aaeca259c81e2a67242f8c24a6d5aea94f60ef0607f5ffd9c703",
+    "bytes": 58784
+  },
+  "analyzer_sha256": "07f7f489b6d0b6c025d334545959e7b70030b68370e687b99f8384a2f20e820d",
+  "contextual_receipt": {
+    "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\ab\\b-field21-final-02\\rockets\\result.json",
+    "sha256": "6d74a1f92db1d4df7f9c228e1591006f3005d1fb96b059e60e75563479b8ac70",
+    "candidate_sha256": "f4426b1a067611c89296a38b722c8ef65c86ff2e61cf2869fa48ca046460d581",
+    "native_sha256": null,
+    "scenario": "rockets",
+    "note": "Recorded context; this analyzer does not requalify the entire runtime receipt"
+  }
+}

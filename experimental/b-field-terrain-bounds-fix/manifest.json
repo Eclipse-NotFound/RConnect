@@ -1,0 +1,13 @@
+{
+  "baseline": "build/ab/b190-field21-build",
+  "source_id": "f8a63b52187efb3a9ec5a5e7d90a6455b9862839adefb09e6fa59d848c3b5ee1",
+  "candidate_sha256": "f4426b1a067611c89296a38b722c8ef65c86ff2e61cf2869fa48ca046460d581",
+  "files": {
+    "src/authority/SceneSnapshot.as": {
+      "baseline_sha256": "3ba35479a64029765e2901c5b378eba520ac2463a4239331d402e58e4ff7cd10",
+      "overlay_sha256": "1de136c11631fa72feefc5adaf49b291d290a11d7fd54337be5a957d0855724a"
+    }
+  },
+  "native_changed": false,
+  "status": "source only; not compiled or runtime tested"
+}

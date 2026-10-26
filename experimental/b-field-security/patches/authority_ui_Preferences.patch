@@ -1,0 +1,11 @@
+--- authority/ui/Preferences.as
++++ authority/ui/Preferences.as
+@@ -5,7 +5,7 @@
+    public final class Preferences {
+       private var store:SharedObject;
+       private var values:Object={nickname:"Pony",hostIp:"127.0.0.1",port:23456,followTeammate:"0",sharedExploration:"1",
+-         allowPeerGrip:"0",peerGripStruggle:"1",peerThrowDamage:"0",friendlyFire:"0",pauseMenus:"0",pauseSats:"0"};
++         allowPeerGrip:"0",peerGripStruggle:"1",peerThrowDamage:"0",friendlyFire:"0",pauseMenus:"0",pauseSats:"0",sharedSecurityHack:"1"};
+       public function Preferences(launch:Object) {
+          store=SharedObject.getLocal("RConnectBPreferences","/");
+          for(var key:String in values)if(store.data[key]!=null)values[key]=store.data[key];

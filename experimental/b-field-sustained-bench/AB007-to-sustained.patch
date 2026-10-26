@@ -1,0 +1,95 @@
+--- AB007/ABBench.as
++++ sustained/ABBench.as
+@@ -8,6 +8,43 @@
+   private var intervals:Array=[],rtts:Array=[],samples:Array=[],baseAmmo:Array=[],windows:Object={},inputFrame:int=0;
+   private var armed:Boolean=false,finished:Boolean=false,phaseCounts:Array=[8,80],enemyCount:int=0,lastFire:Boolean=false;
+   private var anchors:Array=[];
++  private static const MAGAZINE:int=1000,SAMPLE_MS:int=750;
++  private var phaseReserve:Array=[],peerMagazineReady:Boolean=false,magazineReported:Boolean=false,beginAllowed:Boolean=false;
++  private function weaponState():Array {
++   var rows:Array=[];
++   for each(var g:Object in actors()) {var gun:Object=g.currentWeapon;
++    rows.push({id:gun.id,capacity:gun.holder,hold:gun.hold,reload:gun.t_reload,
++     reserve:g.invent.items[gun.ammo].kol,attack:gun.t_attack});}
++   return rows;
++  }
++  private function prepareMagazines():void {
++   if(!isB || !host)throw new Error("Sustained preparation requires authoritative B host");
++   phaseReserve=[];var records:Array=[];
++   for each(var actor:Object in mod.host.actors) {
++    if(actor.id!=records.length)throw new Error("Unexpected actor order");
++    mod.access.scope.run(actor.context,function():void {
++     var g:Object=actor.unit,gun:Object=g.currentWeapon;
++     if(gun==null || gun.id!="lmg" || gun.variant!=0 || gun.ammo!="p556" || gun.rapid!=2 || gun.rashod!=1 || gun.kol!=1)
++      throw new Error("Unexpected native LMG");
++     var row:Object={player:actor.id,beforeCapacity:gun.holder,beforeHold:gun.hold,
++      reload:gun.t_reload,attack:gun.t_attack,reserve:g.invent.items[gun.ammo].kol};
++     gun.holder=MAGAZINE;gun.hold=MAGAZINE;
++     phaseReserve.push(row.reserve);row.capacity=gun.holder;row.hold=gun.hold;records.push(row);
++    });
++   }
++   if(records.length!=2)throw new Error("Missing authoritative actors");
++   log("magazine-prepared",{phase:phase,capacity:MAGAZINE,sampleMs:SAMPLE_MS,players:records});
++  }
++  private function checkMagazines(full:Boolean):void {
++   var members:Array=actors();
++   if(!isB || members.length!=(host?2:1) || phaseReserve.length!=members.length)throw new Error("Missing magazine baseline");
++   for(var i:int=0;i<members.length;i++) {
++    var g:Object=members[i],gun:Object=g.currentWeapon;
++    if(gun==null || gun.id!="lmg" || gun.holder!=MAGAZINE || gun.hold<=0 || gun.hold>MAGAZINE ||
++       (full && gun.hold!=MAGAZINE) || gun.t_reload!=0 || g.invent.items[gun.ammo].kol!=phaseReserve[i])
++     throw new Error("Sustained magazine contract: phase "+phase+", player "+i);
++   }
++  }
+   public var profileBegin:Function,profileEnd:Function,finishProbe:Function;
+   public function ABBench(m:Object,root:Object,c:Object){mod=m;main=root;cfg=c;host=c.role=="host";isB=c.variant=="B";
+    main.stage.addEventListener(Event.ENTER_FRAME,step,false,100000);
+@@ -31,7 +68,9 @@
+   public function message(v:Object):void {
+    if(v.type!="ab-bench")return;
+    if(v.op=="ready")peerReady=true;
+-   if(v.op=="phase" && !host){phase=int(v.phase);preparedAt=getTimer();started=0;prev=0;armed=false;log("phase-prepared",{phase:phase,count:phaseCounts[phase]});}
++   if(v.op=="phase" && !host){phase=int(v.phase);preparedAt=getTimer();started=0;prev=0;armed=false;magazineReported=false;beginAllowed=false;phaseReserve=[];log("phase-prepared",{phase:phase,count:phaseCounts[phase]});}
++   if(v.op=="magazine-ready" && host && v.phase===phase && v.capacity===MAGAZINE && v.hold===MAGAZINE && v.reload===0)peerMagazineReady=true;
++   if(v.op=="begin" && !host && v.phase===phase)beginAllowed=true;
+    if(v.op=="ping")send({op:"pong",time:v.time});
+    if(v.op=="pong" && started>0)rtts.push(getTimer()-int(v.time));
+    if(v.op=="end" && host){peerReady=true;}
+@@ -85,13 +124,20 @@
+      log("ready",{land:w.game.curLandId,room:w.loc.id,width:w.loc.limX,height:w.loc.limY,spaceX:w.loc.spaceX,spaceY:w.loc.spaceY,stageWidth:main.stage.stageWidth,stageHeight:main.stage.stageHeight,rate:main.stage.frameRate});
+      send({op:"ready"});return;
+     }
+-    if(host && peerReady && !armed && (phase<0 || started<0)){
++    if(host && peerReady && !armed && (phase<0 || started<0) && (mod.host.inputs[1].buttons&8)==0 && !mod.host.actors[1].context.ctr.keyAttack){
+      peerReady=false;phase++;if(phase>=phaseCounts.length){done();return;}
+-     spawn(phaseCounts[phase]);preparedAt=now;started=0;prev=0;send({op:"phase",phase:phase});log("phase-prepared",{phase:phase,count:phaseCounts[phase]});
++     spawn(phaseCounts[phase]);prepareMagazines();peerMagazineReady=false;preparedAt=now;started=0;prev=0;send({op:"phase",phase:phase});log("phase-prepared",{phase:phase,count:phaseCounts[phase]});
+     }
+     if(phase<0)return;
+     if(started<0)return;
+-    if(started==0 && now-preparedAt>=5000){started=now;armed=true;inputFrame=0;intervals=[];rtts=[];samples=[];windows={};baseAmmo=ammo();prev=0;lastSample=0;if(profileBegin!=null)profileBegin();log("measure-begin",{phase:phase,ammo:baseAmmo,enemies:countEnemies()});}
++    if(!host && started==0 && !magazineReported && w.gg.currentWeapon.holder==MAGAZINE && w.gg.currentWeapon.hold==MAGAZINE && w.gg.currentWeapon.t_reload==0) {
++     phaseReserve=[w.gg.invent.items[w.gg.currentWeapon.ammo].kol];checkMagazines(true);magazineReported=true;
++     log("magazine-observed",{phase:phase,players:weaponState()});
++     send({op:"magazine-ready",phase:phase,capacity:MAGAZINE,hold:MAGAZINE,reload:0});
++    }
++    if(started==0 && (host?now-preparedAt>=5000 && peerMagazineReady:beginAllowed && magazineReported)){
++     if(host){checkMagazines(true);send({op:"begin",phase:phase});}else checkMagazines(false);
++     started=now;armed=true;inputFrame=0;intervals=[];rtts=[];samples=[];windows={};baseAmmo=ammo();prev=0;lastSample=0;if(profileBegin!=null)profileBegin();log("measure-begin",{phase:phase,ammo:baseAmmo,enemies:countEnemies()});}
+     aa=actors();for(j=0;j<aa.length;j++){a=aa[j];a.currentWeapon.hp=a.currentWeapon.maxhp;a.pers.jammedMult=0;
+      // setLocPos is a room-entry reset and cancels native reload timers.
+      // Anchor with geometry-only setPos so the real gun keeps its lifecycle.
+@@ -100,10 +146,11 @@
+     if(!isB){var pressed:Boolean=fire();if(!pressed)w.ctr.keyAttack=false;else if(!lastFire)w.ctr.keyAttack=true;lastFire=pressed;
+      w.celX=w.gg.X+380;w.celY=w.gg.Y-45;}
+     if(started<=0)return;
++    checkMagazines(false);
+     if(prev>0)intervals.push(now-prev);prev=now;
+-    if(now-lastSample>=1000){lastSample=now;var positions:Array=[];for each(a in actors())positions.push({x:a.X,y:a.Y,hp:a.hp,maxhp:a.maxhp});
++    if(now-lastSample>=SAMPLE_MS){lastSample=now;var positions:Array=[];for each(a in actors())positions.push({x:a.X,y:a.Y,hp:a.hp,maxhp:a.maxhp});
+      var v:Object={ms:now-started,heap:System.totalMemory,ammo:ammo(),enemies:countEnemies(),players:positions};
+-     v.weapons=[];for each(a in actors())v.weapons.push({hold:a.currentWeapon.hold,reserve:a.invent.items[a.currentWeapon.ammo].kol,reload:a.currentWeapon.t_reload,attack:a.currentWeapon.t_attack,requestedFire:fire(),nativeFire:a.ctr.keyAttack});
++     v.weapons=[];for each(a in actors())v.weapons.push({id:a.currentWeapon.id,capacity:a.currentWeapon.holder,hold:a.currentWeapon.hold,reserve:a.invent.items[a.currentWeapon.ammo].kol,reload:a.currentWeapon.t_reload,attack:a.currentWeapon.t_attack,requestedFire:fire(),nativeFire:a.ctr.keyAttack});
+      if(isB){var f:Object=host?mod.host.lastFrame:mod.replica.displayFrame;v.hostTick=f.tick;v.shots=f.spawnsByPlayer;if(!host){v.queued=mod.replica.clock.queued;v.delay=mod.replica.clock.delay;v.underflows=mod.replica.clock.underflows;}}
+      samples.push(v);send({op:"ping",time:now});log("sample",v);
+     }

@@ -1,0 +1,23 @@
+{
+  "revision": 3,
+  "base": "ab-sustained-001",
+  "build": "build/ab/ab-sustained-003",
+  "source_id": "1e4e640689e5269baab49b46e32c3592c568ac63550d18d4c9a83e587a7d3dc7",
+  "sources": {
+    "src/ABBench.as": "1df77568c152e0083ebce5cf80db31370b9120c89b630ab18744cd7631acf3e0",
+    "src/ABBenchMod.as": "8c5d0b58fb3ed0af12f8787e2a4c1ba5409466af4df3b54629dc40868e6e182a",
+    "src/ABBProbe.as": "783d542c462b9ed41a566499911835a79740c4469602b9aefb2ba402ebf3c331",
+    "src/ABPayloadA.as": "582a5e650da2577a251a6239c378826edff5b68e72f1fce865aba14321f39887",
+    "src/ABPayloadB.as": "07487d95a33fb96b09baf3abbed2bd5d51ec43324dbfca117000f1c93988c452",
+    "stubs/authority/ClientReplica.as": "d0beeafbb988b732faed071122bfe5254b0ca4e85095793a01758142d9b8175b",
+    "stubs/authority/HostSession.as": "2578c236a51071b9fb74565a0bca709742e4500e76590b71d51e3940b7660880",
+    "stubs/authority/Log.as": "0946bc5f2dc2a16ed7bbe5c7aa510d380d04a8ba48c4251301851b53a60ec75f",
+    "stubs/authority/NativeAccess.as": "a73e782ee6739f7dac2730fefc6f51f13c64f2324d91ab09c3bd890fb2fc7278",
+    "stubs/authority/Probe.as": "b599604cdd6257adfdd7c07eb599bce96869dd153cc18ba0d24df602cba2466a",
+    "stubs/authority/ProbeArena.as": "791fe3b1eb041ddd3272cf5d3299564582e242d45a635f2a350185f1843ee34f",
+    "stubs/authority/SceneChecks.as": "cf2e26eebb1aebfc965245c7c91020f9154b75fe727693c36c2ff67cd4678cb8",
+    "stubs/authority/Timing.as": "91afc46c7279b33e14054cc26f688e6b219779aa93075bae14d09b3ca506fe84"
+  },
+  "change": "Observe actual consumed neutral command after each firing phase; bounded preparation diagnostics only outside measurement",
+  "measurement_change": false
+}

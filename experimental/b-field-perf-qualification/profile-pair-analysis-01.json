@@ -1,0 +1,2570 @@
+{
+  "schema": "b-field-profile-pair-analysis-1",
+  "diagnostic_only": true,
+  "qualified": false,
+  "plan_sha256": "136a18c6a5699b4ac766a0a2f0e53e0b296772c234f2755795f8f3505d6e1228",
+  "script_sha256": "d1c9516999022e94104454c28384e9bf8e35a6bb24470eb748d30312d400ddbf",
+  "alignment": "Full CPU sample intervals inside the phase for every timer origin allowed by process creation and preserved final log-write upper bound; not an invented exact clock offset",
+  "runs": {
+    "baseline": {
+      "run": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\ab\\b-field21-profile-baseline-01",
+      "result_sha256": "55127411c2f2e6ec68ef4cae7c8cd26da3b87a47387cff40a9894db66e2076d0",
+      "cpu_sha256": "0496cc160850e9a65a16b170908731eb8c663e13d604c830a65934e018a9828d",
+      "declared_wrapper_sha256": "de7c30c0f6c2aa906d32d8e76d4c2ddd2f062a5b16be59e8c0d3431216ed2f2b",
+      "rows": [
+        {
+          "role": "host",
+          "phase": 0,
+          "enemies": 8,
+          "logged_phase_timer_ms": [
+            86800,
+            146846
+          ],
+          "origin_wall_bounds": [
+            1792941168.891353,
+            1792941169.1349976
+          ],
+          "origin_uncertainty_ms": 243.64471435546875,
+          "cpu_safe_phase_interior_wall": [
+            1792941255.9349976,
+            1792941314.6753528
+          ],
+          "cpu_interval_count": 57,
+          "cpu_observed_duration_ms": 58067.8459,
+          "cpu_user_ms": 67343.75,
+          "cpu_kernel_ms": 4437.5,
+          "cpu_core_percent": 123.6161749888504,
+          "cpu_wall_vs_monotonic_max_drift_ms": 1.1105435546875242,
+          "machine_cpu_percent": 36.691663584087166,
+          "working_set_bytes": {
+            "min": 926195712,
+            "mean": 930700521.5438596,
+            "max": 944054272
+          },
+          "private_commit_bytes": {
+            "min": 979013632,
+            "mean": 984326215.8596492,
+            "max": 996577280
+          },
+          "elapsed_ms": 60044,
+          "frames": 662,
+          "mean_frame_ms": 90.70090634441088,
+          "p95_frame_ms": 148,
+          "samples": 58,
+          "visible": {
+            "min": 3,
+            "mean": 4.275862068965517,
+            "max": 6
+          },
+          "count_attached_exact": true,
+          "shot_delta_first_to_last_sample": [
+            220,
+            220
+          ],
+          "ammo_consumed_whole_phase": [
+            220,
+            220
+          ],
+          "firing_windows": [
+            {
+              "window": 0,
+              "span_ms": 9371,
+              "shots": [
+                41,
+                37
+              ]
+            },
+            {
+              "window": 1,
+              "span_ms": 9414,
+              "shots": [
+                42,
+                47
+              ]
+            },
+            {
+              "window": 2,
+              "span_ms": 8722,
+              "shots": [
+                19,
+                16
+              ]
+            },
+            {
+              "window": 3,
+              "span_ms": 8567,
+              "shots": [
+                36,
+                37
+              ]
+            },
+            {
+              "window": 4,
+              "span_ms": 9379,
+              "shots": [
+                26,
+                30
+              ]
+            },
+            {
+              "window": 5,
+              "span_ms": 8355,
+              "shots": [
+                37,
+                34
+              ]
+            }
+          ],
+          "clock_samples": {},
+          "timings": {
+            "simulate.music": {
+              "p95Ms": 0,
+              "histogramCapMs": 2000,
+              "p50Ms": 0,
+              "maxMs": 1,
+              "cappedSamples": 0,
+              "n": 662,
+              "meanMs": 0.004531722054380665,
+              "totalMs": 3
+            },
+            "simulate.mswAfterRoom": {
+              "p95Ms": 1,
+              "histogramCapMs": 2000,
+              "p50Ms": 0,
+              "maxMs": 7,
+              "cappedSamples": 0,
+              "n": 662,
+              "meanMs": 0.3731117824773414,
+              "totalMs": 247
+            },
+            "native.scope.prepare": {
+              "p95Ms": 0,
+              "histogramCapMs": 2000,
+              "p50Ms": 0,
+              "maxMs": 199,
+              "cappedSamples": 0,
+              "n": 16429,
+              "meanMs": 0.05965061780997018,
+              "totalMs": 980
+            },
+            "wire.serialize": {
+              "p95Ms": 3,
+              "histogramCapMs": 2000,
+              "p50Ms": 1,
+              "maxMs": 68,
+              "cappedSamples": 0,
+              "n": 778,
+              "meanMs": 1.0141388174807198,
+              "totalMs": 789
+            },
+            "wire.compress": {
+              "p95Ms": 2,
+              "histogramCapMs": 2000,
+              "p50Ms": 0,
+              "maxMs": 8,
+              "cappedSamples": 0,
+              "n": 778,
+              "meanMs": 0.6041131105398457,
+              "totalMs": 470
+            },
+            "simulate.playerServices": {
+              "p95Ms": 1,
+              "histogramCapMs": 2000,
+              "p50Ms": 0,
+              "maxMs": 2,
+              "cappedSamples": 0,
+              "n": 662,
+              "meanMs": 0.07854984894259819,
+              "totalMs": 52
+            },
+            "host.delta": {
+              "p95Ms": 7,
+              "histogramCapMs": 2000,
+              "p50Ms": 2,
+              "maxMs": 67,
+              "cappedSamples": 0,
+              "n": 662,
+              "meanMs": 2.7583081570996977,
+              "totalMs": 1826
+            },
+            "simulate.mswBeforeObjects": {
+              "p95Ms": 1,
+              "histogramCapMs": 2000,
+              "p50Ms": 0,
+              "maxMs": 7,
+              "cappedSamples": 0,
+              "n": 662,
+              "meanMs": 0.2054380664652568,
+              "totalMs": 136
+            },
+            "simulate.object.fe.graph::Part": {
+              "p95Ms": 0,
+              "histogramCapMs": 2000,
+              "p50Ms": 0,
+              "maxMs": 55,
+              "cappedSamples": 0,
+              "n": 18030,
+              "meanMs": 0.017914586799778146,
+              "totalMs": 323
+            },
+            "capture.untrackedEffects": {
+              "p95Ms": 1,
+              "histogramCapMs": 2000,
+              "p50Ms": 0,
+              "maxMs": 2,
+              "cappedSamples": 0,
+              "n": 662,
+              "meanMs": 0.10120845921450151,
+              "totalMs": 67
+            },
+            "capture.pose": {
+              "p95Ms": 1,
+              "histogramCapMs": 2000,
+              "p50Ms": 0,
+              "maxMs": 205,
+              "cappedSamples": 0,
+              "n": 43229,
+              "meanMs": 0.12283420851743043,
+              "totalMs": 5310
+            },
+            "simulate.room": {
+              "p95Ms": 27,
+              "histogramCapMs": 2000,
+              "p50Ms": 9,
+              "maxMs": 257,
+              "cappedSamples": 0,
+              "n": 662,
+              "meanMs": 12.750755287009063,
+              "totalMs": 8441
+            },
+            "native.scope": {
+              "p95Ms": 6,
+              "histogramCapMs": 2000,
+              "p50Ms": 0,
+              "maxMs": 260,
+              "cappedSamples": 0,
+              "n": 16429,
+              "meanMs": 1.050885629070546,
+              "totalMs": 17265
+            },
+            "host.send": {
+              "p95Ms": 6,
+              "histogramCapMs": 2000,
+              "p50Ms": 1,
+              "maxMs": 72,
+              "cappedSamples": 0,
+              "n": 662,
+              "meanMs": 2.096676737160121,
+              "totalMs": 1388
+            },
+            "native.scope.restore": {
+              "p95Ms": 0,
+              "histogramCapMs": 2000,
+              "p50Ms": 0,
+              "maxMs": 11,
+              "cappedSamples": 0,
+              "n": 16429,
+              "meanMs": 0.022825491508917158,
+              "totalMs": 375
+            },
+            "capture.units": {
+              "p95Ms": 5,
+              "histogramCapMs": 2000,
+              "p50Ms": 3,
+              "maxMs": 21,
+              "cappedSamples": 0,
+              "n": 662,
+              "meanMs": 3.0302114803625377,
+              "totalMs": 2006
+            },
+            "host.sceneAndPlayers": {
+              "p95Ms": 27,
+              "histogramCapMs": 2000,
+              "p50Ms": 15,
+              "maxMs": 99,
+              "cappedSamples": 0,
+              "n": 662,
+              "meanMs": 16.741691842900302,
+              "totalMs": 11083
+            },
+            "simulate.tactics": {
+              "p95Ms": 2,
+              "histogramCapMs": 2000,
+              "p50Ms": 1,
+              "maxMs": 18,
+              "cappedSamples": 0,
+              "n": 662,
+              "meanMs": 0.8051359516616314,
+              "totalMs": 533
+            },
+            "host.character": {
+              "p95Ms": 3,
+              "histogramCapMs": 2000,
+              "p50Ms": 1,
+              "maxMs": 8,
+              "cappedSamples": 0,
+              "n": 662,
+              "meanMs": 1.5619335347432024,
+              "totalMs": 1034
+            },
+            "capture.nativeFields": {
+              "p95Ms": 1,
+              "histogramCapMs": 2000,
+              "p50Ms": 0,
+              "maxMs": 55,
+              "cappedSamples": 0,
+              "n": 22508,
+              "meanMs": 0.07588413008708014,
+              "totalMs": 1708
+            },
+            "capture.tiles": {
+              "p95Ms": 8,
+              "histogramCapMs": 2000,
+              "p50Ms": 6,
+              "maxMs": 82,
+              "cappedSamples": 0,
+              "n": 662,
+              "meanMs": 5.8927492447129906,
+              "totalMs": 3901
+            },
+            "simulate.roomServices": {
+              "p95Ms": 0,
+              "histogramCapMs": 2000,
+              "p50Ms": 0,
+              "maxMs": 2,
+              "cappedSamples": 0,
+              "n": 662,
+              "meanMs": 0.019637462235649546,
+              "totalMs": 13
+            },
+            "simulate.players": {
+              "p95Ms": 18,
+              "histogramCapMs": 2000,
+              "p50Ms": 6,
+              "maxMs": 95,
+              "cappedSamples": 0,
+              "n": 662,
+              "meanMs": 8.021148036253777,
+              "totalMs": 5310
+            },
+            "host.publish": {
+              "p95Ms": 38,
+              "histogramCapMs": 2000,
+              "p50Ms": 20,
+              "maxMs": 111,
+              "cappedSamples": 0,
+              "n": 662,
+              "meanMs": 23.176737160120847,
+              "totalMs": 15343
+            },
+            "simulate.object.fe.unit::UnitZombie": {
+              "p95Ms": 1,
+              "histogramCapMs": 2000,
+              "p50Ms": 0,
+              "maxMs": 199,
+              "cappedSamples": 0,
+              "n": 5296,
+              "meanMs": 0.20430513595166164,
+              "totalMs": 1082
+            },
+            "network.receiveBatch": {
+              "p95Ms": 2,
+              "histogramCapMs": 2000,
+              "p50Ms": 0,
+              "maxMs": 10,
+              "cappedSamples": 0,
+              "n": 621,
+              "meanMs": 0.5217391304347826,
+              "totalMs": 324
+            },
+            "vector.captureCommands": {
+              "p95Ms": 0,
+              "histogramCapMs": 2000,
+              "p50Ms": 0,
+              "maxMs": 37,
+              "cappedSamples": 0,
+              "n": 41419,
+              "meanMs": 0.017986914218112462,
+              "totalMs": 745
+            },
+            "host.simulate": {
+              "p95Ms": 30,
+              "histogramCapMs": 2000,
+              "p50Ms": 11,
+              "maxMs": 260,
+              "cappedSamples": 0,
+              "n": 662,
+              "meanMs": 14.557401812688822,
+              "totalMs": 9637
+            },
+            "capture.blitFrame": {
+              "p95Ms": 0,
+              "histogramCapMs": 2000,
+              "p50Ms": 0,
+              "maxMs": 2,
+              "cappedSamples": 0,
+              "n": 5296,
+              "meanMs": 0.023413897280966767,
+              "totalMs": 124
+            },
+            "simulate.projectileCapture": {
+              "p95Ms": 1,
+              "histogramCapMs": 2000,
+              "p50Ms": 0,
+              "maxMs": 10,
+              "cappedSamples": 0,
+              "n": 1324,
+              "meanMs": 0.2107250755287009,
+              "totalMs": 279
+            },
+            "capture.objectsAndParticles": {
+              "p95Ms": 6,
+              "histogramCapMs": 2000,
+              "p50Ms": 1,
+              "maxMs": 19,
+              "cappedSamples": 0,
+              "n": 662,
+              "meanMs": 1.4712990936555892,
+              "totalMs": 974
+            },
+            "capture.unitsAndTiles": {
+              "p95Ms": 14,
+              "histogramCapMs": 2000,
+              "p50Ms": 8,
+              "maxMs": 85,
+              "cappedSamples": 0,
+              "n": 662,
+              "meanMs": 9.22809667673716,
+              "totalMs": 6109
+            },
+            "simulate.object.fe.weapon::Bullet": {
+              "p95Ms": 2,
+              "histogramCapMs": 2000,
+              "p50Ms": 0,
+              "maxMs": 207,
+              "cappedSamples": 0,
+              "n": 2739,
+              "meanMs": 0.48484848484848486,
+              "totalMs": 1328
+            }
+          }
+        },
+        {
+          "role": "host",
+          "phase": 1,
+          "enemies": 80,
+          "logged_phase_timer_ms": [
+            154332,
+            214450
+          ],
+          "origin_wall_bounds": [
+            1792941168.891353,
+            1792941169.1349976
+          ],
+          "origin_uncertainty_ms": 243.64471435546875,
+          "cpu_safe_phase_interior_wall": [
+            1792941323.4669976,
+            1792941382.259353
+          ],
+          "cpu_interval_count": 56,
+          "cpu_observed_duration_ms": 57860.2436,
+          "cpu_user_ms": 57062.5,
+          "cpu_kernel_ms": 4906.25,
+          "cpu_core_percent": 107.10074162218011,
+          "cpu_wall_vs_monotonic_max_drift_ms": 1.0913984374999472,
+          "machine_cpu_percent": 36.755497797505534,
+          "working_set_bytes": {
+            "min": 933765120,
+            "mean": 937275757.7142857,
+            "max": 940032000
+          },
+          "private_commit_bytes": {
+            "min": 986120192,
+            "mean": 990836809.1428572,
+            "max": 992989184
+          },
+          "elapsed_ms": 60116,
+          "frames": 311,
+          "mean_frame_ms": 193.2990353697749,
+          "p95_frame_ms": 295,
+          "samples": 55,
+          "visible": {
+            "min": 41,
+            "mean": 46.36363636363637,
+            "max": 50
+          },
+          "count_attached_exact": true,
+          "shot_delta_first_to_last_sample": [
+            108,
+            111
+          ],
+          "ammo_consumed_whole_phase": [
+            108,
+            111
+          ],
+          "firing_windows": [
+            {
+              "window": 0,
+              "span_ms": 9089,
+              "shots": [
+                18,
+                17
+              ]
+            },
+            {
+              "window": 1,
+              "span_ms": 8908,
+              "shots": [
+                19,
+                18
+              ]
+            },
+            {
+              "window": 2,
+              "span_ms": 8774,
+              "shots": [
+                8,
+                7
+              ]
+            },
+            {
+              "window": 3,
+              "span_ms": 8791,
+              "shots": [
+                13,
+                15
+              ]
+            },
+            {
+              "window": 4,
+              "span_ms": 9686,
+              "shots": [
+                24,
+                24
+              ]
+            },
+            {
+              "window": 5,
+              "span_ms": 7937,
+              "shots": [
+                16,
+                17
+              ]
+            }
+          ],
+          "clock_samples": {},
+          "timings": {
+            "simulate.music": {
+              "p95Ms": 0,
+              "histogramCapMs": 2000,
+              "p50Ms": 0,
+              "maxMs": 1,
+              "cappedSamples": 0,
+              "n": 311,
+              "meanMs": 0.003215434083601286,
+              "totalMs": 1
+            },
+            "simulate.mswAfterRoom": {
+              "p95Ms": 1,
+              "histogramCapMs": 2000,
+              "p50Ms": 0,
+              "maxMs": 2,
+              "cappedSamples": 0,
+              "n": 311,
+              "meanMs": 0.3890675241157556,
+              "totalMs": 121
+            },
+            "native.scope.prepare": {
+              "p95Ms": 0,
+              "histogramCapMs": 2000,
+              "p50Ms": 0,
+              "maxMs": 71,
+              "cappedSamples": 0,
+              "n": 34556,
+              "meanMs": 0.04774858201180692,
+              "totalMs": 1650
+            },
+            "wire.serialize": {
+              "p95Ms": 6,
+              "histogramCapMs": 2000,
+              "p50Ms": 1,
+              "maxMs": 23,
+              "cappedSamples": 0,
+              "n": 422,
+              "meanMs": 1.7867298578199051,
+              "totalMs": 754
+            },
+            "wire.compress": {
+              "p95Ms": 4,
+              "histogramCapMs": 2000,
+              "p50Ms": 2,
+              "maxMs": 5,
+              "cappedSamples": 0,
+              "n": 422,
+              "meanMs": 1.5308056872037914,
+              "totalMs": 646
+            },
+            "simulate.playerServices": {
+              "p95Ms": 1,
+              "histogramCapMs": 2000,
+              "p50Ms": 0,
+              "maxMs": 2,
+              "cappedSamples": 0,
+              "n": 311,
+              "meanMs": 0.10610932475884244,
+              "totalMs": 33
+            },
+            "host.delta": {
+              "p95Ms": 17,
+              "histogramCapMs": 2000,
+              "p50Ms": 6,
+              "maxMs": 81,
+              "cappedSamples": 0,
+              "n": 311,
+              "meanMs": 8.07717041800643,
+              "totalMs": 2512
+            },
+            "simulate.mswBeforeObjects": {
+              "p95Ms": 1,
+              "histogramCapMs": 2000,
+              "p50Ms": 0,
+              "maxMs": 2,
+              "cappedSamples": 0,
+              "n": 311,
+              "meanMs": 0.19614147909967847,
+              "totalMs": 61
+            },
+            "simulate.object.fe.graph::Part": {
+              "p95Ms": 0,
+              "histogramCapMs": 2000,
+              "p50Ms": 0,
+              "maxMs": 15,
+              "cappedSamples": 0,
+              "n": 5594,
+              "meanMs": 0.019306399713979263,
+              "totalMs": 108
+            },
+            "capture.untrackedEffects": {
+              "p95Ms": 2,
+              "histogramCapMs": 2000,
+              "p50Ms": 0,
+              "maxMs": 39,
+              "cappedSamples": 0,
+              "n": 311,
+              "meanMs": 0.639871382636656,
+              "totalMs": 199
+            },
+            "capture.pose": {
+              "p95Ms": 1,
+              "histogramCapMs": 2000,
+              "p50Ms": 0,
+              "maxMs": 61,
+              "cappedSamples": 0,
+              "n": 61028,
+              "meanMs": 0.09205610539424526,
+              "totalMs": 5618
+            },
+            "simulate.room": {
+              "p95Ms": 45,
+              "histogramCapMs": 2000,
+              "p50Ms": 21,
+              "maxMs": 103,
+              "cappedSamples": 0,
+              "n": 311,
+              "meanMs": 24.376205787781352,
+              "totalMs": 7581
+            },
+            "native.scope": {
+              "p95Ms": 1,
+              "histogramCapMs": 2000,
+              "p50Ms": 0,
+              "maxMs": 116,
+              "cappedSamples": 0,
+              "n": 34556,
+              "meanMs": 0.47560481537214955,
+              "totalMs": 16435
+            },
+            "host.send": {
+              "p95Ms": 9,
+              "histogramCapMs": 2000,
+              "p50Ms": 4,
+              "maxMs": 28,
+              "cappedSamples": 0,
+              "n": 311,
+              "meanMs": 4.797427652733119,
+              "totalMs": 1492
+            },
+            "native.scope.restore": {
+              "p95Ms": 0,
+              "histogramCapMs": 2000,
+              "p50Ms": 0,
+              "maxMs": 59,
+              "cappedSamples": 0,
+              "n": 34556,
+              "meanMs": 0.023382335918509085,
+              "totalMs": 808
+            },
+            "capture.units": {
+              "p95Ms": 67,
+              "histogramCapMs": 2000,
+              "p50Ms": 25,
+              "maxMs": 272,
+              "cappedSamples": 0,
+              "n": 311,
+              "meanMs": 33.87459807073955,
+              "totalMs": 10535
+            },
+            "host.sceneAndPlayers": {
+              "p95Ms": 92,
+              "histogramCapMs": 2000,
+              "p50Ms": 37,
+              "maxMs": 312,
+              "cappedSamples": 0,
+              "n": 311,
+              "meanMs": 47.78778135048231,
+              "totalMs": 14862
+            },
+            "simulate.tactics": {
+              "p95Ms": 8,
+              "histogramCapMs": 2000,
+              "p50Ms": 4,
+              "maxMs": 60,
+              "cappedSamples": 0,
+              "n": 311,
+              "meanMs": 4.559485530546624,
+              "totalMs": 1418
+            },
+            "host.character": {
+              "p95Ms": 3,
+              "histogramCapMs": 2000,
+              "p50Ms": 1,
+              "maxMs": 25,
+              "cappedSamples": 0,
+              "n": 311,
+              "meanMs": 1.8392282958199357,
+              "totalMs": 572
+            },
+            "capture.nativeFields": {
+              "p95Ms": 1,
+              "histogramCapMs": 2000,
+              "p50Ms": 0,
+              "maxMs": 249,
+              "cappedSamples": 0,
+              "n": 55358,
+              "meanMs": 0.11207052277900213,
+              "totalMs": 6204
+            },
+            "capture.tiles": {
+              "p95Ms": 8,
+              "histogramCapMs": 2000,
+              "p50Ms": 6,
+              "maxMs": 17,
+              "cappedSamples": 0,
+              "n": 311,
+              "meanMs": 5.758842443729904,
+              "totalMs": 1791
+            },
+            "simulate.roomServices": {
+              "p95Ms": 0,
+              "histogramCapMs": 2000,
+              "p50Ms": 0,
+              "maxMs": 2,
+              "cappedSamples": 0,
+              "n": 311,
+              "meanMs": 0.022508038585209004,
+              "totalMs": 7
+            },
+            "simulate.players": {
+              "p95Ms": 18,
+              "histogramCapMs": 2000,
+              "p50Ms": 7,
+              "maxMs": 88,
+              "cappedSamples": 0,
+              "n": 311,
+              "meanMs": 9.157556270096464,
+              "totalMs": 2848
+            },
+            "host.publish": {
+              "p95Ms": 121,
+              "histogramCapMs": 2000,
+              "p50Ms": 50,
+              "maxMs": 393,
+              "cappedSamples": 0,
+              "n": 311,
+              "meanMs": 62.51446945337621,
+              "totalMs": 19442
+            },
+            "simulate.object.fe.unit::UnitZombie": {
+              "p95Ms": 1,
+              "histogramCapMs": 2000,
+              "p50Ms": 0,
+              "maxMs": 71,
+              "cappedSamples": 0,
+              "n": 24880,
+              "meanMs": 0.1483118971061093,
+              "totalMs": 3690
+            },
+            "network.receiveBatch": {
+              "p95Ms": 3,
+              "histogramCapMs": 2000,
+              "p50Ms": 1,
+              "maxMs": 7,
+              "cappedSamples": 0,
+              "n": 141,
+              "meanMs": 1.5177304964539007,
+              "totalMs": 214
+            },
+            "vector.captureCommands": {
+              "p95Ms": 0,
+              "histogramCapMs": 2000,
+              "p50Ms": 0,
+              "maxMs": 39,
+              "cappedSamples": 0,
+              "n": 61305,
+              "meanMs": 0.013946660141913383,
+              "totalMs": 855
+            },
+            "host.simulate": {
+              "p95Ms": 58,
+              "histogramCapMs": 2000,
+              "p50Ms": 28,
+              "maxMs": 119,
+              "cappedSamples": 0,
+              "n": 311,
+              "meanMs": 32.61093247588425,
+              "totalMs": 10142
+            },
+            "capture.blitFrame": {
+              "p95Ms": 0,
+              "histogramCapMs": 2000,
+              "p50Ms": 0,
+              "maxMs": 38,
+              "cappedSamples": 0,
+              "n": 24880,
+              "meanMs": 0.020176848874598072,
+              "totalMs": 502
+            },
+            "simulate.projectileCapture": {
+              "p95Ms": 1,
+              "histogramCapMs": 2000,
+              "p50Ms": 0,
+              "maxMs": 6,
+              "cappedSamples": 0,
+              "n": 622,
+              "meanMs": 0.2266881028938907,
+              "totalMs": 141
+            },
+            "capture.objectsAndParticles": {
+              "p95Ms": 2,
+              "histogramCapMs": 2000,
+              "p50Ms": 1,
+              "maxMs": 7,
+              "cappedSamples": 0,
+              "n": 311,
+              "meanMs": 0.8681672025723473,
+              "totalMs": 270
+            },
+            "capture.unitsAndTiles": {
+              "p95Ms": 75,
+              "histogramCapMs": 2000,
+              "p50Ms": 31,
+              "maxMs": 280,
+              "cappedSamples": 0,
+              "n": 311,
+              "meanMs": 39.71061093247589,
+              "totalMs": 12350
+            },
+            "simulate.object.fe.weapon::Bullet": {
+              "p95Ms": 3,
+              "histogramCapMs": 2000,
+              "p50Ms": 0,
+              "maxMs": 9,
+              "cappedSamples": 0,
+              "n": 1019,
+              "meanMs": 0.6957801766437685,
+              "totalMs": 709
+            }
+          }
+        },
+        {
+          "role": "join",
+          "phase": 0,
+          "enemies": 8,
+          "logged_phase_timer_ms": [
+            51401,
+            111418
+          ],
+          "origin_wall_bounds": [
+            1792941204.8411388,
+            1792941205.0359328
+          ],
+          "origin_uncertainty_ms": 194.7939395904541,
+          "cpu_safe_phase_interior_wall": [
+            1792941256.4369328,
+            1792941316.1401389
+          ],
+          "cpu_interval_count": 57,
+          "cpu_observed_duration_ms": 58083.2357,
+          "cpu_user_ms": 72015.625,
+          "cpu_kernel_ms": 5406.25,
+          "cpu_core_percent": 133.29470038460684,
+          "cpu_wall_vs_monotonic_max_drift_ms": 1.0931435546874582,
+          "machine_cpu_percent": 36.78918519016713,
+          "working_set_bytes": {
+            "min": 919433216,
+            "mean": 930016489.5438596,
+            "max": 967286784
+          },
+          "private_commit_bytes": {
+            "min": 972623872,
+            "mean": 983533603.9298246,
+            "max": 1020477440
+          },
+          "elapsed_ms": 60017,
+          "frames": 869,
+          "mean_frame_ms": 69.06444188722669,
+          "p95_frame_ms": 129,
+          "samples": 59,
+          "visible": {
+            "min": 4,
+            "mean": 7.864406779661017,
+            "max": 8
+          },
+          "count_attached_exact": true,
+          "shot_delta_first_to_last_sample": [
+            219,
+            220
+          ],
+          "ammo_consumed_whole_phase": [
+            220
+          ],
+          "firing_windows": [],
+          "clock_samples": {
+            "queued": {
+              "min": 0,
+              "mean": 2.135593220338983,
+              "max": 4
+            },
+            "delay": {
+              "min": 220,
+              "mean": 248.3050847457627,
+              "max": 250
+            },
+            "underflow_delta_between_samples": 44
+          },
+          "timings": {
+            "client.render": {
+              "totalMs": 10381,
+              "histogramCapMs": 2000,
+              "p95Ms": 19,
+              "meanMs": 7.057104010876954,
+              "cappedSamples": 0,
+              "p50Ms": 4,
+              "n": 1471,
+              "maxMs": 132
+            },
+            "replica.objectsAndEffects": {
+              "totalMs": 1110,
+              "histogramCapMs": 2000,
+              "p95Ms": 7,
+              "meanMs": 1.684370257966616,
+              "cappedSamples": 0,
+              "p50Ms": 1,
+              "n": 659,
+              "maxMs": 59
+            },
+            "wire.compress": {
+              "totalMs": 0,
+              "histogramCapMs": 2000,
+              "p95Ms": 0,
+              "meanMs": 0,
+              "cappedSamples": 0,
+              "p50Ms": 0,
+              "n": 985,
+              "maxMs": 0
+            },
+            "client.character": {
+              "totalMs": 655,
+              "histogramCapMs": 2000,
+              "p95Ms": 2,
+              "meanMs": 0.9939301972685888,
+              "cappedSamples": 0,
+              "p50Ms": 1,
+              "n": 659,
+              "maxMs": 8
+            },
+            "network.receiveBatch": {
+              "totalMs": 2494,
+              "histogramCapMs": 2000,
+              "p95Ms": 12,
+              "meanMs": 5.923990498812351,
+              "cappedSamples": 0,
+              "p50Ms": 5,
+              "n": 421,
+              "maxMs": 66
+            },
+            "replica.terrain": {
+              "totalMs": 138,
+              "histogramCapMs": 2000,
+              "p95Ms": 2,
+              "meanMs": 0.2094081942336874,
+              "cappedSamples": 0,
+              "p50Ms": 0,
+              "n": 659,
+              "maxMs": 7
+            },
+            "client.sceneAndMap": {
+              "totalMs": 3104,
+              "histogramCapMs": 2000,
+              "p95Ms": 7,
+              "meanMs": 2.1101291638341264,
+              "cappedSamples": 0,
+              "p50Ms": 1,
+              "n": 1471,
+              "maxMs": 90
+            },
+            "replica.units": {
+              "totalMs": 1262,
+              "histogramCapMs": 2000,
+              "p95Ms": 3,
+              "meanMs": 1.9150227617602429,
+              "cappedSamples": 0,
+              "p50Ms": 2,
+              "n": 659,
+              "maxMs": 84
+            },
+            "vector.applyCommands": {
+              "totalMs": 11,
+              "histogramCapMs": 2000,
+              "p95Ms": 0,
+              "meanMs": 0.02127659574468085,
+              "cappedSamples": 0,
+              "p50Ms": 0,
+              "n": 517,
+              "maxMs": 2
+            },
+            "client.decode": {
+              "totalMs": 1501,
+              "histogramCapMs": 2000,
+              "p95Ms": 7,
+              "meanMs": 2.288109756097561,
+              "cappedSamples": 0,
+              "p50Ms": 1,
+              "n": 656,
+              "maxMs": 66
+            },
+            "client.present": {
+              "totalMs": 12282,
+              "histogramCapMs": 2000,
+              "p95Ms": 31,
+              "meanMs": 14.133486766398159,
+              "cappedSamples": 0,
+              "p50Ms": 12,
+              "n": 869,
+              "maxMs": 146
+            },
+            "vector.applyCached": {
+              "totalMs": 85,
+              "histogramCapMs": 2000,
+              "p95Ms": 0,
+              "meanMs": 0.0012240783410138248,
+              "cappedSamples": 0,
+              "p50Ms": 0,
+              "n": 69440,
+              "maxMs": 2
+            },
+            "wire.serialize": {
+              "totalMs": 143,
+              "histogramCapMs": 2000,
+              "p95Ms": 1,
+              "meanMs": 0.14517766497461929,
+              "cappedSamples": 0,
+              "p50Ms": 0,
+              "n": 985,
+              "maxMs": 16
+            }
+          }
+        },
+        {
+          "role": "join",
+          "phase": 1,
+          "enemies": 80,
+          "logged_phase_timer_ms": [
+            118857,
+            178876
+          ],
+          "origin_wall_bounds": [
+            1792941204.8411388,
+            1792941205.0359328
+          ],
+          "origin_uncertainty_ms": 194.7939395904541,
+          "cpu_safe_phase_interior_wall": [
+            1792941323.892933,
+            1792941382.9591389
+          ],
+          "cpu_interval_count": 56,
+          "cpu_observed_duration_ms": 57848.3237,
+          "cpu_user_ms": 63453.125,
+          "cpu_kernel_ms": 7109.375,
+          "cpu_core_percent": 121.97846970628814,
+          "cpu_wall_vs_monotonic_max_drift_ms": 1.090198437500021,
+          "machine_cpu_percent": 36.786847613260406,
+          "working_set_bytes": {
+            "min": 929415168,
+            "mean": 933749174.8571428,
+            "max": 936128512
+          },
+          "private_commit_bytes": {
+            "min": 984780800,
+            "mean": 988228388.5714285,
+            "max": 990277632
+          },
+          "elapsed_ms": 60018,
+          "frames": 455,
+          "mean_frame_ms": 131.90769230769232,
+          "p95_frame_ms": 215,
+          "samples": 56,
+          "visible": {
+            "min": 47,
+            "mean": 77.85714285714286,
+            "max": 80
+          },
+          "count_attached_exact": true,
+          "shot_delta_first_to_last_sample": [
+            107,
+            109
+          ],
+          "ammo_consumed_whole_phase": [
+            111
+          ],
+          "firing_windows": [],
+          "clock_samples": {
+            "queued": {
+              "min": 0,
+              "mean": 0.35714285714285715,
+              "max": 1
+            },
+            "delay": {
+              "min": 250,
+              "mean": 250,
+              "max": 250
+            },
+            "underflow_delta_between_samples": 294
+          },
+          "timings": {
+            "client.render": {
+              "totalMs": 11782,
+              "histogramCapMs": 2000,
+              "p95Ms": 48,
+              "meanMs": 25.283261802575108,
+              "cappedSamples": 0,
+              "p50Ms": 27,
+              "n": 466,
+              "maxMs": 173
+            },
+            "replica.objectsAndEffects": {
+              "totalMs": 320,
+              "histogramCapMs": 2000,
+              "p95Ms": 3,
+              "meanMs": 1.0289389067524115,
+              "cappedSamples": 0,
+              "p50Ms": 1,
+              "n": 311,
+              "maxMs": 17
+            },
+            "wire.compress": {
+              "totalMs": 0,
+              "histogramCapMs": 2000,
+              "p95Ms": 0,
+              "meanMs": 0,
+              "cappedSamples": 0,
+              "p50Ms": 0,
+              "n": 566,
+              "maxMs": 0
+            },
+            "client.character": {
+              "totalMs": 394,
+              "histogramCapMs": 2000,
+              "p95Ms": 2,
+              "meanMs": 1.2668810289389068,
+              "cappedSamples": 0,
+              "p50Ms": 1,
+              "n": 311,
+              "maxMs": 27
+            },
+            "network.receiveBatch": {
+              "totalMs": 4315,
+              "histogramCapMs": 2000,
+              "p95Ms": 32,
+              "meanMs": 13.276923076923078,
+              "cappedSamples": 0,
+              "p50Ms": 10,
+              "n": 325,
+              "maxMs": 119
+            },
+            "replica.terrain": {
+              "totalMs": 29,
+              "histogramCapMs": 2000,
+              "p95Ms": 1,
+              "meanMs": 0.0932475884244373,
+              "cappedSamples": 0,
+              "p50Ms": 0,
+              "n": 311,
+              "maxMs": 2
+            },
+            "client.sceneAndMap": {
+              "totalMs": 7704,
+              "histogramCapMs": 2000,
+              "p95Ms": 32,
+              "meanMs": 16.532188841201716,
+              "cappedSamples": 0,
+              "p50Ms": 18,
+              "n": 466,
+              "maxMs": 114
+            },
+            "replica.units": {
+              "totalMs": 5871,
+              "histogramCapMs": 2000,
+              "p95Ms": 29,
+              "meanMs": 18.877813504823152,
+              "cappedSamples": 0,
+              "p50Ms": 17,
+              "n": 311,
+              "maxMs": 100
+            },
+            "vector.applyCommands": {
+              "totalMs": 3,
+              "histogramCapMs": 2000,
+              "p95Ms": 0,
+              "meanMs": 0.0410958904109589,
+              "cappedSamples": 0,
+              "p50Ms": 0,
+              "n": 73,
+              "maxMs": 1
+            },
+            "client.decode": {
+              "totalMs": 3387,
+              "histogramCapMs": 2000,
+              "p95Ms": 28,
+              "meanMs": 10.890675241157556,
+              "cappedSamples": 0,
+              "p50Ms": 7,
+              "n": 311,
+              "maxMs": 116
+            },
+            "client.present": {
+              "totalMs": 13256,
+              "histogramCapMs": 2000,
+              "p95Ms": 59,
+              "meanMs": 29.134065934065934,
+              "cappedSamples": 0,
+              "p50Ms": 29,
+              "n": 455,
+              "maxMs": 249
+            },
+            "vector.applyCached": {
+              "totalMs": 72,
+              "histogramCapMs": 2000,
+              "p95Ms": 0,
+              "meanMs": 0.0010781509710845899,
+              "cappedSamples": 0,
+              "p50Ms": 0,
+              "n": 66781,
+              "maxMs": 3
+            },
+            "wire.serialize": {
+              "totalMs": 54,
+              "histogramCapMs": 2000,
+              "p95Ms": 1,
+              "meanMs": 0.09540636042402827,
+              "cappedSamples": 0,
+              "p50Ms": 0,
+              "n": 566,
+              "maxMs": 2
+            }
+          }
+        }
+      ]
+    },
+    "candidate": {
+      "run": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\ab\\b-field21-profile-candidate-01",
+      "result_sha256": "2d31b95575e3ac39f5e567e3e84a2f593e834270f864aeec471af2214eecf4a0",
+      "cpu_sha256": "194c5c66657789674a48504dde1718ec2a34acc735ac798b7e1f04a8a9196a2f",
+      "declared_wrapper_sha256": "b26f8172dfac51be95dcb7c7694d2b6f208443e94d769b779ba51b3a65219dff",
+      "rows": [
+        {
+          "role": "host",
+          "phase": 0,
+          "enemies": 8,
+          "logged_phase_timer_ms": [
+            88602,
+            148826
+          ],
+          "origin_wall_bounds": [
+            1792941388.5142658,
+            1792941388.7223926
+          ],
+          "origin_uncertainty_ms": 208.12678337097168,
+          "cpu_safe_phase_interior_wall": [
+            1792941477.3243926,
+            1792941536.3132658
+          ],
+          "cpu_interval_count": 57,
+          "cpu_observed_duration_ms": 57924.227,
+          "cpu_user_ms": 68203.125,
+          "cpu_kernel_ms": 5531.25,
+          "cpu_core_percent": 127.29453428873552,
+          "cpu_wall_vs_monotonic_max_drift_ms": 1.1896089843750133,
+          "machine_cpu_percent": 35.505951377415116,
+          "working_set_bytes": {
+            "min": 902291456,
+            "mean": 908027221.3333334,
+            "max": 918347776
+          },
+          "private_commit_bytes": {
+            "min": 954941440,
+            "mean": 961257615.7192982,
+            "max": 970817536
+          },
+          "elapsed_ms": 60213,
+          "frames": 621,
+          "mean_frame_ms": 96.96135265700484,
+          "p95_frame_ms": 155,
+          "samples": 58,
+          "visible": {
+            "min": 5,
+            "mean": 5.879310344827586,
+            "max": 7
+          },
+          "count_attached_exact": true,
+          "shot_delta_first_to_last_sample": [
+            214,
+            214
+          ],
+          "ammo_consumed_whole_phase": [
+            214,
+            214
+          ],
+          "firing_windows": [
+            {
+              "window": 0,
+              "span_ms": 9502,
+              "shots": [
+                42,
+                41
+              ]
+            },
+            {
+              "window": 1,
+              "span_ms": 8588,
+              "shots": [
+                38,
+                36
+              ]
+            },
+            {
+              "window": 2,
+              "span_ms": 9464,
+              "shots": [
+                22,
+                21
+              ]
+            },
+            {
+              "window": 3,
+              "span_ms": 8427,
+              "shots": [
+                32,
+                35
+              ]
+            },
+            {
+              "window": 4,
+              "span_ms": 9324,
+              "shots": [
+                28,
+                31
+              ]
+            },
+            {
+              "window": 5,
+              "span_ms": 8536,
+              "shots": [
+                32,
+                29
+              ]
+            }
+          ],
+          "clock_samples": {},
+          "timings": {
+            "capture.unitsAndTiles": {
+              "histogramCapMs": 2000,
+              "n": 621,
+              "meanMs": 9.885668276972625,
+              "p50Ms": 9,
+              "maxMs": 106,
+              "cappedSamples": 0,
+              "totalMs": 6139,
+              "p95Ms": 15
+            },
+            "simulate.object.fe.weapon::Bullet": {
+              "histogramCapMs": 2000,
+              "n": 2464,
+              "meanMs": 0.442775974025974,
+              "p50Ms": 0,
+              "maxMs": 33,
+              "cappedSamples": 0,
+              "totalMs": 1091,
+              "p95Ms": 2
+            },
+            "simulate.object.fe.unit::UnitZombie": {
+              "histogramCapMs": 2000,
+              "n": 4968,
+              "meanMs": 0.15579710144927536,
+              "p50Ms": 0,
+              "maxMs": 8,
+              "cappedSamples": 0,
+              "totalMs": 774,
+              "p95Ms": 1
+            },
+            "vector.captureCommands": {
+              "histogramCapMs": 2000,
+              "n": 38369,
+              "meanMs": 0.019077901430842606,
+              "p50Ms": 0,
+              "maxMs": 52,
+              "cappedSamples": 0,
+              "totalMs": 732,
+              "p95Ms": 0
+            },
+            "capture.pose": {
+              "histogramCapMs": 2000,
+              "n": 39855,
+              "meanMs": 0.11787730523146406,
+              "p50Ms": 0,
+              "maxMs": 56,
+              "cappedSamples": 0,
+              "totalMs": 4698,
+              "p95Ms": 1
+            },
+            "native.scope.restore": {
+              "histogramCapMs": 2000,
+              "n": 15319,
+              "meanMs": 0.02141131927671519,
+              "p50Ms": 0,
+              "maxMs": 8,
+              "cappedSamples": 0,
+              "totalMs": 328,
+              "p95Ms": 0
+            },
+            "host.send": {
+              "histogramCapMs": 2000,
+              "n": 621,
+              "meanMs": 2.1690821256038646,
+              "p50Ms": 2,
+              "maxMs": 60,
+              "cappedSamples": 0,
+              "totalMs": 1347,
+              "p95Ms": 6
+            },
+            "native.scope.prepare": {
+              "histogramCapMs": 2000,
+              "n": 15319,
+              "meanMs": 0.047065735361316016,
+              "p50Ms": 0,
+              "maxMs": 7,
+              "cappedSamples": 0,
+              "totalMs": 721,
+              "p95Ms": 0
+            },
+            "simulate.tactics": {
+              "histogramCapMs": 2000,
+              "n": 621,
+              "meanMs": 0.8035426731078905,
+              "p50Ms": 1,
+              "maxMs": 18,
+              "cappedSamples": 0,
+              "totalMs": 499,
+              "p95Ms": 2
+            },
+            "wire.serialize": {
+              "histogramCapMs": 2000,
+              "n": 737,
+              "meanMs": 1.0502035278154682,
+              "p50Ms": 1,
+              "maxMs": 58,
+              "cappedSamples": 0,
+              "totalMs": 774,
+              "p95Ms": 3
+            },
+            "simulate.mswBeforeObjects": {
+              "histogramCapMs": 2000,
+              "n": 621,
+              "meanMs": 0.23510466988727857,
+              "p50Ms": 0,
+              "maxMs": 6,
+              "cappedSamples": 0,
+              "totalMs": 146,
+              "p95Ms": 1
+            },
+            "native.scope": {
+              "histogramCapMs": 2000,
+              "n": 15319,
+              "meanMs": 1.0367517461975324,
+              "p50Ms": 0,
+              "maxMs": 107,
+              "cappedSamples": 0,
+              "totalMs": 15882,
+              "p95Ms": 7
+            },
+            "simulate.mswAfterRoom": {
+              "histogramCapMs": 2000,
+              "n": 621,
+              "meanMs": 0.37037037037037035,
+              "p50Ms": 0,
+              "maxMs": 6,
+              "cappedSamples": 0,
+              "totalMs": 230,
+              "p95Ms": 1
+            },
+            "simulate.music": {
+              "histogramCapMs": 2000,
+              "n": 621,
+              "meanMs": 0.00322061191626409,
+              "p50Ms": 0,
+              "maxMs": 1,
+              "cappedSamples": 0,
+              "totalMs": 2,
+              "p95Ms": 0
+            },
+            "capture.nativeFields": {
+              "histogramCapMs": 2000,
+              "n": 21114,
+              "meanMs": 0.09316093587193332,
+              "p50Ms": 0,
+              "maxMs": 92,
+              "cappedSamples": 0,
+              "totalMs": 1967,
+              "p95Ms": 1
+            },
+            "host.sceneAndPlayers": {
+              "histogramCapMs": 2000,
+              "n": 621,
+              "meanMs": 17.43961352657005,
+              "p50Ms": 16,
+              "maxMs": 112,
+              "cappedSamples": 0,
+              "totalMs": 10830,
+              "p95Ms": 27
+            },
+            "host.delta": {
+              "histogramCapMs": 2000,
+              "n": 621,
+              "meanMs": 2.7793880837359097,
+              "p50Ms": 2,
+              "maxMs": 53,
+              "cappedSamples": 0,
+              "totalMs": 1726,
+              "p95Ms": 7
+            },
+            "network.receiveBatch": {
+              "histogramCapMs": 2000,
+              "n": 593,
+              "meanMs": 0.5531197301854974,
+              "p50Ms": 0,
+              "maxMs": 6,
+              "cappedSamples": 0,
+              "totalMs": 328,
+              "p95Ms": 2
+            },
+            "capture.blitFrame": {
+              "histogramCapMs": 2000,
+              "n": 4968,
+              "meanMs": 0.021135265700483092,
+              "p50Ms": 0,
+              "maxMs": 3,
+              "cappedSamples": 0,
+              "totalMs": 105,
+              "p95Ms": 0
+            },
+            "simulate.players": {
+              "histogramCapMs": 2000,
+              "n": 621,
+              "meanMs": 8.331723027375201,
+              "p50Ms": 6,
+              "maxMs": 98,
+              "cappedSamples": 0,
+              "totalMs": 5174,
+              "p95Ms": 17
+            },
+            "simulate.playerServices": {
+              "histogramCapMs": 2000,
+              "n": 621,
+              "meanMs": 0.08373590982286634,
+              "p50Ms": 0,
+              "maxMs": 6,
+              "cappedSamples": 0,
+              "totalMs": 52,
+              "p95Ms": 1
+            },
+            "simulate.projectileCapture": {
+              "histogramCapMs": 2000,
+              "n": 1242,
+              "meanMs": 0.21739130434782608,
+              "p50Ms": 0,
+              "maxMs": 23,
+              "cappedSamples": 0,
+              "totalMs": 270,
+              "p95Ms": 1
+            },
+            "capture.untrackedEffects": {
+              "histogramCapMs": 2000,
+              "n": 621,
+              "meanMs": 0.11594202898550725,
+              "p50Ms": 0,
+              "maxMs": 4,
+              "cappedSamples": 0,
+              "totalMs": 72,
+              "p95Ms": 1
+            },
+            "capture.objectsAndParticles": {
+              "histogramCapMs": 2000,
+              "n": 621,
+              "meanMs": 1.4380032206119162,
+              "p50Ms": 1,
+              "maxMs": 16,
+              "cappedSamples": 0,
+              "totalMs": 893,
+              "p95Ms": 7
+            },
+            "host.simulate": {
+              "histogramCapMs": 2000,
+              "n": 621,
+              "meanMs": 14.161030595813205,
+              "p50Ms": 11,
+              "maxMs": 108,
+              "cappedSamples": 0,
+              "totalMs": 8794,
+              "p95Ms": 29
+            },
+            "simulate.roomServices": {
+              "histogramCapMs": 2000,
+              "n": 621,
+              "meanMs": 0.02254428341384863,
+              "p50Ms": 0,
+              "maxMs": 1,
+              "cappedSamples": 0,
+              "totalMs": 14,
+              "p95Ms": 0
+            },
+            "simulate.object.fe.graph::Part": {
+              "histogramCapMs": 2000,
+              "n": 16739,
+              "meanMs": 0.013800107533305454,
+              "p50Ms": 0,
+              "maxMs": 5,
+              "cappedSamples": 0,
+              "totalMs": 231,
+              "p95Ms": 0
+            },
+            "capture.units": {
+              "histogramCapMs": 2000,
+              "n": 621,
+              "meanMs": 3.6489533011272144,
+              "p50Ms": 3,
+              "maxMs": 99,
+              "cappedSamples": 0,
+              "totalMs": 2266,
+              "p95Ms": 7
+            },
+            "wire.compress": {
+              "histogramCapMs": 2000,
+              "n": 737,
+              "meanMs": 0.6092265943012212,
+              "p50Ms": 0,
+              "maxMs": 7,
+              "cappedSamples": 0,
+              "totalMs": 449,
+              "p95Ms": 2
+            },
+            "host.publish": {
+              "histogramCapMs": 2000,
+              "n": 621,
+              "meanMs": 24.466988727858293,
+              "p50Ms": 22,
+              "maxMs": 172,
+              "cappedSamples": 0,
+              "totalMs": 15194,
+              "p95Ms": 37
+            },
+            "capture.tiles": {
+              "histogramCapMs": 2000,
+              "n": 621,
+              "meanMs": 5.935587761674718,
+              "p50Ms": 6,
+              "maxMs": 17,
+              "cappedSamples": 0,
+              "totalMs": 3686,
+              "p95Ms": 9
+            },
+            "simulate.room": {
+              "histogramCapMs": 2000,
+              "n": 621,
+              "meanMs": 12.349436392914654,
+              "p50Ms": 10,
+              "maxMs": 106,
+              "cappedSamples": 0,
+              "totalMs": 7669,
+              "p95Ms": 25
+            },
+            "host.character": {
+              "histogramCapMs": 2000,
+              "n": 621,
+              "meanMs": 2.0611916264090175,
+              "p50Ms": 2,
+              "maxMs": 65,
+              "cappedSamples": 0,
+              "totalMs": 1280,
+              "p95Ms": 5
+            }
+          }
+        },
+        {
+          "role": "host",
+          "phase": 1,
+          "enemies": 80,
+          "logged_phase_timer_ms": [
+            156404,
+            216483
+          ],
+          "origin_wall_bounds": [
+            1792941388.5142658,
+            1792941388.7223926
+          ],
+          "origin_uncertainty_ms": 208.12678337097168,
+          "cpu_safe_phase_interior_wall": [
+            1792941545.1263926,
+            1792941604.6232657
+          ],
+          "cpu_interval_count": 57,
+          "cpu_observed_duration_ms": 57914.4348,
+          "cpu_user_ms": 62703.125,
+          "cpu_kernel_ms": 5375.0,
+          "cpu_core_percent": 117.54949389577743,
+          "cpu_wall_vs_monotonic_max_drift_ms": 1.178105471801814,
+          "machine_cpu_percent": 34.25733893132345,
+          "working_set_bytes": {
+            "min": 921460736,
+            "mean": 925863504.8421053,
+            "max": 927948800
+          },
+          "private_commit_bytes": {
+            "min": 975450112,
+            "mean": 979130835.0877193,
+            "max": 980672512
+          },
+          "elapsed_ms": 60078,
+          "frames": 320,
+          "mean_frame_ms": 187.74375,
+          "p95_frame_ms": 270,
+          "samples": 55,
+          "visible": {
+            "min": 39,
+            "mean": 42.49090909090909,
+            "max": 46
+          },
+          "count_attached_exact": true,
+          "shot_delta_first_to_last_sample": [
+            111,
+            108
+          ],
+          "ammo_consumed_whole_phase": [
+            111,
+            109
+          ],
+          "firing_windows": [
+            {
+              "window": 0,
+              "span_ms": 9768,
+              "shots": [
+                23,
+                20
+              ]
+            },
+            {
+              "window": 1,
+              "span_ms": 9106,
+              "shots": [
+                20,
+                20
+              ]
+            },
+            {
+              "window": 2,
+              "span_ms": 8694,
+              "shots": [
+                8,
+                8
+              ]
+            },
+            {
+              "window": 3,
+              "span_ms": 9186,
+              "shots": [
+                8,
+                7
+              ]
+            },
+            {
+              "window": 4,
+              "span_ms": 8707,
+              "shots": [
+                22,
+                20
+              ]
+            },
+            {
+              "window": 5,
+              "span_ms": 9010,
+              "shots": [
+                20,
+                21
+              ]
+            }
+          ],
+          "clock_samples": {},
+          "timings": {
+            "capture.unitsAndTiles": {
+              "histogramCapMs": 2000,
+              "n": 320,
+              "meanMs": 39.63125,
+              "p50Ms": 34,
+              "maxMs": 192,
+              "cappedSamples": 0,
+              "totalMs": 12682,
+              "p95Ms": 66
+            },
+            "simulate.object.fe.weapon::Bullet": {
+              "histogramCapMs": 2000,
+              "n": 968,
+              "meanMs": 0.6590909090909091,
+              "p50Ms": 0,
+              "maxMs": 9,
+              "cappedSamples": 0,
+              "totalMs": 638,
+              "p95Ms": 4
+            },
+            "simulate.object.fe.unit::UnitZombie": {
+              "histogramCapMs": 2000,
+              "n": 25600,
+              "meanMs": 0.144140625,
+              "p50Ms": 0,
+              "maxMs": 21,
+              "cappedSamples": 0,
+              "totalMs": 3690,
+              "p95Ms": 1
+            },
+            "vector.captureCommands": {
+              "histogramCapMs": 2000,
+              "n": 63552,
+              "meanMs": 0.016820871097683786,
+              "p50Ms": 0,
+              "maxMs": 18,
+              "cappedSamples": 0,
+              "totalMs": 1069,
+              "p95Ms": 0
+            },
+            "capture.pose": {
+              "histogramCapMs": 2000,
+              "n": 62887,
+              "meanMs": 0.09795347210075214,
+              "p50Ms": 0,
+              "maxMs": 138,
+              "cappedSamples": 0,
+              "totalMs": 6160,
+              "p95Ms": 1
+            },
+            "native.scope.restore": {
+              "histogramCapMs": 2000,
+              "n": 35482,
+              "meanMs": 0.02201116058846739,
+              "p50Ms": 0,
+              "maxMs": 18,
+              "cappedSamples": 0,
+              "totalMs": 781,
+              "p95Ms": 0
+            },
+            "host.send": {
+              "histogramCapMs": 2000,
+              "n": 320,
+              "meanMs": 5.1625,
+              "p50Ms": 4,
+              "maxMs": 58,
+              "cappedSamples": 0,
+              "totalMs": 1652,
+              "p95Ms": 10
+            },
+            "native.scope.prepare": {
+              "histogramCapMs": 2000,
+              "n": 35482,
+              "meanMs": 0.04052759145482216,
+              "p50Ms": 0,
+              "maxMs": 18,
+              "cappedSamples": 0,
+              "totalMs": 1438,
+              "p95Ms": 0
+            },
+            "simulate.tactics": {
+              "histogramCapMs": 2000,
+              "n": 320,
+              "meanMs": 4.203125,
+              "p50Ms": 4,
+              "maxMs": 12,
+              "cappedSamples": 0,
+              "totalMs": 1345,
+              "p95Ms": 7
+            },
+            "wire.serialize": {
+              "histogramCapMs": 2000,
+              "n": 431,
+              "meanMs": 2.0371229698375872,
+              "p50Ms": 2,
+              "maxMs": 56,
+              "cappedSamples": 0,
+              "totalMs": 878,
+              "p95Ms": 6
+            },
+            "simulate.mswBeforeObjects": {
+              "histogramCapMs": 2000,
+              "n": 320,
+              "meanMs": 0.240625,
+              "p50Ms": 0,
+              "maxMs": 6,
+              "cappedSamples": 0,
+              "totalMs": 77,
+              "p95Ms": 1
+            },
+            "native.scope": {
+              "histogramCapMs": 2000,
+              "n": 35482,
+              "meanMs": 0.46601093512203373,
+              "p50Ms": 0,
+              "maxMs": 113,
+              "cappedSamples": 0,
+              "totalMs": 16535,
+              "p95Ms": 1
+            },
+            "simulate.mswAfterRoom": {
+              "histogramCapMs": 2000,
+              "n": 320,
+              "meanMs": 0.409375,
+              "p50Ms": 0,
+              "maxMs": 5,
+              "cappedSamples": 0,
+              "totalMs": 131,
+              "p95Ms": 1
+            },
+            "simulate.music": {
+              "histogramCapMs": 2000,
+              "n": 320,
+              "meanMs": 0.00625,
+              "p50Ms": 0,
+              "maxMs": 1,
+              "cappedSamples": 0,
+              "totalMs": 2,
+              "p95Ms": 0
+            },
+            "capture.nativeFields": {
+              "histogramCapMs": 2000,
+              "n": 56960,
+              "meanMs": 0.10282654494382022,
+              "p50Ms": 0,
+              "maxMs": 139,
+              "cappedSamples": 0,
+              "totalMs": 5857,
+              "p95Ms": 1
+            },
+            "host.sceneAndPlayers": {
+              "histogramCapMs": 2000,
+              "n": 320,
+              "meanMs": 47.79375,
+              "p50Ms": 41,
+              "maxMs": 205,
+              "cappedSamples": 0,
+              "totalMs": 15294,
+              "p95Ms": 80
+            },
+            "host.delta": {
+              "histogramCapMs": 2000,
+              "n": 320,
+              "meanMs": 7.778125,
+              "p50Ms": 6,
+              "maxMs": 94,
+              "cappedSamples": 0,
+              "totalMs": 2489,
+              "p95Ms": 15
+            },
+            "network.receiveBatch": {
+              "histogramCapMs": 2000,
+              "n": 144,
+              "meanMs": 1.8819444444444444,
+              "p50Ms": 1,
+              "maxMs": 53,
+              "cappedSamples": 0,
+              "totalMs": 271,
+              "p95Ms": 3
+            },
+            "capture.blitFrame": {
+              "histogramCapMs": 2000,
+              "n": 25600,
+              "meanMs": 0.0204296875,
+              "p50Ms": 0,
+              "maxMs": 2,
+              "cappedSamples": 0,
+              "totalMs": 523,
+              "p95Ms": 0
+            },
+            "simulate.players": {
+              "histogramCapMs": 2000,
+              "n": 320,
+              "meanMs": 9.53125,
+              "p50Ms": 8,
+              "maxMs": 82,
+              "cappedSamples": 0,
+              "totalMs": 3050,
+              "p95Ms": 18
+            },
+            "simulate.playerServices": {
+              "histogramCapMs": 2000,
+              "n": 320,
+              "meanMs": 0.175,
+              "p50Ms": 0,
+              "maxMs": 18,
+              "cappedSamples": 0,
+              "totalMs": 56,
+              "p95Ms": 1
+            },
+            "simulate.projectileCapture": {
+              "histogramCapMs": 2000,
+              "n": 640,
+              "meanMs": 0.221875,
+              "p50Ms": 0,
+              "maxMs": 8,
+              "cappedSamples": 0,
+              "totalMs": 142,
+              "p95Ms": 1
+            },
+            "capture.untrackedEffects": {
+              "histogramCapMs": 2000,
+              "n": 320,
+              "meanMs": 0.66875,
+              "p50Ms": 0,
+              "maxMs": 44,
+              "cappedSamples": 0,
+              "totalMs": 214,
+              "p95Ms": 2
+            },
+            "capture.objectsAndParticles": {
+              "histogramCapMs": 2000,
+              "n": 320,
+              "meanMs": 1.09375,
+              "p50Ms": 1,
+              "maxMs": 27,
+              "cappedSamples": 0,
+              "totalMs": 350,
+              "p95Ms": 4
+            },
+            "host.simulate": {
+              "histogramCapMs": 2000,
+              "n": 320,
+              "meanMs": 32.03125,
+              "p50Ms": 29,
+              "maxMs": 148,
+              "cappedSamples": 0,
+              "totalMs": 10250,
+              "p95Ms": 53
+            },
+            "simulate.roomServices": {
+              "histogramCapMs": 2000,
+              "n": 320,
+              "meanMs": 0.015625,
+              "p50Ms": 0,
+              "maxMs": 2,
+              "cappedSamples": 0,
+              "totalMs": 5,
+              "p95Ms": 0
+            },
+            "simulate.object.fe.graph::Part": {
+              "histogramCapMs": 2000,
+              "n": 6269,
+              "meanMs": 0.017546658159196045,
+              "p50Ms": 0,
+              "maxMs": 2,
+              "cappedSamples": 0,
+              "totalMs": 110,
+              "p95Ms": 0
+            },
+            "capture.units": {
+              "histogramCapMs": 2000,
+              "n": 320,
+              "meanMs": 33.5875,
+              "p50Ms": 27,
+              "maxMs": 186,
+              "cappedSamples": 0,
+              "totalMs": 10748,
+              "p95Ms": 60
+            },
+            "wire.compress": {
+              "histogramCapMs": 2000,
+              "n": 431,
+              "meanMs": 1.591647331786543,
+              "p50Ms": 2,
+              "maxMs": 8,
+              "cappedSamples": 0,
+              "totalMs": 686,
+              "p95Ms": 4
+            },
+            "host.publish": {
+              "histogramCapMs": 2000,
+              "n": 320,
+              "meanMs": 62.49375,
+              "p50Ms": 53,
+              "maxMs": 245,
+              "cappedSamples": 0,
+              "totalMs": 19998,
+              "p95Ms": 107
+            },
+            "capture.tiles": {
+              "histogramCapMs": 2000,
+              "n": 320,
+              "meanMs": 5.915625,
+              "p50Ms": 6,
+              "maxMs": 15,
+              "cappedSamples": 0,
+              "totalMs": 1893,
+              "p95Ms": 9
+            },
+            "simulate.room": {
+              "histogramCapMs": 2000,
+              "n": 320,
+              "meanMs": 24.271875,
+              "p50Ms": 21,
+              "maxMs": 109,
+              "cappedSamples": 0,
+              "totalMs": 7767,
+              "p95Ms": 40
+            },
+            "host.character": {
+              "histogramCapMs": 2000,
+              "n": 320,
+              "meanMs": 1.740625,
+              "p50Ms": 1,
+              "maxMs": 30,
+              "cappedSamples": 0,
+              "totalMs": 557,
+              "p95Ms": 3
+            }
+          }
+        },
+        {
+          "role": "join",
+          "phase": 0,
+          "enemies": 8,
+          "logged_phase_timer_ms": [
+            50897,
+            111036
+          ],
+          "origin_wall_bounds": [
+            1792941426.6280057,
+            1792941426.849961
+          ],
+          "origin_uncertainty_ms": 221.9552993774414,
+          "cpu_safe_phase_interior_wall": [
+            1792941477.746961,
+            1792941537.2470057
+          ],
+          "cpu_interval_count": 58,
+          "cpu_observed_duration_ms": 58937.8099,
+          "cpu_user_ms": 75968.75,
+          "cpu_kernel_ms": 6531.25,
+          "cpu_core_percent": 139.97805507191063,
+          "cpu_wall_vs_monotonic_max_drift_ms": 1.2666036712646473,
+          "machine_cpu_percent": 35.38114883112149,
+          "working_set_bytes": {
+            "min": 934944768,
+            "mean": 946159262.8965517,
+            "max": 984895488
+          },
+          "private_commit_bytes": {
+            "min": 987938816,
+            "mean": 999652104.8275862,
+            "max": 1039654912
+          },
+          "elapsed_ms": 60138,
+          "frames": 838,
+          "mean_frame_ms": 71.76372315035799,
+          "p95_frame_ms": 134,
+          "samples": 58,
+          "visible": {
+            "min": 8,
+            "mean": 8,
+            "max": 8
+          },
+          "count_attached_exact": true,
+          "shot_delta_first_to_last_sample": [
+            214,
+            213
+          ],
+          "ammo_consumed_whole_phase": [
+            214
+          ],
+          "firing_windows": [],
+          "clock_samples": {
+            "queued": {
+              "min": 0,
+              "mean": 2.0344827586206895,
+              "max": 4
+            },
+            "delay": {
+              "min": 219,
+              "mean": 246.63793103448276,
+              "max": 250
+            },
+            "underflow_delta_between_samples": 21
+          },
+          "timings": {
+            "vector.applyCached": {
+              "maxMs": 2,
+              "cappedSamples": 0,
+              "totalMs": 87,
+              "meanMs": 0.0013070127997115558,
+              "n": 66564,
+              "p95Ms": 0,
+              "histogramCapMs": 2000,
+              "p50Ms": 0
+            },
+            "replica.terrain": {
+              "maxMs": 8,
+              "cappedSamples": 0,
+              "totalMs": 110,
+              "meanMs": 0.1774193548387097,
+              "n": 620,
+              "p95Ms": 1,
+              "histogramCapMs": 2000,
+              "p50Ms": 0
+            },
+            "client.character": {
+              "maxMs": 17,
+              "cappedSamples": 0,
+              "totalMs": 657,
+              "meanMs": 1.0596774193548386,
+              "n": 620,
+              "p95Ms": 2,
+              "histogramCapMs": 2000,
+              "p50Ms": 1
+            },
+            "vector.applyCommands": {
+              "maxMs": 2,
+              "cappedSamples": 0,
+              "totalMs": 10,
+              "meanMs": 0.02178649237472767,
+              "n": 459,
+              "p95Ms": 0,
+              "histogramCapMs": 2000,
+              "p50Ms": 0
+            },
+            "replica.units": {
+              "maxMs": 19,
+              "cappedSamples": 0,
+              "totalMs": 1136,
+              "meanMs": 1.832258064516129,
+              "n": 620,
+              "p95Ms": 3,
+              "histogramCapMs": 2000,
+              "p50Ms": 2
+            },
+            "client.present": {
+              "maxMs": 118,
+              "cappedSamples": 0,
+              "totalMs": 11607,
+              "meanMs": 13.850835322195705,
+              "n": 838,
+              "p95Ms": 32,
+              "histogramCapMs": 2000,
+              "p50Ms": 12
+            },
+            "client.decode": {
+              "maxMs": 66,
+              "cappedSamples": 0,
+              "totalMs": 1443,
+              "meanMs": 2.3349514563106797,
+              "n": 618,
+              "p95Ms": 7,
+              "histogramCapMs": 2000,
+              "p50Ms": 2
+            },
+            "wire.compress": {
+              "maxMs": 1,
+              "cappedSamples": 0,
+              "totalMs": 1,
+              "meanMs": 0.0010504201680672268,
+              "n": 952,
+              "p95Ms": 0,
+              "histogramCapMs": 2000,
+              "p50Ms": 0
+            },
+            "wire.serialize": {
+              "maxMs": 10,
+              "cappedSamples": 0,
+              "totalMs": 129,
+              "meanMs": 0.13550420168067226,
+              "n": 952,
+              "p95Ms": 1,
+              "histogramCapMs": 2000,
+              "p50Ms": 0
+            },
+            "client.sceneAndMap": {
+              "maxMs": 38,
+              "cappedSamples": 0,
+              "totalMs": 2828,
+              "meanMs": 1.9790062981105667,
+              "n": 1429,
+              "p95Ms": 8,
+              "histogramCapMs": 2000,
+              "p50Ms": 1
+            },
+            "client.render": {
+              "maxMs": 98,
+              "cappedSamples": 0,
+              "totalMs": 9784,
+              "meanMs": 6.846745976207138,
+              "n": 1429,
+              "p95Ms": 18,
+              "histogramCapMs": 2000,
+              "p50Ms": 4
+            },
+            "network.receiveBatch": {
+              "maxMs": 71,
+              "cappedSamples": 0,
+              "totalMs": 2370,
+              "meanMs": 5.325842696629214,
+              "n": 445,
+              "p95Ms": 12,
+              "histogramCapMs": 2000,
+              "p50Ms": 4
+            },
+            "replica.objectsAndEffects": {
+              "maxMs": 23,
+              "cappedSamples": 0,
+              "totalMs": 992,
+              "meanMs": 1.6,
+              "n": 620,
+              "p95Ms": 7,
+              "histogramCapMs": 2000,
+              "p50Ms": 1
+            }
+          }
+        },
+        {
+          "role": "join",
+          "phase": 1,
+          "enemies": 80,
+          "logged_phase_timer_ms": [
+            118660,
+            178700
+          ],
+          "origin_wall_bounds": [
+            1792941426.6280057,
+            1792941426.849961
+          ],
+          "origin_uncertainty_ms": 221.9552993774414,
+          "cpu_safe_phase_interior_wall": [
+            1792941545.5099611,
+            1792941604.8710058
+          ],
+          "cpu_interval_count": 58,
+          "cpu_observed_duration_ms": 58918.3184,
+          "cpu_user_ms": 69921.875,
+          "cpu_kernel_ms": 7046.875,
+          "cpu_core_percent": 130.63636588786284,
+          "cpu_wall_vs_monotonic_max_drift_ms": 1.4047619018555224,
+          "machine_cpu_percent": 34.18187242082236,
+          "working_set_bytes": {
+            "min": 942366720,
+            "mean": 945959406.3448275,
+            "max": 948178944
+          },
+          "private_commit_bytes": {
+            "min": 997781504,
+            "mean": 999909022.8965517,
+            "max": 1001660416
+          },
+          "elapsed_ms": 60041,
+          "frames": 487,
+          "mean_frame_ms": 123.28747433264887,
+          "p95_frame_ms": 185,
+          "samples": 57,
+          "visible": {
+            "min": 45,
+            "mean": 76.03508771929825,
+            "max": 80
+          },
+          "count_attached_exact": true,
+          "shot_delta_first_to_last_sample": [
+            111,
+            108
+          ],
+          "ammo_consumed_whole_phase": [
+            109
+          ],
+          "firing_windows": [],
+          "clock_samples": {
+            "queued": {
+              "min": 0,
+              "mean": 0.42105263157894735,
+              "max": 2
+            },
+            "delay": {
+              "min": 250,
+              "mean": 250,
+              "max": 250
+            },
+            "underflow_delta_between_samples": 314
+          },
+          "timings": {
+            "vector.applyCached": {
+              "maxMs": 2,
+              "cappedSamples": 0,
+              "totalMs": 87,
+              "meanMs": 0.0012567895527562695,
+              "n": 69224,
+              "p95Ms": 0,
+              "histogramCapMs": 2000,
+              "p50Ms": 0
+            },
+            "replica.terrain": {
+              "maxMs": 6,
+              "cappedSamples": 0,
+              "totalMs": 28,
+              "meanMs": 0.0877742946708464,
+              "n": 319,
+              "p95Ms": 1,
+              "histogramCapMs": 2000,
+              "p50Ms": 0
+            },
+            "client.character": {
+              "maxMs": 3,
+              "cappedSamples": 0,
+              "totalMs": 353,
+              "meanMs": 1.1065830721003134,
+              "n": 319,
+              "p95Ms": 2,
+              "histogramCapMs": 2000,
+              "p50Ms": 1
+            },
+            "vector.applyCommands": {
+              "maxMs": 0,
+              "cappedSamples": 0,
+              "totalMs": 0,
+              "meanMs": 0,
+              "n": 106,
+              "p95Ms": 0,
+              "histogramCapMs": 2000,
+              "p50Ms": 0
+            },
+            "replica.units": {
+              "maxMs": 66,
+              "cappedSamples": 0,
+              "totalMs": 6013,
+              "meanMs": 18.849529780564264,
+              "n": 319,
+              "p95Ms": 27,
+              "histogramCapMs": 2000,
+              "p50Ms": 17
+            },
+            "client.present": {
+              "maxMs": 105,
+              "cappedSamples": 0,
+              "totalMs": 12691,
+              "meanMs": 26.059548254620122,
+              "n": 487,
+              "p95Ms": 50,
+              "histogramCapMs": 2000,
+              "p50Ms": 28
+            },
+            "client.decode": {
+              "maxMs": 400,
+              "cappedSamples": 0,
+              "totalMs": 3941,
+              "meanMs": 12.35423197492163,
+              "n": 319,
+              "p95Ms": 33,
+              "histogramCapMs": 2000,
+              "p50Ms": 7
+            },
+            "wire.compress": {
+              "maxMs": 0,
+              "cappedSamples": 0,
+              "totalMs": 0,
+              "meanMs": 0,
+              "n": 598,
+              "p95Ms": 0,
+              "histogramCapMs": 2000,
+              "p50Ms": 0
+            },
+            "wire.serialize": {
+              "maxMs": 20,
+              "cappedSamples": 0,
+              "totalMs": 94,
+              "meanMs": 0.15719063545150502,
+              "n": 598,
+              "p95Ms": 1,
+              "histogramCapMs": 2000,
+              "p50Ms": 0
+            },
+            "client.sceneAndMap": {
+              "maxMs": 68,
+              "cappedSamples": 0,
+              "totalMs": 7784,
+              "meanMs": 15.950819672131148,
+              "n": 488,
+              "p95Ms": 31,
+              "histogramCapMs": 2000,
+              "p50Ms": 18
+            },
+            "client.render": {
+              "maxMs": 104,
+              "cappedSamples": 0,
+              "totalMs": 11337,
+              "meanMs": 23.23155737704918,
+              "n": 488,
+              "p95Ms": 44,
+              "histogramCapMs": 2000,
+              "p50Ms": 26
+            },
+            "network.receiveBatch": {
+              "maxMs": 401,
+              "cappedSamples": 0,
+              "totalMs": 4902,
+              "meanMs": 14.25,
+              "n": 344,
+              "p95Ms": 36,
+              "histogramCapMs": 2000,
+              "p50Ms": 10
+            },
+            "replica.objectsAndEffects": {
+              "maxMs": 11,
+              "cappedSamples": 0,
+              "totalMs": 369,
+              "meanMs": 1.1567398119122256,
+              "n": 319,
+              "p95Ms": 4,
+              "histogramCapMs": 2000,
+              "p50Ms": 1
+            }
+          }
+        }
+      ]
+    }
+  }
+}

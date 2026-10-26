@@ -1,0 +1,171 @@
+--- field9/authority/VisualPose.as
++++ motion-experiment/authority/VisualPose.as
+@@ -24,6 +24,7 @@
+       private static var scriptless:Dictionary=new Dictionary(true);
+       private static var pixels:Dictionary=new Dictionary(true);
+       private static var immutableKeys:Dictionary=new Dictionary(true);
++      private static var motionPass:Number=0;
+       private static const EMPTY_FILTERS:Array=[];
+       private static function recipeKey(value:Object):String {
+          if(value==null)return "null";
+@@ -135,6 +136,67 @@
+             motion(target,child.s);
+          }
+       }
++      /** Experimental guarded motion path. A previous confirmation is only
++       * eligibility, never proof that local UI/mod code left it unchanged.
++       * Read current discrete state before avoiding its native setters. A
++       * rejection may have moved earlier nodes; the caller must then apply
++       * the complete same recipe synchronously, before rendering the frame. */
++      public static function motionIfReady(display:DisplayObject,s:Object):Boolean {
++         if(display==null || s==null)return false;
++         return checkedMotion(display,s,++motionPass);
++      }
++      private static function checkedMotion(display:DisplayObject,s:Object,pass:Number):Boolean {
++         var previous:Object=applied[display];
++         if(previous==null || display is TextField || s.vector!=null || s.pixels!=null)return false;
++         var clip:MovieClip=display as MovieClip;
++         if(clip!=null && (s.f==null || clip.currentFrame!=int(s.f) || !scriptless[clip] ||
++            !("isPlaying" in clip) || clip["isPlaying"]))return false;
++         if(s.blend!=null && display.blendMode!==s.blend || s.cache!=null && display.cacheAsBitmap!==s.cache)return false;
++         if(display is Bitmap && s.smoothing!=null &&
++            (Bitmap(display).smoothing!==s.smoothing || Bitmap(display).pixelSnapping!==s.pixelSnapping))return false;
++         // Reading filters/color still has a cost. Benchmark this guard against
++         // the avoided writes; do not infer a speedup from fewer apply calls.
++         if(!sameLiveFilters(display.filters,s.filters))return false;
++         if(s.c!=null) {
++            var c:ColorTransform=display.transform.colorTransform;
++            if(c.redMultiplier!==s.c[0] || c.greenMultiplier!==s.c[1] || c.blueMultiplier!==s.c[2] ||
++               c.redOffset!==s.c[4] || c.greenOffset!==s.c[5] || c.blueOffset!==s.c[6] || c.alphaOffset!==s.c[7])return false;
++            // alphaMultiplier is display.alpha; motion restores the requested
++            // interpolated alpha rather than the left confirmation's value.
++         }
++         transform(display,s);previous.motionPass=pass;
++         var parent:DisplayObjectContainer=display as DisplayObjectContainer;
++         if(parent==null || s.children==null)return true;
++         var managed:Dictionary=added[parent];
++         for each(var child:Object in s.children) {
++            var target:DisplayObject=parent.getChildByName(child.n);
++            if(target!=null && getQualifiedClassName(target)!=child.cls && (managed==null || managed[target]!==child.cls))target=null;
++            if(target==null && int(child.i)<parent.numChildren && getQualifiedClassName(parent.getChildAt(int(child.i)))==child.cls)target=parent.getChildAt(int(child.i));
++            if(target==null || !checkedMotion(target,child.s,pass))return false;
++         }
++         // Full apply removes obsolete managed children even when every
++         // retained child's appearance is correct. Never skip that cleanup.
++         for(var owned:Object in managed) {
++            var record:Object=applied[owned];
++            if(record==null || record.motionPass!==pass)return false;
++         }
++         return true;
++      }
++      private static function sameLiveFilters(live:Array,expected:Array):Boolean {
++         if(expected==null || live.length!=expected.length)return false;
++         for(var i:int=0;i<expected.length;i++) {
++            var filter:Object=live[i],recipe:Object=expected[i];
++            if(getQualifiedClassName(filter)!==recipe.kind)return false;
++            if(filter is ColorMatrixFilter) {
++               var matrix:Array=filter.matrix;
++               if(recipe.matrix==null || matrix.length!=recipe.matrix.length)return false;
++               for(var j:int=0;j<matrix.length;j++)if(matrix[j]!==recipe.matrix[j])return false;
++            }else if(filter is GlowFilter || filter is BlurFilter || filter is DropShadowFilter) {
++               for(var key:String in recipe)if(key!="kind" && (!(key in filter) || filter[key]!==recipe[key]))return false;
++            }else return false;
++         }
++         return true;
++      }
+       public static function apply(display:DisplayObject,s:Object):void {
+          if(display==null || s==null)return;
+          if(display is Bitmap && s.pixels!=null) {
+
+--- field9/authority/ClientReplica.as
++++ motion-experiment/authority/ClientReplica.as
+@@ -16,6 +16,7 @@
+       public var sound:SessionSound;
+       public var peerProfile:Object;
+       public var playerApplications:Array=[0,0],projectileApplications:uint=0;
++      public var checkedMotionApplications:uint=0,checkedMotionFallbacks:uint=0;
+       private var peers:Object={},projectiles:Object={};
+       private var endedProjectiles:Object={};
+       public var shortProjectileApplications:uint=0;
+@@ -115,13 +116,13 @@
+             }
+          }
+          var active:Object={};
+-         for each(var p:Object in frame.projectiles)if(p.room===frame.room && present){applyProjectile(p);active[String(p.id)]=true;}
++         for each(var p:Object in frame.projectiles)if(p.room===frame.room && present){applyProjectile(p,interpolated);active[String(p.id)]=true;}
+          for each(p in frame.projectileEvents)if(p.ended && p.room===frame.room && present && !active[String(p.id)]) {
+             // A fast bullet can be born and hit in one host step. Its final
+             // native symbol still gets one source frame, once per lifetime.
+             var last:Object=endedProjectiles[p.id];
+             if(last==null){endedProjectiles[p.id]={tick:frame.tick};last=endedProjectiles[p.id];++shortProjectileApplications;}
+-            if(last.tick==frame.tick){applyProjectile(p);active[String(p.id)]=true;}
++            if(last.tick==frame.tick){applyProjectile(p,interpolated);active[String(p.id)]=true;}
+          }
+          for(var endKey:String in endedProjectiles)if(frame.tick-endedProjectiles[endKey].tick>240)delete endedProjectiles[endKey];
+          for(var key:String in projectiles)if(!active[key]){
+@@ -158,7 +159,10 @@
+             }
+             rec={body:g,actor:local?null:actor,weaponId:"",weapon:null,weaponEpoch:0,held:null};peers[state.id]=rec;
+          }
+-         g=rec.body;if(g.vis.parent==null)g.addVisual();
++         g=rec.body;
++         var bodyMotion:Boolean=interpolated && rec.bodyVisual===g.vis && rec.bodyEpoch===state.epoch &&
++            rec.bodyRoomEpoch===state.roomEpoch && g.vis.parent===access.world.grafon.visObjs[int(state.native.sloy)];
++         if(g.vis.parent==null)g.addVisual();
+          if(state.held==null)g.teleObj=null;
+          else {
+             // Native GUI reads teleObj for the label, held mass and throw arrow.
+@@ -180,10 +184,14 @@
+          g.hp=state.hp;g.maxhp=state.maxhp;
+          if(local)g.mana=state.mana;
+          g.setVisPos();g.vis.scaleX=state.sx;g.vis.scaleY=state.sy;
+-         VisualPose.apply(g.vis,state.visual);
++         applyPose(g.vis,state.visual,bodyMotion);
++         rec.bodyVisual=g.vis;rec.bodyEpoch=state.epoch;rec.bodyRoomEpoch=state.roomEpoch;
+          ++playerApplications[state.id];
+          if(state.weapon!=null) {
+             var w:Object=state.weapon;
++            var weaponMotion:Boolean=interpolated && rec.weapon!=null && rec.weaponVisual===rec.weapon.vis &&
++               rec.weaponId===w.id && rec.weaponEpoch===state.weaponEpoch &&
++               rec.weapon.vis.parent===access.world.grafon.visObjs[int(w.layer)] && w.attached;
+             if(rec.weaponId!==w.id || rec.weaponEpoch!==state.weaponEpoch) {
+                if(rec.weapon!=null)rec.weapon.remVisual();
+                if(local && g.currentWeapon!=null)g.currentWeapon.remVisual();
+@@ -205,15 +213,16 @@
+             else if(v.parent!=null)v.parent.removeChild(v);
+             rec.weapon.hold=w.hold;
+             v.x=w.x;v.y=w.y;v.rotation=w.rotation;v.scaleX=w.sx;v.scaleY=w.sy;
+-            VisualPose.apply(v as DisplayObject,w.visual);
++            applyPose(v as DisplayObject,w.visual,weaponMotion);rec.weaponVisual=v;
+          } else if(rec.weapon!=null) {
+-            rec.weapon.remVisual();rec.weapon=null;rec.weaponId="";
++            rec.weapon.remVisual();rec.weapon=null;rec.weaponId="";rec.weaponVisual=null;
+             g.currentWeapon=null;g.childObjs[0]=null;
+          }
+       }
+-      private function applyProjectile(state:Object):void {
++      private function applyProjectile(state:Object,interpolated:Boolean=false):void {
+          if(state.clip=="")return;
+          var clip:MovieClip=projectiles[state.id];
++         var projectileMotion:Boolean=interpolated && clip!=null && clip.parent===access.world.grafon.visObjs[int(state.layer)];
+          if(clip==null) {
+             var ClassRef:Class=access.visualClass(state.clip);
+             clip=new ClassRef() as MovieClip;
+@@ -226,9 +235,16 @@
+          if(clip.parent!==access.world.grafon.visObjs[int(state.layer)])access.world.grafon.visObjs[int(state.layer)].addChild(clip);
+          clip.x=state.x;clip.y=state.y;clip.rotation=state.rotation;
+          clip.scaleX=state.sx;clip.scaleY=state.sy;
+-         if(state.visual!=null)VisualPose.apply(clip,state.visual);
++         if(state.visual!=null)applyPose(clip,state.visual,projectileMotion);
+          else if(clip.currentFrame!=state.frame)clip.gotoAndStop(state.frame);else clip.stop();
+          ++projectileApplications;
++      }
++      private function applyPose(display:DisplayObject,pose:Object,allowMotion:Boolean):void {
++         if(allowMotion) {
++            if(VisualPose.motionIfReady(display,pose)){++checkedMotionApplications;return;}
++            ++checkedMotionFallbacks;
++         }
++         VisualPose.apply(display,pose);
+       }
+       public function dispose():void {
+          sound.dispose();

@@ -1,0 +1,10 @@
+--- authority/FriendlyCombat.as
++++ authority/FriendlyCombat.as
+@@ -21,6 +21,7 @@
+          return null;
+       }
+       private function allowed(source:Object,target:Object,nativeAllowed:Boolean,kind:String):Boolean {
++         if(session.security!=null)nativeAllowed=session.security.hit(source,target,nativeAllowed);
+          var a:PlayerActor=actor(source),b:PlayerActor=actor(target);
+          if(a==null || b==null)return nativeAllowed;
+          if(a===b)return nativeAllowed;

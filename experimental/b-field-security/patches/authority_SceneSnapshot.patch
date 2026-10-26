@@ -1,0 +1,36 @@
+--- authority/SceneSnapshot.as
++++ authority/SceneSnapshot.as
+@@ -14,6 +14,7 @@
+       public static const TILE:Array=["phis","shelf","hp","thre","zForm","diagon","stair","water","fake","vid","vid2",
+          "front","back","zad","fRear","vRear","v2Rear","opac","mat","grav","lurk","kontur","konturRot","floor","place",
+          "kont1","kont2","kont3","kont4","pont1","pont2","pont3","pont4","indestruct"];
++      public var security:SecurityTerminals;
+       private var access:NativeAccess,ids:Dictionary=new Dictionary(true),nextId:uint=0;
+       private var previousRoom:Object,tiles:Array=[];
+       private var targets:Object={};
+@@ -71,7 +72,7 @@
+          for each(var u:Object in room.units)if(u!=null && !u.player) {
+             var burning:Boolean=AuthorityAnimation.burning(u as Unit);
+             var replay:Boolean=access.time!=null && access.time.phase=="replay";
+-            var us:Object={key:id(u),positionEpoch:access.positionEpoch(u),cls:getQualifiedClassName(u),fields:NativeFields.capture(u),inter:NativeFields.capture(u.inter),pose:VisualPose.capture(u.vis,0,burning || replay),
++            var us:Object={key:id(u),positionEpoch:access.positionEpoch(u),cls:getQualifiedClassName(u),fields:NativeFields.capture(u),inter:interaction(u.inter),pose:VisualPose.capture(u.vis,0,burning || replay),
+                clip:u.vis==null?null:getQualifiedClassName(u.vis),burning:burning,
+                blit:burning || replay?null:AuthorityAnimation.capture(u as Unit),weapons:[],petOwner:-1,layer:u.sloy,attached:u.vis!=null && u.vis.parent!=null};
+             us.healthBar=u.hpbar==null?null:{pose:VisualPose.capture(u.hpbar),attached:u.hpbar.parent!=null};
+@@ -89,7 +90,7 @@
+          var seen:Dictionary=new Dictionary(true);
+          for each(var list:Array in [room.objs,room.acts,room.bonuses])for each(var o:Object in list)if(o!=null && !seen[o]) {
+             seen[o]=true;result.objects.push({key:id(o),cls:getQualifiedClassName(o),fields:NativeFields.capture(o),
+-               pose:VisualPose.capture(o.vis),clip:o.vis==null?null:getQualifiedClassName(o.vis),inter:NativeFields.capture(o.inter)});
++               pose:VisualPose.capture(o.vis),clip:o.vis==null?null:getQualifiedClassName(o.vis),inter:interaction(o.inter)});
+             result.objects[result.objects.length-1].attached=o.vis!=null && o.vis.parent!=null;
+             if(o.vis!=null)rendered[o.vis]=true;
+          }
+@@ -142,6 +143,7 @@
+          result.terrainRevision=terrainRevision;
+          return result;
+       }
++      private function interaction(inter:Object):Object {return security==null?NativeFields.capture(inter):security.capture(inter,1);}
+       private function color(c:Object):Array {return c==null?null:[c.redMultiplier,c.greenMultiplier,c.blueMultiplier,c.alphaMultiplier,c.redOffset,c.greenOffset,c.blueOffset,c.alphaOffset];}
+    }
+ }

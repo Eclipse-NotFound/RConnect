@@ -1,0 +1,42 @@
+--- fe/serv/Interact.as
++++ fe/serv/Interact.as
+@@ -596,6 +596,31 @@
+          this.update();
+          this.owner.prior += 1;
+          this.inited = true;
++      }
++      
++      public function rconnectSecurityActivate() : Boolean
++      {
++         return this.prob == null && this.allact == "hack_robot" && Unit.rconnectSecurityB != null
++            && Unit.rconnectSecurityB("terminal",this,World.w.pers.security) === true;
++      }
++      
++      public function rconnectSecurityState(state:Object = null) : Object
++      {
++         if(state != null)
++         {
++            var changed:Boolean = this.lock != int(state.lock);
++            this.lock = int(state.lock);
++            this.lockAtt = int(state.lockAtt);
++            this.lockHP = Number(state.lockHP);
++            this.saveLock = int(state.saveLock);
++            this.is_act = Boolean(state.is_act);
++            this.is_ready = Boolean(state.is_ready);
++            this.unlock = int(state.unlock);
++            this.master = int(state.master);
++            if(changed) this.update();
++         }
++         return {lock:this.lock,lockAtt:this.lockAtt,lockHP:this.lockHP,saveLock:this.saveLock,
++            is_act:this.is_act,is_ready:this.is_ready,unlock:this.unlock,master:this.master};
+       }
+       
+       public function save(param1:Object) : *
+@@ -1555,6 +1580,7 @@
+       
+       public function allAct() : *
+       {
++         if(this.rconnectSecurityActivate()) return;
+          var _loc1_:Unit = null;
+          var _loc2_:Obj = null;
+          if(this.prob != null)

@@ -1,0 +1,122 @@
+--- a/tools/host_authority/field2_driver/BStartupDriverMod.as
++++ b/tools/host_authority/field2_driver/BStartupDriverMod.as
+@@ -48,6 +48,30 @@
+    var bitmap:BitmapData=new BitmapData(root.stage.stageWidth,root.stage.stageHeight,false,0);bitmap.draw(root.stage);
+    var stream:FileStream=new FileStream();stream.open(file(name+".png"),FileMode.WRITE);stream.writeBytes(bitmap.encode(bitmap.rect,new PNGEncoderOptions()));stream.close();bitmap.dispose();
+   }
++  // Diagnostic-only replay of one recorded terrain layout seed. Never reseed
++  // normal tests or later journeys, and never leave a callback attached.
++  private static var terrainSeedType:Class,terrainSeedPrevious:Function,terrainSeedHook:Function,terrainSeedUsed:Boolean=false;
++  private static function installTerrainSeed():void {
++   if(role!="host" || cfg.scenario!="terrainlive" || !cfg.hasOwnProperty("terrainSeed"))return;
++   var value:Number=Number(cfg.terrainSeed);
++   if(!isFinite(value) || value<1 || value>4294967295 || value!=Math.floor(value))throw new Error("Invalid diagnostic terrain seed");
++   terrainSeedType=domain.getDefinition("fe.loc.Land") as Class;
++   terrainSeedPrevious=terrainSeedType["rconnectSeedSource"];
++   if(terrainSeedPrevious==null)throw new Error("Diagnostic seed requires the initialized B seed provider");
++   terrainSeedHook=function(land:Object):uint {
++    if(land.act.id!="random_mane")return uint(terrainSeedPrevious(land));
++    var seed:uint=uint(value);restoreTerrainSeed();terrainSeedUsed=true;
++    log("terrain-seed-consumed",{seed:seed,map:land.act.id,providerRestored:true});return seed;
++   };
++   terrainSeedType["rconnectSeedSource"]=terrainSeedHook;
++   log("terrain-seed-installed",{seed:value,diagnosticOnly:true});
++  }
++  private static function restoreTerrainSeed():void {
++   if(terrainSeedHook==null)return;
++   if(terrainSeedType["rconnectSeedSource"]!==terrainSeedHook)throw new Error("Diagnostic seed callback changed concurrently");
++   terrainSeedType["rconnectSeedSource"]=terrainSeedPrevious;
++   terrainSeedHook=terrainSeedPrevious=null;terrainSeedType=null;
++  }
+   private static var cases:BFieldCases;
+   private static function external():Boolean{return ["ui","controls","darkteleport","security","textmotion","terrainlive","motion"].indexOf(String(cfg.scenario))>=0;}
+   private static function externalFinish():void{phase=90;finish();}
+@@ -82,7 +106,7 @@
+   private static function log(kind:String,data:Object=null):void {var f:FileStream=new FileStream();f.open(File.applicationStorageDirectory.resolvePath("BStartupDriver.log"),FileMode.APPEND);f.writeUTFBytes(JSON.stringify({kind:kind,data:data,at:getTimer()})+"\n");f.close();}
+   private static function check(ok:Boolean,name:String,data:Object=null):void {if(ok)good++;else bad++;log(ok?"PASS":"FAIL",{name:name,details:data});}
+   private static function finish():void {
+-   if(done)return;finishRequested=true;
++   if(done)return;restoreTerrainSeed();finishRequested=true;
+    if(clockTrace!=null && !clockExported){clockTrace.stop("scenario completed");write("join-clock-trace.json",clockTrace.data());clockExported=true;}
+    if(!flushWrites())return;
+    write(role+"-finished.json",{passed:good,failed:bad});if(!flushWrites())return;
+@@ -308,7 +332,13 @@
+      // Protect only this preparation interval before entering that room;
+      // combat fixtures explicitly remove protection before measured attacks.
+      if(external())w.gg.invulner=true;
++     installTerrainSeed();
+      if(role=="host" && (cfg.scenario=="boundary" || external()) || builtin())w.game.beginMission("random_mane");phase=1;at=getTimer();return;
++    }
++    if(phase==1 && getTimer()-at>1000 && role=="host" && cfg.scenario=="terrainlive" && cfg.hasOwnProperty("terrainSeed")) {
++     if(!terrainSeedUsed || terrainSeedHook!=null || w.land.act.id!="random_mane" || w.land.rconnectLayoutSeed!=uint(cfg.terrainSeed))
++      throw new Error("Diagnostic terrain seed was not consumed/restored for the actual map");
++     log("terrain-seed-verified",{seed:w.land.rconnectLayoutSeed,room:mod.access.roomKey(),providerRestored:true});
+     }
+     if(phase==1 && getTimer()-at>1000){if(builtin()){check(!w.loc.base && w.land.act.id=="random_mane","historical combat fixture uses an exploration room",{base:w.loc.base,land:w.land.act.id});mod.probe.prepare();}click(role);phase=2;return;}
+     if(builtin() && phase>=2) {
+--- a/tools/host_authority/field2_driver/run.py
++++ b/tools/host_authority/field2_driver/run.py
+@@ -96,7 +96,13 @@
+     print(json.dumps(dict(prepared=str(out), seeds=seeds), ensure_ascii=False), flush=True)
+ 
+ 
+-def run(out, scenario, candidate, result, preparation, native=None):
++def validate_terrain_seed(scenario, terrain_seed):
++    if terrain_seed is not None and (scenario != 'terrainlive' or type(terrain_seed) is not int or not 1 <= terrain_seed <= 0xffffffff):
++        raise ValueError('Diagnostic terrain seed requires terrainlive and an integer from 1 to 4294967295')
++
++
++def run(out, scenario, candidate, result, preparation, native=None, terrain_seed=None):
++    validate_terrain_seed(scenario, terrain_seed)
+     game = out/'game'; prepared = read(out/preparation)
+     # Only the tested RConnect SWF/config and generated descriptors vary between runs.
+     mutable = {'mods/rconnect/release/rconnectmod.swf', 'mods/rconnect/release/config.txt','pfe.swf'}
+@@ -115,6 +121,7 @@
+                    seed_hashes={k:v['sha256'] for k,v in prepared['seeds'].items()}, complete=False,
+                    runtime_files=runtime_files,runner_sha256=sha(__file__),preparation_sha256=sha(out/preparation),
+                    candidate_path=str(candidate))
++    if terrain_seed is not None: receipt.update(diagnostic_only=True, terrain_seed=terrain_seed)
+     processes=[]; streams=[]
+     required = 6 if len(roles)==2 else 3
+     with Registration(owner='RConnect B / 交互、出口和性能', purpose='B field '+scenario, run_dir=result, evidence=result/'result.json', wait=900) as reg:
+@@ -127,7 +134,9 @@
+             shutil.copy2(native_source,game/'pfe.swf');runtime_files['pfe.swf']=sha(native_source)
+             receipt['native_source']=str(native_source)
+             save(game/'mods/Rconnect/release/config.txt', config)
+-            save(game/'startup-test.json', dict(scenario=scenario, port=port, timeout=timeout, evidenceDirectory=str(result),clockTrace=scenario=='rockets'))
++            startup=dict(scenario=scenario, port=port, timeout=timeout, evidenceDirectory=str(result),clockTrace=scenario=='rockets')
++            if terrain_seed is not None: startup['terrainSeed']=terrain_seed
++            save(game/'startup-test.json', startup)
+             for name in ('mods/Rconnect/release/RConnectMod.swf','mods/Rconnect/release/config.txt','startup-test.json'):
+                 key=next((k for k in runtime_files if k.lower()==name.lower()),name)
+                 runtime_files[key]=sha(game/name)
+@@ -162,6 +171,8 @@
+             while time.monotonic()<deadline:
+                 data=[events(Path(v['storage'])/'BStartupDriver.log') for v in receipt['roles'].values()]
+                 if any(any(e['kind']=='DRIVER_IO_FAILED' for e in row) for row in data):raise RuntimeError('External evidence write failed; queued temporary files retained')
++                if any(any(e['kind']=='DONE' and e.get('data',{}).get('failed',0)>0 for e in row) for row in data):
++                    raise RuntimeError('Driver completed with failed assertions')
+                 if all(any(e['kind']=='DONE' for e in row) for row in data): receipt['complete']=True;break
+                 if any(p.poll() is not None for p in processes): raise RuntimeError('AIR ended before DONE')
+                 if available_gib()<0.5: raise RuntimeError('Memory guard below 512 MiB')
+@@ -201,7 +212,11 @@
+     ap.add_argument('--preparation',default='prepared.json')
+     ap.add_argument('--refresh-driver',action='store_true')
+     ap.add_argument('--scenario',choices=['hover','boundary','enemies','controls','ui','darkteleport','security','textmotion','terrainlive','motion','teleport','rockets','terrain'])
++    ap.add_argument('--terrain-seed', type=int, help='Diagnostic terrainlive only: replay one recorded native layout seed')
+     ap.add_argument('--native');ap.add_argument('--candidate');ap.add_argument('--result');a=ap.parse_args()
++    validate_terrain_seed(a.scenario, a.terrain_seed)
++    if a.terrain_seed is not None and (a.prepare or a.resume_preparation or a.refresh_driver):
++        ap.error('--terrain-seed is only accepted for a terrainlive run')
+     out=inside_build(ROOT/a.workspace)
+     if a.refresh_driver:
+         with Registration(owner='RConnect B / 交互和出口',purpose='外置驱动修订',run_dir=out,evidence=out/a.preparation) as registration:
+@@ -224,7 +239,7 @@
+             if available_gib()<1:raise RuntimeError('Compiler needs 1 GiB')
+             prepare(out,a.resume_preparation);registration.outcome='passed'
+         return 0
+-    return run(out,a.scenario,ROOT/a.candidate,inside_build(ROOT/a.result),a.preparation,ROOT/a.native if a.native else None)
++    return run(out,a.scenario,ROOT/a.candidate,inside_build(ROOT/a.result),a.preparation,ROOT/a.native if a.native else None,a.terrain_seed)
+ 
+ 
+ if __name__=='__main__':raise SystemExit(main())

@@ -1,0 +1,12 @@
+--- a/src/authority/SceneSnapshot.as
++++ b/src/authority/SceneSnapshot.as
+@@ -13,7 +13,8 @@
+    public final class SceneSnapshot {
+       public static const TILE:Array=["phis","shelf","hp","thre","zForm","diagon","stair","water","fake","vid","vid2",
+          "front","back","zad","fRear","vRear","v2Rear","opac","mat","grav","lurk","kontur","konturRot","floor","place",
+-         "kont1","kont2","kont3","kont4","pont1","pont2","pont3","pont4","indestruct"];
++         "kont1","kont2","kont3","kont4","pont1","pont2","pont3","pont4","indestruct",
++         "phX1","phX2","phY1","phY2"];
+       public var security:SecurityTerminals;
+       private var access:NativeAccess,ids:Dictionary=new Dictionary(true),nextId:uint=0;
+       private var previousRoom:Object,tiles:Array=[],plainFront:Array=[];

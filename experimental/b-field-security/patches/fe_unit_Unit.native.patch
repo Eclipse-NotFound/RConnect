@@ -1,0 +1,13 @@
+--- fe/unit/Unit.as
++++ fe/unit/Unit.as
+@@ -100,6 +100,10 @@
+       public static var rconnectDeferDamage:Function = null;
+       
+       public static var rconnectHitPolicy:Function = null;
++
++      public static const RCONNECT_SECURITY_B:String = "b-security-v1";
++
++      public static var rconnectSecurityB:Function;
+       
+       public static var rconnectTeleported:Function = null;
+       

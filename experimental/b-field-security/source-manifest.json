@@ -1,0 +1,60 @@
+{
+  "baseline": "build/ab/b190-field9-build",
+  "native_baseline": "build/ab/native-hooks-019",
+  "product": {
+    "authority/HostSession.as": {
+      "baseline": "c27ddf037ee3394e94be1bd72449a96c1b41ef182776a4fa419e3030ae8157f6",
+      "overlay": "e23e20b1871b22961a7ed5d54c7b4aad085a777e1b3b99ae9d644bd7288e1f46"
+    },
+    "authority/PlayerActor.as": {
+      "baseline": "17fc8818cbd9363b7be3323d3ce3bc4507761319a98df9731fb27e3916bfc02c",
+      "overlay": "6b3079fbc84c6cb1662768651fe134744b95c270c3f5463081a3e56208e7ae46"
+    },
+    "authority/RoomRuntime.as": {
+      "baseline": "abfcdd2965d99c226c53cfa5e064935a1c0b3608476adc872d46e8b7af0204b9",
+      "overlay": "04f1392f92442f0873cac5425afbf443b22cc5c13f8f5a7483b1aafc1e624c5c"
+    },
+    "authority/FriendlyCombat.as": {
+      "baseline": "f003ba13d1b41cb75ddc9c38c56181357345849be8b4644bb0a705fe5d3ec14b",
+      "overlay": "43cea628190410bda8deabf180b0a24f08fb45a59b27919eae520db556d4829f"
+    },
+    "authority/SceneSnapshot.as": {
+      "baseline": "cfc0c57fccb202ec62ec01cbf252935b27c9e084ec0f1319e22cdea21aafe0f2",
+      "overlay": "282a56ef4d5bdcfc44e736d850bcd32ccefcc12cc45787855cff3b48d0d35c3f"
+    },
+    "RConnectMod.as": {
+      "baseline": "645ebb129e5a22fccb0f4aea299b49b8c985779ca803ccc49e40a9f041f191a9",
+      "overlay": "669b0b9bfda6ed65e9a47e5ae33ebcc713f96fb1268f73057136ed6fb956d8e6"
+    },
+    "authority/ui/Preferences.as": {
+      "baseline": "b9992fd8adf6fc249c4fafb8c1083b77e7c5305894dd2d7b01c3e8102bded017",
+      "overlay": "1d8e7f971ef28f0caabc1cf1f6a4d208e0afe1317e610bd0f363290d14a35572"
+    },
+    "authority/ui/HudModel.as": {
+      "baseline": "e5fb919de48576df086d54c40f49a7d35414c257cb814f121da556adb884c047",
+      "overlay": "835a234d8a2d306f5a51f0c01ddaadfd86d4b700b8a1d712e773d35f70b98b6a"
+    },
+    "authority/ui/NetHud.as": {
+      "baseline": "08349b51a4dafec9e75175fd96cb2c8582cd35ddb1a65c42cc6c7a691e751ec7",
+      "overlay": "494eecc082f02d717847c9e2c2931d277a82475a808817b9a67604b7512e2d2f"
+    },
+    "authority/SecurityTerminals.as": {
+      "baseline": null,
+      "overlay": "094d1b1c174507b4fc60b9882960e4cefa4ebb2368b120dd0b80be3bba753a14"
+    }
+  },
+  "native": {
+    "fe/unit/Unit.as": {
+      "baseline": "7819a1d1dcf494788d23c320a1a12eb913da56c1c0279233464f8e6056461205",
+      "overlay": "2162f5fd7f80d07ad89e8e535c8cc69a1663de6f2d1112c192aac9c9fb05f765"
+    },
+    "fe/serv/Interact.as": {
+      "baseline": "03ea5a9ea57e60bf89e6ed2ef7e7641850928c16d438309a983d0e03d1acde32",
+      "overlay": "8067f9508faa5f58d64fe9b34b4dd1881bf360ce1d4ee6af6b4d895cc6b011c9"
+    },
+    "fe/unit/UnitTurret.as": {
+      "baseline": "2fb4e1dc6a9f9549f5c6d95438ffdf3127e7ebd8899ca28d89ce5e511c05c87f",
+      "overlay": "398d2465e1c6b9c8ee299654bcdb8ce73d735d6e21c52ab90727e153deb965fc"
+    }
+  }
+}

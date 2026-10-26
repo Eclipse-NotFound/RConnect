@@ -1,0 +1,52 @@
+--- authority/HostSession.as
++++ authority/HostSession.as
+@@ -10,6 +10,7 @@
+       public var grips:PeerGrabs;
+       public var travel:PartyTravel;
+       public var combat:FriendlyCombat;
++      public var security:SecurityTerminals;
+       public var sound:SessionSound;
+       private var nativeMenus:NativeMenus;
+       private var expectedRoom:String;
+@@ -29,6 +30,7 @@
+          nativeMenus=new NativeMenus(access,null,this);
+          local.observeWeapon();remote.observeWeapon();
+          local.unit.isSats=remote.unit.isSats=false;
++         security=new SecurityTerminals(this);local.security=remote.security=security;
+          combat=new FriendlyCombat(this);
+          if(access.weapons!=null)access.weapons.bind(this,hello.profile.msw);
+          grips=new PeerGrabs(actors);local.grips=remote.grips=grips;
+@@ -38,14 +40,14 @@
+             actors[i].failed=fail;
+          }
+          runtime=new RoomRuntime(access,actors,inputs);runtime.afterStep=capturePresentation;runtime.failed=fail;
+-         runtime.tactics=tactics;
++         runtime.tactics=tactics;runtime.security=security;
+          runtime.install();active=true;
+          if(access.time!=null)access.time.bind(this);
+          runtime.transfers.notice=notice;
+          for each(var member:PlayerActor in actors)member.requestMeet=function(requester:PlayerActor):void{runtime.transfers.meet(requester);};
+          lives=new PlayerLives(this);runtime.lives=lives;saves=new PersonalSaves(access,this);
+          travel=new PartyTravel(this);runtime.travel=travel;
+-         scene=new SceneSnapshot(access);
++         scene=new SceneSnapshot(access);scene.security=security;
+          sound=new SessionSound(access,actors);
+          runtime.music=sound.music;
+          for each(var actor:PlayerActor in actors)actor.resolveTarget=scene.target;
+@@ -133,7 +135,7 @@
+             if(frame.players[actor.id].held!=null)frame.players[actor.id].held.key=scene.id(actor.unit.teleObj);
+             frame.players[actor.id].actionAck=inputs[actor.id].receivedAction;
+          }
+-         frame.friendlyFire=combat.enabled;
++         frame.friendlyFire=combat.enabled;frame.securityShared=security.shared;
+          frame.audio=sound.snapshot(frame.room,runtime.tick,frame.paused);
+          frame.scene=scene.capture(actors[1].unit.loc,actors,runtime.tick);
+          Timing.end("host.sceneAndPlayers",part);part=Timing.start();
+@@ -161,6 +163,7 @@
+          for each(var owner:PlayerActor in actors)access.scope.run(owner.context,function():void {owner.unit.dropTeleObj();owner.context.sats.clearAll();});
+          if(travel!=null)travel.dispose();
+          if(combat!=null)combat.dispose();
++         if(security!=null)security.dispose();
+          if(lives!=null)lives.dispose();if(saves!=null)saves.dispose();
+          if(nativeMenus!=null)nativeMenus.dispose();
+          if(sound!=null)sound.dispose();

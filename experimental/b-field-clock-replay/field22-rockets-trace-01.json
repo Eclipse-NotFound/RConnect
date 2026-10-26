@@ -1,0 +1,715 @@
+{
+  "schema": "rconnect-b-clock-diagnostic-2",
+  "valid_structure": true,
+  "complete_history": false,
+  "clean_pairing": true,
+  "pairing_valid": true,
+  "pairing_quality_notes": [],
+  "quality_notes": [
+    "Capture started after initial private clock history; exact replay is not possible"
+  ],
+  "termination": {
+    "reason": "scenario completed",
+    "status": "scenario_completed",
+    "collector_reported_scenario_completed": true
+  },
+  "scene_coverage": {
+    "status": "aggregate_events_observed_full_scene_unverified",
+    "full_scene_coverage_established": false,
+    "collector_reported_scenario_completed": true,
+    "initial_tick_zero_pairs": 0,
+    "post_initial_pairs": 735,
+    "matched_projectile_event_frames": 12,
+    "matched_terrain_revision_change_frames": 6,
+    "supports_observed_projectile_event_waits": true,
+    "supports_observed_terrain_revision_waits": true,
+    "supports_weapon_specific_latency": false,
+    "notes": [
+      "Current format has no per-weapon identity/lifecycle coverage contract; a normal stop alone cannot prove a full weapon scenario"
+    ]
+  },
+  "footer_state_within_captured_history": true,
+  "metric_scope": "Captured matching pairs only; not a complete scene or weapon latency claim",
+  "build_label": "rockets",
+  "session": "684cab38a22444cbbf0685884b6862f6",
+  "collection_ms": 34049,
+  "counts": {
+    "accepted_arrivals": 737,
+    "rejected_frame_messages": 0,
+    "confirmations": 735,
+    "matched": 735,
+    "unmatched_confirmations": 0,
+    "skipped_captured_arrivals": 0,
+    "tail_arrivals_not_yet_confirmed": 2,
+    "screen_brackets": 793
+  },
+  "waits": {
+    "all": {
+      "entry_to_confirm_ms": {
+        "n": 735,
+        "min": 7,
+        "mean": 128.8844,
+        "median": 110,
+        "p95": 253,
+        "max": 476
+      },
+      "return_to_confirm_signed_ms": {
+        "n": 735,
+        "min": 7,
+        "mean": 128.2884,
+        "median": 109,
+        "p95": 252,
+        "max": 476
+      },
+      "push_to_confirm_lower_ms": {
+        "n": 735,
+        "min": 7,
+        "mean": 128.2884,
+        "median": 109,
+        "p95": 252,
+        "max": 476
+      },
+      "push_to_confirm_upper_ms": {
+        "n": 735,
+        "min": 7,
+        "mean": 128.8694,
+        "median": 110,
+        "p95": 253,
+        "max": 476
+      }
+    },
+    "initial_tick_zero": {
+      "entry_to_confirm_ms": {
+        "n": 0
+      },
+      "return_to_confirm_signed_ms": {
+        "n": 0
+      },
+      "push_to_confirm_lower_ms": {
+        "n": 0
+      },
+      "push_to_confirm_upper_ms": {
+        "n": 0
+      }
+    },
+    "post_initial": {
+      "entry_to_confirm_ms": {
+        "n": 735,
+        "min": 7,
+        "mean": 128.8844,
+        "median": 110,
+        "p95": 253,
+        "max": 476
+      },
+      "return_to_confirm_signed_ms": {
+        "n": 735,
+        "min": 7,
+        "mean": 128.2884,
+        "median": 109,
+        "p95": 252,
+        "max": 476
+      },
+      "push_to_confirm_lower_ms": {
+        "n": 735,
+        "min": 7,
+        "mean": 128.2884,
+        "median": 109,
+        "p95": 252,
+        "max": 476
+      },
+      "push_to_confirm_upper_ms": {
+        "n": 735,
+        "min": 7,
+        "mean": 128.8694,
+        "median": 110,
+        "p95": 253,
+        "max": 476
+      }
+    },
+    "screen": {
+      "entry_to_confirm_ms": {
+        "n": 735,
+        "min": 7,
+        "mean": 128.8844,
+        "median": 110,
+        "p95": 253,
+        "max": 476
+      },
+      "return_to_confirm_signed_ms": {
+        "n": 735,
+        "min": 7,
+        "mean": 128.2884,
+        "median": 109,
+        "p95": 252,
+        "max": 476
+      },
+      "push_to_confirm_lower_ms": {
+        "n": 735,
+        "min": 7,
+        "mean": 128.2884,
+        "median": 109,
+        "p95": 252,
+        "max": 476
+      },
+      "push_to_confirm_upper_ms": {
+        "n": 735,
+        "min": 7,
+        "mean": 128.8694,
+        "median": 110,
+        "p95": 253,
+        "max": 476
+      }
+    },
+    "delivery_flush": {
+      "entry_to_confirm_ms": {
+        "n": 0
+      },
+      "return_to_confirm_signed_ms": {
+        "n": 0
+      },
+      "push_to_confirm_lower_ms": {
+        "n": 0
+      },
+      "push_to_confirm_upper_ms": {
+        "n": 0
+      }
+    },
+    "with_projectile_events": {
+      "entry_to_confirm_ms": {
+        "n": 12,
+        "min": 32,
+        "mean": 172.8333,
+        "median": 148.0,
+        "p95": 317,
+        "max": 317
+      },
+      "return_to_confirm_signed_ms": {
+        "n": 12,
+        "min": 31,
+        "mean": 172,
+        "median": 147.0,
+        "p95": 316,
+        "max": 316
+      },
+      "push_to_confirm_lower_ms": {
+        "n": 12,
+        "min": 31,
+        "mean": 172,
+        "median": 147.0,
+        "p95": 316,
+        "max": 316
+      },
+      "push_to_confirm_upper_ms": {
+        "n": 12,
+        "min": 32,
+        "mean": 172.8333,
+        "median": 148.0,
+        "p95": 317,
+        "max": 317
+      }
+    },
+    "terrain_revision_changed": {
+      "entry_to_confirm_ms": {
+        "n": 6,
+        "min": 96,
+        "mean": 236.3333,
+        "median": 276.5,
+        "p95": 322,
+        "max": 322
+      },
+      "return_to_confirm_signed_ms": {
+        "n": 6,
+        "min": 96,
+        "mean": 235.3333,
+        "median": 275.5,
+        "p95": 320,
+        "max": 320
+      },
+      "push_to_confirm_lower_ms": {
+        "n": 6,
+        "min": 96,
+        "mean": 235.3333,
+        "median": 275.5,
+        "p95": 320,
+        "max": 320
+      },
+      "push_to_confirm_upper_ms": {
+        "n": 6,
+        "min": 96,
+        "mean": 236.3333,
+        "median": 276.5,
+        "p95": 322,
+        "max": 322
+      }
+    }
+  },
+  "cadence": {
+    "source_gap_all_ms": {
+      "n": 736,
+      "min": 28,
+      "mean": 41.6861,
+      "median": 38.0,
+      "p95": 61,
+      "max": 236
+    },
+    "callback_entry_gap_all_ms": {
+      "n": 736,
+      "min": 0,
+      "mean": 41.2201,
+      "median": 37.0,
+      "p95": 88,
+      "max": 430
+    },
+    "active_same_epoch_source_gap_ms": {
+      "n": 736,
+      "min": 28,
+      "mean": 41.6861,
+      "median": 38.0,
+      "p95": 61,
+      "max": 236
+    },
+    "active_same_epoch_callback_gap_ms": {
+      "n": 736,
+      "min": 0,
+      "mean": 41.2201,
+      "median": 37.0,
+      "p95": 88,
+      "max": 430
+    },
+    "excluded_from_estimator": {},
+    "maximum_callback_entries_in_one_ms": 3
+  },
+  "application_callback_ms": {
+    "n": 737,
+    "min": 0,
+    "mean": 0.5807,
+    "median": 0,
+    "p95": 1,
+    "max": 7
+  },
+  "screen_bracket_ms": {
+    "n": 793,
+    "min": 0,
+    "mean": 12.396,
+    "median": 11,
+    "p95": 27,
+    "max": 251
+  },
+  "screen_start_gap_ms": {
+    "n": 792,
+    "min": 22,
+    "mean": 38.5884,
+    "median": 35.0,
+    "p95": 61,
+    "max": 440
+  },
+  "clock": {
+    "sampled_delay_ms": {
+      "n": 3060,
+      "min": 65,
+      "mean": 130.7507,
+      "median": 101.0,
+      "p95": 250,
+      "max": 250
+    },
+    "sampled_queued": {
+      "n": 3060,
+      "min": 0,
+      "mean": 3.3954,
+      "median": 3.0,
+      "p95": 6,
+      "max": 14
+    },
+    "underflow_counter_delta": 13,
+    "footer_underflow_counter_delta_unscoped": null,
+    "underflow_in_screen_brackets": 13,
+    "screens_with_underflow_increment": 13,
+    "final_queued": 2
+  },
+  "windows": [
+    {
+      "from_ms": 0,
+      "to_ms": 10000,
+      "matched": 247,
+      "entry_to_confirm_ms": {
+        "n": 247,
+        "min": 7,
+        "mean": 111.0769,
+        "median": 106,
+        "p95": 176,
+        "max": 229
+      },
+      "return_to_confirm_signed_ms": {
+        "n": 247,
+        "min": 7,
+        "mean": 110.413,
+        "median": 106,
+        "p95": 175,
+        "max": 229
+      },
+      "push_to_confirm_lower_ms": {
+        "n": 247,
+        "min": 7,
+        "mean": 110.413,
+        "median": 106,
+        "p95": 175,
+        "max": 229
+      },
+      "push_to_confirm_upper_ms": {
+        "n": 247,
+        "min": 7,
+        "mean": 111.0648,
+        "median": 106,
+        "p95": 176,
+        "max": 229
+      }
+    },
+    {
+      "from_ms": 10000,
+      "to_ms": 20000,
+      "matched": 240,
+      "entry_to_confirm_ms": {
+        "n": 240,
+        "min": 15,
+        "mean": 139.0375,
+        "median": 111.5,
+        "p95": 282,
+        "max": 476
+      },
+      "return_to_confirm_signed_ms": {
+        "n": 240,
+        "min": 15,
+        "mean": 138.4667,
+        "median": 110.0,
+        "p95": 281,
+        "max": 476
+      },
+      "push_to_confirm_lower_ms": {
+        "n": 240,
+        "min": 15,
+        "mean": 138.4667,
+        "median": 110.0,
+        "p95": 281,
+        "max": 476
+      },
+      "push_to_confirm_upper_ms": {
+        "n": 240,
+        "min": 15,
+        "mean": 139.0292,
+        "median": 111.5,
+        "p95": 282,
+        "max": 476
+      }
+    },
+    {
+      "from_ms": 20000,
+      "to_ms": 30000,
+      "matched": 234,
+      "entry_to_confirm_ms": {
+        "n": 234,
+        "min": 13,
+        "mean": 139.6966,
+        "median": 114.0,
+        "p95": 270,
+        "max": 459
+      },
+      "return_to_confirm_signed_ms": {
+        "n": 234,
+        "min": 13,
+        "mean": 139.1795,
+        "median": 113.0,
+        "p95": 269,
+        "max": 457
+      },
+      "push_to_confirm_lower_ms": {
+        "n": 234,
+        "min": 13,
+        "mean": 139.1795,
+        "median": 113.0,
+        "p95": 269,
+        "max": 457
+      },
+      "push_to_confirm_upper_ms": {
+        "n": 234,
+        "min": 13,
+        "mean": 139.6709,
+        "median": 114.0,
+        "p95": 270,
+        "max": 459
+      }
+    },
+    {
+      "from_ms": 30000,
+      "to_ms": 40000,
+      "matched": 14,
+      "entry_to_confirm_ms": {
+        "n": 14,
+        "min": 51,
+        "mean": 88.2857,
+        "median": 91.0,
+        "p95": 118,
+        "max": 118
+      },
+      "return_to_confirm_signed_ms": {
+        "n": 14,
+        "min": 50,
+        "mean": 87.1429,
+        "median": 91.0,
+        "p95": 113,
+        "max": 113
+      },
+      "push_to_confirm_lower_ms": {
+        "n": 14,
+        "min": 50,
+        "mean": 87.1429,
+        "median": 91.0,
+        "p95": 113,
+        "max": 113
+      },
+      "push_to_confirm_upper_ms": {
+        "n": 14,
+        "min": 51,
+        "mean": 88.2857,
+        "median": 91.0,
+        "p95": 118,
+        "max": 118
+      }
+    }
+  ],
+  "slowest_matched": [
+    {
+      "arrival_seq": 1139,
+      "confirmation_seq": 1155,
+      "arrival_at": 51177,
+      "confirmed_at": 51653,
+      "tick": 369,
+      "source_time": 79354,
+      "mode": "screen",
+      "entry_to_confirm_ms": 476,
+      "return_to_confirm_signed_ms": 476,
+      "push_to_confirm_lower_ms": 476,
+      "push_to_confirm_upper_ms": 476,
+      "receive_callback_ms": 0,
+      "projectile_events": 0,
+      "projectile_count": 0,
+      "terrain_revision": 4
+    },
+    {
+      "arrival_seq": 1704,
+      "confirmation_seq": 1722,
+      "arrival_at": 59079,
+      "confirmed_at": 59538,
+      "tick": 554,
+      "source_time": 87249,
+      "mode": "screen",
+      "entry_to_confirm_ms": 459,
+      "return_to_confirm_signed_ms": 457,
+      "push_to_confirm_lower_ms": 457,
+      "push_to_confirm_upper_ms": 459,
+      "receive_callback_ms": 2,
+      "projectile_events": 0,
+      "projectile_count": 0,
+      "terrain_revision": 6
+    },
+    {
+      "arrival_seq": 1141,
+      "confirmation_seq": 1156,
+      "arrival_at": 51202,
+      "confirmed_at": 51655,
+      "tick": 370,
+      "source_time": 79387,
+      "mode": "screen",
+      "entry_to_confirm_ms": 453,
+      "return_to_confirm_signed_ms": 452,
+      "push_to_confirm_lower_ms": 452,
+      "push_to_confirm_upper_ms": 453,
+      "receive_callback_ms": 1,
+      "projectile_events": 0,
+      "projectile_count": 0,
+      "terrain_revision": 4
+    },
+    {
+      "arrival_seq": 1706,
+      "confirmation_seq": 1723,
+      "arrival_at": 59126,
+      "confirmed_at": 59540,
+      "tick": 555,
+      "source_time": 87292,
+      "mode": "screen",
+      "entry_to_confirm_ms": 414,
+      "return_to_confirm_signed_ms": 414,
+      "push_to_confirm_lower_ms": 414,
+      "push_to_confirm_upper_ms": 414,
+      "receive_callback_ms": 0,
+      "projectile_events": 0,
+      "projectile_count": 0,
+      "terrain_revision": 6
+    },
+    {
+      "arrival_seq": 1173,
+      "confirmation_seq": 1190,
+      "arrival_at": 51855,
+      "confirmed_at": 52192,
+      "tick": 383,
+      "source_time": 80054,
+      "mode": "screen",
+      "entry_to_confirm_ms": 337,
+      "return_to_confirm_signed_ms": 337,
+      "push_to_confirm_lower_ms": 337,
+      "push_to_confirm_upper_ms": 337,
+      "receive_callback_ms": 0,
+      "projectile_events": 0,
+      "projectile_count": 2,
+      "terrain_revision": 5
+    },
+    {
+      "arrival_seq": 1209,
+      "confirmation_seq": 1227,
+      "arrival_at": 52497,
+      "confirmed_at": 52820,
+      "tick": 397,
+      "source_time": 80690,
+      "mode": "screen",
+      "entry_to_confirm_ms": 323,
+      "return_to_confirm_signed_ms": 323,
+      "push_to_confirm_lower_ms": 323,
+      "push_to_confirm_upper_ms": 323,
+      "receive_callback_ms": 0,
+      "projectile_events": 0,
+      "projectile_count": 0,
+      "terrain_revision": 5
+    },
+    {
+      "arrival_seq": 1136,
+      "confirmation_seq": 1143,
+      "arrival_at": 51124,
+      "confirmed_at": 51446,
+      "tick": 368,
+      "source_time": 79317,
+      "mode": "screen",
+      "entry_to_confirm_ms": 322,
+      "return_to_confirm_signed_ms": 320,
+      "push_to_confirm_lower_ms": 320,
+      "push_to_confirm_upper_ms": 322,
+      "receive_callback_ms": 2,
+      "projectile_events": 0,
+      "projectile_count": 0,
+      "terrain_revision": 4
+    },
+    {
+      "arrival_seq": 1208,
+      "confirmation_seq": 1226,
+      "arrival_at": 52496,
+      "confirmed_at": 52817,
+      "tick": 396,
+      "source_time": 80648,
+      "mode": "screen",
+      "entry_to_confirm_ms": 321,
+      "return_to_confirm_signed_ms": 320,
+      "push_to_confirm_lower_ms": 320,
+      "push_to_confirm_upper_ms": 321,
+      "receive_callback_ms": 1,
+      "projectile_events": 0,
+      "projectile_count": 0,
+      "terrain_revision": 5
+    },
+    {
+      "arrival_seq": 1701,
+      "confirmation_seq": 1708,
+      "arrival_at": 59028,
+      "confirmed_at": 59348,
+      "tick": 553,
+      "source_time": 87211,
+      "mode": "screen",
+      "entry_to_confirm_ms": 320,
+      "return_to_confirm_signed_ms": 319,
+      "push_to_confirm_lower_ms": 319,
+      "push_to_confirm_upper_ms": 320,
+      "receive_callback_ms": 1,
+      "projectile_events": 0,
+      "projectile_count": 0,
+      "terrain_revision": 6
+    },
+    {
+      "arrival_seq": 1179,
+      "confirmation_seq": 1195,
+      "arrival_at": 51943,
+      "confirmed_at": 52260,
+      "tick": 385,
+      "source_time": 80133,
+      "mode": "screen",
+      "entry_to_confirm_ms": 317,
+      "return_to_confirm_signed_ms": 316,
+      "push_to_confirm_lower_ms": 316,
+      "push_to_confirm_upper_ms": 317,
+      "receive_callback_ms": 1,
+      "projectile_events": 2,
+      "projectile_count": 0,
+      "terrain_revision": 5
+    },
+    {
+      "arrival_seq": 1198,
+      "confirmation_seq": 1217,
+      "arrival_at": 52311,
+      "confirmed_at": 52622,
+      "tick": 393,
+      "source_time": 80503,
+      "mode": "screen",
+      "entry_to_confirm_ms": 311,
+      "return_to_confirm_signed_ms": 311,
+      "push_to_confirm_lower_ms": 311,
+      "push_to_confirm_upper_ms": 311,
+      "receive_callback_ms": 0,
+      "projectile_events": 0,
+      "projectile_count": 0,
+      "terrain_revision": 5
+    },
+    {
+      "arrival_seq": 1205,
+      "confirmation_seq": 1221,
+      "arrival_at": 52439,
+      "confirmed_at": 52749,
+      "tick": 395,
+      "source_time": 80602,
+      "mode": "screen",
+      "entry_to_confirm_ms": 310,
+      "return_to_confirm_signed_ms": 309,
+      "push_to_confirm_lower_ms": 309,
+      "push_to_confirm_upper_ms": 310,
+      "receive_callback_ms": 1,
+      "projectile_events": 0,
+      "projectile_count": 0,
+      "terrain_revision": 5
+    }
+  ],
+  "unmatched_confirmation_examples": [],
+  "skipped_arrival_examples": [],
+  "marks": [],
+  "observer_ms_quantized": 57,
+  "interpretation": [
+    "All arrival/confirmation/screen times use the same join-process getTimer.",
+    "Arrival starts after WireCodec.decode and before the original receive callback; it is not socket byte arrival.",
+    "Entry-to-confirm includes decode, queueing, render and observer overhead; it is not pure buffer or network latency.",
+    "Push-to-confirm values are lower/upper bounds because internal push/take times are not exposed.",
+    "Negative return-to-confirm is normal when a boundary flush confirms before the receive callback returns.",
+    "Underflow is the existing take counter with no next state, including flush cases; it is not a dropped-packet count.",
+    "A pending tail at collection end is censored evidence, not proof of event loss.",
+    "Valid captured-pair matching does not establish normal capture termination or representative scene coverage.",
+    "Tick-zero loading waits are separated from post-initialization samples; neither is automatically a weapon event.",
+    "This script neither replays candidate clock algorithms nor grants runtime/performance/deployment qualification."
+  ],
+  "input": {
+    "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\ab\\b-field22-final-02\\rockets\\join-clock-trace.json",
+    "sha256": "105096c9335ab72d5498aacedcd188235df78b94f5eb6cf126e8f0d40a58d690",
+    "bytes": 1473489
+  },
+  "analyzer_sha256": "47d4b41701ed3e13758ed5e54923f8d8f5bf3fae3fac1e224070341d347ca1d6",
+  "contextual_receipt": {
+    "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\ab\\b-field22-final-02\\rockets\\result.json",
+    "sha256": "36ab76325c89811b9e51743618cf1529317a9ec9782a3a86cbd341b8c8ead8d3",
+    "candidate_sha256": "3706828fd10cf30c133826d17fd8cef939444f790a33a70d58c2a2b0779c90bf",
+    "native_sha256": null,
+    "scenario": "rockets",
+    "note": "Recorded context; this analyzer does not requalify the entire runtime receipt"
+  }
+}

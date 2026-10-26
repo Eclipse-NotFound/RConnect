@@ -1,0 +1,44 @@
+--- fe/unit/UnitTurret.as
++++ fe/unit/UnitTurret.as
+@@ -528,8 +528,33 @@
+          return _loc5_;
+       }
+       
++      public function rconnectSecurityCall(op:String, arg:* = null) : *
++      {
++         return Unit.rconnectSecurityB == null ? null : Unit.rconnectSecurityB(op,this,arg);
++      }
++      
++      public function rconnectSecurityState() : Object
++      {
++         return {sleep:this.sleep,reprog:this.reprog,absolute:this.absVis,hidden:this.hidden};
++      }
++      
++      public function rconnectSecurityClear(blocked:Function) : void
++      {
++         if(priorUnit != null && blocked(priorUnit)) priorUnit = null;
++         if(celUnit != null && blocked(celUnit))
++         {
++            celUnit = null;
++            aiSpok = 0;
++            aiState = this.hidden > 0 ? 0 : 1;
++            aiTCh = 0;
++            if(currentWeapon != null) currentWeapon.findCel = false;
++         }
++      }
++      
+       override public function findCel(param1:Boolean = false) : Boolean
+       {
++         var securityResult:* = this.rconnectSecurityCall("find",param1);
++         if(securityResult !== null) return Boolean(securityResult);
+          var _loc2_:Unit = null;
+          var _loc3_:Unit = null;
+          if(this.absVis && loc == World.w.loc && !this.reprog && !this.sleep)
+@@ -567,6 +592,7 @@
+       
+       override public function control() : *
+       {
++         this.rconnectSecurityCall("step");
+          if(Boolean(levit) && !this.reprog || !stay && !fixed && oduplenie <= 0)
+          {
+             if(aiState <= 1 && !this.sleep)

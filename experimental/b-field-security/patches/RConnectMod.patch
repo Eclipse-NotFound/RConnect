@@ -1,0 +1,17 @@
+--- RConnectMod.as
++++ RConnectMod.as
+@@ -266,12 +266,13 @@
+          input.settings.thrownDamage=preferences.getValue("peerThrowDamage")=="1";
+          input.settings.follow=preferences.getValue("followTeammate")=="1";
+          if(vision!=null)vision.enabled=preferences.getValue("sharedExploration")=="1";
+-         var policy:String=[preferences.getValue("pauseMenus"),preferences.getValue("pauseSats"),preferences.getValue("friendlyFire")].join(":");
++         var policy:String=[preferences.getValue("pauseMenus"),preferences.getValue("pauseSats"),preferences.getValue("friendlyFire"),preferences.getValue("sharedSecurityHack")].join(":");
+          if(host!=null && policy!==lastPolicy) {
+             lastPolicy=policy;
+             host.pause.policyMenus=preferences.getValue("pauseMenus")=="1";
+             host.pause.policySats=preferences.getValue("pauseSats")=="1";
+             if(host.combat!=null)host.combat.enabled=preferences.getValue("friendlyFire")=="1";
++            if(host.security!=null)host.security.shared=preferences.getValue("sharedSecurityHack")!="0";
+          }
+       }
+       public function connectAs(requestedRole:String):void {

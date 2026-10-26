@@ -1,0 +1,89 @@
+--- field9/authority/RoomRuntime.as
++++ diagnostic/authority/RoomRuntime.as
+@@ -50,11 +50,11 @@
+       private function stepObject(room:Object,object:Object):void {
+          var measured:int=Timing.start();
+          var bullet:Boolean="owner" in object && object.owner!=null && "weap" in object && object.weap!=null && "begx" in object;
+-         if(bullet)projectile(room,object);
++         if(bullet)projectile(room,object,"beforeObject");
+          if(access.time!=null)access.time.withSource(object,function():void {stepOwnedObject(room,object);});
+          else stepOwnedObject(room,object);
+          if(bullet) {
+-            var finalState:Object=projectile(room,object);
++            var finalState:Object=projectile(room,object,"afterObject");
+             if(!object.in_chain) {
+                finalState.ended=true;recent.push(finalState);
+             }
+@@ -109,7 +109,7 @@
+          Timing.end("simulate.players",measured);measured=Timing.start();
+          if(access.weapons!=null)access.weapons.beforeObjects(room,tick);
+          Timing.end("simulate.mswBeforeObjects",measured);measured=Timing.start();
+-         capture(room);
++         capture(room,"afterPlayers");
+          Timing.end("simulate.projectileCapture",measured);
+       }
+       private function stepLand(land:Object):Boolean {
+@@ -146,7 +146,7 @@
+                   Timing.end("simulate.mswAfterRoom",part);part=Timing.start();
+                   if(worldStep && tactics!=null)tactics.step(room,tick);
+                   Timing.end("simulate.tactics",part);part=Timing.start();
+-                  capture(room);
++                  capture(room,"afterRoom");
+                   Timing.end("simulate.projectileCapture",part);
+                });
+             }
+@@ -177,7 +177,7 @@
+          // completed pose, not a half-built transition containing null limbs.
+          try {
+             var captureFrame:Function=function():void {
+-               if(access.time==null || access.time.phase!="replay")for each(var room:Object in rooms.occupied())capture(room);
++               if(access.time==null || access.time.phase!="replay")for each(var room:Object in rooms.occupied())capture(room,"exitFrame");
+                if(afterStep!=null)afterStep();
+                if(access.time!=null)access.time.capture();
+             };
+@@ -186,13 +186,13 @@
+             Log.error(error);if(failed!=null)failed(String(error));
+          }
+       }
+-      private function capture(room:Object):void {
++      private function capture(room:Object,phase:String):void {
+          var latestProjectiles:Object=latestByRoom[room];if(latestProjectiles==null)latestProjectiles={};
+          var seen:Object={},object:Object=room.firstObj,count:int=0;
+          while(object!=null && ++count<=10000) {
+             var owner:Object="owner" in object?object.owner:null,weapon:Object="weap" in object?object.weap:null;
+             if(owner!=null && weapon!=null && "begx" in object) {
+-               var state:Object=projectile(room,object);seen[String(state.id)]=state;
++               var state:Object=projectile(room,object,phase);seen[String(state.id)]=state;
+             }
+             object=object.nobj;
+          }
+@@ -203,7 +203,8 @@
+          latestByRoom[room]=seen;
+          if(recent.length>1024)throw new Error("Projectile event queue overflow");
+       }
+-      private function projectile(room:Object,object:Object):Object {
++      private function projectile(room:Object,object:Object,phase:String):Object {
++         var measured:int=Timing.start();
+          var owner:Object=object.owner,id:uint=projectileIds[object],born:Boolean=id==0;
+          if(born) {
+             id=++nextProjectile;projectileIds[object]=id;++spawns;ownerSpawns[owner]=uint(ownerSpawns[owner])+1;
+@@ -212,11 +213,18 @@
+          var clip:DisplayObject=object.vis as DisplayObject;
+          var state:Object={id:id,room:access.keyFor(room),x:object.X,y:object.Y,dx:object.dx,dy:object.dy,
+             bx:object.begx,by:object.begy,tick:tick,owner:owner===actors[0].unit?0:owner===actors[1].unit?1:-1,
+-            clip:clip==null?"":getQualifiedClassName(clip),rotation:clip==null?0:clip.rotation,visual:VisualPose.capture(clip),
++            clip:clip==null?"":getQualifiedClassName(clip),rotation:clip==null?0:clip.rotation,visual:projectilePose(clip,phase,object.weap),
+             sx:clip==null?1:clip.scaleX,sy:clip==null?1:clip.scaleY,frame:NativeAccess.get(clip,"currentFrame",1),layer:object.sloy,born:born};
+          if(latestByRoom[room]==null)latestByRoom[room]={};latestByRoom[room][String(id)]=state;
+          if(born)recent.push(state);
++         if(Timing.enabled)Timing.end("projectile.total."+phase+"."+object.weap.id,measured);
+          return state;
++      }
++      private function projectilePose(clip:DisplayObject,phase:String,weapon:Object):Object {
++         if(!Timing.enabled)return VisualPose.capture(clip);
++         var started:int=Timing.start(),pose:Object=VisualPose.capture(clip);
++         Timing.end("projectile.pose."+phase+"."+weapon.id,started);
++         return pose;
+       }
+       public function clearDepartedRooms():void {latestByRoom=new Dictionary(true);recent=[];interactionOwners=new Dictionary(true);}
+       public function snapshot():Object {

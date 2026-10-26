@@ -1,0 +1,120 @@
+{
+  "run": "build/ab/b-field21-terrain-seed-01",
+  "result_sha256": "0289f8ea7258f011b6dc5512641b6803956998ed9fdb453b1c2eca7ba10e3d30",
+  "seed": 2780491448,
+  "baseline_reproduces_original": true,
+  "phases": {
+    "baseline-0": {
+      "images": {
+        "host": {
+          "png": "build/ab/b-field21-terrain-seed-01/host.terrain-evidence-baseline-0.png",
+          "sha256": "c4e5db959b58dd290430e8161850cb5389abdb6a71b50c66f22458e73316f54f",
+          "pixel_hash": "bc128cd5",
+          "tick": 26
+        },
+        "join": {
+          "png": "build/ab/b-field21-terrain-seed-01/join.terrain-evidence-baseline-0.png",
+          "sha256": "4cbe38e08a7c3540804534f190eba0cd21d5a694fa7acb6742c44674241eff4f",
+          "pixel_hash": "c1a70072",
+          "tick": 31
+        }
+      },
+      "different_pixels": 949,
+      "local_bbox": [
+        184,
+        303,
+        225,
+        328
+      ],
+      "difference_by_tile": {
+        "29,22": 1,
+        "28,23": 937,
+        "29,23": 11
+      },
+      "tile_differences": [
+        {
+          "tile": [
+            28,
+            23
+          ],
+          "zForm": 1,
+          "difference": {
+            "bounds": [
+              [
+                1120,
+                1160,
+                930,
+                960
+              ],
+              [
+                1120,
+                1160,
+                920,
+                960
+              ]
+            ]
+          }
+        }
+      ],
+      "room_metadata_equal": true,
+      "tint_equal": true,
+      "same_sample_surfaces": true
+    },
+    "death-0": {
+      "images": {
+        "host": {
+          "png": "build/ab/b-field21-terrain-seed-01/host.terrain-evidence-death-0.png",
+          "sha256": "f001aa628672e4f1030009c000284e873407becc208c3d92c4af1c243c39ca14",
+          "pixel_hash": "a31a1a45",
+          "tick": 289
+        },
+        "join": {
+          "png": "build/ab/b-field21-terrain-seed-01/join.terrain-evidence-death-0.png",
+          "sha256": "21b475b259095df02bf8a81a4082c7b79c57e9ccf6c2d9bc485708f8e329e610",
+          "pixel_hash": "4c8bed02",
+          "tick": 289
+        }
+      },
+      "different_pixels": 949,
+      "local_bbox": [
+        184,
+        303,
+        225,
+        328
+      ],
+      "difference_by_tile": {
+        "29,22": 1,
+        "28,23": 937,
+        "29,23": 11
+      },
+      "tile_differences": [
+        {
+          "tile": [
+            28,
+            23
+          ],
+          "zForm": 1,
+          "difference": {
+            "bounds": [
+              [
+                1120,
+                1160,
+                930,
+                960
+              ],
+              [
+                1120,
+                1160,
+                920,
+                960
+              ]
+            ]
+          }
+        }
+      ],
+      "room_metadata_equal": true,
+      "tint_equal": true,
+      "same_sample_surfaces": true
+    }
+  }
+}

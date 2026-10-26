@@ -1,0 +1,22 @@
+{
+  "diagnostic_only": true,
+  "seed": 2780491448,
+  "reproduction_hashes": {
+    "host": "bc128cd5",
+    "join": "c1a70072"
+  },
+  "files": [
+    {
+      "target": "tools/host_authority/field2_driver/BStartupDriverMod.as",
+      "original_sha256": "42174309aec96d4a83a308788f4aeefa3dbcbacf8c6f4165bbb187f9e3b94cc9",
+      "proposal": "experimental/b-field-terrain-tests/seed-replay/BStartupDriverMod.as",
+      "proposal_sha256": "5121242515ced4d0dc676a8d633459f515506a0b2ab51949d8c3eb9edd25c6fd"
+    },
+    {
+      "target": "tools/host_authority/field2_driver/run.py",
+      "original_sha256": "c33348f6e6135c7625b91b99505dd5e32381cc090a151c263ee334d540115420",
+      "proposal": "experimental/b-field-terrain-tests/seed-replay/run.py",
+      "proposal_sha256": "46adc600efd4ed0df4c1b9637b6e1d8349cdde732fbc29300ebef6e95f7bd570"
+    }
+  ]
+}

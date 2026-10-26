@@ -1,0 +1,22 @@
+--- authority/PlayerActor.as
++++ authority/PlayerActor.as
+@@ -12,6 +12,7 @@
+       public var saveRequests:Array=[];
+       public var personal:Object={allowGrab:false,struggle:true,thrownDamage:false,follow:false};
+       public var grips:PeerGrabs;
++      public var security:SecurityTerminals;
+       public var sight:ActorSight;
+       public var originalLevitPoss:Boolean=false;
+       private var consumedButtons:int=0;
+@@ -55,7 +56,10 @@
+             if(!context.sats.active) {
+                var heldBefore:Object=unit.teleObj,throwRequested:Boolean=ctr.keyAction;
+                if(grips!=null)grips.flights.before(actor);
+-               try {PlayerPointer.run(actor,input,function():void {unit.step();});}
++               try {
++                  var stepNative:Function=function():void {PlayerPointer.run(actor,input,function():void {unit.step();});};
++                  if(security!=null)security.player(actor,stepNative);else stepNative();
++               }
+                finally {if(grips!=null)grips.flights.after(actor);}
+                if(grips!=null)grips.afterStep(actor,heldBefore,throwRequested);
+                for(i=0;i<Commands.HELD.length;i++)if((input.buttons&(1<<i))!=0 && !ctr[Commands.HELD[i]])consumedButtons|=1<<i;

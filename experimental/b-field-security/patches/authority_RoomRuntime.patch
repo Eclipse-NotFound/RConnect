@@ -1,0 +1,27 @@
+--- authority/RoomRuntime.as
++++ authority/RoomRuntime.as
+@@ -12,6 +12,7 @@
+       public var afterStep:Function,failed:Function;
+       public var awaitingFirstView:Boolean=true;
+       public var tactics:TacticsBridge;
++      public var security:SecurityTerminals;
+       public var lives:PlayerLives;
+       public var travel:PartyTravel;
+       public var music:SessionMusic;
+@@ -62,6 +63,7 @@
+          if(Timing.enabled)Timing.end("simulate.object."+getQualifiedClassName(object),measured);
+       }
+       private function stepOwnedObject(room:Object,object:Object):void {
++         if(security!=null && security.stepObject(room,object))return;
+          var inter:Object="inter" in object?object.inter:null,operator:PlayerActor=interactionOwners[object];
+          if(operator!=null && inter!=null) {
+             WorldClaims.step(object,room,operator,actors);
+@@ -218,7 +220,7 @@
+          if(born)recent.push(state);
+          return state;
+       }
+-      public function clearDepartedRooms():void {latestByRoom=new Dictionary(true);recent=[];interactionOwners=new Dictionary(true);}
++      public function clearDepartedRooms():void {if(security!=null)security.resetWorld();latestByRoom=new Dictionary(true);recent=[];interactionOwners=new Dictionary(true);}
+       public function snapshot():Object {
+          var objects:Array=[],events:Array=recent;recent=[];
+          if(access.time!=null && access.time.phase=="replay")events=[];

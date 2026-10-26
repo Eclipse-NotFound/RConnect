@@ -1,0 +1,44 @@
+--- authority/ui/NetHud.as
++++ authority/ui/NetHud.as
+@@ -32,6 +32,7 @@
+       private var policyLabel:TextField,policyHint:TextField,versionLabel:TextField;
+       private var opacityLabel:TextField,opacityValue:TextField,opacityLess:TextField,opacityMore:TextField;
+       private var opacityPercent:int=100;
++      private var securityMode:TextField,securityHint:TextField;
+       private var allowGrip:TextField,struggleGrip:TextField,throwGrip:TextField,gripHint:TextField;
+       private var _btnHost:TextField,_btnJoin:TextField,_btnLeave:TextField,_btnSend:TextField;
+       private var _btnExploration:TextField,_btnFollow:TextField,_btnTeleport:TextField;
+@@ -190,7 +191,10 @@
+          policyHint=field("rconnect-policy-hint","settings",8,308,264,40);
+          friendlyFire=field("rconnect-friendly-fire","peer",8,119,264,30,true);
+          friendlyHint=field("rconnect-friendly-hint","peer",8,155,264,42);
+-         versionLabel=field("rconnect-version","settings",8,352,264,38);
++         securityMode=field("rconnect-security","settings",8,352,264,30,true);
++         securityHint=field("rconnect-security-hint","settings",8,388,264,58);
++         action(securityMode,function():void {if(mod.securityTerminals!=null)mod.securityTerminals.setShared(!mod.securityTerminals.shared);});
++         versionLabel=field("rconnect-version","settings",8,452,264,38);
+          action(friendlyFire,function():void {
+             if(mod.friendlyFire!=null)mod.friendlyFire.setEnabled(!mod.friendlyFire.enabled);
+          });
+@@ -348,6 +352,9 @@
+          friendlyHint.text=tr("由宿主设置；开启后双方攻击可伤害队友。",
+             "Host setting. Attacks can hurt teammates when enabled.",
+             "Настройка ведущего. Атаки могут ранить напарника.");
++         securityMode.text=tr("安保终端：","Security terminals: ","Терминалы: ")+(mod.securityTerminals==null || mod.securityTerminals.shared?tr("共享破解","Shared hack","Общий взлом"):tr("分别破解","Individual hacks","Личный взлом"));
++         enabled(securityMode,mod.securityTerminals!=null && mod.securityTerminals.canChangePolicy);
++         securityHint.text=tr("由宿主设置。只影响之后的破解，已获得的炮塔安全权限保留。","Host setting. Changes affect future hacks; earned turret safety remains.","Настройка ведущего. Изменения влияют на будущий взлом; полученный доступ сохраняется.");
+          versionLabel.text="RConnect B · "+mod.version+" · "+(mod.versionInfo==null?"":mod.versionInfo.version);
+          footer.text=tr("Ctrl+Enter 聊天 · F10","Ctrl+Enter: chat · F10","Ctrl+Enter: чат · F10");
+          dockButton.text=tr("停靠","Dock","Край")+" "+(dock=="tl"?"↖":dock=="tr"?"↗":dock=="br"?"↘":dock=="bl"?"↙":"◇");
+@@ -413,7 +420,10 @@
+                item.renderH=Math.max(42,f.textHeight+6);
+             }
+             if(f==peerHint)item.renderY=155+Math.max(42,friendlyHint.textHeight+6)+6;
+-            if(f==versionLabel)item.renderY=Math.max(352,308+policyHeight+4)+ownerExtra+gripExtra;
++            var securityY:Number=Math.max(352,308+policyHeight+4)+ownerExtra+gripExtra;
++            if(f==securityMode)item.renderY=securityY;
++            if(f==securityHint){item.renderY=securityY+36;item.renderH=Math.max(58,securityHint.textHeight+6);}
++            if(f==versionLabel)item.renderY=securityY+36+Math.max(58,securityHint.textHeight+6)+6;
+             if(f==peerHint || f==helpText)item.renderH=Math.max(item.h,f.textHeight+6);
+             if(help?item.page=="help":item.page==page || item.page=="live" && page=="connect" && active)
+                pageHeight=Math.max(pageHeight,item.renderY+item.renderH+8);

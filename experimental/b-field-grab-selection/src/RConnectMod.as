@@ -1,0 +1,348 @@
+package {
+   import fe.inter.MenuProbe;
+   import authority.*;
+   import authority.ui.*;
+   import flash.desktop.NativeApplication;
+   import flash.display.Stage;
+   import flash.events.Event;
+   import flash.events.MouseEvent;
+   import flash.events.ServerSocketConnectEvent;
+   import flash.events.UncaughtErrorEvent;
+   import flash.filesystem.File;
+   import flash.filesystem.FileMode;
+   import flash.filesystem.FileStream;
+   import flash.net.ServerSocket;
+   import flash.text.TextField;
+   import flash.text.TextFormat;
+   import flash.utils.getTimer;
+   public class RConnectMod {
+      public static const VERSION:String="B3-0.1-field4";
+      public static var instance:RConnectMod;
+      public var main:Object,stage:Stage,access:NativeAccess,host:HostSession,replica:ClientReplica;
+      public var config:Object,link:Link,probe:Probe;
+      public var preferences:Preferences,hud:NetHud,ui:HudModel;
+      public var vision:SharedVision;
+      public var mode:String=HudModel.OFFLINE,peerName:String="队友",welcomed:Boolean=false;
+      public var role:String="";
+      public var tactics:TacticsBridge;
+      public function get sessionId():String{return session;}
+      private var intents:NativeIntents;
+      private var nativeMenus:NativeMenus;
+      private var saves:PersonalSaves;
+      private var viewport:NativeViewport;
+      private var server:ServerSocket,input:InputSource=new InputSource(),label:TextField=new TextField();
+      private var started:Boolean=false,travelled:Boolean=false,network:Boolean=false,stopping:Boolean=false;
+      private var room:String,session:String,bootAt:int=getTimer(),readyFrames:int=0,failed:Boolean=false,lastHud:int=-1000;
+      private var lastPolicy:String="";
+      private var leavingAfterReplay:Boolean=false;
+      private var bootTrace:int=-5000;
+      public static function init(main:*):void {
+         try{instance=new RConnectMod(main);}catch(error:*){Log.error(error);}
+      }
+      public function RConnectMod(main:Object) {
+         this.main=main;stage=main.stage;
+         var id:String=NativeApplication.nativeApplication.applicationID;
+         if(id.indexOf("pfe-modsettings-rconnect-b-")!=0)throw new Error("B requires its isolated experimental launcher");
+         var file:File=File.applicationDirectory.resolvePath("mods/Rconnect/release/config.txt"),stream:FileStream=new FileStream();
+         stream.open(file,FileMode.READ);config=JSON.parse(stream.readUTFBytes(stream.bytesAvailable));stream.close();
+         if(config.experimental!==true || config.session==null || (config.role!=null && config.role!="" && config.role!="host" && config.role!="join"))throw new Error("Missing explicit B configuration");
+         role=config.role==null?"":config.role;session=config.session;access=new NativeAccess(main);access.checkHooks();
+         access.ink=new TerrainInk(access);access.bindPositionBoundary();
+         preferences=new Preferences(config);ui=new HudModel(this);hud=new NetHud(stage,ui);
+         vision=new SharedVision(this);
+         if(access.definition("fe.World")["rconnectChangeWorld"]!=null)throw new Error("Native lifecycle seam occupied");
+         access.definition("fe.World")["rconnectChangeWorld"]=function():void {if(network)leaveSession(false);vision.resetJourney();access.ink.reset();access.resetPositions();};
+         MapState.install(access);
+         if(config.probe===true)probe=["explosives","magic","angles","guns","melee","terrain"].indexOf(config.scenario)>=0?new WeaponProbe(access,role=="host",config.scenario):
+            config.scenario=="impulse"?new WeaponProbe(access,role=="host","explosives",false,["impgr"]):
+            config.scenario=="friendly-melee" || config.scenario=="friendly-magic"?new WeaponProbe(access,role=="host",String(config.scenario).substr(9),true):
+            config.scenario=="msw" || config.scenario=="msw-sweep"?new MswProbe(access,role=="host",config.scenario=="msw-sweep"):
+            config.scenario=="msw-lifecycle"?new MswLifecycleProbe(access,role=="host"):
+            config.scenario=="teleport"?new TeleportProbe(access,role=="host"):
+            config.scenario=="body-effects"?new BodyEffectsProbe(access,role=="host"):
+            config.scenario=="time-control"?new TimeControlProbe(access,role=="host"):
+            config.scenario=="time-special"?new TimeControlProbe(access,role=="host",true):
+            config.scenario=="time-journey"?new TimeJourneyProbe(access,role=="host"):
+            config.scenario=="time-exit-record" || config.scenario=="time-exit-replay"?new TimeExitProbe(access,role=="host",config.scenario=="time-exit-replay"):
+            config.scenario=="movement"?new MovementProbe(access,role=="host"):
+            config.scenario=="motion"?new MotionProbe(access,role=="host"):
+            config.scenario=="sound"?new SoundProbe(access,role=="host"):
+            config.scenario=="music"?new MusicProbe(access,role=="host"):
+            config.scenario=="enemies"?new EnemyVisualProbe(access,role=="host"):
+            config.scenario=="stress"?new StressProbe(access,role=="host"):
+            config.scenario=="vision"?new VisionProbe(access,role=="host"):
+            config.scenario=="dialogue"?new DialogueProbe(access,role=="host"):
+            config.scenario=="menus"?new MenuProbe(access,role=="host"):
+            config.scenario=="hud"?new HudProbe(access,role=="host"):
+            config.scenario=="party"?new PartyProbe(access,role=="host"):
+            config.scenario=="areas"?new AreasProbe(access,role=="host"):
+            config.scenario=="mines"?new MinesProbe(access,role=="host"):
+            config.scenario=="vectors"?new VectorProbe(access,role=="host"):
+            config.scenario=="throw"?new ThrowProbe(access,role=="host"):
+            config.scenario=="personal"?new PersonalProbe(access,role=="host"):
+            config.scenario=="grabs"?new GrabsProbe(access,role=="host"):
+            config.scenario=="enemy-grabs"?new EnemyGrabsProbe(access,role=="host"):
+            config.scenario=="friendly"?new FriendlyProbe(access,role=="host"):
+            config.scenario=="travel"?new TravelProbe(access,role=="host"):
+            config.scenario=="sats"?new SatsProbe(access,role=="host"):
+            config.scenario=="pause-cycles"?new SatsProbe(access,role=="host",4):
+            config.scenario=="pause-holders"?new PauseHoldersProbe(access,role=="host"):
+            config.scenario=="lifecycle"?new LifecycleProbe(access,role=="host"):
+            config.scenario=="cooperation"?new CooperationProbe(access,role=="host"):
+            config.scenario=="split-rooms"?new SplitRoomProbe(access,role=="host",config.enemy):
+            config.scenario=="ownership"?new OwnershipProbe(access,role=="host",config.swap===true,config.enemy):new Probe(access,role=="host");
+         label.defaultTextFormat=new TextFormat("Arial",13,0xFFDB58);label.width=440;label.height=22;
+         label.mouseEnabled=false;label.background=true;label.backgroundColor=0x161B20;label.alpha=.85;label.x=8;label.y=8;
+         label.visible=false;label.text="RConnect B · 开发测试 · "+role;
+         stage.addEventListener(Event.DEACTIVATE,deactivate,false,100000);
+         stage.addEventListener(Event.ENTER_FRAME,before,false,100000);
+         main.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR,onUncaught);
+         Log.write("boot",{version:VERSION,source:BuildInfo.SOURCE,role:role,session:session});
+      }
+      private function deactivate(e:Event):void {e.stopImmediatePropagation();}
+      private function onUncaught(e:UncaughtErrorEvent):void {Log.error(e.error);fail("Uncaught runtime error");e.preventDefault();}
+      private function before(e:Event):void {
+         if(failed)return;
+         try {
+            var w:Object=access.world;
+            if(config.probe===true && !network && getTimer()-bootTrace>=5000) {
+               bootTrace=getTimer();var g:Object=NativeAccess.get(w,"gg");
+               Log.write("boot-state",{ready:access.ready(),land:NativeAccess.get(NativeAccess.get(NativeAccess.get(w,"land"),"act"),"id"),
+                  curLand:NativeAccess.get(NativeAccess.get(w,"game"),"curLandId"),wait:w.ng_wait,pause:w.onPause,
+                  exit:w.t_exit,death:w.t_die,hp:NativeAccess.get(g,"hp"),control:NativeAccess.get(g,"ggControl"),work:NativeAccess.get(g,"work"),
+                  menu:NativeAccess.get(w.mm,"active"),pip:NativeAccess.get(w.pip,"active"),loadClick:w.clickReq});
+            }
+            if(getTimer()-lastHud>=100){lastHud=getTimer();ui.refresh();hud.refresh();}
+            if(w.verror.visible){fail(String(w.verror.txt.text));return;}
+            if(!started && config.autoGame===true && w.landData!=null && w.allLandsLoaded) {
+               started=true;Log.write("native-new-game",{landsReady:w.allLandsLoaded});
+               w.mm.active=false;w.newGame(-1,"RConnect-B-"+role,null);return;
+            }
+            if(!access.ready()) {
+               if(config.autoGame===true && getTimer()-bootAt>90000)fail("Native game boot timed out");
+               return;
+            }
+            if(role==""){if(probe!=null)probe.observe(host,replica);return;}
+            // Normal leave keeps the last confirmed damage/inventory result.
+            // The preceding EXIT_FRAME has published the completed replay.
+            if(leavingAfterReplay && host!=null && access.time!=null && access.time.phase=="idle") {
+               leaveSession(true,true);return;
+            }
+            if(!travelled && config.land!=null && config.land!="") {
+               travelled=true;
+               if(w.land.act.id!==config.land){w.pip.onoff(-1);w.game.beginMission(config.land);return;}
+            }
+            if(!network && config.land!=null && config.land!="" && (w.land.act.id!==config.land || w.game.curLandId!==config.land))return;
+            // Auto-test travel can leave the native Pip page open. It freezes
+            // t_exit, so close it before awaiting the normal transition gate.
+            if(!network && config.autoGame===true && w.pip.active)w.pip.onoff(-1);
+            if(!network && config.autoGame===true && w.clickReq==1)w.ctr.onMouseDown1(new MouseEvent(MouseEvent.MOUSE_DOWN));
+            if(!network && (w.t_exit>0 || w.t_die>0 || !w.gg.ggControl || w.gg.work=="res" || w.gg.work=="change"))return;
+            if(++readyFrames<5)return;
+            if(!network) {
+               w.pip.onoff(-1);
+               if(probe!=null)probe.prepare();
+               network=true;startNetwork();
+            }
+            if(role=="join")w.onPause=true;
+            // Capture what Q points at before the next display interpolation
+            // moves a fast projectile away from the user's visible cursor.
+            var projectilePick:Object=replica!=null && welcomed?replica.projectileSelection():null;
+            if(replica!=null && welcomed) {
+               ++NativeIntents.replaying;
+               try{replica.present();}finally{--NativeIntents.replaying;}
+               if(replica.displayFrame!=null && replica.displayFrame.character!=null)saves.confirm(replica.displayFrame.character.saveRequests);
+            }
+            if(host!=null && host.active){host.menus();host.pause.update(host);}
+            applyPreferences();
+            if((role=="host" && host!=null && host.active) || (role=="join" && welcomed)) {
+               input.acknowledge(role=="host"?host.inputs[0].receivedAction:
+                  (replica.lastFrame==null?0:int(replica.lastFrame.players[1].actionAck)));
+               var frame:Object=input.frame(w,session,role=="host"?0:1,room);
+               if(role=="join")frame.confirmation=replica.displayFrame==null?-1:replica.displayFrame.tick;
+               if(access.weapons!=null){frame.msw=access.weapons.input();if(frame.msw.overlay)frame.buttons=0;}
+               if(role=="join" && (frame.buttons&Commands.TELE)!=0 && projectilePick!=null)frame.projectilePick=projectilePick;
+               var identity:Object=role=="host"?host.inputs[0]:(replica.lastFrame==null?null:replica.lastFrame.control);
+               if(identity!=null){frame.room=identity.room;frame.roomEpoch=identity.roomEpoch;frame.epoch=identity.epoch;}
+               frame.weaponEpoch=identity==null?1:identity.weaponEpoch;
+               if(probe!=null)frame=probe.input(frame,host);
+               if(role=="host")host.localInput(frame);else if(link.send(frame))replica.submitted(frame);
+            }
+            if(vision!=null)vision.step();
+            if(probe!=null)probe.observe(host,replica);
+         }catch(error:*){Log.error(error);fail(String(error));}
+      }
+      private function startNetwork():void {
+         room=access.roomKey();
+         viewport=new NativeViewport(stage,access.world);
+         if(config.rv!=null)access.view=new ViewBridge(main,session,role);
+         if(config.msw!=null)access.weapons=new WeaponBridge(main,access,session,role);
+         if(config.sandy!=null)access.time=new TimeBridge(main,access,session,role);
+         if(config.tdfc!=null)tactics=new TacticsBridge(main,access,session,role);
+         if(role=="host") {
+            host=new HostSession(access,session);host.failed=fail;
+            lastPolicy="";
+            host.pause.enabled=config.sharedPause===true;
+            host.tactics=tactics;
+            applyPreferences();mode=HudModel.HOSTING;
+            server=new ServerSocket();server.bind(int(config.port),"127.0.0.1");server.listen();
+            server.addEventListener(ServerSocketConnectEvent.CONNECT,onAccept);
+            Log.write("listening",{port:config.port});
+         } else {
+            mode=HudModel.JOINING;
+            replica=new ClientReplica(access,vision);
+            intents=new NativeIntents(access,input);
+            nativeMenus=new NativeMenus(access,input);
+            saves=new PersonalSaves(access,null,input);
+            input.scene=replica.scene;
+            replica.tactics=tactics;
+            link=new Link();wire(link);
+            link.connected=function():void {var hello:Object=Commands.greeting("hello",session);hello.tdfc=config.tdfc;hello.rv=config.rv;hello.msw=config.msw;hello.sandy=config.sandy;hello.name=preferences.getValue("nickname");hello.profile=access.profile();link.send(hello);};
+            link.connect(String(preferences.getValue("hostIp")),int(config.port));
+         }
+      }
+      private function onAccept(e:ServerSocketConnectEvent):void {
+         if(link!=null){e.socket.close();return;}
+         link=new Link(e.socket);wire(link);
+      }
+      private function wire(value:Link):void {
+         value.message=receive;value.closed=function(reason:String):void {
+            if(stopping)return;
+            if(probe!=null && probe.finished && reason=="peer closed") {
+               Log.write("probe-cleanup-peer-closed",{reason:reason});return;
+            }
+            if(probe==null){leaveSession(true,true);ui.session.error=reason;}else fail(reason);
+         };
+      }
+      private function receive(value:Object):void {
+         if(failed)return;
+         try {
+            if(probe!=null)probe.message(value);
+            if(value.type=="exploration" && welcomed && value.session===session){vision.receive(value);return;}
+            if(value.type=="exploration-request" && welcomed && value.session===session){vision.resetLink();return;}
+            if(value.type=="chat" && welcomed && value.session===session) {
+               if(value.text is String && value.text.length<=512)hud.addChatLine(peerName,value.text);return;
+            }
+            if(value.type=="leave" && value.session===session){
+               if(link!=null)link.send({type:"leave-ack",session:session});
+               leaveSession(true,true);return;
+            }
+            if(value.type=="leave-request" && welcomed && role=="host" && value.session===session){leaveSession();return;}
+            if(role=="host") {
+               if(value.type=="hello") {
+                  if(value.tdfc!==config.tdfc)throw new Error("TDFC candidate mismatch");
+                  if(value.rv!==config.rv)throw new Error("RV candidate mismatch");
+                  if(value.msw!==config.msw)throw new Error("MSW candidate mismatch");
+                  if(value.sandy!==config.sandy)throw new Error("Sandevistan candidate mismatch");
+                  peerName=value.name is String?String(value.name).substr(0,24):"加入侧";
+                  host.accept(link,value);room=access.roomKey();welcomed=true;lastPolicy="";applyPreferences();
+                  link.send({type:"peer-name",name:preferences.getValue("nickname")});
+               }else host.receive(value);
+            } else if(value.type=="welcome") {
+               if(!Commands.greetingMatches(value,session))throw new Error("Welcome architecture/build mismatch");
+               replica.peerProfile=value.profile;
+               room=value.room;welcomed=true;mode=HudModel.CONNECTED;Log.write("joined",{room:room});
+            } else if(value.type=="frame" && welcomed && value.session===session) {
+               ++NativeIntents.replaying;
+               try{replica.apply(value);}finally{--NativeIntents.replaying;}
+               label.text="RConnect B · 开发测试 · "+role;
+            }
+            else if(value.type=="stopped")fail(value.reason);
+            else if(value.type=="peer-name" && welcomed && value.name is String)peerName=String(value.name).substr(0,24);
+            else if(value.type=="rejected")Log.write("input-rejected",value);
+            else if(value.type=="notice"){label.text=String(value.text);ui.session.rooms.status=String(value.text);Log.write("notice",{text:value.text});}
+            else if(value.type=="probe-result")Log.write("peer-probe-result",value);
+         }catch(error:*){Log.error(error);fail(String(error));}
+      }
+      private function fail(reason:String):void {
+         if(failed)return;
+         failed=true;label.text="RConnect B · 已停止："+reason;
+         ui.session.error=reason;
+         if(access!=null && access.world!=null)access.world.onPause=true;
+         if(host!=null)host.fail(reason);
+         Log.write("FATAL",{reason:reason});
+         if(Timing.enabled)Log.write("fatal-timings",{timings:Timing.snapshot()});
+         if(probe!=null && !probe.finished){probe.check(false,"runtime completed without fatal error",{reason:reason});probe.finish();}
+      }
+      public function applyPreferences():void {
+         input.settings.allowGrab=preferences.getValue("allowPeerGrip")=="1";
+         input.settings.struggle=preferences.getValue("peerGripStruggle")!="0";
+         input.settings.thrownDamage=preferences.getValue("peerThrowDamage")=="1";
+         input.settings.follow=preferences.getValue("followTeammate")=="1";
+         if(vision!=null)vision.enabled=preferences.getValue("sharedExploration")=="1";
+         var policy:String=[preferences.getValue("pauseMenus"),preferences.getValue("pauseSats"),preferences.getValue("friendlyFire"),preferences.getValue("sharedSecurityHack")].join(":");
+         if(host!=null && policy!==lastPolicy) {
+            lastPolicy=policy;
+            host.pause.policyMenus=preferences.getValue("pauseMenus")=="1";
+            host.pause.policySats=preferences.getValue("pauseSats")=="1";
+            if(host.combat!=null)host.combat.enabled=preferences.getValue("friendlyFire")=="1";
+            if(host.security!=null)host.security.shared=preferences.getValue("sharedSecurityHack")!="0";
+         }
+      }
+      public function connectAs(requestedRole:String):void {
+         if(network || requestedRole!="host" && requestedRole!="join")return;
+         if(!access.ready() || access.world.mm.active || access.world.t_exit>0){ui.session.error="请先进入自己的游戏或载入角色，再开始联机。";return;}
+         failed=false;role=requestedRole;config.port=int(preferences.getValue("port"));network=true;ui.session.error="";
+         try {startNetwork();}catch(error:*){Log.error(error);leaveSession();ui.session.error=String(error);}
+      }
+      public function leaveSession(restoreJoin:Boolean=true,force:Boolean=false):void {
+         if(restoreJoin && !force && welcomed && !failed && access.time!=null) {
+            var time:Object=host!=null?access.time.snapshot(false):replica==null || replica.lastFrame==null?null:replica.lastFrame.timeControl;
+            if(time!=null && time.phase!="idle") {
+               if(!leavingAfterReplay) {
+                  leavingAfterReplay=true;
+                  if(host!=null)access.time.requestEnd();
+                  else link.send({type:"leave-request",session:session});
+                  ui.session.rooms.status="回放结束后离开；若全队暂停，请先关闭暂停界面。";
+                  Log.write("leave-after-replay",{phase:time.phase,role:role});
+               }
+               return;
+            }
+         }
+         if(stopping)return;stopping=true;
+         var oldReplica:ClientReplica=replica;
+         try {
+            if(viewport!=null){viewport.dispose();viewport=null;}
+            if(restoreJoin && oldReplica!=null)oldReplica.prepareReturn();
+            if(access.time!=null){access.time.dispose();access.time=null;}
+            if(access.view!=null){access.view.dispose();access.view=null;}
+            if(access.weapons!=null){access.weapons.dispose();access.weapons=null;}
+            if(link!=null){link.finish({type:"leave",session:session},"left session");link=null;}
+            if(server!=null){try{server.close();}catch(ignored:*){}server=null;}
+            if(intents!=null){intents.dispose();intents=null;}
+            if(nativeMenus!=null){nativeMenus.dispose();nativeMenus=null;}
+            if(saves!=null){saves.dispose();saves=null;}
+            if(host!=null){host.dispose();host=null;}
+            if(replica!=null){replica.dispose();replica=null;}
+            // We acquire this lease before either side becomes fully active.
+            // A waiting host has no RoomRuntime; a failed replica constructor
+            // has no replica. Both must still release the acquired interface.
+            if(tactics!=null){tactics.dispose();tactics=null;}
+            if(restoreJoin && oldReplica!=null)oldReplica.returnToOwnGame();
+            access.world.onPause=false;access.world.ctr.clearAll();input=new InputSource();
+            welcomed=network=failed=leavingAfterReplay=false;role="";mode=HudModel.OFFLINE;ui.session.rooms.status="";
+            vision.resetLink();
+         }finally{stopping=false;}
+      }
+      public function sendChat(text:String):void {
+         text=text.substr(0,512);if(!welcomed || text.replace(/^\s+|\s+$/g,"")=="")return;
+         if(link.send({type:"chat",session:session,text:text}))hud.addChatLine(String(preferences.getValue("nickname")),text);
+      }
+      public function meetReason():String {
+         var f:Object=host!=null?host.lastFrame:replica==null?null:replica.lastFrame;
+         if(!welcomed || f==null)return "请先连接队友。";
+         if(f.players[0].hp<=0 || f.players[1].hp<=0)return "双方存活后可传送。";
+         return "";
+      }
+      public function meetPeer():void {var reason:String=meetReason();if(reason!=""){ui.session.rooms.status=reason;return;}input.enqueue({type:"native",key:"meetPeer",args:[]});}
+      public function requestWeaponAction(key:String):Boolean {
+         if(!welcomed || key!="flashGive")return false;
+         input.enqueue({type:"native",key:"mswFlashGive",args:[]});return true;
+      }
+      public function requestTimeAction():Boolean {
+         if(!welcomed || access.time==null || access.world.onConsol || access.world.allStat<1 ||
+            stage.focus is TextField && TextField(stage.focus).type=="input" || SharedPause.requested(access.world))return false;
+         input.enqueue({type:"native",key:"sandyToggle",args:[]});return true;
+      }
+   }
+}

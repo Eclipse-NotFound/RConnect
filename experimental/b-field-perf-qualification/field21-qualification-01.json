@@ -1,0 +1,21 @@
+{
+  "schema": "b-field-ab007-qualification-2",
+  "valid_inputs": false,
+  "qualified": false,
+  "no_material_regression": false,
+  "error": "baseline build/ab/b-field20-perf-baseline-03: host/phase-1: A player stopped firing during a measured ten-second window",
+  "qualifier_sha256": "f0e113b6ecde6ed49a4da63cf091b5d14486ac4b0ca666919850218c04267523",
+  "gates": {
+    "seconds_per_phase": 60,
+    "samples_per_phase_min": 45,
+    "enemies": [
+      8,
+      80
+    ],
+    "maximum_mean_ratio": 1.05,
+    "maximum_p95_ratio": 1.05,
+    "maximum_repeat_ratio": 1.2,
+    "required_firing_windows": 6,
+    "window_span_min_ms": 8000
+  }
+}

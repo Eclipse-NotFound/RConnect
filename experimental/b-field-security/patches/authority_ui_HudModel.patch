@@ -1,0 +1,28 @@
+--- authority/ui/HudModel.as
++++ authority/ui/HudModel.as
+@@ -3,7 +3,7 @@
+    /** UI-only port. The retained compact layout never owns game/network state. */
+    public final class HudModel {
+       public static const OFFLINE:String="offline",HOSTING:String="hosting",JOINING:String="joining",CONNECTED:String="connected";
+-      public var config:Preferences,session:Object,game:Object,exploration:Object,peerGrip:Object,friendlyFire:Object,navigation:Object;
++      public var config:Preferences,session:Object,game:Object,exploration:Object,peerGrip:Object,friendlyFire:Object,navigation:Object,securityTerminals:Object;
+       public var version:String,versionInfo:Object={version:"1.02"};
+       private var owner:RConnectMod;
+       public function HudModel(owner:RConnectMod) {
+@@ -21,6 +21,7 @@
+             setPreferences:function(allow:Boolean,struggle:Boolean):void {config.setValue("allowPeerGrip",allow?"1":"0");config.setValue("peerGripStruggle",struggle?"1":"0");config.save();owner.applyPreferences();refresh();},
+             setThrowDamageAllowed:function(value:Boolean):void{config.setValue("peerThrowDamage",value?"1":"0");config.save();owner.applyPreferences();refresh();}};
+          friendlyFire={enabled:false,canChangePolicy:true,setEnabled:function(value:Boolean):void{if(owner.role=="join")return;config.setValue("friendlyFire",value?"1":"0");config.save();owner.applyPreferences();refresh();}};
++         securityTerminals={shared:true,canChangePolicy:true,setShared:function(value:Boolean):void{if(owner.role=="join")return;config.setValue("sharedSecurityHack",value?"1":"0");config.save();owner.applyPreferences();refresh();}};
+          navigation={travelling:false,unavailable:function():String{return owner.meetReason();},request:function():void{owner.meetPeer();}};
+       }
+       public function refresh():void {
+@@ -35,6 +36,8 @@
+          p.policyMenus=policy==null?config.getValue("pauseMenus")=="1":policy.menus;
+          p.policySats=policy==null?config.getValue("pauseSats")=="1":policy.sats;
+          p.canChangePolicy=owner.role!="join";p.paused=f!=null && f.paused;
++         securityTerminals.canChangePolicy=owner.role!="join";
++         securityTerminals.shared=f!=null && owner.role=="join"?f.securityShared!==false:config.getValue("sharedSecurityHack")!="0";
+          friendlyFire.canChangePolicy=owner.role!="join";friendlyFire.enabled=f!=null && owner.role=="join"?f.friendlyFire:config.getValue("friendlyFire")=="1";
+       }
+    }
