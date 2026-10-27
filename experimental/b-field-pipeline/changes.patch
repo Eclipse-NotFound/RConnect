@@ -1,0 +1,309 @@
+--- src/authority/ClientReplica.as
++++ src/authority/ClientReplica.as
+@@ -18,6 +18,7 @@
+       public var playerApplications:Array=[0,0],projectileApplications:uint=0;
+       private var peers:Object={},projectiles:Object={},projectilePointers:Object={};
+       private var endedProjectiles:Object={};
++      private var endedOrder:Array=[],endedHead:int=0;
+       public var shortProjectileApplications:uint=0;
+       private var originalPause:Boolean;
+       private var entrySave:Object;
+@@ -136,10 +137,20 @@
+             // A fast bullet can be born and hit in one host step. Its final
+             // native symbol still gets one source frame, once per lifetime.
+             var last:Object=endedProjectiles[p.id];
+-            if(last==null){endedProjectiles[p.id]={tick:frame.tick};last=endedProjectiles[p.id];++shortProjectileApplications;}
++            if(last==null) {
++               last={id:String(p.id),tick:frame.tick};endedProjectiles[p.id]=last;
++               endedOrder.push(last);++shortProjectileApplications;
++            }
+             if(last.tick==frame.tick){applyProjectile(p);active[String(p.id)]=true;}
+          }
+-         for(var endKey:String in endedProjectiles)if(frame.tick-endedProjectiles[endKey].tick>240)delete endedProjectiles[endKey];
++         // Confirmations never move backwards in tick; interpolation retains
++         // the current confirmation's tick. Keep the original 240-tick lifetime
++         // without scanning every historical bullet on every rendered frame.
++         while(endedHead<endedOrder.length && frame.tick-endedOrder[endedHead].tick>240) {
++            delete endedProjectiles[endedOrder[endedHead].id];endedOrder[endedHead++]=null;
++         }
++         if(endedHead>0 && endedHead==endedOrder.length){endedOrder=[];endedHead=0;}
++         else if(endedHead>=256 && endedHead*2>=endedOrder.length){endedOrder=endedOrder.slice(endedHead);endedHead=0;}
+          for(var key:String in projectiles)if(!active[key]){
+             var clip:DisplayObject=projectiles[key];if(clip.parent!=null)clip.parent.removeChild(clip);
+             VisualPose.dispose(clip);delete projectiles[key];delete projectilePointers[key];
+@@ -279,7 +290,7 @@
+             if(rec.actor!=null)rec.actor.destroy();
+          }
+          for each(var clip:DisplayObject in projectiles){if(clip.parent!=null)clip.parent.removeChild(clip);VisualPose.dispose(clip);}
+-         scene.dispose();peers={};projectiles={};projectilePointers={};endedProjectiles={};access.world.onPause=originalPause;
++         scene.dispose();peers={};projectiles={};projectilePointers={};endedProjectiles={};endedOrder=[];endedHead=0;access.world.onPause=originalPause;
+       }
+       public function prepareReturn():void {if(access.weapons!=null)access.weapons.carryState(entrySave.game);}
+       public function returnToOwnGame():void {
+--- src/authority/FrameDelta.as
++++ src/authority/FrameDelta.as
+@@ -48,13 +48,15 @@
+       private static function simple(value:*):Boolean {return value==null || value is String || value is Number || value is Boolean || value is ByteArray;}
+       private static function diff(a:*,b:*,path:Array,out:Array):void {
+          if(a===b)return;
+-         if(simple(a) || simple(b) || (a is Array)!=(b is Array)) {out.push([path,1,b]);return;}
+-         if(a is Array && a.length!=b.length) {out.push([path,1,b]);return;}
++         // One encode owns this traversal stack. Only emitted operations keep
++         // a path, so each operation receives its own immutable path copy.
++         if(simple(a) || simple(b) || (a is Array)!=(b is Array)) {out.push([path.concat(),1,b]);return;}
++         if(a is Array && a.length!=b.length) {out.push([path.concat(),1,b]);return;}
+          // Native capture already compared these scalar values. Reuse only
+          // its exact previous record; an unsent diagnostic capture falls back
+          // to the ordinary full comparison below.
+          var native:Object=NativeFields.delta(a,b);
+-         if(native!=null){out.push([path,2,native.updates,native.removed]);return;}
++         if(native!=null){out.push([path.concat(),2,native.updates,native.removed]);return;}
+          var updates:Object=null,removed:Array=null;
+          for(var key:String in b) {
+             var before:*=a[key],after:*=b[key];
+@@ -63,13 +65,15 @@
+             if(before===after)continue;
+             if(!(key in a) || simple(before) || simple(after) || (before is Array)!=(after is Array)) {
+                if(updates==null)updates={};updates[key]=after;
+-            }else diff(before,after,path.concat([key]),out);
++            }else {
++               path.push(key);diff(before,after,path,out);path.pop();
++            }
+          }
+          for(key in a)if(!(key in b)){if(removed==null)removed=[];removed.push(key);}
+          // A native unit changes several scalar fields together. Address its
+          // record once, preserving every changed value and deletion, instead
+          // of repeating a long entity path for each individual number.
+-         if(updates!=null || removed!=null)out.push([path,2,updates,removed]);
++         if(updates!=null || removed!=null)out.push([path.concat(),2,updates,removed]);
+       }
+    }
+ }
+--- src/authority/Link.as
++++ src/authority/Link.as
+@@ -13,6 +13,8 @@
+       public var message:Function, closed:Function, connected:Function;
+       public var socket:Socket;
+       private var buffer:ByteArray=new ByteArray();
++      private var readOffset:uint=0;
++      private static const COMPACT_AFTER:uint=64*1024;
+       private var ended:Boolean=false;
+       private var scheduled:Boolean=false,draining:Boolean=false;
+       private var peerEnded:Boolean=false;
+@@ -41,7 +43,7 @@
+          socket.removeEventListener(IOErrorEvent.IO_ERROR,onError);socket.removeEventListener(SecurityErrorEvent.SECURITY_ERROR,onError);
+          socket.removeEventListener(ProgressEvent.SOCKET_DATA,onData);
+          try{socket.close();}catch(ignored:*){}
+-         buffer.clear();
++         buffer.clear();readOffset=0;
+          if(closed!=null)closed(reason);
+       }
+       public function finish(finalMessage:Object,reason:String):void {
+@@ -81,7 +83,7 @@
+       private function onError(e:Event):void {close(e.toString());}
+       private function onData(e:ProgressEvent):void {
+          try {
+-            if(buffer.length+socket.bytesAvailable>2*LIMIT)throw new Error("receive backlog");
++            if(buffer.length-readOffset+socket.bytesAvailable>2*LIMIT)throw new Error("receive backlog");
+             socket.readBytes(buffer,buffer.length);
+             if(!scheduled && !draining)drain();
+          }catch(error:*){Log.error(error);close("invalid packet");}
+@@ -91,12 +93,15 @@
+          var began:int=Timing.start();
+          var deadline:int=getTimer()+8;
+          try {
+-            buffer.position=0;
+-            while(buffer.bytesAvailable>=4 && !ended) {
+-               var start:int=buffer.position,size:uint=buffer.readUnsignedInt();
++            while(!ended && buffer.length-readOffset>=4) {
++               buffer.position=readOffset;
++               var size:uint=buffer.readUnsignedInt();
+                if(size==0 || size>LIMIT)throw new Error("invalid frame size");
+-               if(buffer.bytesAvailable<size){buffer.position=start;break;}
++               if(buffer.bytesAvailable<size)break;
+                var payload:ByteArray=new ByteArray();buffer.readBytes(payload,0,size);
++               // Commit only a complete payload. A partial header/body keeps
++               // this cursor so a later socket event resumes the same packet.
++               readOffset=buffer.position;
+                var item:Object=WireCodec.decode(payload);
+                if(message!=null)message(item);
+                // Preserve every ordered delta, but yield after bounded work so
+@@ -104,21 +109,29 @@
+                // A first full room can itself exceed this budget; never drop it.
+                if(getTimer()>=deadline)break;
+             }
+-            if(!ended && buffer.position>0) {
+-               var rest:ByteArray=new ByteArray();
+-               if(buffer.bytesAvailable>0)rest.writeBytes(buffer,buffer.position,buffer.bytesAvailable);
+-               buffer=rest;
+-            }
+-            if(!ended && buffer.length>=4) {
+-               buffer.position=0;var nextSize:uint=buffer.readUnsignedInt();buffer.position=0;
++            if(!ended)compact();
++            if(!ended && buffer.length-readOffset>=4) {
++               buffer.position=readOffset;var nextSize:uint=buffer.readUnsignedInt();buffer.position=readOffset;
+                if(nextSize==0 || nextSize>LIMIT)throw new Error("invalid frame size");
+-               if(buffer.length>=nextSize+4){scheduled=true;setTimeout(drain,1);}
++               if(buffer.length-readOffset>=nextSize+4){scheduled=true;setTimeout(drain,1);}
+             }
+          }catch(error:*){Log.error(error);close("invalid packet");}
+          finally {
+             draining=false;Timing.end("network.receiveBatch",began);
+-            if(peerEnded && !ended && !scheduled)close(buffer.length==0?"peer closed":"peer closed with incomplete frame");
++            if(peerEnded && !ended && !scheduled)close(buffer.length==readOffset?"peer closed":"peer closed with incomplete frame");
+          }
++      }
++      private function compact():void {
++         if(readOffset==0)return;
++         if(readOffset==buffer.length){buffer.clear();readOffset=0;return;}
++         // A slow decoder can yield with many complete packets still queued.
++         // Do not copy that entire tail after each 8 ms batch. Copy only when
++         // the consumed prefix is large and at least as long as the remainder;
++         // every retained byte is then charged to bytes already consumed.
++         if(readOffset<COMPACT_AFTER || readOffset<buffer.length-readOffset)return;
++         var rest:ByteArray=new ByteArray();
++         rest.writeBytes(buffer,readOffset,buffer.length-readOffset);
++         buffer=rest;readOffset=0;
+       }
+    }
+ }
+--- src/authority/SceneSnapshot.as
++++ src/authority/SceneSnapshot.as
+@@ -143,9 +143,25 @@
+                   result.effects.push({key:id(drawn),name:drawn.name,clip:getQualifiedClassName(drawn),layer:layer,pose:VisualPose.capture(drawn,0,true),atlas:null});
+             }
+          }
++         // Target IDs also cover players and previously visited rooms. Index
++         // each target's actual room once for this cleanup only; no membership
++         // survives a tick, room move, death or native units-array replacement.
++         var targetRooms:Dictionary;
+          for(var targetKey:String in targets) {
+             var target:Object=targets[targetKey];
+-            if(target.loc==null || target.sost>=3 || target.loc.units.indexOf(target)<0)delete targets[targetKey];
++            var targetRoom:Object=target.loc;
++            if(targetRoom==null || target.sost>=3){delete targets[targetKey];continue;}
++            if(targetRooms==null)targetRooms=new Dictionary();
++            var members:Dictionary=targetRooms[targetRoom];
++            if(members==null) {
++               members=new Dictionary();targetRooms[targetRoom]=members;
++               var targetUnits:Array=targetRoom.units;
++               for(var ui:int=0;ui<targetUnits.length;ui++) {
++                  var targetUnit:Object=targetUnits[ui];
++                  if(targetUnit!=null)members[targetUnit]=true;
++               }
++            }
++            if(!members[target])delete targets[targetKey];
+          }
+          Timing.end("capture.untrackedEffects",began);
+          if(full || result.tiles.length>0)++terrainRevision;
+--- src/authority/VisualPose.as
++++ src/authority/VisualPose.as
+@@ -72,15 +72,36 @@
+          // state and capture the current children when it becomes visible;
+          // hidden health bars otherwise multiply dense-room capture work.
+          if(parent!=null && display.visible && display.alpha>0 && depth<12) {
+-            s.children=[];
++            // Keep old recipes immutable: only copy the already-matched prefix
++            // when a captured child actually changes. childCount indexes the
++            // filtered recipe; i remains the native display-list index.
++            var previousChildren:Array=previous==null?null:(previous.children as Array);
++            var children:Array=previousChildren,childCount:int=0;
+             for(var i:int=0;i<parent.numChildren;i++) {
+                var child:DisplayObject=parent.getChildAt(i);
+                // Authority samples at EXIT_FRAME, after native construction.
+                // A null timeline slot is not evidence that a limb is hidden.
+                if(child==null)continue;
+-               if(child is MovieClip || child is TextField || child is Sprite || child is Bitmap || clip==null && child is Shape)
+-                  s.children.push({n:child.name,i:i,cls:getQualifiedClassName(child),s:capture(child,depth+1,includePixels)});
+-            }
++               if(child is MovieClip || child is TextField || child is Sprite || child is Bitmap || clip==null && child is Shape) {
++                  var childName:String=child.name,childClass:String=getQualifiedClassName(child);
++                  var childPose:Object=capture(child,depth+1,includePixels);
++                  var previousChild:Object=previousChildren!=null && childCount<previousChildren.length?previousChildren[childCount]:null;
++                  var childRecord:Object;
++                  if(previousChild!=null && previousChild.n===childName && previousChild.i===i && previousChild.cls===childClass && previousChild.s===childPose)
++                     childRecord=previousChild;
++                  else {
++                     childRecord={n:childName,i:i,cls:childClass,s:childPose};
++                     if(children===previousChildren)children=previousChildren==null?[]:previousChildren.slice(0,childCount);
++                  }
++                  if(children!==previousChildren)children.push(childRecord);
++                  ++childCount;
++               }
++            }
++            if(children===previousChildren) {
++               if(children==null)children=[];
++               else if(childCount!=children.length)children=children.slice(0,childCount);
++            }
++            s.children=children;
+          }
+          // Native authored trees have many unchanged limbs, colors and empty
+          // filter lists. Keep their immutable records instead of walking and
+@@ -90,14 +111,8 @@
+             for(var field:String in s) {
+                var value:*=s[field],old:*=previous[field];
+                if(value===old)continue;
+-               if(field=="children") {
+-                  var equal:Boolean=old!=null && value.length==old.length;
+-                  if(equal)for(var j:int=0;j<value.length;j++) {
+-                     var ca:Object=value[j],cb:Object=old[j];
+-                     if(ca.n!==cb.n || ca.i!==cb.i || ca.cls!==cb.cls || ca.s!==cb.s){equal=false;break;}
+-                  }
+-                  if(equal)s[field]=old;else same=false;
+-               }else if((value is Array || field=="pixels") && recipeEqual(old,value))s[field]=old;
++               if(field=="children")same=false;
++               else if((value is Array || field=="pixels") && recipeEqual(old,value))s[field]=old;
+                else same=false;
+             }
+             for(field in previous)if(!s.hasOwnProperty(field)){same=false;break;}
+@@ -221,11 +236,13 @@
+          display.alpha=s.a;
+          var parent:DisplayObjectContainer=display as DisplayObjectContainer;
+          if(parent!=null && s.children!=null) {
+-         var managed:Dictionary=added[parent];if(managed==null)managed=added[parent]=new Dictionary(true);
+-         var live:Dictionary=new Dictionary(true);
++         // Authored children need no ownership bookkeeping. Only nodes this
++         // copier creates belong to managed and require stale-node cleanup.
++         var managed:Dictionary=added[parent];
++         var live:Dictionary=managed==null?null:new Dictionary(true);
+          for each(var child:Object in s.children) {
+             var target:DisplayObject=parent.getChildByName(child.n);
+-            if(target!=null && getQualifiedClassName(target)!=child.cls && managed[target]!==child.cls)target=null;
++            if(target!=null && getQualifiedClassName(target)!=child.cls && (managed==null || managed[target]!==child.cls))target=null;
+             // Unnamed authored children have different generated instance names.
+             if(target==null && int(child.i)<parent.numChildren && getQualifiedClassName(parent.getChildAt(int(child.i)))==child.cls)target=parent.getChildAt(int(child.i));
+             if(target==null) {
+@@ -233,11 +250,17 @@
+                else if(child.cls=="flash.display::Bitmap")target=new Bitmap();
+                else if(child.cls=="flash.text::TextField")target=new TextField();
+                else if(resolve!=null){var Type:Class=resolve(child.cls);target=new Type() as DisplayObject;}
+-               if(target!=null){target.name=child.n;parent.addChildAt(target,Math.min(child.i,parent.numChildren));managed[target]=child.cls;}
+-            }
+-            if(target!=null){live[target]=true;apply(target,child.s);}
+-         }
+-         for(var owned:Object in managed)if(!live[owned]) {
++               if(target!=null) {
++                  if(managed==null){managed=added[parent]=new Dictionary(true);live=new Dictionary(true);}
++                  target.name=child.n;parent.addChildAt(target,Math.min(child.i,parent.numChildren));managed[target]=child.cls;
++               }
++            }
++            if(target!=null) {
++               if(managed!=null && managed[target]!==undefined)live[target]=true;
++               apply(target,child.s);
++            }
++         }
++         if(managed!=null)for(var owned:Object in managed)if(!live[owned]) {
+             if(owned.parent===parent)parent.removeChild(owned as DisplayObject);dispose(owned as DisplayObject);delete managed[owned];
+          }
+          }
+--- src/RConnectMod.as
++++ src/RConnectMod.as
+@@ -16,7 +16,7 @@
+    import flash.text.TextFormat;
+    import flash.utils.getTimer;
+    public class RConnectMod {
+-      public static const VERSION:String="B3-0.1-field5";
++      public static const VERSION:String="B3-0.1-field6-dev";
+       public static var instance:RConnectMod;
+       public var main:Object,stage:Stage,access:NativeAccess,host:HostSession,replica:ClientReplica;
+       public var config:Object,link:Link,probe:Probe;

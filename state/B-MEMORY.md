@@ -10,6 +10,8 @@
 
 测试共用登记，只有自有后台桌面和唯一AIR身份，双实例启动余量6GiB、运行512MiB保护；不关闭玩家程序、不写真实存档、不用未点名Ghost。复用隔离副本，保存失败和唯一证据。日常修复通过本机门禁即可部署，不重复询问。
 
+**2026-10-28 当前任务要求：先在代码层面调查和修改密集卡顿/延迟，先不测试。** 本轮只完成源码与静态审阅，未编译、未回放、未启动游戏、未部署。后续继续时保留这一限制，不能把已有实测授权当成本轮测试请求。
+
 ## 3. 当前实际安装（2026-10-27）
 
 - **B3-0.1-field5 / 准确scalar04，已部署并复验。** 原入口 `build/ab/b3-playable-190/Player-1.cmd`、`Player-2.cmd`；原存档ID、配置和其它模组文件保留。已有窗口需玩家保存后重开。
@@ -18,7 +20,11 @@
 - 部署回执 `build/ab/b-field-deploy-20261027-01/deployment.json` 为 **verified**；`before` 保存field4五文件回滚。实际安装字节复验 `b-scalar04-installed-ui-01` 主77/加36通过，无错误，运行文件不变。根游戏/A、原B启动器和存档未改。当前manual清单 `4a85197620badfa03ec4eeac7769ed6106114178ee0d30678e01b8e71543cbf9`。
 - 前版 field4/field22（SWF `3706828f…`，source `76ab46b8…`）为本轮准确基线；field3/field9/native019是更早历史，不能称为当前安装。初始修复过程见 `state/b-field-repair-2026-10-25.md`。
 
-## 4. 本轮完成与验证
+## 4. 当前源码候选与已有验证
+
+新增 **field6-dev源码候选** `experimental/b-field-pipeline/`，准确基线为已安装scalar04。六个覆盖文件及版本标记见source-manifest.json，完整差异changes.patch：targets按实际房间建当次成员表；已消失子弹FIFO过期；VisualPose子记录按变化复制、补建节点字典按需分配；FrameDelta局部路径栈；Link未读游标和摊销尾部压缩。主会话及子代理只做静态交叉审阅，**没有候选SWF或性能/行为通过结论**。安装仍field5。播放时钟与输入发送顺序没有改；解码耗时进入缓冲并不自动等于可以安全扣掉。
+
+以下是field5及其功能基线的既有实测，不能移作field6的通过证据。
 
 修复换房缩放、加入开锁/破解进度、文字矩阵插值、Q瞬移本玩家视野、投掷物按所见身份抓取、地形四个真实边界；普通前景墙在完整像素证据下省重复整房重画。新增宿主设置的安保共享/分别破解，已获权限不因切换撤销。
 
@@ -40,14 +46,15 @@
 
 ## 6. 构建、测试与下一步
 
-从当前准确scalar04继续。field22是功能基线；在其上加 `experimental/b-field-scalar-cache/candidate04.patch` 才是当前产品。用 `field_driver/compile.py` 编译到新唯一build目录。覆盖在 `experimental/b-field-*`，不要整文件覆盖相交补丁，也不改冻结构建。
+当前安装准确scalar04。继续源码候选用 `experimental/b-field-pipeline/src`；其prepare.py只组装新 `build/ab/b190-pipeline*-source` 目录，已保存但未执行，不编译/测试/安装。未来允许验证时再沿 `field_driver/compile.py` 生成唯一候选；不要把覆盖源直接放进安装目录，不改冻结构建。
 
 功能副本 `build/ab/b-field2-runtime-01`，prepared-v19仍绑定部署前field22；性能副本 `build/ab/b-field2-bench-20261025-01`，当前prepared-sustained-003。性能驱动 `ab-sustained-003` source `1e4e640689e5269baab49b46e32c3592c568ac63550d18d4c9a83e587a7d3dc7`。继续用唯一结果目录和共享登记；新一轮资格需新建绑定field5的准备记录，不能改旧指纹。性能运行器另加可提交内存保护，物理内存原门槛保留。
 
-下一优先仍是密集采集/呈现开销和弹丸显示延迟；本轮小幅优化与安装已完成。没有本会话后台测试或新护栏授权存留。本轮复用完整游戏副本，D盘收尾约125GiB余量。
+下一优先是后续获准测试时验证field6源码候选，再判断实际卡顿和延迟是否改善。重点有旧确认不变、动画子树增删、短命弹丸、分房/SATS、半包/正常退出，以及同环境均值、慢帧和事件到显示延迟。当前没有本会话后台任务或新护栏授权。本轮不创建游戏测试副本。
 
 ## 7. 深入记录
 
+- `experimental/b-field-pipeline/README.md`：2026-10-28源码调查、六处减负、保留项、静态审查及未执行验证范围。`source-manifest.json`和`changes.patch`固定本次代码，实际效果待测。
 - `state/b-scalar-optimization-2026-10-27.md`：本轮最终结果、限制、部署回执；`state/b-field22-validation-2026-10-26.md`是前轮功能修复。
 - `experimental/b-field-scalar-cache/field5-input.json`：准确八项、性能、说明的部署输入；本次事务目录中的原脚本可从五文件备份回滚。其README记录尝试及撤回。
 - `state/b-field2-repair-2026-10-25.md`、journal.md：问题与历史；本次精简前快照保留在Git `fcba105:state/B-MEMORY.md`。

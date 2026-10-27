@@ -1,0 +1,22 @@
+{
+  "schema": "b-source-overlay-1",
+  "date": "2026-10-28",
+  "status": "source-only-uncompiled-untested-not-deployed",
+  "version": "B3-0.1-field6-dev",
+  "baseline": {
+    "directory": "build/ab/b190-scalar04-build",
+    "manifest_sha256": "3811c67aeb0f70b6d83dee22023a103a510d34b8d04af03808d90b2ac1f413c8",
+    "source_id": "22e2cdedf6e1c3c0aaf2e7c7821d8199f024ce6188dd01a56f82be18d0ac12f8",
+    "candidate_sha256": "f9e542f6d64fef707c41563558365a3d90562dbc346f3be6cf84f968062b7c07"
+  },
+  "overlay": {
+    "src/authority/ClientReplica.as": "be138c79ced5e015b4d2fc4a9c52758618d7b4bfd6f462597e856d707328bc65",
+    "src/authority/FrameDelta.as": "29b3046258c96e43e171573204b49c85b6216743a7bca5193243a805c86058a3",
+    "src/authority/Link.as": "955edfc9fb02fe311e0d7bf8ea7b930e629d8e14fdd2e4e3e5e218b49ba56638",
+    "src/authority/SceneSnapshot.as": "10b38f627dcf538841b86f2da0fb3f08f2e4995943e83d0f544765a037b159bf",
+    "src/authority/VisualPose.as": "fe4c6242e10240f85bb163d721338a89e993be296bae720924af6d400a14c21e",
+    "src/RConnectMod.as": "243d946fbfa5f914fa82b559606819cbf869e2dea0558b53caafa4770614e653"
+  },
+  "prepare_script_sha256": "318f5c4b19e43cd8ec977e72c94f3d191c042d2ed0c3001e7f971e8dbbd5baf3",
+  "scope": "Source review only. No compile, replay, game run, benchmark, or installation performed."
+}
