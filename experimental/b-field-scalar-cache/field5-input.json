@@ -1,0 +1,25 @@
+{
+  "candidate": "build/ab/b190-scalar04-build",
+  "performance": "experimental/b-field-scalar-cache/performance-result04.json",
+  "notes": "experimental/b-field-scalar-cache/field5-release-notes.txt",
+  "test": [
+    "ui=build/ab/b-scalar04-final-01/ui/result.json",
+    "darkteleport=build/ab/b-scalar04-final-01/darkteleport/result.json",
+    "controls=build/ab/b-scalar04-final-01/controls/result.json",
+    "security=build/ab/b-scalar04-final-01/security/result.json",
+    "terrainlive=build/ab/b-scalar04-final-01/terrainlive/result.json",
+    "rockets=build/ab/b-scalar04-final-01/rockets/result.json",
+    "enemies=build/ab/b-scalar04-final-01/enemies/result.json",
+    "textmotion=build/ab/b-scalar04-final-01/textmotion/result.json"
+  ],
+  "preparation": [
+    "ui=build/ab/b-field2-runtime-01/prepared-v19.json",
+    "darkteleport=build/ab/b-field2-runtime-01/prepared-v19.json",
+    "controls=build/ab/b-field2-runtime-01/prepared-v19.json",
+    "security=build/ab/b-field2-runtime-01/prepared-v19.json",
+    "terrainlive=build/ab/b-field2-runtime-01/prepared-v19.json",
+    "rockets=build/ab/b-field2-runtime-01/prepared-v19.json",
+    "enemies=build/ab/b-field2-runtime-01/prepared-v19.json",
+    "textmotion=build/ab/b-field2-runtime-01/prepared-v19.json"
+  ]
+}

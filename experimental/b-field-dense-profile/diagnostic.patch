@@ -1,0 +1,75 @@
+--- src/authority/SceneSnapshot.as
++++ src/authority/SceneSnapshot.as
+@@ -79,16 +79,27 @@
+          Timing.end("capture.tiles",tilesStarted);
+          var unitsStarted:int=Timing.start();
+          for each(var u:Object in room.units)if(u!=null && !u.player) {
++            var unitPart:int=Timing.start();
+             var burning:Boolean=AuthorityAnimation.burning(u as Unit);
+             var replay:Boolean=access.time!=null && access.time.phase=="replay";
+-            var us:Object={key:id(u),positionEpoch:access.positionEpoch(u),cls:getQualifiedClassName(u),fields:NativeFields.capture(u),inter:interaction(u.inter),pose:VisualPose.capture(u.vis,0,burning || replay),
++            var us:Object={key:id(u),positionEpoch:access.positionEpoch(u),cls:getQualifiedClassName(u)};
++            Timing.end("capture.unit.metadata",unitPart);unitPart=Timing.start();
++            us.fields=NativeFields.capture(u);us.inter=interaction(u.inter);
++            Timing.end("capture.unit.fields",unitPart);unitPart=Timing.start();
++            us.pose=VisualPose.capture(u.vis,0,burning || replay);
++            Timing.end("capture.unit.body",unitPart);unitPart=Timing.start();
++            var rest:Object={
+                clip:u.vis==null?null:getQualifiedClassName(u.vis),burning:burning,
+                blit:burning || replay?null:AuthorityAnimation.capture(u as Unit),weapons:[],petOwner:-1,layer:u.sloy,attached:u.vis!=null && u.vis.parent!=null};
++            for(var partKey:String in rest)us[partKey]=rest[partKey];
++            Timing.end("capture.unit.blit",unitPart);unitPart=Timing.start();
+             us.healthBar=u.hpbar==null?null:{pose:VisualPose.capture(u.hpbar),attached:u.hpbar.parent!=null};
++            Timing.end("capture.unit.bar",unitPart);unitPart=Timing.start();
+             for each(actor in actors)if(actor.unit.pet===u)us.petOwner=actor.id;
+             if(us.cls.indexOf("UnitTurret")>=0)us.mount=int(getQualifiedClassName(u.vis).replace(/^.*visualTurret/,""));
+             for each(var weapon:Object in u.childObjs)if(weapon!=null && "kol_shoot" in weapon)
+                us.weapons.push({id:weapon.id,variant:weapon.variant,pose:VisualPose.capture(weapon.vis),fields:NativeFields.capture(weapon),attached:weapon.vis!=null && weapon.vis.parent!=null});
++            Timing.end("capture.unit.weapons",unitPart);
+             result.units.push(us);
+             if(u.vis!=null)rendered[u.vis]=true;
+             if(u.hpbar!=null)rendered[u.hpbar]=true;
+--- src/authority/ReplicaScene.as
++++ src/authority/ReplicaScene.as
+@@ -178,6 +178,7 @@
+          effects.interpolate(s.effects);
+       }
+       private function applyUnit(s:Object):void {
++         var unitPart:int=Timing.start();
+          var rec:Object=units[s.key],u:Object;
+          if(rec!=null && rec.burning && !s.burning){removeUnit(String(s.key));rec=null;}
+          if(rec==null) {
+@@ -202,10 +203,13 @@
+          }
+          rec.burning=s.burning;
+          rec.petOwner=s.petOwner;
++         Timing.end("replica.unit.construct",unitPart);unitPart=Timing.start();
+          NativeFields.apply(u,s.fields);u.loc=room;
+          NativeFields.apply(u.inter,s.inter);
++         Timing.end("replica.unit.fields",unitPart);unitPart=Timing.start();
+          if(s.attached)attach(u,s.layer);else u.remVisual();u.setVisPos();
+          AuthorityAnimation.apply(u as Unit,s.blit);
++         Timing.end("replica.unit.blit",unitPart);unitPart=Timing.start();
+          // Health bars are native render-only methods; no damage/AI is replayed.
+          if(s.attached && !u.player && u.vis!=null && !u.disabled && u.sost<3) {
+             if(u.hpbar==null || s.healthBar==null || u.boss) {
+@@ -218,8 +222,11 @@
+                access.world.grafon.visObjs[3].addChild(u.hpbar);
+             }
+          }
++         Timing.end("replica.unit.barNative",unitPart);unitPart=Timing.start();
+          VisualPose.apply(u.vis,s.pose);
++         Timing.end("replica.unit.body",unitPart);unitPart=Timing.start();
+          healthBar(u,s);
++         Timing.end("replica.unit.barPose",unitPart);unitPart=Timing.start();
+          for(var i:int=0;i<s.weapons.length;i++) {
+             var gs:Object=s.weapons[i],gun:Object=rec.weapons[i];
+             if(gun==null || gun.id!=gs.id || gun.variant!=gs.variant) {
+@@ -234,6 +241,7 @@
+          // Native constructor child weapons may be different from the confirmed loadout.
+          for each(var original:Object in u.childObjs)if(original!=null && rec.weapons.indexOf(original)<0)original.remVisual();
+          u.childObjs=rec.weapons;
++         Timing.end("replica.unit.weapons",unitPart);
+       }
+       private function applyObject(s:Object):void {
+          var rec:Object=objects[s.key],o:Object;

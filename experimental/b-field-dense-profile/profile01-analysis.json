@@ -1,0 +1,77 @@
+{
+  "diagnostic_only": true,
+  "receipt": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\ab\\b-dense-profile01\\result.json",
+  "sha256": "a44a1fefc66fc32d9ce267519c1feeeb8bf65246fcefbb8eaa1c36d8793e9fbb",
+  "rows": [
+    {
+      "role": "host",
+      "enemies": 8,
+      "frames": 718,
+      "outer_calls": 718,
+      "stage_ms": 62.690807799442894,
+      "outer_ms": 2.4749303621169916,
+      "parts_ms_per_capture": {
+        "capture.unit.body": 0.8663,
+        "capture.unit.fields": 1.1031,
+        "capture.unit.metadata": 0.0362,
+        "capture.unit.bar": 0.188,
+        "capture.unit.weapons": 0.0139,
+        "capture.unit.blit": 0.1866
+      },
+      "residual_ms": 0.0807799442896936
+    },
+    {
+      "role": "host",
+      "enemies": 80,
+      "frames": 366,
+      "outer_calls": 366,
+      "stage_ms": 123.04918032786885,
+      "outer_ms": 24.396174863387976,
+      "parts_ms_per_capture": {
+        "capture.unit.body": 8.418,
+        "capture.unit.fields": 11.5601,
+        "capture.unit.metadata": 0.2568,
+        "capture.unit.bar": 1.8661,
+        "capture.unit.weapons": 0.1557,
+        "capture.unit.blit": 1.6475
+      },
+      "residual_ms": 0.4918032786885246
+    },
+    {
+      "role": "join",
+      "enemies": 8,
+      "frames": 1009,
+      "outer_calls": 717,
+      "stage_ms": 44.5986124876115,
+      "outer_ms": 1.2440725244072524,
+      "parts_ms_per_capture": {
+        "replica.unit.fields": 0.6123,
+        "replica.unit.barPose": 0.0391,
+        "replica.unit.barNative": 0.0516,
+        "replica.unit.weapons": 0.0126,
+        "replica.unit.body": 0.2413,
+        "replica.unit.blit": 0.2008,
+        "replica.unit.construct": 0.0237
+      },
+      "residual_ms": 0.06276150627615062
+    },
+    {
+      "role": "join",
+      "enemies": 80,
+      "frames": 511,
+      "outer_calls": 366,
+      "stage_ms": 88.06849315068493,
+      "outer_ms": 12.969945355191257,
+      "parts_ms_per_capture": {
+        "replica.unit.body": 3.0683,
+        "replica.unit.barNative": 0.8525,
+        "replica.unit.fields": 5.5601,
+        "replica.unit.barPose": 0.6421,
+        "replica.unit.blit": 1.9945,
+        "replica.unit.weapons": 0.0956,
+        "replica.unit.construct": 0.1175
+      },
+      "residual_ms": 0.639344262295082
+    }
+  ]
+}

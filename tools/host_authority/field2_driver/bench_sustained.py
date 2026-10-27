@@ -11,10 +11,20 @@ import time
 import uuid
 from run import ROOT, GAME, Registration, HiddenProcess, available_gib, read, save, sha, verify_files, inside_build, events
 
+def commit_available_gib():
+    class Memory(ctypes.Structure):
+        _fields_=[('length',ctypes.c_ulong),('load',ctypes.c_ulong)]+[(key,ctypes.c_ulonglong) for key in ('total','available','commit','available_commit','virtual','available_virtual','extended')]
+    value=Memory();value.length=ctypes.sizeof(value)
+    if not ctypes.windll.kernel32.GlobalMemoryStatusEx(ctypes.byref(value)):raise ctypes.WinError()
+    return value.available_commit/2**30
+
+def memory_guard():
+    if available_gib()<0.5 or commit_available_gib()<0.75:raise RuntimeError('Memory guard: physical/commit reserve')
+
 def machine():
     values=[ctypes.c_ulonglong() for _ in range(3)]
     ctypes.windll.kernel32.GetSystemTimes(*[ctypes.byref(v) for v in values])
-    return dict(time=time.time(),free_gib=available_gib(),cpuTicks=[v.value for v in values])
+    return dict(time=time.time(),free_gib=available_gib(),commit_free_gib=commit_available_gib(),cpuTicks=[v.value for v in values])
 
 def main():
     ap=argparse.ArgumentParser();ap.add_argument('--workspace',required=True);ap.add_argument('--candidate',required=True)
@@ -38,6 +48,7 @@ def main():
     if result.exists():raise FileExistsError(result)
     with Registration(owner='RConnect B / 性能对照',purpose='Sustained LMG B '+('profile' if a.profile else 'clean')+' '+candidate.name,run_dir=result,evidence=result/'result.json',wait=1200) as reg:
         if available_gib()<6:raise RuntimeError('Dual AIR needs 6 GiB')
+        if commit_available_gib()<3:raise RuntimeError('Dual AIR needs 3 GiB available commit')
         result.mkdir(parents=True);shutil.copy2(__file__,result/'runner.py')
         receipt=dict(complete=False,candidate_sha256=build['candidate_sha256'],candidate_source=build['source_id'],driver_sha256=sha(driver/'build-input.json'),manual_sha256=sha(playable/'manual-input.json'),profile=a.profile,seconds=a.seconds,roles={},private_desktop=True,diagnostic_only=a.diagnostic)
         # Reuse the owned benchmark copies. Verify original preparation first;
@@ -79,6 +90,7 @@ def main():
                 receipt['roles'][role]=dict(appid=appid,storage=str(store),files=files)
                 save(result/'result.json',receipt)
                 reg.before_launch(role+' / '+appid)
+                if commit_available_gib()<1.5:raise RuntimeError('Insufficient commit before AIR launch')
                 stream=(result/(role+'.stdout.log')).open('x',encoding='utf-8');streams.append(stream)
                 p=HiddenProcess([str(game/'adl64.exe'),'-runtime',str(game/'runtimes/air/win64'),str(descriptor)],cwd=game,stdout=stream,stderr=stream)
                 processes.append(p);reg.child(p.pid);receipt['roles'][role].update(pid=p.pid,desktop=p.desktop)
@@ -87,7 +99,7 @@ def main():
                     while time.monotonic()<until:
                         if any(v['kind']=='listening' for v in events(store/'RConnect-B.log')):break
                         if p.poll() is not None:raise RuntimeError('Host exited before listening')
-                        if available_gib()<0.5:raise RuntimeError('Memory guard')
+                        memory_guard()
                         time.sleep(1)
                     else:raise TimeoutError('Host did not listen')
             until=time.monotonic()+a.seconds*2+180
@@ -97,7 +109,7 @@ def main():
                 if any(any(v['kind']=='fatal' for v in log) for log in logs):raise RuntimeError('Benchmark failed; logs retained')
                 if all(any(v['kind']=='done' for v in log) for log in logs):receipt['complete']=True;break
                 if any(p.poll() is not None for p in processes):raise RuntimeError('AIR exited')
-                if available_gib()<0.5:raise RuntimeError('Memory guard')
+                memory_guard()
                 time.sleep(1)
             if not receipt['complete']:raise TimeoutError('Benchmark timeout')
         except Exception as error:receipt['error']=str(error)

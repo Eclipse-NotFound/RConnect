@@ -1,0 +1,139 @@
+--- src/authority/NativeFields.as
++++ src/authority/NativeFields.as
+@@ -6,6 +6,7 @@
+    public final class NativeFields {
+       private static var schemas:Object={};
+       private static var retained:Dictionary=new Dictionary(true),deltas:Dictionary=new Dictionary(true);
++      private static var successors:Dictionary=new Dictionary(true);
+       private static var applySchemas:Object={},applyObjects:Dictionary=new Dictionary(true);
+       // A variable declared as a display object, array or game class cannot
+       // hold a scalar. Keep Object and *: native code can store scalars there.
+@@ -66,8 +67,11 @@
+             // Weak provenance prevents a newest record from keeping the
+             // entire previous-frame chain alive. The normal encoder retains
+             // its own prior frame while it checks this exact baseline.
+-            var from:Dictionary=new Dictionary(true);from[previous]=true;
+-            deltas[out]={from:from,updates:updates,removed:removed};
++            // A scalar capture has one immediate successor. The token
++            // carries no state reference, so both weak maps remain collectible;
++            // avoid allocating a weak hash table for every changed unit/frame.
++            var token:Object={};successors[previous]=token;
++            deltas[out]={from:token,updates:updates,removed:removed};
+          }
+          Timing.end("capture.nativeFields",began);
+          return out;
+@@ -77,7 +81,7 @@
+       }
+       /** Local hint only; never serialized and never substitutes another baseline. */
+       public static function delta(before:Object,after:Object):Object {
+-         var hint:Object=deltas[after];return hint!=null && hint.from[before]===true?hint:null;
++         var hint:Object=deltas[after];return hint!=null && successors[before]===hint.from?hint:null;
+       }
+       public static function apply(value:Object,state:Object):void {
+          var schema:Object=applyObjects[value];
+--- src/authority/VisualPose.as
++++ src/authority/VisualPose.as
+@@ -25,6 +25,11 @@
+       private static var pixels:Dictionary=new Dictionary(true);
+       private static var immutableKeys:Dictionary=new Dictionary(true);
+       private static const EMPTY_FILTERS:Array=[];
++      private static var classNames:Dictionary=new Dictionary(true);
++      private static function displayClass(display:DisplayObject):String {
++         var name:String=classNames[display];
++         if(name==null){name=getQualifiedClassName(display);classNames[display]=name;}return name;
++      }
+       private static function recipeKey(value:Object):String {
+          if(value==null)return "null";
+          var key:String=immutableKeys[value];
+@@ -44,10 +49,27 @@
+          if(c==null || c[0]!==color.redMultiplier || c[1]!==color.greenMultiplier || c[2]!==color.blueMultiplier || c[3]!==color.alphaMultiplier ||
+             c[4]!==color.redOffset || c[5]!==color.greenOffset || c[6]!==color.blueOffset || c[7]!==color.alphaOffset)
+             c=[color.redMultiplier,color.greenMultiplier,color.blueMultiplier,color.alphaMultiplier,color.redOffset,color.greenOffset,color.blueOffset,color.alphaOffset];
+-         var s:Object={x:display.x,y:display.y,sx:display.scaleX,sy:display.scaleY,r:display.rotation,
+-            m:m,a:display.alpha,v:display.visible,c:c};
++         var px:Number=display.x,py:Number=display.y,sx:Number=display.scaleX,sy:Number=display.scaleY,rotation:Number=display.rotation;
++         var alpha:Number=display.alpha,visible:Boolean=display.visible;
++         var blend:String=display.blendMode,cache:Boolean=display.cacheAsBitmap;
+          var nativeFilters:Array=display.filters;
+-         s.blend=display.blendMode;s.cache=display.cacheAsBitmap;s.filters=nativeFilters.length==0?EMPTY_FILTERS:[];
++         // A Bitmap is always a leaf: it has no timeline, children, text or
++         // runtime vector commands. Compare its fixed recipe before allocating
++         // a fresh object and doing the generic enumerable-property walk.
++         if(display is Bitmap && !includePixels && nativeFilters.length==0) {
++            var bitmap:Bitmap=Bitmap(display),smooth:Boolean=bitmap.smoothing,snapping:String=bitmap.pixelSnapping;
++            if(previous!=null && previous.m===m && previous.c===c && previous.x===px && previous.y===py &&
++               previous.sx===sx && previous.sy===sy && previous.r===rotation && previous.a===alpha && previous.v===visible &&
++               previous.blend===blend && previous.cache===cache && previous.smoothing===smooth && previous.pixelSnapping===snapping &&
++               previous.filters.length==0 && !previous.hasOwnProperty("pixels")) {
++               if(depth==0)Timing.end("capture.pose",began);return previous;
++            }
++            var leaf:Object={x:px,y:py,sx:sx,sy:sy,r:rotation,m:m,a:alpha,v:visible,c:c,
++               blend:blend,cache:cache,filters:EMPTY_FILTERS,smoothing:smooth,pixelSnapping:snapping};
++            captured[display]=leaf;if(depth==0)Timing.end("capture.pose",began);return leaf;
++         }
++         var s:Object={x:px,y:py,sx:sx,sy:sy,r:rotation,m:m,a:alpha,v:visible,c:c};
++         s.blend=blend;s.cache=cache;s.filters=nativeFilters.length==0?EMPTY_FILTERS:[];
+          if(display is Bitmap){s.smoothing=Bitmap(display).smoothing;s.pixelSnapping=Bitmap(display).pixelSnapping;}
+          if(includePixels && display is Bitmap && Bitmap(display).bitmapData!=null)s.pixels=PixelSurface.capture(Bitmap(display).bitmapData);
+          for each(var filter:Object in nativeFilters) {
+@@ -65,7 +87,7 @@
+          if(clip!=null)s.f=clip.currentFrame;
+          // Authored MovieClip geometry is already in the native assets. Runtime
+          // Sprite/Shape drawings (laser pointers and curved trails) have no frames.
+-         if(display is Sprite && (clip==null || getQualifiedClassName(display)=="flash.display::MovieClip"))s.vector=VectorDraw.capture(Sprite(display).graphics);
++         if(display is Sprite && (clip==null || displayClass(display)=="flash.display::MovieClip"))s.vector=VectorDraw.capture(Sprite(display).graphics);
+          else if(display is Shape)s.vector=VectorDraw.capture(Shape(display).graphics);
+          var parent:DisplayObjectContainer=display as DisplayObjectContainer;
+          // An invisible parent suppresses its entire subtree. Keep the root
+@@ -79,7 +101,7 @@
+                // A null timeline slot is not evidence that a limb is hidden.
+                if(child==null)continue;
+                if(child is MovieClip || child is TextField || child is Sprite || child is Bitmap || clip==null && child is Shape)
+-                  s.children.push({n:child.name,i:i,cls:getQualifiedClassName(child),s:capture(child,depth+1,includePixels)});
++                  s.children.push({n:child.name,i:i,cls:displayClass(child),s:capture(child,depth+1,includePixels)});
+             }
+          }
+          // Native authored trees have many unchanged limbs, colors and empty
+@@ -129,8 +151,8 @@
+          var managed:Dictionary=added[parent];
+          for each(var child:Object in s.children) {
+             var target:DisplayObject=parent.getChildByName(child.n);
+-            if(target!=null && getQualifiedClassName(target)!=child.cls && (managed==null || managed[target]!==child.cls))target=null;
+-            if(target==null && int(child.i)<parent.numChildren && getQualifiedClassName(parent.getChildAt(int(child.i)))==child.cls)target=parent.getChildAt(int(child.i));
++            if(target!=null && displayClass(target)!=child.cls && (managed==null || managed[target]!==child.cls))target=null;
++            if(target==null && int(child.i)<parent.numChildren && displayClass(parent.getChildAt(int(child.i)))==child.cls)target=parent.getChildAt(int(child.i));
+             if(target==null)throw new Error("Interpolated pose has no confirmed native child");
+             motion(target,child.s);
+          }
+@@ -225,9 +247,9 @@
+          var live:Dictionary=new Dictionary(true);
+          for each(var child:Object in s.children) {
+             var target:DisplayObject=parent.getChildByName(child.n);
+-            if(target!=null && getQualifiedClassName(target)!=child.cls && managed[target]!==child.cls)target=null;
++            if(target!=null && displayClass(target)!=child.cls && managed[target]!==child.cls)target=null;
+             // Unnamed authored children have different generated instance names.
+-            if(target==null && int(child.i)<parent.numChildren && getQualifiedClassName(parent.getChildAt(int(child.i)))==child.cls)target=parent.getChildAt(int(child.i));
++            if(target==null && int(child.i)<parent.numChildren && displayClass(parent.getChildAt(int(child.i)))==child.cls)target=parent.getChildAt(int(child.i));
+             if(target==null) {
+                if(child.s.vector!=null)target=child.cls=="flash.display::Shape"?new Shape():new Sprite();
+                else if(child.cls=="flash.display::Bitmap")target=new Bitmap();
+@@ -245,7 +267,7 @@
+       public static function dispose(display:DisplayObject):void {
+          if(display==null)return;
+          var surface:Object=pixels[display];if(surface!=null){surface.data.dispose();delete pixels[display];}
+-         VectorDraw.dispose(display);delete applied[display];delete added[display];delete captured[display];delete scriptless[display];
++         VectorDraw.dispose(display);delete applied[display];delete added[display];delete captured[display];delete scriptless[display];delete classNames[display];
+          var parent:DisplayObjectContainer=display as DisplayObjectContainer;
+          if(parent!=null)for(var i:int=0;i<parent.numChildren;i++)dispose(parent.getChildAt(i));
+       }
+--- src/RConnectMod.as
++++ src/RConnectMod.as
+@@ -16,7 +16,7 @@
+    import flash.text.TextFormat;
+    import flash.utils.getTimer;
+    public class RConnectMod {
+-      public static const VERSION:String="B3-0.1-field4";
++      public static const VERSION:String="B3-0.1-scalar1";
+       public static var instance:RConnectMod;
+       public var main:Object,stage:Stage,access:NativeAccess,host:HostSession,replica:ClientReplica;
+       public var config:Object,link:Link,probe:Probe;
