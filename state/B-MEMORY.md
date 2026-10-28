@@ -18,6 +18,8 @@
 
 旧overlay01还缺默认开启的Sandy音乐（10.2MB），environment.py已补入未来清单，但旧锁/overlay未修改。新测试包需新锁和资源回执。实际B身份的Sandy diaglog、WallBlend模式会覆盖默认；部署仅备份/重置相关模组偏好，保留原入口、AIR身份、角色存档、RConnect偏好和键位。其它默认设置核查未发现须重置项。
 
+本轮源码/工具/记录本地提交 `86cadaa`，未上传；生成产物和无关工作未入Git。该提交是待验候选保存，不是发布完成。
+
 ## 最新安装状态（2026-10-28，载入修复）
 
 用户报告安保终端 `Security terminal stepped without an occupant`，主侧停留 Loading、加入侧已有地图。已确认原生 `Location.preStep` 在无玩家的新房运行30步，被B误判；错误界面使后续World步进停止。只调整 SecurityTerminals 在无房内玩家时先返回原版步进，延后个人状态建档，不改破解规则、调度或协议。
