@@ -46,6 +46,8 @@
 
 ## 6. 构建、测试与下一步
 
+2026-10-28用户询问低传输压力下的加入侧分工，已做代码评估，建议以专用血条/纯装饰事件、随后身体武器显示描述替代通用pose复制；主侧仍裁定战斗与两房逻辑。详见`design/host-authority-parallel-plan-2026-10-11.md`顶部补充。**仅方案，未实现，不视为用户已选择加入侧接管战斗。** 同机搬计算不自动省总CPU；必须减少两边重复工作。field6及安装版本均未因此变更。
+
 当前安装准确scalar04。继续源码候选用 `experimental/b-field-pipeline/src`；其prepare.py只组装新 `build/ab/b190-pipeline*-source` 目录，已保存但未执行，不编译/测试/安装。未来允许验证时再沿 `field_driver/compile.py` 生成唯一候选；不要把覆盖源直接放进安装目录，不改冻结构建。
 
 功能副本 `build/ab/b-field2-runtime-01`，prepared-v19仍绑定部署前field22；性能副本 `build/ab/b-field2-bench-20261025-01`，当前prepared-sustained-003。性能驱动 `ab-sustained-003` source `1e4e640689e5269baab49b46e32c3592c568ac63550d18d4c9a83e587a7d3dc7`。继续用唯一结果目录和共享登记；新一轮资格需新建绑定field5的准备记录，不能改旧指纹。性能运行器另加可提交内存保护，物理内存原门槛保留。
