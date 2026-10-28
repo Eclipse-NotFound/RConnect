@@ -1,0 +1,20 @@
+{
+  "version": "0.2.24-animfix3-l10n",
+  "zip_sha256": "44934877df3779a229994c01d31d5ea22b4df5865697ba3092b29d142314bd50",
+  "swf_sha256": "239252df5ea24ec6da5005bd80bfeb31a91e393d6b2bfe7b1fd7b371cd4e618c",
+  "bytes": 241341,
+  "files": {
+    "INSTALL.txt": "2f8c80c3eed72144a105316b13a1a6ba4f9f19a21abcdce313702a7640d10e57",
+    "mods/RConnect/release/RConnectMod.swf": "239252df5ea24ec6da5005bd80bfeb31a91e393d6b2bfe7b1fd7b371cd4e618c",
+    "mods/RConnect/README.md": "cbb5d9579ac2e0c4123d105e9196f235909bda56f6de9c608d057adb57939276",
+    "mods/RConnect/README.zh-CN.md": "fa1da4a4ad4fcb3d2fec8d15c1d2b5a918e9ee11f1e29185ca4b914912c947a0",
+    "mods/RConnect/Start-Coop.bat": "e729087209b1aa4676feeebf180b3b1987048486f1ee2de3181386ff444879c4",
+    "mods/RConnect/docs/release-0.2.24.md": "2034439683f382c66e4ca4447fe7ecac41c7b85b08f0743f11d568db55ff2ac1",
+    "mods/RConnect/tools/start_coop.ps1": "b08f2d7e03ca7701065205554bac143011937b6c19749e29968a527534e61e4d",
+    "mods/RConnect/tools/RConnect.Process.ps1": "22f6f390fc1dec8c489c9ffaea2a0c1b311f6ed9194e501261a36a3d9954bb7e",
+    "mods/RConnect/tools/RConnect.Profile.ps1": "032410b0b497dfc086e198472c6d18ec991b9cacfb05126f81c9f4d1133eb206",
+    "mods/RConnect/tools/second_player_descriptor.xml": "04e7ebdae9e6a2fcd71c7d661bea176e3e0d300048b0b40225ffdc3ea8af05f0",
+    "mods/RConnect/tools/keep_test_responsive.ps1": "8995a30e2de30441eb449ab705fe0e026585981da564ed5fdf414cfec53c63ef",
+    "mods/RConnect/BUILD.json": "012b7830a980bfb88a1b1fb7a3e0111e6ffbe97a0fab7d47f3fe29afda6649a8"
+  }
+}

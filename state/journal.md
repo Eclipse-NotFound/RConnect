@@ -1,3 +1,8 @@
+## 2026-10-29 A 九语言与 GitHub Release 已完成
+- 117×9译文补齐；五处语言/UI/版本变化，80玩法类不改。最终239252…E618C，双侧各1181项检查通过，固定标签0溢出。原生存根不嵌入、156源/声明Git字节匹配。
+- 已正常推送完整A公开源303631c及标签v0.2.24-animfix3-l10n、创建预发布安装包；ZIP449348…BD50回读一致。本地主分支B开发变化没有上传。
+- 本机同字节部署，旧EB6D备份及回执在build/a-locales-deploy-20261029。继续性能修复需保留九语言；卡顿／加载目标未借此宣布解决。细节state/github-a-locales-2026-10-29.md。
+
 ## 2026-10-28 A 六项视觉反馈窄修，animfix3已部署
 
 - 已部署EB6D11…ABC127，准确全源visual2-combined-04；Git完整快照experimental/a-visual-round2/validated-src。回执visual2-deploy-5c955c7f verified，旧F14A备份保留，宿主/配置/玩家存档/B不改。

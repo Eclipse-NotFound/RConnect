@@ -1,0 +1,9 @@
+{
+  "status": "verified",
+  "before": "eb6d11e6f20068f76d44d180bc5f579c14ba359caa46e4706d0506b0d4abc127",
+  "after": "239252df5ea24ec6da5005bd80bfeb31a91e393d6b2bfe7b1fd7b371cd4e618c",
+  "backup": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\a-locales-deploy-20261029\\RConnectMod.before.swf",
+  "candidate": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\a-locales-04\\RConnectMod.swf",
+  "runtime": "8a120eb346",
+  "protected_unchanged": true
+}

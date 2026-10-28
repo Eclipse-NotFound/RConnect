@@ -1,0 +1,52 @@
+{
+  "version": "0.2.24-animfix3-l10n",
+  "swf_sha256": "239252df5ea24ec6da5005bd80bfeb31a91e393d6b2bfe7b1fd7b371cd4e618c",
+  "languages": {
+    "messages": 117,
+    "languages": [
+      "zh",
+      "tw",
+      "en",
+      "ru",
+      "ua",
+      "pl",
+      "de",
+      "es",
+      "jp"
+    ],
+    "translations": 1053
+  },
+  "runtime": {
+    "host": {
+      "passed": true,
+      "checks": 1181,
+      "failures": 0,
+      "overflow": [],
+      "page_observations": 369,
+      "audio_volume": 0
+    },
+    "join": {
+      "passed": true,
+      "checks": 1181,
+      "failures": 0,
+      "overflow": [],
+      "page_observations": 369,
+      "audio_volume": 0
+    }
+  },
+  "scope": "isolated RConnect-only host/join; localization and layout, not a performance qualification",
+  "audit": {
+    "passed": true,
+    "classes": 85,
+    "source_changed_from_animfix3": [
+      "modlocales/connect/RCLocale.as",
+      "modlocales/connect/RCLocaleMessages.as",
+      "rconnect/ui/NetHud.as",
+      "rconnect/ui/NetKeybinds.as",
+      "RConnectMod.as"
+    ],
+    "gameplay_classes_unchanged": 80,
+    "native_stubs_embedded": [],
+    "swf_sha256": "239252df5ea24ec6da5005bd80bfeb31a91e393d6b2bfe7b1fd7b371cd4e618c"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "classes": 85,
+  "source_changed_from_animfix3": [
+    "modlocales/connect/RCLocale.as",
+    "modlocales/connect/RCLocaleMessages.as",
+    "rconnect/ui/NetHud.as",
+    "rconnect/ui/NetKeybinds.as",
+    "RConnectMod.as"
+  ],
+  "gameplay_classes_unchanged": 80,
+  "native_stubs_embedded": [],
+  "swf_sha256": "239252df5ea24ec6da5005bd80bfeb31a91e393d6b2bfe7b1fd7b371cd4e618c"
+}
