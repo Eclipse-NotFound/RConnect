@@ -1,5 +1,13 @@
 # B 环境同步候选
 
+## 当前集成结果（2026-10-29）
+
+以下原始制作记录中的“未运行／未安装”是早期停点。当前 `environment-lock-02.json` + `candidate-inputs-03.json` + `overlay-03`（23文件，含Sandy默认音乐）已随 `B3-0.1-clientenv1` 安装并完成双侧复验。模组正源未改；CS/RV/LAD在实际1.02入口默认关闭，其余11项启用默认配置。旧ModSettings明确关闭以免重扫重新启用。
+
+真实伤残/计时/个人保存、配件/战术模块/复活、两人服药/退出、载入/分房、时停/SATS与基地显示通过；同环境性能和安装回执见 `../b-field-client-integration/`。这些不代表穷尽所有武器、自定义设置面板、医生和背景门组合。完整证据与限制见 `../../state/b-clientenv-progress-2026-10-29.md`，原失败不覆盖。
+
+## 独立制作阶段记录
+
 2026-10-29。独立源码、三个模组 SWF 与 PI 原生候选已编译；没有启动游戏或安装。负责窗口之外的性能与经验开关改动不在这里。
 
 当前可用产物及准确源／工具指纹见 `bridge-build-02/build.json` 与 `injury-native-sources-02/native-01/build.json`：

@@ -15,7 +15,7 @@ package {
    {kind:"modify",owner:0},{kind:"modify",owner:1},{kind:"optic",owner:0},{kind:"optic",owner:1},
    {kind:"grenade",owner:0},{kind:"grenade",owner:1},{kind:"grenadeMode",owner:0},{kind:"grenadeMode",owner:1},
    {kind:"leaveGrenadeMode",owner:0},{kind:"leaveGrenadeMode",owner:1},{kind:"bipod",owner:0},{kind:"bipod",owner:1}];
-  private var began:int,bulletSeen:Array=[false,false],duplicateSequence:int=-1,duplicateAt:int=0,reconnectStarted:Boolean=false,done:Boolean=false;
+  private var began:int,bulletSeen:Array=[false,false],duplicateSequence:int=-1,duplicateAt:int=0,reconnectStarted:Boolean=false,reboundDone:Boolean=false,done:Boolean=false;
 
   public function BFAAddonCases(m:Object,r:Object,d:ApplicationDomain,c:Object,role:String,a:Object) {
    if(NativeApplication.nativeApplication.applicationID.indexOf("pfe-modsettings-rconnect-b-startup-")!=0)
@@ -147,6 +147,17 @@ package {
   }
   private function next():void {
    if(++index>=operations.length) {
+    if(!reboundDone) {
+     reboundDone=true;
+     for each(var revived:Object in mod.host.actors)mod.access.scope.run(revived.context,function():void {
+      var weapon:Object=revived.unit.invent.weapons.lmg,identity:Object=revived.unit;
+      // Exercise the same native resurrection and epoch boundary used by
+      // PlayerLives, without waiting through a second damage/death fixture.
+      revived.unit.resurect();++revived.epoch;mod.host.inputs[revived.id].epoch=revived.epoch;mod.host.inputs[revived.id].clear();
+      check(revived.unit===identity && revived.unit.invent.weapons.lmg===weapon,"native resurrection retains modified weapon identity "+revived.id);
+     });
+     expected.bipod=[false,false];publish("rebound");return;
+    }
     check(bulletSeen[0] && bulletSeen[1],"both grenade commands created native owner-tagged projectiles",bulletSeen);
     // Confirm save output uses each actor's own scope and profile.
     for each(var actor:Object in mod.host.actors)mod.access.scope.run(actor.context,function():void {

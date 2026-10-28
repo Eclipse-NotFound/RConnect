@@ -1,0 +1,284 @@
+{
+  "schema": "b-current-environment-sustained-1",
+  "valid_inputs": true,
+  "qualified": true,
+  "gates": {
+    "seconds_per_phase": 60,
+    "samples_per_phase_min": 45,
+    "enemies": [
+      8,
+      80
+    ],
+    "maximum_mean_ratio": 1.05,
+    "maximum_p95_ratio": 1.05,
+    "maximum_repeat_ratio": 1.2,
+    "required_firing_windows": 6,
+    "window_span_min_ms": 8000
+  },
+  "candidate_sha256": "c953c0684ca716b2641c88f13e514275d5f2cc8e3387d9ade50d7ab8bd1fc5a0",
+  "source": "5854ef397c1e96cf24d8b637f32cdc24589502d91fe86cce892a3189b75041dd",
+  "baseline": {
+    "path": "build/ab/b-clientenv-no-cache-01-build",
+    "source_id": "9b99b3674e41b71c88fd5baab45fb919d107a139a160d3e83b396df25a3f19cc",
+    "version": "B3-0.1-clientenv1",
+    "candidate_sha256": "39bf1b7e83517fc7f86fd56ee01b1f125d21dd43f70fdede11f7920737301031",
+    "manifest_sha256": "ddfe43814c5e9165ae1e2bee29f4b1b6c322fbab272128d327b798c56eae2c59"
+  },
+  "candidate": {
+    "path": "build/ab/b-clientenv-bridge-07-build",
+    "source_id": "5854ef397c1e96cf24d8b637f32cdc24589502d91fe86cce892a3189b75041dd",
+    "version": "B3-0.1-clientenv1",
+    "candidate_sha256": "c953c0684ca716b2641c88f13e514275d5f2cc8e3387d9ade50d7ab8bd1fc5a0",
+    "manifest_sha256": "42c946ae647111ffb08a20323222fdd948e342cb236ea2b61afd6f84c30669e4"
+  },
+  "series": "build/ab/b-clientenv-comparison-01/series.json",
+  "series_sha256": "479add26cc57762530dd7148f0584828beb62ad5e2a0bae5e7b4bd27c26010a6",
+  "environment_sha256": "301cf50a092ca145c2b7e3e2d3826e73884bec9554bf6af69a563e933b3a85b7",
+  "native_sha256": "3b1b77d3f6de08e5b31bb03883da6900b3656e497a4749305133019d0377ed83",
+  "comparisons": [
+    {
+      "role": "host",
+      "enemies": 8,
+      "baseline": {
+        "mean_ms": 38.49919902079211,
+        "p95_ms": 60.0,
+        "mean_repeats_ms": [
+          38.38771593090211,
+          38.61068211068211
+        ],
+        "p95_repeats_ms": [
+          60,
+          60
+        ],
+        "repeat_ratio": 1.005808268983269,
+        "p95_repeat_ratio": 1.0
+      },
+      "candidate": {
+        "mean_ms": 39.04147532993687,
+        "p95_ms": 61.5,
+        "mean_repeats_ms": [
+          38.63127413127413,
+          39.451676528599606
+        ],
+        "p95_repeats_ms": [
+          60,
+          63
+        ],
+        "repeat_ratio": 1.0212367418826942,
+        "p95_repeat_ratio": 1.05
+      },
+      "mean_ratio": 1.0140853919805422,
+      "p95_ratio": 1.025,
+      "no_material_regression": true,
+      "repeatable": true
+    },
+    {
+      "role": "host",
+      "enemies": 80,
+      "baseline": {
+        "mean_ms": 63.658060518550506,
+        "p95_ms": 92.0,
+        "mean_repeats_ms": [
+          63.60699152542373,
+          63.70912951167728
+        ],
+        "p95_repeats_ms": [
+          92,
+          92
+        ],
+        "repeat_ratio": 1.0016057666587286,
+        "p95_repeat_ratio": 1.0
+      },
+      "candidate": {
+        "mean_ms": 61.7946672642433,
+        "p95_ms": 90.0,
+        "mean_repeats_ms": [
+          61.83316168898043,
+          61.75617283950617
+        ],
+        "p95_repeats_ms": [
+          90,
+          90
+        ],
+        "repeat_ratio": 1.0012466583652186,
+        "p95_repeat_ratio": 1.0
+      },
+      "mean_ratio": 0.9707280862921641,
+      "p95_ratio": 0.9782608695652174,
+      "no_material_regression": true,
+      "repeatable": true
+    },
+    {
+      "role": "join",
+      "enemies": 8,
+      "baseline": {
+        "mean_ms": 33.44504807740083,
+        "p95_ms": 45.0,
+        "mean_repeats_ms": [
+          33.500558035714285,
+          33.38953811908737
+        ],
+        "p95_repeats_ms": [
+          45,
+          45
+        ],
+        "repeat_ratio": 1.0033249910864581,
+        "p95_repeat_ratio": 1.0
+      },
+      "candidate": {
+        "mean_ms": 33.38982152241694,
+        "p95_ms": 46.0,
+        "mean_repeats_ms": [
+          33.448160535117054,
+          33.33148250971682
+        ],
+        "p95_repeats_ms": [
+          47,
+          45
+        ],
+        "repeat_ratio": 1.0035005351281996,
+        "p95_repeat_ratio": 1.0444444444444445
+      },
+      "mean_ratio": 0.9983487374616392,
+      "p95_ratio": 1.0222222222222221,
+      "no_material_regression": true,
+      "repeatable": true
+    },
+    {
+      "role": "join",
+      "enemies": 80,
+      "baseline": {
+        "mean_ms": 41.02430925491868,
+        "p95_ms": 65.5,
+        "mean_repeats_ms": [
+          41.554016620498615,
+          40.49460188933873
+        ],
+        "p95_repeats_ms": [
+          68,
+          63
+        ],
+        "repeat_ratio": 1.0261618754533008,
+        "p95_repeat_ratio": 1.0793650793650793
+      },
+      "candidate": {
+        "mean_ms": 39.52249406493057,
+        "p95_ms": 64.0,
+        "mean_repeats_ms": [
+          39.710125744540036,
+          39.3348623853211
+        ],
+        "p95_repeats_ms": [
+          66,
+          62
+        ],
+        "repeat_ratio": 1.0095402230098807,
+        "p95_repeat_ratio": 1.064516129032258
+      },
+      "mean_ratio": 0.9633920663805438,
+      "p95_ratio": 0.9770992366412213,
+      "no_material_regression": true,
+      "repeatable": true
+    }
+  ],
+  "qualifier_sha256": "942a024a42ee92e7a9491434b870b8313a410d61ffdc33838f6ed0a0f1e7dd73",
+  "workload_checker_sha256": "1a0b4a83881f354c8f4bc1ec638c0b83a99e208f2180bf0bcf1f5b55f09d986f",
+  "scope": "Stage frame intervals in the same default environment. Not GPU output or input-to-display latency.",
+  "raw_qualification": "build/ab/b-clientenv-comparison-01/qualification-01.json",
+  "playback": [
+    {
+      "group": "baseline",
+      "path": "build/ab/b-clientenv-comparison-01/01-A",
+      "metrics": {
+        "0": {
+          "underflow_increase": 2,
+          "mean_target_delay_ms": 91.63291139240506,
+          "p95_target_delay_ms": 119,
+          "max_target_delay_ms": 124,
+          "max_frame_interval_ms": 116,
+          "empty_buffer_samples": 1
+        },
+        "1": {
+          "underflow_increase": 0,
+          "mean_target_delay_ms": 163.12820512820514,
+          "p95_target_delay_ms": 188,
+          "max_target_delay_ms": 203,
+          "max_frame_interval_ms": 128,
+          "empty_buffer_samples": 0
+        }
+      }
+    },
+    {
+      "group": "candidate",
+      "path": "build/ab/b-clientenv-comparison-01/02-B",
+      "metrics": {
+        "0": {
+          "underflow_increase": 5,
+          "mean_target_delay_ms": 92.58227848101266,
+          "p95_target_delay_ms": 117,
+          "max_target_delay_ms": 121,
+          "max_frame_interval_ms": 105,
+          "empty_buffer_samples": 1
+        },
+        "1": {
+          "underflow_increase": 4,
+          "mean_target_delay_ms": 158.51282051282053,
+          "p95_target_delay_ms": 179,
+          "max_target_delay_ms": 183,
+          "max_frame_interval_ms": 110,
+          "empty_buffer_samples": 0
+        }
+      }
+    },
+    {
+      "group": "baseline",
+      "path": "build/ab/b-clientenv-comparison-01/03-A",
+      "metrics": {
+        "0": {
+          "underflow_increase": 6,
+          "mean_target_delay_ms": 92.41772151898734,
+          "p95_target_delay_ms": 112,
+          "max_target_delay_ms": 115,
+          "max_frame_interval_ms": 104,
+          "empty_buffer_samples": 0
+        },
+        "1": {
+          "underflow_increase": 1,
+          "mean_target_delay_ms": 164.01282051282053,
+          "p95_target_delay_ms": 182,
+          "max_target_delay_ms": 189,
+          "max_frame_interval_ms": 105,
+          "empty_buffer_samples": 0
+        }
+      }
+    },
+    {
+      "group": "candidate",
+      "path": "build/ab/b-clientenv-comparison-01/04-B",
+      "metrics": {
+        "0": {
+          "underflow_increase": 10,
+          "mean_target_delay_ms": 91.0632911392405,
+          "p95_target_delay_ms": 115,
+          "max_target_delay_ms": 119,
+          "max_frame_interval_ms": 98,
+          "empty_buffer_samples": 1
+        },
+        "1": {
+          "underflow_increase": 0,
+          "mean_target_delay_ms": 156.97435897435898,
+          "p95_target_delay_ms": 173,
+          "max_target_delay_ms": 175,
+          "max_frame_interval_ms": 111,
+          "empty_buffer_samples": 0
+        }
+      }
+    }
+  ],
+  "limits": [
+    "Not a comparison against the old installed mod environment.",
+    "Mid-series process observation saw only the two owned AIR instances; no claim of full-machine inactivity.",
+    "Buffer underflows increased in some runs; dense target delay remains around 157-164 ms.",
+    "No end-to-end input latency or GPU-output measurement."
+  ]
+}

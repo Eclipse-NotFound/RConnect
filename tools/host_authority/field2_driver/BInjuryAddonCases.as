@@ -6,10 +6,9 @@ package {
  public final class BInjuryAddonCases {
   private var mod:Object,root:Object,domain:ApplicationDomain,api:Object,side:String;
   private var phase:int=0,at:int=0,seen:int=-1,start:Array,original:Object,ready:Boolean=false;
-  private var injuryClass:Object,front:Object;
+  private var front:Object;
   public function BInjuryAddonCases(m:Object,r:Object,d:ApplicationDomain,c:Object,role:String,a:Object) {
    mod=m;root=r;domain=d;api=a;side=role;at=getTimer();
-   injuryClass=domain.getDefinition("PermanentInjuryMod");
    var carrier:Object=root.getChildByName("PermanentInjuryCarrier");
    if(carrier==null||carrier.authorityAPI.version!==1)throw new Error("PI fixture requires independent authority bridge");
    front=carrier.api;
@@ -19,8 +18,20 @@ package {
    if(w.ctr!=null)for each(var key:String in ["keyLeft","keyRight","keyJump","keyAttack","keySit","keyRun","keyAction","keyTele"])w.ctr[key]=false;
   }
   private function state(a:Object):Object {return a.unit.pers.piPermanent;}
+  private function signature(value:*):String {
+   // AIR JSON can round-trip a fractional Number by a few ulps (for example
+   // 93.31668464463655 -> 93.31668464463657). Keep IDs/seeds/counters exact;
+   // compare continuous injury fields to 1e-9, well below gameplay precision.
+   if(typeof value=="number" && isFinite(Number(value)) && Number(value)!=Math.floor(Number(value)))return JSON.stringify(Math.round(Number(value)*1e9)/1e9);
+   if(value==null||typeof value!="object")return JSON.stringify(value);
+   var parts:Array=[],key:String;
+   if(value is Array){for each(var item:* in value)parts.push(signature(item));return "["+parts.join(",")+"]";}
+   var keys:Array=[];for(key in value)keys.push(key);keys.sort();
+   for each(key in keys)parts.push(JSON.stringify(key)+":"+signature(value[key]));
+   return "{"+parts.join(",")+"}";
+  }
   private function stable(s:Object):String {
-   return JSON.stringify({P:s.P,z:s.z,seed:s.seed,sequence:s.sequence,K:s.K,level:s.level});
+   return signature({P:s.P,z:s.z,seed:s.seed,sequence:s.sequence,K:s.K,level:s.level});
   }
   private function permanent(s:Object):Number {var n:Number=0;for each(var p:String in ["head","torso","legs","blood","mana"])n+=Number(s.P[p]);return n;}
   private function copy(v:Object):Object {return JSON.parse(JSON.stringify(v));}
@@ -46,7 +57,7 @@ package {
     mod.access.scope.run(a.context,function():void {
      // Ordinary wounds place the real damage path below PI's default risk
      // threshold. No permanent injury, probability or random seed is injected.
-     for(var i:int=0;i<64&&permanent(state(a))>=before.sum;i++) {
+     for(var i:int=0;i<256&&permanent(state(a))>=before.sum;i++) {
       p.healAll();g.hp=g.maxhp;g.cut=g.poison=0;
       p.headHP=p.torsHP=p.legsHP=p.bloodHP=p.inMaxHP*.60;
       p.headSt=p.torsSt=p.legsSt=p.bloodSt=1;
@@ -81,13 +92,13 @@ package {
    seen=c.stage;
    api.check(stable(w.pers.piPermanent)===c.remote,"PI join matches its presented confirmed state "+seen);
    api.check(stable(w.pers.piPermanent)!==c.local,"PI join never adopts host injury state "+seen);
-   var before:String=JSON.stringify(w.pers.piPermanent);
+   var before:String=signature(w.pers.piPermanent);
    // Exercise the actual client authority boundary, not a fake controller.
    front.dispatch(w.pers,"tick",10);
    front.dispatch(w.pers,"begin",{dot:false,shot:0});
    front.dispatch(w.pers,"part",{part:"head",D:1000,H:0,M:200});
    front.dispatch(w.pers,"end");front.dispatch(w.pers,"flush");
-   api.check(JSON.stringify(w.pers.piPermanent)===before,"PI join cannot advance time or draw/settle a second injury "+seen);
+   api.check(signature(w.pers.piPermanent)===before,"PI join cannot advance time or draw/settle a second injury "+seen);
    saveRoundtrip(w.pers,"join-stage"+seen);
    api.write("injury-ack-"+seen+".json",{stage:seen,remote:c.remote});
   }
@@ -98,8 +109,9 @@ package {
    if(phase==0) {
     if(!s.active||w.t_exit>0||w.t_die>0||!s.actors[0].unit.ggControl||!s.actors[1].unit.ggControl)return;
     api.check(state(s.actors[0])!=null&&state(s.actors[1])!=null&&state(s.actors[0])!==state(s.actors[1]),"PI both actors have distinct native injury state");
-    original={config:JSON.stringify(injuryClass.config)};
-    api.check(injuryClass.config.enabled===true&&injuryClass.config.magicEnabled===false&&injuryClass.config.p_0===.25,"PI factory rules retained in B test");
+    var config:Object=mod.access.injury.snapshot(s.actors[0]).config;
+    original={config:signature(config)};
+    api.check(config.enabled===true&&config.magicEnabled===false&&config.p_0===.25,"PI factory rules retained in B test");
     start=[capture(s.actors[0]),capture(s.actors[1])];phase=1;at=getTimer();return;
    }
    if(phase==1) {
@@ -115,7 +127,7 @@ package {
     api.write("injury-native-hit-host.json",damageActor(0));signal(2);phase=3;return;
    }
    if(phase==3&&api.read("injury-ack-2.json")!=null) {
-    api.check(JSON.stringify(injuryClass.config)===original.config,"PI fixture never changes factory injury rules");
+    api.check(signature(mod.access.injury.snapshot(s.actors[0]).config)===original.config,"PI fixture never changes factory injury rules");
     api.picture("host-injury-confirmed");api.write("injury-control.json",{done:true});phase=4;at=getTimer();return;
    }
    if(phase==4&&api.read("injury-join-done.json")!=null)api.finish();

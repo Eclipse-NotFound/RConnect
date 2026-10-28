@@ -51,7 +51,7 @@ def main():
  prior_path=WORK/a.prior_preparation;prior=read(prior_path);functional=read(functional_path);plan=read(overlay/'assembly.json');driver=read(DRIVER/'build-input.json')
  previous={role:prior['roles'][role]['files'] if prior.get('kind')=='b-sustained-current-environment' else prior[role] for role in ('host','join')}
  verify_files(overlay,plan['files']);verify_files(DRIVER,driver['files']);verify_files(DRIVER,driver['sources'])
- if set(plan['disabled'])!=DISABLED or len(plan['files'])!=22:raise ValueError('Expected reviewed 22-file environment overlay')
+ if set(plan['disabled'])!=DISABLED or len(plan['files'])!=23 or 'mods/Sandevistan/release/sandy_theme.mp3' not in plan['files']:raise ValueError('Expected reviewed 23-file environment overlay including the default Sandy theme')
  if functional['environment_sha256']!=sha(overlay/'assembly.json') or functional['test_config']['environment']!=sha(overlay/'assembly.json'):raise ValueError('Functional environment does not match overlay')
  config=dict(functional['test_config'])
  if 'rv' in config:raise ValueError('RV must be absent, not silently attached')
@@ -124,7 +124,7 @@ def main():
    result['native_sha256']=plan['files']['pfe.swf'];result['native_source']=str(overlay/'pfe.swf')
    result['environment_files_sha256']=canonical(stable)
    result['full_environment_sha256']=canonical({'roles':stable,'native':result['native_sha256'],'test_config':baseconfig,'driver_source':driver['source_id'],'overlay':overlay_sha})
-   result['complete']=True;save(receipt,result);reg.outcome='passed';reg.note='22 overlay files refreshed per role; exact driver retained; no AIR/resources copied'
+   result['complete']=True;save(receipt,result);reg.outcome='passed';reg.note='23 overlay files refreshed per role; exact driver retained; no AIR or full resource copy'
   except BaseException as e:
    failed=e;result['error']=str(e);result['rolled_back']=True
    for key,change in reversed(list(changes.items())):

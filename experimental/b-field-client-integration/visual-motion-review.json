@@ -1,0 +1,172 @@
+{
+  "schema": "b-clientenv-native-visual-review-1",
+  "accepted_for_component_scope": true,
+  "candidate_sha256": "c953c0684ca716b2641c88f13e514275d5f2cc8e3387d9ade50d7ab8bd1fc5a0",
+  "visual": {
+    "presentations": 29,
+    "box_pairs": 58,
+    "tree_differences": 0,
+    "artwork_differences": 0,
+    "backdrop_differences": 0,
+    "count_differences": 0,
+    "shadow_order_or_count_errors": 0,
+    "screen_patches": 10,
+    "screen_patch_differences": 0,
+    "front_bitmap_differences": 29,
+    "back_bitmap_differences": 29
+  },
+  "speech": {
+    "observations": 16,
+    "passed": true,
+    "max_scale_error": 3.2186508178710938e-06
+  },
+  "motion": {
+    "host": {
+      "walk-right-attack": {
+        "samples": 90,
+        "selfXStart": 617.5,
+        "selfXEnd": 1219.5,
+        "missingText": 0,
+        "textMax": 0,
+        "rootMax": 0,
+        "unshakenCameraReversals": 0,
+        "maxUnshakenCameraReverse": 0,
+        "underflow": 0,
+        "renderIntervalMaxMS": 101
+      },
+      "walk-right": {
+        "samples": 90,
+        "selfXStart": 600,
+        "selfXEnd": 1219.5,
+        "missingText": 0,
+        "textMax": 0,
+        "rootMax": 0,
+        "unshakenCameraReversals": 0,
+        "maxUnshakenCameraReverse": 0,
+        "underflow": 0,
+        "renderIntervalMaxMS": 93
+      },
+      "walk-left-attack": {
+        "samples": 90,
+        "selfXStart": 1226.5,
+        "selfXEnd": 624.5,
+        "missingText": 0,
+        "textMax": 0,
+        "rootMax": 0,
+        "unshakenCameraReversals": 0,
+        "maxUnshakenCameraReverse": 0,
+        "underflow": 0,
+        "renderIntervalMaxMS": 91
+      },
+      "stationary": {
+        "samples": 232,
+        "selfXStart": 600,
+        "selfXEnd": 600,
+        "missingText": 0,
+        "textMax": 0,
+        "rootMax": 0,
+        "unshakenCameraReversals": 0,
+        "maxUnshakenCameraReverse": 0,
+        "underflow": 0,
+        "renderIntervalMaxMS": 94
+      },
+      "walk-left": {
+        "samples": 90,
+        "selfXStart": 1226.5,
+        "selfXEnd": 624.5,
+        "missingText": 0,
+        "textMax": 0,
+        "rootMax": 0,
+        "unshakenCameraReversals": 0,
+        "maxUnshakenCameraReverse": 0,
+        "underflow": 0,
+        "renderIntervalMaxMS": 85
+      }
+    },
+    "join": {
+      "walk-left-attack": {
+        "samples": 105,
+        "selfXStart": 1415.8118279569892,
+        "selfXEnd": 831.5,
+        "missingText": 0,
+        "textMax": 0.049999999999954525,
+        "rootMax": 0.049999999999954525,
+        "unshakenCameraReversals": 0,
+        "maxUnshakenCameraReverse": 0,
+        "underflow": 2,
+        "renderIntervalMaxMS": 82
+      },
+      "stationary": {
+        "samples": 95,
+        "selfXStart": 561.8,
+        "selfXEnd": 800,
+        "missingText": 0,
+        "textMax": 0.04843750000009095,
+        "rootMax": 0.04843750000009095,
+        "unshakenCameraReversals": 0,
+        "maxUnshakenCameraReverse": 0,
+        "underflow": 7,
+        "renderIntervalMaxMS": 299
+      },
+      "walk-right-attack": {
+        "samples": 104,
+        "selfXStart": 831.4125,
+        "selfXEnd": 1402.7,
+        "missingText": 0,
+        "textMax": 0.04888888888888232,
+        "rootMax": 0.04888888888888232,
+        "unshakenCameraReversals": 0,
+        "maxUnshakenCameraReverse": 0,
+        "underflow": 0,
+        "renderIntervalMaxMS": 103
+      },
+      "walk-left": {
+        "samples": 99,
+        "selfXStart": 1429.7374609796836,
+        "selfXEnd": 817.5784507965466,
+        "missingText": 0,
+        "textMax": 0.04857142857144936,
+        "rootMax": 0.04857142857144936,
+        "unshakenCameraReversals": 16,
+        "maxUnshakenCameraReverse": 2,
+        "underflow": 2,
+        "renderIntervalMaxMS": 97
+      },
+      "walk-right": {
+        "samples": 85,
+        "selfXStart": 800,
+        "selfXEnd": 1430.4258385692733,
+        "missingText": 0,
+        "textMax": 0.049999999999954525,
+        "rootMax": 0.049999999999954525,
+        "unshakenCameraReversals": 22,
+        "maxUnshakenCameraReverse": 24,
+        "underflow": 2,
+        "renderIntervalMaxMS": 112
+      }
+    }
+  },
+  "screenshot_review": "已亲自查看两侧 phase0：未遮挡部分的基地装饰、背景位置对应，医疗箱和终端未见黑影覆盖；主侧对话面板不同，不做整图相等判断。",
+  "limitations": [
+    "整层 front/back 位图摘要仍不同，未据局部一致宣称整图逐像素一致。",
+    "运动文字与粒子位置误差不超过0.05像素且无缺失，但加入侧镜头仍有反向跳动；功能断言不代表无卡顿。",
+    "移动测试记录到加入侧静止阶段299毫秒间隔；未测输入到画面的端到端延迟。"
+  ],
+  "files": {
+    "build/ab/b-clientenv-visualfield-01/result.json": "e66fa3623d3bb188c8ccaa2a10e462b28f8f9360d25033b22daeee70c9d40b58",
+    "build/ab/b-clientenv-visualfield-01/visualfield-join-final.json": "b3c713e977e79c27a9cacadfb946f5890b27bccf9a7ca12d9568407486aa6867",
+    "build/ab/b-clientenv-visualfield-01/host-visualfield-0.png": "9cd8ecb83f5cd0c7a4d4192986e2a9c935f69abc596054bdbaade1a3e41fa1e8",
+    "build/ab/b-clientenv-visualfield-01/join-visualfield-0.png": "7612c06882f9a858d4b2d239cf57773730db43701881c5ae4eaa41ceef47a591",
+    "build/ab/b-clientenv-textmotion-01/result.json": "dd31df4a767519f62126914f381dc34b6ea5bbeabb7023fbe85984c4ddb0bf88",
+    "build/ab/b-clientenv-textmotion-01/host-text-motion-final.json": "c6983898f2be9ae5b7e435a4af3dacfbc602019f2a4b416230bfdc51d880846b",
+    "build/ab/b-clientenv-textmotion-01/join-text-motion-final.json": "0f3f8986d8ea16473cab4aa05c5c09be0932679213166177a62405187c036503",
+    "build/ab/b-clientenv-visualfield-01/visualfield-birth-ack-1.json": "d7e6c0db691d459b12fe00021df6780285e7d45824f557285c57388b16fb711a",
+    "build/ab/b-clientenv-visualfield-01/visualfield-birth-ack-2.json": "70c4f17e26bb05f7c22dd10b7598f29c99670ae3328f689b7e48eef7f4a3404d",
+    "build/ab/b-clientenv-visualfield-01/visualfield-birth-ack-3.json": "221ab5eaac1926a4fd9c09edb842d1c9e14cbf518dd7f3f1233c7e5e145c40d0",
+    "build/ab/b-clientenv-visualfield-01/visualfield-birth-ack-4.json": "2ef3073fd6fa6448874db78ae4b578f5d0c59e634f24f47eadd2248c69c669bd",
+    "build/ab/b-clientenv-visualfield-01/visualfield-after-ack-1.json": "455470a7f87a182e8b6a8d439d5cdb01e6eb1aa3cdd1fee48cf188d54a378705",
+    "build/ab/b-clientenv-visualfield-01/visualfield-after-ack-2.json": "ca156715096cd59875e33391d77d071588423867677665d370e58ba71d1a2419",
+    "build/ab/b-clientenv-visualfield-01/visualfield-after-ack-3.json": "83e8138f32c37f584bee27b427c25c87520faa6a8317d6a0843abffec899887a",
+    "build/ab/b-clientenv-visualfield-01/visualfield-after-ack-4.json": "f8716641b2f80a7a5266963075ed1db0ccf988535a8298b1da47adad2d4f10df"
+  }
+}

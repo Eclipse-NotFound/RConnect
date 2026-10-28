@@ -1,0 +1,28 @@
+{
+  "status": "verified",
+  "transaction": "build/ab/b-clientenv-deploy-20261029-03",
+  "transaction_sha256": "341cfcb21129d3a73fb0ee8d0c3f64d75db59e103ec3a1c31e16f28f0bfef4e0",
+  "manual_sha256": "18ece1be58d84452c884663ea6ab9b5fff89bd45762b950560027deb8636c070",
+  "candidate": {
+    "path": "build/ab/b-clientenv-bridge-07-build",
+    "source_id": "5854ef397c1e96cf24d8b637f32cdc24589502d91fe86cce892a3189b75041dd",
+    "version": "B3-0.1-clientenv1",
+    "candidate_sha256": "c953c0684ca716b2641c88f13e514275d5f2cc8e3387d9ade50d7ab8bd1fc5a0",
+    "manifest_sha256": "42c946ae647111ffb08a20323222fdd948e342cb236ea2b61afd6f84c30669e4"
+  },
+  "environment_sha256": "d1f953f68e58650df6c1d7900994d7edd584441e10b0136c3d62e1ceda3fe475",
+  "root_A_same": true,
+  "smoke": {
+    "result": "build/ab/b-clientenv-installed-ui-02/result.json",
+    "sha256": "9aa5cebe3ada2db72961c9862b3684800e8ffd075f63b4bbe2b0ca7e23f9026f",
+    "preparation": "build/ab/b-field2-runtime-01/prepared-clientenv-installed-02.json",
+    "preparation_sha256": "a2f0f881994a017cb526c86b40a40a3c256f41fc7e4581f7583cb8238bd7880b",
+    "scenario": "ui",
+    "checks": {
+      "host": 127,
+      "join": 84
+    }
+  },
+  "installed_target_count": 32,
+  "preserved_file_count": 115
+}

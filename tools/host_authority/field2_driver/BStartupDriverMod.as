@@ -92,7 +92,7 @@ package {
   private static var cases:BFieldCases;
   private static function external():Boolean{return ["ui","controls","darkteleport","security","textmotion","terrainlive","motion","visualfield","loading","horseshoe","addiction","injury","attachments"].indexOf(String(cfg.scenario))>=0;}
   private static function externalFinish():void{phase=90;finish();}
-  private static function builtin():Boolean{return ["enemies","teleport","rockets","terrain"].indexOf(String(cfg.scenario))>=0;}
+  private static function builtin():Boolean{return ["enemies","teleport","rockets","terrain","timecontrol"].indexOf(String(cfg.scenario))>=0;}
   private static var home:Object,nextRoom:Object,target:Object,floorY:Number,epoch:uint,joinStage:String="";
   private static function file(name:String):File {return new File(String(cfg.evidenceDirectory)).resolvePath(name);}
   private static var pendingWrites:Object={},writeWait:int=0,finishRequested:Boolean=false,ioFailed:Boolean=false;
@@ -149,7 +149,7 @@ package {
      fieldsContract();
      BCadenceChecks.run(domain,check);
      BDeltaPrefixChecks.run(domain,check);
-     if(builtin()){var ProbeType:Class=domain.getDefinition(cfg.scenario=="enemies"?"authority.EnemyVisualProbe":cfg.scenario=="teleport"?"authority.TeleportProbe":"authority.WeaponProbe") as Class;
+     if(builtin()){var ProbeType:Class=domain.getDefinition(cfg.scenario=="timecontrol"?"authority.TimeControlProbe":cfg.scenario=="enemies"?"authority.EnemyVisualProbe":cfg.scenario=="teleport"?"authority.TeleportProbe":"authority.WeaponProbe") as Class;
       if(cfg.scenario=="rockets")mod.probe=new ProbeType(mod.access,role=="host","guns",false,["mlau","bel"]);
       else if(cfg.scenario=="terrain")mod.probe=new ProbeType(mod.access,role=="host","terrain");
       else mod.probe=new ProbeType(mod.access,role=="host");}

@@ -127,7 +127,9 @@ package {
     epoch:actor.epoch,roomEpoch:actor.roomEpoch,x:actor.unit.X,y:actor.unit.Y,
     action:actor.unit.actionObj!=null,target:actor.unit.actionObj===target.inter,
     work:actor.unit.work,remaining:actor.unit.t_action,total:actor.unit.mt_action,
-    keyAction:actor.context.ctr.keyAction,lock:target.inter.lock};
+    keyAction:actor.context.ctr.keyAction,lock:target.inter.lock,unlock:target.inter.unlock,master:target.inter.master,
+    lockTip:target.inter.lockTip,lockSkill:actor.context.pers.getLockTip(target.inter.lockTip),
+    lockMaster:actor.context.pers.getLockMaster(target.inter.lockTip)};
   }
   private function zoomFor(n:int):int {return n==1 || n==2?2:1;}
   private function cameraCheck(mode:int,label:String):void {
@@ -152,10 +154,19 @@ package {
    var a:Object=mod.host.actors[1],host:Object=mod.host.actors[0],Box:Class=mod.access.definition("fe.loc.Box");
    mod.access.scope.run(a.context,function():void {
     a.unit.setLocPos(600,floorY);a.unit.dx=a.unit.dy=0;
-    // Fixture qualifications make native success deterministic; actual input,
-    // timer decrement, Interact.act and lock change remain unmodified.
-    a.context.pers.possLockPick=1;a.context.pers.lockPick=10;a.context.pers.unlockMaster=10;
-    a.context.pers.hacker=10;a.context.pers.hackerMaster=10;a.context.pers.lockPickTime=120;
+    // Use persistent native qualifications, not temporary derived fields:
+    // Addiction's normal 15-tick setParameters() discards direct lockPick/
+    // hacker assignments. The original input, timer and unlock still execute.
+    var p:Object=a.context.pers;
+    p.skills.lockpick=20;p.skills.science=20;
+    a.unit.invent.items.screwdriver.kol=Math.max(1,a.unit.invent.items.screwdriver.kol);
+    p.setParameters();
+    var qualified:Object={lock:p.getLockTip(1),hack:p.getLockTip(2),lockMaster:p.getLockMaster(1),hackMaster:p.getLockMaster(2)};
+    p.setParameters();
+    check(qualified.lock>=4 && qualified.hack>=4 && qualified.lockMaster>=1 && qualified.hackMaster>=1 &&
+     p.getLockTip(1)==qualified.lock && p.getLockTip(2)==qualified.hack &&
+     p.getLockMaster(1)==qualified.lockMaster && p.getLockMaster(2)==qualified.hackMaster,
+     "fixture qualifications survive native parameter recomputation, tip "+tip,qualified);
    });
    mod.access.scope.run(host.context,function():void {
     if(target==null) {
@@ -163,7 +174,7 @@ package {
      home.addObj(target);home.objs.push(target);target.addVisual();
     }
     target.nazv=tip==1?"B UI lock fixture":"B UI hacking fixture";
-    target.inter.lockTip=tip;target.inter.t_action=80;target.inter.lockLevel=1;
+    target.inter.lockTip=tip;target.inter.t_action=180;target.inter.lockLevel=1;
     target.inter.setAct("lock",1);target.inter.update();
    });
    publish("lock-ready-"+tip);control.target=target.nazv;

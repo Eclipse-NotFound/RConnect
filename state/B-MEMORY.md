@@ -8,23 +8,28 @@
 
 测试登记后在自有后台桌面、独立AIR身份和复制种子中运行；不碰真实存档、不关闭玩家程序、不调用未点名Ghost。双实例启动物理余量6GiB、单实例3GiB、运行512MiB，另有可提交内存保护。复用隔离目录，保留失败和唯一证据，不复制整套游戏耗费D盘。
 
-## 进行中的任务（2026-10-29）
+## 当前版本与接续（2026-10-29）
 
-用户要求改善加入侧卡顿、同步B模组环境（CS/RV/LAD默认关、其余默认）、增加马蹄铁经验共享开关。当前未部署，安装版仍是下方loadfix1。工作源 `build/ab/b190-visual-motion-clientenv-source`；最新主体编译07，FA04与Addiction/TDFC/Sandy/PI独立桥、新PI native候选均已保存。完整新环境已完成双人加载和马蹄铁主100/加57验证；服药首测发现动作数组类型损失（04/05已修，待复测），PI检查工具跨域查询错误已修（待复测）。07另修退出丢失显示缓冲内确认、配件输入校验边界，仅编译。完整覆盖 `experimental/b-field-client-integration/source-07` 恢复144源指纹一致（5854ef397…041dd）；候选SWF c953c068…fc5a0。
+用户要求改善加入侧卡顿、同步 B 默认模组环境（CS/RV/LAD 关、其余默认）、增加马蹄铁经验共享开关。当前 **`B3-0.1-clientenv1` 已安装并验收**，原 B190 两个 Player 入口保留；事务 `build/ab/b-clientenv-deploy-20261029-03` 为 verified。已有持续部署授权，无待用户批准事项；全部自有测试已结束。
 
-30秒密集诊断采样：旧环境缓存候选加入平均64.35ms/P95 92，新完整环境40.02ms/P95 64；环境不同，不能当作严格算法AB结论。已有默认环境、缓存一致性证据与新性能入口，尚需实际模块玩法和最终性能验证。
+- 准确主体 `build/ab/b-clientenv-bridge-07-build`：SWF `c953c0684ca716b2641c88f13e514275d5f2cc8e3387d9ade50d7ab8bd1fc5a0`；source `5854ef397c1e96cf24d8b637f32cdc24589502d91fe86cce892a3189b75041dd`。完整可恢复源 `experimental/b-field-client-integration/source-07`，144份总源/18份覆盖。不要从陈旧顶层 src 继续，旧 integrate.py 不能代替 source-07。
+- 新原生 PI `3b1b77d3f6de08e5b31bb03883da6900b3656e497a4749305133019d0377ed83`；FA04、Addiction、TDFC/Sandy/PI 独立桥及默认资源均由 overlay-03 的23文件清单固定。启用11项，CS/RV/LAD和旧ModSettings关闭。原生26方法移植回读通过，无关5686方法保留。
+- 马蹄铁共享默认开，由宿主在设置中控制，仅影响之后地图马蹄铁的额外共享。关时只有拾取者获得，不改变击杀/任务奖励。双方服药、伤势、武器配件独立；退出前完整应用已确认但仍在播放缓冲中的结果，避免旧库存带回。
+- 同环境 ABAB 通过原5%平均/P95、重复1.2门槛：8/80敌人各60秒，持续轻机枪，无分项插桩。仅两缓存差异的密集加入平均41.024→39.522ms，主侧63.658→61.795ms；普通加入基本不变、普通主侧慢约1.4%。资格 `build/ab/b-clientenv-comparison-01/qualification-01.json`；不能把早期跨环境差异当缓存收益。
+- 实机通过：addiction-04 89/82、injury-03 78/66、attachments-01 107/86、loading-01 68/62、full-horseshoe-02 108/65、textmotion-01 104/117、visualfield-01 80/73、timecontrol-01 50/50（主/加）。准备06/07/08各自冻结，完整索引 `experimental/b-field-client-integration/functional-evidence.json`。
+- 视觉复核：29组确认，63背景对象逐组对应，58对医疗箱/终端显示树与素材一致，116次影子层序正确、10同缩放屏幕取样一致；16次气泡出生/变焦比例通过。已亲自看双方截图；front/back整体位图摘要仍不同，不称整图逐像素一致。
+- **卡顿和镜头跳动尚未完全解决。** textmotion加入侧向右/左移动出现反向样本，最大24/2px；开火两阶段未出现反向。静止期最大299ms。两缓存不改变预测算法，补充无缓存诊断也见1–2px回摆，但其准备清单大小写重复键导致运行文件核验未通过，不能冒充合格对照。下一步应分开确认供帧、预测校正和镜头，保留这些异常，不能用通过断言覆盖。
+- 安装32目标逐项备份/CAS，115个不相关包文件和原入口身份保留；只重置两个 B 身份已偏离默认的 Sandy/WB 设置，不清存档和联机偏好。before 保存 loadfix1 精确回滚内容；根/A前后见证完全一致。安装字节 `installed-ui-02` 主127/加84通过，真实门/独立换房/镜头缩放/开锁及破解进度复验，已 finalize。
+- `installed-ui-01` 的一项失败已查明是测试临时派生开锁属性被成瘾模组每15步的原生重算覆盖。仅修外置角色布置为真实技能20及螺丝刀，保留真实按键/计时/成功判定，补充重算后资格稳定断言；未改产品或放宽结果。准确安装准备 `prepared-clientenv-installed-02.json` SHA `a2f0f881994a017cb526c86b40a40a3c256f41fc7e4581f7583cb8238bd7880b`。
+- 新安装 manual SHA `18ece1be58d84452c884663ea6ab9b5fff89bd45762b950560027deb8636c070`；事务SHA `341cfcb21129d3a73fb0ee8d0c3f64d75db59e103ec3a1c31e16f28f0bfef4e0`。后续改版须绑定新基线，不原样重用本次固定loadfix1事务入口。精简回执 `experimental/b-field-client-integration/deployment-summary.json`。
 
-隔离测试包更新的一条组合指令被本地护栏拦截，已询问本会话10分钟精确调用授权；截至此记录未答复，未绕过。其余独立工作继续，不能把任务记为完成或已暂停。具体候选、证据、失败、源码与接续见 `state/b-clientenv-progress-2026-10-29.md`；后续统一多文件部署不能直接套旧五文件工具。另有未合入的预测去重研究，不宣称收益。
+用户此前精确护栏授权已执行并撤销。后续补充对照准备的 JSON 写入被本地二进制路径规则拒绝，未重新登记授权、未换工具绕过；只读分析和已通过的部署流程不受影响。原失败和旧事务均保留。源码已有86cadaa/2ec068e，本轮工具、环境锁和结果另行本地提交；不纳入其他 A/recovery 文件。详情 `state/b-clientenv-progress-2026-10-29.md`。
 
-旧overlay01还缺默认开启的Sandy音乐（10.2MB），environment.py已补入未来清单，但旧锁/overlay未修改。新测试包需新锁和资源回执。实际B身份的Sandy diaglog、WallBlend模式会覆盖默认；部署仅备份/重置相关模组偏好，保留原入口、AIR身份、角色存档、RConnect偏好和键位。其它默认设置核查未发现须重置项。
-
-本轮源码/工具/记录本地提交 `86cadaa`，未上传；生成产物和无关工作未入Git。该提交是待验候选保存，不是发布完成。
-
-## 最新安装状态（2026-10-28，载入修复）
+## 前一安装历史（2026-10-28，载入修复）
 
 用户报告安保终端 `Security terminal stepped without an occupant`，主侧停留 Loading、加入侧已有地图。已确认原生 `Location.preStep` 在无玩家的新房运行30步，被B误判；错误界面使后续World步进停止。只调整 SecurityTerminals 在无房内玩家时先返回原版步进，延后个人状态建档，不改破解规则、调度或协议。
 
-**当前已安装 B3-0.1-field8-loadfix1，安装字节双人复验通过，事务 verified。**
+**前一版 B3-0.1-field8-loadfix1，安装字节双人复验通过，事务 verified；当前版本以上方为准。**
 
 - 新构建：`build/ab/b190-field8-loadfix1-build`；SWF `92ea5ec83aa1ab5a412581ba80ebbc49b16fb93a01c180df239b88a4f59b1af7`；source `ac5e9d6e62c35e937deeb254f13c6371d8940f23a0f42f82e578b5006ea65d81`。native021、revision5不变。
 - 事务：`build/ab/b-field-deploy-20261028-loadfix-01/deployment.json`，before保留准确field8五文件。原B190启动入口、AIR身份、配置和存档保留。已经卡住的双方需重启并重新读档。
