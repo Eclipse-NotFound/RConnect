@@ -1,0 +1,46 @@
+--- animfix1/rconnect/game/ProjectileVisuals.as
++++ stutter-repair/rconnect/game/ProjectileVisuals.as
+@@ -114,7 +114,14 @@
+        * Merge by source time, retaining the anchor for the delayed cursor. */
+       private static function mergeFlight(old:Object,fresh:Object):Object {
+          if(!(old.frames is Array) || !(fresh.frames is Array))return fresh;
+-         var a:Array=old.frames as Array,b:Array=fresh.frames as Array,out:Array=[],i:int=0,j:int=0;
++         var a:Array=old.frames as Array,b:Array=fresh.frames as Array;
++         // Full histories already contain every point in the older window.
++         // Reuse them without allocating another array; a suffix or missing
++         // terminal metadata still needs the preserving merge below.
++         if((a.length==0 || (b.length>0 && Number(b[0].at)<=Number(a[0].at)
++            && Number(b[b.length-1].at)>=Number(a[a.length-1].at)))
++            && int(fresh.end)>=int(old.end) && (old.explosion==null || fresh.explosion!=null))return fresh;
++         var out:Array=[],i:int=0,j:int=0;
+          while(i<a.length || j<b.length) {
+             if(j>=b.length || (i<a.length && Number(a[i].at)<Number(b[j].at)))out.push(a[i++]);
+             else {if(i<a.length && Number(a[i].at)==Number(b[j].at))i++;out.push(b[j++]);}
+--- animfix1/rconnect/game/UnitPresentation.as
++++ stutter-repair/rconnect/game/UnitPresentation.as
+@@ -183,10 +183,11 @@
+                var flight:Object=ProjectileVisuals.capture(shot.bullet);
+                if(flight!=null && shot.recorded){
+                   flight.frames=shot.frames;flight.end=shot.end;flight.explosion=shot.explosion;
+-                  // Rendering can block the network timer for longer than the
+-                  // retention window. An unsent ending must never be pruned.
+-                  if(int(shot.end)>0 && int(shot.endSentAt)==0)shot.endSentAt=getTimer();
+                }
++               // Start retention after this capture, including ended invisible
++               // damage probes whose flight is null. Live records still wait
++               // for their ending, and an unsent visible ending is retained.
++               if(int(shot.end)>0 && int(shot.endSentAt)==0)shot.endSentAt=getTimer();
+                events.push({seq:shot.seq,at:shot.at,flight:flight});
+             }
+             var children:Array=get(u,"childObjs") as Array;
+--- animfix1/RConnectMod.as
++++ stutter-repair/RConnectMod.as
+@@ -26,7 +26,7 @@
+    public class RConnectMod
+    {
+       // Working M46 core after the separate 0.2.17 compact HUD release.
+-      public static const VERSION:String = "0.2.24-animfix1";
++      public static const VERSION:String = "0.2.24-animfix2";
+ 
+       public static var instance:RConnectMod;
+ 
