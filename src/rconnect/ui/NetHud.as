@@ -38,11 +38,13 @@ package rconnect.ui {
       private var _btnExploration:TextField,_btnFollow:TextField,_btnTeleport:TextField;
       private var _btnPauseMenus:TextField,_btnPauseSats:TextField,_pauseBanner:TextField;
       private var friendlyFire:TextField,friendlyHint:TextField;
+      private var securityMode:TextField,securityHint:TextField;
       private var page:String="connect",folded:Boolean=true,help:Boolean=false,unread:int=0;
       private var lines:Array=[],scroll:Number=0,dock:String="tl",preferredX:Number=8,preferredY:Number=8;
       private var box:Object={w:280,h:36,body:156},prefs:SharedObject,lastMode:String="",localError:String="";
       private var drag:Object,blockedKeys:Object={},imeActive:Boolean=false,imeCommitAt:int=-1000;
       private var disposed:Boolean=false;
+      private var keybinds:NetKeybinds=new NetKeybinds(),shortcutHeld:Object={};
 
       public function NetHud(stage:Stage,m:RConnectMod) {
          mod=m;surface=stage;name="rconnect-hud";
@@ -82,9 +84,6 @@ package rconnect.ui {
          refresh();
       }
 
-      private function tr(zh:String,en:String,ru:String):String {
-         var lang:String=RCLocale.language();return lang=="zh"?zh:lang=="ru"?ru:en;
-      }
       private function field(id:String,p:String,xx:Number,yy:Number,ww:Number,hh:Number,
          button:Boolean=false,input:Boolean=false):TextField {
          var t:TextField=new TextField();t.name=id;t.x=xx;t.y=yy;t.width=ww;t.height=hh;
@@ -191,7 +190,12 @@ package rconnect.ui {
          policyHint=field("rconnect-policy-hint","settings",8,308,264,40);
          friendlyFire=field("rconnect-friendly-fire","settings",8,352,264,30,true);
          friendlyHint=field("rconnect-friendly-hint","settings",8,388,264,42);
-         versionLabel=field("rconnect-version","settings",8,436,264,38);
+         securityMode=field("rconnect-security","settings",8,436,264,30,true);
+         securityHint=field("rconnect-security-hint","settings",8,472,264,58);
+         versionLabel=field("rconnect-version","settings",8,536,264,38);
+         action(securityMode,function():void {
+            if(mod.securityTerminals!=null)mod.securityTerminals.setShared(!mod.securityTerminals.shared);
+         });
          action(friendlyFire,function():void {
             if(mod.friendlyFire!=null)mod.friendlyFire.setEnabled(!mod.friendlyFire.enabled);
          });
@@ -257,6 +261,7 @@ package rconnect.ui {
       }
       public function refresh():void {
          if(disposed)return;
+         keybinds.tick();
          var s:Session=mod.session,mode:String=s==null?Session.OFFLINE:s.mode;
          var connected:Boolean=mode==Session.CONNECTED || mode==Session.HOSTING && peers().length>0;
          var active:Boolean=mode==Session.HOSTING || mode==Session.CONNECTED;
@@ -267,94 +272,105 @@ package rconnect.ui {
          lastMode=mode;
          var pause:Object=s==null?null:s.pause;
          var error:String=localError!=""?localError:s==null?"":s.error;
-         var status:String=error!="" && mode==Session.OFFLINE?tr("连接失败","Failed","Ошибка"):
-            mode==Session.JOINING?tr("连接中","Connecting","Вход"):
-            mode==Session.HOSTING?peers().length==0?tr("等待队友","Waiting","Ожидание"):tr("宿主","Host","Ведущий")+" 2/2":
-            mode==Session.CONNECTED?tr("已加入","Joined","В игре")+" 2/2":tr("离线","Offline","Офлайн");
-         stateLine.text=pause!=null && pause.paused?tr("已暂停","Paused","Пауза"):status;
-         chatButton.text=tr("聊","Chat","Чат")+(unread>0?" "+Math.min(9,unread):"");
+         var status:String=error!="" && mode==Session.OFFLINE?RCLocale.text("连接失败"):
+            mode==Session.JOINING?RCLocale.text("连接中"):
+            mode==Session.HOSTING?peers().length==0?RCLocale.text("等待队友"):RCLocale.text("宿主")+" 2/2":
+            mode==Session.CONNECTED?RCLocale.text("已加入")+" 2/2":RCLocale.text("离线");
+         stateLine.text=pause!=null && pause.paused?RCLocale.text("已暂停"):status;
+         chatButton.text=RCLocale.text("聊")+(unread>0?" "+Math.min(9,unread):"");
          if(visible && !folded && page=="chat" && !help)unread=0;
-         chatButton.text=tr("聊","Chat","Чат")+(unread>0?" "+Math.min(9,unread):"");
+         chatButton.text=RCLocale.text("聊")+(unread>0?" "+Math.min(9,unread):"");
          expandButton.text=folded?"▼":"▲";
+         // Hidden pages have no usable controls. Opening refreshes immediately.
+         if(!visible || folded) {refreshPauseBanner(pause);layout();return;}
          for(var i:int=0;i<tabs.length;i++) {
-            var t:TextField=tabs[i];t.text=i==0?tr("连接","Connect","Связь"):
-               i==1?tr("队友","Teammate","Напарник"):i==2?tr("聊天","Chat","Чат"):tr("设置","Settings","Настройки");
+            var t:TextField=tabs[i];t.text=i==0?RCLocale.text("连接"):
+               i==1?RCLocale.text("队友"):i==2?RCLocale.text("聊天"):RCLocale.text("设置");
             t.backgroundColor=page==["connect","peer","chat","settings"][i]?0x3A3B25:0x20261C;
          }
-         nickLabel.text=tr("昵称","Name","Имя");ipLabel.text=tr("宿主地址","Host address","Адрес ведущего");
-         portLabel.text=tr("端口","Port","Порт");
-         _btnHost.text=tr("创建房间","Host","Создать");_btnJoin.text=tr("加入","Join","Войти");
-         _btnLeave.text=mode==Session.JOINING?tr("取消连接","Cancel","Отмена"):
-            mode==Session.HOSTING && peers().length==0?tr("停止主持","Stop hosting","Закрыть комнату"):tr("离开联机","Leave","Выйти");
-         liveLabel.text=(mode==Session.HOSTING?tr("房间已创建","Room created","Комната создана"):
-            tr("已加入房间","Joined room","Вход в комнату"))+"\n"+
-            (mode==Session.HOSTING?tr("监听端口","Listening on","Порт")+": "+mod.config.getValue("port"):
+         nickLabel.text=RCLocale.text("昵称");ipLabel.text=RCLocale.text("宿主地址");
+         portLabel.text=RCLocale.text("端口");
+         _btnHost.text=RCLocale.text("创建房间");_btnJoin.text=RCLocale.text("加入");
+         _btnLeave.text=mode==Session.JOINING?RCLocale.text("取消连接"):
+            mode==Session.HOSTING && peers().length==0?RCLocale.text("停止主持"):RCLocale.text("离开联机");
+         liveLabel.text=(mode==Session.HOSTING?RCLocale.text("房间已创建"):
+            RCLocale.text("已加入房间"))+"\n"+
+            (mode==Session.HOSTING?RCLocale.text("监听端口")+": "+mod.config.getValue("port"):
             String(s==null?"":s.hostName)+" · "+mod.config.getValue("hostIp")+":"+mod.config.getValue("port"));
          statusTf.text=error!=""?RCLocale.render(error):
             s!=null && s.rooms.status!=""?RCLocale.text(s.rooms.status):
-            mode==Session.JOINING?tr("正在连接，可取消后修改地址。","Connecting; cancel to edit the address.","Соединение. Отмените, чтобы изменить адрес."):
-            active?status:tr("填写地址加入，或创建房间。","Enter a host address or create a room.","Введите адрес или создайте комнату.");
+            mode==Session.JOINING?RCLocale.text("正在连接，可取消后修改地址。"):
+            active?status:RCLocale.text("填写地址加入，或创建房间。");
          statusTf.textColor=error!=""?0xFFB6A3:0xBFC7AF;
          for each(t in [tfNick,tfIp,tfPort])enabled(t,!active && mode!=Session.JOINING);
          enabled(_btnHost,mode==Session.OFFLINE);enabled(_btnJoin,mode==Session.OFFLINE);
          enabled(_btnLeave,active || mode==Session.JOINING);
          var peer:Object=peers().length>0?peers()[0]:null;
-         peerLabel.text=peer==null?tr("队友尚未加入","No teammate yet","Напарник ещё не вошёл"):String(peer.name);
+         peerLabel.text=peer==null?RCLocale.text("队友尚未加入"):String(peer.name);
          healthLabel.text=peer!=null && peer.snap!=null && isFinite(Number(peer.snap.hp))?
             "HP "+Math.ceil(Number(peer.snap.hp)):"HP —";
-         _btnExploration.text=tr("共享探索","Exploration","Разведка")+": "+
+         _btnExploration.text=RCLocale.text("共享探索")+": "+
             RCLocale.text(mod.exploration.enabled?"开":"关");
-         _btnFollow.text=tr("跟随队友","Follow","Следовать")+": "+
+         _btnFollow.text=RCLocale.text("跟随队友")+": "+
             RCLocale.text(mod.config.getValue("followTeammate")=="1"?"开":"关");
-         RCLocale.bind(_btnTeleport,mod.navigation!=null && mod.navigation.travelling?"正在传送…":"传送到队友身边",false);
-         var teleportReason:String=mod.navigation==null?"请等待房间准备完成":mod.navigation.unavailable();
+         RCLocale.bind(_btnTeleport,mod.navigation!=null && mod.navigation.travelling?"正在传送…":"传送到队友身边",true);
+         var teleportReason:String=visible && !folded && !help && page=="peer"
+            ? (mod.navigation==null?"请等待房间准备完成":mod.navigation.unavailable()) : "";
          enabled(_btnTeleport,teleportReason=="");
          peerHint.text=RCLocale.text("关闭后保留已收到的区域");
-         if(!connected)peerHint.text=tr("先在“连接”中开始联机。","Start a session in Connect.","Начните игру на вкладке «Связь».");
+         if(!connected)peerHint.text=RCLocale.text("先在“连接”中开始联机。");
          else if(teleportReason!="")peerHint.appendText("\n"+RCLocale.text(teleportReason));
          else if(s.rooms.status!="")peerHint.appendText("\n"+RCLocale.text(s.rooms.status));
-         if(lines.length==0)chatLog.text=tr("暂无消息。\n聊天记录只在这一页展开。","No messages.\nChat stays in this tab.","Нет сообщений.\nЧат находится на этой вкладке.");
-         _btnSend.text=tr("发送","Send","Отпр.");enabled(_btnSend,connected);enabled(tfChat,connected);
-         chatHint.text=connected?tr("Enter 发送 · Esc 收起","Enter: send · Esc: close","Enter: отправить · Esc: свернуть"):
-            tr("连接后可聊天，已有记录保留。","Connect to chat; history is retained.","Войдите для чата. История сохранена.");
-         opacityLabel.text=tr("窗口不透明度","Window opacity","Непрозрачность");
+         if(lines.length==0)chatLog.text=RCLocale.text("暂无消息。\n聊天记录只在这一页展开。");
+         _btnSend.text=RCLocale.text("发送");enabled(_btnSend,connected);enabled(tfChat,connected);
+         chatHint.text=connected?RCLocale.text("Enter 发送 · Esc 收起"):
+            RCLocale.text("连接后可聊天，已有记录保留。");
+         opacityLabel.text=RCLocale.text("窗口不透明度");
          opacityValue.text=opacityPercent+"%";
          enabled(opacityLess,opacityPercent>30);enabled(opacityMore,opacityPercent<100);
-         allowGrip.text=tr("允许队友念力抓起我","Allow teammate to lift me","Разрешить поднять меня")+": "+RCLocale.text(mod.peerGrip!=null && mod.peerGrip.allowed?"开":"关");
-         struggleGrip.text=tr("被抓时 WASD 挣脱","WASD escapes teammate grip","WASD: освободиться")+": "+RCLocale.text(mod.peerGrip==null || mod.peerGrip.struggle?"开":"关");
+         allowGrip.text=RCLocale.text("允许队友念力抓起我")+": "+RCLocale.text(mod.peerGrip!=null && mod.peerGrip.allowed?"开":"关");
+         struggleGrip.text=RCLocale.text("被抓时 WASD 挣脱")+": "+RCLocale.text(mod.peerGrip==null || mod.peerGrip.struggle?"开":"关");
          enabled(allowGrip,mod.peerGrip!=null);enabled(struggleGrip,mod.peerGrip!=null);
-         throwGrip.text=tr("允许队友抛掷伤害我","Teammate throw can hurt me","Урон от броска союзником")+": "+RCLocale.text(mod.peerGrip!=null && mod.peerGrip.throwDamageAllowed?"开":"关");
+         throwGrip.text=RCLocale.text("允许队友抛掷伤害我")+": "+RCLocale.text(mod.peerGrip!=null && mod.peerGrip.throwDamageAllowed?"开":"关");
          enabled(throwGrip,mod.peerGrip!=null);
-         gripHint.text=tr("各自设置；关闭允许会立即松开。\n抛掷伤害只控制被队友抛出后的撞击。",
-            "Personal settings. Disallow to release now.\nThrow damage controls your impact after a teammate throws you.",
-            "Личный выбор. Запрет сразу отпускает.\nУрон от броска касается вашего удара после броска союзником.");
+         gripHint.text=RCLocale.text("各自设置；关闭允许会立即松开。\n抛掷伤害只控制被队友抛出后的撞击。");
          policyLabel.text=pause==null || pause.canChangePolicy?
-            mode==Session.OFFLINE?tr("离线预设","Offline presets","Настройки офлайн"):tr("由你设置","Host settings","Настройки ведущего"):
-            tr("宿主设置 · 只读","Host settings · read only","Настройки ведущего · только чтение");
-         RCLocale.bind(_btnPauseMenus,"菜单同步暂停："+(pause!=null && pause.policyMenus?"开":"关"),false);
-         RCLocale.bind(_btnPauseSats,"SATS同步暂停："+(pause!=null && pause.policySats?"开":"关"),false);
+            mode==Session.OFFLINE?RCLocale.text("离线预设"):RCLocale.text("由你设置"):
+            RCLocale.text("宿主设置 · 只读");
+         RCLocale.bind(_btnPauseMenus,"菜单同步暂停："+(pause!=null && pause.policyMenus?"开":"关"),true);
+         RCLocale.bind(_btnPauseSats,"SATS同步暂停："+(pause!=null && pause.policySats?"开":"关"),true);
          enabled(_btnPauseMenus,pause!=null && pause.canChangePolicy);enabled(_btnPauseSats,pause!=null && pause.canChangePolicy);
          policyHint.text=RCLocale.text("由宿主设置；任意一方打开后全队暂停");
-         friendlyFire.text=tr("允许队友伤害","Allow friendly fire","Огонь по своим")+": "+
+         friendlyFire.text=RCLocale.text("允许队友伤害")+": "+
             RCLocale.text(mod.friendlyFire!=null && mod.friendlyFire.enabled?"开":"关");
          enabled(friendlyFire,mod.friendlyFire!=null && mod.friendlyFire.canChangePolicy);
-         friendlyHint.text=tr("由宿主设置；开启后双方攻击可伤害队友。",
-            "Host setting. Attacks can hurt teammates when enabled.",
-            "Настройка ведущего. Атаки могут ранить напарника.");
+         friendlyHint.text=RCLocale.text("由宿主设置；开启后双方攻击可伤害队友。");
+         securityMode.text=RCLocale.text("安保终端：")+
+            (mod.securityTerminals==null || mod.securityTerminals.shared?
+               RCLocale.text("共享破解"):RCLocale.text("分别破解"));
+         enabled(securityMode,mod.securityTerminals!=null && mod.securityTerminals.canChangePolicy);
+         securityHint.text=mod.securityTerminals!=null && !mod.securityTerminals.supported?
+            RCLocale.text("需重启并加载配套游戏版本。"):
+            mod.securityTerminals!=null && !mod.securityTerminals.stateReady?
+            RCLocale.text("正在接收宿主的安保设置。"):
+            RCLocale.text("由宿主设置。只影响之后的破解，已获得的炮塔安全权限保留。");
          versionLabel.text="RConnect v"+RConnectMod.VERSION+" · "+(mod.versionInfo==null?"":mod.versionInfo.version);
-         footer.text=tr("Ctrl+Enter 聊天 · F10","Ctrl+Enter: chat · F10","Ctrl+Enter: чат · F10");
-         dockButton.text=tr("停靠","Dock","Край")+" "+(dock=="tl"?"↖":dock=="tr"?"↗":dock=="br"?"↘":dock=="bl"?"↙":"◇");
-         helpButton.text=tr("说明","Help","Справка");
-         helpText.text=tr("拖动标题可移动浮窗；“停靠”依次切换四角。\n\nCtrl+Enter 打开聊天；Enter 发送；Esc 收起。\nF10 隐藏或恢复，开合状态保留。\n\n共享探索只影响本端接收；关闭后保留已收到区域。\n\n全队暂停由宿主设置；双方都关闭相关界面后继续。\n\n滚轮可滚动当前页。原版菜单优先使用自己的快捷键。",
-            "Drag the title to move. Dock cycles through four corners.\n\nCtrl+Enter opens chat; Enter sends; Esc collapses.\nF10 hides or restores the panel.\n\nExploration controls receiving locally; received areas remain.\n\nThe host sets co-op pause. Both players must close the relevant menus to resume.\n\nScroll the current tab with the wheel. Native menus keep their shortcuts.",
-            "Перетащите заголовок. Кнопка «Край» меняет угол.\n\nCtrl+Enter открывает чат; Enter отправляет; Esc сворачивает.\nF10 скрывает и возвращает панель.\n\nРазведка влияет только на приём; полученные области сохраняются.\n\nПаузу настраивает ведущий. Для продолжения оба игрока закрывают соответствующие окна.\n\nПрокручивайте вкладку колёсиком. Игровые меню сохраняют свои клавиши.");
-         if(_pauseBanner!=null) {
+         footer.text=keybinds.label("chat")+RCLocale.text(" 聊天 · ")+keybinds.label("panel");
+         dockButton.text=RCLocale.text("停靠")+" "+(dock=="tl"?"↖":dock=="tr"?"↗":dock=="br"?"↘":dock=="bl"?"↙":"◇");
+         helpButton.text=RCLocale.text("说明");
+         helpText.text=RCLocale.text("拖动标题可移动浮窗；“停靠”依次切换四角。\n\nCtrl+Enter 打开聊天；Enter 发送；Esc 收起。\nF10 隐藏或恢复，开合状态保留。\n\n共享探索只影响本端接收；关闭后保留已收到区域。\n\n全队暂停由宿主设置；双方都关闭相关界面后继续。\n\n滚轮可滚动当前页。原版菜单优先使用自己的快捷键。");
+         helpText.text=helpText.text.split("Ctrl+Enter").join(keybinds.label("chat")).split("F10").join(keybinds.label("panel"));
+         refreshPauseBanner(pause);
+         layout();
+      }
+
+      private function refreshPauseBanner(pause:Object):void {
+         if(_pauseBanner!=null && surface!=null) {
             _pauseBanner.visible=pause!=null && pause.paused;
             _pauseBanner.width=Math.min(500,Math.max(1,surface.stageWidth-16));
             _pauseBanner.height=40;_pauseBanner.x=(surface.stageWidth-_pauseBanner.width)/2;_pauseBanner.y=8;
             if(_pauseBanner.visible)_pauseBanner.text=pause.description();
          }
-         layout();
       }
 
       private function nativeObstacles():Array {
@@ -379,6 +395,7 @@ package rconnect.ui {
          header.graphics.clear();header.graphics.beginFill(0x242B20);header.graphics.drawRect(0,0,box.w,36);header.graphics.endFill();
          chatButton.x=box.w-104;expandButton.x=box.w-40;
          stateLine.width=Math.max(16,box.w-187);
+         RCLocale.fit(stateLine);RCLocale.fit(chatButton);
          var active:Boolean=mod.session!=null && (mod.session.mode==Session.HOSTING || mod.session.mode==Session.CONNECTED);
          var joining:Boolean=mod.session!=null && mod.session.mode==Session.JOINING;
          // Read real TextField wrapping before laying out dependent rows.
@@ -403,8 +420,11 @@ package rconnect.ui {
                item.renderY=Math.max(352,308+policyHeight+4)+36+ownerExtra+gripExtra;
                item.renderH=Math.max(42,f.textHeight+6);
             }
-            if(f==versionLabel)item.renderY=Math.max(352,308+policyHeight+4)+36+
+            var securityY:Number=Math.max(352,308+policyHeight+4)+36+
                Math.max(42,friendlyHint.textHeight+6)+6+ownerExtra+gripExtra;
+            if(f==securityMode)item.renderY=securityY;
+            if(f==securityHint){item.renderY=securityY+36;item.renderH=Math.max(58,securityHint.textHeight+6);}
+            if(f==versionLabel)item.renderY=securityY+36+Math.max(58,securityHint.textHeight+6)+6;
             if(f==peerHint || f==helpText)item.renderH=Math.max(item.h,f.textHeight+6);
             if(help?item.page=="help":item.page==page || item.page=="live" && page=="connect" && active)
                pageHeight=Math.max(pageHeight,item.renderY+item.renderH+8);
@@ -429,11 +449,13 @@ package rconnect.ui {
             t.x=entry.x;t.y=Math.max(64,natural);
             t.width=entry.w==264?box.w-16:entry.w;
             t.height=entry.renderH;
+            if(!t.selectable && [statusTf,liveLabel,peerHint,gripHint,policyLabel,policyHint,friendlyHint,securityHint,helpText,chatLog].indexOf(t)<0)
+               RCLocale.fit(t,entry.w==264?box.w-16:entry.w,entry.renderH);
             t.scrollRect=new Rectangle(0,clipTop,t.width,clipped);
             t.visible=on&&clipped>0;t.tabEnabled=t.visible && t.mouseEnabled && (t.type==TextFieldType.INPUT || t.background && t!=chatLog);
          }
-         for(var i:int=0;i<tabs.length;i++) {tabs[i].visible=!folded;tabs[i].tabEnabled=!folded;tabs[i].width=box.w/4;tabs[i].x=i*box.w/4;}
-         for each(t in [footer,dockButton,helpButton]) {t.visible=!folded;t.y=box.h-20;t.tabEnabled=!folded && t!=footer;}
+         for(var i:int=0;i<tabs.length;i++) {tabs[i].visible=!folded;tabs[i].tabEnabled=!folded;tabs[i].width=box.w/4;tabs[i].x=i*box.w/4;RCLocale.fit(tabs[i]);}
+         for each(t in [footer,dockButton,helpButton]) {t.visible=!folded;t.y=box.h-20;t.tabEnabled=!folded && t!=footer;RCLocale.fit(t);}
          dockButton.x=box.w-140;helpButton.x=box.w-68;
          if(surface.focus!=null && contains(surface.focus) && !shown(surface.focus))releaseFocus();
       }
@@ -463,6 +485,7 @@ package rconnect.ui {
          drag=null;preferredX=x;preferredY=y;savePreferences();e.stopImmediatePropagation();
       }
       private function cancelDrag(e:Event):void {
+         shortcutHeld={};
          if(drag!=null) {drag=null;preferredX=x;preferredY=y;savePreferences();}
       }
       private function outsideClick(e:MouseEvent):void {
@@ -498,8 +521,11 @@ package rconnect.ui {
             GameBridge.probe(GameBridge.probe(gui,"inform"),"visible")==true;
       }
       private function keyDown(e:KeyboardEvent):void {
+         if(keybinds.capturing())return;
+         if(shortcutHeld[e.keyCode]){e.stopImmediatePropagation();return;}
          var mine:Boolean=ownsInput();
-         if(e.keyCode==121) {
+         if(keybinds.matches("panel",e)) {
+            shortcutHeld[e.keyCode]=true;
             visible=!visible;help=false;releaseFocus();refresh();blockedKeys[e.keyCode]=true;e.stopImmediatePropagation();return;
          }
          if(mine) {
@@ -522,7 +548,8 @@ package rconnect.ui {
          // A fresh native key-down supersedes an older swallowed UI key-down.
          // Its later key-up must reach Ctr and clear that new native state.
          delete blockedKeys[e.keyCode];
-         if(e.keyCode==13 && e.ctrlKey && !nativeBusy() && !(surface.focus is TextField && TextField(surface.focus).type==TextFieldType.INPUT)) {
+         if(keybinds.matches("chat",e) && !nativeBusy() && !(surface.focus is TextField && TextField(surface.focus).type==TextFieldType.INPUT)) {
+            shortcutHeld[e.keyCode]=true;
             openPage("chat",true);blockedKeys[e.keyCode]=true;e.stopImmediatePropagation();return;
          }
          if(e.keyCode==27 && visible && !folded && !nativeBusy()) {
@@ -530,6 +557,7 @@ package rconnect.ui {
          }
       }
       private function keyUp(e:KeyboardEvent):void {
+         delete shortcutHeld[e.keyCode];
          if(blockedKeys[e.keyCode]) {
             // Ctr.clearAll leaves modifiers and its internal key-down vector.
             // Release the native state without forwarding input to game/UI listeners.
@@ -542,7 +570,7 @@ package rconnect.ui {
          var port:String=tfPort.text,number:int=int(port);
          if(tfNick.text.replace(/^\s+|\s+$/g,"")=="" || !host && tfIp.text.replace(/^\s+|\s+$/g,"")=="" ||
             !/^\d+$/.test(port) || number<1 || number>65535) {
-            localError=tr("请填写昵称、地址和 1–65535 的端口。","Enter a name, address and port (1–65535).","Введите имя, адрес и порт (1–65535).");
+            localError=RCLocale.text("请填写昵称、地址和 1–65535 的端口。");
             return;
          }
          localError="";mod.config.setValue("nickname",tfNick.text.substr(0,24));

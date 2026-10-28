@@ -138,7 +138,7 @@ package rconnect.game {
             if(id<=last)continue;
             last=id;
             a={s:s,loc:loc,main:main,vis:null,offset:offset,delay:delay,motion:motion,updated:now,
-               state:state,id:id};
+               state:state,id:id,shown:null,shownAt:-1};
             state.records[String(id)]=a;active.push(a);
             if(active.length>256)remove(0);
          }
@@ -153,11 +153,26 @@ package rconnect.game {
             if(a.loc!==loc) {remove(i);continue;}
             var time:Number=a.motion!=null?a.motion.sourceTime:NaN;
             if(!isFinite(time))time=now-Number(a.offset)-Number(a.delay);
-            if((int(s.end)>0 && time>=Number(s.end)) || now-int(a.updated)>15000) {remove(i);continue;}
+            var ended:Boolean=int(s.end)>0 && time>=Number(s.end);
+            // Do not replay stale history after a long stall. The ordinary
+            // stale-stream limit also covers events whose ending never arrives.
+            if((ended && time-Number(s.end)>RETAIN_MS) || now-int(a.updated)>15000) {remove(i);continue;}
             var frames:Array=s.frames as Array;
             if(time<Number(frames[0].at))continue;
             var point:Object=frames[0];
             for each(var p:Object in frames) {if(Number(p.at)>time)break;point=p;}
+            if(ended) {
+               // A 67ms flash can fall entirely between two display frames.
+               // Show its real first pose once, then only its final known pose
+               // if different. Never enqueue every skipped 19ms sample.
+               var finalPoint:Object=frames[frames.length-1];
+               if(a.shown==null)point=frames[0];
+               // GameBridge ticks at ENTER_FRAME and RENDER with the same
+               // presentationTime. A second call is not a rendered frame.
+               else if(now<=int(a.shownAt))point=a.shown;
+               else if(!samePose(a.shown,finalPoint))point=finalPoint;
+               else {remove(i);continue;}
+            }
             try {
                var world:Object=a.main.loaderInfo.applicationDomain.getDefinition("fe.World").w;
                var layer:DisplayObjectContainer=world.grafon.visObjs[Math.max(0,Math.min(4,int(s.layer)))] as DisplayObjectContainer;
@@ -175,11 +190,25 @@ package rconnect.game {
                v.scaleX=Number(point.sx);v.scaleY=Number(point.sy);v.alpha=Number(point.a);v.visible=point.v===true;
                var c:Array=point.c as Array;
                if(c!=null && c.length==8)v.transform.colorTransform=new ColorTransform(c[0],c[1],c[2],c[3],c[4],c[5],c[6],c[7]);
+               a.shown=point;a.shownAt=Math.max(int(a.shownAt),now);
             } catch(e:*) {
                if(!errors[String(s.cls)]) {errors[String(s.cls)]=true;Log.d("RConnectGame: energy impact "+s.cls+" failed: "+e);}
                remove(i);
             }
          }
+      }
+
+      /** Repeated source samples with identical artwork do not earn an extra
+       * recovery frame. Timestamp is intentionally not a visual property. */
+      private static function samePose(a:Object,b:Object):Boolean {
+         if(a==null || b==null)return false;
+         for each(var key:String in ["x","y","r","sx","sy","a","f","v"])
+            if(a[key]!==b[key])return false;
+         var ca:Array=a.c as Array,cb:Array=b.c as Array;
+         if(ca==null || cb==null)return ca==null && cb==null;
+         if(ca.length!=cb.length)return false;
+         for(var i:int=0;i<ca.length;i++)if(ca[i]!==cb[i])return false;
+         return true;
       }
 
       public function setPaused(value:Boolean):void {

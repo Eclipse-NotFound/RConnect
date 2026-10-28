@@ -86,8 +86,9 @@ package rconnect.core {
                if(game.gg.teleObj===local.raw)game.gg.dropTeleObj();
                endLocal(true);
             }
-            var raw:Object=game.gg.teleObj;
-            beforeMotion=game.grabBody(raw)==null?null:{raw:raw,dx:raw.dx,dy:raw.dy,t:raw.t_throw};
+            var raw:Object=game.gg.teleObj,body:Object=game.grabBody(raw);
+            beforeMotion=body==null?null:{raw:raw,dx:raw.dx,dy:raw.dy,t:raw.t_throw};
+            if(beforeMotion!=null)beforeMotion.direction=throwDirection(raw,body);
             if(lease==null)return;
             var u:Object=lease.target,actor:Object=game.getRemoteGhost(lease.link.id);
             if(!rooms.authority || !lease.link.isOpen || !sameStamp(lease.stamp) || !enemy(u)
@@ -126,10 +127,40 @@ package rconnect.core {
             var p:Object=message("release",rec);
             if(detectThrow && beforeMotion!=null && beforeMotion.raw===rec.raw && int(rec.raw.t_throw)==45) {
                var dx:Number=Number(rec.raw.dx)-Number(beforeMotion.dx),dy:Number=Number(rec.raw.dy)-Number(beforeMotion.dy);
-               if(beforeMotion.t<45 || Math.abs(dx)+Math.abs(dy)>0.01){p.kick={x:dx,y:dy};}
+               if(beforeMotion.t<45 || Math.abs(dx)+Math.abs(dy)>0.01) {
+                  p.kick={x:dx,y:dy};
+                  // Native throwTele owns strength, mana and eligibility. Its
+                  // displayed target position may lag the latest received unit
+                  // state; rotate only that genuine impulse, never move a body.
+                  var direction:Object=beforeMotion.direction;
+                  var strength:Number=Math.sqrt(dx*dx+dy*dy);
+                  if(direction!=null && isFinite(strength) && strength>0) {
+                     var vx:Number=direction.x-direction.playerX;
+                     var vy:Number=direction.y-direction.height/2-direction.playerY+direction.playerHeight/2-10;
+                     var distance:Number=Math.sqrt(vx*vx+vy*vy);
+                     if(isFinite(distance) && distance>0) {
+                        p.kick.x=vx/distance*strength;p.kick.y=vy/distance*strength;
+                     }
+                  }
+               }
             }
             session.link.send(p);
          }
+      }
+      /** Capture once before the same native frame as dx/dy/t_throw. Missing
+       * motion history or an unavailable bridge leaves the native kick intact. */
+      private function throwDirection(raw:Object,body:Object):Object {
+         try {
+            var point:Object=game.latestUnitPosition(body),g:Object=game.gg;
+            if(point==null || point.x==null || point.y==null)return null;
+            var x:Number=Number(point.x),y:Number=Number(point.y);
+            var px:Number=Number(g.X),py:Number=Number(g.Y);
+            var height:Number=Number(raw.scY),playerHeight:Number=Number(g.scY);
+            if(!isFinite(x)||!isFinite(y)||!isFinite(px)||!isFinite(py)
+               ||!isFinite(height)||!isFinite(playerHeight)||height<0||playerHeight<0)return null;
+            return {x:x,y:y,playerX:px,playerY:py,height:height,playerHeight:playerHeight};
+         } catch(error:Error) {}
+         return null;
       }
       private function reply(link:TcpLink,p:Object,accept:Boolean,reason:String=""):void {
          var ack:Object={type:"unit-grip",op:"ack",k:p.k,token:p.token,accept:accept,reason:reason};
@@ -152,6 +183,7 @@ package rconnect.core {
                var released:Object=lease.target,kick:Object=p.kick;endLease("released");
                if(kick!=null && isFinite(Number(kick.x)) && isFinite(Number(kick.y)) && Math.abs(kick.x)<=1000 && Math.abs(kick.y)<=1000) {
                   released.dx+=Number(kick.x);released.dy+=Number(kick.y);released.t_throw=45;
+                  rconnect.game.NativeTextVisuals.watchThrow(released,link);
                }
                return;
             }

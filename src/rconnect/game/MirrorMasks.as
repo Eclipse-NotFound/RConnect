@@ -237,7 +237,7 @@ package rconnect.game {
             // including white bitmap shapes in the same display layer.
             if(v.mask==null || record.hidden[v.mask]!=null || v.mask===record.nativeMask || v.mask===record.last) {
                var nativeMask:DisplayObject=record.nativeMask as DisplayObject,refs:Dictionary=new Dictionary(true);
-               if(rootRef!=null)maskReferences(rootRef,refs);
+               if(rootRef!=null && attached(nativeMask,v) && v.mask!==nativeMask)maskReferences(rootRef,refs);
                var active:Boolean=visionActive(roomRef,rootRef);
                // Direct historical ownership is not current use permission:
                // assigning a Shape can steal it from a real native weapon.

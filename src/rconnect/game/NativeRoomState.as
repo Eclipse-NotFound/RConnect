@@ -24,7 +24,10 @@ package rconnect.game
          }
          for each(var n:String in names)
          {
-            var value:*=GameBridge.probe(o,n);
+            // Names come only from describeType's public variable list, not
+            // arbitrary packet keys or getters. These declared slots cannot
+            // be missing; avoid millions of optional-property probes per map.
+            var value:*=o[n];
             if(value is Number) {if(isFinite(Number(value)))s[n]=value;}
             else if(value is String || value is Boolean) s[n]=value;
             // Native XML attributes remain XMLList entries until arithmetic is

@@ -1,26 +1,31 @@
-RConnect A 0.2.22-dev — Windows / Remains 1.02
+RConnect A 0.2.24-animfix3-l10n — Windows / Remains 1.02
 
-本包为已验证部署的 A 版，保持原 dev 标记；不含 B 实验架构。
-1. 双方保存并退出游戏，备份现有 mods/RConnect。
-2. 首次安装请先安装 ModLoader 的游戏补丁与扫描器：
+九语言预发布版 / Nine-language prerelease (A architecture)
+
+1. 双方保存退出并备份旧 mods/RConnect。
+2. 首次安装先完成 ModLoader 的游戏补丁及扫描器安装：
    https://github.com/Eclipse-NotFound/ModLoader/blob/master/docs/INSTALL.zh-CN.md
-3. 将本包 mods 文件夹合并到游戏根目录；保留个人配置与存档。
-4. 运行 mods/ModLoader/RemainsModScanner.exe，然后正常启动游戏。
-5. F10 显示浮窗；点击 ▼ 展开“连接”，一侧 Host，另一侧 Join。
-   同机地址 127.0.0.1，默认端口 23456；不同电脑填宿主局域网地址。
-6. Ctrl+Enter 打开聊天，Enter 发送，Esc 收起。两边必须同版并重启。
+3. 合并本包 mods 文件夹到游戏根目录，不要套成 mods/mods。
+4. 运行 mods/ModLoader/RemainsModScanner.exe，重新启动双方游戏。
+5. F10 显隐浮窗，展开后创建／加入；默认端口 23456。
+   同机地址 127.0.0.1，不同电脑使用宿主局域网地址。
+6. Ctrl+Enter 打开聊天，Enter 发送，Esc 收起；快捷键可在兼容的设置页修改。
 
 本机双开：mods/RConnect/Start-Coop.bat。双方分别载入、保存角色。
-首次使用第二窗口会复制已有旧 pfe2 角色档并保留原件，不涉及主角色。
-本包不含 config.txt，首次安装使用内置默认值，更新不覆盖个人配置。
-卸载或回退：双方保存退出，恢复备份模组目录，再扫描并重启。
+本包不含个人 config.txt、存档、游戏本体或其他模组，更新不会覆盖它们。
+游戏语言菜单可切换九种模组界面语言；不会翻译昵称或聊天原文。
+密集场景、普通子弹与房间加载仍有待优化；不承诺全部卡顿已消失。
+部分安保／房间能力依赖兼容的游戏宿主接口。缺少接口时可能不可用；
+本包不会替换游戏 pfe.swf。完整限制见 docs/release-0.2.24.md。
+回退：双方保存退出，恢复备份模组、重新扫描并重启。
 
-原始部署验证：38组、4760项及正常双实例加载通过（2026-10-09）。
-密集场景仍可能卡顿；隐藏房间、部分地雷交互等边界尚未全部解决。
-公网、稳定重连、三人以上与其他游戏版本未验证。不附带游戏本体或其他模组。
-中英文详细说明见 mods/RConnect/README.zh-CN.md / README.md。
-
-English: install ModLoader first, merge mods into the game directory, run the
-scanner and restart both games. Host/Join use port 23456; 127.0.0.1 is local only.
-Keep personal settings/saves. This package preserves the original 0.2.22-dev
-binary and its prerelease status. See README.md for controls and limitations.
+English:
+Install ModLoader first, then merge this ZIP's mods folder into the game folder.
+Run the ModLoader scanner and restart BOTH games with the same RConnect version.
+F10 opens the panel. Host/Join use port 23456 by default. 127.0.0.1 is local only;
+on another computer, enter the host's LAN IPv4 address. Ctrl+Enter opens chat.
+Keep personal settings and saves. For same-PC co-op, use mods/RConnect/Start-Coop.bat.
+All nine native game languages are supported in the mod UI. This prerelease does
+not guarantee dense-scene performance, Internet play, reconnection, 3+ players,
+other game versions or every host/mod combination. No game SWF is included.
+Restore your backup, scan and restart to roll back. See the included README.

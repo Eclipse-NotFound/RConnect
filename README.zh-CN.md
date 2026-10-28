@@ -4,11 +4,18 @@
 
 和一位朋友一起探索废土：互相看见、聊天、战斗，也能在同一地图的普通房间分头行动。
 
-**[下载 v0.2.22-dev — RConnect_v0.2.22-dev.zip](https://github.com/Eclipse-NotFound/RConnect/releases/download/v0.2.22-dev/RConnect_v0.2.22-dev.zip)** · [发布说明 / 其他版本](https://github.com/Eclipse-NotFound/RConnect/releases)
+**[下载 v0.2.24-animfix3-l10n — RConnect_v0.2.24-animfix3-l10n.zip](https://github.com/Eclipse-NotFound/RConnect/releases/download/v0.2.24-animfix3-l10n/RConnect_v0.2.24-animfix3-l10n.zip)** · [发布说明 / 其他版本](https://github.com/Eclipse-NotFound/RConnect/releases)
 
 点击上方链接下载成品。也可以打开发布页，展开 **Assets（下载文件）**，选择同名文件；**Source code** 和绿色 **Code → Download ZIP** 是源码，不能直接安装。
 
-> **A 架构，已验证部署版 0.2.22-dev。** 本包与 2026-10-09 本机部署的版本完全一致，现同步到 GitHub。保留预发布标记：密集场景性能及部分历史边界问题仍未解决。不含 B 架构或尚未完成的 M51 改动。
+
+> **当前 A 架构九语言预发布版。** 包含已部署 animfix3 修复与本轮翻译更新，不含 B 实验架构。密集场景仍可能停顿，不宣称解决全部动画和性能问题。
+
+## 语言与本次更新
+
+浮窗、设置、快捷键及连接／房间提示跟随游戏语言，支持 **简体中文、繁體中文、English、Русский、Українська、Polski、Deutsch、Español、日本語**。切换无需重启模组，昵称和聊天原文保持不变，长说明仍在浮窗内部滚动。
+
+本包也纳入 A 版敌人武器翻转与近战姿态、敌人话语、念力撞击伤害数字、快速开关门错误碎屑等修复。特殊弹道在已确认的位置之间平滑显示，但整体帧停顿仍可能使普通子弹卡顿。详见[验证与已知限制](docs/release-0.2.24.md)。
 
 ## 开始前
 
@@ -56,7 +63,7 @@
 
 ## 验证与限制
 
-本包 SWF 沿用 2026-10-09 部署字节：38 组本机双实例、4760 项检查及正常启动通过。本次上传核对原产物和对应源码，不等于重新验证了当前所有第三方模组组合。密集战斗仍可能卡顿，隐藏房间角色失控和部分地雷交互等历史边界仍待排查。详见[部署与验证记录](state/deployment-m50-2026-10-09.md)。
+本轮用独立、静音的主侧／加入侧检查九种语言、AIR 字体排版以及玩家文字保留。80 个玩法类与已部署 animfix3 源码逐字节相同，沿用其对应的门、武器、话语、抛掷反馈和弹道检查证据。本次不构成新的性能保证或全部第三方模组组合验证，详见[验证与限制](docs/release-0.2.24.md)。
 
 ## 连接不上 / 更新 / 停用
 
@@ -73,7 +80,7 @@
 <details>
 <summary>开发资料与版本差异</summary>
 
-公开包的操作依据为 [v0.2.22-dev 源码](https://github.com/Eclipse-NotFound/RConnect/tree/v0.2.22-dev)。当前仓库源码可能包含尚未打包的修复；实现见 [src/](src/)，记录见 [state/](state/)。
+此 Release 标签内的 [src/](src/) 是对应 A 版完整源码；译文在 [locales/messages.json](locales/messages.json)，编译入口见[构建说明](docs/BUILD-A.md)。不包含 B 实验架构。
 
 </details>
 

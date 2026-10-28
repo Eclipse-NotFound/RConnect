@@ -14,6 +14,8 @@ package rconnect.game
    {
       private var states:Dictionary = new Dictionary();
       private var hostShots:Dictionary = new Dictionary(true);
+      private var retainedByOwner:Dictionary;
+      private var captureDepth:int=0;
       private var errors:Object = {};
       private var shotStream:int=0;
       private var frameTime:int=0;
@@ -25,6 +27,24 @@ package rconnect.game
       private var burning:BurnVisuals=new BurnVisuals();
 
       private static function get(o:Object,k:String):* {return GameBridge.probe(o,k);}
+
+      /** A synchronous batch preserves the old per-owner discovery order, but
+       * scans historical weapons once instead of once per enemy. The index is
+       * released on return: it never retains actors or weapons between frames. */
+      public function beginCaptureBatch():void {
+         if(captureDepth++>0)return;
+         retainedByOwner=new Dictionary();
+         for(var w:Object in hostShots) {
+            var owner:Object=get(w,"owner");if(owner==null)continue;
+            var weapons:Array=retainedByOwner[owner];
+            if(weapons==null)weapons=retainedByOwner[owner]=[];
+            weapons.push(w);
+         }
+      }
+      public function endCaptureBatch():void {
+         if(captureDepth<=0)return;
+         if(--captureDepth==0)retainedByOwner=null;
+      }
 
       private function weaponList(u:Object):Array
       {
@@ -38,9 +58,15 @@ package rconnect.game
          if(magic!=null && list.indexOf(magic)<0)list.push(magic);
          // Changing guns must not orphan the previous gun's flying grenade,
          // missile or final impact. These entries carry effects only.
-         for(var previous:Object in hostShots)
-            if(get(previous,"owner")===u && get(previous,"loc")===get(u,"loc")
-               && hostShots[previous].events.length>0 && list.indexOf(previous)<0)list.push(previous);
+         if(retainedByOwner!=null) {
+            for each(var previous:Object in retainedByOwner[u])
+               if(get(previous,"owner")===u && get(previous,"loc")===get(u,"loc")
+                  && hostShots[previous].events.length>0 && list.indexOf(previous)<0)list.push(previous);
+         } else {
+            for(previous in hostShots)
+               if(get(previous,"owner")===u && get(previous,"loc")===get(u,"loc")
+                  && hostShots[previous].events.length>0 && list.indexOf(previous)<0)list.push(previous);
+         }
          return list;
       }
 
@@ -65,6 +91,8 @@ package rconnect.game
          frameTime=stamp>0?stamp:getTimer();
          scanBullets(loc,frameTime);
          var units:Array=get(loc,"units") as Array;if(units==null) return;
+         beginCaptureBatch();
+         try {
          for each(var u:Object in units)
          {
             if(int(get(u,"fraction"))>=100) continue;
@@ -73,6 +101,7 @@ package rconnect.game
             // Its final display frames and end must reach the receiver too.
             for each(var w:Object in weaponList(u)) if(get(w,"kol_shoot")!=null) observeWeapon(w,frameTime);
          }
+         } finally {endCaptureBatch();}
       }
 
       public function observePlayer(u:Object,stamp:int=0):void {frameTime=stamp>0?stamp:getTimer();scanBullets(get(u,"loc"),frameTime);for each(var w:Object in weaponList(u))if(get(w,"kol_shoot")!=null)observeWeapon(w,frameTime,true);}
@@ -110,14 +139,16 @@ package rconnect.game
          for each(var native:Object in bullets)if(!r.seen[native] && get(native,"loc")===get(w,"loc")) {
             r.seen[native]=true;
             r.events.push({seq:++r.serial,at:frameTime>0?frameTime:getTimer(),bullet:native,
-               recorded:player||ProjectileVisuals.usesNativeFrames(native),frames:[],sampled:0,end:0,endSentAt:0,explosion:null});
+               recorded:true,frames:[],sampled:0,end:0,endSentAt:0,explosion:null,motionAt:0,motionEnd:0});
          }
          if(stamp>0)for each(var shot:Object in r.events) {
             if(shot.explosion==null && get(shot.bullet,"isExpl")===true){
                shot.explosion=ProjectileExplosionVisuals.capture(shot.bullet);
                if(shot.explosion!=null)shot.explosion.at=stamp;
             }
-            if(!shot.recorded)continue;
+            // Removal is terminal. Preserve same-frame final refresh, but do
+            // not resample ended displays throughout their resend retention.
+            if(!shot.recorded || (int(shot.end)>0 && int(shot.end)<stamp))continue;
             var point:Object=ProjectileVisuals.beamFrame(shot.bullet,stamp);
             if(point!=null){
                if(int(shot.sampled)==stamp&&shot.frames.length>0)shot.frames[shot.frames.length-1]=point;
@@ -152,17 +183,19 @@ package rconnect.game
                var flight:Object=ProjectileVisuals.capture(shot.bullet);
                if(flight!=null && shot.recorded){
                   flight.frames=shot.frames;flight.end=shot.end;flight.explosion=shot.explosion;
-                  // Rendering can block the network timer for longer than the
-                  // retention window. An unsent ending must never be pruned.
-                  if(int(shot.end)>0 && int(shot.endSentAt)==0)shot.endSentAt=getTimer();
                }
+               // Start retention after this capture, including ended invisible
+               // damage probes whose flight is null. Live records still wait
+               // for their ending, and an unsent visible ending is retained.
+               if(int(shot.end)>0 && int(shot.endSentAt)==0)shot.endSentAt=getTimer();
                events.push({seq:shot.seq,at:shot.at,flight:flight});
             }
             var children:Array=get(u,"childObjs") as Array;
             var effectsOnly:Boolean=w!==current && w!==get(u,"throwWeapon") && w!==get(u,"magicWeapon") && (children==null || children.indexOf(w)<0);
             result.push({stream:hostShots[w].stream,slot:i,id:String(get(w,"id")),variant:int(get(w,"variant")),main:w===current,events:events,effectsOnly:effectsOnly,
                sampleTime:frameTime>0?frameTime:getTimer(),aura:TelekinesisVisuals.captureWeapon(w),
-               display:playerDisplay?WeaponDisplay.capture(u,w):null,
+               // Enemy weapons need the native reflection too: aim/facing alone is insufficient.
+               display:WeaponDisplay.capture(u,w),
                melee:MeleeVisuals.capture(u,w),impacts:energyImpacts.capture(w),
                shots:count,ox:Number(get(w,"X"))-Number(get(u,"X")),
                oy:Number(get(w,"Y"))-Number(get(u,"Y")),rot:Number(get(w,"rot")),
@@ -172,7 +205,40 @@ package rconnect.game
          return result;
       }
 
-      public function apply(u:Object,snapshot:Object,main:Object,motion:RemoteMotion=null):void
+      /** Send only new projectile frames in the frequent pose packet. Full
+       * state still supplies history for newly discovered actors. */
+      public function captureMotion(u:Object):Array {
+         var result:Array=[],list:Array=weaponList(u),current:Object=get(u,"currentWeapon");
+         for(var i:int=0;i<list.length;i++) {
+            var w:Object=list[i],r:Object=hostShots[w];
+            if(w==null||r==null)continue;
+            var events:Array=[];
+            for each(var shot:Object in r.events) {
+               var frames:Array=shot.frames as Array;
+               if(frames.length==0)continue;
+               var latestFrame:Number=Number(frames[frames.length-1].at);
+               if(Number(shot.motionAt)>=latestFrame && int(shot.motionEnd)==int(shot.end))continue;
+               var start:int=0;
+               while(start+1<frames.length && Number(frames[start+1].at)<=Number(shot.motionAt))start++;
+               var flight:Object=ProjectileVisuals.capture(shot.bullet);if(flight==null)continue;
+               flight.frames=frames.slice(start);flight.end=shot.end;flight.explosion=shot.explosion;
+               events.push({seq:shot.seq,at:shot.at,flight:flight});
+               shot.motionAt=latestFrame;shot.motionEnd=shot.end;
+               if(int(shot.end)>0 && int(shot.endSentAt)==0)shot.endSentAt=getTimer();
+            }
+            var children:Array=get(u,"childObjs") as Array;
+            result.push({slot:i,id:String(get(w,"id")),variant:int(get(w,"variant")),main:w===current,
+               effectsOnly:w!==current && w!==get(u,"throwWeapon") && w!==get(u,"magicWeapon") && (children==null || children.indexOf(w)<0),
+               sampleTime:frameTime,events:events,display:WeaponDisplay.capture(u,w),
+               melee:MeleeVisuals.captureMotion(u,w,frameTime,r),
+               stream:r.stream,shots:r.total,ox:Number(get(w,"X"))-Number(u.X),oy:Number(get(w,"Y"))-Number(u.Y),
+               rot:Number(get(w,"rot")),prep:int(get(w,"t_prep")),reload:int(get(w,"t_reload")),
+               cadence:Math.max(16,Number(get(w,"rapid"))*1000/30),aura:TelekinesisVisuals.captureWeapon(w)});
+         }
+         return result;
+      }
+
+      public function apply(u:Object,snapshot:Object,main:Object,motion:RemoteMotion=null,paused:Boolean=false,deferTick:Boolean=false):void
       {
          try
          {
@@ -186,7 +252,7 @@ package rconnect.game
             var old:int=rec.sost;rec.sost=int(snapshot.sost);
             rec.clock=motion;
             rec.burning=snapshot.burning===true;rec.main=main;
-            RConnectAnimationAccess.receive(u as Unit,snapshot.pose,String(snapshot.anim),rec.pose);
+            RConnectAnimationAccess.receive(u as Unit,snapshot.pose,String(snapshot.anim),rec.pose,motion!=null,paused);
             rec.pose=snapshot.pose;
             rec.body=snapshot.body;
             if(rec.sost>=3)
@@ -210,7 +276,7 @@ package rconnect.game
                enforceDeath(u,rec.sost);
                return;
             }
-            rec.death=snapshot.death;
+            if(snapshot.death!=null)rec.death=snapshot.death;
             if(rec.body!=null)TurretDisplay.receive(u,rec.body);
             if(!(snapshot.weapons is Array)) return;
             for each(var s:Object in snapshot.weapons)
@@ -246,11 +312,14 @@ package rconnect.game
                   y:prev==null?Number(s.oy):Number(gun.weapon.Y)-Number(u.Y),
                   r:prev==null?Number(s.rot):Number(gun.weapon.rot),at:now,
                   duration:prev==null?0:Math.max(50,Math.min(600,now-int(prev.at)))};
+               if(s.melee==null&&gun.snapshot!=null)s.melee=gun.snapshot.melee;
                gun.shots=int(s.shots);gun.snapshot=s;
                if(int(s.reload)>0 && int(gun.reload)<=0) play(gun.weapon,"reload");
                gun.reload=int(s.reload);
             }
-            tick(u);
+            // The frame-driven caller ticks immediately after applying a new
+            // pose. Do not advance its muzzle/recoil counters twice that frame.
+            if(!deferTick)tick(u,paused);
          }
          catch(e:*) {failed(u,e);}
       }
@@ -263,17 +332,18 @@ package rconnect.game
             if(item.name==label) {vis.gotoAndPlay(label);return;}
       }
 
-      public function tick(u:Object):void
+      public function tick(u:Object,paused:Boolean=false):void
       {
          var rec:Object=states[u];if(rec==null) return;
          try
          {
             RConnectAnimationAccess.effects(u as Unit);
             if(rec.sost>=3) {enforceDeath(u,rec.sost);return;}
-            burning.present(rec.main,u,rec.burning===true);
+            burning.present(rec.main,u,rec.burning===true,paused);
+            var clockSample:Object=rec.clock==null?null:rec.clock.currentSample;
             for each(var gun:Object in rec.guns)
             {
-               var w:Object=gun.weapon,s:Object=gun.snapshot;
+               var w:Object=gun.weapon,s:Object=gun.snapshot,visual:Object=s;
                if(s==null) continue;
                var v:Object=get(w,"vis");
                if(v!=null && (v.parent==null || (get(get(u,"vis"),"stage")!=null && v.stage!==u.vis.stage))) w.addVisual();
@@ -285,16 +355,33 @@ package rconnect.game
                w.X=Number(u.X)+Number(m.x)+(Number(s.ox)-Number(m.x))*p;
                w.Y=Number(u.Y)+Number(m.y)+(Number(s.oy)-Number(m.y))*p;
                w.rot=Number(m.r)+angle*p;
+               // Body and weapon share a source cursor, without a second tween.
+               if(clockSample!=null && clockSample.weapons is Array)
+                  for each(var pose:Object in clockSample.weapons)
+                     if(pose.slot==s.slot&&pose.id==s.id&&pose.variant==s.variant&&pose.stream==s.stream) {
+                        w.X=Number(u.X)+Number(pose.ox);w.Y=Number(u.Y)+Number(pose.oy);w.rot=Number(pose.rot);
+                        visual=pose;break;
+                     }
                w.t_prep=Math.max(0,int(s.prep)-int(elapsed*30/1000));
                w.t_reload=Math.max(0,int(s.reload)-int(elapsed*30/1000));
-               if(gun.queue>0 && getTimer()>=int(gun.next))
+               if(!paused && gun.queue>0 && getTimer()>=int(gun.next))
                {
-                  gun.queue--;gun.next=getTimer()+(s.cadence==null?80:Math.max(16,Math.min(250,Number(s.cadence))));gun.flash=3;
-                  play(w,"shoot");
+                  gun.queue--;
+                  // Re-arming from now rounds every shot up to a display frame,
+                  // accumulating a queue even at steady native fire rates.
+                  var cadence:Number=s.cadence==null?80:Math.max(16,Math.min(250,Number(s.cadence)));
+                  if(int(gun.next)<=0 || getTimer()-int(gun.next)>250)gun.next=getTimer();
+                  gun.next=Number(gun.next)+cadence;
+                  // Native Weapon.shoot does not restart a muzzle clip while
+                  // its previous flash is still above one frame. Under burst
+                  // delivery the mirror could restart it every rendered frame,
+                  // repeatedly reconstructing its children and hiding motion.
+                  // Consume every shot; only clip restart follows that cooldown.
+                  if(int(gun.flash)<=1){gun.flash=3;play(w,"shoot");}
                   if(rec.body!=null && rec.body.kind=="turret")TurretDisplay.fire(u);
                }
                w.t_shoot=gun.flash;
-               if(gun.flash>0) gun.flash--;
+               if(!paused && gun.flash>0) gun.flash--;
                // animate updates aim and position only. Never call step/actions/attack.
                w.animate();
                telekinesis.weapon(w,s.aura);
@@ -302,18 +389,27 @@ package rconnect.game
                {
                   v.visible=u.vis.visible;v.alpha=u.vis.alpha;
                }
-               melee.apply(u,w,s.melee,rec.clock==null?NaN:rec.clock.sourceTime);
+               // The later pose contains the native in-between swing frames. Using
+               // only the last applied packet would stop at its history endpoint.
+               if(!melee.apply(u,w,visual.melee,rec.clock==null?NaN:rec.clock.sourceTime))
+                  WeaponDisplay.presentPose(u,w,visual.display);
             }
             if(rec.body!=null)TurretDisplay.present(u,rec.body);
          }
          catch(e:*) {failed(u,e);}
       }
 
-      public function animateBody(u:Object):void
+      public function animateBody(u:Object,paused:Boolean=false):void
       {
          var rec:Object=states[u];
          if(rec!=null && rec.body!=null && rec.body.kind=="turret")return;
-         if(rec==null || !RConnectAnimationAccess.tick(u as Unit,rec.pose))u.animate();
+         var sample:Object=rec==null||rec.clock==null?null:rec.clock.currentSample;
+         var clocked:Boolean=sample!=null&&sample.bodyPose!=null&&sample.bodyPose.blit!=null;
+         if(clocked) {
+            RConnectAnimationAccess.receive(u as Unit,sample.bodyPose,String(sample.visual.anim),rec.pose,true,paused);
+            rec.pose=sample.bodyPose;
+         }
+         if(rec==null || !RConnectAnimationAccess.tick(u as Unit,rec.pose,!paused&&!clocked))if(!paused)u.animate();
       }
 
       public function enforce(u:Object):void

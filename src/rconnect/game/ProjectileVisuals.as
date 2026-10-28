@@ -6,6 +6,7 @@ package rconnect.game {
    import flash.utils.getTimer;
    import flash.utils.getQualifiedClassName;
    import rconnect.core.Log;
+   import rconnect.core.ProjectileGrip;
    /** Pure display copies: no Bullet, collision, damage or ammunition changes. */
    public class ProjectileVisuals {
       private var seen:Dictionary=new Dictionary(true),active:Array=[],errors:Object={};
@@ -27,7 +28,8 @@ package rconnect.game {
          if(b==null || GameBridge.probe(b,"vis")==null)return null;
          return {cls:getQualifiedClassName(b.vis),x:b.begx,y:b.begy,ex:b.X,ey:b.Y,
             dx:b.dx,dy:b.dy,ddy:b.ddy,rot:b.rot,vel:b.vel,spring:b.spring,
-            ended:b.babah || !b.in_chain,blend:b.vis.blendMode};
+            ended:b.babah || !b.in_chain,blend:b.vis.blendMode,
+            grip:ProjectileGrip.instance==null?null:ProjectileGrip.instance.describe(b)};
       }
       /** Alicorn lightning is spring=1, not a laser beam. Reproduce its real
        * display trajectory/lifetime instead of the short endpoint approximation.
@@ -62,14 +64,26 @@ package rconnect.game {
             var channel:Object=slots[key];
             var now:int=getTimer(),source:Number=Number(gun.sampleTime);
             if(!isFinite(source))source=now;
-            if(channel==null)channel=slots[key]={last:0,records:{},offset:now-source};
+            if(channel==null)channel=slots[key]={last:0,records:{},offset:now-source,motion:null,playbackOffset:NaN};
             channel.offset=Math.min(Number(channel.offset),now-source);
+            // The actor's pose clock is retired at death. In-flight effects
+            // retain its cursor, then continue on elapsed display time.
+            if(motion==null && channel.motion!=null) {
+               var cursor:Number=channel.motion.sourceTime;
+               if(isFinite(cursor))channel.playbackOffset=now-cursor-(player?100:300);
+               for each(var pending:Object in channel.records) {
+                  if(pending.rateHeld){pending.motion.releaseRate(pending);pending.rateHeld=false;}
+                  pending.motion=null;
+                  if(isFinite(Number(channel.playbackOffset)))pending.offset=channel.playbackOffset;
+               }
+            }
+            channel.motion=motion;
             energyImpacts.receive(channel,gun.impacts as Array,GameBridge.probe(owner,"loc"),main,channel.offset,player?100:300,motion);
             var last:int=int(channel.last);
             for each(var event:Object in gun.events) {
                var existing:Object=channel.records[String(event.seq)];
                if(int(event.seq)<=last) {
-                  if(existing!=null && existing.beam && event.flight!=null){existing.s=event.flight;existing.updated=now;}
+                  if(existing!=null && existing.beam && event.flight!=null){existing.s=mergeFlight(existing.s,event.flight);existing.updated=now;}
                   continue;
                }
                last=int(event.seq);var s:Object=event.flight;if(s==null)continue;
@@ -80,7 +94,8 @@ package rconnect.game {
                   var layer:DisplayObjectContainer=grafon.visObjs[2] as DisplayObjectContainer;
                   if(layer==null)continue;
                   var rec:Object={vis:null,cls:cls,s:s,at:now,loc:world,grafon:grafon,main:main,exploded:false,last:0,
-                     beam:s.frames is Array,offset:channel.offset,delay:player?100:300,channel:channel,seq:event.seq,motion:motion,updated:now};
+                     owner:owner,beam:s.frames is Array,offset:isFinite(Number(channel.playbackOffset))?channel.playbackOffset:channel.offset,
+                     delay:player?100:300,channel:channel,seq:event.seq,motion:motion,updated:now};
                   channel.records[String(event.seq)]=rec;
                   if(!rec.beam)createVisual(rec);
                   active.push(rec);
@@ -94,6 +109,29 @@ package rconnect.game {
             }
             channel.last=last;
          }
+      }
+      /** Frequent packets contain a suffix, full snapshots contain history.
+       * Merge by source time, retaining the anchor for the delayed cursor. */
+      private static function mergeFlight(old:Object,fresh:Object):Object {
+         if(!(old.frames is Array) || !(fresh.frames is Array))return fresh;
+         var a:Array=old.frames as Array,b:Array=fresh.frames as Array;
+         // Full histories already contain every point in the older window.
+         // Reuse them without allocating another array; a suffix or missing
+         // terminal metadata still needs the preserving merge below.
+         if((a.length==0 || (b.length>0 && Number(b[0].at)<=Number(a[0].at)
+            && Number(b[b.length-1].at)>=Number(a[a.length-1].at)))
+            && int(fresh.end)>=int(old.end) && (old.explosion==null || fresh.explosion!=null))return fresh;
+         var out:Array=[],i:int=0,j:int=0;
+         while(i<a.length || j<b.length) {
+            if(j>=b.length || (i<a.length && Number(a[i].at)<Number(b[j].at)))out.push(a[i++]);
+            else {if(i<a.length && Number(a[i].at)==Number(b[j].at))i++;out.push(b[j++]);}
+         }
+         if(out.length>64)out=out.slice(out.length-64);
+         var merged:Object={};for(var key:String in fresh)merged[key]=fresh[key];
+         merged.frames=out;
+         if(int(old.end)>int(merged.end))merged.end=old.end;
+         if(merged.explosion==null)merged.explosion=old.explosion;
+         return merged;
       }
       private function createVisual(a:Object):DisplayObject {
          var cls:Class=a.cls as Class,v:DisplayObject=new cls() as DisplayObject;
@@ -111,7 +149,8 @@ package rconnect.game {
             var a:Object=active[i],s:Object=a.s,v:DisplayObject=a.vis;
             var age:Number=Math.max(0,now-int(a.at))/1000,frames:Number=age*30;
             if(a.loc!==loc){remove(i);continue;}
-            if(a.beam) {if(!tickBeam(a,now))remove(i);continue;}
+            if(a.beam) {if(!tickBeam(a,now))remove(i);
+               else if(ProjectileGrip.instance!=null)ProjectileGrip.instance.present(a);continue;}
             if(age>(s.ended?0.16:2.5) || v==null){remove(i);continue;}
             if(v.parent!==a.grafon.visObjs[2])a.grafon.visObjs[2].addChild(v);
             var x:Number=Number(s.x)+Number(s.dx)*frames;
@@ -130,16 +169,16 @@ package rconnect.game {
          }
       }
       private function tickBeam(a:Object,now:int):Boolean {
-         var s:Object=a.s,list:Array=s.frames as Array,time:Number=a.motion!=null?a.motion.sourceTime:NaN;
+         var s:Object=a.s,time:Number=a.motion!=null?a.motion.sourceTime:NaN;
          if(!isFinite(time))time=now-Number(a.offset)-Number(a.delay);
          if(!a.exploded&&s.explosion!=null&&time>=Number(s.explosion.at)) {
             a.exploded=true;ProjectileExplosionVisuals.play(a.main,a.loc,s.explosion);
          }
          if(int(s.end)>0 && time>=Number(s.end))return false;
          if(now-int(a.updated)>15000)return false;
-         if(list==null || list.length==0 || time<Number(list[0].at))return true;
-         var point:Object=list[0];
-         for each(var p:Object in list){if(Number(p.at)>time)break;point=p;}
+         if(a.frameState==null)a.frameState={};
+         var point:Object=ProjectilePlayback.sample(s,time,a.frameState);
+         if(point==null)return true;
          var v:DisplayObject=a.vis as DisplayObject;if(v==null)v=createVisual(a);
          if(v==null)return false;
          if(v.parent!==a.grafon.visObjs[2])a.grafon.visObjs[2].addChild(v);
@@ -150,7 +189,7 @@ package rconnect.game {
          if(laser!=null){laser.scaleX=Number(point.ls);if(laser is MovieClip && MovieClip(laser).currentFrame!=int(point.lf))MovieClip(laser).gotoAndStop(int(point.lf));}
          return true;
       }
-      private function remove(i:int):void {var a:Object=active[i],v:DisplayObject=a.vis;if(a.rateHeld && a.motion!=null)a.motion.releaseRate(a);if(v!=null && v.parent!=null)v.parent.removeChild(v);delete a.channel.records[String(a.seq)];active.splice(i,1);}
+      private function remove(i:int):void {var a:Object=active[i],v:DisplayObject=a.vis;if(ProjectileGrip.instance!=null)ProjectileGrip.instance.forget(a);if(a.rateHeld && a.motion!=null)a.motion.releaseRate(a);if(v!=null && v.parent!=null)v.parent.removeChild(v);delete a.channel.records[String(a.seq)];active.splice(i,1);}
       public function forget(owner:Object):void {
          var slots:Object=seen[owner];if(slots==null)return;
          for(var i:int=active.length-1;i>=0;i--)

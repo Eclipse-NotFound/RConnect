@@ -23,6 +23,7 @@ package rconnect.core
          peerGripStruggle: "1",
          peerThrowDamage: "0",
          friendlyFire: "0",
+         sharedSecurityHack: "1",
          pauseMenus: "0",
          pauseSats: "0",
          autoRole: "",

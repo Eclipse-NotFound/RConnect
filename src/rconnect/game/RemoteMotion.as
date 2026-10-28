@@ -20,6 +20,8 @@ package rconnect.game
       private var interval:int;
       private var immediateStart:Boolean;
       private var bufferLimit:int=0;
+      private var enemyRecovery:Boolean=false;
+      private var playbackRate:Number=1;
       // Only immediately visible drops use packet-burst buffering. A grab
       // has a separate low-latency policy, and avatar clocks stay unchanged.
       private var firstSample:Boolean=true;
@@ -44,6 +46,10 @@ package rconnect.game
        * continuous clock and pause/release behavior as ordinary streams. */
       public static function held():RemoteMotion {
          var motion:RemoteMotion=new RemoteMotion(50);motion.bufferLimit=100;return motion;
+      }
+      public static function enemy():RemoteMotion {
+         var motion:RemoteMotion=new RemoteMotion(50);motion.bufferLimit=100;
+         motion.enemyRecovery=true;return motion;
       }
 
       public function push(snap:Object, now:int):void
@@ -84,12 +90,23 @@ package rconnect.game
 
       /** Shared display cursor for this avatar's weapon and projectile frames. */
       public function get sourceTime():Number {return frames.length>0?cursor:NaN;}
+      public function get latestSampleTime():Number {return frames.length>0?Number(frames[frames.length-1].at):NaN;}
+      public function get currentSample():Object {return state;}
+
+      /** Simulation input may need the last received location, not the older
+       * display cursor. Return a fresh value without seeking or sampling it. */
+      public function get latestPosition():Object {
+         var latest:Object=frames.length>0?frames[frames.length-1].snap:target;
+         if(latest==null || !isFinite(Number(latest.x)) || !isFinite(Number(latest.y)))return null;
+         return {x:Number(latest.x),y:Number(latest.y)};
+      }
 
       /** A paused world may still receive its last in-flight snapshots. Close
        * the display buffer at the received endpoint, without extrapolation.
        * Retain that cursor so resume cannot replay the pre-pause position. */
       public function settle(now:int):Object {
          if(frames.length>0) {
+            playbackRate=1;
             cursor=Number(frames[frames.length-1].at);
             return sampleTimed(now);
          }
@@ -109,6 +126,7 @@ package rconnect.game
          if(last==null || now-arrivedAt>1000 || stamp-Number(last.at)>1000
             || clockOffset<offset-Math.max(250,interval*2) || (!port && dx*dx+dy*dy>600*600)) {
             frames=[];gaps=[];selected=null;state=null;preceding=null;firstSample=true;dropDelay=0;
+            playbackRate=1;
             offset=clockOffset;cursor=stamp-(immediateStart?0:delay());sampledAt=now;
          } else {
             // Host world broadcasts can repeat an unchanged peer snapshot.
@@ -131,6 +149,10 @@ package rconnect.game
       }
 
       private function delay():Number {
+         // Enemy pose and flight share one cursor. A changing target delay
+         // speeds up/slows down even steady native wing cycles. Keep a fixed
+         // short buffer; existing stall recovery and pause settling remain.
+         if(enemyRecovery)return bufferLimit;
          var value:Number=bufferLimit>0?interval*1.5:Math.max(100,interval*1.5);
          for each(var gap:Number in gaps)value=Math.max(value,gap*1.25);
          // Automatic falling arcs can absorb a slow delivery burst. The
@@ -148,7 +170,16 @@ package rconnect.game
          var wanted:Number=now-offset-delay(),next:Number=cursor+elapsed;
          // Adjust buffer depth by slightly changing playback speed, never by
          // rewinding the avatar when a slower packet interval is observed.
-         cursor=rateHeld()?next:next+Math.max(-elapsed*.1,Math.min(elapsed*.1,wanted-next));
+         if(rateHeld()) {playbackRate=1;cursor=next;}
+         else if(enemyRecovery) {
+            // A stalled receive buffer must not leave enemies several frames
+            // behind for seconds. Recover by gently changing speed, not by
+            // seeking past animation frames. Finite native effects above keep
+            // their exact playback rate. Other stream policies are unchanged.
+            var desiredRate:Number=1+Math.max(-.1,Math.min(.5,(wanted-next)/Math.max(1,elapsed)));
+            playbackRate+=Math.max(-elapsed*.003,Math.min(elapsed*.003,desiredRate-playbackRate));
+            cursor+=elapsed*playbackRate;
+         } else cursor=next+Math.max(-elapsed*.1,Math.min(elapsed*.1,wanted-next));
          var latest:Object=frames[frames.length-1];
          cursor=Math.min(cursor,Number(latest.at));
          while(frames.length>2 && Number(frames[1].at)<=cursor)preceding=frames.shift();
@@ -164,6 +195,7 @@ package rconnect.game
             // Native teleport changes world position immediately. Weapon and
             // body poses come from the matching side of that discontinuity.
             state.weapons=chosen.weapons;
+            state.bodyPose=chosen.visual==null?null:chosen.visual.pose;
             return state;
          }
          var span:Number=Number(b.at)-Number(a.at);
@@ -174,8 +206,48 @@ package rconnect.game
                ? curve(key,a,b,t,span) : first+(last-first)*t;
          }
          if(a.snap.weapons is Array && b.snap.weapons is Array)
-            state.weapons=WeaponDisplay.interpolate(a.snap.weapons as Array,b.snap.weapons as Array,t);
+            state.weapons=blendWeapons(a.snap.weapons as Array,b.snap.weapons as Array,t);
+         state.bodyPose=blendBodyPose(a.snap.visual,b.snap.visual,t,span);
          return state;
+      }
+
+      /** Blit bodies use the same received timeline as position and aim. A
+       * second local Animation.step clock can run ahead and rewind on receipt. */
+      private static function blendBodyPose(a:Object,b:Object,t:Number,span:Number):Object {
+         if(a==null||a.pose==null||a.pose.blit==null||a.pose.blit.length==null)return null;
+         if(b==null||b.pose==null||b.pose.blit==null||a.anim!=b.anim)return a.pose;
+         var first:Object=a.pose.blit,last:Object=b.pose.blit;
+         if(first.st||first.stab||last.stab||first.length!=last.length)return a.pose;
+         var delta:Number=Number(last.f)-Number(first.f),period:Number=Number(first.first)+Number(first.length)-Number(first.ret);
+         if(delta<0) {
+            if(!first.loop||period<=0)return a.pose;
+            delta+=period;
+            // Same-label explicit restarts are discontinuities, not an entire
+            // loop played in one short packet interval.
+            if(delta>Math.max(4,span*.06*Math.max(1,Math.abs(Number(first.df)))))return a.pose;
+         }
+         var pose:Object={},blit:Object={};
+         for(var key:String in a.pose)pose[key]=a.pose[key];
+         for(key in first)blit[key]=first[key];
+         blit.f=Number(first.f)+delta*t;
+         if(first.loop&&period>0&&blit.f>=Number(first.first)+Number(first.length))blit.f-=period;
+         pose.blit=blit;return pose;
+      }
+
+      private static function blendWeapons(first:Array,last:Array,t:Number):Array {
+         var blended:Array=WeaponDisplay.interpolate(first,last,t),out:Array=[];
+         for each(var a:Object in blended) {
+            if(a.display!=null){out.push(a);continue;}
+            var copy:Object={};for(var key:String in a)copy[key]=a[key];
+            for each(var b:Object in last)if(a.slot==b.slot&&a.id==b.id&&a.variant==b.variant&&a.stream==b.stream) {
+               var angle:Number=Number(b.rot)-Number(a.rot);
+               while(angle>Math.PI)angle-=Math.PI*2;while(angle<-Math.PI)angle+=Math.PI*2;
+               copy.ox=Number(a.ox)+(Number(b.ox)-Number(a.ox))*t;
+               copy.oy=Number(a.oy)+(Number(b.oy)-Number(a.oy))*t;copy.rot=Number(a.rot)+angle*t;break;
+            }
+            out.push(copy);
+         }
+         return out;
       }
 
       /** Shape-preserving cubic interpolation makes velocity continuous across

@@ -1,5 +1,6 @@
 package fe.unit {
 import fe.weapon.Bullet;
+import fe.graph.Emitter;
 import flash.display.BitmapData;
 import flash.display.Bitmap;
 // Compile-only external declarations. Never embedded in the production SWF.
@@ -19,6 +20,7 @@ internal var timerDie:int;
 internal var t_hitPart:int;
 internal var hitSumm:Number;
 internal var hitPart:*;
+internal var numbEmit:Emitter;
 internal var visDamDY:int;
 internal var t_mess:int;
 internal var kolChild:int;

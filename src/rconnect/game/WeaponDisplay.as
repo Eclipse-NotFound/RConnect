@@ -64,6 +64,23 @@ package rconnect.game {
          return result;
       }
 
+      /** Use the captured native reflection/rotation in this receiver's actual
+       * parent space. NPC weapons normally share the body world layer; some
+       * weapons are children of a transformed body. Neither needs local AI aim. */
+      public static function presentPose(u:Object,w:Object,p:Object):Boolean {
+         var v:DisplayObject=GameBridge.probe(w,"vis") as DisplayObject;
+         var body:DisplayObject=GameBridge.probe(u,"vis") as DisplayObject;
+         var layer:DisplayObjectContainer=body==null?null:body.parent;
+         if(p==null || v==null || v.parent==null || layer==null)return false;
+         var basis:Matrix=relativeMatrix(v.parent,layer);
+         if(basis==null || Math.abs(basis.a*basis.d-basis.b*basis.c)<.000001)return false;
+         var cos:Number=Math.cos(Number(p.r)),sin:Number=Math.sin(Number(p.r));
+         var nativePose:Matrix=new Matrix(cos*Number(p.sx),sin*Number(p.sx),-sin*Number(p.sy),cos*Number(p.sy),
+            Number(u.X)+Number(p.x),Number(u.Y)+Number(p.y));
+         basis.invert();nativePose.concat(basis);v.transform.matrix=nativePose;
+         return true;
+      }
+
       public function apply(u:Object,w:Object,s:Object,now:int,sourceTime:Number=NaN):void {
          if(melee.apply(u,w,s.melee,sourceTime))return;
          var v:DisplayObject=GameBridge.probe(w,"vis") as DisplayObject;

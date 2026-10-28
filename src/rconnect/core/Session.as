@@ -23,6 +23,12 @@ package rconnect.core
       public static const JOINING:String = "joining";
       public static const CONNECTED:String = "connected";
 
+      // A network attempt revokes the offline shortcut for this Session.
+      private var _networkAttempted:Boolean=false;
+      public function canSkipOfflinePresentation():Boolean {
+         return !_networkAttempted && mode===OFFLINE;
+      }
+
       public var mod:RConnectMod;
       public var progress:WorldProgress;
       public var mode:String = OFFLINE;
@@ -186,6 +192,7 @@ package rconnect.core
 
       public function startHost():void
       {
+         _networkAttempted=true;
          stop();
          error = "";
          _userLeft = false;
@@ -210,6 +217,7 @@ package rconnect.core
 
       public function startJoin():void
       {
+         _networkAttempted=true;
          stop();
          error = "";
          _userLeft = false;
@@ -399,6 +407,7 @@ package rconnect.core
                mode = CONNECTED;
                Log.d("RConnectNet: welcome id=" + myId + " host=" + hostName);
                compareWorldInfo(msg.worldInfo);
+               rooms.receivedWelcome(msg.worldInfo);
                // 自动化联测：join 连接成功后自动发一条聊天验证转发
                if(_autoRole == "join" && !_autoChatSent)
                {
@@ -500,7 +509,9 @@ package rconnect.core
 
             case Protocol.MSG_WORLDSTATE:
                applyWorldState(msg.players as Array);
+               if(msg.enemyMotion is Array && sameHostRoom(msg))mod.game.applyEnemyMotion(msg.enemyMotion as Array);
                if(msg.lootMotion is Array && sameHostRoom(msg))mod.game.applyLootSync(msg.lootMotion as Array,true);
+               if(_worldInject && msg.wallPaint is Array && sameHostRoom(msg))mod.game.applyWallPaint(msg.wallPaint as Array);
                break;
 
             case "map-progress":
@@ -985,7 +996,7 @@ package rconnect.core
          // M24/M25/M26：joiner 高频（200ms）扫描本地 Loot 拾取/推动 + Box
          // 位移（念力）+ ist 变化（开门/开锁/搜刮）→ 上报宿主（搬运中的
          // 物体每秒 5 跳，接收端 tween 平滑）
-         if(mode==CONNECTED && rooms.ready && !rooms.busy && !rooms.authority && mod.game!=null)
+         if(mode==CONNECTED && rooms.canSyncWorld && !rooms.authority && mod.game!=null)
          {
             var sceneDue:Boolean=flash.utils.getTimer()>=_nextSceneReport;
             if(sceneDue)_nextSceneReport=flash.utils.getTimer()+200;
@@ -1051,7 +1062,7 @@ package rconnect.core
             broadcastWorldState();
             // 宿主按实际时间每约200ms广播单位快照 + 世界身份。
             // M17：不设 units>0 门槛——房间无敌人时也要传瓦片/物品/新生成
-            if(flash.utils.getTimer()>=_nextWorldSnapshot && mod.game != null && rooms.ready && !rooms.busy && !mod.game.isTransitioning())
+            if(flash.utils.getTimer()>=_nextWorldSnapshot && mod.game != null && rooms.canSyncWorld && !mod.game.isTransitioning())
             {
                // AIR coalesces delayed timers under load. Counting four callbacks
                // stretched 200ms updates to 500ms; use elapsed time without catch-up bursts.
@@ -1160,11 +1171,11 @@ package rconnect.core
          if(link==null || !link.isOpen)return;
          var hits:Array=mod.game.scanAndReportDamage();
          if(hits!=null && hits.length)link.send(rooms.stamp(Protocol.make(Protocol.MSG_DAMAGE,{hits:hits,worldInfo:mod.game.readWorldInfo()})));
-         if(!scene)return;
          var reports:Array=[];
-         var terrainBatches:Array=closing?mod.game.finishTileReports():[mod.game.scanTileReports()];
+         var terrainBatches:Array=closing?mod.game.finishTileReports():
+            [scene?mod.game.scanTileReports():mod.game.scanWallReports()];
          for each(var terrain:Object in terrainBatches)reports.push({type:Protocol.MSG_TERRAIN,data:terrain});
-         reports=reports.concat([{type:Protocol.MSG_LOOT,data:mod.game.scanLootReports()},
+         if(scene)reports=reports.concat([{type:Protocol.MSG_LOOT,data:mod.game.scanLootReports()},
             {type:Protocol.MSG_OBJS,data:mod.game.scanObjReports()}]);
          for each(var item:Object in reports)if(item.data!=null)
          {
@@ -1203,11 +1214,19 @@ package rconnect.core
          }
          var ws:Object = Protocol.make(Protocol.MSG_WORLDSTATE,
             {tick: _tickCount, players: players});
-         if(mod.game!=null && rooms.ready && !rooms.busy && rooms.authority && !mod.game.isTransitioning()) {
+         if(mod.game!=null && rooms.canSyncWorld && rooms.authority && !mod.game.isTransitioning()) {
+            ws.enemyMotion=mod.game.readEnemyMotion();
             var movingLoot:Array=mod.game.readLootSync(true);
             if(movingLoot!=null)ws.lootMotion=movingLoot;
+            var wallPaint:Array=mod.game.readWallPaintUpdates();
+            if(wallPaint!=null)ws.wallPaint=wallPaint;
          }
          server.broadcast(rooms.stamp(ws));
+         // Keep the 200ms cumulative unitsync repair: a predicted pixel can
+         // intentionally reject this fast update until its own ACK arrives.
+         // Do not consume revisions just by reading them, or with no peer.
+         if(wallPaint!=null && server!=null && server.clients.length>0)
+            mod.game.wallPaintUpdatesSent(wallPaint);
       }
 
       private function applyWorldState(players:Array):void

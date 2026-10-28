@@ -4,11 +4,17 @@
 
 Explore the wasteland with a friend: see each other, chat, fight together, or split up across ordinary rooms on the same map.
 
-**[Download v0.2.22-dev — RConnect_v0.2.22-dev.zip](https://github.com/Eclipse-NotFound/RConnect/releases/download/v0.2.22-dev/RConnect_v0.2.22-dev.zip)** · [Release notes / other versions](https://github.com/Eclipse-NotFound/RConnect/releases)
+**[Download v0.2.24-animfix3-l10n — RConnect_v0.2.24-animfix3-l10n.zip](https://github.com/Eclipse-NotFound/RConnect/releases/download/v0.2.24-animfix3-l10n/RConnect_v0.2.24-animfix3-l10n.zip)** · [Release notes / other versions](https://github.com/Eclipse-NotFound/RConnect/releases)
 
 Use the download link above, or open the release page, expand **Assets**, and select that filename. **Source code** and the green **Code → Download ZIP** button are development files, not the installable package.
 
-> **A architecture, verified deployed build 0.2.22-dev.** This is the unchanged build deployed locally on 2026-10-09, now available on GitHub. It remains a prerelease: dense-combat performance and some historical edge cases are unresolved. B architecture and unfinished M51 changes are not included.
+> **Current A architecture, with nine-language UI.** This prerelease includes the deployed animfix3 repairs and the localization update. It does not contain B architecture. Dense scenes can still stall; this release does not claim to resolve every animation or performance issue.
+
+## Languages and this update
+
+The panel, settings, shortcuts and connection/room notices follow the game's language setting: **English, Русский, Українська, 简体中文, 繁體中文, Polski, Deutsch, Español and 日本語**. You can switch language without restarting the mod. Nicknames and chat messages are never translated. Long hints remain inside the scrolling panel.
+
+This build also includes A's native enemy weapon reflection/melee poses, enemy speech, telekinetic impact damage numbers and rapid door-toggle fixes. Special projectile motion interpolates confirmed samples; occasional whole-frame stalls remain. [Validation and known limits](docs/release-0.2.24.md).
 
 ## Before you start
 
@@ -56,7 +62,7 @@ For two windows on one PC, run `mods/RConnect/Start-Coop.bat`; both windows keep
 
 ## Validation and limits
 
-The unchanged SWF passed 38 local two-instance groups (4,760 checks) and normal startup on 2026-10-09. This upload verifies the original artifact and matching source; it is not a new test of every current third-party mod combination. Dense combat can still stutter, and hidden-room control loss and mine interaction edge cases remain under investigation. See [deployment evidence](state/deployment-m50-2026-10-09.md).
+Localization was checked in isolated, muted host/join instances across all nine languages, including native AIR text layout and preserved player text. The 80 gameplay classes are byte-identical to the deployed animfix3 source; its targeted door, weapon, speech, throw-feedback and projectile checks are reused where unchanged. This is not a new performance qualification or a test of every mod combination. See [validation and limits](docs/release-0.2.24.md).
 
 ## Connection problems, updates and removal
 
@@ -73,7 +79,7 @@ If it still fails, [report an issue](https://github.com/Eclipse-NotFound/RConnec
 <details>
 <summary>Development resources and version differences</summary>
 
-The controls above are based on the [v0.2.22-dev source](https://github.com/Eclipse-NotFound/RConnect/tree/v0.2.22-dev). Current repository source may contain fixes not yet packaged; see [src/](src/) and [state/](state/).
+This release tag contains the exact A source in [src/](src/), the editable [language catalog](locales/messages.json), and a [build guide](docs/BUILD-A.md). No B experiment is included.
 
 </details>
 

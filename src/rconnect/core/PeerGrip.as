@@ -5,6 +5,7 @@ package rconnect.core {
    import flash.utils.Timer;
    import flash.utils.getTimer;
    import rconnect.game.GameBridge;
+   import rconnect.game.TelekinesisVisuals;
    import rconnect.net.NetMessageEvent;
    import rconnect.net.TcpLink;
 
@@ -14,11 +15,13 @@ package rconnect.core {
       private var mod:RConnectMod,timer:Timer=new Timer(50),links:Dictionary=new Dictionary(),retired:Dictionary=new Dictionary();
       private var outgoing:Object,incoming:Object,keys:Object,beforeMotion:Object;
       private var throwDamage:PeerThrowDamage;
+      private var aura:TelekinesisVisuals=new TelekinesisVisuals();
       private var serial:int=0,errors:int=0,lastFrame:int=getTimer(),wasPaused:Boolean=false,manaBefore:Number=0;
       private static const MOVEMENT:Array=["keyLeft","keyRight","keyBeUp","keySit","keyJump","keyDash","keyDubLeft","keyDubRight"];
       public function PeerGrip(m:RConnectMod) {
          mod=m;throwDamage=new PeerThrowDamage(m);m.stage.addEventListener(Event.ENTER_FRAME,before,false,98000);
          m.stage.addEventListener(Event.ENTER_FRAME,after,false,-8500);
+         m.stage.addEventListener(Event.RENDER,presentAura,false,-11000);
          timer.addEventListener(TimerEvent.TIMER,sendHeld);timer.start();
       }
       private function get game():Object {return mod.game;}
@@ -72,7 +75,8 @@ package rconnect.core {
             if(outgoing==null||!ready()||game.gg.teleObj!==outgoing.raw)return;
             var g:Object=game.gg,p:Object=stamp("hold",outgoing.token);
             p.input={cx:g.celX,cy:g.celY,speed:g.teleSpeed,accel:g.teleAccel,mana:g.mana,startMana:outgoing.startMana,
-               mass:g.pers.maxTeleMassa,range:g.pers.teleDist,master:g.pers.telemaster};outgoing.link.send(p);
+               mass:g.pers.maxTeleMassa,range:g.pers.teleDist,master:g.pers.telemaster};
+            p.aura=outgoing.style;outgoing.link.send(p);
          }catch(e:Error){fault(e);}
       }
       private function paused():Boolean {return session.pause!=null&&session.pause.paused;}
@@ -117,12 +121,19 @@ package rconnect.core {
       private function after(e:Event):void {
          try {
             restoreKeys();throwDamage.afterStep();if(!ready()){reset();return;}
+            presentAura();
             var g:Object=game.gg,raw:Object=g.teleObj,link:TcpLink=peerFor(raw);
             if(outgoing!=null&&raw!==outgoing.raw)endOutgoing(true,true);
             if(link==null||raw==null)return;
             if(!raw.levitPoss||incoming!=null||game.isPlayerDead()){g.dropTeleObj();return;}
-            if(outgoing==null){outgoing={raw:raw,link:link,token:++serial,startMana:manaBefore,accepted:false,until:getTimer()+2000};sendHeld();}
+            if(outgoing==null){outgoing={raw:raw,link:link,token:++serial,startMana:manaBefore,accepted:false,
+               style:TelekinesisVisuals.captureObject(raw),until:getTimer()+2000};sendHeld();}
          }catch(err:Error){throwDamage.reset();fault(err);}
+      }
+      private function presentAura(e:Event=null):void {
+         if(incoming==null)return;
+         aura.object(incoming.player,incoming.aura);
+         aura.tick(game.loc,null,false);
       }
       private function safe(p:Object):Boolean {
          if(p==null)return false;for each(var k:String in ["cx","cy","speed","accel","mana","startMana","mass","range","master"])
@@ -160,7 +171,7 @@ package rconnect.core {
             }
             if(!eligible){retire(l,p);reply(l,p,false,"ineligible");if(incoming!=null&&incoming.token==p.token)endIncoming("ineligible");return;}
             if(incoming==null){throwDamage.reset();incoming={player:g,link:l,token:p.token,stamp:p};g.levit=2;g.stay=false;reply(l,p,true);}
-            incoming.input=input;incoming.until=getTimer()+1500;
+            incoming.input=input;incoming.aura=TelekinesisVisuals.validated(p.aura);incoming.until=getTimer()+1500;presentAura();
          }catch(err:Error){fault(err);}
       }
       private function endOutgoing(relay:Boolean,detectThrow:Boolean=false):void {
@@ -178,6 +189,7 @@ package rconnect.core {
       }
       private function endIncoming(reason:String):void {
          var rec:Object=incoming;incoming=null;if(rec==null)return;
+         aura.reset();
          restoreKeys();retire(rec.link,rec);if(rec.player!=null&&rec.player.levit==2)rec.player.levit=0;
          reply(rec.link,rec,false,reason);
       }

@@ -43,20 +43,25 @@ package rconnect.game {
          return [c.redMultiplier,c.greenMultiplier,c.blueMultiplier,c.alphaMultiplier,
             c.redOffset,c.greenOffset,c.blueOffset,c.alphaOffset];
       }
-      private static function tint(v:DisplayObject,a:Array):void {
+      private static function tint(v:DisplayObject,a:Array,preserveAlpha:Boolean=false):void {
          if(a==null || a.length!=8)return;
-         var values:Array=[];
-         for(var i:int=0;i<8;i++)values.push(i<4?clamp(a[i],-16,16,1):clamp(a[i],-4096,4096));
-         if(!equal(colors(v),values))v.transform.colorTransform=new ColorTransform(
-            values[0],values[1],values[2],values[3],values[4],values[5],values[6],values[7]);
+         // This runs for every mirrored enemy at final RENDER. Compare the
+         // native channels once without four temporary arrays per quiet body.
+         var c:ColorTransform=v.transform.colorTransform;
+         var r:Number=clamp(a[0],-16,16,1),g:Number=clamp(a[1],-16,16,1),b:Number=clamp(a[2],-16,16,1);
+         var alpha:Number=clamp(preserveAlpha?c.alphaMultiplier:a[3],-16,16,1);
+         var ro:Number=clamp(a[4],-4096,4096),go:Number=clamp(a[5],-4096,4096),bo:Number=clamp(a[6],-4096,4096);
+         var ao:Number=clamp(preserveAlpha?c.alphaOffset:a[7],-4096,4096);
+         if(c.redMultiplier!==r || c.greenMultiplier!==g || c.blueMultiplier!==b || c.alphaMultiplier!==alpha
+            || c.redOffset!==ro || c.greenOffset!==go || c.blueOffset!==bo || c.alphaOffset!==ao)
+            v.transform.colorTransform=new ColorTransform(r,g,b,alpha,ro,go,bo,ao);
       }
       private static function colorOnly(v:DisplayObject,a:Array):void {
          if(a==null || a.length!=8)return;
-         var desired:Array=a.concat(),current:Array=colors(v);
          // DisplayObject.alpha and ColorTransform.alphaMultiplier are the
          // same channel. An RGB-only enemy update must preserve BOTH alpha
          // terms, including an independently applied native invisibility fade.
-         desired[3]=current[3];desired[7]=current[7];tint(v,desired);
+         tint(v,a,true);
       }
       private static function filters(v:DisplayObject):Array {
          var out:Array=[];
@@ -192,7 +197,7 @@ package rconnect.game {
        * Use the same delayed/settled snapshot as the body (not the latest packet).
        * A packet's style must never execute its gameplay effects on the receiver.
        */
-      public function apply(u:Object,s:Object,paused:Boolean=false):void {
+      public function apply(u:Object,s:Object,paused:Boolean=false,nativeGrip:Boolean=false):void {
          // A receiver must never paint over its real, locally controlled pony.
          if(u==null || get(u,"player")===true)return;
          if(s==null){forget(u);return;}
@@ -206,12 +211,15 @@ package rconnect.game {
          // Keep the existing teammate marking while reflecting native stealth.
          // Enemy alpha/invis belongs to GameBridge.unitView and is left alone.
          if(s.player!==true){colorOnly(root,s.c as Array);presentPart(rec,root,"inh",s.inh,paused);return;}
-         if(s.c is Array && s.c.length==8) {
-            var marked:Array=s.c.concat();
-            marked[3]=.75*clamp(s.a,0,1,finite(marked[3],1));
-            marked[7]=.75*finite(marked[7]);
-            tint(root,marked);
-         } else if(s.a!=null)root.alpha=.75*clamp(s.a,0,1,1);
+         // Native Q owns the held teammate root until its authenticated release.
+         if(!nativeGrip) {
+            if(s.c is Array && s.c.length==8) {
+               var marked:Array=s.c.concat();
+               marked[3]=.75*clamp(s.a,0,1,finite(marked[3],1));
+               marked[7]=.75*finite(marked[7]);
+               tint(root,marked);
+            } else if(s.a!=null)root.alpha=.75*clamp(s.a,0,1,1);
+         }
          var osn:DisplayObject=node(root,"osn");
          if(osn!=null && s.osn!=null){remember(rec,"osn",osn);applyStyle(osn,s.osn);}
          for each(var path:String in PARTS)

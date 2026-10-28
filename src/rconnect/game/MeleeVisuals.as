@@ -60,6 +60,31 @@ package rconnect.game {
          return rec==null?null:{kind:"club",player:get(u,"player")===true,frames:rec.frames.concat()};
       }
 
+      /** Frequent packets need only the previous window's final anchor and
+       * new native frames. The caller owns this state per weapon stream, so a
+       * new authority/session starts with complete history. Full capture above
+       * never consumes this cursor. TCP delivers each window in order. */
+      public static function captureMotion(u:Object,w:Object,stamp:int,state:Object):Object {
+         if(!RConnectMeleeAccess.isClub(w) || state==null)return null;
+         var rec:Object=observed[w];
+         if(rec==null){observe(u,w);rec=observed[w];}
+         if(rec==null || rec.frames.length==0)return null;
+         var frames:Array=rec.frames;
+         if(stamp<=0)stamp=int(rec.at);
+         if(state.meleeMotionStamp==null || int(state.meleeMotionStamp)!=stamp) {
+            state.meleeMotionFrom=state.meleeMotionTo;state.meleeMotionStamp=stamp;
+         }
+         var first:int=0;
+         if(state.meleeMotionFrom!=null)
+            while(first+1<frames.length && Number(frames[first+1].at)<=Number(state.meleeMotionFrom))first++;
+         state.meleeMotionTo=Number(frames[frames.length-1].at);
+         // A second send can have the same source stamp. Keep its window start,
+         // but re-slice current frames: final RENDER may replace that last pose.
+         // Caching the old payload or moving the start would erase those frames
+         // when RemoteMotion replaces an equal-stamp snapshot.
+         return {kind:"club",player:get(u,"player")===true,frames:frames.slice(first)};
+      }
+
       private static function capturePose(u:Object,v:DisplayObject,layer:DisplayObjectContainer):Object {
          // Point projection rounds to display units. A one-pixel basis can
          // amplify that rounding into visible angle/scale jitter.

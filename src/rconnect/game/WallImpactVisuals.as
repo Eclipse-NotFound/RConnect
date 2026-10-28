@@ -6,6 +6,8 @@ package rconnect.game
    import flash.geom.Rectangle;
    import flash.utils.Dictionary;
    import flash.utils.getQualifiedClassName;
+   import flash.system.System;
+   import rconnect.core.Log;
    import rconnect.net.RoomCodec;
 
    /** Grafon.dyrka/decal changes frontBmp, including indestructible walls whose
@@ -33,6 +35,7 @@ package rconnect.game
       private var tileState:Object={};
       private var sequence:int=0,revision:int=0;
       private var domain:Object,margins:Object={};
+      private var bitmapDiagnostics:int=0;
       /** Receiver pixels changed; GameBridge can refresh a cached SATS raster. */
       public var dirty:Boolean=false;
 
@@ -82,7 +85,7 @@ package rconnect.game
       private function state(loc:Object):Object
       {
          var s:Object=rooms[loc];
-         if(s==null)s=rooms[loc]={cells:{},queued:{},pending:null,receipts:{},incoming:{},cursor:0};
+         if(s==null)s=rooms[loc]={cells:{},queued:{},pending:null,receipts:{},incoming:{},sent:{},cursor:0};
          return s;
       }
       private function front(loc:Object):BitmapData
@@ -109,10 +112,29 @@ package rconnect.game
             if(shadow!=null)shadow.dispose();
             active=loc;bitmap=b;tracked=[];contacts=new Dictionary(true);tileState={};
             // drawLoc has already rebuilt this room before a normal frame.
-            replay(loc,b);shadow=b.clone();
+            replay(loc,b);shadow=copyFront(loc,b,"before");
             for(var x:int=0;x<int(loc.spaceX);x++)for(var y:int=0;y<int(loc.spaceY);y++)
                tileState[id(x,y)]={h:Number(loc.space[x][y].hp),p:Number(loc.space[x][y].phis)};
          }
+      }
+
+      private function copyFront(loc:Object,b:BitmapData,where:String):BitmapData
+      {
+         try {return b.clone();}
+         catch(error:Error)
+         {
+            if(bitmapDiagnostics++<4)
+            {
+               var g:Object=get(loc,"grafon"),info:Object={where:where,error:error.toString(),
+                  heap:System.totalMemory,privateBytes:System.privateMemory,freeBytes:System.freeMemory,
+                  current:b===front(loc),grafonRoom:get(g,"loc")===loc,sceneLarge:get(g,"sceneLarge"),
+                  sceneX:get(g,"sceneX"),sceneY:get(g,"sceneY"),spaceX:get(loc,"spaceX"),spaceY:get(loc,"spaceY")};
+               try {info.width=b.width;info.height=b.height;info.pixel=b.getPixel32(0,0);}catch(invalid:Error){info.pixelError=invalid.toString();}
+               Log.d("RConnectWall: bitmap copy failed "+JSON.stringify(info));
+            }
+            throw error;
+         }
+         return null;
       }
 
       /** Call after native simulation and before sending the corresponding
@@ -204,7 +226,7 @@ package rconnect.game
       }
       private function discard(loc:Object,k:String):void
       {
-         var s:Object=state(loc);delete s.cells[k];delete s.queued[k];delete s.incoming[k];
+         var s:Object=state(loc);delete s.cells[k];delete s.queued[k];delete s.incoming[k];delete s.sent[k];
       }
       private function packed(c:Object):Object
       {
@@ -226,9 +248,11 @@ package rconnect.game
          }
          return out;
       }
-      public function report(loc:Object):Object
+      public function report(loc:Object,observeNow:Boolean=true):Object
       {
-         observe(loc);
+         // The fast transport drains changes already observed after the native
+         // frame. It must not add another projectile/bitmap walk every tick.
+         if(observeNow)observe(loc);
          var s:Object=state(loc);
          if(s.pending!=null)return null;
          var cells:Array=queuedBatch(s);if(!cells.length)return null;
@@ -356,6 +380,40 @@ package rconnect.game
          s.pending=null;put(loc,decoded,true,false);
       }
 
+      /** Only changed cell revisions enter the fast player-state channel.
+       * GameBridge already observes every native frame. Selection neither
+       * scans projectiles nor advances the sent cursor before transmission. */
+      public function updates(loc:Object):Array
+      {
+         var s:Object=state(loc),keys:Array=[],out:Array=[],size:int=0;
+         for(var k:String in s.cells)
+         {
+            var c:Object=s.cells[k];
+            if(!solid(loc,c.x,c.y))discard(loc,k);
+            else if(s.sent[k]==null || int(c.v)>int(s.sent[k]))keys.push(k);
+         }
+         keys.sort();
+         for each(k in keys)
+         {
+            c=s.cells[k];var wire:Object=packed(c);
+            if(out.length && (out.length>=MAX_CELLS || size+wire.d.length>MAX_WIRE))break;
+            out.push(wire);size+=wire.d.length;
+         }
+         return out.length?out:null;
+      }
+      /** Called only after the selected batch was handed to the TCP sender.
+       * A newer local revision remains eligible for the next fast packet. */
+      public function sentUpdates(loc:Object,list:Array):void
+      {
+         if(list==null)return;
+         var s:Object=state(loc);
+         for each(var c:Object in list)
+         {
+            var k:String=id(int(c.x),int(c.y));
+            if(s.cells[k]!=null && (s.sent[k]==null || int(c.v)>int(s.sent[k])))s.sent[k]=int(c.v);
+         }
+      }
+
       /** Rotating cumulative cells repair old/later peer views without a full
        * foreground bitmap on every unitsync. No new native projectile is made. */
       public function snapshot(loc:Object):Array
@@ -389,7 +447,7 @@ package rconnect.game
       {
          var decoded:Array=decode(loc,list || [],false);
          if(decoded==null)throw new Error("Invalid wall appearance checkpoint");
-         rooms[loc]={cells:{},queued:{},pending:null,receipts:{},incoming:{},cursor:0};
+         rooms[loc]={cells:{},queued:{},pending:null,receipts:{},incoming:{},sent:{},cursor:0};
          put(loc,decoded,false,false);redraw(loc);
       }
       private function replay(loc:Object,b:BitmapData):void
@@ -414,12 +472,12 @@ package rconnect.game
       {
          var b:BitmapData=front(loc);if(b==null)return;
          replay(loc,b);
-         if(active===loc) {if(shadow!=null)shadow.dispose();bitmap=b;shadow=b.clone();}
+         if(active===loc) {if(shadow!=null)shadow.dispose();bitmap=b;shadow=copyFront(loc,b,"redraw");}
       }
       /** Ownership changes invalidate only transport cursors, not room marks. */
       public function roleChanged(loc:Object):void
       {
-         var s:Object=state(loc);s.queued={};s.pending=null;s.receipts={};s.incoming={};
+         var s:Object=state(loc);s.queued={};s.pending=null;s.receipts={};s.incoming={};s.sent={};s.cursor=0;
          tracked=[];contacts=new Dictionary(true);
       }
       public function reset():void

@@ -39,6 +39,13 @@ package rconnect.game {
       override public function dopTest(bullet:Bullet):Boolean {
          return !disposed && allowed!=null && allowed() && localAttack(bullet,Object(this).loc);
       }
+      /** Optional smart-weapon eligibility contract. The same live host policy
+       * as collision is checked on acquisition and every guided projectile step.
+       * This never changes faction/npc flags or makes the peer an AI enemy. */
+      public function rconnectSmartTargetAllowed(player:Object):Boolean {
+         return !disposed && allowed!=null && allowed() && player!=null
+            && GameBridge.probe(Object(this).loc,"gg")===player;
+      }
       override public function udarBullet(bullet:Bullet,mode:int=0):int {
          if(!dopTest(bullet))return -1;
          return super.udarBullet(bullet,mode);

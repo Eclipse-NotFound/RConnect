@@ -1,0 +1,4 @@
+# Exact released A source bytes; do not rewrite CRLF at checkout.
+src/** -text
+tools/stubs/** -text
+locales/** -text

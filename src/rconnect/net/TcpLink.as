@@ -10,7 +10,7 @@ package rconnect.net
    import flash.utils.ByteArray;
 
    /**
-    * 单条 TCP 连接封装：长度前缀分帧、半包/粘包处理、JSON 消息分发。
+    * 单条 TCP 连接：长度前缀、半包/粘包处理，协商后的纯数据二进制或 JSON。
     * 既可作为客户端主动 connect，也可 attach 服务端 accept 到的 Socket。
     */
    public class TcpLink extends EventDispatcher
@@ -24,6 +24,8 @@ package rconnect.net
       public var peerName:String = "";
       public var socket:Socket;
       public var isOpen:Boolean = false;
+      public var binaryEnabled:Boolean = false;
+      public var binarySent:int=0,binaryReceived:int=0;
 
       private var _rbuf:ByteArray = new ByteArray();
       private var _closedNotified:Boolean = false;
@@ -66,16 +68,20 @@ package rconnect.net
          {
             return;
          }
-         var body:String = Protocol.encode(msg);
          try
          {
-            // 长度必须按 UTF-8 字节数（String.length 是字符数，
-            // 非 ASCII（如俄文房间名）会导致长度前缀与实际字节不符→流错位）
-            var ba:ByteArray = new ByteArray();
-            ba.writeUTFBytes(body);
-            socket.writeInt(ba.length);
+            var handshake:Boolean=msg.type==Protocol.MSG_HELLO || msg.type==Protocol.MSG_WELCOME;
+            if(handshake)msg.binary=BinaryMessageCodec.CAPABILITY;
+            // The greeting stays ordinary JSON. Only peers advertising the
+            // same plain-data codec receive binary frames; others keep JSON.
+            var ba:ByteArray=binaryEnabled && !handshake?BinaryMessageCodec.pack(msg):null;
+            var binary:Boolean=ba!=null;
+            if(!binary) {ba=new ByteArray();ba.writeUTFBytes(Protocol.encode(msg));}
+            if(ba.length>BinaryMessageCodec.MAX_BYTES)throw new Error("Outgoing frame exceeds limit");
+            socket.writeInt(binary?-int(ba.length):int(ba.length));
             socket.writeBytes(ba, 0, ba.length);
             socket.flush();
+            if(binary)binarySent++;
          }
          catch(err:*)
          {
@@ -168,8 +174,9 @@ package rconnect.net
          while(_rbuf.bytesAvailable >= 4)
          {
             var headPos:int = _rbuf.position;
-            var len:int = _rbuf.readInt();
-            if(len <= 0 || len > 1024 * 1024)
+            var header:int = _rbuf.readInt(), binary:Boolean=header<0;
+            var len:int=binary?-header:header;
+            if(len <= 0 || len > BinaryMessageCodec.MAX_BYTES || binary && !binaryEnabled)
             {
                fail("bad frame length: " + len);
                return;
@@ -179,10 +186,17 @@ package rconnect.net
                _rbuf.position = headPos;   // 回退，等待剩余字节
                break;
             }
-            var json:String = _rbuf.readUTFBytes(len);
-            var msg:Object = Protocol.decode(json);
+            var msg:Object;
+            if(binary) {
+               var body:ByteArray=new ByteArray();_rbuf.readBytes(body,0,len);
+               msg=BinaryMessageCodec.unpack(body);
+               if(msg==null){fail("invalid binary frame");return;}
+               binaryReceived++;
+            } else msg=Protocol.decode(_rbuf.readUTFBytes(len));
             if(msg != null)
             {
+               if((msg.type==Protocol.MSG_HELLO || msg.type==Protocol.MSG_WELCOME)
+                  && msg.binary===BinaryMessageCodec.CAPABILITY)binaryEnabled=true;
                dispatchEvent(new NetMessageEvent(MESSAGE, msg));
             }
          }

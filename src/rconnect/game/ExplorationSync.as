@@ -12,6 +12,7 @@ package rconnect.game
    public class ExplorationSync
    {
       private static const HEX:String = "0123456789abcdef";
+      private static const NATIVE_TILES:Array = nativeTileCodes();
       private var mod:RConnectMod;
       private var memories:Dictionary = new Dictionary(true);
       private var gameRef:Object;
@@ -23,6 +24,7 @@ package rconnect.game
       private var lastSent:String = "";
       private var sentRows:Array;
       private var incomingRows:Array;
+      private var outgoingUnion:Array=[];
       private var incomingEpoch:String="";
       private var lastAt:int = -10000;
       private var lastFull:int = -10000;
@@ -64,6 +66,7 @@ package rconnect.game
          epoch = ""; remoteEpoch = ""; roomRef = null;
          lastSent = ""; lastAt = lastFull = -10000;
          sentRows=incomingRows=null;incomingEpoch="";
+         outgoingUnion=[];
       }
 
       private function discover():void
@@ -123,6 +126,7 @@ package rconnect.game
             epoch = new Date().time.toString(36) + "-" + (++serial) + "-" + Math.random().toString(36);
             remoteEpoch = ""; lastSent = ""; lastFull = -10000;
             sentRows=incomingRows=null;incomingEpoch="";
+            outgoingUnion=[];
          }
          return {loc:loc, key:key, cols:cols, height:rows};
       }
@@ -137,6 +141,12 @@ package rconnect.game
          return true;
       }
 
+      private static function nativeTileCodes():Array {
+         var result:Array=[];
+         for(var i:int=0;i<16;i++)result.push(HEX.charAt(i)+(i>0?"ffffffffffffffff":"0000000000000000"));
+         return result;
+      }
+
       public static function nativeRows(loc:Object):Array
       {
          var data:Array = [];
@@ -147,7 +157,7 @@ package rconnect.game
             {
                var value:Number = Number(loc.space[x][y].visi);
                var light:int = isNaN(value) ? 0 : Math.max(0, Math.min(15, Math.round(value * 15)));
-               row.push(HEX.charAt(light) + (light > 0 ? "ffffffffffffffff" : "0000000000000000"));
+               row.push(NATIVE_TILES[light]);
             }
             data.push(row.join(""));
          }
@@ -155,20 +165,28 @@ package rconnect.game
       }
 
       /** Monotone union: retained knowledge cannot be erased by a later packet. */
-      public static function unionRows(old:Array, incoming:Array):Array
+      public static function unionRows(old:Array, incoming:Array, cache:Array=null):Array
       {
-         if(old == null) return incoming.concat();
+         if(old == null) {if(cache!=null)cache.length=0;return incoming.concat();}
+         if(cache!=null)cache.length=incoming.length;
          var result:Array = [];
          for(var y:int = 0; y < incoming.length; y++)
          {
-            var a:String = old[y], b:String = incoming[y], row:Array = [];
+            var a:String = old[y], b:String = incoming[y];
             if(a==b) {result.push(b);continue;}
+            // Retain only the last input pair for each row in the active room.
+            // Strings are immutable; current brightness/history still decide
+            // whether to recompute. Return a fresh array to every caller.
+            var previous:Object=cache==null?null:cache[y];
+            if(previous!=null && previous.a===a && previous.b===b) {result.push(previous.value);continue;}
+            var row:Array = [];
             for(var i:int = 0; i < b.length; i++)
             {
                var av:int = HEX.indexOf(a.charAt(i)), bv:int = HEX.indexOf(b.charAt(i));
                row.push(HEX.charAt(i % 17 == 0 ? Math.max(av,bv) : av | bv));
             }
-            result.push(row.join(""));
+            var value:String=row.join("");result.push(value);
+            if(cache!=null)cache[y]={a:a,b:b,value:value};
          }
          return result;
       }
@@ -188,7 +206,7 @@ package rconnect.game
             try { data = nativeRows(c.loc); } catch(nativeError:*) { return null; }
          }
          var retained:Object = memories[c.loc];
-         if(retained != null) data = unionRows(data,retained.data);
+         if(retained != null) data = unionRows(data,retained.data,outgoingUnion);
          var changes:Array=[];
          var full:Boolean=sentRows==null || remoteEpoch!=lastSent || time-lastFull>=3000;
          if(!full)

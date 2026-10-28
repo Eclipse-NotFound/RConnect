@@ -1,5 +1,6 @@
 package rconnect.game
 {
+   import fe.loc.Tile;
    /** Native tile damage, prediction receipts, and persistent host state.
     * The game's grid is space[x][y]. Never infer orientation from a square room. */
    public class TerrainSync
@@ -20,9 +21,11 @@ package rconnect.game
 
       public function reset():void { room=null; base=[]; observed={}; queued={}; pending=null; receipts={}; dirty=false; }
 
-      public function checkpoint(loc:Object):Array
+      public function checkpoint(loc:Object):Object
       {
-         enter(loc);var out:Array=[];
+         enter(loc);var table:Object=NativeTileState.capture(loc);
+         if(table!=null)return table;
+         var out:Array=[];
          for(var x:int=0;x<int(loc.spaceX);x++)for(var y:int=0;y<int(loc.spaceY);y++)
          {
             var t:Object=tile(x,y),s:Object=state(t,x,y);
@@ -30,9 +33,15 @@ package rconnect.game
          }
          return out;
       }
-      public function restoreCheckpoint(loc:Object,list:Array):void
+      public function restoreCheckpoint(loc:Object,snapshot:Object):void
       {
          reset();enter(loc);
+         if(snapshot!=null && !(snapshot is Array) && (snapshot.nativeTileTable===1 || snapshot.nativeTileTable===2)) {
+            NativeTileState.restore(loc,snapshot,function(t:Object,x:int,y:int):void {observed[key(x,y)]=state(t,x,y);});
+            dirty=true;return;
+         }
+         var list:Array=snapshot as Array;
+         if(list==null)throw new Error("Invalid terrain checkpoint");
          for each(var s:Object in list)NativeRoomState.restore(tile(int(s.x),int(s.y)),s.native);
          apply(loc,list,false);dirty=true;
       }
@@ -62,6 +71,16 @@ package rconnect.game
       }
       private function state(t:Object,x:int,y:int):Object
       {
+         var native:Tile=t as Tile;
+         if(native!=null)return {x:x,y:y,p:native.phis,f:native.front,b:native.back,z:native.zad,
+            zf:native.zForm,w:native.water,st:native.stair,h:native.hp,o:native.opac,v:native.vid,
+            v2:native.vid2,d:native.diagon,sh:native.shelf};
+         return dynamicState(t,x,y);
+      }
+      // Only fallback objects require optional field access. Keep their
+      // missing/throwing-member behavior outside the native Tile hot path.
+      private function dynamicState(t:Object,x:int,y:int):Object
+      {
          var s:Object={x:x,y:y};
          for(var f:String in FIELDS) try {s[f]=t[FIELDS[f]];} catch(e:*) {}
          return s;
@@ -71,6 +90,17 @@ package rconnect.game
       private function matchesTile(t:Object,s:Object):Boolean
       {
          if(t==null || s==null) return false;
+         var native:Tile=t as Tile;
+         if(native!=null)return s.p===native.phis && s.f===native.front && s.b===native.back
+            && s.z===native.zad && s.zf===native.zForm && s.w===native.water && s.st===native.stair
+            && s.h===native.hp && s.o===native.opac && s.v===native.vid && s.v2===native.vid2
+            && s.d===native.diagon && s.sh===native.shelf;
+         return matchesDynamicTile(t,s);
+      }
+      // Keep the generic object's missing/getter semantics in a separate
+      // catch scope, so unchanged native tiles allocate no catch activation.
+      private function matchesDynamicTile(t:Object,s:Object):Boolean
+      {
          for(var f:String in FIELDS)
          {
             var value:*;
@@ -181,15 +211,21 @@ package rconnect.game
             var x:int=int(s.x),y:int=int(s.y),k:String=key(x,y),t:Object=tile(x,y);
             if(t==null || (predict && predicted(k))) continue;
             var before:Object=state(t,x,y);
+            // A live door's collision/opacity/HP belong to its Box and interaction
+            // acknowledgement. Terrain packets can contain an older open state.
+            // Reapplying it here fights local toggles and looks like tile damage.
+            var doorOwned:Boolean=predict && t.door!=null;
             for(var f:String in FIELDS)
             {
                if(s[f]===undefined) continue;
+               if(doorOwned && (f=="p" || f=="o" || f=="h"))continue;
                // Recompute native collision bounds when a partial tile changes shape.
                if(f=="zf" && t["setZForm"] is Function) t.setZForm(int(s.zf));
                else t[FIELDS[f]]=s[f];
             }
             // setZForm also changes opacity; the host's final opacity wins.
-            if(s.o!==undefined) t.opac=s.o;
+            if(doorOwned) {t.phis=before.p;t.opac=before.o;t.hp=before.h;}
+            else if(s.o!==undefined) t.opac=s.o;
             observed[k]=state(t,x,y);
             if(!equal(before,observed[k]))
             {
@@ -215,6 +251,7 @@ package rconnect.game
        * Checkpoints and unrelated structural changes retain the full redraw. */
       private function paintDestruction(t:Object,before:Object,after:Object):Boolean
       {
+         if(t.door!=null)return false;
          if(Number(before.p)<1 || Number(after.p)!=0)return false;
          for each(var field:String in ["b","z","zf","w","st","d","sh"])
             if(before[field]!==after[field])return false;
