@@ -29,6 +29,8 @@ package {
  import flash.system.ApplicationDomain;
  import flash.system.LoaderContext;
  import flash.utils.getTimer;
+ import flash.media.SoundMixer;
+ import flash.media.SoundTransform;
  /** External physical-input regression. No product code or user profile writes. */
  public class BStartupDriverMod extends Sprite {
   private static var root:Object,mod:Object,domain:ApplicationDomain,cfg:Object,role:String;
@@ -88,7 +90,7 @@ package {
    terrainSeedHook=terrainSeedPrevious=null;terrainSeedType=null;
   }
   private static var cases:BFieldCases;
-  private static function external():Boolean{return ["ui","controls","darkteleport","security","textmotion","terrainlive","motion","visualfield"].indexOf(String(cfg.scenario))>=0;}
+  private static function external():Boolean{return ["ui","controls","darkteleport","security","textmotion","terrainlive","motion","visualfield","loading"].indexOf(String(cfg.scenario))>=0;}
   private static function externalFinish():void{phase=90;finish();}
   private static function builtin():Boolean{return ["enemies","teleport","rockets","terrain"].indexOf(String(cfg.scenario))>=0;}
   private static var home:Object,nextRoom:Object,target:Object,floorY:Number,epoch:uint,joinStage:String="";
@@ -135,6 +137,7 @@ package {
   public static function init(main:*):void {
    var id:String=NativeApplication.nativeApplication.applicationID;
    if(id.indexOf("pfe-modsettings-rconnect-b-startup-")!=0)throw new Error("Isolated field profile required");
+   SoundMixer.soundTransform=new SoundTransform(0);
    root=main;domain=ApplicationDomain.currentDomain;began=getTimer();role=id.indexOf("-join-")>=0?"join":"host";
    var f:FileStream=new FileStream();f.open(File.applicationDirectory.resolvePath("startup-test.json"),FileMode.READ);cfg=JSON.parse(f.readUTFBytes(f.bytesAvailable));f.close();
    var loader:Loader=new Loader(),context:LoaderContext=new LoaderContext(false,domain);context.allowCodeImport=true;
@@ -280,7 +283,7 @@ package {
    home=s.actors[0].unit.loc;
    // Preserve the actual base artwork; the visual fixture observes it before
    // changing any native object. The movement fixtures keep their old lane.
-   if(cfg.scenario=="visualfield"){floorY=s.actors[0].unit.Y;return;}
+   if(cfg.scenario=="visualfield" || cfg.scenario=="loading"){floorY=s.actors[0].unit.Y;return;}
    if(cfg.scenario=="darkteleport" || cfg.scenario=="textmotion") {
     home=null;
     for each(var column:Array in w.land.locs)for each(var slots:Array in column)if(slots!=null)for each(var candidate:Object in slots)
@@ -333,6 +336,7 @@ package {
   }
   private static function step(e:Event):void {
    if(done)return;
+   if(SoundMixer.soundTransform.volume!=0)SoundMixer.soundTransform=new SoundTransform(0);
    try {
     flushWrites();if(finishRequested){finish();return;}
     samplePlayback();

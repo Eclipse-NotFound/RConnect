@@ -1,0 +1,13 @@
+{
+  "version": "B3-0.1-field8-loadfix1",
+  "parent": "experimental/b-field-visual-motion-final",
+  "parent_manifest_sha256": "b9960dd75da2695c5957592fea2121121e85fb7c89b3561110fcb361e320212e",
+  "parent_prepare_sha256": "ce35ecaac2c2c096e9614db2122727926aad7680aa166de33e7797734ebfbc3f",
+  "overlay": {
+    "src/RConnectMod.as": "269bee09f95dc331037bb0111526d0732217b4e30b620d61d887dd66adc43aba",
+    "src/authority/SecurityTerminals.as": "a27c6cf83067f18637330046bba3f9cbe11860d912bf4867c1cfa0a2535714a2"
+  },
+  "source_id": "ac5e9d6e62c35e937deeb254f13c6371d8940f23a0f42f82e578b5006ea65d81",
+  "compiled_build": "build/ab/b190-field8-loadfix1-build",
+  "compiled_manifest_sha256": "4bc5983e3b7c61358fc7607e2561bedd607cd96ea351b6f1413f929a459dc47c"
+}

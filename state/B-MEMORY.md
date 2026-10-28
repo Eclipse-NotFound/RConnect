@@ -8,11 +8,26 @@
 
 测试登记后在自有后台桌面、独立AIR身份和复制种子中运行；不碰真实存档、不关闭玩家程序、不调用未点名Ghost。双实例启动物理余量6GiB、单实例3GiB、运行512MiB，另有可提交内存保护。复用隔离目录，保留失败和唯一证据，不复制整套游戏耗费D盘。
 
-## 最新任务与安装状态（2026-10-28）
+## 最新任务与安装状态（2026-10-28，载入修复）
+
+用户报告安保终端 `Security terminal stepped without an occupant`，主侧停留 Loading、加入侧已有地图。已确认原生 `Location.preStep` 在无玩家的新房运行30步，被B误判；错误界面使后续World步进停止。只调整 SecurityTerminals 在无房内玩家时先返回原版步进，延后个人状态建档，不改破解规则、调度或协议。
+
+**当前已安装 B3-0.1-field8-loadfix1，安装字节双人复验通过，事务 verified。**
+
+- 新构建：`build/ab/b190-field8-loadfix1-build`；SWF `92ea5ec83aa1ab5a412581ba80ebbc49b16fb93a01c180df239b88a4f59b1af7`；source `ac5e9d6e62c35e937deeb254f13c6371d8940f23a0f42f82e578b5006ea65d81`。native021、revision5不变。
+- 事务：`build/ab/b-field-deploy-20261028-loadfix-01/deployment.json`，before保留准确field8五文件。原B190启动入口、AIR身份、配置和存档保留。已经卡住的双方需重启并重新读档。
+- 来源：`experimental/b-field-loadfix/` 两份源码覆盖+固定父包；restore-source已重建完整142份且指纹一致。不要从旧工作src继续，不改冻结产物。
+- 测试准备 `prepared-loadfix-03.json`：SHA `9a822144f5492a6be31b4d9103b5e73007911334d9198fdf3b011da3c47298d9`。loading-02主20/加14通过：无人房30步、首次状态、3次地图往返、报错种子1288542690的3个终端、宿主Loading关闭及控制恢复、加入确认。security-01主89/加12通过：真实破解、个人权限与炮塔伤害。准确目录均为 `build/ab/b-field-loadfix-*`。
+- loading-01因测试布置缺少空房显示服务停止，失败保留；只修外部工具。测试默认静音，不影响玩家窗口。没有新增性能实测或改善承诺。
+- 安装字节复验 `build/ab/b-field-loadfix-installed-ui-01` 主77/加36通过，包含交互进度、门与独立换房；运行文件未变，事务已 finalize。原安装5文件及根/A见证通过，所有自有测试进程结束。
+- 当前安装manual SHA：`cccc90f4cf31bf97ec229467d62050a4d180f2a12d37dbbd3b432d17118a6581`。后续prepare/deploy需绑定此新基线；本轮脚本固定旧field8用于本事务，不能原样再次晋升。
+- 详细记录：`state/b-loading-fix-2026-10-28.md`。后续仍需处理field8密集供帧与延迟；本次仅修加载故障。
+
+## 父版本 field8 合并与安装历史（2026-10-28）
 
 用户要求合并部署积累代码，修复移动卡顿、加入侧医疗箱/终端颜色异常、基地背景物件缺失错位、NPC文字过大。此明确部署请求取代前轮“仅源码、不做实验”。
 
-**当前已安装 B3-0.1-field8 / check03，安装字节双侧UI复验通过，事务verified。**
+**此前安装 B3-0.1-field8 / check03，安装字节双侧UI复验通过，事务verified；当前版本以上方载入修复为准。**
 
 - 原入口：`build/ab/b3-playable-190/Player-1.cmd`、`Player-2.cmd`。原存档身份、配置、启动器保留；两侧旧窗口需保存并重启才会加载新代码。
 - 冻结构建：`build/ab/b190-field8-check03-build`。

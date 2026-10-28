@@ -4,7 +4,8 @@ package {
   private var test:Object;
   private var m:Object,r:Object,d:ApplicationDomain,c:Object,a:Object,side:String,done:Boolean=false;
   public function BFieldCases(m:Object,r:Object,d:ApplicationDomain,c:Object,role:String,a:Object){
-   if(c.scenario=="visualfield")test=new BVisualFieldCases(m,r,d,c,role,a);
+   if(c.scenario=="loading")test=new BLoadingCases(m,r,d,c,role,a);
+   else if(c.scenario=="visualfield")test=new BVisualFieldCases(m,r,d,c,role,a);
    else if(c.scenario=="ui")test=new BUiCases(m,r,d,c,role,a);
    else if(c.scenario=="controls")test=new BGrabCases(m,r,d,c,role,a);
    else if(c.scenario=="darkteleport")test=new BDarkTeleportCases(m,r,d,c,role,a);
