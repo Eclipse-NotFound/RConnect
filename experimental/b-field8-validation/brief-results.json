@@ -1,0 +1,343 @@
+{
+  "kind": "field8-readonly-performance-brief",
+  "qualification_report": "experimental/b-field8-validation/performance-result02.json",
+  "qualification_report_sha256": "dc80f9847d031fa08761440e19a32e9dc31819954005682030db2bd744b3718a",
+  "qualified_sustained_workload": true,
+  "candidate_sha256": "3b56e8da26285c242542fcb603b566b5748cc7998de30aa995664b4cccc6c2e9",
+  "source_id": "918211e173c5bc93aaea316c5107a2cc577a2bb159075bc7b3cbbce9bd8c173d",
+  "comparison_aggregation": "Median of the two per-run means and the two per-run P95s, exactly as the fixed qualifier. Lower is better.",
+  "comparisons": [
+    {
+      "role": "host",
+      "enemies": 8,
+      "baseline_mean_ms": 55.1656579992228,
+      "candidate_mean_ms": 49.477812243668424,
+      "mean_reduction_percent": 10.310482937835186,
+      "baseline_p95_ms": 85.5,
+      "candidate_p95_ms": 73.0,
+      "p95_reduction_percent": 14.619883040935678,
+      "maximum_mean_repeat_ratio": 1.0824605726390701,
+      "maximum_p95_repeat_ratio": 1.056338028169014
+    },
+    {
+      "role": "host",
+      "enemies": 80,
+      "baseline_mean_ms": 99.90708893313422,
+      "candidate_mean_ms": 94.16303974821554,
+      "mean_reduction_percent": 5.749391005440119,
+      "baseline_p95_ms": 139.5,
+      "candidate_p95_ms": 129.5,
+      "p95_reduction_percent": 7.168458781362008,
+      "maximum_mean_repeat_ratio": 1.1018745420419696,
+      "maximum_p95_repeat_ratio": 1.072
+    },
+    {
+      "role": "join",
+      "enemies": 8,
+      "baseline_mean_ms": 40.98118460012381,
+      "candidate_mean_ms": 37.98777295946728,
+      "mean_reduction_percent": 7.3043560596525285,
+      "baseline_p95_ms": 67.0,
+      "candidate_p95_ms": 56.5,
+      "p95_reduction_percent": 15.671641791044777,
+      "maximum_mean_repeat_ratio": 1.079770442266069,
+      "maximum_p95_repeat_ratio": 1.0925925925925926
+    },
+    {
+      "role": "join",
+      "enemies": 80,
+      "baseline_mean_ms": 75.21707799703182,
+      "candidate_mean_ms": 71.7506431246656,
+      "mean_reduction_percent": 4.608574228984286,
+      "baseline_p95_ms": 117.0,
+      "candidate_p95_ms": 104.0,
+      "p95_reduction_percent": 11.111111111111116,
+      "maximum_mean_repeat_ratio": 1.092238902058933,
+      "maximum_p95_repeat_ratio": 1.0594059405940595
+    }
+  ],
+  "run_diagnostics": [
+    {
+      "name": "b-field8-baseline-03",
+      "result_sha256": "f77cc2520754edf1709fd78935c5902179cf8f45e70299dabd1fa762aa84e2c6",
+      "phases": {
+        "host-8": {
+          "max_frame_ms": 148,
+          "over100ms_frames": 22,
+          "frames": 1086,
+          "over100ms_percent": 2.0257826887661143
+        },
+        "host-80": {
+          "max_frame_ms": 874,
+          "over100ms_frames": 258,
+          "frames": 588,
+          "over100ms_percent": 43.87755102040816
+        },
+        "join-8": {
+          "max_frame_ms": 236,
+          "over100ms_frames": 10,
+          "frames": 1496,
+          "over100ms_percent": 0.6684491978609626,
+          "delay_target_mean_ms": 128.84615384615384,
+          "delay_target_min_ms": 103,
+          "delay_target_max_ms": 154,
+          "queue_counts": {
+            "2": 47,
+            "1": 11,
+            "3": 19,
+            "0": 1
+          },
+          "underflow_counter_delta": 1,
+          "samples": 78
+        },
+        "join-80": {
+          "max_frame_ms": 822,
+          "over100ms_frames": 100,
+          "frames": 805,
+          "over100ms_percent": 12.422360248447205,
+          "delay_target_mean_ms": 233.80263157894737,
+          "delay_target_min_ms": 203,
+          "delay_target_max_ms": 250,
+          "queue_counts": {
+            "2": 48,
+            "1": 18,
+            "3": 9,
+            "0": 1
+          },
+          "underflow_counter_delta": 3,
+          "samples": 76
+        }
+      },
+      "environment": {
+        "whole_run_cpu_mean_percent": 48.910527420831265,
+        "whole_run_cpu_max_percent": 77.01923076923077,
+        "min_physical_free_gib": 14.202136993408203,
+        "min_commit_free_gib": 3.8706932067871094,
+        "machine_samples": 162
+      }
+    },
+    {
+      "name": "b-field8-baseline-04",
+      "result_sha256": "587b35964f5367b8d95f4b671bdabe780d8bb0967c34eb16a743fb6b45c81737",
+      "phases": {
+        "host-8": {
+          "max_frame_ms": 142,
+          "over100ms_frames": 29,
+          "frames": 1090,
+          "over100ms_percent": 2.6605504587155964
+        },
+        "host-80": {
+          "max_frame_ms": 169,
+          "over100ms_frames": 244,
+          "frames": 615,
+          "over100ms_percent": 39.67479674796748
+        },
+        "join-8": {
+          "max_frame_ms": 132,
+          "over100ms_frames": 4,
+          "frames": 1434,
+          "over100ms_percent": 0.2789400278940028,
+          "delay_target_mean_ms": 131.1153846153846,
+          "delay_target_min_ms": 93,
+          "delay_target_max_ms": 195,
+          "queue_counts": {
+            "2": 43,
+            "1": 11,
+            "3": 22,
+            "4": 2
+          },
+          "underflow_counter_delta": 3,
+          "samples": 78
+        },
+        "join-80": {
+          "max_frame_ms": 172,
+          "over100ms_frames": 95,
+          "frames": 791,
+          "over100ms_percent": 12.010113780025284,
+          "delay_target_mean_ms": 239.23376623376623,
+          "delay_target_min_ms": 203,
+          "delay_target_max_ms": 250,
+          "queue_counts": {
+            "2": 46,
+            "1": 11,
+            "3": 20
+          },
+          "underflow_counter_delta": 0,
+          "samples": 77
+        }
+      },
+      "environment": {
+        "whole_run_cpu_mean_percent": 52.78701378368663,
+        "whole_run_cpu_max_percent": 91.15384615384615,
+        "min_physical_free_gib": 11.338226318359375,
+        "min_commit_free_gib": 3.3446006774902344,
+        "machine_samples": 162
+      }
+    },
+    {
+      "name": "b-field8-candidate-01",
+      "result_sha256": "779ec5c503fada520cddca197c769c2c1c9bfbad9ffdbc03b726cd63dd9df923",
+      "phases": {
+        "host-8": {
+          "max_frame_ms": 115,
+          "over100ms_frames": 7,
+          "frames": 1263,
+          "over100ms_percent": 0.5542359461599367
+        },
+        "host-80": {
+          "max_frame_ms": 158,
+          "over100ms_frames": 166,
+          "frames": 671,
+          "over100ms_percent": 24.739195230998508
+        },
+        "join-8": {
+          "max_frame_ms": 121,
+          "over100ms_frames": 6,
+          "frames": 1643,
+          "over100ms_percent": 0.36518563603164944,
+          "delay_target_mean_ms": 111.16455696202532,
+          "delay_target_min_ms": 81,
+          "delay_target_max_ms": 150,
+          "queue_counts": {
+            "2": 54,
+            "1": 11,
+            "3": 14
+          },
+          "underflow_counter_delta": 3,
+          "samples": 79
+        },
+        "join-80": {
+          "max_frame_ms": 174,
+          "over100ms_frames": 44,
+          "frames": 875,
+          "over100ms_percent": 5.0285714285714285,
+          "delay_target_mean_ms": 247.7792207792208,
+          "delay_target_min_ms": 234,
+          "delay_target_max_ms": 250,
+          "queue_counts": {
+            "2": 41,
+            "3": 20,
+            "1": 14,
+            "0": 1,
+            "4": 1
+          },
+          "underflow_counter_delta": 3,
+          "samples": 77
+        }
+      },
+      "environment": {
+        "whole_run_cpu_mean_percent": 44.44860951651555,
+        "whole_run_cpu_max_percent": 91.11328125,
+        "min_physical_free_gib": 11.534553527832031,
+        "min_commit_free_gib": 1.7595939636230469,
+        "machine_samples": 163
+      }
+    },
+    {
+      "name": "b-field8-candidate-02",
+      "result_sha256": "78a1bbe4c35f5ecbe8312c1c0a634e57b123c69a6438cae2c6ab707c149d7b37",
+      "phases": {
+        "host-8": {
+          "max_frame_ms": 122,
+          "over100ms_frames": 13,
+          "frames": 1167,
+          "over100ms_percent": 1.113967437874893
+        },
+        "host-80": {
+          "max_frame_ms": 160,
+          "over100ms_frames": 234,
+          "frames": 608,
+          "over100ms_percent": 38.48684210526316
+        },
+        "join-8": {
+          "max_frame_ms": 305,
+          "over100ms_frames": 5,
+          "frames": 1522,
+          "over100ms_percent": 0.328515111695138,
+          "delay_target_mean_ms": 124.0126582278481,
+          "delay_target_min_ms": 91,
+          "delay_target_max_ms": 240,
+          "queue_counts": {
+            "3": 17,
+            "2": 47,
+            "1": 10,
+            "4": 5
+          },
+          "underflow_counter_delta": 1,
+          "samples": 79
+        },
+        "join-80": {
+          "max_frame_ms": 158,
+          "over100ms_frames": 64,
+          "frames": 801,
+          "over100ms_percent": 7.990012484394507,
+          "delay_target_mean_ms": 228.82894736842104,
+          "delay_target_min_ms": 198,
+          "delay_target_max_ms": 250,
+          "queue_counts": {
+            "2": 59,
+            "1": 10,
+            "3": 7
+          },
+          "underflow_counter_delta": 0,
+          "samples": 76
+        }
+      },
+      "environment": {
+        "whole_run_cpu_mean_percent": 57.16312680736561,
+        "whole_run_cpu_max_percent": 85.86538461538463,
+        "min_physical_free_gib": 10.368946075439453,
+        "min_commit_free_gib": 2.887176513671875,
+        "machine_samples": 164
+      }
+    }
+  ],
+  "scope_limits": [
+    "60-second 8/80-enemy sustained LMG fixture; fixed player positions. Does not itself test ordinary walking.",
+    "No input-to-display or end-to-end network latency measured. Playback delay is the local smoothing target, not observed round-trip latency.",
+    "Outgoing socket pending bytes are not sampled by this sustained fixture; lack of a backlog error does not establish zero pending bytes.",
+    "Environment covers whole sampled runs, including warm-up; global CPU does not establish per-thread headroom or explain individual long frames.",
+    "Maximum-frame outliers are retained; sorted interval arrays do not preserve the occurrence time needed to assign a cause."
+  ],
+  "walk_comparison": "experimental/b-field8-validation/walk-comparison-02-01.json",
+  "dense_join_playback": {
+    "baseline": {
+      "queue_counts": {
+        "2": 94,
+        "1": 29,
+        "3": 29,
+        "0": 1
+      },
+      "underflow_deltas": [
+        3,
+        0
+      ],
+      "delay250_samples": 48,
+      "samples": 153,
+      "delay_target_mean_ms": 236.5359477124183
+    },
+    "candidate": {
+      "queue_counts": {
+        "2": 100,
+        "3": 27,
+        "1": 24,
+        "0": 1,
+        "4": 1
+      },
+      "underflow_deltas": [
+        3,
+        0
+      ],
+      "delay250_samples": 53,
+      "samples": 153,
+      "delay_target_mean_ms": 238.36601307189542
+    }
+  },
+  "findings": [
+    "All four fixed mean/P95 comparisons improve and satisfy the unchanged formal qualification gates.",
+    "Dense phase underflow deltas are [3,0] in both baseline and candidate; this evidence does not show fewer underflows.",
+    "Dense delay target stays near its 250ms cap; faster frames did not consistently shorten the smoothing target.",
+    "Candidate-02 join low-density maximum is 305ms versus baseline maxima 236/132ms, despite improved P95.",
+    "Walking candidate shows one documented 17px camera reversal on prediction expiry; sustained qualification must not be presented as complete removal of walking hitches."
+  ]
+}

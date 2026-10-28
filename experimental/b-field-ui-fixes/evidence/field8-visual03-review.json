@@ -1,0 +1,59 @@
+{
+  "kind": "visual-review-findings",
+  "reviewer": "b_camera_ui",
+  "reviewed_at": "2026-10-28",
+  "status": "findings-only-awaiting-root-review",
+  "execution": "Reviewed existing run artifacts; did not run or compile anything.",
+  "candidate": {
+    "path": "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/build/ab/b190-field8-check02-build/RConnectMod.swf",
+    "sha256": "3b56e8da26285c242542fcb603b566b5748cc7998de30aa995664b4cccc6c2e9",
+    "preparation_sha256": "a35454d774b4d7908b93faa74bd1ba6d63f2f6ed3938a4a93ac9ba9859937571"
+  },
+  "evidence_directory": "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/build/ab/b-field8-visual-03",
+  "baseline_evidence_directory": "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/build/ab/b-field8-visual-02",
+  "findings": [
+    {
+      "id": "native-box-shadow-order",
+      "conclusion": "The observed cabinet/terminal shadow-over-body error is corrected in this run.",
+      "scene": "rbl:0:0:0:0:",
+      "matched_presentations": 19,
+      "object_comparisons": 38,
+      "objects": {"52": "term", "61": "medbox"},
+      "result": "Every compared host and join object has exactly one matching shadow, placed before its body. No duplicate matching shadow was observed.",
+      "presentation_3_indices": {
+        "term": {"host_shadow": 32, "host_body": 33, "join_shadow": 31, "join_body": 32},
+        "medbox": {"host_shadow": 44, "host_body": 45, "join_shadow": 43, "join_body": 44}
+      },
+      "baseline_presentation_3_indices": {
+        "term": {"host_shadow": 32, "host_body": 33, "join_body": 9, "join_shadow": 43},
+        "medbox": {"host_shadow": 44, "host_body": 45, "join_body": 12, "join_shadow": 52}
+      },
+      "color_evidence": "Raw artwork hashes remain equal in all 38 comparisons. In phase 0, all 12 matched object screen patches (7 x 7 pixels, same camera scale) have exactly equal pixel arrays. Shadow filters retain black, alpha 0.8, blur 8, hideObject=true.",
+      "screenshot_review": "Reviewed host-visualfield-0.png and join-visualfield-0.png. Medical cabinet, terminal, gold container and green panel brightness now agrees in the shared visible area. The host dialogue panel obscures the upper area, so this is not a whole-screen equivalence claim."
+    },
+    {
+      "id": "base-backdrops",
+      "conclusion": "The real base's captured backdrop objects are present in the same positions.",
+      "host_count": 63,
+      "join_count": 63,
+      "matched_presentations": 19,
+      "structural_differences_excluding_generated_instance_names": 0,
+      "truncated_tree_markers": 0,
+      "screenshot_review": "Main base background structures, lights, posters and fixtures are present at corresponding positions in the unobscured screenshot area."
+    },
+    {
+      "id": "speech-size",
+      "conclusion": "Eight after-host-zoom checks passed: replic and replic2 at custom scales 0.5 and 1.5, with host/client camera scales 1 and 0.611 in both directions.",
+      "after_host_zoom_checks_observed": 8,
+      "birth_checks_observed": 0,
+      "maximum_observed_scale_error": 0.0000032186508179,
+      "next_evidence": "A later fixture must wait for birth observation before changing the host zoom; this run does not establish the missing eight birth checks."
+    }
+  ],
+  "limitations": [
+    "The native front/back bitmap sample hashes still differ. Presentation 3 front: host 98401acf, join 1128ab2a; back: host f8ba471d, join 82abb9b0. Cause has not been established. This review does not claim full bitmap or whole-screen pixel equality.",
+    "Shadow evidence covers the two sampled native objects in the real base, not every Box variant, moving boxes, room redraws or removals. Those lifecycle paths have code handling but are not established by this visual run.",
+    "The reported host 24 / join 17 passes include generic component checks and diagnostic phase bookkeeping; they are not 41 independent visual-equivalence checks.",
+    "The parent session owns final acceptance and deployment. No acceptance decision is made by this findings file."
+  ]
+}

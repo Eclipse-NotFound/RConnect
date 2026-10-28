@@ -1,0 +1,1230 @@
+--- a/src/RConnectMod.as
++++ b/src/RConnectMod.as
+@@ -16,7 +16,7 @@
+    import flash.text.TextFormat;
+    import flash.utils.getTimer;
+    public class RConnectMod {
+-      public static const VERSION:String="B3-0.1-field5";
++      public static const VERSION:String="B3-0.1-field8";
+       public static var instance:RConnectMod;
+       public var main:Object,stage:Stage,access:NativeAccess,host:HostSession,replica:ClientReplica;
+       public var config:Object,link:Link,probe:Probe;
+--- a/src/authority/BuildInfo.as
++++ b/src/authority/BuildInfo.as
+@@ -1,8 +1,10 @@
+ package authority {
+    public class BuildInfo {
+       public static const FAMILY:String="rconnect-authority";
+-      public static const REVISION:int=4;
++      // Compact display descriptions require the matching receiver. Keep the
++      // existing strict greeting instead of silently accepting old viewers.
++      public static const REVISION:int=5;
+       public static const NATIVE:String="b3-v12";
+-      public static const SOURCE:String="22e2cdedf6e1c3c0aaf2e7c7821d8199f024ce6188dd01a56f82be18d0ac12f8";
++      public static const SOURCE:String="__SOURCE_HASH__";
+    }
+ }
+--- a/src/authority/ClientReplica.as
++++ b/src/authority/ClientReplica.as
+@@ -18,6 +18,7 @@
+       public var playerApplications:Array=[0,0],projectileApplications:uint=0;
+       private var peers:Object={},projectiles:Object={},projectilePointers:Object={};
+       private var endedProjectiles:Object={};
++      private var endedOrder:Array=[],endedHead:int=0;
+       public var shortProjectileApplications:uint=0;
+       private var originalPause:Boolean;
+       private var entrySave:Object;
+@@ -136,10 +137,20 @@
+             // A fast bullet can be born and hit in one host step. Its final
+             // native symbol still gets one source frame, once per lifetime.
+             var last:Object=endedProjectiles[p.id];
+-            if(last==null){endedProjectiles[p.id]={tick:frame.tick};last=endedProjectiles[p.id];++shortProjectileApplications;}
++            if(last==null) {
++               last={id:String(p.id),tick:frame.tick};endedProjectiles[p.id]=last;
++               endedOrder.push(last);++shortProjectileApplications;
++            }
+             if(last.tick==frame.tick){applyProjectile(p);active[String(p.id)]=true;}
+          }
+-         for(var endKey:String in endedProjectiles)if(frame.tick-endedProjectiles[endKey].tick>240)delete endedProjectiles[endKey];
++         // Confirmations never move backwards in tick; interpolation retains
++         // the current confirmation's tick. Keep the original 240-tick lifetime
++         // without scanning every historical bullet on every rendered frame.
++         while(endedHead<endedOrder.length && frame.tick-endedOrder[endedHead].tick>240) {
++            delete endedProjectiles[endedOrder[endedHead].id];endedOrder[endedHead++]=null;
++         }
++         if(endedHead>0 && endedHead==endedOrder.length){endedOrder=[];endedHead=0;}
++         else if(endedHead>=256 && endedHead*2>=endedOrder.length){endedOrder=endedOrder.slice(endedHead);endedHead=0;}
+          for(var key:String in projectiles)if(!active[key]){
+             var clip:DisplayObject=projectiles[key];if(clip.parent!=null)clip.parent.removeChild(clip);
+             VisualPose.dispose(clip);delete projectiles[key];delete projectilePointers[key];
+@@ -279,7 +290,7 @@
+             if(rec.actor!=null)rec.actor.destroy();
+          }
+          for each(var clip:DisplayObject in projectiles){if(clip.parent!=null)clip.parent.removeChild(clip);VisualPose.dispose(clip);}
+-         scene.dispose();peers={};projectiles={};projectilePointers={};endedProjectiles={};access.world.onPause=originalPause;
++         scene.dispose();peers={};projectiles={};projectilePointers={};endedProjectiles={};endedOrder=[];endedHead=0;access.world.onPause=originalPause;
+       }
+       public function prepareReturn():void {if(access.weapons!=null)access.weapons.carryState(entrySave.game);}
+       public function returnToOwnGame():void {
+--- /dev/null
++++ b/src/authority/DecorativeEffects.as
+@@ -0,0 +1,111 @@
++package authority {
++   import flash.display.DisplayObject;
++   import flash.display.MovieClip;
++   import flash.geom.ColorTransform;
++   import flash.geom.Matrix;
++   import flash.text.TextField;
++   import flash.utils.Dictionary;
++   import flash.utils.getQualifiedClassName;
++   /** Only the known, stopped native damage-number symbol. No Part simulation. */
++   public final class DecorativeEffects {
++      private var captured:Dictionary=new Dictionary(true);
++      private var blocked:Dictionary=new Dictionary(true);
++      private var applied:Dictionary=new Dictionary(true);
++      // These layout settings are not fully represented by VisualPose. A live
++      // change leaves this Part on the original path for the rest of its life.
++      private static const LAYOUT:Array=["width","height","autoSize","wordWrap","embedFonts","antiAliasType",
++         "gridFitType","sharpness","thickness","background","backgroundColor","border","borderColor",
++         "displayAsPassword","condenseWhite","type"];
++      private static const FILTER_FIELDS:Array=["color","alpha","blurX","blurY","strength","quality",
++         "inner","knockout","distance","angle","hideObject"];
++
++      public function capture(value:Object):Object {
++         if(value==null || getQualifiedClassName(value)!="fe.graph::Part")return reject(value);
++         if(blocked[value] || !value.in_chain || value.loc==null || value.isAnim!=0 || value.water!=0 ||
++            value.otklad!=0 || value.blitData!=null || value.liv<=0 || value.mliv<=0)return reject(value);
++         var display:MovieClip=value.vis as MovieClip;
++         if(display==null || getQualifiedClassName(display)!="visualNumb" || display.isPlaying ||
++            display.parent==null || display.mask!=null || display.numChildren!=1)return reject(value);
++         var text:TextField=display.getChildAt(0) as TextField;
++         if(text==null || getQualifiedClassName(text)!="flash.text::TextField" ||
++            Object(display).numb!==text || text.name!="numb" || text.mask!=null || text.styleSheet!=null)return reject(value);
++         var filters:Array=text.filters;
++         var rec:Object=captured[value];
++         if(rec!=null && (rec.display!==display || rec.text!==text))rec=null;
++         if(rec!=null && !sameLayout(text,rec.layout)) {
++            blocked[value]=true;return reject(value);
++         }
++         if(rec==null || display.currentFrame!=rec.recipe.f || !sameText(text,rec.recipe.children[0].s,filters)) {
++            if(!knownFilters(filters))return reject(value);
++            // Invisible roots omit children in the original capture contract.
++            // Wait for a visible confirmation rather than caching an empty tree.
++            if(!display.visible || display.alpha<=0)return reject(value);
++            var full:Object=VisualPose.capture(display);
++            if(full.children==null || full.children.length!=1 || full.children[0].i!=0 ||
++               full.children[0].n!="numb" || full.children[0].cls!="flash.text::TextField")return reject(value);
++            var recipe:Object={f:full.f,children:full.children};
++            var layout:Array=[];for each(var key:String in LAYOUT)layout.push(text[key]);
++            rec={display:display,text:text,layout:layout,recipe:recipe};captured[value]=rec;
++         }
++         // captureRoot has a separate cache and never walks or stores children.
++         // Native Part.step still owns motion, fading, lifetime and removal.
++         return {pose:VisualPose.captureRoot(display),decor:{recipe:rec.recipe}};
++      }
++
++      private function reject(value:Object):Object {
++         if(value!=null)delete captured[value];return null;
++      }
++      private static function sameLayout(text:TextField,layout:Array):Boolean {
++         for(var i:int=0;i<LAYOUT.length;i++)if(text[LAYOUT[i]]!==layout[i])return false;
++         return true;
++      }
++      private static function knownFilters(filters:Array):Boolean {
++         for each(var filter:Object in filters) {
++            var kind:String=getQualifiedClassName(filter);
++            if(kind!="flash.filters::ColorMatrixFilter" && kind!="flash.filters::GlowFilter" &&
++               kind!="flash.filters::BlurFilter" && kind!="flash.filters::DropShadowFilter")return false;
++         }
++         return true;
++      }
++      private static function sameText(text:TextField,s:Object,filters:Array):Boolean {
++         if(text.text!==s.plainText || text.htmlText!==s.text || text.textColor!==s.textColor ||
++            text.multiline!==s.multiline || text.scrollH!==s.scrollH || text.scrollV!==s.scrollV ||
++            text.visible!==s.v || text.alpha!==s.a || text.blendMode!==s.blend || text.cacheAsBitmap!==s.cache)return false;
++         var m:Matrix=text.transform.matrix,c:ColorTransform=text.transform.colorTransform;
++         if(s.m==null || m==null || m.a!==s.m[0] || m.b!==s.m[1] || m.c!==s.m[2] ||
++            m.d!==s.m[3] || m.tx!==s.m[4] || m.ty!==s.m[5])return false;
++         if(c.redMultiplier!==s.c[0] || c.greenMultiplier!==s.c[1] || c.blueMultiplier!==s.c[2] ||
++            c.alphaMultiplier!==s.c[3] || c.redOffset!==s.c[4] || c.greenOffset!==s.c[5] ||
++            c.blueOffset!==s.c[6] || c.alphaOffset!==s.c[7] || filters.length!=s.filters.length)return false;
++         for(var i:int=0;i<filters.length;i++) {
++            var filter:Object=filters[i],prior:Object=s.filters[i];
++            if(getQualifiedClassName(filter)!==prior.kind)return false;
++            if(prior.kind=="flash.filters::ColorMatrixFilter") {
++               var matrix:Array=filter.matrix;
++               if(matrix.length!=prior.matrix.length)return false;
++               for(var j:int=0;j<matrix.length;j++)if(matrix[j]!==prior.matrix[j])return false;
++            }else for each(var key:String in FILTER_FIELDS)if(key in filter && filter[key]!==prior[key])return false;
++         }
++         return true;
++      }
++
++      public function apply(display:DisplayObject,pose:Object,decor:Object):void {
++         if(display==null || pose==null || decor==null)return;
++         if(applied[display]!==decor.recipe) {
++            var full:Object=PoseTween.copy(pose);
++            // Install the text even when this first received root is hidden.
++            // A temporary interpolated child pose, when present, already owns
++            // the correct transform and must not be replaced by the template.
++            if(full.children==null)full.children=decor.recipe.children;
++            VisualPose.apply(display,full);applied[display]=decor.recipe;
++         }else VisualPose.apply(display,pose);
++      }
++      public function motion(display:DisplayObject,pose:Object,decor:Object):void {
++         if(display==null || pose==null || decor==null)return;
++         if(applied[display]!==decor.recipe)apply(display,pose,decor);
++         else VisualPose.motion(display,pose);
++      }
++      /** Call before full-pose fallback and when the receiver removes a clip. */
++      public function forget(display:DisplayObject):void {if(display!=null)delete applied[display];}
++   }
++}
+--- a/src/authority/FrameDelta.as
++++ b/src/authority/FrameDelta.as
+@@ -48,13 +48,15 @@
+       private static function simple(value:*):Boolean {return value==null || value is String || value is Number || value is Boolean || value is ByteArray;}
+       private static function diff(a:*,b:*,path:Array,out:Array):void {
+          if(a===b)return;
+-         if(simple(a) || simple(b) || (a is Array)!=(b is Array)) {out.push([path,1,b]);return;}
+-         if(a is Array && a.length!=b.length) {out.push([path,1,b]);return;}
++         // One encode owns this traversal stack. Only emitted operations keep
++         // a path, so each operation receives its own immutable path copy.
++         if(simple(a) || simple(b) || (a is Array)!=(b is Array)) {out.push([path.concat(),1,b]);return;}
++         if(a is Array && a.length!=b.length) {out.push([path.concat(),1,b]);return;}
+          // Native capture already compared these scalar values. Reuse only
+          // its exact previous record; an unsent diagnostic capture falls back
+          // to the ordinary full comparison below.
+          var native:Object=NativeFields.delta(a,b);
+-         if(native!=null){out.push([path,2,native.updates,native.removed]);return;}
++         if(native!=null){out.push([path.concat(),2,native.updates,native.removed]);return;}
+          var updates:Object=null,removed:Array=null;
+          for(var key:String in b) {
+             var before:*=a[key],after:*=b[key];
+@@ -63,13 +65,15 @@
+             if(before===after)continue;
+             if(!(key in a) || simple(before) || simple(after) || (before is Array)!=(after is Array)) {
+                if(updates==null)updates={};updates[key]=after;
+-            }else diff(before,after,path.concat([key]),out);
++            }else {
++               path.push(key);diff(before,after,path,out);path.pop();
++            }
+          }
+          for(key in a)if(!(key in b)){if(removed==null)removed=[];removed.push(key);}
+          // A native unit changes several scalar fields together. Address its
+          // record once, preserving every changed value and deletion, instead
+          // of repeating a long entity path for each individual number.
+-         if(updates!=null || removed!=null)out.push([path,2,updates,removed]);
++         if(updates!=null || removed!=null)out.push([path.concat(),2,updates,removed]);
+       }
+    }
+ }
+--- /dev/null
++++ b/src/authority/HealthBarPose.as
+@@ -0,0 +1,172 @@
++package authority {
++   import flash.display.BlendMode;
++   import flash.display.DisplayObject;
++   import flash.display.MovieClip;
++   import flash.display.Shape;
++   import flash.geom.ColorTransform;
++   import flash.geom.Matrix;
++   import flash.geom.Rectangle;
++   import flash.utils.Dictionary;
++   import flash.utils.getQualifiedClassName;
++   /** The authored hpBar recipe, after the host has calculated health/shields.
++    * No Unit.visDetails(), private maxima or combat method runs here. */
++   public final class HealthBarPose {
++      private static const KIND:String="hpbar-native-1";
++      private static const SLOTS:Array=["armor","bar","goldstar"];
++      private static const EMPTY:Array=[];
++      private static var captured:Dictionary=new Dictionary(true);
++      private static var drawingProbe:Shape=new Shape();
++
++      /** The caller owns this fresh envelope and may append attached. Only the
++       * immutable root/part records can be shared with older confirmations. */
++      public static function capture(display:DisplayObject):Object {
++         if(display==null || !display.visible || display.alpha<=0)return {kind:"full",pose:VisualPose.capture(display)};
++         var slots:Array=known(display);
++         if(slots==null)return {kind:"full",pose:VisualPose.capture(display)};
++         var pose:Object=VisualPose.captureRoot(display),parts:Array=null;
++         // Full VisualPose also omits the subtree while its root is hidden.
++         if(pose.v && pose.a>0) {
++            parts=[];
++            var parent:MovieClip=display as MovieClip;
++            for(var i:int=0;i<slots.length;i++)parts.push(part(slots[i],parent.getChildIndex(slots[i])));
++         }
++         return {kind:KIND,pose:pose,parts:parts};
++      }
++
++      private static function known(display:DisplayObject):Array {
++         var root:MovieClip=display as MovieClip;
++         if(root==null || getQualifiedClassName(root)!="hpBar" || root.totalFrames!=1 || root.currentFrame!=1)return null;
++         var slots:Array=[];
++         for(var i:int=0;i<SLOTS.length;i++) {
++            var child:MovieClip=root.getChildByName(SLOTS[i]) as MovieClip;
++            if(child==null || child.parent!==root || Object(root)[SLOTS[i]]!==child)return null;
++            var cls:String=getQualifiedClassName(child);
++            // hp_bar2_165 has a frame-19 gotoAndPlay loop and is deliberately
++            // excluded. hp_bar3/4 only stop on frame 1; goldstar has no class
++            // script. Any other named or nested symbol uses the full path.
++            if(i<2) {
++               if(cls!="pfe_fla::hp_bar4_243" && cls!="pfe_fla::hp_bar3_245")return null;
++            }else if(cls!="flash.display::MovieClip")return null;
++            if(child.filters.length!=0 || child.blendMode!=BlendMode.NORMAL || child.mask!=null ||
++               child.scrollRect!=null || child.scale9Grid!=null)return null;
++            for(var j:int=0;j<child.numChildren;j++)if(!(child.getChildAt(j) is Shape))return null;
++            // VisualPose reads own Graphics only for an anonymous MovieClip.
++            // readGraphicsData can omit drawTriangles, so inspect copied
++            // bounds too instead of mistaking those drawings for an empty one.
++            if(cls=="flash.display::MovieClip" && hasDrawing(child))return null;
++            slots.push(child);
++         }
++         for(i=0;i<root.numChildren;i++) {
++            var member:DisplayObject=root.getChildAt(i);
++            // Authored Shape children are also omitted by full VisualPose for
++            // MovieClips; the same native asset supplies their artwork.
++            if(member is Shape)continue;
++            if(member!==slots[0] && member!==slots[1] && member!==slots[2])return null;
++         }
++         return slots;
++      }
++
++      private static function hasDrawing(clip:MovieClip):Boolean {
++         if(clip.graphics.readGraphicsData(false).length!=0)return true;
++         var result:Boolean=false;
++         try {
++            drawingProbe.graphics.copyFrom(clip.graphics);
++            var bounds:Rectangle=drawingProbe.getBounds(drawingProbe);
++            result=bounds.width>0 && bounds.height>0;
++         }finally {drawingProbe.graphics.clear();}
++         return result;
++      }
++
++      private static function part(clip:MovieClip,index:int):Object {
++         var previous:Object=captured[clip],matrix:Matrix=clip.transform.matrix,color:ColorTransform=clip.transform.colorTransform;
++         var m:Array=previous==null?null:previous.m,c:Array=previous==null?null:previous.c;
++         if(m==null || m[0]!==matrix.a || m[1]!==matrix.b || m[2]!==matrix.c || m[3]!==matrix.d || m[4]!==matrix.tx || m[5]!==matrix.ty)
++            m=[matrix.a,matrix.b,matrix.c,matrix.d,matrix.tx,matrix.ty];
++         if(c==null || c[0]!==color.redMultiplier || c[1]!==color.greenMultiplier || c[2]!==color.blueMultiplier || c[3]!==color.alphaMultiplier ||
++            c[4]!==color.redOffset || c[5]!==color.greenOffset || c[6]!==color.blueOffset || c[7]!==color.alphaOffset)
++            c=[color.redMultiplier,color.greenMultiplier,color.blueMultiplier,color.alphaMultiplier,color.redOffset,color.greenOffset,color.blueOffset,color.alphaOffset];
++         var state:Object={cls:getQualifiedClassName(clip),i:index,f:clip.currentFrame,m:m,c:c,
++            sx:clip.scaleX,sy:clip.scaleY,a:clip.alpha,v:clip.visible,cache:clip.cacheAsBitmap};
++         if(previous!=null) {
++            var same:Boolean=true;
++            for(var key:String in state)if(state[key]!==previous[key]){same=false;break;}
++            if(same)return previous;
++         }
++         captured[clip]=state;return state;
++      }
++
++      /** Reconstitute only the three known child instructions on the receiver.
++       * The existing copier owns frame-script suppression, native class
++       * replacement and cleanup of nodes created by a prior full fallback. */
++      public static function apply(display:DisplayObject,state:Object,interpolated:Boolean=false):void {
++         if(display==null || state==null)return;
++         var pose:Object=fullPose(state);
++         if(interpolated)VisualPose.motion(display,pose);else VisualPose.apply(display,pose);
++      }
++
++      private static function fullPose(state:Object):Object {
++         var pose:Object=state.pose;
++         if(state.kind===KIND && state.parts!=null && pose!=null && pose.v && pose.a>0) {
++            pose=PoseTween.copy(pose);pose.children=[];
++            for(var i:int=0;i<SLOTS.length;i++) {
++               var p:Object=state.parts[i];
++               // PoseTween reads scalar transforms as well as the precise
++               // matrix. These are temporary inputs; rendering still uses m.
++               var rotation:Number=Math.atan2(Number(p.m[1]),Number(p.m[0]))*180/Math.PI;
++               if(!isFinite(rotation))rotation=0;
++               var native:Object={f:p.f,m:p.m,x:p.m[4],y:p.m[5],sx:p.sx,sy:p.sy,r:rotation,
++                  c:p.c,a:p.a,v:p.v,cache:p.cache,
++                  blend:BlendMode.NORMAL,filters:EMPTY,children:EMPTY};
++               if(p.cls=="flash.display::MovieClip")native.vector=EMPTY;
++               pose.children.push({n:SLOTS[i],i:p.i,cls:p.cls,s:native});
++            }
++            // Full VisualPose lists children in display-list order. Match it
++            // at a compact/full transition: PoseTween pairs array positions
++            // before checking the recorded native child index and class.
++            pose.children.sortOn("i",Array.NUMERIC);
++         }
++         return pose;
++      }
++
++      public static function tween(a:Object,b:Object,t:Number):Object {
++         if(a==null || b==null || a===b)return a;
++         var out:Object=PoseTween.copy(a);
++         // A mode change must preserve child interpolation too. Materialize
++         // temporary native recipes locally, without expanding the wire state.
++         if(a.kind!==b.kind) {
++            out.kind="full";out.pose=PoseTween.pose(fullPose(a),fullPose(b),t);
++            delete out.parts;return out;
++         }
++         out.pose=PoseTween.pose(a.pose,b.pose,t);
++         if(a.kind!==KIND || b.kind!==KIND || a.parts==null || b.parts==null ||
++            a.pose.v!==b.pose.v || a.pose.f!==b.pose.f)return out;
++         out.parts=[];
++         for(var i:int=0;i<SLOTS.length;i++) {
++            var p:Object=a.parts[i],q:Object=b.parts[i];
++            out.parts.push(p.i===q.i && p.cls===q.cls?tweenPart(p,q,t):p);
++         }
++         return out;
++      }
++
++      private static function tweenPart(a:Object,b:Object,t:Number):Object {
++         if(a===b || a.v!==b.v)return a;
++         var out:Object=PoseTween.copy(a);out.a=lerp(a.a,b.a,t);
++         out.m=a.m.concat();out.m[4]=lerp(a.m[4],b.m[4],t);out.m[5]=lerp(a.m[5],b.m[5],t);
++         // Match PoseTween.pose: interpolate each affine basis, and keep a
++         // reflected basis discrete so a flipped bar cannot shrink through 0.
++         if(a.sx*b.sx>=0 && a.sy*b.sy>=0) {
++            out.sx=lerp(a.sx,b.sx,t);out.sy=lerp(a.sy,b.sy,t);
++            for(var axis:int=0;axis<4;axis+=2) {
++               if(a.m[axis]===b.m[axis] && a.m[axis+1]===b.m[axis+1])continue;
++               var ar:Number=Math.sqrt(a.m[axis]*a.m[axis]+a.m[axis+1]*a.m[axis+1]);
++               var br:Number=Math.sqrt(b.m[axis]*b.m[axis]+b.m[axis+1]*b.m[axis+1]);
++               var rotation:Number=angle(Math.atan2(a.m[axis+1],a.m[axis])*180/Math.PI,Math.atan2(b.m[axis+1],b.m[axis])*180/Math.PI,t)*Math.PI/180;
++               var radius:Number=lerp(ar,br,t);out.m[axis]=Math.cos(rotation)*radius;out.m[axis+1]=Math.sin(rotation)*radius;
++            }
++         }
++         return out;
++      }
++      private static function lerp(a:Number,b:Number,t:Number):Number{return a+(b-a)*t;}
++      private static function angle(a:Number,b:Number,t:Number):Number{return a+(((b-a+540)%360)-180)*t;}
++   }
++}
+--- a/src/authority/HostSession.as
++++ b/src/authority/HostSession.as
+@@ -147,10 +147,23 @@
+          frame.resources={hold:actors[1].unit.currentWeapon==null?0:actors[1].unit.currentWeapon.hold,
+             hp:actors[1].unit.hp,mana:actors[1].unit.mana};
+          lastFrame=frame;
+-         var packet:Object=encoder.encode(frame);Timing.end("host.delta",part);part=Timing.start();
++         // The runtime and lastFrame retain both rooms' complete lifetimes.
++         // Only the peer's displayed room needs projectile pictures on wire.
++         // During replay frame.room can differ from the live control endpoint.
++         var outgoing:Object=PoseTween.copy(frame);
++         outgoing.projectiles=projectilesForRoom(frame.projectiles,frame.room);
++         outgoing.projectileEvents=projectilesForRoom(frame.projectileEvents,frame.room);
++         var packet:Object=encoder.encode(outgoing);Timing.end("host.delta",part);part=Timing.start();
+          if(!link.send(packet))fail("Cannot publish confirmation");
+-         else projectileSelection.published(frame);
++         else projectileSelection.published(outgoing);
+          Timing.end("host.send",part);Timing.end("host.publish",began);
++      }
++      private static function projectilesForRoom(values:Array,room:String):Array {
++         var out:Array=[];
++         // Preserve births, final states and order, including a projectile
++         // that appears and ends in the same host tick. No visibility culling.
++         for each(var value:Object in values)if(value.room===room)out.push(value);
++         return out;
+       }
+       public function fail(reason:String):void {
+          if(!active)return;
+@@ -172,6 +185,7 @@
+          if(sound!=null)sound.dispose();
+          if(projectileSelection!=null)projectileSelection.clear();
+          if(runtime!=null)runtime.dispose();
++         if(scene!=null)scene.dispose();
+          for each(var actor:PlayerActor in actors)actor.destroy();
+          actors=[];inputs=[];
+       }
+--- a/src/authority/Link.as
++++ b/src/authority/Link.as
+@@ -13,6 +13,8 @@
+       public var message:Function, closed:Function, connected:Function;
+       public var socket:Socket;
+       private var buffer:ByteArray=new ByteArray();
++      private var readOffset:uint=0;
++      private static const COMPACT_AFTER:uint=64*1024;
+       private var ended:Boolean=false;
+       private var scheduled:Boolean=false,draining:Boolean=false;
+       private var peerEnded:Boolean=false;
+@@ -41,7 +43,7 @@
+          socket.removeEventListener(IOErrorEvent.IO_ERROR,onError);socket.removeEventListener(SecurityErrorEvent.SECURITY_ERROR,onError);
+          socket.removeEventListener(ProgressEvent.SOCKET_DATA,onData);
+          try{socket.close();}catch(ignored:*){}
+-         buffer.clear();
++         buffer.clear();readOffset=0;
+          if(closed!=null)closed(reason);
+       }
+       public function finish(finalMessage:Object,reason:String):void {
+@@ -81,7 +83,7 @@
+       private function onError(e:Event):void {close(e.toString());}
+       private function onData(e:ProgressEvent):void {
+          try {
+-            if(buffer.length+socket.bytesAvailable>2*LIMIT)throw new Error("receive backlog");
++            if(buffer.length-readOffset+socket.bytesAvailable>2*LIMIT)throw new Error("receive backlog");
+             socket.readBytes(buffer,buffer.length);
+             if(!scheduled && !draining)drain();
+          }catch(error:*){Log.error(error);close("invalid packet");}
+@@ -91,12 +93,15 @@
+          var began:int=Timing.start();
+          var deadline:int=getTimer()+8;
+          try {
+-            buffer.position=0;
+-            while(buffer.bytesAvailable>=4 && !ended) {
+-               var start:int=buffer.position,size:uint=buffer.readUnsignedInt();
++            while(!ended && buffer.length-readOffset>=4) {
++               buffer.position=readOffset;
++               var size:uint=buffer.readUnsignedInt();
+                if(size==0 || size>LIMIT)throw new Error("invalid frame size");
+-               if(buffer.bytesAvailable<size){buffer.position=start;break;}
++               if(buffer.bytesAvailable<size)break;
+                var payload:ByteArray=new ByteArray();buffer.readBytes(payload,0,size);
++               // Commit only a complete payload. A partial header/body keeps
++               // this cursor so a later socket event resumes the same packet.
++               readOffset=buffer.position;
+                var item:Object=WireCodec.decode(payload);
+                if(message!=null)message(item);
+                // Preserve every ordered delta, but yield after bounded work so
+@@ -104,21 +109,29 @@
+                // A first full room can itself exceed this budget; never drop it.
+                if(getTimer()>=deadline)break;
+             }
+-            if(!ended && buffer.position>0) {
+-               var rest:ByteArray=new ByteArray();
+-               if(buffer.bytesAvailable>0)rest.writeBytes(buffer,buffer.position,buffer.bytesAvailable);
+-               buffer=rest;
+-            }
+-            if(!ended && buffer.length>=4) {
+-               buffer.position=0;var nextSize:uint=buffer.readUnsignedInt();buffer.position=0;
++            if(!ended)compact();
++            if(!ended && buffer.length-readOffset>=4) {
++               buffer.position=readOffset;var nextSize:uint=buffer.readUnsignedInt();buffer.position=readOffset;
+                if(nextSize==0 || nextSize>LIMIT)throw new Error("invalid frame size");
+-               if(buffer.length>=nextSize+4){scheduled=true;setTimeout(drain,1);}
++               if(buffer.length-readOffset>=nextSize+4){scheduled=true;setTimeout(drain,1);}
+             }
+          }catch(error:*){Log.error(error);close("invalid packet");}
+          finally {
+             draining=false;Timing.end("network.receiveBatch",began);
+-            if(peerEnded && !ended && !scheduled)close(buffer.length==0?"peer closed":"peer closed with incomplete frame");
++            if(peerEnded && !ended && !scheduled)close(buffer.length==readOffset?"peer closed":"peer closed with incomplete frame");
+          }
++      }
++      private function compact():void {
++         if(readOffset==0)return;
++         if(readOffset==buffer.length){buffer.clear();readOffset=0;return;}
++         // A slow decoder can yield with many complete packets still queued.
++         // Do not copy that entire tail after each 8 ms batch. Copy only when
++         // the consumed prefix is large and at least as long as the remainder;
++         // every retained byte is then charged to bytes already consumed.
++         if(readOffset<COMPACT_AFTER || readOffset<buffer.length-readOffset)return;
++         var rest:ByteArray=new ByteArray();
++         rest.writeBytes(buffer,readOffset,buffer.length-readOffset);
++         buffer=rest;readOffset=0;
+       }
+    }
+ }
+--- a/src/authority/PoseTween.as
++++ b/src/authority/PoseTween.as
+@@ -49,6 +49,15 @@
+          return out;
+       }
+       private static function keyed(list:Array,key:String):Object {var out:Object={};for each(var o:Object in list)out[o[key]]=o;return out;}
++      /** Only changed/fallback decorative templates need child interpolation.
++       * Expand them locally using the current root, never the template's old
++       * root position. The ordinary wire snapshot stays compact. */
++      private static function effectPose(state:Object):Object {
++         if(state.decor==null)return state.pose;
++         var out:Object=copy(state.pose);
++         if(out.v && out.a>0)out.children=state.decor.recipe.children;
++         return out;
++      }
+       public static function frame(a:Object,b:Object,t:Number):Object {
+          if(b==null || t<=0 || a.room!==b.room || a.pauseEpoch!=b.pauseEpoch)return a;
+          if(a.timeControl!=null && b.timeControl!=null &&
+@@ -84,8 +93,15 @@
+                for each(p in a.scene[list]) {
+                   q=targets[p.key];r=p;
+                   if(q!=null && p.positionEpoch==q.positionEpoch && p.pose!=null && q.pose!=null && close(p.pose,q.pose,"x","y")) {
+-                     r=copy(p);r.pose=pose(p.pose,q.pose,t);
+-                     if(p.healthBar!=null && q.healthBar!=null) {r.healthBar=copy(p.healthBar);r.healthBar.pose=pose(p.healthBar.pose,q.healthBar.pose,t);}
++                     r=copy(p);
++                     if(list=="effects" && (p.decor!=null || q.decor!=null) &&
++                        (p.decor==null || q.decor==null || p.decor.recipe!==q.decor.recipe))
++                        r.pose=pose(effectPose(p),effectPose(q),t);
++                     else r.pose=pose(p.pose,q.pose,t);
++                     if(p.healthBar!=null && q.healthBar!=null)r.healthBar=HealthBarPose.tween(p.healthBar,q.healthBar,t);
++                     if(list=="objects" && p.shadow!=null && q.shadow!=null && p.shadow.clip===q.shadow.clip) {
++                        r.shadow=copy(p.shadow);r.shadow.pose=pose(p.shadow.pose,q.shadow.pose,t);
++                     }
+                      if(p.fields!=null && q.fields!=null && close(p.fields,q.fields,"X","Y"))r.fields=fields(p.fields,q.fields,t);
+                      if(p.weapons!=null) {
+                         r.weapons=[];
+--- a/src/authority/ReplicaScene.as
++++ b/src/authority/ReplicaScene.as
+@@ -18,7 +18,8 @@
+       private var vision:SharedVision,lightDirty:Boolean=true,lightX:Number=NaN,lightY:Number=NaN;
+       private var players:Dictionary=new Dictionary(true);
+       private var confirmedTiles:Array=[];
+-      public function ReplicaScene(access:NativeAccess,vision:SharedVision=null){this.access=access;this.vision=vision;effects=new SceneEffects(access);}
++      private var backdrops:SceneBackdrops;
++      public function ReplicaScene(access:NativeAccess,vision:SharedVision=null){this.access=access;this.vision=vision;effects=new SceneEffects(access);backdrops=new SceneBackdrops(access);}
+       public function keyFor(unit:Object):uint {if(players[unit])return players[unit];for(var id:String in units)if(units[id].unit===unit)return uint(id);return 0;}
+       public function registerPlayer(unit:Object,key:uint):void {players[unit]=key;}
+       /** Only selects confirmed objects for native GUI text. Never steps an
+@@ -61,7 +62,10 @@
+             if(rec.unit.hpbar!=null)keep[rec.unit.hpbar]=true;
+             for each(gun in rec.weapons)if(gun.vis!=null)keep[gun.vis]=true;
+          }
+-         for each(rec in objects)if(rec.object.vis!=null)keep[rec.object.vis]=true;
++         for each(rec in objects) {
++            if(rec.object.vis!=null)keep[rec.object.vis]=true;
++            if(rec.shadow!=null)keep[rec.shadow]=true;
++         }
+          for each(rec in effects.records)keep[rec.clip]=true;
+          for(var value:Object in keep){d=value as DisplayObject;if(d!=null && d.mask!=null)keep[d.mask]=true;}
+          for each(var layer:Object in access.world.grafon.visObjs)
+@@ -94,7 +98,8 @@
+             if(!room.black)for(var lx:int=0;lx<room.spaceX;lx++)for(var ly:int=0;ly<room.spaceY;ly++)
+                room.space[lx][ly].visi=room.space[lx][ly].t_visi=1;
+          }
+-         var geometry:Boolean=changed || wasBlack!==room.black || access.ink.needsRedraw(w.grafon,s.ink);
++         var backdropChanged:Boolean=backdrops.apply(room,s.backdrop);
++         var geometry:Boolean=changed || backdropChanged || wasBlack!==room.black || access.ink.needsRedraw(w.grafon,s.ink);
+          var redrawReasons:Object=Timing.enabled?{room:changed,dark:wasBlack!==room.black,ink:access.ink.needsRedraw(w.grafon,s.ink),fields:{}}:null;
+          var patchCount:uint=0;
+          for each(var tile:Object in s.tiles) {
+@@ -134,7 +139,7 @@
+             lightDirty=true;
+             w.grafon.drawLoc(room);w.cam.setLoc(room);
+             for each(var rec:Object in units)attach(rec.unit,rec.layer);
+-            for each(rec in objects)attach(rec.object,rec.layer);
++            for each(rec in objects)attachObject(rec);
+          }else incrementalWalls+=patchCount;
+          access.ink.apply(w.grafon,s.ink,geometry);
+          var live:Object={};
+@@ -144,9 +149,7 @@
+          Timing.end("replica.units",began);began=Timing.start();
+          live={};
+          for each(state in s.objects){applyObject(state);live[state.key]=true;}
+-         for(id in objects)if(!live[id]) {
+-            objects[id].object.remVisual();delete objects[id];
+-         }
++         for(id in objects)if(!live[id])removeObject(id);
+          effects.apply(s.effects);
+          Timing.end("replica.objectsAndEffects",began);
+          terrainRevision=s.terrainRevision;
+@@ -174,6 +177,7 @@
+          for each(state in s.objects) {
+             rec=objects[state.key];if(rec==null)throw new Error("Interpolation lacks a confirmed object");
+             NativeFields.motion(rec.object,state.fields);VisualPose.motion(rec.object.vis,state.pose);
++            if(rec.shadow!=null && state.shadow!=null)VisualPose.motion(rec.shadow,state.shadow.pose);
+          }
+          effects.interpolate(s.effects);
+       }
+@@ -242,7 +246,7 @@
+             if(s.clip!=null) {
+                var Clip:Class=access.visualClass(s.clip);o.vis=new Clip();
+             }
+-            rec=objects[s.key]={object:o,layer:int(s.fields.sloy),inter:s.inter};
++            rec=objects[s.key]={object:o,layer:int(s.fields.sloy),inter:s.inter,attached:false,shadow:null,shadowState:null};
+          }
+          o=rec.object;
+          if(s.inter!=null && s.inter.hasOwnProperty("active")) {
+@@ -251,8 +255,41 @@
+          }else o.inter=null;
+          // The native Interact constructor increments priority; restore the
+          // host's actual object fields after constructing the read-only view.
+-         NativeFields.apply(o,s.fields);rec.inter=s.inter;
+-         if(s.attached)attach(o,rec.layer);else o.remVisual();VisualPose.apply(o.vis,s.pose);
++         NativeFields.apply(o,s.fields);rec.inter=s.inter;rec.layer=int(s.fields.sloy);rec.attached=s.attached;
++         if(s.shadow==null)removeShadow(rec);
++         else {
++            if(rec.shadow==null || getQualifiedClassName(rec.shadow)!==s.shadow.clip) {
++               removeShadow(rec);
++               var Shadow:Class=access.visualClass(s.shadow.clip);rec.shadow=new Shadow() as DisplayObject;
++               if(rec.shadow==null)throw new Error("Unsupported native box shadow: "+s.shadow.clip);
++            }
++            rec.shadowState=s.shadow;VisualPose.apply(rec.shadow,s.shadow.pose);
++         }
++         attachObject(rec);VisualPose.apply(o.vis,s.pose);
++      }
++      private function attachObject(rec:Object):void {
++         var state:Object=rec.shadowState;
++         if(state==null || state.beforeBody!==false)attachShadow(rec);
++         if(rec.attached)attach(rec.object,rec.layer);else rec.object.remVisual();
++         if(state!=null && state.beforeBody===false)attachShadow(rec);
++      }
++      private function attachShadow(rec:Object):void {
++         var shadow:DisplayObject=rec.shadow as DisplayObject,state:Object=rec.shadowState;
++         if(shadow==null)return;
++         if(state!=null && state.attached)access.world.grafon.visObjs[int(state.layer)].addChild(shadow);
++         else if(shadow.parent!=null)shadow.parent.removeChild(shadow);
++      }
++      private function removeShadow(rec:Object):void {
++         var shadow:DisplayObject=rec.shadow as DisplayObject;
++         if(shadow!=null) {
++            if(shadow.parent!=null)shadow.parent.removeChild(shadow);
++            VisualPose.dispose(shadow);
++         }
++         rec.shadow=null;rec.shadowState=null;
++      }
++      private function removeObject(id:String):void {
++         var rec:Object=objects[id];removeShadow(rec);
++         rec.object.remVisual();VisualPose.dispose(rec.object.vis);delete objects[id];
+       }
+       private function healthBar(u:Object,s:Object,interpolated:Boolean=false):void {
+          if(u.hpbar==null || s.healthBar==null)return;
+@@ -261,7 +298,7 @@
+          if(s.healthBar.attached) {
+             if(u.hpbar.parent!==access.world.grafon.visObjs[3])access.world.grafon.visObjs[3].addChild(u.hpbar);
+          }else if(u.hpbar.parent!=null)u.hpbar.parent.removeChild(u.hpbar);
+-         if(interpolated)VisualPose.motion(u.hpbar,s.healthBar.pose);else VisualPose.apply(u.hpbar,s.healthBar.pose);
++         HealthBarPose.apply(u.hpbar,s.healthBar,interpolated);
+       }
+       private function attach(o:Object,layer:int):void {
+          if(o.vis!=null && int(NativeAccess.get(o,"sost",1))<4)
+@@ -277,10 +314,11 @@
+       public function dispose():void {
+          if(room!=null){room.celObj=null;room.celDist=-1;}
+          for(var id:String in units)removeUnit(id);
+-         for each(var rec:Object in objects)rec.object.remVisual();
++         for(id in objects)removeObject(id);
+          units={};objects={};confirmedTiles=[];room=null;key="";
+          lightDirty=true;lightX=lightY=NaN;
+          effects.dispose();
++         backdrops.dispose();
+       }
+    }
+ }
+--- /dev/null
++++ b/src/authority/SceneBackdrops.as
+@@ -0,0 +1,74 @@
++package authority {
++   import flash.display.DisplayObject;
++   import flash.display.MovieClip;
++   import flash.geom.ColorTransform;
++   import flash.utils.Dictionary;
++   import flash.utils.getQualifiedClassName;
++   /** Authored BackObj decorations are baked by drawLoc, not world-layer Pt's.
++    * Cache their immutable description for the native raster epoch. */
++   public final class SceneBackdrops {
++      private static const FIELDS:Array=["id","X","Y","scX","scY","frame","frameOn","frameOff","blend","alpha","sloy","er"];
++      private static const PARTS:Array=["vis","erase","light"];
++      private var access:NativeAccess;
++      private var captured:Dictionary=new Dictionary(true);
++      private var received:Object;
++      private var native:Array=[];
++      public function SceneBackdrops(access:NativeAccess){this.access=access;}
++      public function capture(room:Object,epoch:uint):Object {
++         var old:Object=captured[room];
++         if(old!=null && old.epoch===epoch)return old.state;
++         var state:Object={items:[],tint:color(room.cTransform),fonTint:color(room.cTransformFon)};
++         for each(var object:Object in room.backobjs) {
++            var item:Object={fields:{},parts:{}};
++            for each(var name:String in FIELDS)item.fields[name]=object[name];
++            for each(name in PARTS) {
++               var display:DisplayObject=object[name] as DisplayObject;
++               item.parts[name]=display==null?null:{clip:getQualifiedClassName(display),pose:VisualPose.capture(display)};
++            }
++            state.items.push(item);
++         }
++         captured[room]={epoch:epoch,state:state};return state;
++      }
++      /** Reconstruct native typed BackObjs before Grafon.drawLoc consumes them.
++       * The constructor chooses the correct background resource domain; every
++       * random placement/frame is then replaced by the host's final values. */
++      public function apply(room:Object,state:Object):Boolean {
++         if(state==null)return false;
++         if(received===state && room.backobjs===native)return false;
++         var next:Array=[],Type:Class=access.definition("fe.graph.BackObj");
++         for(var i:int=0;i<state.items.length;i++) {
++            var item:Object=state.items[i],object:Object=i<native.length?native[i]:null;
++            if(object==null || object.id!==item.fields.id) {
++               if(object!=null)release(object);
++               var placement:XML=<back/>;placement.@fr=item.fields.frame;
++               object=new Type(room,item.fields.id,item.fields.X,item.fields.Y,placement);
++            }
++            for each(var name:String in FIELDS)object[name]=item.fields[name];
++            for each(name in PARTS) {
++               var part:Object=item.parts[name],display:DisplayObject=object[name] as DisplayObject;
++               if(part==null) {
++                  if(display!=null)VisualPose.dispose(display);
++                  object[name]=null;
++               }else {
++                  if(display==null || getQualifiedClassName(display)!==part.clip) {
++                     if(display!=null)VisualPose.dispose(display);
++                     var Clip:Class=access.visualClass(part.clip);display=new Clip() as MovieClip;
++                     if(display==null)throw new Error("Unsupported native background symbol: "+part.clip);
++                     object[name]=display;
++                  }
++                  VisualPose.apply(display,part.pose);
++               }
++            }
++            next.push(object);
++         }
++         for(i=state.items.length;i<native.length;i++)release(native[i]);
++         native=next;room.backobjs=native;
++         room.cTransform=transform(state.tint);room.cTransformFon=transform(state.fonTint);
++         received=state;return true;
++      }
++      private static function color(c:Object):Array {return c==null?null:[c.redMultiplier,c.greenMultiplier,c.blueMultiplier,c.alphaMultiplier,c.redOffset,c.greenOffset,c.blueOffset,c.alphaOffset];}
++      private static function transform(c:Array):ColorTransform {return c==null?null:new ColorTransform(c[0],c[1],c[2],c[3],c[4],c[5],c[6],c[7]);}
++      private static function release(object:Object):void {for each(var name:String in PARTS)if(object[name]!=null)VisualPose.dispose(object[name]);}
++      public function dispose():void {for each(var object:Object in native)release(object);native=[];received=null;captured=new Dictionary(true);}
++   }
++}
+--- a/src/authority/SceneEffects.as
++++ b/src/authority/SceneEffects.as
+@@ -11,6 +11,7 @@
+    public final class SceneEffects {
+       public var records:Object={},applications:uint=0;
+       private var access:NativeAccess;
++      private var decorations:DecorativeEffects=new DecorativeEffects();
+       public function SceneEffects(access:NativeAccess){this.access=access;}
+       public function apply(states:Array):void {
+          var live:Object={};
+@@ -36,7 +37,11 @@
+                rec.atlas=s.atlas;
+             }
+             if(s.name!=null)rec.clip.name=s.name;
+-            access.world.grafon.visObjs[int(s.layer)].addChild(rec.clip);VisualPose.apply(rec.clip,s.pose);++applications;
++            access.world.grafon.visObjs[int(s.layer)].addChild(rec.clip);
++            var localPose:Object=SpeechScale.localPose(s.pose,Number(s.screenScale),Number(access.world.cam.scaleV));
++            if(s.decor!=null)decorations.apply(rec.clip,localPose,s.decor);
++            else {decorations.forget(rec.clip);VisualPose.apply(rec.clip,localPose);}
++            ++applications;
+             if(s.loot!=null && s.loot.fields!=null) {
+                if(rec.pointer==null) {
+                   var Obj:Class=access.definition("fe.Obj"),Interact:Class=access.definition("fe.serv.Interact");
+@@ -53,12 +58,15 @@
+          for each(var s:Object in states) {
+             var rec:Object=records[s.key];
+             if(rec==null)throw new Error("Interpolated effect has no confirmed lifetime");
+-            VisualPose.motion(rec.clip,s.pose);
++            var localPose:Object=SpeechScale.localPose(s.pose,Number(s.screenScale),Number(access.world.cam.scaleV));
++            if(s.decor!=null)decorations.motion(rec.clip,localPose,s.decor);
++            else VisualPose.motion(rec.clip,localPose);
+             if(rec.pointer!=null){rec.pointer.X=rec.clip.x+rec.pointerOffset.x;rec.pointer.Y=rec.clip.y+rec.pointerOffset.y;}
+          }
+       }
+       private function remove(id:String):void {
+          var rec:Object=records[id];if(rec.clip.parent!=null)rec.clip.parent.removeChild(rec.clip);
++         decorations.forget(rec.clip);
+          VisualPose.dispose(rec.clip);
+          if(rec.data!=null)rec.data.dispose();delete records[id];
+       }
+--- a/src/authority/SceneSnapshot.as
++++ b/src/authority/SceneSnapshot.as
+@@ -20,8 +20,12 @@
+       private var previousRoom:Object,tiles:Array=[],plainFront:Array=[];
+       private var targets:Object={};
+       private var masks:DisplayMasks=new DisplayMasks();
++      private var decorations:DecorativeEffects=new DecorativeEffects();
++      private var backdrops:SceneBackdrops;
++      private var speech:SpeechScale;
+       private var terrainRevision:uint=0;
+-      public function SceneSnapshot(access:NativeAccess){this.access=access;}
++      public function SceneSnapshot(access:NativeAccess){this.access=access;backdrops=new SceneBackdrops(access);speech=new SpeechScale(access);}
++      public function dispose():void {speech.dispose();backdrops.dispose();reset();}
+       public function id(object:Object):uint {
+          if(object==null)return 0;
+          if(!ids[object])ids[object]=++nextId;
+@@ -40,6 +44,7 @@
+          var result:Object={key:access.keyFor(room),full:full,tiles:[],units:[],objects:[],effects:[]};
+          result.fields=NativeFields.capture(room);
+          result.ink=access.ink.snapshot(room.grafon);
++         result.backdrop=backdrops.capture(room,uint(result.ink.epoch));
+          var rendered:Dictionary=new Dictionary(true);
+          for each(var actor:PlayerActor in actors) {
+             rendered[actor.unit.vis]=true;
+@@ -84,7 +89,8 @@
+             var us:Object={key:id(u),positionEpoch:access.positionEpoch(u),cls:getQualifiedClassName(u),fields:NativeFields.capture(u),inter:interaction(u.inter),pose:VisualPose.capture(u.vis,0,burning || replay),
+                clip:u.vis==null?null:getQualifiedClassName(u.vis),burning:burning,
+                blit:burning || replay?null:AuthorityAnimation.capture(u as Unit),weapons:[],petOwner:-1,layer:u.sloy,attached:u.vis!=null && u.vis.parent!=null};
+-            us.healthBar=u.hpbar==null?null:{pose:VisualPose.capture(u.hpbar),attached:u.hpbar.parent!=null};
++            us.healthBar=u.hpbar==null?null:HealthBarPose.capture(u.hpbar);
++            if(us.healthBar!=null)us.healthBar.attached=u.hpbar.parent!=null;
+             for each(actor in actors)if(actor.unit.pet===u)us.petOwner=actor.id;
+             if(us.cls.indexOf("UnitTurret")>=0)us.mount=int(getQualifiedClassName(u.vis).replace(/^.*visualTurret/,""));
+             for each(var weapon:Object in u.childObjs)if(weapon!=null && "kol_shoot" in weapon)
+@@ -98,9 +104,24 @@
+          Timing.end("capture.unitsAndTiles",began);began=Timing.start();
+          var seen:Dictionary=new Dictionary(true);
+          for each(var list:Array in [room.objs,room.acts,room.bonuses])for each(var o:Object in list)if(o!=null && !seen[o]) {
+-            seen[o]=true;result.objects.push({key:id(o),cls:getQualifiedClassName(o),fields:NativeFields.capture(o),
+-               pose:VisualPose.capture(o.vis),clip:o.vis==null?null:getQualifiedClassName(o.vis),inter:interaction(o.inter)});
+-            result.objects[result.objects.length-1].attached=o.vis!=null && o.vis.parent!=null;
++            seen[o]=true;var boxState:Object={key:id(o),cls:getQualifiedClassName(o),fields:NativeFields.capture(o),
++               pose:VisualPose.capture(o.vis),clip:o.vis==null?null:getQualifiedClassName(o.vis),inter:interaction(o.inter)};
++            boxState.attached=o.vis!=null && o.vis.parent!=null;
++            // Native wall containers draw their shadow and body in the same
++            // layer, shadow first. A loose-effect copy applied after all bodies
++            // reverses that relation and darkens the cabinet/terminal itself.
++            if(boxState.cls=="fe.loc::Box") {
++               var shadow:DisplayObject=o.shad as DisplayObject;
++               var shadowLayer:int=shadow==null || shadow.parent==null?-1:room.grafon.visObjs.indexOf(shadow.parent);
++               if(shadow!=null && (shadow.parent==null || shadowLayer>=0)) {
++                  boxState.shadow={clip:getQualifiedClassName(shadow),pose:VisualPose.capture(shadow),
++                     attached:shadow.parent!=null,layer:shadowLayer<0?0:shadowLayer,
++                     beforeBody:o.vis==null || shadow.parent==null || shadow.parent!==o.vis.parent ||
++                        shadow.parent.getChildIndex(shadow)<shadow.parent.getChildIndex(o.vis)};
++                  rendered[shadow]=true;
++               }
++            }
++            result.objects.push(boxState);
+             if(o.vis!=null)rendered[o.vis]=true;
+          }
+          o=room.firstObj;var count:int=0;
+@@ -108,8 +129,14 @@
+          while(o!=null && ++count<=10000) {
+             var projectile:Boolean="begx" in o;
+             if(o.vis!=null && o.vis.parent!=null && !rendered[o.vis] && !projectile) {
++               // Historical replay may borrow live native objects. It keeps
++               // the full snapshot path, never a cached decorative lifetime.
++               var compact:Object=access.time!=null && access.time.phase=="replay"?null:decorations.capture(o);
+                var effect:Object={key:id(o),clip:getQualifiedClassName(o.vis),layer:o.sloy,
+-                  pose:VisualPose.capture(o.vis),atlas:AuthorityParticle.capture(o,atlas)};
++                  pose:compact==null?VisualPose.capture(o.vis):compact.pose,
++                  atlas:compact==null?AuthorityParticle.capture(o,atlas):null};
++               if(compact!=null)effect.decor=compact.decor;
++               var birthScale:Number=speech.capture(o);if(birthScale>0)effect.screenScale=birthScale;
+                if(getQualifiedClassName(o)=="fe.loc::Loot")effect.loot={id:o.item.id,kol:o.item.kol,x:o.X,y:o.Y,w:o.scX,h:o.scY,
+                   fields:NativeFields.capture(o),inter:NativeFields.capture(o.inter)};
+                result.effects.push(effect);
+@@ -143,9 +170,25 @@
+                   result.effects.push({key:id(drawn),name:drawn.name,clip:getQualifiedClassName(drawn),layer:layer,pose:VisualPose.capture(drawn,0,true),atlas:null});
+             }
+          }
++         // Target IDs also cover players and previously visited rooms. Index
++         // each target's actual room once for this cleanup only; no membership
++         // survives a tick, room move, death or native units-array replacement.
++         var targetRooms:Dictionary;
+          for(var targetKey:String in targets) {
+             var target:Object=targets[targetKey];
+-            if(target.loc==null || target.sost>=3 || target.loc.units.indexOf(target)<0)delete targets[targetKey];
++            var targetRoom:Object=target.loc;
++            if(targetRoom==null || target.sost>=3){delete targets[targetKey];continue;}
++            if(targetRooms==null)targetRooms=new Dictionary();
++            var members:Dictionary=targetRooms[targetRoom];
++            if(members==null) {
++               members=new Dictionary();targetRooms[targetRoom]=members;
++               var targetUnits:Array=targetRoom.units;
++               for(var ui:int=0;ui<targetUnits.length;ui++) {
++                  var targetUnit:Object=targetUnits[ui];
++                  if(targetUnit!=null)members[targetUnit]=true;
++               }
++            }
++            if(!members[target])delete targets[targetKey];
+          }
+          Timing.end("capture.untrackedEffects",began);
+          if(full || result.tiles.length>0)++terrainRevision;
+--- a/src/authority/SharedVision.as
++++ b/src/authority/SharedVision.as
+@@ -53,11 +53,17 @@
+             }
+          }
+          if(room.retDark)return rows;
+-         var old:Object=own[key],merged:Array=[],changed:Boolean=old==null;
++         var old:Object=own[key],merged:Array=null,changed:Boolean=old==null;
++         if(old==null || old.rows.length!=rows.length)merged=[];
+          for(y=0;y<rows.length;y++) {
+-            var line:String=mergeRow(old==null?null:old.rows[y],rows[y]);merged.push(line);
++            var line:String=mergeRow(old==null?null:old.rows[y],rows[y]);
++            // The unchanged prefix already belongs to an immutable row list.
++            // Most visits only rediscover pixels that this player knew before.
++            if(merged==null && old.rows[y]!==line)merged=old.rows.slice(0,y);
++            if(merged!=null)merged.push(line);
+             if(old!=null && old.rows[y]!==line)changed=true;
+          }
++         if(merged==null)merged=old.rows;
+          if(changed)own[key]={cols:room.spaceX,height:room.spaceY,rows:merged,applied:old==null?room:old.applied};
+          return merged;
+       }
+@@ -72,12 +78,28 @@
+       private function fits(entry:Object,room:Object):Boolean{return entry!=null && entry.cols==room.spaceX && entry.height==room.spaceY;}
+       private function mergeRow(a:String,b:String):String {
+          if(a==null || a==b)return b;
+-         var chars:Array=[];
+-         for(var i:int=0;i<b.length;i++) {
+-            var av:int=HEX.indexOf(a.charAt(i)),bv:int=HEX.indexOf(b.charAt(i));
+-            chars.push(HEX.charAt(i%17==0?Math.max(av,bv):av|bv));
++         var chars:Array=null,i:int,av:int,bv:int;
++         // Keep the old length-change behavior; only equal-sized validated
++         // rows can reuse their existing characters without reconstruction.
++         if(a.length!=b.length) {
++            chars=[];
++            for(i=0;i<b.length;i++) {
++               av=HEX.indexOf(a.charAt(i));bv=HEX.indexOf(b.charAt(i));
++               chars.push(HEX.charAt(i%17==0?Math.max(av,bv):av|bv));
++            }
++            return chars.join("");
+          }
+-         return chars.join("");
++         for(i=0;i<b.length;i++) {
++            var previous:String=a.charAt(i),incoming:String=b.charAt(i);
++            if(previous==incoming)continue;
++            av=HEX.indexOf(previous);bv=HEX.indexOf(incoming);
++            var merged:String=HEX.charAt(i%17==0?Math.max(av,bv):av|bv);
++            if(merged!==previous) {
++               if(chars==null)chars=a.split("");
++               chars[i]=merged;
++            }
++         }
++         return chars==null?a:chars.join("");
+       }
+       private function valid(rows:Array,cols:int,height:int):Boolean {
+          if(cols<1 || cols>400 || height<1 || height>400 || rows==null || rows.length!=height)return false;
+--- /dev/null
++++ b/src/authority/SpeechScale.as
+@@ -0,0 +1,41 @@
++package authority {
++   import fe.graph.AuthoritySpeechEmitter;
++   import flash.utils.Dictionary;
++   import flash.utils.getQualifiedClassName;
++   /** Camera compensation belongs to a particle's birth, not its later frame.
++    * Preserve the native custom scale; only exchange the camera's inverse scale. */
++   public final class SpeechScale {
++      private var births:Dictionary=new Dictionary(true),bindings:Array=[];
++      public function SpeechScale(access:NativeAccess) {
++         var array:Array=access.definition("fe.graph.Emitter")["arr"];
++         if(array==null)return;
++         for each(var id:String in ["replic","replic2"]) {
++            var original:Object=array[id],visual:String=id=="replic"?"visReplic":"visReplic2";
++            // Public mods may replace emitters. Leave unknown implementations
++            // and already-existing particles on the unchanged complete-pose path.
++            if(original==null || getQualifiedClassName(original)!=="fe.graph::Emitter" || !original.camscale || original.id!==id || original.vis!==visual)continue;
++            var wrapper:AuthoritySpeechEmitter=new AuthoritySpeechEmitter(original,function():Number{return Number(access.world.cam.scaleV);},remember);
++            bindings.push({array:array,id:id,original:original,wrapper:wrapper});array[id]=wrapper;
++         }
++      }
++      private function remember(part:Object,scale:Number):void {births[part]=scale;}
++      public function capture(part:Object):Number {return births[part]==null?0:Number(births[part]);}
++      public static function localPose(pose:Object,birthScale:Number,localScale:Number):Object {
++         if(pose==null || !isFinite(birthScale) || birthScale<=0 || !isFinite(localScale) || localScale<=0)return pose;
++         var ratio:Number=birthScale/localScale;
++         if(ratio==1)return pose;
++         var out:Object=PoseTween.copy(pose);
++         out.sx=pose.sx*ratio;out.sy=pose.sy*ratio;
++         if(pose.m!=null) {
++            out.m=pose.m.concat();
++            for(var i:int=0;i<4;i++)out.m[i]=pose.m[i]*ratio;
++         }
++         return out;
++      }
++      public function dispose():void {
++         for each(var binding:Object in bindings)
++            if(binding.array[binding.id]===binding.wrapper)binding.array[binding.id]=binding.original;
++         bindings=[];births=new Dictionary(true);
++      }
++   }
++}
+--- a/src/authority/VisualPose.as
++++ b/src/authority/VisualPose.as
+@@ -21,6 +21,7 @@
+       public static var resolve:Function;
+       private static var applied:Dictionary=new Dictionary(true),added:Dictionary=new Dictionary(true);
+       private static var captured:Dictionary=new Dictionary(true);
++      private static var capturedRoots:Dictionary=new Dictionary(true);
+       private static var scriptless:Dictionary=new Dictionary(true);
+       private static var pixels:Dictionary=new Dictionary(true);
+       private static var immutableKeys:Dictionary=new Dictionary(true);
+@@ -31,11 +32,20 @@
+          if(key==null){key=JSON.stringify(value);immutableKeys[value]=key;}return key;
+       }
+       public static function capture(display:DisplayObject,depth:int=0,includePixels:Boolean=false):Object {
++         return captureNode(display,depth,includePixels,false);
++      }
++      /** Compact descriptions own their descendants separately. Keep a second
++       * immutable cache so a root read never replaces a full-tree baseline. */
++      public static function captureRoot(display:DisplayObject):Object {
++         return captureNode(display,0,false,true);
++      }
++      private static function captureNode(display:DisplayObject,depth:int,includePixels:Boolean,rootOnly:Boolean):Object {
+          if(display==null)return null;
+          var began:int=depth==0?Timing.start():0;
+          var color:ColorTransform=display.transform.colorTransform;
+          var matrix:Matrix=display.transform.matrix;
+-         var previous:Object=captured[display],m:Array=previous==null?null:previous.m,c:Array=previous==null?null:previous.c;
++         var cache:Dictionary=rootOnly?capturedRoots:captured;
++         var previous:Object=cache[display],m:Array=previous==null?null:previous.m,c:Array=previous==null?null:previous.c;
+          // Compare fixed native value tuples before allocating. These arrays
+          // are immutable wire recipes; unchanged colors/matrices need neither
+          // fresh arrays nor a recursive property-by-property comparison.
+@@ -71,16 +81,37 @@
+          // An invisible parent suppresses its entire subtree. Keep the root
+          // state and capture the current children when it becomes visible;
+          // hidden health bars otherwise multiply dense-room capture work.
+-         if(parent!=null && display.visible && display.alpha>0 && depth<12) {
+-            s.children=[];
++         if(!rootOnly && parent!=null && display.visible && display.alpha>0 && depth<12) {
++            // Keep old recipes immutable: only copy the already-matched prefix
++            // when a captured child actually changes. childCount indexes the
++            // filtered recipe; i remains the native display-list index.
++            var previousChildren:Array=previous==null?null:(previous.children as Array);
++            var children:Array=previousChildren,childCount:int=0;
+             for(var i:int=0;i<parent.numChildren;i++) {
+                var child:DisplayObject=parent.getChildAt(i);
+                // Authority samples at EXIT_FRAME, after native construction.
+                // A null timeline slot is not evidence that a limb is hidden.
+                if(child==null)continue;
+-               if(child is MovieClip || child is TextField || child is Sprite || child is Bitmap || clip==null && child is Shape)
+-                  s.children.push({n:child.name,i:i,cls:getQualifiedClassName(child),s:capture(child,depth+1,includePixels)});
+-            }
++               if(child is MovieClip || child is TextField || child is Sprite || child is Bitmap || clip==null && child is Shape) {
++                  var childName:String=child.name,childClass:String=getQualifiedClassName(child);
++                  var childPose:Object=capture(child,depth+1,includePixels);
++                  var previousChild:Object=previousChildren!=null && childCount<previousChildren.length?previousChildren[childCount]:null;
++                  var childRecord:Object;
++                  if(previousChild!=null && previousChild.n===childName && previousChild.i===i && previousChild.cls===childClass && previousChild.s===childPose)
++                     childRecord=previousChild;
++                  else {
++                     childRecord={n:childName,i:i,cls:childClass,s:childPose};
++                     if(children===previousChildren)children=previousChildren==null?[]:previousChildren.slice(0,childCount);
++                  }
++                  if(children!==previousChildren)children.push(childRecord);
++                  ++childCount;
++               }
++            }
++            if(children===previousChildren) {
++               if(children==null)children=[];
++               else if(childCount!=children.length)children=children.slice(0,childCount);
++            }
++            s.children=children;
+          }
+          // Native authored trees have many unchanged limbs, colors and empty
+          // filter lists. Keep their immutable records instead of walking and
+@@ -90,20 +121,14 @@
+             for(var field:String in s) {
+                var value:*=s[field],old:*=previous[field];
+                if(value===old)continue;
+-               if(field=="children") {
+-                  var equal:Boolean=old!=null && value.length==old.length;
+-                  if(equal)for(var j:int=0;j<value.length;j++) {
+-                     var ca:Object=value[j],cb:Object=old[j];
+-                     if(ca.n!==cb.n || ca.i!==cb.i || ca.cls!==cb.cls || ca.s!==cb.s){equal=false;break;}
+-                  }
+-                  if(equal)s[field]=old;else same=false;
+-               }else if((value is Array || field=="pixels") && recipeEqual(old,value))s[field]=old;
++               if(field=="children")same=false;
++               else if((value is Array || field=="pixels") && recipeEqual(old,value))s[field]=old;
+                else same=false;
+             }
+             for(field in previous)if(!s.hasOwnProperty(field)){same=false;break;}
+             if(same){if(depth==0)Timing.end("capture.pose",began);return previous;}
+          }
+-         captured[display]=s;if(depth==0)Timing.end("capture.pose",began);return s;
++         cache[display]=s;if(depth==0)Timing.end("capture.pose",began);return s;
+       }
+       public static function recipeEqual(a:*,b:*):Boolean {
+          if(a===b)return true;
+@@ -221,11 +246,13 @@
+          display.alpha=s.a;
+          var parent:DisplayObjectContainer=display as DisplayObjectContainer;
+          if(parent!=null && s.children!=null) {
+-         var managed:Dictionary=added[parent];if(managed==null)managed=added[parent]=new Dictionary(true);
+-         var live:Dictionary=new Dictionary(true);
++         // Authored children need no ownership bookkeeping. Only nodes this
++         // copier creates belong to managed and require stale-node cleanup.
++         var managed:Dictionary=added[parent];
++         var live:Dictionary=managed==null?null:new Dictionary(true);
+          for each(var child:Object in s.children) {
+             var target:DisplayObject=parent.getChildByName(child.n);
+-            if(target!=null && getQualifiedClassName(target)!=child.cls && managed[target]!==child.cls)target=null;
++            if(target!=null && getQualifiedClassName(target)!=child.cls && (managed==null || managed[target]!==child.cls))target=null;
+             // Unnamed authored children have different generated instance names.
+             if(target==null && int(child.i)<parent.numChildren && getQualifiedClassName(parent.getChildAt(int(child.i)))==child.cls)target=parent.getChildAt(int(child.i));
+             if(target==null) {
+@@ -233,11 +260,17 @@
+                else if(child.cls=="flash.display::Bitmap")target=new Bitmap();
+                else if(child.cls=="flash.text::TextField")target=new TextField();
+                else if(resolve!=null){var Type:Class=resolve(child.cls);target=new Type() as DisplayObject;}
+-               if(target!=null){target.name=child.n;parent.addChildAt(target,Math.min(child.i,parent.numChildren));managed[target]=child.cls;}
+-            }
+-            if(target!=null){live[target]=true;apply(target,child.s);}
+-         }
+-         for(var owned:Object in managed)if(!live[owned]) {
++               if(target!=null) {
++                  if(managed==null){managed=added[parent]=new Dictionary(true);live=new Dictionary(true);}
++                  target.name=child.n;parent.addChildAt(target,Math.min(child.i,parent.numChildren));managed[target]=child.cls;
++               }
++            }
++            if(target!=null) {
++               if(managed!=null && managed[target]!==undefined)live[target]=true;
++               apply(target,child.s);
++            }
++         }
++         if(managed!=null)for(var owned:Object in managed)if(!live[owned]) {
+             if(owned.parent===parent)parent.removeChild(owned as DisplayObject);dispose(owned as DisplayObject);delete managed[owned];
+          }
+          }
+@@ -245,7 +278,7 @@
+       public static function dispose(display:DisplayObject):void {
+          if(display==null)return;
+          var surface:Object=pixels[display];if(surface!=null){surface.data.dispose();delete pixels[display];}
+-         VectorDraw.dispose(display);delete applied[display];delete added[display];delete captured[display];delete scriptless[display];
++         VectorDraw.dispose(display);delete applied[display];delete added[display];delete captured[display];delete capturedRoots[display];delete scriptless[display];
+          var parent:DisplayObjectContainer=display as DisplayObjectContainer;
+          if(parent!=null)for(var i:int=0;i<parent.numChildren;i++)dispose(parent.getChildAt(i));
+       }
+--- /dev/null
++++ b/src/fe/graph/AuthoritySpeechEmitter.as
+@@ -0,0 +1,48 @@
++package fe.graph {
++   import fe.loc.Location;
++   import flash.utils.describeType;
++   /** Delegate native speech creation unchanged, observing its exact birth view.
++    * This wrapper is only installed for the two native NPC speech emitters. */
++   public final class AuthoritySpeechEmitter extends Emitter {
++      private var original:Object,camera:Function,observe:Function;
++      private var names:Array=[],mirrored:Object={};
++      private var nativeId:String,nativeVisual:String;
++      public function AuthoritySpeechEmitter(original:Object,camera:Function,observe:Function) {
++         super(<part/>);
++         this.original=original;this.camera=camera;this.observe=observe;
++         nativeId=original.id;nativeVisual=original.vis;
++         for each(var field:XML in describeType(original).variable) {
++            if(field.hasOwnProperty("@uri"))continue;
++            var name:String=String(field.@name);names.push(name);
++            Object(this)[name]=mirrored[name]=original[name];
++         }
++      }
++      override public function cast(room:Location,x:Number,y:Number,options:Object=null):Part {
++         // Keep public emitter changes made through either the array entry or
++         // an existing reference. Native cast also updates frame/dframe itself.
++         for each(var name:String in names) {
++            var value:*=Object(this)[name];
++            if(value!==mirrored[name])original[name]=value;
++            else Object(this)[name]=original[name];
++         }
++         var before:Object=room==null?null:Object(room).lastObj;
++         var scale:Number=Number(camera());
++         var tracked:Boolean=original.camscale && original.id===nativeId && original.vis===nativeVisual && isFinite(scale) && scale>0;
++         var result:Part;
++         try {result=original.cast(room,x,y,options);}
++         finally {for each(name in names)Object(this)[name]=mirrored[name]=original[name];}
++         if(tracked && room!=null) {
++            // Emitter.cast can add up to fifty Part instances (options.kol),
++            // and its return value names only the last one. Preserve all births.
++            var part:Object=before==null?Object(room).firstObj:before.nobj;
++            var last:Object=Object(room).lastObj;
++            while(part!=null) {
++               if(part is Part)observe(part,scale);
++               if(part===last)break;
++               part=part.nobj;
++            }
++         }
++         return result;
++      }
++   }
++}
+--- /dev/null
++++ b/stubs/fe/graph/Emitter.as
+@@ -0,0 +1,7 @@
++package fe.graph {
++   import fe.loc.Location;
++   public class Emitter {
++      public function Emitter(source:XML){}
++      public function cast(room:Location,x:Number,y:Number,options:Object=null):Part{return null;}
++   }
++}
+--- /dev/null
++++ b/stubs/fe/loc/Location.as
+@@ -0,0 +1,3 @@
++package fe.loc {
++   public class Location {}
++}

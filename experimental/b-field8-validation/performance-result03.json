@@ -1,0 +1,21 @@
+{
+  "schema": "b-field-sustained-qualification-1",
+  "valid_inputs": false,
+  "qualified": false,
+  "no_material_regression": false,
+  "error": "Runs overlapped or were not baseline/candidate/baseline/candidate",
+  "qualifier_sha256": "1a0b4a83881f354c8f4bc1ec638c0b83a99e208f2180bf0bcf1f5b55f09d986f",
+  "gates": {
+    "seconds_per_phase": 60,
+    "samples_per_phase_min": 45,
+    "enemies": [
+      8,
+      80
+    ],
+    "maximum_mean_ratio": 1.05,
+    "maximum_p95_ratio": 1.05,
+    "maximum_repeat_ratio": 1.2,
+    "required_firing_windows": 6,
+    "window_span_min_ms": 8000
+  }
+}

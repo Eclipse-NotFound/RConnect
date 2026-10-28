@@ -1,0 +1,65 @@
+{
+  "kind": "visual-component-review-findings",
+  "reviewer": "b_camera_ui",
+  "reviewed_at": "2026-10-28",
+  "status": "findings-only-awaiting-root-review",
+  "scope": "check02 visual components only; not acceptance of later check03 or final integrated deployment",
+  "execution": "Read completed run files and screenshots only; no new compilation or game run.",
+  "candidate": {
+    "path": "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/build/ab/b190-field8-check02-build/RConnectMod.swf",
+    "sha256": "3b56e8da26285c242542fcb603b566b5748cc7998de30aa995664b4cccc6c2e9",
+    "preparation": "prepared03",
+    "preparation_sha256": "dc910049511a171ea8037925196c59dfcd06f696bf4dc6035adaf067f4a8bc1e"
+  },
+  "evidence_directory": "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/build/ab/b-field8-visual-04",
+  "run_summary": {"complete": true, "host_pass": 32, "host_fail": 0, "join_pass": 25, "join_fail": 0},
+  "findings": [
+    {
+      "id": "speech-birth-and-host-zoom",
+      "conclusion": "All four explicit scale/camera combinations observed both native bubble types at birth and again after a real host-only zoom change.",
+      "types": ["replic", "replic2"],
+      "birth_observations": 8,
+      "after_host_zoom_observations": 8,
+      "failed_observations": 0,
+      "maximum_absolute_scale_error": 0.0000032186508179,
+      "phases": [
+        {"phase": 1, "requested_scale": 0.5, "host_birth_camera": 1, "join_camera": 0.611, "ready_presentation": 8, "birth_presentation": 12, "after_presentation": 16},
+        {"phase": 2, "requested_scale": 0.5, "host_birth_camera": 0.611, "join_camera": 1, "ready_presentation": 17, "birth_presentation": 24, "after_presentation": 26},
+        {"phase": 3, "requested_scale": 1.5, "host_birth_camera": 1, "join_camera": 0.611, "ready_presentation": 27, "birth_presentation": 32, "after_presentation": 37},
+        {"phase": 4, "requested_scale": 1.5, "host_birth_camera": 0.611, "join_camera": 1, "ready_presentation": 37, "birth_presentation": 43, "after_presentation": 45}
+      ],
+      "handshake_review": "Each phase has ready, birth-ack and after-ack files. Both acknowledgements contain exactly two observed, passing entries covering distinct replic/replic2 kinds. The driver waits for the join camera before native casting, waits for birth observations before changing host zoom, and only checks after-zoom against a later published presentation. Host rows independently contain both zoom modes and camera scales 1/0.611 in every phase.",
+      "measurement": "Join native display scale multiplied by its real local camera scale; custom emitter scale 0.5/1.5 is retained. This closes the missing birth observations in visual03."
+    },
+    {
+      "id": "box-shadow-and-color",
+      "conclusion": "The sampled real-base terminal and medical cabinet retain one shadow behind the body, with their observed colors restored.",
+      "matched_presentations": 25,
+      "object_comparisons": 50,
+      "objects": {"52": "term", "61": "medbox"},
+      "wrong_relative_order_or_shadow_count": 0,
+      "raw_artwork_hash_differences": 0,
+      "phase0_equal_screen_patches": 10,
+      "screen_patch_size": [7, 7],
+      "screen_patch_pixel_differences": 0
+    },
+    {
+      "id": "real-base-backdrops",
+      "scene": "rbl:0:0:0:0:",
+      "base_flag": true,
+      "host_count": 63,
+      "join_count": 63,
+      "matched_presentations": 25,
+      "captured_tree_and_position_differences_excluding_generated_instance_names": 0,
+      "truncated_tree_markers": 0,
+      "screenshot_review": "Viewed both phase-0 screenshots. Main base rooms, lights, posters, fixtures and decorative structures occupy corresponding positions in the unobscured area. The host dialogue panel obscures the upper region; no whole-screen equivalence claim is made."
+    }
+  ],
+  "limitations": [
+    "This run used check02. The subsequent prediction-timeout handoff fix and check03 integrated behavior are outside this evidence.",
+    "The native front/back bitmap sample hashes remain different: front host 98401acf versus join 1128ab2a; first retained back sample host 5f085feb versus join 3763d456. Cause is not established. Structural backdrop consistency does not establish full bitmap equivalence.",
+    "The 50 Box observations cover two stationary real-base objects. Moving, removing, detaching and redrawing other Box variants are not runtime-proven by this scene.",
+    "NPC evidence covers the two wrapped native speech emitters and the tested camera/scale combinations, not every mod-created text effect or pre-existing particle.",
+    "The pass totals include generic component checks and phase bookkeeping. Final acceptance and deployment remain with the parent session."
+  ]
+}

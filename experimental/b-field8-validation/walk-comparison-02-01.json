@@ -1,0 +1,664 @@
+{
+  "kind": "prepared03-textmotion-pair",
+  "scope": "One baseline/candidate pair, diagnostic comparison; not a repeated formal performance qualification.",
+  "roles": {
+    "host": {
+      "stationary": {
+        "baseline": {
+          "interval_count": 222,
+          "mean_ms": 39.8018018018018,
+          "p95_ms": 69,
+          "max_ms": 155,
+          "underflow_render_samples": 0,
+          "root_error_count": 0,
+          "text_error_count": 0,
+          "root_max_error_px": null,
+          "text_max_error_px": null,
+          "missing_text": 0,
+          "missing_recipe": 0,
+          "screen_reversal_object_samples": 0,
+          "world_reversal_object_samples": 0,
+          "unshaken_camera_reversal_object_samples": 0,
+          "max_camera_reverse_px": 0,
+          "socket_pending_max_sampled_bytes": 0,
+          "trace_player_x": {
+            "first": 600,
+            "last": 600,
+            "min": 600,
+            "max": 600
+          }
+        },
+        "candidate": {
+          "interval_count": 250,
+          "mean_ms": 35.816,
+          "p95_ms": 48,
+          "max_ms": 208,
+          "underflow_render_samples": 0,
+          "root_error_count": 0,
+          "text_error_count": 0,
+          "root_max_error_px": null,
+          "text_max_error_px": null,
+          "missing_text": 0,
+          "missing_recipe": 0,
+          "screen_reversal_object_samples": 0,
+          "world_reversal_object_samples": 0,
+          "unshaken_camera_reversal_object_samples": 0,
+          "max_camera_reverse_px": 0,
+          "socket_pending_max_sampled_bytes": 0,
+          "trace_player_x": {
+            "first": 600,
+            "last": 600,
+            "min": 600,
+            "max": 600
+          }
+        },
+        "mean_change_percent": -10.014124038026251,
+        "p95_change_percent": -30.434782608695656
+      },
+      "walk-right": {
+        "baseline": {
+          "interval_count": 89,
+          "mean_ms": 52,
+          "p95_ms": 90,
+          "max_ms": 126,
+          "underflow_render_samples": 0,
+          "root_error_count": 0,
+          "text_error_count": 0,
+          "root_max_error_px": null,
+          "text_max_error_px": null,
+          "missing_text": 0,
+          "missing_recipe": 0,
+          "screen_reversal_object_samples": 0,
+          "world_reversal_object_samples": 0,
+          "unshaken_camera_reversal_object_samples": 0,
+          "max_camera_reverse_px": 0,
+          "socket_pending_max_sampled_bytes": 0,
+          "trace_player_x": {
+            "first": 600,
+            "last": 1219.5,
+            "min": 600,
+            "max": 1219.5
+          }
+        },
+        "candidate": {
+          "interval_count": 89,
+          "mean_ms": 64.82022471910112,
+          "p95_ms": 138,
+          "max_ms": 444,
+          "underflow_render_samples": 0,
+          "root_error_count": 0,
+          "text_error_count": 0,
+          "root_max_error_px": null,
+          "text_max_error_px": null,
+          "missing_text": 0,
+          "missing_recipe": 0,
+          "screen_reversal_object_samples": 0,
+          "world_reversal_object_samples": 0,
+          "unshaken_camera_reversal_object_samples": 0,
+          "max_camera_reverse_px": 0,
+          "socket_pending_max_sampled_bytes": 0,
+          "trace_player_x": {
+            "first": 600,
+            "last": 1219.5,
+            "min": 600,
+            "max": 1219.5
+          }
+        },
+        "mean_change_percent": 24.654278305963693,
+        "p95_change_percent": 53.33333333333334
+      },
+      "walk-left": {
+        "baseline": {
+          "interval_count": 89,
+          "mean_ms": 54.39325842696629,
+          "p95_ms": 87,
+          "max_ms": 118,
+          "underflow_render_samples": 0,
+          "root_error_count": 0,
+          "text_error_count": 0,
+          "root_max_error_px": null,
+          "text_max_error_px": null,
+          "missing_text": 0,
+          "missing_recipe": 0,
+          "screen_reversal_object_samples": 0,
+          "world_reversal_object_samples": 0,
+          "unshaken_camera_reversal_object_samples": 0,
+          "max_camera_reverse_px": 0,
+          "socket_pending_max_sampled_bytes": 0,
+          "trace_player_x": {
+            "first": 1226.5,
+            "last": 624.5,
+            "min": 624.5,
+            "max": 1230
+          }
+        },
+        "candidate": {
+          "interval_count": 89,
+          "mean_ms": 47.550561797752806,
+          "p95_ms": 64,
+          "max_ms": 114,
+          "underflow_render_samples": 0,
+          "root_error_count": 0,
+          "text_error_count": 0,
+          "root_max_error_px": null,
+          "text_max_error_px": null,
+          "missing_text": 0,
+          "missing_recipe": 0,
+          "screen_reversal_object_samples": 0,
+          "world_reversal_object_samples": 0,
+          "unshaken_camera_reversal_object_samples": 0,
+          "max_camera_reverse_px": 0,
+          "socket_pending_max_sampled_bytes": 0,
+          "trace_player_x": {
+            "first": 1226.5,
+            "last": 624.5,
+            "min": 624.5,
+            "max": 1230
+          }
+        },
+        "mean_change_percent": -12.580045445155964,
+        "p95_change_percent": -26.436781609195403
+      },
+      "walk-right-attack": {
+        "baseline": {
+          "interval_count": 89,
+          "mean_ms": 58.325842696629216,
+          "p95_ms": 89,
+          "max_ms": 155,
+          "underflow_render_samples": 0,
+          "root_error_count": 0,
+          "text_error_count": 0,
+          "root_max_error_px": null,
+          "text_max_error_px": null,
+          "missing_text": 0,
+          "missing_recipe": 0,
+          "screen_reversal_object_samples": 0,
+          "world_reversal_object_samples": 0,
+          "unshaken_camera_reversal_object_samples": 0,
+          "max_camera_reverse_px": 0,
+          "socket_pending_max_sampled_bytes": 0,
+          "trace_player_x": {
+            "first": 617.5,
+            "last": 1219.5,
+            "min": 614,
+            "max": 1219.5
+          }
+        },
+        "candidate": {
+          "interval_count": 89,
+          "mean_ms": 51.337078651685395,
+          "p95_ms": 87,
+          "max_ms": 116,
+          "underflow_render_samples": 0,
+          "root_error_count": 0,
+          "text_error_count": 0,
+          "root_max_error_px": null,
+          "text_max_error_px": null,
+          "missing_text": 0,
+          "missing_recipe": 0,
+          "screen_reversal_object_samples": 0,
+          "world_reversal_object_samples": 0,
+          "unshaken_camera_reversal_object_samples": 0,
+          "max_camera_reverse_px": 0,
+          "socket_pending_max_sampled_bytes": 0,
+          "trace_player_x": {
+            "first": 617.5,
+            "last": 1219.5,
+            "min": 614,
+            "max": 1219.5
+          }
+        },
+        "mean_change_percent": -11.98227701791562,
+        "p95_change_percent": -2.2471910112359605
+      },
+      "walk-left-attack": {
+        "baseline": {
+          "interval_count": 89,
+          "mean_ms": 54.89887640449438,
+          "p95_ms": 81,
+          "max_ms": 122,
+          "underflow_render_samples": 0,
+          "root_error_count": 0,
+          "text_error_count": 0,
+          "root_max_error_px": null,
+          "text_max_error_px": null,
+          "missing_text": 0,
+          "missing_recipe": 0,
+          "screen_reversal_object_samples": 0,
+          "world_reversal_object_samples": 0,
+          "unshaken_camera_reversal_object_samples": 0,
+          "max_camera_reverse_px": 0,
+          "socket_pending_max_sampled_bytes": 0,
+          "trace_player_x": {
+            "first": 1226.5,
+            "last": 624.5,
+            "min": 624.5,
+            "max": 1230
+          }
+        },
+        "candidate": {
+          "interval_count": 89,
+          "mean_ms": 49.258426966292134,
+          "p95_ms": 72,
+          "max_ms": 101,
+          "underflow_render_samples": 0,
+          "root_error_count": 0,
+          "text_error_count": 0,
+          "root_max_error_px": null,
+          "text_max_error_px": null,
+          "missing_text": 0,
+          "missing_recipe": 0,
+          "screen_reversal_object_samples": 0,
+          "world_reversal_object_samples": 0,
+          "unshaken_camera_reversal_object_samples": 0,
+          "max_camera_reverse_px": 0,
+          "socket_pending_max_sampled_bytes": 0,
+          "trace_player_x": {
+            "first": 1226.5,
+            "last": 624.5,
+            "min": 624.5,
+            "max": 1230
+          }
+        },
+        "mean_change_percent": -10.274252967662711,
+        "p95_change_percent": -11.111111111111116
+      }
+    },
+    "join": {
+      "stationary": {
+        "baseline": {
+          "interval_count": 108,
+          "mean_ms": 44.56481481481482,
+          "p95_ms": 64,
+          "max_ms": 459,
+          "underflow_render_samples": 9,
+          "root_error_count": 0,
+          "text_error_count": 0,
+          "root_max_error_px": 0.04868421052628946,
+          "text_max_error_px": 0.04868421052628946,
+          "missing_text": 0,
+          "missing_recipe": 0,
+          "screen_reversal_object_samples": 0,
+          "world_reversal_object_samples": 0,
+          "unshaken_camera_reversal_object_samples": 0,
+          "max_camera_reverse_px": 0,
+          "socket_pending_max_sampled_bytes": 0,
+          "trace_player_x": {
+            "first": 800,
+            "last": 800,
+            "min": 800,
+            "max": 800
+          }
+        },
+        "candidate": {
+          "interval_count": 100,
+          "mean_ms": 40.95,
+          "p95_ms": 59,
+          "max_ms": 435,
+          "underflow_render_samples": 10,
+          "root_error_count": 0,
+          "text_error_count": 0,
+          "root_max_error_px": 0.049999999999954525,
+          "text_max_error_px": 0.049999999999954525,
+          "missing_text": 0,
+          "missing_recipe": 0,
+          "screen_reversal_object_samples": 0,
+          "world_reversal_object_samples": 0,
+          "unshaken_camera_reversal_object_samples": 0,
+          "max_camera_reverse_px": 0,
+          "socket_pending_max_sampled_bytes": 0,
+          "trace_player_x": {
+            "first": 800,
+            "last": 800,
+            "min": 800,
+            "max": 800
+          }
+        },
+        "mean_change_percent": -8.111365052981501,
+        "p95_change_percent": -7.8125
+      },
+      "walk-right": {
+        "baseline": {
+          "interval_count": 88,
+          "mean_ms": 53.05681818181818,
+          "p95_ms": 80,
+          "max_ms": 123,
+          "underflow_render_samples": 1,
+          "root_error_count": 0,
+          "text_error_count": 0,
+          "root_max_error_px": 0.04909090909097813,
+          "text_max_error_px": 0.04909090909097813,
+          "missing_text": 0,
+          "missing_recipe": 0,
+          "screen_reversal_object_samples": 0,
+          "world_reversal_object_samples": 0,
+          "unshaken_camera_reversal_object_samples": 0,
+          "max_camera_reverse_px": 0,
+          "socket_pending_max_sampled_bytes": 0,
+          "trace_player_x": {
+            "first": 815.734742736996,
+            "last": 1427.4973449970933,
+            "min": 815.734742736996,
+            "max": 1427.4973449970933
+          }
+        },
+        "candidate": {
+          "interval_count": 109,
+          "mean_ms": 54.00917431192661,
+          "p95_ms": 108,
+          "max_ms": 148,
+          "underflow_render_samples": 9,
+          "root_error_count": 0,
+          "text_error_count": 0,
+          "root_max_error_px": 0.049107142857110375,
+          "text_max_error_px": 0.04910714285722406,
+          "missing_text": 0,
+          "missing_recipe": 0,
+          "screen_reversal_object_samples": 11,
+          "world_reversal_object_samples": 0,
+          "unshaken_camera_reversal_object_samples": 11,
+          "max_camera_reverse_px": 17,
+          "socket_pending_max_sampled_bytes": 0,
+          "trace_player_x": {
+            "first": 801.477604273042,
+            "last": 1432.2789633217376,
+            "min": 801.477604273042,
+            "max": 1432.2789633217376
+          }
+        },
+        "mean_change_percent": 1.7949740725967445,
+        "p95_change_percent": 35.00000000000001
+      },
+      "walk-left": {
+        "baseline": {
+          "interval_count": 97,
+          "mean_ms": 50.63917525773196,
+          "p95_ms": 74,
+          "max_ms": 115,
+          "underflow_render_samples": 1,
+          "root_error_count": 0,
+          "text_error_count": 0,
+          "root_max_error_px": 0.048245614035067774,
+          "text_max_error_px": 0.048245614035067774,
+          "missing_text": 0,
+          "missing_recipe": 0,
+          "screen_reversal_object_samples": 0,
+          "world_reversal_object_samples": 0,
+          "unshaken_camera_reversal_object_samples": 0,
+          "max_camera_reverse_px": 0,
+          "socket_pending_max_sampled_bytes": 0,
+          "trace_player_x": {
+            "first": 1426.9923934134513,
+            "last": 812.7519209546999,
+            "min": 812.7519209546999,
+            "max": 1426.9923934134513
+          }
+        },
+        "candidate": {
+          "interval_count": 96,
+          "mean_ms": 43.739583333333336,
+          "p95_ms": 56,
+          "max_ms": 104,
+          "underflow_render_samples": 1,
+          "root_error_count": 0,
+          "text_error_count": 0,
+          "root_max_error_px": 0.049999999999954525,
+          "text_max_error_px": 0.049999999999954525,
+          "missing_text": 0,
+          "missing_recipe": 0,
+          "screen_reversal_object_samples": 0,
+          "world_reversal_object_samples": 0,
+          "unshaken_camera_reversal_object_samples": 0,
+          "max_camera_reverse_px": 0,
+          "socket_pending_max_sampled_bytes": 0,
+          "trace_player_x": {
+            "first": 1435.0185734109828,
+            "last": 831.7455605371307,
+            "min": 831.7455605371307,
+            "max": 1437
+          }
+        },
+        "mean_change_percent": -13.625008482627566,
+        "p95_change_percent": -24.32432432432432
+      },
+      "walk-right-attack": {
+        "baseline": {
+          "interval_count": 106,
+          "mean_ms": 49.698113207547166,
+          "p95_ms": 74,
+          "max_ms": 139,
+          "underflow_render_samples": 1,
+          "root_error_count": 0,
+          "text_error_count": 0,
+          "root_max_error_px": 0.049999999999954525,
+          "text_max_error_px": 0.049999999999954525,
+          "missing_text": 0,
+          "missing_recipe": 0,
+          "screen_reversal_object_samples": 0,
+          "world_reversal_object_samples": 0,
+          "unshaken_camera_reversal_object_samples": 0,
+          "max_camera_reverse_px": 0,
+          "socket_pending_max_sampled_bytes": 0,
+          "trace_player_x": {
+            "first": 817.5,
+            "last": 1385.8207547169811,
+            "min": 807,
+            "max": 1385.8207547169811
+          }
+        },
+        "candidate": {
+          "interval_count": 103,
+          "mean_ms": 43.883495145631066,
+          "p95_ms": 65,
+          "max_ms": 149,
+          "underflow_render_samples": 1,
+          "root_error_count": 0,
+          "text_error_count": 0,
+          "root_max_error_px": 0.049999999999954525,
+          "text_max_error_px": 0.049999999999954525,
+          "missing_text": 0,
+          "missing_recipe": 0,
+          "screen_reversal_object_samples": 0,
+          "world_reversal_object_samples": 0,
+          "unshaken_camera_reversal_object_samples": 0,
+          "max_camera_reverse_px": 0,
+          "socket_pending_max_sampled_bytes": 0,
+          "trace_player_x": {
+            "first": 844.6538461538462,
+            "last": 1407.0365853658536,
+            "min": 828,
+            "max": 1407.0365853658536
+          }
+        },
+        "mean_change_percent": -11.699876889960258,
+        "p95_change_percent": -12.16216216216216
+      },
+      "walk-left-attack": {
+        "baseline": {
+          "interval_count": 105,
+          "mean_ms": 47.67619047619048,
+          "p95_ms": 65,
+          "max_ms": 123,
+          "underflow_render_samples": 2,
+          "root_error_count": 0,
+          "text_error_count": 0,
+          "root_max_error_px": 0.04901960784309267,
+          "text_max_error_px": 0.04901960784309267,
+          "missing_text": 0,
+          "missing_recipe": 0,
+          "screen_reversal_object_samples": 0,
+          "world_reversal_object_samples": 0,
+          "unshaken_camera_reversal_object_samples": 0,
+          "max_camera_reverse_px": 0,
+          "socket_pending_max_sampled_bytes": 0,
+          "trace_player_x": {
+            "first": 1416.7241379310344,
+            "last": 824.5,
+            "min": 824.5,
+            "max": 1423
+          }
+        },
+        "candidate": {
+          "interval_count": 108,
+          "mean_ms": 41.129629629629626,
+          "p95_ms": 52,
+          "max_ms": 112,
+          "underflow_render_samples": 1,
+          "root_error_count": 0,
+          "text_error_count": 0,
+          "root_max_error_px": 0.04915254237289446,
+          "text_max_error_px": 0.04915254237289446,
+          "missing_text": 0,
+          "missing_recipe": 0,
+          "screen_reversal_object_samples": 0,
+          "world_reversal_object_samples": 0,
+          "unshaken_camera_reversal_object_samples": 0,
+          "max_camera_reverse_px": 0,
+          "socket_pending_max_sampled_bytes": 0,
+          "trace_player_x": {
+            "first": 1429.4024390243903,
+            "last": 841.933962264151,
+            "min": 841.933962264151,
+            "max": 1437
+          }
+        },
+        "mean_change_percent": -13.731300217516761,
+        "p95_change_percent": -19.999999999999996
+      }
+    }
+  },
+  "sources": {
+    "baseline": {
+      "directory": "build/ab/b-field8-walk-baseline-02",
+      "result_sha256": "890c3096697b698b7a1deb2fdad5cdf33192b692303695bc95ec41fe7b2dfa84",
+      "preparation_sha256": "dc910049511a171ea8037925196c59dfcd06f696bf4dc6035adaf067f4a8bc1e",
+      "candidate_sha256": "f9e542f6d64fef707c41563558365a3d90562dbc346f3be6cf84f968062b7c07",
+      "passed": true,
+      "host_evidence_sha256": "3e4547441c806b9294e0f1251cd830594694b9e14057a5e069ffaf0f7223e5dc",
+      "join_evidence_sha256": "69b319f42cb4839a7ebe2ec4dedafe16b12089b54a63339ce46999e311d9c726"
+    },
+    "candidate": {
+      "directory": "build/ab/b-field8-walk-candidate-01",
+      "result_sha256": "a39c7c1512af25262395cb278a89aeb4b33ca82ec596b8b23f5fb94926525333",
+      "preparation_sha256": "dc910049511a171ea8037925196c59dfcd06f696bf4dc6035adaf067f4a8bc1e",
+      "candidate_sha256": "3b56e8da26285c242542fcb603b566b5748cc7998de30aa995664b4cccc6c2e9",
+      "passed": true,
+      "host_evidence_sha256": "356d0f1f90e0af598c8f644ce585d2c012ce0018f960a46a0aad29e50faadd1d",
+      "join_evidence_sha256": "fdc4f5eb9184efd53648dacd626c7f793725eba540517be9cc4cc14e0e681610"
+    }
+  },
+  "limits": [
+    "Both players receive walking controls in this prepared03 fixture; do not mix with prepared01 host-stationary results.",
+    "Raw interval arrays include stage waiting before confirmed text is eligible; observer valid-sample count can differ.",
+    "underflow_render_samples counts observations with clock.next==null, not clock.underflows increments.",
+    "Text/root error compares final local geometry with the submitted recipe. Host records zero without doing the join-side recipe comparison.",
+    "Reversal counters count affected text objects; 11 affected objects can be one camera reversal.",
+    "Trace is throttled and requires a visible text effect; its player-X endpoints are sampled range evidence, not exact stage start/end."
+  ],
+  "prediction_exit_reversal": {
+    "first_reversal": {
+      "tick": 118,
+      "cameraDelta": 17,
+      "kind": "replic",
+      "lead": 0,
+      "quake": [
+        0,
+        0
+      ],
+      "worldDelta": 0,
+      "key": "71",
+      "unshakenCameraDelta": 17,
+      "delta": 17
+    },
+    "max_px": 17,
+    "affected_object_observations": 11,
+    "trace_camera_reverse_count": 1,
+    "neighbouring_trace": [
+      {
+        "localAt": 49407,
+        "renderFrame": 144,
+        "tick": 115,
+        "nextTick": 116,
+        "latestTick": 119,
+        "fraction": 0.30357142857142855,
+        "delay": 224,
+        "playerX": 990.519930794879,
+        "latestX": 985.5,
+        "displayX": 959.625,
+        "predictionLead": 5.019930794878974,
+        "cameraTargetX": 990,
+        "cameraOffsetX": -498,
+        "observedFrameAgeMS": 23
+      },
+      {
+        "localAt": 49553,
+        "renderFrame": 145,
+        "tick": 116,
+        "nextTick": 117,
+        "latestTick": 120,
+        "fraction": 0.2857142857142857,
+        "delay": 224,
+        "playerX": 1001.716943028619,
+        "latestX": 992.5,
+        "displayX": 966.5,
+        "predictionLead": 9.21694302861897,
+        "cameraTargetX": 1001,
+        "cameraOffsetX": -509,
+        "observedFrameAgeMS": 116
+      },
+      {
+        "localAt": 49639,
+        "renderFrame": 146,
+        "tick": 118,
+        "nextTick": 119,
+        "latestTick": 120,
+        "fraction": 0.8363636363636363,
+        "delay": 224,
+        "playerX": 984.3545454545455,
+        "latestX": 992.5,
+        "displayX": 984.3545454545455,
+        "predictionLead": 0,
+        "cameraTargetX": 984,
+        "cameraOffsetX": -492,
+        "observedFrameAgeMS": 202
+      },
+      {
+        "localAt": 49694,
+        "renderFrame": 147,
+        "tick": 120,
+        "nextTick": null,
+        "latestTick": 120,
+        "fraction": 0,
+        "delay": 224,
+        "playerX": 992.5,
+        "latestX": 992.5,
+        "displayX": 992.5,
+        "predictionLead": 0,
+        "cameraTargetX": 992,
+        "cameraOffsetX": -500,
+        "observedFrameAgeMS": 257
+      },
+      {
+        "localAt": 49761,
+        "renderFrame": 148,
+        "tick": 120,
+        "nextTick": null,
+        "latestTick": 120,
+        "fraction": 0,
+        "delay": 224,
+        "playerX": 992.5,
+        "latestX": 992.5,
+        "displayX": 992.5,
+        "predictionLead": 0,
+        "cameraTargetX": 992,
+        "cameraOffsetX": -500,
+        "observedFrameAgeMS": 324
+      }
+    ],
+    "code_chain": [
+      "MovementPrediction.sample: now-arrival>150 returns null",
+      "ClientReplica.predict: previously predicted local player restores displayFrame.players[1]"
+    ],
+    "interpretation": "Latest received tick remains120 while observed age rises116→202ms; prediction lead9.217→0, displayed local X1001.717→984.355 and camera reverses17px. Text world geometry stays fixed. This matches the existing prediction-expiry fallback; no product code changed during analysis."
+  }
+}

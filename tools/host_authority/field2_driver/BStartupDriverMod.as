@@ -88,7 +88,7 @@ package {
    terrainSeedHook=terrainSeedPrevious=null;terrainSeedType=null;
   }
   private static var cases:BFieldCases;
-  private static function external():Boolean{return ["ui","controls","darkteleport","security","textmotion","terrainlive","motion"].indexOf(String(cfg.scenario))>=0;}
+  private static function external():Boolean{return ["ui","controls","darkteleport","security","textmotion","terrainlive","motion","visualfield"].indexOf(String(cfg.scenario))>=0;}
   private static function externalFinish():void{phase=90;finish();}
   private static function builtin():Boolean{return ["enemies","teleport","rockets","terrain"].indexOf(String(cfg.scenario))>=0;}
   private static var home:Object,nextRoom:Object,target:Object,floorY:Number,epoch:uint,joinStage:String="";
@@ -278,6 +278,9 @@ package {
   private static function setup():void {
    var s:Object=mod.host,r:Object=s.runtime,w:Object=mod.access.world,a:Object;
    home=s.actors[0].unit.loc;
+   // Preserve the actual base artwork; the visual fixture observes it before
+   // changing any native object. The movement fixtures keep their old lane.
+   if(cfg.scenario=="visualfield"){floorY=s.actors[0].unit.Y;return;}
    if(cfg.scenario=="darkteleport" || cfg.scenario=="textmotion") {
     home=null;
     for each(var column:Array in w.land.locs)for each(var slots:Array in column)if(slots!=null)for each(var candidate:Object in slots)
@@ -354,7 +357,8 @@ package {
      // combat fixtures explicitly remove protection before measured attacks.
      if(external())w.gg.invulner=true;
      installTerrainSeed();
-     if(role=="host" && (cfg.scenario=="boundary" || external()) || builtin())w.game.beginMission("random_mane");phase=1;at=getTimer();return;
+     if(role=="host" && cfg.scenario=="visualfield")w.game.beginMission("rbl");
+     if(role=="host" && (cfg.scenario=="boundary" || external() && cfg.scenario!="visualfield") || builtin())w.game.beginMission("random_mane");phase=1;at=getTimer();return;
     }
     if(phase==1 && getTimer()-at>1000 && role=="host" && cfg.scenario=="terrainlive" && cfg.hasOwnProperty("terrainSeed")) {
      if(!terrainSeedUsed || terrainSeedHook!=null || w.land.act.id!="random_mane" || w.land.rconnectLayoutSeed!=uint(cfg.terrainSeed))
@@ -368,7 +372,7 @@ package {
      return;
     }
     if(phase==2 && mod.welcomed){mod.hud.visible=false;phase=3;at=getTimer();return;}
-    if(phase==3 && getTimer()-at>1500){if(role=="host")setup();if(external())cases=new BFieldCases(mod,root,domain,cfg,role,{check:check,write:write,read:read,finish:externalFinish,log:log,home:home,nextRoom:nextRoom,floorY:floorY});phase=4;at=getTimer();return;}
+    if(phase==3 && getTimer()-at>1500){if(role=="host")setup();if(external())cases=new BFieldCases(mod,root,domain,cfg,role,{check:check,write:write,read:read,finish:externalFinish,log:log,picture:picture,home:home,nextRoom:nextRoom,floorY:floorY});phase=4;at=getTimer();return;}
     if(phase<4)return;
     if(cases!=null){cases.step();return;}
     if(mod.ui.session.error!=""){check(false,"session stays live",mod.ui.session.error);finish();return;}

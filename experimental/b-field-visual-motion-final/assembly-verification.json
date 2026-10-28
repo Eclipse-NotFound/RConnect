@@ -1,0 +1,37 @@
+{
+  "schema": "b-source-assembly-verification-1",
+  "date": "2026-10-28",
+  "status": "source-only-verified",
+  "version": "B3-0.1-field8",
+  "assembled_directory": "build/ab/b190-visual-motion-final-check03-source",
+  "source_id": "9c8588713f10d46e445c2ecc64f88a37a6b09242bb9266b84136686308f2a54a",
+  "assembled_source_count": 142,
+  "overlay_source_count": 20,
+  "new_source_count": 7,
+  "all_assembled_source_bytes_equal_unstamped_reference": true,
+  "frozen_compiled_source_bytes_match_manifest": true,
+  "non_stamp_sources_equal_frozen_compiled_source": true,
+  "stamped_buildinfo_equal_frozen_bytes": true,
+  "stamped_buildinfo_sha256": "baa5dcf767e666fb294c4b01aae86776b3f40e8acd5365e3591a0d1dd76fde91",
+  "complete_review_patch_matches_all_overlay_text_differences": true,
+  "changes_patch_sha256": "9aafa2eb9b0823b2106d0810c07643e516899a9da2384a99b3e56f3259e39159",
+  "source_manifest_sha256": "b9960dd75da2695c5957592fea2121121e85fb7c89b3561110fcb361e320212e",
+  "prepare_script_sha256": "ce35ecaac2c2c096e9614db2122727926aad7680aa166de33e7797734ebfbc3f",
+  "readme_sha256": "946a46471d3a934e36dd05b9b2f7c771b61752ce5b859c4c7b6ddc4c8b8f19dd",
+  "previous_overlay_unchanged": true,
+  "previous_overlay_file_count": 23,
+  "previous_overlay_tree_sha256": "edbd4e4b5a7774a91e6e49ac2fd07c97a8c7bf09c2c985331fef81ca2bbc75dd",
+  "compiled_reference": {
+    "directory": "build/ab/b190-field8-check03-build",
+    "manifest_sha256": "c2ca1c6f8213ca275595a9058f200f993ceafd77f8f8e1303c4625912f18c4b7",
+    "source_id": "9c8588713f10d46e445c2ecc64f88a37a6b09242bb9266b84136686308f2a54a",
+    "candidate_sha256": "d1a83ed5e38da1b80786b32e39e1375794586614420e1731ee5cbc9380813ed5"
+  },
+  "actions": {
+    "compiled": false,
+    "game_or_replay_tests_started": false,
+    "deployed": false,
+    "committed": false
+  },
+  "qualification": "Only source packaging verified here. Final integrated functional/performance qualification remains controlled by the root session."
+}

@@ -1,0 +1,28 @@
+{
+  "status": "pass",
+  "kind": "pure-data-algorithm-equivalence",
+  "seed": 108028,
+  "counts": {
+    "hex_pair_positions": 1536,
+    "random_rows": 5000,
+    "remember_steps": 1200,
+    "immutable_snapshots_checked": 1361936,
+    "ret_dark": 64
+  },
+  "source_sha256": {
+    "build\\ab\\b190-scalar04-build\\src\\authority\\SharedVision.as": "de93f3577a98b6d58749dbec24486e66bf3297e6bb2dd2d95ff2c252ce7c468c",
+    "build\\ab\\b190-local-display-field8-source\\src\\authority\\SharedVision.as": "6bde1cfe3a94a6450913ad18be51868f15d9b36a28adafb5b19943bf88ea505a"
+  },
+  "scope": [
+    "Valid hexadecimal rows at equal and differing lengths",
+    "Brightness max and mask OR at every sampled nibble boundary",
+    "No-growth, localized-growth and repeated exploration",
+    "retDark bypass, immutable earlier results, independent sent-row arrays"
+  ],
+  "limits": [
+    "Python mirrors the reviewed AS3 algorithms; it does not execute AS3.",
+    "No game, AIR, network, rendering or performance test was run.",
+    "Malformed rows are rejected by the unchanged AS3 validator, not tested as valid merge inputs.",
+    "External exploration API behavior is not simulated."
+  ]
+}

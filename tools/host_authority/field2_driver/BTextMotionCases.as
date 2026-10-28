@@ -21,9 +21,14 @@ package {
   private var observedFrames:int=-1,observedArrival:int=0,injectedButtons:Object={};
   private var enterFrames:uint=0,renderFrames:uint=0,lastRenderFrame:uint=0,duplicateRenders:uint=0;
   private var zoomRoom:Object;
+  private var previousRenderAt:int=0;
   public var finished:Boolean=false;
   public function BTextMotionCases(m:Object,r:Object,d:ApplicationDomain,c:Object,side:String,a:Object) {
    mod=m;root=r;api=a;role=side;room=a.home;floorY=Number(a.floorY);
+   var Product:Object=d.getDefinition("RConnectMod");
+   if(String(Product.VERSION)=="B3-0.1-field5")
+    api.log("prediction-hold-checks-skipped",{version:Product.VERSION,reason:"field5 baseline predates this new contract; not counted as a pass"});
+   else BPredictChecks.run(d,api.check);
    root.stage.addEventListener(Event.ENTER_FRAME,requestRender,false,-200000);
    root.stage.addEventListener(Event.RENDER,observe,false,-200000);
   }
@@ -55,10 +60,12 @@ package {
    var w:Object=mod.access.world;
    ensureCamera();
    for each(var key:String in ["keyLeft","keyRight","keyJump","keyAttack","keySit","keyRun","keyAction","keyTele"])w.ctr[key]=false;
+   // Both local cameras and players now move. Only the join fires so the
+   // native weapon/projectile workload stays the same across both binaries.
+   if(String(control.stage).indexOf("walk-right")==0)w.ctr.keyRight=true;
+   if(String(control.stage).indexOf("walk-left")==0)w.ctr.keyLeft=true;
    if(role=="join") {
     if(mod.replica.frames!=observedFrames){observedFrames=mod.replica.frames;observedArrival=getTimer();}
-    if(String(control.stage).indexOf("walk-right")==0)w.ctr.keyRight=true;
-    if(String(control.stage).indexOf("walk-left")==0)w.ctr.keyLeft=true;
     if(String(control.stage).indexOf("-attack")>=0 && mod.replica.lastFrame!=null)
      w.ctr.keyAttack=Math.floor(Math.max(0,mod.replica.lastFrame.tick-int(control.tick))/6)%2==0;
    }
@@ -86,6 +93,8 @@ package {
       g.invent.weapons.lmg=gun;g.invent.cWeaponId="lmg";g.currentWeapon=gun;g.childObjs[0]=gun;gun.addVisual();
       g.invent.items[gun.ammo].kol=1000;g.pers.jammedMult=0;shooter.observeWeapon();
      });
+     check(Math.abs(mod.host.actors[1].unit.X-mod.host.actors[0].unit.X-200)<.001,
+      "both local movement actors start 200 pixels apart",{hostX:mod.host.actors[0].unit.X,joinX:mod.host.actors[1].unit.X});
      mod.access.world.cam.quakeX=mod.access.world.cam.quakeY=0;phase=0;setStage();
     }
    }
@@ -96,6 +105,8 @@ package {
     var elapsed:int=mod.host.runtime.tick-beginTick;
     if(lastSpawn<0 || elapsed>=lastSpawn+30){emit();lastSpawn=elapsed;publish();}
     if(elapsed>=90 && api.read("join-text-motion-"+stageName()+".json")!=null) {
+     if(stageName()!="stationary")check(metrics!=null && metrics.selfXMax-metrics.selfXMin>1,
+      "host local player actually moves: "+stageName(),{min:metrics.selfXMin,max:metrics.selfXMax,start:metrics.selfXStart,end:metrics.selfXEnd});
      if(++phase<5)setStage();else {control={stage:"end",keys:kinds};publish();api.write("host-text-motion-final.json",{phases:phaseMetrics,trace:traceRows,renderSampling:renderStats()});}
     }
     if(getTimer()-at>25000 && control.stage!="end") {check(false,"diagnostic phase completes",{stage:control.stage});control={stage:"end",keys:kinds};publish();}
@@ -124,11 +135,16 @@ package {
    });
   }
   private function initMetrics():void {
-   metrics={samples:0,parts:0,numb:0,replic:0,replic2:0,rootError:0,textError:0,missingText:0,missingRecipe:0,
+   var selfX:Number=Number(mod.access.world.gg.X);
+   metrics={workload:"both-walk-join-fire-v2",role:role,selfXStart:selfX,selfXEnd:selfX,selfXMin:selfX,selfXMax:selfX,
+    samples:0,parts:0,numb:0,replic:0,replic2:0,rootError:0,textError:0,missingText:0,missingRecipe:0,
     rootMax:0,textMax:0,screenReversals:0,worldReversals:0,cameraReversals:0,unshakenCameraReversals:0,
     maxScreenReverse:0,maxUnshakenCameraReverse:0,maxWorldXChange:0,
     interpolation:0,underflow:0,timelineGapMax:0,cameraTargetMismatch:0,firstError:null,firstReversal:null,
+    renderIntervals:0,renderIntervalsMs:[],renderIntervalsDropped:0,renderIntervalSumMS:0,renderIntervalMaxMS:0,socketPendingMaxBytes:0,
+    sentByteTotal:null,sentByteTotalUnavailable:"Link exposes pending bytes only, not cumulative transmitted bytes",
     startEnterFrame:enterFrames,startRenderFrame:renderFrames,lastEnterFrame:enterFrames,lastRenderFrame:renderFrames,cameraOffsetMin:Infinity,cameraOffsetMax:-Infinity};
+   previousRenderAt=0;
    phaseMetrics[control.stage]=metrics;previous={};lastPresented=-1;
   }
   private function observe(event:Event):void {
@@ -137,10 +153,19 @@ package {
    if(finished || !started || control.stage==null || control.stage=="end" || mod.role=="")return;
    try {
     if(phaseReceived!=control.stage){phaseReceived=control.stage;initMetrics();}
+    var renderAt:int=getTimer();
+    if(previousRenderAt>0){
+     var interval:int=renderAt-previousRenderAt;++metrics.renderIntervals;metrics.renderIntervalSumMS+=interval;
+     metrics.renderIntervalMaxMS=Math.max(metrics.renderIntervalMaxMS,interval);
+     if(metrics.renderIntervalsMs.length<2000)metrics.renderIntervalsMs.push(interval);else ++metrics.renderIntervalsDropped;
+    }
+    previousRenderAt=renderAt;
+    if(mod.link!=null && mod.link.socket!=null)metrics.socketPendingMaxBytes=Math.max(metrics.socketPendingMaxBytes,mod.link.socket.bytesPending);
     var w:Object=mod.access.world,r:Object=mod.replica,clock:Object=role=="join"?r.clock:null;
     var source:Object=role=="join"?clock.current:null,next:Object=role=="join"?clock.next:null;
     var elapsed:int=role=="join"?(source==null?0:source.tick-int(control.tick)):mod.host.runtime.tick-beginTick;
     if(role=="join" && (source==null || source.tick<int(control.tick)))return;
+    metrics.selfXEnd=Number(w.gg.X);metrics.selfXMin=Math.min(metrics.selfXMin,w.gg.X);metrics.selfXMax=Math.max(metrics.selfXMax,w.gg.X);
     var fraction:Number=role=="join"?clock.fraction:0;
     ++metrics.samples;if(fraction>0 && fraction<1)++metrics.interpolation;if(role=="join" && next==null)++metrics.underflow;
     metrics.lastEnterFrame=enterFrames;metrics.lastRenderFrame=renderFrames;
@@ -169,7 +194,7 @@ package {
       // This intentionally does not claim to validate PoseTween's algorithm.
       var future:Object=futures==null?null:futures[key],recipe:Object=displayed==null?null:displayed[key];
       if(recipe==null || recipe.pose==null){++metrics.missingRecipe;continue;}
-      var a:Object=flatten(recipe.pose),m:Array=recipe.pose.m;
+      var a:Object=flatten(evidencePose(recipe)),m:Array=recipe.pose.m;
       var ex:Number=m==null?recipe.pose.x:m[4],ey:Number=m==null?recipe.pose.y:m[5];
       rootErr=Math.max(Math.abs(rootWorld.x-ex),Math.abs(rootWorld.y-ey));
       if(a!=null) {
@@ -217,6 +242,8 @@ package {
     }
     if(role=="join" && elapsed>=75 && joinAck!=control.stage) {
      joinAck=control.stage;
+     if(control.stage!="stationary")check(metrics.selfXMax-metrics.selfXMin>1,"join local player actually moves: "+control.stage,
+      {min:metrics.selfXMin,max:metrics.selfXMax,start:metrics.selfXStart,end:metrics.selfXEnd});
      check(metrics.numb>10 && metrics.replic>10 && metrics.replic2>10,"native moving number and both speech particles observed: "+control.stage,metrics);
      check(metrics.rootError==0,"final native camera/GUI do not rewrite particle world position: "+control.stage,metrics);
      check(metrics.textError==0 && metrics.missingText==0 && metrics.missingRecipe==0,"final text layout preserves the submitted display recipe: "+control.stage,metrics);
@@ -246,6 +273,16 @@ package {
    return result;
   }
   /** Compose the final submitted recipe, independent of display tree state. */
+  private function evidencePose(effect:Object):Object {
+   var pose:Object=effect.pose;
+   // Compact field7 numbers keep immutable children in a separate template.
+   // Preserve any interpolated children already supplied at a mode change;
+   // never modify the captured/displayed product record or read the actual
+   // display tree to manufacture an expected value.
+   if(pose==null || pose.children!=null || effect.decor==null || effect.decor.recipe==null)return pose;
+   var out:Object={};for(var key:String in pose)out[key]=pose[key];
+   out.children=effect.decor.recipe.children;return out;
+  }
   private function flatten(pose:Object,parent:Array=null):Object {
    var m:Array=pose.m;if(m==null)return null;if(parent!=null)m=multiply(parent,m);
    if(pose.plainText!=null)return {x:m[4],y:m[5],text:pose.plainText};

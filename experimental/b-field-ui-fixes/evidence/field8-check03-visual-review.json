@@ -1,0 +1,322 @@
+{
+  "kind": "visual-component-review-findings",
+  "reviewer": "b_camera_ui",
+  "reviewed_at": "2026-10-28",
+  "status": "findings-only-awaiting-root-review",
+  "candidate_sha256": "d1a83ed5e38da1b80786b32e39e1375794586614420e1731ee5cbc9380813ed5",
+  "source_id": "9c8588713f10d46e445c2ecc64f88a37a6b09242bb9266b84136686308f2a54a",
+  "result_sha256": "46c0da1a4a2fd85008b96b18c117a81476bc52030445461299dfd1b3659962e0",
+  "evidence_directory": "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/build/ab/b-field8-check03-visual-01",
+  "preparation": "prepared04",
+  "preparation_sha256": "9290ec219392d300848af421cdc23e338b20353260ccafebec56dd66cf02fd10",
+  "scope": "check03 的颜色/影子顺序、真实基地背景对象及原生 NPC 气泡出生和宿主后续变焦；不是整版功能、性能或部署验收。",
+  "execution": "仅阅读已完成实测的数据和截图；没有启动新测试、编译或改动产品。",
+  "run_summary": {
+    "complete": true,
+    "host_pass": 32,
+    "host_fail": 0,
+    "join_pass": 25,
+    "join_fail": 0,
+    "matched_presentations": 28
+  },
+  "findings": [
+    {
+      "id": "box-shadow-and-color",
+      "conclusion": "真实基地的终端与医疗箱均保留唯一影子，且在本体后方；素材字段及最终屏幕取样没有观察到先前的盖黑问题。",
+      "objects": {
+        "52": "term",
+        "61": "medbox"
+      },
+      "object_pairs": 56,
+      "shadow_side_observations": 112,
+      "wrong_shadow_count_or_relative_order": 0,
+      "native_tree_differences_excluding_instance_names": 0,
+      "parsed_artwork_pixel_descriptor_differences": 0,
+      "phase0_equal_screen_patches": 8,
+      "screen_patch_size": [
+        7,
+        7
+      ],
+      "screen_patch_pixel_differences": 0,
+      "layer_indices": {
+        "term": {
+          "host_shadow_body": [
+            32,
+            33
+          ],
+          "join_shadow_body": [
+            31,
+            32
+          ]
+        },
+        "medbox": {
+          "host_shadow_body": [
+            44,
+            45
+          ],
+          "join_shadow_body": [
+            43,
+            44
+          ]
+        }
+      },
+      "method": "解析 JSON 后比较对象字段，不比较属性键的输出顺序。pairs.differences 中 artwork sample 52/61 的文字标记来自 JSON.stringify 键序；56 次实际字段比较均相等。"
+    },
+    {
+      "id": "real-base-backdrops",
+      "conclusion": "双方真实基地的 63 个背景对象在所有保留配对中数量、位置和采集到的显示树一致。",
+      "scene": "rbl:0:0:0:0:",
+      "base_flag": true,
+      "host_count": 63,
+      "join_count": 63,
+      "matched_presentations": 28,
+      "captured_tree_and_position_differences_excluding_generated_instance_names": 0,
+      "truncated_tree_markers": 0,
+      "screenshot_review": "亲自查看双方 phase0：未被主侧对话面板遮挡的基地房间、灯具、海报、柜体及装饰位置对应，终端与医疗箱没有先前被黑影盖住的外观。不据此声称整幅画面相同。"
+    },
+    {
+      "id": "speech-birth-and-host-zoom",
+      "conclusion": "四组明确的相机/自定义比例组合，都观察到两类原生气泡出生，并在真实宿主变焦后的较新确认帧再次保持所需屏幕比例。",
+      "types": [
+        "replic",
+        "replic2"
+      ],
+      "birth_observations": 8,
+      "after_host_zoom_observations": 8,
+      "failed_observations": 0,
+      "maximum_absolute_scale_error": 0.0000032186508178710938,
+      "phases": [
+        {
+          "phase": 1,
+          "requested_scale": 0.5,
+          "host_birth_camera": 1,
+          "join_camera": 0.611,
+          "ready_presentation": 9,
+          "birth_presentation": 15,
+          "after_presentation": 19,
+          "observed_host_zoom_scales": [
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              0.611
+            ]
+          ]
+        },
+        {
+          "phase": 2,
+          "requested_scale": 0.5,
+          "host_birth_camera": 0.611,
+          "join_camera": 1,
+          "ready_presentation": 20,
+          "birth_presentation": 24,
+          "after_presentation": 28,
+          "observed_host_zoom_scales": [
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              0.611
+            ]
+          ]
+        },
+        {
+          "phase": 3,
+          "requested_scale": 1.5,
+          "host_birth_camera": 1,
+          "join_camera": 0.611,
+          "ready_presentation": 29,
+          "birth_presentation": 37,
+          "after_presentation": 41,
+          "observed_host_zoom_scales": [
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              0.611
+            ]
+          ]
+        },
+        {
+          "phase": 4,
+          "requested_scale": 1.5,
+          "host_birth_camera": 0.611,
+          "join_camera": 1,
+          "ready_presentation": 42,
+          "birth_presentation": 47,
+          "after_presentation": 49,
+          "observed_host_zoom_scales": [
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              0.611
+            ]
+          ]
+        }
+      ],
+      "handshake_review": "ready 确认加入侧相机后才调用原生 Emitter.cast；两个不同类型的 birth 观察完成后宿主才 setZoom/setLoc；after 检查要求 source.presentation 大于宿主变焦时记录的 presentation。每阶段宿主原始 rows 同时留有 zoom0/scale1 与 zoom1/scale0.611。",
+      "measurement": "加入侧实际原生显示节点 scaleX/scaleY 乘实际本机 camera.scaleV；与原生发射时明确给定的0.5/1.5比较。"
+    },
+    {
+      "id": "phase-screenshot-timing",
+      "conclusion": "阶段截图是该阶段第一次匹配画面的辅助快照，不保证已经看到该阶段新出生的气泡；不将它用作字号出生通过证据。",
+      "viewed_screenshots": [
+        "host-visualfield-0.png",
+        "join-visualfield-0.png",
+        "join-visualfield-3.png"
+      ],
+      "phase3_details": {
+        "picture_begin_join_local_ms": 51051,
+        "picture_drawn_join_local_ms": 51082,
+        "later_missing_new_effects_presentation": 34,
+        "new_effect_keys": [
+          "99",
+          "100"
+        ],
+        "birth_checked_join_local_ms": [
+          52514,
+          52571
+        ],
+        "birth_presentation": 37,
+        "birth_actual_scale": 1.5000000004768372,
+        "after_presentation": 41
+      },
+      "mechanism": "matchRows 在阶段首次有配对时请求图片；BStartupDriver.picture 对同名图片只保留第一次捕获。phase3 图中0.5来自仍在显示的旧气泡；phase3身份99/100的1.5出生及后续变焦由之后的实际节点观察和ack证明。PNG编码在场景结束后执行，与捕获时机分开。"
+    }
+  ],
+  "limitations": [
+    "原生 front/back 位图取样仍不同，全部28对都保留此差异：front 主98401acf、加1128ab2a；首层 back 主22870a46、加9380904f。back2 取样b1d0847b一致。原因尚未确定，背景对象结构一致不能证明底图逐像素一致。",
+    "56个对象对照只覆盖两件静止的真实基地物体；未由此证明所有箱体在移动、拆除、脱离图层和重新绘制后的行为。",
+    "NPC证据只覆盖两类已包装的原生气泡、相机1/0.611与自定义比例0.5/1.5；不覆盖所有模组文本、未登记出生信息的旧粒子或所有相机状态。",
+    "阶段图片可能拍到旧气泡或新气泡到达前的过渡画面。出生和变焦结论依据带新对象身份、期望比例与presentation的独立ack及原始节点记录，不依据图片名称。",
+    "pairs.differences 是诊断列表，包含属性键顺序、不同本机相机比例和确认播放之间的差别；不把列表为空当作通过条件，也不抹去原始列表。",
+    "通过总数包含通用组件和阶段记账检查。本审阅不确认移动预测、密集战斗性能、其它玩法或最终部署资格；最终接受由主会话决定。"
+  ],
+  "evidence": [
+    {
+      "path": "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/build/ab/b-field8-check03-visual-01/result.json",
+      "sha256": "46c0da1a4a2fd85008b96b18c117a81476bc52030445461299dfd1b3659962e0"
+    },
+    {
+      "path": "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/build/ab/b-field8-check03-visual-01/visualfield-join-final.json",
+      "sha256": "79238940134e55b8592e4b7ed86d389dda0f58b7bfbb45e3eb6187c298df96ff"
+    },
+    {
+      "path": "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/build/ab/b-field8-check03-visual-01/visualfield-host-rows.json",
+      "sha256": "839025eacd8dddaf85ac4725e1b51b12f52cf0ab44070fb69566ec29755e7a67"
+    },
+    {
+      "path": "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/build/ab/b-field8-check03-visual-01/visualfield-join-pairs.json",
+      "sha256": "aac36b3fbaca5a623de2ac1a9733360ec6a8e9c2697ac15ff9940b4e0fd75a2c"
+    },
+    {
+      "path": "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/build/ab/b-field8-check03-visual-01/host.BStartupDriver.log",
+      "sha256": "ef096cb064dec89376c4a6c34a55e386b49092338b8845e3b4de846eb5a6b2cc"
+    },
+    {
+      "path": "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/build/ab/b-field8-check03-visual-01/join.BStartupDriver.log",
+      "sha256": "55a63d900b8796c8272f38ad03078502d94e25977733d99f9186dae712a39313"
+    },
+    {
+      "path": "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/build/ab/b-field8-check03-visual-01/visualfield-control.json",
+      "sha256": "ce4fb4f77313c9d52e1752b566c228b0b54c9583cc8d36d66fc1cae9d92da594"
+    },
+    {
+      "path": "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/build/ab/b-field8-check03-visual-01/visualfield-ready-1.json",
+      "sha256": "750d93c346c1cb48dcac74b45ae1b6ab8bb18ac55c24e1ce8b3ef1b0961327d1"
+    },
+    {
+      "path": "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/build/ab/b-field8-check03-visual-01/visualfield-birth-ack-1.json",
+      "sha256": "d073ef9d8897b9f54f025afb32fb0e40ff88352d0a321390db2405741aeb88df"
+    },
+    {
+      "path": "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/build/ab/b-field8-check03-visual-01/visualfield-after-ack-1.json",
+      "sha256": "963fd5062facac32a17631ce0dcc04a6b860dcc4e35ce6869e9c5dbf570a2c7f"
+    },
+    {
+      "path": "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/build/ab/b-field8-check03-visual-01/visualfield-ready-2.json",
+      "sha256": "96d6213224daefa0f01a4c3f505141a1ed07a70b7fc62075740b027254028abe"
+    },
+    {
+      "path": "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/build/ab/b-field8-check03-visual-01/visualfield-birth-ack-2.json",
+      "sha256": "dfc4e11274185372eae494a1b3317b885b2d9a31991043f76a1e19dd5dbc6080"
+    },
+    {
+      "path": "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/build/ab/b-field8-check03-visual-01/visualfield-after-ack-2.json",
+      "sha256": "84985fa9f42c7e2768c26fd193b4fb854c6ad8d0571e089a9777380e5e84550b"
+    },
+    {
+      "path": "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/build/ab/b-field8-check03-visual-01/visualfield-ready-3.json",
+      "sha256": "3c9b403810ac4746bd994afbed53a5c4e88b5ab0ff06a15a3ccaf741fb5441b5"
+    },
+    {
+      "path": "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/build/ab/b-field8-check03-visual-01/visualfield-birth-ack-3.json",
+      "sha256": "5923f12d52603932cbc5c347913a7d2b7cb77bd93c4d405b3f5b287e0638d1c1"
+    },
+    {
+      "path": "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/build/ab/b-field8-check03-visual-01/visualfield-after-ack-3.json",
+      "sha256": "1ba8fec17b33ef8bef8e04fa697f1d26e9dc427f72f42e96a2397f11e567967a"
+    },
+    {
+      "path": "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/build/ab/b-field8-check03-visual-01/visualfield-ready-4.json",
+      "sha256": "9831781e3f8966c52f32c4bf5e049ba7d471e83a91ea71c2b6380fc0b5f8d494"
+    },
+    {
+      "path": "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/build/ab/b-field8-check03-visual-01/visualfield-birth-ack-4.json",
+      "sha256": "980de7c134196d2028341f93b4b6e55634e1521f679b2a6e70697b4534883f22"
+    },
+    {
+      "path": "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/build/ab/b-field8-check03-visual-01/visualfield-after-ack-4.json",
+      "sha256": "a8cf666ec6fb87f6cde214a573c5148f656b5853bda2d8f57bfd2a1f16b97512"
+    },
+    {
+      "path": "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/build/ab/b-field8-check03-visual-01/host-visualfield-0.png",
+      "sha256": "5b9c7673fee03f621a4dd9481718844f0f73c7c365b57d5b4b3562ee48a991d5"
+    },
+    {
+      "path": "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/build/ab/b-field8-check03-visual-01/host-visualfield-1.png",
+      "sha256": "c0fb7a4e85142f2762521f05fd7a8fd37a6f0105b496af458611791d6621ab6e"
+    },
+    {
+      "path": "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/build/ab/b-field8-check03-visual-01/host-visualfield-2.png",
+      "sha256": "4973240a4db7e7a6ded15ad91fd156847e2bcac52fa876f0622d5239044f4092"
+    },
+    {
+      "path": "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/build/ab/b-field8-check03-visual-01/host-visualfield-3.png",
+      "sha256": "b4f7e74051a800f5d391fe39ced08f5fa737235e14da85192c927b010c99202c"
+    },
+    {
+      "path": "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/build/ab/b-field8-check03-visual-01/host-visualfield-4.png",
+      "sha256": "797ad316c1da6f93e6689c748effe96f97bd323f6ac84bcb183e74ace7f16774"
+    },
+    {
+      "path": "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/build/ab/b-field8-check03-visual-01/join-visualfield-0.png",
+      "sha256": "6cc0da2e37b6c47ae697db587bb8d8ed7e7ea7d4277a36f0eb7a8f0a861cb6ec"
+    },
+    {
+      "path": "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/build/ab/b-field8-check03-visual-01/join-visualfield-1.png",
+      "sha256": "509ded5674fd52b5ce6e552421a6a74056153e67f375e22d83a012438e23df53"
+    },
+    {
+      "path": "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/build/ab/b-field8-check03-visual-01/join-visualfield-2.png",
+      "sha256": "0e306e2811b10ebff43954da87cd676d16e0f49965a6c7e84c4d76169afed063"
+    },
+    {
+      "path": "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/build/ab/b-field8-check03-visual-01/join-visualfield-3.png",
+      "sha256": "2af200a90114a755c1a8a228d7686ee3e52211f0e98f1602d837bc27c40dff2a"
+    },
+    {
+      "path": "D:/Program Files/Steam/steamapps/common/Remains/mods/RConnect/build/ab/b-field8-check03-visual-01/join-visualfield-4.png",
+      "sha256": "3bf49cb2b56c5a78c6f5fc18eb28b47af163c86eb5df3aa09110d18d6728485e"
+    }
+  ]
+}

@@ -1,0 +1,596 @@
+{
+  "kind": "archived-textmotion-summary",
+  "directory": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\ab\\b-field8-walk-baseline-01",
+  "complete": true,
+  "passed": true,
+  "runtime_unchanged": true,
+  "candidate_sha256": "f9e542f6d64fef707c41563558365a3d90562dbc346f3be6cf84f968062b7c07",
+  "native_sha256": "eced04ad8dae6b74444ee6e5f5ec5ddf2e83528a9eecfef66f58985cb0c83063",
+  "preparation_sha256": "d3c20dff173e6e35579e5129c41d3fc0debdd2ba4b4f275bd392c9ed277c7038",
+  "runner_sha256": "b2809646f50879f1b79611de8d6bca2dc14b6aef727802bd99b8c7a9614ed2e8",
+  "roles": {
+    "host": {
+      "evidence_sha256": "7e99ac0be57fe49d2d5178cf16f98a7848f8c087f901e6179f14336812764f8e",
+      "render_sampling": {
+        "duplicateRenders": 581,
+        "renderFrames": 579,
+        "enterFrames": 579
+      },
+      "phases": {
+        "stationary": {
+          "render_intervals": 218,
+          "render_span_ms": 7815,
+          "render_mean_ms": 35.84862385321101,
+          "render_max_ms": 123,
+          "raw_intervals_available": false,
+          "render_p95_ms": null,
+          "observer_valid_samples": 219,
+          "interpolated_samples": 0,
+          "underflow_render_samples": 0,
+          "reversals": {
+            "worldReversals": 0,
+            "screenReversals": 0,
+            "cameraReversals": 0,
+            "unshakenCameraReversals": 0
+          },
+          "camera_target_mismatch_samples": 1,
+          "root_error_count": 0,
+          "text_error_count": 0,
+          "root_max_error_px": null,
+          "text_max_error_px": null,
+          "missing_text": 0,
+          "missing_recipe": 0,
+          "timeline_gap_max_px": 0,
+          "socket_pending_max_bytes": 0,
+          "native_effect_observations": {
+            "numb": 279,
+            "replic": 309,
+            "replic2": 309
+          },
+          "trace_stats": {
+            "playerX": {
+              "count": 140,
+              "mean": 600,
+              "min": 600,
+              "max": 600
+            },
+            "delay": {
+              "count": 140,
+              "mean": 0,
+              "min": 0,
+              "max": 0
+            },
+            "predictionLead": {
+              "count": 140,
+              "mean": 0,
+              "min": 0,
+              "max": 0
+            },
+            "observedFrameAgeMS": null
+          }
+        },
+        "walk-right": {
+          "render_intervals": 89,
+          "render_span_ms": 3694,
+          "render_mean_ms": 41.50561797752809,
+          "render_max_ms": 105,
+          "raw_intervals_available": false,
+          "render_p95_ms": null,
+          "observer_valid_samples": 90,
+          "interpolated_samples": 0,
+          "underflow_render_samples": 0,
+          "reversals": {
+            "worldReversals": 0,
+            "screenReversals": 0,
+            "cameraReversals": 0,
+            "unshakenCameraReversals": 0
+          },
+          "camera_target_mismatch_samples": 0,
+          "root_error_count": 0,
+          "text_error_count": 0,
+          "root_max_error_px": null,
+          "text_max_error_px": null,
+          "missing_text": 0,
+          "missing_recipe": 0,
+          "timeline_gap_max_px": 0,
+          "socket_pending_max_bytes": 0,
+          "native_effect_observations": {
+            "numb": 238,
+            "replic": 387,
+            "replic2": 387
+          },
+          "trace_stats": {
+            "playerX": {
+              "count": 70,
+              "mean": 600,
+              "min": 600,
+              "max": 600
+            },
+            "delay": {
+              "count": 70,
+              "mean": 0,
+              "min": 0,
+              "max": 0
+            },
+            "predictionLead": {
+              "count": 70,
+              "mean": 0,
+              "min": 0,
+              "max": 0
+            },
+            "observedFrameAgeMS": null
+          }
+        },
+        "walk-left": {
+          "render_intervals": 89,
+          "render_span_ms": 3761,
+          "render_mean_ms": 42.258426966292134,
+          "render_max_ms": 124,
+          "raw_intervals_available": false,
+          "render_p95_ms": null,
+          "observer_valid_samples": 90,
+          "interpolated_samples": 0,
+          "underflow_render_samples": 0,
+          "reversals": {
+            "worldReversals": 0,
+            "screenReversals": 0,
+            "cameraReversals": 0,
+            "unshakenCameraReversals": 0
+          },
+          "camera_target_mismatch_samples": 0,
+          "root_error_count": 0,
+          "text_error_count": 0,
+          "root_max_error_px": null,
+          "text_max_error_px": null,
+          "missing_text": 0,
+          "missing_recipe": 0,
+          "timeline_gap_max_px": 0,
+          "socket_pending_max_bytes": 0,
+          "native_effect_observations": {
+            "numb": 180,
+            "replic": 310,
+            "replic2": 310
+          },
+          "trace_stats": {
+            "playerX": {
+              "count": 71,
+              "mean": 600,
+              "min": 600,
+              "max": 600
+            },
+            "delay": {
+              "count": 71,
+              "mean": 0,
+              "min": 0,
+              "max": 0
+            },
+            "predictionLead": {
+              "count": 71,
+              "mean": 0,
+              "min": 0,
+              "max": 0
+            },
+            "observedFrameAgeMS": null
+          }
+        },
+        "walk-right-attack": {
+          "render_intervals": 89,
+          "render_span_ms": 3813,
+          "render_mean_ms": 42.842696629213485,
+          "render_max_ms": 96,
+          "raw_intervals_available": false,
+          "render_p95_ms": null,
+          "observer_valid_samples": 90,
+          "interpolated_samples": 0,
+          "underflow_render_samples": 0,
+          "reversals": {
+            "worldReversals": 0,
+            "screenReversals": 0,
+            "cameraReversals": 0,
+            "unshakenCameraReversals": 0
+          },
+          "camera_target_mismatch_samples": 0,
+          "root_error_count": 0,
+          "text_error_count": 0,
+          "root_max_error_px": null,
+          "text_max_error_px": null,
+          "missing_text": 0,
+          "missing_recipe": 0,
+          "timeline_gap_max_px": 0,
+          "socket_pending_max_bytes": 0,
+          "native_effect_observations": {
+            "numb": 180,
+            "replic": 300,
+            "replic2": 300
+          },
+          "trace_stats": {
+            "playerX": {
+              "count": 75,
+              "mean": 600,
+              "min": 600,
+              "max": 600
+            },
+            "delay": {
+              "count": 75,
+              "mean": 0,
+              "min": 0,
+              "max": 0
+            },
+            "predictionLead": {
+              "count": 75,
+              "mean": 0,
+              "min": 0,
+              "max": 0
+            },
+            "observedFrameAgeMS": null
+          }
+        },
+        "walk-left-attack": {
+          "render_intervals": 89,
+          "render_span_ms": 3851,
+          "render_mean_ms": 43.26966292134831,
+          "render_max_ms": 101,
+          "raw_intervals_available": false,
+          "render_p95_ms": null,
+          "observer_valid_samples": 90,
+          "interpolated_samples": 0,
+          "underflow_render_samples": 0,
+          "reversals": {
+            "worldReversals": 0,
+            "screenReversals": 0,
+            "cameraReversals": 0,
+            "unshakenCameraReversals": 0
+          },
+          "camera_target_mismatch_samples": 0,
+          "root_error_count": 0,
+          "text_error_count": 0,
+          "root_max_error_px": null,
+          "text_max_error_px": null,
+          "missing_text": 0,
+          "missing_recipe": 0,
+          "timeline_gap_max_px": 0,
+          "socket_pending_max_bytes": 0,
+          "native_effect_observations": {
+            "numb": 180,
+            "replic": 300,
+            "replic2": 300
+          },
+          "trace_stats": {
+            "playerX": {
+              "count": 67,
+              "mean": 600,
+              "min": 600,
+              "max": 600
+            },
+            "delay": {
+              "count": 67,
+              "mean": 0,
+              "min": 0,
+              "max": 0
+            },
+            "predictionLead": {
+              "count": 67,
+              "mean": 0,
+              "min": 0,
+              "max": 0
+            },
+            "observedFrameAgeMS": null
+          }
+        }
+      }
+    },
+    "join": {
+      "evidence_sha256": "7d0ac3717d2c4fe9e9a6d988392c44f097f116ec35933bffdcb091332f0e5bd9",
+      "render_sampling": {
+        "duplicateRenders": 426,
+        "renderFrames": 424,
+        "enterFrames": 424
+      },
+      "phases": {
+        "stationary": {
+          "render_intervals": 103,
+          "render_span_ms": 4053,
+          "render_mean_ms": 39.349514563106794,
+          "render_max_ms": 258,
+          "raw_intervals_available": false,
+          "render_p95_ms": null,
+          "observer_valid_samples": 104,
+          "interpolated_samples": 96,
+          "underflow_render_samples": 7,
+          "reversals": {
+            "worldReversals": 0,
+            "screenReversals": 0,
+            "cameraReversals": 0,
+            "unshakenCameraReversals": 0
+          },
+          "camera_target_mismatch_samples": 1,
+          "root_error_count": 0,
+          "text_error_count": 0,
+          "root_max_error_px": 0.049200000000041655,
+          "text_max_error_px": 0.049200000000041655,
+          "missing_text": 0,
+          "missing_recipe": 0,
+          "timeline_gap_max_px": 0,
+          "socket_pending_max_bytes": 0,
+          "native_effect_observations": {
+            "numb": 165,
+            "replic": 199,
+            "replic2": 199
+          },
+          "trace_stats": {
+            "playerX": {
+              "count": 63,
+              "mean": 800,
+              "min": 800,
+              "max": 800
+            },
+            "delay": {
+              "count": 63,
+              "mean": 119.98412698412699,
+              "min": 65,
+              "max": 154
+            },
+            "predictionLead": {
+              "count": 63,
+              "mean": 0,
+              "min": 0,
+              "max": 0
+            },
+            "observedFrameAgeMS": {
+              "count": 63,
+              "mean": 46.3968253968254,
+              "min": 7,
+              "max": 311
+            }
+          }
+        },
+        "walk-right": {
+          "render_intervals": 74,
+          "render_span_ms": 3633,
+          "render_mean_ms": 49.0945945945946,
+          "render_max_ms": 116,
+          "raw_intervals_available": false,
+          "render_p95_ms": null,
+          "observer_valid_samples": 74,
+          "interpolated_samples": 69,
+          "underflow_render_samples": 0,
+          "reversals": {
+            "worldReversals": 0,
+            "screenReversals": 0,
+            "cameraReversals": 0,
+            "unshakenCameraReversals": 0
+          },
+          "camera_target_mismatch_samples": 0,
+          "root_error_count": 0,
+          "text_error_count": 0,
+          "root_max_error_px": 0.048484848484918075,
+          "text_max_error_px": 0.048484848484918075,
+          "missing_text": 0,
+          "missing_recipe": 0,
+          "timeline_gap_max_px": 21.264150943396203,
+          "socket_pending_max_bytes": 0,
+          "native_effect_observations": {
+            "numb": 193,
+            "replic": 316,
+            "replic2": 316
+          },
+          "trace_stats": {
+            "playerX": {
+              "count": 74,
+              "mean": 1119.5858372676355,
+              "min": 802.7410417404711,
+              "max": 1414.289139102163
+            },
+            "delay": {
+              "count": 74,
+              "mean": 115.91891891891892,
+              "min": 102,
+              "max": 129
+            },
+            "predictionLead": {
+              "count": 74,
+              "mean": 8.889891321689605,
+              "min": 2.7410417404711325,
+              "max": 18.938923672240662
+            },
+            "observedFrameAgeMS": {
+              "count": 74,
+              "mean": 29.972972972972972,
+              "min": 19,
+              "max": 76
+            }
+          }
+        },
+        "walk-left": {
+          "render_intervals": 75,
+          "render_span_ms": 3765,
+          "render_mean_ms": 50.2,
+          "render_max_ms": 123,
+          "raw_intervals_available": false,
+          "render_p95_ms": null,
+          "observer_valid_samples": 74,
+          "interpolated_samples": 73,
+          "underflow_render_samples": 1,
+          "reversals": {
+            "worldReversals": 0,
+            "screenReversals": 0,
+            "cameraReversals": 0,
+            "unshakenCameraReversals": 0
+          },
+          "camera_target_mismatch_samples": 0,
+          "root_error_count": 0,
+          "text_error_count": 0,
+          "root_max_error_px": 0.04857142857144936,
+          "text_max_error_px": 0.04857142857144936,
+          "missing_text": 0,
+          "missing_recipe": 0,
+          "timeline_gap_max_px": 22.85294117647061,
+          "socket_pending_max_bytes": 0,
+          "native_effect_observations": {
+            "numb": 148,
+            "replic": 256,
+            "replic2": 256
+          },
+          "trace_stats": {
+            "playerX": {
+              "count": 71,
+              "mean": 1123.1418880253773,
+              "min": 816.4646800442509,
+              "max": 1423
+            },
+            "delay": {
+              "count": 71,
+              "mean": 112,
+              "min": 96,
+              "max": 127
+            },
+            "predictionLead": {
+              "count": 71,
+              "mean": -8.815858453495991,
+              "min": -19.058643116619578,
+              "max": 3.5
+            },
+            "observedFrameAgeMS": {
+              "count": 71,
+              "mean": 33.901408450704224,
+              "min": 17,
+              "max": 103
+            }
+          }
+        },
+        "walk-right-attack": {
+          "render_intervals": 83,
+          "render_span_ms": 3899,
+          "render_mean_ms": 46.975903614457835,
+          "render_max_ms": 122,
+          "raw_intervals_available": false,
+          "render_p95_ms": null,
+          "observer_valid_samples": 80,
+          "interpolated_samples": 78,
+          "underflow_render_samples": 0,
+          "reversals": {
+            "worldReversals": 0,
+            "screenReversals": 0,
+            "cameraReversals": 0,
+            "unshakenCameraReversals": 0
+          },
+          "camera_target_mismatch_samples": 0,
+          "root_error_count": 0,
+          "text_error_count": 0,
+          "root_max_error_px": 0.04899999999997817,
+          "text_max_error_px": 0.04899999999997817,
+          "missing_text": 0,
+          "missing_recipe": 0,
+          "timeline_gap_max_px": 22.361111111111086,
+          "socket_pending_max_bytes": 0,
+          "native_effect_observations": {
+            "numb": 160,
+            "replic": 269,
+            "replic2": 269
+          },
+          "trace_stats": {
+            "playerX": {
+              "count": 77,
+              "mean": 1092.8514777013304,
+              "min": 814.1505376344086,
+              "max": 1413.3139534883721
+            },
+            "delay": {
+              "count": 77,
+              "mean": 114.48051948051948,
+              "min": 105,
+              "max": 132
+            },
+            "predictionLead": {
+              "count": 77,
+              "mean": 0,
+              "min": 0,
+              "max": 0
+            },
+            "observedFrameAgeMS": {
+              "count": 77,
+              "mean": 30.90909090909091,
+              "min": 17,
+              "max": 88
+            }
+          }
+        },
+        "walk-left-attack": {
+          "render_intervals": 84,
+          "render_span_ms": 3841,
+          "render_mean_ms": 45.726190476190474,
+          "render_max_ms": 102,
+          "raw_intervals_available": false,
+          "render_p95_ms": null,
+          "observer_valid_samples": 83,
+          "interpolated_samples": 82,
+          "underflow_render_samples": 0,
+          "reversals": {
+            "worldReversals": 0,
+            "screenReversals": 0,
+            "cameraReversals": 0,
+            "unshakenCameraReversals": 0
+          },
+          "camera_target_mismatch_samples": 0,
+          "root_error_count": 0,
+          "text_error_count": 0,
+          "root_max_error_px": 0.049999999999954525,
+          "text_max_error_px": 0.049999999999954525,
+          "missing_text": 0,
+          "missing_recipe": 0,
+          "timeline_gap_max_px": 22.85714285714289,
+          "socket_pending_max_bytes": 0,
+          "native_effect_observations": {
+            "numb": 166,
+            "replic": 280,
+            "replic2": 280
+          },
+          "trace_stats": {
+            "playerX": {
+              "count": 78,
+              "mean": 1169.1276949653532,
+              "min": 851.9166666666666,
+              "max": 1437
+            },
+            "delay": {
+              "count": 78,
+              "mean": 120.25641025641026,
+              "min": 107,
+              "max": 136
+            },
+            "predictionLead": {
+              "count": 78,
+              "mean": 0,
+              "min": 0,
+              "max": 0
+            },
+            "observedFrameAgeMS": {
+              "count": 78,
+              "mean": 30.307692307692307,
+              "min": 16,
+              "max": 79
+            }
+          }
+        }
+      }
+    }
+  },
+  "metric_definitions": {
+    "render_mean_ms": "renderIntervalSumMS / renderIntervals; all de-duplicated observed renders, including pre-confirmation stage wait.",
+    "render_p95_ms": "Only calculated if the complete raw renderIntervalsMs array is present; otherwise null.",
+    "underflow_render_samples": "Valid observer samples where clock.next is null. Not PlaybackClock.underflows deltas.",
+    "root_or_text_error_count": "Root error >0.11px / text error >0.16px against this process's already submitted recipe.",
+    "root_or_text_max_error_px": "Join-local native final geometry minus submitted display recipe; does not validate PoseTween or host/join position latency. Host computes no such recipe difference.",
+    "timeline_gap_max_px": "Absolute difference between latest received player X and displayed player X; distance, not milliseconds.",
+    "socket_pending_max_bytes": "Maximum outgoing socket.bytesPending sampled at render. Not total traffic and not an unsampled burst maximum.",
+    "duplicateRenders": "Observer callbacks discarded within the same ENTER_FRAME; not a count of duplicated product renders.",
+    "trace_stats": "Throttled at least 35ms, requires a visible text effect, at most 1200 records; not every rendered frame."
+  },
+  "limits": [
+    "Only the joining player receives walking controls; host observes that player's motion while its own camera stays still.",
+    "Each stage lasts a short tick-bounded interval, with unequal host/join start-up coverage; this is not the 60-second sustained workload qualification.",
+    "Root/text error checks test final local layout, not cross-process coordinate equality or end-to-end latency.",
+    "The probe samples world/camera/screen reversal diagnostics after the first 18 host ticks of a walking stage.",
+    "No new game/test was run to produce this report."
+  ]
+}

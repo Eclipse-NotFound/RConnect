@@ -215,7 +215,7 @@ def main():
     ap.add_argument('--resume-preparation',action='store_true')
     ap.add_argument('--preparation',default='prepared.json')
     ap.add_argument('--refresh-driver',action='store_true')
-    ap.add_argument('--scenario',choices=['hover','boundary','enemies','controls','ui','darkteleport','security','textmotion','terrainlive','motion','teleport','rockets','terrain'])
+    ap.add_argument('--scenario',choices=['hover','boundary','enemies','controls','ui','darkteleport','security','textmotion','terrainlive','motion','visualfield','teleport','rockets','terrain'])
     ap.add_argument('--terrain-seed', type=int, help='Diagnostic terrainlive only: replay one recorded native layout seed')
     ap.add_argument('--native');ap.add_argument('--candidate');ap.add_argument('--result');a=ap.parse_args()
     validate_terrain_seed(a.scenario, a.terrain_seed)

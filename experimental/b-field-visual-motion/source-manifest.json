@@ -1,0 +1,53 @@
+{
+  "schema": "b-source-overlay-3",
+  "date": "2026-10-28",
+  "status": "compiled-reference-pending-final-qualification-not-deployed",
+  "version": "B3-0.1-field8",
+  "baseline": {
+    "directory": "build/ab/b190-scalar04-build",
+    "manifest_sha256": "3811c67aeb0f70b6d83dee22023a103a510d34b8d04af03808d90b2ac1f413c8",
+    "source_id": "22e2cdedf6e1c3c0aaf2e7c7821d8199f024ce6188dd01a56f82be18d0ac12f8",
+    "candidate_sha256": "f9e542f6d64fef707c41563558365a3d90562dbc346f3be6cf84f968062b7c07"
+  },
+  "compiled_reference": {
+    "directory": "build/ab/b190-field8-check02-build",
+    "manifest_sha256": "d16072da6b6da24dc4ee3cde1deea30dcd419b1c26dc654073caf64ebbaad271",
+    "source_id": "918211e173c5bc93aaea316c5107a2cc577a2bb159075bc7b3cbbce9bd8c173d",
+    "candidate_sha256": "3b56e8da26285c242542fcb603b566b5748cc7998de30aa995664b4cccc6c2e9"
+  },
+  "unstamped_reference": "build/ab/b190-local-display-field8-source",
+  "assembled_source_id": "918211e173c5bc93aaea316c5107a2cc577a2bb159075bc7b3cbbce9bd8c173d",
+  "overlay": {
+    "src/RConnectMod.as": "94be285e3cbbea8c4b02747a41297a7449fce4392019013827dd4cb22c910edb",
+    "src/authority/BuildInfo.as": "eaf3200a3c38235200d8b3071f7fce56f32bbdaadad5c9b2e55ec5cd432a6d08",
+    "src/authority/ClientReplica.as": "be138c79ced5e015b4d2fc4a9c52758618d7b4bfd6f462597e856d707328bc65",
+    "src/authority/DecorativeEffects.as": "7389189f0f84087df6f6f93f00224f1b59a8b5e6f17fef7843d02d59acdea8b3",
+    "src/authority/FrameDelta.as": "29b3046258c96e43e171573204b49c85b6216743a7bca5193243a805c86058a3",
+    "src/authority/HealthBarPose.as": "4dadc0976dc58b6b25305f7de0fa0b909e65d01fef7136fb7c02f9378efef9e3",
+    "src/authority/HostSession.as": "a850a9d5bf31b61bbd0f046f398b2f88211df174768b2badcc024f094d374c00",
+    "src/authority/Link.as": "955edfc9fb02fe311e0d7bf8ea7b930e629d8e14fdd2e4e3e5e218b49ba56638",
+    "src/authority/PoseTween.as": "37d5e4276a78dacf80a389acd7941cbe04a466b978faf1fc3436fe1767abc59d",
+    "src/authority/ReplicaScene.as": "df53bb32c7a752c159804887bbf28bf91ab078baa83f1c94cafeb542ad77b4b7",
+    "src/authority/SceneBackdrops.as": "de4c63121a598b7bdcc72ee2584ae50ec1a98b035969e4065d8720ece8526d85",
+    "src/authority/SceneEffects.as": "d2620a2774ab72a274a1c9ffd00072ce08be2b06e5b40186a2f85f3bebedc17d",
+    "src/authority/SceneSnapshot.as": "b04cf20d0add5b7ae392e9280f46a56e187df61a9add3a11d7f12f550d958376",
+    "src/authority/SharedVision.as": "6bde1cfe3a94a6450913ad18be51868f15d9b36a28adafb5b19943bf88ea505a",
+    "src/authority/SpeechScale.as": "643845dfaf9b20be0921568f74ac850f61c915f1c9fcd2bcfed2dfe6d83fcc10",
+    "src/authority/VisualPose.as": "b4459aad69a0aee118ec40ce2dccd4578b4796d676ed4f1f593c87a04b72460e",
+    "src/fe/graph/AuthoritySpeechEmitter.as": "788212a82878b521b2ff884e96926c1a11873b2a6e1ba2557311d660d653a0dd",
+    "stubs/fe/graph/Emitter.as": "bfd14b99edffc38d352a620b598ac32f8f3fefceaf55072fef03e04f22d821a8",
+    "stubs/fe/loc/Location.as": "e7d15dff28b22bf51182fcc39171f425c1271b0bb2357b3f0853194a5ac6d25c"
+  },
+  "new_sources": [
+    "src/authority/DecorativeEffects.as",
+    "src/authority/HealthBarPose.as",
+    "src/authority/SceneBackdrops.as",
+    "src/authority/SpeechScale.as",
+    "src/fe/graph/AuthoritySpeechEmitter.as",
+    "stubs/fe/graph/Emitter.as",
+    "stubs/fe/loc/Location.as"
+  ],
+  "prepare_script_sha256": "ce35ecaac2c2c096e9614db2122727926aad7680aa166de33e7797734ebfbc3f",
+  "changes_patch_sha256": "ce5641f8217672bfe196a008169cd4dde63b8ddbfb9c279e84e6f3259327842a",
+  "scope": "Only cumulative source/stub differences relative to exact scalar04. BuildInfo remains a template. Compiled source identity checked; final functional/performance qualification and deployment are managed by the root session."
+}
