@@ -1,0 +1,28 @@
+{
+  "commit": "8d570a918a8f316988f7f54018471348b23d1927",
+  "formal_swf": "b3304596eb7e08796f9de2cf02e1e7cccff10e188d26fedfa960aa6370d2a4b9",
+  "source_files": {
+    "src/FADocument.as": "e276c88039b0e620ceb852cd4a342b16611446f282d3956a8b4d3f839ee5e81d",
+    "src/FirearmAttachmentsMod.as": "d20539c752cf503bc590b0a538321d2bdff4395dad72b413dc6d2daaaa21b879",
+    "src/fa/AssemblySession.as": "b657a06243a46f14b9aca22e86ad275138241b5c00ddd2c05446797e5e16969f",
+    "src/fa/AttachmentSettings.as": "96113399092b6a9b113d2dc35cf6768c80a2614fc8fc88e93aa4bd0cac6041c7",
+    "src/fa/BayonetCombat.as": "c2e27f6322995bcc5e14c10aa5458d493f57ba20ce6f77e26e18acea79751938",
+    "src/fa/BayonetImpulse.as": "c713ae8b8fa7cc8c30e4b8324749542095958e1e3fb065585a329f8b72ad3223",
+    "src/fa/BipodSupport.as": "11bd7b70794d67a7b90bd2b5f233cf301669918b98203eed227578fd8dbe5648",
+    "src/fa/BladeSweep.as": "b76de0d2f1910773a5f49fe6678eca7dec057ac808dfeb3852ca9743c3dd6519",
+    "src/fa/Carrier.as": "3e1d7851e90ea84139e969e84b7e4688ecfece4a4abfd809e5bb4c757b56984f",
+    "src/fa/Catalog.as": "0338e8a7a4577e10647ff2c1dca82b804f504540b1d997a3e02c636380e90890",
+    "src/fa/Runtime.as": "0b933e11b77f23163997d527ed02e92fa49566edd9bf68316a2aae42a9da642a",
+    "src/fa/WeaponMenu.as": "4d6e339de02e922c315380381f3a59a3191f858336e88a658abea5d21f0c5330",
+    "src/fa/Workbench.as": "6bce96e0a52faef3e17f11f7c95f521c9055d4b330e026e3cad925970f678c92",
+    "src/fe/FAWorldBridge.as": "e66b236b1c75fe5dbd7d98070c0acac950226b1d05f6a23992afbd24b81d21f6",
+    "src/fe/inter/FAMenuBridge.as": "668d0dba359c18f76ee9c946017564efd2d2abbfd391b3c82d244c6370aa114a",
+    "src/fe/unit/FAPlayerBridge.as": "227fdbd48e4ce8136a43496c6a068ff16595e7b124e95e2e59fd24f6c91b5bb8",
+    "src/fe/weapon/FAWeaponBridge.as": "020c0f41036ac1aac3adb078a0b206c559ccd8ddfa1064d0e8252369163e65e5",
+    "build/stubs/fe/World.as": "6495f79aa8c7955ccea65055c50c7621d94e16729223b1e534ba4593cbaf71a5",
+    "build/stubs/fe/inter/PipPage.as": "732ad92b3b048eac0027137bf81a0310bd367a2f8e5cd7ac9947f5712a2aa01f",
+    "build/stubs/fe/unit/UnitPlayer.as": "dae7eb10275d6415def03a43537b0066973c9660babcfa83c79b05170b900849",
+    "build/stubs/fe/weapon/Weapon.as": "8499ba5641a96fed3dfaeafbc3ed2295d54e091967af7b45b59a2ab93a707777",
+    "data/catalog.json": "a59963d2ab8af1eca3bd2f36faef53bccd4843c618a66d1aa2dc89786d1345a6"
+  }
+}

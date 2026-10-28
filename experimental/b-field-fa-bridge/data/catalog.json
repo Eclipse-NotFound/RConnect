@@ -1,0 +1,1621 @@
+{
+  "version": "0.3.5",
+  "gameVersion": "1.02",
+  "weapons": [
+    {
+      "damage": 11.0,
+      "damexpl": 0.0,
+      "rapid": 7.0,
+      "precision_world": 320.0,
+      "antiprec_world": 0.0,
+      "kol": 1.0,
+      "dkol": 0.0,
+      "prep": 0.0,
+      "deviation": 5.0,
+      "recoilUp_int": 2.0,
+      "speed": 150.0,
+      "drot": 0.0,
+      "drot2": 0.0,
+      "holder": 12.0,
+      "rashod": 1.0,
+      "reload": 35.0,
+      "recharg": 0.0,
+      "noise": 700.0,
+      "shine": 500.0,
+      "pier": 0.0,
+      "crit_base_pct": 10.0,
+      "player_crit_mult_neutral": 2.2,
+      "source_line": 2477.0,
+      "id": "p10mm",
+      "name": "10mm口径手枪",
+      "family": "手枪",
+      "rails": {
+        "top": 3,
+        "side": 2,
+        "under": 2
+      },
+      "stock": false,
+      "bipod": false,
+      "body": "短枪",
+      "energy": "ballistic",
+      "ammo": "p10",
+      "skill": 2,
+      "damageType": 0
+    },
+    {
+      "damage": 9.0,
+      "damexpl": 0.0,
+      "rapid": 3.0,
+      "precision_world": 400.0,
+      "antiprec_world": 0.0,
+      "kol": 1.0,
+      "dkol": 0.0,
+      "prep": 0.0,
+      "deviation": 5.0,
+      "recoilUp_int": 2.0,
+      "speed": 200.0,
+      "drot": 15.0,
+      "drot2": 0.0,
+      "holder": 24.0,
+      "rashod": 1.0,
+      "reload": 40.0,
+      "recharg": 0.0,
+      "noise": 1000.0,
+      "shine": 500.0,
+      "pier": 0.0,
+      "crit_base_pct": 10.0,
+      "player_crit_mult_neutral": 2.2,
+      "source_line": 2678.0,
+      "id": "assr",
+      "name": "突击步枪",
+      "family": "突击步枪",
+      "rails": {
+        "top": 6,
+        "side": 3,
+        "under": 5
+      },
+      "stock": true,
+      "bipod": true,
+      "body": "长枪",
+      "energy": "ballistic",
+      "ammo": "p556",
+      "skill": 2,
+      "damageType": 0
+    },
+    {
+      "damage": 10.0,
+      "damexpl": 0.0,
+      "rapid": 11.0,
+      "precision_world": 280.0,
+      "antiprec_world": 0.0,
+      "kol": 5.0,
+      "dkol": 0.0,
+      "prep": 0.0,
+      "deviation": 5.0,
+      "recoilUp_int": 5.0,
+      "speed": 150.0,
+      "drot": 15.0,
+      "drot2": 0.0,
+      "holder": 8.0,
+      "rashod": 1.0,
+      "reload": 45.0,
+      "recharg": 0.0,
+      "noise": 1200.0,
+      "shine": 500.0,
+      "pier": 0.0,
+      "crit_base_pct": 10.0,
+      "player_crit_mult_neutral": 2.2,
+      "source_line": 2830.0,
+      "id": "saf9",
+      "name": "IF-9战斗霰弹枪",
+      "family": "霰弹枪",
+      "rails": {
+        "top": 4,
+        "side": 2,
+        "under": 4
+      },
+      "stock": true,
+      "bipod": false,
+      "body": "长枪",
+      "energy": "ballistic",
+      "ammo": "p12",
+      "skill": 2,
+      "damageType": 0
+    },
+    {
+      "damage": 40.0,
+      "damexpl": 0.0,
+      "rapid": 24.0,
+      "precision_world": 960.0,
+      "antiprec_world": 320.0,
+      "kol": 1.0,
+      "dkol": 0.0,
+      "prep": 0.0,
+      "deviation": 1.0,
+      "recoilUp_int": 2.0,
+      "speed": 500.0,
+      "drot": 10.0,
+      "drot2": 0.0,
+      "holder": 5.0,
+      "rashod": 1.0,
+      "reload": 60.0,
+      "recharg": 0.0,
+      "noise": 1000.0,
+      "shine": 500.0,
+      "pier": 0.0,
+      "crit_base_pct": 20.0,
+      "player_crit_mult_neutral": 2.7,
+      "source_line": 3028.0,
+      "id": "sniper",
+      "name": "狙击步枪",
+      "family": "精确步枪",
+      "rails": {
+        "top": 7,
+        "side": 2,
+        "under": 5
+      },
+      "stock": true,
+      "bipod": true,
+      "body": "长枪",
+      "energy": "ballistic",
+      "ammo": "p308",
+      "skill": 2,
+      "damageType": 0
+    },
+    {
+      "damage": 7.0,
+      "damexpl": 0.0,
+      "rapid": 1.0,
+      "precision_world": 400.0,
+      "antiprec_world": 0.0,
+      "kol": 1.0,
+      "dkol": 0.0,
+      "prep": 32.0,
+      "deviation": 5.0,
+      "recoilUp_int": 0.0,
+      "speed": 200.0,
+      "drot": 6.0,
+      "drot2": 3.0,
+      "holder": 500.0,
+      "rashod": 1.0,
+      "reload": 60.0,
+      "recharg": 0.0,
+      "noise": 1300.0,
+      "shine": 500.0,
+      "pier": 0.0,
+      "crit_base_pct": 10.0,
+      "player_crit_mult_neutral": 2.2,
+      "source_line": 3084.0,
+      "id": "minigun",
+      "name": "加特林机枪",
+      "family": "旋转机枪",
+      "rails": {
+        "top": 4,
+        "side": 3,
+        "under": 4
+      },
+      "stock": false,
+      "bipod": true,
+      "body": "重武器",
+      "energy": "ballistic",
+      "ammo": "p5",
+      "skill": 2,
+      "damageType": 0
+    },
+    {
+      "damage": 18.0,
+      "damexpl": 0.0,
+      "rapid": 13.0,
+      "precision_world": 600.0,
+      "antiprec_world": 0.0,
+      "kol": 1.0,
+      "dkol": 0.0,
+      "prep": 0.0,
+      "deviation": 4.0,
+      "recoilUp_int": 1.0,
+      "speed": 2000.0,
+      "drot": 15.0,
+      "drot2": 0.0,
+      "holder": 60.0,
+      "rashod": 4.0,
+      "reload": 40.0,
+      "recharg": 0.0,
+      "noise": 400.0,
+      "shine": 500.0,
+      "pier": 0.0,
+      "crit_base_pct": 15.0,
+      "player_crit_mult_neutral": 2.0,
+      "source_line": 2957.0,
+      "id": "lasr",
+      "name": "激光步枪",
+      "family": "激光步枪",
+      "rails": {
+        "top": 5,
+        "side": 3,
+        "under": 4
+      },
+      "stock": true,
+      "bipod": true,
+      "body": "长枪",
+      "energy": "laser",
+      "ammo": "energ",
+      "skill": 4,
+      "damageType": 5
+    },
+    {
+      "damage": 44.0,
+      "damexpl": 0.0,
+      "rapid": 20.0,
+      "precision_world": 400.0,
+      "antiprec_world": 0.0,
+      "kol": 1.0,
+      "dkol": 0.0,
+      "prep": 0.0,
+      "deviation": 8.0,
+      "recoilUp_int": 1.0,
+      "speed": 80.0,
+      "drot": 15.0,
+      "drot2": 0.0,
+      "holder": 100.0,
+      "rashod": 10.0,
+      "reload": 60.0,
+      "recharg": 0.0,
+      "noise": 400.0,
+      "shine": 500.0,
+      "pier": 0.0,
+      "crit_base_pct": 15.0,
+      "player_crit_mult_neutral": 1.8,
+      "source_line": 2972.0,
+      "id": "plar",
+      "name": "等离子步枪",
+      "family": "等离子步枪",
+      "rails": {
+        "top": 5,
+        "side": 3,
+        "under": 4
+      },
+      "stock": true,
+      "bipod": true,
+      "body": "长枪",
+      "energy": "plasma",
+      "ammo": "energ",
+      "skill": 4,
+      "damageType": 6
+    },
+    {
+      "damage": 10.0,
+      "damexpl": 0.0,
+      "rapid": 15.0,
+      "precision_world": 480.0,
+      "antiprec_world": 0.0,
+      "kol": 1.0,
+      "dkol": 0.0,
+      "prep": 0.0,
+      "deviation": 5.0,
+      "recoilUp_int": 1.0,
+      "speed": 300.0,
+      "drot": 0.0,
+      "drot2": 0.0,
+      "holder": 20.0,
+      "rashod": 1.0,
+      "reload": 600.0,
+      "recharg": 30.0,
+      "noise": 300.0,
+      "shine": 500.0,
+      "pier": 0.0,
+      "crit_base_pct": 15.0,
+      "player_crit_mult_neutral": 2.0,
+      "source_line": 2946.0,
+      "id": "rechr",
+      "name": "充能步枪",
+      "family": "自充能步枪",
+      "rails": {
+        "top": 3,
+        "side": 2,
+        "under": 3
+      },
+      "stock": false,
+      "bipod": false,
+      "body": "长枪",
+      "energy": "recharge",
+      "ammo": "recharg",
+      "skill": 4,
+      "damageType": 5
+    },
+    {
+      "damage": 12.0,
+      "damexpl": 0.0,
+      "rapid": 2.0,
+      "precision_world": 480.0,
+      "antiprec_world": 0.0,
+      "kol": 1.0,
+      "dkol": 0.0,
+      "prep": 0.0,
+      "deviation": 6.0,
+      "recoilUp_int": 2.0,
+      "speed": 200.0,
+      "drot": 13.0,
+      "drot2": 0.0,
+      "holder": 90.0,
+      "rashod": 1.0,
+      "reload": 60.0,
+      "recharg": 0.0,
+      "noise": 1000.0,
+      "shine": 500.0,
+      "pier": 0.0,
+      "crit_base_pct": 10.0,
+      "player_crit_mult_neutral": 2.2,
+      "source_line": 2718.0,
+      "id": "lmg",
+      "name": "轻机枪",
+      "family": "轻机枪",
+      "rails": {
+        "top": 6,
+        "side": 3,
+        "under": 5
+      },
+      "stock": true,
+      "bipod": true,
+      "body": "长枪",
+      "energy": "ballistic",
+      "ammo": "p556",
+      "skill": 2,
+      "damageType": 0
+    },
+    {
+      "damage": 13.0,
+      "damexpl": 0.0,
+      "rapid": 2.0,
+      "precision_world": 400.0,
+      "antiprec_world": 0.0,
+      "kol": 1.0,
+      "dkol": 0.0,
+      "prep": 0.0,
+      "deviation": 5.0,
+      "recoilUp_int": 1.0,
+      "speed": 80.0,
+      "drot": 11.0,
+      "drot2": 0.0,
+      "holder": 160.0,
+      "rashod": 4.0,
+      "reload": 45.0,
+      "recharg": 0.0,
+      "noise": 500.0,
+      "shine": 500.0,
+      "pier": 0.0,
+      "crit_base_pct": 10.0,
+      "player_crit_mult_neutral": 1.8,
+      "source_line": 2781.0,
+      "id": "quick",
+      "name": "速射等离子枪",
+      "family": "速射等离子枪",
+      "rails": {
+        "top": 5,
+        "side": 3,
+        "under": 4
+      },
+      "stock": true,
+      "bipod": true,
+      "body": "长枪",
+      "energy": "plasma",
+      "ammo": "energ",
+      "skill": 4,
+      "damageType": 6
+    },
+    {
+      "damage": 66.0,
+      "damexpl": 0.0,
+      "rapid": 15.0,
+      "precision_world": 720.0,
+      "antiprec_world": 0.0,
+      "kol": 1.0,
+      "dkol": 0.0,
+      "prep": 0.0,
+      "deviation": 4.0,
+      "recoilUp_int": 5.0,
+      "speed": 500.0,
+      "drot": 6.0,
+      "drot2": 0.0,
+      "holder": 80.0,
+      "rashod": 8.0,
+      "reload": 75.0,
+      "recharg": 0.0,
+      "noise": 500.0,
+      "shine": 500.0,
+      "pier": 15.0,
+      "crit_base_pct": 15.0,
+      "player_crit_mult_neutral": 2.2,
+      "source_line": 3013.0,
+      "id": "rail",
+      "name": "磁轨枪",
+      "family": "磁轨枪",
+      "rails": {
+        "top": 7,
+        "side": 3,
+        "under": 5
+      },
+      "stock": true,
+      "bipod": true,
+      "body": "长枪",
+      "energy": "rail",
+      "ammo": "crystal",
+      "skill": 4,
+      "damageType": 0
+    },
+    {
+      "damage": 17.0,
+      "damexpl": 0.0,
+      "rapid": 4.0,
+      "precision_world": 320.0,
+      "antiprec_world": 0.0,
+      "kol": 1.0,
+      "dkol": 0.0,
+      "prep": 0.0,
+      "deviation": 5.0,
+      "recoilUp_int": 1.0,
+      "speed": 80.0,
+      "drot": 11.0,
+      "drot2": 0.0,
+      "holder": 180.0,
+      "rashod": 5.0,
+      "reload": 45.0,
+      "recharg": 0.0,
+      "noise": 500.0,
+      "shine": 500.0,
+      "pier": 0.0,
+      "crit_base_pct": 10.0,
+      "player_crit_mult_neutral": 1.8,
+      "source_line": 2755.0,
+      "id": "plamg",
+      "name": "等离子发射器",
+      "family": "等离子发射器",
+      "rails": {
+        "top": 5,
+        "side": 3,
+        "under": 4
+      },
+      "stock": true,
+      "bipod": true,
+      "body": "长枪",
+      "energy": "plasma",
+      "ammo": "energ",
+      "skill": 4,
+      "damageType": 6
+    },
+    {
+      "damage": 25.0,
+      "damexpl": 0.0,
+      "rapid": 3.0,
+      "precision_world": 320.0,
+      "antiprec_world": 0.0,
+      "kol": 1.0,
+      "dkol": 0.0,
+      "prep": 0.0,
+      "deviation": 8.0,
+      "recoilUp_int": 1.0,
+      "speed": 80.0,
+      "drot": 6.0,
+      "drot2": 0.0,
+      "holder": 1000.0,
+      "rashod": 5.0,
+      "reload": 60.0,
+      "recharg": 0.0,
+      "noise": 400.0,
+      "shine": 500.0,
+      "pier": 0.0,
+      "crit_base_pct": 10.0,
+      "player_crit_mult_neutral": 1.8,
+      "source_line": 3134.0,
+      "id": "gatp",
+      "name": "等离子加特林",
+      "family": "等离子加特林",
+      "rails": {
+        "top": 4,
+        "side": 3,
+        "under": 4
+      },
+      "stock": false,
+      "bipod": true,
+      "body": "重武器",
+      "energy": "plasma",
+      "ammo": "crystal",
+      "skill": 4,
+      "damageType": 6
+    },
+    {
+      "damage": 12.0,
+      "damexpl": 0.0,
+      "rapid": 3.0,
+      "precision_world": 520.0,
+      "antiprec_world": 0.0,
+      "kol": 1.0,
+      "dkol": 0.0,
+      "prep": 0.0,
+      "deviation": 5.0,
+      "recoilUp_int": 2.0,
+      "speed": 200.0,
+      "drot": 15.0,
+      "drot2": 0.0,
+      "holder": 32.0,
+      "rashod": 1.0,
+      "reload": 40.0,
+      "recharg": 0.0,
+      "noise": 1000.0,
+      "shine": 500.0,
+      "pier": 0.0,
+      "crit_base_pct": 10.0,
+      "player_crit_mult_neutral": 2.2,
+      "source_line": 2690.0,
+      "id": "carbine",
+      "name": "突击卡宾枪",
+      "family": "突击卡宾枪",
+      "rails": {
+        "top": 6,
+        "side": 3,
+        "under": 5
+      },
+      "stock": true,
+      "bipod": true,
+      "body": "长枪",
+      "energy": "ballistic",
+      "ammo": "p556",
+      "skill": 2,
+      "damageType": 0
+    },
+    {
+      "damage": 30.0,
+      "damexpl": 0.0,
+      "rapid": 5.0,
+      "precision_world": 640.0,
+      "antiprec_world": 0.0,
+      "kol": 1.0,
+      "dkol": 0.0,
+      "prep": 0.0,
+      "deviation": 4.0,
+      "recoilUp_int": 3.0,
+      "speed": 300.0,
+      "drot": 12.0,
+      "drot2": 0.0,
+      "holder": 20.0,
+      "rashod": 1.0,
+      "reload": 45.0,
+      "recharg": 0.0,
+      "noise": 1000.0,
+      "shine": 500.0,
+      "pier": 0.0,
+      "crit_base_pct": 10.0,
+      "player_crit_mult_neutral": 2.2,
+      "source_line": 2730.0,
+      "id": "autor",
+      "name": "自动步枪",
+      "family": "自动步枪",
+      "rails": {
+        "top": 6,
+        "side": 3,
+        "under": 5
+      },
+      "stock": true,
+      "bipod": true,
+      "body": "长枪",
+      "energy": "ballistic",
+      "ammo": "p308",
+      "skill": 2,
+      "damageType": 0
+    },
+    {
+      "damage": 12.0,
+      "damexpl": 0.0,
+      "rapid": 10.0,
+      "precision_world": 280.0,
+      "antiprec_world": 0.0,
+      "kol": 5.0,
+      "dkol": 0.0,
+      "prep": 0.0,
+      "deviation": 5.0,
+      "recoilUp_int": 5.0,
+      "speed": 150.0,
+      "drot": 13.0,
+      "drot2": 0.0,
+      "holder": 12.0,
+      "rashod": 1.0,
+      "reload": 60.0,
+      "recharg": 0.0,
+      "noise": 1200.0,
+      "shine": 500.0,
+      "pier": 0.0,
+      "crit_base_pct": 10.0,
+      "player_crit_mult_neutral": 2.2,
+      "source_line": 2843.0,
+      "id": "pshot",
+      "name": "警用霰弹枪",
+      "family": "霰弹枪",
+      "rails": {
+        "top": 4,
+        "side": 2,
+        "under": 4
+      },
+      "stock": true,
+      "bipod": false,
+      "body": "长枪",
+      "energy": "ballistic",
+      "ammo": "p12",
+      "skill": 2,
+      "damageType": 0
+    },
+    {
+      "damage": 10.0,
+      "damexpl": 0.0,
+      "rapid": 3.0,
+      "precision_world": 240.0,
+      "antiprec_world": 0.0,
+      "kol": 1.0,
+      "dkol": 0.0,
+      "prep": 0.0,
+      "deviation": 10.0,
+      "recoilUp_int": 2.0,
+      "speed": 150.0,
+      "drot": 0.0,
+      "drot2": 0.0,
+      "holder": 24.0,
+      "rashod": 1.0,
+      "reload": 35.0,
+      "recharg": 0.0,
+      "noise": 900.0,
+      "shine": 500.0,
+      "pier": 0.0,
+      "crit_base_pct": 10.0,
+      "player_crit_mult_neutral": 2.2,
+      "source_line": 2654.0,
+      "id": "smg10",
+      "name": "10mm口径冲锋枪",
+      "family": "冲锋枪",
+      "rails": {
+        "top": 4,
+        "side": 2,
+        "under": 3
+      },
+      "stock": false,
+      "bipod": false,
+      "body": "短枪",
+      "energy": "ballistic",
+      "ammo": "p10",
+      "skill": 2,
+      "damageType": 0
+    },
+    {
+      "damage": 8.0,
+      "damexpl": 0.0,
+      "rapid": 7.0,
+      "precision_world": 360.0,
+      "antiprec_world": 0.0,
+      "kol": 1.0,
+      "dkol": 0.0,
+      "prep": 0.0,
+      "deviation": 5.0,
+      "recoilUp_int": 1.0,
+      "speed": 2000.0,
+      "drot": 0.0,
+      "drot2": 0.0,
+      "holder": 15.0,
+      "rashod": 1.0,
+      "reload": 45.0,
+      "recharg": 0.0,
+      "noise": 300.0,
+      "shine": 500.0,
+      "pier": 0.0,
+      "crit_base_pct": 10.0,
+      "player_crit_mult_neutral": 2.0,
+      "source_line": 2582.0,
+      "id": "lasp",
+      "name": "激光手枪",
+      "family": "激光手枪",
+      "rails": {
+        "top": 3,
+        "side": 2,
+        "under": 2
+      },
+      "stock": false,
+      "bipod": false,
+      "body": "短枪",
+      "energy": "laser",
+      "ammo": "batt",
+      "skill": 4,
+      "damageType": 5
+    },
+    {
+      "damage": 20.0,
+      "damexpl": 0.0,
+      "rapid": 12.0,
+      "precision_world": 240.0,
+      "antiprec_world": 0.0,
+      "kol": 1.0,
+      "dkol": 0.0,
+      "prep": 0.0,
+      "deviation": 5.0,
+      "recoilUp_int": 1.0,
+      "speed": 70.0,
+      "drot": 0.0,
+      "drot2": 0.0,
+      "holder": 40.0,
+      "rashod": 4.0,
+      "reload": 45.0,
+      "recharg": 0.0,
+      "noise": 400.0,
+      "shine": 500.0,
+      "pier": 0.0,
+      "crit_base_pct": 10.0,
+      "player_crit_mult_neutral": 1.8,
+      "source_line": 2596.0,
+      "id": "plap",
+      "name": "等离子手枪",
+      "family": "等离子手枪",
+      "rails": {
+        "top": 3,
+        "side": 2,
+        "under": 2
+      },
+      "stock": false,
+      "bipod": false,
+      "body": "短枪",
+      "energy": "plasma",
+      "ammo": "batt",
+      "skill": 4,
+      "damageType": 6
+    },
+    {
+      "damage": 5.0,
+      "damexpl": 0.0,
+      "rapid": 12.0,
+      "precision_world": 320.0,
+      "antiprec_world": 0.0,
+      "kol": 1.0,
+      "dkol": 0.0,
+      "prep": 0.0,
+      "deviation": 5.0,
+      "recoilUp_int": 1.0,
+      "speed": 200.0,
+      "drot": 0.0,
+      "drot2": 0.0,
+      "holder": 20.0,
+      "rashod": 1.0,
+      "reload": 600.0,
+      "recharg": 30.0,
+      "noise": 300.0,
+      "shine": 500.0,
+      "pier": 0.0,
+      "crit_base_pct": 10.0,
+      "player_crit_mult_neutral": 2.0,
+      "source_line": 2559.0,
+      "id": "rech",
+      "name": "充能手枪",
+      "family": "自充能手枪",
+      "rails": {
+        "top": 3,
+        "side": 2,
+        "under": 2
+      },
+      "stock": false,
+      "bipod": false,
+      "body": "短枪",
+      "energy": "recharge",
+      "ammo": "recharg",
+      "skill": 4,
+      "damageType": 5
+    }
+  ],
+  "components": [
+    {
+      "id": "dot",
+      "name": "轻型快瞄红点",
+      "group": "瞄具",
+      "slot": "top",
+      "length": 2,
+      "compat": [
+        "p10mm",
+        "assr",
+        "saf9",
+        "sniper",
+        "minigun",
+        "lasr",
+        "plar",
+        "rechr",
+        "lmg",
+        "quick",
+        "rail",
+        "plamg",
+        "gatp",
+        "carbine",
+        "autor",
+        "pshot",
+        "smg10",
+        "lasp",
+        "plap",
+        "rech"
+      ],
+      "benefit": "高速移动的剩余命中惩罚减轻20%；狙击型改为近距边界缩短15%。",
+      "cost": "占2格与主镜位置；两种收益按枪型择一，不同时给。",
+      "fx": {},
+      "kind": "optic"
+    },
+    {
+      "id": "scope",
+      "name": "通用中距镜",
+      "group": "瞄具",
+      "slot": "top",
+      "length": 3,
+      "compat": [
+        "p10mm",
+        "assr",
+        "saf9",
+        "sniper",
+        "minigun",
+        "lasr",
+        "plar",
+        "rechr",
+        "lmg",
+        "quick",
+        "rail",
+        "plamg",
+        "gatp",
+        "carbine",
+        "autor",
+        "pshot",
+        "smg10",
+        "lasp",
+        "plap",
+        "rech"
+      ],
+      "benefit": "有效距离精度×1.15。",
+      "cost": "追枪速度×0.90；瞬时转向枪只承担长度与主镜机会。",
+      "fx": {
+        "precision": 1.15,
+        "turn": 0.9
+      },
+      "kind": "optic"
+    },
+    {
+      "id": "scope_precision",
+      "name": "稳射精密镜",
+      "group": "瞄具",
+      "slot": "top",
+      "length": 4,
+      "compat": [
+        "assr",
+        "saf9",
+        "sniper",
+        "minigun",
+        "lasr",
+        "plar",
+        "lmg",
+        "quick",
+        "rail",
+        "plamg",
+        "gatp",
+        "carbine",
+        "autor",
+        "pshot",
+        "smg10"
+      ],
+      "benefit": "站定12步后，有效距离精度×1.25。",
+      "cost": "追枪×0.85；移动取消精密增益，命中已满时无额外收益。",
+      "fx": {
+        "turn": 0.85
+      },
+      "kind": "optic",
+      "settleSteps": 12
+    },
+    {
+      "id": "magnifier",
+      "name": "翻转增倍模块",
+      "group": "瞄具",
+      "slot": "top",
+      "length": 2,
+      "compat": [
+        "assr",
+        "saf9",
+        "sniper",
+        "minigun",
+        "lasr",
+        "plar",
+        "lmg",
+        "quick",
+        "rail",
+        "plamg",
+        "gatp",
+        "carbine",
+        "autor",
+        "pshot",
+        "smg10"
+      ],
+      "benefit": "与快瞄红点串联，切到中距模式：精度×1.15。",
+      "cost": "必须已有红点；占2格，切换8步。中距模式追枪×0.90，不享快瞄减罚。",
+      "fx": {},
+      "requires": "dot",
+      "switchSteps": 8
+    },
+    {
+      "id": "suppressor",
+      "name": "短型消音器",
+      "group": "枪口",
+      "slot": "muzzle",
+      "length": 0,
+      "compat": [
+        "p10mm",
+        "assr",
+        "saf9",
+        "sniper",
+        "minigun",
+        "lmg",
+        "carbine",
+        "autor",
+        "pshot",
+        "smg10"
+      ],
+      "benefit": "枪声传播参数×0.55。",
+      "cost": "每弹基础伤害×0.94；不额外降低开火显形。",
+      "fx": {
+        "noise": 0.55,
+        "damage": 0.94
+      }
+    },
+    {
+      "id": "flash",
+      "name": "低暴露枪口件",
+      "group": "枪口",
+      "slot": "muzzle",
+      "length": 0,
+      "compat": [
+        "p10mm",
+        "assr",
+        "saf9",
+        "sniper",
+        "minigun",
+        "lasr",
+        "plar",
+        "rechr",
+        "lmg",
+        "quick",
+        "rail",
+        "plamg",
+        "gatp",
+        "carbine",
+        "autor",
+        "pshot",
+        "smg10",
+        "lasp",
+        "plap",
+        "rech"
+      ],
+      "benefit": "开火显形参数×0.50。",
+      "cost": "枪声保持；占用枪口，不能同时装消音、控枪或喉缩。",
+      "fx": {
+        "shine": 0.5
+      }
+    },
+    {
+      "id": "brake",
+      "name": "控枪补偿器",
+      "group": "枪口",
+      "slot": "muzzle",
+      "length": 0,
+      "compat": [
+        "p10mm",
+        "assr",
+        "saf9",
+        "sniper",
+        "lasr",
+        "plar",
+        "rechr",
+        "lmg",
+        "quick",
+        "rail",
+        "plamg",
+        "gatp",
+        "carbine",
+        "autor",
+        "pshot",
+        "smg10",
+        "lasp",
+        "plap",
+        "rech"
+      ],
+      "benefit": "实际枪口上跳×0.80。",
+      "cost": "追枪速度降低10%；原本无上跳的枪不适配。",
+      "fx": {
+        "recoil": 0.8,
+        "turn": 0.9
+      },
+      "bridge": "float-recoil"
+    },
+    {
+      "id": "light_stock",
+      "name": "轻便枪托",
+      "group": "枪托",
+      "slot": "stock",
+      "length": 0,
+      "compat": [
+        "assr",
+        "saf9",
+        "sniper",
+        "lasr",
+        "plar",
+        "lmg",
+        "quick",
+        "rail",
+        "plamg",
+        "carbine",
+        "autor",
+        "pshot"
+      ],
+      "benefit": "追枪速度×1.20。",
+      "cost": "随机偏角宽度×1.10。",
+      "fx": {
+        "turn": 1.2,
+        "jitter": 1.1
+      }
+    },
+    {
+      "id": "grip",
+      "name": "稳固握持组件",
+      "group": "握持",
+      "slot": "under",
+      "length": 2,
+      "compat": [
+        "assr",
+        "saf9",
+        "sniper",
+        "minigun",
+        "lasr",
+        "plar",
+        "lmg",
+        "quick",
+        "rail",
+        "plamg",
+        "gatp",
+        "carbine",
+        "autor",
+        "pshot",
+        "smg10"
+      ],
+      "benefit": "整次发射的随机偏角宽度×0.85。",
+      "cost": "追枪×0.90；不收紧霰弹固定扇形。",
+      "fx": {
+        "jitter": 0.85,
+        "turn": 0.9
+      }
+    },
+    {
+      "id": "bipod",
+      "name": "折叠两脚架",
+      "group": "支撑",
+      "slot": "bipod",
+      "length": 0,
+      "compat": [
+        "assr",
+        "sniper",
+        "minigun",
+        "lasr",
+        "plar",
+        "lmg",
+        "quick",
+        "rail",
+        "plamg",
+        "gatp",
+        "carbine",
+        "autor"
+      ],
+      "benefit": "架设后精度×1.20、随机偏角宽度×0.85。",
+      "cost": "伏低自动展开4步；移动与转向收起阈值可在模组设置调整。使用独立接口。",
+      "fx": {},
+      "deploySteps": 4
+    },
+    {
+      "id": "quick_mag",
+      "name": "快装弹匣／电芯",
+      "group": "供弹",
+      "slot": "mag",
+      "length": 0,
+      "compat": [
+        "p10mm",
+        "assr",
+        "saf9",
+        "sniper",
+        "minigun",
+        "lasr",
+        "plar",
+        "lmg",
+        "quick",
+        "rail",
+        "plamg",
+        "gatp",
+        "carbine",
+        "autor",
+        "pshot",
+        "smg10",
+        "lasp",
+        "plap"
+      ],
+      "benefit": "逐枪缩短装填约20%。",
+      "cost": "逐枪减小容量，按整发/整能量定档；与其他供弹件互斥。",
+      "fx": {},
+      "mag": {
+        "p10mm": [
+          10,
+          28
+        ],
+        "assr": [
+          20,
+          32
+        ],
+        "saf9": [
+          6,
+          36
+        ],
+        "sniper": [
+          4,
+          48
+        ],
+        "minigun": [
+          400,
+          48
+        ],
+        "lasr": [
+          48,
+          32
+        ],
+        "plar": [
+          80,
+          48
+        ],
+        "lmg": [
+          72,
+          48
+        ],
+        "quick": [
+          128,
+          36
+        ],
+        "rail": [
+          64,
+          60
+        ],
+        "plamg": [
+          145,
+          36
+        ],
+        "gatp": [
+          800,
+          48
+        ],
+        "carbine": [
+          26,
+          32
+        ],
+        "autor": [
+          16,
+          36
+        ],
+        "pshot": [
+          10,
+          48
+        ],
+        "smg10": [
+          20,
+          28
+        ],
+        "lasp": [
+          12,
+          36
+        ],
+        "plap": [
+          32,
+          36
+        ]
+      }
+    },
+    {
+      "id": "large_mag",
+      "name": "扩容弹匣／电芯",
+      "group": "供弹",
+      "slot": "mag",
+      "length": 0,
+      "compat": [
+        "p10mm",
+        "assr",
+        "saf9",
+        "sniper",
+        "minigun",
+        "lasr",
+        "plar",
+        "lmg",
+        "quick",
+        "rail",
+        "plamg",
+        "gatp",
+        "carbine",
+        "autor",
+        "pshot",
+        "smg10",
+        "lasp",
+        "plap"
+      ],
+      "benefit": "满仓可用发射次数增加20%～50%。",
+      "cost": "装填时间增加20%；与快装、强射、节能供弹互斥。",
+      "fx": {},
+      "mag": {
+        "p10mm": [
+          16,
+          42
+        ],
+        "assr": [
+          36,
+          48
+        ],
+        "saf9": [
+          12,
+          54
+        ],
+        "sniper": [
+          6,
+          72
+        ],
+        "minigun": [
+          650,
+          72
+        ],
+        "lasr": [
+          80,
+          48
+        ],
+        "plar": [
+          130,
+          72
+        ],
+        "lmg": [
+          120,
+          72
+        ],
+        "quick": [
+          208,
+          54
+        ],
+        "rail": [
+          104,
+          90
+        ],
+        "plamg": [
+          235,
+          54
+        ],
+        "gatp": [
+          1250,
+          72
+        ],
+        "carbine": [
+          44,
+          48
+        ],
+        "autor": [
+          26,
+          54
+        ],
+        "pshot": [
+          16,
+          72
+        ],
+        "smg10": [
+          32,
+          42
+        ],
+        "lasp": [
+          20,
+          54
+        ],
+        "plap": [
+          52,
+          54
+        ]
+      }
+    },
+    {
+      "id": "choke_tight",
+      "name": "聚束喉缩",
+      "group": "枪口",
+      "slot": "muzzle",
+      "length": 0,
+      "compat": [
+        "saf9",
+        "pshot"
+      ],
+      "benefit": "deviation从5°降到4°，扇形总角10°→8°。",
+      "cost": "减少近处覆盖宽度；弹丸数、总基础伤害不变。",
+      "fx": {
+        "deviation": 0.8
+      }
+    },
+    {
+      "id": "choke_wide",
+      "name": "扩散喉缩",
+      "group": "枪口",
+      "slot": "muzzle",
+      "length": 0,
+      "compat": [
+        "saf9",
+        "pshot"
+      ],
+      "benefit": "deviation从5°升到6°，扇形总角10°→12°。",
+      "cost": "单体中远距接触弹数可能下降；标准喉缩为原装免费状态。",
+      "fx": {
+        "deviation": 1.2
+      }
+    },
+    {
+      "id": "bayonet_short",
+      "name": "短刃刺刀",
+      "group": "刺刀",
+      "slot": "under",
+      "length": 2,
+      "compat": [
+        "p10mm",
+        "smg10",
+        "lasp",
+        "plap",
+        "rech"
+      ],
+      "benefit": "挥击16/8步，穿甲4；碰刃8，穿甲2；近战加成，主动可暴击。",
+      "cost": "装填×1.10；命中阻停/击退，可在设置调整；碰刃/切割共用24步冷却，单次动作不重复伤害。",
+      "fx": {
+        "reload": 1.1
+      },
+      "melee": {
+        "damage": 16,
+        "period": 8,
+        "passive": 8,
+        "pier": 4,
+        "passivePier": 2,
+        "skillTier": 0,
+        "slow": 0.2,
+        "slowSteps": 8,
+        "contactCooldown": 24,
+        "bladeLength": 30,
+        "arc": 70,
+        "phases": [
+          2,
+          2,
+          4
+        ],
+        "reference": "knife",
+        "referenceDamage": 9,
+        "referencePeriod": 8,
+        "motion": "swing"
+      }
+    },
+    {
+      "id": "bayonet_long",
+      "name": "长刃刺刀",
+      "group": "刺刀",
+      "slot": "under",
+      "length": 3,
+      "compat": [
+        "assr",
+        "saf9",
+        "sniper",
+        "lasr",
+        "plar",
+        "rechr",
+        "lmg",
+        "quick",
+        "rail",
+        "plamg",
+        "carbine",
+        "autor",
+        "pshot"
+      ],
+      "benefit": "戳刺36/18步，穿甲8；碰刃14，穿甲4；近战加成，主动可暴击。",
+      "cost": "装填/回充×1.10、追枪×0.90；命中阻停/强击退，可在设置调整；碰刃/切割共用30步冷却。",
+      "fx": {
+        "recovery": 1.1,
+        "turn": 0.9
+      },
+      "melee": {
+        "damage": 36,
+        "period": 18,
+        "passive": 14,
+        "pier": 8,
+        "passivePier": 4,
+        "skillTier": 2,
+        "slow": 0.2,
+        "slowSteps": 10,
+        "contactCooldown": 30,
+        "bladeLength": 40,
+        "arc": 16,
+        "phases": [
+          4,
+          3,
+          11
+        ],
+        "reference": "spear",
+        "referenceDamage": 32,
+        "referencePeriod": 20,
+        "motion": "thrust"
+      }
+    },
+    {
+      "id": "starter",
+      "name": "快速启动控制器",
+      "group": "专用",
+      "slot": "side",
+      "length": 2,
+      "compat": [
+        "minigun"
+      ],
+      "benefit": "准备参数32→24，降低25%。",
+      "cost": "供弹容量再×0.90（向下取整）；不会改变间隔1的持续射速。",
+      "fx": {
+        "prep": 0.75,
+        "capacity": 0.9
+      }
+    },
+    {
+      "id": "recharge_cell",
+      "name": "快速回充电芯",
+      "group": "供弹",
+      "slot": "mag",
+      "length": 0,
+      "compat": [
+        "rechr",
+        "rech"
+      ],
+      "benefit": "回充间隔30→24，可推进回充的步内速度+25%。",
+      "cost": "容量20→16；仍须等攻击计时归零才能推进回充。",
+      "fx": {},
+      "mag": {
+        "rechr": [
+          16,
+          600
+        ],
+        "rech": [
+          16,
+          600
+        ]
+      },
+      "overrides": {
+        "rechr": {
+          "recharg": 24
+        },
+        "rech": {
+          "recharg": 24
+        }
+      }
+    },
+    {
+      "id": "plasma_accel",
+      "name": "等离子加速环",
+      "group": "枪口",
+      "slot": "muzzle",
+      "length": 0,
+      "compat": [
+        "plar",
+        "quick",
+        "plamg",
+        "gatp",
+        "plap"
+      ],
+      "benefit": "当前等离子初速×1.25；例如70→87.5、80→100。独特枪按自身初速计算。",
+      "cost": "当前单弹基础伤害×0.95；不改变寿命，不适配激光或磁轨弹。",
+      "fx": {
+        "speed": 1.25,
+        "damage": 0.95
+      }
+    },
+    {
+      "id": "power_cell",
+      "name": "强射电芯",
+      "group": "供弹",
+      "slot": "mag",
+      "length": 0,
+      "compat": [
+        "lasr",
+        "plar",
+        "quick",
+        "rail",
+        "plamg",
+        "gatp",
+        "plap"
+      ],
+      "benefit": "单弹基础伤害×1.08。",
+      "cost": "逐枪增加耗能：4→5、5→6、8→10、10→12；独特枪保留基础差异，按比例增加并向上取整。",
+      "fx": {
+        "damage": 1.08
+      },
+      "overrides": {
+        "lasr": {
+          "rashod": 5
+        },
+        "plar": {
+          "rashod": 12
+        },
+        "quick": {
+          "rashod": 5
+        },
+        "rail": {
+          "rashod": 10
+        },
+        "plamg": {
+          "rashod": 6
+        },
+        "gatp": {
+          "rashod": 6
+        },
+        "plap": {
+          "rashod": 5
+        }
+      }
+    },
+    {
+      "id": "economy_cell",
+      "name": "节能电芯",
+      "group": "供弹",
+      "slot": "mag",
+      "length": 0,
+      "compat": [
+        "plar",
+        "rail"
+      ],
+      "benefit": "普通等离子步枪能耗10→9；普通磁轨枪8→7。独特枪按比例折算，向下取整。",
+      "cost": "每弹基础伤害×0.95；不适配低耗能枪，避免一次少耗1点带来过大收益。",
+      "fx": {
+        "damage": 0.95
+      },
+      "overrides": {
+        "plar": {
+          "rashod": 9
+        },
+        "rail": {
+          "rashod": 7
+        }
+      }
+    },
+    {
+      "id": "grenade",
+      "name": "下挂榴弹发射器",
+      "group": "下挂",
+      "slot": "under",
+      "length": 4,
+      "compat": [
+        "assr",
+        "saf9",
+        "sniper",
+        "minigun",
+        "lasr",
+        "plar",
+        "lmg",
+        "quick",
+        "rail",
+        "plamg",
+        "gatp",
+        "carbine",
+        "autor",
+        "pshot"
+      ],
+      "benefit": "独立40mm榴弹：爆炸90、半径120、初速28、重力0.85；投掷键直射或HUD切左键下挂模式。",
+      "cost": "下轨4格；装填60步；追枪×0.85，主枪装填×1.15。",
+      "fx": {
+        "reload": 1.15,
+        "turn": 0.85
+      }
+    }
+  ],
+  "source": {
+    "allData": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\game-reference\\decompiled\\1.02\\src102\\scripts\\fe\\AllData.as",
+    "allDataSha256": "975b0d0e68059a288549805c960c4402b34cc88740a8309007f75b6f0e2763e2",
+    "auditedCsv": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\讨论档案\\2026-10-14-attachment-balance\\vanilla-guns.csv",
+    "csvSha256": "cbe51194df2f9e6f6a6bb0012ceab259bd293f45c95e54975900430f3f71cb63"
+  },
+  "boundaries": [
+    "原版枪数值来自源码；轨长、接口兼容、配件值是本批设计。",
+    "标准对照：满耐久、熟练等级达标、技能系数1、普通弹、无额外专长。",
+    "接触后概率不含几何漏弹、墙体、敌人子类闪避。",
+    "两脚架/光学/刺刀已接入游戏；首批自由装配用于验证，长期平衡仍需试玩。"
+  ]
+}

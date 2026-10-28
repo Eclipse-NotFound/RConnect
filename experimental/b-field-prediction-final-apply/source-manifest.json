@@ -1,0 +1,12 @@
+{
+  "baseline": "mods/RConnect/build/ab/b190-visual-motion-clientenv-source/src/authority/ClientReplica.as",
+  "baselineSHA256": "eef7a6b86198e53ff0377fe2857e8f0caee071e3bcdcbdf125598dfdea0432de",
+  "compiled": false,
+  "gameTested": false,
+  "realCoverageHits": null,
+  "files": {
+    "src/authority/ClientReplica.as": "6048472fa3cebebb3aa25285ecab305833bd5d9e519315886707456ce73e5b51",
+    "src/authority/PredictionPoseCover.as": "d7935e0042e1c7a6ee5e00e401d62c2ade0a7314dea71a130f482726fc1bd7cc",
+    "tests/BPredictionCoverChecks.as": "d63db9617624225eaf2dabd6d8ffcad65d98addc44f3760fd6b5ca4f7dd64c5f"
+  }
+}

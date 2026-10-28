@@ -4,7 +4,12 @@ package {
   private var test:Object;
   private var m:Object,r:Object,d:ApplicationDomain,c:Object,a:Object,side:String,done:Boolean=false;
   public function BFieldCases(m:Object,r:Object,d:ApplicationDomain,c:Object,role:String,a:Object){
-   if(c.scenario=="loading")test=new BLoadingCases(m,r,d,c,role,a);
+   BAddonInputChecks.run(m,d,a.check);
+   if(c.scenario=="injury")test=new BInjuryAddonCases(m,r,d,c,role,a);
+   else if(c.scenario=="attachments")test=new BFAAddonCases(m,r,d,c,role,a);
+   else if(c.scenario=="addiction")test=new BAddictionLiveCases(m,r,d,c,role,a);
+   else if(c.scenario=="horseshoe")test=new BHorseshoeCases(m,r,d,c,role,a);
+   else if(c.scenario=="loading")test=new BLoadingCases(m,r,d,c,role,a);
    else if(c.scenario=="visualfield")test=new BVisualFieldCases(m,r,d,c,role,a);
    else if(c.scenario=="ui")test=new BUiCases(m,r,d,c,role,a);
    else if(c.scenario=="controls")test=new BGrabCases(m,r,d,c,role,a);

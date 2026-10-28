@@ -1,0 +1,112 @@
+{
+  "kind": "pi-native021-readback-seams",
+  "passed": true,
+  "class_count": 10,
+  "rows": [
+    {
+      "class": "fe/inter/PipPageMed.as",
+      "base_sha256": "bfa05d08ce93999de3d05deee0a3033d3f2b12d26af489baac1f1243fb77d1b4",
+      "readback_sha256": "33772c5628638a975bd69bab7b393d5916b21cacdba6cb0a146adab9e4806e4a",
+      "B_symbols": [
+        "rconnectMenu"
+      ]
+    },
+    {
+      "class": "fe/unit/Invent.as",
+      "base_sha256": "381ad5e868c165eaca3ea84a2a2d5344277950103f2fb806e28ba49c2eed7008",
+      "readback_sha256": "cadd90b29e8562c2b50609df446b89bf335c5c42601719031a516986a325077c",
+      "B_symbols": [
+        "rconnectIntent",
+        "rconnectXmlFind"
+      ]
+    },
+    {
+      "class": "fe/unit/Pers.as",
+      "base_sha256": "3dda5cf3cdad3f560ecad3a3795ac95c0beee87b48b6d1760cb9bbf50af30c54",
+      "readback_sha256": "8c4912129e16567fc6d3b496f5b0761f62f798cd7b20eeb9ed0580e31bd5879c",
+      "B_symbols": [
+        "rconnectIntent",
+        "rconnectXmlFind"
+      ]
+    },
+    {
+      "class": "fe/unit/Spell.as",
+      "base_sha256": "5d7178b11f8d79c245ab79dfe5f128a64db7b998afb8f95fd0e2e97acc4b39c7",
+      "readback_sha256": "8b4514e31ebb9912971de92c377022bdb0e7e4cf0d5337fb58d29dc4a40b918d",
+      "B_symbols": []
+    },
+    {
+      "class": "fe/unit/Unit.as",
+      "base_sha256": "99a256461c35d5d276e4d097d8b68aaf8c878c0d0f586a305e425b02f47344cf",
+      "readback_sha256": "2dbf9b2ccb66d863fd5874b86fce3a2430a28c657f86e12614f330eee1e4fdf7",
+      "B_symbols": [
+        "rconnectAllowed",
+        "rconnectDeferDamage",
+        "rconnectFindTarget",
+        "rconnectFinding",
+        "rconnectHitPolicy",
+        "rconnectSecurityB",
+        "rconnectTeleported",
+        "rconnectXmlFind"
+      ]
+    },
+    {
+      "class": "fe/unit/UnitPlayer.as",
+      "base_sha256": "1a4bbf676a3e411a8398123c8f084b5b49ddc057af669b6f7dba81c6f5dea815",
+      "readback_sha256": "9cb165a052ebd142d63ebdb6c0c115c6f4cc51d5fe051a8b590ae00671192109",
+      "B_symbols": [
+        "rconnectCallPet",
+        "rconnectDamage",
+        "rconnectDeath",
+        "rconnectDeferDamage",
+        "rconnectIntent",
+        "rconnectPlayerStep"
+      ]
+    },
+    {
+      "class": "fe/weapon/Bullet.as",
+      "base_sha256": "c38a1163433817603cd75cf7d8d81c46a0a5ed89fb8b00ad6305a637f97ad367",
+      "readback_sha256": "6302a02e73ecac58551c33f7841908eb143b6419ec24de3ae9eb66082a905af2",
+      "B_symbols": [
+        "rconnectAllowed",
+        "rconnectHitPolicy"
+      ]
+    },
+    {
+      "class": "fe/weapon/Weapon.as",
+      "base_sha256": "959e368595e178b41935475c5c488406c8f18e77f7214048ce281593bcdb3270",
+      "readback_sha256": "588b69f8ca653d62cbd2edeb60dcc4779337283a4edc934a8a0f44d9888d2704",
+      "B_symbols": [
+        "rconnectIntent",
+        "rconnectStopChannel",
+        "rconnectXmlFind"
+      ]
+    },
+    {
+      "class": "fe/weapon/WMagic.as",
+      "base_sha256": "00f92be610d7ed7031ec88b657fe3d09f32b93e3886fe7f6617019b5fcc6719a",
+      "readback_sha256": "695bbbcc3c9966bf5415b2a4342f0df6eea13f5476dd1ef4a8ed4f51bddfad0f",
+      "B_symbols": []
+    },
+    {
+      "class": "fe/World.as",
+      "base_sha256": "4e4e4bd19952bf4f0e2596d77fe0e3e4ea3e59000c7f97ff876c5ba28616585e",
+      "readback_sha256": "2d043465cc77fc6ace9f406f98ceeb95bd3c86795b69300d383a695dc0d19d04",
+      "B_symbols": [
+        "rconnectChangeWorld",
+        "rconnectSave"
+      ]
+    }
+  ],
+  "checks": [
+    "all original rconnect symbol references retained",
+    "typed optional new helper signatures",
+    "B E4X helper calls retained",
+    "Pers save/load state",
+    "Bullet public slot",
+    "real damage and deferred B damage ordering",
+    "both native PI clock calls yield to B"
+  ],
+  "compiled_candidate_sha256": "3b1b77d3f6de08e5b31bb03883da6900b3656e497a4749305133019d0377ed83",
+  "runtime_tested": false
+}

@@ -1,0 +1,33 @@
+{
+  "baseline": "mods/RConnect/build/ab/b190-field8-loadfix1-build/src/authority/PoseTween.as",
+  "baseline_sha256": "37d5e4276a78dacf80a389acd7941cbe04a466b978faf1fc3436fe1767abc59d",
+  "changes": [
+    "Only private keyed array indexes cached in a weak Dictionary, scoped by array identity and key field.",
+    "FrameDelta.decode caches the previous write-target path prefix only within each packet, preserving ordered writes and per-path copy-on-write."
+  ],
+  "not_run": [
+    "compile",
+    "AIR",
+    "performance"
+  ],
+  "reference_adjustments": [
+    "Class/package renamed for an external driver. NativeFields.MOTION and HealthBarPose.tween resolved dynamically from the unchanged loaded implementation. Original uncached keyed loop retained."
+  ],
+  "files": {
+    "tests/BCadenceChecks.as": "3fbce95270247b68d8891a9b6788f9ad21d211fd69e6b0879f7c8b3e657bbbd4",
+    "tests/BCadenceReferenceChecks.as": "246acbf1a9b937c73e2ee42fe4bae1d192867201590caad0620e25a4c7a304d5",
+    "tests/BDeltaPrefixChecks.as": "7f88df8b45a5a598a73d6f551d049dc15a5e263164a66dad7c79ff0b648534a8",
+    "tests/BDeltaReferenceChecks.as": "5a780437938e077331f37b6716d7eecc99586c1617f612758e4b4337f501f9b5",
+    "src/authority/FrameDelta.as": "7078bfdf2125e2d88acd3cef5cc6e12e5d4a8bd4114440b8fbb667d279f2c3ce",
+    "src/authority/PoseTween.as": "30a7176334830999fab67216e7f2bbae281f9cc6cbb3928f23240066ae5d3dbb"
+  },
+  "static_checks": {
+    "reference_reverses_to_exact_baseline_text": true,
+    "visualpose_modified": false,
+    "as3_checks_pending": 15,
+    "delta_reference_recovers_exact_baseline_text": true,
+    "delta_as3_checks_pending": 25
+  },
+  "delta_baseline": "mods/RConnect/build/ab/b190-field8-loadfix1-build/src/authority/FrameDelta.as",
+  "delta_baseline_sha256": "29b3046258c96e43e171573204b49c85b6216743a7bca5193243a805c86058a3"
+}

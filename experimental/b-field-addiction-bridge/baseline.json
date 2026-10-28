@@ -1,0 +1,16 @@
+{
+  "baseline": "mods/AddictionSystem/src",
+  "version": "0.1.0",
+  "sources": {
+    "AddictionDoc.as": "f29386e53bb5a16226734deb441cd4992e77a6af7a16baea453932b10b296aad",
+    "AddictionSystemMod.as": "9724dfd71e5d2e114d96fb113280ebb14b7d8759b7a3f82b44337b8f7ba9cd81",
+    "addiction/Catalog.as": "1cf2a092540d08d4b3c6ac257e8cd679c0c9f7941340c8efd372aa5063d5fe05",
+    "addiction/Engine.as": "a25677c55cb443cfd96a84f5812f2a6c686b2f0660cc0b261f5ac1aa49eec2c3",
+    "addiction/Panel.as": "6c808282f41be7f06e778d955b8a2fe2b2aac1f8866c438adc8515f6c13468b2",
+    "addiction/Runtime.as": "45cd2c6d58a4fa5f28f478c74133dac629d17ec26709e16ac41cd23f99162504",
+    "fe/inter/AddictionUIBridge.as": "d5fc9152feec263c58ae3f9292734297c676f793316af52fd149f7c92fc9be36",
+    "fe/unit/AddictionInvent.as": "fd578e9a8b1c918f00a1b8a4f0cfa3b2ddc8a00c8dbb7cca9725e8e8de1e696f",
+    "fe/unit/AddictionPers.as": "19fbd2ea6db1e6d3ad1379edb57c5b0dd74411b60d4e348490d599cad2be7445"
+  },
+  "scope": "Independent RConnect B copy only; not built or deployed"
+}

@@ -1,0 +1,194 @@
+{
+  "schema": 1,
+  "kind": "b-environment-source-lock",
+  "native_baseline_sha256": "eced04ad8dae6b74444ee6e5f5ec5ddf2e83528a9eecfef66f58985cb0c83063",
+  "disabled": [
+    "ContinuousSceneMod",
+    "LightAndDarknessMod",
+    "RealisticVisionMod"
+  ],
+  "mods": [
+    {
+      "entry": "ModLoaderMod",
+      "directory": "ModLoader",
+      "path": "mods/ModLoader/release/ModLoaderMod.swf",
+      "sha256": "2050e023205e87fdfdf7fba4b54b9bad7769868e51767d0bfbe1742cdc7542e2",
+      "bytes": 28418,
+      "enabled": true,
+      "old_sha256": "2d01241a89fb25d608ac5138254e14dc3e5fb46e7120319a0d5922e4cf9816fd",
+      "bridge_symbols": {},
+      "independent_required": false
+    },
+    {
+      "entry": "SandevistanMod",
+      "directory": "Sandevistan",
+      "path": "mods/Sandevistan/release/SandevistanMod.swf",
+      "sha256": "cec6a3061cb90380579d8a95aa1254e0328bd0dae6e239fc4ca5205d6cccf942",
+      "bytes": 56972,
+      "enabled": true,
+      "old_sha256": "fbe6ec73dbe75f25c5f312a21bfb95e84e92b4969e16408e017f019becbccec1",
+      "bridge_symbols": {
+        "SandyAuthorityAPI": false,
+        "attach": true
+      },
+      "independent_required": true
+    },
+    {
+      "entry": "RConnectMod",
+      "directory": "Rconnect",
+      "path": "mods/Rconnect/release/RConnectMod.swf",
+      "sha256": "eb6d11e6f20068f76d44d180bc5f579c14ba359caa46e4706d0506b0d4abc127",
+      "bytes": 201042,
+      "enabled": true,
+      "old_sha256": "92ea5ec83aa1ab5a412581ba80ebbc49b16fb93a01c180df239b88a4f59b1af7",
+      "bridge_symbols": {},
+      "independent_required": false
+    },
+    {
+      "entry": "RealisticVisionMod",
+      "directory": "RealisticVision",
+      "path": "mods/RealisticVision/release/RealisticVisionMod.swf",
+      "sha256": "638e2d408e2cf46683c41114f75773829a1b4417d74bffe9d08855a4fe343710",
+      "bytes": 46110,
+      "enabled": false,
+      "old_sha256": "0615f177dffeac066130c5392bfef1da2aab7eda23a8f5c1759d8b06a2057ed1",
+      "bridge_symbols": {},
+      "independent_required": false
+    },
+    {
+      "entry": "MoreSkillsWeaponsMod",
+      "directory": "MoreSkills&Weapons",
+      "path": "mods/MoreSkills&Weapons/release/MoreSkillsWeaponsMod.swf",
+      "sha256": "526a6fd09297fb4f502236076b4252bf97bb50d2f77000b13763cf118546ab71",
+      "bytes": 95951,
+      "enabled": true,
+      "old_sha256": "285ac12d36df00b71a860fde6fe58c6f6bb433d52ab0340f3e64acf730461c6b",
+      "bridge_symbols": {
+        "MSWAuthorityAPI": true,
+        "beforePlayer": true,
+        "afterRoom": true,
+        "present": true
+      },
+      "independent_required": false
+    },
+    {
+      "entry": "TDFCMod",
+      "directory": "TDFC",
+      "path": "mods/TDFC/release/TDFCMod.swf",
+      "sha256": "7acd45193109267dbbf875240528048ad6f1d09fa3b8b36baa6f98ebb5fddce5",
+      "bytes": 39237,
+      "enabled": true,
+      "old_sha256": "79201b172b4ac7e19b6c0bdc1425e6ef2c61f0e471e2549341bbf106a349dc09",
+      "bridge_symbols": {
+        "TDFCAuthorityCarrier": false,
+        "attachAuthority": false
+      },
+      "independent_required": true
+    },
+    {
+      "entry": "RandomRoomsMod",
+      "directory": "RandomRooms",
+      "path": "mods/RandomRooms/release/RandomRoomsMod.swf",
+      "sha256": "3f8789c62f9b2ef8efc082597f672a2fea230a0d7fce3be90c04efd9582e5145",
+      "bytes": 125194,
+      "enabled": true,
+      "old_sha256": "f21d7c04ff1ccf59779f0b8d9f52d982585145447c47727c660e9ecc7d62c0df",
+      "bridge_symbols": {},
+      "independent_required": false
+    },
+    {
+      "entry": "LootEditorMod",
+      "directory": "RModifier",
+      "path": "mods/RModifier/release/LootEditorMod.swf",
+      "sha256": "4f1d6cf19979f4ea4960f8ccd8377c1d3cac490bed9949866885357d073c8625",
+      "bytes": 37127,
+      "enabled": true,
+      "old_sha256": "4f1d6cf19979f4ea4960f8ccd8377c1d3cac490bed9949866885357d073c8625",
+      "bridge_symbols": {},
+      "independent_required": false
+    },
+    {
+      "entry": "PermanentInjuryMod",
+      "directory": "PermanentInjury",
+      "path": "mods/PermanentInjury/release/PermanentInjuryMod.swf",
+      "sha256": "d4f6a096ee06f8869fffb316801c6325df26f54260a34666ac17ec24ad8bd083",
+      "bytes": 12046,
+      "enabled": true,
+      "old_sha256": null,
+      "bridge_symbols": {
+        "PermanentInjuryCarrier": true,
+        "attachAuthority": false,
+        "presentAuthority": false
+      },
+      "independent_required": true
+    },
+    {
+      "entry": "AddictionSystemMod",
+      "directory": "AddictionSystem",
+      "path": "mods/AddictionSystem/release/AddictionSystemMod.swf",
+      "sha256": "5a4d9a405777867826061bb50178df931591987ea0737580bd0aa8a89458b9b3",
+      "bytes": 19299,
+      "enabled": true,
+      "old_sha256": null,
+      "bridge_symbols": {
+        "AddictionAuthorityAPI": false,
+        "attach": true
+      },
+      "independent_required": true
+    },
+    {
+      "entry": "ContinuousSceneMod",
+      "directory": "ContinuousScene",
+      "path": "mods/ContinuousScene/release/ContinuousSceneMod.swf",
+      "sha256": "380dec3068938b3e3ba1f2c8db25a6b3d5fc229e8526e8fc03ca23795961e111",
+      "bytes": 16398,
+      "enabled": false,
+      "old_sha256": null,
+      "bridge_symbols": {},
+      "independent_required": false
+    },
+    {
+      "entry": "FirearmAttachmentsMod",
+      "directory": "FirearmAttachments",
+      "path": "mods/FirearmAttachments/release/FirearmAttachmentsMod.swf",
+      "sha256": "b3304596eb7e08796f9de2cf02e1e7cccff10e188d26fedfa960aa6370d2a4b9",
+      "bytes": 39514,
+      "enabled": true,
+      "old_sha256": null,
+      "bridge_symbols": {
+        "FAAuthorityAPI": false,
+        "attach": true
+      },
+      "independent_required": true
+    },
+    {
+      "entry": "LightAndDarknessMod",
+      "directory": "LightAndDarkness",
+      "path": "mods/LightAndDarkness/release/LightAndDarknessMod.swf",
+      "sha256": "8adba6914df5aada4df12a646b6c22df4b95b9630a55dd05ca7f713621c7e3ef",
+      "bytes": 42209,
+      "enabled": false,
+      "old_sha256": null,
+      "bridge_symbols": {},
+      "independent_required": false
+    },
+    {
+      "entry": "WallBlendMod",
+      "directory": "WallBlend",
+      "path": "mods/WallBlend/release/WallBlendMod.swf",
+      "sha256": "14112da06214bca51c6875d2527e73246dcb4c985caadda719eb4f77f1c0920d",
+      "bytes": 32526,
+      "enabled": true,
+      "old_sha256": "1bb9b65af80a946f6758824a72eed941173d0ae40b8c09c084ecf12b92458820",
+      "bridge_symbols": {},
+      "independent_required": false
+    }
+  ],
+  "auxiliary": {
+    "mods/ModLoader/RemainsModLauncher.exe": "c05b4c231a97ebd740dce64d642f994edbffbc14b74723ab40a1f27fa45f9590",
+    "mods/ModLoader/supported-mods.txt": "7fb288494055cb49f20aaef494eadc0405c0b1d55c3fa5ba798cadca890abcfe",
+    "mods/RandomRooms/release/RandomRoomsEditor.swf": "fb1537f54b2c32af02aca771cb09366441fb74ca01ee3a6099e35c4d3a35dfd8",
+    "mods/PermanentInjury/default-config.json": "f506d9ab772ff81acab7b300da4f8dddafd19dfa44eb08fa9db0c2e815dc64d0"
+  },
+  "preferences": "fresh test AIR identity; compiled defaults; never copy LocalStore or player preferences"
+}

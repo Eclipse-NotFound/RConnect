@@ -192,14 +192,18 @@ def run(out, scenario, candidate, result, preparation, native=None, terrain_seed
             reservation.close()
             for role, entry in receipt['roles'].items():
                 store=Path(entry['storage'])
-                for name in ('BStartupDriver.log','RConnect-B.log','tdfc.log','sandy_modlog.txt','RVision.log'):
-                    if (store/name).exists():shutil.copy2(store/name,result/(role+'.'+name))
+                # This is a fresh owned test identity. Keep every module's log
+                # so failures in newly enabled dependencies remain diagnosable.
+                for log in store.iterdir() if store.is_dir() else []:
+                    if log.is_file() and (log.suffix.lower()=='.log' or log.name.endswith('modlog.txt')):
+                        shutil.copy2(log,result/(role+'.'+log.name))
                 for picture in store.glob('*.png'):shutil.copy2(picture,result/(role+'.'+picture.name))
                 data=events(store/'BStartupDriver.log')
                 entry['passed']=sum(x['kind']=='PASS' for x in data);entry['failed']=sum(x['kind']=='FAIL' for x in data)
                 entry['done']=any(x['kind']=='DONE' for x in data)
                 entry['fatal']=[x for x in events(store/'RConnect-B.log') if x['kind']=='FATAL']
-                entry['logs']={p.name:sha(p) for p in result.glob(role+'.*.log')}
+                entry['logs']={p.name:sha(p) for p in result.glob(role+'.*')
+                               if p.is_file() and (p.suffix.lower()=='.log' or p.name.endswith('modlog.txt'))}
             receipt['runtime_changes']=[name for name,digest in runtime_files.items() if sha(game/name)!=digest]
             receipt['runtime_unchanged']=not receipt['runtime_changes']
             receipt['passed']=receipt['complete'] and receipt['runtime_unchanged'] and all(
@@ -215,7 +219,7 @@ def main():
     ap.add_argument('--resume-preparation',action='store_true')
     ap.add_argument('--preparation',default='prepared.json')
     ap.add_argument('--refresh-driver',action='store_true')
-    ap.add_argument('--scenario',choices=['hover','boundary','enemies','controls','ui','darkteleport','security','textmotion','terrainlive','motion','visualfield','teleport','rockets','terrain','loading'])
+    ap.add_argument('--scenario',choices=['hover','boundary','enemies','controls','ui','darkteleport','security','textmotion','terrainlive','motion','visualfield','teleport','rockets','terrain','loading','horseshoe','addiction','injury','attachments'])
     ap.add_argument('--terrain-seed', type=int, help='Diagnostic terrainlive only: replay one recorded native layout seed')
     ap.add_argument('--native');ap.add_argument('--candidate');ap.add_argument('--result');a=ap.parse_args()
     validate_terrain_seed(a.scenario, a.terrain_seed)

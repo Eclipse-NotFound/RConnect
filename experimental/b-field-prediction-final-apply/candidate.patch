@@ -1,0 +1,155 @@
+--- baseline/authority/ClientReplica.as
++++ candidate/authority/ClientReplica.as
+@@ -28,6 +28,8 @@
+       private var uiSerial:uint=0;
+       private var menuSerial:uint=0,menuRevision:uint=0,standSerial:uint=0;
+       private var predicted:Boolean=false;
++      public var deferredLocalInterpolations:uint=0,skippedLocalInterpolations:uint=0;
++      public var localInterpolationCandidates:uint=0,localPoseCoverageRejected:uint=0;
+       public var satsRefreshes:uint=0;
+       // Optional diagnostic observer; receives the actual applied discrete
+       // confirmation before any display interpolation. Unset during play.
+@@ -72,13 +74,14 @@
+          // Every discrete scene delta is consumed, even if several confirmations
+          // arrive during one screen frame. No broken wall or removed unit is lost.
+          for each(var state:Object in ready){render(state);if(confirmed!=null)confirmed(state);}
++         var deferred:Object=null;
+          if(clock.current!=null && clock.fraction>0) {
+             var tweenAt:int=Timing.start();
+             var tween:Object=PoseTween.frame(clock.current,clock.next,clock.fraction);
+-            Timing.end("client.tween",tweenAt);render(tween,true);
++            Timing.end("client.tween",tweenAt);deferred=render(tween,true,true);
+          }
+          var endAt:int=Timing.start();
+-         predict();
++         predict(deferred);
+          Timing.end("client.prediction",endAt);endAt=Timing.start();
+          if(displayFrame!=null)scene.light(displayFrame.paused===true);
+          Timing.end("client.light",endAt);endAt=Timing.start();
+@@ -88,16 +91,52 @@
+          Timing.end("client.present",began);
+       }
+       public function submitted(input:Object):void {prediction.record(input,getTimer());predict();}
+-      private function predict():void {
++      private function predict(deferred:Object=null):void {
+          var replaying:Boolean=displayFrame!=null && displayFrame.timeControl!=null && displayFrame.timeControl.phase=="replay";
+          var state:Object=replaying?null:prediction.sample(getTimer(),displayFrame,scene.terrainRevision,SharedPause.requested(access.world));
+-         if(state!=null){applyPlayer(state,true);predicted=true;}
++         if(state!=null){if(deferred!=null)++skippedLocalInterpolations;applyPlayer(state,true);predicted=true;}
+          // A new combat/pause request must remove the previous visual lead even
+          // when no new confirmed frame arrived in this screen frame.
+-         else if(predicted && displayFrame!=null && displayFrame.players[1].room===displayFrame.room){applyPlayer(displayFrame.players[1],true);predicted=false;}
+-      }
+-      private function render(frame:Object,interpolated:Boolean=false):void {
++         else {
++            // Sampling stays after the complete interpolated scene/projectile
++            // pass, as before. A rejected prediction still receives the exact
++            // local interpolation, followed by the original withdrawal path.
++            if(deferred!=null)applyPlayer(deferred,true);
++            if(predicted && displayFrame!=null && displayFrame.players[1].room===displayFrame.room){applyPlayer(displayFrame.players[1],true);predicted=false;}
++         }
++      }
++      /** Only defer an already materialized local display. Rebuilding/reparenting
++       * before prune can create native auxiliary roots; retain that order when
++       * an attachment, weapon, pet or mask needs repair. */
++      private function canDeferLocal(state:Object,frame:Object):Boolean {
++         var w:Object=access.world,rec:Object=peers[1],latest:Object=lastFrame==null?null:lastFrame.players[1];
++         if(frame.paused || w.sats.active || SharedPause.requested(w) ||
++            frame.timeControl!=null && frame.timeControl.phase=="replay" || latest==null || latest.motion==null ||
++            rec==null || rec.body!==w.gg || rec.body.vis==null || rec.body.vis.mask!=null ||
++            state.held!=null || state.action!=null || latest.held!=null || latest.action!=null ||
++            rec.body.teleObj!=null || rec.body.actionObj!=null ||
++            rec.body.vis.parent!==w.grafon.visObjs[int(rec.body.sloy)] ||
++            rec.body.pet!==scene.petFor(1) || rec.body.childObjs[2]!==rec.body.pet)return false;
++         if(state.weapon==null) {if(rec.weapon!=null || rec.body.currentWeapon!=null)return false;}
++         else if(rec.weapon==null || rec.weaponId!==state.weapon.id || rec.weaponEpoch!==state.weaponEpoch ||
++            rec.body.currentWeapon!==rec.weapon || rec.body.childObjs[0]!==rec.weapon || !state.weapon.attached ||
++            rec.weapon.vis==null || rec.weapon.vis.mask!=null || rec.weapon.vis.parent!==w.grafon.visObjs[int(state.weapon.layer)])return false;
++         // Omitted non-finite scalar fields normally leave prior native values
++         // intact. Do not skip an older write unless the prediction will replace
++         // every motion field written by this intermediate pose.
++         for each(var key:String in NativeFields.MOTION)if(state.native[key] is Number && !(latest.native[key] is Number))return false;
++         ++localInterpolationCandidates;
++         var original:Object=clock.current.players[1];
++         if(!PredictionPoseCover.covers(original.visual,latest.visual)) {++localPoseCoverageRejected;return false;}
++         if(original.weapon!=null) {
++            if(latest.weapon==null || original.weaponEpoch!==latest.weaponEpoch || original.weapon.id!==latest.weapon.id ||
++               !PredictionPoseCover.covers(original.weapon.visual,latest.weapon.visual)) {++localPoseCoverageRejected;return false;}
++         }else if(latest.weapon!=null){++localPoseCoverageRejected;return false;}
++         return true;
++      }
++      private function render(frame:Object,interpolated:Boolean=false,deferLocal:Boolean=false):Object {
+          var began:int=Timing.start(),part:int=began;
++         var deferred:Object=null;
+          if(access.view!=null)access.view.prepare();
+          displayFrame=frame;
+          if(!interpolated)MapState.apply(access,frame.map);
+@@ -133,7 +172,11 @@
+          }
+          part=Timing.start();
+          for each(var state:Object in frame.players) {
+-            if(state.room===frame.room && present)applyPlayer(state,interpolated);
++            if(state.room===frame.room && present) {
++               if(interpolated && deferLocal && state.id==1 && canDeferLocal(state,frame)) {
++                  deferred=state;++deferredLocalInterpolations;
++               }else applyPlayer(state,interpolated);
++            }
+             else if(peers[state.id]!=null) {
+                peers[state.id].body.teleObj=null;
+                peers[state.id].body.remVisual();
+@@ -186,6 +229,7 @@
+          }
+          if(!access.world.sats.active)satsEpoch=-1;
+          Timing.end("client.render",began);
++         return deferred;
+       }
+       private function applyPlayer(state:Object,interpolated:Boolean=false):void {
+          var local:Boolean=state.id==1,rec:Object=peers[state.id];
+--- baseline/authority/PredictionPoseCover.as
++++ candidate/authority/PredictionPoseCover.as
+@@ -0,0 +1,45 @@
++package authority {
++   import flash.utils.Dictionary;
++   /** Conservative proof that applying B makes every write of A redundant.
++    * Inputs are the two original immutable confirmation recipes, never the
++    * per-render PoseTween/MovementPrediction copies. Unknown topology falls back. */
++   public final class PredictionPoseCover {
++      private static var pairs:Dictionary=new Dictionary(true);
++      public static var lookups:uint=0,hits:uint=0,checks:uint=0,passed:uint=0;
++      public static var failures:Object={};
++      public static function covers(before:Object,after:Object):Boolean {
++         ++lookups;
++         if(before===after || before==null){++passed;return true;}
++         if(after==null)return fail("missing-pose");
++         var targets:Dictionary=pairs[before],cached:*=targets==null?undefined:targets[after];
++         if(cached!==undefined){++hits;if(cached===true)++passed;return cached===true;}
++         ++checks;
++         var ok:Boolean=inspect(before,after);
++         if(targets==null){targets=new Dictionary(true);pairs[before]=targets;}
++         targets[after]=ok;
++         if(ok)++passed;return ok;
++      }
++      private static function fail(reason:String):Boolean {failures[reason]=uint(failures[reason])+1;return false;}
++      private static function inspect(before:Object,after:Object):Boolean {
++         // VisualPose.apply has conditional writes. A hidden child recipe may
++         // omit its subtree; a missing vector/pixel/text recipe does not erase
++         // the previous drawing. None of these old writes may be skipped.
++         for each(var field:String in ["pixels","vector","f","blend","cache","smoothing","text","plainText","multiline","scrollH","scrollV","c"])
++            if(before[field]!=null && after[field]==null)return fail("missing-"+field);
++         if(before.children===after.children || before.children==null)return true;
++         if(after.children==null)return fail("hidden-subtree");
++         var a:Array=before.children,b:Array=after.children;
++         // Authored children are not all owned by VisualPose's cleanup map.
++         // Require the same identities/topology instead of assuming an omitted
++         // native limb would be destroyed by the later frame's gotoAndStop.
++         if(a.length!=b.length)return fail("child-count");
++         for(var i:int=0;i<a.length;i++) {
++            var old:Object=a[i],next:Object=b[i];
++            if(old===next)continue;
++            if(old==null || next==null || old.n!==next.n || old.i!==next.i || old.cls!==next.cls)return fail("child-identity");
++            if(!covers(old.s,next.s))return false;
++         }
++         return true;
++      }
++   }
++}

@@ -1,0 +1,36 @@
+{
+  "base": "build/ab/b190-field8-loadfix1-build",
+  "base_source": "ac5e9d6e62c35e937deeb254f13c6371d8940f23a0f42f82e578b5006ea65d81",
+  "files": {
+    "src/authority/HostSession.as": {
+      "base": "a850a9d5bf31b61bbd0f046f398b2f88211df174768b2badcc024f094d374c00",
+      "overlay": "bfb9c6d7afbc36c69c0ae72b99b5892213aba6b8ed1a8413ec0e95c60cff79b8"
+    },
+    "src/authority/RoomRuntime.as": {
+      "base": "25770ee37d53859b199fc143657cf6707e4f9182d270386a6a49dbf4aac4b2a9",
+      "overlay": "dfcaddeba3666acd1e748f31fdb08eb7f7126421264f80c348b56c6872b9d57a"
+    },
+    "src/authority/ui/HudModel.as": {
+      "base": "835a234d8a2d306f5a51f0c01ddaadfd86d4b700b8a1d712e773d35f70b98b6a",
+      "overlay": "99e20cce532da556b8427399e20b6a1cde9866cfa4d159b302c60d7d1b368a84"
+    },
+    "src/authority/ui/NetHud.as": {
+      "base": "494eecc082f02d717847c9e2c2931d277a82475a808817b9a67604b7512e2d2f",
+      "overlay": "39603ecdad68a56e55683eaf5c65e365df30685dcb0c7c769a35da5364129841"
+    },
+    "src/authority/ui/Preferences.as": {
+      "base": "1d8e7f971ef28f0caabc1cf1f6a4d208e0afe1317e610bd0f363290d14a35572",
+      "overlay": "5f54761da8bf24bfb0252689d1d192195a89fcbcc40101ee29101bc58acc572f"
+    },
+    "src/authority/WorldClaims.as": {
+      "base": "1bbe6e4f0e2a999e879a11153e292f979ad29aa699b3a6e8fa8e4eaf832eb0fc",
+      "overlay": "45017c88b6bedda7b71391194892670e2eac7a8d85c4dab3d61e3e61f69441c3"
+    },
+    "src/RConnectMod.as": {
+      "base": "269bee09f95dc331037bb0111526d0732217b4e30b620d61d887dd66adc43aba",
+      "overlay": "5559101e4612df999baec2d767dbe476ca15622d6f15a7d20dfdec65e6f99062"
+    }
+  },
+  "patch_sha256": "cdaba9015225e6868a6090684d00607cac11dc27324c86a9a15eeb6e5a6a182d",
+  "status": "source-only-not-compiled-or-run"
+}

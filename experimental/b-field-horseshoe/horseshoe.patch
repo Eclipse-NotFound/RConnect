@@ -1,0 +1,161 @@
+--- a/src/authority/HostSession.as
++++ b/src/authority/HostSession.as
+@@ -138,6 +138,7 @@
+             frame.players[actor.id].actionAck=inputs[actor.id].receivedAction;
+          }
+          frame.friendlyFire=combat.enabled;frame.securityShared=security.shared;
++         frame.horseshoeShared=runtime.shareHorseshoeXP;
+          frame.audio=sound.snapshot(frame.room,runtime.tick,frame.paused);
+          frame.scene=scene.capture(actors[1].unit.loc,actors,runtime.tick);
+          Timing.end("host.sceneAndPlayers",part);part=Timing.start();
+--- a/src/authority/RoomRuntime.as
++++ b/src/authority/RoomRuntime.as
+@@ -13,6 +13,7 @@
+       public var awaitingFirstView:Boolean=true;
+       public var tactics:TacticsBridge;
+       public var security:SecurityTerminals;
++      public var shareHorseshoeXP:Boolean=true;
+       public var lives:PlayerLives;
+       public var travel:PartyTravel;
+       public var music:SessionMusic;
+@@ -68,12 +69,12 @@
+          if(security!=null && security.stepObject(room,object))return;
+          var inter:Object="inter" in object?object.inter:null,operator:PlayerActor=interactionOwners[object];
+          if(operator!=null && inter!=null) {
+-            WorldClaims.step(object,room,operator,actors);
++            WorldClaims.step(object,room,operator,actors,shareHorseshoeXP);
+             if(!inter.is_act && operator.interacting!==object)delete interactionOwners[object];
+             return;
+          }
+          var claimant:PlayerActor=WorldClaims.choose(object,room,actors);
+-         if(claimant!=null){WorldClaims.step(object,room,claimant,actors);return;}
++         if(claimant!=null){WorldClaims.step(object,room,claimant,actors,shareHorseshoeXP);return;}
+          var owner:Object="owner" in object?object.owner:null;
+          for each(var actor:PlayerActor in actors) {
+             if(object===actor.unit)throw new Error("Player was also inserted into native object chain");
+--- a/src/authority/ui/HudModel.as
++++ b/src/authority/ui/HudModel.as
+@@ -3,7 +3,7 @@
+    /** UI-only port. The retained compact layout never owns game/network state. */
+    public final class HudModel {
+       public static const OFFLINE:String="offline",HOSTING:String="hosting",JOINING:String="joining",CONNECTED:String="connected";
+-      public var config:Preferences,session:Object,game:Object,exploration:Object,peerGrip:Object,friendlyFire:Object,navigation:Object,securityTerminals:Object;
++      public var config:Preferences,session:Object,game:Object,exploration:Object,peerGrip:Object,friendlyFire:Object,navigation:Object,securityTerminals:Object,horseshoeXP:Object;
+       public var version:String,versionInfo:Object={version:"1.02"};
+       private var owner:RConnectMod;
+       public function HudModel(owner:RConnectMod) {
+@@ -22,6 +22,7 @@
+             setThrowDamageAllowed:function(value:Boolean):void{config.setValue("peerThrowDamage",value?"1":"0");config.save();owner.applyPreferences();refresh();}};
+          friendlyFire={enabled:false,canChangePolicy:true,setEnabled:function(value:Boolean):void{if(owner.role=="join")return;config.setValue("friendlyFire",value?"1":"0");config.save();owner.applyPreferences();refresh();}};
+          securityTerminals={shared:true,canChangePolicy:true,setShared:function(value:Boolean):void{if(owner.role=="join")return;config.setValue("sharedSecurityHack",value?"1":"0");config.save();owner.applyPreferences();refresh();}};
++         horseshoeXP={shared:true,canChangePolicy:true,setShared:function(value:Boolean):void{if(owner.role=="join")return;config.setValue("shareHorseshoeXP",value?"1":"0");config.save();owner.applyPreferences();if(owner.host!=null)owner.host.publish();refresh();}};
+          navigation={travelling:false,unavailable:function():String{return owner.meetReason();},request:function():void{owner.meetPeer();}};
+       }
+       public function refresh():void {
+@@ -38,6 +39,8 @@
+          p.canChangePolicy=owner.role!="join";p.paused=f!=null && f.paused;
+          securityTerminals.canChangePolicy=owner.role!="join";
+          securityTerminals.shared=f!=null && owner.role=="join"?f.securityShared!==false:config.getValue("sharedSecurityHack")!="0";
++         horseshoeXP.canChangePolicy=owner.role!="join";
++         horseshoeXP.shared=f!=null && owner.role=="join"?f.horseshoeShared!==false:config.getValue("shareHorseshoeXP")!="0";
+          friendlyFire.canChangePolicy=owner.role!="join";friendlyFire.enabled=f!=null && owner.role=="join"?f.friendlyFire:config.getValue("friendlyFire")=="1";
+       }
+    }
+--- a/src/authority/ui/NetHud.as
++++ b/src/authority/ui/NetHud.as
+@@ -33,6 +33,7 @@
+       private var opacityLabel:TextField,opacityValue:TextField,opacityLess:TextField,opacityMore:TextField;
+       private var opacityPercent:int=100;
+       private var securityMode:TextField,securityHint:TextField;
++      private var horseshoeMode:TextField,horseshoeHint:TextField;
+       private var allowGrip:TextField,struggleGrip:TextField,throwGrip:TextField,gripHint:TextField;
+       private var _btnHost:TextField,_btnJoin:TextField,_btnLeave:TextField,_btnSend:TextField;
+       private var _btnExploration:TextField,_btnFollow:TextField,_btnTeleport:TextField;
+@@ -194,7 +195,10 @@
+          securityMode=field("rconnect-security","settings",8,352,264,30,true);
+          securityHint=field("rconnect-security-hint","settings",8,388,264,58);
+          action(securityMode,function():void {if(mod.securityTerminals!=null)mod.securityTerminals.setShared(!mod.securityTerminals.shared);});
+-         versionLabel=field("rconnect-version","settings",8,452,264,38);
++         horseshoeMode=field("rconnect-horseshoe-xp","settings",8,452,264,30,true);
++         horseshoeHint=field("rconnect-horseshoe-hint","settings",8,488,264,58);
++         action(horseshoeMode,function():void {if(mod.horseshoeXP!=null)mod.horseshoeXP.setShared(!mod.horseshoeXP.shared);});
++         versionLabel=field("rconnect-version","settings",8,552,264,38);
+          action(friendlyFire,function():void {
+             if(mod.friendlyFire!=null)mod.friendlyFire.setEnabled(!mod.friendlyFire.enabled);
+          });
+@@ -355,6 +359,11 @@
+          securityMode.text=tr("安保终端：","Security terminals: ","Терминалы: ")+(mod.securityTerminals==null || mod.securityTerminals.shared?tr("共享破解","Shared hack","Общий взлом"):tr("分别破解","Individual hacks","Личный взлом"));
+          enabled(securityMode,mod.securityTerminals!=null && mod.securityTerminals.canChangePolicy);
+          securityHint.text=tr("由宿主设置。只影响之后的破解，已获得的炮塔安全权限保留。","Host setting. Changes affect future hacks; earned turret safety remains.","Настройка ведущего. Изменения влияют на будущий взлом; полученный доступ сохраняется.");
++         horseshoeMode.text=tr("马蹄铁经验共享","Share horseshoe XP","Общий опыт подков")+": "+RCLocale.text(mod.horseshoeXP==null || mod.horseshoeXP.shared?"开":"关");
++         enabled(horseshoeMode,mod.horseshoeXP!=null && mod.horseshoeXP.canChangePolicy);
++         horseshoeHint.text=tr("由宿主设置。开启后双方获得马蹄铁经验；关闭后仅拾取者获得。只影响之后的拾取。",
++            "Host setting. Share horseshoe XP with both players, or award only the collector. Applies to future pickups.",
++            "Настройка ведущего. Опыт подков получают оба игрока или только собравший. Для следующих подков.");
+          versionLabel.text="RConnect B · "+mod.version+" · "+(mod.versionInfo==null?"":mod.versionInfo.version);
+          footer.text=tr("Ctrl+Enter 聊天 · F10","Ctrl+Enter: chat · F10","Ctrl+Enter: чат · F10");
+          dockButton.text=tr("停靠","Dock","Край")+" "+(dock=="tl"?"↖":dock=="tr"?"↗":dock=="br"?"↘":dock=="bl"?"↙":"◇");
+@@ -423,7 +432,10 @@
+             var securityY:Number=Math.max(352,308+policyHeight+4)+ownerExtra+gripExtra;
+             if(f==securityMode)item.renderY=securityY;
+             if(f==securityHint){item.renderY=securityY+36;item.renderH=Math.max(58,securityHint.textHeight+6);}
+-            if(f==versionLabel)item.renderY=securityY+36+Math.max(58,securityHint.textHeight+6)+6;
++            var horseshoeY:Number=securityY+36+Math.max(58,securityHint.textHeight+6)+6;
++            if(f==horseshoeMode)item.renderY=horseshoeY;
++            if(f==horseshoeHint){item.renderY=horseshoeY+36;item.renderH=Math.max(58,horseshoeHint.textHeight+6);}
++            if(f==versionLabel)item.renderY=horseshoeY+36+Math.max(58,horseshoeHint.textHeight+6)+6;
+             if(f==peerHint || f==helpText)item.renderH=Math.max(item.h,f.textHeight+6);
+             if(help?item.page=="help":item.page==page || item.page=="live" && page=="connect" && active)
+                pageHeight=Math.max(pageHeight,item.renderY+item.renderH+8);
+--- a/src/authority/ui/Preferences.as
++++ b/src/authority/ui/Preferences.as
+@@ -5,7 +5,7 @@
+    public final class Preferences {
+       private var store:SharedObject;
+       private var values:Object={nickname:"Pony",hostIp:"127.0.0.1",port:23456,followTeammate:"0",sharedExploration:"1",
+-         allowPeerGrip:"0",peerGripStruggle:"1",peerThrowDamage:"0",friendlyFire:"0",pauseMenus:"0",pauseSats:"0",sharedSecurityHack:"1"};
++         allowPeerGrip:"0",peerGripStruggle:"1",peerThrowDamage:"0",friendlyFire:"0",pauseMenus:"0",pauseSats:"0",sharedSecurityHack:"1",shareHorseshoeXP:"1"};
+       public function Preferences(launch:Object) {
+          store=SharedObject.getLocal("RConnectBPreferences","/");
+          for(var key:String in values)if(store.data[key]!=null)values[key]=store.data[key];
+--- a/src/authority/WorldClaims.as
++++ b/src/authority/WorldClaims.as
+@@ -15,14 +15,18 @@
+          }
+          return chosen;
+       }
+-      public static function step(object:Object,room:Object,actor:PlayerActor,actors:Array):void {
++      public static function step(object:Object,room:Object,actor:PlayerActor,actors:Array,shareHorseshoeXP:Boolean=true):void {
+          var type:String=getQualifiedClassName(object),xp:int=0,wasXP:Boolean=type=="fe.loc::Bonus" && object.id=="xp" && object.sost==1;
++         var beforeXP:int=wasXP?int(room.kolXp):0;
+          if(type=="fe.loc::Area" && object.tip=="gg") {stepArea(object,room,actor,actors);return;}
+          if(wasXP)xp=room.kolXp==1 && room.maxXp>1?room.unXp*room.maxXp:room.unXp;
+          if(wasXP && room.kolXp==1 && room.maxXp>1 && !room.detecting && room.summXp>0)xp+=room.summXp;
+          var cp:Boolean=type=="fe.loc::CheckPoint",before:int=cp?int(object.active):-1;
+          actor.access.scope.runRoom(actor.context,room,function():void {object.step();});
+-         if(wasXP && object.sost==2)for each(var other:PlayerActor in actors)if(other!==actor)
++         // Native Bonus.take always rewards its real collector. This policy
++         // only controls the extra teammate reward for a consumed XP point;
++         // expiry/removal is not a pickup, and other XP sources stay native.
++         if(shareHorseshoeXP && wasXP && object.sost==2 && int(room.kolXp)<beforeXP)for each(var other:PlayerActor in actors)if(other!==actor)
+             actor.access.scope.run(other.context,function():void {other.unit.pers.expa(xp);});
+          if(cp && before!=2 && object.active==2)for each(other in actors) {
+             other.unit.pers.currentCP=object;other.unit.pers.currentCPCode=object.code;
+--- a/src/RConnectMod.as
++++ b/src/RConnectMod.as
+@@ -270,13 +270,14 @@
+          input.settings.thrownDamage=preferences.getValue("peerThrowDamage")=="1";
+          input.settings.follow=preferences.getValue("followTeammate")=="1";
+          if(vision!=null)vision.enabled=preferences.getValue("sharedExploration")=="1";
+-         var policy:String=[preferences.getValue("pauseMenus"),preferences.getValue("pauseSats"),preferences.getValue("friendlyFire"),preferences.getValue("sharedSecurityHack")].join(":");
++         var policy:String=[preferences.getValue("pauseMenus"),preferences.getValue("pauseSats"),preferences.getValue("friendlyFire"),preferences.getValue("sharedSecurityHack"),preferences.getValue("shareHorseshoeXP")].join(":");
+          if(host!=null && policy!==lastPolicy) {
+             lastPolicy=policy;
+             host.pause.policyMenus=preferences.getValue("pauseMenus")=="1";
+             host.pause.policySats=preferences.getValue("pauseSats")=="1";
+             if(host.combat!=null)host.combat.enabled=preferences.getValue("friendlyFire")=="1";
+             if(host.security!=null)host.security.shared=preferences.getValue("sharedSecurityHack")!="0";
++            if(host.runtime!=null)host.runtime.shareHorseshoeXP=preferences.getValue("shareHorseshoeXP")!="0";
+          }
+       }
+       public function connectAs(requestedRole:String):void {
