@@ -1,0 +1,517 @@
+--- a/src/RConnectMod.as
++++ b/src/RConnectMod.as
+@@ -16,7 +16,7 @@
+    import flash.text.TextFormat;
+    import flash.utils.getTimer;
+    public class RConnectMod {
+-      public static const VERSION:String="B3-0.1-field6-dev";
++      public static const VERSION:String="B3-0.1-field7-dev";
+       public static var instance:RConnectMod;
+       public var main:Object,stage:Stage,access:NativeAccess,host:HostSession,replica:ClientReplica;
+       public var config:Object,link:Link,probe:Probe;
+--- a/src/authority/BuildInfo.as
++++ b/src/authority/BuildInfo.as
+@@ -1,8 +1,10 @@
+ package authority {
+    public class BuildInfo {
+       public static const FAMILY:String="rconnect-authority";
+-      public static const REVISION:int=4;
++      // Compact display descriptions require the matching receiver. Keep the
++      // existing strict greeting instead of silently accepting old viewers.
++      public static const REVISION:int=5;
+       public static const NATIVE:String="b3-v12";
+-      public static const SOURCE:String="22e2cdedf6e1c3c0aaf2e7c7821d8199f024ce6188dd01a56f82be18d0ac12f8";
++      public static const SOURCE:String="__SOURCE_HASH__";
+    }
+ }
+--- /dev/null
++++ b/src/authority/DecorativeEffects.as
+@@ -0,0 +1,111 @@
++package authority {
++   import flash.display.DisplayObject;
++   import flash.display.MovieClip;
++   import flash.geom.ColorTransform;
++   import flash.geom.Matrix;
++   import flash.text.TextField;
++   import flash.utils.Dictionary;
++   import flash.utils.getQualifiedClassName;
++   /** Only the known, stopped native damage-number symbol. No Part simulation. */
++   public final class DecorativeEffects {
++      private var captured:Dictionary=new Dictionary(true);
++      private var blocked:Dictionary=new Dictionary(true);
++      private var applied:Dictionary=new Dictionary(true);
++      // These layout settings are not fully represented by VisualPose. A live
++      // change leaves this Part on the original path for the rest of its life.
++      private static const LAYOUT:Array=["width","height","autoSize","wordWrap","embedFonts","antiAliasType",
++         "gridFitType","sharpness","thickness","background","backgroundColor","border","borderColor",
++         "displayAsPassword","condenseWhite","type"];
++      private static const FILTER_FIELDS:Array=["color","alpha","blurX","blurY","strength","quality",
++         "inner","knockout","distance","angle","hideObject"];
++
++      public function capture(value:Object):Object {
++         if(value==null || getQualifiedClassName(value)!="fe.graph::Part")return reject(value);
++         if(blocked[value] || !value.in_chain || value.loc==null || value.isAnim!=0 || value.water!=0 ||
++            value.otklad!=0 || value.blitData!=null || value.liv<=0 || value.mliv<=0)return reject(value);
++         var display:MovieClip=value.vis as MovieClip;
++         if(display==null || getQualifiedClassName(display)!="visualNumb" || display.isPlaying ||
++            display.parent==null || display.mask!=null || display.numChildren!=1)return reject(value);
++         var text:TextField=display.getChildAt(0) as TextField;
++         if(text==null || getQualifiedClassName(text)!="flash.text::TextField" ||
++            Object(display).numb!==text || text.name!="numb" || text.mask!=null || text.styleSheet!=null)return reject(value);
++         var filters:Array=text.filters;
++         var rec:Object=captured[value];
++         if(rec!=null && (rec.display!==display || rec.text!==text))rec=null;
++         if(rec!=null && !sameLayout(text,rec.layout)) {
++            blocked[value]=true;return reject(value);
++         }
++         if(rec==null || display.currentFrame!=rec.recipe.f || !sameText(text,rec.recipe.children[0].s,filters)) {
++            if(!knownFilters(filters))return reject(value);
++            // Invisible roots omit children in the original capture contract.
++            // Wait for a visible confirmation rather than caching an empty tree.
++            if(!display.visible || display.alpha<=0)return reject(value);
++            var full:Object=VisualPose.capture(display);
++            if(full.children==null || full.children.length!=1 || full.children[0].i!=0 ||
++               full.children[0].n!="numb" || full.children[0].cls!="flash.text::TextField")return reject(value);
++            var recipe:Object={f:full.f,children:full.children};
++            var layout:Array=[];for each(var key:String in LAYOUT)layout.push(text[key]);
++            rec={display:display,text:text,layout:layout,recipe:recipe};captured[value]=rec;
++         }
++         // captureRoot has a separate cache and never walks or stores children.
++         // Native Part.step still owns motion, fading, lifetime and removal.
++         return {pose:VisualPose.captureRoot(display),decor:{recipe:rec.recipe}};
++      }
++
++      private function reject(value:Object):Object {
++         if(value!=null)delete captured[value];return null;
++      }
++      private static function sameLayout(text:TextField,layout:Array):Boolean {
++         for(var i:int=0;i<LAYOUT.length;i++)if(text[LAYOUT[i]]!==layout[i])return false;
++         return true;
++      }
++      private static function knownFilters(filters:Array):Boolean {
++         for each(var filter:Object in filters) {
++            var kind:String=getQualifiedClassName(filter);
++            if(kind!="flash.filters::ColorMatrixFilter" && kind!="flash.filters::GlowFilter" &&
++               kind!="flash.filters::BlurFilter" && kind!="flash.filters::DropShadowFilter")return false;
++         }
++         return true;
++      }
++      private static function sameText(text:TextField,s:Object,filters:Array):Boolean {
++         if(text.text!==s.plainText || text.htmlText!==s.text || text.textColor!==s.textColor ||
++            text.multiline!==s.multiline || text.scrollH!==s.scrollH || text.scrollV!==s.scrollV ||
++            text.visible!==s.v || text.alpha!==s.a || text.blendMode!==s.blend || text.cacheAsBitmap!==s.cache)return false;
++         var m:Matrix=text.transform.matrix,c:ColorTransform=text.transform.colorTransform;
++         if(s.m==null || m==null || m.a!==s.m[0] || m.b!==s.m[1] || m.c!==s.m[2] ||
++            m.d!==s.m[3] || m.tx!==s.m[4] || m.ty!==s.m[5])return false;
++         if(c.redMultiplier!==s.c[0] || c.greenMultiplier!==s.c[1] || c.blueMultiplier!==s.c[2] ||
++            c.alphaMultiplier!==s.c[3] || c.redOffset!==s.c[4] || c.greenOffset!==s.c[5] ||
++            c.blueOffset!==s.c[6] || c.alphaOffset!==s.c[7] || filters.length!=s.filters.length)return false;
++         for(var i:int=0;i<filters.length;i++) {
++            var filter:Object=filters[i],prior:Object=s.filters[i];
++            if(getQualifiedClassName(filter)!==prior.kind)return false;
++            if(prior.kind=="flash.filters::ColorMatrixFilter") {
++               var matrix:Array=filter.matrix;
++               if(matrix.length!=prior.matrix.length)return false;
++               for(var j:int=0;j<matrix.length;j++)if(matrix[j]!==prior.matrix[j])return false;
++            }else for each(var key:String in FILTER_FIELDS)if(key in filter && filter[key]!==prior[key])return false;
++         }
++         return true;
++      }
++
++      public function apply(display:DisplayObject,pose:Object,decor:Object):void {
++         if(display==null || pose==null || decor==null)return;
++         if(applied[display]!==decor.recipe) {
++            var full:Object=PoseTween.copy(pose);
++            // Install the text even when this first received root is hidden.
++            // A temporary interpolated child pose, when present, already owns
++            // the correct transform and must not be replaced by the template.
++            if(full.children==null)full.children=decor.recipe.children;
++            VisualPose.apply(display,full);applied[display]=decor.recipe;
++         }else VisualPose.apply(display,pose);
++      }
++      public function motion(display:DisplayObject,pose:Object,decor:Object):void {
++         if(display==null || pose==null || decor==null)return;
++         if(applied[display]!==decor.recipe)apply(display,pose,decor);
++         else VisualPose.motion(display,pose);
++      }
++      /** Call before full-pose fallback and when the receiver removes a clip. */
++      public function forget(display:DisplayObject):void {if(display!=null)delete applied[display];}
++   }
++}
+--- /dev/null
++++ b/src/authority/HealthBarPose.as
+@@ -0,0 +1,170 @@
++package authority {
++   import flash.display.BlendMode;
++   import flash.display.DisplayObject;
++   import flash.display.MovieClip;
++   import flash.display.Shape;
++   import flash.geom.ColorTransform;
++   import flash.geom.Matrix;
++   import flash.geom.Rectangle;
++   import flash.utils.Dictionary;
++   import flash.utils.getQualifiedClassName;
++   /** The authored hpBar recipe, after the host has calculated health/shields.
++    * No Unit.visDetails(), private maxima or combat method runs here. */
++   public final class HealthBarPose {
++      private static const KIND:String="hpbar-native-1";
++      private static const SLOTS:Array=["armor","bar","goldstar"];
++      private static const EMPTY:Array=[];
++      private static var captured:Dictionary=new Dictionary(true);
++      private static var drawingProbe:Shape=new Shape();
++
++      /** The caller owns this fresh envelope and may append attached. Only the
++       * immutable root/part records can be shared with older confirmations. */
++      public static function capture(display:DisplayObject):Object {
++         if(display==null || !display.visible || display.alpha<=0)return {kind:"full",pose:VisualPose.capture(display)};
++         var slots:Array=known(display);
++         if(slots==null)return {kind:"full",pose:VisualPose.capture(display)};
++         var pose:Object=VisualPose.captureRoot(display),parts:Array=null;
++         // Full VisualPose also omits the subtree while its root is hidden.
++         if(pose.v && pose.a>0) {
++            parts=[];
++            var parent:MovieClip=display as MovieClip;
++            for(var i:int=0;i<slots.length;i++)parts.push(part(slots[i],parent.getChildIndex(slots[i])));
++         }
++         return {kind:KIND,pose:pose,parts:parts};
++      }
++
++      private static function known(display:DisplayObject):Array {
++         var root:MovieClip=display as MovieClip;
++         if(root==null || getQualifiedClassName(root)!="hpBar" || root.totalFrames!=1 || root.currentFrame!=1)return null;
++         var slots:Array=[];
++         for(var i:int=0;i<SLOTS.length;i++) {
++            var child:MovieClip=root.getChildByName(SLOTS[i]) as MovieClip;
++            if(child==null || child.parent!==root || Object(root)[SLOTS[i]]!==child)return null;
++            var cls:String=getQualifiedClassName(child);
++            // hp_bar2_165 has a frame-19 gotoAndPlay loop and is deliberately
++            // excluded. hp_bar3/4 only stop on frame 1; goldstar has no class
++            // script. Any other named or nested symbol uses the full path.
++            if(i<2) {
++               if(cls!="pfe_fla::hp_bar4_243" && cls!="pfe_fla::hp_bar3_245")return null;
++            }else if(cls!="flash.display::MovieClip")return null;
++            if(child.filters.length!=0 || child.blendMode!=BlendMode.NORMAL || child.mask!=null ||
++               child.scrollRect!=null || child.scale9Grid!=null)return null;
++            for(var j:int=0;j<child.numChildren;j++)if(!(child.getChildAt(j) is Shape))return null;
++            // VisualPose reads own Graphics only for an anonymous MovieClip.
++            // readGraphicsData can omit drawTriangles, so inspect copied
++            // bounds too instead of mistaking those drawings for an empty one.
++            if(cls=="flash.display::MovieClip" && hasDrawing(child))return null;
++            slots.push(child);
++         }
++         for(i=0;i<root.numChildren;i++) {
++            var member:DisplayObject=root.getChildAt(i);
++            // Authored Shape children are also omitted by full VisualPose for
++            // MovieClips; the same native asset supplies their artwork.
++            if(member is Shape)continue;
++            if(member!==slots[0] && member!==slots[1] && member!==slots[2])return null;
++         }
++         return slots;
++      }
++
++      private static function hasDrawing(clip:MovieClip):Boolean {
++         if(clip.graphics.readGraphicsData(false).length!=0)return true;
++         try {
++            drawingProbe.graphics.copyFrom(clip.graphics);
++            var bounds:Rectangle=drawingProbe.getBounds(drawingProbe);
++            return bounds.width>0 && bounds.height>0;
++         }finally {drawingProbe.graphics.clear();}
++      }
++
++      private static function part(clip:MovieClip,index:int):Object {
++         var previous:Object=captured[clip],matrix:Matrix=clip.transform.matrix,color:ColorTransform=clip.transform.colorTransform;
++         var m:Array=previous==null?null:previous.m,c:Array=previous==null?null:previous.c;
++         if(m==null || m[0]!==matrix.a || m[1]!==matrix.b || m[2]!==matrix.c || m[3]!==matrix.d || m[4]!==matrix.tx || m[5]!==matrix.ty)
++            m=[matrix.a,matrix.b,matrix.c,matrix.d,matrix.tx,matrix.ty];
++         if(c==null || c[0]!==color.redMultiplier || c[1]!==color.greenMultiplier || c[2]!==color.blueMultiplier || c[3]!==color.alphaMultiplier ||
++            c[4]!==color.redOffset || c[5]!==color.greenOffset || c[6]!==color.blueOffset || c[7]!==color.alphaOffset)
++            c=[color.redMultiplier,color.greenMultiplier,color.blueMultiplier,color.alphaMultiplier,color.redOffset,color.greenOffset,color.blueOffset,color.alphaOffset];
++         var state:Object={cls:getQualifiedClassName(clip),i:index,f:clip.currentFrame,m:m,c:c,
++            sx:clip.scaleX,sy:clip.scaleY,a:clip.alpha,v:clip.visible,cache:clip.cacheAsBitmap};
++         if(previous!=null) {
++            var same:Boolean=true;
++            for(var key:String in state)if(state[key]!==previous[key]){same=false;break;}
++            if(same)return previous;
++         }
++         captured[clip]=state;return state;
++      }
++
++      /** Reconstitute only the three known child instructions on the receiver.
++       * The existing copier owns frame-script suppression, native class
++       * replacement and cleanup of nodes created by a prior full fallback. */
++      public static function apply(display:DisplayObject,state:Object,interpolated:Boolean=false):void {
++         if(display==null || state==null)return;
++         var pose:Object=fullPose(state);
++         if(interpolated)VisualPose.motion(display,pose);else VisualPose.apply(display,pose);
++      }
++
++      private static function fullPose(state:Object):Object {
++         var pose:Object=state.pose;
++         if(state.kind===KIND && state.parts!=null && pose!=null && pose.v && pose.a>0) {
++            pose=PoseTween.copy(pose);pose.children=[];
++            for(var i:int=0;i<SLOTS.length;i++) {
++               var p:Object=state.parts[i];
++               // PoseTween reads scalar transforms as well as the precise
++               // matrix. These are temporary inputs; rendering still uses m.
++               var rotation:Number=Math.atan2(Number(p.m[1]),Number(p.m[0]))*180/Math.PI;
++               if(!isFinite(rotation))rotation=0;
++               var native:Object={f:p.f,m:p.m,x:p.m[4],y:p.m[5],sx:p.sx,sy:p.sy,r:rotation,
++                  c:p.c,a:p.a,v:p.v,cache:p.cache,
++                  blend:BlendMode.NORMAL,filters:EMPTY,children:EMPTY};
++               if(p.cls=="flash.display::MovieClip")native.vector=EMPTY;
++               pose.children.push({n:SLOTS[i],i:p.i,cls:p.cls,s:native});
++            }
++            // Full VisualPose lists children in display-list order. Match it
++            // at a compact/full transition: PoseTween pairs array positions
++            // before checking the recorded native child index and class.
++            pose.children.sortOn("i",Array.NUMERIC);
++         }
++         return pose;
++      }
++
++      public static function tween(a:Object,b:Object,t:Number):Object {
++         if(a==null || b==null || a===b)return a;
++         var out:Object=PoseTween.copy(a);
++         // A mode change must preserve child interpolation too. Materialize
++         // temporary native recipes locally, without expanding the wire state.
++         if(a.kind!==b.kind) {
++            out.kind="full";out.pose=PoseTween.pose(fullPose(a),fullPose(b),t);
++            delete out.parts;return out;
++         }
++         out.pose=PoseTween.pose(a.pose,b.pose,t);
++         if(a.kind!==KIND || b.kind!==KIND || a.parts==null || b.parts==null ||
++            a.pose.v!==b.pose.v || a.pose.f!==b.pose.f)return out;
++         out.parts=[];
++         for(var i:int=0;i<SLOTS.length;i++) {
++            var p:Object=a.parts[i],q:Object=b.parts[i];
++            out.parts.push(p.i===q.i && p.cls===q.cls?tweenPart(p,q,t):p);
++         }
++         return out;
++      }
++
++      private static function tweenPart(a:Object,b:Object,t:Number):Object {
++         if(a===b || a.v!==b.v)return a;
++         var out:Object=PoseTween.copy(a);out.a=lerp(a.a,b.a,t);
++         out.m=a.m.concat();out.m[4]=lerp(a.m[4],b.m[4],t);out.m[5]=lerp(a.m[5],b.m[5],t);
++         // Match PoseTween.pose: interpolate each affine basis, and keep a
++         // reflected basis discrete so a flipped bar cannot shrink through 0.
++         if(a.sx*b.sx>=0 && a.sy*b.sy>=0) {
++            out.sx=lerp(a.sx,b.sx,t);out.sy=lerp(a.sy,b.sy,t);
++            for(var axis:int=0;axis<4;axis+=2) {
++               if(a.m[axis]===b.m[axis] && a.m[axis+1]===b.m[axis+1])continue;
++               var ar:Number=Math.sqrt(a.m[axis]*a.m[axis]+a.m[axis+1]*a.m[axis+1]);
++               var br:Number=Math.sqrt(b.m[axis]*b.m[axis]+b.m[axis+1]*b.m[axis+1]);
++               var rotation:Number=angle(Math.atan2(a.m[axis+1],a.m[axis])*180/Math.PI,Math.atan2(b.m[axis+1],b.m[axis])*180/Math.PI,t)*Math.PI/180;
++               var radius:Number=lerp(ar,br,t);out.m[axis]=Math.cos(rotation)*radius;out.m[axis+1]=Math.sin(rotation)*radius;
++            }
++         }
++         return out;
++      }
++      private static function lerp(a:Number,b:Number,t:Number):Number{return a+(b-a)*t;}
++      private static function angle(a:Number,b:Number,t:Number):Number{return a+(((b-a+540)%360)-180)*t;}
++   }
++}
+--- a/src/authority/HostSession.as
++++ b/src/authority/HostSession.as
+@@ -147,10 +147,23 @@
+          frame.resources={hold:actors[1].unit.currentWeapon==null?0:actors[1].unit.currentWeapon.hold,
+             hp:actors[1].unit.hp,mana:actors[1].unit.mana};
+          lastFrame=frame;
+-         var packet:Object=encoder.encode(frame);Timing.end("host.delta",part);part=Timing.start();
++         // The runtime and lastFrame retain both rooms' complete lifetimes.
++         // Only the peer's displayed room needs projectile pictures on wire.
++         // During replay frame.room can differ from the live control endpoint.
++         var outgoing:Object=PoseTween.copy(frame);
++         outgoing.projectiles=projectilesForRoom(frame.projectiles,frame.room);
++         outgoing.projectileEvents=projectilesForRoom(frame.projectileEvents,frame.room);
++         var packet:Object=encoder.encode(outgoing);Timing.end("host.delta",part);part=Timing.start();
+          if(!link.send(packet))fail("Cannot publish confirmation");
+-         else projectileSelection.published(frame);
++         else projectileSelection.published(outgoing);
+          Timing.end("host.send",part);Timing.end("host.publish",began);
++      }
++      private static function projectilesForRoom(values:Array,room:String):Array {
++         var out:Array=[];
++         // Preserve births, final states and order, including a projectile
++         // that appears and ends in the same host tick. No visibility culling.
++         for each(var value:Object in values)if(value.room===room)out.push(value);
++         return out;
+       }
+       public function fail(reason:String):void {
+          if(!active)return;
+--- a/src/authority/PoseTween.as
++++ b/src/authority/PoseTween.as
+@@ -49,6 +49,15 @@
+          return out;
+       }
+       private static function keyed(list:Array,key:String):Object {var out:Object={};for each(var o:Object in list)out[o[key]]=o;return out;}
++      /** Only changed/fallback decorative templates need child interpolation.
++       * Expand them locally using the current root, never the template's old
++       * root position. The ordinary wire snapshot stays compact. */
++      private static function effectPose(state:Object):Object {
++         if(state.decor==null)return state.pose;
++         var out:Object=copy(state.pose);
++         if(out.v && out.a>0)out.children=state.decor.recipe.children;
++         return out;
++      }
+       public static function frame(a:Object,b:Object,t:Number):Object {
+          if(b==null || t<=0 || a.room!==b.room || a.pauseEpoch!=b.pauseEpoch)return a;
+          if(a.timeControl!=null && b.timeControl!=null &&
+@@ -84,8 +93,12 @@
+                for each(p in a.scene[list]) {
+                   q=targets[p.key];r=p;
+                   if(q!=null && p.positionEpoch==q.positionEpoch && p.pose!=null && q.pose!=null && close(p.pose,q.pose,"x","y")) {
+-                     r=copy(p);r.pose=pose(p.pose,q.pose,t);
+-                     if(p.healthBar!=null && q.healthBar!=null) {r.healthBar=copy(p.healthBar);r.healthBar.pose=pose(p.healthBar.pose,q.healthBar.pose,t);}
++                     r=copy(p);
++                     if(list=="effects" && (p.decor!=null || q.decor!=null) &&
++                        (p.decor==null || q.decor==null || p.decor.recipe!==q.decor.recipe))
++                        r.pose=pose(effectPose(p),effectPose(q),t);
++                     else r.pose=pose(p.pose,q.pose,t);
++                     if(p.healthBar!=null && q.healthBar!=null)r.healthBar=HealthBarPose.tween(p.healthBar,q.healthBar,t);
+                      if(p.fields!=null && q.fields!=null && close(p.fields,q.fields,"X","Y"))r.fields=fields(p.fields,q.fields,t);
+                      if(p.weapons!=null) {
+                         r.weapons=[];
+--- a/src/authority/ReplicaScene.as
++++ b/src/authority/ReplicaScene.as
+@@ -261,7 +261,7 @@
+          if(s.healthBar.attached) {
+             if(u.hpbar.parent!==access.world.grafon.visObjs[3])access.world.grafon.visObjs[3].addChild(u.hpbar);
+          }else if(u.hpbar.parent!=null)u.hpbar.parent.removeChild(u.hpbar);
+-         if(interpolated)VisualPose.motion(u.hpbar,s.healthBar.pose);else VisualPose.apply(u.hpbar,s.healthBar.pose);
++         HealthBarPose.apply(u.hpbar,s.healthBar,interpolated);
+       }
+       private function attach(o:Object,layer:int):void {
+          if(o.vis!=null && int(NativeAccess.get(o,"sost",1))<4)
+--- a/src/authority/SceneEffects.as
++++ b/src/authority/SceneEffects.as
+@@ -11,6 +11,7 @@
+    public final class SceneEffects {
+       public var records:Object={},applications:uint=0;
+       private var access:NativeAccess;
++      private var decorations:DecorativeEffects=new DecorativeEffects();
+       public function SceneEffects(access:NativeAccess){this.access=access;}
+       public function apply(states:Array):void {
+          var live:Object={};
+@@ -36,7 +37,10 @@
+                rec.atlas=s.atlas;
+             }
+             if(s.name!=null)rec.clip.name=s.name;
+-            access.world.grafon.visObjs[int(s.layer)].addChild(rec.clip);VisualPose.apply(rec.clip,s.pose);++applications;
++            access.world.grafon.visObjs[int(s.layer)].addChild(rec.clip);
++            if(s.decor!=null)decorations.apply(rec.clip,s.pose,s.decor);
++            else {decorations.forget(rec.clip);VisualPose.apply(rec.clip,s.pose);}
++            ++applications;
+             if(s.loot!=null && s.loot.fields!=null) {
+                if(rec.pointer==null) {
+                   var Obj:Class=access.definition("fe.Obj"),Interact:Class=access.definition("fe.serv.Interact");
+@@ -53,12 +57,14 @@
+          for each(var s:Object in states) {
+             var rec:Object=records[s.key];
+             if(rec==null)throw new Error("Interpolated effect has no confirmed lifetime");
+-            VisualPose.motion(rec.clip,s.pose);
++            if(s.decor!=null)decorations.motion(rec.clip,s.pose,s.decor);
++            else VisualPose.motion(rec.clip,s.pose);
+             if(rec.pointer!=null){rec.pointer.X=rec.clip.x+rec.pointerOffset.x;rec.pointer.Y=rec.clip.y+rec.pointerOffset.y;}
+          }
+       }
+       private function remove(id:String):void {
+          var rec:Object=records[id];if(rec.clip.parent!=null)rec.clip.parent.removeChild(rec.clip);
++         decorations.forget(rec.clip);
+          VisualPose.dispose(rec.clip);
+          if(rec.data!=null)rec.data.dispose();delete records[id];
+       }
+--- a/src/authority/SceneSnapshot.as
++++ b/src/authority/SceneSnapshot.as
+@@ -20,6 +20,7 @@
+       private var previousRoom:Object,tiles:Array=[],plainFront:Array=[];
+       private var targets:Object={};
+       private var masks:DisplayMasks=new DisplayMasks();
++      private var decorations:DecorativeEffects=new DecorativeEffects();
+       private var terrainRevision:uint=0;
+       public function SceneSnapshot(access:NativeAccess){this.access=access;}
+       public function id(object:Object):uint {
+@@ -84,7 +85,8 @@
+             var us:Object={key:id(u),positionEpoch:access.positionEpoch(u),cls:getQualifiedClassName(u),fields:NativeFields.capture(u),inter:interaction(u.inter),pose:VisualPose.capture(u.vis,0,burning || replay),
+                clip:u.vis==null?null:getQualifiedClassName(u.vis),burning:burning,
+                blit:burning || replay?null:AuthorityAnimation.capture(u as Unit),weapons:[],petOwner:-1,layer:u.sloy,attached:u.vis!=null && u.vis.parent!=null};
+-            us.healthBar=u.hpbar==null?null:{pose:VisualPose.capture(u.hpbar),attached:u.hpbar.parent!=null};
++            us.healthBar=u.hpbar==null?null:HealthBarPose.capture(u.hpbar);
++            if(us.healthBar!=null)us.healthBar.attached=u.hpbar.parent!=null;
+             for each(actor in actors)if(actor.unit.pet===u)us.petOwner=actor.id;
+             if(us.cls.indexOf("UnitTurret")>=0)us.mount=int(getQualifiedClassName(u.vis).replace(/^.*visualTurret/,""));
+             for each(var weapon:Object in u.childObjs)if(weapon!=null && "kol_shoot" in weapon)
+@@ -108,8 +110,13 @@
+          while(o!=null && ++count<=10000) {
+             var projectile:Boolean="begx" in o;
+             if(o.vis!=null && o.vis.parent!=null && !rendered[o.vis] && !projectile) {
++               // Historical replay may borrow live native objects. It keeps
++               // the full snapshot path, never a cached decorative lifetime.
++               var compact:Object=access.time!=null && access.time.phase=="replay"?null:decorations.capture(o);
+                var effect:Object={key:id(o),clip:getQualifiedClassName(o.vis),layer:o.sloy,
+-                  pose:VisualPose.capture(o.vis),atlas:AuthorityParticle.capture(o,atlas)};
++                  pose:compact==null?VisualPose.capture(o.vis):compact.pose,
++                  atlas:compact==null?AuthorityParticle.capture(o,atlas):null};
++               if(compact!=null)effect.decor=compact.decor;
+                if(getQualifiedClassName(o)=="fe.loc::Loot")effect.loot={id:o.item.id,kol:o.item.kol,x:o.X,y:o.Y,w:o.scX,h:o.scY,
+                   fields:NativeFields.capture(o),inter:NativeFields.capture(o.inter)};
+                result.effects.push(effect);
+--- a/src/authority/VisualPose.as
++++ b/src/authority/VisualPose.as
+@@ -21,6 +21,7 @@
+       public static var resolve:Function;
+       private static var applied:Dictionary=new Dictionary(true),added:Dictionary=new Dictionary(true);
+       private static var captured:Dictionary=new Dictionary(true);
++      private static var capturedRoots:Dictionary=new Dictionary(true);
+       private static var scriptless:Dictionary=new Dictionary(true);
+       private static var pixels:Dictionary=new Dictionary(true);
+       private static var immutableKeys:Dictionary=new Dictionary(true);
+@@ -31,11 +32,20 @@
+          if(key==null){key=JSON.stringify(value);immutableKeys[value]=key;}return key;
+       }
+       public static function capture(display:DisplayObject,depth:int=0,includePixels:Boolean=false):Object {
++         return captureNode(display,depth,includePixels,false);
++      }
++      /** Compact descriptions own their descendants separately. Keep a second
++       * immutable cache so a root read never replaces a full-tree baseline. */
++      public static function captureRoot(display:DisplayObject):Object {
++         return captureNode(display,0,false,true);
++      }
++      private static function captureNode(display:DisplayObject,depth:int,includePixels:Boolean,rootOnly:Boolean):Object {
+          if(display==null)return null;
+          var began:int=depth==0?Timing.start():0;
+          var color:ColorTransform=display.transform.colorTransform;
+          var matrix:Matrix=display.transform.matrix;
+-         var previous:Object=captured[display],m:Array=previous==null?null:previous.m,c:Array=previous==null?null:previous.c;
++         var cache:Dictionary=rootOnly?capturedRoots:captured;
++         var previous:Object=cache[display],m:Array=previous==null?null:previous.m,c:Array=previous==null?null:previous.c;
+          // Compare fixed native value tuples before allocating. These arrays
+          // are immutable wire recipes; unchanged colors/matrices need neither
+          // fresh arrays nor a recursive property-by-property comparison.
+@@ -71,7 +81,7 @@
+          // An invisible parent suppresses its entire subtree. Keep the root
+          // state and capture the current children when it becomes visible;
+          // hidden health bars otherwise multiply dense-room capture work.
+-         if(parent!=null && display.visible && display.alpha>0 && depth<12) {
++         if(!rootOnly && parent!=null && display.visible && display.alpha>0 && depth<12) {
+             // Keep old recipes immutable: only copy the already-matched prefix
+             // when a captured child actually changes. childCount indexes the
+             // filtered recipe; i remains the native display-list index.
+@@ -118,7 +128,7 @@
+             for(field in previous)if(!s.hasOwnProperty(field)){same=false;break;}
+             if(same){if(depth==0)Timing.end("capture.pose",began);return previous;}
+          }
+-         captured[display]=s;if(depth==0)Timing.end("capture.pose",began);return s;
++         cache[display]=s;if(depth==0)Timing.end("capture.pose",began);return s;
+       }
+       public static function recipeEqual(a:*,b:*):Boolean {
+          if(a===b)return true;
+@@ -268,7 +278,7 @@
+       public static function dispose(display:DisplayObject):void {
+          if(display==null)return;
+          var surface:Object=pixels[display];if(surface!=null){surface.data.dispose();delete pixels[display];}
+-         VectorDraw.dispose(display);delete applied[display];delete added[display];delete captured[display];delete scriptless[display];
++         VectorDraw.dispose(display);delete applied[display];delete added[display];delete captured[display];delete capturedRoots[display];delete scriptless[display];
+          var parent:DisplayObjectContainer=display as DisplayObjectContainer;
+          if(parent!=null)for(var i:int=0;i<parent.numChildren;i++)dispose(parent.getChildAt(i));
+       }

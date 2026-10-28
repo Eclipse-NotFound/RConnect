@@ -1,0 +1,38 @@
+{
+  "schema": "b-source-overlay-2",
+  "date": "2026-10-28",
+  "status": "source-only-uncompiled-untested-not-deployed",
+  "version": "B3-0.1-field7-dev",
+  "baseline": {
+    "directory": "build/ab/b190-scalar04-build",
+    "manifest_sha256": "3811c67aeb0f70b6d83dee22023a103a510d34b8d04af03808d90b2ac1f413c8",
+    "source_id": "22e2cdedf6e1c3c0aaf2e7c7821d8199f024ce6188dd01a56f82be18d0ac12f8",
+    "candidate_sha256": "f9e542f6d64fef707c41563558365a3d90562dbc346f3be6cf84f968062b7c07"
+  },
+  "parent": {
+    "directory": "experimental/b-field-pipeline",
+    "manifest_sha256": "211d074970f0a3fb73d18413151a60343cf1637fc70ab6fd213e7e7e39862a30",
+    "status": "source-only-uncompiled-untested-not-deployed"
+  },
+  "overlay": {
+    "src/RConnectMod.as": "a856c60331e0e84a11e543fa3da0b621b1b4d814df1e2e0cd69b454650ca1b81",
+    "src/authority/BuildInfo.as": "eaf3200a3c38235200d8b3071f7fce56f32bbdaadad5c9b2e55ec5cd432a6d08",
+    "src/authority/ClientReplica.as": "be138c79ced5e015b4d2fc4a9c52758618d7b4bfd6f462597e856d707328bc65",
+    "src/authority/DecorativeEffects.as": "7389189f0f84087df6f6f93f00224f1b59a8b5e6f17fef7843d02d59acdea8b3",
+    "src/authority/FrameDelta.as": "29b3046258c96e43e171573204b49c85b6216743a7bca5193243a805c86058a3",
+    "src/authority/HealthBarPose.as": "94137744e23831f1ed799b80e6b4b48b99ca1cabfc0e4d3fc2472dcbe0f46c1d",
+    "src/authority/HostSession.as": "e6932ed5575c3586d7339431a5bb217e5fa010313ccb294bc348e43d4d691e38",
+    "src/authority/Link.as": "955edfc9fb02fe311e0d7bf8ea7b930e629d8e14fdd2e4e3e5e218b49ba56638",
+    "src/authority/PoseTween.as": "8550bac1a3f32650009340e925b882bb862315c4cffe9864d0ed6e5ebce7d0cb",
+    "src/authority/ReplicaScene.as": "0b89564b9b3100f51f3600c5eda3302d6521eb01638a69c2b583cd41a26dae4a",
+    "src/authority/SceneEffects.as": "ade73789001d6ee24e92b7ecb8c4c2f594418c2bf9f03856372c46813f9134b8",
+    "src/authority/SceneSnapshot.as": "8e77111b36ca668f19f19bc1a740b65785504164507bede9744440102519e703",
+    "src/authority/VisualPose.as": "b4459aad69a0aee118ec40ce2dccd4578b4796d676ed4f1f593c87a04b72460e"
+  },
+  "new_sources": [
+    "src/authority/DecorativeEffects.as",
+    "src/authority/HealthBarPose.as"
+  ],
+  "prepare_script_sha256": "c008a727e81ea325a40e54f10b66e84f3b080dc9c0208454a89efafcc632e555",
+  "scope": "Source implementation and static review only. No assembly, compilation, experiment, replay, game run, or deployment performed."
+}
