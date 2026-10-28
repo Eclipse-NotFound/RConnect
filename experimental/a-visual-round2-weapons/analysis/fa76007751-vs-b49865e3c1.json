@@ -1,0 +1,2199 @@
+{
+  "baseline": {
+    "kind": "native-enemy-weapon-pose-analysis",
+    "checks": [
+      {
+        "name": "Correct native probe traces",
+        "ok": true,
+        "evidence": [
+          "native-enemy-weapon-pose",
+          "native-enemy-weapon-pose"
+        ]
+      },
+      {
+        "name": "Both roles present",
+        "ok": true,
+        "evidence": [
+          "host",
+          "join"
+        ]
+      },
+      {
+        "name": "Real source weapon fixtures recorded",
+        "ok": true,
+        "evidence": [
+          {
+            "id": "weaponpose_free",
+            "krep": 0,
+            "weapon": "lmg"
+          },
+          {
+            "id": "weaponpose_fixed",
+            "krep": 1,
+            "weapon": "lmg"
+          },
+          {
+            "id": "weaponpose_club",
+            "krep": 0,
+            "weapon": "armature"
+          },
+          {
+            "id": "weaponpose_laser",
+            "krep": 0,
+            "weapon": "ripper"
+          }
+        ]
+      },
+      {
+        "name": "weaponpose_free: source and remote genuinely on stage",
+        "ok": true,
+        "evidence": [
+          440,
+          410
+        ]
+      },
+      {
+        "name": "weaponpose_free: source has both true determinant signs",
+        "ok": true,
+        "evidence": [
+          -1,
+          1
+        ]
+      },
+      {
+        "name": "weaponpose_free: remote has both true determinant signs",
+        "ok": true,
+        "evidence": [
+          -1,
+          1
+        ]
+      },
+      {
+        "name": "weaponpose_free: no rendered singular weapon matrices",
+        "ok": true,
+        "evidence": [
+          0,
+          0
+        ]
+      },
+      {
+        "name": "weaponpose_free: native and remote actual pose changes observed",
+        "ok": true,
+        "evidence": [
+          351,
+          317
+        ]
+      },
+      {
+        "name": "weaponpose_free: every observed frequent packet has native transform",
+        "ok": false,
+        "evidence": 438
+      },
+      {
+        "name": "weaponpose_fixed: source and remote genuinely on stage",
+        "ok": true,
+        "evidence": [
+          440,
+          410
+        ]
+      },
+      {
+        "name": "weaponpose_fixed: source has both true determinant signs",
+        "ok": true,
+        "evidence": [
+          -1,
+          1
+        ]
+      },
+      {
+        "name": "weaponpose_fixed: remote has both true determinant signs",
+        "ok": true,
+        "evidence": [
+          -1,
+          1
+        ]
+      },
+      {
+        "name": "weaponpose_fixed: no rendered singular weapon matrices",
+        "ok": true,
+        "evidence": [
+          0,
+          0
+        ]
+      },
+      {
+        "name": "weaponpose_fixed: native and remote actual pose changes observed",
+        "ok": true,
+        "evidence": [
+          351,
+          316
+        ]
+      },
+      {
+        "name": "weaponpose_fixed: every observed frequent packet has native transform",
+        "ok": false,
+        "evidence": 438
+      },
+      {
+        "name": "weaponpose_club: source and remote genuinely on stage",
+        "ok": true,
+        "evidence": [
+          440,
+          410
+        ]
+      },
+      {
+        "name": "weaponpose_club: source has both true determinant signs",
+        "ok": true,
+        "evidence": [
+          -1,
+          1
+        ]
+      },
+      {
+        "name": "weaponpose_club: remote has both true determinant signs",
+        "ok": true,
+        "evidence": [
+          -1,
+          1
+        ]
+      },
+      {
+        "name": "weaponpose_club: no rendered singular weapon matrices",
+        "ok": true,
+        "evidence": [
+          0,
+          0
+        ]
+      },
+      {
+        "name": "weaponpose_club: native and remote actual pose changes observed",
+        "ok": true,
+        "evidence": [
+          351,
+          30
+        ]
+      },
+      {
+        "name": "weaponpose_club: every observed frequent packet has native transform",
+        "ok": false,
+        "evidence": 438
+      },
+      {
+        "name": "weaponpose_club: frequent packets carry real melee history",
+        "ok": false,
+        "evidence": {
+          "packets": 438,
+          "with_history": 0
+        }
+      },
+      {
+        "name": "weaponpose_laser: source and remote genuinely on stage",
+        "ok": true,
+        "evidence": [
+          440,
+          410
+        ]
+      },
+      {
+        "name": "weaponpose_laser: source has both true determinant signs",
+        "ok": true,
+        "evidence": [
+          -1,
+          1
+        ]
+      },
+      {
+        "name": "weaponpose_laser: remote has both true determinant signs",
+        "ok": true,
+        "evidence": [
+          -1,
+          1
+        ]
+      },
+      {
+        "name": "weaponpose_laser: no rendered singular weapon matrices",
+        "ok": true,
+        "evidence": [
+          0,
+          0
+        ]
+      },
+      {
+        "name": "weaponpose_laser: native and remote actual pose changes observed",
+        "ok": true,
+        "evidence": [
+          342,
+          30
+        ]
+      },
+      {
+        "name": "weaponpose_laser: every observed frequent packet has native transform",
+        "ok": false,
+        "evidence": 438
+      },
+      {
+        "name": "weaponpose_laser: frequent packets carry real melee history",
+        "ok": false,
+        "evidence": {
+          "packets": 438,
+          "with_history": 0
+        }
+      },
+      {
+        "name": "weaponpose_laser: source-changing clip also changes remotely: ",
+        "ok": true,
+        "evidence": {
+          "source_changes": 234,
+          "remote_changes": 14
+        }
+      },
+      {
+        "name": "weaponpose_laser: source-changing clip also changes remotely: /@0",
+        "ok": true,
+        "evidence": {
+          "source_changes": 350,
+          "remote_changes": 329
+        }
+      }
+    ],
+    "actors": [
+      {
+        "id": "weaponpose_free",
+        "weapon": "lmg",
+        "source": {
+          "rendered_samples": 440,
+          "active_samples": 352,
+          "positive_determinant": 172,
+          "negative_determinant": 180,
+          "singular_matrices": 0,
+          "handedness": [
+            -1,
+            1
+          ],
+          "flip_ages_ms": [
+            2025,
+            4029,
+            6012,
+            8029,
+            10013,
+            12013
+          ],
+          "native_or_remote_changed_frames": 351,
+          "same_pose_frames": 0,
+          "longest_same_pose_ms": 0,
+          "clip_frames": [
+            {
+              "path": "",
+              "class": "vislmg",
+              "total": 40,
+              "samples": 352,
+              "changes": 351,
+              "distinct_frames": [
+                1,
+                2,
+                3
+              ]
+            },
+            {
+              "path": "/@0",
+              "class": "flash.display::MovieClip",
+              "total": 1,
+              "samples": 352,
+              "changes": 0,
+              "distinct_frames": [
+                1
+              ]
+            },
+            {
+              "path": "/emit",
+              "class": "flash.display::MovieClip",
+              "total": 1,
+              "samples": 352,
+              "changes": 0,
+              "distinct_frames": [
+                1
+              ]
+            },
+            {
+              "path": "/@1",
+              "class": "flash.display::MovieClip",
+              "total": 2,
+              "samples": 351,
+              "changes": 350,
+              "distinct_frames": [
+                1,
+                2
+              ]
+            }
+          ]
+        },
+        "remote": {
+          "rendered_samples": 410,
+          "active_samples": 331,
+          "positive_determinant": 161,
+          "negative_determinant": 170,
+          "singular_matrices": 0,
+          "handedness": [
+            -1,
+            1
+          ],
+          "flip_ages_ms": [
+            2153,
+            4087,
+            6086,
+            8085,
+            10055,
+            12059
+          ],
+          "native_or_remote_changed_frames": 317,
+          "same_pose_frames": 13,
+          "longest_same_pose_ms": 127,
+          "clip_frames": [
+            {
+              "path": "",
+              "class": "vislmg",
+              "total": 40,
+              "samples": 331,
+              "changes": 330,
+              "distinct_frames": [
+                1,
+                2,
+                3
+              ]
+            },
+            {
+              "path": "/@0",
+              "class": "flash.display::MovieClip",
+              "total": 1,
+              "samples": 331,
+              "changes": 0,
+              "distinct_frames": [
+                1
+              ]
+            },
+            {
+              "path": "/emit",
+              "class": "flash.display::MovieClip",
+              "total": 1,
+              "samples": 331,
+              "changes": 0,
+              "distinct_frames": [
+                1
+              ]
+            },
+            {
+              "path": "/@1",
+              "class": "flash.display::MovieClip",
+              "total": 2,
+              "samples": 326,
+              "changes": 325,
+              "distinct_frames": [
+                1,
+                2
+              ]
+            }
+          ]
+        },
+        "timeline_fit": {
+          "available": true,
+          "estimated_common_lag_ms": 20,
+          "at_search_boundary": false,
+          "median_tip_equivalent_error_px": 7.12501970281364,
+          "p95_tip_equivalent_error_px": 19.981768931724158,
+          "compared_frames": 314,
+          "reflection_mismatch_frames": 6,
+          "remote_held_while_aligned_native_moved": 5,
+          "note": "Fit from real observed matrices; not the private source cursor or a performance score."
+        },
+        "actual_reflection_transitions": {
+          "source_transitions": 6,
+          "remote_transitions": 6,
+          "matches": [
+            {
+              "source_age": 2025,
+              "source_at": 37455,
+              "remote_age": 2153,
+              "remote_at": 25613,
+              "to_sign": -1,
+              "lag_ms_after_min_transit_calibration": 194
+            },
+            {
+              "source_age": 4029,
+              "source_at": 39459,
+              "remote_age": 4087,
+              "remote_at": 27547,
+              "to_sign": 1,
+              "lag_ms_after_min_transit_calibration": 124
+            },
+            {
+              "source_age": 6012,
+              "source_at": 41442,
+              "remote_age": 6086,
+              "remote_at": 29546,
+              "to_sign": -1,
+              "lag_ms_after_min_transit_calibration": 140
+            },
+            {
+              "source_age": 8029,
+              "source_at": 43459,
+              "remote_age": 8085,
+              "remote_at": 31545,
+              "to_sign": 1,
+              "lag_ms_after_min_transit_calibration": 122
+            },
+            {
+              "source_age": 10013,
+              "source_at": 45443,
+              "remote_age": 10055,
+              "remote_at": 33515,
+              "to_sign": -1,
+              "lag_ms_after_min_transit_calibration": 108
+            },
+            {
+              "source_age": 12013,
+              "source_at": 47443,
+              "remote_age": 12059,
+              "remote_at": 35519,
+              "to_sign": 1,
+              "lag_ms_after_min_transit_calibration": 112
+            }
+          ],
+          "missing_source_transitions": [],
+          "unpaired_remote_transitions": [],
+          "lag_ms": {
+            "samples": 6,
+            "mean": 133.33333333333334,
+            "median": 123.0,
+            "p95": 194,
+            "max": 194,
+            "gt100": 6
+          }
+        }
+      },
+      {
+        "id": "weaponpose_fixed",
+        "weapon": "lmg",
+        "source": {
+          "rendered_samples": 440,
+          "active_samples": 352,
+          "positive_determinant": 172,
+          "negative_determinant": 180,
+          "singular_matrices": 0,
+          "handedness": [
+            -1,
+            1
+          ],
+          "flip_ages_ms": [
+            2025,
+            4029,
+            6012,
+            8029,
+            10013,
+            12013
+          ],
+          "native_or_remote_changed_frames": 351,
+          "same_pose_frames": 0,
+          "longest_same_pose_ms": 0,
+          "clip_frames": [
+            {
+              "path": "",
+              "class": "vislmg",
+              "total": 40,
+              "samples": 352,
+              "changes": 351,
+              "distinct_frames": [
+                1,
+                2,
+                3
+              ]
+            },
+            {
+              "path": "/@0",
+              "class": "flash.display::MovieClip",
+              "total": 1,
+              "samples": 352,
+              "changes": 0,
+              "distinct_frames": [
+                1
+              ]
+            },
+            {
+              "path": "/emit",
+              "class": "flash.display::MovieClip",
+              "total": 1,
+              "samples": 352,
+              "changes": 0,
+              "distinct_frames": [
+                1
+              ]
+            },
+            {
+              "path": "/@1",
+              "class": "flash.display::MovieClip",
+              "total": 2,
+              "samples": 351,
+              "changes": 350,
+              "distinct_frames": [
+                1,
+                2
+              ]
+            }
+          ]
+        },
+        "remote": {
+          "rendered_samples": 410,
+          "active_samples": 331,
+          "positive_determinant": 161,
+          "negative_determinant": 170,
+          "singular_matrices": 0,
+          "handedness": [
+            -1,
+            1
+          ],
+          "flip_ages_ms": [
+            2153,
+            4087,
+            6086,
+            8085,
+            10055,
+            12059
+          ],
+          "native_or_remote_changed_frames": 316,
+          "same_pose_frames": 14,
+          "longest_same_pose_ms": 132,
+          "clip_frames": [
+            {
+              "path": "",
+              "class": "vislmg",
+              "total": 40,
+              "samples": 331,
+              "changes": 330,
+              "distinct_frames": [
+                1,
+                2,
+                3
+              ]
+            },
+            {
+              "path": "/@0",
+              "class": "flash.display::MovieClip",
+              "total": 1,
+              "samples": 331,
+              "changes": 0,
+              "distinct_frames": [
+                1
+              ]
+            },
+            {
+              "path": "/emit",
+              "class": "flash.display::MovieClip",
+              "total": 1,
+              "samples": 331,
+              "changes": 0,
+              "distinct_frames": [
+                1
+              ]
+            },
+            {
+              "path": "/@1",
+              "class": "flash.display::MovieClip",
+              "total": 2,
+              "samples": 326,
+              "changes": 325,
+              "distinct_frames": [
+                1,
+                2
+              ]
+            }
+          ]
+        },
+        "timeline_fit": {
+          "available": true,
+          "estimated_common_lag_ms": 25,
+          "at_search_boundary": false,
+          "median_tip_equivalent_error_px": 7.159936041277806,
+          "p95_tip_equivalent_error_px": 15.767842141209425,
+          "compared_frames": 314,
+          "reflection_mismatch_frames": 4,
+          "remote_held_while_aligned_native_moved": 8,
+          "note": "Fit from real observed matrices; not the private source cursor or a performance score."
+        },
+        "actual_reflection_transitions": {
+          "source_transitions": 6,
+          "remote_transitions": 6,
+          "matches": [
+            {
+              "source_age": 2025,
+              "source_at": 37455,
+              "remote_age": 2153,
+              "remote_at": 25613,
+              "to_sign": -1,
+              "lag_ms_after_min_transit_calibration": 194
+            },
+            {
+              "source_age": 4029,
+              "source_at": 39459,
+              "remote_age": 4087,
+              "remote_at": 27547,
+              "to_sign": 1,
+              "lag_ms_after_min_transit_calibration": 124
+            },
+            {
+              "source_age": 6012,
+              "source_at": 41442,
+              "remote_age": 6086,
+              "remote_at": 29546,
+              "to_sign": -1,
+              "lag_ms_after_min_transit_calibration": 140
+            },
+            {
+              "source_age": 8029,
+              "source_at": 43459,
+              "remote_age": 8085,
+              "remote_at": 31545,
+              "to_sign": 1,
+              "lag_ms_after_min_transit_calibration": 122
+            },
+            {
+              "source_age": 10013,
+              "source_at": 45443,
+              "remote_age": 10055,
+              "remote_at": 33515,
+              "to_sign": -1,
+              "lag_ms_after_min_transit_calibration": 108
+            },
+            {
+              "source_age": 12013,
+              "source_at": 47443,
+              "remote_age": 12059,
+              "remote_at": 35519,
+              "to_sign": 1,
+              "lag_ms_after_min_transit_calibration": 112
+            }
+          ],
+          "missing_source_transitions": [],
+          "unpaired_remote_transitions": [],
+          "lag_ms": {
+            "samples": 6,
+            "mean": 133.33333333333334,
+            "median": 123.0,
+            "p95": 194,
+            "max": 194,
+            "gt100": 6
+          }
+        }
+      },
+      {
+        "id": "weaponpose_club",
+        "weapon": "armature",
+        "source": {
+          "rendered_samples": 440,
+          "active_samples": 352,
+          "positive_determinant": 172,
+          "negative_determinant": 180,
+          "singular_matrices": 0,
+          "handedness": [
+            -1,
+            1
+          ],
+          "flip_ages_ms": [
+            2025,
+            4029,
+            6012,
+            8029,
+            10013,
+            12013
+          ],
+          "native_or_remote_changed_frames": 351,
+          "same_pose_frames": 0,
+          "longest_same_pose_ms": 0,
+          "clip_frames": [
+            {
+              "path": "",
+              "class": "visarmature",
+              "total": 1,
+              "samples": 352,
+              "changes": 0,
+              "distinct_frames": [
+                1
+              ]
+            }
+          ]
+        },
+        "remote": {
+          "rendered_samples": 410,
+          "active_samples": 331,
+          "positive_determinant": 207,
+          "negative_determinant": 124,
+          "singular_matrices": 0,
+          "handedness": [
+            -1,
+            1
+          ],
+          "flip_ages_ms": [
+            2280,
+            4789,
+            10255,
+            12095
+          ],
+          "native_or_remote_changed_frames": 30,
+          "same_pose_frames": 300,
+          "longest_same_pose_ms": 2702,
+          "clip_frames": [
+            {
+              "path": "",
+              "class": "visarmature",
+              "total": 1,
+              "samples": 331,
+              "changes": 0,
+              "distinct_frames": [
+                1
+              ]
+            }
+          ]
+        },
+        "timeline_fit": {
+          "available": true,
+          "estimated_common_lag_ms": 125,
+          "at_search_boundary": false,
+          "median_tip_equivalent_error_px": 153.00493010404057,
+          "p95_tip_equivalent_error_px": 248.74147762059687,
+          "compared_frames": 314,
+          "reflection_mismatch_frames": 86,
+          "remote_held_while_aligned_native_moved": 283,
+          "note": "Fit from real observed matrices; not the private source cursor or a performance score."
+        },
+        "actual_reflection_transitions": {
+          "source_transitions": 6,
+          "remote_transitions": 4,
+          "matches": [
+            {
+              "source_age": 2025,
+              "source_at": 37455,
+              "remote_age": 2280,
+              "remote_at": 25740,
+              "to_sign": -1,
+              "lag_ms_after_min_transit_calibration": 321
+            },
+            {
+              "source_age": 4029,
+              "source_at": 39459,
+              "remote_age": 4789,
+              "remote_at": 28249,
+              "to_sign": 1,
+              "lag_ms_after_min_transit_calibration": 826
+            },
+            {
+              "source_age": 10013,
+              "source_at": 45443,
+              "remote_age": 10255,
+              "remote_at": 33715,
+              "to_sign": -1,
+              "lag_ms_after_min_transit_calibration": 308
+            },
+            {
+              "source_age": 12013,
+              "source_at": 47443,
+              "remote_age": 12095,
+              "remote_at": 35555,
+              "to_sign": 1,
+              "lag_ms_after_min_transit_calibration": 148
+            }
+          ],
+          "missing_source_transitions": [
+            {
+              "age": 6012,
+              "at": 41442,
+              "to_sign": -1
+            },
+            {
+              "age": 8029,
+              "at": 43459,
+              "to_sign": 1
+            }
+          ],
+          "unpaired_remote_transitions": [],
+          "lag_ms": {
+            "samples": 4,
+            "mean": 400.75,
+            "median": 314.5,
+            "p95": 826,
+            "max": 826,
+            "gt100": 4
+          }
+        }
+      },
+      {
+        "id": "weaponpose_laser",
+        "weapon": "ripper",
+        "source": {
+          "rendered_samples": 440,
+          "active_samples": 352,
+          "positive_determinant": 172,
+          "negative_determinant": 180,
+          "singular_matrices": 0,
+          "handedness": [
+            -1,
+            1
+          ],
+          "flip_ages_ms": [
+            2025,
+            4029,
+            6012,
+            8029,
+            10013,
+            12013
+          ],
+          "native_or_remote_changed_frames": 342,
+          "same_pose_frames": 9,
+          "longest_same_pose_ms": 107,
+          "clip_frames": [
+            {
+              "path": "",
+              "class": "visripper",
+              "total": 3,
+              "samples": 352,
+              "changes": 234,
+              "distinct_frames": [
+                1,
+                2,
+                3
+              ]
+            },
+            {
+              "path": "/@0",
+              "class": "flash.display::MovieClip",
+              "total": 2,
+              "samples": 351,
+              "changes": 350,
+              "distinct_frames": [
+                1,
+                2
+              ]
+            }
+          ]
+        },
+        "remote": {
+          "rendered_samples": 410,
+          "active_samples": 331,
+          "positive_determinant": 207,
+          "negative_determinant": 124,
+          "singular_matrices": 0,
+          "handedness": [
+            -1,
+            1
+          ],
+          "flip_ages_ms": [
+            2280,
+            4789,
+            10255,
+            12095
+          ],
+          "native_or_remote_changed_frames": 30,
+          "same_pose_frames": 300,
+          "longest_same_pose_ms": 2702,
+          "clip_frames": [
+            {
+              "path": "",
+              "class": "visripper",
+              "total": 3,
+              "samples": 331,
+              "changes": 14,
+              "distinct_frames": [
+                1,
+                2,
+                3
+              ]
+            },
+            {
+              "path": "/@0",
+              "class": "flash.display::MovieClip",
+              "total": 2,
+              "samples": 330,
+              "changes": 329,
+              "distinct_frames": [
+                1,
+                2
+              ]
+            }
+          ]
+        },
+        "timeline_fit": {
+          "available": true,
+          "estimated_common_lag_ms": 145,
+          "at_search_boundary": false,
+          "median_tip_equivalent_error_px": 7.921976491739754,
+          "p95_tip_equivalent_error_px": 215.66079540740884,
+          "compared_frames": 314,
+          "reflection_mismatch_frames": 84,
+          "remote_held_while_aligned_native_moved": 266,
+          "note": "Fit from real observed matrices; not the private source cursor or a performance score."
+        },
+        "actual_reflection_transitions": {
+          "source_transitions": 6,
+          "remote_transitions": 4,
+          "matches": [
+            {
+              "source_age": 2025,
+              "source_at": 37455,
+              "remote_age": 2280,
+              "remote_at": 25740,
+              "to_sign": -1,
+              "lag_ms_after_min_transit_calibration": 321
+            },
+            {
+              "source_age": 4029,
+              "source_at": 39459,
+              "remote_age": 4789,
+              "remote_at": 28249,
+              "to_sign": 1,
+              "lag_ms_after_min_transit_calibration": 826
+            },
+            {
+              "source_age": 10013,
+              "source_at": 45443,
+              "remote_age": 10255,
+              "remote_at": 33715,
+              "to_sign": -1,
+              "lag_ms_after_min_transit_calibration": 308
+            },
+            {
+              "source_age": 12013,
+              "source_at": 47443,
+              "remote_age": 12095,
+              "remote_at": 35555,
+              "to_sign": 1,
+              "lag_ms_after_min_transit_calibration": 148
+            }
+          ],
+          "missing_source_transitions": [
+            {
+              "age": 6012,
+              "at": 41442,
+              "to_sign": -1
+            },
+            {
+              "age": 8029,
+              "at": 43459,
+              "to_sign": 1
+            }
+          ],
+          "unpaired_remote_transitions": [],
+          "lag_ms": {
+            "samples": 4,
+            "mean": 400.75,
+            "median": 314.5,
+            "p95": 826,
+            "max": 826,
+            "gt100": 4
+          }
+        }
+      }
+    ],
+    "boundary": "Structural visual assertions and actual frame counts; completed is reported separately, never used to pass these checks.",
+    "driver_status": {
+      "host": {
+        "completed": true,
+        "error": ""
+      },
+      "join": {
+        "completed": false,
+        "error": "Frequent enemy poses carry native weapon transform: 0"
+      }
+    },
+    "structural_visual_checks_passed": false,
+    "overall_smoothness_qualified": false,
+    "run_id": "fa76007751",
+    "profile": "coexist",
+    "frozen_artifacts": {
+      "candidate_sha256": "f14a44e74ac98ec480875203d4d714acfbc496141980e5a1d7b0de0c7ad222fb",
+      "driver_sha256": "d0fda07570582e1c79368cb2934165bcd153c8e91fddb2a7739962c64b3b2319",
+      "harness_sha256": "a28f5fb3e0bcd78a1cf09f4b628987b8fe6b11cb3103708df97bf515584f8b50",
+      "game_sha256": "b84f24280b3c676f4068e1cdc5a6ebee89988f62bcf7a44d4dd71a4771360184"
+    },
+    "environment_before": {
+      "memory": {
+        "load": 73,
+        "totalPhysical": 33879638016,
+        "availablePhysical": 8828432384,
+        "commitLimit": 58533253120,
+        "availableCommit": 12581175296
+      },
+      "other_air": {
+        "processes": [
+          {
+            "pid": 80640,
+            "exe": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\ab\\b3-playable-190\\game\\adl64.exe"
+          },
+          {
+            "pid": 89504,
+            "exe": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\ab\\b3-playable-190\\game\\adl64.exe"
+          }
+        ],
+        "unreadableProcessCount": 169,
+        "scope": "endpoints only; absence is not proof of an idle computer"
+      },
+      "qualification": "coexist observation; not isolated performance ranking"
+    },
+    "clock_alignment": {
+      "receiver_minus_source_min_ms": -12036,
+      "receiver_minus_source_median_ms": -12012.0,
+      "samples": 1752,
+      "boundary": "Clock offset uses minimum real receive-at minus source-stamp. Reported lag excludes unknown minimum transit and source render scheduling; it is not exact one-way network latency."
+    },
+    "inputs": {
+      "host": {
+        "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\fa76007751\\logs\\host\\stutter-result.json",
+        "sha256": "f74767337fcd48bd79281d9c9bd649b59e1a2549328ea6fc779ff68b82e66e31"
+      },
+      "join": {
+        "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\fa76007751\\logs\\join\\stutter-result.json",
+        "sha256": "384f629c7db90b08c270de061c909d33c68813a399cc4dfa3c0950fca05827e5"
+      }
+    },
+    "frame_gaps_ms": {
+      "host": {
+        "full": {
+          "samples": 439,
+          "mean": 35.02050113895216,
+          "median": 33,
+          "p95": 60,
+          "max": 141,
+          "gt100": 5
+        },
+        "active": {
+          "samples": 351,
+          "mean": 33.598290598290596,
+          "median": 33,
+          "p95": 55,
+          "max": 112,
+          "gt100": 1
+        }
+      },
+      "join": {
+        "full": {
+          "samples": 409,
+          "mean": 37.261613691931544,
+          "median": 33,
+          "p95": 51,
+          "max": 475,
+          "gt100": 9
+        },
+        "active": {
+          "samples": 330,
+          "mean": 35.587878787878786,
+          "median": 33.0,
+          "p95": 51,
+          "max": 353,
+          "gt100": 6
+        }
+      }
+    }
+  },
+  "candidate": {
+    "kind": "native-enemy-weapon-pose-analysis",
+    "checks": [
+      {
+        "name": "Correct native probe traces",
+        "ok": true,
+        "evidence": [
+          "native-enemy-weapon-pose",
+          "native-enemy-weapon-pose"
+        ]
+      },
+      {
+        "name": "Both roles present",
+        "ok": true,
+        "evidence": [
+          "host",
+          "join"
+        ]
+      },
+      {
+        "name": "Real source weapon fixtures recorded",
+        "ok": true,
+        "evidence": [
+          {
+            "id": "weaponpose_free",
+            "krep": 0,
+            "weapon": "lmg"
+          },
+          {
+            "id": "weaponpose_fixed",
+            "krep": 1,
+            "weapon": "lmg"
+          },
+          {
+            "id": "weaponpose_club",
+            "krep": 0,
+            "weapon": "armature"
+          },
+          {
+            "id": "weaponpose_laser",
+            "krep": 0,
+            "weapon": "ripper"
+          }
+        ]
+      },
+      {
+        "name": "weaponpose_free: source and remote genuinely on stage",
+        "ok": true,
+        "evidence": [
+          436,
+          403
+        ]
+      },
+      {
+        "name": "weaponpose_free: source has both true determinant signs",
+        "ok": true,
+        "evidence": [
+          -1,
+          1
+        ]
+      },
+      {
+        "name": "weaponpose_free: remote has both true determinant signs",
+        "ok": true,
+        "evidence": [
+          -1,
+          1
+        ]
+      },
+      {
+        "name": "weaponpose_free: no rendered singular weapon matrices",
+        "ok": true,
+        "evidence": [
+          0,
+          0
+        ]
+      },
+      {
+        "name": "weaponpose_free: native and remote actual pose changes observed",
+        "ok": true,
+        "evidence": [
+          343,
+          317
+        ]
+      },
+      {
+        "name": "weaponpose_free: every observed frequent packet has native transform",
+        "ok": true,
+        "evidence": 433
+      },
+      {
+        "name": "weaponpose_fixed: source and remote genuinely on stage",
+        "ok": true,
+        "evidence": [
+          436,
+          403
+        ]
+      },
+      {
+        "name": "weaponpose_fixed: source has both true determinant signs",
+        "ok": true,
+        "evidence": [
+          -1,
+          1
+        ]
+      },
+      {
+        "name": "weaponpose_fixed: remote has both true determinant signs",
+        "ok": true,
+        "evidence": [
+          -1,
+          1
+        ]
+      },
+      {
+        "name": "weaponpose_fixed: no rendered singular weapon matrices",
+        "ok": true,
+        "evidence": [
+          0,
+          0
+        ]
+      },
+      {
+        "name": "weaponpose_fixed: native and remote actual pose changes observed",
+        "ok": true,
+        "evidence": [
+          343,
+          316
+        ]
+      },
+      {
+        "name": "weaponpose_fixed: every observed frequent packet has native transform",
+        "ok": true,
+        "evidence": 433
+      },
+      {
+        "name": "weaponpose_club: source and remote genuinely on stage",
+        "ok": true,
+        "evidence": [
+          436,
+          403
+        ]
+      },
+      {
+        "name": "weaponpose_club: source has both true determinant signs",
+        "ok": true,
+        "evidence": [
+          -1,
+          1
+        ]
+      },
+      {
+        "name": "weaponpose_club: remote has both true determinant signs",
+        "ok": true,
+        "evidence": [
+          -1,
+          1
+        ]
+      },
+      {
+        "name": "weaponpose_club: no rendered singular weapon matrices",
+        "ok": true,
+        "evidence": [
+          0,
+          0
+        ]
+      },
+      {
+        "name": "weaponpose_club: native and remote actual pose changes observed",
+        "ok": true,
+        "evidence": [
+          343,
+          322
+        ]
+      },
+      {
+        "name": "weaponpose_club: every observed frequent packet has native transform",
+        "ok": true,
+        "evidence": 433
+      },
+      {
+        "name": "weaponpose_club: frequent packets carry real melee history",
+        "ok": true,
+        "evidence": {
+          "packets": 433,
+          "with_history": 433
+        }
+      },
+      {
+        "name": "weaponpose_laser: source and remote genuinely on stage",
+        "ok": true,
+        "evidence": [
+          436,
+          403
+        ]
+      },
+      {
+        "name": "weaponpose_laser: source has both true determinant signs",
+        "ok": true,
+        "evidence": [
+          -1,
+          1
+        ]
+      },
+      {
+        "name": "weaponpose_laser: remote has both true determinant signs",
+        "ok": true,
+        "evidence": [
+          -1,
+          1
+        ]
+      },
+      {
+        "name": "weaponpose_laser: no rendered singular weapon matrices",
+        "ok": true,
+        "evidence": [
+          0,
+          0
+        ]
+      },
+      {
+        "name": "weaponpose_laser: native and remote actual pose changes observed",
+        "ok": true,
+        "evidence": [
+          333,
+          315
+        ]
+      },
+      {
+        "name": "weaponpose_laser: every observed frequent packet has native transform",
+        "ok": true,
+        "evidence": 433
+      },
+      {
+        "name": "weaponpose_laser: frequent packets carry real melee history",
+        "ok": true,
+        "evidence": {
+          "packets": 433,
+          "with_history": 433
+        }
+      },
+      {
+        "name": "weaponpose_laser: source-changing clip also changes remotely: ",
+        "ok": true,
+        "evidence": {
+          "source_changes": 228,
+          "remote_changes": 192
+        }
+      },
+      {
+        "name": "weaponpose_laser: source-changing clip also changes remotely: /@0",
+        "ok": true,
+        "evidence": {
+          "source_changes": 343,
+          "remote_changes": 321
+        }
+      }
+    ],
+    "actors": [
+      {
+        "id": "weaponpose_free",
+        "weapon": "lmg",
+        "source": {
+          "rendered_samples": 436,
+          "active_samples": 344,
+          "positive_determinant": 165,
+          "negative_determinant": 179,
+          "singular_matrices": 0,
+          "handedness": [
+            -1,
+            1
+          ],
+          "flip_ages_ms": [
+            2038,
+            4005,
+            6031,
+            8069,
+            10030,
+            12043
+          ],
+          "native_or_remote_changed_frames": 343,
+          "same_pose_frames": 0,
+          "longest_same_pose_ms": 0,
+          "clip_frames": [
+            {
+              "path": "",
+              "class": "vislmg",
+              "total": 40,
+              "samples": 344,
+              "changes": 343,
+              "distinct_frames": [
+                2,
+                3
+              ]
+            },
+            {
+              "path": "/@0",
+              "class": "flash.display::MovieClip",
+              "total": 1,
+              "samples": 344,
+              "changes": 0,
+              "distinct_frames": [
+                1
+              ]
+            },
+            {
+              "path": "/@1",
+              "class": "flash.display::MovieClip",
+              "total": 2,
+              "samples": 344,
+              "changes": 343,
+              "distinct_frames": [
+                1,
+                2
+              ]
+            },
+            {
+              "path": "/emit",
+              "class": "flash.display::MovieClip",
+              "total": 1,
+              "samples": 344,
+              "changes": 0,
+              "distinct_frames": [
+                1
+              ]
+            }
+          ]
+        },
+        "remote": {
+          "rendered_samples": 403,
+          "active_samples": 323,
+          "positive_determinant": 154,
+          "negative_determinant": 169,
+          "singular_matrices": 0,
+          "handedness": [
+            -1,
+            1
+          ],
+          "flip_ages_ms": [
+            2230,
+            4116,
+            6114,
+            8115,
+            10113,
+            12112
+          ],
+          "native_or_remote_changed_frames": 317,
+          "same_pose_frames": 5,
+          "longest_same_pose_ms": 100,
+          "clip_frames": [
+            {
+              "path": "",
+              "class": "vislmg",
+              "total": 40,
+              "samples": 323,
+              "changes": 305,
+              "distinct_frames": [
+                1,
+                2,
+                3
+              ]
+            },
+            {
+              "path": "/@0",
+              "class": "flash.display::MovieClip",
+              "total": 1,
+              "samples": 323,
+              "changes": 0,
+              "distinct_frames": [
+                1
+              ]
+            },
+            {
+              "path": "/emit",
+              "class": "flash.display::MovieClip",
+              "total": 1,
+              "samples": 323,
+              "changes": 0,
+              "distinct_frames": [
+                1
+              ]
+            },
+            {
+              "path": "/@1",
+              "class": "flash.display::MovieClip",
+              "total": 2,
+              "samples": 284,
+              "changes": 283,
+              "distinct_frames": [
+                1,
+                2
+              ]
+            }
+          ]
+        },
+        "timeline_fit": {
+          "available": true,
+          "estimated_common_lag_ms": 60,
+          "at_search_boundary": false,
+          "median_tip_equivalent_error_px": 0.9464397536677605,
+          "p95_tip_equivalent_error_px": 17.694145446573316,
+          "compared_frames": 306,
+          "reflection_mismatch_frames": 3,
+          "remote_held_while_aligned_native_moved": 3,
+          "note": "Fit from real observed matrices; not the private source cursor or a performance score."
+        },
+        "actual_reflection_transitions": {
+          "source_transitions": 6,
+          "remote_transitions": 6,
+          "matches": [
+            {
+              "source_age": 2038,
+              "source_at": 37063,
+              "remote_age": 2230,
+              "remote_at": 25246,
+              "to_sign": -1,
+              "lag_ms_after_min_transit_calibration": 229
+            },
+            {
+              "source_age": 4005,
+              "source_at": 39030,
+              "remote_age": 4116,
+              "remote_at": 27132,
+              "to_sign": 1,
+              "lag_ms_after_min_transit_calibration": 148
+            },
+            {
+              "source_age": 6031,
+              "source_at": 41056,
+              "remote_age": 6114,
+              "remote_at": 29130,
+              "to_sign": -1,
+              "lag_ms_after_min_transit_calibration": 120
+            },
+            {
+              "source_age": 8069,
+              "source_at": 43094,
+              "remote_age": 8115,
+              "remote_at": 31131,
+              "to_sign": 1,
+              "lag_ms_after_min_transit_calibration": 83
+            },
+            {
+              "source_age": 10030,
+              "source_at": 45055,
+              "remote_age": 10113,
+              "remote_at": 33129,
+              "to_sign": -1,
+              "lag_ms_after_min_transit_calibration": 120
+            },
+            {
+              "source_age": 12043,
+              "source_at": 47068,
+              "remote_age": 12112,
+              "remote_at": 35128,
+              "to_sign": 1,
+              "lag_ms_after_min_transit_calibration": 106
+            }
+          ],
+          "missing_source_transitions": [],
+          "unpaired_remote_transitions": [],
+          "lag_ms": {
+            "samples": 6,
+            "mean": 134.33333333333334,
+            "median": 120.0,
+            "p95": 229,
+            "max": 229,
+            "gt100": 5
+          }
+        }
+      },
+      {
+        "id": "weaponpose_fixed",
+        "weapon": "lmg",
+        "source": {
+          "rendered_samples": 436,
+          "active_samples": 344,
+          "positive_determinant": 165,
+          "negative_determinant": 179,
+          "singular_matrices": 0,
+          "handedness": [
+            -1,
+            1
+          ],
+          "flip_ages_ms": [
+            2038,
+            4005,
+            6031,
+            8069,
+            10030,
+            12043
+          ],
+          "native_or_remote_changed_frames": 343,
+          "same_pose_frames": 0,
+          "longest_same_pose_ms": 0,
+          "clip_frames": [
+            {
+              "path": "",
+              "class": "vislmg",
+              "total": 40,
+              "samples": 344,
+              "changes": 343,
+              "distinct_frames": [
+                2,
+                3
+              ]
+            },
+            {
+              "path": "/@0",
+              "class": "flash.display::MovieClip",
+              "total": 1,
+              "samples": 344,
+              "changes": 0,
+              "distinct_frames": [
+                1
+              ]
+            },
+            {
+              "path": "/@1",
+              "class": "flash.display::MovieClip",
+              "total": 2,
+              "samples": 344,
+              "changes": 343,
+              "distinct_frames": [
+                1,
+                2
+              ]
+            },
+            {
+              "path": "/emit",
+              "class": "flash.display::MovieClip",
+              "total": 1,
+              "samples": 344,
+              "changes": 0,
+              "distinct_frames": [
+                1
+              ]
+            }
+          ]
+        },
+        "remote": {
+          "rendered_samples": 403,
+          "active_samples": 323,
+          "positive_determinant": 154,
+          "negative_determinant": 169,
+          "singular_matrices": 0,
+          "handedness": [
+            -1,
+            1
+          ],
+          "flip_ages_ms": [
+            2230,
+            4116,
+            6114,
+            8115,
+            10113,
+            12112
+          ],
+          "native_or_remote_changed_frames": 316,
+          "same_pose_frames": 6,
+          "longest_same_pose_ms": 100,
+          "clip_frames": [
+            {
+              "path": "",
+              "class": "vislmg",
+              "total": 40,
+              "samples": 323,
+              "changes": 303,
+              "distinct_frames": [
+                1,
+                2,
+                3
+              ]
+            },
+            {
+              "path": "/@0",
+              "class": "flash.display::MovieClip",
+              "total": 1,
+              "samples": 323,
+              "changes": 0,
+              "distinct_frames": [
+                1
+              ]
+            },
+            {
+              "path": "/emit",
+              "class": "flash.display::MovieClip",
+              "total": 1,
+              "samples": 323,
+              "changes": 0,
+              "distinct_frames": [
+                1
+              ]
+            },
+            {
+              "path": "/@1",
+              "class": "flash.display::MovieClip",
+              "total": 2,
+              "samples": 280,
+              "changes": 279,
+              "distinct_frames": [
+                1,
+                2
+              ]
+            }
+          ]
+        },
+        "timeline_fit": {
+          "available": true,
+          "estimated_common_lag_ms": 60,
+          "at_search_boundary": false,
+          "median_tip_equivalent_error_px": 0.9317413191835979,
+          "p95_tip_equivalent_error_px": 16.887417663267946,
+          "compared_frames": 306,
+          "reflection_mismatch_frames": 3,
+          "remote_held_while_aligned_native_moved": 4,
+          "note": "Fit from real observed matrices; not the private source cursor or a performance score."
+        },
+        "actual_reflection_transitions": {
+          "source_transitions": 6,
+          "remote_transitions": 6,
+          "matches": [
+            {
+              "source_age": 2038,
+              "source_at": 37063,
+              "remote_age": 2230,
+              "remote_at": 25246,
+              "to_sign": -1,
+              "lag_ms_after_min_transit_calibration": 229
+            },
+            {
+              "source_age": 4005,
+              "source_at": 39030,
+              "remote_age": 4116,
+              "remote_at": 27132,
+              "to_sign": 1,
+              "lag_ms_after_min_transit_calibration": 148
+            },
+            {
+              "source_age": 6031,
+              "source_at": 41056,
+              "remote_age": 6114,
+              "remote_at": 29130,
+              "to_sign": -1,
+              "lag_ms_after_min_transit_calibration": 120
+            },
+            {
+              "source_age": 8069,
+              "source_at": 43094,
+              "remote_age": 8115,
+              "remote_at": 31131,
+              "to_sign": 1,
+              "lag_ms_after_min_transit_calibration": 83
+            },
+            {
+              "source_age": 10030,
+              "source_at": 45055,
+              "remote_age": 10113,
+              "remote_at": 33129,
+              "to_sign": -1,
+              "lag_ms_after_min_transit_calibration": 120
+            },
+            {
+              "source_age": 12043,
+              "source_at": 47068,
+              "remote_age": 12112,
+              "remote_at": 35128,
+              "to_sign": 1,
+              "lag_ms_after_min_transit_calibration": 106
+            }
+          ],
+          "missing_source_transitions": [],
+          "unpaired_remote_transitions": [],
+          "lag_ms": {
+            "samples": 6,
+            "mean": 134.33333333333334,
+            "median": 120.0,
+            "p95": 229,
+            "max": 229,
+            "gt100": 5
+          }
+        }
+      },
+      {
+        "id": "weaponpose_club",
+        "weapon": "armature",
+        "source": {
+          "rendered_samples": 436,
+          "active_samples": 344,
+          "positive_determinant": 165,
+          "negative_determinant": 179,
+          "singular_matrices": 0,
+          "handedness": [
+            -1,
+            1
+          ],
+          "flip_ages_ms": [
+            2038,
+            4005,
+            6031,
+            8069,
+            10030,
+            12043
+          ],
+          "native_or_remote_changed_frames": 343,
+          "same_pose_frames": 0,
+          "longest_same_pose_ms": 0,
+          "clip_frames": [
+            {
+              "path": "",
+              "class": "visarmature",
+              "total": 1,
+              "samples": 344,
+              "changes": 0,
+              "distinct_frames": [
+                1
+              ]
+            }
+          ]
+        },
+        "remote": {
+          "rendered_samples": 403,
+          "active_samples": 323,
+          "positive_determinant": 155,
+          "negative_determinant": 168,
+          "singular_matrices": 0,
+          "handedness": [
+            -1,
+            1
+          ],
+          "flip_ages_ms": [
+            2230,
+            4087,
+            6114,
+            8115,
+            10113,
+            12112
+          ],
+          "native_or_remote_changed_frames": 322,
+          "same_pose_frames": 0,
+          "longest_same_pose_ms": 0,
+          "clip_frames": [
+            {
+              "path": "",
+              "class": "visarmature",
+              "total": 1,
+              "samples": 323,
+              "changes": 0,
+              "distinct_frames": [
+                1
+              ]
+            }
+          ]
+        },
+        "timeline_fit": {
+          "available": true,
+          "estimated_common_lag_ms": 60,
+          "at_search_boundary": false,
+          "median_tip_equivalent_error_px": 7.1693520890714275,
+          "p95_tip_equivalent_error_px": 64.21912806096755,
+          "compared_frames": 306,
+          "reflection_mismatch_frames": 2,
+          "remote_held_while_aligned_native_moved": 0,
+          "note": "Fit from real observed matrices; not the private source cursor or a performance score."
+        },
+        "actual_reflection_transitions": {
+          "source_transitions": 6,
+          "remote_transitions": 6,
+          "matches": [
+            {
+              "source_age": 2038,
+              "source_at": 37063,
+              "remote_age": 2230,
+              "remote_at": 25246,
+              "to_sign": -1,
+              "lag_ms_after_min_transit_calibration": 229
+            },
+            {
+              "source_age": 4005,
+              "source_at": 39030,
+              "remote_age": 4087,
+              "remote_at": 27103,
+              "to_sign": 1,
+              "lag_ms_after_min_transit_calibration": 119
+            },
+            {
+              "source_age": 6031,
+              "source_at": 41056,
+              "remote_age": 6114,
+              "remote_at": 29130,
+              "to_sign": -1,
+              "lag_ms_after_min_transit_calibration": 120
+            },
+            {
+              "source_age": 8069,
+              "source_at": 43094,
+              "remote_age": 8115,
+              "remote_at": 31131,
+              "to_sign": 1,
+              "lag_ms_after_min_transit_calibration": 83
+            },
+            {
+              "source_age": 10030,
+              "source_at": 45055,
+              "remote_age": 10113,
+              "remote_at": 33129,
+              "to_sign": -1,
+              "lag_ms_after_min_transit_calibration": 120
+            },
+            {
+              "source_age": 12043,
+              "source_at": 47068,
+              "remote_age": 12112,
+              "remote_at": 35128,
+              "to_sign": 1,
+              "lag_ms_after_min_transit_calibration": 106
+            }
+          ],
+          "missing_source_transitions": [],
+          "unpaired_remote_transitions": [],
+          "lag_ms": {
+            "samples": 6,
+            "mean": 129.5,
+            "median": 119.5,
+            "p95": 229,
+            "max": 229,
+            "gt100": 5
+          }
+        }
+      },
+      {
+        "id": "weaponpose_laser",
+        "weapon": "ripper",
+        "source": {
+          "rendered_samples": 436,
+          "active_samples": 344,
+          "positive_determinant": 165,
+          "negative_determinant": 179,
+          "singular_matrices": 0,
+          "handedness": [
+            -1,
+            1
+          ],
+          "flip_ages_ms": [
+            2038,
+            4005,
+            6031,
+            8069,
+            10030,
+            12043
+          ],
+          "native_or_remote_changed_frames": 333,
+          "same_pose_frames": 10,
+          "longest_same_pose_ms": 106,
+          "clip_frames": [
+            {
+              "path": "",
+              "class": "visripper",
+              "total": 3,
+              "samples": 344,
+              "changes": 228,
+              "distinct_frames": [
+                2,
+                3
+              ]
+            },
+            {
+              "path": "/@0",
+              "class": "flash.display::MovieClip",
+              "total": 2,
+              "samples": 344,
+              "changes": 343,
+              "distinct_frames": [
+                1,
+                2
+              ]
+            }
+          ]
+        },
+        "remote": {
+          "rendered_samples": 403,
+          "active_samples": 323,
+          "positive_determinant": 155,
+          "negative_determinant": 168,
+          "singular_matrices": 0,
+          "handedness": [
+            -1,
+            1
+          ],
+          "flip_ages_ms": [
+            2230,
+            4087,
+            6114,
+            8115,
+            10113,
+            12112
+          ],
+          "native_or_remote_changed_frames": 315,
+          "same_pose_frames": 7,
+          "longest_same_pose_ms": 98,
+          "clip_frames": [
+            {
+              "path": "",
+              "class": "visripper",
+              "total": 3,
+              "samples": 323,
+              "changes": 192,
+              "distinct_frames": [
+                1,
+                2,
+                3
+              ]
+            },
+            {
+              "path": "/@0",
+              "class": "flash.display::MovieClip",
+              "total": 2,
+              "samples": 322,
+              "changes": 321,
+              "distinct_frames": [
+                1,
+                2
+              ]
+            }
+          ]
+        },
+        "timeline_fit": {
+          "available": true,
+          "estimated_common_lag_ms": 60,
+          "at_search_boundary": false,
+          "median_tip_equivalent_error_px": 0.29272028498513236,
+          "p95_tip_equivalent_error_px": 6.915147349449067,
+          "compared_frames": 306,
+          "reflection_mismatch_frames": 2,
+          "remote_held_while_aligned_native_moved": 0,
+          "note": "Fit from real observed matrices; not the private source cursor or a performance score."
+        },
+        "actual_reflection_transitions": {
+          "source_transitions": 6,
+          "remote_transitions": 6,
+          "matches": [
+            {
+              "source_age": 2038,
+              "source_at": 37063,
+              "remote_age": 2230,
+              "remote_at": 25246,
+              "to_sign": -1,
+              "lag_ms_after_min_transit_calibration": 229
+            },
+            {
+              "source_age": 4005,
+              "source_at": 39030,
+              "remote_age": 4087,
+              "remote_at": 27103,
+              "to_sign": 1,
+              "lag_ms_after_min_transit_calibration": 119
+            },
+            {
+              "source_age": 6031,
+              "source_at": 41056,
+              "remote_age": 6114,
+              "remote_at": 29130,
+              "to_sign": -1,
+              "lag_ms_after_min_transit_calibration": 120
+            },
+            {
+              "source_age": 8069,
+              "source_at": 43094,
+              "remote_age": 8115,
+              "remote_at": 31131,
+              "to_sign": 1,
+              "lag_ms_after_min_transit_calibration": 83
+            },
+            {
+              "source_age": 10030,
+              "source_at": 45055,
+              "remote_age": 10113,
+              "remote_at": 33129,
+              "to_sign": -1,
+              "lag_ms_after_min_transit_calibration": 120
+            },
+            {
+              "source_age": 12043,
+              "source_at": 47068,
+              "remote_age": 12112,
+              "remote_at": 35128,
+              "to_sign": 1,
+              "lag_ms_after_min_transit_calibration": 106
+            }
+          ],
+          "missing_source_transitions": [],
+          "unpaired_remote_transitions": [],
+          "lag_ms": {
+            "samples": 6,
+            "mean": 129.5,
+            "median": 119.5,
+            "p95": 229,
+            "max": 229,
+            "gt100": 5
+          }
+        }
+      }
+    ],
+    "boundary": "Structural visual assertions and actual frame counts; completed is reported separately, never used to pass these checks.",
+    "driver_status": {
+      "host": {
+        "completed": true,
+        "error": ""
+      },
+      "join": {
+        "completed": true,
+        "error": ""
+      }
+    },
+    "structural_visual_checks_passed": true,
+    "overall_smoothness_qualified": false,
+    "run_id": "b49865e3c1",
+    "profile": "coexist",
+    "frozen_artifacts": {
+      "candidate_sha256": "1421a3877d4b0e657200ca4b52f86049488b1885a8bb05df800359fb3250fd05",
+      "driver_sha256": "d0fda07570582e1c79368cb2934165bcd153c8e91fddb2a7739962c64b3b2319",
+      "harness_sha256": "a28f5fb3e0bcd78a1cf09f4b628987b8fe6b11cb3103708df97bf515584f8b50",
+      "game_sha256": "b84f24280b3c676f4068e1cdc5a6ebee89988f62bcf7a44d4dd71a4771360184"
+    },
+    "environment_before": {
+      "memory": {
+        "load": 74,
+        "totalPhysical": 33879638016,
+        "availablePhysical": 8799477760,
+        "commitLimit": 58533253120,
+        "availableCommit": 12620468224
+      },
+      "other_air": {
+        "processes": [
+          {
+            "pid": 80640,
+            "exe": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\ab\\b3-playable-190\\game\\adl64.exe"
+          },
+          {
+            "pid": 89504,
+            "exe": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\ab\\b3-playable-190\\game\\adl64.exe"
+          }
+        ],
+        "unreadableProcessCount": 168,
+        "scope": "endpoints only; absence is not proof of an idle computer"
+      },
+      "qualification": "coexist observation; not isolated performance ranking"
+    },
+    "clock_alignment": {
+      "receiver_minus_source_min_ms": -12046,
+      "receiver_minus_source_median_ms": -12026.0,
+      "samples": 1732,
+      "boundary": "Clock offset uses minimum real receive-at minus source-stamp. Reported lag excludes unknown minimum transit and source render scheduling; it is not exact one-way network latency."
+    },
+    "inputs": {
+      "host": {
+        "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\b49865e3c1\\logs\\host\\stutter-result.json",
+        "sha256": "d82928977e6fe081951b22051c3d3e544b119b4c7ec4b65c5a1f1b85a8145c0b"
+      },
+      "join": {
+        "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\b49865e3c1\\logs\\join\\stutter-result.json",
+        "sha256": "c0559e77c13472e9a4a7b9f85d6df4b54d7c4cd7fbc1aa8fa082898c26df694c"
+      }
+    },
+    "frame_gaps_ms": {
+      "host": {
+        "full": {
+          "samples": 435,
+          "mean": 35.60689655172414,
+          "median": 33,
+          "p95": 60,
+          "max": 195,
+          "gt100": 7
+        },
+        "active": {
+          "samples": 343,
+          "mean": 34,
+          "median": 31,
+          "p95": 57,
+          "max": 116,
+          "gt100": 1
+        }
+      },
+      "join": {
+        "full": {
+          "samples": 402,
+          "mean": 37.992537313432834,
+          "median": 33.0,
+          "p95": 64,
+          "max": 376,
+          "gt100": 12
+        },
+        "active": {
+          "samples": 322,
+          "mean": 36.13354037267081,
+          "median": 33.0,
+          "p95": 61,
+          "max": 242,
+          "gt100": 8
+        }
+      }
+    }
+  },
+  "performance_qualification": false,
+  "scope": "Same driver02, four native NPC weapon fixture, coexist single run each."
+}

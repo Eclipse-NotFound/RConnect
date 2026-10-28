@@ -4,3 +4,4 @@ experimental/goal-*/** -text
 experimental/b-field-*/** -text
 experimental/b-field8-validation/** -text
 tools/host_authority/field2_driver/** -text
+experimental/a-visual-round2*/** -text

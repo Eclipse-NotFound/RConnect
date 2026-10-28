@@ -1,0 +1,17 @@
+{
+  "base": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\a-stutter-repair-02\\src",
+  "sources": {
+    "rconnect/game/UnitPresentation.as": {
+      "base_sha256": "87d29bb7a7385a78c118c0b32d5bd324b61ac48287c135733adfb1958fd61bcf",
+      "overlay_sha256": "ede52442e11d5fca2b74149b2abad328a9394b865315d2982d9e88ef707d0139"
+    },
+    "rconnect/game/WeaponDisplay.as": {
+      "base_sha256": "c76a6b157992398dbb8d8620de2482375594423226cd64b90e13e8fee96066f2",
+      "overlay_sha256": "365cc30c3bab62f937d2127b95e1c793b48feca80f25263d37976649dc4e2d69"
+    },
+    "rconnect/game/MeleeVisuals.as": {
+      "base_sha256": "2a3c82dac17f96614f67d1711be5339056208e3485e38d2d159e0f303c075a00",
+      "overlay_sha256": "ada8cc9e61f8a06dea0774f8ad11c2bbe0b71951f5c75449a67b1e01486229f6"
+    }
+  }
+}

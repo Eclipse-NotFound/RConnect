@@ -1,0 +1,682 @@
+{
+  "before_reduction": {
+    "run_id": "b49865e3c1",
+    "profile": "coexist",
+    "frozen_artifacts": {
+      "candidate_sha256": "1421a3877d4b0e657200ca4b52f86049488b1885a8bb05df800359fb3250fd05",
+      "driver_sha256": "d0fda07570582e1c79368cb2934165bcd153c8e91fddb2a7739962c64b3b2319",
+      "harness_sha256": "a28f5fb3e0bcd78a1cf09f4b628987b8fe6b11cb3103708df97bf515584f8b50",
+      "game_sha256": "b84f24280b3c676f4068e1cdc5a6ebee89988f62bcf7a44d4dd71a4771360184"
+    },
+    "driver_status": {
+      "host": {
+        "completed": true,
+        "error": ""
+      },
+      "join": {
+        "completed": true,
+        "error": ""
+      }
+    },
+    "structural_visual_checks_passed": true,
+    "clock_alignment": {
+      "receiver_minus_source_min_ms": -12046,
+      "receiver_minus_source_median_ms": -12026.0,
+      "samples": 1732,
+      "boundary": "Clock offset uses minimum real receive-at minus source-stamp. Reported lag excludes unknown minimum transit and source render scheduling; it is not exact one-way network latency."
+    },
+    "frame_gaps_ms": {
+      "host": {
+        "full": {
+          "samples": 435,
+          "mean": 35.60689655172414,
+          "median": 33,
+          "p95": 60,
+          "max": 195,
+          "gt100": 7
+        },
+        "active": {
+          "samples": 343,
+          "mean": 34,
+          "median": 31,
+          "p95": 57,
+          "max": 116,
+          "gt100": 1
+        }
+      },
+      "join": {
+        "full": {
+          "samples": 402,
+          "mean": 37.992537313432834,
+          "median": 33.0,
+          "p95": 64,
+          "max": 376,
+          "gt100": 12
+        },
+        "active": {
+          "samples": 322,
+          "mean": 36.13354037267081,
+          "median": 33.0,
+          "p95": 61,
+          "max": 242,
+          "gt100": 8
+        }
+      }
+    },
+    "inputs": {
+      "host": {
+        "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\b49865e3c1\\logs\\host\\stutter-result.json",
+        "sha256": "d82928977e6fe081951b22051c3d3e544b119b4c7ec4b65c5a1f1b85a8145c0b"
+      },
+      "join": {
+        "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\b49865e3c1\\logs\\join\\stutter-result.json",
+        "sha256": "c0559e77c13472e9a4a7b9f85d6df4b54d7c4cd7fbc1aa8fa082898c26df694c"
+      }
+    },
+    "actors": [
+      {
+        "id": "weaponpose_free",
+        "weapon": "lmg",
+        "source": {
+          "rendered_samples": 436,
+          "active_samples": 344,
+          "native_or_remote_changed_frames": 343,
+          "same_pose_frames": 0,
+          "longest_same_pose_ms": 0,
+          "handedness": [
+            -1,
+            1
+          ],
+          "singular_matrices": 0,
+          "root_frame_changes": 343,
+          "root_frames": [
+            2,
+            3
+          ],
+          "child_frame_changes": 343
+        },
+        "remote": {
+          "rendered_samples": 403,
+          "active_samples": 323,
+          "native_or_remote_changed_frames": 317,
+          "same_pose_frames": 5,
+          "longest_same_pose_ms": 100,
+          "handedness": [
+            -1,
+            1
+          ],
+          "singular_matrices": 0,
+          "root_frame_changes": 305,
+          "root_frames": [
+            1,
+            2,
+            3
+          ],
+          "child_frame_changes": 283
+        },
+        "flips": {
+          "source": 6,
+          "remote": 6,
+          "matched": 6,
+          "missing": [],
+          "calibrated_lag_ms": {
+            "samples": 6,
+            "mean": 134.33333333333334,
+            "median": 120.0,
+            "p95": 229,
+            "max": 229,
+            "gt100": 5
+          }
+        },
+        "fitted_source_moving_remote_held_frames": 3
+      },
+      {
+        "id": "weaponpose_fixed",
+        "weapon": "lmg",
+        "source": {
+          "rendered_samples": 436,
+          "active_samples": 344,
+          "native_or_remote_changed_frames": 343,
+          "same_pose_frames": 0,
+          "longest_same_pose_ms": 0,
+          "handedness": [
+            -1,
+            1
+          ],
+          "singular_matrices": 0,
+          "root_frame_changes": 343,
+          "root_frames": [
+            2,
+            3
+          ],
+          "child_frame_changes": 343
+        },
+        "remote": {
+          "rendered_samples": 403,
+          "active_samples": 323,
+          "native_or_remote_changed_frames": 316,
+          "same_pose_frames": 6,
+          "longest_same_pose_ms": 100,
+          "handedness": [
+            -1,
+            1
+          ],
+          "singular_matrices": 0,
+          "root_frame_changes": 303,
+          "root_frames": [
+            1,
+            2,
+            3
+          ],
+          "child_frame_changes": 279
+        },
+        "flips": {
+          "source": 6,
+          "remote": 6,
+          "matched": 6,
+          "missing": [],
+          "calibrated_lag_ms": {
+            "samples": 6,
+            "mean": 134.33333333333334,
+            "median": 120.0,
+            "p95": 229,
+            "max": 229,
+            "gt100": 5
+          }
+        },
+        "fitted_source_moving_remote_held_frames": 4
+      },
+      {
+        "id": "weaponpose_club",
+        "weapon": "armature",
+        "source": {
+          "rendered_samples": 436,
+          "active_samples": 344,
+          "native_or_remote_changed_frames": 343,
+          "same_pose_frames": 0,
+          "longest_same_pose_ms": 0,
+          "handedness": [
+            -1,
+            1
+          ],
+          "singular_matrices": 0,
+          "root_frame_changes": 0,
+          "root_frames": [
+            1
+          ],
+          "child_frame_changes": 0
+        },
+        "remote": {
+          "rendered_samples": 403,
+          "active_samples": 323,
+          "native_or_remote_changed_frames": 322,
+          "same_pose_frames": 0,
+          "longest_same_pose_ms": 0,
+          "handedness": [
+            -1,
+            1
+          ],
+          "singular_matrices": 0,
+          "root_frame_changes": 0,
+          "root_frames": [
+            1
+          ],
+          "child_frame_changes": 0
+        },
+        "flips": {
+          "source": 6,
+          "remote": 6,
+          "matched": 6,
+          "missing": [],
+          "calibrated_lag_ms": {
+            "samples": 6,
+            "mean": 129.5,
+            "median": 119.5,
+            "p95": 229,
+            "max": 229,
+            "gt100": 5
+          }
+        },
+        "fitted_source_moving_remote_held_frames": 0,
+        "melee_history": {
+          "enemyMotion": {
+            "packets": 433,
+            "frame_instances": 10455,
+            "min": 2,
+            "median": 25,
+            "mean": 24.145496535796767,
+            "max": 27
+          },
+          "units": {
+            "packets": 66,
+            "frame_instances": 1545,
+            "min": 6,
+            "median": 26.0,
+            "mean": 23.40909090909091,
+            "max": 26
+          }
+        }
+      },
+      {
+        "id": "weaponpose_laser",
+        "weapon": "ripper",
+        "source": {
+          "rendered_samples": 436,
+          "active_samples": 344,
+          "native_or_remote_changed_frames": 333,
+          "same_pose_frames": 10,
+          "longest_same_pose_ms": 106,
+          "handedness": [
+            -1,
+            1
+          ],
+          "singular_matrices": 0,
+          "root_frame_changes": 228,
+          "root_frames": [
+            2,
+            3
+          ],
+          "child_frame_changes": 343
+        },
+        "remote": {
+          "rendered_samples": 403,
+          "active_samples": 323,
+          "native_or_remote_changed_frames": 315,
+          "same_pose_frames": 7,
+          "longest_same_pose_ms": 98,
+          "handedness": [
+            -1,
+            1
+          ],
+          "singular_matrices": 0,
+          "root_frame_changes": 192,
+          "root_frames": [
+            1,
+            2,
+            3
+          ],
+          "child_frame_changes": 321
+        },
+        "flips": {
+          "source": 6,
+          "remote": 6,
+          "matched": 6,
+          "missing": [],
+          "calibrated_lag_ms": {
+            "samples": 6,
+            "mean": 129.5,
+            "median": 119.5,
+            "p95": 229,
+            "max": 229,
+            "gt100": 5
+          }
+        },
+        "fitted_source_moving_remote_held_frames": 0,
+        "melee_history": {
+          "enemyMotion": {
+            "packets": 433,
+            "frame_instances": 10551,
+            "min": 2,
+            "median": 26,
+            "mean": 24.367205542725173,
+            "max": 27
+          },
+          "units": {
+            "packets": 66,
+            "frame_instances": 1560,
+            "min": 6,
+            "median": 26.0,
+            "mean": 23.636363636363637,
+            "max": 26
+          }
+        }
+      }
+    ]
+  },
+  "after_reduction": {
+    "run_id": "2e24094452",
+    "profile": "coexist",
+    "frozen_artifacts": {
+      "candidate_sha256": "eb6d11e6f20068f76d44d180bc5f579c14ba359caa46e4706d0506b0d4abc127",
+      "driver_sha256": "d0fda07570582e1c79368cb2934165bcd153c8e91fddb2a7739962c64b3b2319",
+      "harness_sha256": "a28f5fb3e0bcd78a1cf09f4b628987b8fe6b11cb3103708df97bf515584f8b50",
+      "game_sha256": "b84f24280b3c676f4068e1cdc5a6ebee89988f62bcf7a44d4dd71a4771360184"
+    },
+    "driver_status": {
+      "host": {
+        "completed": true,
+        "error": ""
+      },
+      "join": {
+        "completed": true,
+        "error": ""
+      }
+    },
+    "structural_visual_checks_passed": true,
+    "clock_alignment": {
+      "receiver_minus_source_min_ms": -12081,
+      "receiver_minus_source_median_ms": -12059.0,
+      "samples": 1664,
+      "boundary": "Clock offset uses minimum real receive-at minus source-stamp. Reported lag excludes unknown minimum transit and source render scheduling; it is not exact one-way network latency."
+    },
+    "frame_gaps_ms": {
+      "host": {
+        "full": {
+          "samples": 416,
+          "mean": 36.81009615384615,
+          "median": 32.0,
+          "p95": 66,
+          "max": 196,
+          "gt100": 7
+        },
+        "active": {
+          "samples": 331,
+          "mean": 35.44712990936556,
+          "median": 32,
+          "p95": 65,
+          "max": 154,
+          "gt100": 2
+        }
+      },
+      "join": {
+        "full": {
+          "samples": 380,
+          "mean": 39.98421052631579,
+          "median": 32.5,
+          "p95": 74,
+          "max": 581,
+          "gt100": 14
+        },
+        "active": {
+          "samples": 303,
+          "mean": 37.696369636963695,
+          "median": 32,
+          "p95": 70,
+          "max": 311,
+          "gt100": 9
+        }
+      }
+    },
+    "inputs": {
+      "host": {
+        "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\2e24094452\\logs\\host\\stutter-result.json",
+        "sha256": "630b601f622ea109152064d9f3351b6a6bacae5779ed5617441e47e0422c4c94"
+      },
+      "join": {
+        "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\2e24094452\\logs\\join\\stutter-result.json",
+        "sha256": "3aef51ad29606b97b4cbd9756f9a4920eeecf0955fdbf2d54b725673e72032e7"
+      }
+    },
+    "actors": [
+      {
+        "id": "weaponpose_free",
+        "weapon": "lmg",
+        "source": {
+          "rendered_samples": 417,
+          "active_samples": 332,
+          "native_or_remote_changed_frames": 331,
+          "same_pose_frames": 0,
+          "longest_same_pose_ms": 0,
+          "handedness": [
+            -1,
+            1
+          ],
+          "singular_matrices": 0,
+          "root_frame_changes": 331,
+          "root_frames": [
+            1,
+            2,
+            3
+          ],
+          "child_frame_changes": 330
+        },
+        "remote": {
+          "rendered_samples": 381,
+          "active_samples": 304,
+          "native_or_remote_changed_frames": 299,
+          "same_pose_frames": 4,
+          "longest_same_pose_ms": 74,
+          "handedness": [
+            -1,
+            1
+          ],
+          "singular_matrices": 0,
+          "root_frame_changes": 284,
+          "root_frames": [
+            1,
+            2,
+            3
+          ],
+          "child_frame_changes": 255
+        },
+        "flips": {
+          "source": 6,
+          "remote": 6,
+          "matched": 6,
+          "missing": [],
+          "calibrated_lag_ms": {
+            "samples": 6,
+            "mean": 164.66666666666666,
+            "median": 139.0,
+            "p95": 338,
+            "max": 338,
+            "gt100": 6
+          }
+        },
+        "fitted_source_moving_remote_held_frames": 3
+      },
+      {
+        "id": "weaponpose_fixed",
+        "weapon": "lmg",
+        "source": {
+          "rendered_samples": 417,
+          "active_samples": 332,
+          "native_or_remote_changed_frames": 331,
+          "same_pose_frames": 0,
+          "longest_same_pose_ms": 0,
+          "handedness": [
+            -1,
+            1
+          ],
+          "singular_matrices": 0,
+          "root_frame_changes": 331,
+          "root_frames": [
+            1,
+            2,
+            3
+          ],
+          "child_frame_changes": 330
+        },
+        "remote": {
+          "rendered_samples": 381,
+          "active_samples": 304,
+          "native_or_remote_changed_frames": 299,
+          "same_pose_frames": 4,
+          "longest_same_pose_ms": 74,
+          "handedness": [
+            -1,
+            1
+          ],
+          "singular_matrices": 0,
+          "root_frame_changes": 281,
+          "root_frames": [
+            1,
+            2,
+            3
+          ],
+          "child_frame_changes": 249
+        },
+        "flips": {
+          "source": 6,
+          "remote": 6,
+          "matched": 6,
+          "missing": [],
+          "calibrated_lag_ms": {
+            "samples": 6,
+            "mean": 164.66666666666666,
+            "median": 139.0,
+            "p95": 338,
+            "max": 338,
+            "gt100": 6
+          }
+        },
+        "fitted_source_moving_remote_held_frames": 3
+      },
+      {
+        "id": "weaponpose_club",
+        "weapon": "armature",
+        "source": {
+          "rendered_samples": 417,
+          "active_samples": 332,
+          "native_or_remote_changed_frames": 331,
+          "same_pose_frames": 0,
+          "longest_same_pose_ms": 0,
+          "handedness": [
+            -1,
+            1
+          ],
+          "singular_matrices": 0,
+          "root_frame_changes": 0,
+          "root_frames": [
+            1
+          ],
+          "child_frame_changes": 0
+        },
+        "remote": {
+          "rendered_samples": 381,
+          "active_samples": 304,
+          "native_or_remote_changed_frames": 303,
+          "same_pose_frames": 0,
+          "longest_same_pose_ms": 0,
+          "handedness": [
+            -1,
+            1
+          ],
+          "singular_matrices": 0,
+          "root_frame_changes": 0,
+          "root_frames": [
+            1
+          ],
+          "child_frame_changes": 0
+        },
+        "flips": {
+          "source": 6,
+          "remote": 6,
+          "matched": 6,
+          "missing": [],
+          "calibrated_lag_ms": {
+            "samples": 6,
+            "mean": 161,
+            "median": 128.0,
+            "p95": 338,
+            "max": 338,
+            "gt100": 6
+          }
+        },
+        "fitted_source_moving_remote_held_frames": 0,
+        "melee_history": {
+          "enemyMotion": {
+            "packets": 416,
+            "frame_instances": 1041,
+            "min": 2,
+            "median": 2.0,
+            "mean": 2.5024038461538463,
+            "max": 4
+          },
+          "units": {
+            "packets": 64,
+            "frame_instances": 1449,
+            "min": 3,
+            "median": 25.0,
+            "mean": 22.640625,
+            "max": 27
+          }
+        }
+      },
+      {
+        "id": "weaponpose_laser",
+        "weapon": "ripper",
+        "source": {
+          "rendered_samples": 417,
+          "active_samples": 332,
+          "native_or_remote_changed_frames": 319,
+          "same_pose_frames": 12,
+          "longest_same_pose_ms": 150,
+          "handedness": [
+            -1,
+            1
+          ],
+          "singular_matrices": 0,
+          "root_frame_changes": 221,
+          "root_frames": [
+            1,
+            2,
+            3
+          ],
+          "child_frame_changes": 330
+        },
+        "remote": {
+          "rendered_samples": 381,
+          "active_samples": 304,
+          "native_or_remote_changed_frames": 297,
+          "same_pose_frames": 6,
+          "longest_same_pose_ms": 121,
+          "handedness": [
+            -1,
+            1
+          ],
+          "singular_matrices": 0,
+          "root_frame_changes": 167,
+          "root_frames": [
+            2,
+            3
+          ],
+          "child_frame_changes": 303
+        },
+        "flips": {
+          "source": 6,
+          "remote": 6,
+          "matched": 6,
+          "missing": [],
+          "calibrated_lag_ms": {
+            "samples": 6,
+            "mean": 161,
+            "median": 128.0,
+            "p95": 338,
+            "max": 338,
+            "gt100": 6
+          }
+        },
+        "fitted_source_moving_remote_held_frames": 0,
+        "melee_history": {
+          "enemyMotion": {
+            "packets": 416,
+            "frame_instances": 1041,
+            "min": 2,
+            "median": 2.0,
+            "mean": 2.5024038461538463,
+            "max": 4
+          },
+          "units": {
+            "packets": 64,
+            "frame_instances": 1457,
+            "min": 3,
+            "median": 25.0,
+            "mean": 22.765625,
+            "max": 27
+          }
+        }
+      }
+    ]
+  },
+  "same_driver": true,
+  "same_harness": true,
+  "same_game": true,
+  "weapon_scope_result": "实际源/远端均6次翻转；两种近战保留连续姿态，未见原2.7秒定格；高频历史实际降至每包2-4帧，完整包保留长历史。",
+  "limits": [
+    "本次只检查固定四NPC武器夹具，不扩大为所有游玩功能或密集场景结论。",
+    "本轮帧间隔及首次翻转延迟比03稍差，coexist单轮不支持性能无回退或整体提升承诺。",
+    "拟合对齐仅从真实矩阵测量，不是读取私有游标；翻转延迟扣除了未知最小传输时间。"
+  ],
+  "performance_qualified": false
+}

@@ -3,9 +3,11 @@
 ## 1. 当前任务
 
 A 为普通入口的双人联机；B 独立架构本轮不碰。根会话 `01a086bb-378c-7f60-b8e1-50d90ffa0996` 统一整合、编译、AIR测试及部署。
-**10月28日当前主线与交付**：用户明确本次自己操作与远端弹道均卡来自A。Git核对已定位10月25日 `fa91de7` 扩大了无视觉爆炸辅助对象的联机记录泄漏，真实7次爆炸／56对象旧版停火后残留56，新版归零；同时避免完整轨迹重复合并。准确全源 `build/m52/a-stutter-repair-02/src`，已部署 `0.2.24-animfix2` / `f14a44e74ac98ec480875203d4d714acfbc496141980e5a1d7b0de0c7ad222fb`；回执 `build/m52/a-stutter-deploy-a3a3e26e/deployment.json` verified，旧2C49备份在同目录。仅RC改变，宿主/配置/玩家存档不改。仍不能宣称所有操作／弹道卡顿或总体性能已解决。详见 `state/a-stutter-investigation-2026-10-28.md`。
+**10月28日晚最新A交付（animfix3）**：用户六项视觉反馈已做窄修并部署 `0.2.24-animfix3` / `eb6d11e6f20068f76d44d180bc5f579c14ba359caa46e4706d0506b0d4abc127`。准确全源 `build/m52/visual2-combined-04/src`，Git全源副本 `experimental/a-visual-round2/validated-src`；回执 `build/m52/visual2-deploy-5c955c7f/deployment.json` verified，旧F14A备份同目录。门开关误碎片、话语缺失、抛掷原生数字、敌人武器翻转/近战停顿已获对应实证；特殊弹已收轨迹内平滑，火焰重复343/454→0，近战翻转6/6、高频历史减至2–4帧。**普通枪弹仍伴随整帧停顿，coexist时序混合，不能声称全部卡顿或性能无回退。** 只改RC，宿主/配置/存档和B不改。自有测试均结束，运行副本已清理。详细六项状态、失败记录、验证复用与遗留见 `state/a-visual-feedback-repair-2026-10-28.md`。双方需重启。
 
-本轮验证边界：driver02早期input主侧仍在原生复活，动作资格已撤回并保留失败；07da后半两个持续开火阶段独立逐点核实双方实际横向197–211px、纵向114–126px、res0、117/121和61/61发且远端弹丸显示，因此只复用这些有效阶段与9655519e55爆炸生命周期作窄修部署依据。新driver04已编译，feac0dd1d2排队10分钟暂缓、未启动AIR，不能称新驱动已实测；所有根AIR/JVM已结束，没有继续排队。旧性能单轮不授稳定收益。
+**10月28日前一轮A交付（animfix2，已由上述版本替代）**：用户明确本次自己操作与远端弹道均卡来自A。Git核对已定位10月25日 `fa91de7` 扩大了无视觉爆炸辅助对象的联机记录泄漏，真实7次爆炸／56对象旧版停火后残留56，新版归零；同时避免完整轨迹重复合并。准确全源 `build/m52/a-stutter-repair-02/src`，已部署 `0.2.24-animfix2` / `f14a44e74ac98ec480875203d4d714acfbc496141980e5a1d7b0de0c7ad222fb`；回执 `build/m52/a-stutter-deploy-a3a3e26e/deployment.json` verified，旧2C49备份在同目录。仅RC改变，宿主/配置/玩家存档不改。仍不能宣称所有操作／弹道卡顿或总体性能已解决。详见 `state/a-stutter-investigation-2026-10-28.md`。
+
+上一轮animfix2验证边界：driver02早期input主侧仍在原生复活，动作资格已撤回并保留失败；07da后半两个持续开火阶段独立逐点核实双方实际横向197–211px、纵向114–126px、res0、117/121和61/61发且远端弹丸显示，因此只复用这些有效阶段与9655519e55爆炸生命周期作窄修部署依据。新driver04已编译，feac0dd1d2排队10分钟暂缓、未启动AIR，不能称新驱动已实测；所有根AIR/JVM已结束，没有继续排队。旧性能单轮不授稳定收益。
 此前主线（本轮未完成）：删除“房间交接中”定制界面，双方加载达到相应原单人流程耗时，解决新房间不同步，并按git核对性能倒退。**10月24日用户明确要求先部署再继续，roomfix5已实际安装；大场景性能目标尚未完成。**
 用户现已建立持续目标：首次场景加载、双向远端角色/念力运动、加入侧本机尤其跳跃掉帧，三项都继续。之前高速弹丸/掉落/击墙动画也尚未全修；不要用局部通过声称全部完成，不扩回B或无关功能。当前三项证据与停点见 `state/three-performance-goals-2026-10-25.md`。
 
@@ -30,7 +32,7 @@ A 为普通入口的双人联机；B 独立架构本轮不碰。根会话 `01a08
 
 **独立 B 会话补充（2026-10-25）**：本会话只负责B，独立记忆入口 `state/B-MEMORY.md`。原 `build/ab/b3-playable-190` 已更新为 `B3-0.1-field3` / SWF `fbaaea1b`，准确源 `b190-field9-build`；修复普通出口无反应和加入侧原生交互提示，减少重复采集与显示计算。功能 boundary33、hover28、敌人主119/加112，部署后实际文件33项均过；四轮对照主侧平均帧耗时改善8–10%，加入密集基本持平、仍未解决卡顿。原Player-1/2、存档ID及冻结原生组合保留，A安装未改，B195未晋升。回执 `build/ab/b190-field3-deploy-20261025-01/deployment.json` 已verified；详情和回滚见 `state/b-field-repair-2026-10-25.md`。自有AIR/JVM均结束，三个运行副本完整归档后净回收938,069,625字节；A后续占用以共享登记和当时进程为准。
 
-正式RC：`0.2.24-animfix2`，SHA `f14a44e74ac98ec480875203d4d714acfbc496141980e5a1d7b0de0c7ad222fb`。本次来源、行为证据和回退见第一节。上一版animfix1为2C49/196402B，旧回执a-live-animation-deploy-01及78C备份保留。下面roomfix5及更早记录是历史，不代表当前安装。
+正式RC：`0.2.24-animfix3`，SHA `eb6d11e6f20068f76d44d180bc5f579c14ba359caa46e4706d0506b0d4abc127`。旧F14A备份见本轮visual2-deploy-5c955c7f回执。本次来源、行为证据和回退见第一节。上一版animfix1为2C49/196402B，旧回执a-live-animation-deploy-01及78C备份保留。下面roomfix5及更早记录是历史，不代表当前安装。
 用户要求先部署后继续；回执`build/m52/recovery-room-user-deploy-01/deployment.json` SHA16EF10BA，22项仅RC变化；同目录备份DF0F/aura1。执行脚本原字节冻结deploy-executed.py（639166DB），随后维护源失败路径已加固但未重跑。安装后单实例smoke ed2fa23d99已通过：78C准确字节、14模组初始化、tick200及日志检查；installed-smoke.json SHA BCAD4048，独立副本已清理，仅启动资格。性能资格仍false。准确产品源/编译在recovery-room-production-05，不是历史src/dev版本。
 此前aura1回执recovery-aura-offline-deploy-02，smoke7d45932e01及EB365备份保留；上一层574D见recovery-offline-deploy-01。房间修正本次首次交付，高速运动等尚未全交付。
 

@@ -1,0 +1,19 @@
+--- a/src/RConnectMod.as
++++ b/src/RConnectMod.as
+@@
+          game.enemyGrip = this.enemyGrip;
++         new rconnect.game.NativeTextVisuals(this);
+          this.peerGrip = new rconnect.core.PeerGrip(this);
+--- a/src/rconnect/core/EnemyGrip.as
++++ b/src/rconnect/core/EnemyGrip.as
+@@
+                   released.dx+=Number(kick.x);released.dy+=Number(kick.y);released.t_throw=45;
++                  rconnect.game.NativeTextVisuals.watchThrow(released,link);
+--- a/stubs/fe/unit/Unit.as
++++ b/stubs/fe/unit/Unit.as
+@@
+ package fe.unit {
++import fe.graph.Emitter;
+@@
+ internal var hitPart:*;
++internal var numbEmit:Emitter;

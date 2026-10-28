@@ -1,0 +1,7 @@
+{
+  "passed": true,
+  "files": 156,
+  "version": "0.2.24-animfix3",
+  "source_manifest_sha256": "ca80c3245f9dcf8b19186f0c8d041cb30ffc58df844bbf4e78b33e0a83d7a961",
+  "scope": "Exact staged source and external declaration bytes; retained native baseline whitespace is intentional."
+}

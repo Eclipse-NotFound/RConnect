@@ -1,0 +1,26 @@
+{
+  "status": "verified",
+  "version": "0.2.24-animfix3",
+  "previous_sha256": "f14a44e74ac98ec480875203d4d714acfbc496141980e5a1d7b0de0c7ad222fb",
+  "candidate_sha256": "eb6d11e6f20068f76d44d180bc5f579c14ba359caa46e4706d0506b0d4abc127",
+  "backup": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\visual2-deploy-5c955c7f\\RConnectMod.before.swf",
+  "source_directory": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\visual2-combined-04\\src",
+  "qualification_sha256": "947105066dd51d25217efca982fcf2970f10c8ed17f7c5cbc2c23fc6e07121e1",
+  "untouched_before": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\pfe.swf": "b84f24280b3c676f4068e1cdc5a6ebee89988f62bcf7a44d4dd71a4771360184",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\application.xml": "70dd3b085e5f6c66c03693cf68ce5e93a4e4136dd745d40d1a5b2a49863ba236",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\release\\config.txt": "5ca72017f1f811b5f8a2b1f18f6cb8b2c24239e2240716c4059cbc073913fc0a"
+  },
+  "limitations": [
+    "No general FPS or absence-of-regression qualification: coexist single runs have mixed long-frame results.",
+    "Ordinary bullets still inherit occasional whole-frame stalls; no complete stutter-resolution claim.",
+    "Feedback probe executes native damageWall, not complete E-key input; final t_throw=1 input was not independently logged.",
+    "Seven alicorn shots support only narrow lightning continuity evidence."
+  ],
+  "untouched_after": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\pfe.swf": "b84f24280b3c676f4068e1cdc5a6ebee89988f62bcf7a44d4dd71a4771360184",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\application.xml": "70dd3b085e5f6c66c03693cf68ce5e93a4e4136dd745d40d1a5b2a49863ba236",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\release\\config.txt": "5ca72017f1f811b5f8a2b1f18f6cb8b2c24239e2240716c4059cbc073913fc0a"
+  },
+  "installed_sha256": "eb6d11e6f20068f76d44d180bc5f579c14ba359caa46e4706d0506b0d4abc127"
+}

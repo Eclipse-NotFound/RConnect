@@ -1,0 +1,262 @@
+{
+  "schema": 1,
+  "run": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\02364cdc46",
+  "inputs": {
+    "host": {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\02364cdc46\\logs\\host\\stutter-result.json",
+      "sha256": "10ab515bb854d32c4a692c53837a6bcec7a323439dac9f1b8c6d802d8330bd49"
+    },
+    "join": {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\02364cdc46\\logs\\join\\stutter-result.json",
+      "sha256": "c3fde7e5538d98c9bb8d9b5c4e4ace9c5de36a7579df59b04611497444f97d2d"
+    }
+  },
+  "status": "insufficient",
+  "failed": [],
+  "insufficient": [
+    "aggregate_last_throw_frame"
+  ],
+  "checks": [
+    {
+      "id": "host_execution",
+      "status": "pass",
+      "explanation": "运行结束与驱动断言；此项单独通过不代表功能通过。",
+      "evidence": {
+        "completed": true,
+        "error": "",
+        "failed_checks": [],
+        "reported_role": "host"
+      }
+    },
+    {
+      "id": "host_muted",
+      "status": "pass",
+      "explanation": "隔离实例静音状态。",
+      "evidence": {
+        "audio_volume": 0
+      }
+    },
+    {
+      "id": "host_sample_coverage",
+      "status": "pass",
+      "explanation": "样本应覆盖话语、两种数字、取消及最后消失阶段。",
+      "evidence": {
+        "count": 165,
+        "first": 0,
+        "last": 11023,
+        "sample_gap_median_ms": 66.0,
+        "sample_gap_max_ms": 112
+      }
+    },
+    {
+      "id": "join_execution",
+      "status": "pass",
+      "explanation": "运行结束与驱动断言；此项单独通过不代表功能通过。",
+      "evidence": {
+        "completed": true,
+        "error": "",
+        "failed_checks": [],
+        "reported_role": "join"
+      }
+    },
+    {
+      "id": "join_muted",
+      "status": "pass",
+      "explanation": "隔离实例静音状态。",
+      "evidence": {
+        "audio_volume": 0
+      }
+    },
+    {
+      "id": "join_sample_coverage",
+      "status": "pass",
+      "explanation": "样本应覆盖话语、两种数字、取消及最后消失阶段。",
+      "evidence": {
+        "count": 166,
+        "first": 50,
+        "last": 11050,
+        "sample_gap_median_ms": 66,
+        "sample_gap_max_ms": 104
+      }
+    },
+    {
+      "id": "native_speech_text_color",
+      "status": "pass",
+      "explanation": "实际主侧原生气泡、传输内容及加入侧原生气泡的文本/颜色一致。",
+      "evidence": {
+        "source_samples": 16,
+        "remote_samples": 16,
+        "packets": 1,
+        "source": [
+          {
+            "text": "RConnect 原生话语",
+            "color": 16763904
+          }
+        ],
+        "remote": [
+          {
+            "text": "RConnect 原生话语",
+            "color": 16763904
+          }
+        ],
+        "wire": [
+          {
+            "text": "RConnect 原生话语",
+            "color": 16763904
+          }
+        ]
+      }
+    },
+    {
+      "id": "early_speech_cancel",
+      "status": "pass",
+      "explanation": "驱动在约1800ms提前取消；按2300ms进入下阶段前已消失核查，并要求真实结束包。此项不是精确网络取消延迟指标。",
+      "evidence": {
+        "ids": [
+          1
+        ],
+        "ending_messages": [
+          {
+            "ended": true,
+            "id": 1,
+            "revision": 2
+          }
+        ],
+        "host_late_samples": [],
+        "join_late_samples": [],
+        "absence_cutoff_ms": 2300
+      }
+    },
+    {
+      "id": "duplicate_fixture_once",
+      "status": "pass",
+      "explanation": "同一fixture确经TCP收到至少两次，实际显示样本最多一份，并按原生寿命消失。定时采样不能排除采样间的极短重叠。",
+      "evidence": {
+        "wire_copies": 2,
+        "identical_payload": true,
+        "max_simultaneous": 1,
+        "visible_samples": 7,
+        "late_samples": []
+      }
+    },
+    {
+      "id": "throw_number_native_values",
+      "status": "pass",
+      "explanation": "每个真实数字修订的文本、颜色及frame必须同时出现在主侧原生Part、传输包和加入侧Part；不拿HP差替代。",
+      "evidence": {
+        "source": [
+          {
+            "text": "127",
+            "color": 16749070,
+            "frame": 1
+          },
+          {
+            "text": "65",
+            "color": 16749070,
+            "frame": 1
+          },
+          {
+            "text": "67",
+            "color": 16749070,
+            "frame": 1
+          }
+        ],
+        "wire": [
+          {
+            "text": "127",
+            "color": 16749070,
+            "frame": 1
+          },
+          {
+            "text": "65",
+            "color": 16749070,
+            "frame": 1
+          },
+          {
+            "text": "67",
+            "color": 16749070,
+            "frame": 1
+          }
+        ],
+        "remote": [
+          {
+            "text": "127",
+            "color": 16749070,
+            "frame": 1
+          },
+          {
+            "text": "65",
+            "color": 16749070,
+            "frame": 1
+          },
+          {
+            "text": "67",
+            "color": 16749070,
+            "frame": 1
+          }
+        ],
+        "missing_source": [],
+        "missing_remote": []
+      }
+    },
+    {
+      "id": "ordinary_collision_number",
+      "status": "pass",
+      "explanation": "showHit=1的第一轮真实碰撞数字在双方及网络上均有相同样本。",
+      "evidence": {
+        "matched": [
+          {
+            "text": "67",
+            "color": 16749070,
+            "frame": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "aggregate_high_revision",
+      "status": "pass",
+      "explanation": "同一原生聚合数字以更高修订号更新文本，两个真实状态在双方均可见。",
+      "evidence": {
+        "groups": [
+          {
+            "id": "3",
+            "revisions": [
+              1,
+              2
+            ],
+            "values": [
+              {
+                "text": "127",
+                "color": 16749070,
+                "frame": 1
+              },
+              {
+                "text": "65",
+                "color": 16749070,
+                "frame": 1
+              }
+            ],
+            "all_source_observed": true,
+            "all_remote_observed": true,
+            "text_changed": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "aggregate_last_throw_frame",
+      "status": "insufficient",
+      "explanation": "必须有运行时记录证明聚合模式在t_throw=1调用真实碰撞且扣血，并已观察聚合修订；driver01未记录此动作字段时不能单凭源码赋值判通过。",
+      "evidence": {
+        "matching_actions": [],
+        "aggregate_display_passed": true
+      }
+    }
+  ],
+  "limits": [
+    "仅原生反馈显示通道；未验证玩家E键抓取/释放输入。",
+    "定时采样而非每帧采样，实际间隔见coverage项；遗漏的短暂状态不假报成功，也不直接判功能失败。",
+    "不评价整体性能、加载速度或其他动画问题。"
+  ]
+}

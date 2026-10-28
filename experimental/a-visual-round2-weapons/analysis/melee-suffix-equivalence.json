@@ -1,0 +1,123 @@
+{
+  "source": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\b49865e3c1\\logs\\join\\stutter-result.json",
+  "sha256": "c0559e77c13472e9a4a7b9f85d6df4b54d7c4cd7fbc1aa8fa082898c26df694c",
+  "scope": "Actual b49865e3c1 histories; slower-send cases retain actual frames but decimate sends, not a new runtime benchmark.",
+  "results": {
+    "weaponpose_club": {
+      "actual_full_fast_interleaved": {
+        "packets": 499,
+        "cursor_checks_half_ms": 55371,
+        "mismatches": 0,
+        "first_mismatches": [],
+        "same_source_stamp_packets": 187,
+        "same_stamp_history_updates": 0,
+        "stale_ignored": 0,
+        "fast_original_frame_instances": 10455,
+        "fast_suffix_frame_instances": 1088,
+        "fast_original_json_chars_proxy": 3013679,
+        "fast_suffix_json_chars_proxy": 329851,
+        "boundary": "JSON character count is offline volume proxy; actual TCP uses the binary codec."
+      },
+      "actual_fast_only": {
+        "packets": 433,
+        "cursor_checks_half_ms": 47745,
+        "mismatches": 0,
+        "first_mismatches": [],
+        "same_source_stamp_packets": 121,
+        "same_stamp_history_updates": 0,
+        "stale_ignored": 0,
+        "fast_original_frame_instances": 10455,
+        "fast_suffix_frame_instances": 1088,
+        "fast_original_json_chars_proxy": 3013679,
+        "fast_suffix_json_chars_proxy": 329851,
+        "boundary": "JSON character count is offline volume proxy; actual TCP uses the binary codec."
+      },
+      "actual_frames_sent_133ms": {
+        "packets": 210,
+        "cursor_checks_half_ms": 51116,
+        "mismatches": 0,
+        "first_mismatches": [],
+        "same_source_stamp_packets": 68,
+        "same_stamp_history_updates": 0,
+        "stale_ignored": 0,
+        "fast_original_frame_instances": 3383,
+        "fast_suffix_frame_instances": 780,
+        "fast_original_json_chars_proxy": 975332,
+        "fast_suffix_json_chars_proxy": 229607,
+        "boundary": "JSON character count is offline volume proxy; actual TCP uses the binary codec."
+      },
+      "actual_frames_sent_250ms": {
+        "packets": 155,
+        "cursor_checks_half_ms": 55541,
+        "mismatches": 0,
+        "first_mismatches": [],
+        "same_source_stamp_packets": 56,
+        "same_stamp_history_updates": 0,
+        "stale_ignored": 0,
+        "fast_original_frame_instances": 2070,
+        "fast_suffix_frame_instances": 758,
+        "fast_original_json_chars_proxy": 597239,
+        "fast_suffix_json_chars_proxy": 221184,
+        "boundary": "JSON character count is offline volume proxy; actual TCP uses the binary codec."
+      }
+    },
+    "weaponpose_laser": {
+      "actual_full_fast_interleaved": {
+        "packets": 499,
+        "cursor_checks_half_ms": 55371,
+        "mismatches": 0,
+        "first_mismatches": [],
+        "same_source_stamp_packets": 187,
+        "same_stamp_history_updates": 0,
+        "stale_ignored": 0,
+        "fast_original_frame_instances": 10551,
+        "fast_suffix_frame_instances": 1094,
+        "fast_original_json_chars_proxy": 2954452,
+        "fast_suffix_json_chars_proxy": 322096,
+        "boundary": "JSON character count is offline volume proxy; actual TCP uses the binary codec."
+      },
+      "actual_fast_only": {
+        "packets": 433,
+        "cursor_checks_half_ms": 47745,
+        "mismatches": 0,
+        "first_mismatches": [],
+        "same_source_stamp_packets": 121,
+        "same_stamp_history_updates": 0,
+        "stale_ignored": 0,
+        "fast_original_frame_instances": 10551,
+        "fast_suffix_frame_instances": 1094,
+        "fast_original_json_chars_proxy": 2954452,
+        "fast_suffix_json_chars_proxy": 322096,
+        "boundary": "JSON character count is offline volume proxy; actual TCP uses the binary codec."
+      },
+      "actual_frames_sent_133ms": {
+        "packets": 210,
+        "cursor_checks_half_ms": 51116,
+        "mismatches": 0,
+        "first_mismatches": [],
+        "same_source_stamp_packets": 68,
+        "same_stamp_history_updates": 0,
+        "stale_ignored": 0,
+        "fast_original_frame_instances": 3417,
+        "fast_suffix_frame_instances": 787,
+        "fast_original_json_chars_proxy": 956297,
+        "fast_suffix_json_chars_proxy": 224542,
+        "boundary": "JSON character count is offline volume proxy; actual TCP uses the binary codec."
+      },
+      "actual_frames_sent_250ms": {
+        "packets": 155,
+        "cursor_checks_half_ms": 55541,
+        "mismatches": 0,
+        "first_mismatches": [],
+        "same_source_stamp_packets": 56,
+        "same_stamp_history_updates": 0,
+        "stale_ignored": 0,
+        "fast_original_frame_instances": 2093,
+        "fast_suffix_frame_instances": 766,
+        "fast_original_json_chars_proxy": 585779,
+        "fast_suffix_json_chars_proxy": 216619,
+        "boundary": "JSON character count is offline volume proxy; actual TCP uses the binary codec."
+      }
+    }
+  }
+}

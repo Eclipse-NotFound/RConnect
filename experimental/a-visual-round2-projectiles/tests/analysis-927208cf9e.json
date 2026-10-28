@@ -1,0 +1,2899 @@
+{
+  "method": {
+    "positionEpsilonPx": 0.05,
+    "nativeQuantum": "Use each run's targetRate; a normal 30 FPS frame is approximately 33.3 ms, not a stall.",
+    "tailClassification": "Native terminal uses actual babah; remote tail compatibility uses paired native endpoints and received histories. No remote event identity is exposed.",
+    "verdict": "Metrics only. Unknown-tail repeats require inspection; not an automatic regression or pass."
+  },
+  "candidate": {
+    "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\cooperation\\927208cf9e",
+    "roles": {
+      "host": {
+        "inputSha256": "1c5e105aadf3c0969b1f8b6527efef7229686242ef5ff608276bd68545fa7b8a",
+        "probe": "native-special-projectiles-v1",
+        "completed": true,
+        "passed": false,
+        "error": "",
+        "targetRate": 30,
+        "phases": [
+          {
+            "name": "both-lmg",
+            "weapon": "lmg",
+            "weaponNative": null,
+            "coverage": {
+              "localShots": 69,
+              "enemyShots": 0,
+              "nativeObjects": 69,
+              "wireEvents": 50,
+              "nativeVisibleRows": 146,
+              "remoteVisibleRows": 142,
+              "nativeVisibleSpanMs": 5772,
+              "remoteVisibleSpanMs": 5351,
+              "checks": [
+                {
+                  "actual": 184,
+                  "phase": "both-lmg",
+                  "ok": true,
+                  "name": "final-render-samples"
+                },
+                {
+                  "phase": "both-lmg",
+                  "name": "both-native-and-remote-fire",
+                  "nativeVisible": true,
+                  "shots": 69,
+                  "remoteVisible": true,
+                  "ok": true
+                }
+              ]
+            },
+            "render": {
+              "rows": 184,
+              "durationMs": 7018,
+              "observedFps": 26.076,
+              "nativeTargetFrameMs": 33.333333333333336,
+              "gapMs": {
+                "n": 183,
+                "min": 11.0,
+                "p50": 35.0,
+                "p95": 79.5,
+                "p99": 130.44,
+                "max": 168.0,
+                "mean": 38.3497
+              },
+              "over1_5NativeFrames": 35,
+              "over2NativeFrames": 12,
+              "over100ms": 7,
+              "over250ms": 0,
+              "workMs": {
+                "n": 184,
+                "min": 2.0,
+                "p50": 7.0,
+                "p95": 45.7,
+                "p99": 91.0,
+                "max": 110.0,
+                "mean": 13.7283
+              }
+            },
+            "motion": {
+              "native:visualBullet": {
+                "clips": 69,
+                "samples": 694,
+                "pairs": 625,
+                "gapsAcrossHiddenFrames": 0,
+                "repeatedPositionPairs": 138,
+                "identicalVisualPairs": 138,
+                "nativeTerminalRepeatPairs": 138,
+                "nativeActiveRepeatPairs": 0,
+                "remoteTailCompatibleRepeatPairs": 0,
+                "remoteOutsideKnownTailRepeatPairs": 0,
+                "nativePhysicsMovedWhileVisualRepeated": 0,
+                "stepPx": {
+                  "n": 625,
+                  "min": 0.0,
+                  "p50": 183.7089,
+                  "p95": 234.3509,
+                  "p99": 238.084,
+                  "max": 239.3888,
+                  "mean": 147.018
+                },
+                "speedPxPerSecond": {
+                  "n": 625,
+                  "min": 0.0,
+                  "p50": 4318.1824,
+                  "p95": 13495.3601,
+                  "p99": 15985.9436,
+                  "max": 17775.3811,
+                  "mean": 5092.303
+                },
+                "sampleGapMs": {
+                  "n": 625,
+                  "min": 11.0,
+                  "p50": 36.0,
+                  "p95": 75.0,
+                  "p99": 129.0,
+                  "max": 168.0,
+                  "mean": 37.9584
+                },
+                "repeatRunMs": {
+                  "n": 69,
+                  "min": 30.0,
+                  "p50": 67.0,
+                  "p95": 111.0,
+                  "p99": 159.08,
+                  "max": 223.0,
+                  "mean": 71.8841
+                },
+                "repeatRunsOver100ms": 8,
+                "longestRepeatRuns": [
+                  {
+                    "clip": 2,
+                    "kind": "native-terminal",
+                    "from": 35548,
+                    "to": 35771,
+                    "ms": 223,
+                    "pairs": 2,
+                    "identicalPairs": 2,
+                    "x": 392.9,
+                    "y": 34.85
+                  },
+                  {
+                    "clip": 3,
+                    "kind": "native-terminal",
+                    "from": 35771,
+                    "to": 35900,
+                    "ms": 129,
+                    "pairs": 2,
+                    "identicalPairs": 2,
+                    "x": 692.75,
+                    "y": 32.8
+                  },
+                  {
+                    "clip": 43,
+                    "kind": "native-terminal",
+                    "from": 38690,
+                    "to": 38814,
+                    "ms": 124,
+                    "pairs": 2,
+                    "identicalPairs": 2,
+                    "x": 1887.1,
+                    "y": 38
+                  },
+                  {
+                    "clip": 6,
+                    "kind": "native-terminal",
+                    "from": 36575,
+                    "to": 36686,
+                    "ms": 111,
+                    "pairs": 2,
+                    "identicalPairs": 2,
+                    "x": 1925.5,
+                    "y": 246.95
+                  },
+                  {
+                    "clip": 92,
+                    "kind": "native-terminal",
+                    "from": 40261,
+                    "to": 40372,
+                    "ms": 111,
+                    "pairs": 2,
+                    "identicalPairs": 2,
+                    "x": 1882.15,
+                    "y": 95.35
+                  },
+                  {
+                    "clip": 4,
+                    "kind": "native-terminal",
+                    "from": 36139,
+                    "to": 36246,
+                    "ms": 107,
+                    "pairs": 2,
+                    "identicalPairs": 2,
+                    "x": 1238.5,
+                    "y": 37.4
+                  },
+                  {
+                    "clip": 41,
+                    "kind": "native-terminal",
+                    "from": 38665,
+                    "to": 38770,
+                    "ms": 105,
+                    "pairs": 2,
+                    "identicalPairs": 2,
+                    "x": 1885.55,
+                    "y": 82.1
+                  },
+                  {
+                    "clip": 1,
+                    "kind": "native-terminal",
+                    "from": 35447,
+                    "to": 35548,
+                    "ms": 101,
+                    "pairs": 2,
+                    "identicalPairs": 2,
+                    "x": 212.05,
+                    "y": 37.5
+                  }
+                ],
+                "longestOutsideKnownTailRuns": [],
+                "positionRepeatFraction": 0.2208
+              },
+              "remote:visualBullet": {
+                "clips": 50,
+                "samples": 550,
+                "pairs": 500,
+                "gapsAcrossHiddenFrames": 0,
+                "repeatedPositionPairs": 114,
+                "identicalVisualPairs": 101,
+                "nativeTerminalRepeatPairs": 0,
+                "nativeActiveRepeatPairs": 0,
+                "remoteTailCompatibleRepeatPairs": 114,
+                "remoteOutsideKnownTailRepeatPairs": 0,
+                "nativePhysicsMovedWhileVisualRepeated": 0,
+                "stepPx": {
+                  "n": 500,
+                  "min": 0.0,
+                  "p50": 85.4843,
+                  "p95": 299.6044,
+                  "p99": 391.1442,
+                  "max": 600.8052,
+                  "mean": 111.8255
+                },
+                "speedPxPerSecond": {
+                  "n": 500,
+                  "min": 0.0,
+                  "p50": 2678.0284,
+                  "p95": 12298.2031,
+                  "p99": 15529.3206,
+                  "max": 24471.2852,
+                  "mean": 3904.2122
+                },
+                "sampleGapMs": {
+                  "n": 500,
+                  "min": 11.0,
+                  "p50": 33.0,
+                  "p95": 59.0,
+                  "p99": 111.08,
+                  "max": 137.0,
+                  "mean": 34.834
+                },
+                "repeatRunMs": {
+                  "n": 48,
+                  "min": 15.0,
+                  "p50": 65.0,
+                  "p95": 205.55,
+                  "p99": 787.01,
+                  "max": 983.0,
+                  "mean": 95.6667
+                },
+                "repeatRunsOver100ms": 8,
+                "longestRepeatRuns": [
+                  {
+                    "clip": 5,
+                    "kind": "remote-tail-compatible",
+                    "from": 35832,
+                    "to": 36815,
+                    "ms": 983,
+                    "pairs": 11,
+                    "identicalPairs": 11,
+                    "x": 300.9,
+                    "y": 587.6
+                  },
+                  {
+                    "clip": 11,
+                    "kind": "remote-tail-compatible",
+                    "from": 36686,
+                    "to": 37252,
+                    "ms": 566,
+                    "pairs": 13,
+                    "identicalPairs": 13,
+                    "x": 386.7,
+                    "y": 566.25
+                  },
+                  {
+                    "clip": 16,
+                    "kind": "remote-tail-compatible",
+                    "from": 38032,
+                    "to": 38289,
+                    "ms": 257,
+                    "pairs": 8,
+                    "identicalPairs": 8,
+                    "x": 1927,
+                    "y": 277.2
+                  },
+                  {
+                    "clip": 23,
+                    "kind": "remote-tail-compatible",
+                    "from": 38319,
+                    "to": 38429,
+                    "ms": 110,
+                    "pairs": 3,
+                    "identicalPairs": 3,
+                    "x": 1927.9,
+                    "y": 225.95
+                  },
+                  {
+                    "clip": 27,
+                    "kind": "remote-tail-compatible",
+                    "from": 38319,
+                    "to": 38429,
+                    "ms": 110,
+                    "pairs": 3,
+                    "identicalPairs": 3,
+                    "x": 1923.5,
+                    "y": 254.3
+                  },
+                  {
+                    "clip": 44,
+                    "kind": "remote-tail-compatible",
+                    "from": 38665,
+                    "to": 38770,
+                    "ms": 105,
+                    "pairs": 2,
+                    "identicalPairs": 0,
+                    "x": 1881.25,
+                    "y": 164.6
+                  },
+                  {
+                    "clip": 45,
+                    "kind": "remote-tail-compatible",
+                    "from": 38665,
+                    "to": 38770,
+                    "ms": 105,
+                    "pairs": 2,
+                    "identicalPairs": 2,
+                    "x": 1920.45,
+                    "y": 207.35
+                  },
+                  {
+                    "clip": 110,
+                    "kind": "remote-tail-compatible",
+                    "from": 40771,
+                    "to": 40873,
+                    "ms": 102,
+                    "pairs": 3,
+                    "identicalPairs": 3,
+                    "x": 1888.6,
+                    "y": 37.95
+                  }
+                ],
+                "longestOutsideKnownTailRuns": [],
+                "positionRepeatFraction": 0.228
+              }
+            },
+            "knownTailEvidence": {
+              "visualBullet": {
+                "native-babah": 150,
+                "native-end": 50,
+                "wire-final-stationary-pair": 12
+              }
+            },
+            "network": {
+              "allMessages": 154,
+              "allBytes": 1139095,
+              "packetEventReferences": 767,
+              "packetFrameReferences": 6405,
+              "streams": {
+                "player:1:3": {
+                  "events": 50,
+                  "streamReceiveGapIncludingInterShotIdleMs": {
+                    "n": 33,
+                    "min": 4.0,
+                    "p50": 86.0,
+                    "p95": 222.4,
+                    "p99": 355.2,
+                    "max": 416.0,
+                    "mean": 108.303
+                  },
+                  "withinEventReceiveGapMs": {
+                    "n": 182,
+                    "min": 4.0,
+                    "p50": 68.0,
+                    "p95": 184.0,
+                    "p99": 226.0,
+                    "max": 416.0,
+                    "mean": 83.6154
+                  },
+                  "withinEventAdvancingUpdateGapMs": {
+                    "n": 71,
+                    "min": 4.0,
+                    "p50": 105.0,
+                    "p95": 207.0,
+                    "p99": 283.0,
+                    "max": 416.0,
+                    "mean": 97.6056
+                  },
+                  "withinEventSourceSampleGapMs": {
+                    "n": 96,
+                    "min": 15.0,
+                    "p50": 43.0,
+                    "p95": 187.0,
+                    "p99": 283.4,
+                    "max": 576.0,
+                    "mean": 73.6562
+                  },
+                  "receiveMinusSentCenteredMs": {
+                    "n": 194,
+                    "min": -16.0,
+                    "p50": 0.0,
+                    "p95": 73.0,
+                    "p99": 150.0,
+                    "max": 286.0,
+                    "mean": 16.9278
+                  }
+                }
+              },
+              "limit": "Detailed timestamps cover first 12 events per stream; centered offsets are jitter, not one-way latency."
+            }
+          },
+          {
+            "name": "both-cflamer",
+            "weapon": "cflamer",
+            "weaponNative": null,
+            "coverage": {
+              "localShots": 140,
+              "enemyShots": 0,
+              "nativeObjects": 140,
+              "wireEvents": 152,
+              "nativeVisibleRows": 157,
+              "remoteVisibleRows": 153,
+              "nativeVisibleSpanMs": 6105,
+              "remoteVisibleSpanMs": 5968,
+              "checks": [
+                {
+                  "actual": 184,
+                  "phase": "both-cflamer",
+                  "ok": true,
+                  "name": "final-render-samples"
+                },
+                {
+                  "phase": "both-cflamer",
+                  "name": "both-native-and-remote-fire",
+                  "nativeVisible": true,
+                  "shots": 140,
+                  "remoteVisible": true,
+                  "ok": true
+                }
+              ]
+            },
+            "render": {
+              "rows": 184,
+              "durationMs": 6997,
+              "observedFps": 26.154,
+              "nativeTargetFrameMs": 33.333333333333336,
+              "gapMs": {
+                "n": 183,
+                "min": 14.0,
+                "p50": 35.0,
+                "p95": 60.9,
+                "p99": 76.62,
+                "max": 87.0,
+                "mean": 38.235
+              },
+              "over1_5NativeFrames": 42,
+              "over2NativeFrames": 7,
+              "over100ms": 0,
+              "over250ms": 0,
+              "workMs": {
+                "n": 184,
+                "min": 1.0,
+                "p50": 11.0,
+                "p95": 25.0,
+                "p99": 43.38,
+                "max": 66.0,
+                "mean": 12.837
+              }
+            },
+            "motion": {
+              "native:visbulflame": {
+                "clips": 140,
+                "samples": 2384,
+                "pairs": 2244,
+                "gapsAcrossHiddenFrames": 0,
+                "repeatedPositionPairs": 280,
+                "identicalVisualPairs": 0,
+                "nativeTerminalRepeatPairs": 280,
+                "nativeActiveRepeatPairs": 0,
+                "remoteTailCompatibleRepeatPairs": 0,
+                "remoteOutsideKnownTailRepeatPairs": 0,
+                "nativePhysicsMovedWhileVisualRepeated": 0,
+                "stepPx": {
+                  "n": 2244,
+                  "min": 0.0,
+                  "p50": 39.8818,
+                  "p95": 40.9523,
+                  "p99": 41.1007,
+                  "max": 41.1596,
+                  "mean": 34.2206
+                },
+                "speedPxPerSecond": {
+                  "n": 2244,
+                  "min": 0.0,
+                  "p50": 891.825,
+                  "p95": 2221.6836,
+                  "p99": 2515.101,
+                  "max": 2565.5793,
+                  "mean": 1013.0136
+                },
+                "sampleGapMs": {
+                  "n": 2244,
+                  "min": 16.0,
+                  "p50": 36.0,
+                  "p95": 62.0,
+                  "p99": 84.0,
+                  "max": 87.0,
+                  "mean": 39.8538
+                },
+                "repeatRunMs": {
+                  "n": 140,
+                  "min": 32.0,
+                  "p50": 73.0,
+                  "p95": 122.0,
+                  "p99": 140.0,
+                  "max": 140.0,
+                  "mean": 80.3571
+                },
+                "repeatRunsOver100ms": 27,
+                "longestRepeatRuns": [
+                  {
+                    "clip": 292,
+                    "kind": "native-terminal",
+                    "from": 46339,
+                    "to": 46479,
+                    "ms": 140,
+                    "pairs": 2,
+                    "identicalPairs": 0,
+                    "x": 969.85,
+                    "y": 560.3
+                  },
+                  {
+                    "clip": 296,
+                    "kind": "native-terminal",
+                    "from": 46286,
+                    "to": 46426,
+                    "ms": 140,
+                    "pairs": 2,
+                    "identicalPairs": 0,
+                    "x": 916.35,
+                    "y": 561.85
+                  },
+                  {
+                    "clip": 300,
+                    "kind": "native-terminal",
+                    "from": 46339,
+                    "to": 46479,
+                    "ms": 140,
+                    "pairs": 2,
+                    "identicalPairs": 0,
+                    "x": 877.5,
+                    "y": 560.15
+                  },
+                  {
+                    "clip": 254,
+                    "kind": "native-terminal",
+                    "from": 45481,
+                    "to": 45611,
+                    "ms": 130,
+                    "pairs": 2,
+                    "identicalPairs": 0,
+                    "x": 970.1,
+                    "y": 562.05
+                  },
+                  {
+                    "clip": 255,
+                    "kind": "native-terminal",
+                    "from": 45481,
+                    "to": 45611,
+                    "ms": 130,
+                    "pairs": 2,
+                    "identicalPairs": 0,
+                    "x": 962.35,
+                    "y": 561.05
+                  },
+                  {
+                    "clip": 257,
+                    "kind": "native-terminal",
+                    "from": 45481,
+                    "to": 45611,
+                    "ms": 130,
+                    "pairs": 2,
+                    "identicalPairs": 0,
+                    "x": 923.9,
+                    "y": 560.2
+                  },
+                  {
+                    "clip": 156,
+                    "kind": "native-terminal",
+                    "from": 43623,
+                    "to": 43745,
+                    "ms": 122,
+                    "pairs": 2,
+                    "identicalPairs": 0,
+                    "x": 962.3,
+                    "y": 561.05
+                  },
+                  {
+                    "clip": 158,
+                    "kind": "native-terminal",
+                    "from": 43623,
+                    "to": 43745,
+                    "ms": 122,
+                    "pairs": 2,
+                    "identicalPairs": 0,
+                    "x": 924.05,
+                    "y": 561.4
+                  }
+                ],
+                "longestOutsideKnownTailRuns": [],
+                "positionRepeatFraction": 0.12478
+              },
+              "remote:visbulflame": {
+                "clips": 152,
+                "samples": 2338,
+                "pairs": 2186,
+                "gapsAcrossHiddenFrames": 0,
+                "repeatedPositionPairs": 270,
+                "identicalVisualPairs": 83,
+                "nativeTerminalRepeatPairs": 0,
+                "nativeActiveRepeatPairs": 0,
+                "remoteTailCompatibleRepeatPairs": 270,
+                "remoteOutsideKnownTailRepeatPairs": 0,
+                "nativePhysicsMovedWhileVisualRepeated": 0,
+                "stepPx": {
+                  "n": 2186,
+                  "min": 0.0,
+                  "p50": 35.4353,
+                  "p95": 82.2542,
+                  "p99": 97.1619,
+                  "max": 142.609,
+                  "mean": 36.192
+                },
+                "speedPxPerSecond": {
+                  "n": 2186,
+                  "min": 0.0,
+                  "p50": 882.9302,
+                  "p95": 2194.5331,
+                  "p99": 2522.0657,
+                  "max": 3280.6602,
+                  "mean": 979.1965
+                },
+                "sampleGapMs": {
+                  "n": 2186,
+                  "min": 16.0,
+                  "p50": 36.0,
+                  "p95": 64.0,
+                  "p99": 84.0,
+                  "max": 87.0,
+                  "mean": 39.7223
+                },
+                "repeatRunMs": {
+                  "n": 136,
+                  "min": 16.0,
+                  "p50": 70.0,
+                  "p95": 122.0,
+                  "p99": 137.75,
+                  "max": 143.0,
+                  "mean": 72.3676
+                },
+                "repeatRunsOver100ms": 20,
+                "longestRepeatRuns": [
+                  {
+                    "clip": 236,
+                    "kind": "remote-tail-compatible",
+                    "from": 44984,
+                    "to": 45127,
+                    "ms": 143,
+                    "pairs": 3,
+                    "identicalPairs": 1,
+                    "x": 1068.45,
+                    "y": 560.6
+                  },
+                  {
+                    "clip": 238,
+                    "kind": "remote-tail-compatible",
+                    "from": 44984,
+                    "to": 45127,
+                    "ms": 143,
+                    "pairs": 3,
+                    "identicalPairs": 1,
+                    "x": 998.5,
+                    "y": 560.85
+                  },
+                  {
+                    "clip": 374,
+                    "kind": "remote-tail-compatible",
+                    "from": 47761,
+                    "to": 47889,
+                    "ms": 128,
+                    "pairs": 3,
+                    "identicalPairs": 1,
+                    "x": 1029.65,
+                    "y": 560.25
+                  },
+                  {
+                    "clip": 353,
+                    "kind": "remote-tail-compatible",
+                    "from": 47281,
+                    "to": 47406,
+                    "ms": 125,
+                    "pairs": 4,
+                    "identicalPairs": 3,
+                    "x": 1014.15,
+                    "y": 561.2
+                  },
+                  {
+                    "clip": 356,
+                    "kind": "remote-tail-compatible",
+                    "from": 47281,
+                    "to": 47406,
+                    "ms": 125,
+                    "pairs": 4,
+                    "identicalPairs": 3,
+                    "x": 998.5,
+                    "y": 561
+                  },
+                  {
+                    "clip": 240,
+                    "kind": "remote-tail-compatible",
+                    "from": 45176,
+                    "to": 45299,
+                    "ms": 123,
+                    "pairs": 4,
+                    "identicalPairs": 2,
+                    "x": 1106.9,
+                    "y": 560.6
+                  },
+                  {
+                    "clip": 157,
+                    "kind": "remote-tail-compatible",
+                    "from": 43623,
+                    "to": 43745,
+                    "ms": 122,
+                    "pairs": 2,
+                    "identicalPairs": 1,
+                    "x": 1107.05,
+                    "y": 561.65
+                  },
+                  {
+                    "clip": 159,
+                    "kind": "remote-tail-compatible",
+                    "from": 43623,
+                    "to": 43745,
+                    "ms": 122,
+                    "pairs": 2,
+                    "identicalPairs": 1,
+                    "x": 1053,
+                    "y": 560.55
+                  }
+                ],
+                "longestOutsideKnownTailRuns": [],
+                "positionRepeatFraction": 0.12351
+              }
+            },
+            "knownTailEvidence": {
+              "visbulflame": {
+                "native-babah": 456,
+                "native-end": 152,
+                "wire-final-stationary-pair": 12
+              }
+            },
+            "network": {
+              "allMessages": 155,
+              "allBytes": 2816796,
+              "packetEventReferences": 3015,
+              "packetFrameReferences": 40377,
+              "streams": {
+                "player:1:4": {
+                  "events": 152,
+                  "streamReceiveGapIncludingInterShotIdleMs": {
+                    "n": 24,
+                    "min": 20.0,
+                    "p50": 66.0,
+                    "p95": 107.55,
+                    "p99": 121.09,
+                    "max": 125.0,
+                    "mean": 66.4583
+                  },
+                  "withinEventReceiveGapMs": {
+                    "n": 228,
+                    "min": 20.0,
+                    "p50": 67.0,
+                    "p95": 119.05,
+                    "p99": 125.0,
+                    "max": 125.0,
+                    "mean": 68.3596
+                  },
+                  "withinEventAdvancingUpdateGapMs": {
+                    "n": 98,
+                    "min": 31.0,
+                    "p50": 73.5,
+                    "p95": 108.0,
+                    "p99": 108.0,
+                    "max": 108.0,
+                    "mean": 71.0612
+                  },
+                  "withinEventSourceSampleGapMs": {
+                    "n": 197,
+                    "min": 21.0,
+                    "p50": 33.0,
+                    "p95": 46.0,
+                    "p99": 46.0,
+                    "max": 46.0,
+                    "mean": 33.9645
+                  },
+                  "receiveMinusSentCenteredMs": {
+                    "n": 240,
+                    "min": -32.0,
+                    "p50": 0.0,
+                    "p95": 37.75,
+                    "p99": 71.0,
+                    "max": 71.0,
+                    "mean": 0.0417
+                  }
+                }
+              },
+              "limit": "Detailed timestamps cover first 12 events per stream; centered offsets are jitter, not one-way latency."
+            }
+          },
+          {
+            "name": "both-prism",
+            "weapon": "prism",
+            "weaponNative": null,
+            "coverage": {
+              "localShots": 1,
+              "enemyShots": 0,
+              "nativeObjects": 6,
+              "wireEvents": 6,
+              "nativeVisibleRows": 3,
+              "remoteVisibleRows": 7,
+              "nativeVisibleSpanMs": 128,
+              "remoteVisibleSpanMs": 131,
+              "checks": [
+                {
+                  "actual": 211,
+                  "phase": "both-prism",
+                  "ok": true,
+                  "name": "final-render-samples"
+                },
+                {
+                  "phase": "both-prism",
+                  "name": "both-native-and-remote-fire",
+                  "nativeVisible": true,
+                  "shots": 1,
+                  "remoteVisible": true,
+                  "ok": false
+                }
+              ]
+            },
+            "render": {
+              "rows": 211,
+              "durationMs": 6996,
+              "observedFps": 30.017,
+              "nativeTargetFrameMs": 33.333333333333336,
+              "gapMs": {
+                "n": 210,
+                "min": 11.0,
+                "p50": 34.0,
+                "p95": 41.0,
+                "p99": 66.28,
+                "max": 71.0,
+                "mean": 33.3143
+              },
+              "over1_5NativeFrames": 4,
+              "over2NativeFrames": 3,
+              "over100ms": 0,
+              "over250ms": 0,
+              "workMs": {
+                "n": 211,
+                "min": 1.0,
+                "p50": 4.0,
+                "p95": 11.0,
+                "p99": 21.5,
+                "max": 40.0,
+                "mean": 5.2227
+              }
+            },
+            "motion": {
+              "native:visbullaser6": {
+                "clips": 6,
+                "samples": 18,
+                "pairs": 12,
+                "gapsAcrossHiddenFrames": 0,
+                "repeatedPositionPairs": 2,
+                "identicalVisualPairs": 0,
+                "nativeTerminalRepeatPairs": 2,
+                "nativeActiveRepeatPairs": 0,
+                "remoteTailCompatibleRepeatPairs": 0,
+                "remoteOutsideKnownTailRepeatPairs": 0,
+                "nativePhysicsMovedWhileVisualRepeated": 0,
+                "stepPx": {
+                  "n": 12,
+                  "min": 0.05,
+                  "p50": 1.7894,
+                  "p95": 3.5288,
+                  "p99": 3.5288,
+                  "max": 3.5288,
+                  "mean": 1.7894
+                },
+                "speedPxPerSecond": {
+                  "n": 12,
+                  "min": 0.7246,
+                  "p50": 30.2675,
+                  "p95": 59.8103,
+                  "p99": 59.8103,
+                  "max": 59.8103,
+                  "mean": 30.2675
+                },
+                "sampleGapMs": {
+                  "n": 12,
+                  "min": 59.0,
+                  "p50": 64.0,
+                  "p95": 69.0,
+                  "p99": 69.0,
+                  "max": 69.0,
+                  "mean": 64.0
+                },
+                "repeatRunMs": {
+                  "n": 2,
+                  "min": 69.0,
+                  "p50": 69.0,
+                  "p95": 69.0,
+                  "p99": 69.0,
+                  "max": 69.0,
+                  "mean": 69.0
+                },
+                "repeatRunsOver100ms": 0,
+                "longestRepeatRuns": [
+                  {
+                    "clip": 412,
+                    "kind": "native-terminal",
+                    "from": 49518,
+                    "to": 49587,
+                    "ms": 69,
+                    "pairs": 1,
+                    "identicalPairs": 0,
+                    "x": 1869.3,
+                    "y": 35.15
+                  },
+                  {
+                    "clip": 417,
+                    "kind": "native-terminal",
+                    "from": 49518,
+                    "to": 49587,
+                    "ms": 69,
+                    "pairs": 1,
+                    "identicalPairs": 0,
+                    "x": 1281.35,
+                    "y": 557
+                  }
+                ],
+                "longestOutsideKnownTailRuns": [],
+                "positionRepeatFraction": 0.16667
+              },
+              "remote:visbullaser6": {
+                "clips": 6,
+                "samples": 42,
+                "pairs": 36,
+                "gapsAcrossHiddenFrames": 0,
+                "repeatedPositionPairs": 28,
+                "identicalVisualPairs": 6,
+                "nativeTerminalRepeatPairs": 0,
+                "nativeActiveRepeatPairs": 0,
+                "remoteTailCompatibleRepeatPairs": 28,
+                "remoteOutsideKnownTailRepeatPairs": 0,
+                "nativePhysicsMovedWhileVisualRepeated": 0,
+                "stepPx": {
+                  "n": 36,
+                  "min": 0.0,
+                  "p50": 0.0,
+                  "p95": 1.4577,
+                  "p99": 1.4577,
+                  "max": 1.4577,
+                  "mean": 0.2513
+                },
+                "speedPxPerSecond": {
+                  "n": 36,
+                  "min": 0.0,
+                  "p50": 0.0,
+                  "p95": 63.3799,
+                  "p99": 63.3799,
+                  "max": 63.3799,
+                  "mean": 10.9256
+                },
+                "sampleGapMs": {
+                  "n": 36,
+                  "min": 14.0,
+                  "p50": 21.0,
+                  "p95": 36.0,
+                  "p99": 36.0,
+                  "max": 36.0,
+                  "mean": 21.8333
+                },
+                "repeatRunMs": {
+                  "n": 8,
+                  "min": 36.0,
+                  "p50": 78.5,
+                  "p95": 108.0,
+                  "p99": 108.0,
+                  "max": 108.0,
+                  "mean": 75.25
+                },
+                "repeatRunsOver100ms": 4,
+                "longestRepeatRuns": [
+                  {
+                    "clip": 418,
+                    "kind": "remote-tail-compatible",
+                    "from": 49610,
+                    "to": 49718,
+                    "ms": 108,
+                    "pairs": 5,
+                    "identicalPairs": 1,
+                    "x": 1885.25,
+                    "y": 533.25
+                  },
+                  {
+                    "clip": 419,
+                    "kind": "remote-tail-compatible",
+                    "from": 49610,
+                    "to": 49718,
+                    "ms": 108,
+                    "pairs": 5,
+                    "identicalPairs": 1,
+                    "x": 1882.95,
+                    "y": 435.35
+                  },
+                  {
+                    "clip": 422,
+                    "kind": "remote-tail-compatible",
+                    "from": 49610,
+                    "to": 49718,
+                    "ms": 108,
+                    "pairs": 5,
+                    "identicalPairs": 1,
+                    "x": 1882.4,
+                    "y": 133.9
+                  },
+                  {
+                    "clip": 423,
+                    "kind": "remote-tail-compatible",
+                    "from": 49610,
+                    "to": 49718,
+                    "ms": 108,
+                    "pairs": 5,
+                    "identicalPairs": 1,
+                    "x": 1863.8,
+                    "y": 33.45
+                  },
+                  {
+                    "clip": 420,
+                    "kind": "remote-tail-compatible",
+                    "from": 49610,
+                    "to": 49659,
+                    "ms": 49,
+                    "pairs": 3,
+                    "identicalPairs": 0,
+                    "x": 1885.5,
+                    "y": 336.55
+                  },
+                  {
+                    "clip": 421,
+                    "kind": "remote-tail-compatible",
+                    "from": 49610,
+                    "to": 49659,
+                    "ms": 49,
+                    "pairs": 3,
+                    "identicalPairs": 0,
+                    "x": 1927,
+                    "y": 228.2
+                  },
+                  {
+                    "clip": 420,
+                    "kind": "remote-tail-compatible",
+                    "from": 49682,
+                    "to": 49718,
+                    "ms": 36,
+                    "pairs": 1,
+                    "identicalPairs": 1,
+                    "x": 1885.5,
+                    "y": 336.6
+                  },
+                  {
+                    "clip": 421,
+                    "kind": "remote-tail-compatible",
+                    "from": 49682,
+                    "to": 49718,
+                    "ms": 36,
+                    "pairs": 1,
+                    "identicalPairs": 1,
+                    "x": 1927,
+                    "y": 228.25
+                  }
+                ],
+                "longestOutsideKnownTailRuns": [],
+                "positionRepeatFraction": 0.77778
+              }
+            },
+            "knownTailEvidence": {
+              "visbullaser6": {
+                "native-babah": 18,
+                "native-end": 6,
+                "wire-final-stationary-pair": 4
+              }
+            },
+            "network": {
+              "allMessages": 135,
+              "allBytes": 281683,
+              "packetEventReferences": 78,
+              "packetFrameReferences": 228,
+              "streams": {
+                "player:1:5": {
+                  "events": 6,
+                  "streamReceiveGapIncludingInterShotIdleMs": {
+                    "n": 12,
+                    "min": 29.0,
+                    "p50": 64.0,
+                    "p95": 75.95,
+                    "p99": 80.79,
+                    "max": 82.0,
+                    "mean": 61.0
+                  },
+                  "withinEventReceiveGapMs": {
+                    "n": 72,
+                    "min": 29.0,
+                    "p50": 64.0,
+                    "p95": 82.0,
+                    "p99": 82.0,
+                    "max": 82.0,
+                    "mean": 61.0
+                  },
+                  "withinEventAdvancingUpdateGapMs": {
+                    "n": 6,
+                    "min": 29.0,
+                    "p50": 29.0,
+                    "p95": 29.0,
+                    "p99": 29.0,
+                    "max": 29.0,
+                    "mean": 29.0
+                  },
+                  "withinEventSourceSampleGapMs": {
+                    "n": 12,
+                    "min": 33.0,
+                    "p50": 56.0,
+                    "p95": 79.0,
+                    "p99": 79.0,
+                    "max": 79.0,
+                    "mean": 56.0
+                  },
+                  "receiveMinusSentCenteredMs": {
+                    "n": 78,
+                    "min": -3.0,
+                    "p50": 0.0,
+                    "p95": 76.0,
+                    "p99": 76.0,
+                    "max": 76.0,
+                    "mean": 8.3846
+                  }
+                }
+              },
+              "limit": "Detailed timestamps cover first 12 events per stream; centered offsets are jitter, not one-way latency."
+            }
+          },
+          {
+            "name": "enemy-lightning",
+            "weapon": "lmg",
+            "weaponNative": null,
+            "coverage": {
+              "localShots": 0,
+              "enemyShots": 7,
+              "nativeObjects": 7,
+              "wireEvents": 0,
+              "nativeVisibleRows": 87,
+              "remoteVisibleRows": 0,
+              "nativeVisibleSpanMs": 7399,
+              "remoteVisibleSpanMs": 0,
+              "checks": [
+                {
+                  "actual": 302,
+                  "phase": "enemy-lightning",
+                  "ok": true,
+                  "name": "final-render-samples"
+                },
+                {
+                  "phase": "enemy-lightning",
+                  "ok": true,
+                  "nativeVisible": true,
+                  "shots": 7,
+                  "name": "native-alicorn-fire"
+                }
+              ]
+            },
+            "render": {
+              "rows": 302,
+              "durationMs": 9970,
+              "observedFps": 30.191,
+              "nativeTargetFrameMs": 33.333333333333336,
+              "gapMs": {
+                "n": 301,
+                "min": 10.0,
+                "p50": 33.0,
+                "p95": 42.0,
+                "p99": 53.0,
+                "max": 72.0,
+                "mean": 33.1229
+              },
+              "over1_5NativeFrames": 5,
+              "over2NativeFrames": 1,
+              "over100ms": 0,
+              "over250ms": 0,
+              "workMs": {
+                "n": 302,
+                "min": 0.0,
+                "p50": 4.0,
+                "p95": 11.0,
+                "p99": 30.9,
+                "max": 52.0,
+                "mean": 5.3907
+              }
+            },
+            "motion": {
+              "native:visbullightning": {
+                "clips": 7,
+                "samples": 87,
+                "pairs": 80,
+                "gapsAcrossHiddenFrames": 0,
+                "repeatedPositionPairs": 14,
+                "identicalVisualPairs": 0,
+                "nativeTerminalRepeatPairs": 14,
+                "nativeActiveRepeatPairs": 0,
+                "remoteTailCompatibleRepeatPairs": 0,
+                "remoteOutsideKnownTailRepeatPairs": 0,
+                "nativePhysicsMovedWhileVisualRepeated": 0,
+                "stepPx": {
+                  "n": 80,
+                  "min": 0.0,
+                  "p50": 47.5795,
+                  "p95": 59.7244,
+                  "p99": 59.7738,
+                  "max": 59.7738,
+                  "mean": 38.62
+                },
+                "speedPxPerSecond": {
+                  "n": 80,
+                  "min": 0.0,
+                  "p50": 1413.241,
+                  "p95": 2205.8373,
+                  "p99": 2939.9702,
+                  "max": 3358.0841,
+                  "mean": 1235.1342
+                },
+                "sampleGapMs": {
+                  "n": 80,
+                  "min": 12.0,
+                  "p50": 33.0,
+                  "p95": 40.05,
+                  "p99": 54.1,
+                  "max": 62.0,
+                  "mean": 32.975
+                },
+                "repeatRunMs": {
+                  "n": 7,
+                  "min": 65.0,
+                  "p50": 67.0,
+                  "p95": 69.7,
+                  "p99": 69.94,
+                  "max": 70.0,
+                  "mean": 67.0
+                },
+                "repeatRunsOver100ms": 0,
+                "longestRepeatRuns": [
+                  {
+                    "clip": 428,
+                    "kind": "native-terminal",
+                    "from": 62883,
+                    "to": 62953,
+                    "ms": 70,
+                    "pairs": 2,
+                    "identicalPairs": 0,
+                    "x": 32.2,
+                    "y": 333.75
+                  },
+                  {
+                    "clip": 426,
+                    "kind": "native-terminal",
+                    "from": 60584,
+                    "to": 60653,
+                    "ms": 69,
+                    "pairs": 2,
+                    "identicalPairs": 0,
+                    "x": 39,
+                    "y": 382.5
+                  },
+                  {
+                    "clip": 430,
+                    "kind": "native-terminal",
+                    "from": 65249,
+                    "to": 65317,
+                    "ms": 68,
+                    "pairs": 2,
+                    "identicalPairs": 0,
+                    "x": 37.1,
+                    "y": 339.75
+                  },
+                  {
+                    "clip": 424,
+                    "kind": "native-terminal",
+                    "from": 58217,
+                    "to": 58284,
+                    "ms": 67,
+                    "pairs": 2,
+                    "identicalPairs": 0,
+                    "x": 38.8,
+                    "y": 388.5
+                  },
+                  {
+                    "clip": 425,
+                    "kind": "native-terminal",
+                    "from": 59350,
+                    "to": 59415,
+                    "ms": 65,
+                    "pairs": 2,
+                    "identicalPairs": 0,
+                    "x": 33.55,
+                    "y": 371.05
+                  },
+                  {
+                    "clip": 427,
+                    "kind": "native-terminal",
+                    "from": 61686,
+                    "to": 61751,
+                    "ms": 65,
+                    "pairs": 2,
+                    "identicalPairs": 0,
+                    "x": 31.7,
+                    "y": 387.6
+                  },
+                  {
+                    "clip": 429,
+                    "kind": "native-terminal",
+                    "from": 64153,
+                    "to": 64218,
+                    "ms": 65,
+                    "pairs": 2,
+                    "identicalPairs": 0,
+                    "x": 35.15,
+                    "y": 346.05
+                  }
+                ],
+                "longestOutsideKnownTailRuns": [],
+                "positionRepeatFraction": 0.175
+              }
+            },
+            "knownTailEvidence": {},
+            "network": {
+              "allMessages": 188,
+              "allBytes": 311723,
+              "packetEventReferences": 0,
+              "packetFrameReferences": 0,
+              "streams": {},
+              "limit": "Detailed timestamps cover first 12 events per stream; centered offsets are jitter, not one-way latency."
+            }
+          }
+        ]
+      },
+      "join": {
+        "inputSha256": "8c4fbb51d3a50c7484c03556166b2a1c75e7e7444165f779a96e06f387cb120e",
+        "probe": "native-special-projectiles-v1",
+        "completed": true,
+        "passed": false,
+        "error": "",
+        "targetRate": 30,
+        "phases": [
+          {
+            "name": "both-lmg",
+            "weapon": "lmg",
+            "weaponNative": null,
+            "coverage": {
+              "localShots": 50,
+              "enemyShots": 0,
+              "nativeObjects": 50,
+              "wireEvents": 69,
+              "nativeVisibleRows": 107,
+              "remoteVisibleRows": 111,
+              "nativeVisibleSpanMs": 5437,
+              "remoteVisibleSpanMs": 5189,
+              "checks": [
+                {
+                  "phase": "both-lmg",
+                  "actual": 148,
+                  "name": "final-render-samples",
+                  "ok": true
+                },
+                {
+                  "phase": "both-lmg",
+                  "nativeVisible": true,
+                  "ok": true,
+                  "remoteVisible": true,
+                  "shots": 50,
+                  "name": "both-native-and-remote-fire"
+                }
+              ]
+            },
+            "render": {
+              "rows": 148,
+              "durationMs": 6806,
+              "observedFps": 21.599,
+              "nativeTargetFrameMs": 33.333333333333336,
+              "gapMs": {
+                "n": 147,
+                "min": 11.0,
+                "p50": 34.0,
+                "p95": 137.2,
+                "p99": 259.52,
+                "max": 424.0,
+                "mean": 46.2993
+              },
+              "over1_5NativeFrames": 21,
+              "over2NativeFrames": 16,
+              "over100ms": 11,
+              "over250ms": 2,
+              "workMs": {
+                "n": 148,
+                "min": 1.0,
+                "p50": 7.0,
+                "p95": 46.3,
+                "p99": 73.71,
+                "max": 222.0,
+                "mean": 11.9324
+              }
+            },
+            "motion": {
+              "native:visualBullet": {
+                "clips": 50,
+                "samples": 482,
+                "pairs": 432,
+                "gapsAcrossHiddenFrames": 0,
+                "repeatedPositionPairs": 100,
+                "identicalVisualPairs": 84,
+                "nativeTerminalRepeatPairs": 100,
+                "nativeActiveRepeatPairs": 0,
+                "remoteTailCompatibleRepeatPairs": 0,
+                "remoteOutsideKnownTailRepeatPairs": 0,
+                "nativePhysicsMovedWhileVisualRepeated": 0,
+                "stepPx": {
+                  "n": 432,
+                  "min": 0.0,
+                  "p50": 176.1608,
+                  "p95": 230.5438,
+                  "p99": 237.4459,
+                  "max": 238.5592,
+                  "mean": 140.7798
+                },
+                "speedPxPerSecond": {
+                  "n": 432,
+                  "min": 0.0,
+                  "p50": 4738.0137,
+                  "p95": 10052.8957,
+                  "p99": 12619.5559,
+                  "max": 16467.4176,
+                  "mean": 4365.5796
+                },
+                "sampleGapMs": {
+                  "n": 432,
+                  "min": 14.0,
+                  "p50": 34.0,
+                  "p95": 109.1,
+                  "p99": 189.87,
+                  "max": 424.0,
+                  "mean": 41.6204
+                },
+                "repeatRunMs": {
+                  "n": 50,
+                  "min": 28.0,
+                  "p50": 67.0,
+                  "p95": 167.45,
+                  "p99": 545.35,
+                  "max": 636.0,
+                  "mean": 85.1
+                },
+                "repeatRunsOver100ms": 3,
+                "longestRepeatRuns": [
+                  {
+                    "clip": 1,
+                    "kind": "native-terminal",
+                    "from": 23508,
+                    "to": 24144,
+                    "ms": 636,
+                    "pairs": 2,
+                    "identicalPairs": 2,
+                    "x": 300.9,
+                    "y": 587.6
+                  },
+                  {
+                    "clip": 5,
+                    "kind": "native-terminal",
+                    "from": 24144,
+                    "to": 24595,
+                    "ms": 451,
+                    "pairs": 2,
+                    "identicalPairs": 2,
+                    "x": 386.7,
+                    "y": 566.25
+                  },
+                  {
+                    "clip": 8,
+                    "kind": "native-terminal",
+                    "from": 25593,
+                    "to": 25832,
+                    "ms": 239,
+                    "pairs": 2,
+                    "identicalPairs": 2,
+                    "x": 1927,
+                    "y": 277.2
+                  },
+                  {
+                    "clip": 79,
+                    "kind": "native-terminal",
+                    "from": 27723,
+                    "to": 27803,
+                    "ms": 80,
+                    "pairs": 2,
+                    "identicalPairs": 0,
+                    "x": 1880.8,
+                    "y": 161.65
+                  },
+                  {
+                    "clip": 105,
+                    "kind": "native-terminal",
+                    "from": 28551,
+                    "to": 28630,
+                    "ms": 79,
+                    "pairs": 2,
+                    "identicalPairs": 2,
+                    "x": 1888.6,
+                    "y": 37.95
+                  },
+                  {
+                    "clip": 12,
+                    "kind": "native-terminal",
+                    "from": 25951,
+                    "to": 26029,
+                    "ms": 78,
+                    "pairs": 2,
+                    "identicalPairs": 2,
+                    "x": 1927.9,
+                    "y": 225.95
+                  },
+                  {
+                    "clip": 16,
+                    "kind": "native-terminal",
+                    "from": 25951,
+                    "to": 26029,
+                    "ms": 78,
+                    "pairs": 2,
+                    "identicalPairs": 2,
+                    "x": 1923.5,
+                    "y": 254.3
+                  },
+                  {
+                    "clip": 91,
+                    "kind": "native-terminal",
+                    "from": 28083,
+                    "to": 28158,
+                    "ms": 75,
+                    "pairs": 2,
+                    "identicalPairs": 2,
+                    "x": 1882.1,
+                    "y": 74.9
+                  }
+                ],
+                "longestOutsideKnownTailRuns": [],
+                "positionRepeatFraction": 0.23148
+              },
+              "remote:visualBullet": {
+                "clips": 68,
+                "samples": 549,
+                "pairs": 481,
+                "gapsAcrossHiddenFrames": 0,
+                "repeatedPositionPairs": 101,
+                "identicalVisualPairs": 101,
+                "nativeTerminalRepeatPairs": 0,
+                "nativeActiveRepeatPairs": 0,
+                "remoteTailCompatibleRepeatPairs": 101,
+                "remoteOutsideKnownTailRepeatPairs": 0,
+                "nativePhysicsMovedWhileVisualRepeated": 0,
+                "stepPx": {
+                  "n": 481,
+                  "min": 0.0,
+                  "p50": 154.6892,
+                  "p95": 432.0723,
+                  "p99": 765.144,
+                  "max": 1118.9222,
+                  "mean": 164.6042
+                },
+                "speedPxPerSecond": {
+                  "n": 481,
+                  "min": 0.0,
+                  "p50": 4620.542,
+                  "p95": 9105.3878,
+                  "p99": 12223.6304,
+                  "max": 31433.5977,
+                  "mean": 4313.8268
+                },
+                "sampleGapMs": {
+                  "n": 481,
+                  "min": 14.0,
+                  "p50": 34.0,
+                  "p95": 119.0,
+                  "p99": 239.0,
+                  "max": 277.0,
+                  "mean": 42.3846
+                },
+                "repeatRunMs": {
+                  "n": 49,
+                  "min": 28.0,
+                  "p50": 66.0,
+                  "p95": 111.8,
+                  "p99": 127.76,
+                  "max": 134.0,
+                  "mean": 70.6122
+                },
+                "repeatRunsOver100ms": 5,
+                "longestRepeatRuns": [
+                  {
+                    "clip": 48,
+                    "kind": "remote-tail-compatible",
+                    "from": 26682,
+                    "to": 26816,
+                    "ms": 134,
+                    "pairs": 4,
+                    "identicalPairs": 4,
+                    "x": 1885.55,
+                    "y": 82.1
+                  },
+                  {
+                    "clip": 115,
+                    "kind": "remote-tail-compatible",
+                    "from": 28931,
+                    "to": 29052,
+                    "ms": 121,
+                    "pairs": 4,
+                    "identicalPairs": 4,
+                    "x": 1722.75,
+                    "y": 38.65
+                  },
+                  {
+                    "clip": 50,
+                    "kind": "remote-tail-compatible",
+                    "from": 26749,
+                    "to": 26864,
+                    "ms": 115,
+                    "pairs": 3,
+                    "identicalPairs": 3,
+                    "x": 1887.1,
+                    "y": 38
+                  },
+                  {
+                    "clip": 98,
+                    "kind": "remote-tail-compatible",
+                    "from": 28346,
+                    "to": 28453,
+                    "ms": 107,
+                    "pairs": 3,
+                    "identicalPairs": 3,
+                    "x": 1735.8,
+                    "y": 37.6
+                  },
+                  {
+                    "clip": 13,
+                    "kind": "remote-tail-compatible",
+                    "from": 25222,
+                    "to": 25323,
+                    "ms": 101,
+                    "pairs": 1,
+                    "identicalPairs": 1,
+                    "x": 1882.65,
+                    "y": 80.3
+                  },
+                  {
+                    "clip": 100,
+                    "kind": "remote-tail-compatible",
+                    "from": 28386,
+                    "to": 28485,
+                    "ms": 99,
+                    "pairs": 3,
+                    "identicalPairs": 3,
+                    "x": 1811.1,
+                    "y": 39.1
+                  },
+                  {
+                    "clip": 20,
+                    "kind": "remote-tail-compatible",
+                    "from": 25593,
+                    "to": 25690,
+                    "ms": 97,
+                    "pairs": 1,
+                    "identicalPairs": 1,
+                    "x": 1882.3,
+                    "y": 159.8
+                  },
+                  {
+                    "clip": 117,
+                    "kind": "remote-tail-compatible",
+                    "from": 28990,
+                    "to": 29082,
+                    "ms": 92,
+                    "pairs": 3,
+                    "identicalPairs": 3,
+                    "x": 1736.45,
+                    "y": 39.55
+                  }
+                ],
+                "longestOutsideKnownTailRuns": [],
+                "positionRepeatFraction": 0.20998
+              }
+            },
+            "knownTailEvidence": {
+              "visualBullet": {
+                "native-babah": 207,
+                "native-end": 69,
+                "wire-final-stationary-pair": 12
+              }
+            },
+            "network": {
+              "allMessages": 370,
+              "allBytes": 5661496,
+              "packetEventReferences": 2046,
+              "packetFrameReferences": 17851,
+              "streams": {
+                "player:0:3": {
+                  "events": 69,
+                  "streamReceiveGapIncludingInterShotIdleMs": {
+                    "n": 51,
+                    "min": 1.0,
+                    "p50": 44.0,
+                    "p95": 100.0,
+                    "p99": 111.0,
+                    "max": 116.0,
+                    "mean": 48.3137
+                  },
+                  "withinEventReceiveGapMs": {
+                    "n": 285,
+                    "min": 1.0,
+                    "p50": 44.0,
+                    "p95": 103.0,
+                    "p99": 116.0,
+                    "max": 116.0,
+                    "mean": 48.1228
+                  },
+                  "withinEventAdvancingUpdateGapMs": {
+                    "n": 78,
+                    "min": 5.0,
+                    "p50": 76.0,
+                    "p95": 117.0,
+                    "p99": 177.0,
+                    "max": 177.0,
+                    "mean": 72.859
+                  },
+                  "withinEventSourceSampleGapMs": {
+                    "n": 96,
+                    "min": 11.0,
+                    "p50": 55.5,
+                    "p95": 163.0,
+                    "p99": 187.0,
+                    "max": 187.0,
+                    "mean": 63.4271
+                  },
+                  "receiveMinusSentCenteredMs": {
+                    "n": 297,
+                    "min": -67.0,
+                    "p50": 0.0,
+                    "p95": 142.0,
+                    "p99": 188.44,
+                    "max": 199.0,
+                    "mean": 14.7677
+                  }
+                }
+              },
+              "limit": "Detailed timestamps cover first 12 events per stream; centered offsets are jitter, not one-way latency."
+            }
+          },
+          {
+            "name": "both-cflamer",
+            "weapon": "cflamer",
+            "weaponNative": null,
+            "coverage": {
+              "localShots": 152,
+              "enemyShots": 0,
+              "nativeObjects": 152,
+              "wireEvents": 140,
+              "nativeVisibleRows": 167,
+              "remoteVisibleRows": 173,
+              "nativeVisibleSpanMs": 5977,
+              "remoteVisibleSpanMs": 6129,
+              "checks": [
+                {
+                  "phase": "both-cflamer",
+                  "actual": 199,
+                  "name": "final-render-samples",
+                  "ok": true
+                },
+                {
+                  "phase": "both-cflamer",
+                  "nativeVisible": true,
+                  "ok": true,
+                  "remoteVisible": true,
+                  "shots": 152,
+                  "name": "both-native-and-remote-fire"
+                }
+              ]
+            },
+            "render": {
+              "rows": 199,
+              "durationMs": 6998,
+              "observedFps": 28.294,
+              "nativeTargetFrameMs": 33.333333333333336,
+              "gapMs": {
+                "n": 198,
+                "min": 15.0,
+                "p50": 32.5,
+                "p95": 65.0,
+                "p99": 78.12,
+                "max": 93.0,
+                "mean": 35.3434
+              },
+              "over1_5NativeFrames": 21,
+              "over2NativeFrames": 7,
+              "over100ms": 0,
+              "over250ms": 0,
+              "workMs": {
+                "n": 199,
+                "min": 1.0,
+                "p50": 7.0,
+                "p95": 18.0,
+                "p99": 24.5,
+                "max": 53.0,
+                "mean": 9.1759
+              }
+            },
+            "motion": {
+              "native:visbulflame": {
+                "clips": 152,
+                "samples": 2588,
+                "pairs": 2436,
+                "gapsAcrossHiddenFrames": 0,
+                "repeatedPositionPairs": 304,
+                "identicalVisualPairs": 0,
+                "nativeTerminalRepeatPairs": 304,
+                "nativeActiveRepeatPairs": 0,
+                "remoteTailCompatibleRepeatPairs": 0,
+                "remoteOutsideKnownTailRepeatPairs": 0,
+                "nativePhysicsMovedWhileVisualRepeated": 0,
+                "stepPx": {
+                  "n": 2436,
+                  "min": 0.0,
+                  "p50": 39.8794,
+                  "p95": 40.9401,
+                  "p99": 41.0841,
+                  "max": 41.1585,
+                  "mean": 34.1946
+                },
+                "speedPxPerSecond": {
+                  "n": 2436,
+                  "min": 0.0,
+                  "p50": 1169.8227,
+                  "p95": 1995.2111,
+                  "p99": 2368.8637,
+                  "max": 2712.3585,
+                  "mean": 1069.097
+                },
+                "sampleGapMs": {
+                  "n": 2436,
+                  "min": 15.0,
+                  "p50": 33.0,
+                  "p95": 65.0,
+                  "p99": 82.0,
+                  "max": 93.0,
+                  "mean": 36.0612
+                },
+                "repeatRunMs": {
+                  "n": 152,
+                  "min": 38.0,
+                  "p50": 65.5,
+                  "p95": 103.45,
+                  "p99": 125.41,
+                  "max": 130.0,
+                  "mean": 70.9803
+                },
+                "repeatRunsOver100ms": 11,
+                "longestRepeatRuns": [
+                  {
+                    "clip": 271,
+                    "kind": "native-terminal",
+                    "from": 33672,
+                    "to": 33802,
+                    "ms": 130,
+                    "pairs": 2,
+                    "identicalPairs": 0,
+                    "x": 1099.35,
+                    "y": 561.65
+                  },
+                  {
+                    "clip": 273,
+                    "kind": "native-terminal",
+                    "from": 33672,
+                    "to": 33802,
+                    "ms": 130,
+                    "pairs": 2,
+                    "identicalPairs": 0,
+                    "x": 1060.7,
+                    "y": 560.35
+                  },
+                  {
+                    "clip": 226,
+                    "kind": "native-terminal",
+                    "from": 32805,
+                    "to": 32926,
+                    "ms": 121,
+                    "pairs": 2,
+                    "identicalPairs": 0,
+                    "x": 1068.45,
+                    "y": 560.6
+                  },
+                  {
+                    "clip": 229,
+                    "kind": "native-terminal",
+                    "from": 32805,
+                    "to": 32926,
+                    "ms": 121,
+                    "pairs": 2,
+                    "identicalPairs": 0,
+                    "x": 998.5,
+                    "y": 560.85
+                  },
+                  {
+                    "clip": 355,
+                    "kind": "native-terminal",
+                    "from": 35380,
+                    "to": 35488,
+                    "ms": 108,
+                    "pairs": 2,
+                    "identicalPairs": 0,
+                    "x": 1068.5,
+                    "y": 561.1
+                  },
+                  {
+                    "clip": 359,
+                    "kind": "native-terminal",
+                    "from": 35380,
+                    "to": 35488,
+                    "ms": 108,
+                    "pairs": 2,
+                    "identicalPairs": 0,
+                    "x": 1006.3,
+                    "y": 560.7
+                  },
+                  {
+                    "clip": 394,
+                    "kind": "native-terminal",
+                    "from": 36064,
+                    "to": 36171,
+                    "ms": 107,
+                    "pairs": 2,
+                    "identicalPairs": 0,
+                    "x": 1084,
+                    "y": 561.75
+                  },
+                  {
+                    "clip": 231,
+                    "kind": "native-terminal",
+                    "from": 32993,
+                    "to": 33097,
+                    "ms": 104,
+                    "pairs": 2,
+                    "identicalPairs": 0,
+                    "x": 1106.9,
+                    "y": 560.6
+                  }
+                ],
+                "longestOutsideKnownTailRuns": [],
+                "positionRepeatFraction": 0.12479
+              },
+              "remote:visbulflame": {
+                "clips": 140,
+                "samples": 2656,
+                "pairs": 2516,
+                "gapsAcrossHiddenFrames": 0,
+                "repeatedPositionPairs": 360,
+                "identicalVisualPairs": 136,
+                "nativeTerminalRepeatPairs": 0,
+                "nativeActiveRepeatPairs": 0,
+                "remoteTailCompatibleRepeatPairs": 347,
+                "remoteOutsideKnownTailRepeatPairs": 13,
+                "nativePhysicsMovedWhileVisualRepeated": 0,
+                "stepPx": {
+                  "n": 2516,
+                  "min": 0.0,
+                  "p50": 28.4412,
+                  "p95": 62.9456,
+                  "p99": 98.3445,
+                  "max": 109.2367,
+                  "mean": 29.2982
+                },
+                "speedPxPerSecond": {
+                  "n": 2516,
+                  "min": 0.0,
+                  "p50": 895.9974,
+                  "p95": 1636.2071,
+                  "p99": 2275.2161,
+                  "max": 2365.2257,
+                  "mean": 843.8098
+                },
+                "sampleGapMs": {
+                  "n": 2516,
+                  "min": 15.0,
+                  "p50": 33.0,
+                  "p95": 65.0,
+                  "p99": 82.0,
+                  "max": 93.0,
+                  "mean": 35.7484
+                },
+                "repeatRunMs": {
+                  "n": 151,
+                  "min": 20.0,
+                  "p50": 75.0,
+                  "p95": 154.5,
+                  "p99": 189.0,
+                  "max": 189.0,
+                  "mean": 80.8675
+                },
+                "repeatRunsOver100ms": 33,
+                "longestRepeatRuns": [
+                  {
+                    "clip": 164,
+                    "kind": "remote-tail-compatible",
+                    "from": 31639,
+                    "to": 31828,
+                    "ms": 189,
+                    "pairs": 5,
+                    "identicalPairs": 3,
+                    "x": 962.3,
+                    "y": 561.05
+                  },
+                  {
+                    "clip": 166,
+                    "kind": "remote-tail-compatible",
+                    "from": 31639,
+                    "to": 31828,
+                    "ms": 189,
+                    "pairs": 5,
+                    "identicalPairs": 3,
+                    "x": 924.05,
+                    "y": 561.4
+                  },
+                  {
+                    "clip": 168,
+                    "kind": "remote-tail-compatible",
+                    "from": 31639,
+                    "to": 31828,
+                    "ms": 189,
+                    "pairs": 5,
+                    "identicalPairs": 3,
+                    "x": 869.7,
+                    "y": 560.3
+                  },
+                  {
+                    "clip": 301,
+                    "kind": "remote-tail-compatible",
+                    "from": 34334,
+                    "to": 34516,
+                    "ms": 182,
+                    "pairs": 5,
+                    "identicalPairs": 3,
+                    "x": 916.35,
+                    "y": 561.85
+                  },
+                  {
+                    "clip": 258,
+                    "kind": "remote-tail-compatible",
+                    "from": 33404,
+                    "to": 33564,
+                    "ms": 160,
+                    "pairs": 5,
+                    "identicalPairs": 3,
+                    "x": 946.95,
+                    "y": 560.5
+                  },
+                  {
+                    "clip": 302,
+                    "kind": "remote-tail-compatible",
+                    "from": 34388,
+                    "to": 34548,
+                    "ms": 160,
+                    "pairs": 4,
+                    "identicalPairs": 2,
+                    "x": 969.85,
+                    "y": 560.3
+                  },
+                  {
+                    "clip": 306,
+                    "kind": "remote-tail-compatible",
+                    "from": 34388,
+                    "to": 34548,
+                    "ms": 160,
+                    "pairs": 4,
+                    "identicalPairs": 2,
+                    "x": 877.5,
+                    "y": 560.15
+                  },
+                  {
+                    "clip": 386,
+                    "kind": "remote-tail-compatible",
+                    "from": 35986,
+                    "to": 36142,
+                    "ms": 156,
+                    "pairs": 3,
+                    "identicalPairs": 1,
+                    "x": 862,
+                    "y": 560.95
+                  }
+                ],
+                "longestOutsideKnownTailRuns": [
+                  {
+                    "clip": 170,
+                    "kind": "remote-outside-known-tail",
+                    "from": 31639,
+                    "to": 31669,
+                    "ms": 30,
+                    "pairs": 1,
+                    "identicalPairs": 1,
+                    "x": 844.1,
+                    "y": 537.55
+                  },
+                  {
+                    "clip": 172,
+                    "kind": "remote-outside-known-tail",
+                    "from": 31639,
+                    "to": 31669,
+                    "ms": 30,
+                    "pairs": 1,
+                    "identicalPairs": 1,
+                    "x": 805.3,
+                    "y": 537.55
+                  },
+                  {
+                    "clip": 174,
+                    "kind": "remote-outside-known-tail",
+                    "from": 31639,
+                    "to": 31669,
+                    "ms": 30,
+                    "pairs": 1,
+                    "identicalPairs": 1,
+                    "x": 764,
+                    "y": 516.8
+                  },
+                  {
+                    "clip": 176,
+                    "kind": "remote-outside-known-tail",
+                    "from": 31639,
+                    "to": 31669,
+                    "ms": 30,
+                    "pairs": 1,
+                    "identicalPairs": 1,
+                    "x": 726.85,
+                    "y": 535.7
+                  },
+                  {
+                    "clip": 178,
+                    "kind": "remote-outside-known-tail",
+                    "from": 31639,
+                    "to": 31669,
+                    "ms": 30,
+                    "pairs": 1,
+                    "identicalPairs": 1,
+                    "x": 645.75,
+                    "y": 508.35
+                  },
+                  {
+                    "clip": 179,
+                    "kind": "remote-outside-known-tail",
+                    "from": 31639,
+                    "to": 31669,
+                    "ms": 30,
+                    "pairs": 1,
+                    "identicalPairs": 1,
+                    "x": 686.3,
+                    "y": 520.7
+                  },
+                  {
+                    "clip": 181,
+                    "kind": "remote-outside-known-tail",
+                    "from": 31639,
+                    "to": 31669,
+                    "ms": 30,
+                    "pairs": 1,
+                    "identicalPairs": 1,
+                    "x": 606.6,
+                    "y": 510.45
+                  },
+                  {
+                    "clip": 184,
+                    "kind": "remote-outside-known-tail",
+                    "from": 31639,
+                    "to": 31669,
+                    "ms": 30,
+                    "pairs": 1,
+                    "identicalPairs": 1,
+                    "x": 486.65,
+                    "y": 499.25
+                  }
+                ],
+                "positionRepeatFraction": 0.14308
+              }
+            },
+            "knownTailEvidence": {
+              "visbulflame": {
+                "native-babah": 420,
+                "native-end": 140,
+                "wire-final-stationary-pair": 12
+              }
+            },
+            "network": {
+              "allMessages": 376,
+              "allBytes": 12681499,
+              "packetEventReferences": 5976,
+              "packetFrameReferences": 78770,
+              "streams": {
+                "player:0:4": {
+                  "events": 140,
+                  "streamReceiveGapIncludingInterShotIdleMs": {
+                    "n": 50,
+                    "min": 3.0,
+                    "p50": 33.5,
+                    "p95": 71.65,
+                    "p99": 89.81,
+                    "max": 105.0,
+                    "mean": 34.32
+                  },
+                  "withinEventReceiveGapMs": {
+                    "n": 452,
+                    "min": 3.0,
+                    "p50": 33.0,
+                    "p95": 73.0,
+                    "p99": 105.0,
+                    "max": 105.0,
+                    "mean": 34.4668
+                  },
+                  "withinEventAdvancingUpdateGapMs": {
+                    "n": 175,
+                    "min": 3.0,
+                    "p50": 39.0,
+                    "p95": 63.0,
+                    "p99": 74.0,
+                    "max": 74.0,
+                    "mean": 39.3029
+                  },
+                  "withinEventSourceSampleGapMs": {
+                    "n": 197,
+                    "min": 18.0,
+                    "p50": 34.0,
+                    "p95": 41.0,
+                    "p99": 52.0,
+                    "max": 52.0,
+                    "mean": 34.2843
+                  },
+                  "receiveMinusSentCenteredMs": {
+                    "n": 464,
+                    "min": -29.0,
+                    "p50": 0.0,
+                    "p95": 69.0,
+                    "p99": 117.0,
+                    "max": 117.0,
+                    "mean": 8.2435
+                  }
+                }
+              },
+              "limit": "Detailed timestamps cover first 12 events per stream; centered offsets are jitter, not one-way latency."
+            }
+          },
+          {
+            "name": "both-prism",
+            "weapon": "prism",
+            "weaponNative": null,
+            "coverage": {
+              "localShots": 1,
+              "enemyShots": 0,
+              "nativeObjects": 6,
+              "wireEvents": 6,
+              "nativeVisibleRows": 3,
+              "remoteVisibleRows": 4,
+              "nativeVisibleSpanMs": 111,
+              "remoteVisibleSpanMs": 130,
+              "checks": [
+                {
+                  "phase": "both-prism",
+                  "actual": 211,
+                  "name": "final-render-samples",
+                  "ok": true
+                },
+                {
+                  "phase": "both-prism",
+                  "nativeVisible": true,
+                  "ok": false,
+                  "remoteVisible": true,
+                  "shots": 1,
+                  "name": "both-native-and-remote-fire"
+                }
+              ]
+            },
+            "render": {
+              "rows": 211,
+              "durationMs": 6989,
+              "observedFps": 30.047,
+              "nativeTargetFrameMs": 33.333333333333336,
+              "gapMs": {
+                "n": 210,
+                "min": 11.0,
+                "p50": 33.0,
+                "p95": 47.1,
+                "p99": 69.91,
+                "max": 78.0,
+                "mean": 33.281
+              },
+              "over1_5NativeFrames": 8,
+              "over2NativeFrames": 5,
+              "over100ms": 0,
+              "over250ms": 0,
+              "workMs": {
+                "n": 211,
+                "min": 1.0,
+                "p50": 4.0,
+                "p95": 9.0,
+                "p99": 15.7,
+                "max": 40.0,
+                "mean": 4.545
+              }
+            },
+            "motion": {
+              "native:visbullaser6": {
+                "clips": 6,
+                "samples": 18,
+                "pairs": 12,
+                "gapsAcrossHiddenFrames": 0,
+                "repeatedPositionPairs": 4,
+                "identicalVisualPairs": 0,
+                "nativeTerminalRepeatPairs": 4,
+                "nativeActiveRepeatPairs": 0,
+                "remoteTailCompatibleRepeatPairs": 0,
+                "remoteOutsideKnownTailRepeatPairs": 0,
+                "nativePhysicsMovedWhileVisualRepeated": 0,
+                "stepPx": {
+                  "n": 12,
+                  "min": 0.05,
+                  "p50": 1.7894,
+                  "p95": 3.5288,
+                  "p99": 3.5288,
+                  "max": 3.5288,
+                  "mean": 1.7894
+                },
+                "speedPxPerSecond": {
+                  "n": 12,
+                  "min": 0.7143,
+                  "p50": 43.3914,
+                  "p95": 86.0685,
+                  "p99": 86.0685,
+                  "max": 86.0685,
+                  "mean": 43.3914
+                },
+                "sampleGapMs": {
+                  "n": 12,
+                  "min": 41.0,
+                  "p50": 55.5,
+                  "p95": 70.0,
+                  "p99": 70.0,
+                  "max": 70.0,
+                  "mean": 55.5
+                },
+                "repeatRunMs": {
+                  "n": 4,
+                  "min": 70.0,
+                  "p50": 70.0,
+                  "p95": 70.0,
+                  "p99": 70.0,
+                  "max": 70.0,
+                  "mean": 70.0
+                },
+                "repeatRunsOver100ms": 0,
+                "longestRepeatRuns": [
+                  {
+                    "clip": 411,
+                    "kind": "native-terminal",
+                    "from": 37432,
+                    "to": 37502,
+                    "ms": 70,
+                    "pairs": 1,
+                    "identicalPairs": 0,
+                    "x": 1863.8,
+                    "y": 33.5
+                  },
+                  {
+                    "clip": 412,
+                    "kind": "native-terminal",
+                    "from": 37432,
+                    "to": 37502,
+                    "ms": 70,
+                    "pairs": 1,
+                    "identicalPairs": 0,
+                    "x": 1882.4,
+                    "y": 133.95
+                  },
+                  {
+                    "clip": 415,
+                    "kind": "native-terminal",
+                    "from": 37432,
+                    "to": 37502,
+                    "ms": 70,
+                    "pairs": 1,
+                    "identicalPairs": 0,
+                    "x": 1882.95,
+                    "y": 435.4
+                  },
+                  {
+                    "clip": 416,
+                    "kind": "native-terminal",
+                    "from": 37432,
+                    "to": 37502,
+                    "ms": 70,
+                    "pairs": 1,
+                    "identicalPairs": 0,
+                    "x": 1885.25,
+                    "y": 533.3
+                  }
+                ],
+                "longestOutsideKnownTailRuns": [],
+                "positionRepeatFraction": 0.33333
+              },
+              "remote:visbullaser6": {
+                "clips": 6,
+                "samples": 24,
+                "pairs": 18,
+                "gapsAcrossHiddenFrames": 0,
+                "repeatedPositionPairs": 8,
+                "identicalVisualPairs": 0,
+                "nativeTerminalRepeatPairs": 0,
+                "nativeActiveRepeatPairs": 0,
+                "remoteTailCompatibleRepeatPairs": 8,
+                "remoteOutsideKnownTailRepeatPairs": 0,
+                "nativePhysicsMovedWhileVisualRepeated": 0,
+                "stepPx": {
+                  "n": 18,
+                  "min": 0.0,
+                  "p50": 0.05,
+                  "p95": 1.5075,
+                  "p99": 1.5075,
+                  "max": 1.5075,
+                  "mean": 0.5192
+                },
+                "speedPxPerSecond": {
+                  "n": 18,
+                  "min": 0.0,
+                  "p50": 1.9231,
+                  "p95": 19.3267,
+                  "p99": 19.3267,
+                  "max": 19.3267,
+                  "mean": 7.0833
+                },
+                "sampleGapMs": {
+                  "n": 18,
+                  "min": 26.0,
+                  "p50": 26.0,
+                  "p95": 78.0,
+                  "p99": 78.0,
+                  "max": 78.0,
+                  "mean": 43.3333
+                },
+                "repeatRunMs": {
+                  "n": 6,
+                  "min": 26.0,
+                  "p50": 26.0,
+                  "p95": 52.0,
+                  "p99": 52.0,
+                  "max": 52.0,
+                  "mean": 34.6667
+                },
+                "repeatRunsOver100ms": 0,
+                "longestRepeatRuns": [
+                  {
+                    "clip": 417,
+                    "kind": "remote-tail-compatible",
+                    "from": 37580,
+                    "to": 37632,
+                    "ms": 52,
+                    "pairs": 2,
+                    "identicalPairs": 0,
+                    "x": 1281.35,
+                    "y": 556.95
+                  },
+                  {
+                    "clip": 422,
+                    "kind": "remote-tail-compatible",
+                    "from": 37580,
+                    "to": 37632,
+                    "ms": 52,
+                    "pairs": 2,
+                    "identicalPairs": 0,
+                    "x": 1869.3,
+                    "y": 35.1
+                  },
+                  {
+                    "clip": 418,
+                    "kind": "remote-tail-compatible",
+                    "from": 37580,
+                    "to": 37606,
+                    "ms": 26,
+                    "pairs": 1,
+                    "identicalPairs": 0,
+                    "x": 1887.15,
+                    "y": 480.45
+                  },
+                  {
+                    "clip": 419,
+                    "kind": "remote-tail-compatible",
+                    "from": 37580,
+                    "to": 37606,
+                    "ms": 26,
+                    "pairs": 1,
+                    "identicalPairs": 0,
+                    "x": 1881.5,
+                    "y": 371.4
+                  },
+                  {
+                    "clip": 420,
+                    "kind": "remote-tail-compatible",
+                    "from": 37580,
+                    "to": 37606,
+                    "ms": 26,
+                    "pairs": 1,
+                    "identicalPairs": 0,
+                    "x": 1921,
+                    "y": 254.7
+                  },
+                  {
+                    "clip": 421,
+                    "kind": "remote-tail-compatible",
+                    "from": 37580,
+                    "to": 37606,
+                    "ms": 26,
+                    "pairs": 1,
+                    "identicalPairs": 0,
+                    "x": 1887.05,
+                    "y": 146.7
+                  }
+                ],
+                "longestOutsideKnownTailRuns": [],
+                "positionRepeatFraction": 0.44444
+              }
+            },
+            "knownTailEvidence": {
+              "visbullaser6": {
+                "native-babah": 18,
+                "native-end": 6,
+                "wire-final-stationary-pair": 2
+              }
+            },
+            "network": {
+              "allMessages": 358,
+              "allBytes": 1731618,
+              "packetEventReferences": 156,
+              "packetFrameReferences": 456,
+              "streams": {
+                "player:0:5": {
+                  "events": 6,
+                  "streamReceiveGapIncludingInterShotIdleMs": {
+                    "n": 25,
+                    "min": 1.0,
+                    "p50": 33.0,
+                    "p95": 52.0,
+                    "p99": 53.52,
+                    "max": 54.0,
+                    "mean": 30.48
+                  },
+                  "withinEventReceiveGapMs": {
+                    "n": 150,
+                    "min": 1.0,
+                    "p50": 33.0,
+                    "p95": 52.0,
+                    "p99": 54.0,
+                    "max": 54.0,
+                    "mean": 30.48
+                  },
+                  "withinEventAdvancingUpdateGapMs": {
+                    "n": 6,
+                    "min": 52.0,
+                    "p50": 52.0,
+                    "p95": 52.0,
+                    "p99": 52.0,
+                    "max": 52.0,
+                    "mean": 52.0
+                  },
+                  "withinEventSourceSampleGapMs": {
+                    "n": 12,
+                    "min": 34.0,
+                    "p50": 64.0,
+                    "p95": 94.0,
+                    "p99": 94.0,
+                    "max": 94.0,
+                    "mean": 64.0
+                  },
+                  "receiveMinusSentCenteredMs": {
+                    "n": 156,
+                    "min": -15.5,
+                    "p50": 0.0,
+                    "p95": 55.5,
+                    "p99": 106.5,
+                    "max": 106.5,
+                    "mean": 7.8846
+                  }
+                }
+              },
+              "limit": "Detailed timestamps cover first 12 events per stream; centered offsets are jitter, not one-way latency."
+            }
+          },
+          {
+            "name": "enemy-lightning",
+            "weapon": "lmg",
+            "weaponNative": null,
+            "coverage": {
+              "localShots": 0,
+              "enemyShots": 0,
+              "nativeObjects": 0,
+              "wireEvents": 7,
+              "nativeVisibleRows": 0,
+              "remoteVisibleRows": 86,
+              "nativeVisibleSpanMs": 0,
+              "remoteVisibleSpanMs": 7371,
+              "checks": [
+                {
+                  "phase": "enemy-lightning",
+                  "actual": 301,
+                  "name": "final-render-samples",
+                  "ok": true
+                },
+                {
+                  "remoteVisible": true,
+                  "phase": "enemy-lightning",
+                  "name": "remote-alicorn-projectile",
+                  "events": 7,
+                  "ok": true
+                }
+              ]
+            },
+            "render": {
+              "rows": 301,
+              "durationMs": 10002,
+              "observedFps": 29.994,
+              "nativeTargetFrameMs": 33.333333333333336,
+              "gapMs": {
+                "n": 300,
+                "min": 10.0,
+                "p50": 33.0,
+                "p95": 46.0,
+                "p99": 60.0,
+                "max": 105.0,
+                "mean": 33.34
+              },
+              "over1_5NativeFrames": 13,
+              "over2NativeFrames": 1,
+              "over100ms": 1,
+              "over250ms": 0,
+              "workMs": {
+                "n": 301,
+                "min": 0.0,
+                "p50": 4.0,
+                "p95": 10.0,
+                "p99": 17.0,
+                "max": 55.0,
+                "mean": 4.8638
+              }
+            },
+            "motion": {
+              "remote:visbullightning": {
+                "clips": 7,
+                "samples": 86,
+                "pairs": 79,
+                "gapsAcrossHiddenFrames": 0,
+                "repeatedPositionPairs": 14,
+                "identicalVisualPairs": 0,
+                "nativeTerminalRepeatPairs": 0,
+                "nativeActiveRepeatPairs": 0,
+                "remoteTailCompatibleRepeatPairs": 14,
+                "remoteOutsideKnownTailRepeatPairs": 0,
+                "nativePhysicsMovedWhileVisualRepeated": 0,
+                "stepPx": {
+                  "n": 79,
+                  "min": 0.0,
+                  "p50": 41.9558,
+                  "p95": 67.5378,
+                  "p99": 82.6349,
+                  "max": 103.2665,
+                  "mean": 37.3774
+                },
+                "speedPxPerSecond": {
+                  "n": 79,
+                  "min": 0.0,
+                  "p50": 1362.6351,
+                  "p95": 2062.7751,
+                  "p99": 2179.8935,
+                  "max": 2433.0613,
+                  "mean": 1159.7701
+                },
+                "sampleGapMs": {
+                  "n": 79,
+                  "min": 14.0,
+                  "p50": 32.0,
+                  "p95": 41.1,
+                  "p99": 55.44,
+                  "max": 57.0,
+                  "mean": 32.7342
+                },
+                "repeatRunMs": {
+                  "n": 7,
+                  "min": 56.0,
+                  "p50": 66.0,
+                  "p95": 68.7,
+                  "p99": 68.94,
+                  "max": 69.0,
+                  "mean": 64.5714
+                },
+                "repeatRunsOver100ms": 0,
+                "longestRepeatRuns": [
+                  {
+                    "clip": 425,
+                    "kind": "remote-tail-compatible",
+                    "from": 48613,
+                    "to": 48682,
+                    "ms": 69,
+                    "pairs": 2,
+                    "identicalPairs": 0,
+                    "x": 39,
+                    "y": 382.5
+                  },
+                  {
+                    "clip": 428,
+                    "kind": "remote-tail-compatible",
+                    "from": 52178,
+                    "to": 52246,
+                    "ms": 68,
+                    "pairs": 2,
+                    "identicalPairs": 0,
+                    "x": 35.15,
+                    "y": 346.05
+                  },
+                  {
+                    "clip": 426,
+                    "kind": "remote-tail-compatible",
+                    "from": 49713,
+                    "to": 49780,
+                    "ms": 67,
+                    "pairs": 2,
+                    "identicalPairs": 0,
+                    "x": 31.7,
+                    "y": 387.6
+                  },
+                  {
+                    "clip": 429,
+                    "kind": "remote-tail-compatible",
+                    "from": 53279,
+                    "to": 53345,
+                    "ms": 66,
+                    "pairs": 2,
+                    "identicalPairs": 0,
+                    "x": 37.1,
+                    "y": 339.75
+                  },
+                  {
+                    "clip": 423,
+                    "kind": "remote-tail-compatible",
+                    "from": 46248,
+                    "to": 46313,
+                    "ms": 65,
+                    "pairs": 2,
+                    "identicalPairs": 0,
+                    "x": 38.8,
+                    "y": 388.5
+                  },
+                  {
+                    "clip": 424,
+                    "kind": "remote-tail-compatible",
+                    "from": 47388,
+                    "to": 47449,
+                    "ms": 61,
+                    "pairs": 2,
+                    "identicalPairs": 0,
+                    "x": 33.55,
+                    "y": 371.05
+                  },
+                  {
+                    "clip": 427,
+                    "kind": "remote-tail-compatible",
+                    "from": 50920,
+                    "to": 50976,
+                    "ms": 56,
+                    "pairs": 2,
+                    "identicalPairs": 0,
+                    "x": 32.2,
+                    "y": 333.75
+                  }
+                ],
+                "longestOutsideKnownTailRuns": [],
+                "positionRepeatFraction": 0.17722
+              }
+            },
+            "knownTailEvidence": {
+              "visbullightning": {
+                "native-babah": 21,
+                "native-end": 7,
+                "wire-final-stationary-pair": 7
+              }
+            },
+            "network": {
+              "allMessages": 510,
+              "allBytes": 2451381,
+              "packetEventReferences": 105,
+              "packetFrameReferences": 521,
+              "streams": {
+                "projectileprobe_alicorn:6": {
+                  "events": 7,
+                  "streamReceiveGapIncludingInterShotIdleMs": {
+                    "n": 103,
+                    "min": 6.0,
+                    "p50": 47.0,
+                    "p95": 255.8,
+                    "p99": 285.6,
+                    "max": 294.0,
+                    "mean": 78.6019
+                  },
+                  "withinEventReceiveGapMs": {
+                    "n": 98,
+                    "min": 6.0,
+                    "p50": 44.5,
+                    "p95": 257.3,
+                    "p99": 286.24,
+                    "max": 294.0,
+                    "mean": 75.1327
+                  },
+                  "withinEventAdvancingUpdateGapMs": {
+                    "n": 57,
+                    "min": 6.0,
+                    "p50": 49.0,
+                    "p95": 81.0,
+                    "p99": 83.64,
+                    "max": 87.0,
+                    "mean": 46.7895
+                  },
+                  "withinEventSourceSampleGapMs": {
+                    "n": 80,
+                    "min": 16.0,
+                    "p50": 33.0,
+                    "p95": 36.0,
+                    "p99": 46.0,
+                    "max": 46.0,
+                    "mean": 33.025
+                  },
+                  "receiveMinusSentCenteredMs": {
+                    "n": 105,
+                    "min": -16.0,
+                    "p50": 0.0,
+                    "p95": 25.6,
+                    "p99": 42.72,
+                    "max": 46.0,
+                    "mean": 1.9714
+                  }
+                }
+              },
+              "limit": "Detailed timestamps cover first 12 events per stream; centered offsets are jitter, not one-way latency."
+            }
+          }
+        ]
+      }
+    }
+  }
+}
