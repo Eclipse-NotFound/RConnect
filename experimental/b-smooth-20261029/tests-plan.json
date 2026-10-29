@@ -1,0 +1,14 @@
+[
+  {
+    "result": "build/ab/b-smooth-textmotion-02/result.json",
+    "preparation": "build/ab/b-field2-runtime-01/prepared-smooth-06.json"
+  },
+  {
+    "result": "build/ab/b-smooth-ui-02/result.json",
+    "preparation": "build/ab/b-field2-runtime-01/prepared-smooth-06.json"
+  },
+  {
+    "result": "build/ab/b-smooth-rockets-02/result.json",
+    "preparation": "build/ab/b-field2-runtime-01/prepared-smooth-06.json"
+  }
+]

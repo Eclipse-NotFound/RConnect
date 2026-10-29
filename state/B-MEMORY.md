@@ -10,7 +10,15 @@
 
 ## 当前版本与接续（2026-10-29）
 
-用户要求改善加入侧卡顿、同步 B 默认模组环境（CS/RV/LAD 关、其余默认）、增加马蹄铁经验共享开关。当前 **`B3-0.1-clientenv1` 已安装并验收**，原 B190 两个 Player 入口保留；事务 `build/ab/b-clientenv-deploy-20261029-03` 为 verified。已有持续部署授权，无待用户批准事项；全部自有测试已结束。
+**最新已安装：B3-0.1-smooth1，原B190入口不变，双方重启后生效。** 用户允许参考A但禁止修改A；本轮只读A并仅改B。准确构建 `build/ab/b-smooth-04-build`，SWF `c3118075c414887aea770d7df36b349e52fe330a441571218fa969c25bff44fa`，source `e2be0722726c5d489f76419a194ea86274b61362c0836707a2ab7d1570a1cf15`；可恢复源 `experimental/b-smooth-20261029/source-04`，144份完整源/5份覆盖，已独立恢复核对。减少重复姿态差异计算、静止子树分配和相同显示值重写；不改同步节拍、战斗、预测/镜头或默认模组环境。实际hpBar存在嵌套动画，撤销未命中的血条缓存，保留原完整同步回退。
+
+- 准确04字节功能：textmotion02主111/加124，ui02主134/加91，rockets02主57/加57，共574个外置断言通过；火箭/核弹双方实际发射与伤害、4阶段2030个显示样本无缺失/姿态/像素错。统一准备 `prepared-smooth-06.json` / `06d5414eeac2ec9a6c965b7f32b1e0fc209102dc3fe4d9c55c519a133412749e`；亲自检查进度条截图可见。
+- `b-smooth-clean-05/qualification-01.json`：同环境无插桩ABAB、8/80敌人各60秒、原5%平均/P95与重复1.2门槛通过。密集加入44.321→41.921ms（约5.4%），主66.580→65.579ms（约1.5%）；轻负载主慢约1.5%，加入基本不变。03的收益不代替04；详细机器/缓冲记录保留。
+- **卡顿仍未完全解决**：加入静止阶段首个间隔292ms，左右步行仍有1–2px镜头回摆；密集播放等待均值仍约162–168ms。轻负载欠帧计数候选6/10、基线5/5，候选有1个空缓冲样本。性能门槛通过不等于所有输入延迟消失；未修改预测与播放时钟。
+- 部署事务 `build/ab/b-smooth-deploy-20261029-01` verified，仅主体及3个说明/清单文件，139个其它包文件/入口及根/A见证保留，旧4文件备份在before。沿用同字节功能证据并回读部署，未重复启动安装实例。无配置/存档/宿主写入，默认环境和马蹄铁开关沿用clientenv1；全部自有测试已结束。
+- 新manual SHA `eaaf54bb5ca21463673d8a503642e5b176f336b9ed0b6606cb514fce6d39ab8f`；事务SHA `8731fd181756feb25e1e1a06823f09b1bc483be63eb4c8ca61be86fad1d24996`。后续晋升必须绑定这个新基线，不能原样重用本轮固定clientenv1的release.py。方案、失败、证据和回退入口见 `experimental/b-smooth-20261029/README.md`。
+
+前一轮改善加入侧卡顿、同步 B 默认模组环境（CS/RV/LAD 关、其余默认）、增加马蹄铁经验共享开关。**`B3-0.1-clientenv1` 已安装并验收**，原 B190 两个 Player 入口保留；事务 `build/ab/b-clientenv-deploy-20261029-03` 为 verified。已有持续部署授权，无待用户批准事项；该轮自有测试已结束。
 
 - 准确主体 `build/ab/b-clientenv-bridge-07-build`：SWF `c953c0684ca716b2641c88f13e514275d5f2cc8e3387d9ade50d7ab8bd1fc5a0`；source `5854ef397c1e96cf24d8b637f32cdc24589502d91fe86cce892a3189b75041dd`。完整可恢复源 `experimental/b-field-client-integration/source-07`，144份总源/18份覆盖。不要从陈旧顶层 src 继续，旧 integrate.py 不能代替 source-07。
 - 新原生 PI `3b1b77d3f6de08e5b31bb03883da6900b3656e497a4749305133019d0377ed83`；FA04、Addiction、TDFC/Sandy/PI 独立桥及默认资源均由 overlay-03 的23文件清单固定。启用11项，CS/RV/LAD和旧ModSettings关闭。原生26方法移植回读通过，无关5686方法保留。

@@ -1,0 +1,26 @@
+{
+  "passed": true,
+  "candidate_sha256": "c3118075c414887aea770d7df36b349e52fe330a441571218fa969c25bff44fa",
+  "source_id": "e2be0722726c5d489f76419a194ea86274b61362c0836707a2ab7d1570a1cf15",
+  "build_manifest_sha256": "ff7452155e458c04ae4127019da5a17a0ebed965130ac17a25589f48d2144c83",
+  "class_count": 128,
+  "classes_unchanged": true,
+  "changed_sources": [
+    "src/RConnectMod.as",
+    "src/authority/BuildInfo.as",
+    "src/authority/FrameDelta.as",
+    "src/authority/NativeFields.as",
+    "src/authority/PoseTween.as",
+    "src/authority/VisualPose.as"
+  ],
+  "health_bar_source_unchanged": true,
+  "scripts": {
+    "audit.py": "a0812c3beb700786977b084bc99ab08b213f33c29d0471273b9e186fabd9543c",
+    "prepare-checks.py": "1de5ef28d645e5a18b41ad7ee8f426e11fd48883e225683b3726978028246aca",
+    "qualify-final.py": "8064cd989f05f9b41da02c7a43af71fbe7021c1bcc778339d28de392101a1c48",
+    "qualify.py": "7a1e39e3a49c6e7df1c808941e4eef61cf37e95e6b1f7b7bae14371f6b3de419",
+    "release.py": "3a6d595b4da82e37d80fbfefa7b977c460ae44a4e803344baf86e8aa9a4d710d",
+    "source.py": "75acdb59c60a4f3caa8492d063a557c7eb1734361af81bb02730d91f3172b22f"
+  },
+  "limits": "Static/source checks; not runtime or performance qualification."
+}

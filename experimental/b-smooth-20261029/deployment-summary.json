@@ -1,0 +1,40 @@
+{
+  "status": "verified",
+  "version": "B3-0.1-smooth1",
+  "candidate": "build/ab/b-smooth-04-build",
+  "candidate_sha256": "c3118075c414887aea770d7df36b349e52fe330a441571218fa969c25bff44fa",
+  "source_id": "e2be0722726c5d489f76419a194ea86274b61362c0836707a2ab7d1570a1cf15",
+  "source_archive": "experimental/b-smooth-20261029/source-04",
+  "native_sha256": "3b1b77d3f6de08e5b31bb03883da6900b3656e497a4749305133019d0377ed83",
+  "transaction": "build/ab/b-smooth-deploy-20261029-01/deployment.json",
+  "transaction_sha256": "8731fd181756feb25e1e1a06823f09b1bc483be63eb4c8ca61be86fad1d24996",
+  "installed_manual_sha256": "eaaf54bb5ca21463673d8a503642e5b176f336b9ed0b6606cb514fce6d39ab8f",
+  "installed_readme_sha256": "4d46e57639446642a5bd7a24d6bf07943b465cc4461f669b55995dfd52b4ace9",
+  "preserved_files_and_launchers": 139,
+  "changed_targets": [
+    "game/mods/RConnect/release/RConnectMod.swf",
+    "README.txt",
+    "manual-input.json",
+    "playable-validation.json"
+  ],
+  "functional_tests": {
+    "textmotion": {"host": 111, "join": 124},
+    "ui": {"host": 134, "join": 91},
+    "rockets": {"host": 57, "join": 57}
+  },
+  "performance": "build/ab/b-smooth-clean-05/qualification-01.json",
+  "dense_mean_ms": {
+    "host_before": 66.57960924364592,
+    "host_after": 65.57903575944083,
+    "join_before": 44.32095904037162,
+    "join_after": 41.92139304888937
+  },
+  "verification": "Exact tested bytes and unchanged dependencies copied and read back; behavior evidence reused without another installed-instance run.",
+  "limits": [
+    "Dense combat still has slow frames; this is a limited improvement.",
+    "Light host mean was about 1.5 percent slower within the unchanged gate.",
+    "Join startup stationary interval reached 292 ms; walking camera still reversed by 1-2 pixels.",
+    "Stage timing is not input-to-display latency. Playback waiting remains.",
+    "Existing player windows require a saved restart."
+  ]
+}

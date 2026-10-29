@@ -138,8 +138,11 @@ def run(out, scenario, candidate, result, preparation, native=None, terrain_seed
             if terrain_seed is not None: startup['terrainSeed']=terrain_seed
             save(game/'startup-test.json', startup)
             for name in ('mods/Rconnect/release/RConnectMod.swf','mods/Rconnect/release/config.txt','startup-test.json'):
-                key=next((k for k in runtime_files if k.lower()==name.lower()),name)
-                runtime_files[key]=sha(game/name)
+                # Older preparations contain both RConnect and Rconnect. On
+                # Windows these name the same file; update every alias when
+                # pinning this run, leaving the old preparation unchanged.
+                keys=[k for k in runtime_files if k.lower()==name.lower()] or [name]
+                for key in keys:runtime_files[key]=sha(game/name)
             free=available_gib(); receipt['free_gib']=free
             if free<required: raise RuntimeError(f'Only {free:.3f} GiB available; need {required} GiB')
             for role in roles:
