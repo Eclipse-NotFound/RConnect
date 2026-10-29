@@ -13,8 +13,11 @@ def main():
         actual={p.relative_to(path).as_posix():sha(p.read_bytes()) for p in sorted(path.rglob('*.as'))}
         assert actual==manifest[group],group+' changed after build'
     version=re.search(r'VERSION\s*:\s*String\s*=\s*"([^"]+)"',(ROOT/'src/RConnectMod.as').read_text('utf8'))[1]
-    files={'INSTALL.txt':(ROOT/'INSTALL.txt').read_bytes(),'mods/RConnect/release/RConnectMod.swf':swf}
+    install=(ROOT/'INSTALL.txt').read_bytes()
+    files={'INSTALL.txt':install,'先读我-安装说明.txt':install,'mods/RConnect/release/RConnectMod.swf':swf}
     names=['README.md','README.zh-CN.md','Start-Coop.bat','docs/release-0.2.24.md',
+           'docs/release-0.2.24-tcp1.md','docs/tcp-tunnel.zh-CN.md','docs/tcp-tunnel.md',
+           'docs/local-coop.md','docs/BUILD-A.md',
            'tools/start_coop.ps1','tools/RConnect.Process.ps1','tools/RConnect.Profile.ps1',
            'tools/second_player_descriptor.xml','tools/keep_test_responsive.ps1']
     for name in names:files['mods/RConnect/'+name]=(ROOT/name).read_bytes()

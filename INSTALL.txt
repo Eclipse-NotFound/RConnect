@@ -1,31 +1,77 @@
-RConnect A 0.2.24-animfix3-l10n — Windows / Remains 1.02
+RConnect A 0.2.24-tcp1 — TCP 内网穿透版
+Windows / Remains 1.02；双方都要安装同一版并重启游戏。
 
-九语言预发布版 / Nine-language prerelease (A architecture)
+【安装：已装过 ModLoader 的玩家】
+1. 保存并完全退出游戏，备份原来的 mods/RConnect 文件夹。
+2. Steam 库 → 右键 Remains → 管理 → 浏览本地文件。
+   确认打开的文件夹里有 pfe.swf 和 application.xml。
+3. 右键本 ZIP → 全部解压。把解压后的 mods 文件夹拖进上述游戏文件夹。
+   同名文件夹选择合并、同名模组文件选择替换。不要拖入 ZIP 本身。
+4. 双击游戏目录中的 mods/ModLoader/RemainsModScanner.exe，等待扫描完成。
+5. 正常启动游戏，载入角色。按 F10，点短状态条的 ▼ 展开联机面板。
 
-1. 双方保存退出并备份旧 mods/RConnect。
-2. 首次安装先完成 ModLoader 的游戏补丁及扫描器安装：
-   https://github.com/Eclipse-NotFound/ModLoader/blob/master/docs/INSTALL.zh-CN.md
-3. 合并本包 mods 文件夹到游戏根目录，不要套成 mods/mods。
-4. 运行 mods/ModLoader/RemainsModScanner.exe，重新启动双方游戏。
-5. F10 显隐浮窗，展开后创建／加入；默认端口 23456。
-   同机地址 127.0.0.1，不同电脑使用宿主局域网地址。
-6. Ctrl+Enter 打开聊天，Enter 发送，Esc 收起；快捷键可在兼容的设置页修改。
+放对后应该是：
+  Remains/
+    pfe.swf
+    application.xml
+    mods/
+      ModLoader/RemainsModScanner.exe
+      RConnect/release/RConnectMod.swf
 
-本机双开：mods/RConnect/Start-Coop.bat。双方分别载入、保存角色。
-本包不含个人 config.txt、存档、游戏本体或其他模组，更新不会覆盖它们。
-游戏语言菜单可切换九种模组界面语言；不会翻译昵称或聊天原文。
-密集场景、普通子弹与房间加载仍有待优化；不承诺全部卡顿已消失。
-部分安保／房间能力依赖兼容的游戏宿主接口。缺少接口时可能不可用；
-本包不会替换游戏 pfe.swf。完整限制见 docs/release-0.2.24.md。
-回退：双方保存退出，恢复备份模组、重新扫描并重启。
+不要放成 Remains/mods/mods，也不要把整个 RConnect_v0.2.24-tcp1 文件夹拖进去。
+本包没有 config.txt，不会覆盖你原有的设置，也不包含或修改角色存档。
+安装后的“设置”页应显示版本 0.2.24-tcp1。回主菜单不能代替完全重启。
 
-English:
-Install ModLoader first, then merge this ZIP's mods folder into the game folder.
-Run the ModLoader scanner and restart BOTH games with the same RConnect version.
-F10 opens the panel. Host/Join use port 23456 by default. 127.0.0.1 is local only;
-on another computer, enter the host's LAN IPv4 address. Ctrl+Enter opens chat.
-Keep personal settings and saves. For same-PC co-op, use mods/RConnect/Start-Coop.bat.
-All nine native game languages are supported in the mod UI. This prerelease does
-not guarantee dense-scene performance, Internet play, reconnection, 3+ players,
-other game versions or every host/mod combination. No game SWF is included.
-Restore your backup, scan and restart to roll back. See the included README.
+【完全第一次安装模组】
+原版游戏需要先安装一次 ModLoader 游戏加载入口和扫描器：
+https://github.com/Eclipse-NotFound/ModLoader/blob/master/docs/INSTALL.zh-CN.md#first-install
+按该页面先运行 GamePatch，再拖入 ModLoader 的 mods 文件夹，然后继续上面步骤。
+这些前置组件不包含在本包中。只拖入 RConnect 无法给未打补丁的原版游戏增加加载入口。
+不需要下载源码、输入命令、安装编译器或用别人的 pfe.swf 覆盖游戏。
+
+【异地联机：例如使用 SakuraFrp 或 frp】
+1. 两边读入各自的角色。宿主填写昵称，端口填 23456，点击“创建房间”。
+2. 宿主在穿透工具里新建 TCP 隧道，本地地址填 127.0.0.1，本地端口填 23456。
+3. 开启隧道，把工具给出的外部地址发给队友，例如 node.example.net:45678。
+   这是例子，必须换成你自己的真实地址；外部端口可以不是 23456。
+4. 加入方把完整外部地址粘入“宿主地址”，点击“加入”。端口会自动识别。
+5. 宿主同时保持游戏和穿透工具运行。普通 TCP 转发下加入方无需穿透客户端。
+宿主和加入方均需自己的游戏；穿透服务账号、节点由宿主自行准备。
+不要使用 HTTP/HTTPS/UDP 隧道或 Proxy Protocol。不要把账号令牌填进地址框。
+详细指南在 mods/RConnect/docs/tcp-tunnel.zh-CN.md，也可在线阅读：
+https://github.com/Eclipse-NotFound/RConnect/blob/v0.2.24-tcp1/docs/tcp-tunnel.zh-CN.md
+
+同一局域网：加入方填宿主局域网 IPv4 地址与游戏端口。
+同一台电脑：使用 mods/RConnect/Start-Coop.bat，加入方地址填 127.0.0.1。
+异地队友不要填 127.0.0.1；那表示队友自己的电脑。
+Ctrl+Enter 打开聊天，Enter 发送，Esc 收起。
+
+【版本边界与回退】
+这是 A 架构预发布版，保留九语言界面，不含 B。
+两轮本机 TCP 转发（含模拟延迟与拆包）共 140 项检查通过；尚未验证真实异地长局。
+此前的密集场景、普通子弹、加载卡顿仍可能存在，本版不承诺解决这些性能问题。
+部分安保/房间能力需要兼容的游戏宿主接口；本包不替换游戏 pfe.swf。
+模组当前没有房间口令或应用层端到端加密。只向可信队友分享连接地址。
+需要回退：双方保存退出，恢复备份的模组目录，扫描并重启。
+完整发布说明：mods/RConnect/docs/release-0.2.24-tcp1.md。
+
+English quick start
+-------------------
+Install ModLoader's game patch and scanner once if this is your first mod:
+https://github.com/Eclipse-NotFound/ModLoader/blob/master/docs/INSTALL.md#first-install
+Save and close the game. Back up mods/RConnect, extract this ZIP, and drag its mods
+folder into your game folder (the one containing pfe.swf and application.xml).
+Merge folders, replace mod files, run mods/ModLoader/RemainsModScanner.exe, and
+restart BOTH games. Avoid nesting mods/mods. Personal config and saves are omitted.
+Both players load their characters. F10 and the arrow open the connection panel.
+Host on port 23456. Set a plain TCP tunnel to local 127.0.0.1:23456; give your friend
+the tunnel's external hostname:port. They paste it into the address field and Join.
+The external port can differ from 23456. The host keeps the game and tunnel running.
+Do not enable Proxy Protocol or use HTTP/HTTPS/UDP forwarding. See the English guide:
+mods/RConnect/docs/tcp-tunnel.md
+For LAN play, use the host's LAN address and game port. For same-PC play only, use
+mods/RConnect/Start-Coop.bat and address 127.0.0.1. Ctrl+Enter opens chat.
+This A prerelease passed local relay tests, including simulated delay. Long-distance
+stability, reconnection, 3+ players and improvements to existing stalls are not promised.
+No game SWF or other mod is bundled. Some features require compatible game-host hooks.
+To roll back, restore your mod backup, scan, and restart both games.

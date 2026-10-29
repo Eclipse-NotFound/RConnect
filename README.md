@@ -4,13 +4,15 @@
 
 Explore the wasteland with a friend: see each other, chat, fight together, or split up across ordinary rooms on the same map.
 
-**[Download v0.2.24-animfix3-l10n — RConnect_v0.2.24-animfix3-l10n.zip](https://github.com/Eclipse-NotFound/RConnect/releases/download/v0.2.24-animfix3-l10n/RConnect_v0.2.24-animfix3-l10n.zip)** · [Release notes / other versions](https://github.com/Eclipse-NotFound/RConnect/releases)
+**[Download v0.2.24-tcp1 — RConnect_v0.2.24-tcp1.zip](https://github.com/Eclipse-NotFound/RConnect/releases/download/v0.2.24-tcp1/RConnect_v0.2.24-tcp1.zip)** · [Release notes / other versions](https://github.com/Eclipse-NotFound/RConnect/releases)
 
 Use the download link above, or open the release page, expand **Assets**, and select that filename. **Source code** and the green **Code → Download ZIP** button are development files, not the installable package.
 
-> **Current A architecture, with nine-language UI.** This prerelease includes the deployed animfix3 repairs and the localization update. It does not contain B architecture. Dense scenes can still stall; this release does not claim to resolve every animation or performance issue.
+> **Current A architecture, TCP tunnel prerelease.** Connect through plain TCP forwarding such as frp or SakuraFrp, with the nine-language UI and animfix3 repairs retained. B architecture is not included. Local forwarding and simulated delay were tested; a real long-distance session has not been qualified. Dense scenes can still stall.
 
 ## Languages and this update
+
+The joining player can now paste **hostname:port** or **tcp://hostname:port** directly. RConnect separates the address and port automatically. The host's local port and the tunnel's external port may differ. See the [remote connection guide](docs/tcp-tunnel.md).
 
 The panel, settings, shortcuts and connection/room notices follow the game's language setting: **English, Русский, Українська, 简体中文, 繁體中文, Polski, Deutsch, Español and 日本語**. You can switch language without restarting the mod. Nicknames and chat messages are never translated. Long hints remain inside the scrolling panel.
 
@@ -19,7 +21,7 @@ This build also includes A's native enemy weapon reflection/melee poses, enemy s
 ## Before you start
 
 - Each player needs **Windows / Remains 1.02** and the **same RConnect version**.
-- Start with two computers on the same local network. Internet play, reliable reconnection and three or more players are not guaranteed.
+- Use a direct connection on the same LAN, or plain **TCP port forwarding** for remote play. The host supplies their own tunnel service/tool. Reliable reconnection and three or more players are not guaranteed.
 - One player hosts, the other joins. Each saves their own character; you do not need identical save files.
 
 ## Install
@@ -38,6 +40,18 @@ Check that this file exists: `mods/RConnect/release/RConnectMod.swf`. After load
 **Both players must complete the installation steps.**
 
 ## Connect for the first time
+
+### From different locations: TCP forwarding
+
+1. Both players load their own characters. Press **F10**, then **▼** to expand the connection tab.
+2. The host enters a nickname, keeps port **23456**, and clicks **Host**.
+3. On the host PC, create a **TCP** tunnel to local address **127.0.0.1**, local port **23456**, and start it.
+4. Share the external endpoint supplied by the tunnel service, for example `node.example.net:45678`. Replace this example with your actual endpoint.
+5. The joining player pastes that entire endpoint into the host address field and clicks **Join**. The host keeps both the game and tunnel running.
+
+External port **45678** need not equal local port **23456**. Do not select HTTP/HTTPS/UDP forwarding or enable Proxy Protocol. See the [tunnel guide](docs/tcp-tunnel.md) for details and troubleshooting.
+
+### On the same LAN
 
 1. Both players launch the game and load their own characters. Press **F10** if the panel is hidden.
 2. The host enters a nickname, keeps **127.0.0.1** and port **23456**, then clicks **Host**.
@@ -62,11 +76,11 @@ For two windows on one PC, run `mods/RConnect/Start-Coop.bat`; both windows keep
 
 ## Validation and limits
 
-Localization was checked in isolated, muted host/join instances across all nine languages, including native AIR text layout and preserved player text. The 80 gameplay classes are byte-identical to the deployed animfix3 source; its targeted door, weapon, speech, throw-feedback and projectile checks are reused where unchanged. This is not a new performance qualification or a test of every mod combination. See [validation and limits](docs/release-0.2.24.md).
+The exact release binary passed two local TCP relay runs: normal forwarding, then 40 ms added delay in each direction with fragmented writes. Each run passed 33 host and 37 join checks, totaling 140, covering pasted endpoints, different internal/external ports, handshake, room initialization, chat and sustained game state. All 119 UI messages cover nine languages. Earlier localization and gameplay evidence is reused only for unchanged paths. Real long-distance sessions, performance improvements and every mod combination are not newly qualified. See [this release's validation and limits](docs/release-0.2.24-tcp1.md).
 
 ## Connection problems, updates and removal
 
-Check in this order: matching versions and a full restart → host clicked Host first → joiner entered the host’s LAN address → matching ports → host firewall permits the connection. Test on the same LAN first; a failed connection does not mean you need to reinstall the game.
+Check in this order: matching versions and a full restart → host clicked Host first → tunnel is online → tunnel's local port matches the game → joiner uses the external endpoint and port. For LAN connections, use the host's LAN address and game port. Check firewall permissions; disabling the entire firewall or reinstalling the game is unnecessary.
 
 For updates, both players save and exit, back up `mods/RConnect`, install the same new version, scan and restart. Keep each player’s existing configuration. This ZIP omits `config.txt` to avoid overwriting personal settings; new installations use built-in defaults. To disable, move the RConnect folder outside `mods` as a backup, scan and restart.
 
