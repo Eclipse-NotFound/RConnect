@@ -1,0 +1,12 @@
+{
+  "status": "verified",
+  "before": "239252df5ea24ec6da5005bd80bfeb31a91e393d6b2bfe7b1fd7b371cd4e618c",
+  "after": "690604878bd8707007a99e3ad14f8f5f3f55cdd4948c8debe6cc87363afd38c9",
+  "backup": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\a-tcp-deploy-20261029\\RConnectMod.before.swf",
+  "tests": [
+    "fe52e36c9c",
+    "25e9211372"
+  ],
+  "package": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\a-tcp-01\\RConnect_A_0.2.24-tcp1.zip",
+  "package_sha256": "6378600d42c7a0daf8524b5aa2cfef28fc9f5944879d564bc0f4016c8aef9b21"
+}

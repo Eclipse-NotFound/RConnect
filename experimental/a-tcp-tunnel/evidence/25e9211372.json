@@ -1,0 +1,48 @@
+{
+  "passed": true,
+  "relay": [
+    {
+      "target": 52538,
+      "external": 52546,
+      "delay_each_direction_ms": 40.0,
+      "counts": {
+        "join_to_host": 425265,
+        "host_to_join": 1297600
+      },
+      "writes": 4084,
+      "connections": 1,
+      "errors": [],
+      "stopped": true
+    }
+  ],
+  "roles": {
+    "host": {
+      "passed": true,
+      "checks": 33,
+      "packets": {
+        "playerstate": 211,
+        "exploration": 5,
+        "room": 2,
+        "security-terminals": 1,
+        "chat": 5,
+        "coop-pause": 54
+      }
+    },
+    "join": {
+      "passed": true,
+      "checks": 37,
+      "packets": {
+        "worldstate": 426,
+        "security-terminals": 2,
+        "chat": 5,
+        "player-mines": 115,
+        "welcome": 1,
+        "room": 2,
+        "coop-pause": 99,
+        "unitsync": 61,
+        "friendly-fire": 26,
+        "exploration": 6
+      }
+    }
+  }
+}

@@ -6,3 +6,4 @@ experimental/b-field8-validation/** -text
 tools/host_authority/field2_driver/** -text
 experimental/a-visual-round2*/** -text
 experimental/a-locales-release/** -text
+experimental/a-tcp-tunnel/** -text
