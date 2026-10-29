@@ -28,4 +28,12 @@
 - 没有使用用户穿透账号、配置真实节点或第二宽带测试；不是已证实异地长局稳定，也不宣称改善高延迟下既有弹道、整帧卡顿和房间加载。
 - 普通TCP，不支持HTTP/HTTPS/UDP代理或Proxy Protocol头；IPv6只检查输入格式，未实测IPv6隧道。当前无房间口令或应用层端到端加密，指南提示只给可信队友及服务端来源限制。
 - 用户根据 `docs/tcp-tunnel.zh-CN.md` 配置真实本地/外部端口后可继续公网实测；不要求把账号令牌交给agent或队友。
-- 本轮本机部署并提供更新ZIP，**未新建GitHub Release/推送TCP分支**。线上仍为已发布九语言版；此前单次发布任务已完成。保留此前卡顿/加载遗留，后续修改应从tcp1全源继续，不能退回旧顶层src。
+- 初次适配仅本机部署并提供更新ZIP；用户随后明确要求GitHub发布与零基础安装包，已完成下述发布。保留此前卡顿/加载遗留，后续修改应从tcp1全源继续，不能退回旧顶层src。
+
+## 后续：GitHub 发布与新手安装包
+
+- 已推送公开 A 完整源码到 `Eclipse-NotFound/RConnect` 的 master；提交 `b205d86845feeb16b2480609a188bb144dfe66b9`，标签 `v0.2.24-tcp1`。从上一公开303631c增量发布，没有推送本地主分支的B或历史实验。
+- [Release](https://github.com/Eclipse-NotFound/RConnect/releases/tag/v0.2.24-tcp1)已公开，非草稿、标为预发布。资产 `RConnect_v0.2.24-tcp1.zip`，260057字节，SHA256 `9d19befa8583241136143b6e3525a19d880555b13da85bd6b55b61fd2a110c3f`；本地在 `build/a-tcp-01`，上传后下载到 `build/a-tcp-published-download`，摘要一致。
+- ZIP共19文件，包含可直接合并的 `mods/RConnect`、完整原双开依赖、中英文安装/穿透指南和校验清单。根部额外提供“先读我-安装说明.txt”。不含config.txt、存档、原版宿主或其他模组。首次安装依赖公开ModLoader加载补丁与扫描器，相关官方下载资产已核对，不能声称只拖本包即可修补纯原版。
+- 白名单打包逐一比对86份源码、71份声明和已测SWF；119×9语言检查再次通过。`experimental/a-tcp-tunnel/verify_release_package.py`检查ZIP完整性/路径/双开依赖，并在隔离目录模拟合并，原配置、存档、游戏、其他模组4种占位文件均保留，无mods/mods套层；回执 `build/a-tcp-01/package-install-check.json`。仅包结构检查，不冒充新一次游戏测试。
+- 此次仅调整发布文档与打包清单，SWF仍为690604，沿用此前两轮140项实际游戏证据，未重编译或再次替换正式安装。公开源码工作区保持在 `build/github-a-release`，后续应从此继续。

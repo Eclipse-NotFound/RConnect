@@ -3,7 +3,7 @@
 ## 1. 当前任务
 
 A 为普通入口的双人联机；B 独立架构本轮不碰。根会话 `01a086bb-378c-7f60-b8e1-50d90ffa0996` 统一整合、编译、AIR测试及部署。
-**10月29日最新本机A：TCP穿透适配** `0.2.24-tcp1` / `690604878bd8707007a99e3ad14f8f5f3f55cdd4948c8debe6cc87363afd38c9` 已部署。完整源仍在 `build/github-a-release/src`，当前分支 `codex/a-tcp-tunnel`；纯TCP转发／双向各40ms延迟拆包两轮各主33加37项通过。能粘贴域名:端口／tcp://地址并区分内外端口，九语言保留。回执与旧239252备份在 `build/a-tcp-deploy-20261029`；队友更新ZIP在 `build/a-tcp-01`。未配置真实公网节点、未测试异地长局、不修正此前性能遗留；未再推送GitHub，线上仍下述九语言版。[配置指南](../docs/tcp-tunnel.zh-CN.md)；[证据与边界](a-tcp-tunnel-2026-10-29.md)。本轮用户已明确把TCP穿透纳入A范围。
+**10月29日最新本机和公开A：TCP穿透适配** `0.2.24-tcp1` / `690604878bd8707007a99e3ad14f8f5f3f55cdd4948c8debe6cc87363afd38c9` 已部署并按用户要求发布至 [GitHub Release](https://github.com/Eclipse-NotFound/RConnect/releases/tag/v0.2.24-tcp1)。公开提交 `b205d86845feeb16b2480609a188bb144dfe66b9`，完整源仍在 `build/github-a-release/src`，分支 `codex/a-tcp-tunnel`；**旧顶层src不能作为本版源码**。TCP转发／双向各40ms延迟拆包两轮各主33加37项通过。成品 `build/a-tcp-01/RConnect_v0.2.24-tcp1.zip`（260057字节／19文件，SHA256 `9d19befa8583241136143b6e3525a19d880555b13da85bd6b55b61fd2a110c3f`）已上传并下载回读一致，含新手中英文安装说明和穿透指南；首次原版安装仍需ModLoader加载入口与扫描器。回执与旧239252备份在 `build/a-tcp-deploy-20261029`。本次发布未改变游戏产物，复用同字节验证；未配置真实公网节点、未测试异地长局、不宣称修正此前性能遗留。[证据与边界](a-tcp-tunnel-2026-10-29.md)。
 
 **10月29日前一版A已发布（本机已由tcp1替代）**：九语言 `0.2.24-animfix3-l10n` / `239252df5ea24ec6da5005bd80bfeb31a91e393d6b2bfe7b1fd7b371cd4e618c`。完整A源在 `build/github-a-release/src`，公共Git提交/标签 `303631c142a4b09049786491e5a4cc70b3f0724d` / `v0.2.24-animfix3-l10n` 可恢复；**本地主分支旧顶层src仍不是准确安装源**。只改5个语言/UI/版本文件，80玩法类与animfix3相同。117×9译文、双侧各1181项/0溢出通过；GitHub ZIP下载回读一致。回执 `build/a-locales-deploy-20261029/deployment.json` verified，旧EB6D备份同目录。正式安装已是此版，双方需重启；B不改，普通子弹/整帧/加载遗留仍在。发布和限制见 [本轮记录](github-a-locales-2026-10-29.md)。公开源从远端主分支单独更新，未把本地B实验整体推送。
 

@@ -1,0 +1,18 @@
+{
+  "tag": "v0.2.24-tcp1",
+  "commit": "b205d86845feeb16b2480609a188bb144dfe66b9",
+  "url": "https://github.com/Eclipse-NotFound/RConnect/releases/tag/v0.2.24-tcp1",
+  "draft": false,
+  "prerelease": true,
+  "asset": "RConnect_v0.2.24-tcp1.zip",
+  "bytes": 260057,
+  "entries": 19,
+  "zip_sha256": "9d19befa8583241136143b6e3525a19d880555b13da85bd6b55b61fd2a110c3f",
+  "swf_sha256": "690604878bd8707007a99e3ad14f8f5f3f55cdd4948c8debe6cc87363afd38c9",
+  "github_asset_digest_matches": true,
+  "downloaded_asset_digest_matches": true,
+  "package_merge_check": "passed",
+  "preserved_sentinels": ["config", "save", "game", "other_mod"],
+  "runtime_evidence_reused": ["fe52e36c9c", "25e9211372"],
+  "real_internet_session_tested": false
+}
