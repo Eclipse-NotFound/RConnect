@@ -18,6 +18,7 @@ package rconnect.ui {
    import flash.text.TextFormat;
    import flash.utils.getTimer;
    import rconnect.core.Session;
+   import rconnect.net.ConnectAddress;
    import rconnect.game.GameBridge;
 
    /** Compact, local UI. Session/RoomSync remain the owners of gameplay. */
@@ -360,6 +361,7 @@ package rconnect.ui {
          helpButton.text=RCLocale.text("说明");
          helpText.text=RCLocale.text("拖动标题可移动浮窗；“停靠”依次切换四角。\n\nCtrl+Enter 打开聊天；Enter 发送；Esc 收起。\nF10 隐藏或恢复，开合状态保留。\n\n共享探索只影响本端接收；关闭后保留已收到区域。\n\n全队暂停由宿主设置；双方都关闭相关界面后继续。\n\n滚轮可滚动当前页。原版菜单优先使用自己的快捷键。");
          helpText.text=helpText.text.split("Ctrl+Enter").join(keybinds.label("chat")).split("F10").join(keybinds.label("panel"));
+         helpText.appendText("\n\n"+RCLocale.text("TCP 穿透：宿主填写本地端口；隧道转发到 127.0.0.1 的此端口。加入侧填写穿透域名和外部端口，也可直接粘贴域名:端口。"));
          refreshPauseBanner(pause);
          layout();
       }
@@ -567,14 +569,16 @@ package rconnect.ui {
          }
       }
       private function connect(host:Boolean):void {
-         var port:String=tfPort.text,number:int=int(port);
-         if(tfNick.text.replace(/^\s+|\s+$/g,"")=="" || !host && tfIp.text.replace(/^\s+|\s+$/g,"")=="" ||
-            !/^\d+$/.test(port) || number<1 || number>65535) {
-            localError=RCLocale.text("请填写昵称、地址和 1–65535 的端口。");
+         var number:int=ConnectAddress.port(tfPort.text);
+         var endpoint:Object=host?null:ConnectAddress.parse(tfIp.text,tfPort.text);
+         if(tfNick.text.replace(/^\s+|\s+$/g,"")=="" || host && number==0) {
+            localError="请填写昵称、地址和 1–65535 的端口。";
             return;
          }
+         if(!host && endpoint==null) {localError="请填写域名或 IP，可附端口；不支持网页链接。";return;}
          localError="";mod.config.setValue("nickname",tfNick.text.substr(0,24));
-         if(tfIp.text.length>0)mod.config.setValue("hostIp",tfIp.text);
+         if(!host) {number=endpoint.port;tfIp.text=endpoint.host;mod.config.setValue("hostIp",endpoint.host);}
+         tfPort.text=String(number);
          mod.config.setValue("port",number);mod.config.save();mod.session.myName=tfNick.text.substr(0,24);
          if(host)mod.session.startHost();else mod.session.startJoin();
          if(host && mod.session.mode==Session.HOSTING)collapse();

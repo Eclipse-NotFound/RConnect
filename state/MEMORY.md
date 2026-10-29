@@ -1,4 +1,6 @@
-# RConnect A — 发布源码状态
+# RConnect A — 当前本机候选
+
+当前为0.2.24-tcp1：地址粘贴、端口分离与普通TCP转发已完成双实例验证并本机部署。尚未推送TCP分支；详见state/tcp-tunnel-2026-10-29.md。以下是之前已公开版本记录。
 
 当前发布候选：**0.2.24-animfix3-l10n**（九语言预发布），A 架构。源码正本为本分支 `src/`，构建 `tools/build_a.py`，译文 `locales/messages.json`，安装包由 `tools/package_a.py` 白名单生成。`release-manifest.json` 记录全部源文件和产物 SHA256。不要使用旧实验目录构建本版本。
 

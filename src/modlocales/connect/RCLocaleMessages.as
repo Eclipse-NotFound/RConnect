@@ -410,15 +410,15 @@ package modlocales.connect {
     "jp": "部屋を作成できません。ポートが使用中でないか確認してください。"
   },
   "connect failed (check ip/port)": {
-    "en": "Connection failed. Check the IP address and port.",
-    "ru": "Не удалось подключиться. Проверьте IP-адрес и порт.",
-    "zh": "连接失败，请检查地址和端口。",
-    "tw": "連線失敗，請檢查位址和連接埠。",
-    "ua": "Помилка підключення. Перевірте IP-адресу й порт.",
-    "pl": "Błąd połączenia. Sprawdź adres IP i port.",
-    "de": "Verbindung fehlgeschlagen. IP-Adresse und Port prüfen.",
-    "es": "Error de conexión. Revisa la dirección IP y el puerto.",
-    "jp": "接続に失敗しました。IPアドレスとポートを確認してください。"
+    "zh": "连接失败。请检查地址、连接端口和 TCP 隧道是否启动。",
+    "tw": "連線失敗。請檢查位址、連接埠和 TCP 通道是否啟動。",
+    "en": "Connection failed. Check the address, destination port and TCP tunnel.",
+    "ru": "Сбой соединения. Проверьте адрес, порт назначения и TCP-туннель.",
+    "ua": "Помилка з’єднання. Перевірте адресу, порт призначення й TCP-тунель.",
+    "pl": "Błąd połączenia. Sprawdź adres, port docelowy i tunel TCP.",
+    "de": "Verbindung fehlgeschlagen. Adresse, Zielport und TCP-Tunnel prüfen.",
+    "es": "Error de conexión. Revisa la dirección, el puerto de destino y el túnel TCP.",
+    "jp": "接続に失敗しました。アドレス、接続先ポート、TCPトンネルを確認してください。"
   },
   "传送到队友身边": {
     "en": "Teleport to teammate",
@@ -1288,6 +1288,28 @@ package modlocales.connect {
     "de": "Taste",
     "es": "Tecla",
     "jp": "キー"
+  },
+  "请填写域名或 IP，可附端口；不支持网页链接。": {
+    "zh": "请填写域名或 IP，可附端口；不支持网页链接。",
+    "tw": "請填寫網域或 IP，可附連接埠；不支援網頁連結。",
+    "en": "Enter a hostname or IP, optionally with a port. Web links are not supported.",
+    "ru": "Введите имя узла или IP, при необходимости с портом. Веб-ссылки не поддерживаются.",
+    "ua": "Введіть домен або IP, за потреби з портом. Вебпосилання не підтримуються.",
+    "pl": "Wpisz nazwę hosta lub IP, opcjonalnie z portem. Linki WWW nie są obsługiwane.",
+    "de": "Hostnamen oder IP eingeben, optional mit Port. Weblinks werden nicht unterstützt.",
+    "es": "Introduce un dominio o IP, con puerto si hace falta. No se admiten enlaces web.",
+    "jp": "ホスト名またはIPを入力してください。ポートも指定できます。Webリンクには対応していません。"
+  },
+  "TCP 穿透：宿主填写本地端口；隧道转发到 127.0.0.1 的此端口。加入侧填写穿透域名和外部端口，也可直接粘贴域名:端口。": {
+    "zh": "TCP 穿透：宿主填写本地端口；隧道转发到 127.0.0.1 的此端口。加入侧填写穿透域名和外部端口，也可直接粘贴域名:端口。",
+    "tw": "TCP 穿透：主機填寫本機連接埠；通道轉發至 127.0.0.1 的此連接埠。加入方填寫通道網域和外部連接埠，也可直接貼上網域:連接埠。",
+    "en": "TCP tunnel: the host uses the local port; forward to that port on 127.0.0.1. The guest uses the tunnel hostname and external port. You can paste hostname:port directly.",
+    "ru": "TCP-туннель: ведущий указывает локальный порт; туннель направляется на этот порт 127.0.0.1. Гость вводит адрес туннеля и внешний порт. Можно вставить адрес:порт целиком.",
+    "ua": "TCP-тунель: хост задає локальний порт; тунель пересилає на цей порт 127.0.0.1. Гість вводить домен тунелю й зовнішній порт. Можна вставити домен:порт разом.",
+    "pl": "Tunel TCP: gospodarz podaje port lokalny; tunel przekierowuje na ten port w 127.0.0.1. Gość wpisuje adres tunelu i port zewnętrzny. Możesz wkleić adres:port.",
+    "de": "TCP-Tunnel: Der Host nutzt den lokalen Port; der Tunnel leitet auf diesen Port an 127.0.0.1 weiter. Der Gast nutzt Tunneladresse und externen Port. Adresse:Port lässt sich direkt einfügen.",
+    "es": "Túnel TCP: el anfitrión usa el puerto local; el túnel reenvía a ese puerto en 127.0.0.1. El invitado usa el dominio del túnel y el puerto externo. Puedes pegar dominio:puerto.",
+    "jp": "TCPトンネル：ホストはローカルポートを設定し、トンネルを127.0.0.1の同じポートに転送します。参加側はトンネルのホスト名と外部ポートを入力します。ホスト名:ポートの貼り付けも可能です。"
   }
 };
    }

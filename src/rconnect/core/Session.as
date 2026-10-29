@@ -11,6 +11,7 @@ package rconnect.core
    import rconnect.net.NetMessageEvent;
    import rconnect.net.Protocol;
    import rconnect.net.TcpLink;
+   import rconnect.net.ConnectAddress;
 
    /**
     * 会话状态机：offline / hosting / joining / connected。
@@ -217,6 +218,8 @@ package rconnect.core
 
       public function startJoin():void
       {
+         var endpoint:Object=ConnectAddress.parse(String(mod.config.getValue("hostIp")),mod.config.getValue("port"));
+         if(endpoint==null) {error="请填写域名或 IP，可附端口；不支持网页链接。";return;}
          _networkAttempted=true;
          stop();
          error = "";
@@ -226,10 +229,10 @@ package rconnect.core
          link.addEventListener(TcpLink.CLOSED, onLinkClosed);
          link.addEventListener(TcpLink.FAILED, onLinkFailed);
          link.addEventListener(TcpLink.MESSAGE, onLinkMessage);
-         link.connect(String(mod.config.getValue("hostIp")),
-                      int(mod.config.getValue("port")));
          mode = JOINING;
          myId = -1;
+         // Set state before connect: a synchronous failure must stay OFFLINE.
+         link.connect(endpoint.host,endpoint.port);
       }
 
       public function leave():void

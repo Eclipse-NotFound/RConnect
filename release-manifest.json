@@ -12,7 +12,7 @@
     "fe/unit/RConnectUnitAccess.as": "1e49291317222540157667c5c2cd0ea6db9538844e74516b1d08a2b27aea47bb",
     "fe/weapon/RConnectMeleeAccess.as": "2f55938707bc2e0ce0dd72304e4126acad7b958faf712a72fced5d817a27a658",
     "modlocales/connect/RCLocale.as": "3354fde17f8d030046b94ffc29c1e66fd12e521523d8afb9131b54d4d6f6933a",
-    "modlocales/connect/RCLocaleMessages.as": "6a50289555d94329c5e21866c564275c8692478ccfae7eb651d258fd998b4101",
+    "modlocales/connect/RCLocaleMessages.as": "94158f1a2b10cb199dc520fdfb093f179feacae9525992949b0a24555ed9a852",
     "rconnect/core/Config.as": "28de8236cf4d8ef66b70db419484be366fb0d7df4400266d15ef089b358d505d",
     "rconnect/core/CoopPause.as": "1ea5e5a0225d989e0dbfb5076fb00a2e0ee694354d54ed75769b8d4b0606334e",
     "rconnect/core/EnemyGrip.as": "8521ec630bd578c2828dc8ce877f8c0f264ede272039ff2c70dcd3a88929dd91",
@@ -27,7 +27,7 @@
     "rconnect/core/RoomDiagnostics.as": "fabbb2506701b1da9b88f89c81141f7ec3cec06be248c332bfc132b7d68cd175",
     "rconnect/core/RoomSync.as": "1c5ac8d9c761c40d0908a2c048062a7b09f604c6b9fa34272cae27e27c52a848",
     "rconnect/core/SecurityTerminals.as": "4d400bb5e48ec32ef2750849e46dee8c6fcffa205719e5af9ae197ac2cfcaf1b",
-    "rconnect/core/Session.as": "14aac9a684133740b95a4bbe3cbcec9f03095965496c292b2d9ffeb54d9f453d",
+    "rconnect/core/Session.as": "4a76768efb7e5c1135fa077894ac9793d36b926e20ca8c6cc6287288232875e9",
     "rconnect/core/TeammateNavigation.as": "4697dc1eb4634e6062a78e54ab889819edb25c080098a01a83f27232f69e74dd",
     "rconnect/core/TravelGuard.as": "76fb5ff44149e8f2d8ae677d16ec0799f4cb75b4a743f235b93176805259a31d",
     "rconnect/core/TravelPlacement.as": "4b9a37772e2a71305e56ecec7158de7f3549df6bf17341c60e9df7c6d0835e52",
@@ -72,18 +72,19 @@
     "rconnect/game/WeaponDisplay.as": "365cc30c3bab62f937d2127b95e1c793b48feca80f25263d37976649dc4e2d69",
     "rconnect/game/WorldProgress.as": "9d1ef52d3710581906c61d23d0daa641b64a66c77db6f812d9001944de723d13",
     "rconnect/net/BinaryMessageCodec.as": "001479db144318320669ce3d89e6c275c210a7d81b9e6f116cdb58e6091376f1",
+    "rconnect/net/ConnectAddress.as": "9178155246c4da45913edebb3c89799fccd8f73258a59f1af558cb7c9ba9f3d0",
     "rconnect/net/HostServer.as": "db414124b24bf72285c49992d7e4faacecd39b9dae834cf976588d22dcba3ee2",
     "rconnect/net/NetMessageEvent.as": "45886a1f4c10ca4f1fc831803ff54ccc91c2f8c0d12d4a37f2e2a952ff91db7b",
     "rconnect/net/Protocol.as": "9655eb28a4c417750bbbf318a0ce20bd485080051447c0caf0500ce76218b39d",
     "rconnect/net/RoomCodec.as": "bd98187fb1201c118f4980a3a93e3a06b0ebed28ba1cfc1be8661dcb33762570",
     "rconnect/net/TcpLink.as": "b7ab3b85e9d97a3096c2ceb466515bdade58f705ac8585b96984c435a3359a5a",
     "rconnect/ui/HudLayout.as": "da332cdfdb1776a8a8666dc6c22754f093cd5dd2652da9d1a22a1536b3ac2ef5",
-    "rconnect/ui/NetHud.as": "8b23f619d46b2b5d4ae534c367ba91d56026cf78a3f2a89f71d0a92e09cd1436",
+    "rconnect/ui/NetHud.as": "a0d30bc3ed1a26f7b9b07cd61d464e33e404d8b8afa23496cb6493bf0e830a0b",
     "rconnect/ui/NetKeybinds.as": "81fa0377b7748385eb06acc8430d52c1da6c5e5542834cf56eb2d63aef953ff1",
     "rconnect/ui/RoomEntryView.as": "4cb479f39262f631b834c6290f78fcaec3b3cc102bb56f9886a71791a05efe0b",
     "rconnect/ui/TeammateMap.as": "2043b149453cc710e39163e2cc2c89c8f77abf61c577133b76fb4a8119bba080",
     "RConnectDoc.as": "764967e351e57e10fbcf1c3136d5170e633c6cd2e750a7427c6a180e3a1e34e1",
-    "RConnectMod.as": "7653bee192fa6859f815354fe0882b0752c71159e7c50803b2bc9fdaae9b9040",
+    "RConnectMod.as": "8bb2f4e489ee554be44bd07a341598c076ecf9a3cf1f77661fc48b890212ed71",
     "RConnectModDomains.as": "372167c4a32b2ac9b23b7addc7959ba3c70b7f74fea9732cdd1c650112eb9b00"
   },
   "stubs": {
@@ -160,7 +161,7 @@
     "MainFE.as": "1c85c03422b67bc639c1150f200fee1c0c63adc5d840091b91d44dfb2f25eef6"
   },
   "localization": {
-    "messages": 117,
+    "messages": 119,
     "languages": [
       "zh",
       "tw",
@@ -172,7 +173,7 @@
       "es",
       "jp"
     ],
-    "translations": 1053
+    "translations": 1071
   },
-  "swf_sha256": "239252df5ea24ec6da5005bd80bfeb31a91e393d6b2bfe7b1fd7b371cd4e618c"
+  "swf_sha256": "690604878bd8707007a99e3ad14f8f5f3f55cdd4948c8debe6cc87363afd38c9"
 }
