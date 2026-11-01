@@ -16,12 +16,17 @@ package modlocales.connect
       private static var fitted:Dictionary = new Dictionary(true);
       private static var watcher:Timer;
       private static var observed:String = "";
+      // Cached result of language(); invalidate from the watcher only, so the
+      // per-tick label pipeline skips normalize()'s RegExp/string allocation.
+      private static var codeCache:String = null;
 
       public static function language():String
       {
+         if(codeCache != null) return codeCache;
          var code:String = "zh";
          try { code = String(getDefinitionByName("fe.World")["w"]["lang"]); } catch(e:*) {}
-         return normalize(code);
+         codeCache = normalize(code);
+         return codeCache;
       }
       private static function normalize(code:String):String
       {
@@ -76,9 +81,16 @@ package modlocales.connect
       {
          if(field == null || field.styleSheet != null)return;
          width=isNaN(width)?field.width:width;height=isNaN(height)?field.height:height;
-         var signature:String=field.text+"\u0000"+width+"/"+height;
+         // Compare numeric measurements instead of building a signature string.
+         // This runs for every field on every HUD tick; the old
+         // text+"\u0000"+w+"/"+h concatenation allocated short-lived objects
+         // on every call (the pure-garbage stack attributed to RCLocale$/fit
+         // in the 2026-11-02 combo measurement). The fitted font size depends
+         // only on these scalars, so equal values yield an equal result.
          var cached:Object=fitted[field];
-         if(cached!=null && cached.signature===signature)return;
+         if(cached!=null && cached.w===width && cached.h===height
+            && cached.tw===field.textWidth && cached.th===field.textHeight
+            && cached.len===field.length)return;
          var style:TextFormat=field.defaultTextFormat;
          var baseSize:Number=cached==null?Number(style.size):cached.baseSize;
          style.size=baseSize;
@@ -89,7 +101,7 @@ package modlocales.connect
          // Reassigning text uses this format, so unchanged labels need no
          // further text measurement or format operations on later ticks.
          field.defaultTextFormat=style;
-         fitted[field]={signature:signature,baseSize:baseSize};
+         fitted[field]={w:width,h:height,tw:field.textWidth,th:field.textHeight,len:field.length,baseSize:baseSize};
       }
       /** Weak binding refreshes persistent labels after the native language menu changes. */
       public static function bind(field:TextField,source:String,fit:Boolean=false):void
@@ -113,6 +125,7 @@ package modlocales.connect
       }
       private static function refresh(e:TimerEvent):void
       {
+         codeCache=null; // force a real re-read of the native language setting
          var code:String=language();if(code == observed)return;observed=code;
          for(var field:Object in fields)paint(field as TextField,fields[field],code);
       }

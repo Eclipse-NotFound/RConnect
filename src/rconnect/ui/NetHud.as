@@ -258,8 +258,14 @@ package rconnect.ui {
       }
       private function peers():Array {
          var s:Session=mod.session;
-         return s==null?[]:s.mode==Session.HOSTING?s.peers:s.mode==Session.CONNECTED?s.remotes:[];
+         return s==null?NO_PEERS:s.mode==Session.HOSTING?s.peers:s.mode==Session.CONNECTED?s.remotes:NO_PEERS;
       }
+      // Read-only shared empties and lazy comparison sets: layout() used to
+      // rebuild these Array literals and a fresh scrollRect Rectangle for
+      // every entry on every tick (pure garbage in the NetHud/layout stack).
+      private static const NO_PEERS:Array=[];
+      private static const NATIVE_WIDGETS:Array=["hpBar","hp","manaBar","xpBar","hpPet","textWeapon","textMana","odBar","visibility"];
+      private var connectInputs:Array=null,noFitFields:Array=null,obstacleList:Array=[],viewRect:Rectangle=null;
       public function refresh():void {
          if(disposed)return;
          keybinds.tick();
@@ -376,12 +382,15 @@ package rconnect.ui {
       }
 
       private function nativeObstacles():Array {
-         var result:Array=[],v:Object=GameBridge.probe(GameBridge.probe(mod.game==null?null:mod.game.world,"gui"),"vis");
-         for each(var id:String in ["hpBar","hp","manaBar","xpBar","hpPet","textWeapon","textMana","odBar","visibility"]) {
+         var result:Array=obstacleList,v:Object=GameBridge.probe(GameBridge.probe(mod.game==null?null:mod.game.world,"gui"),"vis");
+         result.length=0;
+         if(viewRect==null)viewRect=new Rectangle(0,0,1,1);
+         viewRect.width=surface.stageWidth;viewRect.height=surface.stageHeight;
+         for each(var id:String in NATIVE_WIDGETS) {
             var child:DisplayObject=GameBridge.probe(v,id) as DisplayObject;
             if(child==null || child.stage!==surface || !shown(child))continue;
             var r:Rectangle=child.getBounds(surface);
-            if(r.width>0 && r.height>0 && r.intersects(new Rectangle(0,0,surface.stageWidth,surface.stageHeight)))result.push(r);
+            if(r.width>0 && r.height>0 && r.intersects(viewRect))result.push(r);
          }
          return result;
       }
@@ -438,11 +447,15 @@ package rconnect.ui {
             scrollbar.graphics.beginFill(0x46503D);scrollbar.graphics.drawRect(box.w-4,64,2,box.body);scrollbar.graphics.endFill();
             scrollbar.graphics.beginFill(0xD9C374);scrollbar.graphics.drawRect(box.w-4,64+(box.body-thumb)*scroll/(pageHeight-box.body),2,thumb);scrollbar.graphics.endFill();
          }
+         if(connectInputs==null) {
+            connectInputs=[tfNick,tfIp,tfPort,nickLabel,ipLabel,portLabel];
+            noFitFields=[statusTf,liveLabel,peerHint,gripHint,policyLabel,policyHint,friendlyHint,securityHint,helpText,chatLog];
+         }
          for each(var entry:Object in entries) {
             var t:TextField=entry.tf,on:Boolean=!folded && (help?entry.page=="help":
                entry.page==page || entry.page=="live" && page=="connect" && active);
             if(entry.page=="connect") {
-               if([tfNick,tfIp,tfPort,nickLabel,ipLabel,portLabel].indexOf(t)>=0)on=on&&!active;
+               if(connectInputs.indexOf(t)>=0)on=on&&!active;
                if(t==_btnHost || t==_btnJoin)on=on&&!active&&!joining;
                if(t==_btnLeave)on=on&&(active||joining);
             }
@@ -451,9 +464,11 @@ package rconnect.ui {
             t.x=entry.x;t.y=Math.max(64,natural);
             t.width=entry.w==264?box.w-16:entry.w;
             t.height=entry.renderH;
-            if(!t.selectable && [statusTf,liveLabel,peerHint,gripHint,policyLabel,policyHint,friendlyHint,securityHint,helpText,chatLog].indexOf(t)<0)
+            if(!t.selectable && noFitFields.indexOf(t)<0)
                RCLocale.fit(t,entry.w==264?box.w-16:entry.w,entry.renderH);
-            t.scrollRect=new Rectangle(0,clipTop,t.width,clipped);
+            if(entry.clip==null)entry.clip=new Rectangle(0,clipTop,t.width,clipped);
+            else {entry.clip.x=0;entry.clip.y=clipTop;entry.clip.width=t.width;entry.clip.height=clipped;}
+            t.scrollRect=entry.clip;
             t.visible=on&&clipped>0;t.tabEnabled=t.visible && t.mouseEnabled && (t.type==TextFieldType.INPUT || t.background && t!=chatLog);
          }
          for(var i:int=0;i<tabs.length;i++) {tabs[i].visible=!folded;tabs[i].tabEnabled=!folded;tabs[i].width=box.w/4;tabs[i].x=i*box.w/4;RCLocale.fit(tabs[i]);}
