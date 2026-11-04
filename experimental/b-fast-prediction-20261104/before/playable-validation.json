@@ -1,0 +1,49 @@
+{
+  "experimental_only": true,
+  "candidate_ready_for_manual_testing": true,
+  "local_field_gate_complete": true,
+  "formal_release_gate_complete": false,
+  "candidate_sha256": "3b58198e6e11ef32cf12f6499b75d7a4497788cb668680aa637057b30311644c",
+  "source_id": "1223ba92c2e514c21a15eb2a700529ac20ced9b189ff5689093fb752fb0d338d",
+  "field_tests": [
+    {
+      "scenario": "ui",
+      "path": "build/ab/b-entry-ui-03/result.json",
+      "sha256": "d0ca04fe4f5ffbf20a8be69edd682deb398afa4ab16efafa13c9ac27997b2847",
+      "checks": {
+        "host": 136,
+        "join": 91
+      }
+    },
+    {
+      "scenario": "textmotion",
+      "path": "build/ab/b-entry-textmotion-02/result.json",
+      "sha256": "3543aa36ff4bedc8ace9c0a92bf33fef63e5d9326634932ba0993a25ef41b877",
+      "checks": {
+        "host": 109,
+        "join": 122
+      }
+    },
+    {
+      "scenario": "enemies",
+      "path": "build/ab/b-entry-enemies-01/result.json",
+      "sha256": "f3015aab961f3519c4403d1a362ae1f7e71cc13b1508183cfff7dbd6d0f731c4",
+      "checks": {
+        "host": 55,
+        "join": 55
+      }
+    }
+  ],
+  "performance": "build/ab/b-entry-clean-01/qualification-01.json",
+  "manual_manifest_sha256": "b5bb40e9cdcd267591c8c5a431835fec67433971d1fe84cd8d098943e2fa1de0",
+  "verification_scope": "Exact-byte functional/performance tests; same native host and dependencies. New launchers use the verified root AIR host with unchanged player descriptors.",
+  "limitations": [
+    "Existing windows must be restarted.",
+    "Stage intervals are not input-to-display latency; dense combat may still stutter."
+  ],
+  "launcher_verification": {
+    "transaction": "build/ab/b-entry-deploy-20261101-launcher-02",
+    "mode": "check-only; no player started",
+    "sha256": "4185c9a2aeeb7a4735ce23153da9fe26bc7d2f47e9e97e41aadc1e6e384d866a"
+  }
+}

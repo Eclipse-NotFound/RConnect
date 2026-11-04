@@ -1,3 +1,26 @@
+## 2026-11-04 B fast1：证伪「播放头平滑追赶」，交付两处纯开销删除（已部署）
+- 做了什么：按用户要求实施加入侧卡顿/延迟优化方案。先实现 ①`PlaybackClock.take` 停顿后按 +25% 限速追赶（不再 `position=max(position,target)`）、②`ClientReplica.present` 积压时才限量消费确认、③预测窗口 100ms/3 步→150ms/5 步、④预测冻结阈值 150→200ms、⑤删 `SceneSnapshot` 层扫描里结果从未使用的 `getQualifiedClassName`、⑥HUD 固定标签每条 frame 消息重设文本改为仅 role 变化时赋值。
+- 关键决定/发现：
+  - **①+② 实测有害，已撤销**：`BStartupDriverMod` 的 PLAYBACK 探针（`lag = replica.lastFrame.time - clock.position`）显示加入侧 `maxLag` 从历史 90–218ms 恶化到 **456–597ms**、`maxQueued` 升到 8–11、`clock.delay` 长期顶 250ms 上限。原因：旧实现播放头恒贴在墙钟目标上，`lag ≈ delay`；给播放头限速等于把「未追回的差额」直接加进延迟。**结论：加入侧的数值延迟就是 `delay`，任何降低播放头推进速度的改动都会等量加延迟，不能用它换平滑。** 见 `experimental/b-fast-prediction-20261104/README.md` §1。
+  - **④ 撞契约，已撤销**：150ms 冻结边界是 `BPredictChecks` 已发布契约（13 项），改 200ms 双侧各 13 项失败；阈值不动。
+  - 保留 ③⑤⑥ 为 `B3-0.1-fast1`，体 `9f60d9e6df1a053c5dea72127dc9eee87f815d2a043845cb3c9e5952449bad89`（251,953B），source `7b682a0145a115ceb20c69467605614888e25597df87f6819b20c6bc3e3432b2`，候选 `build/ab/b-fast1-03`，源覆盖 `experimental/b-fast-prediction-20261104/source-01`（145 份）+ `source-manifest.json`。
+  - 同字节功能回归 `build/ab/b-fast1-test-textmotion-08`：主 **109/0**、加 **122/0**，`complete=true`、`runtime_unchanged=true`、无 FATAL——与 entry1 基线计数完全相同（109/122），插值率 86/104。部署事务 `experimental/b-fast-prediction-20261104/deployment.json` status=verified（before 三文件备份、A 体/根/DLC witness 前后一致、`launch-b.cmd check` exit 0）。
+  - 契约离线复核：`simulate_clock.py` 用逐行等价 Python 模型复算 `ContractChecks.playbackCadence` 三条断言（连续播放/不倒退/不越界、暂停边界原子、delay 回落 65），旧/新实现均通过；仅作算法一致性，不改写 AS3 实测口径。
+- 遗留/下一步：**本轮未取得可分离的性能收益，也未做 ABAB**——本窗口机器被他会话长期占用（一次编译 >30min、游戏启动 70–100s，历史 15–20s），fast1-02 的 6 次 textmotion 均因启动过慢耗尽 220s 阶段预算而未进入行走阶段（唯一失败项是 `diagnostic phase completes: stationary`，非断言失败，回执保留不作依据）。下一刀应打主侧发布耗时（80 敌 `host.publish` 32–34ms，其中 `capture.units` 18ms/282 字段、`capture.tiles` 3.4ms 全房 39 字段扫描），这是唯一能同时降延迟与卡顿的方向；`FrameDelta.decode` 大包尖峰（41–49ms）次之。**不要**再给播放头限速、**不要**动 150ms 冻结契约。
+
+## 2026-11-02 build 相同副本清理（ModLoader 会话统一执行，跨模组治理）
+
+- 按"只删完全相同副本"处置 build 堆积（D 盘曾剩 6.2 GB）：本模组 168,759 个文件被删——均为与游戏根/各 release SHA256 相同、或 build 内字节级重复（组内保留最浅一份）的副本；git 跟踪文件、48h 内写入子树、测试登记表目录、backups 一律保留。三模组本轮合计实际释放 54.67 GiB。
+- 恢复：被删文件按 `../ModLoader/build/out/cleanup-plans/20261102-095751/receipt.json` 记录的 origin（游戏根/某模组 release/build 内保留份）重新复制即可；工具 `../ModLoader/tools/cleanup_test_copies.py`（plan/check 可复跑；48h 窗口滑过后可再回收一轮）。
+- 根因（每试验复制一份完整游戏本体）与防复发（调试器 1.2.0 硬链接冻结＋自动 sweep、`/build/` 整体 gitignore、配额巡检）见 ModLoader journal 同日条目；本模组自带 runner（ab/cooperation/m* 驱动）的输出根迁硬链接路径待后续迭代。
+
+## 2026-11-02 A gcfit1：HUD 每帧垃圾分配修复（依 ContinuousScene 移交报告）
+- 做了什么：按 `mods/ContinuousScene/knowledge/handoff-gc-attribution-20261102.md` 修复点名栈 `RCLocale$/fit < NetHud/layout < NetHud/refresh < Session/onTick`（~139 纯垃圾/帧）。`RCLocale.fit` 签名串拼接→(w,h,textWidth,textHeight,len) 数值键缓存；`language()` 缓存+200ms watcher 失效；`NetHud.layout` scrollRect/比较数组/视口/空数组复用。版本 `0.2.24-gcfit1`，worktree `codex/a-tcp-tunnel` 提交 `3f99a7e`（基于 tcp1 b205d86），已本机部署 release（回执/备份 `build/gc-fit-deploy-20261102/`），**远端未发布**。
+- 验证：ContinuousScene v14 探针 fork（探针 SWF 与测量源逐字节等于原版，`build/generated/gc-verify-v14-20261102/`），runtime 副本携基线组合字节、唯一变量=RConnect tcp1→gcfit1。A/B：fit 栈 3,324→**0**；layout 栈当窗死 1,080→37（-96.6%）；normalize 周期化至 200ms；checks 10/10、tick 心跳连续、verror=false、135 单位大场景正常。证据 `knowledge/experiments/evidence/rconnect-gcfit-verify-r1/`；全记录与复现 `knowledge/experiments/2026-11-02-gc-hud-garbage-fix.md`。
+- 环境备注：①正式名单 `ConditionSystemMod` 重复入口使 RemainsModLauncher `--list` 失败（exit 1，阻塞 agent-debug 等所有依赖正式清单的测试入口），系 ConditionSystem 会话 merge 期间留下，未替它修；探针因此改走 runtime 副本 staging（反而更单变量）。②DSH workspace-write 沙箱拦截 %APPDATA% 写入，探针静音协议需提权（已获批准跑通）。③runtime-gcverify 501MB 已清理，重建命令在实验记录。
+- 遗留/下一步：HUD 字号视觉截图核对未做（等名单修复后 agent-debug visual）；GameBridge/roomKey 等游戏逻辑每帧路径（合计 ~40/帧）不在本轮范围；帧收益判定等 AddictionSystem 与 CS envkey 缓存（本轮榜单第一 67,412/98.8%死）组合复测；gcfit1 是否并入下个公开版由用户拍板。
+- 后续（07:5x）：ConditionSystem 会话修复正式名单（`--list` exit 0，ConditionSystemMod 单条；ContinuousScene/FirearmAttachments 被标"新发现·兼容性未核验"仍加载）。补跑 agent-debug visual smoke（gcfit1 正式组合，new-game，trial valid/errors=[]）：显示树 54 个 RConnect 节点结构完整，折叠态仅 header 可见，可见字段坐标尺寸与 build() 设计值逐项一致（title 65×22@17,8 等）——布局无畸变；树不记文本内容，字号像素级证据仍缺（等价性靠缓存键论证兜底）。会话 `mods/ModLoader/build/out/debugger/20261102-075139-46a20e7b`。
+
 ## 2026-11-01 B entry1：开房反馈、根目录入口及稀疏同步修复已部署
 - 用户确认旧入口点击开房无反应。新增游戏根 `RConnect-B.cmd` 菜单及两个直接入口，复用已验证根 AIR 程序、原 B 描述符/存档身份；开房即时状态、载入前等待/取消、占端口失败后的重试已实机通过。未证实原问题的唯一原因；安装后校验命令兼容问题已修正为 .NET SHA-256，助手 check 与菜单 Q 退出通过。
 - entry1 `3b58198e…644c` / source `1223ba92…38d` 修复物件插值漏读变化字段、删除失效、尸体缓存漏更新；按需缓存有效位置信息，减少解码扫描/分配与重复采集。145份父源及8文件覆盖已完整归档并恢复核对。实现、复现、限制见 `experimental/b-entry-smooth-20261101/README.md`。
@@ -8,6 +31,52 @@
 - 对 smooth04 → P0-06 的 11 处 AS 文件差异、实际安装身份和七组已有测试/日志/运行器指纹完成审查；已有通过证据保留，未新启动游戏。
 - 行为发现：物件插值仍读旧基线位置、稀疏删除失去删除语义、尸体缓存漏失效；规范发现：最终新增源只在被忽略的 build 中。详见 `state/b-iteration-review-2026-11-01.md`，其中区分源码结论与实机未验边界。
 - 未改产品/部署/回滚，未提交另一 agent 的未提交代码。后续修复针对这些触发路径；清理测试构建之前先完整归档最终源。两条可选读取/摘要操作被护栏拦截，未绕过。
+
+## 2026-11-01 B P0 渲染地形缓存补齐验证并部署（B 可玩包，A 未动）
+- 承接 P1/P3 部署后的 P0 原型，按建议补齐同字节回归、两轮 ABAB 与内存评估。最终安装体 `build/ab/b-p0-06/RConnectMod.swf` `a382e94f…8386`（source `ec5945be…58d7`），部署事务 `b-p0-deploy-20261101-01`；旧 P13 体 `014a7ad8…` 备份，A 体 `69060487…` 未动。
+- 功能：textmotion 104/117、rockets 50/50、terrainlive 178/123、enemies 50/50、loading 68/62、ui 127/84、boundary 61/52 全通过。`TerrainBitmapCache` 保留最多 2 个房间的 front/back/back2/voda/sats 渲染面、轮廓与边框变换；背景 `VisualPose.recipeEqual` 结构比较；换房先恢复缓存，未命中才 `drawLoc`；只有换房写缓存，同房重绘不承担克隆。
+- 性能：重复房间恢复 8–13ms，未命中 drawLoc 143–538ms，首次克隆 6–141ms。P0 vs P13 两轮 60s ABAB 加入80：第一轮 41.34/43.90 vs 44.45/44.00，第二轮 43.30/38.64 vs 44.17/39.58；合并 mean 42.59 vs 43.04（约−2.9%），P95 70.25 vs 74.5（约−5.7%），主侧/轻负载噪声内。
+- 内存：loading 配对采样 join 稳定私有内存 P0 1341MB、P13 1306MB（约+35MB），峰值 1447 vs1482MB；两房间渲染面理论上限约 76MB。security host 原生失败仍与 baseline 相同。版本串仍 smooth1，两实例需重启加载。
+- 前置部署：P1/P3 组合候选 `build/ab/b-p13-01` `014a7ad8…328` 已在同日先装到 B 可玩包（事务 `b-p13-deploy-20261101-01`），其同字节 textmotion/rockets/terrainlive/enemies/loading/ui 全通过；ABAB vs J12 噪声内，作为小幅优化部署。
+
+## 2026-10-31 B J12 未变字段跳过部署 + 负向切口（B 可玩包）
+- J12 在 J11 上记录 `appliedBase/appliedDelta`，未变的确认字段基准不再每帧整份重写，只应用变化键。候选 `build/ab/b-j12-01` `7c2cc412…47a`，源 `b-j12-source-01`。
+- 同字节功能：textmotion 104/117、rockets 50/50、terrainlive 178/123、enemies 50/50、loading 68/62、ui 127/84，全 0 failed。ABAB：J12 vs J11 两轮 join80 36.77/36.13 与 40.29/34.86 vs 42.49/39.58 与 38.62/38.98（合并约−7%）；J12 vs smooth04 基线 34.13/33.84 vs 39.79/39.18（约−14% mean、−18% P95），主侧噪声内、轻负载持平。
+- 部署：`build/ab/b-j12-01/RConnectMod.swf` → B 可玩包；旧 J11 体备份 `b-j12-deploy-20261031-01/before/`；安装后 manual `a3a0c301…c7b0`、README `96ab5a7c…ad8e`、validation `477d379a…c1c5`；A 体 `69060487…`、root/DLC witness 未变。版本串仍 smooth1。
+- 已评估未晋升：J13 姿态/血条记录跳过仅约−2.5%；J14 隔帧瓦片扫描触发 BTerrainBoundsChecks 失败；J15 尸体采集缓存导致 enemies join 13 项失败；J16 多确认限流 join80 反而约+2.9%；J17 插值跳过 join80 约+0.5%；J18 动画帧缓存导致 enemies join 1 项视觉断言失败；J19 多确认帧跳过插值 join80 持平但 enemies host 123/1 失败；S1/S2 字段裁剪无稳定收益。均保留回执，不部署。
+- 真实战斗/端到端近似：enemies 原生敌人场景 J12 50/50 通过；J12 vs J11 同驱动分项（非 ABAB）join present 9.48 vs 9.86、render 4.00 vs 4.27、replica.units 1.34 vs 1.47、decode 0.74 vs 0.69，host 基本持平；外部 UI 驱动增加 wallLatencyMs（控制发布→join 可见状态），J12 两轮 372/371、160/167ms，J11 对照 290/322、190/165ms；BGrabCases 增加 host 输入注入→join 可见弹丸墙钟延迟，J12 360/450/323ms、J11 348/295ms。样本少/地图不同，不能当收益结论，但链路已可观测且无异常停顿；完整输入→屏幕延迟夹具仍缺。
+
+## 2026-10-31 B J11 正式部署（B 可玩包，A 未动）
+- 用户授权：确认收益幅度，达到部署标准则与 J11 一起部署。S1 两次确认方向相反（`b-j11s1-clean-01` S1 偏好、`b-j11s1-confirm-02` J11 偏好），未达稳定标准，故只部署 J11，不并入 S1。
+- J11 第二轮 ABAB `b-j11-clean-02`：加入 80 敌 37.01/35.72 vs 基线 44.65/40.26；两轮合并加入 mean 约 36.3 vs 41.2（约−12%）、P95 约 59 vs 69（约−14%），主侧密集未变差，重复门槛内。
+- 部署：`build/ab/b-j11-03/RConnectMod.swf` `6d540c20…f842` → `build/ab/b3-playable-190/game/mods/RConnect/release/RConnectMod.swf`；旧体 `c3118075…` 与旧 manual 备份在 `build/ab/b-j11-deploy-20261031-01/before/`，回执 `deployment.json`；安装后 manual `2bdf07f9…cd667`、README `a55ff531…9f312`、validation `d99fcd1c…a547`；A 体 `69060487…`、根/DLC witness 未变。版本串仍 `B3-0.1-smooth1`，安装字节=测试字节；README/validation 已标注 J11。
+- 测试驱动修正：外部 `BUiCases.as` 改读稀疏 `fieldsDelta` 有效值，重建 `prepared-smooth-07`；这不是产品功能修复。
+
+## 2026-10-31 B S1 字段裁剪探索（J11 之上，未部署）
+- 按 field-consumers.md 的 S1 清单，在 J11 基础上对非玩家 scene unit 排除 40 个 host AI/物理/音效字段（NativeFields.capture crop），玩家/对象/武器/房间保持完整；候选 `build/ab/b-j11s1-01` `33ac70ea…ca8`，源 `b-j11s1-source-01`。
+- 同字节 textmotion 104/117、enemies 50/50、rockets 50/50 通过；terrainlive host 124/2（native 玩家启动死亡超时，join 123/0），loading/ui 未跑。ABAB 两次方向相反：`b-j11s1-clean-01` 80 敌主侧 64.82/65.67 vs J11 75.41/71.63，`b-j11s1-confirm-02` S1 67.96/65.02 vs J11 61.70/60.52；`b-j11s1-total-01` vs baseline 环境波动大。**未达稳定部署标准，不部署；字段键数约−18–20%，保留探索。**
+- 下一步值得试：S2 约18字段组（音效/名字脚本/武器技能坐标）、host capture.tiles 事件化、J8 多确认预算；均需先加计数。
+
+## 2026-10-31 B J11 稀疏字段候选（未部署）
+- 按推荐继续 H5/J11：FrameDelta 对 scene 单位/物件的 fields 不再整份克隆，保留不可变 base + 累积变化键；每帧生成 MOTION 快照供插值；ReplicaScene 应用 base+delta；新单位构造读有效字段；PoseTween 保持参考兼容 fields；probe/SceneChecks 读有效字段。
+- 候选 `build/ab/b-j11-03/RConnectMod.swf` `6d540c20…f842`，源 `b-j11-source-01`。同字节功能：textmotion 111/124、rockets 57/57、terrainlive 185/130、enemies 57/57、loading 75/69、ui 127/84；security host 88/1 与 baseline 同失败（原生安全阶段）。UI 首轮失败是外部 BUiCases 直接读稀疏 fields，已改为有效字段并重建 prepared-smooth-07，同驱动 baseline/candidate 均 127/84。
+- 性能：60s clean ABAB `b-j11-clean-01` 加入80敌 37.02/35.40 vs 基线40.24/39.70（约−9.4%），主侧持平、轻负载略好；探针60s 加入 dt mean 36.56 vs 46.22、>100ms 0 vs 15、decode mean 1.69 vs 3.47。未部署，正式B包/A未改；版本串仍 smooth1，部署方式待定。
+
+## 2026-10-29 B Stage 1 低风险候选 v2（未部署）
+- 用户批准优化方案后实施 Stage 1 低风险项；未改正式 release/可玩包/A版。候选 v2 `77d4f837…f9a1`，源 `build/ab/b-stage1-source-01`，只改 5 文件+新增 ClassNames：类名弱缓存、full 帧去重复 NativeFields.capture、replay 标志外提、空 clip 辅助弹丸结束事件不重放、不可见 label 去重。
+- 先做 v1 `796ec224…` 含“玩家插值用 VisualPose.motion”，textmotion 加入侧 FATAL `Interpolated pose has no confirmed native child`，保留失败并从 v2 撤销；v2 同字节复测 textmotion 111/124、ui 134/91 通过，0 failed、0 fatal、runtime unchanged。
+- 尚未完成 rockets/enemies/terrainlive/security/loading 与同环境 ABAB 性能；未部署，不宣称收益。真实战斗/端到端延迟与 Stage 0 诊断仍受测试资源/环境限制。
+- 后续实际完成：rockets 57/57 通过；ABAB `b-stage1-clean-01` 30s×2×ABAB 无可分离收益（8敌主约+4%、80敌主+1.7%、8敌加持平、80敌加约−2.3%但基线波动14.7%），只有功能资格，不晋升不部署。
+- Stage 0 首批逐帧数据 `b-perfdiag-run-06` 完成：80敌加入 dt mean 40.6/p95 70/max 136；最差 130/111ms 为 receiveBatch 48/44 + decode 46/42 + present 39/43 且 ready=2；102ms 为 present59/tween41。主侧 80敌 176ms 为 publish45/采集27/simulate20。下一轮优先 J8 突发控制。
+- 解码包级 `b-perfdiag-run-07`（60s）：加80敌 mean decode 3.09ms、wire 0.65ms；长帧 decode 41–49ms（包6.3–13.3KB、full=0），AMF3仅1–3ms → FrameDelta分支克隆是主因，与282字段/pose树克隆规模相关；ready=2 103ms、tween50ms/GC次之。优先级改为 **H5字段裁剪 + J11 decode/clone > J8**；主侧仍 publish/capture/GC。
+
+## 2026-10-29 B 战斗卡顿调查（只读，未部署）
+- 用户反馈“加入侧相对主侧严重卡顿，战斗时两侧都卡”。本轮只调查/测试并给方案，未改 release/SWF/src、未部署、未改 A；用户要求不覆盖模组本体文件。
+- 既有 clean-05 四轮 Stage 数据不支持“加入侧显著差于主侧”：80 敌人主 63.70–75.52 ms / 加 41.48–47.63 ms，长帧主 11–55 / 加 1–13；但 8→80 两侧都大幅退化（主 +59%～+91%、加 +24%～+39%），且加入侧 162–168 ms 播放等待、欠帧 22/60 s、292 ms 起始长帧、1–2 px 回摆仍未解。体感问题不能由平均帧解释，需逐帧/端到端测试。
+- 分项（smooth01 插桩，量级参考）：主 publish 32–34 ms/帧（采集 21–23，其中单位 17–18.5；字段 8.5–9.3、姿态 9.9–12.1、瓦片 3.3–3.5）；加 present 17.4–18.8（render 13–14、tween 4.3–4.6）、decode 5.7–6.1/消息、replica 应用 6.2–7.1/帧。
+- A 对照纠偏：用户点名的七项多为 B field6/7 已有机制，不是 A 普通入口；A 真正可借的是无显示记录退休、轨迹复用、地形栅格复用等。不得把 A 记录泄漏当 B FPS 结论。
+- 新运行测试被 AIR 环境阻塞：逐帧诊断构建 b-perfdiag-01 已编，但私有桌面 AIR 0xC0000142、默认桌面探针 app id 不符；未取得新数据，失败回执保留。
+- 交付 state/b-perf-optimization-plan-2026-10-29.md（分阶段优化方案/验收/风险）；审计见 experimental/b-perf-investigation-20261029/{join,host,a}-audit/inventory、evidence-table。未部署，未宣称已修复。
 
 ## 2026-10-29 B smooth1显示与差异计算优化已部署
 - 用户要求改善B加入侧及双侧战斗卡顿，只参考A、不改A。准确基线clientenv1/source07；只改VisualPose、PoseTween、NativeFields、FrameDelta及版本身份。比较实际显示值后再写矩阵/滤镜/颜色，复用静止子树与已比较差异；大型动态绘图继续逐项传输。

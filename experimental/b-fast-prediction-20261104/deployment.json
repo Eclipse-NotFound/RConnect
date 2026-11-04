@@ -1,0 +1,64 @@
+{
+  "schema": "b-fast1-deployment-1",
+  "status": "verified",
+  "installed": true,
+  "experimental_only": true,
+  "build": {
+    "path": "build/ab/b-fast1-03",
+    "version": "B3-0.1-fast1",
+    "candidate_sha256": "9f60d9e6df1a053c5dea72127dc9eee87f815d2a043845cb3c9e5952449bad89",
+    "source_id": "7b682a0145a115ceb20c69467605614888e25597df87f6819b20c6bc3e3432b2",
+    "manifest_sha256": "8c9a23a7c064653cbf6a1bf10830c4d74aa82fc6b4a79e2936b157a4546bec17"
+  },
+  "before": {
+    "game/mods/RConnect/release/RConnectMod.swf": "3b58198e6e11ef32cf12f6499b75d7a4497788cb668680aa637057b30311644c",
+    "manual-input.json": "b5bb40e9cdcd267591c8c5a431835fec67433971d1fe84cd8d098943e2fa1de0",
+    "playable-validation.json": "824b379e36a8a9c4c0bc3c5856a55ac052402b5e8e7b0bccfc6f2cd6c53647da",
+    "backup": "experimental/b-fast-prediction-20261104/before"
+  },
+  "after": {
+    "game/mods/RConnect/release/RConnectMod.swf": "9f60d9e6df1a053c5dea72127dc9eee87f815d2a043845cb3c9e5952449bad89",
+    "manual-input.json": "5edd4b3c445a5ed16d940c39285c5f336b3e657233e2b251ca29d173377ba4af",
+    "playable-validation.json": "a2b2e8b271c4d0953329e4f47db0962edb556a0a1a2ee94eb4fa054f77e71349"
+  },
+  "parent_manifest": {
+    "path": "experimental/b-fast-prediction-20261104/before/manual-input.json",
+    "sha256": "b5bb40e9cdcd267591c8c5a431835fec67433971d1fe84cd8d098943e2fa1de0"
+  },
+  "witnesses": {
+    "before": {
+      "pfe.swf": "1d2004ab4c972f199fdd6bca708c8f483c8314fed77aea477fb9544f33ab02f3",
+      "DLC/pfe.swf": "c4611f035c0c18e3849c7359096eb5a1f2cdf289ed975c9d93d8784140059855",
+      "DLC/pfeUI.swf": "96e393958bf00fd475455afb8e8239fc53c26f18236b9eeb554f901ebe2fa8b5",
+      "application.xml": "70dd3b085e5f6c66c03693cf68ce5e93a4e4136dd745d40d1a5b2a49863ba236",
+      "mods/RConnect/release/RConnectMod.swf": "8ab94c8b11e642d55df11dd94490259bcbf47619eeb52a63f6e181aefee94ea8"
+    },
+    "after": {
+      "pfe.swf": "1d2004ab4c972f199fdd6bca708c8f483c8314fed77aea477fb9544f33ab02f3",
+      "DLC/pfe.swf": "c4611f035c0c18e3849c7359096eb5a1f2cdf289ed975c9d93d8784140059855",
+      "DLC/pfeUI.swf": "96e393958bf00fd475455afb8e8239fc53c26f18236b9eeb554f901ebe2fa8b5",
+      "application.xml": "70dd3b085e5f6c66c03693cf68ce5e93a4e4136dd745d40d1a5b2a49863ba236",
+      "mods/RConnect/release/RConnectMod.swf": "8ab94c8b11e642d55df11dd94490259bcbf47619eeb52a63f6e181aefee94ea8"
+    }
+  },
+  "tests": [
+    {
+      "scenario": "textmotion",
+      "path": "build/ab/b-fast1-test-textmotion-08/result.json",
+      "sha256": "1387e6be59d09bc6eac8c0249f1aeced4972e125ed941f9f7c68e415457f00fc",
+      "checks": {
+        "host": 109,
+        "join": 122
+      }
+    }
+  ],
+  "performance": [],
+  "known_limits": [
+    "Version string is B3-0.1-fast1; both sides must run this exact body because the greeting pins the source hash.",
+    "Changes are playback shaping (smooth post-stall catch-up, backlog cap at 4+), a wider bounded prediction lead inside the unchanged 150 ms hold window, and two dead-cost removals.",
+    "The 150 ms prediction hold boundary is a published contract; it was not changed.",
+    "Host capture of full-room tiles and per-unit native fields is unchanged: dense host frame time is still dominated by capture/publish.",
+    "No end-to-end input-to-display latency fixture exists yet; no ABAB performance pair was accepted here."
+  ],
+  "rollback": "restore before/RConnectMod.swf, before/manual-input.json and before/playable-validation.json, verify hashes"
+}

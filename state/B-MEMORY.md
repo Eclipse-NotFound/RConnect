@@ -1,6 +1,17 @@
 # RConnect B 开发入口
 
-## 2026-11-01 当前 B：entry1 已部署，根目录快捷入口可用
+## 2026-11-04 当前 B：fast1 已部署（本轮核心结论是「证伪」）
+
+- **已安装 `B3-0.1-fast1`**：体 `9f60d9e6df1a053c5dea72127dc9eee87f815d2a043845cb3c9e5952449bad89`（251,953B），源 `7b682a0145a115ceb20c69467605614888e25597df87f6819b20c6bc3e3432b2`，候选 `build/ab/b-fast1-03`，源覆盖 `experimental/b-fast-prediction-20261104/source-01`（145 份）+ `source-manifest.json`。事务 `experimental/b-fast-prediction-20261104/deployment.json` verified；A 体仍 `8ab94c8b`，根/DLC witness 未变，`launch-b.cmd check` exit 0。双方需重启。
+- **同字节功能回归通过**：`build/ab/b-fast1-test-textmotion-08` 主 **109/0**、加 **122/0**，complete、runtime unchanged、无 FATAL，计数与 entry1 基线完全相同；插值率 86/104。**未有 ABAB 性能证据**（本窗口被他会话长期占机）。
+- **保留的三项改动**：①`MovementPrediction` 预测窗口 100ms/3 步 → 150ms/5 步（冻结阈值 150ms 不动）；②删 `SceneSnapshot` 层扫描里结果从未使用的 `getQualifiedClassName`；③HUD 固定标签改为仅 role 变化时赋值。
+- **本轮证伪两条，不要重试**：
+  - **播放头不能限速**。`PlaybackClock` 的 `position=max(position,target)` 是延迟最优解：探针 `lag=lastFrame.time-clock.position` 历史 90–218ms，改成「+25% 限速追赶」后恶化到 **456–597ms**，`queued` 到 8–11，`delay` 长期顶 250ms。**加入侧数值延迟就等于 `clock.delay`**，任何给播放头减速的做法都会等量加延迟。
+  - **150ms 预测冻结是契约不是参数**。改 200ms 会让 `BPredictChecks` 双侧各 13 项失败。
+- **下一步只剩一个真方向**：主侧发布耗时。80 敌 `host.publish` 32–34ms（`capture.units` 18ms / 每单位 282 字段 + 整棵姿态树；`capture.tiles` 3.4ms 全房 39 字段扫描；`delta` 2.8、`send` 2.5）+ `simulate` 16–17ms。把发布间隔压到 33ms 以内，65ms 基准缓冲才够用，延迟与卡顿才会同时下降。`FrameDelta.decode` 大包尖峰（41–49ms）次之，属协议层。
+- 详细证据/复现/模型脚本：`experimental/b-fast-prediction-20261104/README.md`（§1 有 30+ 次运行的 PLAYBACK 对照表）、`simulate_clock.py`。
+
+## 2026-11-01 前一版 B：entry1（已被 11-04 fast1 取代）
 
 - 用户反馈点击创建房间无反应，要求入口易找并继续优化卡顿。已部署 `B3-0.1-entry1`：体 `3b58198e6e11ef32cf12f6499b75d7a4497788cb668680aa637057b30311644c`，源 `1223ba92c2e514c21a15eb2a700529ac20ced9b189ff5689093fb752fb0d338d`，候选 `build/ab/b-entry-smooth-01`。游戏根 `RConnect-B.cmd` 可选单开/双开，另有两个直接入口；旧 Player 入口同样可用，存档身份保留，需重启旧窗口生效。
 - 处理前轮审查的三个行为风险：移动物件有效字段插值、稀疏字段删除、尸体缓存失效；位置派生改为按需弱缓存，减少解码全扫分配与重复房间采集。开房/加入立即显示状态，未载入角色时等待/可取消，端口占用失败可重试。旧入口低权限标签属已确认风险，未证明是用户当时无反应的唯一原因。
@@ -16,9 +27,30 @@
 
 测试登记后在自有后台桌面、独立AIR身份和复制种子中运行；不碰真实存档、不关闭玩家程序、不调用未点名Ghost。双实例启动物理余量6GiB、单实例3GiB、运行512MiB，另有可提交内存保护。复用隔离目录，保留失败和唯一证据，不复制整套游戏耗费D盘。
 
+## 2026-10-29 战斗卡顿调查（只读，未部署；用户要求不改模组本体/A）
+
+- 用户重复反馈“加入侧相对主侧相当严重卡顿，战斗时两侧都卡”。本轮只调查/测试并给方案；**未改正式 release/可玩包 SWF/产品源，未部署，未改 A**（仅隔离 benchmark 副本按测试脚本常规流程替换为候选）。
+- 既有受控证据（clean-05 四轮 60 s）**不支持“加入侧 Stage 帧率显著差于主侧”**：80 敌人主侧均值 63.70–75.52 ms、加入 41.48–47.63 ms；>100 ms 长帧主 11–55、加 1–13。但 8→80 两侧都显著退化（主 +59%～+91%、加 +24%～+39%），且加入侧有密集播放等待 162–168 ms、欠帧 22/60 s、起始静止 292 ms、镜头 1–2 px 回摆——体感问题不能由平均帧解释。
+- 分项（smooth01 插桩 30 s）：主 `host.publish` 32–34 ms/帧（采集 21–23：单位 17–18.5，字段 8.5–9.3、姿态 9.9–12.1、瓦片 3.3–3.5；编码/发送 2.8+2.5）；加 `present` 17.4–18.8（render 13–14、tween 4.3–4.6）、每消息 decode 5.7–6.1（3.3–3.9/帧）、replica 应用 6.2–7.1（单位 5.9–6.7）。分项来自 smooth01，安装 smooth04 密集加入约快 5.4%，只作量级。
+- 根因排序：R1 主侧逐单位全量采集 → tick/publish 率下降 → 播放缓冲放大；R2 加入侧每确认帧完整重放（未利用 FrameDelta 分支身份）；R3 每帧 tween/render/prune/pointer/SharedVision 全扫；R4 尸体/空 clip 爆炸辅助弹丸/未变单位仍采集重放；R5 同 tick 对象链最多 6 次遍历与每帧分配；R6 收包/AMF3/边界 flush 突发；R7 战斗破墙 `drawLoc` 风险（未测）。
+- A 对照已纠偏（`a-inventory.md`）：用户点名的显示树/差异编码/接收游标/血条 compact/伤害数字模板/根 pose/显示房过滤**是 B field6/7 已有机制，不是 A 普通入口**；A 真正可借的是无显示记录退休、轨迹复用、地形栅格复用等。不要用 A 的记录泄漏直推 B 的 FPS。
+- 早期 AIR 私有桌面确实失败（`0xC0000142`），后环境恢复；已取得 `b-perfdiag-run-06`（30s）与 `b-perfdiag-run-07`（60s，带包统计）两批逐帧数据，失败回执保留。
+- 交付：`state/b-perf-optimization-plan-2026-10-29.md`（方案/阶段/验收/风险）；审计与证据表在 `experimental/b-perf-investigation-20261029/`。**未部署，未宣称卡顿已修复。**
+- Stage 1 候选 v2 `build/ab/b-stage1-02/RConnectMod.swf` `77d4f837…f9a1`（源 `build/ab/b-stage1-source-01`，相对 smooth04 只改 5 文件+新增 `ClassNames`）：类名弱缓存、去 full 帧重复 `NativeFields.capture(room)`、replay 标志外提、空 clip 辅助弹丸结束事件不重放、不可见 label 去重。**未部署。**
+- v1 `796ec224…` 含“玩家插值 motion”已实测失败（join FATAL `Interpolated pose has no confirmed native child`），撤销；v2 复测 textmotion 111/124、ui 134/91、rockets 57/57 通过，0 fatal、runtime unchanged。
+- v2 ABAB（`b-stage1-clean-01`，30s×2×ABAB）无可分离稳定收益：8敌主约+4%、80敌主+1.7%、8敌加持平、80敌加约−2.3%但基线自身波动14.7%。**只有功能资格，不晋升、不部署。** 剩余 Stage 2 大项（采集分级/脏路径/突发预算）未做。
+- 解码包级诊断 `b-perfdiag-run-07`（60s）：加 80 敌 mean decode 3.09ms/帧、wire 0.65ms，但长帧 decode 41–49ms（包 6.3–13.3KB、full=0、1–2 消息），AMF3 仅 1–3ms → **FrameDelta 分支克隆是主因**，与 282 字段/整 pose 树克隆规模相关；其次 ready=2（103ms）与 tween 50ms/GC。优先级改为 **H5 字段裁剪 + J11 decode/clone > J8 突发**；主侧长帧仍为 publish/capture/GC。
+- J11 稀疏字段解码 **已部署（2026-10-31）**：`build/ab/b-j11-03/RConnectMod.swf` `6d540c20…f842`（源 `b-j11-source-01`，source `37a4d17a…dea5`），旧体备份 `b-j11-deploy-20261031-01/before`；功能与两轮 ABAB 见上，合并约 −12% 加入 mean。
+- J12 未变字段跳过 **已部署（2026-10-31，覆盖 J11 安装体）**：`build/ab/b-j12-01/RConnectMod.swf` `7c2cc412…47a`（源 `b-j12-source-01`，source `03db4c49…bb1c`），装到 B 可玩包；J11 体 `6d540c20…` 备份在 `b-j12-deploy-20261031-01/before/`，A 体 `69060487…` 未动。安装后 manual `a3a0c301…c7b0`、README `96ab5a7c…ad8e`、validation `477d379a…c1c5`，README/validation 标注 +J11+J12。功能同字节 textmotion 104/117、rockets 50/50、terrainlive 178/123、enemies 50/50、loading 68/62、ui 127/84，均 0 failed。ABAB：J12 vs J11 两轮加入80 36.77/36.13 与 40.29/34.86 vs 42.49/39.58 与 38.62/38.98（合并约 −7% mean、−11% P95）；J12 vs smooth04 基线 `b-j12-total-01` 加入80 34.13/33.84 vs 39.79/39.18（约 −14% mean、−18% P95）；主侧基本持平/噪声内，轻负载持平。
+- P1+P3 小幅优化 **已部署（2026-11-01，覆盖 J12 安装体）**：组合候选 `build/ab/b-p13-01/RConnectMod.swf` `014a7ad8…328`（源 `b-p13-source-01` = J12 + P1 稳定尸体跳过 + P3 未变姿态/血条/blit 跳过），部署事务 `b-p13-deploy-20261101-01`；旧 J12 体备份在同事务 `before/`，A 体未动。同字节 textmotion 104/117、rockets 50/50、terrainlive 178/123、enemies 50/50、loading 68/62、ui 127/84 全通过。ABAB vs J12：join80 41.34/41.81 vs 42.43/40.90（噪声内不可分离）；作为小幅优化按用户指示部署，不宣称独立 5% 收益。
+- P0 B 专用渲染地形缓存 **已部署（2026-11-01，覆盖 P1/P3 安装体）**：源 `build/ab/b-p0-source-01`，安装体 `build/ab/b-p0-06/RConnectMod.swf` `a382e94f…8386`（source `ec5945be…58d7`），部署事务 `b-p0-deploy-20261101-01`；旧 P13 体 `014a7ad8…` 备份在同事务 `before/`，A 体 `69060487…` 未动。新增 `TerrainBitmapCache`（最多 2 个房间的 front/back/back2/voda/sats 渲染面 + 轮廓/边框变换缓存，背景 `VisualPose.recipeEqual` 结构比较）；`ReplicaScene` 换房先恢复缓存，未命中才 `drawLoc`；**只有房间切换写缓存**，同房重绘不承担克隆。功能：textmotion 104/117、rockets 50/50、terrainlive 178/123、enemies 50/50、loading 68/62、ui 127/84、boundary 61/52 全通过。性能：重复房间恢复 **8–13ms** vs 未命中 `drawLoc` **143–538ms**，首次克隆 **6–141ms**；P0 vs P13 两轮 60s ABAB 加入80 合并 mean **42.59 vs 43.04ms（约−2.9%）**、P95 **70.25 vs 74.5ms（约−5.7%）**，主侧/轻负载噪声内。内存：loading 配对采样 join 稳定私有内存 **1341MB vs 1306MB（约+35MB）**，两房间渲染面理论上限约 76MB。security host 原生失败与 baseline 相同；版本串仍 smooth1。
+- 负向/未晋升切口（均有回执）：J13 姿态/血条记录跳过 join 仅约 −2.5%，不晋升；J14 隔帧瓦片扫描触发 `BTerrainBoundsChecks` 失败，撤销；J15 尸体采集缓存导致 enemies join 13 项失败，撤销；J16 多确认限流反而 join80 约 +2.9%，撤销；J17 插值记录跳过 join80 约 +0.5%，撤销；J18 动画帧缓存导致 enemies join 1 项视觉断言失败，撤销；J19 多确认帧跳过插值 join80 持平且尾部较好，但 enemies host 123/1 失败，撤销；S1/S2 字段裁剪均无稳定收益，不部署。
+- 真实战斗/端到端近似验证：`enemies` 原生敌人场景 J12 50/50 通过；J12 vs J11 同驱动分项（非 ABAB）join present 9.48 vs 9.86、render 4.00 vs 4.27、replica.units 1.34 vs 1.47、decode 0.74 vs 0.69，host 基本持平；外部 UI 驱动增加 `wallLatencyMs`（控制发布→join 可见状态），J12 两轮 372/371、160/167ms，J11 对照 290/322、190/165ms；`BGrabCases` 增加 host 输入注入→join 可见弹丸墙钟延迟，J12 360/450/323ms、J11 348/295ms。样本少/地图不同，不能当收益结论，但链路已可观测且无异常停顿。完整输入→屏幕延迟夹具仍缺。
+- S1 字段裁剪（J11 之上）候选 `build/ab/b-j11s1-01` `33ac70ea…ca8`（源 `b-j11s1-source-01`）：非玩家 scene unit 排除 40 个 host AI/物理/音效字段。textmotion 104/117、enemies 50/50、rockets 50/50 通过；terrainlive host 124/2（native 玩家启动死亡超时，join 123/0），loading/ui 未跑。ABAB 两次不一致：`b-j11s1-clean-01` 方向偏好 S1，`b-j11s1-confirm-02` 方向偏好 J11（host 80 67.96/65.02 vs 61.70/60.52），`b-j11s1-total-01` vs baseline 环境波动大；**未达到稳定的部署标准，不部署，不并入本轮**。字段键数约 −18–20%，保留探索切口；后续需低负载重复。
+
 ## 当前版本与接续（2026-10-29）
 
-**最新已安装：B3-0.1-smooth1，原B190入口不变，双方重启后生效。** 用户允许参考A但禁止修改A；本轮只读A并仅改B。准确构建 `build/ab/b-smooth-04-build`，SWF `c3118075c414887aea770d7df36b349e52fe330a441571218fa969c25bff44fa`，source `e2be0722726c5d489f76419a194ea86274b61362c0836707a2ab7d1570a1cf15`；可恢复源 `experimental/b-smooth-20261029/source-04`，144份完整源/5份覆盖，已独立恢复核对。减少重复姿态差异计算、静止子树分配和相同显示值重写；不改同步节拍、战斗、预测/镜头或默认模组环境。实际hpBar存在嵌套动画，撤销未命中的血条缓存，保留原完整同步回退。
+**最新已安装：B3-0.1-smooth1 + J11 + J12 + P1/P3 + P0 渲染地形缓存，原B190入口不变，双方重启后生效。** 安装体 `a382e94f66fa22e008c1a056871a6634bdf4915e1e84a9b2b9a3de0347818386`，source `ec5945be3f642135994b95873ff511c46b6d5e7f675385188d6655dcfe4558d7`，候选 `build/ab/b-p0-06`，源 `build/ab/b-p0-source-01`；部署回执 `build/ab/b-p0-deploy-20261101-01/deployment.json`。旧 P13 体 `014a7ad8…` 备份在同事务 `before/`，A 体 `69060487…` 未动。**版本串仍是 smooth1（未 bump）；安装字节与测试字节完全一致。** P0 主收益是重复房间地形恢复（8–13ms vs 143–538ms）；80 敌 ABAB mean 约−2.9%、P95约−5.7%，内存配对实测 join 约+35MB。
 
 - 准确04字节功能：textmotion02主111/加124，ui02主134/加91，rockets02主57/加57，共574个外置断言通过；火箭/核弹双方实际发射与伤害、4阶段2030个显示样本无缺失/姿态/像素错。统一准备 `prepared-smooth-06.json` / `06d5414eeac2ec9a6c965b7f32b1e0fc209102dc3fe4d9c55c519a133412749e`；亲自检查进度条截图可见。
 - `b-smooth-clean-05/qualification-01.json`：同环境无插桩ABAB、8/80敌人各60秒、原5%平均/P95与重复1.2门槛通过。密集加入44.321→41.921ms（约5.4%），主66.580→65.579ms（约1.5%）；轻负载主慢约1.5%，加入基本不变。03的收益不代替04；详细机器/缓冲记录保留。
