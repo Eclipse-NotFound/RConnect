@@ -1,3 +1,12 @@
+## 2026-11-04 B fast2：主侧整房瓦片扫描 −35%，类名反射缓存（已部署）
+- 做了什么：按上一轮遗留的"只能压主侧发布间隔"结论动手。①`SceneSnapshot.capture` 整房瓦片循环把 `TILE`/`TILE.length`/`room.spaceY`/`tiles`/`plainFront`/`result.tiles` 与外层列数组全部提出内层循环，内层 `for(;;TILE[j])` 改 `while` 局部索引（比较值、顺序、`plainFront` 读写时机、产出记录形状不变）；②新增 `authority/ClassNames.as`（弱键 Dictionary 按对象身份缓存 `getQualifiedClassName`），替换 `VisualPose` 捕获/应用、`SceneSnapshot`、`RoomRuntime.projectile` 的热点反射；滤镜类名与 `matchesFilters` 故意不缓存（`display.filters` 每次可能返回新实例，缓存会无界增长）。
+- 关键决定/发现：
+  - **实测收益**（同环境 30s profile，`bench_sustained --driver build/ab/ab-sustained-004`，两次 `passed=true`）：`capture.tiles` 80 敌 **3.681→2.379 ms（−35.4%）**、8 敌 3.522→2.439（−30.8%）；`host.publish` 80 敌 **36.008→34.619（−3.9%）**、8 敌 15.022→13.792（−8.2%）。`capture.units` 80 敌 19.656→19.732 与 `host.simulate` +3.9% 均在噪声内；join 侧无变化。−3.9% 与"瓦片约占 publish 10%、砍掉三分之一"的预期自洽。
+  - **功能回归** `build/ab/b-fast2-test-terrainlive-01`：主 **183/0**、加 **128/0**，complete/runtime unchanged/无 FATAL。选 terrainlive 是因为它正是瓦片差分、破墙、地形同步的主场景。
+  - **冻结基准漂移**（重要环境事实）：`build/ab/b-field2-bench-20261025-01` 的 host/join 已与其 `prepared.json` 漂移 16 项（`pfe.swf`、13 个模组文件、`mods/loader-manifest.txt`），`prepared-sustained-003.json` 因此直接拒绝运行。**没有改写历史 `prepared.json`**：另存 `prepared-bench-fix-20261104.json`（逐文件 was→now，host/join 漂移集合一致）并复制驱动为 `build/ab/ab-sustained-004`，由工具生成 `prepared-sustained-004.json`。A/B 共用新基准，故对照受控；绝对数不能与 j11/j12/p0 时代相加。
+  - 交付 `B3-0.1-fast2`：体 `d0f5b1973b2605b89c6ff5e550bd7874fcab5713a91491cd1fc479e97611b96a`（252,145B），源 `3c3ef225ea03ac51898b0683a8acae9393e1ae7d7940916abdb13117fb780280`，源覆盖 `experimental/b-fast2-host-publish-20261104/source-01`（146 份）；部署事务同目录 `deployment.json` verified，A 体/根/DLC witness 未变，`launch-b.cmd check` exit 0。
+- 遗留/下一步：`capture.units` 19.7 ms（每单位 282 原生字段 + 整棵姿态树）占 publish 一半以上，是下一个目标，需先加"本帧真变了什么"的计数再分级采集（S1/S2 两次 ABAB 方向相反，不能盲裁）；`capture.untrackedEffects` 在 80 敌下反升 35.9%（0.311→0.423 ms）方向异常值得单独看；`FrameDelta.decode` 大包尖峰属协议层。本轮仍只有单轮 profile，没有 ABAB 序列。
+
 ## 2026-11-04 B fast1：证伪「播放头平滑追赶」，交付两处纯开销删除（已部署）
 - 做了什么：按用户要求实施加入侧卡顿/延迟优化方案。先实现 ①`PlaybackClock.take` 停顿后按 +25% 限速追赶（不再 `position=max(position,target)`）、②`ClientReplica.present` 积压时才限量消费确认、③预测窗口 100ms/3 步→150ms/5 步、④预测冻结阈值 150→200ms、⑤删 `SceneSnapshot` 层扫描里结果从未使用的 `getQualifiedClassName`、⑥HUD 固定标签每条 frame 消息重设文本改为仅 role 变化时赋值。
 - 关键决定/发现：

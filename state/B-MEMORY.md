@@ -1,6 +1,16 @@
 # RConnect B 开发入口
 
-## 2026-11-04 当前 B：fast1 已部署（本轮核心结论是「证伪」）
+## 2026-11-04 当前 B：fast2 已部署（主侧瓦片扫描 −35%）
+
+- **已安装 `B3-0.1-fast2`**：体 `d0f5b1973b2605b89c6ff5e550bd7874fcab5713a91491cd1fc479e97611b96a`（252,145B），源 `3c3ef225ea03ac51898b0683a8acae9393e1ae7d7940916abdb13117fb780280`，候选 `build/ab/b-fast2-01`，源覆盖 `experimental/b-fast2-host-publish-20261104/source-01`（146 份）+ `source-manifest.json`。事务同目录 `deployment.json` verified；A 体仍 `8ab94c8b`，根/DLC witness 未变，`launch-b.cmd check` exit 0。双方需重启。
+- **改了什么**：①`SceneSnapshot.capture` 的整房瓦片扫描把 `TILE`/`TILE.length`/`spaceY`/`tiles`/`plainFront`/`result.tiles` 与列数组全部提出内层循环、内层改 `while`（比较的值与顺序、`plainFront` 读写时机、产出记录形状完全不变）；②新增 `authority/ClassNames.as`（弱键 Dictionary 按对象身份缓存 `getQualifiedClassName`），替换 `VisualPose` 捕获/应用路径、`SceneSnapshot`、`RoomRuntime.projectile` 的热点反射调用；**故意不缓存** `display.filters` 里的滤镜类名（每次读取可能是新实例，会让字典无界增长）。
+- **实测（同环境 30s profile，两次 `passed=true`）**：`capture.tiles` 80 敌 **3.681 → 2.379 ms（−35.4%）**、8 敌 3.522 → 2.439（−30.8%）；`host.publish` 80 敌 **36.008 → 34.619 ms（−3.9%）**、8 敌 15.022 → 13.792（−8.2%）。`capture.units` 80 敌 19.656 → 19.732（噪声内，**未改善**），`host.simulate` +3.9%（宿主代码未改，噪声）。join 侧无变化。
+- **功能回归 `build/ab/b-fast2-test-terrainlive-01`**：主 **183/0**、加 **128/0**，complete、runtime unchanged、无 FATAL——`terrainlive` 正是瓦片差分/破墙/地形同步的主场景，是与本轮改动最相关的回归。
+- **基准漂移（必须记住）**：`build/ab/b-field2-bench-20261025-01` 的 host/join 副本已与其 `prepared.json` 漂移 16 项（`pfe.swf`、13 个模组文件、`mods/loader-manifest.txt` 等，由后续会话来刷新）。本轮**没有改写历史 `prepared.json`**，另存 `prepared-bench-fix-20261104.json`（逐文件 was→now），并用驱动副本 `build/ab/ab-sustained-004` 生成 `prepared-sustained-004.json`。旧的 `prepared-sustained-003.json` 已过期（钉着旧的 loader-manifest），别再直接用它跑。新基准下的绝对数与 j11/j12/p0 时代**不可相加**。
+- **下一步**：`capture.units` 19.7ms（占 publish 一半以上，每单位 282 原生字段 + 整棵姿态树）才是主目标，需要先加"本帧真的变了什么"的计数再分级采集（S1/S2 字段裁剪两次 ABAB 方向相反，不能盲裁）；其次 `capture.untrackedEffects` 80 敌下 +35.9%（0.311→0.423ms，量级小但方向异常）；`FrameDelta.decode` 大包尖峰（41–49ms）属协议层。
+- **仍然不要做**：给播放头限速（见下一节的证伪记录）、改 150ms 预测冻结契约。
+
+## 2026-11-04 前一版 B：fast1（核心结论是「证伪」）
 
 - **已安装 `B3-0.1-fast1`**：体 `9f60d9e6df1a053c5dea72127dc9eee87f815d2a043845cb3c9e5952449bad89`（251,953B），源 `7b682a0145a115ceb20c69467605614888e25597df87f6819b20c6bc3e3432b2`，候选 `build/ab/b-fast1-03`，源覆盖 `experimental/b-fast-prediction-20261104/source-01`（145 份）+ `source-manifest.json`。事务 `experimental/b-fast-prediction-20261104/deployment.json` verified；A 体仍 `8ab94c8b`，根/DLC witness 未变，`launch-b.cmd check` exit 0。双方需重启。
 - **同字节功能回归通过**：`build/ab/b-fast1-test-textmotion-08` 主 **109/0**、加 **122/0**，complete、runtime unchanged、无 FATAL，计数与 entry1 基线完全相同；插值率 86/104。**未有 ABAB 性能证据**（本窗口被他会话长期占机）。

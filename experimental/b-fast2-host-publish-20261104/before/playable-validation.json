@@ -1,0 +1,33 @@
+{
+  "experimental_only": true,
+  "candidate_ready_for_manual_testing": true,
+  "local_field_gate_complete": true,
+  "formal_release_gate_complete": false,
+  "candidate_sha256": "9f60d9e6df1a053c5dea72127dc9eee87f815d2a043845cb3c9e5952449bad89",
+  "source_id": "7b682a0145a115ceb20c69467605614888e25597df87f6819b20c6bc3e3432b2",
+  "field_tests": [
+    {
+      "scenario": "textmotion",
+      "path": "build/ab/b-fast1-test-textmotion-08/result.json",
+      "sha256": "1387e6be59d09bc6eac8c0249f1aeced4972e125ed941f9f7c68e415457f00fc",
+      "checks": {
+        "host": 109,
+        "join": 122
+      }
+    }
+  ],
+  "performance": "build/ab/b-entry-clean-01/qualification-01.json",
+  "manual_manifest_sha256": "5edd4b3c445a5ed16d940c39285c5f336b3e657233e2b251ca29d173377ba4af",
+  "verification_scope": "Exact-byte functional/performance tests; same native host and dependencies. New launchers use the verified root AIR host with unchanged player descriptors.",
+  "limitations": [
+    "Existing windows must be restarted.",
+    "Stage intervals are not input-to-display latency; dense combat may still stutter.",
+    "Playback-clock and receive-burst shaping are validated by the published contract checks and one functional scenario only.",
+    "No comparable ABAB performance pair was accepted for this body in this environment."
+  ],
+  "launcher_verification": {
+    "transaction": "build/ab/b-entry-deploy-20261101-launcher-02",
+    "mode": "check-only; no player started",
+    "sha256": "4185c9a2aeeb7a4735ce23153da9fe26bc7d2f47e9e97e41aadc1e6e384d866a"
+  }
+}
