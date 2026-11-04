@@ -1,3 +1,13 @@
+## 2026-11-04 B fast3diag：字段/姿态变更分布实测（诊断构建，未部署）
+- 做了什么：上一轮把 `host.publish` 降到 34.6ms 后，`capture.units` 19.7ms 成唯一大项但只有 ms 级计时、无法归因。本轮**只加计数不改行为**：`NativeFields.capture` 末尾记 `field.declared`/`field.changed`，`VisualPose.captureNode` 在 `depth==0` 记 `pose.nodes`/`pose.changed`，均在 `if(Timing.enabled)` 内（关闭零成本）。用 `bench_sustained --profile --driver build/ab/ab-sustained-004` 跑 30s 拿到分布。
+- 关键决定/发现：
+  - **字段捕获 ~98% 的写入是白干**：80 敌下 `capture.nativeFields` **178 次/帧**、`field.declared` 均值 **129.5**、`field.changed` 均值 **仅 2.86**（p95 12）。eager 路径边读边把全部 129 个字段写进新记录，只有 2.86 个真的变了。
+  - **`capture.nativeFields` max 62 ms**：297 次属性读不可能花 62ms，该尖峰只能是分配触发的 GC——即每帧 80 单位 × 129 槽 ≈ 10,320 属性槽、约 150KB/帧短命对象。**这是主侧百毫秒级卡顿的一个真实来源**，此前只被记成"GC 与 decode 互相放大"。
+  - **姿态是"每对象固定开销"而非"每节点"**：`capture.pose` **198 次根捕获/帧**、`pose.nodes` 均值 **2.39**（合计 473 节点/帧）却约 11.5ms（每节点 ~24µs）。瓶颈是每个根捕获的 `transform.matrix` / `colorTransform` 各一次新对象分配、`display.filters` 返回新数组、新记录分配。`pose.changed` 均值 **0.53**：47% 的根捕获判定没变、固定开销白付。
+  - 8 敌同向（declared 108.1 / changed 2.42 / nodes 2.63 / changed 0.598），排除"只在密集场景成立"的偶然。
+- 交付：`build/ab/b-fast3-diag-01`（`d8752f3adc2b28fd579c5f7f3a171c7d5a0e093750f968d71cd9599d327c2027`），版本 `B3-0.1-fast3diag`；运行 `build/ab/b-fast3-bench-diag-01` passed=true。诊断源覆盖 `experimental/b-fast3-field-pose-profile-20261104/source-01`（3 份，覆盖到 `build/ab/b-fast2-source-01` 可重建）+ `source-manifest.json`。**未部署**，可玩包仍是 fast2 `d0f5b197…`。
+- 遗留/下一步：字段记录只装变化项（`NativeFields.capture(value, complete)` + 每对象可变 `mirror` 做比较、`state` 只写变化键、`SceneSnapshot` 在 `full` 帧传 `complete=true`）。预期 `capture.nativeFields` −30%、publish −2.5~3ms，并显著削掉 62ms 级 GC 尖峰。**风险高**：主机侧探针直接读 `.fields.X` 会缺键、`ContractChecks` 的不可变断言要逐条复核、需完整套件同字节验证；本轮环境不足以承担，故未实施。姿态侧要赢只能减少 198 次/帧的根捕获或跳过固定开销，都需要新廉价签名；血条/姿态跳过已被 P1/P3/J13 证否。
+
 ## 2026-11-04 B fast2：主侧整房瓦片扫描 −35%，类名反射缓存（已部署）
 - 做了什么：按上一轮遗留的"只能压主侧发布间隔"结论动手。①`SceneSnapshot.capture` 整房瓦片循环把 `TILE`/`TILE.length`/`room.spaceY`/`tiles`/`plainFront`/`result.tiles` 与外层列数组全部提出内层循环，内层 `for(;;TILE[j])` 改 `while` 局部索引（比较值、顺序、`plainFront` 读写时机、产出记录形状不变）；②新增 `authority/ClassNames.as`（弱键 Dictionary 按对象身份缓存 `getQualifiedClassName`），替换 `VisualPose` 捕获/应用、`SceneSnapshot`、`RoomRuntime.projectile` 的热点反射；滤镜类名与 `matchesFilters` 故意不缓存（`display.filters` 每次可能返回新实例，缓存会无界增长）。
 - 关键决定/发现：

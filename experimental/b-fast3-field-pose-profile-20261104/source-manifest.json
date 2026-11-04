@@ -1,0 +1,23 @@
+﻿{
+    "kind":  "b-fast3-diagnostic-overlay",
+    "created":  "2026-11-04",
+    "base":  "B3-0.1-fast2 source (build/ab/b-fast2-source-01)",
+    "base_candidate_sha256":  "d0f5b1973b2605b89c6ff5e550bd7874fcab5713a91491cd1fc479e97611b96a",
+    "diagnostic_only":  true,
+    "deployed":  false,
+    "source_id":  "20d7a514acd0bb59f3a8e2f8c77dd1be85a34b07840ff0e993702a5f4fb8fdee",
+    "candidate_sha256":  "d8752f3adc2b28fd579c5f7f3a171c7d5a0e093750f968d71cd9599d327c2027",
+    "candidate_build":  "build/ab/b-fast3-diag-01",
+    "version":  "B3-0.1-fast3diag",
+    "changed":  [
+                    "src/authority/NativeFields.as",
+                    "src/authority/VisualPose.as",
+                    "src/RConnectMod.as"
+                ],
+    "note":  "Only the three files in this overlay differ from the fast2 source; apply them onto build/ab/b-fast2-source-01 to rebuild the probe.",
+    "files":  {
+                  "src/authority/NativeFields.as":  "ec0a9fb1205cd0088fe04bda766c05d5002a74d0c1b2f77d59a673a938b0e0a5",
+                  "src/authority/VisualPose.as":  "3c474236b55557303bd9039cd40e33b05f724281adb397d453d6428c915b7da7",
+                  "src/RConnectMod.as":  "7d98c9aa0c9dde56743e503e074053c351b9fbed0e83911775b720b83e9dfdb5"
+              }
+}

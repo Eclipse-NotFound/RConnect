@@ -1,6 +1,17 @@
 # RConnect B 开发入口
 
-## 2026-11-04 当前 B：fast2 已部署（主侧瓦片扫描 −35%）
+## 2026-11-04 实测归因（诊断构建，未部署）：字段捕获 98% 写入是白干
+
+- **部署状态不变**：可玩包仍为 `B3-0.1-fast2`（`d0f5b197…`）。本轮只加了两个计数器，构建 `B3-0.1-fast3diag`（`d8752f3a…`）只在基准副本里跑过，**未部署、不在正式路径**。诊断源覆盖 `experimental/b-fast3-field-pose-profile-20261104/source-01`（3 份文件，覆盖到 `build/ab/b-fast2-source-01` 即可重建）。
+- **加了什么**：`NativeFields.capture` 末尾记 `field.declared`/`field.changed`；`VisualPose.captureNode` 在 `depth==0` 记 `pose.nodes`/`pose.changed`。全部在 `if(Timing.enabled)` 内，关闭时零成本。计数用小整数占用 `Timing.record` 的 ms 槽（值域 ≤300，不截断）。
+- **80 敌实测（`build/ab/b-fast3-bench-diag-01`，passed=true，30s，399 发布帧）**：
+  - `capture.nativeFields` **178 次/帧**，`field.declared` 均值 **129.5** 字段/次，`field.changed` 均值 **仅 2.86**（p95 12、max 15）→ **≈98% 的字段写入是白干**。`capture.nativeFields` max **62 ms**：297 次属性读不可能花 62ms，这个尖峰只能是分配触发的 GC 停顿。
+  - `capture.pose` **198 次根捕获/帧**，`pose.nodes` 均值 **2.39**（合计仅 473 节点/帧），却约 11.5ms → **瓶颈是每对象固定开销**（`transform.matrix`/`colorTransform` 各分配新对象、`display.filters` 返回新数组、新记录分配），不是每节点。`pose.changed` 均值 **0.53**：47% 的根捕获最后判定没变、白付了固定开销。
+  - 8 敌同向：declared 108.1 / changed 2.42 / nodes 2.63 / changed 0.598。
+- **下一步（已设计、未实施）**：让字段记录只装变化项——`NativeFields.capture(value, complete)` + 每对象一份仅本机使用的可变 `mirror` 做比较，`state` 只写变化键；`SceneSnapshot.capture` 在 `full` 帧传 `complete=true` 保证全量帧完整。预期 `capture.nativeFields` −30%、`host.publish` −2.5~3ms，**并显著削掉 62ms 级 GC 尖峰**（体感收益主要在这里）。风险：主机侧探针直接读 `.fields.X` 会缺失键；`ContractChecks` 的"历史确认帧不可变"断言必须逐条复核；需完整套件同字节验证。**没敢在会阻塞的环境里改这条**。
+- **姿态那条路要赢只能减少根捕获次数**（198/帧）或跳过固定开销，两者都需要新的廉价签名；血条/姿态跳过已被 P1/P3/J13 证明无可分离收益，不再盲试。
+
+## 2026-11-04 前一版：fast2（主侧瓦片扫描 −35%）
 
 - **已安装 `B3-0.1-fast2`**：体 `d0f5b1973b2605b89c6ff5e550bd7874fcab5713a91491cd1fc479e97611b96a`（252,145B），源 `3c3ef225ea03ac51898b0683a8acae9393e1ae7d7940916abdb13117fb780280`，候选 `build/ab/b-fast2-01`，源覆盖 `experimental/b-fast2-host-publish-20261104/source-01`（146 份）+ `source-manifest.json`。事务同目录 `deployment.json` verified；A 体仍 `8ab94c8b`，根/DLC witness 未变，`launch-b.cmd check` exit 0。双方需重启。
 - **改了什么**：①`SceneSnapshot.capture` 的整房瓦片扫描把 `TILE`/`TILE.length`/`spaceY`/`tiles`/`plainFront`/`result.tiles` 与列数组全部提出内层循环、内层改 `while`（比较的值与顺序、`plainFront` 读写时机、产出记录形状完全不变）；②新增 `authority/ClassNames.as`（弱键 Dictionary 按对象身份缓存 `getQualifiedClassName`），替换 `VisualPose` 捕获/应用路径、`SceneSnapshot`、`RoomRuntime.projectile` 的热点反射调用；**故意不缓存** `display.filters` 里的滤镜类名（每次读取可能是新实例，会让字典无界增长）。
