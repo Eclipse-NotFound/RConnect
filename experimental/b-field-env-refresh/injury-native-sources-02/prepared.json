@@ -1,0 +1,10 @@
+{
+  "kind": "pi-native021-source-rebase",
+  "parent_patch_sha256": "7796a25c7ac58ac0df4feb4b1f8b60d581cf00fc9ad70230a0fa0d5108fefd97",
+  "native021_export_sha256": "959e368595e178b41935475c5c488406c8f18e77f7214048ce281593bcdb3270",
+  "files": {
+    "MethodPatch.java": "709b1b12774292723b0d0151292dcc77cb97f6b1e3735bc0ccbe1fa673b93a30",
+    "patch-native.cjs": "eef363d46d0aece8f3cea53977e12109d85a7c5ebf93b965322d1d3f7d301889"
+  },
+  "change": "Weapon.shoot declares _loc3_ at method top; replace its single assignment before pellet loop, preserving declaration."
+}

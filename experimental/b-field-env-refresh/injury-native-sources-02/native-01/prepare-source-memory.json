@@ -1,0 +1,17 @@
+{
+  "pid": 85716,
+  "reason": null,
+  "rows": [
+    {
+      "utc_ms": 1793202902247,
+      "free_commit_bytes": 12241887232,
+      "commit_limit_bytes": 58533253120,
+      "physical_available_bytes": 9390604288
+    }
+  ],
+  "exit_code": 0,
+  "process_returncode": 0,
+  "sample_elapsed_ms": 1.6700000269338489,
+  "interval_ms": 1000,
+  "minimum_commit_bytes": 536870912
+}

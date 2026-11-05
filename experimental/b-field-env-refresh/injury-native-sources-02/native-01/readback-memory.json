@@ -1,0 +1,41 @@
+{
+  "pid": 65232,
+  "reason": null,
+  "rows": [
+    {
+      "utc_ms": 1793202929296,
+      "free_commit_bytes": 12217487360,
+      "commit_limit_bytes": 58533253120,
+      "physical_available_bytes": 9363992576
+    },
+    {
+      "utc_ms": 1793202930298,
+      "free_commit_bytes": 12018049024,
+      "commit_limit_bytes": 58533253120,
+      "physical_available_bytes": 9171099648
+    },
+    {
+      "utc_ms": 1793202931300,
+      "free_commit_bytes": 11886387200,
+      "commit_limit_bytes": 58533253120,
+      "physical_available_bytes": 9037582336
+    },
+    {
+      "utc_ms": 1793202932302,
+      "free_commit_bytes": 11728097280,
+      "commit_limit_bytes": 58533253120,
+      "physical_available_bytes": 8883212288
+    },
+    {
+      "utc_ms": 1793202933307,
+      "free_commit_bytes": 11459203072,
+      "commit_limit_bytes": 58533253120,
+      "physical_available_bytes": 8718946304
+    }
+  ],
+  "exit_code": 0,
+  "process_returncode": 0,
+  "sample_elapsed_ms": 6.756999995559454,
+  "interval_ms": 1000,
+  "minimum_commit_bytes": 536870912
+}

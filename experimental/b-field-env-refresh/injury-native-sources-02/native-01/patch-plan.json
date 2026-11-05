@@ -1,0 +1,84 @@
+{
+  "version": 1,
+  "scope": "candidate only; live deployment separate",
+  "changes": [
+    {
+      "file": "fe/unit/Pers.as",
+      "before": "c5efffdf20d6634219ee3b841993836cb787f206518cd7595b5dd13403ab8b6b",
+      "after": "4b6ea1e529963421b9abc0def9ab90083fe57dfa3ca91c5bae6f3be8985897e3"
+    },
+    {
+      "file": "fe/unit/UnitPlayer.as",
+      "before": "ff7afda899c10393a10e598930a00d46638e45aff3dba9d42e72b1d75d686269",
+      "after": "eabfcc5723ad44a84ba711250fdd88a6ee5e61a3d9d39cd331ed4d4b19c642ea"
+    },
+    {
+      "file": "fe/unit/Unit.as",
+      "before": "71f13ac93996851303450d70e6d4e8a39ca252cab4a5c5e59401bf25f9c4ab8f",
+      "after": "39834c6b77db3acfd10cd5c7a897b1f2294b8ec3d78c1b95a64b7a865a81d24c"
+    },
+    {
+      "file": "fe/unit/Invent.as",
+      "before": "963ad46cf0709311bcd9ec1b046667e5c7231a6f213ac866c67bc3be1091d1d6",
+      "after": "3e37b29765f64e7fcf8d760957a1c9a008b006d600b52068915ce471c9674b5d"
+    },
+    {
+      "file": "fe/weapon/Weapon.as",
+      "before": "11d6f1ca3b8dd751124d9490313d8ed80c326872c4c482701b490248d81d68da",
+      "after": "a4cf62b9cab8b8ff96042472abfcaba964c5f7906676d6f219f7d26a6cc3225a"
+    },
+    {
+      "file": "fe/weapon/Bullet.as",
+      "before": "f8880b2029e8dc9ca7a62ba82d1ea3efa494fba15b36c0b620d4095699fe1acc",
+      "after": "82c103f14fa05c6b2ce32a56f2ab1c2d26d4d49781fd218c754e2466b27b9921"
+    },
+    {
+      "file": "fe/unit/Spell.as",
+      "before": "0d0489ef275c57e237ee3ef7e9a17f384b96b7b6b3177c7f470a0e1f17ce2c7e",
+      "after": "8851b49d763ea6424dbd0dcc6eacbe32bae7f2986808b412509599cda45f1201"
+    },
+    {
+      "file": "fe/weapon/WMagic.as",
+      "before": "030d6ed32ac9f5a7613eca63ccc56cda1592eac58a7dd76a5848d91e88f74550",
+      "after": "d85214cb06accab5ccc9c864b49352851e3e3ac93ae58d919c722f0918abda56"
+    },
+    {
+      "file": "fe/World.as",
+      "before": "c48c3458cf9add5cd2acd12d254cf11d5f2fe66d069843641afdf57c505aaff2",
+      "after": "2811553df733a8396ac965248c72767d9dea15c4225cfcaa38783ca3d6243d68"
+    },
+    {
+      "file": "fe/inter/PipPageMed.as",
+      "before": "175e627670a963937e3797067b67261b858ba46270e54cc8200c9db3e5b9c300",
+      "after": "c7358c88e45fc46bba47817e557cf53e303b717817d587ecf0b948e6ada5c489"
+    }
+  ],
+  "methods": [
+    "fe.unit.Pers\t$init",
+    "fe.unit.Pers\tsave",
+    "fe.unit.Pers\tpiEvent",
+    "fe.unit.Pers\tpiFactor",
+    "fe.unit.Pers\tdamage",
+    "fe.unit.Pers\tbloodDamage",
+    "fe.unit.Pers\tmanaDamage",
+    "fe.unit.Pers\tsetParameters",
+    "fe.unit.UnitPlayer\tsetSpeeds",
+    "fe.unit.UnitPlayer\tactions",
+    "fe.unit.UnitPlayer\tactPort",
+    "fe.unit.UnitPlayer\tcheckPort",
+    "fe.unit.UnitPlayer\tmanaSpell",
+    "fe.unit.UnitPlayer\tcontrol",
+    "fe.unit.UnitPlayer\tdamage",
+    "fe.unit.Unit\tactions",
+    "fe.unit.Invent\tusePotion",
+    "fe.weapon.Weapon\tshoot",
+    "fe.weapon.Weapon\tinitReload",
+    "fe.unit.Spell\tcast",
+    "fe.weapon.WMagic\tsetPers",
+    "fe.weapon.WMagic\tshoot",
+    "fe.World\tstep",
+    "fe.inter.PipPageMed\tsetSubPages",
+    "fe.inter.PipPageMed\tstatInfo",
+    "fe.inter.PipPageMed\titemClick"
+  ]
+}

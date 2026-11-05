@@ -1,0 +1,15 @@
+{
+  "kind": "independent-preview-only",
+  "script_ast_parsed": true,
+  "integration_script_executed": false,
+  "active_tree_written": false,
+  "exact_source_files": 85,
+  "two_deltas_commute": true,
+  "expected_wall_sha256": "0b12230008c12cd792bdb98d715de6f12a0942a048d717901080787a653364e9",
+  "expected_version_source_sha256": "e7b2117c5b16c902bae80ad731febf5e6ddcc905c0a7c9e75a3781e8d63de25b",
+  "active_integration_sha256": "74d621994870c233870407f29f7311597207fa9dbb92b6786859791e293ff4a7",
+  "script_sha256": "7c0576d883744fa70e05e4747101d6c60fa80073f61ec56bfbf7931fe402124d",
+  "patch_sha256": "63b5cdd1603edfd4e5e92bb69a1cf29431362528b8334ac1d96df2104fd35144",
+  "JVM": false,
+  "AIR": false
+}

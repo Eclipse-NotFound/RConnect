@@ -1,0 +1,83 @@
+{
+  "pid": 33416,
+  "reason": null,
+  "rows": [
+    {
+      "utc_ms": 1793202889987,
+      "free_commit_bytes": 12115787776,
+      "commit_limit_bytes": 58533253120,
+      "physical_available_bytes": 9275453440
+    },
+    {
+      "utc_ms": 1793202890996,
+      "free_commit_bytes": 12024569856,
+      "commit_limit_bytes": 58533253120,
+      "physical_available_bytes": 9212596224
+    },
+    {
+      "utc_ms": 1793202891998,
+      "free_commit_bytes": 11841318912,
+      "commit_limit_bytes": 58533253120,
+      "physical_available_bytes": 8980668416
+    },
+    {
+      "utc_ms": 1793202893000,
+      "free_commit_bytes": 11725713408,
+      "commit_limit_bytes": 58533253120,
+      "physical_available_bytes": 8883363840
+    },
+    {
+      "utc_ms": 1793202894008,
+      "free_commit_bytes": 11333652480,
+      "commit_limit_bytes": 58533253120,
+      "physical_available_bytes": 8668356608
+    },
+    {
+      "utc_ms": 1793202895009,
+      "free_commit_bytes": 11359920128,
+      "commit_limit_bytes": 58533253120,
+      "physical_available_bytes": 8637886464
+    },
+    {
+      "utc_ms": 1793202896011,
+      "free_commit_bytes": 10753236992,
+      "commit_limit_bytes": 58533253120,
+      "physical_available_bytes": 8568799232
+    },
+    {
+      "utc_ms": 1793202897014,
+      "free_commit_bytes": 10612101120,
+      "commit_limit_bytes": 58533253120,
+      "physical_available_bytes": 8389283840
+    },
+    {
+      "utc_ms": 1793202898016,
+      "free_commit_bytes": 10528571392,
+      "commit_limit_bytes": 58533253120,
+      "physical_available_bytes": 8327196672
+    },
+    {
+      "utc_ms": 1793202899017,
+      "free_commit_bytes": 10551365632,
+      "commit_limit_bytes": 58533253120,
+      "physical_available_bytes": 8304488448
+    },
+    {
+      "utc_ms": 1793202900018,
+      "free_commit_bytes": 11235999744,
+      "commit_limit_bytes": 58533253120,
+      "physical_available_bytes": 8534650880
+    },
+    {
+      "utc_ms": 1793202901021,
+      "free_commit_bytes": 11189243904,
+      "commit_limit_bytes": 58533253120,
+      "physical_available_bytes": 8482099200
+    }
+  ],
+  "exit_code": 0,
+  "process_returncode": 0,
+  "sample_elapsed_ms": 19.97659995686263,
+  "interval_ms": 1000,
+  "minimum_commit_bytes": 536870912
+}

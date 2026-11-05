@@ -1,0 +1,29 @@
+{
+  "kind": "exact13-probe-fast-component-only",
+  "files": {
+    "check_sources.py": "fcea8d9e3534953811f922512de3bbc6c5230f9c9da1528e0fe720fce309a16a",
+    "components/fe/Obj.as": "e59129d5d4bae8d98e1794a05903b79c30a133764222738669b7346c583904e4",
+    "components/fe/Pt.as": "23bc4c01bcbd4031d268d40a840b989b99ec70928481085a5332e00f4891a6e0",
+    "components/fe/serv/Interact.as": "8e46102acd5ca6a4923a428964a314fd7c852d6814eed76ac80a55577e50b55a",
+    "components/fe/unit/Unit.as": "41aff06468b1ef5e46bfed7459f894a6887041bcd4152de005bb4114770b4f5a",
+    "components/fe/weapon/Bullet.as": "5a02bba4083f27b7262c79972bda01f17dba59a8e5c1640d32003e8198593bc9",
+    "components/fe/weapon/PhisBullet.as": "8aad275fd550a403cd7be2dd36a7edd4f196951861edbc8e97592266730758b1",
+    "components/fe/weapon/SmartBullet.as": "1f3058e269343016b5648447ba9aaa35f0a1eb190a4d4eae97878a92a5eba4d7",
+    "components/fe/weapon/Weapon.as": "0265bfeaca7ba283cbd00c3d5545992d34278075d5318a9fb4d356d521003ee1",
+    "components/probecheck/FieldLists.as": "088086f2e48ac491ce6ad31f136fe783953b7689422aba0a2cd4d19bc4b34c5b",
+    "components/probecheck/ProbeAfter.as": "84bc197b0c46f544d0e9829b573ea5491e570446a26aec26828bf889f589dbc9",
+    "components/probecheck/ProbeBefore.as": "ec6d5ab3c43f8a093ebddfb9ff294d444030f341cc3590f96cfa9fb06b6ae936",
+    "components/ProbeFastChecks.as": "9f4d31c973cecf1f8c893afaec900f842c2d8b9f59e82a0d06399887903b2aac",
+    "extraction.json": "07697314dad7f8435e4b52c2d58bc1907546b8f3290f030e673351642477dc48",
+    "methods-only.patch": "fd635082084fe096e6c63de95435da5fb8e36e29b10fdfe7952bdeb0193b9446",
+    "negative/IllegalBulletGetter.as": "94c1ce8290e073bb76f81cceaf27ee8adb2b3a7e8eced80a7accfd09e15f5e59",
+    "negative/IllegalWeaponGetter.as": "789a15773b6304e34f5f0872905ee860babb699c30c0df650d6ed98b6d9a8b86",
+    "negative/PositiveCompileChecks.as": "8a65a14eac27aa15306c0d851ffbef1076f68d2888234bae51c16c51e5b32f68",
+    "prepare.py": "5866b666a664238d8cd367c8e7225fad69611d0b69d7346ec193b837742fce55",
+    "README.md": "7c21679b4bbfe5db8b8cc3bb663e3d7e97528e021edd8feb0668cce168956fed",
+    "review_results.py": "85103a0138f9dc9827aeda07660ebda143464dc1e434646c0082906477b5b8b7",
+    "run_negative.py": "501bbe1c64d38ed89ca10d782bd853abb050cc298b83b8a88c623f52280e1c19",
+    "static-checks.json": "3aa3d8c9d0162efe96b05599a26cd70766561f5b70a7eee11475618db8cec4de"
+  },
+  "runtime_executed": false
+}

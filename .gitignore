@@ -1,4 +1,4 @@
-# ---- 构建产物（均可再生成：build_mod.py / make_release.py / 测试脚本）----
+﻿# ---- 鏋勫缓浜х墿锛堝潎鍙啀鐢熸垚锛歜uild_mod.py / make_release.py / 娴嬭瘯鑴氭湰锛?---
 build/
 release/*.swf
 
@@ -6,7 +6,19 @@ release/*.swf
 __pycache__/
 *.pyc
 
-# ---- 系统/编辑器 ----
+# ---- 绯荤粺/缂栬緫鍣?----
 .DS_Store
 Thumbs.db
 *.tmp
+
+# ---- B 鏈湴鏋勫缓鍙犲姞浜х墿锛圫WF/闊抽/EXE 涓?pcode 涓棿浠讹紝浣撶Н澶э紝涓嶅叆搴擄級----
+experimental/b-field-env-refresh/overlay-01/
+experimental/b-field-env-refresh/overlay-03/
+experimental/b-field-env-refresh/injury-native-sources-02/**/*.swf
+experimental/b-field-env-refresh/injury-native-sources-02/**/*.pcode
+experimental/b-field-env-refresh/injury-native-sources-02/**/*.log
+experimental/b-field-env-refresh/injury-native-sources-02/**/*.class
+
+experimental/b-field-client-integration/bench-prepared-environment-*/
+experimental/b-field-env-refresh/bridge-build-*/
+experimental/b-field-env-refresh/injury-sources-01/

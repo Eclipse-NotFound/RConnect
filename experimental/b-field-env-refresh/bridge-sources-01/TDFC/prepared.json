@@ -1,0 +1,62 @@
+{
+  "kind": "b-environment-bridge-source",
+  "mod": "TDFC",
+  "git_commit": "533a27c960f272f2d8003a725512c88cca7e469b",
+  "sources": {
+    "src/ActionExecutor.as": "64223cc2e517e3ace826c100662446a3a55aae801dbff25bc223bcd2fcc910a8",
+    "src/AimFixture.as": "986e0a3d107e31303c8ad0def080b6cb684c739031f3a2b6897e355b4a74b12b",
+    "src/AuthorityRoom.as": "8587279d851e957ae9fd223dd573001a0140c07b5427c4e100658971387c80d8",
+    "src/AuthoritySession.as": "69d48f773e73c55b0c12c0c54f7fc990af21fe6f0f652407ccf9a9745379b43a",
+    "src/BrainState.as": "171c3170182babe01427506798094677488e8eda7c1ba75e656fee80ffd8cdaa",
+    "src/Config.as": "8b37542464db346dd1c49b5811e57382fb72044d7602a129161911bfb1cc60ab",
+    "src/CoverFixture.as": "6649e2a02053e6e7327e01e0f93e37c0c6e48f4ca2474f197e11b898e44e8884",
+    "src/DebugOverlay.as": "b8555866f94cfe5e03735a9fa021037b13ef6d09942786597bb9cb391c7c61f1",
+    "src/EnemyProfile.as": "64e58135f7a5a18ae2228736ec2733ed360f5a979ed3f30611f0db1fed0a90c9",
+    "src/GameBridge.as": "acf5fac9e1a5e9cef918f33e1047f6542352189fa1a1835944eeb35618747b00",
+    "src/GrabDiagnostics.as": "0890803afe0b01b3ce0f959f7e20c0222d72c04659baaad6f0b7b76dcf2525bc",
+    "src/NoiseState.as": "4c247c99b68d08c3e1bd46a46cc96bea3261ed54078f45207b6d5a740ae7a99f",
+    "src/PerceptionModel.as": "8c5c80f55d6db2810005698715ac8ebc226f3f4145770b007f51cbdc539acf4a",
+    "src/PlayerNoise.as": "618c4acae2f17719b863d5c28e0018bca3d73da60d8a8859c7a448e56faeeddc",
+    "src/PngCapture.as": "c14bb979631542f40b6ba886f7a77f30c260a7148ae3e564878af82086a86b94",
+    "src/ScenarioRunner.as": "4b08336e762997580046745cd94fe61d0ca710d809f7f986972b2524178c9e0f",
+    "src/SquadMind.as": "c7acd8983388cc812211332fc7082203eaa8deda8c0cfffa142bf27508dcefea",
+    "src/TDFCMod.as": "c27ed3522500d208a1f40acc1e11d9b4cfa7837edd3ecaa922f049b4193e3a50",
+    "src/TacticalMind.as": "61dacda42c2f38393968c410da8c4c640bc150cf16f8dc760bbfd843260a03b9",
+    "src/TacticalStep.as": "6e8f67bb819c2e6d08bfc7859aed0f9d1cdc142ec7b412ba0cc27085064a27c5",
+    "src/TargetMemory.as": "86c7a1293d4ee098b19beb448fd65dfa45ed800c9fcb515a34da4d3a73b525b6",
+    "src/TargetSelection.as": "53a31d5049517ab4719e09bc2dde7c529041e73422399ea407c06b1af1808075",
+    "src/TdfcLog.as": "60f6838ff5fab74e600c7bfb8cc1d582e5e64be120637a3eccf08d79ef84274b",
+    "src/TdfcRuntime.as": "38ed918a14452a30725e140233e53ad85ebcc8a7eea0dff28bd474249ad7229b",
+    "src/TelekinesisFixture.as": "7be1e7208b6b58d800fd4fe28ae501bf87e15db8da8e04a993abec33ca0a9743",
+    "src/TestSave.as": "e18568338a57e5669e3385d01061148d4c8cdbc87cf43fc4f2c8c0cf5635504f",
+    "src/modlocales/tactics/TDFCLocale.as": "40d9b6aa04b2051a938be4d4d9a08e140d6784e3413195ed4e69106f6bea4176",
+    "src/modlocales/tactics/TDFCLocaleMessages.as": "d626d12cf59a6e91504b709f70bcb0a9192d07cce0ef2a1cb9f2dd9ce65d720c"
+  },
+  "commands": [
+    [
+      "C:\\Users\\hello\\Documents\\_sandevistan_dev\\jdk-11.0.32.1+1-jre\\bin\\java.exe",
+      "-Xmx512m",
+      "-Dsun.io.useCanonCaches=false",
+      "-jar",
+      "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\Sandevistan\\build\\tools\\flexsdk\\lib\\mxmlc.jar",
+      "+configname=air",
+      "+flexlib=D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\Sandevistan\\build\\tools\\flexsdk\\frameworks",
+      "-source-path=D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\b-field-env-refresh\\bridge-sources-01\\TDFC\\src",
+      "-swf-version=38",
+      "-debug=false",
+      "-optimize=true",
+      "-output=D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\b-field-env-refresh\\bridge-sources-01\\TDFC\\TDFCMod.swf",
+      "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\b-field-env-refresh\\bridge-sources-01\\TDFC\\src\\TDFCMod.as"
+    ]
+  ],
+  "compiler": {
+    "C:\\Users\\hello\\Documents\\_sandevistan_dev\\jdk-11.0.32.1+1-jre\\bin\\java.exe": "9fcc7d5d43918e389df240d44601c98a4d3aa9e7d0cbbd6d208304e0b574c7e2",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\Sandevistan\\build\\tools\\flexsdk\\lib\\mxmlc.jar": "cc07d749e376715e650271a9875289e49d94234902fff5e5fae287c478c8557b",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\Sandevistan\\build\\tools\\flexsdk\\lib\\compc.jar": "843b4f9728d168abf3342585b47959d6120fa89718368e5d9acf636b2e7c6946",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\Sandevistan\\build\\tools\\flexsdk\\frameworks\\libs\\air\\airglobal.swc": "e0f81fdb2029d2bb16e6987c8d85d4eba5eedfa3a23ed6e7f780bf6eb67b0546"
+  },
+  "compiled": false,
+  "runtime_qualified": false,
+  "installed": false,
+  "qualification": "After compilation inspect external class isolation and attach/detach; test both roles, room travel, current mod features."
+}

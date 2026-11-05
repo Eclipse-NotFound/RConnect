@@ -1,0 +1,60 @@
+{
+  "kind": "b-environment-bridge-source",
+  "mod": "Sandevistan",
+  "git_commit": "3f4a59b75da912cd32d193d448ff8cec608f97ae",
+  "sources": {
+    "build/stubs-high-fps/fe/serv/Gov60.as": "48c00840661fde98d97a6f3a5c889e96b5d5bd7843b735ba1beaba05dee43d24",
+    "src/SandevistanMod.as": "c7cefc187e08a1c53256cf347722b63241d807c38bc137563c5d22185b4d2f81",
+    "src/SandyAuthority.as": "777796ddc457be342012d991d663d2aff589233caebcb87948d3c138ff49962f",
+    "src/SandyBlitReplay.as": "17dd8224893a7eecb18cb12f80f1f5bcdda5507f6ad32b3b4f65ec18fb8d7a53",
+    "src/SandyDamagePredictor.as": "7da2427cb6fe5d402157e2a7462528ed7d7f9bc4223bfbaf1c9b7eacecbbefad",
+    "src/SandyHighFpsView.as": "b6e4930fa6256e7988018f27386e2ad6ef5a62c20b2476d5ad4ed6cb1e0ce2db",
+    "src/SandyKeybinds.as": "dacc438d1f2f03395ae8090413b74b16008983a421d16f1d137138d2a92a88ac",
+    "src/fe/serv/SandyHighFpsClock.as": "136209c11eb9fee685f73c6e1963aa7fcde95e986021e41a32a601550a42d32f",
+    "src/modlocales/sandy/SandyLocale.as": "bdd4dc4730121b83cba0b2fa87094078e7b0a7b4ea8cbf95d0d923d390f0baa1",
+    "src/modlocales/sandy/SandyLocaleMessages.as": "056a5b3e45bc91f70b9274e296ee0d0966733b97077f827ab6e501f56ebb1029",
+    "src/patch/MainFE.original.as": "e51db20bf411cf91cb82aba0644010aa64699a4772fb6ee73d3248ab8d6c17ac",
+    "src/patch/scripts/MainFE.as": "349b092c40ea0a23f9b085e821d79da36e74006050b0d9868772cb57c8c49406"
+  },
+  "commands": [
+    [
+      "C:\\Users\\hello\\Documents\\_sandevistan_dev\\jdk-11.0.32.1+1-jre\\bin\\java.exe",
+      "-Xmx512m",
+      "-Dsun.io.useCanonCaches=false",
+      "-jar",
+      "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\Sandevistan\\build\\tools\\flexsdk\\lib\\compc.jar",
+      "+configname=air",
+      "+flexlib=D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\Sandevistan\\build\\tools\\flexsdk\\frameworks",
+      "-source-path=D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\b-field-env-refresh\\bridge-sources-02\\Sandevistan\\build\\stubs-high-fps",
+      "-include-classes=fe.serv.Gov60",
+      "-output=D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\b-field-env-refresh\\bridge-sources-02\\Sandevistan\\Gov60Stubs.swc",
+      "-swf-version=38"
+    ],
+    [
+      "C:\\Users\\hello\\Documents\\_sandevistan_dev\\jdk-11.0.32.1+1-jre\\bin\\java.exe",
+      "-Xmx512m",
+      "-Dsun.io.useCanonCaches=false",
+      "-jar",
+      "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\Sandevistan\\build\\tools\\flexsdk\\lib\\mxmlc.jar",
+      "+configname=air",
+      "+flexlib=D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\Sandevistan\\build\\tools\\flexsdk\\frameworks",
+      "-source-path=D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\b-field-env-refresh\\bridge-sources-02\\Sandevistan\\src",
+      "-external-library-path+=D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\b-field-env-refresh\\bridge-sources-02\\Sandevistan\\Gov60Stubs.swc",
+      "-swf-version=38",
+      "-debug=false",
+      "-optimize=true",
+      "-output=D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\b-field-env-refresh\\bridge-sources-02\\Sandevistan\\SandevistanMod.swf",
+      "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\b-field-env-refresh\\bridge-sources-02\\Sandevistan\\src\\SandevistanMod.as"
+    ]
+  ],
+  "compiler": {
+    "C:\\Users\\hello\\Documents\\_sandevistan_dev\\jdk-11.0.32.1+1-jre\\bin\\java.exe": "9fcc7d5d43918e389df240d44601c98a4d3aa9e7d0cbbd6d208304e0b574c7e2",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\Sandevistan\\build\\tools\\flexsdk\\lib\\mxmlc.jar": "cc07d749e376715e650271a9875289e49d94234902fff5e5fae287c478c8557b",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\Sandevistan\\build\\tools\\flexsdk\\lib\\compc.jar": "843b4f9728d168abf3342585b47959d6120fa89718368e5d9acf636b2e7c6946",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\Sandevistan\\build\\tools\\flexsdk\\frameworks\\libs\\air\\airglobal.swc": "e0f81fdb2029d2bb16e6987c8d85d4eba5eedfa3a23ed6e7f780bf6eb67b0546"
+  },
+  "compiled": false,
+  "runtime_qualified": false,
+  "installed": false,
+  "qualification": "After compilation inspect external class isolation and attach/detach; test both roles, room travel, current mod features."
+}

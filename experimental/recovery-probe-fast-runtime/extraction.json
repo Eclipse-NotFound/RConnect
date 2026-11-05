@@ -1,0 +1,338 @@
+{
+  "baseline": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-13",
+  "baseline_rc_sha256": "1177eb1ae9b227bcf3c0eb39dedad92b63ac16dcb7ffb0b421ea0a2024bfddb1",
+  "bridge_sha256": "26bb0f7cd4da7c74c83bd2657575823247196c41a861babf23bb40c17fc3cbf7",
+  "host_sha256": "fd92fbd5ae92b5c8d4cbf8151d11796a140810f34988b7031e258c747d86734e",
+  "methods": {
+    "probe": {
+      "sha256": "7b62fd471a881ba41b0b95cc55f11a2331fccb3ef57e0588f3a1d37f4223c538",
+      "unchanged_from_recovery01": true
+    },
+    "probeOptional": {
+      "sha256": "269f06aa4251b5219081228b97205713087f2f4134ce09707ef9f06ab270956c",
+      "unchanged_from_recovery01": true
+    },
+    "probeNum": {
+      "sha256": "5a87e1136b54bd060791a4ac5a1fe27074e39025b3644dd8e555a87a822a07ed",
+      "unchanged_from_recovery01": true
+    }
+  },
+  "original_tables": {
+    "NATIVE_UNIT_FIELDS": "563dfda000bc88e4de716433cd9c25310cfe378c2b350bac0d086188313aaee8",
+    "NATIVE_POINT_FIELDS": "3a48f49f411d18e0573bb5d16a6271ab8734caddee8e087e9c44a9ab98c082f3",
+    "NATIVE_INTERACT_FIELDS": "fae179a097a7e95b129a6f1218b13568e1cdf5145bd2227363565ac608d61aca"
+  },
+  "added_fields": {
+    "Weapon": [
+      "owner",
+      "b",
+      "kol_shoot",
+      "hold",
+      "rashod",
+      "id",
+      "variant",
+      "rot",
+      "t_prep",
+      "t_reload",
+      "rapid",
+      "flare",
+      "visexpl"
+    ],
+    "Bullet": [
+      "owner",
+      "weap",
+      "babah",
+      "isExpl",
+      "vel",
+      "explRadius",
+      "spring",
+      "flame",
+      "parr",
+      "tilehit",
+      "tipDecal",
+      "inWater",
+      "tipDamage",
+      "flare"
+    ]
+  },
+  "exact_host_traits": {
+    "fe.weapon::Weapon": {
+      "parent": "fe::Obj",
+      "flags": 9,
+      "slots": {
+        "owner": {
+          "name": "owner",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "fe.unit::Unit"
+        },
+        "b": {
+          "name": "b",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "fe.weapon::Bullet"
+        },
+        "kol_shoot": {
+          "name": "kol_shoot",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "int"
+        },
+        "hold": {
+          "name": "hold",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "int"
+        },
+        "rashod": {
+          "name": "rashod",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "Number"
+        },
+        "id": {
+          "name": "id",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "String"
+        },
+        "variant": {
+          "name": "variant",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "int"
+        },
+        "rot": {
+          "name": "rot",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "Number"
+        },
+        "t_prep": {
+          "name": "t_prep",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "int"
+        },
+        "t_reload": {
+          "name": "t_reload",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "int"
+        },
+        "rapid": {
+          "name": "rapid",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "int"
+        },
+        "flare": {
+          "name": "flare",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "String"
+        },
+        "visexpl": {
+          "name": "visexpl",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "String"
+        }
+      }
+    },
+    "fe.weapon::Bullet": {
+      "parent": "fe::Obj",
+      "flags": 9,
+      "slots": {
+        "owner": {
+          "name": "owner",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "fe.unit::Unit"
+        },
+        "weap": {
+          "name": "weap",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "fe.weapon::Weapon"
+        },
+        "babah": {
+          "name": "babah",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "Boolean"
+        },
+        "isExpl": {
+          "name": "isExpl",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "Boolean"
+        },
+        "vel": {
+          "name": "vel",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "Number"
+        },
+        "explRadius": {
+          "name": "explRadius",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "Number"
+        },
+        "spring": {
+          "name": "spring",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "int"
+        },
+        "flame": {
+          "name": "flame",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "int"
+        },
+        "parr": {
+          "name": "parr",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "Array"
+        },
+        "tilehit": {
+          "name": "tilehit",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "Boolean"
+        },
+        "tipDecal": {
+          "name": "tipDecal",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "int"
+        },
+        "inWater": {
+          "name": "inWater",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "int"
+        },
+        "tipDamage": {
+          "name": "tipDamage",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "int"
+        },
+        "flare": {
+          "name": "flare",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "String"
+        }
+      }
+    },
+    "fe::Obj": {
+      "parent": "fe::Pt",
+      "flags": 9,
+      "slots": {}
+    },
+    "fe::Pt": {
+      "parent": "Object",
+      "flags": 9,
+      "slots": {}
+    },
+    "fe.weapon::PhisBullet": {
+      "parent": "fe.weapon::Bullet",
+      "flags": 9,
+      "slots": {}
+    },
+    "fe.weapon::SmartBullet": {
+      "parent": "fe.weapon::Bullet",
+      "flags": 9,
+      "slots": {}
+    }
+  },
+  "inputs": {
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-13\\src\\rconnect\\game\\GameBridge.as": "26bb0f7cd4da7c74c83bd2657575823247196c41a861babf23bb40c17fc3cbf7",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-13\\RConnectMod.swf": "1177eb1ae9b227bcf3c0eb39dedad92b63ac16dcb7ffb0b421ea0a2024bfddb1",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-first-raster-host-03\\pfe.swf": "fd92fbd5ae92b5c8d4cbf8151d11796a140810f34988b7031e258c747d86734e",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-01\\src\\rconnect\\game\\GameBridge.as": "16330c074a9b2eeb13a5681408b747a5c585f164f7d489b696f4c413803fb2d2",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-probe-fast\\prepare.py": "b5782d876b62cc063c61b732998ff4874027dc1300d67dc878f6ba488af1d2f3",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-probe-fast\\audit_native_slots.py": "e5ea01e889bb7eba4dfedbbe2c337995059f5673ca69a17f5299b6649df8a2c9",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-probe-fast\\audit.json": "cd82bd2953cc4280c274644e21d46ffe148aa5617cfcc64c28a488fef328e1f8",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\tools\\validation\\run_recovery_component.py": "9952aeeaa37f6eead636cceff9f25fabff3045671d3c4cbb60c326909d1e572d",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-probe-fast\\components\\fe\\Obj.as": "e59129d5d4bae8d98e1794a05903b79c30a133764222738669b7346c583904e4",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-probe-fast\\components\\fe\\Pt.as": "23bc4c01bcbd4031d268d40a840b989b99ec70928481085a5332e00f4891a6e0",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-probe-fast\\components\\fe\\serv\\Interact.as": "8e46102acd5ca6a4923a428964a314fd7c852d6814eed76ac80a55577e50b55a",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-probe-fast\\components\\fe\\unit\\Unit.as": "41aff06468b1ef5e46bfed7459f894a6887041bcd4152de005bb4114770b4f5a",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-probe-fast\\components\\fe\\weapon\\Bullet.as": "5a02bba4083f27b7262c79972bda01f17dba59a8e5c1640d32003e8198593bc9",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-probe-fast\\components\\fe\\weapon\\PhisBullet.as": "8aad275fd550a403cd7be2dd36a7edd4f196951861edbc8e97592266730758b1",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-probe-fast\\components\\fe\\weapon\\SmartBullet.as": "1f3058e269343016b5648447ba9aaa35f0a1eb190a4d4eae97878a92a5eba4d7",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-probe-fast\\components\\fe\\weapon\\Weapon.as": "0265bfeaca7ba283cbd00c3d5545992d34278075d5318a9fb4d356d521003ee1",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-probe-fast\\components\\probecheck\\FieldLists.as": "088086f2e48ac491ce6ad31f136fe783953b7689422aba0a2cd4d19bc4b34c5b",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-probe-fast\\components\\probecheck\\ProbeAfter.as": "85f86bde0fd8f5ed313b4058e587a5e367322cb3f90fbcc719ec34ca64642083",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-probe-fast\\components\\probecheck\\ProbeBefore.as": "ec6d5ab3c43f8a093ebddfb9ff294d444030f341cc3590f96cfa9fb06b6ae936",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-probe-fast\\components\\ProbeFastChecks.as": "17c71905b90f25f82f796b3744f75ee82e8598483dc965e3f497d1d10a8ec255",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-probe-fast\\negative\\IllegalBulletGetter.as": "48e67e86609ba7196082603db4a2b26e907fd7ad5fe46af314db92bea642716b",
+    "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\recovery-probe-fast\\negative\\IllegalWeaponGetter.as": "4271aad6498824d6dd89684eb0b78cd2d9b4dcffc753d10402aa02275028ecf3"
+  },
+  "production_overlay_written": false,
+  "JVM_started": false,
+  "AIR_started": false,
+  "component_compiled": false,
+  "benchmark_run": false,
+  "boundary": "Real extracted algorithms; sealed slot/hierarchy fixtures, no native constructors or game weighting."
+}

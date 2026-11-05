@@ -1,0 +1,170 @@
+{
+  "base": {
+    "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\m52\\recovery-01\\src\\rconnect\\game\\GameBridge.as",
+    "sha256": "16330c074a9b2eeb13a5681408b747a5c585f164f7d489b696f4c413803fb2d2"
+  },
+  "overlay_sha256": "730df2ea72a46a31f5f4f54d4c41869e81cc2e15f5f2835bc2c07d7a12d620cd",
+  "added_fields": {
+    "Weapon": {
+      "owner": {
+        "type": "Unit",
+        "line": 24
+      },
+      "b": {
+        "type": "Bullet",
+        "line": 20
+      },
+      "kol_shoot": {
+        "type": "int",
+        "line": 78
+      },
+      "hold": {
+        "type": "int",
+        "line": 88
+      },
+      "rashod": {
+        "type": "Number",
+        "line": 182
+      },
+      "id": {
+        "type": "String",
+        "line": 98
+      },
+      "variant": {
+        "type": "int",
+        "line": 102
+      },
+      "rot": {
+        "type": "Number",
+        "line": 26
+      },
+      "t_prep": {
+        "type": "int",
+        "line": 52
+      },
+      "t_reload": {
+        "type": "int",
+        "line": 54
+      },
+      "rapid": {
+        "type": "int",
+        "line": 126
+      },
+      "flare": {
+        "type": "String",
+        "line": 42
+      },
+      "visexpl": {
+        "type": "String",
+        "line": 44
+      }
+    },
+    "Bullet": {
+      "owner": {
+        "type": "Unit",
+        "line": 15
+      },
+      "weap": {
+        "type": "Weapon",
+        "line": 17
+      },
+      "babah": {
+        "type": "Boolean",
+        "line": 71
+      },
+      "isExpl": {
+        "type": "Boolean",
+        "line": 53
+      },
+      "vel": {
+        "type": "Number",
+        "line": 25
+      },
+      "explRadius": {
+        "type": "Number",
+        "line": 125
+      },
+      "spring": {
+        "type": "int",
+        "line": 57
+      },
+      "flame": {
+        "type": "int",
+        "line": 59
+      },
+      "parr": {
+        "type": "Array",
+        "line": 69
+      },
+      "tilehit": {
+        "type": "Boolean",
+        "line": 73
+      },
+      "tipDecal": {
+        "type": "int",
+        "line": 99
+      },
+      "inWater": {
+        "type": "int",
+        "line": 51
+      },
+      "tipDamage": {
+        "type": "int",
+        "line": 97
+      },
+      "flare": {
+        "type": "String",
+        "line": 61
+      }
+    }
+  },
+  "references": {
+    "fe/Pt.as": {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\game-reference\\decompiled\\1.02\\src102\\scripts\\fe\\Pt.as",
+      "sha256": "98f5fcf9a42a84e8d1374f73dfaed830c39a53d0b70ad5cba26e438922a799c2"
+    },
+    "fe/Obj.as": {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\game-reference\\decompiled\\1.02\\src102\\scripts\\fe\\Obj.as",
+      "sha256": "e835c6b3a2dce6568f24e4c365c36dbee9cda808131a0761bf6542a06edb9bb3"
+    },
+    "fe/unit/Unit.as": {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\game-reference\\decompiled\\1.02\\src102\\scripts\\fe\\unit\\Unit.as",
+      "sha256": "3a6c2db7cca18045c6c6d753f15e2ae96fea6da1c97223ecd8f7f35b9756d66c"
+    },
+    "fe/serv/Interact.as": {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\game-reference\\decompiled\\1.02\\src102\\scripts\\fe\\serv\\Interact.as",
+      "sha256": "379b1fe8ca8bb2954ec1fe0994766b56e7319140be48a06540995f42f1131be9"
+    },
+    "fe/weapon/Weapon.as": {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\game-reference\\decompiled\\1.02\\src102\\scripts\\fe\\weapon\\Weapon.as",
+      "sha256": "3e5cf1dc01d7304d5824c7dfd08f0f4de73d2d107ff2b30d2abfb3d6f770b4e4"
+    },
+    "fe/weapon/Bullet.as": {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\game-reference\\decompiled\\1.02\\src102\\scripts\\fe\\weapon\\Bullet.as",
+      "sha256": "c5d89dae281dd23cfb9a1b99c1b47b28b0e33c9923a5eac708295f2e5a697586"
+    },
+    "fe/weapon/PhisBullet.as": {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\game-reference\\decompiled\\1.02\\src102\\scripts\\fe\\weapon\\PhisBullet.as",
+      "sha256": "3ff72dc4441a3ce51c15a52ef0fb57110ab55efecd6fab0bd7045b7332d7b36f"
+    },
+    "fe/weapon/SmartBullet.as": {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\game-reference\\decompiled\\1.02\\src102\\scripts\\fe\\weapon\\SmartBullet.as",
+      "sha256": "0dd66938099e09f2f9feeb26bf899652b2f64d3680c2967b9b5333feac69eba3"
+    }
+  },
+  "compile_stubs": {
+    "Weapon": {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\tools\\stubs\\fe\\weapon\\Weapon.as",
+      "sha256": "d72edfc920219cd954a1c2dfbe1438b6ac6a89364fbb9cf661e1e3faa6b2d280",
+      "limitation": "type identity only; incomplete inheritance and fields"
+    },
+    "Bullet": {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\tools\\stubs\\fe\\weapon\\Bullet.as",
+      "sha256": "3b1a7ead10f9d187219c064413e9d4ab9c4ac575a66a71e3178eb7093d343905",
+      "limitation": "type identity only; incomplete inheritance and fields"
+    }
+  },
+  "probe_optional_source_equal": true,
+  "java_started": false,
+  "air_started": false
+}

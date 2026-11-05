@@ -1,0 +1,257 @@
+{
+  "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\pfe.swf",
+  "sha256": "befcf0509e11fac9fef7afb834708b8b93752a14ae3d5cd72b42aa6d42f9b82a",
+  "classes": {
+    "fe.weapon::Weapon": {
+      "parent": "fe::Obj",
+      "flags": 9,
+      "slots": {
+        "owner": {
+          "name": "owner",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "fe.unit::Unit"
+        },
+        "b": {
+          "name": "b",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "fe.weapon::Bullet"
+        },
+        "kol_shoot": {
+          "name": "kol_shoot",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "int"
+        },
+        "hold": {
+          "name": "hold",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "int"
+        },
+        "rashod": {
+          "name": "rashod",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "Number"
+        },
+        "id": {
+          "name": "id",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "String"
+        },
+        "variant": {
+          "name": "variant",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "int"
+        },
+        "rot": {
+          "name": "rot",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "Number"
+        },
+        "t_prep": {
+          "name": "t_prep",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "int"
+        },
+        "t_reload": {
+          "name": "t_reload",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "int"
+        },
+        "rapid": {
+          "name": "rapid",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "int"
+        },
+        "flare": {
+          "name": "flare",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "String"
+        },
+        "visexpl": {
+          "name": "visexpl",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "String"
+        }
+      }
+    },
+    "fe.weapon::Bullet": {
+      "parent": "fe::Obj",
+      "flags": 9,
+      "slots": {
+        "owner": {
+          "name": "owner",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "fe.unit::Unit"
+        },
+        "weap": {
+          "name": "weap",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "fe.weapon::Weapon"
+        },
+        "babah": {
+          "name": "babah",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "Boolean"
+        },
+        "isExpl": {
+          "name": "isExpl",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "Boolean"
+        },
+        "vel": {
+          "name": "vel",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "Number"
+        },
+        "explRadius": {
+          "name": "explRadius",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "Number"
+        },
+        "spring": {
+          "name": "spring",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "int"
+        },
+        "flame": {
+          "name": "flame",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "int"
+        },
+        "parr": {
+          "name": "parr",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "Array"
+        },
+        "tilehit": {
+          "name": "tilehit",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "Boolean"
+        },
+        "tipDecal": {
+          "name": "tipDecal",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "int"
+        },
+        "inWater": {
+          "name": "inWater",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "int"
+        },
+        "tipDamage": {
+          "name": "tipDamage",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "int"
+        },
+        "flare": {
+          "name": "flare",
+          "namespace": "",
+          "namespace_kind": 22,
+          "kind": 0,
+          "slot": 0,
+          "type": "String"
+        }
+      }
+    },
+    "fe::Obj": {
+      "parent": "fe::Pt",
+      "flags": 9,
+      "slots": {}
+    },
+    "fe::Pt": {
+      "parent": "Object",
+      "flags": 9,
+      "slots": {}
+    },
+    "fe.weapon::PhisBullet": {
+      "parent": "fe.weapon::Bullet",
+      "flags": 9,
+      "slots": {}
+    },
+    "fe.weapon::SmartBullet": {
+      "parent": "fe.weapon::Bullet",
+      "flags": 9,
+      "slots": {}
+    }
+  },
+  "public_slots_verified": true,
+  "JVM_started": false,
+  "AIR_started": false
+}

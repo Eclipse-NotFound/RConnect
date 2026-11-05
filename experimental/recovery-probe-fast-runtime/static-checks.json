@@ -1,0 +1,182 @@
+{
+  "passed": true,
+  "assertions": [
+    {
+      "passed": true,
+      "label": "exact extraction inputs unchanged"
+    },
+    {
+      "passed": true,
+      "label": "before class is exact recovery13 extracted members"
+    },
+    {
+      "passed": true,
+      "label": "before real probe is verbatim"
+    },
+    {
+      "passed": true,
+      "label": "before real probeOptional is verbatim"
+    },
+    {
+      "passed": true,
+      "label": "protected optional path unchanged"
+    },
+    {
+      "passed": true,
+      "label": "all three original whitelists unchanged"
+    },
+    {
+      "passed": true,
+      "label": "only two new native slot tables"
+    },
+    {
+      "passed": true,
+      "label": "all original semantic cases unchanged before benchmark enable"
+    },
+    {
+      "passed": true,
+      "label": "getter/Proxy and subclass counterexamples unchanged"
+    },
+    {
+      "passed": true,
+      "label": "benchmark explicitly enabled without marker"
+    },
+    {
+      "passed": true,
+      "label": "generic runner assertions schema"
+    },
+    {
+      "passed": true,
+      "label": "native component lifecycle and result outlet"
+    },
+    {
+      "passed": true,
+      "label": "runtime asserts all six groups and six pairs executed"
+    },
+    {
+      "passed": true,
+      "label": "original six AB/BA pairs of 60000 reads preserved"
+    },
+    {
+      "passed": true,
+      "label": "original warmup and allocation sample sizes preserved"
+    },
+    {
+      "passed": true,
+      "label": "unfavorable fallback and non-Pt groups retained"
+    },
+    {
+      "passed": true,
+      "label": "no native workload or whole-frame performance claim"
+    },
+    {
+      "passed": true,
+      "label": "Weapon all added slots verified in exact FD92 host"
+    },
+    {
+      "passed": true,
+      "label": "Weapon fixture slot names/types exactly mirror allowed primitive/reference boundary"
+    },
+    {
+      "passed": true,
+      "label": "Weapon true inheritance shape retained"
+    },
+    {
+      "passed": true,
+      "label": "Bullet all added slots verified in exact FD92 host"
+    },
+    {
+      "passed": true,
+      "label": "Bullet fixture slot names/types exactly mirror allowed primitive/reference boundary"
+    },
+    {
+      "passed": true,
+      "label": "Bullet true inheritance shape retained"
+    },
+    {
+      "passed": true,
+      "label": "old fixture unchanged: fe/Pt.as"
+    },
+    {
+      "passed": true,
+      "label": "old fixture unchanged: fe/Obj.as"
+    },
+    {
+      "passed": true,
+      "label": "old fixture unchanged: fe/unit/Unit.as"
+    },
+    {
+      "passed": true,
+      "label": "old fixture unchanged: fe/serv/Interact.as"
+    },
+    {
+      "passed": true,
+      "label": "old fixture unchanged: fe/weapon/PhisBullet.as"
+    },
+    {
+      "passed": true,
+      "label": "old fixture unchanged: fe/weapon/SmartBullet.as"
+    },
+    {
+      "passed": true,
+      "label": "old fixture unchanged: probecheck/FieldLists.as"
+    },
+    {
+      "passed": true,
+      "label": "negative parser accepts specific hold override diagnosis"
+    },
+    {
+      "passed": true,
+      "label": "negative parser rejects missing-type error for hold"
+    },
+    {
+      "passed": true,
+      "label": "negative parser rejects unrelated-file failure for hold"
+    },
+    {
+      "passed": true,
+      "label": "negative parser rejects mixed syntax failure for hold"
+    },
+    {
+      "passed": true,
+      "label": "negative parser accepts specific babah override diagnosis"
+    },
+    {
+      "passed": true,
+      "label": "negative parser rejects missing-type error for babah"
+    },
+    {
+      "passed": true,
+      "label": "negative parser rejects unrelated-file failure for babah"
+    },
+    {
+      "passed": true,
+      "label": "negative parser rejects mixed syntax failure for babah"
+    },
+    {
+      "passed": true,
+      "label": "no whole GameBridge or production overlay produced"
+    },
+    {
+      "passed": true,
+      "label": "Python syntax: check_sources.py"
+    },
+    {
+      "passed": true,
+      "label": "Python syntax: prepare.py"
+    },
+    {
+      "passed": true,
+      "label": "Python syntax: review_results.py"
+    },
+    {
+      "passed": true,
+      "label": "Python syntax: run_negative.py"
+    }
+  ],
+  "checks": 43,
+  "JVM_started": false,
+  "AIR_started": false,
+  "component_compiled": false,
+  "benchmark_run": false
+}

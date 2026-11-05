@@ -1,0 +1,50 @@
+{
+  "kind": "b-environment-candidate-inputs",
+  "base_native_sha256": "eced04ad8dae6b74444ee6e5f5ec5ddf2e83528a9eecfef66f58985cb0c83063",
+  "modules": {
+    "TDFCMod": {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\b-field-env-refresh\\bridge-sources-02\\TDFC\\TDFCMod.swf",
+      "sha256": "9ed11bcce00b4a8dd219cf7f5279b7eea76138bd0db44c8e39477aa94a699c85",
+      "authority_api": 1,
+      "source_sha256": "cf6d1507d32157e724c946e08c9547763396b07de02efa60a079170e77f86d9e",
+      "class_list_sha256": "c512d4a2f36d996c2ea7968fc0b9090f33532595dd1f499b9459c4e3175b1199"
+    },
+    "SandevistanMod": {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\b-field-env-refresh\\bridge-sources-02\\Sandevistan\\SandevistanMod.swf",
+      "sha256": "87b8cbcc29965056ff20e973d31085f8f0a0002678892b47efccfcc867328466",
+      "authority_api": 1,
+      "source_sha256": "cc4df9840f88709420e906b720278082bbcc12f29be8dfeeaea5fb835fdf018c",
+      "class_list_sha256": "7eb1f7a1c64ff8478f192d08344c754dff060abae8e26e9e4ac346c655b87396"
+    },
+    "PermanentInjuryMod": {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\b-field-env-refresh\\injury-sources-01\\PermanentInjuryMod.swf",
+      "sha256": "ff7a90d95f1cdb0c919f882a9ad00192077888c022f7e376a18479ceb1e766ac",
+      "authority_api": 1,
+      "source_sha256": "d01ffc1accd2fd09026dc12b7935aeebfbf175fe184e9d02cae600528d8baf8e",
+      "class_list_sha256": "91b9fc3602df8c532a86db8ef11025381fdd373c592b66312d1b6b8f7d1b47b6"
+    },
+    "RConnectMod": {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\ab\\b-clientenv-bridge-04-build\\RConnectMod.swf",
+      "sha256": "f2e1c53785b86ed039d5fb9508ebe63bedb1b130e53f10e72916ee165546fe0c",
+      "authority_api": null
+    },
+    "FirearmAttachmentsMod": {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\ab\\fa-b-bridge-04\\FirearmAttachmentsMod.swf",
+      "sha256": "75b8f76067bfe17fc2324469f067923332af1a50fac7447a7d09dcf5b247226c",
+      "authority_api": 1
+    },
+    "AddictionSystemMod": {
+      "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\b-field-addiction-bridge\\build\\AddictionSystemMod.swf",
+      "sha256": "b013282be0b61bd4995430297823e0426dd10034c5a3451f00c070f8461fa111",
+      "authority_api": 1
+    }
+  },
+  "native": {
+    "path": "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\b-field-env-refresh\\injury-native-sources-02\\native-01\\candidate\\pfe.swf",
+    "sha256": "3b1b77d3f6de08e5b31bb03883da6900b3656e497a4749305133019d0377ed83",
+    "capabilities": [
+      "b3-v12",
+      "permanent-injury-v1"
+    ]
+  }
+}

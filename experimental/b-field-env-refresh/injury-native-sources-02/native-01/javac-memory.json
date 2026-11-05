@@ -1,0 +1,23 @@
+{
+  "pid": 33616,
+  "reason": null,
+  "rows": [
+    {
+      "utc_ms": 1793202920791,
+      "free_commit_bytes": 12256698368,
+      "commit_limit_bytes": 58533253120,
+      "physical_available_bytes": 9386622976
+    },
+    {
+      "utc_ms": 1793202921793,
+      "free_commit_bytes": 11993759744,
+      "commit_limit_bytes": 58533253120,
+      "physical_available_bytes": 9221423104
+    }
+  ],
+  "exit_code": 0,
+  "process_returncode": 0,
+  "sample_elapsed_ms": 2.4276000331155956,
+  "interval_ms": 1000,
+  "minimum_commit_bytes": 536870912
+}

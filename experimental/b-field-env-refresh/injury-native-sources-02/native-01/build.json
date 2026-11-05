@@ -1,0 +1,124 @@
+{
+  "compiled": true,
+  "installed": false,
+  "runtime_qualified": false,
+  "commands": [
+    {
+      "name": "export",
+      "argv": [
+        "D:\\Program Files\\Adobe Animate 2024\\jre\\bin\\java.exe",
+        "-Xms32m",
+        "-Xmx768m",
+        "-XX:+UseSerialGC",
+        "-Dfile.encoding=UTF-8",
+        "-Duser.language=en",
+        "-Duser.country=US",
+        "-jar",
+        "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\Sandevistan\\build\\tools\\ffdec\\ffdec-cli.jar",
+        "-selectclass",
+        "fe.World,fe.unit.Pers,fe.unit.UnitPlayer,fe.unit.Unit,fe.unit.Invent,fe.weapon.Weapon,fe.weapon.Bullet,fe.unit.Spell,fe.weapon.WMagic,fe.inter.PipPageMed",
+        "-export",
+        "script",
+        "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\b-field-env-refresh\\injury-native-sources-02\\native-01\\host",
+        "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\ab\\native-hooks-021\\pfe.swf"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "prepare-source",
+      "argv": [
+        "C:\\Users\\hello\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+        "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\b-field-env-refresh\\injury-native-sources-02\\patch-native.cjs",
+        "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\b-field-env-refresh\\injury-native-sources-02\\native-01"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "donor",
+      "argv": [
+        "D:\\Program Files\\Adobe Animate 2024\\jre\\bin\\java.exe",
+        "-Xms32m",
+        "-Xmx768m",
+        "-XX:+UseSerialGC",
+        "-Dfile.encoding=UTF-8",
+        "-Duser.language=en",
+        "-Duser.country=US",
+        "-jar",
+        "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\Sandevistan\\build\\tools\\ffdec\\ffdec-cli.jar",
+        "-importScript",
+        "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\ab\\native-hooks-021\\pfe.swf",
+        "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\b-field-env-refresh\\injury-native-sources-02\\native-01\\candidate\\donor.swf",
+        "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\b-field-env-refresh\\injury-native-sources-02\\native-01\\candidate\\scripts"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "javac",
+      "argv": [
+        "D:\\Program Files\\Adobe Animate 2024\\jre\\bin\\javac.exe",
+        "-classpath",
+        "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\Sandevistan\\build\\tools\\ffdec\\lib\\*",
+        "-d",
+        "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\b-field-env-refresh\\injury-native-sources-02\\native-01\\classes",
+        "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\b-field-env-refresh\\injury-native-sources-02\\MethodPatch.java"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "transplant",
+      "argv": [
+        "D:\\Program Files\\Adobe Animate 2024\\jre\\bin\\java.exe",
+        "-Xms32m",
+        "-Xmx768m",
+        "-XX:+UseSerialGC",
+        "-Drconnect.pi.outputRoot=D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\b-field-env-refresh\\injury-native-sources-02\\native-01",
+        "-classpath",
+        "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\b-field-env-refresh\\injury-native-sources-02\\native-01\\classes;D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\Sandevistan\\build\\tools\\ffdec\\lib\\*",
+        "MethodPatch",
+        "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\build\\ab\\native-hooks-021\\pfe.swf",
+        "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\b-field-env-refresh\\injury-native-sources-02\\native-01\\candidate\\donor.swf",
+        "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\b-field-env-refresh\\injury-native-sources-02\\native-01\\candidate\\pfe.swf",
+        "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\b-field-env-refresh\\injury-native-sources-02\\native-01\\methods.tsv"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "readback",
+      "argv": [
+        "D:\\Program Files\\Adobe Animate 2024\\jre\\bin\\java.exe",
+        "-Xms32m",
+        "-Xmx768m",
+        "-XX:+UseSerialGC",
+        "-Dfile.encoding=UTF-8",
+        "-Duser.language=en",
+        "-Duser.country=US",
+        "-jar",
+        "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\Sandevistan\\build\\tools\\ffdec\\ffdec-cli.jar",
+        "-selectclass",
+        "fe.World,fe.unit.Pers,fe.unit.UnitPlayer,fe.unit.Unit,fe.unit.Invent,fe.weapon.Weapon,fe.weapon.Bullet,fe.unit.Spell,fe.weapon.WMagic,fe.inter.PipPageMed",
+        "-export",
+        "script",
+        "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\b-field-env-refresh\\injury-native-sources-02\\native-01\\verified",
+        "D:\\Program Files\\Steam\\steamapps\\common\\Remains\\mods\\RConnect\\experimental\\b-field-env-refresh\\injury-native-sources-02\\native-01\\candidate\\pfe.swf"
+      ],
+      "exit_code": 0
+    }
+  ],
+  "candidate_sha256": "3b1b77d3f6de08e5b31bb03883da6900b3656e497a4749305133019d0377ed83",
+  "method_proof": {
+    "baseline": "eced04ad8dae6b74444ee6e5f5ec5ddf2e83528a9eecfef66f58985cb0c83063",
+    "candidate": "3b1b77d3f6de08e5b31bb03883da6900b3656e497a4749305133019d0377ed83",
+    "untouchedBodies": 5686,
+    "transplantedMethods": 26,
+    "readback": true
+  },
+  "resource_proof": {
+    "raw_resources_preserved": true,
+    "tag_count": 5039,
+    "changed_abc_tags": [
+      332
+    ]
+  },
+  "installation_unchanged": true,
+  "inputs_unchanged": true
+}
