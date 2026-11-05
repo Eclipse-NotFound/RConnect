@@ -1,5 +1,7 @@
 # RConnect A — 本标签版本
 
+> **2026-11-05 GitHub 公开**：本仓库已开源到 https://github.com/Eclipse-NotFound/RConnect（默认分支 `master`，MIT 许可证），发布 tag `v0.2.24-gcfit1` 与 Release 资产 `RConnect_v0.2.24-gcfit1.zip`（预发布）。由同步会话执行；未运行游戏、未改 `release/` 下已部署产物。
+
 **0.2.24-tcp1**，A 架构 TCP 穿透预发布版。源码正本为本分支 `src/`，构建入口 `tools/build_a.py`，译文 `locales/messages.json`，安装包由 `tools/package_a.py` 白名单生成。`release-manifest.json` 记录完整源、声明与产物指纹。不要使用旧实验目录构建本版本。
 
 SWF SHA256：`690604878bd8707007a99e3ad14f8f5f3f55cdd4948c8debe6cc87363afd38c9`。地址粘贴、内外端口分离、普通 TCP 转发及每方向 40ms 模拟延迟/拆包已完成两轮独立双实例检查，共 140 项通过。119×9 译文覆盖检查通过，之前的翻译布局与玩法证据仅复用未变路径。

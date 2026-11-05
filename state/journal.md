@@ -1,3 +1,11 @@
+## 2026-11-05 GitHub 开源同步
+
+- 仓库公开：https://github.com/Eclipse-NotFound/RConnect（默认分支 `master`，MIT 许可证）
+- 发布：tag `v0.2.24-gcfit1`，Release 资产 `RConnect_v0.2.24-gcfit1.zip`（预发布）
+- 同步内容：本地提交（源码/设计/知识/状态）+ MIT `LICENSE` + README 下载链接与版本号更新
+- 验证边界：未运行游戏、未改 `release/` 下已部署 SWF；资产回读改用 GitHub 服务端 asset digest 校验（下载域名被网络策略拒绝）
+- 残留：本条目写入时 tag 可能早于后续文档提交；各模组记忆由负责人在后续会话继续维护
+
 ## 2026-10-29 A 九语言发布更新
 - 同步完整 animfix3 A 源码与编译存根，补齐九语言统一词库、语言别名和固定标签排版。80个玩法类未改。
 - 主侧／加入侧各1,181项检查通过；85类审计无原生存根嵌入。已知性能限制保留，见 docs/release-0.2.24.md。
