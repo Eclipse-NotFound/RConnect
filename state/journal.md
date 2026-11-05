@@ -1,3 +1,11 @@
+## 2026-11-05 GitHub 开源同步
+
+- 仓库公开：https://github.com/Eclipse-NotFound/RConnect（默认分支 `master`，MIT 许可证）
+- 发布：tag `v0.2.24-gcfit1`，Release 资产 `RConnect_v0.2.24-gcfit1.zip`（预发布）
+- 同步内容：本地提交（源码/设计/知识/状态）+ MIT `LICENSE` + README 下载链接与版本号更新
+- 验证边界：未运行游戏、未改 `release/` 下已部署 SWF；资产回读改用 GitHub 服务端 asset digest 校验（下载域名被网络策略拒绝）
+- 残留：本条目写入时 tag 可能早于后续文档提交；各模组记忆由负责人在后续会话继续维护
+
 ## 2026-11-04 B fast3diag：字段/姿态变更分布实测（诊断构建，未部署）
 - 做了什么：上一轮把 `host.publish` 降到 34.6ms 后，`capture.units` 19.7ms 成唯一大项但只有 ms 级计时、无法归因。本轮**只加计数不改行为**：`NativeFields.capture` 末尾记 `field.declared`/`field.changed`，`VisualPose.captureNode` 在 `depth==0` 记 `pose.nodes`/`pose.changed`，均在 `if(Timing.enabled)` 内（关闭零成本）。用 `bench_sustained --profile --driver build/ab/ab-sustained-004` 跑 30s 拿到分布。
 - 关键决定/发现：

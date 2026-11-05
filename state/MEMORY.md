@@ -1,5 +1,7 @@
 # RConnect — 开发记忆入口
 
+> **2026-11-05 GitHub 公开**：本仓库已开源到 https://github.com/Eclipse-NotFound/RConnect（默认分支 `master`，MIT 许可证），发布 tag `v0.2.24-gcfit1` 与 Release 资产 `RConnect_v0.2.24-gcfit1.zip`（预发布）。由同步会话执行；未运行游戏、未改 `release/` 下已部署产物。
+
 ## 1. 当前任务
 
 A 为普通入口的双人联机；B 独立架构本轮不碰。根会话 `01a086bb-378c-7f60-b8e1-50d90ffa0996` 统一整合、编译、AIR测试及部署。
