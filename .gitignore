@@ -22,3 +22,5 @@ experimental/b-field-env-refresh/injury-native-sources-02/**/*.class
 experimental/b-field-client-integration/bench-prepared-environment-*/
 experimental/b-field-env-refresh/bridge-build-*/
 experimental/b-field-env-refresh/injury-sources-01/
+# 本机测试证据日志（体积大、含本机路径，不公开）
+knowledge/experiments/evidence/
