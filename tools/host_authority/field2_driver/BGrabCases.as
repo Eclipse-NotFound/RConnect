@@ -19,7 +19,10 @@ package {
    for each(var key:String in ["keyLeft","keyRight","keyJump","keyAttack","keySit","keyRun","keyAction","keyTele","keyGrenad"])ctr[key]=false;
    if(control.stage==null || control.stage=="end")return;
    var me:int=side=="host"?0:1,x:Number=control.x,y:Number=control.y;
-   if(control.stage=="throw" && me==control.owner)ctr.keyGrenad=true;
+   if(control.stage=="throw" && me==control.owner) {
+    if(control.wallInput==null)control.wallInput=new Date().getTime();
+    ctr.keyGrenad=true;
+   }
    if(control.stage=="grab") {
     var p:Object=null;
     if(side=="host" && bullet!=null)p={x:bullet.X,y:bullet.Y};
@@ -37,6 +40,17 @@ package {
    if(control.stage=="hold" || control.stage=="return") {x=control.returnX;y=fy-90;if(side=="join")y=control.floor-90;}
    if(control.stage=="return" && me==control.holder)ctr.keyAction=true;
    w.celX=x;w.celY=y;if(w.cam!=null){w.cam.celX=w.cam.vx+x*w.cam.scaleV;w.cam.celY=w.cam.vy+y*w.cam.scaleV;}
+   if(side=="join" && control.stage=="grab" && control.id!=null && control.wallInput!=null && !control.wallLatencyLogged && m.replica!=null && m.replica.displayFrame!=null) {
+    for each(var seenProjectile:Object in m.replica.displayFrame.projectiles)if(seenProjectile.id==control.id) {
+     control.wallLatencyLogged=true;
+     var wallLatency:Number=new Date().getTime()-Number(control.wallInput);
+     api.log("grab-wall-latency",{phase:control.phase,id:control.id,wallLatencyMs:wallLatency,
+      displayTick:m.replica.displayFrame.tick,latestTick:m.replica.lastFrame.tick});
+     api.write("join-grab-latency-"+control.phase+".json",{phase:control.phase,id:control.id,wallLatencyMs:wallLatency,
+      displayTick:m.replica.displayFrame.tick});
+     break;
+    }
+   }
    if(side=="join" && control.stage=="grab" && me==control.holder && ctr.keyTele) {
     ++samples;
     // Same pre-present point and old picture as the physical Q edge. Reading

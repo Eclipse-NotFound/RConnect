@@ -178,7 +178,7 @@ package {
     target.inter.setAct("lock",1);target.inter.update();
    });
    publish("lock-ready-"+tip);control.target=target.nazv;
-   control.preparedAt=now();control.expectedRoom=mod.access.keyFor(a.unit.loc);
+   control.preparedAt=now();control.wallAt=new Date().getTime();control.expectedRoom=mod.access.keyFor(a.unit.loc);
    control.epoch=a.epoch;control.roomEpoch=a.roomEpoch;control.playerX=a.unit.X;
    rewrite();
   }
@@ -192,7 +192,10 @@ package {
     var frame:Object=mod.replica.displayFrame;
     if(frame==null || frame.players==null || frame.scene==null || !control.hasOwnProperty("preparedAt") || frame.time<control.preparedAt)return;
     var player:Object=frame.players[1],found:Boolean=false;
-    for each(var item:Object in frame.scene.objects)if(item.fields!=null && item.fields.nazv===control.target && item.inter!=null && item.inter.lock==1)found=true;
+    for each(var item:Object in frame.scene.objects)if(item.fields!=null) {
+     var d:Object=item.fieldsDelta,effective:*=d!=null && d.hasOwnProperty("nazv")?d.nazv:item.fields.nazv;
+     if(effective===control.target && item.inter!=null && item.inter.lock==1)found=true;
+    }
     // This only qualifies the fixture. It never counts as the later progress
     // bar test and does not write native action/timer state or replay a key.
     if(found && frame.room===control.expectedRoom && mod.access.roomKey()===control.expectedRoom &&
@@ -200,7 +203,8 @@ package {
        Math.abs(Number(player.x)-Number(control.playerX))<.1 && Math.abs(w.gg.X-Number(control.playerX))<.1 &&
        player.action==null && w.gg.actionObj==null && !w.ctr.keyAction && player.ack>0) {
      var readyData:Object={ready:true,room:frame.room,epoch:player.epoch,roomEpoch:player.roomEpoch,
-      tick:frame.tick,time:frame.time,ack:player.ack,x:player.x,target:control.target};
+      tick:frame.tick,time:frame.time,ack:player.ack,x:player.x,target:control.target,
+      wallLatencyMs:control.hasOwnProperty("wallAt")?new Date().getTime()-Number(control.wallAt):-1};
      api.log("ui-ready-observed",readyData);acknowledge(readyData);
     }
    }else if(name.indexOf("settle-")==0 && name!=joinStage && now()-at>800) {
