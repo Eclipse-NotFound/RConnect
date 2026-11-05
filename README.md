@@ -4,7 +4,7 @@
 
 Explore the wasteland with a friend: see each other, chat, fight together, or split up across ordinary rooms on the same map.
 
-**[Download v0.2.24-tcp1 — RConnect_v0.2.24-tcp1.zip](https://github.com/Eclipse-NotFound/RConnect/releases/download/v0.2.24-tcp1/RConnect_v0.2.24-tcp1.zip)** · [Release notes / other versions](https://github.com/Eclipse-NotFound/RConnect/releases)
+**[Download v0.2.24-gcfit1 — RConnect_v0.2.24-gcfit1.zip](https://github.com/Eclipse-NotFound/RConnect/releases/download/v0.2.24-gcfit1/RConnect_v0.2.24-gcfit1.zip)** · [Release notes / other versions](https://github.com/Eclipse-NotFound/RConnect/releases)
 
 Use the download link above, or open the release page, expand **Assets**, and select that filename. **Source code** and the green **Code → Download ZIP** button are development files, not the installable package.
 
@@ -17,6 +17,8 @@ The joining player can now paste **hostname:port** or **tcp://hostname:port** di
 The panel, settings, shortcuts and connection/room notices follow the game's language setting: **English, Русский, Українська, 简体中文, 繁體中文, Polski, Deutsch, Español and 日本語**. You can switch language without restarting the mod. Nicknames and chat messages are never translated. Long hints remain inside the scrolling panel.
 
 This build also includes A's native enemy weapon reflection/melee poses, enemy speech, telekinetic impact damage numbers and rapid door-toggle fixes. Special projectile motion interpolates confirmed samples; occasional whole-frame stalls remain. [Validation and known limits](docs/release-0.2.24.md).
+
+**v0.2.24-gcfit1** is a performance fix on top of tcp1. The co-op HUD no longer allocates per-frame garbage: text fitting compares cached scalar measurements, the language code is normalized once per watcher tick, and panel layout reuses its scroll rectangles and arrays. Measured with a frozen ContinuousScene v14 probe (only RConnectMod.swf swapped, tcp1 -> gcfit1): the recorded 139 pure-garbage objects per frame and 1,080 in-window layout deaths were eliminated. Long-session frame gains were not re-measured, and visual size checks for the HUD text were not completed.
 
 ## Before you start
 
@@ -76,7 +78,7 @@ For two windows on one PC, run `mods/RConnect/Start-Coop.bat`; both windows keep
 
 ## Validation and limits
 
-The exact release binary passed two local TCP relay runs: normal forwarding, then 40 ms added delay in each direction with fragmented writes. Each run passed 33 host and 37 join checks, totaling 140, covering pasted endpoints, different internal/external ports, handshake, room initialization, chat and sustained game state. All 119 UI messages cover nine languages. Earlier localization and gameplay evidence is reused only for unchanged paths. Real long-distance sessions, performance improvements and every mod combination are not newly qualified. See [this release's validation and limits](docs/release-0.2.24-tcp1.md).
+The exact release binary passed two local TCP relay runs: normal forwarding, then 40 ms added delay in each direction with fragmented writes. Each run passed 33 host and 37 join checks, totaling 140, covering pasted endpoints, different internal/external ports, handshake, room initialization, chat and sustained game state. All 119 UI messages cover nine languages. Earlier localization and gameplay evidence is reused only for unchanged paths. Real long-distance sessions, performance improvements and every mod combination are not newly qualified. See [this release's validation and limits](docs/release-0.2.24-gcfit1.md).
 
 ## Connection problems, updates and removal
 
